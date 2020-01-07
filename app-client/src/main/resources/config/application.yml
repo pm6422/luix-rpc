@@ -1,0 +1,55 @@
+# ===================================================================
+# Spring Boot configuration.
+#
+# This configuration will be overridden by the Spring profile you use,
+# for example application-dev.yml if you use the "dev" profile.
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# ===================================================================
+info: # These configuration can be exported to Environment, accessing URL /info can get these properties
+    artifact:
+        id: @project.artifactId@
+        name: @project.artifactId@
+        version: @project.version@
+    project:
+        package: org.infinity.rpc.appclient
+spring:
+    application:
+        name: ${info.artifact.name}
+    profiles:
+        # The commented value for `active` can be replaced with valid spring profiles to load.
+        # Otherwise, it will be filled in by maven when building the WAR file
+        # Either way, it can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
+        active: @spring.profiles.active@
+    messages:
+        # Do not add the prefix classpath:, please refer to MessageSourceAutoConfiguration.getResources(ClassLoader classLoader, String name)
+        basename: i18n/messages_zh_CN,i18n/messages_en_US
+        fallback-to-system-locale: false
+    mvc:
+        favicon:
+            enabled: false
+        locale: zh_CN
+    thymeleaf: #ThymeleafAutoConfiguration
+        mode: HTML
+    banner:
+        location: classpath:config/banner-company.txt
+server: 
+    # It can be overridden by `--server.port` value passed in the commandline or `-Dserver.port` set in `JAVA_OPTS`
+    port: @app.server.port@
+    servlet:
+        session:
+            cookie:
+                name: ${info.artifact.name}
+logging:
+    config: classpath:config/logback-spring.xml
+    path: ${user.home}${file.separator}Log${file.separator}${info.artifact.id}${file.separator}${info.artifact.id}
+    level:
+        root: DEBUG
+        ${info.project.package}: DEBUG
+# ===================================================================
+# Application specific properties
+# ===================================================================
