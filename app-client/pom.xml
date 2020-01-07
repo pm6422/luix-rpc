@@ -11,8 +11,10 @@
 
     <groupId>org.infinity</groupId>
     <artifactId>app-client</artifactId>
+
     <version>1.0.0</version>
     <packaging>war</packaging>
+    <name>AppClient</name>
 
     <!--
         *************************************************************************************

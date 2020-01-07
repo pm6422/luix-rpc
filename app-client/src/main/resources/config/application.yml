@@ -13,7 +13,7 @@
 info: # These configuration can be exported to Environment, accessing URL /info can get these properties
     artifact:
         id: @project.artifactId@
-        name: @project.artifactId@
+        name: @project.name@
         version: @project.version@
     project:
         package: org.infinity.rpc.appclient
