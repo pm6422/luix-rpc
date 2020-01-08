@@ -13,7 +13,7 @@ import java.util.Random;
 /**
  * 根据注册中心地址实时发现服务器列表
  */
-public class ZookeeperServerDiscovery {
+public class ZookeeperRpcServerDiscovery {
     public static final Logger       LOGGER     = LoggerFactory.getLogger(ZookeeperRpcServerRegistry.class);
     // 注册中心地址
     private             String       registryAddress;
@@ -21,7 +21,7 @@ public class ZookeeperServerDiscovery {
     // 所有提供服务的服务器列表
     private volatile    List<String> serverList = new ArrayList<>();
 
-    public ZookeeperServerDiscovery(String registryAddress) throws Exception {
+    public ZookeeperRpcServerDiscovery(String registryAddress) throws Exception {
         this.registryAddress = registryAddress;
         zooKeeper = new ZooKeeper(registryAddress, Constant.SESSION_TIMEOUT, new Watcher() {
             @Override
@@ -34,14 +34,6 @@ public class ZookeeperServerDiscovery {
         });
         // 获取节点相关数据
         watchNode();
-    }
-
-    public String getRegistryAddress() {
-        return registryAddress;
-    }
-
-    public void setRegistryAddress(String registryAddress) {
-        this.registryAddress = registryAddress;
     }
 
     /**
@@ -61,7 +53,7 @@ public class ZookeeperServerDiscovery {
     /**
      * 监听服务端的列表信息
      */
-    private void watchNode() {
+    public void watchNode() {
         try {
             //获取子节点信息
             List<String> nodeList = zooKeeper.getChildren(Constant.REGISTRY_PATH, true);

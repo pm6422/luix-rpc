@@ -11,11 +11,11 @@
 
     <context:property-placeholder location="classpath:rpc.properties"/>
 
-    <bean id="serviceRegistry" class="org.infinity.rpc.registry.ZookeeperRpcServerRegistry">
+    <bean id="rpcServiceRegistry" class="org.infinity.rpc.registry.ZookeeperRpcServerRegistry">
         <property name="registryAddress" value="${registry.address}"/>
     </bean>
     <bean id="rpcServer" class="org.infinity.rpc.server.RpcServer">
         <constructor-arg name="serverAddress" value="${server.address}"/>
-        <constructor-arg name="zookeeperRpcServerRegistry" ref="serviceRegistry"/>
+        <constructor-arg name="rpcServerRegistry" ref="rpcServiceRegistry"/>
     </bean>
 </beans>

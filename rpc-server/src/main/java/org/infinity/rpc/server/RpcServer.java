@@ -35,14 +35,13 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
     private              String                     serverIp;
     private              int                        serverPort;
 
-    public RpcServer(String serverAddress, ZookeeperRpcServerRegistry zookeeperRpcServerRegistry) {
+    public RpcServer(String serverAddress, ZookeeperRpcServerRegistry rpcServerRegistry) {
         LOGGER.info("Starting RPC server on [{}]", serverAddress);
         this.serverAddress = serverAddress;
         String[] ipAndPortParts = serverAddress.split(":");
         serverIp = ipAndPortParts[0];
         serverPort = Integer.valueOf(ipAndPortParts[1]);
-
-        this.zookeeperRpcServerRegistry = zookeeperRpcServerRegistry;
+        this.zookeeperRpcServerRegistry = rpcServerRegistry;
     }
 
     @Override
@@ -73,7 +72,6 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         this.startNettyServer();
-        this.registerRpcServer();
     }
 
     /**
@@ -104,11 +102,14 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
             ;
             // 开启异步通信服务
             ChannelFuture future = server.bind(serverIp, serverPort).sync();
-            // 等待通信完成
-            future.channel().closeFuture().sync();
+
+            // Register RPC server on registry
+            this.registerRpcServer();
             LOGGER.info("Started RPC server on [{}]", serverAddress);
+            // 线程阻塞在此，程序暂停执行，等待通信完成
+            future.channel().closeFuture().sync();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to start netty", e.getMessage());
         } finally {
             // 优雅的关闭socket
             bossGroup.shutdownGracefully();
