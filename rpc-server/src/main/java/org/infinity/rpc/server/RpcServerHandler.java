@@ -24,10 +24,10 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        LOGGER.debug("RpcServerHandler.channelRead: {}", msg);
+        LOGGER.debug("Received RPC request: {}", msg);
         RpcRequest rpcRequest = (RpcRequest) msg;
         RpcResponse rpcResponse = this.processRequest(rpcRequest);
-        //告诉客户端，关闭socket连接
+        // 告诉客户端，关闭socket连接
         ctx.writeAndFlush(rpcResponse).addListener(ChannelFutureListener.CLOSE);
     }
 
@@ -40,16 +40,15 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
             String methodName = rpcRequest.getMethodName();
             Class<?>[] parameterTypes = rpcRequest.getParameterTypes();
             Object[] args = rpcRequest.getArgs();
-            // 获取到具字节码对象
-            Class<?> clz = Class.forName(className);
             // 获取到实现类
             Object serviceImpl = serviceBeanMap.get(className);
             if (serviceImpl == null) {
-                throw new RuntimeException("Service bean can NOT be found with name: ".concat(className));
+                throw new RuntimeException("Service provider class can NOT be found with name: ".concat(className));
             }
-            Method method = clz.getMethod(methodName, parameterTypes);
+            // 获取到具字节码对象
+            Method method = Class.forName(className).getMethod(methodName, parameterTypes);
             if (method == null) {
-                throw new RuntimeException("Method can NOT be found with name: ".concat(methodName));
+                throw new RuntimeException("Service provider method can NOT be found with name: ".concat(methodName));
             }
             // JDK反射调用
             Object result = method.invoke(serviceImpl, args);

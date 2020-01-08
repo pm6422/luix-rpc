@@ -1,4 +1,4 @@
-package org.infinity.rpc.server;
+package org.infinity.rpc.server.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

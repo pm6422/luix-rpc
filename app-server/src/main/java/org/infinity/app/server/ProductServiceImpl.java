@@ -2,7 +2,7 @@ package org.infinity.app.server;
 
 import org.infinity.app.common.IProductService;
 import org.infinity.app.common.Product;
-import org.infinity.rpc.server.RpcService;
+import org.infinity.rpc.server.annotation.RpcService;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

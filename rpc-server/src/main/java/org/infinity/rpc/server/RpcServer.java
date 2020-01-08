@@ -13,6 +13,7 @@ import org.infinity.rpc.common.RpcEncoder;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
 import org.infinity.rpc.registry.ZookeeperRpcServerRegistry;
+import org.infinity.rpc.server.annotation.RpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
