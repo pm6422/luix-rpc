@@ -1,7 +1,7 @@
 package org.infinity.rpc.client;
 
 
-import org.infinity.rpc.register.RpcZookeeperServerDiscovery;
+import org.infinity.rpc.registry.RpcZookeeperServerDiscovery;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
 import org.slf4j.Logger;

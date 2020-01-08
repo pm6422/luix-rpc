@@ -1,7 +1,7 @@
 package org.infinity.rpc.client;
 
 
-import org.infinity.rpc.register.RpcZookeeperServerDiscovery;
+import org.infinity.rpc.registry.RpcZookeeperServerDiscovery;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;

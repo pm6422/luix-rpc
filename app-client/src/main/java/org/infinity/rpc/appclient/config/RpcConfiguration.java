@@ -1,7 +1,7 @@
 package org.infinity.rpc.appclient.config;
 
 import org.infinity.rpc.client.RpcClientProxy;
-import org.infinity.rpc.register.RpcZookeeperServerDiscovery;
+import org.infinity.rpc.registry.RpcZookeeperServerDiscovery;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
