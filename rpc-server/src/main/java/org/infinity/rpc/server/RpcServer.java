@@ -63,8 +63,15 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
         if (MapUtils.isNotEmpty(serviceBeanMap)) {
             for (Object serviceImpl : serviceBeanMap.values()) {
                 // 获取到类的路径名称
-                String interfaceName = serviceImpl.getClass().getAnnotation(RpcService.class).value().getName();
-                // 存放格式{接口名：实现类对象}
+                final Class<?>[] interfaces = serviceImpl.getClass().getInterfaces();
+                String interfaceName;
+                if (interfaces.length == 1) {
+                    interfaceName = interfaces[0].getName();
+                } else {
+                    // Get service interface from annotation if a instance has more than one declared interfaces
+                    interfaceName = serviceImpl.getClass().getAnnotation(RpcService.class).interfaceClass().getName();
+                }
+                // 存放格式={接口名：实现类对象}
                 this.serviceBeanMap.put(interfaceName, serviceImpl);
                 LOGGER.info("Discovering RPC Service provider [{}]", serviceImpl.getClass().getName());
             }

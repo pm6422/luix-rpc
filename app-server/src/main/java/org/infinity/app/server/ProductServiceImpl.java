@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Component
-@RpcService(IProductService.class)
+@RpcService
 public class ProductServiceImpl implements IProductService {
     @Override
     public void save(Product product) {
