@@ -77,12 +77,12 @@ public class RpcZookeeperRegistry {
         return dataList;
     }
 
-    //测试程序
-    public static void main(String[] args) throws Exception {
-        RpcZookeeperRegistry rpcZookeeperRegistry = new RpcZookeeperRegistry();
-        rpcZookeeperRegistry.setRegistryAddress("127.0.0.1:2181");
-        rpcZookeeperRegistry.createNode("testdata");
-        //让程序等待输入,程序一直处于运行状态
-        System.in.read();
-    }
+//    //测试程序
+//    public static void main(String[] args) throws Exception {
+//        RpcZookeeperRegistry rpcZookeeperRegistry = new RpcZookeeperRegistry();
+//        rpcZookeeperRegistry.setRegistryAddress("127.0.0.1:2181");
+//        rpcZookeeperRegistry.createNode("testdata");
+//        //让程序等待输入,程序一直处于运行状态
+//        System.in.read();
+//    }
 }
