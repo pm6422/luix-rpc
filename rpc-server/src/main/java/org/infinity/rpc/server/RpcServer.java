@@ -81,11 +81,11 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
         // 创建异步通信的事件组，用于处理Channel(通道)的I/O事件
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
-            //开始设置server的相关参数
+            // 开始设置server的相关参数
             server.group(bossGroup, workerGroup)
-                    //启动异步ServerSocket
+                    // 启动异步ServerSocket
                     .channel(NioServerSocketChannel.class)
-                    //初始化通道信息
+                    // 初始化通道信息
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
@@ -107,7 +107,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            //优雅的关闭socket
+            // 优雅的关闭socket
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
