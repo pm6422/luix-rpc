@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ZookeeperRegistry {
+public class ZookeeperRpcServerRegistry {
 
-    public static final Logger    LOGGER = LoggerFactory.getLogger(ZookeeperRegistry.class);
+    public static final Logger    LOGGER = LoggerFactory.getLogger(ZookeeperRpcServerRegistry.class);
     private             String    registryAddress;
     private             ZooKeeper zooKeeper;
 
@@ -30,7 +30,7 @@ public class ZookeeperRegistry {
         this.zooKeeper = zooKeeper;
     }
 
-    public void createNode(String data) throws Exception {
+    public void createRpcServerNode(String data) throws Exception {
         //创建一个客户端程序, 对于注册可以不用监听事件
         zooKeeper = new ZooKeeper(registryAddress, Constant.SESSION_TIMEOUT, new Watcher() {
             @Override

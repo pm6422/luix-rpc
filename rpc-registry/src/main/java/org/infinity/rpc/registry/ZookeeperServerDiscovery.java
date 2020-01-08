@@ -14,7 +14,7 @@ import java.util.Random;
  * 根据注册中心地址实时发现服务器列表
  */
 public class ZookeeperServerDiscovery {
-    public static final Logger       LOGGER     = LoggerFactory.getLogger(ZookeeperRegistry.class);
+    public static final Logger       LOGGER     = LoggerFactory.getLogger(ZookeeperRpcServerRegistry.class);
     // 注册中心地址
     private             String       registryAddress;
     private             ZooKeeper    zooKeeper;
@@ -32,7 +32,7 @@ public class ZookeeperServerDiscovery {
                 }
             }
         });
-        //获取节点相关数据
+        // 获取节点相关数据
         watchNode();
     }
 
@@ -49,7 +49,7 @@ public class ZookeeperServerDiscovery {
      *
      * @return
      */
-    public String discover() {
+    public String discoverRpcServer() {
         int size = serverList.size();
         if (size == 0) {
             throw new RuntimeException("No server found.");

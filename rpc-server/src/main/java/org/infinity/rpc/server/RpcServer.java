@@ -12,7 +12,7 @@ import org.infinity.rpc.common.RpcDecoder;
 import org.infinity.rpc.common.RpcEncoder;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
-import org.infinity.rpc.registry.ZookeeperRegistry;
+import org.infinity.rpc.registry.ZookeeperRpcServerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -27,20 +27,20 @@ import java.util.Map;
  * RPC服务器类，使用Spring
  */
 public class RpcServer implements ApplicationContextAware, InitializingBean {
-    private static final Logger              LOGGER         = LoggerFactory.getLogger(RpcServer.class);
+    private static final Logger                     LOGGER         = LoggerFactory.getLogger(RpcServer.class);
     // 用于保存所有提供服务的方法，其中key为类的全路径名，value是所有的实现类
-    private final        Map<String, Object> serviceBeanMap = new HashMap<>();
-    private              ZookeeperRegistry   zookeeperRegistry;
-    private              String              serverAddress;
-    private              String              serverIp;
-    private              int                 serverPort;
+    private final        Map<String, Object>        serviceBeanMap = new HashMap<>();
+    private              ZookeeperRpcServerRegistry zookeeperRpcServerRegistry;
+    private              String                     serverAddress;
+    private              String                     serverIp;
+    private              int                        serverPort;
 
-    public ZookeeperRegistry getZookeeperRegistry() {
-        return zookeeperRegistry;
+    public ZookeeperRpcServerRegistry getZookeeperRpcServerRegistry() {
+        return zookeeperRpcServerRegistry;
     }
 
-    public void setZookeeperRegistry(ZookeeperRegistry zookeeperRegistry) {
-        this.zookeeperRegistry = zookeeperRegistry;
+    public void setZookeeperRpcServerRegistry(ZookeeperRpcServerRegistry zookeeperRpcServerRegistry) {
+        this.zookeeperRpcServerRegistry = zookeeperRpcServerRegistry;
     }
 
     public String getServerAddress() {
@@ -56,7 +56,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        LOGGER.info("Starting RPC server on [{}:{}]", serverIp, serverPort);
+        LOGGER.info("Starting RPC server on [{}]", serverAddress);
         // 获取到所有使用RpcService注解的Bean对象
         Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(RpcService.class);
         if (MapUtils.isNotEmpty(serviceBeanMap)) {
@@ -99,11 +99,11 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
             // 开启异步通信服务
             ChannelFuture future = server.bind(serverIp, serverPort).sync();
             LOGGER.info("Registering RPC server address [{}] on registry", serverAddress);
-            zookeeperRegistry.createNode(serverAddress);
+            zookeeperRpcServerRegistry.createRpcServerNode(serverAddress);
             LOGGER.info("Registered RPC server address [{}] on registry", serverAddress);
             // 等待通信完成
             future.channel().closeFuture().sync();
-            LOGGER.info("Started RPC server on [{}:{}]", serverIp, serverPort);
+            LOGGER.info("Started RPC server on [{}]", serverAddress);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

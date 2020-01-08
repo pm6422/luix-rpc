@@ -1,9 +1,9 @@
 package org.infinity.rpc.client;
 
 
-import org.infinity.rpc.registry.RpcZookeeperServerDiscovery;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
+import org.infinity.rpc.registry.ZookeeperServerDiscovery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,29 +16,29 @@ import java.util.UUID;
  * 获取到接口对应的代理对象，被代理对象的所有的方法调用时都会执行invoke方法
  */
 public class RpcClientProxy {
-    private RpcZookeeperServerDiscovery rpcZookeeperServerDiscovery;
+    private ZookeeperServerDiscovery zookeeperServerDiscovery;
 
-    public RpcClientProxy(RpcZookeeperServerDiscovery rpcZookeeperServerDiscovery) {
-        this.rpcZookeeperServerDiscovery = rpcZookeeperServerDiscovery;
+    public RpcClientProxy(ZookeeperServerDiscovery zookeeperServerDiscovery) {
+        this.zookeeperServerDiscovery = zookeeperServerDiscovery;
     }
 
     @SuppressWarnings("all")
     public <T> T getInstance(Class<T> interfaceClass) {
-        T instance = (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class<?>[]{interfaceClass}, MethodInvocationHandler.getInstance(rpcZookeeperServerDiscovery));
+        T instance = (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class<?>[]{interfaceClass}, MethodInvocationHandler.getInstance(zookeeperServerDiscovery));
         //返回一个代理对象
         return instance;
     }
 
     static class MethodInvocationHandler implements InvocationHandler {
 
-        private static final Logger                      LOGGER = LoggerFactory.getLogger(MethodInvocationHandler.class);
-        private static       RpcZookeeperServerDiscovery rpcZookeeperServerDiscovery;
+        private static final Logger                   LOGGER = LoggerFactory.getLogger(MethodInvocationHandler.class);
+        private static       ZookeeperServerDiscovery zookeeperServerDiscovery;
 
         private MethodInvocationHandler() {
         }
 
-        public static MethodInvocationHandler getInstance(RpcZookeeperServerDiscovery discovery) {
-            rpcZookeeperServerDiscovery = discovery;
+        public static MethodInvocationHandler getInstance(ZookeeperServerDiscovery discovery) {
+            zookeeperServerDiscovery = discovery;
             return SingletonHolder.INSTANCE;
         }
 
@@ -58,7 +58,7 @@ public class RpcClientProxy {
                     method.getDeclaringClass().getName(), method.getName(), method.getParameterTypes(), args);
             LOGGER.debug("RPC request: {}", rpcRequest);
             // 创建client对象，并且发送消息到服务端
-            RpcClient rpcClient = new RpcClient(rpcRequest, rpcZookeeperServerDiscovery);
+            RpcClient rpcClient = new RpcClient(rpcRequest, zookeeperServerDiscovery);
             RpcResponse rpcResponse = rpcClient.send();
             // 返回调用结果
             return rpcResponse.getResult();
