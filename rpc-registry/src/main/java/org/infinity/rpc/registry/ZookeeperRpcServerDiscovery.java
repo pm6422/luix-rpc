@@ -15,7 +15,6 @@ import java.util.Random;
  */
 public class ZookeeperRpcServerDiscovery {
     public static final Logger       LOGGER     = LoggerFactory.getLogger(ZookeeperRpcServerRegistry.class);
-    // 注册中心地址
     private             String       registryAddress;
     private             ZooKeeper    zooKeeper;
     // 所有提供服务的服务器列表
@@ -37,23 +36,9 @@ public class ZookeeperRpcServerDiscovery {
     }
 
     /**
-     * 随机返回一台服务器地址信息，用于负载均衡
-     *
-     * @return
-     */
-    public String discoverRpcServer() {
-        int size = serverList.size();
-        if (size == 0) {
-            throw new RuntimeException("No server found.");
-        }
-        int index = new Random().nextInt(size);
-        return serverList.get(index);
-    }
-
-    /**
      * 监听服务端的列表信息
      */
-    public void watchNode() {
+    private void watchNode() {
         try {
             //获取子节点信息
             List<String> nodeList = zooKeeper.getChildren(Constant.REGISTRY_PATH, true);
@@ -63,12 +48,26 @@ public class ZookeeperRpcServerDiscovery {
             }
 
             if (serverList.size() == 0) {
-                LOGGER.error("No server list found");
+                LOGGER.error("No RPC server found");
             } else {
-                LOGGER.info("Discovered server list: {}", serverList);
+                LOGGER.info("Discovered RPC servers [{}]", serverList);
             }
         } catch (Exception e) {
             LOGGER.error("Failed to get nodes", e);
         }
+    }
+
+    /**
+     * 随机返回一台服务器地址信息，用于负载均衡
+     *
+     * @return
+     */
+    public String discoverRpcServer() {
+        int size = serverList.size();
+        if (size == 0) {
+            throw new RuntimeException("No RPC server found");
+        }
+        int index = new Random().nextInt(size);
+        return serverList.get(index);
     }
 }
