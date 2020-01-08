@@ -16,7 +16,6 @@ import org.infinity.rpc.registry.ZookeeperRpcServerRegistry;
 import org.infinity.rpc.server.annotation.RpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -29,59 +28,58 @@ import java.util.Map;
  */
 public class RpcServer implements ApplicationContextAware, InitializingBean {
     private static final Logger                     LOGGER         = LoggerFactory.getLogger(RpcServer.class);
-    // 用于保存所有提供服务的方法，其中key为类的全路径名，value是所有的实现类
+    // key: serviceInterfaceName, value: serviceImpl
     private final        Map<String, Object>        serviceBeanMap = new HashMap<>();
     private              ZookeeperRpcServerRegistry zookeeperRpcServerRegistry;
     private              String                     serverAddress;
     private              String                     serverIp;
     private              int                        serverPort;
 
-    public ZookeeperRpcServerRegistry getZookeeperRpcServerRegistry() {
-        return zookeeperRpcServerRegistry;
-    }
-
-    public void setZookeeperRpcServerRegistry(ZookeeperRpcServerRegistry zookeeperRpcServerRegistry) {
-        this.zookeeperRpcServerRegistry = zookeeperRpcServerRegistry;
-    }
-
-    public String getServerAddress() {
-        return serverAddress;
-    }
-
-    public void setServerAddress(String serverAddress) {
+    public RpcServer(String serverAddress, ZookeeperRpcServerRegistry zookeeperRpcServerRegistry) {
+        LOGGER.info("Starting RPC server on [{}]", serverAddress);
         this.serverAddress = serverAddress;
         String[] ipAndPortParts = serverAddress.split(":");
         serverIp = ipAndPortParts[0];
         serverPort = Integer.valueOf(ipAndPortParts[1]);
+
+        this.zookeeperRpcServerRegistry = zookeeperRpcServerRegistry;
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        LOGGER.info("Starting RPC server on [{}]", serverAddress);
-        // 获取到所有使用RpcService注解的Bean对象
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.discoverRpcService(applicationContext);
+    }
+
+    private void discoverRpcService(ApplicationContext applicationContext) {
+        // get all beans with the annotation
         Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(RpcService.class);
         if (MapUtils.isNotEmpty(serviceBeanMap)) {
             for (Object serviceImpl : serviceBeanMap.values()) {
-                // 获取到类的路径名称
                 final Class<?>[] interfaces = serviceImpl.getClass().getInterfaces();
-                String interfaceName;
+                String serviceInterfaceName;
                 if (interfaces.length == 1) {
-                    interfaceName = interfaces[0].getName();
+                    serviceInterfaceName = interfaces[0].getName();
                 } else {
                     // Get service interface from annotation if a instance has more than one declared interfaces
-                    interfaceName = serviceImpl.getClass().getAnnotation(RpcService.class).interfaceClass().getName();
+                    serviceInterfaceName = serviceImpl.getClass().getAnnotation(RpcService.class).interfaceClass().getName();
                 }
-                // 存放格式={接口名：实现类对象}
-                this.serviceBeanMap.put(interfaceName, serviceImpl);
+                this.serviceBeanMap.put(serviceInterfaceName, serviceImpl);
                 LOGGER.info("Discovering RPC Service provider [{}]", serviceImpl.getClass().getName());
             }
         }
         LOGGER.info("Discovered all RPC service providers");
     }
 
-    // 初始化完成后执行
     @Override
     public void afterPropertiesSet() throws Exception {
+        this.startNettyServer();
+        this.registerRpcServer();
+    }
+
+    /**
+     * Start netty server
+     */
+    private void startNettyServer() {
         // 创建服务端的通信对象
         ServerBootstrap server = new ServerBootstrap();
         // 创建异步通信的事件组 用于建立TCP连接的
@@ -106,9 +104,6 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
             ;
             // 开启异步通信服务
             ChannelFuture future = server.bind(serverIp, serverPort).sync();
-            LOGGER.info("Registering RPC server address [{}] on registry", serverAddress);
-            zookeeperRpcServerRegistry.createRpcServerNode(serverAddress);
-            LOGGER.info("Registered RPC server address [{}] on registry", serverAddress);
             // 等待通信完成
             future.channel().closeFuture().sync();
             LOGGER.info("Started RPC server on [{}]", serverAddress);
@@ -119,5 +114,16 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+    /**
+     * Register RPC server on registry
+     *
+     * @throws Exception
+     */
+    private void registerRpcServer() throws Exception {
+        LOGGER.info("Registering RPC server address [{}] on registry", serverAddress);
+        zookeeperRpcServerRegistry.createRpcServerNode(serverAddress);
+        LOGGER.info("Registered RPC server address [{}] on registry", serverAddress);
     }
 }

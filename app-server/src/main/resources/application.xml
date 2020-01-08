@@ -15,7 +15,7 @@
         <property name="registryAddress" value="${registry.address}"/>
     </bean>
     <bean id="rpcServer" class="org.infinity.rpc.server.RpcServer">
-        <property name="serverAddress" value="${server.address}"/>
-        <property name="zookeeperRpcServerRegistry" ref="serviceRegistry"/>
+        <constructor-arg name="serverAddress" value="${server.address}"/>
+        <constructor-arg name="zookeeperRpcServerRegistry" ref="serviceRegistry"/>
     </bean>
 </beans>
