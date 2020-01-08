@@ -32,6 +32,8 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
     private final        Map<String, Object>  serviceBeanMap = new HashMap<>();
     private              RpcZookeeperRegistry rpcZookeeperRegistry;
     private              String               serverAddress;
+    private              String               serverIp;
+    private              int                  serverPort;
 
     public RpcZookeeperRegistry getRpcZookeeperRegistry() {
         return rpcZookeeperRegistry;
@@ -47,10 +49,14 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
 
     public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
+        String[] ipAndPortParts = serverAddress.split(":");
+        serverIp = ipAndPortParts[0];
+        serverPort = Integer.valueOf(ipAndPortParts[1]);
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        LOGGER.info("Starting RPC server on [{}:{}]", serverIp, serverPort);
         // 获取到所有使用RpcService注解的Bean对象
         Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(RpcService.class);
         if (MapUtils.isNotEmpty(serviceBeanMap)) {
@@ -59,9 +65,10 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
                 String interfaceName = serviceImpl.getClass().getAnnotation(RpcService.class).value().getName();
                 // 存放格式{接口名：实现类对象}
                 this.serviceBeanMap.put(interfaceName, serviceImpl);
+                LOGGER.info("Discovering RPC Service provider [{}]", serviceImpl.getClass().getName());
             }
         }
-        LOGGER.debug("Service provider {} contains the service list {}", serverAddress, serviceBeanMap);
+        LOGGER.info("Discovered all RPC service providers");
     }
 
     // 初始化完成后执行
@@ -89,13 +96,14 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
                     }).option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
             ;
-            String[] hostAndPortParts = serverAddress.split(":");
-            ChannelFuture future = server.bind(hostAndPortParts[0], Integer.valueOf(hostAndPortParts[1])).sync();//开启异步通信服务
-            LOGGER.info("RPC server {} started successfully.", future.channel().localAddress());
-            LOGGER.debug("Registering service providers info on registry");
+            // 开启异步通信服务
+            ChannelFuture future = server.bind(serverIp, serverPort).sync();
+            LOGGER.info("Registering RPC server address [{}] on registry", serverAddress);
             rpcZookeeperRegistry.createNode(serverAddress);
-            LOGGER.debug("Registered service providers info on registry");
-            future.channel().closeFuture().sync();// 等待通信完成
+            LOGGER.info("Registered RPC server address [{}] on registry", serverAddress);
+            // 等待通信完成
+            future.channel().closeFuture().sync();
+            LOGGER.info("Started RPC server on [{}:{}]", serverIp, serverPort);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
