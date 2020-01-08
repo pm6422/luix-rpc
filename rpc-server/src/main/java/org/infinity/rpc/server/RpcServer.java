@@ -12,7 +12,7 @@ import org.infinity.rpc.common.RpcDecoder;
 import org.infinity.rpc.common.RpcEncoder;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
-import org.infinity.rpc.registry.RpcZookeeperRegistry;
+import org.infinity.rpc.registry.ZookeeperRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -27,20 +27,20 @@ import java.util.Map;
  * RPC服务器类，使用Spring
  */
 public class RpcServer implements ApplicationContextAware, InitializingBean {
-    private static final Logger               LOGGER         = LoggerFactory.getLogger(RpcServer.class);
+    private static final Logger              LOGGER         = LoggerFactory.getLogger(RpcServer.class);
     // 用于保存所有提供服务的方法，其中key为类的全路径名，value是所有的实现类
-    private final        Map<String, Object>  serviceBeanMap = new HashMap<>();
-    private              RpcZookeeperRegistry rpcZookeeperRegistry;
-    private              String               serverAddress;
-    private              String               serverIp;
-    private              int                  serverPort;
+    private final        Map<String, Object> serviceBeanMap = new HashMap<>();
+    private              ZookeeperRegistry   zookeeperRegistry;
+    private              String              serverAddress;
+    private              String              serverIp;
+    private              int                 serverPort;
 
-    public RpcZookeeperRegistry getRpcZookeeperRegistry() {
-        return rpcZookeeperRegistry;
+    public ZookeeperRegistry getZookeeperRegistry() {
+        return zookeeperRegistry;
     }
 
-    public void setRpcZookeeperRegistry(RpcZookeeperRegistry rpcZookeeperRegistry) {
-        this.rpcZookeeperRegistry = rpcZookeeperRegistry;
+    public void setZookeeperRegistry(ZookeeperRegistry zookeeperRegistry) {
+        this.zookeeperRegistry = zookeeperRegistry;
     }
 
     public String getServerAddress() {
@@ -99,7 +99,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
             // 开启异步通信服务
             ChannelFuture future = server.bind(serverIp, serverPort).sync();
             LOGGER.info("Registering RPC server address [{}] on registry", serverAddress);
-            rpcZookeeperRegistry.createNode(serverAddress);
+            zookeeperRegistry.createNode(serverAddress);
             LOGGER.info("Registered RPC server address [{}] on registry", serverAddress);
             // 等待通信完成
             future.channel().closeFuture().sync();

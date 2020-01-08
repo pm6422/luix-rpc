@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RpcZookeeperRegistry {
+public class ZookeeperRegistry {
 
-    public static final Logger    LOGGER = LoggerFactory.getLogger(RpcZookeeperRegistry.class);
+    public static final Logger    LOGGER = LoggerFactory.getLogger(ZookeeperRegistry.class);
     private             String    registryAddress;
     private             ZooKeeper zooKeeper;
 

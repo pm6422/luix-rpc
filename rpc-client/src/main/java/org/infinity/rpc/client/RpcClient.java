@@ -1,7 +1,6 @@
 package org.infinity.rpc.client;
 
 
-import org.infinity.rpc.registry.RpcZookeeperServerDiscovery;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -11,24 +10,25 @@ import org.infinity.rpc.common.RpcDecoder;
 import org.infinity.rpc.common.RpcEncoder;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
+import org.infinity.rpc.registry.ZookeeperServerDiscovery;
 
 /**
  * RPC通信客户端，向服务端发送请求，并接受服务端的响应
  */
 public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
     // 消息请求对象
-    private RpcRequest         rpcRequest;
+    private RpcRequest               rpcRequest;
     // 消息响应对象
-    private RpcResponse                 rpcResponse;
+    private RpcResponse              rpcResponse;
     // 获取服务地址列表
-    private RpcZookeeperServerDiscovery rpcZookeeperServerDiscovery;
+    private ZookeeperServerDiscovery zookeeperServerDiscovery;
     // 同步锁
-    private Object                      object = new Object();
+    private Object                   object = new Object();
 
     //构造函数
-    public RpcClient(RpcRequest rpcRequest, RpcZookeeperServerDiscovery rpcZookeeperServerDiscovery) {
+    public RpcClient(RpcRequest rpcRequest, ZookeeperServerDiscovery zookeeperServerDiscovery) {
         this.rpcRequest = rpcRequest;
-        this.rpcZookeeperServerDiscovery = rpcZookeeperServerDiscovery;
+        this.zookeeperServerDiscovery = zookeeperServerDiscovery;
     }
 
     /**
@@ -54,7 +54,7 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
                         }
                     }).option(ChannelOption.SO_KEEPALIVE, true);
             ;
-            String serverAddress = rpcZookeeperServerDiscovery.discover();// 客户端根据负载均衡算法获取一个服务器地址
+            String serverAddress = zookeeperServerDiscovery.discover();// 客户端根据负载均衡算法获取一个服务器地址
             String[] hostAndPortParts = serverAddress.split(":");
             ChannelFuture future = client.connect(hostAndPortParts[0], Integer.valueOf(hostAndPortParts[1])).sync();
             future.channel().writeAndFlush(this.rpcRequest).sync();
