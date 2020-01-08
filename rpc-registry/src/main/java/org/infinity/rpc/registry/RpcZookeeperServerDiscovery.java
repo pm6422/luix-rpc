@@ -17,7 +17,7 @@ public class RpcZookeeperServerDiscovery {
     public static final Logger       LOGGER     = LoggerFactory.getLogger(RpcZookeeperRegistry.class);
     // 注册中心地址
     private             String       registryAddress;
-    private             ZooKeeper    zooKeeper  = null;
+    private             ZooKeeper    zooKeeper;
     // 所有提供服务的服务器列表
     private volatile    List<String> serverList = new ArrayList<>();
 
