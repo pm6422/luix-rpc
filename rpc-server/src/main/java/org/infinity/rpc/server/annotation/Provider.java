@@ -6,10 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * RPC service annotation
+ * RPC provider annotation
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface RpcService {
+public @interface Provider {
     Class<?> interfaceClass() default void.class;
 }

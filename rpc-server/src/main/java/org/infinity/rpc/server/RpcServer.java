@@ -13,7 +13,7 @@ import org.infinity.rpc.common.RpcEncoder;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
 import org.infinity.rpc.registry.ZookeeperRpcServerRegistry;
-import org.infinity.rpc.server.annotation.RpcService;
+import org.infinity.rpc.server.annotation.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -51,7 +51,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
 
     private void discoverRpcService(ApplicationContext applicationContext) {
         // get all beans with the annotation
-        Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(RpcService.class);
+        Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(Provider.class);
         if (MapUtils.isNotEmpty(serviceBeanMap)) {
             for (Object serviceImpl : serviceBeanMap.values()) {
                 final Class<?>[] interfaces = serviceImpl.getClass().getInterfaces();
@@ -60,7 +60,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
                     serviceInterfaceName = interfaces[0].getName();
                 } else {
                     // Get service interface from annotation if a instance has more than one declared interfaces
-                    serviceInterfaceName = serviceImpl.getClass().getAnnotation(RpcService.class).interfaceClass().getName();
+                    serviceInterfaceName = serviceImpl.getClass().getAnnotation(Provider.class).interfaceClass().getName();
                 }
                 this.serviceBeanMap.put(serviceInterfaceName, serviceImpl);
                 LOGGER.info("Discovering RPC Service provider [{}]", serviceImpl.getClass().getName());

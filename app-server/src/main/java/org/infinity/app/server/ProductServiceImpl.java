@@ -2,14 +2,14 @@ package org.infinity.app.server;
 
 import org.infinity.app.common.IProductService;
 import org.infinity.app.common.Product;
-import org.infinity.rpc.server.annotation.RpcService;
+import org.infinity.rpc.server.annotation.Provider;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Component
-@RpcService
+@Provider
 public class ProductServiceImpl implements IProductService {
     @Override
     public void save(Product product) {

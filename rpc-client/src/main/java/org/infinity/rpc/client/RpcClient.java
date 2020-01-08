@@ -54,7 +54,8 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
                         }
                     }).option(ChannelOption.SO_KEEPALIVE, true);
             ;
-            String serverAddress = zookeeperRpcServerDiscovery.discoverRpcServer();// 客户端根据负载均衡算法获取一个服务器地址
+            // 客户端负载均衡算法获取一个服务器地址
+            String serverAddress = zookeeperRpcServerDiscovery.discoverRpcServer();
             String[] hostAndPortParts = serverAddress.split(":");
             ChannelFuture future = client.connect(hostAndPortParts[0], Integer.valueOf(hostAndPortParts[1])).sync();
             future.channel().writeAndFlush(this.rpcRequest).sync();
