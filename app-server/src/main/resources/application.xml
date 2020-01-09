@@ -11,7 +11,7 @@
 
     <context:property-placeholder location="classpath:rpc.properties"/>
 
-    <bean id="rpcServiceRegistry" class="org.infinity.rpc.registry.ZookeeperRpcServerRegistry">
+    <bean id="rpcServiceRegistry" class="org.infinity.rpc.registry.ZkRpcServerRegistry">
         <property name="registryAddress" value="${registry.address}"/>
     </bean>
     <bean id="rpcServer" class="org.infinity.rpc.server.RpcServer">
