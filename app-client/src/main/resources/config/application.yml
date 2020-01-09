@@ -37,6 +37,9 @@ spring:
         mode: HTML
     banner:
         location: classpath:config/banner-company.txt
+    rpc:
+        client:
+            base-packages: ${info.project.package}
 server: 
     # It can be overridden by `--server.port` value passed in the commandline or `-Dserver.port` set in `JAVA_OPTS`
     port: @app.server.port@

@@ -16,9 +16,9 @@ spring:
             enabled: true # disable on prod environment
         livereload:
             enabled: false # we use gulp + BrowserSync for livereload
+    rpc:
+        registry:
+            address: 127.0.0.1:2181
 # ===================================================================
 # Application specific properties
 # ===================================================================
-application:
-    registry:
-        address: 127.0.0.1:2181

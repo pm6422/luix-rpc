@@ -1,10 +1,11 @@
 package org.infinity.rpc.appclient;
 
-import org.infinity.rpc.appclient.config.ApplicationConstants;
-import org.infinity.rpc.appclient.utils.NetworkIpUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.infinity.rpc.appclient.config.ApplicationConstants;
+import org.infinity.rpc.appclient.utils.NetworkIpUtils;
+import org.infinity.rpc.client.registrar.EnableRpcClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 @SpringBootApplication
+@EnableRpcClient(basePackages = ApplicationConstants.BASE_PACKAGE)
 public class AppClientLauncher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppClientLauncher.class);
