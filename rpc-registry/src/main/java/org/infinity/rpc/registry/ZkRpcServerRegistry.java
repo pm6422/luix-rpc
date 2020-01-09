@@ -5,9 +5,9 @@ import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ZookeeperRpcServerRegistry {
+public class ZkRpcServerRegistry {
 
-    public static final Logger    LOGGER = LoggerFactory.getLogger(ZookeeperRpcServerRegistry.class);
+    public static final Logger    LOGGER = LoggerFactory.getLogger(ZkRpcServerRegistry.class);
     private             String    registryAddress;
     private             ZooKeeper zooKeeper;
 

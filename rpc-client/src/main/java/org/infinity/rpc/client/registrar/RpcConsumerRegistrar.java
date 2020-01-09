@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.client.RpcClientProperties;
 import org.infinity.rpc.client.RpcClientProxy;
 import org.infinity.rpc.client.annotation.Consumer;
-import org.infinity.rpc.registry.ZookeeperRpcServerDiscovery;
+import org.infinity.rpc.registry.ZkRegistryRpcServerDiscovery;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -266,7 +266,7 @@ public class RpcConsumerRegistrar implements ImportBeanDefinitionRegistrar {
             RpcClientProperties rpcClientProperties = beanFactory.getBean(RpcClientProperties.class);
 
             try {
-                ZookeeperRpcServerDiscovery rpcServerDiscovery = new ZookeeperRpcServerDiscovery("127.0.0.1:2181");
+                ZkRegistryRpcServerDiscovery rpcServerDiscovery = new ZkRegistryRpcServerDiscovery("127.0.0.1:2181");
                 RpcClientProxy rpcClientProxy = new RpcClientProxy(rpcServerDiscovery);
                 Object proxy = rpcClientProxy.getProxy(clazz);
 

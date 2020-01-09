@@ -13,14 +13,14 @@ import java.util.Random;
 /**
  * 根据注册中心地址实时发现服务器列表
  */
-public class ZookeeperRpcServerDiscovery {
-    public static final Logger       LOGGER     = LoggerFactory.getLogger(ZookeeperRpcServerRegistry.class);
+public class ZkRegistryRpcServerDiscovery {
+    public static final Logger       LOGGER     = LoggerFactory.getLogger(ZkRpcServerRegistry.class);
     private             String       registryAddress;
     private             ZooKeeper    zooKeeper;
     // 所有提供服务的服务器列表
     private volatile    List<String> serverList = new ArrayList<>();
 
-    public ZookeeperRpcServerDiscovery(String registryAddress) throws Exception {
+    public ZkRegistryRpcServerDiscovery(String registryAddress) throws Exception {
         this.registryAddress = registryAddress;
         zooKeeper = new ZooKeeper(registryAddress, Constant.SESSION_TIMEOUT, new Watcher() {
             @Override

@@ -1,7 +1,7 @@
 package org.infinity.rpc.client;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.registry.ZookeeperRpcServerDiscovery;
+import org.infinity.rpc.registry.ZkRegistryRpcServerDiscovery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -18,12 +18,12 @@ public class RpcClientConfiguration {
     private RpcClientProperties rpcClientProperties;
 
     @Bean
-    public ZookeeperRpcServerDiscovery rpcServerDiscovery() throws Exception {
-        return new ZookeeperRpcServerDiscovery(rpcClientProperties.getRegistry().getAddress());
+    public ZkRegistryRpcServerDiscovery rpcServerDiscovery() throws Exception {
+        return new ZkRegistryRpcServerDiscovery(rpcClientProperties.getRegistry().getAddress());
     }
 
     @Bean
-    public RpcClientProxy rpcClientProxy(ZookeeperRpcServerDiscovery rpcServerDiscovery) throws Exception {
+    public RpcClientProxy rpcClientProxy(ZkRegistryRpcServerDiscovery rpcServerDiscovery) throws Exception {
         return new RpcClientProxy(rpcServerDiscovery);
     }
 }

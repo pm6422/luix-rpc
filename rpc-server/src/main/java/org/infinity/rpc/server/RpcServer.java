@@ -12,7 +12,7 @@ import org.infinity.rpc.common.RpcDecoder;
 import org.infinity.rpc.common.RpcEncoder;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
-import org.infinity.rpc.registry.ZookeeperRpcServerRegistry;
+import org.infinity.rpc.registry.ZkRpcServerRegistry;
 import org.infinity.rpc.server.annotation.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,21 +27,21 @@ import java.util.Map;
  * RPC服务器类，使用Spring
  */
 public class RpcServer implements ApplicationContextAware, InitializingBean {
-    private static final Logger                     LOGGER         = LoggerFactory.getLogger(RpcServer.class);
+    private static final Logger              LOGGER         = LoggerFactory.getLogger(RpcServer.class);
     // key: serviceInterfaceName, value: serviceImpl
-    private final        Map<String, Object>        serviceBeanMap = new HashMap<>();
-    private              ZookeeperRpcServerRegistry zookeeperRpcServerRegistry;
-    private              String                     serverAddress;
-    private              String                     serverIp;
-    private              int                        serverPort;
+    private final        Map<String, Object> serviceBeanMap = new HashMap<>();
+    private              ZkRpcServerRegistry zkRpcServerRegistry;
+    private              String              serverAddress;
+    private              String              serverIp;
+    private              int                 serverPort;
 
-    public RpcServer(String serverAddress, ZookeeperRpcServerRegistry rpcServerRegistry) {
+    public RpcServer(String serverAddress, ZkRpcServerRegistry rpcServerRegistry) {
         LOGGER.info("Starting RPC server on [{}]", serverAddress);
         this.serverAddress = serverAddress;
         String[] ipAndPortParts = serverAddress.split(":");
         serverIp = ipAndPortParts[0];
         serverPort = Integer.valueOf(ipAndPortParts[1]);
-        this.zookeeperRpcServerRegistry = rpcServerRegistry;
+        this.zkRpcServerRegistry = rpcServerRegistry;
     }
 
     @Override
@@ -124,7 +124,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
      */
     private void registerRpcServer() throws Exception {
         LOGGER.info("Registering RPC server address [{}] on registry", serverAddress);
-        zookeeperRpcServerRegistry.createRpcServerNode(serverAddress);
+        zkRpcServerRegistry.createRpcServerNode(serverAddress);
         LOGGER.info("Registered RPC server address [{}] on registry", serverAddress);
     }
 }

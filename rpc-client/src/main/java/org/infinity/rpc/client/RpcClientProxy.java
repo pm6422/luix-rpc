@@ -3,7 +3,7 @@ package org.infinity.rpc.client;
 
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
-import org.infinity.rpc.registry.ZookeeperRpcServerDiscovery;
+import org.infinity.rpc.registry.ZkRegistryRpcServerDiscovery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,11 +16,11 @@ import java.util.UUID;
  * 获取到接口对应的代理对象，被代理对象的所有的方法调用时都会执行invoke方法
  */
 public class RpcClientProxy {
-    private static final Logger                      LOGGER = LoggerFactory.getLogger(RpcClientProxy.class);
-    private              ZookeeperRpcServerDiscovery zookeeperRpcServerDiscovery;
+    private static final Logger                       LOGGER = LoggerFactory.getLogger(RpcClientProxy.class);
+    private              ZkRegistryRpcServerDiscovery zkRegistryRpcServerDiscovery;
 
-    public RpcClientProxy(ZookeeperRpcServerDiscovery zookeeperRpcServerDiscovery) {
-        this.zookeeperRpcServerDiscovery = zookeeperRpcServerDiscovery;
+    public RpcClientProxy(ZkRegistryRpcServerDiscovery zkRegistryRpcServerDiscovery) {
+        this.zkRegistryRpcServerDiscovery = zkRegistryRpcServerDiscovery;
     }
 
     @SuppressWarnings("all")
@@ -39,7 +39,7 @@ public class RpcClientProxy {
                         method.getDeclaringClass().getName(), method.getName(), method.getParameterTypes(), args);
                 LOGGER.debug("RPC request: {}", rpcRequest);
                 // 创建client对象，并且发送消息到服务端
-                RpcClient rpcClient = new RpcClient(rpcRequest, zookeeperRpcServerDiscovery);
+                RpcClient rpcClient = new RpcClient(rpcRequest, zkRegistryRpcServerDiscovery);
                 RpcResponse rpcResponse = rpcClient.send();
                 // 返回调用结果
                 return rpcResponse.getResult();
