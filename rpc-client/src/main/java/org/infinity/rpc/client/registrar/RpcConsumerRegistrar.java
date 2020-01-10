@@ -81,10 +81,6 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean,
             log.info("No @Consumer bean found", basePackages.toString());
             return;
         }
-        //注册处理器后,为 对象注入环境配置信息
-        //通过该类对对象进行进一步操作
-        //registerHsfBeanPostProcessor(registry);
-        //注册
         registerBeanDef(candidates, registry);
     }
 
