@@ -5,8 +5,8 @@ import org.infinity.rpc.client.RpcClient;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
 import org.infinity.rpc.registry.ZkRegistryRpcServerDiscovery;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.*;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -14,17 +14,13 @@ import java.lang.reflect.Proxy;
 import java.util.UUID;
 
 @Slf4j
-public class RpcConsumerFactoryBean implements InitializingBean, FactoryBean<Object>, BeanClassLoaderAware, BeanFactoryAware {
+public class RpcConsumerFactoryBean implements InitializingBean, FactoryBean<Object> {
 
     private final Class<?>                     consumerInterface;
     private       ZkRegistryRpcServerDiscovery zkRegistryRpcServerDiscovery;
 
     public RpcConsumerFactoryBean(Class<?> consumerInterface) {
         this.consumerInterface = consumerInterface;
-    }
-
-    public ZkRegistryRpcServerDiscovery getZkRegistryRpcServerDiscovery() {
-        return zkRegistryRpcServerDiscovery;
     }
 
     public void setZkRegistryRpcServerDiscovery(ZkRegistryRpcServerDiscovery zkRegistryRpcServerDiscovery) {
@@ -73,15 +69,5 @@ public class RpcConsumerFactoryBean implements InitializingBean, FactoryBean<Obj
     @Override
     public boolean isSingleton() {
         return true;
-    }
-
-    @Override
-    public void setBeanClassLoader(ClassLoader classLoader) {
-
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-
     }
 }
