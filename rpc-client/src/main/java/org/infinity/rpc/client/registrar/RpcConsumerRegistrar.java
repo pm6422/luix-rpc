@@ -44,7 +44,6 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean,
     // 已经注册过的，用于去重复
     private static final Map<String, Class<?>> REGISTERED_BEAN_MAPPING  = new ConcurrentHashMap<String, Class<?>>();
     private              BeanFactory           beanFactory;
-    private static final String                FACTORY_BEAN_OBJECT_TYPE = "factoryBeanObjectType";
     private              RpcClientProperties   rpcClientProperties;
 
     @Override
@@ -269,9 +268,10 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean,
                 BeanDefinitionBuilder definitionBuilder = this.build(clazz);
                 BeanDefinition beanDefinition = definitionBuilder.getBeanDefinition();
 
-                // Save in attributes
-                beanDefinition.setAttribute(FACTORY_BEAN_OBJECT_TYPE, clazz.getName());
+                // Save to attributes
+//                beanDefinition.setAttribute(FACTORY_BEAN_OBJECT_TYPE, clazz.getName());
                 String beanName = ClassUtils.getShortNameAsProperty(clazz);
+                // Register bean
                 registry.registerBeanDefinition(beanName, beanDefinition);
                 log.debug("Registered RPC consumer service bean [{}]", clazz.getName());
                 REGISTERED_BEAN_MAPPING.put(beanName, clazz);
