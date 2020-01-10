@@ -254,11 +254,11 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean,
      * 注册 Bean,
      * Bean的名称格式:
      *
-     * @param internalClasses
+     * @param beanClasses
      * @param registry
      */
-    private void registerBeanDef(Set<Class<?>> internalClasses, BeanDefinitionRegistry registry) {
-        for (Class<?> clazz : internalClasses) {
+    private void registerBeanDef(Set<Class<?>> beanClasses, BeanDefinitionRegistry registry) {
+        for (Class<?> clazz : beanClasses) {
             if (REGISTERED_BEAN_MAPPING.values().contains(clazz)) {
                 log.debug("Ignore the bean for already registered", clazz.getName());
                 continue;
