@@ -14,6 +14,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Method;
 import java.util.UUID;
@@ -45,7 +46,8 @@ public class RpcConsumerFactoryBean implements FactoryBean<Object>, BeanFactoryA
         ProxyFactory result = new ProxyFactory();
         result.setInterfaces(consumerInterface);
         result.addAdvice(new MethodInvokingMethodInterceptor());
-        return result.getProxy(consumerInterface.getClassLoader());
+        Object proxy = result.getProxy(consumerInterface.getClassLoader());
+        return proxy;
     }
 
     @Override
@@ -68,9 +70,9 @@ public class RpcConsumerFactoryBean implements FactoryBean<Object>, BeanFactoryA
         public Object invoke(MethodInvocation invocation) throws Throwable {
             Method method = invocation.getMethod();
             if (method.getDeclaringClass() == Object.class && method.getName().equals("toString")) {
-                // TODO: 调查调用的原因
-                log.debug("Invoked Object.toString()");
-                return null;
+                // Object proxy = result.getProxy(consumerInterface.getClassLoader()); 在IDE上光标放到proxy就会看到调用toString()
+                log.trace("Invoked Object.toString() by view proxy instance on IDE debugger");
+                return ClassUtils.getShortNameAsProperty(RpcConsumerFactoryBean.class).concat("Proxy");
             }
 
             // 创建请求对象，包含类名，方法名，参数类型和实际参数值
@@ -82,6 +84,11 @@ public class RpcConsumerFactoryBean implements FactoryBean<Object>, BeanFactoryA
             // 返回调用结果
             return rpcResponse.getResult();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "RpcConsumerFactoryBean{}";
     }
 }
 
