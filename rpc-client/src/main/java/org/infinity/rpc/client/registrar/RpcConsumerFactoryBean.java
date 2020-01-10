@@ -37,7 +37,7 @@ public class RpcConsumerFactoryBean implements FactoryBean<Object>, BeanFactoryA
     @Override
     public void afterPropertiesSet() throws Exception {
         rpcServerDiscovery = this.beanFactory.getBean(ZkRegistryRpcServerDiscovery.class);
-        Assert.notNull(rpcServerDiscovery, "Rpc server discovery bean must be created!");
+        Assert.notNull(rpcServerDiscovery, "RPC server discovery bean must be created!");
     }
 
     public Object getProxy() {
