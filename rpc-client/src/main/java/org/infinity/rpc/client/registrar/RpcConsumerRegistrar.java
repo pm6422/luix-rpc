@@ -40,9 +40,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean, ImportBeanDefinitionRegistrar, EnvironmentAware {
-    private static final String                RESOURCE_PATTERN         = "**/*.class";
+    private static final String                RESOURCE_PATTERN        = "**/*.class";
     // 已经注册过的，用于去重复
-    private static final Map<String, Class<?>> REGISTERED_BEAN_MAPPING  = new ConcurrentHashMap<String, Class<?>>();
+    private static final Map<String, Class<?>> REGISTERED_BEAN_MAPPING = new ConcurrentHashMap<String, Class<?>>();
     private              BeanFactory           beanFactory;
     private              RpcClientProperties   rpcClientProperties;
 
@@ -263,21 +263,16 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean,
                 log.debug("Ignore the bean for already registered", clazz.getName());
                 continue;
             }
+            BeanDefinitionBuilder definitionBuilder = this.build(clazz);
+            BeanDefinition beanDefinition = definitionBuilder.getBeanDefinition();
 
-            try {
-                BeanDefinitionBuilder definitionBuilder = this.build(clazz);
-                BeanDefinition beanDefinition = definitionBuilder.getBeanDefinition();
-
-                // Save to attributes
+            // Save to attributes
 //                beanDefinition.setAttribute(FACTORY_BEAN_OBJECT_TYPE, clazz.getName());
-                String beanName = ClassUtils.getShortNameAsProperty(clazz);
-                // Register bean
-                registry.registerBeanDefinition(beanName, beanDefinition);
-                log.debug("Registered RPC consumer service bean [{}]", clazz.getName());
-                REGISTERED_BEAN_MAPPING.put(beanName, clazz);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            String beanName = ClassUtils.getShortNameAsProperty(clazz);
+            // Register bean
+            registry.registerBeanDefinition(beanName, beanDefinition);
+            log.debug("Registered RPC consumer service bean [{}]", clazz.getName());
+            REGISTERED_BEAN_MAPPING.put(beanName, clazz);
         }
     }
 
