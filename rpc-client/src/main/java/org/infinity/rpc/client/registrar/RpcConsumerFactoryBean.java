@@ -85,10 +85,5 @@ public class RpcConsumerFactoryBean implements FactoryBean<Object>, BeanFactoryA
             return rpcResponse.getResult();
         }
     }
-
-    @Override
-    public String toString() {
-        return "RpcConsumerFactoryBean{}";
-    }
 }
 
