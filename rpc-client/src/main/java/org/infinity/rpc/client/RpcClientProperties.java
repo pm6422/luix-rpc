@@ -3,7 +3,7 @@ package org.infinity.rpc.client;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "spring.rpc")
+@ConfigurationProperties(prefix = "spring.infinity-rpc")
 @Data
 public class RpcClientProperties {
     private Client   client;
