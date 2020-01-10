@@ -163,6 +163,7 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean,
                                     if (annotation != null) {
                                         // Get the field
                                         candidates.add(field.getType());
+                                        log.debug("Found RPC consumer service bean [{}]", field.getType().getName());
                                     }
                                 }
                             } catch (Exception e) {
@@ -185,9 +186,7 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean,
      * @throws IOException
      */
     private List<Class<?>> findCandidateClasses(String basePackage, List<TypeFilter> includeFilters) throws IOException {
-        if (log.isDebugEnabled()) {
-            log.debug("开始扫描指定包{}下的所有类" + basePackage);
-        }
+        log.debug("Scanning candidate class under the package [{}]", basePackage);
         List<Class<?>> candidates = new ArrayList<Class<?>>();
         String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + replaceDotByDelimiter(basePackage) + '/' + RESOURCE_PATTERN;
 
@@ -201,7 +200,6 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean,
 
                 if (candidateClass != null) {
                     candidates.add(candidateClass);
-                    log.debug("扫描到符合要求基础类:{}" + candidateClass.getName());
                 }
             }
         }
