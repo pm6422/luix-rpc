@@ -58,6 +58,7 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean,
     @Override
     public void setEnvironment(Environment environment) {
         Binder binder = Binder.get(environment);
+        // It can initialize the bean in advance
         rpcClientProperties = binder.bind("spring.infinity-rpc", Bindable.of(RpcClientProperties.class)).get();
         Assert.notNull(rpcClientProperties, "Rpc client properties bean must be created!");
     }
