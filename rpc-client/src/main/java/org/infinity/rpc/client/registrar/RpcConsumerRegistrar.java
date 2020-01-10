@@ -1,18 +1,19 @@
 package org.infinity.rpc.client.registrar;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.client.RpcClientProperties;
-import org.infinity.rpc.client.RpcClientProxy;
 import org.infinity.rpc.client.annotation.Consumer;
-import org.infinity.rpc.registry.ZkRegistryRpcServerDiscovery;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -34,11 +35,13 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class RpcConsumerRegistrar implements ImportBeanDefinitionRegistrar {
-    private static final String                RESOURCE_PATTERN       = "**/*.class";
+public class RpcConsumerRegistrar implements BeanFactoryAware, ImportBeanDefinitionRegistrar, EnvironmentAware {
+    private static final String                RESOURCE_PATTERN         = "**/*.class";
     //生成的Bean名称到代理的Service Class的映射
-    private static final Map<String, Class<?>> HSF_UNDERLYING_MAPPING = new ConcurrentHashMap<String, Class<?>>();
-    public               String                RPC_CLIENT_PROXY       = "rpcClientProxy";
+    private static final Map<String, Class<?>> HSF_UNDERLYING_MAPPING   = new ConcurrentHashMap<String, Class<?>>();
+    private              BeanFactory           beanFactory;
+    private              Environment           environment;
+    private static final String                FACTORY_BEAN_OBJECT_TYPE = "factoryBeanObjectType";
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
@@ -69,7 +72,7 @@ public class RpcConsumerRegistrar implements ImportBeanDefinitionRegistrar {
         //通过该类对对象进行进一步操作
         //registerHsfBeanPostProcessor(registry);
         //注册
-        registerBeanDefinitions(candidates, registry);
+        registerBeanDef(candidates, registry);
     }
 
     /**
@@ -154,7 +157,7 @@ public class RpcConsumerRegistrar implements ImportBeanDefinitionRegistrar {
                                     }
                                 }
                             } catch (Exception e) {
-                                //doNothing
+                                // doNothing
                             }
                         }
                     }
@@ -250,43 +253,44 @@ public class RpcConsumerRegistrar implements ImportBeanDefinitionRegistrar {
      * @param internalClasses
      * @param registry
      */
-    private void registerBeanDefinitions(Set<Class<?>> internalClasses, BeanDefinitionRegistry registry) {
+    private void registerBeanDef(Set<Class<?>> internalClasses, BeanDefinitionRegistry registry) {
         for (Class<?> clazz : internalClasses) {
             if (HSF_UNDERLYING_MAPPING.values().contains(clazz)) {
-                log.debug("重复扫描{}类,忽略重复注册", clazz.getName());
+                log.debug("Ignore the bean for already registered", clazz.getName());
                 continue;
             }
 
-            BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(clazz);
-            GenericBeanDefinition definition = (GenericBeanDefinition) builder.getRawBeanDefinition();
-
-            definition.getPropertyValues().add("interfaceClass", clazz);
-
-            DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) registry;
-            RpcClientProperties rpcClientProperties = beanFactory.getBean(RpcClientProperties.class);
-
             try {
-                ZkRegistryRpcServerDiscovery rpcServerDiscovery = new ZkRegistryRpcServerDiscovery("127.0.0.1:2181");
-                RpcClientProxy rpcClientProxy = new RpcClientProxy(rpcServerDiscovery);
-                Object proxy = rpcClientProxy.getProxy(clazz);
+                BeanDefinitionBuilder definitionBuilder = this.build(clazz);
+                BeanDefinition beanDefinition = definitionBuilder.getBeanDefinition();
 
-//                RpcClientProxy rpcClientProxyBean = beanFactory.getBean(RpcClientProxy.class);
-//                Object proxy = rpcClientProxyBean.getProxy(clazz);
-
-                definition.getPropertyValues().add("interfaceClass", clazz);
-                definition.getPropertyValues().add("value", proxy);
-                definition.setBeanClass(proxy.getClass());
-                definition.setAutowireMode(GenericBeanDefinition.AUTOWIRE_BY_TYPE);
-                log.debug("注册[{}]Bean", clazz.getName());
+                // Save in attributes
+                beanDefinition.setAttribute(FACTORY_BEAN_OBJECT_TYPE, clazz.getName());
                 String beanName = ClassUtils.getShortNameAsProperty(clazz);
-                beanFactory.registerBeanDefinition(beanName, definition);
-                HSF_UNDERLYING_MAPPING.put(ClassUtils.getShortNameAsProperty(clazz), clazz);
-
+                registry.registerBeanDefinition(beanName, beanDefinition);
+                log.debug("Registered RPC consumer service bean [{}]", clazz.getName());
+                HSF_UNDERLYING_MAPPING.put(beanName, clazz);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
+    private BeanDefinitionBuilder build(Class consumerInterface) {
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(RpcConsumerFactoryBean.class);
+//        builder.getRawBeanDefinition().setSource();
+        // Set 1st constructor arg RpcConsumerFactoryBean.class
+        builder.addConstructorArgValue(consumerInterface);
+        return builder;
+    }
 
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
 }

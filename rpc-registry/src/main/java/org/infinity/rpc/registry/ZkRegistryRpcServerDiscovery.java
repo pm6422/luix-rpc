@@ -6,6 +6,7 @@ import org.apache.zookeeper.ZooKeeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -20,17 +21,21 @@ public class ZkRegistryRpcServerDiscovery {
     // 所有提供服务的服务器列表
     private volatile    List<String> serverList = new ArrayList<>();
 
-    public ZkRegistryRpcServerDiscovery(String registryAddress) throws Exception {
+    public ZkRegistryRpcServerDiscovery(String registryAddress) {
         this.registryAddress = registryAddress;
-        zooKeeper = new ZooKeeper(registryAddress, Constant.SESSION_TIMEOUT, new Watcher() {
-            @Override
-            public void process(WatchedEvent watchedEvent) {
-                if (watchedEvent.getType() == Event.EventType.NodeChildrenChanged) {
-                    // 实时监听zkServer的服务器列表变化
-                    watchNode();
+        try {
+            zooKeeper = new ZooKeeper(registryAddress, Constant.SESSION_TIMEOUT, new Watcher() {
+                @Override
+                public void process(WatchedEvent watchedEvent) {
+                    if (watchedEvent.getType() == Event.EventType.NodeChildrenChanged) {
+                        // 实时监听zkServer的服务器列表变化
+                        watchNode();
+                    }
                 }
-            }
-        });
+            });
+        } catch (IOException e) {
+            LOGGER.error("Failed to register zk", e.getMessage());
+        }
         // 获取节点相关数据
         watchNode();
     }
