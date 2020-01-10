@@ -1,14 +1,18 @@
 package org.infinity.rpc.client.registrar;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.client.RpcClientProperties;
 import org.infinity.rpc.client.annotation.Consumer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -35,37 +39,46 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class RpcConsumerRegistrar implements BeanFactoryAware, ImportBeanDefinitionRegistrar, EnvironmentAware {
+public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean, ImportBeanDefinitionRegistrar, EnvironmentAware {
     private static final String                RESOURCE_PATTERN         = "**/*.class";
-    //生成的Bean名称到代理的Service Class的映射
-    private static final Map<String, Class<?>> HSF_UNDERLYING_MAPPING   = new ConcurrentHashMap<String, Class<?>>();
+    // 已经注册过的，用于去重复
+    private static final Map<String, Class<?>> REGISTERED_BEAN_MAPPING  = new ConcurrentHashMap<String, Class<?>>();
     private              BeanFactory           beanFactory;
-    private              Environment           environment;
     private static final String                FACTORY_BEAN_OBJECT_TYPE = "factoryBeanObjectType";
+    private              RpcClientProperties   rpcClientProperties;
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        Binder binder = Binder.get(environment);
+        rpcClientProperties = binder.bind("spring.infinity-rpc", Bindable.of(RpcClientProperties.class)).get();
+        Assert.notNull(rpcClientProperties, "Rpc client properties bean must be created!");
+    }
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        AnnotationAttributes annAttr = AnnotationAttributes.fromMap(importingClassMetadata.getAnnotationAttributes(EnableRpcClient.class.getName()));
-        String[] basePackages = annAttr.getStringArray("value");
+//        AnnotationAttributes annAttr = AnnotationAttributes.fromMap(importingClassMetadata.getAnnotationAttributes(EnableRpcClient.class.getName()));
+        String[] basePackages = rpcClientProperties.getClient().getBasePackages();
 
-        if (ObjectUtils.isEmpty(basePackages)) {
-            basePackages = annAttr.getStringArray("basePackages");
-        }
-        if (ObjectUtils.isEmpty(basePackages)) {
-            basePackages = getPackagesFromClasses(annAttr.getClassArray("basePackageClasses"));
-        }
         if (ObjectUtils.isEmpty(basePackages)) {
             basePackages = new String[]{ClassUtils.getPackageName(importingClassMetadata.getClassName())};
         }
 
-        List<TypeFilter> includeFilters = extractTypeFilters(annAttr.getAnnotationArray("includeFilters"));
+        List<TypeFilter> includeFilters = new ArrayList<>();
         //增加一个包含的过滤器,扫描到的类只要不是抽象的,接口,枚举,注解,及匿名类那么就算是符合的
-        includeFilters.add(new HsfTypeFilter());
-        List<TypeFilter> excludeFilters = extractTypeFilters(annAttr.getAnnotationArray("excludeFilters"));
-        Set<Class<?>> candidates = scanPackages(basePackages, includeFilters, excludeFilters);
+        includeFilters.add(new RpcConsumerTypeFilter());
+//        List<TypeFilter> excludeFilters = extractTypeFilters(annAttr.getAnnotationArray("excludeFilters"));
+        Set<Class<?>> candidates = scanPackages(basePackages, includeFilters);
 
         if (candidates.isEmpty()) {
-            log.info("扫描指定包[{}]时未发现复合条件的类", basePackages.toString());
+            log.info("No @Consumer bean found", basePackages.toString());
             return;
         }
         //注册处理器后,为 对象注入环境配置信息
@@ -113,7 +126,7 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, ImportBeanDefinit
         for (Class<?> filterClass : filterAttributes.getClassArray("classes")) {
             switch (filterType) {
                 case ANNOTATION:
-                    Assert.isAssignable(Annotation.class, filterClass, "@HsfComponentScan 注解类型的Filter必须指定一个注解");
+                    Assert.isAssignable(Annotation.class, filterClass, "@ComponentScan 注解类型的Filter必须指定一个注解");
                     Class<Annotation> annotationType = (Class<Annotation>) filterClass;
                     typeFilters.add(new AnnotationTypeFilter(annotationType));
                     break;
@@ -121,7 +134,7 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, ImportBeanDefinit
                     typeFilters.add(new AssignableTypeFilter(filterClass));
                     break;
                 case CUSTOM:
-                    Assert.isAssignable(TypeFilter.class, filterClass, "@HsfComponentScan 自定义Filter必须实现TypeFilter接口");
+                    Assert.isAssignable(TypeFilter.class, filterClass, "@ComponentScan 自定义Filter必须实现TypeFilter接口");
                     TypeFilter filter = BeanUtils.instantiateClass(filterClass, TypeFilter.class);
                     typeFilters.add(filter);
                     break;
@@ -135,14 +148,13 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, ImportBeanDefinit
     /**
      * @param basePackages
      * @param includeFilters
-     * @param excludeFilters
      * @return
      */
-    private Set<Class<?>> scanPackages(String[] basePackages, List<TypeFilter> includeFilters, List<TypeFilter> excludeFilters) {
+    private Set<Class<?>> scanPackages(String[] basePackages, List<TypeFilter> includeFilters) {
         Set<Class<?>> candidates = new HashSet<Class<?>>();
         for (String pkg : basePackages) {
             try {
-                List<Class<?>> candidateClasses = findCandidateClasses(pkg, includeFilters, excludeFilters);
+                List<Class<?>> candidateClasses = findCandidateClasses(pkg, includeFilters);
                 if (!CollectionUtils.isEmpty(candidateClasses)) {
                     for (Class<?> candidateClass : candidateClasses) {
                         for (; candidateClass != Object.class; candidateClass = candidateClass.getSuperclass()) {
@@ -163,7 +175,7 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, ImportBeanDefinit
                     }
                 }
             } catch (IOException e) {
-                log.error("扫描指定HSF基础包[{}]时出现异常", pkg);
+                log.error("Failed to scan @Consumer bean", pkg);
                 continue;
             }
         }
@@ -175,7 +187,7 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, ImportBeanDefinit
      * @return
      * @throws IOException
      */
-    private List<Class<?>> findCandidateClasses(String basePackage, List<TypeFilter> includeFilters, List<TypeFilter> excludeFilters) throws IOException {
+    private List<Class<?>> findCandidateClasses(String basePackage, List<TypeFilter> includeFilters) throws IOException {
         if (log.isDebugEnabled()) {
             log.debug("开始扫描指定包{}下的所有类" + basePackage);
         }
@@ -187,7 +199,7 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, ImportBeanDefinit
         Resource[] resources = ResourcePatternUtils.getResourcePatternResolver(resourceLoader).getResources(packageSearchPath);
         for (Resource resource : resources) {
             MetadataReader reader = readerFactory.getMetadataReader(resource);
-            if (isCandidateResource(reader, readerFactory, includeFilters, excludeFilters)) {
+            if (isCandidateResource(reader, readerFactory, includeFilters)) {
                 Class<?> candidateClass = transform(reader.getClassMetadata().getClassName());
 
                 if (candidateClass != null) {
@@ -213,17 +225,15 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, ImportBeanDefinit
      * @param reader
      * @param readerFactory
      * @param includeFilters
-     * @param excludeFilters
      * @return
      * @throws IOException
      */
-    private boolean isCandidateResource(MetadataReader reader, MetadataReaderFactory readerFactory, List<TypeFilter> includeFilters,
-                                        List<TypeFilter> excludeFilters) throws IOException {
-        for (TypeFilter tf : excludeFilters) {
-            if (tf.match(reader, readerFactory)) {
-                return false;
-            }
-        }
+    private boolean isCandidateResource(MetadataReader reader, MetadataReaderFactory readerFactory, List<TypeFilter> includeFilters) throws IOException {
+//        for (TypeFilter tf : excludeFilters) {
+//            if (tf.match(reader, readerFactory)) {
+//                return false;
+//            }
+//        }
         for (TypeFilter tf : includeFilters) {
             if (tf.match(reader, readerFactory)) {
                 return true;
@@ -255,7 +265,7 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, ImportBeanDefinit
      */
     private void registerBeanDef(Set<Class<?>> internalClasses, BeanDefinitionRegistry registry) {
         for (Class<?> clazz : internalClasses) {
-            if (HSF_UNDERLYING_MAPPING.values().contains(clazz)) {
+            if (REGISTERED_BEAN_MAPPING.values().contains(clazz)) {
                 log.debug("Ignore the bean for already registered", clazz.getName());
                 continue;
             }
@@ -269,7 +279,7 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, ImportBeanDefinit
                 String beanName = ClassUtils.getShortNameAsProperty(clazz);
                 registry.registerBeanDefinition(beanName, beanDefinition);
                 log.debug("Registered RPC consumer service bean [{}]", clazz.getName());
-                HSF_UNDERLYING_MAPPING.put(beanName, clazz);
+                REGISTERED_BEAN_MAPPING.put(beanName, clazz);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -282,15 +292,5 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, ImportBeanDefinit
         // Set 1st constructor arg RpcConsumerFactoryBean.class
         builder.addConstructorArgValue(consumerInterface);
         return builder;
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
-    }
-
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
     }
 }

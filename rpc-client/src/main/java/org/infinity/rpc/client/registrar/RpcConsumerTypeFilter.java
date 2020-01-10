@@ -14,10 +14,10 @@ import org.springframework.util.ClassUtils;
 import java.lang.reflect.Field;
 
 /**
- * 自定义HSF类型过滤，过滤抽象类,接口,注解,枚举,内部类及匿名类
+ * 自定义RPC consumer类型过滤，过滤抽象类,接口,注解,枚举,内部类及匿名类
  */
 @Slf4j
-public class HsfTypeFilter extends AbstractClassTestingTypeFilter {
+public class RpcConsumerTypeFilter extends AbstractClassTestingTypeFilter {
 
     @Override
     protected boolean match(ClassMetadata metadata) {
@@ -49,7 +49,7 @@ public class HsfTypeFilter extends AbstractClassTestingTypeFilter {
         }
 
         if (isAnnotatedBySpring(clazz)) {
-            throw new IllegalStateException("类{" + clazz.getName() + "}已经标识了Spring组件注解,不能再指定[registerBean = true]");
+            throw new IllegalStateException("Class ".concat(clazz.getName()).concat(" can NOT be marked as Spring related and @Consumer annotation"));
         }
         //过滤抽象类,接口,注解,枚举,内部类及匿名类
         return !metadata.isAbstract() && !clazz.isInterface() && !clazz.isAnnotation() && !clazz.isEnum()
@@ -65,7 +65,7 @@ public class HsfTypeFilter extends AbstractClassTestingTypeFilter {
         try {
             clazz = ClassUtils.forName(className, this.getClass().getClassLoader());
         } catch (ClassNotFoundException e) {
-            log.info("未找到指定HSF基础类{}", className);
+            log.info("No found RPC consumer");
         }
         return clazz;
     }

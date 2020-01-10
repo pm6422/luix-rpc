@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 @SpringBootApplication
-@EnableRpcClient(basePackages = ApplicationConstants.BASE_PACKAGE)
+@EnableRpcClient
 public class AppClientLauncher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppClientLauncher.class);
