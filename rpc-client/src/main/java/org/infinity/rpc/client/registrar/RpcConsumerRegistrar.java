@@ -266,8 +266,7 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean,
             BeanDefinitionBuilder definitionBuilder = this.build(clazz);
             BeanDefinition beanDefinition = definitionBuilder.getBeanDefinition();
 
-            // Save to attributes
-//                beanDefinition.setAttribute(FACTORY_BEAN_OBJECT_TYPE, clazz.getName());
+            // beanDefinition.setAttribute(FACTORY_BEAN_OBJECT_TYPE, clazz.getName());
             String beanName = ClassUtils.getShortNameAsProperty(clazz);
             // Register bean
             registry.registerBeanDefinition(beanName, beanDefinition);
