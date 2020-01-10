@@ -1,14 +1,16 @@
 package org.infinity.app.common;
 
-public interface IProductService {
+public interface ProductService {
     /**
      * 保存产品
+     *
      * @param product
      */
     void save(Product product);
 
     /**
      * 根据产品id删除产品
+     *
      * @param productId
      */
     void deleteById(Long productId);
