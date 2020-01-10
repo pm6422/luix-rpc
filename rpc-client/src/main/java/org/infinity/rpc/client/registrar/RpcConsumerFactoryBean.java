@@ -18,7 +18,7 @@ import java.lang.reflect.Proxy;
 import java.util.UUID;
 
 @Slf4j
-public class RpcConsumerFactoryBean implements FactoryBean<Object>, InitializingBean, BeanFactoryAware {
+public class RpcConsumerFactoryBean implements FactoryBean<Object>, BeanFactoryAware, InitializingBean {
 
     private final Class<?>                     consumerInterface;
     private       BeanFactory                  beanFactory;
