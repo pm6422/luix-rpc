@@ -37,11 +37,6 @@ public class RpcClientConfiguration implements ApplicationContextAware {
         return zkRegistryRpcServerDiscovery;
     }
 
-    @Bean
-    public RpcClientProxy rpcClientProxy(ZkRegistryRpcServerDiscovery rpcServerDiscovery) throws Exception {
-        return new RpcClientProxy(rpcServerDiscovery);
-    }
-
     private void setRpcServerDiscovery(ZkRegistryRpcServerDiscovery rpcServerDiscovery) {
         Map<String, RpcConsumerFactoryBean> beansOfType = applicationContext.getBeansOfType(RpcConsumerFactoryBean.class);
         if (CollectionUtils.isEmpty(beansOfType)) {
