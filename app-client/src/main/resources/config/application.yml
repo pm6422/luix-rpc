@@ -37,7 +37,7 @@ spring:
         mode: HTML
     banner:
         location: classpath:config/banner-company.txt
-    rpc:
+    infinity-rpc:
         client:
             base-packages: ${info.project.package}
 server: 

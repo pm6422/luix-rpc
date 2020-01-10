@@ -16,7 +16,7 @@ spring:
             enabled: true
         livereload:
             enabled: false # we use gulp + BrowserSync for livereload
-    rpc:
+    infinity-rpc:
         registry:
             address: 127.0.0.1:2181
 # ===================================================================
