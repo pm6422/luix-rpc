@@ -251,8 +251,7 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean,
     }
 
     /**
-     * 注册 Bean,
-     * Bean的名称格式:
+     * Register bean instance
      *
      * @param beanClasses
      * @param registry
