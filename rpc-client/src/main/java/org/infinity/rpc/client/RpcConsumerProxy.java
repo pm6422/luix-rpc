@@ -27,32 +27,6 @@ public class RpcConsumerProxy {
         this.rpcServerDiscovery = zkRegistryRpcServerDiscovery;
     }
 
-    @SuppressWarnings("all")
-//    public <T> T getProxy(Class<T> interfaceClass) {
-//        T instance = (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class<?>[]{interfaceClass}, new InvocationHandler() {
-//            @Override
-//            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-//                if (method.getDeclaringClass() == Object.class && method.getName().equals("toString")) {
-//                    // Object proxy = result.getProxy(consumerInterface);在IDE上光标放到proxy就会看到调用toString()
-//                    log.trace("Invoked Object.toString() by view proxy instance on IDE debugger");
-//                    return ClassUtils.getShortNameAsProperty(interfaceClass).concat(RpcConsumerProxy.class.getSimpleName());
-//                }
-//
-//                // 创建请求对象，包含类名，方法名，参数类型和实际参数值
-//                RpcRequest rpcRequest = new RpcRequest(UUID.randomUUID().toString(),
-//                        method.getDeclaringClass().getName(), method.getName(), method.getParameterTypes(), args);
-//                LOGGER.debug("RPC request: {}", rpcRequest);
-//                // 创建client对象，并且发送消息到服务端
-//                RpcClient rpcClient = new RpcClient(rpcRequest, zkRegistryRpcServerDiscovery);
-//                RpcResponse rpcResponse = rpcClient.send();
-//                // 返回调用结果
-//                return rpcResponse.getResult();
-//            }
-//        });
-//        //返回一个代理对象
-//        return instance;
-//    }
-
     public <T> T getProxy(Class<T> interfaceClass) {
         ProxyFactory factory = new ProxyFactory();
         factory.setInterfaces(interfaceClass);
