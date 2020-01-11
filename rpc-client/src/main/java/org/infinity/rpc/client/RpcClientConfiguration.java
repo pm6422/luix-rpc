@@ -20,4 +20,9 @@ public class RpcClientConfiguration {
         ZkRegistryRpcServerDiscovery zkRegistryRpcServerDiscovery = new ZkRegistryRpcServerDiscovery(rpcClientProperties.getRegistry().getAddress());
         return zkRegistryRpcServerDiscovery;
     }
+
+    @Bean
+    public RpcConsumerProxy rpcClientProxy(ZkRegistryRpcServerDiscovery rpcServerDiscovery) {
+        return new RpcConsumerProxy(rpcServerDiscovery);
+    }
 }
