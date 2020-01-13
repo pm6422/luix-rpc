@@ -11,7 +11,6 @@ import org.springframework.util.StringUtils;
 
 /**
  * SpringBoot的SPI扩展在META-INF/spring.factories中配置
- * 或application.properties中加入org.infinity.springboot.infinityrpc.RpcConfigurationApplicationContextInitializer
  */
 @Slf4j
 public class RpcConfigurationApplicationContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
@@ -23,7 +22,6 @@ public class RpcConfigurationApplicationContextInitializer implements Applicatio
         if (!StringUtils.isEmpty(consumerScanBasePackages)) {
             ConsumerAnnotationBean consumerAnnotationBean = BeanUtils.instantiateClass(ConsumerAnnotationBean.class);
             consumerAnnotationBean.setConsumerScanPackages(consumerScanBasePackages);
-            consumerAnnotationBean.setBeanFactory(applicationContext.getBeanFactory());
             applicationContext.addBeanFactoryPostProcessor(consumerAnnotationBean);
             applicationContext.getBeanFactory().addBeanPostProcessor(consumerAnnotationBean);
             String beanName = ClassUtils.getShortNameAsProperty(ConsumerAnnotationBean.class);
