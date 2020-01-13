@@ -1,4 +1,4 @@
-package org.infinity.rpc.client;
+package org.infinity.springboot.infinityrpc;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -6,8 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.infinity-rpc")
 @Data
 public class RpcClientProperties {
-    private Client   client;
-    private Registry registry;
+    public static final String   CONSUMER_SCAN_BASE_PACKAGES = "spring.infinity-rpc.client.base-packages";
+    private             Client   client;
+    private             Registry registry;
 
     public static class Client {
         private String[] basePackages;

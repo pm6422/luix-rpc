@@ -5,7 +5,6 @@ import org.infinity.app.common.Product;
 import org.infinity.app.common.ProductService;
 import org.infinity.app.common.UserService;
 import org.infinity.rpc.client.annotation.Consumer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,10 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class AppClientController {
 
     @Consumer
-    @Autowired
     private ProductService productService;
     @Consumer
-    @Autowired
     private UserService    userService;
 
     @GetMapping("/api/app-client/product")

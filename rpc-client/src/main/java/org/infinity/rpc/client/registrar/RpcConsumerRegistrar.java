@@ -1,7 +1,7 @@
 package org.infinity.rpc.client.registrar;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.client.RpcClientProperties;
+import org.infinity.rpc.client.RpcConsumerFactoryBean;
 import org.infinity.rpc.client.annotation.Consumer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -11,8 +11,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.boot.context.properties.bind.Bindable;
-import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -37,6 +35,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean, ImportBeanDefinitionRegistrar, EnvironmentAware {
@@ -44,10 +43,14 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean,
     // 已经注册过的，用于去重复
     private static final Map<String, Class<?>> REGISTERED_BEAN_MAPPING = new ConcurrentHashMap<String, Class<?>>();
     private              BeanFactory           beanFactory;
-    private              RpcClientProperties   rpcClientProperties;
+    private              String[]              consumerScanBasePackages;
+    public static final  Pattern               COMMA_SPLIT_PATTERN     = Pattern.compile("\\s*[,]+\\s*");
 
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+    public RpcConsumerRegistrar() {
+    }
+
+    public RpcConsumerRegistrar(String consumerBasePackages) {
+        this.consumerScanBasePackages = (StringUtils.isEmpty(consumerBasePackages)) ? null : COMMA_SPLIT_PATTERN.split(consumerBasePackages);
     }
 
     @Override
@@ -55,17 +58,22 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean,
     }
 
     @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
+    }
+
+    @Override
     public void setEnvironment(Environment environment) {
-        Binder binder = Binder.get(environment);
-        // It can initialize the bean in advance
-        rpcClientProperties = binder.bind("spring.infinity-rpc", Bindable.of(RpcClientProperties.class)).get();
-        Assert.notNull(rpcClientProperties, "Rpc client properties bean must be created!");
+//        Binder binder = Binder.get(environment);
+//        // It can initialize the bean in advance
+//        rpcClientProperties = binder.bind("spring.infinity-rpc", Bindable.of(RpcClientProperties.class)).get();
+//        Assert.notNull(rpcClientProperties, "Rpc client properties bean must be created!");
     }
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-//        AnnotationAttributes annAttr = AnnotationAttributes.fromMap(importingClassMetadata.getAnnotationAttributes(EnableRpcClient.class.getName()));
-        String[] basePackages = rpcClientProperties.getClient().getBasePackages();
+        String[] basePackages = consumerScanBasePackages;
+//        String[] basePackages = rpcClientProperties.getClient().getBasePackages();
 
         if (ObjectUtils.isEmpty(basePackages)) {
             basePackages = new String[]{ClassUtils.getPackageName(importingClassMetadata.getClassName())};
@@ -281,4 +289,6 @@ public class RpcConsumerRegistrar implements BeanFactoryAware, InitializingBean,
         builder.addConstructorArgValue(consumerInterface);
         return builder;
     }
+
+
 }

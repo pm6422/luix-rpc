@@ -7,30 +7,22 @@
     <artifactId>rpc</artifactId>
     <version>1.0.0</version>
     <modules>
-        <!--该模块用于编写RPC通信的编码,解码器,数据的序列化方式,已经rpc通信的请求和响应的报文规则定义-->
         <module>rpc-common</module>
-        <!--用于编写往ZKServer中添加服务节点信息和客户端获取服务端的地址和端口信息-->
         <module>rpc-registry</module>
-        <!--启动网络通信的服务端,并且扫描到所有的可以提供的服务,并且保存到内存-->
         <module>rpc-server</module>
-        <!--网络通信的客户端,使用netty往服务端发送消息,并且等待服务端的响应结果,动态代理类的设置,对于所有代理的方法都往服务端发送数据-->
         <module>rpc-client</module>
-        <!--具体的应用程序的共通-->
+        <module>spring-boot-starter-infinity-rpc</module>
         <module>app-common</module>
-        <!--具体的应用程序的实现-->
         <module>app-server</module>
-        <!--通过RPC远程调用服务端的实现-->
         <module>app-client</module>
     </modules>
     <packaging>pom</packaging>
     <dependencies>
-        <!-- 单元测试jar包 -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
         </dependency>
-        <!-- lombok 自动生成setter和getter方法 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
