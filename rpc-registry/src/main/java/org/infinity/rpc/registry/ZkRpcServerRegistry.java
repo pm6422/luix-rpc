@@ -1,13 +1,11 @@
 package org.infinity.rpc.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class ZkRpcServerRegistry {
-
-    public static final Logger    LOGGER = LoggerFactory.getLogger(ZkRpcServerRegistry.class);
     private             String    registryAddress;
     private             ZooKeeper zooKeeper;
 
@@ -30,16 +28,16 @@ public class ZkRpcServerRegistry {
                 if (stat == null) {
                     // 如果不存在，创建一个持久节点目录
                     zooKeeper.create(Constant.REGISTRY_PATH, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-                    LOGGER.debug("Created a persistent directory [{}]", Constant.REGISTRY_PATH);
+                    log.debug("Created a persistent directory [{}]", Constant.REGISTRY_PATH);
                 }
                 // 创建一个临时节点用于保存数据信息
                 zooKeeper.create(Constant.DATA_PATH, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
-                LOGGER.debug("Created a temporary data node [{}] on [{}]", data, Constant.DATA_PATH);
+                log.debug("Created a temporary data node [{}] on [{}]", data, Constant.DATA_PATH);
             } catch (Exception e) {
-                LOGGER.error("Failed to create node", e.getMessage());
+                log.error("Failed to create node", e.getMessage());
             }
         } else {
-            LOGGER.error("ZooKeeper connect is null");
+            log.error("ZooKeeper connect is null");
         }
     }
 }

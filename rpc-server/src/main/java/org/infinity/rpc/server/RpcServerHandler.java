@@ -4,19 +4,18 @@ package org.infinity.rpc.server;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 public class RpcServerHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger              LOGGER = LoggerFactory.getLogger(RpcServerHandler.class);
-    private              Map<String, Object> serviceBeanMap;
+    private Map<String, Object> serviceBeanMap;
 
     public RpcServerHandler(Map<String, Object> serviceBeanMap) {
         this.serviceBeanMap = serviceBeanMap;
@@ -24,7 +23,7 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        LOGGER.debug("Received RPC request: {}", msg);
+        log.debug("Received RPC request: {}", msg);
         RpcRequest rpcRequest = (RpcRequest) msg;
         RpcResponse rpcResponse = this.processRequest(rpcRequest);
         // 告诉客户端，关闭socket连接

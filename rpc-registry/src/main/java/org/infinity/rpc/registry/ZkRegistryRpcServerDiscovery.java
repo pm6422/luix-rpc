@@ -1,10 +1,9 @@
 package org.infinity.rpc.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,8 +13,8 @@ import java.util.Random;
 /**
  * 根据注册中心地址实时发现服务器列表
  */
+@Slf4j
 public class ZkRegistryRpcServerDiscovery {
-    public static final Logger       LOGGER     = LoggerFactory.getLogger(ZkRpcServerRegistry.class);
     private             String       registryAddress;
     private             ZooKeeper    zooKeeper;
     // 所有提供服务的服务器列表
@@ -34,7 +33,7 @@ public class ZkRegistryRpcServerDiscovery {
                 }
             });
         } catch (IOException e) {
-            LOGGER.error("Failed to register zk", e.getMessage());
+            log.error("Failed to register zk", e.getMessage());
         }
         // 获取节点相关数据
         watchNode();
@@ -53,12 +52,12 @@ public class ZkRegistryRpcServerDiscovery {
             }
 
             if (serverList.size() == 0) {
-                LOGGER.error("No RPC server found");
+                log.error("No RPC server found");
             } else {
-                LOGGER.info("Discovered RPC servers [{}]", serverList);
+                log.info("Discovered RPC servers [{}]", serverList);
             }
         } catch (Exception e) {
-            LOGGER.error("Failed to get nodes", e);
+            log.error("Failed to get nodes", e);
         }
     }
 

@@ -7,36 +7,35 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.apache.commons.collections4.MapUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.common.RpcDecoder;
 import org.infinity.rpc.common.RpcEncoder;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
 import org.infinity.rpc.registry.ZkRpcServerRegistry;
 import org.infinity.rpc.server.annotation.Provider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ConcurrentReferenceHashMap;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * RPC服务器类，使用Spring
  */
+@Slf4j
 public class RpcServer implements ApplicationContextAware, InitializingBean {
-    private static final Logger              LOGGER         = LoggerFactory.getLogger(RpcServer.class);
     // key: serviceInterfaceName, value: serviceImpl
-    private final        Map<String, Object> serviceBeanMap = new HashMap<>();
+    private final        Map<String, Object> serviceBeanMap = new ConcurrentReferenceHashMap<>();
     private              ZkRpcServerRegistry zkRpcServerRegistry;
     private              String              serverAddress;
     private              String              serverIp;
     private              int                 serverPort;
 
     public RpcServer(String serverAddress, ZkRpcServerRegistry rpcServerRegistry) {
-        LOGGER.info("Starting RPC server on [{}]", serverAddress);
+        log.info("Starting RPC server on [{}]", serverAddress);
         this.serverAddress = serverAddress;
         String[] ipAndPortParts = serverAddress.split(":");
         serverIp = ipAndPortParts[0];
@@ -52,7 +51,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
     private void discoverRpcService(ApplicationContext applicationContext) {
         // get all beans with the annotation
         Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(Provider.class);
-        if (MapUtils.isNotEmpty(serviceBeanMap)) {
+        if (!CollectionUtils.isEmpty(serviceBeanMap)) {
             for (Object serviceImpl : serviceBeanMap.values()) {
                 final Class<?>[] interfaces = serviceImpl.getClass().getInterfaces();
                 String serviceInterfaceName;
@@ -63,10 +62,10 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
                     serviceInterfaceName = serviceImpl.getClass().getAnnotation(Provider.class).interfaceClass().getName();
                 }
                 this.serviceBeanMap.put(serviceInterfaceName, serviceImpl);
-                LOGGER.info("Discovering RPC Service provider [{}]", serviceImpl.getClass().getName());
+                log.info("Discovering RPC Service provider [{}]", serviceImpl.getClass().getName());
             }
         }
-        LOGGER.info("Discovered all RPC service providers");
+        log.info("Discovered all RPC service providers");
     }
 
     @Override
@@ -105,11 +104,11 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
 
             // Register RPC server on registry
             this.registerRpcServer();
-            LOGGER.info("Started RPC server on [{}]", serverAddress);
+            log.info("Started RPC server on [{}]", serverAddress);
             // 线程阻塞在此，程序暂停执行，等待通信完成
             future.channel().closeFuture().sync();
         } catch (Exception e) {
-            LOGGER.error("Failed to start netty", e.getMessage());
+            log.error("Failed to start netty", e.getMessage());
         } finally {
             // 优雅的关闭socket
             bossGroup.shutdownGracefully();
@@ -123,8 +122,8 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
      * @throws Exception
      */
     private void registerRpcServer() throws Exception {
-        LOGGER.info("Registering RPC server address [{}] on registry", serverAddress);
+        log.info("Registering RPC server address [{}] on registry", serverAddress);
         zkRpcServerRegistry.createRpcServerNode(serverAddress);
-        LOGGER.info("Registered RPC server address [{}] on registry", serverAddress);
+        log.info("Registered RPC server address [{}] on registry", serverAddress);
     }
 }
