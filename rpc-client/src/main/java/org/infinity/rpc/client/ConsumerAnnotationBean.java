@@ -1,5 +1,6 @@
 package org.infinity.rpc.client;
 
+import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.client.annotation.Consumer;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPostProcessor {
     public static final Pattern                             COMMA_SPLIT_PATTERN       = Pattern.compile("\\s*[,]+\\s*");
     private             ApplicationContext                  applicationContext;
@@ -28,6 +30,7 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
 
     public ConsumerAnnotationBean(ApplicationContext applicationContext, String consumerScanPackages) {
         Assert.notNull(applicationContext, "Application context must not be null!");
+        Assert.hasText(consumerScanPackages, "Consumer scan packages must not be empty!");
         this.applicationContext = applicationContext;
         this.consumerScanPackages = (StringUtils.isEmpty(consumerScanPackages)) ? null : COMMA_SPLIT_PATTERN.split(consumerScanPackages);
     }
@@ -48,6 +51,7 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
             return bean;
         }
 
+        // Activate bean initialization
         RpcConsumerProxy rpcConsumerProxy = applicationContext.getBean(RpcConsumerProxy.class);
         setConsumerOnMethod(bean, clazz, rpcConsumerProxy);
         setConsumerOnField(bean, clazz, rpcConsumerProxy);
@@ -66,11 +70,7 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
     }
 
     private boolean matchScanPackages(Class clazz) {
-        if (consumerScanPackages == null || consumerScanPackages.length == 0) {
-            return true;
-        }
-        String beanClassName = clazz.getName();
-        return Arrays.asList(consumerScanPackages).stream().anyMatch(pkg -> beanClassName.startsWith(pkg));
+        return Arrays.asList(consumerScanPackages).stream().anyMatch(pkg -> clazz.getName().startsWith(pkg));
     }
 
     private void setConsumerOnMethod(Object bean, Class clazz, RpcConsumerProxy rpcConsumerProxy) {
@@ -159,29 +159,5 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-//        if (consumerScanPackages == null || consumerScanPackages.length == 0) {
-//            return;
-//        }
-//        if (beanFactory instanceof BeanDefinitionRegistry) {
-//            try {
-//                // init scanner
-//                Class<?> scannerClass = ClassUtils.forName("org.springframework.context.annotation.ClassPathBeanDefinitionScanner",
-//                        ConsumerAnnotationBean.class.getClassLoader());
-//                Object scanner = scannerClass.getConstructor(new Class<?>[]{BeanDefinitionRegistry.class, boolean.class})
-//                        .newInstance(new Object[]{(BeanDefinitionRegistry) beanFactory, true});
-//                // add filter
-//                Class<?> filterClass = ClassUtils.forName("org.springframework.core.type.filter.AnnotationTypeFilter",
-//                        ConsumerAnnotationBean.class.getClassLoader());
-//                Object filter = filterClass.getConstructor(Class.class).newInstance(MotanService.class);
-//                Method addIncludeFilter = scannerClass.getMethod("addIncludeFilter",
-//                        ClassUtils.forName("org.springframework.core.type.filter.TypeFilter", ConsumerAnnotationBean.class.getClassLoader()));
-//                addIncludeFilter.invoke(scanner, filter);
-//                // scan packages
-//                Method scan = scannerClass.getMethod("scan", new Class<?>[]{String[].class});
-//                scan.invoke(scanner, new Object[]{consumerScanPackages});
-//            } catch (Throwable e) {
-//                // spring 2.0
-//            }
-//        }
     }
 }

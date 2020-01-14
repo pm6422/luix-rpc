@@ -16,6 +16,7 @@ public class RpcConsumerFactoryBean<T> {
 
     public RpcConsumerFactoryBean(Class<T> consumerInterface, RpcConsumerProxy rpcConsumerProxy) {
         Assert.notNull(consumerInterface, "Consumer interface must not be null!");
+        Assert.notNull(rpcConsumerProxy, "RPC consumer proxy must not be null!");
         this.consumerInterface = consumerInterface;
         this.rpcConsumerProxy = rpcConsumerProxy;
     }

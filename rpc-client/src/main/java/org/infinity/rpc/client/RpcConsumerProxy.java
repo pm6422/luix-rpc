@@ -7,8 +7,6 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
 import org.infinity.rpc.registry.ZkRegistryRpcServerDiscovery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.util.ClassUtils;
 
@@ -20,7 +18,6 @@ import java.util.UUID;
  */
 @Slf4j
 public class RpcConsumerProxy {
-    private static final Logger                       LOGGER = LoggerFactory.getLogger(RpcConsumerProxy.class);
     private              ZkRegistryRpcServerDiscovery rpcServerDiscovery;
 
     public RpcConsumerProxy(ZkRegistryRpcServerDiscovery zkRegistryRpcServerDiscovery) {
