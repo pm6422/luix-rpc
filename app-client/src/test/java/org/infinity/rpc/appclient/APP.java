@@ -2,7 +2,7 @@
 //
 //import org.infinity.app.common.IProductService;
 //import org.infinity.app.common.Product;
-//import org.infinity.rpc.client.RpcProxy;
+//import org.infinity.rpc.appclient.client.RpcProxy;
 //import org.junit.Before;
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
