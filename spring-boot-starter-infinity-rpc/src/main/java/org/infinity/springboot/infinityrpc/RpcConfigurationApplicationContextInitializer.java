@@ -2,7 +2,6 @@ package org.infinity.springboot.infinityrpc;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.client.ConsumerAnnotationBean;
-import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
@@ -20,11 +19,12 @@ public class RpcConfigurationApplicationContextInitializer implements Applicatio
         String consumerScanBasePackages = env.getProperty(RpcClientProperties.CONSUMER_SCAN_BASE_PACKAGES);
         log.debug("RPC client scan package: [{}]", consumerScanBasePackages);
         if (!StringUtils.isEmpty(consumerScanBasePackages)) {
-            ConsumerAnnotationBean consumerAnnotationBean = BeanUtils.instantiateClass(ConsumerAnnotationBean.class);
-            consumerAnnotationBean.setConsumerScanPackages(consumerScanBasePackages);
-            applicationContext.addBeanFactoryPostProcessor(consumerAnnotationBean);
+            ConsumerAnnotationBean consumerAnnotationBean = new ConsumerAnnotationBean(applicationContext, consumerScanBasePackages);
+            // Bean post processor will be called before bean factory post processor
             applicationContext.getBeanFactory().addBeanPostProcessor(consumerAnnotationBean);
+            applicationContext.addBeanFactoryPostProcessor(consumerAnnotationBean);
             String beanName = ClassUtils.getShortNameAsProperty(ConsumerAnnotationBean.class);
+            // Register bean
             applicationContext.getBeanFactory().registerSingleton(beanName, consumerAnnotationBean);
             log.debug("Initialized consumer annotation bean");
         }

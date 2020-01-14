@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * RPC consumer annotation
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Consumer {
     Class<?> interfaceClass() default void.class;
 }

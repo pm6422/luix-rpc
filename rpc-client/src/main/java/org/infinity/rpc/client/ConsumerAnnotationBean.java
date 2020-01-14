@@ -3,12 +3,12 @@ package org.infinity.rpc.client;
 import org.infinity.rpc.client.annotation.Consumer;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
@@ -19,19 +19,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-public class ConsumerAnnotationBean implements BeanFactoryAware, BeanPostProcessor, BeanFactoryPostProcessor {
+public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPostProcessor {
     public static final Pattern                             COMMA_SPLIT_PATTERN       = Pattern.compile("\\s*[,]+\\s*");
+    private             ApplicationContext                  applicationContext;
     private             String[]                            consumerScanPackages;
-    private             BeanFactory                         beanFactory;
     private final       Map<String, RpcConsumerFactoryBean> rpcConsumerFactoryBeanMap = new ConcurrentHashMap<String, RpcConsumerFactoryBean>();
 
-    public void setConsumerScanPackages(String consumerScanPackages) {
-        this.consumerScanPackages = (StringUtils.isEmpty(consumerScanPackages)) ? null : COMMA_SPLIT_PATTERN.split(consumerScanPackages);
-    }
 
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
+    public ConsumerAnnotationBean(ApplicationContext applicationContext, String consumerScanPackages) {
+        Assert.notNull(applicationContext, "Application context must not be null!");
+        this.applicationContext = applicationContext;
+        this.consumerScanPackages = (StringUtils.isEmpty(consumerScanPackages)) ? null : COMMA_SPLIT_PATTERN.split(consumerScanPackages);
     }
 
     /**
@@ -50,8 +48,9 @@ public class ConsumerAnnotationBean implements BeanFactoryAware, BeanPostProcess
             return bean;
         }
 
-        setConsumerOnMethod(bean, clazz);
-        setConsumerOnField(bean, clazz);
+        RpcConsumerProxy rpcConsumerProxy = applicationContext.getBean(RpcConsumerProxy.class);
+        setConsumerOnMethod(bean, clazz, rpcConsumerProxy);
+        setConsumerOnField(bean, clazz, rpcConsumerProxy);
         return bean;
     }
 
@@ -74,7 +73,7 @@ public class ConsumerAnnotationBean implements BeanFactoryAware, BeanPostProcess
         return Arrays.asList(consumerScanPackages).stream().anyMatch(pkg -> beanClassName.startsWith(pkg));
     }
 
-    private void setConsumerOnMethod(Object bean, Class clazz) {
+    private void setConsumerOnMethod(Object bean, Class clazz, RpcConsumerProxy rpcConsumerProxy) {
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {
             String methodName = method.getName();
@@ -85,8 +84,8 @@ public class ConsumerAnnotationBean implements BeanFactoryAware, BeanPostProcess
                 try {
                     Consumer consumerMethod = method.getAnnotation(Consumer.class);
                     if (consumerMethod != null) {
-                        // Method annotated with the @Consumer
-                        Object value = getConsumerProxy(consumerMethod, method.getParameterTypes()[0]);
+                        // if setter method annotated with the @Consumer
+                        Object value = getConsumerProxy(consumerMethod, method.getParameterTypes()[0], rpcConsumerProxy);
                         if (value != null) {
                             method.invoke(bean, new Object[]{value});
                         }
@@ -99,7 +98,7 @@ public class ConsumerAnnotationBean implements BeanFactoryAware, BeanPostProcess
         }
     }
 
-    private void setConsumerOnField(Object bean, Class clazz) {
+    private void setConsumerOnField(Object bean, Class clazz, RpcConsumerProxy rpcConsumerProxy) {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             try {
@@ -108,9 +107,9 @@ public class ConsumerAnnotationBean implements BeanFactoryAware, BeanPostProcess
                 }
                 Consumer consumerField = field.getAnnotation(Consumer.class);
                 if (consumerField != null) {
-                    // Field annotated with the @Consumer
-                    Object value = getConsumerProxy(consumerField, field.getType());
+                    Object value = getConsumerProxy(consumerField, field.getType(), rpcConsumerProxy);
                     if (value != null) {
+                        // if field annotated with the @Consumer
                         field.set(bean, value);
                     }
                 }
@@ -121,7 +120,7 @@ public class ConsumerAnnotationBean implements BeanFactoryAware, BeanPostProcess
         }
     }
 
-    private <T> Object getConsumerProxy(Consumer consumer, Class<T> consumerClass) throws Exception {
+    private <T> Object getConsumerProxy(Consumer consumer, Class<T> consumerClass, RpcConsumerProxy rpcConsumerProxy) throws Exception {
         String interfaceName;
         if (!void.class.equals(consumer.interfaceClass())) {
             interfaceName = consumer.interfaceClass().getName();
@@ -140,10 +139,8 @@ public class ConsumerAnnotationBean implements BeanFactoryAware, BeanPostProcess
             } else {
                 consumerInterface = (Class<T>) consumer.interfaceClass();
             }
-            rpcConsumerFactoryBean = new RpcConsumerFactoryBean<T>(consumerInterface);
-            RpcConsumerProxy rpcConsumerProxy = beanFactory.getBean(RpcConsumerProxy.class);
-            rpcConsumerFactoryBean.setRpcConsumerProxy(rpcConsumerProxy);
 
+            rpcConsumerFactoryBean = new RpcConsumerFactoryBean<T>(consumerInterface, rpcConsumerProxy);
             rpcConsumerFactoryBeanMap.putIfAbsent(key, rpcConsumerFactoryBean);
         }
         return rpcConsumerFactoryBean.getObject();
