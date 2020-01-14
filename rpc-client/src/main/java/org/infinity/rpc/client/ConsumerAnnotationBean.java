@@ -53,7 +53,9 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
 
         // Activate bean initialization
         RpcConsumerProxy rpcConsumerProxy = applicationContext.getBean(RpcConsumerProxy.class);
+        // Method dependency injection by reflection
         setConsumerOnMethod(bean, clazz, rpcConsumerProxy);
+        // Field dependency injection by reflection
         setConsumerOnField(bean, clazz, rpcConsumerProxy);
         return bean;
     }
@@ -73,6 +75,13 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
         return Arrays.asList(consumerScanPackages).stream().anyMatch(pkg -> clazz.getName().startsWith(pkg));
     }
 
+    /**
+     * Method dependency injection by reflection
+     *
+     * @param bean
+     * @param clazz
+     * @param rpcConsumerProxy
+     */
     private void setConsumerOnMethod(Object bean, Class clazz, RpcConsumerProxy rpcConsumerProxy) {
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {
@@ -98,6 +107,13 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
         }
     }
 
+    /**
+     * Field dependency injection by reflection
+     *
+     * @param bean
+     * @param clazz
+     * @param rpcConsumerProxy
+     */
     private void setConsumerOnField(Object bean, Class clazz, RpcConsumerProxy rpcConsumerProxy) {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
