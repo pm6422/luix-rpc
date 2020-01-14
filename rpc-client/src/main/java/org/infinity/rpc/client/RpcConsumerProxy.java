@@ -8,6 +8,7 @@ import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
 import org.infinity.rpc.registry.ZkRegistryRpcServerDiscovery;
 import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Method;
@@ -25,6 +26,7 @@ public class RpcConsumerProxy {
     }
 
     public <T> T getProxy(Class<T> interfaceClass) {
+        Assert.notNull(interfaceClass, "Consumer interface class must not be null!");
         ProxyFactory factory = new ProxyFactory();
         factory.setInterfaces(interfaceClass);
         factory.addAdvice(new MethodInvokingMethodInterceptor());

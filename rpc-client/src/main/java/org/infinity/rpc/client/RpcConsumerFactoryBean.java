@@ -11,17 +11,9 @@ import org.springframework.util.Assert;
 @Slf4j
 public class RpcConsumerFactoryBean<T> {
 
-    private final Class<T>         consumerInterface;
-    private final RpcConsumerProxy rpcConsumerProxy;
-
-    public RpcConsumerFactoryBean(Class<T> consumerInterface, RpcConsumerProxy rpcConsumerProxy) {
-        Assert.notNull(consumerInterface, "Consumer interface must not be null!");
+    public T getObject(RpcConsumerProxy rpcConsumerProxy, Class<T> consumerInterface) throws Exception {
         Assert.notNull(rpcConsumerProxy, "RPC consumer proxy must not be null!");
-        this.consumerInterface = consumerInterface;
-        this.rpcConsumerProxy = rpcConsumerProxy;
-    }
-
-    public T getObject() throws Exception {
+        Assert.notNull(consumerInterface, "Consumer interface class must not be null!");
         return rpcConsumerProxy.getProxy(consumerInterface);
     }
 }

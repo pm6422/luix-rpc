@@ -138,10 +138,13 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
 
     private <T> Object getConsumerProxy(Consumer consumer, Class<T> consumerClass, RpcConsumerProxy rpcConsumerProxy) throws Exception {
         String interfaceName;
+        Class<T> consumerInterface;
         if (!void.class.equals(consumer.interfaceClass())) {
             interfaceName = consumer.interfaceClass().getName();
+            consumerInterface = (Class<T>) consumer.interfaceClass();
         } else if (consumerClass.isInterface()) {
             interfaceName = consumerClass.getName();
+            consumerInterface = consumerClass;
         } else {
             throw new IllegalStateException("The consumer must be declared as an interface or specify the interfaceClass attribute value of @Consumer annotation!");
         }
@@ -149,17 +152,10 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
         String key = interfaceName;
         RpcConsumerFactoryBean rpcConsumerFactoryBean = rpcConsumerFactoryBeanMap.get(key);
         if (rpcConsumerFactoryBean == null) {
-            Class<T> consumerInterface;
-            if (void.class.equals(consumer.interfaceClass()) && consumerClass.isInterface()) {
-                consumerInterface = consumerClass;
-            } else {
-                consumerInterface = (Class<T>) consumer.interfaceClass();
-            }
-
-            rpcConsumerFactoryBean = new RpcConsumerFactoryBean<T>(consumerInterface, rpcConsumerProxy);
+            rpcConsumerFactoryBean = new RpcConsumerFactoryBean<T>();
             rpcConsumerFactoryBeanMap.putIfAbsent(key, rpcConsumerFactoryBean);
         }
-        return rpcConsumerFactoryBean.getObject();
+        return rpcConsumerFactoryBean.getObject(rpcConsumerProxy, consumerInterface);
     }
 
     /**

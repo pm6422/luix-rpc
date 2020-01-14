@@ -19,7 +19,7 @@ public class RpcConfigurationApplicationContextInitializer implements Applicatio
         String consumerScanPackages = env.getProperty(RpcClientProperties.CONSUMER_SCAN_PACKAGES);
         Assert.hasText(consumerScanPackages, "Consumer scan base packages must not be empty!");
 
-        log.debug("RPC client scan package: [{}]", consumerScanPackages);
+        log.debug("RPC consumer scan base package: [{}]", consumerScanPackages);
         ConsumerAnnotationBean consumerAnnotationBean = new ConsumerAnnotationBean(applicationContext, consumerScanPackages);
         // Bean post processor will be called before bean factory post processor
         applicationContext.getBeanFactory().addBeanPostProcessor(consumerAnnotationBean);
