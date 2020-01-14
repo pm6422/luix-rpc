@@ -25,7 +25,8 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
     public static final Pattern                             COMMA_SPLIT_PATTERN       = Pattern.compile("\\s*[,]+\\s*");
     private             ApplicationContext                  applicationContext;
     private             String[]                            consumerScanPackages;
-    private final       Map<String, RpcConsumerFactoryBean> rpcConsumerFactoryBeanMap = new ConcurrentHashMap<String, RpcConsumerFactoryBean>();
+    // Consumers are not injected into bean factory, they are saved in this map.
+    private final Map<String, RpcConsumerFactoryBean> rpcConsumerFactoryBeanMap = new ConcurrentHashMap<String, RpcConsumerFactoryBean>();
 
 
     public ConsumerAnnotationBean(ApplicationContext applicationContext, String consumerScanPackages) {
