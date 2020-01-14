@@ -6,19 +6,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.infinity-rpc")
 @Data
 public class RpcClientProperties {
-    public static final String   CONSUMER_SCAN_BASE_PACKAGES = "spring.infinity-rpc.client.base-packages";
-    private             Client   client;
+    public static final String   CONSUMER_SCAN_PACKAGES = "spring.infinity-rpc.consumer.scan-packages";
+    private             Consumer consumer;
     private             Registry registry;
 
-    public static class Client {
-        private String[] basePackages;
+    public static class Consumer {
+        private String[] scanPackages;
 
-        public String[] getBasePackages() {
-            return basePackages;
+        public String[] getScanPackages() {
+            return scanPackages;
         }
 
-        public void setBasePackages(String[] basePackages) {
-            this.basePackages = basePackages;
+        public void setScanPackages(String[] scanPackages) {
+            this.scanPackages = scanPackages;
         }
     }
 
