@@ -23,7 +23,7 @@ public class RpcClientAutoConfiguration {
     }
 
     @Bean
-    public RpcConsumerProxy rpcClientProxy(ZkRegistryRpcServerDiscovery rpcServerDiscovery) {
+    public RpcConsumerProxy rpcConsumerProxy(ZkRegistryRpcServerDiscovery rpcServerDiscovery) {
         return new RpcConsumerProxy(rpcServerDiscovery);
     }
 }

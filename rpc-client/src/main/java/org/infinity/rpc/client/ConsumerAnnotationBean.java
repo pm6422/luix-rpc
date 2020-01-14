@@ -122,6 +122,7 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
+                field.getDeclaredAnnotation(Consumer.class);
                 Consumer consumerField = field.getAnnotation(Consumer.class);
                 if (consumerField != null) {
                     Object value = getConsumerProxy(consumerField, field.getType(), rpcConsumerProxy);

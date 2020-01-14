@@ -9,10 +9,9 @@
         <relativePath />
     </parent>
 
-    <artifactId>app-client</artifactId>
-
     <version>1.0.0</version>
     <packaging>war</packaging>
+    <artifactId>app-client</artifactId>
     <name>app-client</name>
 
     <!--
@@ -228,12 +227,12 @@
         </dependency>
         <dependency>
             <groupId>org.infinity</groupId>
-            <artifactId>rpc-common</artifactId>
+            <artifactId>spring-boot-starter-infinity-rpc</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>org.infinity</groupId>
-            <artifactId>rpc-registry</artifactId>
+            <groupId>org.infinity.rpc</groupId>
+            <artifactId>app-common</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
