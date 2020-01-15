@@ -28,7 +28,6 @@ public class ProductController implements ApplicationContextAware {
 
     @GetMapping("/api/product/product")
     public Product getProduct() {
-        applicationContext.getBean(Product.class);
         int count = userService.count();
         log.debug("User count: {}", count);
         Product product = productService.get(1L);
