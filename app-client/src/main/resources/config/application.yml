@@ -88,10 +88,6 @@ logging:
     level:
         root: DEBUG
         ${info.project.package}: DEBUG
-security:
-    oauth2:
-        resource:
-            filter-order: 101 # The order of the filter chain used to authenticate tokens. Note: it must be greater than 100.
 # ===================================================================
 # Application specific properties
 # ===================================================================
