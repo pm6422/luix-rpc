@@ -26,7 +26,7 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
     private             ApplicationContext                  applicationContext;
     private             String[]                            consumerScanPackages;
     // Consumers are not injected into bean factory, they are saved in this map.
-    private final Map<String, RpcConsumerFactoryBean> rpcConsumerFactoryBeanMap = new ConcurrentHashMap<String, RpcConsumerFactoryBean>();
+    private final       Map<String, RpcConsumerFactoryBean> rpcConsumerFactoryBeanMap = new ConcurrentHashMap<String, RpcConsumerFactoryBean>();
 
 
     public ConsumerAnnotationBean(ApplicationContext applicationContext, String consumerScanPackages) {
@@ -51,7 +51,6 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
         if (!matchScanPackages(clazz)) {
             return bean;
         }
-
         // Activate bean initialization
         RpcConsumerProxy rpcConsumerProxy = applicationContext.getBean(RpcConsumerProxy.class);
         // Method dependency injection by reflection
@@ -92,10 +91,10 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
                     && Modifier.isPublic(method.getModifiers())
                     && !Modifier.isStatic(method.getModifiers())) {
                 try {
-                    Consumer consumerMethod = method.getAnnotation(Consumer.class);
-                    if (consumerMethod != null) {
+                    Consumer methodAnnotation = method.getAnnotation(Consumer.class);
+                    if (methodAnnotation != null) {
                         // if setter method annotated with the @Consumer
-                        Object value = getConsumerProxy(consumerMethod, method.getParameterTypes()[0], rpcConsumerProxy);
+                        Object value = getConsumerProxy(methodAnnotation, method.getParameterTypes()[0], rpcConsumerProxy);
                         if (value != null) {
                             method.invoke(bean, new Object[]{value});
                         }
@@ -122,10 +121,10 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
-                field.getDeclaredAnnotation(Consumer.class);
-                Consumer consumerField = field.getAnnotation(Consumer.class);
-                if (consumerField != null) {
-                    Object value = getConsumerProxy(consumerField, field.getType(), rpcConsumerProxy);
+
+                Consumer fieldAnnotation = field.getAnnotation(Consumer.class);
+                if (fieldAnnotation != null) {
+                    Object value = getConsumerProxy(fieldAnnotation, field.getType(), rpcConsumerProxy);
                     if (value != null) {
                         // if field annotated with the @Consumer
                         field.set(bean, value);
