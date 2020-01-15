@@ -1,6 +1,7 @@
 package org.infinity.springboot.infinityrpc;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.client.DefinitionRegistryPostProcessor;
 import org.infinity.rpc.client.RpcConsumerProxy;
 import org.infinity.rpc.registry.ZkRegistryRpcServerDiscovery;
 import org.springframework.beans.factory.annotation.Autowired;
