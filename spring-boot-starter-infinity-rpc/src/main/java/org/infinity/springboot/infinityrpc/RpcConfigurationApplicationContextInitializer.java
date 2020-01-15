@@ -26,7 +26,8 @@ public class RpcConfigurationApplicationContextInitializer implements Applicatio
         applicationContext.addBeanFactoryPostProcessor(consumerAnnotationBean);
         String beanName = ClassUtils.getShortNameAsProperty(ConsumerAnnotationBean.class);
         // Register bean
-        //
+        // 注意：这里只有注册bean，但由于时机太早，没法注册beanDefinition，所以applicationContext.getBeanDefinitionNames()里获取不到
+        // 但applicationContext.getBean(ConsumerAnnotationBean.class)可以获取到bean
         applicationContext.getBeanFactory().registerSingleton(beanName, consumerAnnotationBean);
         log.debug("Initialized consumer annotation bean");
     }
