@@ -1,6 +1,6 @@
-package org.infinity.rpc.appclient.service;
+package org.infinity.app.common.service;
 
-import org.infinity.rpc.appclient.entity.MenuTreeNode;
+import org.infinity.app.common.entity.MenuTreeNode;
 
 import java.util.List;
 

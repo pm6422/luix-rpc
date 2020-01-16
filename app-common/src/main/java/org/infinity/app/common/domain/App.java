@@ -1,10 +1,9 @@
-package org.infinity.rpc.appclient.domain;
+package org.infinity.app.common.domain;
 
-import org.infinity.rpc.appclient.dto.AppDTO;
+import org.infinity.app.common.dto.AppDTO;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -16,7 +15,6 @@ public class App implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Size(min = 0, max = 50)
     private String name;
 
     private Boolean enabled;

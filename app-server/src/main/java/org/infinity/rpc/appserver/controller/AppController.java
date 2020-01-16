@@ -1,11 +1,11 @@
 package org.infinity.rpc.appserver.controller;
 
 import io.swagger.annotations.*;
-import org.infinity.rpc.appserver.domain.App;
-import org.infinity.rpc.appserver.dto.AppDTO;
+import org.infinity.app.common.domain.App;
+import org.infinity.app.common.dto.AppDTO;
+import org.infinity.app.common.service.AppService;
 import org.infinity.rpc.appserver.exception.NoDataException;
 import org.infinity.rpc.appserver.repository.AppRepository;
-import org.infinity.rpc.appserver.service.AppService;
 import org.infinity.rpc.appserver.utils.HttpHeaderCreator;
 import org.infinity.rpc.appserver.utils.PaginationUtils;
 import org.slf4j.Logger;

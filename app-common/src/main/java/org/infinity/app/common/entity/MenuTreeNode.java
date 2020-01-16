@@ -1,6 +1,6 @@
-package org.infinity.rpc.appclient.entity;
+package org.infinity.app.common.entity;
 
-import org.infinity.rpc.appclient.dto.AdminMenuDTO;
+import org.infinity.app.common.dto.AdminMenuDTO;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
-package org.infinity.rpc.appclient.entity;
+package org.infinity.app.common.entity;
 
-import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -9,8 +9,8 @@ import java.util.List;
 public class MenuTree implements Serializable {
 
     private static final long         serialVersionUID = 1L;
-    private              int          nodeSize         = 0;
-    private              MenuTreeNode root             = new MenuTreeNode();
+    private int          nodeSize = 0;
+    private MenuTreeNode root     = new MenuTreeNode();
 
     public MenuTree(List<MenuTreeNode> list) {
         list.sort(Comparator.comparing(MenuTreeNode::getLevel));
@@ -39,7 +39,7 @@ public class MenuTree implements Serializable {
     }
 
     private void sort(MenuTreeNode node, Comparator<MenuTreeNode> comparator) {
-        if (CollectionUtils.isNotEmpty(node.getChildren())) {
+        if (!CollectionUtils.isEmpty(node.getChildren())) {
             node.getChildren().sort(comparator);
             node.getChildren().forEach(child -> this.sort(child, comparator));
         }

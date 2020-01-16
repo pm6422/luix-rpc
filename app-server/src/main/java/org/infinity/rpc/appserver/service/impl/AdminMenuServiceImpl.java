@@ -1,10 +1,11 @@
 package org.infinity.rpc.appserver.service.impl;
 
-import org.infinity.rpc.appserver.domain.AdminMenu;
-import org.infinity.rpc.appserver.entity.MenuTree;
-import org.infinity.rpc.appserver.entity.MenuTreeNode;
+import org.infinity.app.common.domain.AdminMenu;
+import org.infinity.app.common.entity.MenuTree;
+import org.infinity.app.common.entity.MenuTreeNode;
+import org.infinity.app.common.service.AdminMenuService;
 import org.infinity.rpc.appserver.repository.AdminMenuRepository;
-import org.infinity.rpc.appserver.service.AdminMenuService;
+import org.infinity.rpc.server.annotation.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Provider
 public class AdminMenuServiceImpl implements AdminMenuService {
 
     @Autowired

@@ -1,14 +1,12 @@
-package org.infinity.rpc.appserver.domain;
+package org.infinity.app.common.domain;
 
-import org.infinity.rpc.appserver.dto.AdminMenuDTO;
-import org.infinity.rpc.appserver.entity.MenuTreeNode;
+import org.infinity.app.common.dto.AdminMenuDTO;
+import org.infinity.app.common.entity.MenuTreeNode;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -24,8 +22,6 @@ public class AdminMenu implements Serializable {
     // 主键不要定义为Long型，因为定义为Long型的字段如果超过16位的话在前端页面O会显示为0
     @Id
     private String  id;
-    @NotNull
-    @Size(min = 1, max = 50)
     private String  name;
     private String  label;
     @Field(FIELD_LEVEL)

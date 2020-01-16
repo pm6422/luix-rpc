@@ -1,13 +1,13 @@
 package org.infinity.rpc.appclient.controller;
 
 import io.swagger.annotations.*;
-import org.infinity.rpc.appclient.domain.App;
-import org.infinity.rpc.appclient.dto.AppDTO;
+import org.infinity.app.common.domain.App;
+import org.infinity.app.common.dto.AppDTO;
+import org.infinity.app.common.service.AppService;
 import org.infinity.rpc.appclient.exception.NoDataException;
-import org.infinity.rpc.appclient.repository.AppRepository;
-import org.infinity.rpc.appclient.service.AppService;
 import org.infinity.rpc.appclient.utils.HttpHeaderCreator;
 import org.infinity.rpc.appclient.utils.PaginationUtils;
+import org.infinity.rpc.client.annotation.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +33,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 public class AppController {
 
     private static final Logger            LOGGER = LoggerFactory.getLogger(AppController.class);
-    @Autowired
-    private              AppRepository     appRepository;
-    @Autowired
+    @Consumer
     private              AppService        appService;
     @Autowired
     private              HttpHeaderCreator httpHeaderCreator;
@@ -54,18 +52,10 @@ public class AppController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
     @GetMapping("/api/app/apps")
     public ResponseEntity<List<AppDTO>> find(Pageable pageable) throws URISyntaxException {
-        Page<App> apps = appRepository.findAll(pageable);
+        Page<App> apps = appService.findAll(pageable);
         List<AppDTO> DTOs = apps.getContent().stream().map(entity -> entity.asDTO()).collect(Collectors.toList());
         HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(apps, "/api/app/apps");
         return ResponseEntity.ok().headers(headers).body(DTOs);
-    }
-
-    @ApiOperation("获取所有应用")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
-    @GetMapping("/api/app/apps/all")
-    public ResponseEntity<List<AppDTO>> findAll() {
-        List<AppDTO> appDTOs = appRepository.findAll().stream().map(app -> app.asDTO()).collect(Collectors.toList());
-        return ResponseEntity.ok(appDTOs);
     }
 
     @ApiOperation("根据应用名称检索应用信息")
@@ -73,7 +63,7 @@ public class AppController {
             @ApiResponse(code = SC_BAD_REQUEST, message = "应用信息不存在")})
     @GetMapping("/api/app/apps/{name}")
     public ResponseEntity<AppDTO> findById(@ApiParam(value = "应用名称", required = true) @PathVariable String name) {
-        App app = appRepository.findById(name).get();
+        App app = appService.findById(name).get();
         return ResponseEntity.ok(new AppDTO(name, app.getEnabled(), null));
     }
 
@@ -83,7 +73,7 @@ public class AppController {
     @PutMapping("/api/app/apps")
     public ResponseEntity<Void> update(@ApiParam(value = "新的应用信息", required = true) @Valid @RequestBody AppDTO dto) {
         LOGGER.debug("REST request to update app: {}", dto);
-        appRepository.findById(dto.getName()).orElseThrow(() -> new NoDataException(dto.getName()));
+        appService.findById(dto.getName()).orElseThrow(() -> new NoDataException(dto.getName()));
         appService.update(dto.getName(), dto.getEnabled(), dto.getAuthorities());
         return ResponseEntity.ok()
                 .headers(httpHeaderCreator.createSuccessHeader("notification.app.updated", dto.getName())).build();
@@ -95,8 +85,8 @@ public class AppController {
     @DeleteMapping("/api/app/apps/{name}")
     public ResponseEntity<Void> delete(@ApiParam(value = "应用名称", required = true) @PathVariable String name) {
         LOGGER.debug("REST request to delete app: {}", name);
-        appRepository.findById(name).orElseThrow(() -> new NoDataException(name));
-        appRepository.deleteById(name);
+        appService.findById(name).orElseThrow(() -> new NoDataException(name));
+        appService.deleteById(name);
         return ResponseEntity.ok()
                 .headers(httpHeaderCreator.createSuccessHeader("notification.app.deleted", name)).build();
     }
