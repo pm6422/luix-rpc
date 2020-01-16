@@ -1,10 +1,9 @@
-package org.infinity.rpc.appserver.domain;
+package org.infinity.app.common.domain;
 
-import org.infinity.rpc.appserver.dto.AuthorityDTO;
+import org.infinity.app.common.dto.AuthorityDTO;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -28,7 +27,6 @@ public class Authority implements Serializable {
     public static final String SYSTEM_ACCOUNT = "system";
 
     @Id
-    @Size(min = 0, max = 50)
     private String name;
 
     private Boolean systemLevel;

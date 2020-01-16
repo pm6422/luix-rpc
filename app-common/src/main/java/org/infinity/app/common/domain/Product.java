@@ -1,4 +1,4 @@
-package org.infinity.app.common;
+package org.infinity.app.common.domain;
 
 import lombok.ToString;
 

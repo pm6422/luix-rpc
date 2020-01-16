@@ -6,12 +6,18 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.rpc.appserver.config.ApplicationConstants;
 import org.infinity.rpc.appserver.config.EmbeddedZooKeeper;
 import org.infinity.rpc.appserver.utils.NetworkIpUtils;
+import org.infinity.rpc.registry.ZkRpcServerRegistry;
+import org.infinity.rpc.server.RpcServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.Assert;
@@ -24,12 +30,12 @@ import java.util.Arrays;
 import java.util.Date;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
-public class AppServerLauncher {
+public class AppServerLauncher implements ApplicationContextAware {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppServerLauncher.class);
-
+    private static final Logger                         LOGGER = LoggerFactory.getLogger(AppServerLauncher.class);
     @Autowired
-    private Environment env;
+    private              Environment                    env;
+    private static       ConfigurableApplicationContext applicationContext;
 
     /**
      * Entrance method which used to run the application. Spring profiles can be configured with a program arguments
@@ -38,12 +44,16 @@ public class AppServerLauncher {
      * @param args
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         // 启动嵌入式zk
         startZooKeeper();
         SpringApplication app = new SpringApplication(AppServerLauncher.class);
         Environment env = app.run(args).getEnvironment();
         printAppInfo(env);
+        RpcServer rpcServer = new RpcServer("127.0.0.1:" + "2" + env.getProperty("server.port"), applicationContext.getBean(ZkRpcServerRegistry.class));
+        applicationContext.getBeanFactory().registerSingleton("rpcServer", rpcServer);
+        rpcServer.setApplicationContext(applicationContext);
+        rpcServer.afterPropertiesSet();
     }
 
     private static void printAppInfo(Environment env) throws IOException {
@@ -78,5 +88,10 @@ public class AppServerLauncher {
     private static void startZooKeeper() throws IOException {
         // Start embedded zookeeper server
         new EmbeddedZooKeeper(2181, false).start();
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = (ConfigurableApplicationContext) applicationContext;
     }
 }

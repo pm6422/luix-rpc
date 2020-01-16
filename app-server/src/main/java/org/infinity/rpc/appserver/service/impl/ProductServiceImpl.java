@@ -1,7 +1,7 @@
 package org.infinity.rpc.appserver.service.impl;
 
-import org.infinity.app.common.Product;
-import org.infinity.app.common.ProductService;
+import org.infinity.app.common.domain.Product;
+import org.infinity.app.common.service.ProductService;
 import org.infinity.rpc.server.annotation.Provider;
 import org.springframework.stereotype.Service;
 

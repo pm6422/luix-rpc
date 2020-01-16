@@ -1,4 +1,6 @@
-package org.infinity.app.common;
+package org.infinity.app.common.service;
+
+import org.infinity.app.common.domain.Product;
 
 public interface ProductService {
     /**
