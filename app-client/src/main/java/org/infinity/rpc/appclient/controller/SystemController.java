@@ -1,20 +1,12 @@
 package org.infinity.rpc.appclient.controller;
 
-import com.github.mongobee.Mongobee;
-import com.github.mongobee.exception.MongobeeException;
 import io.swagger.annotations.Api;
 import org.infinity.rpc.appclient.config.ApplicationProperties;
-import org.infinity.rpc.appclient.domain.Authority;
 import org.infinity.rpc.appclient.utils.NetworkIpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @RestController
 @Api(tags = "系统")
@@ -22,39 +14,14 @@ public class SystemController {
 
     @Autowired
     private ApplicationProperties applicationProperties;
-    @Autowired
-    private Mongobee              mongobee;
-    @Autowired
-    private MongoTemplate         mongoTemplate;
-
-    @GetMapping("/api/system/redis-admin")
-    @Secured(Authority.DEVELOPER)
-    public void redirectToRedisAdmin(HttpServletResponse response) throws IOException {
-        response.sendRedirect(applicationProperties.getRedis().getAdminUrl());
-    }
-
-    @GetMapping("/api/system/scheduler-admin")
-    @Secured(Authority.DEVELOPER)
-    public void redirectToScheduler(HttpServletResponse response) throws IOException {
-        response.sendRedirect(applicationProperties.getScheduler().getAdminUrl());
-    }
 
     @GetMapping("/api/system/internet-ip")
-    @Secured(Authority.DEVELOPER)
     public ResponseEntity<String> getInternetIp() {
         return ResponseEntity.ok(NetworkIpUtils.INTERNET_IP);
     }
 
     @GetMapping("/api/system/intranet-ip")
-    @Secured(Authority.DEVELOPER)
     public ResponseEntity<String> getIntranetIp() {
         return ResponseEntity.ok(NetworkIpUtils.INTRANET_IP);
-    }
-
-    @GetMapping("/open-api/system/reset-database")
-    public String resetDatabase() throws MongobeeException {
-        mongoTemplate.getDb().drop();
-        mongobee.execute();
-        return "Reset successfully.";
     }
 }

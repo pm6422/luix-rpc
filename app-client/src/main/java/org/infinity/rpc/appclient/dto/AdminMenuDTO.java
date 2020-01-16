@@ -2,7 +2,6 @@ package org.infinity.rpc.appclient.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.infinity.rpc.appclient.domain.base.AbstractAuditableDomain;
 import org.infinity.rpc.appclient.entity.MenuTreeNode;
 import org.springframework.cglib.beans.BeanCopier;
 
@@ -12,7 +11,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @ApiModel("管理系统菜单DTO")
-public class AdminMenuDTO extends AbstractAuditableDomain implements Serializable {
+public class AdminMenuDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

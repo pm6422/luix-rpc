@@ -25,7 +25,7 @@ public class ProfileInfo implements Serializable {
     @ApiModelProperty(value = "是否禁止Swagger")
     private boolean swaggerDisabled = false;
 
-    public ProfileInfo(String[] activeProfiles, String ribbonEnv, String oAuth2ClientId, String oAuth2ClientSecret) {
+    public ProfileInfo(String[] activeProfiles, String ribbonEnv) {
         this.activeProfiles = activeProfiles;
         this.ribbonEnv = ribbonEnv;
 

@@ -3,11 +3,9 @@ package org.infinity.rpc.appclient.controller;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.*;
 import org.infinity.rpc.appclient.domain.App;
-import org.infinity.rpc.appclient.domain.AppAuthority;
 import org.infinity.rpc.appclient.domain.Authority;
 import org.infinity.rpc.appclient.dto.AppDTO;
 import org.infinity.rpc.appclient.exception.NoDataException;
-import org.infinity.rpc.appclient.repository.AppAuthorityRepository;
 import org.infinity.rpc.appclient.repository.AppRepository;
 import org.infinity.rpc.appclient.service.AppService;
 import org.infinity.rpc.appclient.utils.HttpHeaderCreator;
@@ -26,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -38,15 +35,13 @@ import static javax.servlet.http.HttpServletResponse.*;
 @Api(tags = "应用管理")
 public class AppController {
 
-    private static final Logger                 LOGGER = LoggerFactory.getLogger(AppController.class);
+    private static final Logger            LOGGER = LoggerFactory.getLogger(AppController.class);
     @Autowired
-    private              AppRepository          appRepository;
+    private              AppRepository     appRepository;
     @Autowired
-    private              AppAuthorityRepository appAuthorityRepository;
+    private              AppService        appService;
     @Autowired
-    private              AppService             appService;
-    @Autowired
-    private              HttpHeaderCreator      httpHeaderCreator;
+    private              HttpHeaderCreator httpHeaderCreator;
 
     @ApiOperation("创建应用")
     @ApiResponses(value = {@ApiResponse(code = SC_CREATED, message = "成功创建")})
@@ -90,10 +85,7 @@ public class AppController {
     @Timed
     public ResponseEntity<AppDTO> findById(@ApiParam(value = "应用名称", required = true) @PathVariable String name) {
         App app = appRepository.findById(name).get();
-        List<AppAuthority> appAuthorities = appAuthorityRepository.findByAppName(name);
-        Set<String> authorities = appAuthorities.stream().map(item -> item.getAuthorityName())
-                .collect(Collectors.toSet());
-        return ResponseEntity.ok(new AppDTO(name, app.getEnabled(), authorities));
+        return ResponseEntity.ok(new AppDTO(name, app.getEnabled(), null));
     }
 
     @ApiOperation("更新应用信息")
@@ -120,7 +112,6 @@ public class AppController {
         LOGGER.debug("REST request to delete app: {}", name);
         appRepository.findById(name).orElseThrow(() -> new NoDataException(name));
         appRepository.deleteById(name);
-        appAuthorityRepository.deleteByAppName(name);
         return ResponseEntity.ok()
                 .headers(httpHeaderCreator.createSuccessHeader("notification.app.deleted", name)).build();
     }

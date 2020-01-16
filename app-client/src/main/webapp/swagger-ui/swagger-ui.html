@@ -79,7 +79,7 @@
                     window.swaggerUi.headerView.trigger('update-swagger-ui', {
                         url: $('#select_baseUrl').val()
                     });
-                    addApiKeyAuthorization();
+                    // addApiKeyAuthorization();
                 });
 
                 function log() {
@@ -125,7 +125,7 @@
                     $urlDropdown.empty();
                     $.each(data, function (i, resource) {
                         var option = $('<option></option>')
-                            .attr("value", maybePrefix(resource.location, relativeLocation) + "&access_token=" + getAccessToken())
+                            .attr("value", maybePrefix(resource.location, relativeLocation))
                             .text(resource.name + " (" + resource.location + ")");
                         $urlDropdown.append(option);
                     });
@@ -134,16 +134,12 @@
 
             }
 
-            function getAccessToken() {
-                return JSON.parse(localStorage.getItem("app-authenticationToken")).access_token;
-            }
-
-            function addApiKeyAuthorization() {
-                var authToken = getAccessToken();
-                var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("Authorization",
-                    "Bearer " + authToken, "header");
-                window.swaggerUi.api.clientAuthorizations.add("key", apiKeyAuth);
-            }
+            // function addApiKeyAuthorization() {
+            //     var authToken = getAccessToken();
+            //     var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("Authorization",
+            //         "Bearer " + authToken, "header");
+            //     window.swaggerUi.api.clientAuthorizations.add("key", apiKeyAuth);
+            // }
         });
     </script>
 </head>

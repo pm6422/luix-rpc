@@ -1,6 +1,7 @@
 package org.infinity.rpc.appclient.async;
 
-import org.infinity.rpc.appclient.utils.LogUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.task.AsyncTaskExecutor;
@@ -12,6 +13,8 @@ import java.util.concurrent.Future;
  * Async task executor with exception handling.
  */
 public class ExceptionHandlingAsyncTaskExecutor implements AsyncTaskExecutor, InitializingBean, DisposableBean {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandlingAsyncTaskExecutor.class);
 
     private final AsyncTaskExecutor executor;
 
@@ -51,7 +54,7 @@ public class ExceptionHandlingAsyncTaskExecutor implements AsyncTaskExecutor, In
     }
 
     protected void handle(Exception e) {
-        LogUtils.error(e, "Caught async exception");
+        LOGGER.error("Caught async exception", e);
     }
 
     @Override

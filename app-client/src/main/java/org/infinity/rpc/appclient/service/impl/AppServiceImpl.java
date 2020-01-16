@@ -1,9 +1,6 @@
 package org.infinity.rpc.appclient.service.impl;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.appclient.domain.App;
-import org.infinity.rpc.appclient.domain.AppAuthority;
-import org.infinity.rpc.appclient.repository.AppAuthorityRepository;
 import org.infinity.rpc.appclient.repository.AppRepository;
 import org.infinity.rpc.appclient.service.AppService;
 import org.slf4j.Logger;
@@ -21,18 +18,10 @@ public class AppServiceImpl implements AppService {
     @Autowired
     private AppRepository appRepository;
 
-    @Autowired
-    private AppAuthorityRepository appAuthorityRepository;
-
     @Override
     public App insert(String name, Boolean enabled, Set<String> authorityNames) {
         App newApp = new App(name, enabled);
         appRepository.save(newApp);
-
-        authorityNames.stream().forEach(authorityName -> {
-            appAuthorityRepository.insert(new AppAuthority(newApp.getName(), authorityName));
-        });
-
         LOGGER.debug("Created Information for app: {}", newApp);
         return newApp;
     }
@@ -43,16 +32,6 @@ public class AppServiceImpl implements AppService {
             app.setEnabled(enabled);
             appRepository.save(app);
             LOGGER.debug("Updated app: {}", app);
-
-            if (CollectionUtils.isNotEmpty(authorityNames)) {
-                appAuthorityRepository.deleteByAppName(app.getName());
-                authorityNames.forEach(authorityName -> {
-                    appAuthorityRepository.insert(new AppAuthority(app.getName(), authorityName));
-                });
-                LOGGER.debug("Updated user authorities");
-            } else {
-                appAuthorityRepository.deleteByAppName(app.getName());
-            }
         });
     }
 }

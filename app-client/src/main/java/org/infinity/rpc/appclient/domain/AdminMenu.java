@@ -1,11 +1,9 @@
 package org.infinity.rpc.appclient.domain;
 
-import org.infinity.rpc.appclient.domain.base.AbstractAuditableDomain;
 import org.infinity.rpc.appclient.dto.AdminMenuDTO;
 import org.infinity.rpc.appclient.entity.MenuTreeNode;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -17,7 +15,7 @@ import java.io.Serializable;
  * Spring Data MongoDB collection for the AdminMenu entity.
  */
 @Document(collection = "AdminMenu")
-public class AdminMenu extends AbstractAuditableDomain implements Serializable {
+public class AdminMenu implements Serializable {
 
     private static final long   serialVersionUID = 1L;
     public static final  String FIELD_LEVEL      = "level";
@@ -26,10 +24,6 @@ public class AdminMenu extends AbstractAuditableDomain implements Serializable {
     // 主键不要定义为Long型，因为定义为Long型的字段如果超过16位的话在前端页面O会显示为0
     @Id
     private String  id;
-    @NotNull
-    @Size(min = 1, max = 20)
-    @Indexed
-    private String  appName;
     @NotNull
     @Size(min = 1, max = 50)
     private String  name;
@@ -48,7 +42,6 @@ public class AdminMenu extends AbstractAuditableDomain implements Serializable {
     /**
      * Constructor for creating operation
      *
-     * @param appName
      * @param name
      * @param label
      * @param level
@@ -56,10 +49,9 @@ public class AdminMenu extends AbstractAuditableDomain implements Serializable {
      * @param sequence
      * @param parentId
      */
-    public AdminMenu(String appName, String name, String label, Integer level, String url,
+    public AdminMenu(String name, String label, Integer level, String url,
                      Integer sequence, String parentId) {
         super();
-        this.appName = appName;
         this.name = name;
         this.label = label;
         this.level = level;
@@ -74,14 +66,6 @@ public class AdminMenu extends AbstractAuditableDomain implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getAppName() {
-        return appName;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
     }
 
     public String getName() {
@@ -145,8 +129,6 @@ public class AdminMenu extends AbstractAuditableDomain implements Serializable {
         }
         AdminMenu other = (AdminMenu) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getAppName() == null ? other.getAppName() == null
-                : this.getAppName().equals(other.getAppName()))
                 && (this.getName() == null ? other.getName() == null
                 : this.getName().equals(other.getName()))
                 && (this.getLabel() == null ? other.getLabel() == null
@@ -164,7 +146,6 @@ public class AdminMenu extends AbstractAuditableDomain implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getAppName() == null) ? 0 : getAppName().hashCode());
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         result = prime * result + ((getLabel() == null) ? 0 : getLabel().hashCode());
         result = prime * result + ((getLevel() == null) ? 0 : getLevel().hashCode());

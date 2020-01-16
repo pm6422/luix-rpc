@@ -4,19 +4,10 @@
 angular
     .module('smartcloudserviceApp')
     .controller('MainController', MainController)
-    .controller('ApiResponseTimeController', ApiResponseTimeController)
-    .controller('ApiAccessController', ApiAccessController)
     .controller('LeftSidebarController', LeftSidebarController)
     .controller('ErrorPageController', ErrorPageController)
-    .controller('LoginController', LoginController)
     .controller('NavbarController', NavbarController)
     .controller('FooterController', FooterController)
-    .controller('ProfileController', ProfileController)
-    .controller('RegisterController', RegisterController)
-    .controller('ActivationController', ActivationController)
-    .controller('ForgotPasswordController', ForgotPasswordController)
-    .controller('ResetPasswordController', ResetPasswordController)
-    .controller('PasswordController', PasswordController)
     .controller('MetricsController', MetricsController)
     .controller('MetricsDialogController', MetricsDialogController)
     .controller('HealthController', HealthController)
@@ -26,12 +17,6 @@ angular
     .controller('MappingsController', MappingsController)
     .controller('HttpTraceController', HttpTraceController)
     .controller('HttpSessionController', HttpSessionController)
-    .controller('AuditsController', AuditsController)
-    .controller('TrackerController', TrackerController)
-    .controller('DictListController', DictListController)
-    .controller('DictDialogController', DictDialogController)
-    .controller('DictItemListController', DictItemListController)
-    .controller('DictItemDialogController', DictItemDialogController)
     .controller('LoggerController', LoggerController)
     .controller('ScheduleController', ScheduleController)
     .controller('ControlController', ControlController)
@@ -39,29 +24,14 @@ angular
     .controller('AppDialogController', AppDialogController)
     .controller('AppDetailsController', AppDetailsController)
     .controller('AuthorityListController', AuthorityListController)
-    .controller('AuthorityDialogController', AuthorityDialogController)
-    .controller('OAuth2ClientListController', OAuth2ClientListController)
-    .controller('OAuth2ClientDialogController', OAuth2ClientDialogController)
-    .controller('OAuth2ClientDetailsController', OAuth2ClientDetailsController)
-    .controller('OAuth2AccessTokenListController', OAuth2AccessTokenListController)
-    .controller('OAuth2AccessTokenDetailsController', OAuth2AccessTokenDetailsController)
-    .controller('OAuth2RefreshTokenListController', OAuth2RefreshTokenListController)
-    .controller('OAuth2RefreshTokenDetailsController', OAuth2RefreshTokenDetailsController)
-    .controller('OAuth2ApprovalListController', OAuth2ApprovalListController)
-    .controller('OAuth2ApprovalDetailsController', OAuth2ApprovalDetailsController)
-    .controller('AdminMenuListController', AdminMenuListController)
-    .controller('AdminMenuDialogController', AdminMenuDialogController)
-    .controller('AuthorityAdminMenuController', AuthorityAdminMenuController)
-    .controller('UserListController', UserListController)
-    .controller('UserDialogController', UserDialogController)
-    .controller('UserDetailsController', UserDetailsController);
+    .controller('AuthorityDialogController', AuthorityDialogController);
 
 /**
  * MainController - controller
  * Contains several global data used in different view
  *
  */
-function MainController($http, $rootScope, $scope, $state, AuthenticationService, PrincipalService, AuthorityAdminMenuService, AuthServerService, AlertUtils, APP_NAME, COMPANY_NAME) {
+function MainController($http, $rootScope, $scope, $state, AdminMenuService, AlertUtils, APP_NAME, COMPANY_NAME) {
     var main = this;
     main.account = null;
     main.isAuthenticated = null;
@@ -70,156 +40,33 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
     main.selectLink = selectLink;
     $rootScope.companyName = COMPANY_NAME;
 
-    // Authenticate user whether has logged in
-    AuthenticationService.authorize(false, getAccount);
-
-    $scope.$on('authenticationSuccess', function () {
-        getAccount();
-    });
-
-    $scope.$watch(PrincipalService.isAuthenticated, function () {
-        loadLinks();
-    });
-
-    function loadLinks() {
-        if (PrincipalService.isAuthenticated() == true) {
-            main.links = AuthorityAdminMenuService.queryLinks({appName: APP_NAME});
-        }
-    }
-
-    function getAccount() {
-        PrincipalService.identity().then(function (account) {
-            main.account = account;
-
-            var authToken = AuthServerService.getToken();
-            if (authToken) {
-                main.account.profilePhotoUrl = '/api/account/profile-photo?access_token=' + authToken.access_token;
-            }
-
-            main.isAuthenticated = PrincipalService.isAuthenticated;
-
-            if (account) {
-                AlertUtils.success('登录成功');
-            }
-        });
-    }
-
     function selectLink($item, $model, $label, $event) {
         $state.go(main.selectedLink.url);
     }
 }
 
 /**
- * ApiResponseTimeController
- */
-function ApiResponseTimeController() {
-    var vm = this;
-
-    /**
-     * Options for Line chart
-     */
-    vm.lineOptions = {
-        scaleShowGridLines: true,
-        scaleGridLineColor: 'rgba(0,0,0,.05)',
-        scaleGridLineWidth: 1,
-        bezierCurve: true,
-        bezierCurveTension: 0.4,
-        pointDot: true,
-        pointDotRadius: 4,
-        pointDotStrokeWidth: 1,
-        pointHitDetectionRadius: 20,
-        datasetStroke: true,
-        datasetStrokeWidth: 2,
-        datasetFill: true
-    };
-
-    /**
-     * Data for Line chart
-     */
-    vm.lineData = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [
-            {
-                label: 'Example dataset',
-                fillColor: 'rgba(26,179,148,0.5)',
-                strokeColor: 'rgba(26,179,148,0.7)',
-                pointColor: 'rgba(26,179,148,1)',
-                pointStrokeColor: '#fff',
-                pointHighlightFill: '#fff',
-                pointHighlightStroke: 'rgba(26,179,148,1)',
-                data: [28, 48, 40, 19, 86, 27, 90]
-            }
-        ]
-    };
-}
-
-function ApiAccessController() {
-    var vm = this;
-
-    /**
-     * Options for Line chart
-     */
-    vm.lineOptions = {
-        scaleShowGridLines: true,
-        scaleGridLineColor: 'rgba(0,0,0,.05)',
-        scaleGridLineWidth: 1,
-        bezierCurve: true,
-        bezierCurveTension: 0.4,
-        pointDot: true,
-        pointDotRadius: 4,
-        pointDotStrokeWidth: 1,
-        pointHitDetectionRadius: 20,
-        datasetStroke: true,
-        datasetStrokeWidth: 2,
-        datasetFill: true
-    };
-
-    /**
-     * Data for Line chart
-     */
-    this.lineData = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [
-            {
-                label: 'Example dataset',
-                fillColor: 'rgba(26,179,148,0.5)',
-                strokeColor: 'rgba(26,179,148,0.7)',
-                pointColor: 'rgba(26,179,148,1)',
-                pointStrokeColor: '#fff',
-                pointHighlightFill: '#fff',
-                pointHighlightStroke: 'rgba(26,179,148,1)',
-                data: [3265, 3159, 2830, 2281, 2756, 2355, 1940]
-            }
-        ]
-    };
-}
-
-/**
  * LeftSidebarController
  */
-function LeftSidebarController($scope, $state, $element, $timeout, APP_NAME, AuthorityAdminMenuService, PrincipalService) {
+function LeftSidebarController($scope, $state, $element, $timeout, APP_NAME, AdminMenuService) {
     var vm = this;
 
     vm.init = init;
     vm.groups = [];
 
-    $scope.$watch(PrincipalService.isAuthenticated, function () {
-        vm.init();
-    });
+    vm.init();
 
     function init() {
-        if (PrincipalService.isAuthenticated() == true) {
-            AuthorityAdminMenuService.query({appName: APP_NAME}, function (response) {
-                if (response) {
-                    vm.groups = response;
-                    // Call the metsiMenu plugin and plug it to sidebar navigation
-                    $timeout(function () {
-                        $element.metisMenu();
-                    });
-                }
-            }, function (errorResponse) {
-            });
-        }
+        AdminMenuService.query({}, function (response) {
+            if (response) {
+                vm.groups = response;
+                // Call the metsiMenu plugin and plug it to sidebar navigation
+                $timeout(function () {
+                    $element.metisMenu();
+                });
+            }
+        }, function (errorResponse) {
+        });
     }
 }
 
@@ -233,65 +80,12 @@ function ErrorPageController($state, $stateParams, $scope, JSONFormatterConfig) 
 }
 
 /**
- * LoginController
- */
-function LoginController($rootScope, $state, AuthenticationService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.userName = null;
-    vm.password = null;
-    vm.errorMsg = null;
-    vm.login = login;
-    vm.requestResetPassword = requestResetPassword;
-    vm.isSaving = false;
-
-    function login(event) {
-        event.preventDefault();
-        vm.isSaving = true;
-        AuthenticationService.login({
-                userName: vm.userName,
-                password: vm.password,
-                rememberMe: vm.rememberMe
-            },
-            function (data) {
-                vm.errorMsg = null;
-//            if ($state.current.name === 'register' || $state.current.name === 'activate' ||
-//                $state.current.name === 'finishReset' || $state.current.name === 'requestReset') {
-//                $state.go('home');
-//            }
-
-                $rootScope.$broadcast('authenticationSuccess');
-
-                // previousState was set in the authExpiredInterceptor before being redirected to login modal.
-                // since login is successful, go to stored previousState and clear previousState
-                if (AuthenticationService.getPreviousState()) {
-                    var previousState = AuthenticationService.getPreviousState();
-                    AuthenticationService.resetPreviousState();
-                    $state.go(previousState.name, previousState.params);
-                }
-
-                $state.go('dashboard');
-            },
-            function (data) {
-                vm.errorMsg = data.error_description;
-                vm.isSaving = false;
-            });
-    }
-
-    function requestResetPassword() {
-        $state.go('requestReset');
-    }
-}
-
-/**
  * NavbarController
  */
-function NavbarController($rootScope, $scope, $translate, $state, AuthenticationService, PrincipalService, ProfileService) {
+function NavbarController($rootScope, $scope, $translate, $state, ProfileService) {
     var vm = this;
 
     vm.isNavbarCollapsed = true;
-    vm.isAuthenticated = PrincipalService.isAuthenticated;
     vm.changeLanguage = changeLanguage;
 
     ProfileService.getProfileInfo().then(function (response) {
@@ -299,7 +93,6 @@ function NavbarController($rootScope, $scope, $translate, $state, Authentication
         vm.swaggerDisabled = response.swaggerDisabled;
     });
 
-    vm.logout = logout;
     vm.toggleNavbar = toggleNavbar;
     vm.collapseNavbar = collapseNavbar;
     vm.$state = $state;
@@ -309,11 +102,6 @@ function NavbarController($rootScope, $scope, $translate, $state, Authentication
     function changeLanguage(langKey) {
         $translate.use(langKey);
         $scope.language = langKey;
-    }
-
-    function logout() {
-        AuthenticationService.logout();
-        $state.go('login');
     }
 
     function toggleNavbar() {
@@ -328,261 +116,8 @@ function NavbarController($rootScope, $scope, $translate, $state, Authentication
 /**
  * FooterController
  */
-function FooterController($http, PrincipalService) {
+function FooterController($http) {
     var vm = this;
-
-    PrincipalService.hasAuthority('ROLE_DEVELOPER')
-        .then(function (result) {
-            if (result) {
-                $http({
-                    url: 'api/system/internet-ip',
-                    method: 'GET',
-                    transformResponse: [function (data) {
-                        return data;
-                    }]
-                }).then(function (response) {
-                    vm.ip = response.data;
-                });
-            }
-        });
-}
-
-/**
- * ProfileController
- */
-function ProfileController($state, PrincipalService, AccountService, AuthServerService, Upload) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.save = save;
-    vm.isSaving = false;
-    vm.profileAccount = null;
-    vm.file = null;
-    vm.uploading = false;
-    vm.uploadProgress = 0;
-    vm.upload = upload;
-
-    var authToken = AuthServerService.getToken();
-    if (authToken) {
-        vm.profilePhotoUrl = '/api/account/profile-photo?access_token=' + authToken.access_token;
-    }
-
-    /**
-     * Store the 'profile account' in a separate variable, and not in the shared 'account' variable.
-     */
-    var copyAccount = function (account) {
-        return {
-            activated: account.activated,
-            email: account.email,
-            mobileNo: parseInt(account.mobileNo),
-            firstName: account.firstName,
-            lastName: account.lastName,
-            userName: account.userName,
-            hasProfilePhoto: account.hasProfilePhoto
-        };
-    };
-
-    PrincipalService.identity().then(function (account) {
-        vm.profileAccount = copyAccount(account);
-    });
-
-    function save() {
-        vm.isSaving = true;
-        AccountService.update(vm.profileAccount,
-            function (response) {
-                vm.isSaving = false;
-                PrincipalService.identity(true).then(function (account) {
-                    vm.profileAccount = copyAccount(account);
-                });
-            },
-            function (response) {
-                vm.isSaving = false;
-            });
-    }
-
-    function upload(file) {
-        if (file) {
-            vm.uploading = true;
-            vm.uploadProgress = 30;
-            Upload.upload({
-                url: '/api/account/profile-photo/upload',
-                // the 'file' must match the parameter of backend
-                data: {file: file, description: "user profile"},
-                disableProgress: false
-            }).then(function (resp) {
-                vm.uploadProgress = 100;
-                vm.uploading = false;
-            }, function (resp) {
-                // if (resp.status > 0)
-                //     vm.errorMsg = resp.status + ': ' + resp.data;
-                vm.uploading = false;
-            }, function (evt) {
-                // does not work
-                vm.uploadProgress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-                vm.uploading = false;
-            });
-        }
-    }
-}
-
-/**
- * RegisterController
- */
-function RegisterController($state, $timeout, AuthenticationService, RegisterService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.register = register;
-    vm.isSaving = false;
-    vm.registerAccount = {};
-    vm.passwordNotMatch = false;
-
-    $timeout(function () {
-        angular.element('#userName').focus();
-    });
-
-    function register() {
-        if (vm.registerAccount.password !== vm.confirmPassword) {
-            vm.passwordNotMatch = true;
-        } else {
-            vm.isSaving = true;
-            RegisterService.save(vm.registerAccount,
-                function (account) {
-                    vm.isSaving = false;
-                    vm.passwordNotMatch = false;
-                    $state.go('login');
-                },
-                function (response) {
-                    AuthenticationService.logout();
-                    vm.isSaving = false;
-                    vm.passwordNotMatch = false;
-                });
-        }
-    }
-}
-
-/**
- * ActivationController
- */
-function ActivationController($state, $stateParams, ActivateService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.success = false;
-    vm.errorMessage = null;
-
-    if ($stateParams.key) {
-        ActivateService.get({key: $stateParams.key},
-            function (response) {
-                vm.success = true;
-                vm.fieldErrors = [];
-            },
-            function (response, headers) {
-                vm.success = false;
-                vm.errorMessage = response.data.message;
-            });
-    }
-}
-
-/**
- * ForgotPasswordController
- */
-function ForgotPasswordController($state, $timeout, PasswordResetInitService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.requestReset = requestReset;
-    vm.email = '';
-    vm.isSaving = false;
-    vm.success = false;
-    vm.errorMsg = null;
-
-    $timeout(function () {
-        angular.element('#email').focus();
-    });
-
-    function requestReset() {
-        vm.isSaving = true;
-        vm.success = false;
-        PasswordResetInitService.save(vm.email,
-            function (response) {
-                vm.isSaving = false;
-                vm.success = true;
-            },
-            function (response) {
-                vm.isSaving = false;
-                vm.success = false;
-                vm.errorMsg = response.error_description;
-            });
-    }
-}
-
-/**
- * ResetPasswordController
- */
-function ResetPasswordController($state, $stateParams, $timeout, PasswordResetFinishService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.resetPassword = resetPassword;
-    vm.password = '';
-    vm.confirmPassword = '';
-    vm.success = false;
-    vm.error = false;
-    vm.isSaving = false;
-    vm.keyMissing = angular.isUndefined($stateParams.key);
-
-    $timeout(function () {
-        angular.element('#password').focus();
-    });
-
-    function resetPassword() {
-        vm.success = false;
-        vm.error = false;
-        vm.isSaving = true;
-        PasswordResetFinishService.save({key: $stateParams.key, newPassword: vm.password},
-            function (response) {
-                vm.success = true;
-                vm.isSaving = false;
-            },
-            function (response) {
-                vm.success = false;
-                vm.error = true;
-                vm.isSaving = false;
-            });
-    }
-}
-
-/**
- * PasswordController
- */
-function PasswordController($state, PasswordService, PrincipalService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.save = save;
-    vm.isSaving = false;
-    vm.passwordNotMatch = false;
-
-    PrincipalService.identity().then(function (account) {
-        vm.account = account;
-    });
-
-    function save() {
-        if (vm.password !== vm.confirmPassword) {
-            vm.passwordNotMatch = true;
-        } else {
-            vm.passwordNotMatch = false;
-            vm.isSaving = true;
-            PasswordService.update(vm.password,
-                function (response) {
-                    vm.isSaving = false;
-                },
-                function (response) {
-                    vm.isSaving = false;
-                });
-        }
-    }
 }
 
 /**
@@ -1099,356 +634,6 @@ function HttpSessionController($state, AlertUtils, ParseLinksUtils, PAGINATION_C
     }
 }
 
-function AuditsController($state, $filter, AuditsService, ParseLinksUtils, PAGINATION_CONSTANTS) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.entities = null;
-    vm.links = null;
-    vm.loadAll = loadAll;
-    vm.page = 1;
-    vm.itemsPerPage = 20;
-    vm.previousMonth = previousMonth;
-    // Previous 1 month
-    vm.fromDate = null;
-    // Tomorrow
-    vm.toDate = null;
-    vm.today = today;
-    vm.totalItems = null;
-    vm.predicate = 'auditEventDate';
-    vm.reverse = false;
-
-    vm.today();
-    vm.previousMonth();
-    vm.loadAll();
-
-    function loadAll() {
-        var dateFormat = 'yyyy-MM-dd';
-        var fromDate = $filter('date')(vm.fromDate, dateFormat);
-        var toDate = $filter('date')(vm.toDate, dateFormat);
-        AuditsService.query({
-            page: vm.page - 1,
-            size: vm.itemsPerPage,
-            sort: [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')],
-            from: fromDate,
-            to: toDate
-        }, function (result, headers) {
-            vm.links = ParseLinksUtils.parse(headers('link'));
-            vm.totalItems = headers('X-Total-Count');
-            vm.entities = result;
-        });
-    }
-
-    // Date picker configuration
-    function today() {
-        // Today + 1 day - needed if the current day must be included
-        var today = new Date();
-        vm.toDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-    }
-
-    function previousMonth() {
-        var fromDate = new Date();
-        if (fromDate.getMonth() === 0) {
-            fromDate = new Date(fromDate.getFullYear() - 1, 11, fromDate.getDate());
-        } else {
-            fromDate = new Date(fromDate.getFullYear(), fromDate.getMonth() - 1, fromDate.getDate());
-        }
-        vm.fromDate = fromDate;
-    }
-}
-
-/**
- * TrackerController
- */
-function TrackerController($cookies, $http, TrackerService) {
-    // This controller uses a Websocket connection to receive user activities in real-time.
-    var vm = this;
-
-    vm.activities = [];
-
-    TrackerService.receive().then(null, null, function (activity) {
-        showActivity(activity);
-    });
-
-    function showActivity(activity) {
-        var existingActivity = false;
-        for (var index = 0; index < vm.activities.length; index++) {
-            if (vm.activities[index].sessionId === activity.sessionId) {
-                existingActivity = true;
-                if (activity.page === 'logout') {
-                    vm.activities.splice(index, 1);
-                } else {
-                    vm.activities[index] = activity;
-                }
-            }
-        }
-        if (!existingActivity && (activity.page !== 'logout')) {
-            vm.activities.push(activity);
-        }
-    }
-
-}
-
-/**
- * DictListController
- */
-function DictListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, DictService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.links = null;
-    vm.loadAll = loadAll;
-    vm.loadPage = loadPage;
-    vm.checkPressEnter = checkPressEnter;
-    vm.page = 1;
-    vm.setEnabled = setEnabled;
-    vm.totalItems = null;
-    vm.entities = [];
-    vm.predicate = pagingParams.predicate;
-    vm.reverse = pagingParams.ascending;
-    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
-    vm.transition = transition;
-    vm.criteria = criteria;
-    vm.del = del;
-
-    vm.loadAll();
-
-    function loadAll() {
-        DictService.query({
-            page: pagingParams.page - 1,
-            size: vm.itemsPerPage,
-            sort: sort(),
-            dictName: vm.criteria.dictName
-        }, function (result, headers) {
-            vm.links = ParseLinksUtils.parse(headers('link'));
-            vm.totalItems = headers('X-Total-Count');
-            vm.page = pagingParams.page;
-            vm.entities = result;
-        });
-    }
-
-    function sort() {
-        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
-        if (vm.predicate !== 'dictCode') {
-            // default sort column
-            result.push('dictCode,asc');
-        }
-        return result;
-    }
-
-    function loadPage(page) {
-        vm.page = page;
-        vm.transition();
-    }
-
-    function transition() {
-        $state.transitionTo($state.$current, {
-            page: vm.page,
-            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
-            dictName: vm.criteria.dictName
-        });
-    }
-
-    function checkPressEnter($event) {
-        //按下enter键重新查询数据
-        if ($event.keyCode == 13) {
-            vm.transition();
-        }
-    }
-
-    function setEnabled(entity, enabled) {
-        entity.enabled = enabled;
-        DictService.update(entity,
-            function () {
-                vm.loadAll();
-            },
-            function () {
-                entity.enabled = !enabled;
-            });
-    }
-
-    function del(id) {
-        AlertUtils.createDeleteConfirmation('数据有可能被其他数据所引用，删除之后可能出现一些问题，您确定删除吗?', function (isConfirm) {
-            if (isConfirm) {
-                DictService.del({id: id},
-                    function () {
-                        vm.loadAll();
-                    },
-                    function () {
-                    });
-            }
-        });
-    }
-}
-
-/**
- * DictDialogController
- */
-function DictDialogController($state, $stateParams, $uibModalInstance, DictService, entity) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.mode = $state.current.data.mode;
-    vm.entity = entity;
-    vm.isSaving = false;
-    vm.save = save;
-    vm.cancel = cancel;
-
-    function save() {
-        vm.isSaving = true;
-        if (vm.mode == 'edit') {
-            DictService.update(vm.entity, onSaveSuccess, onSaveError);
-        } else {
-            DictService.save(vm.entity, onSaveSuccess, onSaveError);
-        }
-    }
-
-    function onSaveSuccess(result) {
-        vm.isSaving = false;
-        $uibModalInstance.close(result);
-    }
-
-    function onSaveError(result) {
-        vm.isSaving = false;
-    }
-
-    function cancel() {
-        $uibModalInstance.dismiss('cancel');
-    }
-}
-
-/**
- * DictItemListController
- */
-function DictItemListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, DictService, DictItemService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.dicts = DictService.queryAll();
-    vm.links = null;
-    vm.loadAll = loadAll;
-    vm.loadPage = loadPage;
-    vm.checkPressEnter = checkPressEnter;
-    vm.page = 1;
-    vm.setEnabled = setEnabled;
-    vm.totalItems = null;
-    vm.entities = [];
-    vm.predicate = pagingParams.predicate;
-    vm.reverse = pagingParams.ascending;
-    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
-    vm.transition = transition;
-    vm.criteria = criteria;
-    vm.del = del;
-
-    vm.loadAll();
-
-    function loadAll() {
-        DictItemService.query({
-            page: pagingParams.page - 1,
-            size: vm.itemsPerPage,
-            sort: sort(),
-            dictCode: vm.criteria.dictCode,
-            dictItemName: vm.criteria.dictItemName
-        }, function (result, headers) {
-            vm.links = ParseLinksUtils.parse(headers('link'));
-            vm.totalItems = headers('X-Total-Count');
-            vm.page = pagingParams.page;
-            vm.entities = result;
-        });
-    }
-
-    function sort() {
-        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
-        if (vm.predicate !== 'dictCode') {
-            // default sort column
-            result.push('dictCode,asc');
-        }
-        return result;
-    }
-
-    function loadPage(page) {
-        vm.page = page;
-        vm.transition();
-    }
-
-    function transition() {
-        $state.transitionTo($state.$current, {
-            page: vm.page,
-            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
-            dictCode: vm.criteria.dictCode,
-            dictItemName: vm.criteria.dictItemName
-        });
-    }
-
-    function checkPressEnter($event) {
-        //按下enter键重新查询数据
-        if ($event.keyCode == 13) {
-            vm.transition();
-        }
-    }
-
-    function setEnabled(entity, enabled) {
-        entity.enabled = enabled;
-        DictItemService.update(entity,
-            function () {
-                vm.loadAll();
-            },
-            function () {
-                entity.enabled = !enabled;
-            });
-    }
-
-    function del(id) {
-        AlertUtils.createDeleteConfirmation('数据有可能被其他数据所引用，删除之后可能出现一些问题，您确定删除吗?', function (isConfirm) {
-            if (isConfirm) {
-                DictItemService.del({id: id},
-                    function () {
-                        vm.loadAll();
-                    },
-                    function () {
-                    });
-            }
-        });
-    }
-}
-
-/**
- * DictItemDialogController
- */
-function DictItemDialogController($state, $stateParams, $uibModalInstance, DictService, DictItemService, entity) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.dicts = DictService.queryAll({enabled: true});
-    vm.mode = $state.current.data.mode;
-    vm.entity = entity;
-    vm.isSaving = false;
-    vm.save = save;
-    vm.cancel = cancel;
-
-    function save() {
-        vm.isSaving = true;
-        if (vm.mode == 'edit') {
-            DictItemService.update(vm.entity, onSaveSuccess, onSaveError);
-        } else {
-            DictItemService.save(vm.entity, onSaveSuccess, onSaveError);
-        }
-    }
-
-    function onSaveSuccess(result) {
-        vm.isSaving = false;
-        $uibModalInstance.close(result);
-    }
-
-    function onSaveError(result) {
-        vm.isSaving = false;
-    }
-
-    function cancel() {
-        $uibModalInstance.dismiss('cancel');
-    }
-}
-
 /**
  * LoggerController
  */
@@ -1513,6 +698,145 @@ function ControlController($state, $http, AlertUtils) {
 }
 
 /**
+ * AppListController
+ */
+function AppListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, AppService) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
+    vm.links = null;
+    vm.loadAll = loadAll;
+    vm.loadPage = loadPage;
+    vm.checkPressEnter = checkPressEnter;
+    vm.page = 1;
+    vm.setEnabled = setEnabled;
+    vm.totalItems = null;
+    vm.entities = [];
+    vm.predicate = pagingParams.predicate;
+    vm.reverse = pagingParams.ascending;
+    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
+    vm.transition = transition;
+    vm.criteria = criteria;
+    vm.del = del;
+
+    vm.loadAll();
+
+    function loadAll() {
+        AppService.query({
+            page: pagingParams.page - 1,
+            size: vm.itemsPerPage,
+            sort: sort()
+        }, function (result, headers) {
+            vm.links = ParseLinksUtils.parse(headers('link'));
+            vm.totalItems = headers('X-Total-Count');
+            vm.page = pagingParams.page;
+            vm.entities = result;
+        });
+    }
+
+    function sort() {
+        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
+        if (vm.predicate !== 'name') {
+            // default sort column
+            result.push('name,asc');
+        }
+        return result;
+    }
+
+    function loadPage(page) {
+        vm.page = page;
+        vm.transition();
+    }
+
+    function transition() {
+        $state.transitionTo($state.$current, {
+            page: vm.page,
+            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')
+        });
+    }
+
+    function checkPressEnter($event) {
+        //按下enter键重新查询数据
+        if ($event.keyCode == 13) {
+            vm.transition();
+        }
+    }
+
+    function setEnabled(entity, enabled) {
+        entity.enabled = enabled;
+        AppService.update(entity,
+            function () {
+                vm.loadAll();
+            },
+            function () {
+                entity.enabled = !enabled;
+            });
+    }
+
+    function del(name) {
+        AlertUtils.createDeleteConfirmation('数据有可能被其他数据所引用，删除之后可能出现一些问题，您确定删除吗?', function (isConfirm) {
+            if (isConfirm) {
+                AppService.del({extension: name},
+                    function () {
+                        vm.loadAll();
+                    },
+                    function () {
+                    });
+            }
+        });
+    }
+}
+
+/**
+ * AppDialogController
+ */
+function AppDialogController($state, $stateParams, $uibModalInstance, AppService, entity) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.mode = $state.current.data.mode;
+    vm.entity = entity;
+    vm.isSaving = false;
+    vm.save = save;
+    vm.cancel = cancel;
+
+    function save() {
+        vm.isSaving = true;
+        if (vm.mode == 'edit') {
+            AppService.update(vm.entity, onSaveSuccess, onSaveError);
+        } else {
+            AppService.save(vm.entity, onSaveSuccess, onSaveError);
+        }
+    }
+
+    function onSaveSuccess(result) {
+        vm.isSaving = false;
+        $uibModalInstance.close(result);
+    }
+
+    function onSaveError(result) {
+        vm.isSaving = false;
+    }
+
+    function cancel() {
+        $uibModalInstance.dismiss('cancel');
+    }
+}
+
+/**
+ * AppDetailsController
+ */
+function AppDetailsController($state, $stateParams, entity) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
+    vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
+    vm.entity = entity;
+}
+
+/**
  * AuthorityListController
  */
 function AuthorityListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, AuthorityService) {
@@ -1572,7 +896,7 @@ function AuthorityListController($state, AlertUtils, ParseLinksUtils, PAGINATION
     }
 
     function checkPressEnter($event) {
-        //按下enter键重新查询数据 
+        //按下enter键重新查询数据
         if ($event.keyCode == 13) {
             vm.transition();
         }
@@ -1637,1001 +961,4 @@ function AuthorityDialogController($state, $stateParams, $uibModalInstance, Auth
     function cancel() {
         $uibModalInstance.dismiss('cancel');
     }
-}
-
-/**
- * UserListController
- */
-function UserListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, UserService, PrincipalService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.currentAccount = null;
-    vm.links = null;
-    vm.loadAll = loadAll;
-    vm.loadPage = loadPage;
-    vm.checkPressEnter = checkPressEnter;
-    vm.page = 1;
-    vm.setActive = setActive;
-    vm.setEnabled = setEnabled;
-    vm.totalItems = null;
-    vm.entities = [];
-    vm.predicate = pagingParams.predicate;
-    vm.reverse = pagingParams.ascending;
-    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
-    vm.transition = transition;
-    vm.criteria = criteria;
-    vm.del = del;
-    vm.resetPassword = resetPassword;
-
-    vm.loadAll();
-
-    PrincipalService.identity().then(function (account) {
-        vm.currentAccount = account;
-    });
-
-    function loadAll() {
-        UserService.query({
-            page: pagingParams.page - 1,
-            size: vm.itemsPerPage,
-            sort: sort(),
-            login: vm.criteria.login
-        }, function (result, headers) {
-            //hide anonymous user from user management: it's a required user for Spring Security
-            for (var i in result) {
-                if (result[i]['userName'] === 'anonymoususer') {
-                    result.splice(i, co1);
-                }
-            }
-            vm.links = ParseLinksUtils.parse(headers('link'));
-            vm.totalItems = headers('X-Total-Count');
-            vm.page = pagingParams.page;
-            vm.entities = result;
-        });
-    }
-
-    function sort() {
-        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
-        if (vm.predicate !== 'modifiedTime') {
-            // default sort column
-            result.push('modifiedTime,desc');
-        }
-        return result;
-    }
-
-    function loadPage(page) {
-        vm.page = page;
-        vm.transition();
-    }
-
-    function transition() {
-        $state.transitionTo($state.$current, {
-            page: vm.page,
-            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
-            login: vm.criteria.login
-        });
-    }
-
-    function checkPressEnter($event) {
-        //按下enter键重新查询数据 
-        if ($event.keyCode == 13) {
-            vm.transition();
-        }
-    }
-
-    function setActive(user, isActivated) {
-        user.activated = isActivated;
-        UserService.update(user, function () {
-                vm.loadAll();
-            },
-            function () {
-                user.activated = !isActivated;
-            });
-    }
-
-    function setEnabled(entity, enabled) {
-        entity.enabled = enabled;
-        UserService.update(entity,
-            function () {
-                vm.loadAll();
-            },
-            function () {
-                entity.enabled = !enabled;
-            });
-    }
-
-    function del(userName) {
-        AlertUtils.createDeleteConfirmation('数据有可能被其他数据所引用，删除之后可能出现一些问题，您确定删除吗?', function (isConfirm) {
-            if (isConfirm) {
-                UserService.del({userName: userName},
-                    function () {
-                        vm.loadAll();
-                    },
-                    function () {
-                    });
-            }
-        });
-    }
-
-    function resetPassword(userName) {
-        AlertUtils.createResetPasswordConfirmation('密码恢复到初始值?', function (isConfirm) {
-            if (isConfirm) {
-                UserService.resetPassword({userName: userName},
-                    function () {
-                    });
-            }
-        });
-    }
-}
-
-/**
- * UserDialogController
- */
-function UserDialogController($state, $stateParams, $uibModalInstance, UserService, AccountService, entity) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.mode = $state.current.data.mode;
-    vm.authorities = AccountService.queryAuthorityNames({enabled: true});
-    vm.entity = entity;
-    vm.isSaving = false;
-    vm.save = save;
-    vm.cancel = cancel;
-
-    function save() {
-        vm.isSaving = true;
-        if (vm.mode == 'edit') {
-            UserService.update(vm.entity, onSaveSuccess, onSaveError);
-        } else {
-            UserService.save(vm.entity, onSaveSuccess, onSaveError);
-        }
-    }
-
-    function onSaveSuccess(result) {
-        vm.isSaving = false;
-        $uibModalInstance.close(result);
-    }
-
-    function onSaveError(result) {
-        vm.isSaving = false;
-    }
-
-    function cancel() {
-        $uibModalInstance.dismiss('cancel');
-    }
-}
-
-/**
- * UserDetailsController
- */
-function UserDetailsController($state, $stateParams, entity, AuthServerService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
-    vm.entity = entity;
-
-    var authToken = AuthServerService.getToken();
-    if (authToken) {
-        vm.entity.profilePhotoUrl = '/api/user/profile-photo/' + vm.entity.userName + '?access_token=' + authToken.access_token;
-    }
-}
-
-/**
- * AppListController
- */
-function AppListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, AppService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.links = null;
-    vm.loadAll = loadAll;
-    vm.loadPage = loadPage;
-    vm.checkPressEnter = checkPressEnter;
-    vm.page = 1;
-    vm.setEnabled = setEnabled;
-    vm.totalItems = null;
-    vm.entities = [];
-    vm.predicate = pagingParams.predicate;
-    vm.reverse = pagingParams.ascending;
-    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
-    vm.transition = transition;
-    vm.criteria = criteria;
-    vm.del = del;
-
-    vm.loadAll();
-
-    function loadAll() {
-        AppService.query({
-            page: pagingParams.page - 1,
-            size: vm.itemsPerPage,
-            sort: sort()
-        }, function (result, headers) {
-            vm.links = ParseLinksUtils.parse(headers('link'));
-            vm.totalItems = headers('X-Total-Count');
-            vm.page = pagingParams.page;
-            vm.entities = result;
-        });
-    }
-
-    function sort() {
-        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
-        if (vm.predicate !== 'name') {
-            // default sort column
-            result.push('name,asc');
-        }
-        return result;
-    }
-
-    function loadPage(page) {
-        vm.page = page;
-        vm.transition();
-    }
-
-    function transition() {
-        $state.transitionTo($state.$current, {
-            page: vm.page,
-            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')
-        });
-    }
-
-    function checkPressEnter($event) {
-        //按下enter键重新查询数据 
-        if ($event.keyCode == 13) {
-            vm.transition();
-        }
-    }
-
-    function setEnabled(entity, enabled) {
-        entity.enabled = enabled;
-        AppService.update(entity,
-            function () {
-                vm.loadAll();
-            },
-            function () {
-                entity.enabled = !enabled;
-            });
-    }
-
-    function del(name) {
-        AlertUtils.createDeleteConfirmation('数据有可能被其他数据所引用，删除之后可能出现一些问题，您确定删除吗?', function (isConfirm) {
-            if (isConfirm) {
-                AppService.del({extension: name},
-                    function () {
-                        vm.loadAll();
-                    },
-                    function () {
-                    });
-            }
-        });
-    }
-}
-
-/**
- * AppDialogController
- */
-function AppDialogController($state, $stateParams, $uibModalInstance, AppService, AccountService, entity) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.mode = $state.current.data.mode;
-    vm.authorities = AccountService.queryAuthorityNames({enabled: true});
-    vm.entity = entity;
-    vm.isSaving = false;
-    vm.save = save;
-    vm.cancel = cancel;
-
-    function save() {
-        vm.isSaving = true;
-        if (vm.mode == 'edit') {
-            AppService.update(vm.entity, onSaveSuccess, onSaveError);
-        } else {
-            AppService.save(vm.entity, onSaveSuccess, onSaveError);
-        }
-    }
-
-    function onSaveSuccess(result) {
-        vm.isSaving = false;
-        $uibModalInstance.close(result);
-    }
-
-    function onSaveError(result) {
-        vm.isSaving = false;
-    }
-
-    function cancel() {
-        $uibModalInstance.dismiss('cancel');
-    }
-}
-
-/**
- * AppDetailsController
- */
-function AppDetailsController($state, $stateParams, entity) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
-    vm.entity = entity;
-}
-
-/**
- * AdminMenuListController
- */
-function AdminMenuListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, AdminMenuService, AppService, APP_NAME) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.apps = AppService.queryAll();
-    vm.links = null;
-    vm.loadAll = loadAll;
-    vm.loadPage = loadPage;
-    vm.checkPressEnter = checkPressEnter;
-    vm.page = 1;
-    vm.totalItems = null;
-    vm.entities = [];
-    vm.predicate = pagingParams.predicate;
-    vm.reverse = pagingParams.ascending;
-    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
-    vm.transition = transition;
-    vm.criteria = criteria;
-    vm.del = del;
-    vm.raiseSeq = raiseSeq;
-    vm.lowerSeq = lowerSeq;
-
-    vm.loadAll();
-
-    function loadAll() {
-        AdminMenuService.query({
-            page: pagingParams.page - 1,
-            size: vm.itemsPerPage,
-            sort: sort(),
-            appName: vm.criteria.app
-        }, function (result, headers) {
-            vm.links = ParseLinksUtils.parse(headers('link'));
-            vm.totalItems = headers('X-Total-Count');
-            vm.page = pagingParams.page;
-            vm.entities = result;
-        });
-    }
-
-    function sort() {
-        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
-        if (vm.predicate !== 'modifiedTime') {
-            // default sort column
-            result.push('modifiedTime,desc');
-        }
-        return result;
-    }
-
-    function loadPage(page) {
-        vm.page = page;
-        vm.transition();
-    }
-
-    function transition() {
-        $state.transitionTo($state.$current, {
-            page: vm.page,
-            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
-            app: vm.criteria.app
-        });
-    }
-
-    function checkPressEnter($event) {
-        //按下enter键重新查询数据 
-        if ($event.keyCode == 13) {
-            vm.transition();
-        }
-    }
-
-    function del(id) {
-        AlertUtils.createDeleteConfirmation('数据有可能被其他数据所引用，删除之后可能出现一些问题，您确定删除吗?', function (isConfirm) {
-            if (isConfirm) {
-                AdminMenuService.del({id: id},
-                    function () {
-                        vm.loadAll();
-                    },
-                    function () {
-                    });
-            }
-        });
-    }
-
-    function raiseSeq(id) {
-        AdminMenuService.raiseSeq({id: id},
-            function () {
-                vm.loadAll()
-            });
-    }
-
-    function lowerSeq(id) {
-        AdminMenuService.lowerSeq({id: id},
-            function () {
-                vm.loadAll()
-            });
-    }
-}
-
-/**
- * AdminMenuDialogController
- */
-function AdminMenuDialogController($state, $stateParams, $uibModalInstance, AdminMenuService, AppService, APP_NAME, entity) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.mode = $state.current.data.mode;
-    vm.apps = AppService.queryAll();
-    vm.searchParentMenus = searchParentMenus;
-    vm.entity = entity;
-    vm.isSaving = false;
-    vm.save = save;
-    vm.cancel = cancel;
-
-    vm.searchParentMenus();
-
-    function save() {
-        vm.isSaving = true;
-        vm.entity.level = 1;
-        if (vm.entity.parentId) {
-            vm.entity.level = 2;
-        }
-        if (vm.mode == 'edit') {
-            AdminMenuService.update(vm.entity, onSaveSuccess, onSaveError);
-        } else {
-            AdminMenuService.save(vm.entity, onSaveSuccess, onSaveError);
-        }
-    }
-
-    function searchParentMenus() {
-        if (vm.entity && vm.entity.appName) {
-            vm.parentMenus = AdminMenuService.queryParentMenu({app: vm.entity.appName});
-        } else {
-            vm.parentMenus = [];
-        }
-    }
-
-    function onSaveSuccess(result) {
-        vm.isSaving = false;
-        $uibModalInstance.close(result);
-    }
-
-    function onSaveError(result) {
-        vm.isSaving = false;
-    }
-
-    function cancel() {
-        $uibModalInstance.dismiss('cancel');
-    }
-}
-
-/**
- * AuthorityAdminMenuController
- */
-function AuthorityAdminMenuController($state, AuthorityAdminMenuService, AppAuthorityService, AppService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.apps = AppService.queryAll();
-    vm.authorities = [];
-    vm.allMenus = [];
-    vm.isSaving = false;
-    vm.searchAuthorities = searchAuthorities;
-    vm.searchMenus = searchMenus;
-    vm.save = save;
-
-    function searchAuthorities() {
-        if (vm.criteria && vm.criteria.appName) {
-            vm.authorities = AppAuthorityService.queryByAppName({id: vm.criteria.appName});
-        } else {
-            vm.authorities = [];
-        }
-    }
-
-    function searchMenus() {
-        vm.allMenus = [];
-        if (vm.criteria.authorityName) {
-            AuthorityAdminMenuService.queryMenusByAuthorityName({
-                appName: vm.criteria.appName,
-                authorityName: vm.criteria.authorityName
-            }, function (response) {
-                vm.allMenus = response;
-            });
-        }
-    }
-
-    function save() {
-        vm.isSaving = true;
-        if (vm.criteria.appName && vm.criteria.authorityName) {
-            var adminMenuIds = getAllCheckIds(vm.allMenus, []);
-            AuthorityAdminMenuService.updateAuthorityMenus({
-                    appName: vm.criteria.appName,
-                    authorityName: vm.criteria.authorityName,
-                    adminMenuIds: adminMenuIds
-                },
-                function (response) {
-                    vm.isSaving = false;
-                }, function (errorResponse) {
-                    vm.isSaving = false;
-                });
-        }
-    }
-
-    function getAllCheckIds(allMenus, adminMenuIds) {
-        for (var i = 0; i < allMenus.length; i++) {
-            if (allMenus[i].checked) {
-                adminMenuIds.push(allMenus[i].id);
-            }
-            if (allMenus[i].children) {
-                getAllCheckIds(allMenus[i].children, adminMenuIds);
-            }
-        }
-        return adminMenuIds;
-    }
-}
-
-/**
- * OAuth2ClientListController
- */
-function OAuth2ClientListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, OAuth2ClientService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.links = null;
-    vm.loadAll = loadAll;
-    vm.loadPage = loadPage;
-    vm.checkPressEnter = checkPressEnter;
-    vm.page = 1;
-    vm.totalItems = null;
-    vm.entities = [];
-    vm.predicate = pagingParams.predicate;
-    vm.reverse = pagingParams.ascending;
-    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
-    vm.transition = transition;
-    vm.criteria = criteria;
-    vm.del = del;
-
-    vm.loadAll();
-
-    function loadAll() {
-        OAuth2ClientService.query({
-            page: pagingParams.page - 1,
-            size: vm.itemsPerPage,
-            sort: sort(),
-            clientId: vm.criteria.clientId
-        }, function (result, headers) {
-            vm.links = ParseLinksUtils.parse(headers('link'));
-            vm.totalItems = headers('X-Total-Count');
-            vm.page = pagingParams.page;
-            vm.entities = result;
-        });
-    }
-
-    function sort() {
-        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
-        if (vm.predicate !== 'client_id') {
-            // default sort column
-            result.push('client_id,asc');
-        }
-        return result;
-    }
-
-    function loadPage(page) {
-        vm.page = page;
-        vm.transition();
-    }
-
-    function transition() {
-        $state.transitionTo($state.$current, {
-            page: vm.page,
-            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
-            clientId: vm.criteria.clientId
-        });
-    }
-
-    function checkPressEnter($event) {
-        //按下enter键重新查询数据 
-        if ($event.keyCode == 13) {
-            vm.transition();
-        }
-    }
-
-    function del(id) {
-        AlertUtils.createDeleteConfirmation('数据有可能被其他数据所引用，删除之后可能出现一些问题，您确定删除吗?', function (isConfirm) {
-            if (isConfirm) {
-                OAuth2ClientService.del({id: id},
-                    function () {
-                        vm.loadAll();
-                    },
-                    function () {
-                    });
-            }
-        });
-    }
-}
-
-/**
- * OAuth2ClientDialogController
- */
-function OAuth2ClientDialogController($scope, $state, $stateParams, $uibModalInstance, OAuth2ClientService, entity) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.mode = $state.current.data.mode;
-    vm.entity = entity;
-    vm.isSaving = false;
-    vm.save = save;
-    vm.cancel = cancel;
-    vm.addUri = addUri;
-    vm.delUri = delUri;
-
-    if (vm.mode == 'create') {
-        vm.entity.redirect_uri.push("");
-    }
-
-    $scope.$watch('vm.entity.scope', function (newValue) {
-        if (newValue) {
-            if (_.isArray(newValue)) {
-                vm.entity.scopeArray = newValue;
-            } else {
-                vm.entity.scopeArray = newValue.split(',');
-            }
-        } else {
-            vm.entity.scopeArray = [];
-        }
-    });
-    vm.entity.scopeArray = vm.entity.scope;
-
-
-    function save() {
-        vm.isSaving = true;
-
-        vm.entity.autoapprove = _.intersection(vm.entity.autoapprove, vm.entity.scopeArray);
-
-        if (vm.mode == 'edit') {
-            OAuth2ClientService.update(vm.entity, onSaveSuccess, onSaveError);
-        } else {
-            OAuth2ClientService.save(vm.entity, onSaveSuccess, onSaveError);
-        }
-    }
-
-    function onSaveSuccess(result) {
-        vm.isSaving = false;
-        $uibModalInstance.close(result);
-    }
-
-    function onSaveError(result) {
-        vm.isSaving = false;
-    }
-
-    function cancel() {
-        $uibModalInstance.dismiss('cancel');
-    }
-
-    function addUri() {
-        vm.entity.redirect_uri.length++;
-    }
-
-    function delUri(index) {
-        // Remove element
-        vm.entity.redirect_uri.splice(index, 1);
-    }
-}
-
-/**
- * OAuth2ClientDetailsController
- */
-function OAuth2ClientDetailsController($state, $stateParams, entity) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
-    vm.entity = entity;
-}
-
-/**
- * OAuth2AccessTokenListController
- */
-function OAuth2AccessTokenListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, OAuth2AccessTokenService, AuthServerService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.currentAccessToken = AuthServerService.getAccessToken();
-    vm.links = null;
-    vm.loadAll = loadAll;
-    vm.loadPage = loadPage;
-    vm.checkPressEnter = checkPressEnter;
-    vm.page = 1;
-    vm.totalItems = null;
-    vm.entities = [];
-    vm.predicate = pagingParams.predicate;
-    vm.reverse = pagingParams.ascending;
-    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
-    vm.transition = transition;
-    vm.criteria = criteria;
-    vm.del = del;
-    vm.goRefreshToken = goRefreshToken;
-
-    vm.loadAll();
-
-    function loadAll() {
-        OAuth2AccessTokenService.query({
-            page: pagingParams.page - 1,
-            size: vm.itemsPerPage,
-            sort: sort(),
-            tokenId: vm.criteria.tokenId,
-            clientId: vm.criteria.clientId,
-            userName: vm.criteria.userName,
-            refreshToken: vm.criteria.refreshToken
-        }, function (result, headers) {
-            vm.links = ParseLinksUtils.parse(headers('link'));
-            vm.totalItems = headers('X-Total-Count');
-            vm.page = pagingParams.page;
-            vm.entities = result;
-        });
-    }
-
-    function sort() {
-        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
-        if (vm.predicate !== 'modifiedTime') {
-            // default sort column
-            result.push('modifiedTime,desc');
-        }
-        return result;
-    }
-
-    function loadPage(page) {
-        vm.page = page;
-        vm.transition();
-    }
-
-    function transition() {
-        $state.transitionTo($state.$current, {
-            page: vm.page,
-            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
-            tokenId: vm.criteria.tokenId,
-            clientId: vm.criteria.clientId,
-            userName: vm.criteria.userName,
-            refreshToken: vm.criteria.refreshToken
-        });
-    }
-
-    function checkPressEnter($event) {
-        //按下enter键重新查询数据 
-        if ($event.keyCode == 13) {
-            vm.transition();
-        }
-    }
-
-    function del(id) {
-        AlertUtils.createDeleteConfirmation('删除会使该用户退出系统，您确定删除吗?', function (isConfirm) {
-            if (isConfirm) {
-                OAuth2AccessTokenService.del({id: id},
-                    function () {
-                        vm.loadAll();
-                    },
-                    function () {
-                    });
-            }
-        });
-    }
-
-    function goRefreshToken(refreshToken) {
-        $state.go('security.oauth2-refresh-token-list', {'tokenId': refreshToken});
-    }
-}
-
-/**
- * OAuth2AccessTokenDetailsController
- */
-function OAuth2AccessTokenDetailsController($state, $stateParams, entity) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
-    vm.entity = entity;
-}
-
-/**
- * OAuth2RefreshTokenListController
- */
-function OAuth2RefreshTokenListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, OAuth2RefreshTokenService, AuthServerService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.currentRefreshToken = AuthServerService.getRefreshToken();
-    vm.links = null;
-    vm.loadAll = loadAll;
-    vm.loadPage = loadPage;
-    vm.checkPressEnter = checkPressEnter;
-    vm.page = 1;
-    vm.totalItems = null;
-    vm.entities = [];
-    vm.predicate = pagingParams.predicate;
-    vm.reverse = pagingParams.ascending;
-    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
-    vm.transition = transition;
-    vm.criteria = criteria;
-    vm.del = del;
-
-    vm.loadAll();
-
-    function loadAll() {
-        OAuth2RefreshTokenService.query({
-            page: pagingParams.page - 1,
-            size: vm.itemsPerPage,
-            sort: sort(),
-            tokenId: vm.criteria.tokenId,
-            clientId: vm.criteria.clientId,
-            userName: vm.criteria.userName
-        }, function (result, headers) {
-            vm.links = ParseLinksUtils.parse(headers('link'));
-            vm.totalItems = headers('X-Total-Count');
-            vm.page = pagingParams.page;
-            vm.entities = result;
-        });
-    }
-
-    function sort() {
-        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
-        if (vm.predicate !== 'modifiedTime') {
-            // default sort column
-            result.push('modifiedTime,desc');
-        }
-        return result;
-    }
-
-    function loadPage(page) {
-        vm.page = page;
-        vm.transition();
-    }
-
-    function transition() {
-        $state.transitionTo($state.$current, {
-            page: vm.page,
-            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
-            tokenId: vm.criteria.tokenId,
-            clientId: vm.criteria.clientId,
-            userName: vm.criteria.userName
-        });
-    }
-
-    function checkPressEnter($event) {
-        //按下enter键重新查询数据 
-        if ($event.keyCode == 13) {
-            vm.transition();
-        }
-    }
-
-    function del(id) {
-        AlertUtils.createDeleteConfirmation('删除会使该用户退出系统，您确定删除吗?', function (isConfirm) {
-            if (isConfirm) {
-                OAuth2RefreshTokenService.del({id: id},
-                    function () {
-                        vm.loadAll();
-                    },
-                    function () {
-                    });
-            }
-        });
-    }
-}
-
-/**
- * OAuth2RefreshTokenDetailsController
- */
-function OAuth2RefreshTokenDetailsController($state, $stateParams, entity) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
-    vm.entity = entity;
-}
-
-/**
- * OAuth2ApprovalListController
- */
-function OAuth2ApprovalListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, OAuth2ApprovalService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.links = null;
-    vm.loadAll = loadAll;
-    vm.loadPage = loadPage;
-    vm.checkPressEnter = checkPressEnter;
-    vm.page = 1;
-    vm.totalItems = null;
-    vm.entities = [];
-    vm.predicate = pagingParams.predicate;
-    vm.reverse = pagingParams.ascending;
-    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
-    vm.transition = transition;
-    vm.criteria = criteria;
-    vm.del = del;
-
-    vm.loadAll();
-
-    function loadAll() {
-        OAuth2ApprovalService.query({
-            page: pagingParams.page - 1,
-            size: vm.itemsPerPage,
-            sort: sort(),
-            approvalId: vm.criteria.approvalId,
-            clientId: vm.criteria.clientId,
-            userName: vm.criteria.userName
-        }, function (result, headers) {
-            vm.links = ParseLinksUtils.parse(headers('link'));
-            vm.totalItems = headers('X-Total-Count');
-            vm.page = pagingParams.page;
-            vm.entities = result;
-        });
-    }
-
-    function sort() {
-        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
-        if (vm.predicate !== 'clientId') {
-            // default sort column
-            result.push('clientId,asc');
-        }
-        return result;
-    }
-
-    function loadPage(page) {
-        vm.page = page;
-        vm.transition();
-    }
-
-    function transition() {
-        $state.transitionTo($state.$current, {
-            page: vm.page,
-            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
-            approvalId: vm.criteria.approvalId,
-            clientId: vm.criteria.clientId,
-            userName: vm.criteria.userName
-        });
-    }
-
-    function checkPressEnter($event) {
-        //按下enter键重新查询数据 
-        if ($event.keyCode == 13) {
-            vm.transition();
-        }
-    }
-
-    function del(id) {
-        AlertUtils.createDeleteConfirmation('删除会使该用户退出系统，您确定删除吗?', function (isConfirm) {
-            if (isConfirm) {
-                OAuth2ApprovalService.del({id: id},
-                    function () {
-                        vm.loadAll();
-                    },
-                    function () {
-                    });
-            }
-        });
-    }
-}
-
-/**
- * OAuth2ApprovalDetailsController
- */
-function OAuth2ApprovalDetailsController($state, $stateParams, entity, $scope, $rootScope) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
-    vm.entity = entity;
 }

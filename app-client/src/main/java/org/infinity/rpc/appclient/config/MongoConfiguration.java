@@ -2,10 +2,6 @@ package org.infinity.rpc.appclient.config;
 
 import com.github.mongobee.Mongobee;
 import com.mongodb.MongoClient;
-import org.infinity.rpc.appclient.config.oauth2.OAuth2AccessTokenReadConverter;
-import org.infinity.rpc.appclient.config.oauth2.OAuth2AuthenticationReadConverter;
-import org.infinity.rpc.appclient.config.oauth2.OAuth2GrantedAuthorityTokenReadConverter;
-import org.infinity.rpc.appclient.config.oauth2.OAuth2RefreshTokenReadConverter;
 import org.infinity.rpc.appclient.setup.DatabaseInitialSetup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.convert.*;
@@ -25,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-@EnableMongoAuditing(auditorAwareRef = "springSecurityAuditorAware")
 public class MongoConfiguration {
 
     private final Logger               LOGGER = LoggerFactory.getLogger(MongoConfiguration.class);
@@ -47,10 +41,6 @@ public class MongoConfiguration {
     @Bean
     public MongoCustomConversions customConversions() {
         List<Converter<?, ?>> converters = new ArrayList<>();
-        converters.add(new OAuth2AccessTokenReadConverter());
-        converters.add(new OAuth2RefreshTokenReadConverter());
-        converters.add(new OAuth2AuthenticationReadConverter());
-        converters.add(new OAuth2GrantedAuthorityTokenReadConverter());
         return new MongoCustomConversions(converters);
     }
 
