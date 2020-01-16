@@ -1,6 +1,5 @@
 package org.infinity.rpc.appclient.controller;
 
-import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -27,7 +26,6 @@ public class TestController {
      */
     @ApiOperation("测试Request线程安全")
     @GetMapping("/open-api/test/threadsafe")
-    @Timed
     public void testThreadSafe(@RequestParam(value = "key", required = true) String key) throws InterruptedException {
         Set<String> keys = new HashSet<>();
         if (keys.contains(key)) {

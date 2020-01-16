@@ -1,6 +1,5 @@
 package org.infinity.rpc.appclient.controller;
 
-import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -32,7 +31,6 @@ public class AdminMenuController {
     @ApiOperation("查询菜单")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
     @GetMapping("/api/admin-menu/menus")
-    @Timed
     public ResponseEntity<List<MenuTreeNode>> menus() {
         List<MenuTreeNode> results = adminMenuService.getMenus();
         return ResponseEntity.ok(results);

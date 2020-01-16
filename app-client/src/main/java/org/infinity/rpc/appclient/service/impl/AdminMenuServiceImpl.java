@@ -1,6 +1,5 @@
 package org.infinity.rpc.appclient.service.impl;
 
-import com.codahale.metrics.annotation.Timed;
 import org.infinity.rpc.appclient.domain.AdminMenu;
 import org.infinity.rpc.appclient.entity.MenuTree;
 import org.infinity.rpc.appclient.entity.MenuTreeNode;
@@ -19,7 +18,6 @@ public class AdminMenuServiceImpl implements AdminMenuService {
     private AdminMenuRepository       adminMenuRepository;
 
     @Override
-    @Timed
     public List<MenuTreeNode> getMenus() {
         List<AdminMenu> adminMenus = adminMenuRepository.findAll();
         return this.groupAdminMenu(adminMenus);

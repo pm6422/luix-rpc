@@ -1,9 +1,7 @@
 package org.infinity.rpc.appclient.controller;
 
-import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.*;
 import org.infinity.rpc.appclient.domain.App;
-import org.infinity.rpc.appclient.domain.Authority;
 import org.infinity.rpc.appclient.dto.AppDTO;
 import org.infinity.rpc.appclient.exception.NoDataException;
 import org.infinity.rpc.appclient.repository.AppRepository;
@@ -18,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -46,8 +43,6 @@ public class AppController {
     @ApiOperation("创建应用")
     @ApiResponses(value = {@ApiResponse(code = SC_CREATED, message = "成功创建")})
     @PostMapping("/api/app/apps")
-    @Secured({Authority.ADMIN})
-    @Timed
     public ResponseEntity<Void> create(@ApiParam(value = "应用信息", required = true) @Valid @RequestBody AppDTO dto) {
         LOGGER.debug("REST request to create app: {}", dto);
         appService.insert(dto.getName(), dto.getEnabled(), dto.getAuthorities());
@@ -58,8 +53,6 @@ public class AppController {
     @ApiOperation("获取应用列表")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
     @GetMapping("/api/app/apps")
-    @Secured({Authority.ADMIN})
-    @Timed
     public ResponseEntity<List<AppDTO>> find(Pageable pageable) throws URISyntaxException {
         Page<App> apps = appRepository.findAll(pageable);
         List<AppDTO> DTOs = apps.getContent().stream().map(entity -> entity.asDTO()).collect(Collectors.toList());
@@ -70,8 +63,6 @@ public class AppController {
     @ApiOperation("获取所有应用")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
     @GetMapping("/api/app/apps/all")
-    @Secured({Authority.ADMIN})
-    @Timed
     public ResponseEntity<List<AppDTO>> findAll() {
         List<AppDTO> appDTOs = appRepository.findAll().stream().map(app -> app.asDTO()).collect(Collectors.toList());
         return ResponseEntity.ok(appDTOs);
@@ -81,8 +72,6 @@ public class AppController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取"),
             @ApiResponse(code = SC_BAD_REQUEST, message = "应用信息不存在")})
     @GetMapping("/api/app/apps/{name}")
-    @Secured({Authority.ADMIN})
-    @Timed
     public ResponseEntity<AppDTO> findById(@ApiParam(value = "应用名称", required = true) @PathVariable String name) {
         App app = appRepository.findById(name).get();
         return ResponseEntity.ok(new AppDTO(name, app.getEnabled(), null));
@@ -92,8 +81,6 @@ public class AppController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功更新"),
             @ApiResponse(code = SC_BAD_REQUEST, message = "应用信息不存在")})
     @PutMapping("/api/app/apps")
-    @Secured({Authority.ADMIN})
-    @Timed
     public ResponseEntity<Void> update(@ApiParam(value = "新的应用信息", required = true) @Valid @RequestBody AppDTO dto) {
         LOGGER.debug("REST request to update app: {}", dto);
         appRepository.findById(dto.getName()).orElseThrow(() -> new NoDataException(dto.getName()));
@@ -106,8 +93,6 @@ public class AppController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功删除"),
             @ApiResponse(code = SC_BAD_REQUEST, message = "应用信息不存在")})
     @DeleteMapping("/api/app/apps/{name}")
-    @Secured({Authority.ADMIN})
-    @Timed
     public ResponseEntity<Void> delete(@ApiParam(value = "应用名称", required = true) @PathVariable String name) {
         LOGGER.debug("REST request to delete app: {}", name);
         appRepository.findById(name).orElseThrow(() -> new NoDataException(name));

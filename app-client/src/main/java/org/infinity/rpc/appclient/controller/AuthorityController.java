@@ -1,6 +1,5 @@
 package org.infinity.rpc.appclient.controller;
 
-import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.*;
 import org.infinity.rpc.appclient.domain.Authority;
 import org.infinity.rpc.appclient.dto.AuthorityDTO;
@@ -16,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -42,8 +40,6 @@ public class AuthorityController {
     @ApiOperation("创建权限")
     @ApiResponses(value = {@ApiResponse(code = SC_CREATED, message = "成功创建")})
     @PostMapping("/api/authority/authorities")
-    @Secured({Authority.ADMIN})
-    @Timed
     public ResponseEntity<Void> create(
             @ApiParam(value = "权限信息", required = true) @Valid @RequestBody AuthorityDTO dto) {
         LOGGER.debug("REST request to create authority: {}", dto);
@@ -56,8 +52,6 @@ public class AuthorityController {
     @ApiOperation("获取权限列表")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
     @GetMapping("/api/authority/authorities")
-    @Secured({Authority.ADMIN})
-    @Timed
     public ResponseEntity<List<AuthorityDTO>> find(Pageable pageable) throws URISyntaxException {
         Page<Authority> authorities = authorityRepository.findAll(pageable);
         List<AuthorityDTO> DTOs = authorities.getContent().stream().map(auth -> auth.asDTO())
@@ -69,8 +63,6 @@ public class AuthorityController {
     @ApiOperation("获取所有权限")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
     @GetMapping("/api/authority/authorities/all")
-    @Secured({Authority.ADMIN})
-    @Timed
     public ResponseEntity<List<AuthorityDTO>> findAll() {
         List<AuthorityDTO> authDTOs = authorityRepository.findAll().stream().map(entity -> entity.asDTO())
                 .collect(Collectors.toList());
@@ -81,8 +73,6 @@ public class AuthorityController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取"),
             @ApiResponse(code = SC_BAD_REQUEST, message = "权限信息不存在")})
     @GetMapping("/api/authority/authorities/{name}")
-    @Secured({Authority.ADMIN})
-    @Timed
     public ResponseEntity<AuthorityDTO> findById(
             @ApiParam(value = "权限名称", required = true) @PathVariable String name) {
         Authority authority = authorityRepository.findById(name).orElseThrow(() -> new NoDataException(name));
@@ -93,8 +83,6 @@ public class AuthorityController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功更新"),
             @ApiResponse(code = SC_BAD_REQUEST, message = "权限信息不存在")})
     @PutMapping("/api/authority/authorities")
-    @Secured({Authority.ADMIN})
-    @Timed
     public ResponseEntity<Void> update(
             @ApiParam(value = "新的权限信息", required = true) @Valid @RequestBody AuthorityDTO dto) {
         LOGGER.debug("REST request to update authority: {}", dto);
@@ -109,8 +97,6 @@ public class AuthorityController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功删除"),
             @ApiResponse(code = SC_BAD_REQUEST, message = "权限信息不存在")})
     @DeleteMapping("/api/authority/authorities/{name}")
-    @Secured({Authority.ADMIN})
-    @Timed
     public ResponseEntity<Void> delete(@ApiParam(value = "权限名称", required = true) @PathVariable String name) {
         LOGGER.debug("REST request to delete authority: {}", name);
         authorityRepository.findById(name).orElseThrow(() -> new NoDataException(name));
