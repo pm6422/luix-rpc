@@ -14,6 +14,7 @@ import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
 import org.infinity.rpc.registry.ZkRpcServerRegistry;
 import org.infinity.rpc.server.annotation.Provider;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -53,7 +54,8 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
         Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(Provider.class);
         if (!CollectionUtils.isEmpty(serviceBeanMap)) {
             for (Object serviceImpl : serviceBeanMap.values()) {
-                final Class<?>[] interfaces = serviceImpl.getClass().getInterfaces();
+                Class targetClass = getTargetClass(serviceImpl);
+                final Class<?>[] interfaces = targetClass.getInterfaces();
                 String serviceInterfaceName;
                 if (interfaces.length == 1) {
                     serviceInterfaceName = interfaces[0].getName();
@@ -66,6 +68,17 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
             }
         }
         log.info("Discovered all RPC service providers");
+    }
+
+    private Class getTargetClass(Object bean) {
+        if (isProxyBean(bean)) {
+            return AopUtils.getTargetClass(bean);
+        }
+        return bean.getClass();
+    }
+
+    private boolean isProxyBean(Object bean) {
+        return AopUtils.isAopProxy(bean);
     }
 
     @Override
