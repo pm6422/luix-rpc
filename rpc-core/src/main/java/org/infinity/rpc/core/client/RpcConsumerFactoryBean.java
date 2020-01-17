@@ -1,6 +1,7 @@
-package org.infinity.rpc.client;
+package org.infinity.rpc.core.client;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
 import org.springframework.util.Assert;
 
 /**

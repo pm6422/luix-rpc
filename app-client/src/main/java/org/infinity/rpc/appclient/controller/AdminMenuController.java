@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.infinity.app.common.entity.MenuTreeNode;
 import org.infinity.app.common.service.AdminMenuService;
-import org.infinity.rpc.client.annotation.Consumer;
+import org.infinity.rpc.core.client.annotation.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package org.infinity.rpc.server;
+package org.infinity.rpc.core.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -12,8 +12,8 @@ import org.infinity.rpc.common.RpcDecoder;
 import org.infinity.rpc.common.RpcEncoder;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
+import org.infinity.rpc.core.server.annotation.Provider;
 import org.infinity.rpc.registry.ZkRpcServerRegistry;
-import org.infinity.rpc.server.annotation.Provider;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;

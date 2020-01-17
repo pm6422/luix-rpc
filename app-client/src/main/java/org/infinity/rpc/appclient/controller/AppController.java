@@ -7,7 +7,7 @@ import org.infinity.app.common.service.AppService;
 import org.infinity.rpc.appclient.exception.NoDataException;
 import org.infinity.rpc.appclient.utils.HttpHeaderCreator;
 import org.infinity.rpc.appclient.utils.PaginationUtils;
-import org.infinity.rpc.client.annotation.Consumer;
+import org.infinity.rpc.core.client.annotation.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

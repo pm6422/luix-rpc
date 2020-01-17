@@ -1,4 +1,4 @@
-package org.infinity.rpc.client;
+package org.infinity.rpc.core.client.proxy;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -6,6 +6,7 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
+import org.infinity.rpc.core.client.RpcClient;
 import org.infinity.rpc.registry.ZkRpcServerRegistry;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.util.Assert;

@@ -3,7 +3,7 @@ package org.infinity.rpc.appserver.service.impl;
 import org.infinity.app.common.domain.App;
 import org.infinity.app.common.service.AppService;
 import org.infinity.rpc.appserver.repository.AppRepository;
-import org.infinity.rpc.server.annotation.Provider;
+import org.infinity.rpc.core.server.annotation.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

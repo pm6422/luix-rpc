@@ -3,7 +3,7 @@ package org.infinity.rpc.appserver.service.impl;
 import org.infinity.app.common.domain.Authority;
 import org.infinity.app.common.service.AuthorityService;
 import org.infinity.rpc.appserver.repository.AuthorityRepository;
-import org.infinity.rpc.server.annotation.Provider;
+import org.infinity.rpc.core.server.annotation.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

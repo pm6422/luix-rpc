@@ -1,7 +1,7 @@
 package org.infinity.springboot.infinityrpc;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.client.RpcConsumerProxy;
+import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
 import org.infinity.rpc.registry.ZkRpcServerRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

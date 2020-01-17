@@ -1,8 +1,8 @@
 package org.infinity.springboot.infinityrpc;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.client.SpringBeanDefinitionRegistryPostProcessor;
-import org.infinity.rpc.client.SpringBeanPostProcessor;
+import org.infinity.rpc.core.SpringBeanDefinitionRegistryPostProcessor;
+import org.infinity.rpc.core.SpringBeanPostProcessor;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;

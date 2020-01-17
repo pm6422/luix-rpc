@@ -1,4 +1,4 @@
-package org.infinity.rpc.server;
+package org.infinity.rpc.core.server;
 
 
 import io.netty.channel.ChannelFutureListener;

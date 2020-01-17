@@ -28,12 +28,7 @@
         </dependency>
         <dependency>
             <groupId>org.infinity</groupId>
-            <artifactId>rpc-client</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.infinity</groupId>
-            <artifactId>rpc-server</artifactId>
+            <artifactId>rpc-core</artifactId>
             <version>1.0.0</version>
         </dependency>
     </dependencies>

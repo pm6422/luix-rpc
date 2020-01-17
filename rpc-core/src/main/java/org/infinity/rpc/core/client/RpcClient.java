@@ -1,4 +1,4 @@
-package org.infinity.rpc.client;
+package org.infinity.rpc.core.client;
 
 
 import io.netty.bootstrap.Bootstrap;

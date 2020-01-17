@@ -1,4 +1,4 @@
-package org.infinity.rpc.client;
+package org.infinity.rpc.core;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
