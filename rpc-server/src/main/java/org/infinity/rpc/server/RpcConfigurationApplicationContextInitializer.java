@@ -14,15 +14,15 @@ public class RpcConfigurationApplicationContextInitializer implements Applicatio
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
         Environment env = applicationContext.getEnvironment();
-        ProviderAnnotationBean providerAnnotationBean = new ProviderAnnotationBean(applicationContext);
+        SpringBeanPostProcessor springBeanPostProcessor = new SpringBeanPostProcessor(applicationContext);
         // Bean post processor will be called before bean factory post processor
-        applicationContext.getBeanFactory().addBeanPostProcessor(providerAnnotationBean);
-        applicationContext.addBeanFactoryPostProcessor(providerAnnotationBean);
-        String beanName = ClassUtils.getShortNameAsProperty(ProviderAnnotationBean.class);
+        applicationContext.getBeanFactory().addBeanPostProcessor(springBeanPostProcessor);
+        applicationContext.addBeanFactoryPostProcessor(springBeanPostProcessor);
+        String beanName = ClassUtils.getShortNameAsProperty(SpringBeanPostProcessor.class);
         // Register bean
         // 注意：这里只有注册bean，但由于时机太早，没法注册beanDefinition，所以applicationContext.getBeanDefinitionNames()里获取不到
         // 但applicationContext.getBean(ConsumerAnnotationBean.class)可以获取到bean
-        applicationContext.getBeanFactory().registerSingleton(beanName, providerAnnotationBean);
+        applicationContext.getBeanFactory().registerSingleton(beanName, springBeanPostProcessor);
         log.debug("Initialized provider annotation bean");
     }
 }

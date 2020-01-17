@@ -16,13 +16,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 @Slf4j
-public class ProviderAnnotationBean implements BeanPostProcessor, BeanFactoryPostProcessor {
+public class SpringBeanPostProcessor implements BeanPostProcessor, BeanFactoryPostProcessor {
     public static final Pattern             COMMA_SPLIT_PATTERN = Pattern.compile("\\s*[,]+\\s*");
     private             ApplicationContext  applicationContext;
     private final       Map<String, Object> rpcProviderMap      = new ConcurrentHashMap<String, Object>();
 
 
-    public ProviderAnnotationBean(ApplicationContext applicationContext) {
+    public SpringBeanPostProcessor(ApplicationContext applicationContext) {
         Assert.notNull(applicationContext, "Application context must not be null!");
         this.applicationContext = applicationContext;
     }

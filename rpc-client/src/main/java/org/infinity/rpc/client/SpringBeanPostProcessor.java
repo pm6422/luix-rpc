@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 @Slf4j
-public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPostProcessor {
+public class SpringBeanPostProcessor implements BeanPostProcessor, BeanFactoryPostProcessor {
     public static final Pattern                             COMMA_SPLIT_PATTERN       = Pattern.compile("\\s*[,]+\\s*");
     private             ApplicationContext                  applicationContext;
     private             String[]                            consumerScanPackages;
@@ -29,7 +29,7 @@ public class ConsumerAnnotationBean implements BeanPostProcessor, BeanFactoryPos
     private final       Map<String, RpcConsumerFactoryBean> rpcConsumerFactoryBeanMap = new ConcurrentHashMap<String, RpcConsumerFactoryBean>();
 
 
-    public ConsumerAnnotationBean(ApplicationContext applicationContext, String consumerScanPackages) {
+    public SpringBeanPostProcessor(ApplicationContext applicationContext, String consumerScanPackages) {
         Assert.notNull(applicationContext, "Application context must not be null!");
         Assert.hasText(consumerScanPackages, "Consumer scan packages must not be empty!");
         this.applicationContext = applicationContext;

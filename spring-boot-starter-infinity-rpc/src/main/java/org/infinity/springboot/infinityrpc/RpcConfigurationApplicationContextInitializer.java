@@ -1,7 +1,8 @@
 package org.infinity.springboot.infinityrpc;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.client.ConsumerAnnotationBean;
+import org.infinity.rpc.client.SpringBeanDefinitionPostProcessor;
+import org.infinity.rpc.client.SpringBeanPostProcessor;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
@@ -20,15 +21,20 @@ public class RpcConfigurationApplicationContextInitializer implements Applicatio
         Assert.hasText(consumerScanPackages, "Consumer scan base packages must not be empty!");
 
         log.debug("RPC consumer scan base package: [{}]", consumerScanPackages);
-        ConsumerAnnotationBean consumerAnnotationBean = new ConsumerAnnotationBean(applicationContext, consumerScanPackages);
+        SpringBeanPostProcessor springBeanPostProcessor = new SpringBeanPostProcessor(applicationContext, consumerScanPackages);
         // Bean post processor will be called before bean factory post processor
-        applicationContext.getBeanFactory().addBeanPostProcessor(consumerAnnotationBean);
-        applicationContext.addBeanFactoryPostProcessor(consumerAnnotationBean);
-        String beanName = ClassUtils.getShortNameAsProperty(ConsumerAnnotationBean.class);
-        // Register bean
+        applicationContext.getBeanFactory().addBeanPostProcessor(springBeanPostProcessor);
+        applicationContext.addBeanFactoryPostProcessor(springBeanPostProcessor);
+        String beanName = ClassUtils.getShortNameAsProperty(SpringBeanPostProcessor.class);
         // 注意：这里只有注册bean，但由于时机太早，没法注册beanDefinition，所以applicationContext.getBeanDefinitionNames()里获取不到
         // 但applicationContext.getBean(ConsumerAnnotationBean.class)可以获取到bean
-        applicationContext.getBeanFactory().registerSingleton(beanName, consumerAnnotationBean);
+        // Register custom bean post processor
+        applicationContext.getBeanFactory().registerSingleton(beanName, springBeanPostProcessor);
+
+        SpringBeanDefinitionPostProcessor springBeanDefinitionPostProcessor = new SpringBeanDefinitionPostProcessor();
+        // Register custom bean definition post processor
+        applicationContext.getBeanFactory().registerSingleton(ClassUtils.getShortNameAsProperty(SpringBeanDefinitionPostProcessor.class), springBeanDefinitionPostProcessor);
+
         log.debug("Initialized consumer annotation bean");
     }
 }
