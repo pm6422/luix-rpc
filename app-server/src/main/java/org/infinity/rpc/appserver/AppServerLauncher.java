@@ -52,8 +52,8 @@ public class AppServerLauncher implements ApplicationContextAware {
         startZooKeeper();
         printAppInfo(env);
         RpcServer rpcServer = new RpcServer("127.0.0.1:" + "2" + env.getProperty("server.port"), applicationContext.getBean(ZkRpcServerRegistry.class));
-        rpcServer.setApplicationContext(applicationContext);
-        rpcServer.afterPropertiesSet();
+        rpcServer.discoverRpcService(applicationContext);
+        rpcServer.startNettyServer();
     }
 
     private static void printAppInfo(Environment env) throws IOException {

@@ -15,9 +15,7 @@ import org.infinity.rpc.common.RpcResponse;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.infinity.rpc.registry.ZkRpcServerRegistry;
 import org.springframework.aop.support.AopUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ConcurrentReferenceHashMap;
 
@@ -27,7 +25,7 @@ import java.util.Map;
  * RPC服务器类，使用Spring
  */
 @Slf4j
-public class RpcServer implements ApplicationContextAware, InitializingBean {
+public class RpcServer {
     // key: serviceInterfaceName, value: serviceImpl
     private final        Map<String, Object> serviceBeanMap = new ConcurrentReferenceHashMap<>();
     private              ZkRpcServerRegistry zkRpcServerRegistry;
@@ -44,12 +42,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
         this.zkRpcServerRegistry = rpcServerRegistry;
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.discoverRpcService(applicationContext);
-    }
-
-    private void discoverRpcService(ApplicationContext applicationContext) {
+    public void discoverRpcService(ApplicationContext applicationContext) {
         // get all beans with the annotation
         Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(Provider.class);
         if (!CollectionUtils.isEmpty(serviceBeanMap)) {
@@ -81,15 +74,10 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
         return AopUtils.isAopProxy(bean);
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.startNettyServer();
-    }
-
     /**
      * Start netty server
      */
-    private void startNettyServer() {
+    public void startNettyServer() {
         // 创建服务端的通信对象
         ServerBootstrap server = new ServerBootstrap();
         // 创建异步通信的事件组 用于建立TCP连接的
