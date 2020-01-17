@@ -12,12 +12,8 @@ import org.infinity.rpc.common.RpcDecoder;
 import org.infinity.rpc.common.RpcEncoder;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
-import org.infinity.rpc.core.server.annotation.Provider;
 import org.infinity.rpc.registry.ZkRpcServerRegistry;
 import org.springframework.aop.support.AopUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ConcurrentReferenceHashMap;
 
 import java.util.Map;
 
@@ -27,40 +23,20 @@ import java.util.Map;
 @Slf4j
 public class RpcServer {
     // key: serviceInterfaceName, value: serviceImpl
-    private final        Map<String, Object> serviceBeanMap = new ConcurrentReferenceHashMap<>();
-    private              ZkRpcServerRegistry zkRpcServerRegistry;
-    private              String              serverAddress;
-    private              String              serverIp;
-    private              int                 serverPort;
+    private Map<String, Object> rpcProviderMap;
+    private ZkRpcServerRegistry zkRpcServerRegistry;
+    private String              serverAddress;
+    private String              serverIp;
+    private int                 serverPort;
 
-    public RpcServer(String serverAddress, ZkRpcServerRegistry rpcServerRegistry) {
+    public RpcServer(String serverAddress, ZkRpcServerRegistry rpcServerRegistry, Map<String, Object> rpcProviderMap) {
         log.info("Starting RPC server on [{}]", serverAddress);
         this.serverAddress = serverAddress;
         String[] ipAndPortParts = serverAddress.split(":");
         serverIp = ipAndPortParts[0];
         serverPort = Integer.valueOf(ipAndPortParts[1]);
         this.zkRpcServerRegistry = rpcServerRegistry;
-    }
-
-    public void discoverRpcService(ApplicationContext applicationContext) {
-        // get all beans with the annotation
-        Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(Provider.class);
-        if (!CollectionUtils.isEmpty(serviceBeanMap)) {
-            for (Object serviceImpl : serviceBeanMap.values()) {
-                Class targetClass = getTargetClass(serviceImpl);
-                final Class<?>[] interfaces = targetClass.getInterfaces();
-                String serviceInterfaceName;
-                if (interfaces.length == 1) {
-                    serviceInterfaceName = interfaces[0].getName();
-                } else {
-                    // Get service interface from annotation if a instance has more than one declared interfaces
-                    serviceInterfaceName = serviceImpl.getClass().getAnnotation(Provider.class).interfaceClass().getName();
-                }
-                this.serviceBeanMap.put(serviceInterfaceName, serviceImpl);
-                log.info("Discovering RPC Service provider [{}]", serviceImpl.getClass().getName());
-            }
-        }
-        log.info("Discovered all RPC service providers");
+        this.rpcProviderMap = rpcProviderMap;
     }
 
     private Class getTargetClass(Object bean) {
@@ -95,7 +71,7 @@ public class RpcServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new RpcDecoder(RpcRequest.class))//1.解码请求对象
                                     .addLast(new RpcEncoder(RpcResponse.class))//2.编码响应对象
-                                    .addLast(new RpcServerHandler(serviceBeanMap));//3.请求处理
+                                    .addLast(new RpcServerHandler(rpcProviderMap));//3.请求处理
                         }
                     }).option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);

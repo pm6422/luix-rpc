@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.RpcConsumerFactoryBean;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
+import org.infinity.rpc.core.server.annotation.Provider;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
@@ -14,6 +15,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -29,6 +31,7 @@ public class SpringBeanPostProcessor implements BeanPostProcessor, BeanFactoryPo
     private             String[]                            consumerScanPackages;
     // Consumers are not injected into bean factory, they are saved in this map.
     private final       Map<String, RpcConsumerFactoryBean> rpcConsumerFactoryBeanMap = new ConcurrentHashMap<String, RpcConsumerFactoryBean>();
+    private final       Map<String, Object>                 rpcProviderMap            = new ConcurrentHashMap<String, Object>();
 
 
     public SpringBeanPostProcessor(ApplicationContext applicationContext, String consumerScanPackages) {
@@ -169,7 +172,33 @@ public class SpringBeanPostProcessor implements BeanPostProcessor, BeanFactoryPo
      */
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        Class clazz = getTargetClass(bean);
+
+        if (!matchScanPackages(clazz)) {
+            return bean;
+        }
+
+        Annotation classAnnotation = clazz.getAnnotation(Provider.class);
+        if (classAnnotation == null) {
+            return bean;
+        }
+
+        final Class<?>[] interfaces = clazz.getInterfaces();
+        String serviceInterfaceName;
+        if (interfaces.length == 1) {
+            serviceInterfaceName = interfaces[0].getName();
+        } else {
+            // Get service interface from annotation if a instance has more than one declared interfaces
+            serviceInterfaceName = ((Provider) classAnnotation).interfaceClass().getName();
+        }
+
+        this.rpcProviderMap.put(serviceInterfaceName, bean);
+        log.info("Discovered RPC service provider [{}]", serviceInterfaceName);
         return bean;
+    }
+
+    public Map<String, Object> getRpcProviderMap() {
+        return rpcProviderMap;
     }
 
     @Override

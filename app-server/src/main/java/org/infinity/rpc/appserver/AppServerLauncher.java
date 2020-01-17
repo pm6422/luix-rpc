@@ -6,6 +6,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.rpc.appserver.config.ApplicationConstants;
 import org.infinity.rpc.appserver.config.EmbeddedZooKeeper;
 import org.infinity.rpc.appserver.utils.NetworkIpUtils;
+import org.infinity.rpc.core.SpringBeanPostProcessor;
 import org.infinity.rpc.core.server.RpcServer;
 import org.infinity.rpc.registry.ZkRpcServerRegistry;
 import org.infinity.springboot.infinityrpc.InfinityRpcProperties;
@@ -51,8 +52,9 @@ public class AppServerLauncher implements ApplicationContextAware {
         // 启动嵌入式zk
         startZooKeeper();
         printAppInfo(env);
-        RpcServer rpcServer = new RpcServer("127.0.0.1:" + "2" + env.getProperty("server.port"), applicationContext.getBean(ZkRpcServerRegistry.class));
-        rpcServer.discoverRpcService(applicationContext);
+        SpringBeanPostProcessor springBeanPostProcessor = applicationContext.getBean(SpringBeanPostProcessor.class);
+        RpcServer rpcServer = new RpcServer("127.0.0.1:" + "2" + env.getProperty("server.port"),
+                applicationContext.getBean(ZkRpcServerRegistry.class), springBeanPostProcessor.getRpcProviderMap());
         rpcServer.startNettyServer();
     }
 
