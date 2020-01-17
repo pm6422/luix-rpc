@@ -8,6 +8,7 @@ import org.infinity.rpc.appserver.config.EmbeddedZooKeeper;
 import org.infinity.rpc.appserver.utils.NetworkIpUtils;
 import org.infinity.rpc.registry.ZkRpcServerRegistry;
 import org.infinity.rpc.server.RpcServer;
+import org.infinity.springboot.infinityrpc.InfinityRpcProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -45,13 +46,12 @@ public class AppServerLauncher implements ApplicationContextAware {
      * @throws IOException
      */
     public static void main(String[] args) throws Exception {
-        // 启动嵌入式zk
-        startZooKeeper();
         SpringApplication app = new SpringApplication(AppServerLauncher.class);
         Environment env = app.run(args).getEnvironment();
+        // 启动嵌入式zk
+        startZooKeeper();
         printAppInfo(env);
         RpcServer rpcServer = new RpcServer("127.0.0.1:" + "2" + env.getProperty("server.port"), applicationContext.getBean(ZkRpcServerRegistry.class));
-        applicationContext.getBeanFactory().registerSingleton("rpcServer", rpcServer);
         rpcServer.setApplicationContext(applicationContext);
         rpcServer.afterPropertiesSet();
     }
@@ -85,9 +85,10 @@ public class AppServerLauncher implements ApplicationContextAware {
         });
     }
 
-    private static void startZooKeeper() throws IOException {
+    private static void startZooKeeper() {
+        InfinityRpcProperties properties = applicationContext.getBean(InfinityRpcProperties.class);
         // Start embedded zookeeper server
-        new EmbeddedZooKeeper(2181, false).start();
+        new EmbeddedZooKeeper(properties.getRegistry().getPort(), false).start();
     }
 
     @Override

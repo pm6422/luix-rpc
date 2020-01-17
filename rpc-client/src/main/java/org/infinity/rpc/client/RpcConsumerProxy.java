@@ -6,7 +6,7 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
-import org.infinity.rpc.registry.ZkRegistryRpcServerDiscovery;
+import org.infinity.rpc.registry.ZkRpcServerRegistry;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -19,10 +19,10 @@ import java.util.UUID;
  */
 @Slf4j
 public class RpcConsumerProxy {
-    private              ZkRegistryRpcServerDiscovery rpcServerDiscovery;
+    private ZkRpcServerRegistry rpcServerDiscovery;
 
-    public RpcConsumerProxy(ZkRegistryRpcServerDiscovery zkRegistryRpcServerDiscovery) {
-        this.rpcServerDiscovery = zkRegistryRpcServerDiscovery;
+    public RpcConsumerProxy(ZkRpcServerRegistry rpcServerDiscovery) {
+        this.rpcServerDiscovery = rpcServerDiscovery;
     }
 
     public <T> T getProxy(Class<T> interfaceClass) {

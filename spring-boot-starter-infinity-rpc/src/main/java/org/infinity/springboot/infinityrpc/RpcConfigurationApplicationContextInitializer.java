@@ -17,7 +17,7 @@ public class RpcConfigurationApplicationContextInitializer implements Applicatio
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
         Environment env = applicationContext.getEnvironment();
-        String consumerScanPackages = env.getProperty(RpcClientProperties.CONSUMER_SCAN_PACKAGES);
+        String consumerScanPackages = env.getProperty(InfinityRpcProperties.CONSUMER_SCAN_PACKAGES);
         Assert.hasText(consumerScanPackages, "Consumer scan base packages must not be empty!");
 
         log.debug("RPC consumer scan base package: [{}]", consumerScanPackages);

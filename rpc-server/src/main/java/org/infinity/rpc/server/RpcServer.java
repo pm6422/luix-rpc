@@ -137,6 +137,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
     private void registerRpcServer() throws Exception {
         log.info("Registering RPC server address [{}] on registry", serverAddress);
         zkRpcServerRegistry.createRpcServerNode(serverAddress);
+        zkRpcServerRegistry.startWatchNode();
         log.info("Registered RPC server address [{}] on registry", serverAddress);
     }
 }
