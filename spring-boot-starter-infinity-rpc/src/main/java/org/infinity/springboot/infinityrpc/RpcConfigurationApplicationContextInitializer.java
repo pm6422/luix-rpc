@@ -1,7 +1,7 @@
 package org.infinity.springboot.infinityrpc;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.client.SpringBeanDefinitionPostProcessor;
+import org.infinity.rpc.client.SpringBeanDefinitionRegistryPostProcessor;
 import org.infinity.rpc.client.SpringBeanPostProcessor;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -25,15 +25,16 @@ public class RpcConfigurationApplicationContextInitializer implements Applicatio
         // Bean post processor will be called before bean factory post processor
         applicationContext.getBeanFactory().addBeanPostProcessor(springBeanPostProcessor);
         applicationContext.addBeanFactoryPostProcessor(springBeanPostProcessor);
-        String beanName = ClassUtils.getShortNameAsProperty(SpringBeanPostProcessor.class);
+        String springBeanPostProcessorBeanName = ClassUtils.getShortNameAsProperty(SpringBeanPostProcessor.class);
         // 注意：这里只有注册bean，但由于时机太早，没法注册beanDefinition，所以applicationContext.getBeanDefinitionNames()里获取不到
         // 但applicationContext.getBean(ConsumerAnnotationBean.class)可以获取到bean
         // Register custom bean post processor
-        applicationContext.getBeanFactory().registerSingleton(beanName, springBeanPostProcessor);
+        applicationContext.getBeanFactory().registerSingleton(springBeanPostProcessorBeanName, springBeanPostProcessor);
 
-        SpringBeanDefinitionPostProcessor springBeanDefinitionPostProcessor = new SpringBeanDefinitionPostProcessor();
+        SpringBeanDefinitionRegistryPostProcessor springBeanDefinitionRegistryPostProcessor = new SpringBeanDefinitionRegistryPostProcessor();
         // Register custom bean definition post processor
-        applicationContext.getBeanFactory().registerSingleton(ClassUtils.getShortNameAsProperty(SpringBeanDefinitionPostProcessor.class), springBeanDefinitionPostProcessor);
+        String springBeanDefinitionRegistryPostProcessorBeanName = ClassUtils.getShortNameAsProperty(SpringBeanDefinitionRegistryPostProcessor.class);
+        applicationContext.getBeanFactory().registerSingleton(springBeanDefinitionRegistryPostProcessorBeanName, springBeanDefinitionRegistryPostProcessor);
 
         log.debug("Initialized consumer annotation bean");
     }

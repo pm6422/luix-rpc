@@ -6,7 +6,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
-public class SpringBeanDefinitionPostProcessor implements BeanDefinitionRegistryPostProcessor {
+public class SpringBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor {
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory arg) throws BeansException {
