@@ -18,8 +18,7 @@ public class RpcClientAutoConfiguration {
 
     @Bean
     public ZkRpcServerRegistry rpcServiceRegistry() {
-        ZkRpcServerRegistry rpcServiceRegistry = new ZkRpcServerRegistry();
-        rpcServiceRegistry.setRegistryAddress(infinityRpcProperties.getRegistry().getAddress());
+        ZkRpcServerRegistry rpcServiceRegistry = new ZkRpcServerRegistry(infinityRpcProperties.getRegistry().getAddress());
         return rpcServiceRegistry;
     }
 

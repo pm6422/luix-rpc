@@ -16,7 +16,7 @@ public class ZkRpcServerRegistry {
     // 所有提供服务的服务器列表
     private volatile List<String> serverList = new ArrayList<>();
 
-    public void setRegistryAddress(String registryAddress) {
+    public ZkRpcServerRegistry(String registryAddress) {
         this.registryAddress = registryAddress;
     }
 
