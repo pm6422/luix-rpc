@@ -15,7 +15,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -172,24 +171,30 @@ public class SpringBeanPostProcessor implements BeanPostProcessor, BeanFactoryPo
      */
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        Class clazz = getTargetClass(bean);
+        Class<?> clazz = getTargetClass(bean);
 
         if (!matchScanPackages(clazz)) {
             return bean;
         }
 
-        Annotation classAnnotation = clazz.getAnnotation(Provider.class);
+        Provider classAnnotation = clazz.getAnnotation(Provider.class);
         if (classAnnotation == null) {
             return bean;
         }
 
         final Class<?>[] interfaces = clazz.getInterfaces();
-        String serviceInterfaceName;
-        if (interfaces.length == 1) {
+        String serviceInterfaceName = null;
+
+        if (interfaces.length == 0) {
+            throw new IllegalStateException("The RPC service provider bean must implement more than one interfaces!");
+        } else if (interfaces.length == 1) {
             serviceInterfaceName = interfaces[0].getName();
         } else {
             // Get service interface from annotation if a instance has more than one declared interfaces
-            serviceInterfaceName = ((Provider) classAnnotation).interfaceClass().getName();
+            serviceInterfaceName = classAnnotation.interfaceClass().getName();
+            if (void.class.equals(classAnnotation.interfaceClass())) {
+                throw new IllegalStateException("The @Provider annotation of RPC service provider must specify interfaceClass attribute value if the bean implements more than one interfaces!");
+            }
         }
 
         this.rpcProviderMap.put(serviceInterfaceName, bean);
