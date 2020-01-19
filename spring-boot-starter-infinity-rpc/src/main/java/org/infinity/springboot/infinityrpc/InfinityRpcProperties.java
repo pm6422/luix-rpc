@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 @ConfigurationProperties(prefix = "spring.infinity-rpc")
 @Data
 public class InfinityRpcProperties implements InitializingBean {
-    public static final String      CONSUMER_SCAN_PACKAGES = "spring.infinity-rpc.package-scan.scan-packages";
-    public static final Pattern     COLON_SPLIT_PATTERN    = Pattern.compile("\\s*[:]+\\s*");
+    public static final String      SCAN_PACKAGES       = "spring.infinity-rpc.package-scan.scan-packages";
+    public static final Pattern     COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
     private             PackageScan packageScan;
     private             Registry    registry;
 
