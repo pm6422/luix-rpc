@@ -17,11 +17,11 @@ public class RpcConfigurationApplicationContextInitializer implements Applicatio
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
         Environment env = applicationContext.getEnvironment();
-        String consumerScanPackages = env.getProperty(InfinityRpcProperties.CONSUMER_SCAN_PACKAGES);
-        Assert.hasText(consumerScanPackages, "Consumer scan base packages must not be empty!");
+        String scanPackages = env.getProperty(InfinityRpcProperties.SCAN_PACKAGES);
+        Assert.hasText(scanPackages, "Consumer and provider scan base packages must not be empty!");
 
-        log.debug("RPC consumer scan base package: [{}]", consumerScanPackages);
-        SpringBeanPostProcessor springBeanPostProcessor = new SpringBeanPostProcessor(applicationContext, consumerScanPackages);
+        log.debug("RPC consumer scan base package: [{}]", scanPackages);
+        SpringBeanPostProcessor springBeanPostProcessor = new SpringBeanPostProcessor(applicationContext, scanPackages);
         // Bean post processor will be called before bean factory post processor
         applicationContext.getBeanFactory().addBeanPostProcessor(springBeanPostProcessor);
         applicationContext.addBeanFactoryPostProcessor(springBeanPostProcessor);
