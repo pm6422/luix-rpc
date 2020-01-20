@@ -45,7 +45,7 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
                 throw new RuntimeException("Service provider class can NOT be found with name: ".concat(className));
             }
             // 获取到具字节码对象
-            Method method = Class.forName(className).getMethod(methodName, parameterTypes);
+            Method method = serviceImpl.getClass().getMethod(methodName, parameterTypes);
             if (method == null) {
                 throw new RuntimeException("Service provider method can NOT be found with name: ".concat(methodName));
             }

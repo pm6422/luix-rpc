@@ -12,31 +12,50 @@ import org.infinity.rpc.common.RpcDecoder;
 import org.infinity.rpc.common.RpcEncoder;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
+import org.infinity.rpc.core.server.annotation.Provider;
 import org.infinity.rpc.registry.ZkRpcServerRegistry;
 import org.springframework.aop.support.AopUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * RPC服务器类，使用Spring
  */
 @Slf4j
-public class RpcServer {
+public class RpcServer implements ApplicationContextAware {
+    private Map<String, Object> rpcProviderMap = new ConcurrentHashMap<>();
     // key: serviceInterfaceName, value: serviceImpl
-    private Map<String, Object> rpcProviderMap;
     private ZkRpcServerRegistry zkRpcServerRegistry;
     private String              serverAddress;
     private String              serverIp;
     private int                 serverPort;
+    private ApplicationContext  applicationContext;
 
-    public RpcServer(String serverAddress, ZkRpcServerRegistry rpcServerRegistry, Map<String, Object> rpcProviderMap) {
+    public RpcServer(int serverPort, ZkRpcServerRegistry rpcServerRegistry) {
+        this.serverIp = "localhost";
+        this.serverPort = serverPort;
+        this.serverAddress = this.serverIp + ":" + this.serverPort;
         log.info("Starting RPC server on [{}]", serverAddress);
-        this.serverAddress = serverAddress;
-        String[] ipAndPortParts = serverAddress.split(":");
-        serverIp = ipAndPortParts[0];
-        serverPort = Integer.valueOf(ipAndPortParts[1]);
         this.zkRpcServerRegistry = rpcServerRegistry;
-        this.rpcProviderMap = rpcProviderMap;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+        Map<String, Object> map = this.applicationContext.getBeansWithAnnotation(Provider.class);
+        if (!CollectionUtils.isEmpty(map)) {
+            Set<Map.Entry<String, Object>> entries = map.entrySet();
+            for (Map.Entry<String, Object> entry : entries) {
+                final Class targetClass = getTargetClass(entry.getValue());
+                rpcProviderMap.putIfAbsent(targetClass.getInterfaces()[0].getName(), entry.getValue());
+            }
+        }
     }
 
     private Class getTargetClass(Object bean) {

@@ -10,10 +10,9 @@ import java.util.regex.Pattern;
 @ConfigurationProperties(prefix = "spring.infinity-rpc")
 @Data
 public class InfinityRpcProperties implements InitializingBean {
-    public static final String      SCAN_PACKAGES       = "spring.infinity-rpc.package-scan.scan-packages";
-    public static final Pattern     COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
-    private             PackageScan packageScan;
-    private             Registry    registry;
+    public static final Pattern  COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
+    private             Registry registry;
+    private             Protocol   protocol;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -25,12 +24,6 @@ public class InfinityRpcProperties implements InitializingBean {
     }
 
     @Data
-    public static class PackageScan {
-        // The base packages to scan, if multiple values must be delimited by comma
-        private String[] scanPackages;
-    }
-
-    @Data
     public static class Registry {
         // Registry center server address
         private String  address;
@@ -38,5 +31,11 @@ public class InfinityRpcProperties implements InitializingBean {
         private String  server;
         // Registry center port number
         private Integer port;
+    }
+
+    @Data
+    public static class Protocol {
+        // Rpc server port
+        private int port;
     }
 }

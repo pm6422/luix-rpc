@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.rpc.appclient.config.ApplicationConstants;
 import org.infinity.rpc.appclient.utils.NetworkIpUtils;
+import org.infinity.rpc.core.annotation.EnableRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Date;
 
+@EnableRpc
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class, MongoDataAutoConfiguration.class})
 public class AppClientLauncher {
 

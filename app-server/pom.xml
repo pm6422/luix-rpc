@@ -20,6 +20,7 @@
         *************************************************************************************
     -->
     <properties>
+        <app.rpc.port>2${app.server.port}</app.rpc.port>
         <app.server.port>6010</app.server.port>
         <dockerfile-maven-plugin.version>1.3.4</dockerfile-maven-plugin.version>
         <java.version>1.8</java.version>

@@ -1,10 +1,8 @@
-package org.infinity.rpc.core;
+package org.infinity.rpc.core.client;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.client.RpcConsumerFactoryBean;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
-import org.infinity.rpc.core.server.annotation.Provider;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
@@ -12,8 +10,8 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -21,23 +19,23 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
 @Slf4j
-public class SpringBeanPostProcessor implements BeanPostProcessor, BeanFactoryPostProcessor {
-    public static final Pattern                             COMMA_SPLIT_PATTERN       = Pattern.compile("\\s*[,]+\\s*");
+public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanPostProcessor, BeanFactoryPostProcessor {
     private             ApplicationContext                  applicationContext;
-    private             String[]                            consumerScanPackages;
+    private             String[]                            scanBasePackages;
     // Consumers are not injected into bean factory, they are saved in this map.
     private final       Map<String, RpcConsumerFactoryBean> rpcConsumerFactoryBeanMap = new ConcurrentHashMap<String, RpcConsumerFactoryBean>();
-    private final       Map<String, Object>                 rpcProviderMap            = new ConcurrentHashMap<String, Object>();
 
 
-    public SpringBeanPostProcessor(ApplicationContext applicationContext, String consumerScanPackages) {
-        Assert.notNull(applicationContext, "Application context must not be null!");
-        Assert.hasText(consumerScanPackages, "Consumer scan packages must not be empty!");
+    public ConsumerBeanPostProcessor(String[] scanBasePackages) {
+        Assert.notEmpty(scanBasePackages, "Consumer scan packages must not be empty!");
+        this.scanBasePackages = scanBasePackages;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-        this.consumerScanPackages = (StringUtils.isEmpty(consumerScanPackages)) ? null : COMMA_SPLIT_PATTERN.split(consumerScanPackages);
     }
 
     /**
@@ -76,7 +74,7 @@ public class SpringBeanPostProcessor implements BeanPostProcessor, BeanFactoryPo
     }
 
     private boolean matchScanPackages(Class clazz) {
-        return Arrays.asList(consumerScanPackages).stream().anyMatch(pkg -> clazz.getName().startsWith(pkg));
+        return Arrays.asList(scanBasePackages).stream().anyMatch(pkg -> clazz.getName().startsWith(pkg));
     }
 
     /**
@@ -151,7 +149,8 @@ public class SpringBeanPostProcessor implements BeanPostProcessor, BeanFactoryPo
             interfaceName = consumerClass.getName();
             consumerInterface = consumerClass;
         } else {
-            throw new IllegalStateException("The consumer must be declared as an interface or specify the interfaceClass attribute value of @Consumer annotation!");
+            throw new IllegalStateException("The consumer must be declared as an interface " +
+                    "or specify the interfaceClass attribute value of @Consumer annotation!");
         }
 
         String key = interfaceName;
@@ -171,40 +170,9 @@ public class SpringBeanPostProcessor implements BeanPostProcessor, BeanFactoryPo
      */
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        Class<?> clazz = getTargetClass(bean);
-
-        if (!matchScanPackages(clazz)) {
-            return bean;
-        }
-
-        Provider classAnnotation = clazz.getAnnotation(Provider.class);
-        if (classAnnotation == null) {
-            return bean;
-        }
-
-        final Class<?>[] interfaces = clazz.getInterfaces();
-        String serviceInterfaceName = null;
-
-        if (interfaces.length == 0) {
-            throw new IllegalStateException("The RPC service provider bean must implement more than one interfaces!");
-        } else if (interfaces.length == 1) {
-            serviceInterfaceName = interfaces[0].getName();
-        } else {
-            // Get service interface from annotation if a instance has more than one declared interfaces
-            serviceInterfaceName = classAnnotation.interfaceClass().getName();
-            if (void.class.equals(classAnnotation.interfaceClass())) {
-                throw new IllegalStateException("The @Provider annotation of RPC service provider must specify interfaceClass attribute value if the bean implements more than one interfaces!");
-            }
-        }
-
-        this.rpcProviderMap.put(serviceInterfaceName, bean);
-        log.info("Discovered RPC service provider [{}]", serviceInterfaceName);
         return bean;
     }
 
-    public Map<String, Object> getRpcProviderMap() {
-        return rpcProviderMap;
-    }
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
