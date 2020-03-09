@@ -13,7 +13,7 @@
 management: # Management http server configuration, used by ManagementServerProperties
     endpoints:
         web:
-            base-path: /management
+            base-path: /
             exposure:
                 include: ['configprops', 'env', 'health', 'info', 'threaddump', 'beans', 'mappings', 'httptrace', 'shutdown', 'auditevents', 'loggers', 'scheduledtasks']
     endpoint:
