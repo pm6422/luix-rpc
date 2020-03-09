@@ -482,7 +482,7 @@ function HealthService($rootScope, $http) {
     };
 
     function checkHealth() {
-        return $http.get('management/health').then(function (response) {
+        return $http.get('health').then(function (response) {
             return response.data;
         });
     }
