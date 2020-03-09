@@ -8,8 +8,9 @@
         <version>Cairo-SR3</version>
         <relativePath />
     </parent>
-    <artifactId>app-server</artifactId>
 
+    <groupId>org.infinity</groupId>
+    <artifactId>app-server</artifactId>
     <version>1.0.0</version>
     <packaging>war</packaging>
     <name>app-server</name>
