@@ -11,6 +11,7 @@ import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.http.MediaType;
 
 import javax.servlet.DispatcherType;
@@ -40,7 +41,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         LOGGER.info("Configuring web application");
         EnumSet<DispatcherType> disps = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD,
                 DispatcherType.ASYNC);
-        if (env.acceptsProfiles(ApplicationConstants.SPRING_PROFILE_PRODUCTION)) {
+        if (env.acceptsProfiles(Profiles.of(ApplicationConstants.SPRING_PROFILE_PRODUCTION))) {
             initCachingHttpHeadersFilter(servletContext, disps);
         }
         LOGGER.info("Configured web application");
