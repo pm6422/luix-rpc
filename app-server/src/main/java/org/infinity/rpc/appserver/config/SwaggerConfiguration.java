@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
@@ -31,8 +32,7 @@ import static springfox.documentation.builders.PathSelectors.regex;
 @Profile("!" + ApplicationConstants.SPRING_PROFILE_NO_SWAGGER)
 public class SwaggerConfiguration {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(SwaggerConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SwaggerConfiguration.class);
 
     @Autowired
     private ApplicationProperties applicationProperties;
@@ -50,7 +50,9 @@ public class SwaggerConfiguration {
                 && "true".equals(System.getProperty("specified.uri.scheme.host"))) {
             docket.host(applicationProperties.getSwagger().getHost());
         }
-        docket.genericModelSubstitutes(ResponseEntity.class).ignoredParameterTypes(java.sql.Date.class)
+        docket.genericModelSubstitutes(ResponseEntity.class)
+                .ignoredParameterTypes(Pageable.class)
+                .ignoredParameterTypes(java.sql.Date.class)
                 .directModelSubstitute(java.time.LocalDate.class, java.sql.Date.class)
                 .directModelSubstitute(java.time.ZonedDateTime.class, Date.class)
                 .directModelSubstitute(java.time.LocalDateTime.class, Date.class).select()
@@ -68,7 +70,8 @@ public class SwaggerConfiguration {
                 && "true".equals(System.getProperty("specified.uri.scheme.host"))) {
             docket.host(applicationProperties.getSwagger().getHost());
         }
-        docket.genericModelSubstitutes(ResponseEntity.class).ignoredParameterTypes(Pageable.class)
+        docket.genericModelSubstitutes(ResponseEntity.class)
+                .ignoredParameterTypes(Pageable.class)
                 .ignoredParameterTypes(java.sql.Date.class)
                 .directModelSubstitute(java.time.LocalDate.class, java.sql.Date.class)
                 .directModelSubstitute(java.time.ZonedDateTime.class, Date.class)
@@ -83,11 +86,15 @@ public class SwaggerConfiguration {
                 applicationProperties.getSwagger().getContactUrl(),
                 applicationProperties.getSwagger().getContactEmail());
 
-        ApiInfo apiInfo = new ApiInfo(applicationProperties.getSwagger().getApi().getTitle(),
-                applicationProperties.getSwagger().getApi().getDescription(),
-                applicationProperties.getSwagger().getVersion(),
-                applicationProperties.getSwagger().getTermsOfServiceUrl(), contact,
-                applicationProperties.getSwagger().getLicense(), applicationProperties.getSwagger().getLicenseUrl());
+        ApiInfo apiInfo = new ApiInfoBuilder()
+                .title(applicationProperties.getSwagger().getApi().getTitle())
+                .description(applicationProperties.getSwagger().getApi().getDescription())
+                .version(applicationProperties.getSwagger().getVersion())
+                .termsOfServiceUrl(applicationProperties.getSwagger().getTermsOfServiceUrl())
+                .contact(contact)
+                .license(applicationProperties.getSwagger().getLicense())
+                .licenseUrl(applicationProperties.getSwagger().getLicenseUrl())
+                .build();
         return apiInfo;
     }
 
@@ -96,11 +103,15 @@ public class SwaggerConfiguration {
                 applicationProperties.getSwagger().getContactUrl(),
                 applicationProperties.getSwagger().getContactEmail());
 
-        ApiInfo apiInfo = new ApiInfo(applicationProperties.getSwagger().getOpenApi().getTitle(),
-                applicationProperties.getSwagger().getOpenApi().getDescription(),
-                applicationProperties.getSwagger().getVersion(),
-                applicationProperties.getSwagger().getTermsOfServiceUrl(), contact,
-                applicationProperties.getSwagger().getLicense(), applicationProperties.getSwagger().getLicenseUrl());
+        ApiInfo apiInfo = new ApiInfoBuilder()
+                .title(applicationProperties.getSwagger().getOpenApi().getTitle())
+                .description(applicationProperties.getSwagger().getOpenApi().getDescription())
+                .version(applicationProperties.getSwagger().getVersion())
+                .termsOfServiceUrl(applicationProperties.getSwagger().getTermsOfServiceUrl())
+                .contact(contact)
+                .license(applicationProperties.getSwagger().getLicense())
+                .licenseUrl(applicationProperties.getSwagger().getLicenseUrl())
+                .build();
         return apiInfo;
     }
 }
