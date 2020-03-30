@@ -24,7 +24,6 @@ import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventL
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @Configuration
-//@Import(value = MongoAutoConfiguration.class)
 @Slf4j
 public class MongoConfiguration {
 
