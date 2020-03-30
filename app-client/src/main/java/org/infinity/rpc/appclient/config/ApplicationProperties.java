@@ -24,15 +24,11 @@ public class ApplicationProperties {
 
     private final Swagger swagger = new Swagger();
 
-    private final Metrics metrics = new Metrics();
-
     private final Zookeeper zookeeper = new Zookeeper();
 
     private final Redis redis = new Redis();
 
     private final Scheduler scheduler = new Scheduler();
-
-    private final Logging logging = new Logging();
 
     private final Ribbon ribbon = new Ribbon();
 
@@ -64,10 +60,6 @@ public class ApplicationProperties {
         return swagger;
     }
 
-    public Metrics getMetrics() {
-        return metrics;
-    }
-
     public Zookeeper getZookeeper() {
         return zookeeper;
     }
@@ -78,10 +70,6 @@ public class ApplicationProperties {
 
     public Scheduler getScheduler() {
         return scheduler;
-    }
-
-    public Logging getLogging() {
-        return logging;
     }
 
     public Ribbon getRibbon() {
@@ -338,145 +326,6 @@ public class ApplicationProperties {
         }
     }
 
-    public static class Metrics {
-
-        private final Jmx jmx = new Jmx();
-
-        private final Spark spark = new Spark();
-
-        private final Graphite graphite = new Graphite();
-
-        private final Logs logs = new Logs();
-
-        public Jmx getJmx() {
-            return jmx;
-        }
-
-        public Spark getSpark() {
-            return spark;
-        }
-
-        public Graphite getGraphite() {
-            return graphite;
-        }
-
-        public Logs getLogs() {
-            return logs;
-        }
-
-        public static class Jmx {
-
-            private boolean enabled = true;
-
-            public boolean isEnabled() {
-                return enabled;
-            }
-
-            public void setEnabled(boolean enabled) {
-                this.enabled = enabled;
-            }
-        }
-
-        public static class Spark {
-
-            private boolean enabled = false;
-
-            private String host = "localhost";
-
-            private int port = 9999;
-
-            public boolean isEnabled() {
-                return enabled;
-            }
-
-            public void setEnabled(boolean enabled) {
-                this.enabled = enabled;
-            }
-
-            public String getHost() {
-                return host;
-            }
-
-            public void setHost(String host) {
-                this.host = host;
-            }
-
-            public int getPort() {
-                return port;
-            }
-
-            public void setPort(int port) {
-                this.port = port;
-            }
-        }
-
-        public static class Graphite {
-
-            private boolean enabled = false;
-
-            private String host = "localhost";
-
-            private int port = 2003;
-
-            private String prefix = "";
-
-            public boolean isEnabled() {
-                return enabled;
-            }
-
-            public void setEnabled(boolean enabled) {
-                this.enabled = enabled;
-            }
-
-            public String getHost() {
-                return host;
-            }
-
-            public void setHost(String host) {
-                this.host = host;
-            }
-
-            public int getPort() {
-                return port;
-            }
-
-            public void setPort(int port) {
-                this.port = port;
-            }
-
-            public String getPrefix() {
-                return prefix;
-            }
-
-            public void setPrefix(String prefix) {
-                this.prefix = prefix;
-            }
-        }
-
-        public static class Logs {
-
-            private boolean enabled = false;
-
-            private int reportFrequency = 60;
-
-            public int getReportFrequency() {
-                return reportFrequency;
-            }
-
-            public void setReportFrequency(int reportFrequency) {
-                this.reportFrequency = reportFrequency;
-            }
-
-            public boolean isEnabled() {
-                return enabled;
-            }
-
-            public void setEnabled(boolean enabled) {
-                this.enabled = enabled;
-            }
-        }
-    }
-
     public static class Dubbo {
 
         private String adminUrl;
@@ -535,59 +384,6 @@ public class ApplicationProperties {
         public void setAdminUrl(String adminUrl) {
             this.adminUrl = adminUrl;
         }
-    }
-
-    public static class Logging {
-
-        private final Logstash logstash = new Logstash();
-
-        public Logstash getLogstash() {
-            return logstash;
-        }
-
-        public static class Logstash {
-
-            private boolean enabled = false;
-
-            private String host = "localhost";
-
-            private int port = 5000;
-
-            private int queueSize = 512;
-
-            public boolean isEnabled() {
-                return enabled;
-            }
-
-            public void setEnabled(boolean enabled) {
-                this.enabled = enabled;
-            }
-
-            public String getHost() {
-                return host;
-            }
-
-            public void setHost(String host) {
-                this.host = host;
-            }
-
-            public int getPort() {
-                return port;
-            }
-
-            public void setPort(int port) {
-                this.port = port;
-            }
-
-            public int getQueueSize() {
-                return queueSize;
-            }
-
-            public void setQueueSize(int queueSize) {
-                this.queueSize = queueSize;
-            }
-        }
-
     }
 
     public static class Ribbon {
