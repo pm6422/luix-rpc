@@ -133,7 +133,6 @@ application:
         version: @project.version@
         terms-of-service-url: http://www.infinity.org
         contact-name: Louis
-        contact-url: http://www.infinity.org
         contact-email: pm6422@126.com
         license: 1.0
         license-url: http://www.apache.org/licenses/LICENSE-2.0.html

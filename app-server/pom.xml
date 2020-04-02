@@ -336,7 +336,6 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.sourceDirectory}/../webapp/app/</outputDirectory>
-                            <useDefaultDelimiters>false</useDefaultDelimiters>
                             <resources>
                                 <resource>
                                     <filtering>true</filtering>
@@ -354,9 +353,6 @@
                         <goals>
                             <goal>testResources</goal>
                         </goals>
-                        <configuration>
-                            <useDefaultDelimiters>false</useDefaultDelimiters>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -402,7 +398,8 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <warSourceDirectory>src/main/webapp/</warSourceDirectory>
-                    <packagingExcludes>WEB-INF/lib/tomcat-*.jar</packagingExcludes>
+                    <!--                    uncomment it if use the undertow-->
+                    <!--                    <packagingExcludes>WEB-INF/lib/tomcat-*.jar</packagingExcludes>-->
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <webResources>
                         <webResource>
