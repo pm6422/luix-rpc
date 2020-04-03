@@ -30,6 +30,7 @@ import static springfox.documentation.builders.PathSelectors.regex;
 @Configuration
 @EnableSwagger2
 @Profile("!" + ApplicationConstants.SPRING_PROFILE_NO_SWAGGER)
+//@ConditionalOnProperty(prefix = "application.swagger", value = "enable", havingValue = "true")
 public class SwaggerConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SwaggerConfiguration.class);
@@ -83,34 +84,28 @@ public class SwaggerConfiguration {
 
     private ApiInfo apiInfo() {
         Contact contact = new Contact(applicationProperties.getSwagger().getContactName(),
-                applicationProperties.getSwagger().getContactUrl(),
+                null,
                 applicationProperties.getSwagger().getContactEmail());
 
         ApiInfo apiInfo = new ApiInfoBuilder()
                 .title(applicationProperties.getSwagger().getApi().getTitle())
                 .description(applicationProperties.getSwagger().getApi().getDescription())
                 .version(applicationProperties.getSwagger().getVersion())
-                .termsOfServiceUrl(applicationProperties.getSwagger().getTermsOfServiceUrl())
                 .contact(contact)
-                .license(applicationProperties.getSwagger().getLicense())
-                .licenseUrl(applicationProperties.getSwagger().getLicenseUrl())
                 .build();
         return apiInfo;
     }
 
     private ApiInfo openApiInfo() {
         Contact contact = new Contact(applicationProperties.getSwagger().getContactName(),
-                applicationProperties.getSwagger().getContactUrl(),
+                null,
                 applicationProperties.getSwagger().getContactEmail());
 
         ApiInfo apiInfo = new ApiInfoBuilder()
                 .title(applicationProperties.getSwagger().getOpenApi().getTitle())
                 .description(applicationProperties.getSwagger().getOpenApi().getDescription())
                 .version(applicationProperties.getSwagger().getVersion())
-                .termsOfServiceUrl(applicationProperties.getSwagger().getTermsOfServiceUrl())
                 .contact(contact)
-                .license(applicationProperties.getSwagger().getLicense())
-                .licenseUrl(applicationProperties.getSwagger().getLicenseUrl())
                 .build();
         return apiInfo;
     }
