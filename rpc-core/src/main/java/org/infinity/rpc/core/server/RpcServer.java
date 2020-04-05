@@ -13,6 +13,7 @@ import org.infinity.rpc.common.RpcEncoder;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
 import org.infinity.rpc.core.server.annotation.Provider;
+import org.infinity.rpc.core.utils.NetworkIpUtils;
 import org.infinity.rpc.registry.ZkRpcServerRegistry;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
@@ -38,7 +39,7 @@ public class RpcServer implements ApplicationContextAware {
     private ApplicationContext  applicationContext;
 
     public RpcServer(int serverPort, ZkRpcServerRegistry rpcServerRegistry) {
-        this.serverIp = "localhost";
+        this.serverIp = NetworkIpUtils.INTRANET_IP;
         this.serverPort = serverPort;
         this.serverAddress = this.serverIp + ":" + this.serverPort;
         this.zkRpcServerRegistry = rpcServerRegistry;
@@ -121,6 +122,7 @@ public class RpcServer implements ApplicationContextAware {
         log.info("Registering RPC server address [{}] on registry", serverAddress);
         zkRpcServerRegistry.createRpcServerNode(serverAddress);
         zkRpcServerRegistry.startWatchNode();
+        zkRpcServerRegistry.discoverRpcServer();
         log.info("Registered RPC server address [{}] on registry", serverAddress);
     }
 }
