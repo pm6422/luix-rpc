@@ -28,7 +28,7 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public Optional<App> findById(String id) {
-        return Optional.empty();
+        return appRepository.findById(id);
     }
 
     @Override
