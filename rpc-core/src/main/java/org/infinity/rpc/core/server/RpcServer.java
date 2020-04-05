@@ -41,7 +41,6 @@ public class RpcServer implements ApplicationContextAware {
         this.serverIp = "localhost";
         this.serverPort = serverPort;
         this.serverAddress = this.serverIp + ":" + this.serverPort;
-        log.info("Starting RPC server on [{}]", serverAddress);
         this.zkRpcServerRegistry = rpcServerRegistry;
     }
 
@@ -73,6 +72,7 @@ public class RpcServer implements ApplicationContextAware {
      * Start netty server
      */
     public void startNettyServer() {
+        log.info("Starting RPC server on [{}]", serverAddress);
         // 创建服务端的通信对象
         ServerBootstrap server = new ServerBootstrap();
         // 创建异步通信的事件组 用于建立TCP连接的
