@@ -1,7 +1,10 @@
 package org.infinity.rpc.registry;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.zookeeper.*;
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooDefs;
+import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
 import java.io.IOException;
@@ -94,7 +97,9 @@ public class ZkRpcServerRegistry {
             List<String> serverList = new ArrayList<>();
             for (String node : nodeList) {
                 byte[] bytes = zooKeeper.getData(Constant.REGISTRY_PATH + "/" + node, false, null);
-                serverList.add(new String(bytes));
+                String server = new String(bytes);
+                serverList.add(server);
+                log.debug("Found registered RPC server: [{}]", server);
             }
 
             if (serverList.size() == 0) {
