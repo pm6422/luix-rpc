@@ -49,8 +49,6 @@ public class AppServerLauncher implements ApplicationContextAware {
     public static void main(String[] args) throws Exception {
         SpringApplication app = new SpringApplication(AppServerLauncher.class);
         Environment env = app.run(args).getEnvironment();
-        // 启动嵌入式zk
-        startZooKeeper();
         printAppInfo(env);
         RpcServer rpcServer = applicationContext.getBean(RpcServer.class);
         rpcServer.startNettyServer();
@@ -83,12 +81,6 @@ public class AppServerLauncher implements ApplicationContextAware {
             LOGGER.error("Misconfigured application with an illegal profile '{}'!", activeProfile);
             System.exit(0);
         });
-    }
-
-    private static void startZooKeeper() {
-        InfinityRpcProperties properties = applicationContext.getBean(InfinityRpcProperties.class);
-        // Start embedded zookeeper server
-        new EmbeddedZooKeeper(properties.getRegistry().getPort(), false).start();
     }
 
     @Override
