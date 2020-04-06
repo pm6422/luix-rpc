@@ -22,10 +22,7 @@ public class ZkRpcServerRegistry {
 
     public void createRpcServerNode(String data) throws Exception {
         //创建一个客户端程序, 对于注册可以不用监听事件
-        zooKeeper = new ZooKeeper(registryAddress, Constant.SESSION_TIMEOUT, new Watcher() {
-            @Override
-            public void process(WatchedEvent event) {
-            }
+        zooKeeper = new ZooKeeper(registryAddress, Constant.SESSION_TIMEOUT, event -> {
         });
 
         if (zooKeeper != null) {
@@ -41,7 +38,7 @@ public class ZkRpcServerRegistry {
                 zooKeeper.create(Constant.DATA_PATH, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
                 log.debug("Created a temporary data node [{}] on [{}]", data, Constant.DATA_PATH);
             } catch (Exception e) {
-                log.error("Failed to create node", e.getMessage());
+                log.error("Failed to create node with error: {}", e.getMessage());
             }
         } else {
             log.error("ZooKeeper connect is null");
@@ -51,17 +48,14 @@ public class ZkRpcServerRegistry {
     public void startWatchNode() {
         if (zooKeeper == null) {
             try {
-                zooKeeper = new ZooKeeper(registryAddress, Constant.SESSION_TIMEOUT, new Watcher() {
-                    @Override
-                    public void process(WatchedEvent watchedEvent) {
-                        if (watchedEvent.getType() == Event.EventType.NodeChildrenChanged) {
-                            // 实时监听zkServer的服务器列表变化
-                            watchNode();
-                        }
+                zooKeeper = new ZooKeeper(registryAddress, Constant.SESSION_TIMEOUT, watchedEvent -> {
+                    if (watchedEvent.getType() == Watcher.Event.EventType.NodeChildrenChanged) {
+                        // 实时监听zkServer的服务器列表变化
+                        watchNode();
                     }
                 });
             } catch (IOException e) {
-                log.error("Failed to register zk", e.getMessage());
+                log.error("Failed to register zk with error: {}", e.getMessage());
             }
             // 获取节点相关数据
             watchNode();
@@ -86,9 +80,32 @@ public class ZkRpcServerRegistry {
                 log.info("Discovered RPC servers [{}]", serverList);
             }
         } catch (Exception e) {
-            log.error("Failed to get nodes", e);
+            log.error("Failed to get nodes with error: {}", e.getMessage());
         }
     }
+
+    public void checkRegisteredRpcServer() {
+        try {
+            //创建一个客户端程序, 对于注册可以不用监听事件
+            ZooKeeper zk = new ZooKeeper(registryAddress, Constant.SESSION_TIMEOUT, event -> {
+            });
+            //获取子节点信息
+            List<String> nodeList = zk.getChildren(Constant.REGISTRY_PATH, true);
+            List<String> serverList = new ArrayList<>();
+            for (String node : nodeList) {
+                byte[] bytes = zooKeeper.getData(Constant.REGISTRY_PATH + "/" + node, false, null);
+                serverList.add(new String(bytes));
+            }
+
+            if (serverList.size() == 0) {
+                throw new RuntimeException("No RPC server found");
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to get nodes with error: {}", e.getMessage());
+        }
+    }
+
 
     /**
      * 随机返回一台服务器地址信息，用于负载均衡

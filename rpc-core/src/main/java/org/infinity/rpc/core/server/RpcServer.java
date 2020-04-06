@@ -120,7 +120,7 @@ public class RpcServer implements ApplicationContextAware {
     private void registerRpcServer() throws Exception {
         log.info("Registering RPC server address [{}] on registry", serverAddress);
         zkRpcServerRegistry.createRpcServerNode(serverAddress);
-        zkRpcServerRegistry.startWatchNode();
+        zkRpcServerRegistry.checkRegisteredRpcServer();
         log.info("Registered RPC server address [{}] on registry", serverAddress);
     }
 }
