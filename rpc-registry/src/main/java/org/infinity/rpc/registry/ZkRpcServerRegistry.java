@@ -123,6 +123,8 @@ public class ZkRpcServerRegistry {
             throw new RuntimeException("No RPC server found");
         }
         int index = new Random().nextInt(size);
-        return serverList.get(index);
+        String server = serverList.get(index);
+        log.info("Got RPC server [{}] by load balance algorithm", server);
+        return server;
     }
 }
