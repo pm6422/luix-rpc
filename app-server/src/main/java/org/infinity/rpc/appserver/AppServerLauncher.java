@@ -1,16 +1,24 @@
 package org.infinity.rpc.appserver;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.rpc.appserver.config.ApplicationConstants;
+import org.infinity.rpc.appserver.config.EmbeddedZooKeeper;
 import org.infinity.rpc.appserver.utils.NetworkIpUtils;
 import org.infinity.rpc.core.annotation.EnableRpc;
+import org.infinity.rpc.core.server.RpcServer;
+import org.infinity.springboot.infinityrpc.InfinityRpcProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.Assert;
@@ -24,11 +32,12 @@ import java.util.Date;
 
 @EnableRpc
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
-@Slf4j
-public class AppServerLauncher {
+public class AppServerLauncher implements ApplicationContextAware {
 
+    private static final Logger                         LOGGER = LoggerFactory.getLogger(AppServerLauncher.class);
     @Autowired
-    private Environment env;
+    private              Environment                    env;
+    private static       ConfigurableApplicationContext applicationContext;
 
     /**
      * Entrance method which used to run the application. Spring profiles can be configured with a program arguments
@@ -40,13 +49,17 @@ public class AppServerLauncher {
     public static void main(String[] args) throws Exception {
         SpringApplication app = new SpringApplication(AppServerLauncher.class);
         Environment env = app.run(args).getEnvironment();
+        // 启动嵌入式zk
+        startZooKeeper();
         printAppInfo(env);
+        RpcServer rpcServer = applicationContext.getBean(RpcServer.class);
+        rpcServer.startNettyServer();
     }
 
     private static void printAppInfo(Environment env) throws IOException {
         String appBanner = StreamUtils.copyToString(new ClassPathResource("config/banner-app.txt").getInputStream(),
                 Charset.defaultCharset());
-        log.info(appBanner, env.getProperty("spring.application.name"),
+        LOGGER.info(appBanner, env.getProperty("spring.application.name"),
                 StringUtils.isEmpty(env.getProperty("server.ssl.key-store")) ? "http" : "https",
                 NetworkIpUtils.INTRANET_IP,
                 env.getProperty("server.port"),
@@ -67,8 +80,19 @@ public class AppServerLauncher {
         Arrays.asList(env.getActiveProfiles()).stream()
                 .filter(activeProfile -> !ArrayUtils.contains(ApplicationConstants.AVAILABLE_PROFILES, activeProfile))
                 .findFirst().ifPresent((activeProfile) -> {
-            log.error("Misconfigured application with an illegal profile '{}'!", activeProfile);
+            LOGGER.error("Misconfigured application with an illegal profile '{}'!", activeProfile);
             System.exit(0);
         });
+    }
+
+    private static void startZooKeeper() {
+        InfinityRpcProperties properties = applicationContext.getBean(InfinityRpcProperties.class);
+        // Start embedded zookeeper server
+        new EmbeddedZooKeeper(properties.getRegistry().getPort(), false).start();
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = (ConfigurableApplicationContext) applicationContext;
     }
 }

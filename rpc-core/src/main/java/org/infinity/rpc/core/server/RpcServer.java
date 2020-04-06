@@ -13,7 +13,6 @@ import org.infinity.rpc.common.RpcEncoder;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
 import org.infinity.rpc.core.server.annotation.Provider;
-import org.infinity.rpc.core.utils.NetworkIpUtils;
 import org.infinity.rpc.registry.ZkRpcServerRegistry;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
@@ -39,9 +38,10 @@ public class RpcServer implements ApplicationContextAware {
     private ApplicationContext  applicationContext;
 
     public RpcServer(int serverPort, ZkRpcServerRegistry rpcServerRegistry) {
-        this.serverIp = NetworkIpUtils.INTRANET_IP;
+        this.serverIp = "localhost";
         this.serverPort = serverPort;
         this.serverAddress = this.serverIp + ":" + this.serverPort;
+        log.info("Starting RPC server on [{}]", serverAddress);
         this.zkRpcServerRegistry = rpcServerRegistry;
     }
 
@@ -73,7 +73,6 @@ public class RpcServer implements ApplicationContextAware {
      * Start netty server
      */
     public void startNettyServer() {
-        log.info("Starting RPC server on [{}]", serverAddress);
         // 创建服务端的通信对象
         ServerBootstrap server = new ServerBootstrap();
         // 创建异步通信的事件组 用于建立TCP连接的
@@ -122,7 +121,6 @@ public class RpcServer implements ApplicationContextAware {
         log.info("Registering RPC server address [{}] on registry", serverAddress);
         zkRpcServerRegistry.createRpcServerNode(serverAddress);
         zkRpcServerRegistry.startWatchNode();
-        zkRpcServerRegistry.discoverRpcServer();
         log.info("Registered RPC server address [{}] on registry", serverAddress);
     }
 }
