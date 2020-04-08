@@ -54,7 +54,6 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
                                     .addLast(RpcClient.this);//3.发送请求对象
                         }
                     }).option(ChannelOption.SO_KEEPALIVE, true);
-            ;
             // 客户端负载均衡算法获取一个服务器地址
             String serverAddress = zkRpcServerRegistry.discoverRpcServer();
             String[] hostAndPortParts = serverAddress.split(":");
