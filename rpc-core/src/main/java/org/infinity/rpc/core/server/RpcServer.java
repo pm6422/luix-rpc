@@ -105,7 +105,7 @@ public class RpcServer implements ApplicationContextAware {
             // 线程阻塞在此，程序暂停执行，等待通信完成
             future.channel().closeFuture().sync();
         } catch (Exception e) {
-            log.error("Failed to start netty", e.getMessage());
+            log.error("Failed to start netty with error: {}", e.getMessage());
         } finally {
             // 优雅的关闭socket
             bossGroup.shutdownGracefully();
