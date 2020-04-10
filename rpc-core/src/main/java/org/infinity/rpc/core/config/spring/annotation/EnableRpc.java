@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.annotation;
+package org.infinity.rpc.core.config.spring.annotation;
 
 import org.infinity.rpc.core.registrar.RpcConsumerProviderRegistrar;
 import org.springframework.context.annotation.Import;

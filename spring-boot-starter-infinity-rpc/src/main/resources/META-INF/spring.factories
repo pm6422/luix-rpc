@@ -1,3 +1,0 @@
-#SpringSPI扩展
-#org.springframework.context.ApplicationContextInitializer=org.infinity.springboot.infinityrpc.RpcConfigurationApplicationContextInitializer
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.infinity.springboot.infinityrpc.RpcClientAutoConfiguration

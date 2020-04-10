@@ -1,4 +1,4 @@
-package org.infinity.springboot.infinityrpc;
+package org.infinity.rpc.core.config.spring;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.server.RpcServer;

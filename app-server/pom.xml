@@ -189,7 +189,7 @@
         </dependency>
         <dependency>
             <groupId>org.infinity</groupId>
-            <artifactId>spring-boot-starter-infinity-rpc</artifactId>
+            <artifactId>rpc-core</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

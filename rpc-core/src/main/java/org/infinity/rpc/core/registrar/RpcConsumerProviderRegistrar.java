@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.registrar;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.annotation.EnableRpc;
+import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
 import org.infinity.rpc.core.client.ConsumerBeanPostProcessor;
 import org.infinity.rpc.core.server.ProviderBeanDefinitionRegistryPostProcessor;
 import org.springframework.beans.factory.BeanClassLoaderAware;

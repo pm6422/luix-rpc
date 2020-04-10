@@ -1,4 +1,4 @@
-package org.infinity.springboot.infinityrpc;
+package org.infinity.rpc.core.config.spring.properties;
 
 import lombok.Data;
 import org.springframework.beans.factory.InitializingBean;

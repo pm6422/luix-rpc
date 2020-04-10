@@ -88,6 +88,7 @@ public class ZkRpcServerRegistry {
     }
 
     public void checkRegisteredRpcServer() {
+        log.debug("Checking registered RPC server");
         try {
             //创建一个客户端程序, 对于注册可以不用监听事件
             ZooKeeper zk = new ZooKeeper(registryAddress, Constant.SESSION_TIMEOUT, event -> {
@@ -109,6 +110,8 @@ public class ZkRpcServerRegistry {
         } catch (Exception e) {
             log.error("Failed to get nodes with error: {}", e.getMessage());
         }
+        log.debug("Checked registered RPC server");
+
     }
 
 
