@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.server;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.registrar.RpcClassPathBeanDefinitionScanner;
+import org.infinity.rpc.core.config.spring.registrar.RpcClassPathBeanDefinitionScanner;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;

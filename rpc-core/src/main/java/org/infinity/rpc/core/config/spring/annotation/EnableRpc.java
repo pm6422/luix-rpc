@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.config.spring.annotation;
 
-import org.infinity.rpc.core.registrar.RpcConsumerProviderRegistrar;
+import org.infinity.rpc.core.config.spring.registrar.RpcConsumerProviderScanRegistrar;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.ElementType;
@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Import(RpcConsumerProviderRegistrar.class)
+@Import(RpcConsumerProviderScanRegistrar.class)
 public @interface EnableRpc {
 
     String[] scanBasePackages() default {};

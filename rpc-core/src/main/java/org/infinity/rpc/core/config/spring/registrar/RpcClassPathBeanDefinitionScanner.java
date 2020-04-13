@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.registrar;
+package org.infinity.rpc.core.config.spring.registrar;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
