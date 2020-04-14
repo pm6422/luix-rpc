@@ -37,6 +37,7 @@ public class RpcConsumerProviderScanRegistrar implements ImportBeanDefinitionReg
         AnnotationAttributes attributes = AnnotationAttributes.fromMap(metadata.getAnnotationAttributes(EnableRpc.class.getName()));
         String[] scanBasePackages = attributes.getStringArray("scanBasePackages");
 //        Class<?> currentClass = ClassUtils.resolveClassName(metadata.getClassName(), classLoader);
+        // Keep sequence
         Set<String> packagesToScan = new LinkedHashSet<String>(Arrays.asList(scanBasePackages));
         if (packagesToScan.isEmpty()) {
             String packageName = ClassUtils.getPackageName(metadata.getClassName());

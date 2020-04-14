@@ -33,7 +33,7 @@ public class RpcConfigurationApplicationContextInitializer implements Applicatio
 
 //        ProviderBeanDefinitionRegistryPostProcessor springBeanDefinitionRegistryPostProcessor = new ProviderBeanDefinitionRegistryPostProcessor(scanPackages);
         // Register custom bean definition post processor
-        String springBeanDefinitionRegistryPostProcessorBeanName = ClassUtils.getShortNameAsProperty(ProviderBeanDefinitionRegistryPostProcessor.class);
+//        String springBeanDefinitionRegistryPostProcessorBeanName = ClassUtils.getShortNameAsProperty(ProviderBeanDefinitionRegistryPostProcessor.class);
 //        applicationContext.getBeanFactory().registerSingleton(springBeanDefinitionRegistryPostProcessorBeanName, springBeanDefinitionRegistryPostProcessor);
 
         log.debug("Initialized consumer annotation bean");
