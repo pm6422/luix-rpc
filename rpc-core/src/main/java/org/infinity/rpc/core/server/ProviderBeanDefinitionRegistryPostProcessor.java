@@ -23,7 +23,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
+/**
+ * Register provider bean and provider wrapper to spring context.
+ */
 @Slf4j
 public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentAware, ResourceLoaderAware, BeanClassLoaderAware, BeanDefinitionRegistryPostProcessor {
 
