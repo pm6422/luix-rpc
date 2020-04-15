@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.server;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.config.spring.bean.DefaultBeanNameGenerator;
 import org.infinity.rpc.core.config.spring.registrar.RpcClassPathBeanDefinitionScanner;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.springframework.beans.BeansException;
@@ -8,11 +9,9 @@ import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.*;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
-import org.springframework.context.annotation.AnnotationBeanNameGenerator;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
@@ -24,7 +23,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.springframework.context.annotation.AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR;
 
 @Slf4j
 public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentAware, ResourceLoaderAware, BeanClassLoaderAware, BeanDefinitionRegistryPostProcessor {
@@ -55,83 +53,102 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+        // todo: register listener
 //        registerListener(registry, );
         registerBeans(registry, scanBasePackages);
     }
 
     private void registerBeans(BeanDefinitionRegistry registry, Set<String> scanBasePackages) {
-        Set<String> resolvedScanBasePackages = resolvePackagePlaceHolders(scanBasePackages);
+        Set<String> resolvedScanBasePackages = resolvePackagePlaceholders(scanBasePackages);
         if (CollectionUtils.isEmpty(resolvedScanBasePackages)) {
             log.warn("No scan package to register bean!");
             return;
         }
-        registerProviderBeans(registry, resolvedScanBasePackages);
+        registerProviders(registry, resolvedScanBasePackages);
     }
 
-    private Set<String> resolvePackagePlaceHolders(Set<String> scanBasePackages) {
-        Set<String> resolvedPkgs = scanBasePackages.stream()
+    private Set<String> resolvePackagePlaceholders(Set<String> scanBasePackages) {
+        Set<String> resolvedPkgs = scanBasePackages
+                .stream()
                 .filter(x -> StringUtils.hasText(x))
                 .map(x -> environment.resolvePlaceholders(x.trim()))
                 .collect(Collectors.toSet());
         return resolvedPkgs;
     }
 
-    private void registerProviderBeans(BeanDefinitionRegistry registry, Set<String> resolvedScanBasePackages) {
-        BeanNameGenerator beanNameGenerator = resolveBeanNameGenerator(registry);
-        RpcClassPathBeanDefinitionScanner scanner = createClassPathScanner(registry, beanNameGenerator);
-        scanner.addIncludeFilter(new AnnotationTypeFilter(Provider.class));
+    private void registerProviders(BeanDefinitionRegistry registry, Set<String> resolvedScanBasePackages) {
+        BeanNameGenerator beanNameGenerator = DefaultBeanNameGenerator.create(registry);
+        RpcClassPathBeanDefinitionScanner scanner = createProviderScanner(registry, beanNameGenerator);
 
-        for (String scanBasePackage : resolvedScanBasePackages) {
-            // The 'scan' method can register @Provider Bean to spring context
-            scanner.scan(scanBasePackage);
-
-            // Next we need to register ProviderBean which is the wrapper of service provider to spring context
-            Set<BeanDefinitionHolder> providerBeanDefinitionHolders = findProviderBeanDefinitionHolders(scanner, scanBasePackage, registry, beanNameGenerator);
-            if (!CollectionUtils.isEmpty(providerBeanDefinitionHolders)) {
-                for (BeanDefinitionHolder providerBeanDefinitionHolder : providerBeanDefinitionHolders) {
-                    registerProviderBean(providerBeanDefinitionHolder, registry, scanner);
-                }
-            }
-            log.info("Registered all RPC service providers");
-        }
+        resolvedScanBasePackages.forEach(scanBasePackage -> {
+            registerProviderInstances(scanner, scanBasePackage);
+            registerProviderWrappers(registry, beanNameGenerator, scanner, scanBasePackage);
+        });
     }
 
-    private BeanNameGenerator resolveBeanNameGenerator(BeanDefinitionRegistry registry) {
-        BeanNameGenerator beanNameGenerator = null;
-        if (registry instanceof SingletonBeanRegistry) {
-            SingletonBeanRegistry singletonBeanRegistry = SingletonBeanRegistry.class.cast(registry);
-            beanNameGenerator = (BeanNameGenerator) singletonBeanRegistry.getSingleton(CONFIGURATION_BEAN_NAME_GENERATOR);
-        }
-        if (beanNameGenerator == null) {
-            log.info("Can NOT find BeanNameGenerator bean with name [{}]", CONFIGURATION_BEAN_NAME_GENERATOR);
-            log.info("Using the default [{}]", AnnotationBeanNameGenerator.class.getName());
-            beanNameGenerator = new AnnotationBeanNameGenerator();
-        }
-        return beanNameGenerator;
-    }
-
-    private RpcClassPathBeanDefinitionScanner createClassPathScanner(BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator) {
+    private RpcClassPathBeanDefinitionScanner createProviderScanner(BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator) {
         RpcClassPathBeanDefinitionScanner scanner = new RpcClassPathBeanDefinitionScanner(registry, environment, resourceLoader);
         scanner.setBeanNameGenerator(beanNameGenerator);
+        scanner.addIncludeFilter(new AnnotationTypeFilter(Provider.class));
         return scanner;
     }
 
-    private Set<BeanDefinitionHolder> findProviderBeanDefinitionHolders(RpcClassPathBeanDefinitionScanner scanner, String scanBasePackage, BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator) {
+
+    private void registerProviderInstances(RpcClassPathBeanDefinitionScanner scanner, String scanBasePackage) {
+        // The 'scan' method can register @Provider bean instance to spring context
+        scanner.scan(scanBasePackage);
+        log.info("Registered RPC provider instances to spring context");
+    }
+
+    private void registerProviderWrappers(BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator, RpcClassPathBeanDefinitionScanner scanner, String scanBasePackage) {
+        // Next we need to register ProviderBean which is the wrapper of service provider to spring context
+        Set<BeanDefinitionHolder> providerBeanDefinitionHolders = findProviderBeanDefinitionHolders(scanner, scanBasePackage, registry, beanNameGenerator);
+        if (CollectionUtils.isEmpty(providerBeanDefinitionHolders)) {
+            return;
+        }
+        providerBeanDefinitionHolders.forEach(providerBeanDefinitionHolder -> {
+            registerProviderWrapper(providerBeanDefinitionHolder, registry, scanner);
+        });
+    }
+
+    private Set<BeanDefinitionHolder> findProviderBeanDefinitionHolders(RpcClassPathBeanDefinitionScanner scanner, String scanBasePackage,
+                                                                        BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator) {
         // Find the components satisfying the condition
         Set<BeanDefinition> beanDefinitions = scanner.findCandidateComponents(scanBasePackage);
         Set<BeanDefinitionHolder> beanDefinitionHolders = new LinkedHashSet<>(beanDefinitions.size());
-        for (BeanDefinition beanDefinition : beanDefinitions) {
+        beanDefinitions.forEach(beanDefinition -> {
             String beanName = beanNameGenerator.generateBeanName(beanDefinition, registry);
-            BeanDefinitionHolder beanDefinitionHolder = new BeanDefinitionHolder(beanDefinition, beanName);
-            beanDefinitionHolders.add(beanDefinitionHolder);
-        }
-
+            beanDefinitionHolders.add(new BeanDefinitionHolder(beanDefinition, beanName));
+        });
         return beanDefinitionHolders;
     }
 
-    private void registerProviderBean(BeanDefinitionHolder providerBeanDefinitionHolder, BeanDefinitionRegistry registry, RpcClassPathBeanDefinitionScanner scanner) {
-        Class<?> providerBeanClass = resolveClass(providerBeanDefinitionHolder);
+    private void registerProviderWrapper(BeanDefinitionHolder providerBeanDefinitionHolder, BeanDefinitionRegistry registry, RpcClassPathBeanDefinitionScanner scanner) {
+        Class<?> providerBeanClass = resolveProviderClass(providerBeanDefinitionHolder);
         Provider providerAnnotation = findProviderAnnotation(providerBeanClass);
+        Class<?> providerInterfaceClass = findProviderInterface(providerAnnotation, providerBeanClass);
+
+        String providerWrapperName = generateProviderWrapperName(providerInterfaceClass);
+        AbstractBeanDefinition wrapperDefinition = buildProviderWrapperDefinition(ProviderWrapper.class, providerInterfaceClass, providerBeanDefinitionHolder.getBeanName());
+
+        // Check duplicated candidate bean
+        if (scanner.checkCandidate(providerWrapperName, wrapperDefinition)) {
+            registry.registerBeanDefinition(providerWrapperName, wrapperDefinition);
+            log.info("Registered RPC provider wrapper [{}] to spring context", providerWrapperName);
+        }
+    }
+
+    private Class<?> resolveProviderClass(BeanDefinitionHolder beanDefinitionHolder) {
+        BeanDefinition beanDefinition = beanDefinitionHolder.getBeanDefinition();
+        String beanClassName = beanDefinition.getBeanClassName();
+        return ClassUtils.resolveClassName(beanClassName, classLoader);
+    }
+
+    private Provider findProviderAnnotation(Class<?> beanClass) {
+        return beanClass.getAnnotation(Provider.class);
+    }
+
+    private Class<?> findProviderInterface(Provider providerAnnotation, Class<?> providerBeanClass) {
         Class<?>[] interfaceClasses = providerBeanClass.getInterfaces();
         Class<?> interfaceClass;
 
@@ -147,45 +164,27 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
                         "if the bean implements more than one interfaces!");
             }
         }
-
-        String providerBeanName = generateProviderBeanName(interfaceClass);
-        AbstractBeanDefinition beanDefinition = buildProviderBeanDefinition(ProviderBean.class, interfaceClass, providerBeanDefinitionHolder.getBeanName());
-
-        // Check duplicated candidate bean
-        if (scanner.checkCandidate(providerBeanName, beanDefinition)) {
-            // Register bean definition
-            registry.registerBeanDefinition(providerBeanName, beanDefinition);
-            log.info("Registered RPC provider [{}]", providerBeanName);
-        }
+        return interfaceClass;
     }
 
-    private Provider findProviderAnnotation(Class<?> beanClass) {
-        return beanClass.getAnnotation(Provider.class);
+    private String generateProviderWrapperName(Class<?> interfaceClass) {
+        ProviderWrapperNameBuilder builder = ProviderWrapperNameBuilder.create(interfaceClass, environment);
+        return builder.build();
     }
 
-    private AbstractBeanDefinition buildProviderBeanDefinition(Class<?> providerBeanClass, Class<?> providerBeanInterfaceClass, String annotatedProviderBeanName) {
+    private AbstractBeanDefinition buildProviderWrapperDefinition(Class<?> providerBeanClass, Class<?> providerInterfaceClass, String providerInstanceName) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(providerBeanClass);
-        // References "ref" property to annotated @Provider Bean
-//        addPropertyReference(builder, "ref", annotatedProviderBeanName);
-        // Set interface
-//        builder.addPropertyValue("interface", interfaceClass.getName());
+        addPropertyValue(builder, "interfaceName", providerBeanClass.getName());
+        addPropertyReference(builder, "instanceName", providerInstanceName);
         return builder.getBeanDefinition();
     }
 
-    private void addPropertyReference(BeanDefinitionBuilder builder, String propertyName, String beanName) {
-        String resolvedBeanName = environment.resolvePlaceholders(beanName);
-        builder.addPropertyReference(propertyName, resolvedBeanName);
+    private void addPropertyValue(BeanDefinitionBuilder builder, String propertyName, String propertyValue) {
+        builder.addPropertyValue(propertyName, propertyValue);
     }
 
-    private Class<?> resolveClass(BeanDefinitionHolder beanDefinitionHolder) {
-        BeanDefinition beanDefinition = beanDefinitionHolder.getBeanDefinition();
-        String beanClassName = beanDefinition.getBeanClassName();
-        return ClassUtils.resolveClassName(beanClassName, classLoader);
-    }
-
-    private String generateProviderBeanName(Class<?> interfaceClass) {
-        ProviderBeanNameBuilder builder = ProviderBeanNameBuilder.create(interfaceClass, environment);
-        return builder.build();
+    private void addPropertyReference(BeanDefinitionBuilder builder, String propertyName, String providerInstanceName) {
+        builder.addPropertyReference(propertyName, environment.resolvePlaceholders(providerInstanceName));
     }
 
     @Override

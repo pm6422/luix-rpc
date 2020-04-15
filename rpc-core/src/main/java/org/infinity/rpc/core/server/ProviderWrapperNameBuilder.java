@@ -3,20 +3,20 @@ package org.infinity.rpc.core.server;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
-public final class ProviderBeanNameBuilder {
+public final class ProviderWrapperNameBuilder {
     private static final String   PROVIDER_PREFIX = "RpcProvider";
     private static final String   SEPARATOR       = ":";
     private final        Class<?> interfaceClass;
 
     private final Environment env;
 
-    private ProviderBeanNameBuilder(Class<?> interfaceClass, Environment env) {
+    private ProviderWrapperNameBuilder(Class<?> interfaceClass, Environment env) {
         this.interfaceClass = interfaceClass;
         this.env = env;
     }
 
-    public static ProviderBeanNameBuilder create(Class<?> interfaceClass, Environment environment) {
-        return new ProviderBeanNameBuilder(interfaceClass, environment);
+    public static ProviderWrapperNameBuilder create(Class<?> interfaceClass, Environment environment) {
+        return new ProviderWrapperNameBuilder(interfaceClass, environment);
     }
 
     public String build() {
