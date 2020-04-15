@@ -1,42 +1,30 @@
 package org.infinity.rpc.core.server;
 
-import org.infinity.rpc.core.server.annotation.Provider;
-
 public class ProviderWrapper<T> {
 
-    private Provider provider;
+    /**
+     * The provider interface name
+     */
+    private String providerInterface;
 
     /**
-     * The interface name of the provider
+     * The provider instance
      */
-    private String interfaceName;
+    private T providerInstance;
 
-    /**
-     * The reference of the interface implementation
-     */
-    private T instanceName;
-
-    public Provider getProvider() {
-        return provider;
+    public String getProviderInterface() {
+        return providerInterface;
     }
 
-    public void setProvider(Provider provider) {
-        this.provider = provider;
+    public void setProviderInterface(String providerInterface) {
+        this.providerInterface = providerInterface;
     }
 
-    public String getInterfaceName() {
-        return interfaceName;
+    public T getProviderInstance() {
+        return providerInstance;
     }
 
-    public void setInterfaceName(String interfaceName) {
-        this.interfaceName = interfaceName;
-    }
-
-    public T getInstanceName() {
-        return instanceName;
-    }
-
-    public void setInstanceName(T instanceName) {
-        this.instanceName = instanceName;
+    public void setProviderInstance(T providerInstance) {
+        this.providerInstance = providerInstance;
     }
 }

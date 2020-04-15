@@ -174,8 +174,9 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
 
     private AbstractBeanDefinition buildProviderWrapperDefinition(Class<?> providerBeanClass, Class<?> providerInterfaceClass, String providerInstanceName) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(providerBeanClass);
-        addPropertyValue(builder, "interfaceName", providerBeanClass.getName());
-        addPropertyReference(builder, "instanceName", providerInstanceName);
+        addPropertyValue(builder, "providerInterface", providerBeanClass.getName());
+        // obtain the instance and inject
+        addPropertyReference(builder, "providerInstance", providerInstanceName);
         return builder.getBeanDefinition();
     }
 
