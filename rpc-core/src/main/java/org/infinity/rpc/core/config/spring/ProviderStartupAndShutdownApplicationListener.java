@@ -6,7 +6,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 
 /**
- * The spring application listener which is used to startup and shutdown the RPC server.
+ * The spring application listener used to start and shutdown the RPC provider.
  */
 public class ProviderStartupAndShutdownApplicationListener extends ExecuteOnceApplicationListener implements Ordered {
     @Override
