@@ -1,6 +1,7 @@
-package org.infinity.rpc.core.client;
+package org.infinity.rpc.core.config.spring.client;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.client.RpcConsumerFactoryBean;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
 import org.springframework.aop.support.AopUtils;

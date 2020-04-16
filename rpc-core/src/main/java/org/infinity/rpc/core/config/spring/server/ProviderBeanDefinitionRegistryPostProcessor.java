@@ -1,8 +1,9 @@
-package org.infinity.rpc.core.server;
+package org.infinity.rpc.core.config.spring.server;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.bean.DefaultBeanNameGenerator;
 import org.infinity.rpc.core.config.spring.bean.RpcClassPathBeanDefinitionScanner;
+import org.infinity.rpc.core.server.ProviderWrapper;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -55,8 +56,6 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-        // todo: register listener
-//        registerListener(registry, );
         registerBeans(registry, scanBasePackages);
     }
 

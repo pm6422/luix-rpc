@@ -6,7 +6,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.rpc.appserver.config.ApplicationConstants;
 import org.infinity.rpc.appserver.utils.NetworkIpUtils;
 import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
-import org.infinity.rpc.core.server.RpcServer;
+import org.infinity.rpc.core.config.spring.server.RpcServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
