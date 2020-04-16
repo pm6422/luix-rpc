@@ -5,7 +5,7 @@ import org.infinity.rpc.core.config.spring.ProviderStartupAndShutdownApplication
 import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
 import org.infinity.rpc.core.config.spring.client.ConsumerBeanPostProcessor;
 import org.infinity.rpc.core.config.spring.server.ProviderBeanDefinitionRegistryPostProcessor;
-import org.infinity.rpc.core.config.spring.utils.AnnotatedBeanDefinitionRegistryUtils;
+import org.infinity.rpc.core.config.spring.bean.registry.AnnotatedBeanDefinitionRegistry;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -59,7 +59,7 @@ public class RpcConsumerProviderScanRegistrar implements ImportBeanDefinitionReg
      * @param registry
      */
     private void registerProviderStartupAndShutdownApplicationListener(BeanDefinitionRegistry registry) {
-        AnnotatedBeanDefinitionRegistryUtils.registerBeans(registry, ProviderStartupAndShutdownApplicationListener.class);
+        AnnotatedBeanDefinitionRegistry.registerBeans(registry, ProviderStartupAndShutdownApplicationListener.class);
     }
 
     /**
