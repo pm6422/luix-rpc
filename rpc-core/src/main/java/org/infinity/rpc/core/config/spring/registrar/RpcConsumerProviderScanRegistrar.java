@@ -5,20 +5,22 @@ import org.infinity.rpc.core.config.spring.ProviderStartupAndShutdownApplication
 import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
 import org.infinity.rpc.core.config.spring.client.ConsumerBeanPostProcessor;
 import org.infinity.rpc.core.config.spring.server.ProviderBeanDefinitionRegistryPostProcessor;
+import org.infinity.rpc.core.config.spring.utils.AnnotatedBeanDefinitionRegistryUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.ObjectUtils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Slf4j
 public class RpcConsumerProviderScanRegistrar implements ImportBeanDefinitionRegistrar {
@@ -57,24 +59,8 @@ public class RpcConsumerProviderScanRegistrar implements ImportBeanDefinitionReg
      * @param registry
      */
     private void registerProviderStartupAndShutdownApplicationListener(BeanDefinitionRegistry registry) {
-//        registerListener(registry, ProviderStartupAndShutdownApplicationListener.class);
+        AnnotatedBeanDefinitionRegistryUtils.registerBeans(registry, ProviderStartupAndShutdownApplicationListener.class);
     }
-
-//    private void registerListener(BeanDefinitionRegistry registry, Class<ProviderStartupAndShutdownApplicationListener> listener) {
-//        if (!ObjectUtils.isEmpty(listener)) {
-//            Iterator iterator = (new ArrayList(Arrays.asList(listener))).iterator();
-//
-//            while (iterator.hasNext()) {
-//                Class<?> annotatedClass = (Class) iterator.next();
-//                if (isPresentBean(registry, annotatedClass)) {
-//                    iterator.remove();
-//                }
-//            }
-//            AnnotatedBeanDefinitionReader reader = new AnnotatedBeanDefinitionReader(registry);
-//            log.debug(registry.getClass().getSimpleName() + " will register annotated classes : " + Arrays.asList(listener) + " .");
-//            reader.register(listener);
-//        }
-//    }
 
     /**
      * Register beans with @Provider annotation
