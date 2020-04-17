@@ -1,5 +1,6 @@
 package org.infinity.rpc.core.config.spring;
 
+import org.infinity.rpc.core.config.spring.server.RpcServerLauncher;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -9,6 +10,13 @@ import org.springframework.core.Ordered;
  * The spring application listener used to start and shutdown the RPC provider.
  */
 public class ProviderStartupAndShutdownApplicationListener extends ExecuteOnceApplicationListener implements Ordered {
+
+    private final RpcServerLauncher rpcServerLauncher;
+
+    public ProviderStartupAndShutdownApplicationListener() {
+        this.rpcServerLauncher = RpcServerLauncher.getInstance();
+    }
+
     @Override
     protected void onApplicationContextEvent(ApplicationContextEvent event) {
         if (event instanceof ContextRefreshedEvent) {
@@ -19,11 +27,11 @@ public class ProviderStartupAndShutdownApplicationListener extends ExecuteOnceAp
     }
 
     private void onContextRefreshedEvent(ContextRefreshedEvent event) {
-//        dubboBootstrap.start();
+        rpcServerLauncher.start();
     }
 
     private void onContextClosedEvent(ContextClosedEvent event) {
-//        dubboBootstrap.stop();
+        rpcServerLauncher.stop();
     }
 
     @Override
