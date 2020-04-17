@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * It used to start and stop the RPC server
+ * Used to start and stop the RPC server
  */
 @Slf4j
 public class RpcServerLifecycle {
@@ -60,12 +60,14 @@ public class RpcServerLifecycle {
      * Start the RPC server
      */
     public void start() {
-        // check whether has been started
-        if (started.compareAndSet(false, true)) {
-            log.info("Starting the RPC server");
-            initialize();
-            exportRpcProviders();
+        if (!started.compareAndSet(false, true)) {
+            // already started
+            return;
         }
+        log.info("Starting the RPC server");
+        initialize();
+        exportRpcProviders();
+        log.info("Started the RPC server");
     }
 
     /**
