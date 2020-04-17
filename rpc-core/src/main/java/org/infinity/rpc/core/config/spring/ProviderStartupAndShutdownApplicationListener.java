@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.config.spring;
 
-import org.infinity.rpc.core.config.spring.server.RpcServerLauncher;
+import org.infinity.rpc.core.server.RpcServerLifecycle;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -11,10 +11,10 @@ import org.springframework.core.Ordered;
  */
 public class ProviderStartupAndShutdownApplicationListener extends ExecuteOnceApplicationListener implements Ordered {
 
-    private final RpcServerLauncher rpcServerLauncher;
+    private final RpcServerLifecycle rpcServerLifecycle;
 
     public ProviderStartupAndShutdownApplicationListener() {
-        this.rpcServerLauncher = RpcServerLauncher.getInstance();
+        this.rpcServerLifecycle = RpcServerLifecycle.getInstance();
     }
 
     @Override
@@ -27,11 +27,11 @@ public class ProviderStartupAndShutdownApplicationListener extends ExecuteOnceAp
     }
 
     private void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        rpcServerLauncher.start();
+        rpcServerLifecycle.start();
     }
 
     private void onContextClosedEvent(ContextClosedEvent event) {
-        rpcServerLauncher.stop();
+        rpcServerLifecycle.stop();
     }
 
     @Override
