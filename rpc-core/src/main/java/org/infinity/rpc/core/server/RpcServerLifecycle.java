@@ -22,13 +22,24 @@ public class RpcServerLifecycle {
      */
     private AtomicBoolean stopped     = new AtomicBoolean(false);
 
+    /**
+     * Prohibit instantiate an instance
+     */
     private RpcServerLifecycle() {
     }
 
+    /**
+     * Get the singleton instance
+     *
+     * @return singleton instance {@link RpcServerLifecycle}
+     */
     public static RpcServerLifecycle getInstance() {
         return SingletonHolder.INSTANCE;
     }
 
+    /**
+     * The singleton instance holder static inner class
+     */
     private static class SingletonHolder {
         private static final RpcServerLifecycle INSTANCE = new RpcServerLifecycle();// static variable will be instantiated on class loading.
     }
