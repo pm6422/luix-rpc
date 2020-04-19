@@ -90,6 +90,9 @@ public class RpcApplicationLifecycle {
         unregisterProviders();
     }
 
+    /**
+     * Unregister RPC providers from registry
+     */
     private void unregisterProviders() {
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
             providerWrapper.unregister();
