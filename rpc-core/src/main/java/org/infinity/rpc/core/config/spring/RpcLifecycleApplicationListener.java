@@ -1,20 +1,20 @@
 package org.infinity.rpc.core.config.spring;
 
-import org.infinity.rpc.core.server.RpcServerLifecycle;
+import org.infinity.rpc.core.server.RpcApplicationLifecycle;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 
 /**
- * The spring application listener used to start and shutdown the RPC provider.
+ * The spring application listener used to start and shutdown the RPC application.
  */
-public class ProviderStartupAndShutdownApplicationListener extends ExecuteOnceApplicationListener implements Ordered {
+public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListener implements Ordered {
 
-    private final RpcServerLifecycle rpcServerLifecycle;
+    private final RpcApplicationLifecycle rpcApplicationLifecycle;
 
-    public ProviderStartupAndShutdownApplicationListener() {
-        this.rpcServerLifecycle = RpcServerLifecycle.getInstance();
+    public RpcLifecycleApplicationListener() {
+        this.rpcApplicationLifecycle = RpcApplicationLifecycle.getInstance();
     }
 
     @Override
@@ -27,11 +27,11 @@ public class ProviderStartupAndShutdownApplicationListener extends ExecuteOnceAp
     }
 
     private void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        rpcServerLifecycle.start();
+        rpcApplicationLifecycle.start();
     }
 
     private void onContextClosedEvent(ContextClosedEvent event) {
-        rpcServerLifecycle.stop();
+        rpcApplicationLifecycle.stop();
     }
 
     @Override

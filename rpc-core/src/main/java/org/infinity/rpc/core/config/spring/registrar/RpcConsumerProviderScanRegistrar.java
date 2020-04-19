@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.config.spring.registrar;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.config.spring.ProviderStartupAndShutdownApplicationListener;
+import org.infinity.rpc.core.config.spring.RpcLifecycleApplicationListener;
 import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
 import org.infinity.rpc.core.config.spring.client.ConsumerBeanPostProcessor;
 import org.infinity.rpc.core.config.spring.server.ProviderBeanDefinitionRegistryPostProcessor;
@@ -59,7 +59,7 @@ public class RpcConsumerProviderScanRegistrar implements ImportBeanDefinitionReg
      * @param registry
      */
     private void registerProviderStartupAndShutdownApplicationListener(BeanDefinitionRegistry registry) {
-        AnnotatedBeanDefinitionRegistry.registerBeans(registry, ProviderStartupAndShutdownApplicationListener.class);
+        AnnotatedBeanDefinitionRegistry.registerBeans(registry, RpcLifecycleApplicationListener.class);
     }
 
     /**

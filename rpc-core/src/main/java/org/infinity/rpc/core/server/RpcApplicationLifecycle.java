@@ -8,28 +8,28 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Used to start and stop the RPC server
  */
 @Slf4j
-public class RpcServerLifecycle {
+public class RpcApplicationLifecycle {
     /**
      * The start flag used to identify whether the RPC server already started.
      */
-    private AtomicBoolean started     = new AtomicBoolean(false);
+    private AtomicBoolean started = new AtomicBoolean(false);
     /**
      * The stop flag used to identify whether the RPC server already stopped.
      */
-    private AtomicBoolean stopped     = new AtomicBoolean(false);
+    private AtomicBoolean stopped = new AtomicBoolean(false);
 
     /**
      * Prohibit instantiate an instance
      */
-    private RpcServerLifecycle() {
+    private RpcApplicationLifecycle() {
     }
 
     /**
      * Get the singleton instance
      *
-     * @return singleton instance {@link RpcServerLifecycle}
+     * @return singleton instance {@link RpcApplicationLifecycle}
      */
-    public static RpcServerLifecycle getInstance() {
+    public static RpcApplicationLifecycle getInstance() {
         return SingletonHolder.INSTANCE;
     }
 
@@ -37,7 +37,7 @@ public class RpcServerLifecycle {
      * The singleton instance holder static inner class
      */
     private static class SingletonHolder {
-        private static final RpcServerLifecycle INSTANCE = new RpcServerLifecycle();// static variable will be instantiated on class loading.
+        private static final RpcApplicationLifecycle INSTANCE = new RpcApplicationLifecycle();// static variable will be instantiated on class loading.
     }
 
     public AtomicBoolean getStarted() {
@@ -59,6 +59,7 @@ public class RpcServerLifecycle {
         log.info("Starting the RPC server");
         initConfig();
         registerProviders();
+        // referProviders();
         log.info("Started the RPC server");
     }
 
@@ -77,6 +78,21 @@ public class RpcServerLifecycle {
         });
     }
 
+    /**
+     * Stop the RPC server
+     */
     public void stop() {
+        if (!started.compareAndSet(true, false) || !stopped.compareAndSet(false, true)) {
+            // not yet started or already stopped
+            return;
+        }
+
+        unregisterProviders();
+    }
+
+    private void unregisterProviders() {
+        ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
+            providerWrapper.unregister();
+        });
     }
 }
