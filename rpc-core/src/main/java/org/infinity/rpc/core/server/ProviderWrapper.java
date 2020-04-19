@@ -14,11 +14,11 @@ import javax.annotation.PostConstruct;
 public class ProviderWrapper<T> {
 
     /**
-     * The provider interface full name
+     * The provider interface full qualified name
      */
     private String providerInterface;
     /**
-     * The provider instance name
+     * The provider instance simple name
      */
     private String providerInstanceName;
     /**
@@ -62,6 +62,7 @@ public class ProviderWrapper<T> {
      * Register the RPC provider to registry
      */
     public void register() {
+        // todo: register to registry
         log.debug("Published RPC provider [{}] to registry", providerInterface);
     }
 }
