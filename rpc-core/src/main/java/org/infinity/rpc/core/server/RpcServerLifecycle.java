@@ -10,10 +10,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class RpcServerLifecycle {
     /**
-     * The initialization flag used to identify whether the RPC server already initialized.
-     */
-    private AtomicBoolean initialized = new AtomicBoolean(false);
-    /**
      * The start flag used to identify whether the RPC server already started.
      */
     private AtomicBoolean started     = new AtomicBoolean(false);
@@ -44,10 +40,6 @@ public class RpcServerLifecycle {
         private static final RpcServerLifecycle INSTANCE = new RpcServerLifecycle();// static variable will be instantiated on class loading.
     }
 
-    public AtomicBoolean getInitialized() {
-        return initialized;
-    }
-
     public AtomicBoolean getStarted() {
         return started;
     }
@@ -74,10 +66,6 @@ public class RpcServerLifecycle {
      * Initialize the RPC server
      */
     private void initConfig() {
-        if (!initialized.compareAndSet(false, true)) {
-            // already initialized
-            return;
-        }
     }
 
     /**

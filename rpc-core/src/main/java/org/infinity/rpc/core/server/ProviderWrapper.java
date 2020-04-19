@@ -27,7 +27,7 @@ public class ProviderWrapper<T> {
     private T      providerInstance;
 
     /**
-     * The method is invoked by Java EE container automatically
+     * The method is invoked by Java EE container automatically after registered bean definition
      */
     @PostConstruct
     public void init() {
