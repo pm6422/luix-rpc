@@ -65,7 +65,7 @@ public class RpcServerLifecycle {
             return;
         }
         log.info("Starting the RPC server");
-        initialize();
+        initConfig();
         registerProviders();
         log.info("Started the RPC server");
     }
@@ -73,7 +73,7 @@ public class RpcServerLifecycle {
     /**
      * Initialize the RPC server
      */
-    private void initialize() {
+    private void initConfig() {
         if (!initialized.compareAndSet(false, true)) {
             // already initialized
             return;

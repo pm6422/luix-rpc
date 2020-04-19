@@ -4,6 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * PRC provider configuration wrapper
+ * Automatically add {@link ProviderWrapper} instance to {@link ProviderWrapperHolder}
+ *
+ * @param <T>
+ */
 @Slf4j
 public class ProviderWrapper<T> {
 
@@ -11,16 +17,14 @@ public class ProviderWrapper<T> {
      * The provider interface full name
      */
     private String providerInterface;
-
     /**
      * The provider instance name
      */
     private String providerInstanceName;
-
     /**
      * The provider instance
      */
-    private T providerInstance;
+    private T      providerInstance;
 
     /**
      * The method is invoked by Java EE container automatically
@@ -54,6 +58,9 @@ public class ProviderWrapper<T> {
         this.providerInstance = providerInstance;
     }
 
+    /**
+     * Register the RPC provider to registry
+     */
     public void register() {
         log.debug("Published RPC provider [{}] to registry", providerInterface);
     }
