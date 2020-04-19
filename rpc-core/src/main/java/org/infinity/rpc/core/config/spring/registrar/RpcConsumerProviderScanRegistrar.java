@@ -31,7 +31,7 @@ public class RpcConsumerProviderScanRegistrar implements ImportBeanDefinitionReg
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         Set<String> scanBasePackages = getScanBasePackages(importingClassMetadata);
-        registerProviderStartupAndShutdownApplicationListener(registry);
+        registerRpcLifecycleApplicationListener(registry);
         registerProviderDefinitionRegistryPostProcessor(scanBasePackages, registry);
         registerConsumerDefinitionRegistryPostProcessor(scanBasePackages, registry);
     }
@@ -54,11 +54,11 @@ public class RpcConsumerProviderScanRegistrar implements ImportBeanDefinitionReg
     }
 
     /**
-     * Register RPC provider startup and shutdown listener
+     * Register RPC provider and consumer start and stop listener
      *
      * @param registry
      */
-    private void registerProviderStartupAndShutdownApplicationListener(BeanDefinitionRegistry registry) {
+    private void registerRpcLifecycleApplicationListener(BeanDefinitionRegistry registry) {
         AnnotatedBeanDefinitionRegistry.registerBeans(registry, RpcLifecycleApplicationListener.class);
     }
 
