@@ -63,6 +63,6 @@ public class ProviderWrapper<T> {
      */
     public void register() {
         // todo: register to registry
-        log.debug("Published RPC provider [{}] to registry", providerInterface);
+        log.debug("Registered RPC provider [{}] to registry", providerInterface);
     }
 }
