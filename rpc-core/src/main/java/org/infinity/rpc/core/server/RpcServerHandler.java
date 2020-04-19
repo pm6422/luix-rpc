@@ -15,10 +15,10 @@ import java.util.UUID;
 @Slf4j
 public class RpcServerHandler extends ChannelInboundHandlerAdapter {
 
-    private Map<String, Object> serviceBeanMap;
+    private Map<String, ProviderWrapper> wrapperMap;
 
-    public RpcServerHandler(Map<String, Object> serviceBeanMap) {
-        this.serviceBeanMap = serviceBeanMap;
+    public RpcServerHandler(Map<String, ProviderWrapper> wrapperMap) {
+        this.wrapperMap = wrapperMap;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
             Class<?>[] parameterTypes = rpcRequest.getParameterTypes();
             Object[] args = rpcRequest.getArgs();
             // 获取到实现类
-            Object serviceImpl = serviceBeanMap.get(className);
+            Object serviceImpl = wrapperMap.get(className).getProviderInstance();
             if (serviceImpl == null) {
                 throw new RuntimeException("Service provider class can NOT be found with name: ".concat(className));
             }

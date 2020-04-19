@@ -66,7 +66,7 @@ public class RpcServerLifecycle {
         }
         log.info("Starting the RPC server");
         initialize();
-        exportRpcProviders();
+        registerProviders();
         log.info("Started the RPC server");
     }
 
@@ -81,9 +81,12 @@ public class RpcServerLifecycle {
     }
 
     /**
-     * Export the RPC providers
+     * Register RPC providers to registry
      */
-    private void exportRpcProviders() {
+    private void registerProviders() {
+        ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
+            providerWrapper.register();
+        });
     }
 
     public void stop() {

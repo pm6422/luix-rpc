@@ -12,6 +12,8 @@ import org.infinity.rpc.common.RpcDecoder;
 import org.infinity.rpc.common.RpcEncoder;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
+import org.infinity.rpc.core.server.ProviderWrapper;
+import org.infinity.rpc.core.server.ProviderWrapperHolder;
 import org.infinity.rpc.core.server.RpcServerHandler;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.infinity.rpc.core.utils.NetworkIpUtils;
@@ -31,7 +33,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public class RpcServer implements ApplicationContextAware {
-    private Map<String, Object> rpcProviderMap = new ConcurrentHashMap<>();
     // key: serviceInterfaceName, value: serviceImpl
     private ZkRpcServerRegistry zkRpcServerRegistry;
     private String              serverAddress;
@@ -50,14 +51,6 @@ public class RpcServer implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-        Map<String, Object> map = this.applicationContext.getBeansWithAnnotation(Provider.class);
-        if (!CollectionUtils.isEmpty(map)) {
-            Set<Map.Entry<String, Object>> entries = map.entrySet();
-            for (Map.Entry<String, Object> entry : entries) {
-                final Class targetClass = getTargetClass(entry.getValue());
-                rpcProviderMap.putIfAbsent(targetClass.getInterfaces()[0].getName(), entry.getValue());
-            }
-        }
     }
 
     private Class getTargetClass(Object bean) {
@@ -92,7 +85,7 @@ public class RpcServer implements ApplicationContextAware {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new RpcDecoder(RpcRequest.class))//1.解码请求对象
                                     .addLast(new RpcEncoder(RpcResponse.class))//2.编码响应对象
-                                    .addLast(new RpcServerHandler(rpcProviderMap));//3.请求处理
+                                    .addLast(new RpcServerHandler(ProviderWrapperHolder.getInstance().getWrappers()));//3.请求处理
                         }
                     }).option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
