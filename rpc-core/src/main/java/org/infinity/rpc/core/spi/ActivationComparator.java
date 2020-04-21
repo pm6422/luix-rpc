@@ -14,14 +14,28 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.extension;
+package org.infinity.rpc.core.spi;
 
-import java.lang.annotation.*;
+import java.util.Comparator;
 
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-public @interface SpiMeta {
+/**
+ * Priority comparator
+ */
 
-    String name() default "";
+public class ActivationComparator<T> implements Comparator<T> {
+    /**
+     * sequence大的排在后面,如果没有设置sequence的排到最前面
+     */
+    @Override
+    public int compare(T o1, T o2) {
+        Activation p1 = o1.getClass().getAnnotation(Activation.class);
+        Activation p2 = o2.getClass().getAnnotation(Activation.class);
+        if (p1 == null) {
+            return 1;
+        } else if (p2 == null) {
+            return -1;
+        } else {
+            return p1.sequence() - p2.sequence();
+        }
+    }
 }

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.extension;
+package org.infinity.rpc.core.spi;
 
 public enum Scope {
     SINGLETON,

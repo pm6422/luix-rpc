@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.extension;
+package org.infinity.rpc.core.spi;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -33,46 +33,65 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * <pre>
- * 	扩展JDK SPI
- * </pre>
+ * An utility used to load a specified implementation of a service interface.
+ * Its functionality is similar with the {@link ServiceLoader}
+ * Service providers can be installed in an implementation of the Java platform in the form of
+ * jar files placed into any of the usual extension directories. Providers can also be made available by adding them to the
+ * application's class path or by some other platform-specific means.
+ * <p>
+ * Requirements:
+ * _ The service provider interface must be an interface class, not a concrete or abstract class
+ * _ The service provider implementation class must have a zero-argument constructor so that they can be instantiated during loading
+ * - The service provider is identified by placing a configuration file in the resource directory META-INF/services/
+ * - The configuration file's name is the fully-qualified of service provider interface
+ * - The configuration file must be encoded in UTF-8
+ * - The contents of configuration file must be the fully-qualified of service provider implementation class
+ *
+ * @param <T>
  */
 @Slf4j
-public class CachedExtensionLoaderHolder<T> {
-    // SPI path prefix
-    private static final String                                      SPI_DIR_PREFIX          = "META-INF/services/";
-    private static final Map<String, CachedExtensionLoaderHolder<?>> EXTENSION_LOADERS_CACHE = new ConcurrentHashMap<String, CachedExtensionLoaderHolder<?>>();
-    private              ConcurrentMap<String, T>                    singletonInstances      = new ConcurrentHashMap<String, T>();
-    private              ConcurrentMap<String, Class<T>>             extensionClasses        = null;
-    private              Class<T>                                    extensionInterface;
-    private              ClassLoader                                 classLoader;
+public class CachedServiceLoader<T> {
+    /**
+     * service directory prefix
+     */
+    private static final String                              SERVICE_DIR_PREFIX    = "META-INF/services/";
+    private static final Map<String, CachedServiceLoader<?>> SERVICE_LOADERS_CACHE = new ConcurrentHashMap<String, CachedServiceLoader<?>>();
+    private              ClassLoader                         classLoader;
+    private              Class<T>                            serviceInterface;
+    private              Map<String, Class<T>>               serviceImplClasses;
+    private              Map<String, T>                      serviceImplInstances  = new ConcurrentHashMap<String, T>();
 
     /**
      * Prohibit instantiate an instance
      */
-    private CachedExtensionLoaderHolder(Class<T> extensionInterface) {
-        this(extensionInterface, Thread.currentThread().getContextClassLoader());
+    private CachedServiceLoader(Class<T> serviceInterface) {
+        this(Thread.currentThread().getContextClassLoader(), serviceInterface);
     }
 
     /**
      * Prohibit instantiate an instance
      */
-    private CachedExtensionLoaderHolder(Class<T> extensionInterface, ClassLoader classLoader) {
-        this.extensionInterface = extensionInterface;
+    private CachedServiceLoader(ClassLoader classLoader, Class<T> serviceInterface) {
         this.classLoader = classLoader;
-        extensionClasses = loadExtensionClasses(SPI_DIR_PREFIX);
+        this.serviceInterface = serviceInterface;
+        serviceImplClasses = loadImplClasses(SERVICE_DIR_PREFIX);
     }
 
-    private ConcurrentMap<String, Class<T>> loadExtensionClasses(String spiDirPrefix) {
-        String extensionFileName = spiDirPrefix.concat(extensionInterface.getName());
-        List<String> classNames = new ArrayList<String>();
-
+    /**
+     * Load service instance based on service configuration file
+     *
+     * @param serviceDirPrefix
+     * @return
+     */
+    private ConcurrentMap<String, Class<T>> loadImplClasses(String serviceDirPrefix) {
+        String serviceFileName = serviceDirPrefix.concat(serviceInterface.getName());
+        List<String> serviceImplClassNames = new ArrayList<String>();
         try {
             Enumeration<URL> urls;
             if (classLoader == null) {
-                urls = ClassLoader.getSystemResources(extensionFileName);
+                urls = ClassLoader.getSystemResources(serviceFileName);
             } else {
-                urls = classLoader.getResources(extensionFileName);
+                urls = classLoader.getResources(serviceFileName);
             }
 
             if (urls == null || !urls.hasMoreElements()) {
@@ -81,7 +100,7 @@ public class CachedExtensionLoaderHolder<T> {
 
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
-                parseUrl(extensionInterface, url, classNames);
+                serviceImplClassNames = parseUrl(serviceInterface, url);
             }
         } catch (Exception e) {
             throw new RuntimeException();
@@ -90,10 +109,11 @@ public class CachedExtensionLoaderHolder<T> {
 //                    "ExtensionLoader loadExtensionClasses error, prefix: " + prefix + " type: " + type.getClass(), e);
         }
 
-        return loadClass(classNames);
+        return loadImplClass(serviceImplClassNames);
     }
 
-    private void parseUrl(Class<T> type, URL url, List<String> classNames) throws ServiceConfigurationError {
+    private List<String> parseUrl(Class<T> type, URL url) throws ServiceConfigurationError {
+        List<String> serviceImplClassNames = new ArrayList<String>();
         InputStream inputStream = null;
         BufferedReader reader = null;
         try {
@@ -105,7 +125,7 @@ public class CachedExtensionLoaderHolder<T> {
 
             while ((line = reader.readLine()) != null) {
                 indexNumber++;
-                parseLine(type, url, line, indexNumber, classNames);
+                parseLine(type, url, line, indexNumber, serviceImplClassNames);
             }
         } catch (Exception x) {
             failLog(type, "Error reading spi configuration file", x);
@@ -120,10 +140,12 @@ public class CachedExtensionLoaderHolder<T> {
             } catch (IOException y) {
                 failLog(type, "Error closing spi configuration file", y);
             }
+
+            return serviceImplClassNames;
         }
     }
 
-    private void parseLine(Class<T> type, URL url, String line, int lineNumber, List<String> classNames) throws IOException, ServiceConfigurationError {
+    private void parseLine(Class<T> type, URL url, String line, int lineNumber, List<String> serviceImplClassNames) throws ServiceConfigurationError {
         int ci = line.indexOf('#');
 
         if (ci >= 0) {
@@ -152,24 +174,24 @@ public class CachedExtensionLoaderHolder<T> {
             }
         }
 
-        if (!classNames.contains(line)) {
-            classNames.add(line);
+        if (!serviceImplClassNames.contains(line)) {
+            serviceImplClassNames.add(line);
             log.debug("[{}] implementation: [{}]", type.getName().substring(type.getName().lastIndexOf(".") + 1), line);
         }
     }
 
-    private ConcurrentMap<String, Class<T>> loadClass(List<String> classNames) {
+    private ConcurrentMap<String, Class<T>> loadImplClass(List<String> implClassNames) {
         ConcurrentMap<String, Class<T>> map = new ConcurrentHashMap<String, Class<T>>();
-        for (String className : classNames) {
+        for (String implClassName : implClassNames) {
             try {
                 Class<T> clz;
                 if (classLoader == null) {
-                    clz = (Class<T>) Class.forName(className);
+                    clz = (Class<T>) Class.forName(implClassName);
                 } else {
-                    clz = (Class<T>) Class.forName(className, true, classLoader);
+                    clz = (Class<T>) Class.forName(implClassName, true, classLoader);
                 }
 
-                checkExtensionType(clz);
+                checkServiceImplType(clz);
                 String spiName = getSpiName(clz);
                 if (map.containsKey(spiName)) {
                     failThrows(clz, ":Error spiName already exist " + spiName);
@@ -177,13 +199,13 @@ public class CachedExtensionLoaderHolder<T> {
                     map.put(spiName, clz);
                 }
             } catch (Exception e) {
-                failLog(extensionInterface, "Error load spi class", e);
+                failLog(serviceInterface, "Error load spi class", e);
             }
         }
         return map;
     }
 
-    private void checkExtensionType(Class<T> clz) {
+    private void checkServiceImplType(Class<T> clz) {
         checkClassPublic(clz);
         checkConstructorPublic(clz);
         checkClassInherit(clz);
@@ -211,41 +233,41 @@ public class CachedExtensionLoaderHolder<T> {
     }
 
     private void checkClassInherit(Class<T> clz) {
-        if (!extensionInterface.isAssignableFrom(clz)) {
-            failThrows(clz, "Error is not instanceof " + extensionInterface.getName());
+        if (!serviceInterface.isAssignableFrom(clz)) {
+            failThrows(clz, "Error is not instanceof " + serviceInterface.getName());
         }
     }
 
     public String getSpiName(Class<?> clz) {
-        SpiMeta spiMeta = clz.getAnnotation(SpiMeta.class);
-        String name = (spiMeta != null && !"".equals(spiMeta.name())) ? spiMeta.name() : clz.getSimpleName();
+        ServiceName serviceName = clz.getAnnotation(ServiceName.class);
+        String name = (serviceName != null && !"".equals(serviceName.value())) ? serviceName.value() : clz.getSimpleName();
         return name;
     }
 
     /**
-     * Get the extension loader instance
+     * Get the service loader
      *
-     * @param extensionInterface extension interface with @Spi annotation
+     * @param serviceInterface provider interface with @Spi annotation
      * @param <T>
      * @return
      */
-    public static <T> CachedExtensionLoaderHolder<T> getExtensionLoader(Class<T> extensionInterface) {
-        checkValidity(extensionInterface);
-        CachedExtensionLoaderHolder<T> loader = createExtensionLoader(extensionInterface);
+    public static <T> CachedServiceLoader<T> getServiceLoader(Class<T> serviceInterface) {
+        checkValidity(serviceInterface);
+        CachedServiceLoader<T> loader = createServiceLoader(serviceInterface);
         return loader;
     }
 
-    private static <T> void checkValidity(Class<T> extensionInterface) {
-        if (extensionInterface == null) {
-            failThrows(extensionInterface, "Extension type must NOT be null!");
+    private static <T> void checkValidity(Class<T> serviceInterface) {
+        if (serviceInterface == null) {
+            failThrows(serviceInterface, "Service interface must NOT be null!");
         }
 
-        if (!extensionInterface.isInterface()) {
-            failThrows(extensionInterface, "Extension type must be interface!");
+        if (!serviceInterface.isInterface()) {
+            failThrows(serviceInterface, "Service interface must be interface class!");
         }
 
-        if (!isSpiType(extensionInterface)) {
-            failThrows(extensionInterface, "Extension type must be specified @Spi annotation!");
+        if (!isSpiType(serviceInterface)) {
+            failThrows(serviceInterface, "Service interface must be specified @Spi annotation!");
         }
     }
 
@@ -253,123 +275,104 @@ public class CachedExtensionLoaderHolder<T> {
         return clz.isAnnotationPresent(Spi.class);
     }
 
-    public static synchronized <T> CachedExtensionLoaderHolder<T> createExtensionLoader(Class<T> extensionInterface) {
-        CachedExtensionLoaderHolder<T> loader = (CachedExtensionLoaderHolder<T>) EXTENSION_LOADERS_CACHE.get(extensionInterface.getName());
+    public static synchronized <T> CachedServiceLoader<T> createServiceLoader(Class<T> serviceInterface) {
+        CachedServiceLoader<T> loader = (CachedServiceLoader<T>) SERVICE_LOADERS_CACHE.get(serviceInterface.getName());
         if (loader == null) {
-            loader = new CachedExtensionLoaderHolder<T>(extensionInterface);
-            EXTENSION_LOADERS_CACHE.put(extensionInterface.getName(), loader);
+            loader = new CachedServiceLoader<T>(serviceInterface);
+            SERVICE_LOADERS_CACHE.put(serviceInterface.getName(), loader);
         }
         return loader;
     }
 
+    public Class<T> getServiceClass(String name) {
+        return serviceImplClasses.get(name);
+    }
 
-//    public Class<T> getExtensionClass(String name) {
-////        initialize();
-//        return extensionClasses.get(name);
-//    }
-
-    public T getExtension(String name) {
-//        initialize();
-        Validate.notEmpty(name, "Extension name must NOT be empty!");
+    public T getService(String name) {
+        Validate.notEmpty(name, "Service name must NOT be empty!");
 
         try {
-            Spi spi = extensionInterface.getAnnotation(Spi.class);
+            Spi spi = serviceInterface.getAnnotation(Spi.class);
             if (spi.scope() == Scope.SINGLETON) {
-                return getSingletonInstance(name);
+                return getSingletonService(name);
             } else {
-                Class<T> clz = extensionClasses.get(name);
+                Class<T> clz = serviceImplClasses.get(name);
                 if (clz == null) {
                     return null;
                 }
                 return clz.newInstance();
             }
         } catch (Exception e) {
-            failThrows(extensionInterface, "Error when getExtension " + name, e);
+            failThrows(serviceInterface, "Error when getExtension " + name, e);
         }
 
         return null;
     }
 
-    private T getSingletonInstance(String name) throws InstantiationException, IllegalAccessException {
-        T obj = singletonInstances.get(name);
+    private T getSingletonService(String name) throws InstantiationException, IllegalAccessException {
+        T obj = serviceImplInstances.get(name);
         if (obj != null) {
             return obj;
         }
 
-        Class<T> clz = extensionClasses.get(name);
+        Class<T> clz = serviceImplClasses.get(name);
         if (clz == null) {
             return null;
         }
 
-        synchronized (singletonInstances) {
-            obj = singletonInstances.get(name);
+        synchronized (serviceImplInstances) {
+            obj = serviceImplInstances.get(name);
             if (obj != null) {
                 return obj;
             }
             obj = clz.newInstance();
-            singletonInstances.put(name, obj);
+            serviceImplInstances.put(name, obj);
         }
 
         return obj;
     }
 
-    public void addExtensionClass(Class<T> clz) {
+    public void addServiceImplClass(Class<T> clz) {
         if (clz == null) {
             return;
         }
-//        initialize();
-        checkExtensionType(clz);
+        checkServiceImplType(clz);
 
         String spiName = getSpiName(clz);
 
-        synchronized (extensionClasses) {
-            if (extensionClasses.containsKey(spiName)) {
+        synchronized (serviceImplClasses) {
+            if (serviceImplClasses.containsKey(spiName)) {
                 failThrows(clz, ":Error spiName already exist " + spiName);
             } else {
-                extensionClasses.put(spiName, clz);
+                serviceImplClasses.put(spiName, clz);
             }
         }
     }
 
-//    private void initialize() {
-//        if (!initialized) {
-//            loadExtensionClasses();
-//        }
-//    }
-
-
-    /**
-     * 有些地方需要spi的所有激活的instances，所以需要能返回一个列表的方法 注意：1 SpiMeta 中的active 为true； 2
-     * 按照spiMeta中的sequence进行排序 FIXME： 是否需要对singleton来区分对待，后面再考虑 fishermen
-     *
-     * @return
-     */
-    public List<T> getExtensions(String key) {
-//        initialize();
-
-        if (extensionClasses.size() == 0) {
+    public List<T> getServiceImpls(String key) {
+        if (serviceImplClasses.size() == 0) {
             return Collections.emptyList();
         }
 
         // 如果只有一个实现，直接返回
-        List<T> exts = new ArrayList<T>(extensionClasses.size());
+        List<T> serviceImpls = new ArrayList<T>(serviceImplClasses.size());
 
         // 多个实现，按优先级排序返回
-        for (Map.Entry<String, Class<T>> entry : extensionClasses.entrySet()) {
+        for (Map.Entry<String, Class<T>> entry : serviceImplClasses.entrySet()) {
             Activation activation = entry.getValue().getAnnotation(Activation.class);
             if (StringUtils.isBlank(key)) {
-                exts.add(getExtension(entry.getKey()));
+                serviceImpls.add(getService(entry.getKey()));
             } else if (activation != null && activation.key() != null) {
                 for (String k : activation.key()) {
                     if (key.equals(k)) {
-                        exts.add(getExtension(entry.getKey()));
+                        serviceImpls.add(getService(entry.getKey()));
                         break;
                     }
                 }
             }
         }
-        Collections.sort(exts, new ActivationComparator<T>());
-        return exts;
+        Collections.sort(serviceImpls, new ActivationComparator<T>());
+        return serviceImpls;
     }
 
     private static <T> void failLog(Class<T> type, String msg, Throwable cause) {
