@@ -14,7 +14,9 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.spi;
+package org.infinity.rpc.core.spi.annotation;
+
+import org.infinity.rpc.core.spi.annotation.Activation;
 
 import java.util.Comparator;
 

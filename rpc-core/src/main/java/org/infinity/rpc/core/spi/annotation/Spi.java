@@ -14,14 +14,15 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.spi;
+package org.infinity.rpc.core.spi.annotation;
 
 import java.lang.annotation.*;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface ServiceName {
+public @interface Spi {
 
-    String value() default "";
+    Scope scope() default Scope.SINGLETON;
+
 }

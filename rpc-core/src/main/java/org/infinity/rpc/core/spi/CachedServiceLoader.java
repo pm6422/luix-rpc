@@ -19,6 +19,7 @@ package org.infinity.rpc.core.spi;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.infinity.rpc.core.spi.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -347,6 +348,10 @@ public class CachedServiceLoader<T> {
                 serviceImplClasses.put(spiName, clz);
             }
         }
+    }
+
+    public List<T> getServiceImpls(){
+        return getServiceImpls("");
     }
 
     public List<T> getServiceImpls(String key) {
