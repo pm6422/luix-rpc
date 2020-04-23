@@ -4,14 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.infinity</groupId>
-    <artifactId>rpc</artifactId>
+    <artifactId>rpc-demo</artifactId>
     <version>1.0.0</version>
     <modules>
-        <module>rpc-utilities</module>
-        <module>rpc-common</module>
-        <module>rpc-core</module>
-        <module>rpc-registry-zookeeper</module>
-        <module>rpc-demo</module>
+        <module>app-common</module>
+        <module>app-server</module>
+        <module>app-client</module>
     </modules>
     <packaging>pom</packaging>
     <properties>
@@ -27,11 +25,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.20</version>
-        </dependency>
-        <dependency>
-            <artifactId>slf4j-api</artifactId>
-            <groupId>org.slf4j</groupId>
-            <version>1.7.30</version>
         </dependency>
     </dependencies>
     <build>

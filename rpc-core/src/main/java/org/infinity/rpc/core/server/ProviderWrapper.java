@@ -2,10 +2,9 @@ package org.infinity.rpc.core.server;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.registry.Registry;
-import org.infinity.rpc.core.spi.ServiceInstanceLoader;
 import org.infinity.rpc.core.registry.RegistryFactory;
-import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 
 import javax.annotation.PostConstruct;
 

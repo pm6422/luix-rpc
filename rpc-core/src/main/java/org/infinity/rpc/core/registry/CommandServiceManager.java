@@ -23,8 +23,8 @@ import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.NotifyListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.switcher.SwitcherUtils;
-import org.infinity.rpc.core.utils.ConcurrentHashSet;
-import org.infinity.rpc.core.utils.NetworkIpUtils;
+import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
+import org.infinity.rpc.utilities.network.NetworkIpUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

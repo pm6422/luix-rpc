@@ -12,7 +12,7 @@ import org.infinity.rpc.core.registry.CommandFailbackRegistry;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
-import org.infinity.rpc.core.utils.ConcurrentHashSet;
+import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

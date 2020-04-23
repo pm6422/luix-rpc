@@ -16,7 +16,7 @@
 
 package org.infinity.rpc.core.switcher;
 
-import org.infinity.rpc.core.spi.annotation.ServiceName;
+import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.util.ArrayList;
 import java.util.Collections;

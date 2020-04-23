@@ -1,8 +1,9 @@
 package org.infinity.rpc.core.switcher;
 
 
-import org.infinity.rpc.core.spi.annotation.Scope;
-import org.infinity.rpc.core.spi.annotation.Spi;
+
+import org.infinity.rpc.utilities.spi.annotation.Scope;
+import org.infinity.rpc.utilities.spi.annotation.Spi;
 
 import java.util.List;
 
