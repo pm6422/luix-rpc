@@ -6,7 +6,6 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.rpc.appserver.config.ApplicationConstants;
 import org.infinity.rpc.appserver.utils.NetworkIpUtils;
 import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
-import org.infinity.rpc.core.config.spring.server.RpcServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -48,8 +47,8 @@ public class AppServerLauncher implements ApplicationContextAware {
         SpringApplication app = new SpringApplication(AppServerLauncher.class);
         Environment env = app.run(args).getEnvironment();
         printAppInfo(env);
-        RpcServer rpcServer = applicationContext.getBean(RpcServer.class);
-        rpcServer.startNettyServer();
+//        RpcServer rpcServer = applicationContext.getBean(RpcServer.class);
+//        rpcServer.startNettyServer();
     }
 
     private static void printAppInfo(Environment env) throws IOException {

@@ -22,12 +22,11 @@ import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.spi.annotation.*;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,28 +50,47 @@ import java.util.concurrent.ConcurrentMap;
  * @param <T>
  */
 @Slf4j
-public class CachedServiceLoader<T> {
+public class ServiceInstanceLoader<T> {
     /**
-     * service directory prefix
+     * Service directory prefix
      */
-    private static final String                              SERVICE_DIR_PREFIX    = "META-INF/services/";
-    private static final Map<String, CachedServiceLoader<?>> SERVICE_LOADERS_CACHE = new ConcurrentHashMap<String, CachedServiceLoader<?>>();
-    private              ClassLoader                         classLoader;
-    private              Class<T>                            serviceInterface;
-    private              Map<String, Class<T>>               serviceImplClasses;
-    private              Map<String, T>                      serviceImplInstances  = new ConcurrentHashMap<String, T>();
+    private static final String                                SERVICE_DIR_PREFIX          = "META-INF/services/";
+    /**
+     * Charset of the service configuration file
+     */
+    public static final  Charset                               SERVICE_CONFIG_FILE_CHARSET = StandardCharsets.UTF_8;
+    /**
+     * Cache used to store service loader
+     */
+    private static final Map<String, ServiceInstanceLoader<?>> SERVICE_LOADERS_CACHE       = new ConcurrentHashMap<String, ServiceInstanceLoader<?>>();
+    /**
+     * The class loader used to locate, load, and instantiate service
+     */
+    private              ClassLoader                           classLoader;
+    /**
+     * The interface representing the service being loaded
+     */
+    private              Class<T>                              serviceInterface;
+    /**
+     * The loaded service classes
+     */
+    private              Map<String, Class<T>>                 serviceImplClasses;
+    /**
+     * The loaded service instances
+     */
+    private              Map<String, T>                        serviceImplInstances        = new ConcurrentHashMap<String, T>();
 
     /**
      * Prohibit instantiate an instance
      */
-    private CachedServiceLoader(Class<T> serviceInterface) {
+    private ServiceInstanceLoader(Class<T> serviceInterface) {
         this(Thread.currentThread().getContextClassLoader(), serviceInterface);
     }
 
     /**
      * Prohibit instantiate an instance
      */
-    private CachedServiceLoader(ClassLoader classLoader, Class<T> serviceInterface) {
+    private ServiceInstanceLoader(ClassLoader classLoader, Class<T> serviceInterface) {
         this.classLoader = classLoader;
         this.serviceInterface = serviceInterface;
         serviceImplClasses = loadImplClasses(SERVICE_DIR_PREFIX);
@@ -101,7 +119,7 @@ public class CachedServiceLoader<T> {
 
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
-                serviceImplClassNames = parseUrl(serviceInterface, url);
+                parseUrl(serviceInterface, url, serviceImplClassNames);
             }
         } catch (Exception e) {
             throw new RuntimeException();
@@ -113,15 +131,10 @@ public class CachedServiceLoader<T> {
         return loadImplClass(serviceImplClassNames);
     }
 
-    private List<String> parseUrl(Class<T> type, URL url) throws ServiceConfigurationError {
-        List<String> serviceImplClassNames = new ArrayList<String>();
-        InputStream inputStream = null;
-        BufferedReader reader = null;
-        try {
-            inputStream = url.openStream();
-            reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
-            String line = null;
+    private void parseUrl(Class<T> type, URL url, List<String> serviceImplClassNames) throws ServiceConfigurationError {
+        // try-with-resource statement can automatically close the stream after use
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), SERVICE_CONFIG_FILE_CHARSET))) {
+            String line;
             int indexNumber = 0;
 
             while ((line = reader.readLine()) != null) {
@@ -130,19 +143,6 @@ public class CachedServiceLoader<T> {
             }
         } catch (Exception x) {
             failLog(type, "Error reading spi configuration file", x);
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException y) {
-                failLog(type, "Error closing spi configuration file", y);
-            }
-
-            return serviceImplClassNames;
         }
     }
 
@@ -193,7 +193,7 @@ public class CachedServiceLoader<T> {
                 }
 
                 checkServiceImplType(clz);
-                String spiName = getSpiName(clz);
+                String spiName = getSpiServiceName(clz);
                 if (map.containsKey(spiName)) {
                     failThrows(clz, ":Error spiName already exist " + spiName);
                 } else {
@@ -204,6 +204,25 @@ public class CachedServiceLoader<T> {
             }
         }
         return map;
+    }
+
+    /**
+     * Manually add service implementation class to service loader
+     * @param clz class to add to service loader
+     */
+    public void addServiceImplClass(Class<T> clz) {
+        if (clz == null) {
+            return;
+        }
+        checkServiceImplType(clz);
+        String spiName = getSpiServiceName(clz);
+        synchronized (serviceImplClasses) {
+            if (serviceImplClasses.containsKey(spiName)) {
+                failThrows(clz, ":Error spiName already exist " + spiName);
+            } else {
+                serviceImplClasses.put(spiName, clz);
+            }
+        }
     }
 
     private void checkServiceImplType(Class<T> clz) {
@@ -239,7 +258,7 @@ public class CachedServiceLoader<T> {
         }
     }
 
-    public String getSpiName(Class<?> clz) {
+    private String getSpiServiceName(Class<?> clz) {
         ServiceName serviceName = clz.getAnnotation(ServiceName.class);
         String name = (serviceName != null && !"".equals(serviceName.value())) ? serviceName.value() : clz.getSimpleName();
         return name;
@@ -250,11 +269,11 @@ public class CachedServiceLoader<T> {
      *
      * @param serviceInterface provider interface with @Spi annotation
      * @param <T>
-     * @return
+     * @return the singleton service loader instance
      */
-    public static <T> CachedServiceLoader<T> getServiceLoader(Class<T> serviceInterface) {
+    public static <T> ServiceInstanceLoader<T> getServiceLoader(Class<T> serviceInterface) {
         checkValidity(serviceInterface);
-        CachedServiceLoader<T> loader = createServiceLoader(serviceInterface);
+        ServiceInstanceLoader<T> loader = createServiceLoader(serviceInterface);
         return loader;
     }
 
@@ -267,50 +286,51 @@ public class CachedServiceLoader<T> {
             failThrows(serviceInterface, "Service interface must be interface class!");
         }
 
-        if (!isSpiType(serviceInterface)) {
+        if (!serviceInterface.isAnnotationPresent(Spi.class)) {
             failThrows(serviceInterface, "Service interface must be specified @Spi annotation!");
         }
     }
 
-    private static <T> boolean isSpiType(Class<T> clz) {
-        return clz.isAnnotationPresent(Spi.class);
-    }
-
-    public static synchronized <T> CachedServiceLoader<T> createServiceLoader(Class<T> serviceInterface) {
-        CachedServiceLoader<T> loader = (CachedServiceLoader<T>) SERVICE_LOADERS_CACHE.get(serviceInterface.getName());
+    private static synchronized <T> ServiceInstanceLoader<T> createServiceLoader(Class<T> serviceInterface) {
+        ServiceInstanceLoader<T> loader = (ServiceInstanceLoader<T>) SERVICE_LOADERS_CACHE.get(serviceInterface.getName());
         if (loader == null) {
-            loader = new CachedServiceLoader<T>(serviceInterface);
+            loader = new ServiceInstanceLoader<T>(serviceInterface);
             SERVICE_LOADERS_CACHE.put(serviceInterface.getName(), loader);
         }
         return loader;
     }
 
-    public Class<T> getServiceClass(String name) {
+    /**
+     * Get service implementation class by name
+     * @param name service implementation service name
+     * @return implementation service class
+     */
+    public Class<T> getServiceImplClass(String name) {
         return serviceImplClasses.get(name);
     }
 
-    public T getService(String name) {
+    /**
+     * Get service implementation instance by name
+     * @param name service implementation service name
+     * @return implementation service instance
+     */
+    public T getServiceImpl(String name) {
         Validate.notEmpty(name, "Service name must NOT be empty!");
 
         try {
             Spi spi = serviceInterface.getAnnotation(Spi.class);
             if (spi.scope() == Scope.SINGLETON) {
-                return getSingletonService(name);
+                return getSingletonServiceImpl(name);
             } else {
-                Class<T> clz = serviceImplClasses.get(name);
-                if (clz == null) {
-                    return null;
-                }
-                return clz.newInstance();
+                return getPrototypeServiceImpl(name);
             }
         } catch (Exception e) {
             failThrows(serviceInterface, "Error when getExtension " + name, e);
         }
-
         return null;
     }
 
-    private T getSingletonService(String name) throws InstantiationException, IllegalAccessException {
+    private T getSingletonServiceImpl(String name) throws InstantiationException, IllegalAccessException {
         T obj = serviceImplInstances.get(name);
         if (obj != null) {
             return obj;
@@ -329,55 +349,15 @@ public class CachedServiceLoader<T> {
             obj = clz.newInstance();
             serviceImplInstances.put(name, obj);
         }
-
         return obj;
     }
 
-    public void addServiceImplClass(Class<T> clz) {
+    private T getPrototypeServiceImpl(String name) throws IllegalAccessException, InstantiationException {
+        Class<T> clz = serviceImplClasses.get(name);
         if (clz == null) {
-            return;
+            return null;
         }
-        checkServiceImplType(clz);
-
-        String spiName = getSpiName(clz);
-
-        synchronized (serviceImplClasses) {
-            if (serviceImplClasses.containsKey(spiName)) {
-                failThrows(clz, ":Error spiName already exist " + spiName);
-            } else {
-                serviceImplClasses.put(spiName, clz);
-            }
-        }
-    }
-
-    public List<T> getServiceImpls(){
-        return getServiceImpls("");
-    }
-
-    public List<T> getServiceImpls(String key) {
-        if (serviceImplClasses.size() == 0) {
-            return Collections.emptyList();
-        }
-
-        // 如果只有一个实现，直接返回
-        List<T> serviceImpls = new ArrayList<T>(serviceImplClasses.size());
-
-        // 多个实现，按优先级排序返回
-        for (Map.Entry<String, Class<T>> entry : serviceImplClasses.entrySet()) {
-            Activation activation = entry.getValue().getAnnotation(Activation.class);
-            if (StringUtils.isBlank(key)) {
-                serviceImpls.add(getService(entry.getKey()));
-            } else if (activation != null && activation.key() != null) {
-                for (String k : activation.key()) {
-                    if (key.equals(k)) {
-                        serviceImpls.add(getService(entry.getKey()));
-                        break;
-                    }
-                }
-            }
-        }
-        Collections.sort(serviceImpls, new ActivationComparator<T>());
-        return serviceImpls;
+        return clz.newInstance();
     }
 
     private static <T> void failLog(Class<T> type, String msg, Throwable cause) {

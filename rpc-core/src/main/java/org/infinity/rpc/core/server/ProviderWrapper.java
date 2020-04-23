@@ -1,6 +1,11 @@
 package org.infinity.rpc.core.server;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.registry.Registry;
+import org.infinity.rpc.core.spi.ServiceInstanceLoader;
+import org.infinity.rpc.core.registry.RegistryFactory;
+import org.infinity.rpc.core.registry.Registrable;
+import org.infinity.rpc.core.registry.Url;
 
 import javax.annotation.PostConstruct;
 
@@ -14,7 +19,7 @@ import javax.annotation.PostConstruct;
 public class ProviderWrapper<T> {
 
     /**
-     * The provider interface full qualified name
+     * The provider interface fully-qualified name
      */
     private String providerInterface;
     /**
@@ -61,9 +66,20 @@ public class ProviderWrapper<T> {
     /**
      * Register the RPC provider to registry
      */
-    public void register() {
-        // todo: register to registry
+    public void register(Url url) {
+        RegistryFactory registryFactory = getRegistryFactory(url);
+        Registry registry = registryFactory.getRegistry(url);
+        registry.register(url);
         log.debug("Registered RPC provider [{}] to registry", providerInterface);
+    }
+
+    private RegistryFactory getRegistryFactory(Url url) {
+        // Get the property registry factory by protocol value
+        RegistryFactory registryFactory = ServiceInstanceLoader.getServiceLoader(RegistryFactory.class).getServiceImpl(url.getProtocol());
+        if(registryFactory ==null) {
+            throw new IllegalStateException("Failed to find the proper registry factory, please check the dependency or a correct protocol value!");
+        }
+        return registryFactory;
     }
 
     /**

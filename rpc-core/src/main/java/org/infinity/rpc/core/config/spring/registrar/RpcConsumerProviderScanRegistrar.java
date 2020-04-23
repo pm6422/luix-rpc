@@ -3,9 +3,8 @@ package org.infinity.rpc.core.config.spring.registrar;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.RpcLifecycleApplicationListener;
 import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
-import org.infinity.rpc.core.config.spring.client.ConsumerBeanPostProcessor;
-import org.infinity.rpc.core.config.spring.server.ProviderBeanDefinitionRegistryPostProcessor;
 import org.infinity.rpc.core.config.spring.bean.registry.AnnotatedBeanDefinitionRegistry;
+import org.infinity.rpc.core.config.spring.server.ProviderBeanDefinitionRegistryPostProcessor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -79,7 +78,7 @@ public class RpcConsumerProviderScanRegistrar implements ImportBeanDefinitionReg
      * @param registry
      */
     private void registerConsumerDefinitionRegistryPostProcessor(Set<String> scanBasePackages, BeanDefinitionRegistry registry) {
-        registerBeanDefinition(scanBasePackages, registry, ConsumerBeanPostProcessor.class);
+//        registerBeanDefinition(scanBasePackages, registry, ConsumerBeanPostProcessor.class);
     }
 
     private void registerBeanDefinition(Set<String> scanBasePackages, BeanDefinitionRegistry registry, Class clazz) {

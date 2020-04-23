@@ -8,8 +8,8 @@
     <version>1.0.0</version>
     <modules>
         <module>rpc-common</module>
-        <module>rpc-registry</module>
         <module>rpc-core</module>
+        <module>rpc-registry-zookeeper</module>
         <module>app-common</module>
         <module>app-server</module>
         <module>app-client</module>

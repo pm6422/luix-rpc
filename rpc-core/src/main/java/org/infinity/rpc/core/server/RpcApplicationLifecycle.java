@@ -1,6 +1,8 @@
 package org.infinity.rpc.core.server;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.registry.Protocol;
+import org.infinity.rpc.core.registry.Url;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -74,7 +76,8 @@ public class RpcApplicationLifecycle {
      */
     private void registerProviders() {
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
-            providerWrapper.register();
+            Url url = new Url(Protocol.ZOOKEEPER, "localhost", 9999);
+            providerWrapper.register(url);
         });
     }
 

@@ -1,11 +1,9 @@
 package org.infinity.rpc.core.config.spring;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.config.spring.client.ConsumerBeanPostProcessor;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.util.ClassUtils;
 
 /**
  * SpringBoot的SPI扩展在META-INF/spring.factories中配置
@@ -24,7 +22,7 @@ public class RpcConfigurationApplicationContextInitializer implements Applicatio
         // Bean post processor will be called before bean factory post processor
 //        applicationContext.getBeanFactory().addBeanPostProcessor(springBeanPostProcessor);
 //        applicationContext.addBeanFactoryPostProcessor(springBeanPostProcessor);
-        String springBeanPostProcessorBeanName = ClassUtils.getShortNameAsProperty(ConsumerBeanPostProcessor.class);
+//        String springBeanPostProcessorBeanName = ClassUtils.getShortNameAsProperty(ConsumerBeanPostProcessor.class);
         // 注意：这里只有注册bean，但由于时机太早，没法注册beanDefinition，所以applicationContext.getBeanDefinitionNames()里获取不到
         // 但applicationContext.getBean(ConsumerAnnotationBean.class)可以获取到bean
         // Register custom bean post processor

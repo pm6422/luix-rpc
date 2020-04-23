@@ -152,7 +152,7 @@
         </dependency>
         <dependency>
             <groupId>org.infinity</groupId>
-            <artifactId>rpc-core</artifactId>
+            <artifactId>rpc-registry-zookeeper</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
