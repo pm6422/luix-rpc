@@ -12,10 +12,24 @@ import java.util.regex.Pattern;
 public class InfinityRpcProperties implements InitializingBean {
     public static final Pattern  COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
     private             Registry registry;
-    private             Protocol   protocol;
+    private             Protocol protocol;
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        checkIntegrity();
+        checkValidity();
+        assignValues();
+    }
+
+    private void checkIntegrity() {
+        // todo
+    }
+
+    private void checkValidity() {
+        // todo
+    }
+
+    private void assignValues() {
         if (!StringUtils.isEmpty(registry.getAddress()) && StringUtils.isEmpty(registry.getServer()) && registry.getPort() == null) {
             String[] splitParts = COLON_SPLIT_PATTERN.split(registry.getAddress());
             registry.setServer(splitParts[0]);
@@ -25,6 +39,8 @@ public class InfinityRpcProperties implements InitializingBean {
 
     @Data
     public static class Registry {
+        // Protocol for register center
+        private String  protocol;
         // Registry center server address
         private String  address;
         // Registry center server name
@@ -35,7 +51,7 @@ public class InfinityRpcProperties implements InitializingBean {
 
     @Data
     public static class Protocol {
-        // Rpc server port
+        // RPC server port
         private int port;
     }
 }

@@ -7,6 +7,7 @@ import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * PRC provider configuration wrapper
@@ -65,10 +66,12 @@ public class ProviderWrapper<T> {
     /**
      * Register the RPC provider to registry
      */
-    public void register(Url url) {
-        RegistryFactory registryFactory = getRegistryFactory(url);
-        Registry registry = registryFactory.getRegistry(url);
-        registry.register(url);
+    public void register(List<Url> registryUrls, Url providerUrl) {
+        for(Url registryUrl: registryUrls) {
+            RegistryFactory registryFactory = getRegistryFactory(registryUrl);
+            Registry registry = registryFactory.getRegistry(registryUrl);
+            registry.register(providerUrl);
+        }
         log.debug("Registered RPC provider [{}] to registry", providerInterface);
     }
 

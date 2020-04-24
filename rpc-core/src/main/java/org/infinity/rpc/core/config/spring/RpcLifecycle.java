@@ -1,16 +1,19 @@
-package org.infinity.rpc.core.server;
+package org.infinity.rpc.core.config.spring;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.registry.Protocol;
+import org.infinity.rpc.core.config.spring.properties.InfinityRpcProperties;
 import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.server.ProviderWrapperHolder;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Used to start and stop the RPC server
  */
 @Slf4j
-public class RpcApplicationLifecycle {
+public class RpcLifecycle {
     /**
      * The start flag used to identify whether the RPC server already started.
      */
@@ -23,15 +26,15 @@ public class RpcApplicationLifecycle {
     /**
      * Prohibit instantiate an instance
      */
-    private RpcApplicationLifecycle() {
+    private RpcLifecycle() {
     }
 
     /**
      * Get the singleton instance
      *
-     * @return singleton instance {@link RpcApplicationLifecycle}
+     * @return singleton instance {@link RpcLifecycle}
      */
-    public static RpcApplicationLifecycle getInstance() {
+    public static RpcLifecycle getInstance() {
         return SingletonHolder.INSTANCE;
     }
 
@@ -39,7 +42,7 @@ public class RpcApplicationLifecycle {
      * The singleton instance holder static inner class
      */
     private static class SingletonHolder {
-        private static final RpcApplicationLifecycle INSTANCE = new RpcApplicationLifecycle();// static variable will be instantiated on class loading.
+        private static final RpcLifecycle INSTANCE = new RpcLifecycle();// static variable will be instantiated on class loading.
     }
 
     public AtomicBoolean getStarted() {
@@ -52,15 +55,17 @@ public class RpcApplicationLifecycle {
 
     /**
      * Start the RPC server
+     *
+     * @param rpcProperties RPC configuration properties
      */
-    public void start() {
+    public void start(InfinityRpcProperties rpcProperties) {
         if (!started.compareAndSet(false, true)) {
             // already started
             return;
         }
         log.info("Starting the RPC server");
         initConfig();
-        registerProviders();
+        registerProviders(rpcProperties);
         // referProviders();
         log.info("Started the RPC server");
     }
@@ -73,18 +78,23 @@ public class RpcApplicationLifecycle {
 
     /**
      * Register RPC providers to registry
+     *
+     * @param rpcProperties RPC configuration properties
      */
-    private void registerProviders() {
+    private void registerProviders(InfinityRpcProperties rpcProperties) {
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
-            Url url = new Url(Protocol.ZOOKEEPER, "localhost", 9999);
-            providerWrapper.register(url);
+            List<Url> registryUrls = Arrays.asList(new Url(rpcProperties.getRegistry().getProtocol(), rpcProperties.getRegistry().getServer(), rpcProperties.getRegistry().getPort()));
+            Url providerUrl = new Url(rpcProperties.getRegistry().getProtocol(), rpcProperties.getRegistry().getServer(), rpcProperties.getRegistry().getPort());
+            providerWrapper.register(registryUrls, providerUrl);
         });
     }
 
     /**
      * Stop the RPC server
+     *
+     * @param rpcProperties RPC configuration properties
      */
-    public void stop() {
+    public void stop(InfinityRpcProperties rpcProperties) {
         if (!started.compareAndSet(true, false) || !stopped.compareAndSet(false, true)) {
             // not yet started or already stopped
             return;

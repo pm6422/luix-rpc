@@ -1,20 +1,31 @@
 package org.infinity.rpc.core.config.spring;
 
-import org.infinity.rpc.core.server.RpcApplicationLifecycle;
+import org.apache.commons.lang3.Validate;
+import org.infinity.rpc.core.config.spring.properties.InfinityRpcProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 
+import javax.annotation.PostConstruct;
+
 /**
- * The spring application listener used to start and shutdown the RPC application.
+ * The spring application listener used to start and stop the RPC application.
  */
 public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListener implements Ordered {
 
-    private final RpcApplicationLifecycle rpcApplicationLifecycle;
+    @Autowired
+    private       InfinityRpcProperties rpcProperties;
+    private final RpcLifecycle          rpcLifecycle;
 
     public RpcLifecycleApplicationListener() {
-        this.rpcApplicationLifecycle = RpcApplicationLifecycle.getInstance();
+        this.rpcLifecycle = RpcLifecycle.getInstance();
+    }
+
+    @PostConstruct
+    public void init() {
+        Validate.notNull(rpcProperties, "RPC properties must NOT be null!");
     }
 
     @Override
@@ -27,15 +38,16 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
     }
 
     private void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        rpcApplicationLifecycle.start();
+        rpcLifecycle.start(rpcProperties);
     }
 
     private void onContextClosedEvent(ContextClosedEvent event) {
-        rpcApplicationLifecycle.stop();
+        rpcLifecycle.stop(rpcProperties);
     }
 
     @Override
     public int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
     }
+
 }
