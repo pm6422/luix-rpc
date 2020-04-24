@@ -220,7 +220,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
                             Iterator<Url> iterator = mergedResult.iterator();
                             while (iterator.hasNext()) {
                                 Url url = iterator.next();
-                                if (url.getProtocol().equalsIgnoreCase("rule")) {
+                                if (url.getProtocol().value().equalsIgnoreCase("rule")) {
                                     continue;
                                 }
                                 idx = to.indexOf('*');
@@ -277,7 +277,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
 
         if (weights.size() > 1) {
             // 将所有group及权重拼接成一个rule的URL，并作为第一个元素添加到最终结果中
-            Url ruleUrl = new Url("rule", url.getHost(), url.getPort(), url.getPath());
+            Url ruleUrl = Url.of(Protocol.valueOf("rule"), url.getHost(), url.getPort(), url.getPath());
             StringBuilder weightsBuilder = new StringBuilder(64);
             for (Map.Entry<String, Integer> entry : weights.entrySet()) {
                 weightsBuilder.append(entry.getKey()).append(':').append(entry.getValue()).append(',');

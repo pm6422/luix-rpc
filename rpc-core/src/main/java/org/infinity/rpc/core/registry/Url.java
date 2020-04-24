@@ -2,7 +2,6 @@ package org.infinity.rpc.core.registry;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
@@ -21,11 +20,12 @@ public class Url implements Serializable {
     public static final        String              PROTOCOL_SEPARATOR = "://";
     public static final        String              PATH_SEPARATOR     = "/";
     /**
-     * RPC Protocol name
+     * RPC protocol
+     * SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type, and check whether value are valid during application startup.
      */
-    private                    String              protocol;
+    private                    Protocol            protocol;
     /**
-     * RPC server or client ip or domain name
+     * RPC server or client host name
      */
     private                    String              host;
     /**
@@ -39,33 +39,33 @@ public class Url implements Serializable {
     private                    Map<String, String> parameters;
     private volatile transient Map<String, Number> numbers;
 
-    public Url(String protocol, String host, Integer port, String path, Map<String, String> parameters) {
-        this.protocol = protocol;
-        this.host = host;
-        this.port = port;
-        this.path = path;
-        this.parameters = parameters;
-
-        checkIntegrity();
-        checkValidity();
+    public static Url of(Protocol protocol, String host, Integer port, String path, Map<String, String> parameters) {
+        Url url = new Url();
+        url.setProtocol(protocol);
+        url.setHost(host);
+        url.setPort(port);
+        url.setPath(path);
+        url.setParameters(parameters);
+        url.checkIntegrity();
+        url.checkValidity();
+        return url;
     }
 
-    public Url(String protocol, String host, Integer port) {
-        this(protocol, host, port, null, null);
+    public static Url of(Protocol protocol, String host, Integer port) {
+        return of(protocol, host, port, null, null);
     }
 
-    public Url(String protocol, String host, Integer port, String path) {
-        this(protocol, host, port, path, null);
+    public static Url of(Protocol protocol, String host, Integer port, String path) {
+        return of(protocol, host, port, path, null);
     }
 
     private void checkIntegrity() {
-        Validate.notEmpty(protocol, "Protocol must NOT be empty!");
+        Validate.notNull(protocol, "Protocol must NOT be null!");
         Validate.notEmpty(host, "Host must NOT be empty!");
         Validate.notNull(port, "Port must NOT be null!");
     }
 
     private void checkValidity() {
-        Validate.isTrue(ArrayUtils.contains(Protocol.VALID_PROTOCOLS, protocol), "Valid protocols: " + Protocol.VALID_PROTOCOLS);
     }
 
     public Integer getIntParameter(String name, int defaultValue) {
@@ -106,7 +106,7 @@ public class Url implements Serializable {
         if (this.parameters != null) {
             params.putAll(this.parameters);
         }
-        return new Url(protocol, host, port, path, params);
+        return of(protocol, host, port, path, params);
     }
 
     /**
@@ -197,7 +197,7 @@ public class Url implements Serializable {
             url = url.substring(0, i);
         }
         if (url.length() > 0) host = url;
-        return new Url(protocol, host, port, path, parameters);
+        return of(Protocol.valueOf(protocol), host, port, path, parameters);
     }
 
     public String toFullStr() {

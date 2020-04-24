@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.config.spring.config;
 
 import lombok.Data;
+import org.infinity.rpc.core.registry.Protocol;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.StringUtils;
@@ -30,9 +31,9 @@ public class InfinityRpcProperties implements InitializingBean {
     }
 
     private void assignValues() {
-        if (!StringUtils.isEmpty(registry.getAddress()) && StringUtils.isEmpty(registry.getServer()) && registry.getPort() == null) {
+        if (!StringUtils.isEmpty(registry.getAddress()) && StringUtils.isEmpty(registry.getHost()) && registry.getPort() == null) {
             String[] splitParts = COLON_SPLIT_PATTERN.split(registry.getAddress());
-            registry.setServer(splitParts[0]);
+            registry.setHost(splitParts[0]);
             registry.setPort(Integer.parseInt(splitParts[1]));
         }
     }
@@ -40,18 +41,18 @@ public class InfinityRpcProperties implements InitializingBean {
     @Data
     public static class Registry {
         // Protocol for register center
-        private String  protocol;
+        private Protocol protocol;
         // Registry center server address
-        private String  address;
-        // Registry center server name
-        private String  server;
+        private String   address;
+        // Registry center host name
+        private String   host;
         // Registry center port number
-        private Integer port;
+        private Integer  port;
     }
 
-    @Data
-    public static class Protocol {
-        // RPC server port
-        private int port;
-    }
+//    @Data
+//    public static class Protocol {
+//        // RPC server port
+//        private int port;
+//    }
 }

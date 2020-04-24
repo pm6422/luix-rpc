@@ -1,9 +1,20 @@
 package org.infinity.rpc.core.registry;
 
 
-import org.infinity.rpc.utilities.collection.ArrayUtils;
+public enum Protocol {
+    ZOOKEEPER("zookeeper");
 
-public class Protocol {
-    public static final String   ZOOKEEPER       = "zookeeper";
-    public static final String[] VALID_PROTOCOLS = ArrayUtils.newArray(ZOOKEEPER);
+    private String value;
+
+    Protocol(String value) {
+        this.value = value;
+    }
+
+    public Protocol fromValue(String value) {
+        return Protocol.valueOf(value);
+    }
+
+    public String value() {
+        return value;
+    }
 }
