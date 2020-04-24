@@ -82,6 +82,7 @@ public class RpcLifecycle {
      * @param rpcProperties RPC configuration properties
      */
     private void registerProviders(InfinityRpcProperties rpcProperties) {
+        // TODO: consider using the async thread pool to speed up the startup process
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
             // Support multiple registry centers
             List<Url> registryUrls = Arrays.asList(Url.of(rpcProperties.getRegistry().getProtocol().value(), rpcProperties.getRegistry().getHost(), rpcProperties.getRegistry().getPort()));

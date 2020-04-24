@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * - TransferProtocol
  * - Registry
  */
-@ConfigurationProperties(prefix = "spring.infinity-rpc")
+@ConfigurationProperties(prefix = "infinity")
 @Data
 public class InfinityRpcProperties implements InitializingBean {
     public static final Pattern           COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");

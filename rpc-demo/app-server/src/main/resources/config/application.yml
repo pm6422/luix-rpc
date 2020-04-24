@@ -97,9 +97,12 @@ spring:
     data:
         mongodb:
             auto-index-creation: false
-    infinity-rpc:
-        protocol:
-            port: @app.rpc.port@
+infinity:
+    application:
+        id: ${info.artifact.id}
+        name: ${info.artifact.name}
+    transport-protocol:
+        port: @app.rpc.port@
 server:
     # It can be overridden by `--server.port` value passed in the commandline or `-Dserver.port` set in `JAVA_OPTS`
     port: @app.server.port@
