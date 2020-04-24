@@ -11,31 +11,32 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ *
+ */
 @Data
 @EqualsAndHashCode
 public class Url implements Serializable {
-    private static final long    serialVersionUID   = 2970867582138131181L;
-    public static final  String  PROTOCOL_SEPARATOR = "://";
-    public static final String PATH_SEPARATOR = "/";
+    private static final       long                serialVersionUID   = 2970867582138131181L;
+    public static final        String              PROTOCOL_SEPARATOR = "://";
+    public static final        String              PATH_SEPARATOR     = "/";
     /**
      * RPC Protocol name
      */
-    private              String  protocol;
+    private                    String              protocol;
     /**
      * RPC server or client ip or domain name
      */
-    private              String  host;
+    private                    String              host;
     /**
      * RPC server or client port
      */
-    private              Integer port;
+    private                    Integer             port;
     /**
      * RPC interface fully-qualified name
      */
-    private              String  path;
-
-    private Map<String, String> parameters;
-
+    private                    String              path;
+    private                    Map<String, String> parameters;
     private volatile transient Map<String, Number> numbers;
 
     public Url(String protocol, String host, Integer port, String path, Map<String, String> parameters) {
@@ -55,38 +56,6 @@ public class Url implements Serializable {
 
     public Url(String protocol, String host, Integer port, String path) {
         this(protocol, host, port, path, null);
-    }
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public Integer getPort() {
-        return port;
-    }
-
-    public void setPort(Integer port) {
-        this.port = port;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
     }
 
     private void checkIntegrity() {

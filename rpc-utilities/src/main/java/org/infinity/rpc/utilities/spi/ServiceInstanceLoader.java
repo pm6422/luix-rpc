@@ -251,7 +251,7 @@ public class ServiceInstanceLoader<T> {
     }
 
     /**
-     * Get the service loader
+     * Get the service loader by service interface type
      *
      * @param serviceInterface provider interface with @Spi annotation
      * @param <T>
