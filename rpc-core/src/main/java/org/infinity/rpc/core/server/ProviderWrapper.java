@@ -78,7 +78,7 @@ public class ProviderWrapper<T> {
 
     private RegistryFactory getRegistryFactory(Url url) {
         // Get the property registry factory by protocol value
-        RegistryFactory registryFactory = ServiceInstanceLoader.getServiceLoader(RegistryFactory.class).getServiceImpl(url.getProtocol().value());
+        RegistryFactory registryFactory = ServiceInstanceLoader.getServiceLoader(RegistryFactory.class).getServiceImpl(url.getProtocol());
         if (registryFactory == null) {
             throw new IllegalStateException("Failed to find the proper registry factory, please check the dependency or a correct protocol value!");
         }

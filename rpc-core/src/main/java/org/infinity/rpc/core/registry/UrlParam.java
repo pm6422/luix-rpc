@@ -3,17 +3,14 @@ package org.infinity.rpc.core.registry;
 import java.util.concurrent.TimeUnit;
 
 public enum UrlParam {
-    /**
-     * connect timeout
-     **/
-    connectTimeout("connectTimeout", 1000),
-    /**
-     * registry session timeout
-     */
+    // registry connect timeout
+    registryConnectTimeout("connectTimeout", TimeUnit.SECONDS.toMillis(1)),
+    // registry session timeout
     registrySessionTimeout("registrySessionTimeout", TimeUnit.MINUTES.toMillis(1)),
 
     /************************** SPI end ******************************/
     registryRetryPeriod("registryRetryPeriod", TimeUnit.SECONDS.toMillis(30)),
+
     group("group", "default_rpc"),
     codec("codec", "motan"),// todo
     check("check", "true"),

@@ -22,7 +22,7 @@ public class Url implements Serializable {
     /**
      * RPC protocol
      */
-    private                    Protocol            protocol;
+    private                    String              protocol;
     /**
      * RPC server or client host name
      */
@@ -35,10 +35,13 @@ public class Url implements Serializable {
      * RPC interface fully-qualified name
      */
     private                    String              path;
+    /**
+     * Extended parameters
+     */
     private                    Map<String, String> parameters;
     private volatile transient Map<String, Number> numbers;
 
-    public static Url of(Protocol protocol, String host, Integer port, String path, Map<String, String> parameters) {
+    public static Url of(String protocol, String host, Integer port, String path, Map<String, String> parameters) {
         Url url = new Url();
         url.setProtocol(protocol);
         url.setHost(host);
@@ -50,11 +53,11 @@ public class Url implements Serializable {
         return url;
     }
 
-    public static Url of(Protocol protocol, String host, Integer port) {
+    public static Url of(String protocol, String host, Integer port) {
         return of(protocol, host, port, null, null);
     }
 
-    public static Url of(Protocol protocol, String host, Integer port, String path) {
+    public static Url of(String protocol, String host, Integer port, String path) {
         return of(protocol, host, port, path, null);
     }
 
@@ -196,7 +199,7 @@ public class Url implements Serializable {
             url = url.substring(0, i);
         }
         if (url.length() > 0) host = url;
-        return of(Protocol.valueOf(protocol), host, port, path, parameters);
+        return of(protocol, host, port, path, parameters);
     }
 
     public String toFullStr() {
