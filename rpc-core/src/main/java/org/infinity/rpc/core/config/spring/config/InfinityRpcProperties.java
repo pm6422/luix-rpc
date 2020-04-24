@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
 @ConfigurationProperties(prefix = "spring.infinity-rpc")
 @Data
 public class InfinityRpcProperties implements InitializingBean {
-    public static final Pattern  COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
-    private             Registry registry;
-    private             Protocol protocol;
+    public static final Pattern          COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
+    private             Registry         registry;
+    private             TransferProtocol transferProtocol;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -41,6 +41,7 @@ public class InfinityRpcProperties implements InitializingBean {
     @Data
     public static class Registry {
         // Protocol for register center
+        // SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type, and check whether value are valid during application startup.
         private Protocol protocol;
         // Registry center server address
         private String   address;
@@ -50,9 +51,9 @@ public class InfinityRpcProperties implements InitializingBean {
         private Integer  port;
     }
 
-//    @Data
-//    public static class Protocol {
-//        // RPC server port
-//        private int port;
-//    }
+    @Data
+    public static class TransferProtocol {
+        // RPC server port
+        private int port;
+    }
 }

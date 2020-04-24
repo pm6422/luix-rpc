@@ -21,7 +21,6 @@ public class Url implements Serializable {
     public static final        String              PATH_SEPARATOR     = "/";
     /**
      * RPC protocol
-     * SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type, and check whether value are valid during application startup.
      */
     private                    Protocol            protocol;
     /**
