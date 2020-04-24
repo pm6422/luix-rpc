@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.config.spring;
 
 import org.apache.commons.lang3.Validate;
-import org.infinity.rpc.core.config.spring.properties.InfinityRpcProperties;
+import org.infinity.rpc.core.config.spring.config.InfinityRpcProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;

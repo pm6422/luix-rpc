@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.config.spring;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.config.spring.properties.InfinityRpcProperties;
+import org.infinity.rpc.core.config.spring.config.InfinityRpcProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
