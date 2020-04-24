@@ -83,6 +83,7 @@ public class RpcLifecycle {
      */
     private void registerProviders(InfinityRpcProperties rpcProperties) {
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
+            // Support multiple registry centers
             List<Url> registryUrls = Arrays.asList(Url.of(rpcProperties.getRegistry().getProtocol().value(), rpcProperties.getRegistry().getHost(), rpcProperties.getRegistry().getPort()));
             Url providerUrl = Url.of(rpcProperties.getRegistry().getProtocol().value(), rpcProperties.getRegistry().getHost(), rpcProperties.getRegistry().getPort());
             providerWrapper.register(registryUrls, providerUrl);

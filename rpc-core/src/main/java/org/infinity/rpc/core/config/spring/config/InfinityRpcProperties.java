@@ -9,40 +9,39 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.regex.Pattern;
 
 /**
- * - Registry
+ * - Application
  * - TransferProtocol
+ * - Registry
  */
 @ConfigurationProperties(prefix = "spring.infinity-rpc")
 @Data
 public class InfinityRpcProperties implements InitializingBean {
     public static final Pattern           COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
-    private             Registry          registry;
+    private             Application       application;
     private             TransportProtocol transportProtocol;
+    private             Registry          registry;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        checkIntegrity();
-        checkValidity();
-        assignValues();
+        initialize();
     }
 
-    private void checkIntegrity() {
-        // todo
+    private void initialize() {
+        registry.initialize();
     }
 
-    private void checkValidity() {
-        // todo
+    @Data
+    public static class Application {
+        // Application name
+        private String name;
+        // Environment variable, e.g. dev, test or prod
+        private String env;
     }
 
-    private void assignValues() {
-        if (StringUtils.isNotEmpty(registry.getAddress()) && StringUtils.isEmpty(registry.getHost()) && registry.getPort() == null) {
-            String[] splitParts = COLON_SPLIT_PATTERN.split(registry.getAddress());
-            registry.setHost(splitParts[0]);
-            registry.setPort(Integer.parseInt(splitParts[1]));
-        }
-        if (StringUtils.isEmpty(registry.getAddress()) && StringUtils.isNotEmpty(registry.getHost()) && registry.getPort() != null) {
-            registry.setAddress(registry.getHost() + ":" + registry.getPort());
-        }
+    @Data
+    public static class TransportProtocol {
+        // RPC server port
+        private Integer port;
     }
 
     @Data
@@ -63,11 +62,28 @@ public class InfinityRpcProperties implements InitializingBean {
         // 注册中心会话超时时间(毫秒)
 //        private             Integer  sessionTimeout  = Math.toIntExact(TimeUnit.MINUTES.toMillis(1));
         private Integer  sessionTimeout;
-    }
+        // 注册中心连接失败后重试的时间间隔(毫秒)
+        private Integer  retryInterval;
 
-    @Data
-    public static class TransportProtocol {
-        // RPC server port
-        private Integer port;
+        public void initialize() {
+            checkIntegrity();
+            checkValidity();
+            if (StringUtils.isNotEmpty(address) && StringUtils.isEmpty(host) && port == null) {
+                String[] splitParts = COLON_SPLIT_PATTERN.split(address);
+                host = splitParts[0];
+                port = Integer.parseInt(splitParts[1]);
+            }
+            if (StringUtils.isEmpty(address) && StringUtils.isNotEmpty(host) && port != null) {
+                address = host + ":" + port;
+            }
+        }
+
+        private void checkIntegrity() {
+            // todo
+        }
+
+        private void checkValidity() {
+            // todo
+        }
     }
 }
