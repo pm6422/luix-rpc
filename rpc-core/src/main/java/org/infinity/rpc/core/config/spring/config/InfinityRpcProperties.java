@@ -32,8 +32,12 @@ public class InfinityRpcProperties implements InitializingBean {
 
     @Data
     public static class Application {
+        // Application ID
+        private String id;
         // Application name
         private String name;
+        // Application description
+        private String description;
         // Environment variable, e.g. dev, test or prod
         private String env;
     }
