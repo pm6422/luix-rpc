@@ -3,9 +3,8 @@ package org.infinity.rpc.appserver.config;
 import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
 import com.google.common.base.Function;
-import org.infinity.rpc.appserver.config.ApplicationConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +26,7 @@ import static springfox.documentation.spi.schema.contexts.ModelContext.inputPara
 
 @Component
 @Order(SwaggerPluginSupport.SWAGGER_PLUGIN_ORDER)
-@Profile("!" + ApplicationConstants.SPRING_PROFILE_NO_SWAGGER)
+@ConditionalOnProperty(prefix = "application.swagger", value = "enable", havingValue = "true")
 public class PageableParameterBuilderPlugin implements ParameterBuilderPlugin {
     private final TypeNameExtractor nameExtractor;
 

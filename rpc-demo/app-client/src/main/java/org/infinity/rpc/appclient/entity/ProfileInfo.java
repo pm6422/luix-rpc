@@ -25,7 +25,7 @@ public class ProfileInfo implements Serializable {
     @ApiModelProperty(value = "是否禁止Swagger")
     private boolean swaggerDisabled = false;
 
-    public ProfileInfo(String[] activeProfiles, String ribbonEnv) {
+    public ProfileInfo(String[] activeProfiles, boolean swaggerDisabled, String ribbonEnv) {
         this.activeProfiles = activeProfiles;
         this.ribbonEnv = ribbonEnv;
 
@@ -33,9 +33,7 @@ public class ProfileInfo implements Serializable {
         if (springBootProfiles.contains(ApplicationConstants.SPRING_PROFILE_PROD)) {
             this.inProduction = true;
         }
-        if (springBootProfiles.contains(ApplicationConstants.SPRING_PROFILE_NO_SWAGGER)) {
-            this.swaggerDisabled = true;
-        }
+        this.swaggerDisabled = swaggerDisabled;
     }
 
     public String[] getActiveProfiles() {
