@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.config.spring;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.config.spring.config.InfinityRpcProperties;
+import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.server.ProviderWrapperHolder;
 
@@ -58,7 +58,7 @@ public class RpcLifecycle {
      *
      * @param rpcProperties RPC configuration properties
      */
-    public void start(InfinityRpcProperties rpcProperties) {
+    public void start(InfinityProperties rpcProperties) {
         if (!started.compareAndSet(false, true)) {
             // already started
             return;
@@ -81,7 +81,7 @@ public class RpcLifecycle {
      *
      * @param rpcProperties RPC configuration properties
      */
-    private void registerProviders(InfinityRpcProperties rpcProperties) {
+    private void registerProviders(InfinityProperties rpcProperties) {
         // TODO: consider using the async thread pool to speed up the startup process
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
             // Support multiple registry centers
@@ -96,7 +96,7 @@ public class RpcLifecycle {
      *
      * @param rpcProperties RPC configuration properties
      */
-    public void stop(InfinityRpcProperties rpcProperties) {
+    public void stop(InfinityProperties rpcProperties) {
         if (!started.compareAndSet(true, false) || !stopped.compareAndSet(false, true)) {
             // not yet started or already stopped
             return;

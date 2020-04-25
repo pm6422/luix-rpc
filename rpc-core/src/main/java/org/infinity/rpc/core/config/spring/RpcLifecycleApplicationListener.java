@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.config.spring;
 
 import org.apache.commons.lang3.Validate;
-import org.infinity.rpc.core.config.spring.config.InfinityRpcProperties;
+import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;
@@ -16,8 +16,8 @@ import javax.annotation.PostConstruct;
 public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListener implements Ordered {
 
     @Autowired
-    private       InfinityRpcProperties rpcProperties;
-    private final RpcLifecycle          rpcLifecycle;
+    private       InfinityProperties rpcProperties;
+    private final RpcLifecycle       rpcLifecycle;
 
     public RpcLifecycleApplicationListener() {
         this.rpcLifecycle = RpcLifecycle.getInstance();

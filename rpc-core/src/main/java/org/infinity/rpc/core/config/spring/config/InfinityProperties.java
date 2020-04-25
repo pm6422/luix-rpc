@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  */
 @ConfigurationProperties(prefix = "infinity")
 @Data
-public class InfinityRpcProperties implements InitializingBean {
+public class InfinityProperties implements InitializingBean {
     public static final Pattern           COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
     private             Application       application;
     private             TransportProtocol transportProtocol;
