@@ -18,8 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * An utility used to load a specified implementation of a service interface.
- * Its functionality is similar with the {@link ServiceLoader}
+ * A utility used to load a specified implementation of a service interface.
+ * It carries out similar functions as {@link ServiceLoader}
  * Service providers can be installed in an implementation of the Java platform in the form of
  * jar files placed into any of the usual extension directories. Providers can also be made available by adding them to the
  * application's class path or by some other platform-specific means.
@@ -28,9 +28,9 @@ import java.util.concurrent.ConcurrentMap;
  * _ The service provider interface must be an interface class, not a concrete or abstract class
  * _ The service provider implementation class must have a zero-argument constructor so that they can be instantiated during loading
  * - The service provider is identified by placing a configuration file in the resource directory META-INF/services/
- * - The configuration file's name is the fully-qualified of service provider interface
  * - The configuration file must be encoded in UTF-8
- * - The contents of configuration file must be the fully-qualified of service provider implementation class
+ * - The configuration file's name is the fully-qualified name of service provider interface
+ * - The configuration file's contents are the fully-qualified name of service provider implementation class
  *
  * @param <T>
  */
