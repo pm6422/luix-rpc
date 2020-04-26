@@ -2,6 +2,7 @@ package org.infinity.rpc.core.config.spring.config;
 
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.registry.Protocol;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -24,6 +25,9 @@ InfinityProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        Validate.notNull(application, "Application must NOT the null, please check your configuration!");
+        Validate.notNull(transportProtocol, "Transport protocol must NOT the null, please check your configuration!");
+        Validate.notNull(registry, "Registry must NOT the null, please check your configuration!");
         initialize();
     }
 

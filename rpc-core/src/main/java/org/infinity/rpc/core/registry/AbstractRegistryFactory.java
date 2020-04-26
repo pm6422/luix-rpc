@@ -8,11 +8,6 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
     private static       Map<String, Registry> registries = new ConcurrentHashMap<String, Registry>();
     private static final ReentrantLock         lock       = new ReentrantLock();
 
-    protected String getRegistryUri(Url url) {
-        String registryUri = url.getUri();
-        return registryUri;
-    }
-
     @Override
     public Registry getRegistry(Url url) {
         String registryUri = getRegistryUri(url);
@@ -33,6 +28,10 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
         } finally {
             lock.unlock();
         }
+    }
+
+    private String getRegistryUri(Url url) {
+        return url.getUri();
     }
 
     protected abstract Registry createRegistry(Url url);

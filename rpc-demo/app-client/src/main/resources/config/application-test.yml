@@ -9,14 +9,10 @@
 # Full reference is available at:
 # https://docs.spring.io/spring-boot/docs/2.0.4.RELEASE/reference/html/common-application-properties.html
 # ===================================================================
-
-spring:
-    thymeleaf:
-        cache: false
-    infinity-rpc:
-        registry:
-            protocol: zookeeper
-            address: localhost:2181
+infinity:
+    registry:
+        protocol: zookeeper
+        address: localhost:2181
 # ===================================================================
 # Application specific properties
 # ===================================================================
