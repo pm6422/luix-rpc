@@ -2,6 +2,7 @@ package org.infinity.rpc.core.config.spring;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.server.ProviderWrapperHolder;
 
@@ -85,7 +86,10 @@ public class RpcLifecycle {
         // TODO: consider using the async thread pool to speed up the startup process
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
             // TODO: Support multiple registry centers
-            List<Url> registryUrls = Arrays.asList(Url.of(rpcProperties.getRegistry().getProtocol().value(), rpcProperties.getRegistry().getHost(), rpcProperties.getRegistry().getPort()));
+            List<Url> registryUrls = Arrays.asList(Url.of(rpcProperties.getRegistry().getProtocol().value(),
+                    rpcProperties.getRegistry().getHost(),
+                    rpcProperties.getRegistry().getPort(),
+                    Registrable.class.getName()));
             Url providerUrl = Url.of(
                     rpcProperties.getRegistry().getProtocol().value(),
                     rpcProperties.getRegistry().getHost(),
