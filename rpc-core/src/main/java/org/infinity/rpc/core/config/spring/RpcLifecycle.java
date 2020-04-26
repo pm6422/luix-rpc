@@ -24,7 +24,7 @@ public class RpcLifecycle {
     private AtomicBoolean stopped = new AtomicBoolean(false);
 
     /**
-     * Prohibit instantiate an instance
+     * Prohibit instantiate an instance outside the class
      */
     private RpcLifecycle() {
     }
@@ -84,9 +84,13 @@ public class RpcLifecycle {
     private void registerProviders(InfinityProperties rpcProperties) {
         // TODO: consider using the async thread pool to speed up the startup process
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
-            // Support multiple registry centers
+            // TODO: Support multiple registry centers
             List<Url> registryUrls = Arrays.asList(Url.of(rpcProperties.getRegistry().getProtocol().value(), rpcProperties.getRegistry().getHost(), rpcProperties.getRegistry().getPort()));
-            Url providerUrl = Url.of(rpcProperties.getRegistry().getProtocol().value(), rpcProperties.getRegistry().getHost(), rpcProperties.getRegistry().getPort());
+            Url providerUrl = Url.of(
+                    rpcProperties.getRegistry().getProtocol().value(),
+                    rpcProperties.getRegistry().getHost(),
+                    rpcProperties.getRegistry().getPort(),
+                    providerWrapper.getProviderInterface());
             providerWrapper.register(registryUrls, providerUrl);
         });
     }

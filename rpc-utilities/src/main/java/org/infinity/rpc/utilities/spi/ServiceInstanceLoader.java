@@ -66,14 +66,14 @@ public class ServiceInstanceLoader<T> {
     private              Map<String, T>                        serviceImplInstances        = new ConcurrentHashMap<String, T>();
 
     /**
-     * Prohibit instantiate an instance
+     * Prohibit instantiate an instance outside the class
      */
     private ServiceInstanceLoader(Class<T> serviceInterface) {
         this(Thread.currentThread().getContextClassLoader(), serviceInterface);
     }
 
     /**
-     * Prohibit instantiate an instance
+     * Prohibit instantiate an instance outside the class
      */
     private ServiceInstanceLoader(ClassLoader classLoader, Class<T> serviceInterface) {
         this.classLoader = classLoader;

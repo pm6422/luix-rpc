@@ -12,7 +12,7 @@ public class ProviderWrapperHolder {
 
 
     /**
-     * Prohibit instantiate an instance
+     * Prohibit instantiate an instance outside the class
      */
     private ProviderWrapperHolder() {
     }

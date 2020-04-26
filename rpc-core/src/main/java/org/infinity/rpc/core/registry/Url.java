@@ -17,6 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @EqualsAndHashCode
 public class Url implements Serializable {
     private static final       long                serialVersionUID   = 2970867582138131181L;
+    // {protocol}://{host}:{port}/{service}?{parameterPairs}
+    private static final       String              URL_PATTERN        = "{0}://{1}:{2}/{3}?{4}";
     public static final        String              PROTOCOL_SEPARATOR = "://";
     public static final        String              PATH_SEPARATOR     = "/";
     /**
@@ -41,6 +43,12 @@ public class Url implements Serializable {
     private                    Map<String, String> parameters;
     private volatile transient Map<String, Number> numbers;
 
+    /**
+     * Prohibit instantiate an instance outside the class
+     */
+    private Url() {
+    }
+
     public static Url of(String protocol, String host, Integer port, String path, Map<String, String> parameters) {
         Url url = new Url();
         url.setProtocol(protocol);
@@ -53,12 +61,12 @@ public class Url implements Serializable {
         return url;
     }
 
-    public static Url of(String protocol, String host, Integer port) {
-        return of(protocol, host, port, null, null);
-    }
-
     public static Url of(String protocol, String host, Integer port, String path) {
         return of(protocol, host, port, path, null);
+    }
+
+    public static Url of(String protocol, String host, Integer port) {
+        return of(protocol, host, port, null, null);
     }
 
     private void checkIntegrity() {
@@ -68,6 +76,14 @@ public class Url implements Serializable {
     }
 
     private void checkValidity() {
+    }
+
+    public Url copy() {
+        Map<String, String> params = new HashMap<String, String>();
+        if (this.parameters != null) {
+            params.putAll(this.parameters);
+        }
+        return of(protocol, host, port, path, params);
     }
 
     public Integer getIntParameter(String name, int defaultValue) {
@@ -101,14 +117,6 @@ public class Url implements Serializable {
             return defaultValue;
         }
         return value;
-    }
-
-    public Url copy() {
-        Map<String, String> params = new HashMap<String, String>();
-        if (this.parameters != null) {
-            params.putAll(this.parameters);
-        }
-        return of(protocol, host, port, path, params);
     }
 
     /**
@@ -155,8 +163,7 @@ public class Url implements Serializable {
         int port = 0;
         String path = null;
         Map<String, String> parameters = new HashMap<String, String>();
-        ;
-        int i = url.indexOf("?"); // seperator between body and parameters
+        int i = url.indexOf("?"); // separator between body and parameters
         if (i >= 0) {
             String[] parts = url.substring(i + 1).split("\\&");
 
