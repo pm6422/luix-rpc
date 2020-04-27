@@ -39,6 +39,7 @@ public class Url implements Serializable {
      */
     private              String  path;
 
+    public static final String GROUP                 = "group";
     public static final String PARAM_ADDRESS         = "address";
     public static final String PARAM_CONNECT_TIMEOUT = "connectTimeout";
     public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
@@ -235,6 +236,10 @@ public class Url implements Serializable {
     // 包含协议、host、port、path、group
     public String toSimpleString() {
         return getUri() + "?group=" + getGroup();
+    }
+
+    public String toString() {
+        return toSimpleString();
     }
 
     public void addParameter(String name, String value) {
