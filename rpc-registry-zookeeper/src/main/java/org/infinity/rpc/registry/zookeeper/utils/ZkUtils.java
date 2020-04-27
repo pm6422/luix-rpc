@@ -1,6 +1,7 @@
-package org.infinity.rpc.registry.zookeeper;
+package org.infinity.rpc.registry.zookeeper.utils;
 
 import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.registry.zookeeper.ZkNodeType;
 
 public class ZkUtils {
 

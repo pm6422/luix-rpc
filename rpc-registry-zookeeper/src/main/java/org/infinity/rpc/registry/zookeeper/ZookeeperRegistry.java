@@ -12,6 +12,7 @@ import org.infinity.rpc.core.registry.CommandFailbackRegistry;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
+import org.infinity.rpc.registry.zookeeper.utils.ZkUtils;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 
 import java.util.*;
