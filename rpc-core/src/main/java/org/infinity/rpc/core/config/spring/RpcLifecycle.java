@@ -81,28 +81,28 @@ public class RpcLifecycle {
     /**
      * Register RPC providers to registry
      *
-     * @param rpcProperties RPC configuration properties
+     * @param infinityProperties RPC configuration properties
      */
-    private void registerProviders(InfinityProperties rpcProperties) {
+    private void registerProviders(InfinityProperties infinityProperties) {
         // TODO: consider using the async thread pool to speed up the startup process
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
             // TODO: Support multiple registry centers
-            Url registryUrl = Url.of(rpcProperties.getRegistry().getName().value(),
-                    rpcProperties.getRegistry().getHost(),
-                    rpcProperties.getRegistry().getPort(),
+            Url registryUrl = Url.of(infinityProperties.getRegistry().getName().value(),
+                    infinityProperties.getRegistry().getHost(),
+                    infinityProperties.getRegistry().getPort(),
                     Registrable.class.getName());
             registryUrl.addParameter(Url.PARAM_ADDRESS, registryUrl.getAddress());
-            registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, rpcProperties.getRegistry().getConnectTimeout().toString());
-            registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, rpcProperties.getRegistry().getSessionTimeout().toString());
-            registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, rpcProperties.getRegistry().getRetryInterval().toString());
+            registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, infinityProperties.getRegistry().getConnectTimeout().toString());
+            registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, infinityProperties.getRegistry().getSessionTimeout().toString());
+            registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, infinityProperties.getRegistry().getRetryInterval().toString());
             List<Url> registryUrls = Arrays.asList(registryUrl);
 
             Url providerUrl = Url.of(
-                    rpcProperties.getProtocol().getName().value(),
+                    infinityProperties.getProtocol().getName().value(),
                     NetworkIpUtils.INTRANET_IP,
-                    rpcProperties.getProtocol().getPort(),
+                    infinityProperties.getProtocol().getPort(),
                     providerWrapper.getProviderInterface());
-            providerUrl.addParameter(Url.GROUP, rpcProperties.getApplication().getId());
+            providerUrl.addParameter(Url.GROUP, infinityProperties.getApplication().getId());
             providerWrapper.register(registryUrls, providerUrl);
         });
     }

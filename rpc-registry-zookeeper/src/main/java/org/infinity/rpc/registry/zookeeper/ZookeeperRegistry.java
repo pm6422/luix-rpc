@@ -366,8 +366,10 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     private void createNode(Url url, ZkNodeType nodeType) {
         String nodeTypePath = ZkUtils.toNodeTypePath(url, nodeType);
         if (!zkClient.exists(nodeTypePath)) {
+            // Create a persistent directory
             zkClient.createPersistent(nodeTypePath, true);
         }
+        // Create a temporary node
         zkClient.createEphemeral(ZkUtils.toNodePath(url, nodeType), url.toFullStr());
     }
 

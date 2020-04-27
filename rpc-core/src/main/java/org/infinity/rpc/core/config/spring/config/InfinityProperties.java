@@ -3,6 +3,7 @@ package org.infinity.rpc.core.config.spring.config;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.infinity.rpc.utilities.id.ShortIdWorker;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -19,9 +20,9 @@ import java.util.regex.Pattern;
 public class
 InfinityProperties implements InitializingBean {
     public static final Pattern     COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
-    private             Application application;
-    private             Protocol    protocol            = new Protocol();// set default value
-    private             Registry    registry;
+    private             Application application         = new Application();
+    private             Protocol    protocol            = new Protocol();
+    private             Registry    registry            = new Registry();
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -37,7 +38,7 @@ InfinityProperties implements InitializingBean {
     @Data
     public static class Application {
         // Application ID
-        private String id;
+        private String id = "R" + new ShortIdWorker().nextId();
         // Application name
         private String name;
         // Application description
@@ -71,6 +72,15 @@ InfinityProperties implements InitializingBean {
         private Name    name = Name.INFINITY;
         // Port number of the RPC server
         private Integer port;
+
+        private void checkIntegrity() {
+            // todo
+
+        }
+
+        private void checkValidity() {
+            // todo
+        }
     }
 
     @Data
@@ -94,13 +104,13 @@ InfinityProperties implements InitializingBean {
         }
 
         // Type name of register center
-        private Name    name;
-        // Registry center server address
-        private String  address;
+        private Name    name           = Name.ZOOKEEPER;
         // Registry center host name
         private String  host;
         // Registry center port number
         private Integer port;
+        // Registry center server address
+        private String  address;
         // 注册中心连接超时时间(毫秒)
         private Integer connectTimeout = Math.toIntExact(TimeUnit.SECONDS.toMillis(1));
         // 注册中心会话超时时间(毫秒)
