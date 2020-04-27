@@ -65,6 +65,11 @@ InfinityProperties implements InitializingBean {
             public String value() {
                 return value;
             }
+
+            @Override
+            public String toString() {
+                return value;
+            }
         }
 
         // Name of protocol
@@ -99,6 +104,11 @@ InfinityProperties implements InitializingBean {
             }
 
             public String value() {
+                return value;
+            }
+
+            @Override
+            public String toString() {
                 return value;
             }
         }

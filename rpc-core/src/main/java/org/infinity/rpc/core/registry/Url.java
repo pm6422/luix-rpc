@@ -39,7 +39,7 @@ public class Url implements Serializable {
      */
     private              String  path;
 
-    public static final String GROUP                 = "group";
+    public static final String PARAM_GROUP           = "group";
     public static final String PARAM_ADDRESS         = "address";
     public static final String PARAM_CONNECT_TIMEOUT = "connectTimeout";
     public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
