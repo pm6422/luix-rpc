@@ -4,7 +4,7 @@ import org.infinity.rpc.core.registry.Url;
 
 public class ZkUtils {
 
-    public static final String ZOOKEEPER_REGISTRY_NAMESPACE = "/motan";
+    public static final String ZOOKEEPER_REGISTRY_NAMESPACE = "/infinity";
     public static final String ZOOKEEPER_REGISTRY_COMMAND = "/command";
 
     public static String toGroupPath(Url url) {

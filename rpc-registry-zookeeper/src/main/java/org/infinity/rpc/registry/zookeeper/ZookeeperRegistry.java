@@ -33,7 +33,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
         IZkStateListener zkStateListener = new IZkStateListener() {
             @Override
             public void handleStateChanged(Watcher.Event.KeeperState state) throws Exception {
-                // do nothing
+                // do nothing intentionally
             }
 
             @Override
