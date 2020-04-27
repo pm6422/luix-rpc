@@ -16,27 +16,34 @@ import java.util.concurrent.ConcurrentHashMap;
 @Data
 @EqualsAndHashCode
 public class Url implements Serializable {
-    private static final       long                serialVersionUID   = 2970867582138131181L;
+    private static final long    serialVersionUID   = 2970867582138131181L;
     // {protocol}://{host}:{port}/{service}?{parameterPairs}
-    private static final       String              URL_PATTERN        = "{0}://{1}:{2}/{3}?{4}";
-    public static final        String              PROTOCOL_SEPARATOR = "://";
-    public static final        String              PATH_SEPARATOR     = "/";
+    private static final String  URL_PATTERN        = "{0}://{1}:{2}/{3}?{4}";
+    public static final  String  PROTOCOL_SEPARATOR = "://";
+    public static final  String  PATH_SEPARATOR     = "/";
     /**
      * RPC protocol
      */
-    private                    String              protocol;
+    private              String  protocol;
     /**
      * RPC server or client host name
      */
-    private                    String              host;
+    private              String  host;
     /**
      * RPC server or client port
      */
-    private                    Integer             port;
+    private              Integer port;
+    private              String  address;
     /**
      * RPC interface fully-qualified name
      */
-    private                    String              path;
+    private              String  path;
+
+    public static final String PARAM_ADDRESS         = "address";
+    public static final String PARAM_CONNECT_TIMEOUT = "connectTimeout";
+    public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
+    public static final String PARAM_RETRY_INTERVAL  = "retryInterval";
+
     /**
      * Extended parameters
      */
@@ -54,6 +61,7 @@ public class Url implements Serializable {
         url.setProtocol(protocol);
         url.setHost(host);
         url.setPort(port);
+        url.setAddress(host + ":" + port);
         url.setPath(path);
         url.setParameters(parameters);
         url.checkIntegrity();
@@ -62,11 +70,11 @@ public class Url implements Serializable {
     }
 
     public static Url of(String protocol, String host, Integer port, String path) {
-        return of(protocol, host, port, path, null);
+        return of(protocol, host, port, path, new HashMap<>());
     }
 
     public static Url of(String protocol, String host, Integer port) {
-        return of(protocol, host, port, null, null);
+        return of(protocol, host, port, "", new HashMap<>());
     }
 
     private void checkIntegrity() {
@@ -86,15 +94,12 @@ public class Url implements Serializable {
         return of(protocol, host, port, path, params);
     }
 
-    public Integer getIntParameter(String name, int defaultValue) {
+    public Integer getIntParameter(String name) {
         Number n = getNumbers().get(name);
         if (n != null) {
             return n.intValue();
         }
         String value = parameters.get(name);
-        if (value == null || value.length() == 0) {
-            return defaultValue;
-        }
         int i = Integer.parseInt(value);
         getNumbers().put(name, i);
         return i;

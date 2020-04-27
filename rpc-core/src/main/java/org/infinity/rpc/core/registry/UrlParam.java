@@ -4,12 +4,12 @@ import java.util.concurrent.TimeUnit;
 
 public enum UrlParam {
     // registry connect timeout
-    registryConnectTimeout("connectTimeout", TimeUnit.SECONDS.toMillis(1)),
+//    registryConnectTimeout("connectTimeout", TimeUnit.SECONDS.toMillis(1)),
     // registry session timeout
-    registrySessionTimeout("registrySessionTimeout", TimeUnit.MINUTES.toMillis(1)),
+//    registrySessionTimeout("registrySessionTimeout", TimeUnit.MINUTES.toMillis(1)),
 
     /************************** SPI end ******************************/
-    registryRetryPeriod("registryRetryPeriod", TimeUnit.SECONDS.toMillis(30)),
+//    registryRetryPeriod("registryRetryPeriod", TimeUnit.SECONDS.toMillis(30)),
 
     group("group", "default_rpc"),
     codec("codec", "motan"),// todo

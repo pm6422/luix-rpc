@@ -7,6 +7,7 @@ import org.infinity.rpc.core.registry.Protocol;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
@@ -65,14 +66,13 @@ InfinityProperties implements InitializingBean {
         // Registry center port number
         private Integer  port;
         // 注册中心连接超时时间(毫秒)
-        private Integer  connectTimeout;
+        private Integer  connectTimeout = Math.toIntExact(TimeUnit.SECONDS.toMillis(1));
         // 注册中心会话超时时间(毫秒)
-//        private             Integer  sessionTimeout  = Math.toIntExact(TimeUnit.MINUTES.toMillis(1));
-        private Integer  sessionTimeout;
+        private Integer  sessionTimeout = Math.toIntExact(TimeUnit.MINUTES.toMillis(1));
+        // 注册中心连接失败后重试的时间间隔(毫秒)
+        private Integer  retryInterval  = Math.toIntExact(TimeUnit.SECONDS.toMillis(30));
         // 注册中心请求超时时间(毫秒)
         private Integer  requestTimeout;
-        // 注册中心连接失败后重试的时间间隔(毫秒)
-        private Integer  retryInterval;
 
         public void initialize() {
             checkIntegrity();

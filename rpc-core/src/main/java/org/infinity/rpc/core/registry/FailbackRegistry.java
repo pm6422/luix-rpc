@@ -31,16 +31,12 @@ public abstract class FailbackRegistry extends AbstractRegistry {
 
     public FailbackRegistry(Url url) {
         super(url);
-        long retryPeriod = url.getIntParameter(UrlParam.registryRetryPeriod.getName(), UrlParam.registryRetryPeriod.getIntValue());
-        retryExecutor.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    retry();
-                } catch (Exception e) {
-                    log.warn(String.format("[%s] False when retry in failback registry", registryClassName), e);
-                }
-
+        long retryPeriod = url.getIntParameter(Url.PARAM_RETRY_INTERVAL);
+        retryExecutor.scheduleAtFixedRate(() -> {
+            try {
+                retry();
+            } catch (Exception e) {
+                log.warn(String.format("[%s] False when retry in failback registry", registryClassName), e);
             }
         }, retryPeriod, retryPeriod, TimeUnit.MILLISECONDS);
     }

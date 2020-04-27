@@ -86,10 +86,16 @@ public class RpcLifecycle {
         // TODO: consider using the async thread pool to speed up the startup process
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
             // TODO: Support multiple registry centers
-            List<Url> registryUrls = Arrays.asList(Url.of(rpcProperties.getRegistry().getProtocol().value(),
+            Url registryUrl = Url.of(rpcProperties.getRegistry().getProtocol().value(),
                     rpcProperties.getRegistry().getHost(),
                     rpcProperties.getRegistry().getPort(),
-                    Registrable.class.getName()));
+                    Registrable.class.getName());
+            registryUrl.addParameter(Url.PARAM_ADDRESS, registryUrl.getAddress());
+            registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, rpcProperties.getRegistry().getConnectTimeout().toString());
+            registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, rpcProperties.getRegistry().getSessionTimeout().toString());
+            registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, rpcProperties.getRegistry().getRetryInterval().toString());
+            List<Url> registryUrls = Arrays.asList(registryUrl);
+
             Url providerUrl = Url.of(
                     rpcProperties.getRegistry().getProtocol().value(),
                     rpcProperties.getRegistry().getHost(),

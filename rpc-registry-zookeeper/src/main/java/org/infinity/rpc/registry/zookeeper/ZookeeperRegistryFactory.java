@@ -3,7 +3,9 @@ package org.infinity.rpc.registry.zookeeper;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.exception.ZkException;
-import org.infinity.rpc.core.registry.*;
+import org.infinity.rpc.core.registry.AbstractRegistryFactory;
+import org.infinity.rpc.core.registry.Registry;
+import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 @ServiceName("zookeeper")
@@ -12,9 +14,9 @@ public class ZookeeperRegistryFactory extends AbstractRegistryFactory {
     @Override
     public Registry createRegistry(Url registryUrl) {
         try {
-            int connectTimeout = registryUrl.getIntParameter(UrlParam.registryConnectTimeout.getName(), UrlParam.registryConnectTimeout.getIntValue());
-            int sessionTimeout = registryUrl.getIntParameter(UrlParam.registrySessionTimeout.getName(), UrlParam.registrySessionTimeout.getIntValue());
-            ZkClient zkClient = createZkClient(registryUrl.getParameter("address"), sessionTimeout, connectTimeout);
+            int connectTimeout = registryUrl.getIntParameter(Url.PARAM_CONNECT_TIMEOUT);
+            int sessionTimeout = registryUrl.getIntParameter(Url.PARAM_CONNECT_TIMEOUT);
+            ZkClient zkClient = createZkClient(registryUrl.getParameter(Url.PARAM_ADDRESS), sessionTimeout, connectTimeout);
             return new ZookeeperRegistry(registryUrl, zkClient);
         } catch (ZkException e) {
             log.error("Failed to connect zookeeper server with error: {}", e.getMessage());
