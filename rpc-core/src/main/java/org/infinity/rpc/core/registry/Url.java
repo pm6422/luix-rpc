@@ -222,10 +222,8 @@ public class Url implements Serializable {
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             String name = entry.getKey();
             String value = entry.getValue();
-
             builder.append(name).append("=").append(value).append("&");
         }
-
         return builder.toString();
     }
 
