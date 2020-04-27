@@ -5,6 +5,7 @@ import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.server.ProviderWrapperHolder;
+import org.infinity.rpc.utilities.network.NetworkIpUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -86,7 +87,7 @@ public class RpcLifecycle {
         // TODO: consider using the async thread pool to speed up the startup process
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
             // TODO: Support multiple registry centers
-            Url registryUrl = Url.of(rpcProperties.getRegistry().getProtocol().value(),
+            Url registryUrl = Url.of(rpcProperties.getRegistry().getName().value(),
                     rpcProperties.getRegistry().getHost(),
                     rpcProperties.getRegistry().getPort(),
                     Registrable.class.getName());
@@ -97,10 +98,11 @@ public class RpcLifecycle {
             List<Url> registryUrls = Arrays.asList(registryUrl);
 
             Url providerUrl = Url.of(
-                    rpcProperties.getRegistry().getProtocol().value(),
-                    rpcProperties.getRegistry().getHost(),
-                    rpcProperties.getRegistry().getPort(),
+                    rpcProperties.getProtocol().getName().value(),
+                    NetworkIpUtils.INTRANET_IP,
+                    rpcProperties.getProtocol().getPort(),
                     providerWrapper.getProviderInterface());
+            providerUrl.addParameter(Url.GROUP, rpcProperties.getApplication().getId());
             providerWrapper.register(registryUrls, providerUrl);
         });
     }

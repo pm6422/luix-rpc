@@ -8,8 +8,10 @@
 # ===================================================================
 infinity:
     registry:
-        protocol: zookeeper
+        name: zookeeper
         address: localhost:2181
+    protocol:
+        port: @app.rpc.port@
 # ===================================================================
 # Application specific properties
 # ===================================================================

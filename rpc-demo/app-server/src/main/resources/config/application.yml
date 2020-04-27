@@ -105,8 +105,6 @@ infinity:
     registry:
         connectTimeout: 1000
         sessionTimeout: 60000
-    transport-protocol:
-        port: @app.rpc.port@
 server:
     # It can be overridden by `--server.port` value passed in the commandline or `-Dserver.port` set in `JAVA_OPTS`
     port: @app.server.port@

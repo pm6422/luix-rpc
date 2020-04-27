@@ -3,7 +3,6 @@ package org.infinity.rpc.core.config.spring.config;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.infinity.rpc.core.registry.Protocol;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -19,15 +18,14 @@ import java.util.regex.Pattern;
 @Data
 public class
 InfinityProperties implements InitializingBean {
-    public static final Pattern           COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
-    private             Application       application;
-    private             TransportProtocol transportProtocol;
-    private             Registry          registry;
+    public static final Pattern     COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
+    private             Application application;
+    private             Protocol    protocol            = new Protocol();// set default value
+    private             Registry    registry;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         Validate.notNull(application, "Application must NOT the null, please check your configuration!");
-        Validate.notNull(transportProtocol, "Transport protocol must NOT the null, please check your configuration!");
         Validate.notNull(registry, "Registry must NOT the null, please check your configuration!");
         initialize();
     }
@@ -49,30 +47,68 @@ InfinityProperties implements InitializingBean {
     }
 
     @Data
-    public static class TransportProtocol {
-        // RPC server port
+    public static class Protocol {
+        public enum Name {
+            INFINITY("infinity");
+
+            private String value;
+
+            Name(String value) {
+                this.value = value;
+            }
+
+            public Registry.Name fromValue(String value) {
+                return Registry.Name.valueOf(value);
+            }
+
+            public String value() {
+                return value;
+            }
+        }
+
+        // Name of protocol
+        // SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type, and check whether value is valid during application startup.
+        private Name    name = Name.INFINITY;
+        // Port number of the RPC server
         private Integer port;
     }
 
     @Data
     public static class Registry {
-        // Protocol for register center
-        // SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type, and check whether value is valid during application startup.
-        private Protocol protocol;
+        public enum Name {
+            ZOOKEEPER("zookeeper");
+
+            private String value;
+
+            Name(String value) {
+                this.value = value;
+            }
+
+            public Name fromValue(String value) {
+                return Name.valueOf(value);
+            }
+
+            public String value() {
+                return value;
+            }
+        }
+
+        // Type name of register center
+        private Name    name;
         // Registry center server address
-        private String   address;
+        private String  address;
         // Registry center host name
-        private String   host;
+        private String  host;
         // Registry center port number
-        private Integer  port;
+        private Integer port;
         // 注册中心连接超时时间(毫秒)
-        private Integer  connectTimeout = Math.toIntExact(TimeUnit.SECONDS.toMillis(1));
+        private Integer connectTimeout = Math.toIntExact(TimeUnit.SECONDS.toMillis(1));
         // 注册中心会话超时时间(毫秒)
-        private Integer  sessionTimeout = Math.toIntExact(TimeUnit.MINUTES.toMillis(1));
+        private Integer sessionTimeout = Math.toIntExact(TimeUnit.MINUTES.toMillis(1));
         // 注册中心连接失败后重试的时间间隔(毫秒)
-        private Integer  retryInterval  = Math.toIntExact(TimeUnit.SECONDS.toMillis(30));
+        private Integer retryInterval  = Math.toIntExact(TimeUnit.SECONDS.toMillis(30));
         // 注册中心请求超时时间(毫秒)
-        private Integer  requestTimeout;
+        private Integer requestTimeout;
 
         public void initialize() {
             checkIntegrity();
