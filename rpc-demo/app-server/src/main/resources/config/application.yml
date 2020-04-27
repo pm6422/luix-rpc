@@ -102,6 +102,9 @@ infinity:
         id: ${info.artifact.id}
         name: ${info.artifact.name}
         env: ${spring.profiles.active}
+    registry:
+        connectTimeout: 1000
+        sessionTimeout: 60000
     transport-protocol:
         port: @app.rpc.port@
 server:
