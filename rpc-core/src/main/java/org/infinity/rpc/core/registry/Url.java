@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @EqualsAndHashCode
 public class Url implements Serializable {
     private static final long    serialVersionUID   = 2970867582138131181L;
-    // {protocol}://{host}:{port}/{service}?{parameterPairs}
+    // URL Pattern: {protocol}://{host}:{port}/{path}?{parameters}
     private static final String  URL_PATTERN        = "{0}://{1}:{2}/{3}?{4}";
     public static final  String  PROTOCOL_SEPARATOR = "://";
     public static final  String  PATH_SEPARATOR     = "/";
