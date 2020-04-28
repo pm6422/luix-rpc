@@ -302,7 +302,7 @@ public class ServiceInstanceLoader<T> {
      * @param name service implementation service name
      * @return implementation service instance
      */
-    public T getServiceImpl(String name) {
+    public T load(String name) {
         Validate.notEmpty(name, "Service name must NOT be empty!");
 
         try {

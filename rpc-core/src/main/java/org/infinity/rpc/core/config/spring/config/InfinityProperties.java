@@ -3,12 +3,14 @@ package org.infinity.rpc.core.config.spring.config;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.infinity.rpc.core.exception.InfinityConfigurationException;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.utilities.id.ShortIdWorker;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -157,11 +159,9 @@ InfinityProperties implements InitializingBean {
         }
 
         private void checkValidity() {
-            RegistryFactory registryFactory = ServiceInstanceLoader.getServiceLoader(RegistryFactory.class).getServiceImpl(name.value);
-            if (registryFactory == null) {
-                throw new IllegalStateException("Failed to find the proper registry factory, " +
-                        "please check whether the dependency [rpc-registry-" + name.value + "] is in your class path!");
-            }
+            Optional.ofNullable(ServiceInstanceLoader.getServiceLoader(RegistryFactory.class).load(name.value))
+                    .orElseThrow(() -> new InfinityConfigurationException("Failed to load the proper registry factory, " +
+                            "please check whether the dependency [rpc-registry-" + name.value + "] is in your class path!"));
         }
     }
 }
