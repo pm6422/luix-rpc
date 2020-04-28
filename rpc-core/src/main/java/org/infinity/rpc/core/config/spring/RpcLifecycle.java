@@ -102,7 +102,8 @@ public class RpcLifecycle {
                     NetworkIpUtils.INTRANET_IP,
                     infinityProperties.getProtocol().getPort(),
                     providerWrapper.getProviderInterface());
-//            providerUrl.addParameter(Url.GROUP, infinityProperties.getApplication().getId());
+            // assign values to parameters
+            providerUrl.addParameter(Url.PARAM_GROUP, infinityProperties.getApplication().getGroup());
             providerWrapper.register(registryUrls, providerUrl);
         });
     }

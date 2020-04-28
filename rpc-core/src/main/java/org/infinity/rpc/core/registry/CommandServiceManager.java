@@ -65,7 +65,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
         }
 
         Url urlCopy = serviceUrl.copy();
-        String groupName = urlCopy.getParameter(UrlParam.group.getName(), UrlParam.group.getValue());
+        String groupName = urlCopy.getParameter(Url.PARAM_GROUP);
         groupServiceCache.put(groupName, urls);
 
         List<Url> finalResult = new ArrayList<Url>();
@@ -121,7 +121,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
                 if (!weights.containsKey(gk)) {
                     groupServiceCache.remove(gk);
                     Url urlTemp = urlCopy.copy();
-                    urlTemp.addParameter(UrlParam.group.getName(), gk);
+                    urlTemp.addParameter(Url.PARAM_GROUP, gk);
                     registry.unsubscribeService(urlTemp, this);
                 }
             }
@@ -291,7 +291,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
                 finalResult.addAll(groupServiceCache.get(key));
             } else {
                 Url urlTemp = url.copy();
-                urlTemp.addParameter(UrlParam.group.getName(), key);
+                urlTemp.addParameter(Url.PARAM_GROUP, key);
                 finalResult.addAll(discoverOneGroup(urlTemp));
                 registry.subscribeService(urlTemp, this);
             }
@@ -301,7 +301,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
 
     private List<Url> discoverOneGroup(Url urlCopy) {
         log.info("CommandServiceManager discover one group. url:" + urlCopy.toSimpleString());
-        String group = urlCopy.getParameter(UrlParam.group.getName(), UrlParam.group.getValue());
+        String group = urlCopy.getParameter(Url.PARAM_GROUP);
         List<Url> list = groupServiceCache.get(group);
         if (list == null) {
             list = registry.discoverService(urlCopy);

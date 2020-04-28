@@ -11,7 +11,7 @@ public enum UrlParam {
     /************************** SPI end ******************************/
 //    registryRetryPeriod("registryRetryPeriod", TimeUnit.SECONDS.toMillis(30)),
 
-    group("group", "default-group"),
+//    group("group", "default-group"),
     codec("codec", "motan"),// todo
     check("check", "true"),
     nodeType("nodeType", "service"),

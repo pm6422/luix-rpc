@@ -40,6 +40,8 @@ public class Url implements Serializable {
     private              String  path;
 
     public static final String PARAM_GROUP           = "group";
+    public static final String PARAM_GROUP_VALUE     = "default-group";
+
     public static final String PARAM_ADDRESS         = "address";
     public static final String PARAM_CONNECT_TIMEOUT = "connectTimeout";
     public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
@@ -64,7 +66,10 @@ public class Url implements Serializable {
         url.setPort(port);
         url.setAddress(host + ":" + port);
         url.setPath(path);
-        url.setParameters(parameters);
+
+        // initialize fields with init values
+        url.initialize();
+        url.addParameters(parameters);
         url.checkIntegrity();
         url.checkValidity();
         return url;
@@ -76,6 +81,11 @@ public class Url implements Serializable {
 
     public static Url of(String protocol, String host, Integer port) {
         return of(protocol, host, port, "", new HashMap<>());
+    }
+
+    private void initialize() {
+        parameters = new HashMap<>();
+        parameters.put(PARAM_GROUP, PARAM_GROUP_VALUE);
     }
 
     private void checkIntegrity() {
@@ -125,6 +135,10 @@ public class Url implements Serializable {
         return value;
     }
 
+    private void addParameters(Map<String, String> parameters) {
+        this.parameters.putAll(parameters);
+    }
+
     /**
      * 返回一个service or referer的identity,如果两个url的identity相同，则表示相同的一个service或者referer
      *
@@ -136,7 +150,7 @@ public class Url implements Serializable {
     }
 
     public String getGroup() {
-        return getParameter(UrlParam.group.getName(), UrlParam.group.getValue());
+        return getParameter(Url.PARAM_GROUP);
     }
 
     public String getServerPortStr() {

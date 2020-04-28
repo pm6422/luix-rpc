@@ -38,11 +38,13 @@ InfinityProperties implements InitializingBean {
     @Data
     public static class Application {
         // Application ID
-        private String id = "R" + new ShortIdWorker().nextId();
+        private String id = "ID-" + new ShortIdWorker().nextId();
         // Application name
         private String name;
         // Application description
         private String description;
+        // Group used to discover services
+        private String group;
         // Environment variable, e.g. dev, test or prod
         private String env;
     }
