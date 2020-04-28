@@ -89,7 +89,6 @@ public class ProviderWrapper<T> {
      * Unregister the RPC provider from registry
      */
     public void unregister() {
-        // todo: unregister to registry
         log.debug("Unregistered RPC provider [{}] from registry", providerInterface);
     }
 }

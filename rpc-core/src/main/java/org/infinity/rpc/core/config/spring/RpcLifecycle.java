@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.server.ProviderWrapper;
 import org.infinity.rpc.core.server.ProviderWrapperHolder;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 
@@ -86,26 +87,35 @@ public class RpcLifecycle {
     private void registerProviders(InfinityProperties infinityProperties) {
         // TODO: consider using the async thread pool to speed up the startup process
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
-            // TODO: Support multiple registry centers
-            Url registryUrl = Url.of(infinityProperties.getRegistry().getName().value(),
-                    infinityProperties.getRegistry().getHost(),
-                    infinityProperties.getRegistry().getPort(),
-                    Registrable.class.getName());
-            registryUrl.addParameter(Url.PARAM_ADDRESS, registryUrl.getAddress());
-            registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, infinityProperties.getRegistry().getConnectTimeout().toString());
-            registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, infinityProperties.getRegistry().getSessionTimeout().toString());
-            registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, infinityProperties.getRegistry().getRetryInterval().toString());
-            List<Url> registryUrls = Arrays.asList(registryUrl);
-
-            Url providerUrl = Url.of(
-                    infinityProperties.getProtocol().getName().value(),
-                    NetworkIpUtils.INTRANET_IP,
-                    infinityProperties.getProtocol().getPort(),
-                    providerWrapper.getProviderInterface());
-            // assign values to parameters
-            providerUrl.addParameter(Url.PARAM_GROUP, infinityProperties.getApplication().getGroup());
+            List<Url> registryUrls = createRegistryUrls(infinityProperties);
+            Url providerUrl = createProviderUrl(infinityProperties, providerWrapper);
+            // DO the providers registering
             providerWrapper.register(registryUrls, providerUrl);
         });
+    }
+
+    private List<Url> createRegistryUrls(InfinityProperties infinityProperties) {
+        Url registryUrl = Url.of(infinityProperties.getRegistry().getName().value(),
+                infinityProperties.getRegistry().getHost(),
+                infinityProperties.getRegistry().getPort(),
+                Registrable.class.getName());
+        registryUrl.addParameter(Url.PARAM_ADDRESS, registryUrl.getAddress());
+        registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, infinityProperties.getRegistry().getConnectTimeout().toString());
+        registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, infinityProperties.getRegistry().getSessionTimeout().toString());
+        registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, infinityProperties.getRegistry().getRetryInterval().toString());
+        // TODO: Support multiple registry centers
+        return Arrays.asList(registryUrl);
+    }
+
+    private Url createProviderUrl(InfinityProperties infinityProperties, ProviderWrapper providerWrapper) {
+        Url providerUrl = Url.of(
+                infinityProperties.getProtocol().getName().value(),
+                NetworkIpUtils.INTRANET_IP,
+                infinityProperties.getProtocol().getPort(),
+                providerWrapper.getProviderInterface());
+        // assign values to parameters
+        providerUrl.addParameter(Url.PARAM_GROUP, infinityProperties.getApplication().getGroup());
+        return providerUrl;
     }
 
     /**
@@ -118,7 +128,6 @@ public class RpcLifecycle {
             // not yet started or already stopped
             return;
         }
-
         unregisterProviders();
     }
 
@@ -127,6 +136,7 @@ public class RpcLifecycle {
      */
     private void unregisterProviders() {
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
+            // TODO: unregister from registry
             providerWrapper.unregister();
         });
     }
