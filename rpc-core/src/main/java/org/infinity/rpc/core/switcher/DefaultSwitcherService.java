@@ -17,6 +17,7 @@
 package org.infinity.rpc.core.switcher;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.util.ArrayList;
@@ -31,8 +32,13 @@ public class DefaultSwitcherService implements SwitcherService {
     private static      Map<String, Switcher>               switchers    = new ConcurrentHashMap<>();
     private static      Map<String, List<SwitcherListener>> listenerMap  = new ConcurrentHashMap<>();
 
-    public static Switcher getSwitcherStatic(String name) {
-        return switchers.get(name);
+    /**
+     * Get the DefaultSwitcherService instance
+     *
+     * @return
+     */
+    public static SwitcherService getInstance() {
+        return ServiceInstanceLoader.getServiceLoader(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME);
     }
 
     @Override
@@ -106,5 +112,9 @@ public class DefaultSwitcherService implements SwitcherService {
         } else {
             listeners.remove(listener);
         }
+    }
+
+    public static Switcher getSwitcherStatic(String name) {
+        return switchers.get(name);
     }
 }

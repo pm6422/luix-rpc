@@ -39,7 +39,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
     private static      Pattern IP_PATTERN             = Pattern.compile("^!?[0-9.]*\\*?$");
 
     static {
-        ServiceInstanceLoader.getServiceLoader(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME).initSwitcher(MOTAN_COMMAND_SWITCHER, true);
+        DefaultSwitcherService.getInstance().initSwitcher(MOTAN_COMMAND_SWITCHER, true);
     }
 
     private          Url                               refUrl;

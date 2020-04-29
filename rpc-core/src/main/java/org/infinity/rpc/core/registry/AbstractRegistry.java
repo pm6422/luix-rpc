@@ -33,10 +33,10 @@ public abstract class AbstractRegistry implements Registry {
      * Register a heartbeat switcher to perceive service state change
      */
     private void registerSwitcherListener() {
-        ServiceInstanceLoader.getServiceLoader(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME).initSwitcher(REGISTRY_HEARTBEAT_SWITCHER, false);
+        DefaultSwitcherService.getInstance().initSwitcher(REGISTRY_HEARTBEAT_SWITCHER, false);
 
         // Register anonymous inner class of AbstractRegistry as listener
-        ServiceInstanceLoader.getServiceLoader(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME).registerListener(REGISTRY_HEARTBEAT_SWITCHER, (name, switchOn) -> {
+        DefaultSwitcherService.getInstance().registerListener(REGISTRY_HEARTBEAT_SWITCHER, (name, switchOn) -> {
             if (StringUtils.isNotEmpty(name) && switchOn != null) {
                 if (switchOn) {
                     // switch on
@@ -76,7 +76,7 @@ public abstract class AbstractRegistry implements Registry {
         // Added it to the container after registered
         registeredServiceUrls.add(url);
         // available if heartbeat switcher already open
-        if (ServiceInstanceLoader.getServiceLoader(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME).isOpen(REGISTRY_HEARTBEAT_SWITCHER)) {
+        if (DefaultSwitcherService.getInstance().isOpen(REGISTRY_HEARTBEAT_SWITCHER)) {
             available(url);
         }
     }

@@ -47,7 +47,7 @@ public class ServiceInstanceLoader<T> {
     /**
      * Cache used to store service loader
      */
-    private static final Map<String, ServiceInstanceLoader<?>> SERVICE_LOADERS_CACHE       = new ConcurrentHashMap<String, ServiceInstanceLoader<?>>();
+    private static final Map<String, ServiceInstanceLoader<?>> SERVICE_LOADERS_CACHE       = new ConcurrentHashMap<>();
     /**
      * The class loader used to locate, load, and instantiate service
      */
@@ -89,7 +89,7 @@ public class ServiceInstanceLoader<T> {
      */
     private ConcurrentMap<String, Class<T>> loadImplClasses(String serviceDirPrefix) {
         String serviceFileName = serviceDirPrefix.concat(serviceInterface.getName());
-        List<String> serviceImplClassNames = new ArrayList<String>();
+        List<String> serviceImplClassNames = new ArrayList<>();
         try {
             Enumeration<URL> urls;
             if (classLoader == null) {
@@ -99,7 +99,7 @@ public class ServiceInstanceLoader<T> {
             }
 
             if (urls == null || !urls.hasMoreElements()) {
-                return new ConcurrentHashMap<String, Class<T>>();
+                return new ConcurrentHashMap<>();
             }
 
             while (urls.hasMoreElements()) {
