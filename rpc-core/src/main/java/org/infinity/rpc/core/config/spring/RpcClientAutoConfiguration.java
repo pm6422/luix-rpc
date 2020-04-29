@@ -18,18 +18,9 @@ public class RpcClientAutoConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
-//    @Bean
-//    public ZkRpcServerRegistry rpcServiceRegistry() {
-//        return new ZkRpcServerRegistry(infinityRpcProperties.getRegistry().getAddress());
-//    }
 
 //    @Bean
 //    public RpcConsumerProxy rpcConsumerProxy(ZkRpcServerRegistry rpcServiceRegistry) {
 //        return new RpcConsumerProxy(rpcServiceRegistry);
-//    }
-//
-//    @Bean
-//    public RpcServer rpcServer() {
-//        return new RpcServer(infinityRpcProperties.getProtocol().getPort(), rpcServiceRegistry());
 //    }
 }

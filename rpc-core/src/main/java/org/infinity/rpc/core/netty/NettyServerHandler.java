@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.server;
+package org.infinity.rpc.core.netty;
 
 
 import io.netty.channel.ChannelFutureListener;
@@ -7,15 +7,13 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
+import org.infinity.rpc.core.server.ProviderWrapperHolder;
 
 import java.lang.reflect.Method;
 import java.util.UUID;
 
 @Slf4j
-public class RpcServerHandler extends ChannelInboundHandlerAdapter {
-
-    public RpcServerHandler() {
-    }
+public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {

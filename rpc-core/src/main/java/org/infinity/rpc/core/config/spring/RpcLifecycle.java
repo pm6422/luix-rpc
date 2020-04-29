@@ -2,7 +2,7 @@ package org.infinity.rpc.core.config.spring;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.config.spring.server.RpcServer;
+import org.infinity.rpc.core.netty.NettyServer;
 import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.server.ProviderWrapper;
@@ -73,8 +73,8 @@ public class RpcLifecycle {
         // referProviders();
         log.info("Started the RPC server");
         log.info("Starting the netty server");
-        RpcServer rpcServer = new RpcServer(rpcProperties.getProtocol().getHost(), rpcProperties.getProtocol().getPort());
-        rpcServer.startNettyServer();
+        NettyServer nettyServer = new NettyServer(rpcProperties.getProtocol().getHost(), rpcProperties.getProtocol().getPort());
+        nettyServer.startNettyServer();
     }
 
     /**

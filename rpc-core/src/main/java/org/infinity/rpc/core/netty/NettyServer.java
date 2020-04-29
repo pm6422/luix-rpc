@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.config.spring.server;
+package org.infinity.rpc.core.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -12,18 +12,17 @@ import org.infinity.rpc.common.RpcDecoder;
 import org.infinity.rpc.common.RpcEncoder;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
-import org.infinity.rpc.core.server.RpcServerHandler;
 
 /**
- * RPC服务器类，使用Spring
+ * Netty服务器类
  */
 @Slf4j
-public class RpcServer {
+public class NettyServer {
     private String host;
     private int    port;
     private String address;
 
-    public RpcServer(String host, int port) {
+    public NettyServer(String host, int port) {
         this.host = host;
         this.port = port;
         this.address = this.host + ":" + this.port;
@@ -50,7 +49,7 @@ public class RpcServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new RpcDecoder(RpcRequest.class))//1.解码请求对象
                                     .addLast(new RpcEncoder(RpcResponse.class))//2.编码响应对象
-                                    .addLast(new RpcServerHandler());//3.请求处理
+                                    .addLast(new NettyServerHandler());//3.请求处理
                         }
                     }).option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
