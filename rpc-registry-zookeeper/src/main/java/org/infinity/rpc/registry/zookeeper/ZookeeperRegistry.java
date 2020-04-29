@@ -5,6 +5,8 @@ import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.IZkDataListener;
 import org.I0Itec.zkclient.IZkStateListener;
 import org.I0Itec.zkclient.ZkClient;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.zookeeper.Watcher;
 import org.infinity.rpc.core.destory.Closable;
@@ -41,19 +43,86 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 // do nothing intentionally
             }
 
+            /**
+             * Called after the zookeeper session has expired and a new session has been created.
+             * You would have to re-create any ephemeral nodes here.
+             * @throws Exception On any error
+             */
             @Override
             public void handleNewSession() throws Exception {
-                log.info("zkRegistry get new session notify");
+                log.info("Received a new zookeeper session notification");
                 reconnectService();
                 reconnectClient();
             }
 
             @Override
             public void handleSessionEstablishmentError(Throwable error) throws Exception {
-
+                // do nothing intentionally
             }
         };
         zkClient.subscribeStateChanges(zkStateListener);
+    }
+
+    /**
+     * Re-register the providers
+     */
+    private void reconnectService() {
+        Collection<Url> allRegisteredServices = super.getRegisteredServiceUrls();
+        if (CollectionUtils.isEmpty(allRegisteredServices)) {
+            return;
+        }
+        try {
+            serverLock.lock();
+            for (Url url : super.getRegisteredServiceUrls()) {
+                // re-register after a new session
+                doRegister(url);
+            }
+            log.info("Re-registered all the providers [{}] after a reconnect to zookeeper", allRegisteredServices);
+
+            for (Url url : availableServices) {
+                if (!super.getRegisteredServiceUrls().contains(url)) {
+                    log.warn("reconnect url not register. url:{}", url);
+                    continue;
+                }
+                doAvailable(url);
+            }
+            log.info("[{}] reconnect: available services {}", registryClassName, availableServices);
+        } finally {
+            serverLock.unlock();
+        }
+    }
+
+    /**
+     *
+     */
+    private void reconnectClient() {
+        if (MapUtils.isEmpty(serviceListeners)) {
+            return;
+        }
+        try {
+            clientLock.lock();
+            for (Map.Entry entry : serviceListeners.entrySet()) {
+                Url url = (Url) entry.getKey();
+                ConcurrentHashMap<ServiceListener, IZkChildListener> childChangeListeners = serviceListeners.get(url);
+                if (childChangeListeners != null) {
+                    for (Map.Entry e : childChangeListeners.entrySet()) {
+                        subscribeService(url, (ServiceListener) e.getKey());
+                    }
+                }
+            }
+            for (Map.Entry entry : commandListeners.entrySet()) {
+                Url url = (Url) entry.getKey();
+                ConcurrentHashMap<CommandListener, IZkDataListener> dataChangeListeners = commandListeners.get(url);
+                if (dataChangeListeners != null) {
+                    for (Map.Entry e : dataChangeListeners.entrySet()) {
+                        subscribeCommand(url, (CommandListener) e.getKey());
+                    }
+                }
+            }
+            log.info("[{}] reconnect all clients", registryClassName);
+        } finally {
+            clientLock.unlock();
+        }
     }
 
     /**
@@ -71,7 +140,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             // Create a node
             createNode(url, ZkNodeType.UNAVAILABLE_SERVER);
         } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to register [{0}] to zookeeper [{1}] with the error: {2}", url, getUrl(), e.getMessage()), e);
+            throw new RuntimeException(MessageFormat.format("Failed to register [{0}] to zookeeper [{1}] with the error: {2}", url, getRegistryUrl(), e.getMessage()), e);
         } finally {
             serverLock.unlock();
         }
@@ -113,62 +182,9 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             removeNode(url, ZkNodeType.AVAILABLE_SERVER);
             removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);
         } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to unregister %s to zookeeper(%s), cause: %s", url, getUrl(), e.getMessage()), e);
+            throw new RuntimeException(String.format("Failed to unregister %s to zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
         } finally {
             serverLock.unlock();
-        }
-    }
-
-    private void reconnectService() {
-        Collection<Url> allRegisteredServices = getRegisteredServiceUrls();
-        if (allRegisteredServices != null && !allRegisteredServices.isEmpty()) {
-            try {
-                serverLock.lock();
-                for (Url url : getRegisteredServiceUrls()) {
-                    doRegister(url);
-                }
-                log.info("[{}] reconnect: register services {}", registryClassName, allRegisteredServices);
-
-                for (Url url : availableServices) {
-                    if (!getRegisteredServiceUrls().contains(url)) {
-                        log.warn("reconnect url not register. url:{}", url);
-                        continue;
-                    }
-                    doAvailable(url);
-                }
-                log.info("[{}] reconnect: available services {}", registryClassName, availableServices);
-            } finally {
-                serverLock.unlock();
-            }
-        }
-    }
-
-    private void reconnectClient() {
-        if (serviceListeners != null && !serviceListeners.isEmpty()) {
-            try {
-                clientLock.lock();
-                for (Map.Entry entry : serviceListeners.entrySet()) {
-                    Url url = (Url) entry.getKey();
-                    ConcurrentHashMap<ServiceListener, IZkChildListener> childChangeListeners = serviceListeners.get(url);
-                    if (childChangeListeners != null) {
-                        for (Map.Entry e : childChangeListeners.entrySet()) {
-                            subscribeService(url, (ServiceListener) e.getKey());
-                        }
-                    }
-                }
-                for (Map.Entry entry : commandListeners.entrySet()) {
-                    Url url = (Url) entry.getKey();
-                    ConcurrentHashMap<CommandListener, IZkDataListener> dataChangeListeners = commandListeners.get(url);
-                    if (dataChangeListeners != null) {
-                        for (Map.Entry e : dataChangeListeners.entrySet()) {
-                            subscribeCommand(url, (CommandListener) e.getKey());
-                        }
-                    }
-                }
-                log.info("[{}] reconnect all clients", registryClassName);
-            } finally {
-                clientLock.unlock();
-            }
         }
     }
 
@@ -186,7 +202,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 childChangeListeners.putIfAbsent(serviceListener, new IZkChildListener() {
                     @Override
                     public void handleChildChange(String parentPath, List<String> currentChilds) {
-                        serviceListener.notifyService(url, getUrl(), nodeChildsToUrls(url, parentPath, currentChilds));
+                        serviceListener.notifyService(url, getRegistryUrl(), nodeChildsToUrls(url, parentPath, currentChilds));
                         log.info(String.format("[ZookeeperRegistry] service list change: path=%s, currentChilds=%s", parentPath, currentChilds.toString()));
                     }
                 });
@@ -205,7 +221,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             zkClient.subscribeChildChanges(serverTypePath, zkChildListener);
             log.info(String.format("[ZookeeperRegistry] subscribe service: path=%s, info=%s", ZkUtils.toNodePath(url, ZkNodeType.AVAILABLE_SERVER), url.toFullStr()));
         } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to subscribe %s to zookeeper(%s), cause: %s", url, getUrl(), e.getMessage()), e);
+            throw new RuntimeException(String.format("Failed to subscribe %s to zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
         } finally {
             clientLock.unlock();
         }
@@ -242,7 +258,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             zkClient.subscribeDataChanges(commandPath, zkDataListener);
             log.info(String.format("[ZookeeperRegistry] subscribe command: path=%s, info=%s", commandPath, url.toFullStr()));
         } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to subscribe %s to zookeeper(%s), cause: %s", url, getUrl(), e.getMessage()), e);
+            throw new RuntimeException(String.format("Failed to subscribe %s to zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
         } finally {
             clientLock.unlock();
         }
@@ -261,7 +277,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 }
             }
         } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to unsubscribe service %s to zookeeper(%s), cause: %s", url, getUrl(), e.getMessage()), e);
+            throw new RuntimeException(String.format("Failed to unsubscribe service %s to zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
         } finally {
             clientLock.unlock();
         }
@@ -280,7 +296,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 }
             }
         } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to unsubscribe command %s to zookeeper(%s), cause: %s", url, getUrl(), e.getMessage()), e);
+            throw new RuntimeException(String.format("Failed to unsubscribe command %s to zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
         } finally {
             clientLock.unlock();
         }
@@ -296,7 +312,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             }
             return nodeChildsToUrls(url, parentPath, currentChilds);
         } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to discover service %s from zookeeper(%s), cause: %s", url, getUrl(), e.getMessage()), e);
+            throw new RuntimeException(String.format("Failed to discover service %s from zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
         }
     }
 
@@ -310,7 +326,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             }
             return command;
         } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to discover command %s from zookeeper(%s), cause: %s", url, getUrl(), e.getMessage()));
+            throw new RuntimeException(String.format("Failed to discover command %s from zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()));
         }
     }
 

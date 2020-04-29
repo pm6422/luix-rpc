@@ -16,7 +16,7 @@ public abstract class AbstractRegistry implements Registry {
     private Map<Url, Map<String, List<Url>>> subscribedCategoryResponses = new ConcurrentHashMap<>();
 
     private   Url      registryUrl;
-    private   Set<Url> registeredServiceUrls = new ConcurrentHashSet<Url>();
+    private   Set<Url> registeredServiceUrls = new ConcurrentHashSet<>();
     protected String   registryClassName     = this.getClass().getSimpleName();
 
     public AbstractRegistry(Url Url) {
@@ -34,6 +34,16 @@ public abstract class AbstractRegistry implements Registry {
         });
     }
 
+    @Override
+    public Url getRegistryUrl() {
+        return registryUrl;
+    }
+
+    @Override
+    public Collection<Url> getRegisteredServiceUrls() {
+        return registeredServiceUrls;
+    }
+
     /**
      * Register url
      *
@@ -48,6 +58,7 @@ public abstract class AbstractRegistry implements Registry {
         Url copy = removeUnnecessaryParams(url.copy());
         doRegister(copy);
         log.info("Registered the url [{}] to registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+        // Added it to the container after registered
         registeredServiceUrls.add(url);
         // available if heartbeat switcher already open
         if (SwitcherUtils.isOpen(SwitcherUtils.REGISTRY_HEARTBEAT_SWITCHER)) {
@@ -63,6 +74,7 @@ public abstract class AbstractRegistry implements Registry {
         }
         log.info("Unregistered the url [{}] from registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
         doUnregister(removeUnnecessaryParams(url.copy()));
+        // Removed it from the container after unregistered
         registeredServiceUrls.remove(url);
     }
 
@@ -113,16 +125,6 @@ public abstract class AbstractRegistry implements Registry {
             }
         }
         return results;
-    }
-
-    @Override
-    public Url getUrl() {
-        return registryUrl;
-    }
-
-    @Override
-    public Collection<Url> getRegisteredServiceUrls() {
-        return registeredServiceUrls;
     }
 
     @Override
@@ -184,7 +186,7 @@ public abstract class AbstractRegistry implements Registry {
         cUrls.putAll(nodeTypeUrlsInRs);
 
         for (List<Url> us : nodeTypeUrlsInRs.values()) {
-            listener.notify(getUrl(), us);
+            listener.notify(getRegistryUrl(), us);
         }
     }
 

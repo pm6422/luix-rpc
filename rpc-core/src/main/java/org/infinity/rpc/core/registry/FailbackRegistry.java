@@ -55,8 +55,8 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         try {
             super.register(url);
         } catch (Exception e) {
-            if (isCheckingUrls(getUrl(), url)) {
-                throw new RuntimeException(MessageFormat.format("Failed to register the url [{0}] to registry [{1}] by using [{2}]", url, getUrl(), registryClassName), e);
+            if (isCheckingUrls(getRegistryUrl(), url)) {
+                throw new RuntimeException(MessageFormat.format("Failed to register the url [{0}] to registry [{1}] by using [{2}]", url, getRegistryUrl(), registryClassName), e);
             }
             failedRegistered.add(url);
         }
@@ -70,8 +70,8 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         try {
             super.unregister(url);
         } catch (Exception e) {
-            if (isCheckingUrls(getUrl(), url)) {
-                throw new RuntimeException(String.format("[%s] false to unregistery %s to %s", registryClassName, url, getUrl()), e);
+            if (isCheckingUrls(getRegistryUrl(), url)) {
+                throw new RuntimeException(String.format("[%s] false to unregistery %s to %s", registryClassName, url, getRegistryUrl()), e);
             }
             failedUnregistered.add(url);
         }
@@ -86,10 +86,10 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         } catch (Exception e) {
             List<Url> cachedUrls = getCachedUrls(url);
             if (cachedUrls != null && cachedUrls.size() > 0) {
-                listener.notify(getUrl(), cachedUrls);
-            } else if (isCheckingUrls(getUrl(), url)) {
-                log.warn(String.format("[%s] false to subscribe %s from %s", registryClassName, url, getUrl()), e);
-                throw new RuntimeException(String.format("[%s] false to subscribe %s from %s", registryClassName, url, getUrl()), e);
+                listener.notify(getRegistryUrl(), cachedUrls);
+            } else if (isCheckingUrls(getRegistryUrl(), url)) {
+                log.warn(String.format("[%s] false to subscribe %s from %s", registryClassName, url, getRegistryUrl()), e);
+                throw new RuntimeException(String.format("[%s] false to subscribe %s from %s", registryClassName, url, getRegistryUrl()), e);
             }
             addToFailedMap(failedSubscribed, url, listener);
         }
@@ -102,8 +102,8 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         try {
             super.unsubscribe(url, listener);
         } catch (Exception e) {
-            if (isCheckingUrls(getUrl(), url)) {
-                throw new RuntimeException(String.format("[%s] false to unsubscribe %s from %s", registryClassName, url, getUrl()),
+            if (isCheckingUrls(getRegistryUrl(), url)) {
+                throw new RuntimeException(String.format("[%s] false to unsubscribe %s from %s", registryClassName, url, getRegistryUrl()),
                         e);
             }
             addToFailedMap(failedUnsubscribed, url, listener);
@@ -117,7 +117,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
             return super.discover(url);
         } catch (Exception e) {
             // 如果discover失败，返回一个empty list吧，毕竟是个下行动作，
-            log.warn(String.format("Failed to discover url:%s in registry (%s)", url, getUrl()), e);
+            log.warn(String.format("Failed to discover url:%s in registry (%s)", url, getRegistryUrl()), e);
             return Collections.EMPTY_LIST;
         }
     }

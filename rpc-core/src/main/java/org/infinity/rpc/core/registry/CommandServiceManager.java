@@ -79,7 +79,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
         }
 
         for (NotifyListener notifyListener : notifySet) {
-            notifyListener.notify(registry.getUrl(), finalResult);
+            notifyListener.notify(registry.getRegistryUrl(), finalResult);
         }
 
     }
@@ -137,7 +137,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
         }
 
         for (NotifyListener notifyListener : notifySet) {
-            notifyListener.notify(registry.getUrl(), finalResult);
+            notifyListener.notify(registry.getRegistryUrl(), finalResult);
         }
     }
 
