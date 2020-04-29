@@ -22,9 +22,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.NotifyListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
-import org.infinity.rpc.core.switcher.SwitcherUtils;
+import org.infinity.rpc.core.switcher.DefaultSwitcherService;
+import org.infinity.rpc.core.switcher.SwitcherService;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
+import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,21 +35,21 @@ import java.util.regex.Pattern;
 @Slf4j
 public class CommandServiceManager implements CommandListener, ServiceListener {
 
-    public static final String MOTAN_COMMAND_SWITCHER = "feature.motanrpc.command.enable";
-    private static Pattern IP_PATTERN = Pattern.compile("^!?[0-9.]*\\*?$");
+    public static final String  MOTAN_COMMAND_SWITCHER = "feature.motanrpc.command.enable";
+    private static      Pattern IP_PATTERN             = Pattern.compile("^!?[0-9.]*\\*?$");
 
     static {
-        SwitcherUtils.initSwitcher(MOTAN_COMMAND_SWITCHER, true);
+        ServiceInstanceLoader.getServiceLoader(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME).initSwitcher(MOTAN_COMMAND_SWITCHER, true);
     }
 
-    private Url                               refUrl;
-    private ConcurrentHashSet<NotifyListener> notifySet;
-    private CommandFailbackRegistry           registry;
+    private          Url                               refUrl;
+    private          ConcurrentHashSet<NotifyListener> notifySet;
+    private          CommandFailbackRegistry           registry;
     // service cache
-    private Map<String, List<Url>> groupServiceCache;
+    private          Map<String, List<Url>>            groupServiceCache;
     // command cache
-    private String commandStringCache = "";
-    private volatile RpcCommand commandCache;
+    private          String                            commandStringCache = "";
+    private volatile RpcCommand                        commandCache;
 
     public CommandServiceManager(Url refUrl) {
         log.info("CommandServiceManager init url:" + refUrl.toFullStr());
@@ -88,7 +90,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
     public void notifyCommand(Url serviceUrl, String commandString) {
         log.info("CommandServiceManager notify command. service:" + serviceUrl.toSimpleString() + ", command:" + commandString);
 
-        if (!SwitcherUtils.isOpen(MOTAN_COMMAND_SWITCHER) || commandString == null) {
+        if (!ServiceInstanceLoader.getServiceLoader(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME).isOpen(MOTAN_COMMAND_SWITCHER) || commandString == null) {
             log.info("command reset empty since swither is close.");
             commandString = "";
         }

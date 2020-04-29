@@ -1,7 +1,6 @@
 package org.infinity.rpc.core.switcher;
 
 
-
 import org.infinity.rpc.utilities.spi.annotation.Scope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
@@ -9,6 +8,8 @@ import java.util.List;
 
 @Spi(scope = Scope.SINGLETON)
 public interface SwitcherService {
+    String REGISTRY_HEARTBEAT_SWITCHER = "feature.configserver.heartbeat";
+
     /**
      * 获取接口降级开关
      *
@@ -72,5 +73,4 @@ public interface SwitcherService {
      * @param listener     the listener to be unregistered, null for all listeners for this switcherName
      */
     void unRegisterListener(String switcherName, SwitcherListener listener);
-
 }

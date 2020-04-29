@@ -1,11 +1,12 @@
 package org.infinity.rpc.core.switcher;
 
 /**
+ * A utility used to degrade services.
  * 静态开关工具类。一般全局开关使用此类。 可以替换switcherService为不同实现
  */
+@Deprecated
 public class SwitcherUtils {
-    public static final String REGISTRY_HEARTBEAT_SWITCHER = "feature.configserver.heartbeat";
-    private static SwitcherService switcherService = new LocalSwitcherService();
+    private static SwitcherService switcherService = new DefaultSwitcherService();
 
     public static void initSwitcher(String switcherName, boolean initialValue) {
         switcherService.initSwitcher(switcherName, initialValue);

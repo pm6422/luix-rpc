@@ -16,20 +16,20 @@
 
 package org.infinity.rpc.core.switcher;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
-@ServiceName("localSwitcherService")
-public class LocalSwitcherService implements SwitcherService {
-
-    private static ConcurrentMap<String, Switcher> switchers = new ConcurrentHashMap<String, Switcher>();
-
-    private ConcurrentHashMap<String, List<SwitcherListener>> listenerMap = new ConcurrentHashMap<>();
+@ServiceName(DefaultSwitcherService.SERVICE_NAME)
+public class DefaultSwitcherService implements SwitcherService {
+    public static final String                              SERVICE_NAME = "defaultSwitcherService";
+    private static      Map<String, Switcher>               switchers    = new ConcurrentHashMap<>();
+    private static      Map<String, List<SwitcherListener>> listenerMap  = new ConcurrentHashMap<>();
 
     public static Switcher getSwitcherStatic(String name) {
         return switchers.get(name);
@@ -43,14 +43,6 @@ public class LocalSwitcherService implements SwitcherService {
     @Override
     public List<Switcher> getAllSwitchers() {
         return new ArrayList<Switcher>(switchers.values());
-    }
-
-    public static void putSwitcher(Switcher switcher) {
-        if (switcher == null) {
-            throw new RuntimeException("LocalSwitcherService addSwitcher Error: switcher is null");
-        }
-
-        switchers.put(switcher.getName(), switcher);
     }
 
     @Override
@@ -77,19 +69,27 @@ public class LocalSwitcherService implements SwitcherService {
     @Override
     public void setValue(String switcherName, boolean value) {
         putSwitcher(new Switcher(switcherName, value));
+        triggerChangeEvent(switcherName, value);
+    }
 
-        List<SwitcherListener> listeners = listenerMap.get(switcherName);
-        if (listeners != null) {
-            for (SwitcherListener listener : listeners) {
-                listener.onValueChanged(switcherName, value);
-            }
+    private static void putSwitcher(Switcher switcher) {
+        if (switcher == null) {
+            throw new RuntimeException("LocalSwitcherService addSwitcher Error: switcher is null");
+        }
+        switchers.put(switcher.getName(), switcher);
+    }
+
+    private void triggerChangeEvent(String switcherName, boolean value) {
+        List<SwitcherListener> listeners = DefaultSwitcherService.listenerMap.get(switcherName);
+        if (CollectionUtils.isNotEmpty(listeners)) {
+            listeners.forEach(listener -> listener.onSubscribe(switcherName, value));
         }
     }
 
     @Override
     public void registerListener(String switcherName, SwitcherListener listener) {
         List listeners = Collections.synchronizedList(new ArrayList());
-        List preListeners = listenerMap.putIfAbsent(switcherName, listeners);
+        List preListeners = DefaultSwitcherService.listenerMap.putIfAbsent(switcherName, listeners);
         if (preListeners == null) {
             listeners.add(listener);
         } else {
@@ -99,7 +99,7 @@ public class LocalSwitcherService implements SwitcherService {
 
     @Override
     public void unRegisterListener(String switcherName, SwitcherListener listener) {
-        List<SwitcherListener> listeners = listenerMap.get(switcherName);
+        List<SwitcherListener> listeners = DefaultSwitcherService.listenerMap.get(switcherName);
         if (listener == null) {
             // keep empty listeners
             listeners.clear();

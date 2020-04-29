@@ -1,12 +1,17 @@
 package org.infinity.rpc.core.registry;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.registry.listener.NotifyListener;
-import org.infinity.rpc.core.switcher.SwitcherUtils;
+import org.infinity.rpc.core.switcher.DefaultSwitcherService;
+import org.infinity.rpc.core.switcher.SwitcherService;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
+import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static org.infinity.rpc.core.switcher.SwitcherService.REGISTRY_HEARTBEAT_SWITCHER;
 
 /**
  * Abstract registry
@@ -21,13 +26,23 @@ public abstract class AbstractRegistry implements Registry {
 
     public AbstractRegistry(Url Url) {
         this.registryUrl = Url.copy();
-        // register a heartbeat switcher to perceive service state change and change available state
-        SwitcherUtils.initSwitcher(SwitcherUtils.REGISTRY_HEARTBEAT_SWITCHER, false);
-        SwitcherUtils.registerSwitcherListener(SwitcherUtils.REGISTRY_HEARTBEAT_SWITCHER, (key, value) -> {
-            if (key != null && value != null) {
-                if (value) {
+        registerSwitcherListener();
+    }
+
+    /**
+     * Register a heartbeat switcher to perceive service state change
+     */
+    private void registerSwitcherListener() {
+        ServiceInstanceLoader.getServiceLoader(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME).initSwitcher(REGISTRY_HEARTBEAT_SWITCHER, false);
+
+        // Register anonymous inner class of AbstractRegistry as listener
+        ServiceInstanceLoader.getServiceLoader(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME).registerListener(REGISTRY_HEARTBEAT_SWITCHER, (name, switchOn) -> {
+            if (StringUtils.isNotEmpty(name) && switchOn != null) {
+                if (switchOn) {
+                    // switch on
                     available(null);
                 } else {
+                    // switch off
                     unavailable(null);
                 }
             }
@@ -61,7 +76,7 @@ public abstract class AbstractRegistry implements Registry {
         // Added it to the container after registered
         registeredServiceUrls.add(url);
         // available if heartbeat switcher already open
-        if (SwitcherUtils.isOpen(SwitcherUtils.REGISTRY_HEARTBEAT_SWITCHER)) {
+        if (ServiceInstanceLoader.getServiceLoader(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME).isOpen(REGISTRY_HEARTBEAT_SWITCHER)) {
             available(url);
         }
     }

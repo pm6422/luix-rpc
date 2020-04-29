@@ -7,7 +7,10 @@ import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.server.ProviderWrapper;
 import org.infinity.rpc.core.server.ProviderWrapperHolder;
+import org.infinity.rpc.core.switcher.DefaultSwitcherService;
+import org.infinity.rpc.core.switcher.SwitcherService;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
+import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 
 import java.util.Arrays;
 import java.util.List;
@@ -70,6 +73,7 @@ public class RpcLifecycle {
         log.info("Starting the RPC server");
         initConfig();
         registerProviders(rpcProperties);
+        ServiceInstanceLoader.getServiceLoader(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME).setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
         // referProviders();
         log.info("Started the RPC server");
         log.info("Starting the netty server");

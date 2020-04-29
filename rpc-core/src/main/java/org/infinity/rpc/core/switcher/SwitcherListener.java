@@ -1,6 +1,9 @@
 package org.infinity.rpc.core.switcher;
 
+/**
+ * Listener to monitor the value changes
+ */
 public interface SwitcherListener {
 
-    void onValueChanged(String key,Boolean value);
+    void onSubscribe(String name, Boolean value);
 }
