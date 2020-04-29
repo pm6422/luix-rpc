@@ -27,7 +27,6 @@ public class RpcServer {
         this.host = host;
         this.port = port;
         this.address = this.host + ":" + this.port;
-        log.info("Starting RPC server on [{}]", address);
     }
 
     /**
@@ -55,10 +54,9 @@ public class RpcServer {
                         }
                     }).option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
-            ;
             // 开启异步通信服务
             ChannelFuture future = server.bind(host, port).sync();
-            log.info("Started RPC server on [{}]", address);
+            log.info("Started netty server on [{}]", address);
             // 线程阻塞在此，程序暂停执行，等待通信完成
             future.channel().closeFuture().sync();
         } catch (Exception e) {

@@ -72,6 +72,7 @@ public class RpcLifecycle {
         registerProviders(rpcProperties);
         // referProviders();
         log.info("Started the RPC server");
+        log.info("Starting the netty server");
         RpcServer rpcServer = new RpcServer(rpcProperties.getProtocol().getHost(), rpcProperties.getProtocol().getPort());
         rpcServer.startNettyServer();
     }
