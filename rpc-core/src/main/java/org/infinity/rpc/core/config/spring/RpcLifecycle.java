@@ -94,6 +94,11 @@ public class RpcLifecycle {
         });
     }
 
+    /**
+     * Create registry urls
+     * @param infinityProperties configuration properties
+     * @return registry urls
+     */
     private List<Url> createRegistryUrls(InfinityProperties infinityProperties) {
         Url registryUrl = Url.of(infinityProperties.getRegistry().getName().value(),
                 infinityProperties.getRegistry().getHost(),
@@ -107,6 +112,12 @@ public class RpcLifecycle {
         return Arrays.asList(registryUrl);
     }
 
+    /**
+     * Create provider url
+     * @param infinityProperties configuration properties
+     * @param providerWrapper provider instance wrapper
+     * @return provider url
+     */
     private Url createProviderUrl(InfinityProperties infinityProperties, ProviderWrapper providerWrapper) {
         Url providerUrl = Url.of(
                 infinityProperties.getProtocol().getName().value(),
