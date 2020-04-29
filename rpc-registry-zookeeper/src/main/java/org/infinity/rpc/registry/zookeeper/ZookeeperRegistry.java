@@ -81,7 +81,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
 
             for (Url availableServiceUrl : availableServiceUrls) {
                 if (!super.getRegisteredServiceUrls().contains(availableServiceUrl)) {
-                    log.warn("reconnect url not register. url:{}", availableServiceUrl);
+                    log.warn("Url [{}] has not been registered!", availableServiceUrl);
                     continue;
                 }
                 doAvailable(availableServiceUrl);
@@ -122,6 +122,63 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             log.info("[{}] reconnect all clients", registryClassName);
         } finally {
             clientLock.unlock();
+        }
+    }
+
+    /**
+     * Register specified url info to zookeeper available node
+     *
+     * @param url
+     */
+    @Override
+    protected void doAvailable(Url url) {
+        try {
+            serverLock.lock();
+            if (url == null) {
+                availableServiceUrls.addAll(super.getRegisteredServiceUrls());
+                for (Url u : super.getRegisteredServiceUrls()) {
+                    // Remove the dirty data node
+                    removeNode(u, ZkNodeType.AVAILABLE_SERVER);
+                    removeNode(u, ZkNodeType.UNAVAILABLE_SERVER);
+                    // Create a available server node
+                    createNode(u, ZkNodeType.AVAILABLE_SERVER);
+                }
+            } else {
+                availableServiceUrls.add(url);
+                // Remove the dirty data node
+                removeNode(url, ZkNodeType.AVAILABLE_SERVER);
+                removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);
+                // Create a available server node
+                createNode(url, ZkNodeType.AVAILABLE_SERVER);
+            }
+        } finally {
+            serverLock.unlock();
+        }
+    }
+
+    @Override
+    protected void doUnavailable(Url url) {
+        try {
+            serverLock.lock();
+            if (url == null) {
+                availableServiceUrls.removeAll(getRegisteredServiceUrls());
+                for (Url u : getRegisteredServiceUrls()) {
+                    // Remove the dirty data node
+                    removeNode(u, ZkNodeType.AVAILABLE_SERVER);
+                    removeNode(u, ZkNodeType.UNAVAILABLE_SERVER);
+                    // Create a available server node
+                    createNode(u, ZkNodeType.UNAVAILABLE_SERVER);
+                }
+            } else {
+                availableServiceUrls.remove(url);
+                // Remove the dirty data node
+                removeNode(url, ZkNodeType.AVAILABLE_SERVER);
+                removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);
+                // Create a available server node
+                createNode(url, ZkNodeType.UNAVAILABLE_SERVER);
+            }
+        } finally {
+            serverLock.unlock();
         }
     }
 
@@ -327,58 +384,6 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             return command;
         } catch (Throwable e) {
             throw new RuntimeException(String.format("Failed to discover command %s from zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()));
-        }
-    }
-
-    @Override
-    protected void doAvailable(Url url) {
-        try {
-            serverLock.lock();
-            if (url == null) {
-                availableServiceUrls.addAll(super.getRegisteredServiceUrls());
-                for (Url u : super.getRegisteredServiceUrls()) {
-                    // Remove the dirty data node
-                    removeNode(u, ZkNodeType.AVAILABLE_SERVER);
-                    removeNode(u, ZkNodeType.UNAVAILABLE_SERVER);
-                    // Create a available server node
-                    createNode(u, ZkNodeType.AVAILABLE_SERVER);
-                }
-            } else {
-                availableServiceUrls.add(url);
-                // Remove the dirty data node
-                removeNode(url, ZkNodeType.AVAILABLE_SERVER);
-                removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);
-                // Create a available server node
-                createNode(url, ZkNodeType.AVAILABLE_SERVER);
-            }
-        } finally {
-            serverLock.unlock();
-        }
-    }
-
-    @Override
-    protected void doUnavailable(Url url) {
-        try {
-            serverLock.lock();
-            if (url == null) {
-                availableServiceUrls.removeAll(getRegisteredServiceUrls());
-                for (Url u : getRegisteredServiceUrls()) {
-                    // Remove the dirty data node
-                    removeNode(u, ZkNodeType.AVAILABLE_SERVER);
-                    removeNode(u, ZkNodeType.UNAVAILABLE_SERVER);
-                    // Create a available server node
-                    createNode(u, ZkNodeType.UNAVAILABLE_SERVER);
-                }
-            } else {
-                availableServiceUrls.remove(url);
-                // Remove the dirty data node
-                removeNode(url, ZkNodeType.AVAILABLE_SERVER);
-                removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);
-                // Create a available server node
-                createNode(url, ZkNodeType.UNAVAILABLE_SERVER);
-            }
-        } finally {
-            serverLock.unlock();
         }
     }
 
