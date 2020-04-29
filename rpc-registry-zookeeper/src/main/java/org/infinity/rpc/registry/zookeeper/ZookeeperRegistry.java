@@ -27,12 +27,12 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @Slf4j
 public class ZookeeperRegistry extends CommandFailbackRegistry implements Closable {
-    private final ReentrantLock                                                  clientLock        = new ReentrantLock();
-    private final ReentrantLock                                                  serverLock        = new ReentrantLock();
+    private final ReentrantLock                                                  clientLock           = new ReentrantLock();
+    private final ReentrantLock                                                  serverLock           = new ReentrantLock();
     private       ZkClient                                                       zkClient;
-    private       Set<Url>                                                       availableServices = new ConcurrentHashSet<>();
-    private       Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> serviceListeners  = new ConcurrentHashMap<>();
-    private       Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>  commandListeners  = new ConcurrentHashMap<>();
+    private       Set<Url>                                                       availableServiceUrls = new ConcurrentHashSet<>();
+    private       Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> serviceListeners     = new ConcurrentHashMap<>();
+    private       Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>  commandListeners     = new ConcurrentHashMap<>();
 
     public ZookeeperRegistry(Url url, ZkClient zkClient) {
         super(url);
@@ -77,16 +77,16 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 // re-register after a new session
                 doRegister(url);
             }
-            log.info("Re-registered all the providers [{}] after a reconnect to zookeeper", allRegisteredServices);
+            log.info("Re-registered all the providers after a reconnection to zookeeper");
 
-            for (Url url : availableServices) {
-                if (!super.getRegisteredServiceUrls().contains(url)) {
-                    log.warn("reconnect url not register. url:{}", url);
+            for (Url availableServiceUrl : availableServiceUrls) {
+                if (!super.getRegisteredServiceUrls().contains(availableServiceUrl)) {
+                    log.warn("reconnect url not register. url:{}", availableServiceUrl);
                     continue;
                 }
-                doAvailable(url);
+                doAvailable(availableServiceUrl);
             }
-            log.info("[{}] reconnect: available services {}", registryClassName, availableServices);
+            log.info("[{}] reconnect: available services {}", registryClassName, availableServiceUrls);
         } finally {
             serverLock.unlock();
         }
@@ -335,16 +335,20 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
         try {
             serverLock.lock();
             if (url == null) {
-                availableServices.addAll(getRegisteredServiceUrls());
-                for (Url u : getRegisteredServiceUrls()) {
+                availableServiceUrls.addAll(super.getRegisteredServiceUrls());
+                for (Url u : super.getRegisteredServiceUrls()) {
+                    // Remove the dirty data node
                     removeNode(u, ZkNodeType.AVAILABLE_SERVER);
                     removeNode(u, ZkNodeType.UNAVAILABLE_SERVER);
+                    // Create a available server node
                     createNode(u, ZkNodeType.AVAILABLE_SERVER);
                 }
             } else {
-                availableServices.add(url);
+                availableServiceUrls.add(url);
+                // Remove the dirty data node
                 removeNode(url, ZkNodeType.AVAILABLE_SERVER);
                 removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);
+                // Create a available server node
                 createNode(url, ZkNodeType.AVAILABLE_SERVER);
             }
         } finally {
@@ -357,16 +361,20 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
         try {
             serverLock.lock();
             if (url == null) {
-                availableServices.removeAll(getRegisteredServiceUrls());
+                availableServiceUrls.removeAll(getRegisteredServiceUrls());
                 for (Url u : getRegisteredServiceUrls()) {
+                    // Remove the dirty data node
                     removeNode(u, ZkNodeType.AVAILABLE_SERVER);
                     removeNode(u, ZkNodeType.UNAVAILABLE_SERVER);
+                    // Create a available server node
                     createNode(u, ZkNodeType.UNAVAILABLE_SERVER);
                 }
             } else {
-                availableServices.remove(url);
+                availableServiceUrls.remove(url);
+                // Remove the dirty data node
                 removeNode(url, ZkNodeType.AVAILABLE_SERVER);
                 removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);
+                // Create a available server node
                 createNode(url, ZkNodeType.UNAVAILABLE_SERVER);
             }
         } finally {
