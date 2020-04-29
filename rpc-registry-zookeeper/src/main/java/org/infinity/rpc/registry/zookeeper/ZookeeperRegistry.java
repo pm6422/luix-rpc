@@ -252,17 +252,14 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             clientLock.lock();
             ConcurrentHashMap<ServiceListener, IZkChildListener> childChangeListeners = serviceListeners.get(url);
             if (childChangeListeners == null) {
-                serviceListeners.putIfAbsent(url, new ConcurrentHashMap<ServiceListener, IZkChildListener>());
+                serviceListeners.putIfAbsent(url, new ConcurrentHashMap<>());
                 childChangeListeners = serviceListeners.get(url);
             }
             IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
             if (zkChildListener == null) {
-                childChangeListeners.putIfAbsent(serviceListener, new IZkChildListener() {
-                    @Override
-                    public void handleChildChange(String parentPath, List<String> currentChilds) {
-                        serviceListener.notifyService(url, getRegistryUrl(), nodeChildsToUrls(url, parentPath, currentChilds));
-                        log.info(String.format("[ZookeeperRegistry] service list change: path=%s, currentChilds=%s", parentPath, currentChilds.toString()));
-                    }
+                childChangeListeners.putIfAbsent(serviceListener, (parentPath, currentChilds) -> {
+                    serviceListener.notifyService(url, getRegistryUrl(), nodeChildsToUrls(url, parentPath, currentChilds));
+                    log.info(String.format("[ZookeeperRegistry] service list change: path=%s, currentChilds=%s", parentPath, currentChilds.toString()));
                 });
                 zkChildListener = childChangeListeners.get(serviceListener);
             }
@@ -291,7 +288,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             clientLock.lock();
             ConcurrentHashMap<CommandListener, IZkDataListener> dataChangeListeners = commandListeners.get(url);
             if (dataChangeListeners == null) {
-                commandListeners.putIfAbsent(url, new ConcurrentHashMap<CommandListener, IZkDataListener>());
+                commandListeners.putIfAbsent(url, new ConcurrentHashMap<>());
                 dataChangeListeners = commandListeners.get(url);
             }
             IZkDataListener zkDataListener = dataChangeListeners.get(commandListener);
