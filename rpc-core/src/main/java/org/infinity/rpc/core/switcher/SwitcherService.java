@@ -10,67 +10,39 @@ import java.util.List;
 public interface SwitcherService {
     String REGISTRY_HEARTBEAT_SWITCHER = "feature.configserver.heartbeat";
 
-    /**
-     * 获取接口降级开关
-     *
-     * @param name
-     * @return
-     */
     Switcher getSwitcher(String name);
 
-    /**
-     * 获取所有接口降级开关
-     *
-     * @return
-     */
     List<Switcher> getAllSwitchers();
 
-    /**
-     * 初始化开关。
-     *
-     * @param switcherName
-     * @param initialValue
-     */
-    void initSwitcher(String switcherName, boolean initialValue);
+    void initSwitcher(String name, boolean initialValue);
+
+    boolean isOpen(String name);
 
     /**
-     * 检查开关是否开启。
+     * Check if the switcher is on or not, return the value if switcher exist,
+     * set the switcher with default value and return the default value if switcher does not exist
      *
-     * @param switcherName
-     * @return true ：设置来开关，并且开关值为true false：未设置开关或开关为false
+     * @param name         switcher name
+     * @param defaultValue default value
+     * @return open or not
      */
-    boolean isOpen(String switcherName);
+    boolean isOpen(String name, boolean defaultValue);
+
+    void setValue(String name, boolean value);
 
     /**
-     * 检查开关是否开启，如果开关不存在则将开关置默认值，并返回。
+     * Register a listener for the specified switcher
      *
-     * @param switcherName
-     * @param defaultValue
-     * @return 开关存在时返回开关值，开关不存在时设置开关为默认值，并返回默认值。
+     * @param name     switcher name
+     * @param listener listener
      */
-    boolean isOpen(String switcherName, boolean defaultValue);
+    void registerListener(String name, SwitcherListener listener);
 
     /**
-     * 设置开关状态。
+     * Unregister a listener
      *
-     * @param switcherName
-     * @param value
+     * @param name     switcher name
+     * @param listener the listener to be unregistered, null for all listeners for this name
      */
-    void setValue(String switcherName, boolean value);
-
-    /**
-     * register a listener for switcher value change, register a listener twice will only fire once
-     *
-     * @param switcherName
-     * @param listener
-     */
-    void registerListener(String switcherName, SwitcherListener listener);
-
-    /**
-     * unregister a listener
-     *
-     * @param switcherName
-     * @param listener     the listener to be unregistered, null for all listeners for this switcherName
-     */
-    void unRegisterListener(String switcherName, SwitcherListener listener);
+    void unRegisterListener(String name, SwitcherListener listener);
 }
