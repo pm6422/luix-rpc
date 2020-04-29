@@ -1,5 +1,6 @@
 package org.infinity.rpc.registry;
 
+@Deprecated
 public interface Constant {
     //定义客户端连接session会话超时时间,单位为毫秒,该值的设置和zkServer设置的心跳时间有关系
     int    SESSION_TIMEOUT = 400000;
