@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Random;
 
 @Slf4j
+@Deprecated
 public class ZkRpcServerRegistry {
     private          String       registryAddress;
     private          ZooKeeper    zooKeeper;

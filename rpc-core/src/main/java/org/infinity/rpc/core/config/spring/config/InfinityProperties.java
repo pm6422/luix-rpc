@@ -6,6 +6,7 @@ import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.exception.InfinityConfigurationException;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.utilities.id.ShortIdWorker;
+import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -82,6 +83,8 @@ InfinityProperties implements InitializingBean {
         // Name of protocol
         // SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type, and check whether value is valid during application startup.
         private Name    name = Name.INFINITY;
+        // Host name of the RPC server
+        private String  host = NetworkIpUtils.INTRANET_IP;
         // Port number of the RPC server
         private Integer port;
 

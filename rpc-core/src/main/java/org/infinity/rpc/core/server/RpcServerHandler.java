@@ -9,16 +9,12 @@ import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
 
 import java.lang.reflect.Method;
-import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
 public class RpcServerHandler extends ChannelInboundHandlerAdapter {
 
-    private Map<String, ProviderWrapper> wrapperMap;
-
-    public RpcServerHandler(Map<String, ProviderWrapper> wrapperMap) {
-        this.wrapperMap = wrapperMap;
+    public RpcServerHandler() {
     }
 
     @Override
@@ -40,7 +36,7 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
             Class<?>[] parameterTypes = rpcRequest.getParameterTypes();
             Object[] args = rpcRequest.getArgs();
             // 获取到实现类
-            Object serviceImpl = wrapperMap.get(className).getProviderInstance();
+            Object serviceImpl = ProviderWrapperHolder.getInstance().getWrappers().get(className).getProviderInstance();
             if (serviceImpl == null) {
                 throw new RuntimeException("Service provider class can NOT be found with name: ".concat(className));
             }

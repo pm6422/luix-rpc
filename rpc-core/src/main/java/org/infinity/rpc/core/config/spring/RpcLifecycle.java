@@ -2,6 +2,7 @@ package org.infinity.rpc.core.config.spring;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.config.spring.server.RpcServer;
 import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.server.ProviderWrapper;
@@ -71,6 +72,8 @@ public class RpcLifecycle {
         registerProviders(rpcProperties);
         // referProviders();
         log.info("Started the RPC server");
+        RpcServer rpcServer = new RpcServer(rpcProperties.getProtocol().getHost(), rpcProperties.getProtocol().getPort());
+        rpcServer.startNettyServer();
     }
 
     /**
@@ -96,6 +99,7 @@ public class RpcLifecycle {
 
     /**
      * Create registry urls
+     *
      * @param infinityProperties configuration properties
      * @return registry urls
      */
@@ -114,8 +118,9 @@ public class RpcLifecycle {
 
     /**
      * Create provider url
+     *
      * @param infinityProperties configuration properties
-     * @param providerWrapper provider instance wrapper
+     * @param providerWrapper    provider instance wrapper
      * @return provider url
      */
     private Url createProviderUrl(InfinityProperties infinityProperties, ProviderWrapper providerWrapper) {

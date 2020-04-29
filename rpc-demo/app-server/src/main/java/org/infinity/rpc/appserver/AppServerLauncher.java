@@ -47,8 +47,6 @@ public class AppServerLauncher implements ApplicationContextAware {
         SpringApplication app = new SpringApplication(AppServerLauncher.class);
         Environment env = app.run(args).getEnvironment();
         printAppInfo(env);
-//        RpcServer rpcServer = applicationContext.getBean(RpcServer.class);
-//        rpcServer.startNettyServer();
     }
 
     private static void printAppInfo(Environment env) throws IOException {
