@@ -140,7 +140,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                     // Remove the dirty data node
                     removeNode(u, ZkNodeType.AVAILABLE_SERVER);
                     removeNode(u, ZkNodeType.UNAVAILABLE_SERVER);
-                    // Create a available server node
+                    // Create data under available server node
                     createNode(u, ZkNodeType.AVAILABLE_SERVER);
                 }
             } else {
@@ -148,7 +148,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 // Remove the dirty data node
                 removeNode(url, ZkNodeType.AVAILABLE_SERVER);
                 removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);
-                // Create a available server node
+                // Create data under available server node
                 createNode(url, ZkNodeType.AVAILABLE_SERVER);
             }
         } finally {
@@ -166,7 +166,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                     // Remove the dirty data node
                     removeNode(u, ZkNodeType.AVAILABLE_SERVER);
                     removeNode(u, ZkNodeType.UNAVAILABLE_SERVER);
-                    // Create a available server node
+                    // Create data under available server node
                     createNode(u, ZkNodeType.UNAVAILABLE_SERVER);
                 }
             } else {
@@ -174,7 +174,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 // Remove the dirty data node
                 removeNode(url, ZkNodeType.AVAILABLE_SERVER);
                 removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);
-                // Create a available server node
+                // Create data under available server node
                 createNode(url, ZkNodeType.UNAVAILABLE_SERVER);
             }
         } finally {
@@ -194,7 +194,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             // Remove old node in order to avoid using dirty data
             removeNode(url, ZkNodeType.AVAILABLE_SERVER);
             removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);
-            // Create a node
+            // Create data under unavailable server node
             createNode(url, ZkNodeType.UNAVAILABLE_SERVER);
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to register [{0}] to zookeeper [{1}] with the error: {2}", url, getRegistryUrl(), e.getMessage()), e);
