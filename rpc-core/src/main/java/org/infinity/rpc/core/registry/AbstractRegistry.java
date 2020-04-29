@@ -47,7 +47,7 @@ public abstract class AbstractRegistry implements Registry {
         }
         Url copy = removeUnnecessaryParams(url.copy());
         doRegister(copy);
-        log.info("Registered the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+        log.info("Registered the url [{}] to registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
         registeredServiceUrls.add(url);
         // available if heartbeat switcher already open
         if (SwitcherUtils.isOpen(SwitcherUtils.REGISTRY_HEARTBEAT_SWITCHER)) {
@@ -61,7 +61,7 @@ public abstract class AbstractRegistry implements Registry {
             log.warn("[{}] unregister with malformed param, Url is null", registryClassName);
             return;
         }
-        log.info("Unregistered the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+        log.info("Unregistered the url [{}] from registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
         doUnregister(removeUnnecessaryParams(url.copy()));
         registeredServiceUrls.remove(url);
     }

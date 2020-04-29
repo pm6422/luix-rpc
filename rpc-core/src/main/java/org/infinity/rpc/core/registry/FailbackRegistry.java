@@ -5,6 +5,7 @@ import org.infinity.rpc.core.destory.ShutdownHook;
 import org.infinity.rpc.core.registry.listener.NotifyListener;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -41,6 +42,11 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         }, retryPeriod, retryPeriod, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Register the url
+     *
+     * @param url url
+     */
     @Override
     public void register(Url url) {
         failedRegistered.remove(url);
@@ -50,7 +56,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
             super.register(url);
         } catch (Exception e) {
             if (isCheckingUrls(getUrl(), url)) {
-                throw new RuntimeException(String.format("[%s] false to registery %s to %s", registryClassName, url, getUrl()), e);
+                throw new RuntimeException(MessageFormat.format("Failed to register the url [{0}] to registry [{1}] by using [{2}]", url, getUrl(), registryClassName), e);
             }
             failedRegistered.add(url);
         }
