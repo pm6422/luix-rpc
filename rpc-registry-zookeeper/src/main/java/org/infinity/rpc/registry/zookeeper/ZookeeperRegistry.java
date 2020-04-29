@@ -60,6 +60,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 // do nothing intentionally
             }
         };
+        // Subscribe zk listener
         zkClient.subscribeStateChanges(zkStateListener);
     }
 
