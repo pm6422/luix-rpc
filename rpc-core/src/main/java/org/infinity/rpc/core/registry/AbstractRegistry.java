@@ -32,17 +32,18 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     @Override
-    public void register(Url Url) {
-        if (Url == null) {
-            log.warn("[{}] register with malformed param, Url is null", registryClassName);
+    public void register(Url url) {
+        if (url == null) {
+            log.error("Failed to register a null url with the [{}]", registryClassName);
             return;
         }
-        log.info("[{}] Url ({}) will register to Registry [{}]", registryClassName, Url, registryUrl.getIdentity());
-        doRegister(removeUnnecessaryParmas(Url.copy()));
-        registeredServiceUrls.add(Url);
+        Url copy = removeUnnecessaryParams(url.copy());
+        doRegister(copy);
+        log.info("Registered the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+        registeredServiceUrls.add(url);
         // available if heartbeat switcher already open
         if (SwitcherUtils.isOpen(SwitcherUtils.REGISTRY_HEARTBEAT_SWITCHER)) {
-            available(Url);
+            available(url);
         }
     }
 
@@ -53,7 +54,7 @@ public abstract class AbstractRegistry implements Registry {
             return;
         }
         log.info("[{}] Url ({}) will unregister to Registry [{}]", registryClassName, Url, registryUrl.getIdentity());
-        doUnregister(removeUnnecessaryParmas(Url.copy()));
+        doUnregister(removeUnnecessaryParams(Url.copy()));
         registeredServiceUrls.remove(Url);
     }
 
@@ -120,7 +121,7 @@ public abstract class AbstractRegistry implements Registry {
     public void available(Url Url) {
         log.info("[{}] Url ({}) will set to available to Registry [{}]", registryClassName, Url, registryUrl.getIdentity());
         if (Url != null) {
-            doAvailable(removeUnnecessaryParmas(Url.copy()));
+            doAvailable(removeUnnecessaryParams(Url.copy()));
         } else {
             doAvailable(null);
         }
@@ -130,7 +131,7 @@ public abstract class AbstractRegistry implements Registry {
     public void unavailable(Url Url) {
         log.info("[{}] Url ({}) will set to unavailable to Registry [{}]", registryClassName, Url, registryUrl.getIdentity());
         if (Url != null) {
-            doUnavailable(removeUnnecessaryParmas(Url.copy()));
+            doUnavailable(removeUnnecessaryParams(Url.copy()));
         } else {
             doUnavailable(null);
         }
@@ -184,7 +185,7 @@ public abstract class AbstractRegistry implements Registry {
      *
      * @param Url
      */
-    private Url removeUnnecessaryParmas(Url Url) {
+    private Url removeUnnecessaryParams(Url Url) {
         // codec参数不能提交到注册中心，如果client端没有对应的codec会导致client端不能正常请求。
         Url.getParameters().remove(UrlParam.codec.getName());
         return Url;

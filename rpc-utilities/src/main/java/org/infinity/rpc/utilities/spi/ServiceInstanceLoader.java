@@ -277,6 +277,12 @@ public class ServiceInstanceLoader<T> {
         }
     }
 
+    /**
+     * Create a service loader or get it from cache if exists
+     * @param serviceInterface
+     * @param <T>
+     * @return
+     */
     private static synchronized <T> ServiceInstanceLoader<T> createServiceLoader(Class<T> serviceInterface) {
         ServiceInstanceLoader<T> loader = (ServiceInstanceLoader<T>) SERVICE_LOADERS_CACHE.get(serviceInterface.getName());
         if (loader == null) {
