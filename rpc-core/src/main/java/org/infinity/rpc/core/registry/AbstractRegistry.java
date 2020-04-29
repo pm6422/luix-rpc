@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public abstract class AbstractRegistry implements Registry {
-    private ConcurrentHashMap<Url, Map<String, List<Url>>> subscribedCategoryResponses = new ConcurrentHashMap<>();
+    private Map<Url, Map<String, List<Url>>> subscribedCategoryResponses = new ConcurrentHashMap<>();
 
     private   Url      registryUrl;
     private   Set<Url> registeredServiceUrls = new ConcurrentHashSet<Url>();

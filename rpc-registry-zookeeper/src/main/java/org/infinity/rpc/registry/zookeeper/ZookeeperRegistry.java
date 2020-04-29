@@ -21,12 +21,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 public class ZookeeperRegistry extends CommandFailbackRegistry implements Closable {
-    private final ReentrantLock                                                                clientLock        = new ReentrantLock();
-    private final ReentrantLock                                                                serverLock        = new ReentrantLock();
-    private       ZkClient                                                                     zkClient;
-    private       Set<Url>                                                                     availableServices = new ConcurrentHashSet<>();
-    private       ConcurrentHashMap<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> serviceListeners  = new ConcurrentHashMap<>();
-    private       ConcurrentHashMap<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>  commandListeners  = new ConcurrentHashMap<>();
+    private final ReentrantLock                                                  clientLock        = new ReentrantLock();
+    private final ReentrantLock                                                  serverLock        = new ReentrantLock();
+    private       ZkClient                                                       zkClient;
+    private       Set<Url>                                                       availableServices = new ConcurrentHashSet<>();
+    private       Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> serviceListeners  = new ConcurrentHashMap<>();
+    private       Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>  commandListeners  = new ConcurrentHashMap<>();
 
     public ZookeeperRegistry(Url url, ZkClient zkClient) {
         super(url);
@@ -251,9 +251,10 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     protected void doRegister(Url url) {
         try {
             serverLock.lock();
-            // 防止旧节点未正常注销
+            // Remove old node in order to avoid using dirty data
             removeNode(url, ZkNodeType.AVAILABLE_SERVER);
             removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);
+            // Create a node
             createNode(url, ZkNodeType.UNAVAILABLE_SERVER);
         } catch (Throwable e) {
             throw new RuntimeException(String.format("Failed to register %s to zookeeper(%s), cause: %s", url, getUrl(), e.getMessage()), e);
