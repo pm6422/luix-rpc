@@ -15,10 +15,14 @@ import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.registry.zookeeper.utils.ZkUtils;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Zookeeper registry implementation used to subscribe, unsubscribe, register or unregister data.
+ */
 @Slf4j
 public class ZookeeperRegistry extends CommandFailbackRegistry implements Closable {
     private final ReentrantLock                                                  clientLock        = new ReentrantLock();
@@ -50,6 +54,69 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             }
         };
         zkClient.subscribeStateChanges(zkStateListener);
+    }
+
+    /**
+     * Register specified url info to zookeeper
+     *
+     * @param url
+     */
+    @Override
+    protected void doRegister(Url url) {
+        try {
+            serverLock.lock();
+            // Remove old node in order to avoid using dirty data
+            removeNode(url, ZkNodeType.AVAILABLE_SERVER);
+            removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);
+            // Create a node
+            createNode(url, ZkNodeType.UNAVAILABLE_SERVER);
+        } catch (Throwable e) {
+            throw new RuntimeException(MessageFormat.format("Failed to register [{0}] to zookeeper [{1}] with the error: {2}", url, getUrl(), e.getMessage()), e);
+        } finally {
+            serverLock.unlock();
+        }
+    }
+
+    /**
+     * Delete specified directory
+     *
+     * @param url      url
+     * @param nodeType directory
+     */
+    private void removeNode(Url url, ZkNodeType nodeType) {
+        String nodePath = ZkUtils.toNodePath(url, nodeType);
+        if (zkClient.exists(nodePath)) {
+            zkClient.delete(nodePath);
+        }
+    }
+
+    /**
+     * Create zookeeper persistent and ephemeral node
+     *
+     * @param url      url
+     * @param nodeType directory
+     */
+    private void createNode(Url url, ZkNodeType nodeType) {
+        String nodeTypePath = ZkUtils.toNodeTypePath(url, nodeType);
+        if (!zkClient.exists(nodeTypePath)) {
+            // Create a persistent directory
+            zkClient.createPersistent(nodeTypePath, true);
+        }
+        // Create a temporary node
+        zkClient.createEphemeral(ZkUtils.toNodePath(url, nodeType), url.toFullStr());
+    }
+
+    @Override
+    protected void doUnregister(Url url) {
+        try {
+            serverLock.lock();
+            removeNode(url, ZkNodeType.AVAILABLE_SERVER);
+            removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);
+        } catch (Throwable e) {
+            throw new RuntimeException(String.format("Failed to unregister %s to zookeeper(%s), cause: %s", url, getUrl(), e.getMessage()), e);
+        } finally {
+            serverLock.unlock();
+        }
     }
 
     private void reconnectService() {
@@ -248,35 +315,6 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     }
 
     @Override
-    protected void doRegister(Url url) {
-        try {
-            serverLock.lock();
-            // Remove old node in order to avoid using dirty data
-            removeNode(url, ZkNodeType.AVAILABLE_SERVER);
-            removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);
-            // Create a node
-            createNode(url, ZkNodeType.UNAVAILABLE_SERVER);
-        } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to register %s to zookeeper(%s), cause: %s", url, getUrl(), e.getMessage()), e);
-        } finally {
-            serverLock.unlock();
-        }
-    }
-
-    @Override
-    protected void doUnregister(Url url) {
-        try {
-            serverLock.lock();
-            removeNode(url, ZkNodeType.AVAILABLE_SERVER);
-            removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);
-        } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to unregister %s to zookeeper(%s), cause: %s", url, getUrl(), e.getMessage()), e);
-        } finally {
-            serverLock.unlock();
-        }
-    }
-
-    @Override
     protected void doAvailable(Url url) {
         try {
             serverLock.lock();
@@ -362,23 +400,6 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             }
         }
         return urls;
-    }
-
-    private void createNode(Url url, ZkNodeType nodeType) {
-        String nodeTypePath = ZkUtils.toNodeTypePath(url, nodeType);
-        if (!zkClient.exists(nodeTypePath)) {
-            // Create a persistent directory
-            zkClient.createPersistent(nodeTypePath, true);
-        }
-        // Create a temporary node
-        zkClient.createEphemeral(ZkUtils.toNodePath(url, nodeType), url.toFullStr());
-    }
-
-    private void removeNode(Url url, ZkNodeType nodeType) {
-        String nodePath = ZkUtils.toNodePath(url, nodeType);
-        if (zkClient.exists(nodePath)) {
-            zkClient.delete(nodePath);
-        }
     }
 
     @Override

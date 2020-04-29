@@ -7,4 +7,6 @@ import org.infinity.rpc.utilities.spi.annotation.Spi;
 @Spi(scope = Scope.SINGLETON)
 public interface RegistryFactory {
     Registry getRegistry(Url url);
+
+    Registry createRegistry(Url url);
 }

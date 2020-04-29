@@ -8,6 +8,9 @@ import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Abstract registry
+ */
 @Slf4j
 public abstract class AbstractRegistry implements Registry {
     private Map<Url, Map<String, List<Url>>> subscribedCategoryResponses = new ConcurrentHashMap<>();
@@ -31,6 +34,11 @@ public abstract class AbstractRegistry implements Registry {
         });
     }
 
+    /**
+     * Register url
+     *
+     * @param url url
+     */
     @Override
     public void register(Url url) {
         if (url == null) {
@@ -48,48 +56,48 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     @Override
-    public void unregister(Url Url) {
-        if (Url == null) {
+    public void unregister(Url url) {
+        if (url == null) {
             log.warn("[{}] unregister with malformed param, Url is null", registryClassName);
             return;
         }
-        log.info("[{}] Url ({}) will unregister to Registry [{}]", registryClassName, Url, registryUrl.getIdentity());
-        doUnregister(removeUnnecessaryParams(Url.copy()));
-        registeredServiceUrls.remove(Url);
+        log.info("Unregistered the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+        doUnregister(removeUnnecessaryParams(url.copy()));
+        registeredServiceUrls.remove(url);
     }
 
     @Override
-    public void subscribe(Url Url, NotifyListener listener) {
-        if (Url == null || listener == null) {
-            log.warn("[{}] subscribe with malformed param, Url:{}, listener:{}", registryClassName, Url, listener);
+    public void subscribe(Url url, NotifyListener listener) {
+        if (url == null || listener == null) {
+            log.warn("[{}] subscribe with malformed param, Url:{}, listener:{}", registryClassName, url, listener);
             return;
         }
-        log.info("[{}] Listener ({}) will subscribe to Url ({}) in Registry [{}]", registryClassName, listener, Url,
+        log.info("[{}] Listener ({}) will subscribe to Url ({}) in Registry [{}]", registryClassName, listener, url,
                 registryUrl.getIdentity());
-        doSubscribe(Url.copy(), listener);
+        doSubscribe(url.copy(), listener);
     }
 
     @Override
-    public void unsubscribe(Url Url, NotifyListener listener) {
-        if (Url == null || listener == null) {
-            log.warn("[{}] unsubscribe with malformed param, Url:{}, listener:{}", registryClassName, Url, listener);
+    public void unsubscribe(Url url, NotifyListener listener) {
+        if (url == null || listener == null) {
+            log.warn("[{}] unsubscribe with malformed param, Url:{}, listener:{}", registryClassName, url, listener);
             return;
         }
-        log.info("[{}] Listener ({}) will unsubscribe from Url ({}) in Registry [{}]", registryClassName, listener, Url,
+        log.info("[{}] Listener ({}) will unsubscribe from Url ({}) in Registry [{}]", registryClassName, listener, url,
                 registryUrl.getIdentity());
-        doUnsubscribe(Url.copy(), listener);
+        doUnsubscribe(url.copy(), listener);
     }
 
     @Override
-    public List<Url> discover(Url Url) {
-        if (Url == null) {
+    public List<Url> discover(Url url) {
+        if (url == null) {
             log.warn("[{}] discover with malformed param, refUrl is null", registryClassName);
             return Collections.EMPTY_LIST;
         }
-        Url = Url.copy();
+        url = url.copy();
         List<Url> results = new ArrayList<Url>();
 
-        Map<String, List<Url>> categoryUrls = subscribedCategoryResponses.get(Url);
+        Map<String, List<Url>> categoryUrls = subscribedCategoryResponses.get(url);
         if (categoryUrls != null && categoryUrls.size() > 0) {
             for (List<Url> Urls : categoryUrls.values()) {
                 for (Url tempUrl : Urls) {
@@ -97,7 +105,7 @@ public abstract class AbstractRegistry implements Registry {
                 }
             }
         } else {
-            List<Url> UrlsDiscovered = doDiscover(Url);
+            List<Url> UrlsDiscovered = doDiscover(url);
             if (UrlsDiscovered != null) {
                 for (Url u : UrlsDiscovered) {
                     results.add(u.copy());
@@ -118,27 +126,27 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     @Override
-    public void available(Url Url) {
-        log.info("[{}] Url ({}) will set to available to Registry [{}]", registryClassName, Url, registryUrl.getIdentity());
-        if (Url != null) {
-            doAvailable(removeUnnecessaryParams(Url.copy()));
+    public void available(Url url) {
+        log.info("[{}] Url ({}) will set to available to Registry [{}]", registryClassName, url, registryUrl.getIdentity());
+        if (url != null) {
+            doAvailable(removeUnnecessaryParams(url.copy()));
         } else {
             doAvailable(null);
         }
     }
 
     @Override
-    public void unavailable(Url Url) {
-        log.info("[{}] Url ({}) will set to unavailable to Registry [{}]", registryClassName, Url, registryUrl.getIdentity());
-        if (Url != null) {
-            doUnavailable(removeUnnecessaryParams(Url.copy()));
+    public void unavailable(Url url) {
+        log.info("[{}] Url ({}) will set to unavailable to Registry [{}]", registryClassName, url, registryUrl.getIdentity());
+        if (url != null) {
+            doUnavailable(removeUnnecessaryParams(url.copy()));
         } else {
             doUnavailable(null);
         }
     }
 
-    protected List<Url> getCachedUrls(Url Url) {
-        Map<String, List<Url>> rsUrls = subscribedCategoryResponses.get(Url);
+    protected List<Url> getCachedUrls(Url url) {
+        Map<String, List<Url>> rsUrls = subscribedCategoryResponses.get(url);
         if (rsUrls == null || rsUrls.size() == 0) {
             return null;
         }
@@ -152,12 +160,12 @@ public abstract class AbstractRegistry implements Registry {
         return Urls;
     }
 
-    protected void notify(Url refUrl, NotifyListener listener, List<Url> Urls) {
-        if (listener == null || Urls == null) {
+    protected void notify(Url refUrl, NotifyListener listener, List<Url> urls) {
+        if (listener == null || urls == null) {
             return;
         }
         Map<String, List<Url>> nodeTypeUrlsInRs = new HashMap<String, List<Url>>();
-        for (Url sUrl : Urls) {
+        for (Url sUrl : urls) {
             String nodeType = sUrl.getParameter(UrlParam.nodeType.getName(), UrlParam.nodeType.getValue());
             List<Url> oneNodeTypeUrls = nodeTypeUrlsInRs.get(nodeType);
             if (oneNodeTypeUrls == null) {
@@ -183,17 +191,17 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * 移除不必提交到注册中心的参数。这些参数不需要被client端感知。
      *
-     * @param Url
+     * @param url
      */
-    private Url removeUnnecessaryParams(Url Url) {
+    private Url removeUnnecessaryParams(Url url) {
         // codec参数不能提交到注册中心，如果client端没有对应的codec会导致client端不能正常请求。
-        Url.getParameters().remove(UrlParam.codec.getName());
-        return Url;
+        url.getParameters().remove(UrlParam.codec.getName());
+        return url;
     }
 
-    protected abstract void doRegister(Url Url);
+    protected abstract void doRegister(Url url);
 
-    protected abstract void doUnregister(Url Url);
+    protected abstract void doUnregister(Url url);
 
     protected abstract void doSubscribe(Url url, NotifyListener listener);
 
@@ -201,7 +209,7 @@ public abstract class AbstractRegistry implements Registry {
 
     protected abstract List<Url> doDiscover(Url url);
 
-    protected abstract void doAvailable(Url Url);
+    protected abstract void doAvailable(Url url);
 
-    protected abstract void doUnavailable(Url Url);
+    protected abstract void doUnavailable(Url url);
 }

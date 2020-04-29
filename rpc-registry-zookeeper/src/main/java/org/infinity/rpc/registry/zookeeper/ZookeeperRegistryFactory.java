@@ -11,6 +11,11 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 @ServiceName("zookeeper")
 @Slf4j
 public class ZookeeperRegistryFactory extends AbstractRegistryFactory {
+    /**
+     * Create a zookeeper registry
+     * @param registryUrl registry URL
+     * @return registry instance
+     */
     @Override
     public Registry createRegistry(Url registryUrl) {
         try {
@@ -20,7 +25,7 @@ public class ZookeeperRegistryFactory extends AbstractRegistryFactory {
             return new ZookeeperRegistry(registryUrl, zkClient);
         } catch (ZkException e) {
             log.error("Failed to connect zookeeper server with error: {}", e.getMessage());
-            throw e;
+            return null;
         }
     }
 

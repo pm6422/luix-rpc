@@ -76,6 +76,12 @@ public class ProviderWrapper<T> {
         log.debug("Registered RPC provider [{}] to registry", providerInterface);
     }
 
+
+    /**
+     * Get the registry factory based on protocol
+     * @param url url
+     * @return registry factory
+     */
     private RegistryFactory getRegistryFactory(Url url) {
         // Get the property registry factory by protocol value
         RegistryFactory registryFactory = ServiceInstanceLoader.getServiceLoader(RegistryFactory.class).load(url.getProtocol());
