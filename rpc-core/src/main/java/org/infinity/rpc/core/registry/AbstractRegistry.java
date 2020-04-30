@@ -65,7 +65,7 @@ public abstract class AbstractRegistry implements Registry {
     @Override
     public void register(Url url) {
         if (url == null) {
-            log.error("Failed to register a null url with the [{}]", registryClassName);
+            log.error("Failed to register a null url!");
             return;
         }
         Url copy = removeUnnecessaryParams(url.copy());
@@ -82,13 +82,33 @@ public abstract class AbstractRegistry implements Registry {
     @Override
     public void unregister(Url url) {
         if (url == null) {
-            log.warn("[{}] unregister with malformed param, Url is null", registryClassName);
+            log.error("Failed to unregister a null url!");
             return;
         }
-        log.info("Unregistered the url [{}] from registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
         doUnregister(removeUnnecessaryParams(url.copy()));
+        log.info("Unregistered the url [{}] from registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
         // Removed it from the container after unregistered
         registeredServiceUrls.remove(url);
+    }
+
+    @Override
+    public void activate(Url url) {
+        log.info("Activate the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+        if (url != null) {
+            doActivate(removeUnnecessaryParams(url.copy()));
+        } else {
+            doActivate(null);
+        }
+    }
+
+    @Override
+    public void deactivate(Url url) {
+        log.info("Deactivate the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+        if (url != null) {
+            doDeactivate(removeUnnecessaryParams(url.copy()));
+        } else {
+            doDeactivate(null);
+        }
     }
 
     @Override
@@ -138,26 +158,6 @@ public abstract class AbstractRegistry implements Registry {
             }
         }
         return results;
-    }
-
-    @Override
-    public void activate(Url url) {
-        log.info("[{}] Url ({}) will set to available to Registry [{}]", registryClassName, url, registryUrl.getIdentity());
-        if (url != null) {
-            doActivate(removeUnnecessaryParams(url.copy()));
-        } else {
-            doActivate(null);
-        }
-    }
-
-    @Override
-    public void deactivate(Url url) {
-        log.info("[{}] Url ({}) will set to unavailable to Registry [{}]", registryClassName, url, registryUrl.getIdentity());
-        if (url != null) {
-            doDeactivate(removeUnnecessaryParams(url.copy()));
-        } else {
-            doDeactivate(null);
-        }
     }
 
     protected List<Url> getCachedUrls(Url url) {

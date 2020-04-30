@@ -128,7 +128,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     }
 
     /**
-     * Register specified url info to zookeeper available node
+     * Register specified url info to zookeeper inactive node
      *
      * @param url
      */
