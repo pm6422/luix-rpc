@@ -60,7 +60,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
     }
 
     @Override
-    public void notifyService(Url serviceUrl, Url registryUrl, List<Url> urls) {
+    public void onSubscribe(Url serviceUrl, Url registryUrl, List<Url> urls) {
 
         if (registry == null) {
             throw new RuntimeException("registry must be set.");
@@ -81,13 +81,13 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
         }
 
         for (NotifyListener notifyListener : notifySet) {
-            notifyListener.notify(registry.getRegistryUrl(), finalResult);
+            notifyListener.onSubscribe(registry.getRegistryUrl(), finalResult);
         }
 
     }
 
     @Override
-    public void notifyCommand(Url serviceUrl, String commandString) {
+    public void onSubscribe(Url serviceUrl, String commandString) {
         log.info("CommandServiceManager notify command. service:" + serviceUrl.toSimpleString() + ", command:" + commandString);
 
         if (!ServiceInstanceLoader.getServiceLoader(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME).isOn(MOTAN_COMMAND_SWITCHER) || commandString == null) {
@@ -139,7 +139,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
         }
 
         for (NotifyListener notifyListener : notifySet) {
-            notifyListener.notify(registry.getRegistryUrl(), finalResult);
+            notifyListener.onSubscribe(registry.getRegistryUrl(), finalResult);
         }
     }
 

@@ -259,7 +259,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
             if (zkChildListener == null) {
                 childChangeListeners.putIfAbsent(serviceListener, (parentPath, currentChilds) -> {
-                    serviceListener.notifyService(url, getRegistryUrl(), nodeChildsToUrls(url, parentPath, currentChilds));
+                    serviceListener.onSubscribe(url, getRegistryUrl(), nodeChildsToUrls(url, parentPath, currentChilds));
                     log.info(String.format("[ZookeeperRegistry] service list change: path=%s, currentChilds=%s", parentPath, currentChilds.toString()));
                 });
                 zkChildListener = childChangeListeners.get(serviceListener);
@@ -297,13 +297,13 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 dataChangeListeners.putIfAbsent(commandListener, new IZkDataListener() {
                     @Override
                     public void handleDataChange(String dataPath, Object data) throws Exception {
-                        commandListener.notifyCommand(url, (String) data);
+                        commandListener.onSubscribe(url, (String) data);
                         log.info(String.format("[ZookeeperRegistry] command data change: path=%s, command=%s", dataPath, (String) data));
                     }
 
                     @Override
                     public void handleDataDeleted(String dataPath) throws Exception {
-                        commandListener.notifyCommand(url, null);
+                        commandListener.onSubscribe(url, null);
                         log.info(String.format("[ZookeeperRegistry] command deleted: path=%s", dataPath));
                     }
                 });

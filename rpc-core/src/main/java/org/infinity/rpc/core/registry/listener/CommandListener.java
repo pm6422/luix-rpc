@@ -4,6 +4,6 @@ import org.infinity.rpc.core.registry.Url;
 
 public interface CommandListener {
 
-    void notifyCommand(Url refUrl, String commandString);
+    void onSubscribe(Url refUrl, String commandString);
 
 }

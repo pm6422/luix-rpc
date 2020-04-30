@@ -27,5 +27,5 @@ import java.util.List;
 
 public interface NotifyListener {
 
-    void notify(Url registryUrl, List<Url> urls);
+    void onSubscribe(Url registryUrl, List<Url> urls);
 }

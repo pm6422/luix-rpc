@@ -207,7 +207,7 @@ public abstract class AbstractRegistry implements Registry {
         cUrls.putAll(nodeTypeUrlsInRs);
 
         for (List<Url> us : nodeTypeUrlsInRs.values()) {
-            listener.notify(getRegistryUrl(), us);
+            listener.onSubscribe(getRegistryUrl(), us);
         }
     }
 

@@ -86,7 +86,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         } catch (Exception e) {
             List<Url> cachedUrls = getCachedUrls(url);
             if (cachedUrls != null && cachedUrls.size() > 0) {
-                listener.notify(getRegistryUrl(), cachedUrls);
+                listener.onSubscribe(getRegistryUrl(), cachedUrls);
             } else if (isCheckingUrls(getRegistryUrl(), url)) {
                 log.warn(String.format("[%s] false to subscribe %s from %s", registryClassName, url, getRegistryUrl()), e);
                 throw new RuntimeException(String.format("[%s] false to subscribe %s from %s", registryClassName, url, getRegistryUrl()), e);

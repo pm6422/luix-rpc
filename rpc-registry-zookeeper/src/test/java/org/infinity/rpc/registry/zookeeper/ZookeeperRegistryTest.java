@@ -1,6 +1,7 @@
 package org.infinity.rpc.registry.zookeeper;
 
 import org.I0Itec.zkclient.ZkClient;
+import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.registry.listener.CommandListener;
@@ -17,10 +18,12 @@ import java.util.Properties;
 
 public class ZookeeperRegistryTest {
     private static ZookeeperRegistry registry;
-    private static Url               serviceUrl, clientUrl;
+    private static Url               registryUrl;
+    private static Url               providerUrl;
+    private static Url               clientUrl;
     private static EmbeddedZookeeper zookeeper;
     private static ZkClient          zkClient;
-    private static String            service = "org.infinity.app.common.service.AppService";
+    private static String            provider = "org.infinity.app.common.service.AppService";
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -30,18 +33,22 @@ public class ZookeeperRegistryTest {
         int port = Integer.parseInt(properties.getProperty("clientPort"));
         in.close();
 
-        Url zkUrl = Url.of("zookeeper", "127.0.0.1", port, Registrable.class.getName());
-        clientUrl = Url.of("infinity", "127.0.0.1", 0, service);
+        registryUrl = Url.of("zookeeper", "127.0.0.1", port, Registrable.class.getName());
+        registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, new InfinityProperties().getRegistry().getConnectTimeout().toString());
+        registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, new InfinityProperties().getRegistry().getSessionTimeout().toString());
+        registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, new InfinityProperties().getRegistry().getRetryInterval().toString());
+
+        clientUrl = Url.of("infinity", "127.0.0.1", 0, provider);
         clientUrl.addParameter("group", "aaa");
 
-        serviceUrl = Url.of("zookeeper", "127.0.0.1", 8001, service);
-        serviceUrl.addParameter("group", "aaa");
+        providerUrl = Url.of("zookeeper", "127.0.0.1", 8001, provider);
+        providerUrl.addParameter("group", "aaa");
 
         zookeeper = new EmbeddedZookeeper();
         zookeeper.start();
         Thread.sleep(1000);
         zkClient = new ZkClient("127.0.0.1:" + port, 5000);
-        registry = new ZookeeperRegistry(zkUrl, zkClient);
+        registry = new ZookeeperRegistry(registryUrl, zkClient);
     }
 
     @After
@@ -53,13 +60,13 @@ public class ZookeeperRegistryTest {
     public void subAndUnsubService() throws Exception {
         ServiceListener serviceListener = (refUrl, registryUrl, urls) -> {
             if (!urls.isEmpty()) {
-                Assert.assertTrue(urls.contains(serviceUrl));
+                Assert.assertTrue(urls.contains(providerUrl));
             }
         };
         registry.subscribeService(clientUrl, serviceListener);
         Assert.assertTrue(containsServiceListener(clientUrl, serviceListener));
-        registry.doRegister(serviceUrl);
-        registry.doActivate(serviceUrl);
+        registry.doRegister(providerUrl);
+        registry.doActivate(providerUrl);
         Thread.sleep(2000);
 
         registry.unsubscribeService(clientUrl, serviceListener);
@@ -100,13 +107,13 @@ public class ZookeeperRegistryTest {
 
     @Test
     public void discoverService() throws Exception {
-        registry.doRegister(serviceUrl);
+        registry.doRegister(providerUrl);
         List<Url> results = registry.discoverService(clientUrl);
         Assert.assertTrue(results.isEmpty());
 
-        registry.doActivate(serviceUrl);
+        registry.doActivate(providerUrl);
         results = registry.discoverService(clientUrl);
-        Assert.assertTrue(results.contains(serviceUrl));
+        Assert.assertTrue(results.contains(providerUrl));
     }
 
     @Test
@@ -126,28 +133,28 @@ public class ZookeeperRegistryTest {
 
     @Test
     public void doRegisterAndAvailable() throws Exception {
-        String node = serviceUrl.getServerPortStr();
+        String node = providerUrl.getServerPortStr();
         List<String> available, unavailable;
-        String unavailablePath = ZkUtils.toNodeTypePath(serviceUrl, ZkNodeType.INACTIVE_SERVER);
-        String availablePath = ZkUtils.toNodeTypePath(serviceUrl, ZkNodeType.ACTIVE_SERVER);
+        String unavailablePath = ZkUtils.toNodeTypePath(providerUrl, ZkNodeType.INACTIVE_SERVER);
+        String availablePath = ZkUtils.toNodeTypePath(providerUrl, ZkNodeType.ACTIVE_SERVER);
 
-        registry.doRegister(serviceUrl);
+        registry.doRegister(providerUrl);
         unavailable = zkClient.getChildren(unavailablePath);
         Assert.assertTrue(unavailable.contains(node));
 
-        registry.doActivate(serviceUrl);
+        registry.doActivate(providerUrl);
         unavailable = zkClient.getChildren(unavailablePath);
         Assert.assertFalse(unavailable.contains(node));
         available = zkClient.getChildren(availablePath);
         Assert.assertTrue(available.contains(node));
 
-        registry.doDeactivate(serviceUrl);
+        registry.doDeactivate(providerUrl);
         unavailable = zkClient.getChildren(unavailablePath);
         Assert.assertTrue(unavailable.contains(node));
         available = zkClient.getChildren(availablePath);
         Assert.assertFalse(available.contains(node));
 
-        registry.doUnregister(serviceUrl);
+        registry.doUnregister(providerUrl);
         unavailable = zkClient.getChildren(unavailablePath);
         Assert.assertFalse(unavailable.contains(node));
         available = zkClient.getChildren(availablePath);
