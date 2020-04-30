@@ -86,7 +86,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                     log.warn("Url [{}] has not been registered!", availableServiceUrl);
                     continue;
                 }
-                doAvailable(availableServiceUrl);
+                doActivate(availableServiceUrl);
             }
             log.info("[{}] reconnect: available services {}", registryClassName, availableServiceUrls);
         } finally {
@@ -133,25 +133,25 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
      * @param url
      */
     @Override
-    protected void doAvailable(Url url) {
+    protected void doActivate(Url url) {
         try {
             serverLock.lock();
             if (url == null) {
                 availableServiceUrls.addAll(super.getRegisteredServiceUrls());
                 for (Url u : super.getRegisteredServiceUrls()) {
                     // Remove the dirty data node
-                    removeNode(u, ZkNodeType.NORMAL_SERVER);
-                    removeNode(u, ZkNodeType.ABNORMAL_SERVER);
+                    removeNode(u, ZkNodeType.ACTIVE_SERVER);
+                    removeNode(u, ZkNodeType.INACTIVE_SERVER);
                     // Create data under available server node
-                    createNode(u, ZkNodeType.NORMAL_SERVER);
+                    createNode(u, ZkNodeType.ACTIVE_SERVER);
                 }
             } else {
                 availableServiceUrls.add(url);
                 // Remove the dirty data node
-                removeNode(url, ZkNodeType.NORMAL_SERVER);
-                removeNode(url, ZkNodeType.ABNORMAL_SERVER);
+                removeNode(url, ZkNodeType.ACTIVE_SERVER);
+                removeNode(url, ZkNodeType.INACTIVE_SERVER);
                 // Create data under available server node
-                createNode(url, ZkNodeType.NORMAL_SERVER);
+                createNode(url, ZkNodeType.ACTIVE_SERVER);
             }
         } finally {
             serverLock.unlock();
@@ -159,25 +159,25 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     }
 
     @Override
-    protected void doUnavailable(Url url) {
+    protected void doDeactivate(Url url) {
         try {
             serverLock.lock();
             if (url == null) {
                 availableServiceUrls.removeAll(getRegisteredServiceUrls());
                 for (Url u : getRegisteredServiceUrls()) {
                     // Remove the dirty data node
-                    removeNode(u, ZkNodeType.NORMAL_SERVER);
-                    removeNode(u, ZkNodeType.ABNORMAL_SERVER);
+                    removeNode(u, ZkNodeType.ACTIVE_SERVER);
+                    removeNode(u, ZkNodeType.INACTIVE_SERVER);
                     // Create data under available server node
-                    createNode(u, ZkNodeType.ABNORMAL_SERVER);
+                    createNode(u, ZkNodeType.INACTIVE_SERVER);
                 }
             } else {
                 availableServiceUrls.remove(url);
                 // Remove the dirty data node
-                removeNode(url, ZkNodeType.NORMAL_SERVER);
-                removeNode(url, ZkNodeType.ABNORMAL_SERVER);
+                removeNode(url, ZkNodeType.ACTIVE_SERVER);
+                removeNode(url, ZkNodeType.INACTIVE_SERVER);
                 // Create data under available server node
-                createNode(url, ZkNodeType.ABNORMAL_SERVER);
+                createNode(url, ZkNodeType.INACTIVE_SERVER);
             }
         } finally {
             serverLock.unlock();
@@ -194,10 +194,10 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
         try {
             serverLock.lock();
             // Remove old node in order to avoid using dirty data
-            removeNode(url, ZkNodeType.NORMAL_SERVER);
-            removeNode(url, ZkNodeType.ABNORMAL_SERVER);
+            removeNode(url, ZkNodeType.ACTIVE_SERVER);
+            removeNode(url, ZkNodeType.INACTIVE_SERVER);
             // Create data under unavailable server node
-            createNode(url, ZkNodeType.ABNORMAL_SERVER);
+            createNode(url, ZkNodeType.INACTIVE_SERVER);
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to register [{0}] to zookeeper [{1}] with the error: {2}", url, getRegistryUrl(), e.getMessage()), e);
         } finally {
@@ -238,8 +238,8 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     protected void doUnregister(Url url) {
         try {
             serverLock.lock();
-            removeNode(url, ZkNodeType.NORMAL_SERVER);
-            removeNode(url, ZkNodeType.ABNORMAL_SERVER);
+            removeNode(url, ZkNodeType.ACTIVE_SERVER);
+            removeNode(url, ZkNodeType.INACTIVE_SERVER);
         } catch (Throwable e) {
             throw new RuntimeException(String.format("Failed to unregister %s to zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
         } finally {
@@ -273,9 +273,9 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 log.warn("[ZookeeperRegistry] subscribe service: create node error, path=%s, msg=%s", ZkUtils.toNodePath(url, ZkNodeType.CLIENT), e.getMessage());
             }
 
-            String serverTypePath = ZkUtils.toNodeTypePath(url, ZkNodeType.NORMAL_SERVER);
+            String serverTypePath = ZkUtils.toNodeTypePath(url, ZkNodeType.ACTIVE_SERVER);
             zkClient.subscribeChildChanges(serverTypePath, zkChildListener);
-            log.info(String.format("[ZookeeperRegistry] subscribe service: path=%s, info=%s", ZkUtils.toNodePath(url, ZkNodeType.NORMAL_SERVER), url.toFullStr()));
+            log.info(String.format("[ZookeeperRegistry] subscribe service: path=%s, info=%s", ZkUtils.toNodePath(url, ZkNodeType.ACTIVE_SERVER), url.toFullStr()));
         } catch (Throwable e) {
             throw new RuntimeException(String.format("Failed to subscribe %s to zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
         } finally {
@@ -361,7 +361,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     @Override
     protected List<Url> discoverService(Url url) {
         try {
-            String parentPath = ZkUtils.toNodeTypePath(url, ZkNodeType.NORMAL_SERVER);
+            String parentPath = ZkUtils.toNodeTypePath(url, ZkNodeType.ACTIVE_SERVER);
             List<String> currentChilds = new ArrayList<>();
             if (zkClient.exists(parentPath)) {
                 currentChilds = zkClient.getChildren(parentPath);

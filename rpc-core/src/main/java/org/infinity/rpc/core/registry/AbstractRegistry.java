@@ -38,10 +38,10 @@ public abstract class AbstractRegistry implements Registry {
             if (StringUtils.isNotEmpty(name) && switchOn != null) {
                 if (switchOn) {
                     // switch on
-                    available(null);
+                    activate(null);
                 } else {
                     // switch off
-                    unavailable(null);
+                    deactivate(null);
                 }
             }
         });
@@ -75,7 +75,7 @@ public abstract class AbstractRegistry implements Registry {
         registeredServiceUrls.add(url);
         // available if heartbeat switcher already open
         if (DefaultSwitcherService.getInstance().isOn(REGISTRY_HEARTBEAT_SWITCHER)) {
-            available(url);
+            activate(url);
         }
     }
 
@@ -141,22 +141,22 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     @Override
-    public void available(Url url) {
+    public void activate(Url url) {
         log.info("[{}] Url ({}) will set to available to Registry [{}]", registryClassName, url, registryUrl.getIdentity());
         if (url != null) {
-            doAvailable(removeUnnecessaryParams(url.copy()));
+            doActivate(removeUnnecessaryParams(url.copy()));
         } else {
-            doAvailable(null);
+            doActivate(null);
         }
     }
 
     @Override
-    public void unavailable(Url url) {
+    public void deactivate(Url url) {
         log.info("[{}] Url ({}) will set to unavailable to Registry [{}]", registryClassName, url, registryUrl.getIdentity());
         if (url != null) {
-            doUnavailable(removeUnnecessaryParams(url.copy()));
+            doDeactivate(removeUnnecessaryParams(url.copy()));
         } else {
-            doUnavailable(null);
+            doDeactivate(null);
         }
     }
 
@@ -224,7 +224,7 @@ public abstract class AbstractRegistry implements Registry {
 
     protected abstract List<Url> doDiscover(Url url);
 
-    protected abstract void doAvailable(Url url);
+    protected abstract void doActivate(Url url);
 
-    protected abstract void doUnavailable(Url url);
+    protected abstract void doDeactivate(Url url);
 }

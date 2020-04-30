@@ -8,9 +8,9 @@ public interface Registrable {
 
     void unregister(Url url);
 
-    void available(Url url);
+    void activate(Url url);
 
-    void unavailable(Url Url);
+    void deactivate(Url Url);
 
     Collection<Url> getRegisteredServiceUrls();
 }

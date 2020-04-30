@@ -2,8 +2,8 @@ package org.infinity.rpc.registry.zookeeper;
 
 public enum ZkNodeType {
 
-    NORMAL_SERVER("normal"),
-    ABNORMAL_SERVER("abnormal"),
+    ACTIVE_SERVER("active"),
+    INACTIVE_SERVER("inactive"),
     CLIENT("client");
 
     private String value;
