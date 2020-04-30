@@ -1,6 +1,8 @@
 package org.infinity.rpc.core.registry;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.registry.listener.NotifyListener;
 import org.infinity.rpc.core.switcher.DefaultSwitcherService;
@@ -65,7 +67,7 @@ public abstract class AbstractRegistry implements Registry {
     @Override
     public void register(Url url) {
         if (url == null) {
-            log.error("Failed to register a null url!");
+            log.warn("Url must NOT be null!");
             return;
         }
         Url copy = removeUnnecessaryParams(url.copy());
@@ -82,7 +84,7 @@ public abstract class AbstractRegistry implements Registry {
     @Override
     public void unregister(Url url) {
         if (url == null) {
-            log.error("Failed to unregister a null url!");
+            log.warn("Url must NOT be null!");
             return;
         }
         doUnregister(removeUnnecessaryParams(url.copy()));
@@ -113,46 +115,52 @@ public abstract class AbstractRegistry implements Registry {
 
     @Override
     public void subscribe(Url url, NotifyListener listener) {
-        if (url == null || listener == null) {
-            log.warn("[{}] subscribe with malformed param, Url:{}, listener:{}", registryClassName, url, listener);
+        if (url == null) {
+            log.warn("Url must NOT be null!");
             return;
         }
-        log.info("[{}] Listener ({}) will subscribe to Url ({}) in Registry [{}]", registryClassName, listener, url,
-                registryUrl.getIdentity());
+        if (listener == null) {
+            log.warn("Listener must NOT be null!");
+            return;
+        }
         doSubscribe(url.copy(), listener);
+        log.info("Subscribed the url [{}] to listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
     }
 
     @Override
     public void unsubscribe(Url url, NotifyListener listener) {
-        if (url == null || listener == null) {
-            log.warn("[{}] unsubscribe with malformed param, Url:{}, listener:{}", registryClassName, url, listener);
+        if (url == null) {
+            log.warn("Url must NOT be null!");
             return;
         }
-        log.info("[{}] Listener ({}) will unsubscribe from Url ({}) in Registry [{}]", registryClassName, listener, url,
-                registryUrl.getIdentity());
+        if (listener == null) {
+            log.warn("Listener must NOT be null!");
+            return;
+        }
         doUnsubscribe(url.copy(), listener);
+        log.info("Unsubscribed the url [{}] from listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
     }
 
     @Override
     public List<Url> discover(Url url) {
         if (url == null) {
-            log.warn("[{}] discover with malformed param, refUrl is null", registryClassName);
+            log.warn("Url must NOT be null!");
             return Collections.EMPTY_LIST;
         }
         url = url.copy();
-        List<Url> results = new ArrayList<Url>();
+        List<Url> results = new ArrayList<>();
 
         Map<String, List<Url>> categoryUrls = subscribedCategoryResponses.get(url);
-        if (categoryUrls != null && categoryUrls.size() > 0) {
+        if (MapUtils.isNotEmpty(categoryUrls)) {
             for (List<Url> Urls : categoryUrls.values()) {
                 for (Url tempUrl : Urls) {
                     results.add(tempUrl.copy());
                 }
             }
         } else {
-            List<Url> UrlsDiscovered = doDiscover(url);
-            if (UrlsDiscovered != null) {
-                for (Url u : UrlsDiscovered) {
+            List<Url> discoveredUrls = doDiscover(url);
+            if (CollectionUtils.isNotEmpty(discoveredUrls)) {
+                for (Url u : discoveredUrls) {
                     results.add(u.copy());
                 }
             }
@@ -218,13 +226,13 @@ public abstract class AbstractRegistry implements Registry {
 
     protected abstract void doUnregister(Url url);
 
+    protected abstract void doActivate(Url url);
+
+    protected abstract void doDeactivate(Url url);
+
     protected abstract void doSubscribe(Url url, NotifyListener listener);
 
     protected abstract void doUnsubscribe(Url url, NotifyListener listener);
 
     protected abstract List<Url> doDiscover(Url url);
-
-    protected abstract void doActivate(Url url);
-
-    protected abstract void doDeactivate(Url url);
 }
