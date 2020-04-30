@@ -2,13 +2,13 @@ package org.infinity.rpc.registry.zookeeper;
 
 public enum ZkNodeType {
 
-    AVAILABLE_SERVER("server"),
-    UNAVAILABLE_SERVER("unavailableServer"),
+    NORMAL_SERVER("normal"),
+    ABNORMAL_SERVER("abnormal"),
     CLIENT("client");
 
     private String value;
 
-    private ZkNodeType(String value){
+    private ZkNodeType(String value) {
         this.value = value;
     }
 

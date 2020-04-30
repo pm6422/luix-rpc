@@ -58,7 +58,7 @@ InfinityProperties implements InitializingBean {
     @Data
     public static class Protocol {
         public enum Name {
-            INFINITY("infinity");
+            infinity("infinity");
 
             private String value;
 
@@ -73,16 +73,11 @@ InfinityProperties implements InitializingBean {
             public String value() {
                 return value;
             }
-
-            @Override
-            public String toString() {
-                return value;
-            }
         }
 
         // Name of protocol
         // SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type, and check whether value is valid during application startup.
-        private Name    name = Name.INFINITY;
+        private Name    name = Name.infinity;
         // Host name of the RPC server
         private String  host = NetworkIpUtils.INTRANET_IP;
         // Port number of the RPC server
@@ -105,7 +100,7 @@ InfinityProperties implements InitializingBean {
     @Data
     public static class Registry {
         public enum Name {
-            ZOOKEEPER("zookeeper");
+            zookeeper("zookeeper");
 
             private String value;
 
@@ -120,15 +115,10 @@ InfinityProperties implements InitializingBean {
             public String value() {
                 return value;
             }
-
-            @Override
-            public String toString() {
-                return value;
-            }
         }
 
         // Type name of register center
-        private Name    name           = Name.ZOOKEEPER;
+        private Name    name           = Name.zookeeper;
         // Registry center host name
         private String  host;
         // Registry center port number
