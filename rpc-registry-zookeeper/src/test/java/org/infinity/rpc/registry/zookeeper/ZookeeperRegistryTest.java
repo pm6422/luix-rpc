@@ -40,11 +40,11 @@ public class ZookeeperRegistryTest {
         registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, new InfinityProperties().getRegistry().getSessionTimeout().toString());
         registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, new InfinityProperties().getRegistry().getRetryInterval().toString());
 
-        clientUrl = Url.of("infinity", "127.0.0.1", 0, provider);
-        clientUrl.addParameter("group", "aaa");
+        clientUrl = Url.of("rpc", "127.0.0.1", 0, provider);
+        clientUrl.addParameter("group", Url.PARAM_GROUP_VALUE);
 
-        providerUrl = Url.of("zookeeper", "127.0.0.1", 8001, provider);
-        providerUrl.addParameter("group", "aaa");
+        providerUrl = Url.of("infinity", "127.0.0.1", 8001, provider);
+        providerUrl.addParameter("group", Url.PARAM_GROUP_VALUE);
 
         zookeeper = new EmbeddedZookeeper();
         zookeeper.start();
@@ -93,7 +93,33 @@ public class ZookeeperRegistryTest {
     }
 
     @Test
-    public void subAndUnsubService() throws Exception {
+    public void discoverService() {
+        registry.doRegister(providerUrl);
+        List<Url> results = registry.discoverService(clientUrl);
+        Assert.assertTrue(results.isEmpty());
+
+        registry.doActivate(providerUrl);
+        results = registry.discoverService(clientUrl);
+        Assert.assertTrue(results.contains(providerUrl));
+    }
+
+    @Test
+    public void discoverCommand() {
+        String result = registry.discoverCommand(clientUrl);
+        Assert.assertTrue(result.equals(""));
+
+        String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
+        String commandPath = ZkUtils.toCommandPath(clientUrl);
+        if (!zkClient.exists(commandPath)) {
+            zkClient.createPersistent(commandPath, true);
+        }
+        zkClient.writeData(commandPath, command);
+        result = registry.discoverCommand(clientUrl);
+        Assert.assertTrue(result.equals(command));
+    }
+
+    @Test
+    public void testSubscribe() throws Exception {
         ServiceListener serviceListener = (refUrl, registryUrl, urls) -> {
             if (!urls.isEmpty()) {
                 Assert.assertTrue(urls.contains(providerUrl));
@@ -115,7 +141,7 @@ public class ZookeeperRegistryTest {
 
     @Test
     public void subAndUnsubCommand() throws Exception {
-        final String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
+        String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
         CommandListener commandListener = (refUrl, commandString) -> {
             if (commandString != null) {
                 Assert.assertTrue(commandString.equals(command));
@@ -139,31 +165,5 @@ public class ZookeeperRegistryTest {
 
     private boolean containsCommandListener(Url clientUrl, CommandListener commandListener) {
         return registry.getCommandListeners().get(clientUrl).containsKey(commandListener);
-    }
-
-    @Test
-    public void discoverService() throws Exception {
-        registry.doRegister(providerUrl);
-        List<Url> results = registry.discoverService(clientUrl);
-        Assert.assertTrue(results.isEmpty());
-
-        registry.doActivate(providerUrl);
-        results = registry.discoverService(clientUrl);
-        Assert.assertTrue(results.contains(providerUrl));
-    }
-
-    @Test
-    public void discoverCommand() throws Exception {
-        String result = registry.discoverCommand(clientUrl);
-        Assert.assertTrue(result.equals(""));
-
-        String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
-        String commandPath = ZkUtils.toCommandPath(clientUrl);
-        if (!zkClient.exists(commandPath)) {
-            zkClient.createPersistent(commandPath, true);
-        }
-        zkClient.writeData(commandPath, command);
-        result = registry.discoverCommand(clientUrl);
-        Assert.assertTrue(result.equals(command));
     }
 }

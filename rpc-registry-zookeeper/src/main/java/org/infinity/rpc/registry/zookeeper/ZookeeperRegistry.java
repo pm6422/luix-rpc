@@ -253,10 +253,83 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     }
 
     @Override
-    protected void subscribeService(Url url, final ServiceListener serviceListener) {
+    protected List<Url> discoverService(Url url) {
+        try {
+            String parentPath = ZkUtils.toNodeTypePath(url, ZkNodeType.ACTIVE_SERVER);
+            List<String> currentChilds = new ArrayList<>();
+            if (zkClient.exists(parentPath)) {
+                currentChilds = zkClient.getChildren(parentPath);
+            }
+            return nodeChildsToUrls(url, parentPath, currentChilds);
+        } catch (Throwable e) {
+            throw new RuntimeException(MessageFormat.format("Failed to discover service [{0}] from zookeeper [{1}] with the error: {2}", url, getRegistryUrl(), e.getMessage()), e);
+        }
+    }
+
+    private List<Url> nodeChildsToUrls(Url url, String parentPath, List<String> currentChilds) {
+        List<Url> urls = new ArrayList<>();
+        if (CollectionUtils.isEmpty(currentChilds)) {
+            return urls;
+        }
+        for (String node : currentChilds) {
+            String nodePath = parentPath + Url.PATH_SEPARATOR + node;
+            String data = null;
+            try {
+                data = zkClient.readData(nodePath, true);
+            } catch (Exception e) {
+                log.warn("get zkdata fail!" + e.getMessage());
+            }
+            Url newurl = null;
+            if (StringUtils.isNotBlank(data)) {
+                try {
+                    newurl = Url.valueOf(data);
+                } catch (Exception e) {
+                    log.warn(String.format("Found malformed urls from ZookeeperRegistry, path=%s", nodePath), e);
+                }
+            }
+            if (newurl == null) {
+                newurl = url.copy();
+                String host = "";
+                int port = 80;
+                if (node.indexOf(":") > -1) {
+                    String[] hp = node.split(":");
+                    if (hp.length > 1) {
+                        host = hp[0];
+                        try {
+                            port = Integer.parseInt(hp[1]);
+                        } catch (Exception ignore) {
+                        }
+                    }
+                } else {
+                    host = node;
+                }
+                newurl.setHost(host);
+                newurl.setPort(port);
+            }
+            urls.add(newurl);
+        }
+        return urls;
+    }
+
+    @Override
+    protected String discoverCommand(Url url) {
+        try {
+            String commandPath = ZkUtils.toCommandPath(url);
+            String command = "";
+            if (zkClient.exists(commandPath)) {
+                command = zkClient.readData(commandPath);
+            }
+            return command;
+        } catch (Throwable e) {
+            throw new RuntimeException(MessageFormat.format("Failed to discover command [{0}] from zookeeper [{1}] with the error: {2}", url, getRegistryUrl(), e.getMessage()), e);
+        }
+    }
+
+    @Override
+    protected void subscribeService(Url url, ServiceListener serviceListener) {
         try {
             clientLock.lock();
-            ConcurrentHashMap<ServiceListener, IZkChildListener> childChangeListeners = serviceListeners.get(url);
+            Map<ServiceListener, IZkChildListener> childChangeListeners = serviceListeners.get(url);
             if (childChangeListeners == null) {
                 serviceListeners.putIfAbsent(url, new ConcurrentHashMap<>());
                 childChangeListeners = serviceListeners.get(url);
@@ -361,78 +434,6 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
         } finally {
             clientLock.unlock();
         }
-    }
-
-    @Override
-    protected List<Url> discoverService(Url url) {
-        try {
-            String parentPath = ZkUtils.toNodeTypePath(url, ZkNodeType.ACTIVE_SERVER);
-            List<String> currentChilds = new ArrayList<>();
-            if (zkClient.exists(parentPath)) {
-                currentChilds = zkClient.getChildren(parentPath);
-            }
-            return nodeChildsToUrls(url, parentPath, currentChilds);
-        } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to discover service %s from zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
-        }
-    }
-
-    @Override
-    protected String discoverCommand(Url url) {
-        try {
-            String commandPath = ZkUtils.toCommandPath(url);
-            String command = "";
-            if (zkClient.exists(commandPath)) {
-                command = zkClient.readData(commandPath);
-            }
-            return command;
-        } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to discover command %s from zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()));
-        }
-    }
-
-    private List<Url> nodeChildsToUrls(Url url, String parentPath, List<String> currentChilds) {
-        List<Url> urls = new ArrayList<>();
-        if (currentChilds != null) {
-            for (String node : currentChilds) {
-                String nodePath = parentPath + Url.PATH_SEPARATOR + node;
-                String data = null;
-                try {
-                    data = zkClient.readData(nodePath, true);
-                } catch (Exception e) {
-                    log.warn("get zkdata fail!" + e.getMessage());
-                }
-                Url newurl = null;
-                if (StringUtils.isNotBlank(data)) {
-                    try {
-                        newurl = Url.valueOf(data);
-                    } catch (Exception e) {
-                        log.warn(String.format("Found malformed urls from ZookeeperRegistry, path=%s", nodePath), e);
-                    }
-                }
-                if (newurl == null) {
-                    newurl = url.copy();
-                    String host = "";
-                    int port = 80;
-                    if (node.indexOf(":") > -1) {
-                        String[] hp = node.split(":");
-                        if (hp.length > 1) {
-                            host = hp[0];
-                            try {
-                                port = Integer.parseInt(hp[1]);
-                            } catch (Exception ignore) {
-                            }
-                        }
-                    } else {
-                        host = node;
-                    }
-                    newurl.setHost(host);
-                    newurl.setPort(port);
-                }
-                urls.add(newurl);
-            }
-        }
-        return urls;
     }
 
     @Override
