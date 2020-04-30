@@ -234,6 +234,11 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
         zkClient.createEphemeral(ZkUtils.toNodePath(url, nodeType), url.toFullStr());
     }
 
+    /**
+     * Unregister specified url info from zookeeper
+     *
+     * @param url
+     */
     @Override
     protected void doUnregister(Url url) {
         try {
@@ -241,7 +246,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             removeNode(url, ZkNodeType.ACTIVE_SERVER);
             removeNode(url, ZkNodeType.INACTIVE_SERVER);
         } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to unregister %s to zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
+            throw new RuntimeException(MessageFormat.format("Failed to unregister [{0}] from zookeeper [{1}] with the error: {2}", url, getRegistryUrl(), e.getMessage()), e);
         } finally {
             serverLock.unlock();
         }

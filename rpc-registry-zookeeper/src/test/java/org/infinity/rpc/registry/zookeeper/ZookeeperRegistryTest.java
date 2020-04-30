@@ -1,5 +1,6 @@
 package org.infinity.rpc.registry.zookeeper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.registry.Registrable;
@@ -16,6 +17,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
+@Slf4j
 public class ZookeeperRegistryTest {
     private static ZookeeperRegistry registry;
     private static Url               registryUrl;
@@ -54,6 +56,40 @@ public class ZookeeperRegistryTest {
     @After
     public void tearDown() {
         zkClient.deleteRecursive(ZkUtils.ZOOKEEPER_REGISTRY_NAMESPACE);
+    }
+
+    @Test
+    public void testRegisterAndActivate() {
+        String node = providerUrl.getServerPortStr();
+        List<String> activateList;
+        List<String> deactivateList;
+
+        String inactivePath = ZkUtils.toNodeTypePath(providerUrl, ZkNodeType.INACTIVE_SERVER);
+        log.debug("inactivePath: {}", inactivePath);
+        String activePath = ZkUtils.toNodeTypePath(providerUrl, ZkNodeType.ACTIVE_SERVER);
+        log.debug("activePath: {}", activePath);
+
+        registry.doRegister(providerUrl);
+        deactivateList = zkClient.getChildren(inactivePath);
+        Assert.assertTrue(deactivateList.contains(node));
+
+        registry.doActivate(providerUrl);
+        deactivateList = zkClient.getChildren(inactivePath);
+        Assert.assertFalse(deactivateList.contains(node));
+        activateList = zkClient.getChildren(activePath);
+        Assert.assertTrue(activateList.contains(node));
+
+        registry.doDeactivate(providerUrl);
+        deactivateList = zkClient.getChildren(inactivePath);
+        Assert.assertTrue(deactivateList.contains(node));
+        activateList = zkClient.getChildren(activePath);
+        Assert.assertFalse(activateList.contains(node));
+
+        registry.doUnregister(providerUrl);
+        deactivateList = zkClient.getChildren(inactivePath);
+        Assert.assertFalse(deactivateList.contains(node));
+        activateList = zkClient.getChildren(activePath);
+        Assert.assertFalse(activateList.contains(node));
     }
 
     @Test
@@ -130,35 +166,4 @@ public class ZookeeperRegistryTest {
         result = registry.discoverCommand(clientUrl);
         Assert.assertTrue(result.equals(command));
     }
-
-    @Test
-    public void doRegisterAndAvailable() throws Exception {
-        String node = providerUrl.getServerPortStr();
-        List<String> available, unavailable;
-        String unavailablePath = ZkUtils.toNodeTypePath(providerUrl, ZkNodeType.INACTIVE_SERVER);
-        String availablePath = ZkUtils.toNodeTypePath(providerUrl, ZkNodeType.ACTIVE_SERVER);
-
-        registry.doRegister(providerUrl);
-        unavailable = zkClient.getChildren(unavailablePath);
-        Assert.assertTrue(unavailable.contains(node));
-
-        registry.doActivate(providerUrl);
-        unavailable = zkClient.getChildren(unavailablePath);
-        Assert.assertFalse(unavailable.contains(node));
-        available = zkClient.getChildren(availablePath);
-        Assert.assertTrue(available.contains(node));
-
-        registry.doDeactivate(providerUrl);
-        unavailable = zkClient.getChildren(unavailablePath);
-        Assert.assertTrue(unavailable.contains(node));
-        available = zkClient.getChildren(availablePath);
-        Assert.assertFalse(available.contains(node));
-
-        registry.doUnregister(providerUrl);
-        unavailable = zkClient.getChildren(unavailablePath);
-        Assert.assertFalse(unavailable.contains(node));
-        available = zkClient.getChildren(availablePath);
-        Assert.assertFalse(available.contains(node));
-    }
-
 }
