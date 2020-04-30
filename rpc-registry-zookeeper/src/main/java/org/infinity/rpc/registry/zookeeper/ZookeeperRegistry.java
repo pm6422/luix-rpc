@@ -434,4 +434,12 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     public void close() {
         this.zkClient.close();
     }
+
+    public Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> getServiceListeners() {
+        return serviceListeners;
+    }
+
+    public Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>> getCommandListeners() {
+        return commandListeners;
+    }
 }
