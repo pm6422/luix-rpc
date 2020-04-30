@@ -20,6 +20,7 @@ import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -27,12 +28,12 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @Slf4j
 public class ZookeeperRegistry extends CommandFailbackRegistry implements Closable {
-    private final ReentrantLock                                                  clientLock           = new ReentrantLock();
-    private final ReentrantLock                                                  serverLock           = new ReentrantLock();
+    private final Lock                                                           clientLock           = new ReentrantLock();
+    private final Lock                                                           serverLock           = new ReentrantLock();
+    private final Set<Url>                                                       availableServiceUrls = new ConcurrentHashSet<>();
+    private final Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> serviceListeners     = new ConcurrentHashMap<>();
+    private final Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>  commandListeners     = new ConcurrentHashMap<>();
     private       ZkClient                                                       zkClient;
-    private       Set<Url>                                                       availableServiceUrls = new ConcurrentHashSet<>();
-    private       Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> serviceListeners     = new ConcurrentHashMap<>();
-    private       Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>  commandListeners     = new ConcurrentHashMap<>();
 
     public ZookeeperRegistry(Url url, ZkClient zkClient) {
         super(url);

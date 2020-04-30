@@ -29,8 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServiceName(DefaultSwitcherService.SERVICE_NAME)
 public class DefaultSwitcherService implements SwitcherService {
     public static final String                              SERVICE_NAME = "defaultSwitcherService";
-    private static      Map<String, Switcher>               switchers    = new ConcurrentHashMap<>();
-    private static      Map<String, List<SwitcherListener>> listenerMap  = new ConcurrentHashMap<>();
+    private final       Map<String, Switcher>               switchers    = new ConcurrentHashMap<>();
+    private final       Map<String, List<SwitcherListener>> listenerMap  = new ConcurrentHashMap<>();
 
     /**
      * Get the DefaultSwitcherService instance
@@ -78,7 +78,7 @@ public class DefaultSwitcherService implements SwitcherService {
         triggerChangeEvent(switcherName, value);
     }
 
-    private static void putSwitcher(Switcher switcher) {
+    private void putSwitcher(Switcher switcher) {
         if (switcher == null) {
             throw new RuntimeException("LocalSwitcherService addSwitcher Error: switcher is null");
         }
@@ -86,7 +86,7 @@ public class DefaultSwitcherService implements SwitcherService {
     }
 
     private void triggerChangeEvent(String switcherName, boolean value) {
-        List<SwitcherListener> listeners = DefaultSwitcherService.listenerMap.get(switcherName);
+        List<SwitcherListener> listeners = listenerMap.get(switcherName);
         if (CollectionUtils.isNotEmpty(listeners)) {
             listeners.forEach(listener -> listener.onSubscribe(switcherName, value));
         }
@@ -95,7 +95,7 @@ public class DefaultSwitcherService implements SwitcherService {
     @Override
     public void registerListener(String switcherName, SwitcherListener listener) {
         List listeners = Collections.synchronizedList(new ArrayList());
-        List preListeners = DefaultSwitcherService.listenerMap.putIfAbsent(switcherName, listeners);
+        List preListeners = listenerMap.putIfAbsent(switcherName, listeners);
         if (preListeners == null) {
             listeners.add(listener);
         } else {
@@ -104,17 +104,13 @@ public class DefaultSwitcherService implements SwitcherService {
     }
 
     @Override
-    public void unRegisterListener(String switcherName, SwitcherListener listener) {
-        List<SwitcherListener> listeners = DefaultSwitcherService.listenerMap.get(switcherName);
+    public void unregisterListener(String switcherName, SwitcherListener listener) {
+        List<SwitcherListener> listeners = listenerMap.get(switcherName);
         if (listener == null) {
             // keep empty listeners
             listeners.clear();
         } else {
             listeners.remove(listener);
         }
-    }
-
-    public static Switcher getSwitcherStatic(String name) {
-        return switchers.get(name);
     }
 }

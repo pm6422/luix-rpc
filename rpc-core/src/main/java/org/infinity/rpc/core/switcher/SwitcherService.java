@@ -44,5 +44,5 @@ public interface SwitcherService {
      * @param name     switcher name
      * @param listener the listener to be unregistered, null for all listeners for this name
      */
-    void unRegisterListener(String name, SwitcherListener listener);
+    void unregisterListener(String name, SwitcherListener listener);
 }

@@ -4,9 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.registry.listener.NotifyListener;
 import org.infinity.rpc.core.switcher.DefaultSwitcherService;
-import org.infinity.rpc.core.switcher.SwitcherService;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
-import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
