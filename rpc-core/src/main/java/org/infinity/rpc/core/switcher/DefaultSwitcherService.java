@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServiceName(DefaultSwitcherService.SERVICE_NAME)
 public class DefaultSwitcherService implements SwitcherService {
     public static final String                              SERVICE_NAME = "defaultSwitcherService";
-    private final       Map<String, Switcher>               switchers    = new ConcurrentHashMap<>();
+    private final       Map<String, Switcher>               switcherMap  = new ConcurrentHashMap<>();
     private final       Map<String, List<SwitcherListener>> listenerMap  = new ConcurrentHashMap<>();
 
     /**
@@ -43,74 +43,81 @@ public class DefaultSwitcherService implements SwitcherService {
 
     @Override
     public Switcher getSwitcher(String name) {
-        return switchers.get(name);
+        return switcherMap.get(name);
     }
 
     @Override
     public List<Switcher> getAllSwitchers() {
-        return new ArrayList<Switcher>(switchers.values());
+        return new ArrayList<>(switcherMap.values());
     }
 
     @Override
-    public void initSwitcher(String switcherName, boolean initialValue) {
-        setValue(switcherName, initialValue);
+    public void initSwitcher(String name, boolean initialValue) {
+        setValue(name, initialValue);
     }
 
     @Override
-    public boolean isOpen(String switcherName) {
-        Switcher switcher = switchers.get(switcherName);
+    public void setValue(String name, boolean value) {
+        putSwitcher(Switcher.of(name, value));
+        publishChangeEvent(name, value);
+    }
+
+    private void putSwitcher(Switcher switcher) {
+        switcherMap.put(switcher.getName(), switcher);
+    }
+
+    private void publishChangeEvent(String name, boolean value) {
+        List<SwitcherListener> listeners = listenerMap.get(name);
+        if (CollectionUtils.isEmpty(listeners)) {
+            return;
+        }
+        // trigger the change event
+        listeners.forEach(listener -> listener.onSubscribe(name, value));
+    }
+
+    @Override
+    public boolean isOn(String name) {
+        Switcher switcher = switcherMap.get(name);
         return switcher != null && switcher.isOn();
     }
 
     @Override
-    public boolean isOpen(String switcherName, boolean defaultValue) {
-        Switcher switcher = switchers.get(switcherName);
+    public boolean isOn(String name, boolean defaultValue) {
+        Switcher switcher = switcherMap.get(name);
         if (switcher == null) {
-            switchers.putIfAbsent(switcherName, new Switcher(switcherName, defaultValue));
-            switcher = switchers.get(switcherName);
+            switcherMap.putIfAbsent(name, Switcher.of(name, defaultValue));
+            switcher = switcherMap.get(name);
         }
         return switcher.isOn();
     }
 
     @Override
-    public void setValue(String switcherName, boolean value) {
-        putSwitcher(new Switcher(switcherName, value));
-        triggerChangeEvent(switcherName, value);
-    }
-
-    private void putSwitcher(Switcher switcher) {
-        if (switcher == null) {
-            throw new RuntimeException("LocalSwitcherService addSwitcher Error: switcher is null");
-        }
-        switchers.put(switcher.getName(), switcher);
-    }
-
-    private void triggerChangeEvent(String switcherName, boolean value) {
-        List<SwitcherListener> listeners = listenerMap.get(switcherName);
-        if (CollectionUtils.isNotEmpty(listeners)) {
-            listeners.forEach(listener -> listener.onSubscribe(switcherName, value));
-        }
-    }
-
-    @Override
-    public void registerListener(String switcherName, SwitcherListener listener) {
+    public void registerListener(String name, SwitcherListener listener) {
         List listeners = Collections.synchronizedList(new ArrayList());
-        List preListeners = listenerMap.putIfAbsent(switcherName, listeners);
-        if (preListeners == null) {
+        List existingListeners = listenerMap.putIfAbsent(name, listeners);
+        if (existingListeners == null) {
+            // Key does not exist in map, return null
             listeners.add(listener);
         } else {
-            preListeners.add(listener);
+            // Key exists in map, return old data
+            existingListeners.add(listener);
         }
     }
 
     @Override
-    public void unregisterListener(String switcherName, SwitcherListener listener) {
-        List<SwitcherListener> listeners = listenerMap.get(switcherName);
-        if (listener == null) {
-            // keep empty listeners
-            listeners.clear();
-        } else {
+    public void unregisterListener(String name, SwitcherListener listener) {
+        List<SwitcherListener> listeners = listenerMap.get(name);
+        if (CollectionUtils.isNotEmpty(listeners)) {
             listeners.remove(listener);
+        }
+    }
+
+    @Override
+    public void unregisterListeners(String name) {
+        List<SwitcherListener> listeners = listenerMap.get(name);
+        if (CollectionUtils.isNotEmpty(listeners)) {
+            // clean all the listeners
+            listeners.clear();
         }
     }
 }

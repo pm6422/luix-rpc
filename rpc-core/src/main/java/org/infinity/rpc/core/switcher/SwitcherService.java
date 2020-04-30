@@ -10,13 +10,44 @@ import java.util.List;
 public interface SwitcherService {
     String REGISTRY_HEARTBEAT_SWITCHER = "feature.configserver.heartbeat";
 
+    /**
+     * Get switcher by name
+     *
+     * @param name name of switcher
+     * @return switcher
+     */
     Switcher getSwitcher(String name);
 
+    /**
+     * Get all switchers
+     *
+     * @return switchers
+     */
     List<Switcher> getAllSwitchers();
 
+    /**
+     * Set initial value to specified switcher
+     *
+     * @param name         name of switcher
+     * @param initialValue initial value
+     */
     void initSwitcher(String name, boolean initialValue);
 
-    boolean isOpen(String name);
+    /**
+     * Assign value
+     *
+     * @param name  name of switcher
+     * @param value new value
+     */
+    void setValue(String name, boolean value);
+
+    /**
+     * Check if the switcher is on or not
+     *
+     * @param name switcher name
+     * @return on or not
+     */
+    boolean isOn(String name);
 
     /**
      * Check if the switcher is on or not, return the value if switcher exist,
@@ -24,11 +55,9 @@ public interface SwitcherService {
      *
      * @param name         switcher name
      * @param defaultValue default value
-     * @return open or not
+     * @return on or not
      */
-    boolean isOpen(String name, boolean defaultValue);
-
-    void setValue(String name, boolean value);
+    boolean isOn(String name, boolean defaultValue);
 
     /**
      * Register a listener for the specified switcher
@@ -42,7 +71,13 @@ public interface SwitcherService {
      * Unregister a listener
      *
      * @param name     switcher name
-     * @param listener the listener to be unregistered, null for all listeners for this name
+     * @param listener the listener to be unregistered
      */
     void unregisterListener(String name, SwitcherListener listener);
+
+    /**
+     * Unregister all listeners specified by name
+     * @param name switcher name
+     */
+    void unregisterListeners(String name);
 }

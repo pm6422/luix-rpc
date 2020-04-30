@@ -10,9 +10,11 @@ public class Switcher {
     private String  name;
     private boolean on = true;
 
-    public Switcher(String name, boolean on) {
-        this.name = name;
-        this.on = on;
+    public static Switcher of(String name, boolean on) {
+        Switcher switcher = new Switcher();
+        switcher.setName(name);
+        switcher.setOn(on);
+        return switcher;
     }
 
     /**

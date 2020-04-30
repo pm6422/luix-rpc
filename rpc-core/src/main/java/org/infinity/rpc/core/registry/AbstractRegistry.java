@@ -74,7 +74,7 @@ public abstract class AbstractRegistry implements Registry {
         // Added it to the container after registered
         registeredServiceUrls.add(url);
         // available if heartbeat switcher already open
-        if (DefaultSwitcherService.getInstance().isOpen(REGISTRY_HEARTBEAT_SWITCHER)) {
+        if (DefaultSwitcherService.getInstance().isOn(REGISTRY_HEARTBEAT_SWITCHER)) {
             available(url);
         }
     }
