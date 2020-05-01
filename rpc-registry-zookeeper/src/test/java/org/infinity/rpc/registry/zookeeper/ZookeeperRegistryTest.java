@@ -7,6 +7,7 @@ import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
+import org.infinity.rpc.registry.zookeeper.service.TestDummyService;
 import org.infinity.rpc.registry.zookeeper.utils.ZkUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -25,7 +26,7 @@ public class ZookeeperRegistryTest {
     private static Url               clientUrl;
     private static EmbeddedZookeeper zookeeper;
     private static ZkClient          zkClient;
-    private static String            provider = "org.infinity.app.common.service.AppService";
+    private static String            provider = TestDummyService.class.getName();
 
     @BeforeClass
     public static void setUp() throws Exception {

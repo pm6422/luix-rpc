@@ -13,7 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  *
  */
-@Data
 @EqualsAndHashCode
 public class Url implements Serializable {
     private static final long    serialVersionUID   = 2970867582138131181L;
@@ -33,7 +32,6 @@ public class Url implements Serializable {
      * RPC server or client port
      */
     private              Integer port;
-    private              String  address;
     /**
      * RPC interface fully-qualified name
      */
@@ -64,7 +62,6 @@ public class Url implements Serializable {
         url.setProtocol(protocol);
         url.setHost(host);
         url.setPort(port);
-        url.setAddress(host + ":" + port);
         url.setPath(path);
 
         // initialize fields with init values
@@ -81,6 +78,50 @@ public class Url implements Serializable {
 
     public static Url of(String protocol, String host, Integer port) {
         return of(protocol, host, port, "", new HashMap<>());
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    /**
+     * Composition of host + port
+     * @return
+     */
+    public String getAddress() {
+        return host + ":" + port;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
     }
 
     private void initialize() {
