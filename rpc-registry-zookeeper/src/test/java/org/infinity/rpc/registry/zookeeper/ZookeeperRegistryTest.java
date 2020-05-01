@@ -2,6 +2,7 @@ package org.infinity.rpc.registry.zookeeper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
+import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
@@ -94,13 +95,14 @@ public class ZookeeperRegistryTest {
     }
 
     @Test
-    public void discoverService() {
+    public void testDiscover() {
         registry.doRegister(providerUrl);
         List<Url> results = registry.discoverService(clientUrl);
         Assert.assertTrue(results.isEmpty());
 
         registry.doActivate(providerUrl);
         results = registry.discoverService(clientUrl);
+        Assert.assertTrue(CollectionUtils.isNotEmpty(results));
         Assert.assertTrue(results.contains(providerUrl));
     }
 
