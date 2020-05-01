@@ -1,16 +1,19 @@
 package org.infinity.rpc.registry.zookeeper;
 
-public enum ZkNodeType {
+/**
+ * Zookeeper active status node name
+ */
+public enum ZookeeperActiveStatusNode {
 
     ACTIVE_SERVER("active"),
     INACTIVE_SERVER("inactive"),
     CLIENT("client");
 
-    private String value;
-
-    private ZkNodeType(String value) {
+    ZookeeperActiveStatusNode(String value) {
         this.value = value;
     }
+
+    private String value;
 
     public String getValue() {
         return value;

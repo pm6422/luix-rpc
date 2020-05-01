@@ -66,9 +66,9 @@ public class ZookeeperRegistryTest {
         List<String> activateList;
         List<String> deactivateList;
 
-        String inactivePath = ZkUtils.getPathByNode(providerUrl, ZkNodeType.INACTIVE_SERVER);
+        String inactivePath = ZkUtils.getActiveNodePath(providerUrl, ZookeeperActiveStatusNode.INACTIVE_SERVER);
         log.debug("inactivePath: {}", inactivePath);
-        String activePath = ZkUtils.getPathByNode(providerUrl, ZkNodeType.ACTIVE_SERVER);
+        String activePath = ZkUtils.getActiveNodePath(providerUrl, ZookeeperActiveStatusNode.ACTIVE_SERVER);
         log.debug("activePath: {}", activePath);
 
         registry.doRegister(providerUrl);
@@ -95,7 +95,7 @@ public class ZookeeperRegistryTest {
     }
 
     @Test
-    public void testDiscover() {
+    public void testDiscoverProviders() {
         registry.doRegister(providerUrl);
         List<Url> results = registry.discoverProviders(clientUrl);
         Assert.assertTrue(results.isEmpty());
@@ -112,7 +112,7 @@ public class ZookeeperRegistryTest {
         Assert.assertTrue(result.equals(""));
 
         String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
-        String commandPath = ZkUtils.toCommandPath(clientUrl);
+        String commandPath = ZkUtils.getCommandPath(clientUrl);
         if (!zkClient.exists(commandPath)) {
             zkClient.createPersistent(commandPath, true);
         }
@@ -153,7 +153,7 @@ public class ZookeeperRegistryTest {
         registry.subscribeCommand(clientUrl, commandListener);
         Assert.assertTrue(containsCommandListener(clientUrl, commandListener));
 
-        String commandPath = ZkUtils.toCommandPath(clientUrl);
+        String commandPath = ZkUtils.getCommandPath(clientUrl);
         if (!zkClient.exists(commandPath)) {
             zkClient.createPersistent(commandPath, true);
         }
