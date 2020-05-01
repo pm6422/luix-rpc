@@ -237,7 +237,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     /**
      * Unregister specified url info from zookeeper
      *
-     * @param url
+     * @param url url
      */
     @Override
     protected void doUnregister(Url url) {
