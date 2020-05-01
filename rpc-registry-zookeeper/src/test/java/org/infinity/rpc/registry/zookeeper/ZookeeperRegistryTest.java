@@ -45,7 +45,7 @@ public class ZookeeperRegistryTest {
         clientUrl = Url.of("infinity", "127.0.0.1", 0, provider);
         clientUrl.addParameter("group", Url.PARAM_GROUP_VALUE);
 
-        providerUrl = Url.of("zookeeper", "127.0.0.1", 8001, provider);
+        providerUrl = Url.of("infinity", "127.0.0.1", 8001, provider);
         providerUrl.addParameter("group", Url.PARAM_GROUP_VALUE);
 
         zookeeper = new EmbeddedZookeeper();
@@ -66,9 +66,9 @@ public class ZookeeperRegistryTest {
         List<String> activateList;
         List<String> deactivateList;
 
-        String inactivePath = ZkUtils.toNodeTypePath(providerUrl, ZkNodeType.INACTIVE_SERVER);
+        String inactivePath = ZkUtils.getPathByNode(providerUrl, ZkNodeType.INACTIVE_SERVER);
         log.debug("inactivePath: {}", inactivePath);
-        String activePath = ZkUtils.toNodeTypePath(providerUrl, ZkNodeType.ACTIVE_SERVER);
+        String activePath = ZkUtils.getPathByNode(providerUrl, ZkNodeType.ACTIVE_SERVER);
         log.debug("activePath: {}", activePath);
 
         registry.doRegister(providerUrl);

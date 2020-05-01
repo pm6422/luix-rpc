@@ -225,7 +225,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
      * @param nodeType directory
      */
     private void createNode(Url url, ZkNodeType nodeType) {
-        String nodeTypePath = ZkUtils.toNodeTypePath(url, nodeType);
+        String nodeTypePath = ZkUtils.getPathByNode(url, nodeType);
         if (!zkClient.exists(nodeTypePath)) {
             // Create a persistent directory
             zkClient.createPersistent(nodeTypePath, true);
@@ -255,44 +255,44 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     @Override
     protected List<Url> discoverService(Url url) {
         try {
-            String parentPath = ZkUtils.toNodeTypePath(url, ZkNodeType.ACTIVE_SERVER);
-            List<String> currentChilds = new ArrayList<>();
+            String parentPath = ZkUtils.getPathByNode(url, ZkNodeType.ACTIVE_SERVER);
+            List<String> addresses = new ArrayList<>();
             if (zkClient.exists(parentPath)) {
-                currentChilds = zkClient.getChildren(parentPath);
+                addresses = zkClient.getChildren(parentPath);
             }
-            return nodeChildsToUrls(url, parentPath, currentChilds);
+            return nodeChildsToUrls(url, parentPath, addresses);
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to discover service [{0}] from zookeeper [{1}] with the error: {2}", url, getRegistryUrl(), e.getMessage()), e);
         }
     }
 
-    private List<Url> nodeChildsToUrls(Url url, String parentPath, List<String> currentChilds) {
+    private List<Url> nodeChildsToUrls(Url url, String path, List<String> addresses) {
         List<Url> urls = new ArrayList<>();
-        if (CollectionUtils.isEmpty(currentChilds)) {
+        if (CollectionUtils.isEmpty(addresses)) {
             return urls;
         }
-        for (String node : currentChilds) {
-            String nodePath = parentPath + Url.PATH_SEPARATOR + node;
-            String data = null;
+        for (String address : addresses) {
+            String addrFilePath = path.concat(Url.PATH_SEPARATOR).concat(address);
+            String addrFileData = null;
             try {
-                data = zkClient.readData(nodePath, true);
+                addrFileData = zkClient.readData(addrFilePath, true);
             } catch (Exception e) {
-                log.warn("get zkdata fail!" + e.getMessage());
+                log.warn("Failed to read the zookeeper file data!");
             }
             Url newurl = null;
-            if (StringUtils.isNotBlank(data)) {
+            if (StringUtils.isNotBlank(addrFileData)) {
                 try {
-                    newurl = Url.valueOf(data);
+                    newurl = Url.valueOf(addrFileData);
                 } catch (Exception e) {
-                    log.warn(String.format("Found malformed urls from ZookeeperRegistry, path=%s", nodePath), e);
+                    log.warn(String.format("Found malformed urls from ZookeeperRegistry, path=%s", addrFilePath), e);
                 }
             }
             if (newurl == null) {
                 newurl = url.copy();
                 String host = "";
                 int port = 80;
-                if (node.indexOf(":") > -1) {
-                    String[] hp = node.split(":");
+                if (address.indexOf(":") > -1) {
+                    String[] hp = address.split(":");
                     if (hp.length > 1) {
                         host = hp[0];
                         try {
@@ -301,7 +301,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                         }
                     }
                 } else {
-                    host = node;
+                    host = address;
                 }
                 newurl.setHost(host);
                 newurl.setPort(port);
@@ -351,7 +351,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 log.warn("[ZookeeperRegistry] subscribe service: create node error, path=%s, msg=%s", ZkUtils.toNodePath(url, ZkNodeType.CLIENT), e.getMessage());
             }
 
-            String serverTypePath = ZkUtils.toNodeTypePath(url, ZkNodeType.ACTIVE_SERVER);
+            String serverTypePath = ZkUtils.getPathByNode(url, ZkNodeType.ACTIVE_SERVER);
             zkClient.subscribeChildChanges(serverTypePath, zkChildListener);
             log.info(String.format("[ZookeeperRegistry] subscribe service: path=%s, info=%s", ZkUtils.toNodePath(url, ZkNodeType.ACTIVE_SERVER), url.toFullStr()));
         } catch (Throwable e) {
@@ -406,7 +406,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             if (childChangeListeners != null) {
                 IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
                 if (zkChildListener != null) {
-                    zkClient.unsubscribeChildChanges(ZkUtils.toNodeTypePath(url, ZkNodeType.CLIENT), zkChildListener);
+                    zkClient.unsubscribeChildChanges(ZkUtils.getPathByNode(url, ZkNodeType.CLIENT), zkChildListener);
                     childChangeListeners.remove(serviceListener);
                 }
             }
