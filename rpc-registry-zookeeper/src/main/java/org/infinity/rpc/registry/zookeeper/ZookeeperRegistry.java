@@ -14,7 +14,7 @@ import org.infinity.rpc.core.registry.CommandFailbackRegistry;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
-import org.infinity.rpc.registry.zookeeper.utils.ZkUtils;
+import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 
 import java.text.MessageFormat;
@@ -212,7 +212,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
      * @param nodeType directory
      */
     private void removeNode(Url url, ZookeeperActiveStatusNode nodeType) {
-        String nodePath = ZkUtils.getAddressPath(url, nodeType);
+        String nodePath = ZookeeperUtils.getAddressPath(url, nodeType);
         if (zkClient.exists(nodePath)) {
             zkClient.delete(nodePath);
         }
@@ -225,13 +225,13 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
      * @param nodeType directory
      */
     private void createNode(Url url, ZookeeperActiveStatusNode nodeType) {
-        String nodeTypePath = ZkUtils.getActiveNodePath(url, nodeType);
+        String nodeTypePath = ZookeeperUtils.getActiveNodePath(url, nodeType);
         if (!zkClient.exists(nodeTypePath)) {
             // Create a persistent directory
             zkClient.createPersistent(nodeTypePath, true);
         }
         // Create a temporary node
-        zkClient.createEphemeral(ZkUtils.getAddressPath(url, nodeType), url.toFullStr());
+        zkClient.createEphemeral(ZookeeperUtils.getAddressPath(url, nodeType), url.toFullStr());
     }
 
     /**
@@ -261,7 +261,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     @Override
     protected List<Url> discoverProviders(Url url) {
         try {
-            String parentPath = ZkUtils.getActiveNodePath(url, ZookeeperActiveStatusNode.ACTIVE_SERVER);
+            String parentPath = ZookeeperUtils.getActiveNodePath(url, ZookeeperActiveStatusNode.ACTIVE_SERVER);
             List<String> addresses = new ArrayList<>();
             if (zkClient.exists(parentPath)) {
                 addresses = zkClient.getChildren(parentPath);
@@ -329,7 +329,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     @Override
     protected String discoverCommand(Url url) {
         try {
-            String commandPath = ZkUtils.getCommandPath(url);
+            String commandPath = ZookeeperUtils.getCommandPath(url);
             String command = "";
             if (zkClient.exists(commandPath)) {
                 command = zkClient.readData(commandPath);
@@ -363,12 +363,12 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 removeNode(url, ZookeeperActiveStatusNode.CLIENT);
                 createNode(url, ZookeeperActiveStatusNode.CLIENT);
             } catch (Exception e) {
-                log.warn("[ZookeeperRegistry] subscribe service: create node error, path=%s, msg=%s", ZkUtils.getAddressPath(url, ZookeeperActiveStatusNode.CLIENT), e.getMessage());
+                log.warn("[ZookeeperRegistry] subscribe service: create node error, path=%s, msg=%s", ZookeeperUtils.getAddressPath(url, ZookeeperActiveStatusNode.CLIENT), e.getMessage());
             }
 
-            String serverTypePath = ZkUtils.getActiveNodePath(url, ZookeeperActiveStatusNode.ACTIVE_SERVER);
+            String serverTypePath = ZookeeperUtils.getActiveNodePath(url, ZookeeperActiveStatusNode.ACTIVE_SERVER);
             zkClient.subscribeChildChanges(serverTypePath, zkChildListener);
-            log.info(String.format("[ZookeeperRegistry] subscribe service: path=%s, info=%s", ZkUtils.getAddressPath(url, ZookeeperActiveStatusNode.ACTIVE_SERVER), url.toFullStr()));
+            log.info(String.format("[ZookeeperRegistry] subscribe service: path=%s, info=%s", ZookeeperUtils.getAddressPath(url, ZookeeperActiveStatusNode.ACTIVE_SERVER), url.toFullStr()));
         } catch (Throwable e) {
             throw new RuntimeException(String.format("Failed to subscribe %s to zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
         } finally {
@@ -403,7 +403,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 zkDataListener = dataChangeListeners.get(commandListener);
             }
 
-            String commandPath = ZkUtils.getCommandPath(url);
+            String commandPath = ZookeeperUtils.getCommandPath(url);
             zkClient.subscribeDataChanges(commandPath, zkDataListener);
             log.info(String.format("[ZookeeperRegistry] subscribe command: path=%s, info=%s", commandPath, url.toFullStr()));
         } catch (Throwable e) {
@@ -421,7 +421,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             if (childChangeListeners != null) {
                 IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
                 if (zkChildListener != null) {
-                    zkClient.unsubscribeChildChanges(ZkUtils.getActiveNodePath(url, ZookeeperActiveStatusNode.CLIENT), zkChildListener);
+                    zkClient.unsubscribeChildChanges(ZookeeperUtils.getActiveNodePath(url, ZookeeperActiveStatusNode.CLIENT), zkChildListener);
                     childChangeListeners.remove(serviceListener);
                 }
             }
@@ -440,7 +440,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             if (dataChangeListeners != null) {
                 IZkDataListener zkDataListener = dataChangeListeners.get(commandListener);
                 if (zkDataListener != null) {
-                    zkClient.unsubscribeDataChanges(ZkUtils.getCommandPath(url), zkDataListener);
+                    zkClient.unsubscribeDataChanges(ZookeeperUtils.getCommandPath(url), zkDataListener);
                     dataChangeListeners.remove(commandListener);
                 }
             }

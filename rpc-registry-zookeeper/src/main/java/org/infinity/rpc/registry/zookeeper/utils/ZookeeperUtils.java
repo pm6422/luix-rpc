@@ -3,7 +3,7 @@ package org.infinity.rpc.registry.zookeeper.utils;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.registry.zookeeper.ZookeeperActiveStatusNode;
 
-public class ZkUtils {
+public class ZookeeperUtils {
 
     public static final String ZOOKEEPER_REGISTRY_NAMESPACE = "/infinity";
     public static final String ZOOKEEPER_REGISTRY_COMMAND   = "/command";

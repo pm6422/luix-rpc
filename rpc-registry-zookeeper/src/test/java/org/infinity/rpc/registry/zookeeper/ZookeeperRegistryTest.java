@@ -3,13 +3,14 @@ package org.infinity.rpc.registry.zookeeper;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.registry.zookeeper.service.TestDummyService;
-import org.infinity.rpc.registry.zookeeper.utils.ZkUtils;
+import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -57,7 +58,7 @@ public class ZookeeperRegistryTest {
 
     @After
     public void tearDown() {
-        zkClient.deleteRecursive(ZkUtils.ZOOKEEPER_REGISTRY_NAMESPACE);
+        zkClient.deleteRecursive(ZookeeperUtils.ZOOKEEPER_REGISTRY_NAMESPACE);
     }
 
     @Test
@@ -66,9 +67,9 @@ public class ZookeeperRegistryTest {
         List<String> activateList;
         List<String> deactivateList;
 
-        String inactivePath = ZkUtils.getActiveNodePath(providerUrl, ZookeeperActiveStatusNode.INACTIVE_SERVER);
+        String inactivePath = ZookeeperUtils.getActiveNodePath(providerUrl, ZookeeperActiveStatusNode.INACTIVE_SERVER);
         log.debug("inactivePath: {}", inactivePath);
-        String activePath = ZkUtils.getActiveNodePath(providerUrl, ZookeeperActiveStatusNode.ACTIVE_SERVER);
+        String activePath = ZookeeperUtils.getActiveNodePath(providerUrl, ZookeeperActiveStatusNode.ACTIVE_SERVER);
         log.debug("activePath: {}", activePath);
 
         registry.doRegister(providerUrl);
@@ -107,18 +108,19 @@ public class ZookeeperRegistryTest {
     }
 
     @Test
-    public void discoverCommand() {
+    public void testDiscoverCommand() {
         String result = registry.discoverCommand(clientUrl);
-        Assert.assertTrue(result.equals(""));
+        Assert.assertTrue(StringUtils.isEmpty(result));
 
         String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
-        String commandPath = ZkUtils.getCommandPath(clientUrl);
+        String commandPath = ZookeeperUtils.getCommandPath(clientUrl);
         if (!zkClient.exists(commandPath)) {
             zkClient.createPersistent(commandPath, true);
         }
         zkClient.writeData(commandPath, command);
+
         result = registry.discoverCommand(clientUrl);
-        Assert.assertTrue(result.equals(command));
+        Assert.assertEquals(command, result);
     }
 
     @Test
@@ -153,7 +155,7 @@ public class ZookeeperRegistryTest {
         registry.subscribeCommand(clientUrl, commandListener);
         Assert.assertTrue(containsCommandListener(clientUrl, commandListener));
 
-        String commandPath = ZkUtils.getCommandPath(clientUrl);
+        String commandPath = ZookeeperUtils.getCommandPath(clientUrl);
         if (!zkClient.exists(commandPath)) {
             zkClient.createPersistent(commandPath, true);
         }
