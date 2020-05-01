@@ -70,7 +70,7 @@ public abstract class CommandFailbackRegistry extends FailbackRegistry {
             // 此处先对manager更新指令，避免首次订阅无效的问题。
             manager.setCommandCache(commandStr);
         } else {
-            finalResult = discoverService(urlCopy);
+            finalResult = discoverProviders(urlCopy);
         }
 
         log.info("CommandFailbackRegistry discover size: " + (finalResult == null ? "0" : finalResult.size()));
@@ -86,7 +86,7 @@ public abstract class CommandFailbackRegistry extends FailbackRegistry {
             CommandServiceManager manager = getCommandServiceManager(urlCopy);
             finalResult = manager.discoverServiceWithCommand(urlCopy, new HashMap<String, Integer>(), rpcCommand, previewIP);
         } else {
-            finalResult = discoverService(urlCopy);
+            finalResult = discoverProviders(urlCopy);
         }
 
         return finalResult;
@@ -116,7 +116,7 @@ public abstract class CommandFailbackRegistry extends FailbackRegistry {
 
     protected abstract void unsubscribeCommand(Url url, CommandListener listener);
 
-    protected abstract List<Url> discoverService(Url url);
+    protected abstract List<Url> discoverProviders(Url url);
 
     protected abstract String discoverCommand(Url url);
 }

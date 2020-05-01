@@ -18,12 +18,12 @@ public class ZkUtils {
         return toServicePath(url) + Url.PATH_SEPARATOR + nodeType.getValue();
     }
 
-    public static String toGroupPath(Url url) {
-        return ZOOKEEPER_REGISTRY_NAMESPACE + Url.PATH_SEPARATOR + url.getGroup();
-    }
-
     public static String toServicePath(Url url) {
         return toGroupPath(url) + Url.PATH_SEPARATOR + url.getPath();
+    }
+
+    public static String toGroupPath(Url url) {
+        return ZOOKEEPER_REGISTRY_NAMESPACE + Url.PATH_SEPARATOR + url.getGroup();
     }
 
     public static String toCommandPath(Url url) {

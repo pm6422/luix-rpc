@@ -306,7 +306,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
         String group = urlCopy.getParameter(Url.PARAM_GROUP);
         List<Url> list = groupServiceCache.get(group);
         if (list == null) {
-            list = registry.discoverService(urlCopy);
+            list = registry.discoverProviders(urlCopy);
             groupServiceCache.put(group, list);
         }
         return list;

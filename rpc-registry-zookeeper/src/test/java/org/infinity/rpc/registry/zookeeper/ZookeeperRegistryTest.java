@@ -97,11 +97,11 @@ public class ZookeeperRegistryTest {
     @Test
     public void testDiscover() {
         registry.doRegister(providerUrl);
-        List<Url> results = registry.discoverService(clientUrl);
+        List<Url> results = registry.discoverProviders(clientUrl);
         Assert.assertTrue(results.isEmpty());
 
         registry.doActivate(providerUrl);
-        results = registry.discoverService(clientUrl);
+        results = registry.discoverProviders(clientUrl);
         Assert.assertTrue(CollectionUtils.isNotEmpty(results));
         Assert.assertTrue(results.contains(providerUrl));
     }

@@ -252,21 +252,35 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
         }
     }
 
+    /**
+     * Discover providers url of cluster
+     *
+     * @param url url
+     * @return provider urls
+     */
     @Override
-    protected List<Url> discoverService(Url url) {
+    protected List<Url> discoverProviders(Url url) {
         try {
             String parentPath = ZkUtils.getPathByNode(url, ZkNodeType.ACTIVE_SERVER);
             List<String> addresses = new ArrayList<>();
             if (zkClient.exists(parentPath)) {
                 addresses = zkClient.getChildren(parentPath);
             }
-            return nodeChildsToUrls(url, parentPath, addresses);
+            return readUrl(addresses, parentPath, url);
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to discover service [{0}] from zookeeper [{1}] with the error: {2}", url, getRegistryUrl(), e.getMessage()), e);
         }
     }
 
-    private List<Url> nodeChildsToUrls(Url url, String path, List<String> addresses) {
+    /**
+     * Read address file content as provider url
+     *
+     * @param addresses addresses
+     * @param path      zookeeper path
+     * @param url       url
+     * @return provider urls
+     */
+    private List<Url> readUrl(List<String> addresses, String path, Url url) {
         List<Url> urls = new ArrayList<>();
         if (CollectionUtils.isEmpty(addresses)) {
             return urls;
@@ -284,28 +298,29 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 try {
                     newurl = Url.valueOf(addrFileData);
                 } catch (Exception e) {
-                    log.warn(String.format("Found malformed urls from ZookeeperRegistry, path=%s", addrFilePath), e);
+                    log.warn(MessageFormat.format("Found illegal zookeeper file data with path [{0}]", addrFilePath), e);
                 }
             }
-            if (newurl == null) {
-                newurl = url.copy();
-                String host = "";
-                int port = 80;
-                if (address.indexOf(":") > -1) {
-                    String[] hp = address.split(":");
-                    if (hp.length > 1) {
-                        host = hp[0];
-                        try {
-                            port = Integer.parseInt(hp[1]);
-                        } catch (Exception ignore) {
-                        }
-                    }
-                } else {
-                    host = address;
-                }
-                newurl.setHost(host);
-                newurl.setPort(port);
-            }
+            // TODO: remove the useless code snippet
+//            if (newurl == null) {
+//                newurl = url.copy();
+//                String host = "";
+//                int port = 80;
+//                if (address.indexOf(":") > -1) {
+//                    String[] hp = address.split(":");
+//                    if (hp.length > 1) {
+//                        host = hp[0];
+//                        try {
+//                            port = Integer.parseInt(hp[1]);
+//                        } catch (Exception ignore) {
+//                        }
+//                    }
+//                } else {
+//                    host = address;
+//                }
+//                newurl.setHost(host);
+//                newurl.setPort(port);
+//            }
             urls.add(newurl);
         }
         return urls;
@@ -337,7 +352,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
             if (zkChildListener == null) {
                 childChangeListeners.putIfAbsent(serviceListener, (parentPath, currentChilds) -> {
-                    serviceListener.onSubscribe(url, getRegistryUrl(), nodeChildsToUrls(url, parentPath, currentChilds));
+                    serviceListener.onSubscribe(url, getRegistryUrl(), readUrl(currentChilds, parentPath, url));
                     log.info(String.format("[ZookeeperRegistry] service list change: path=%s, currentChilds=%s", parentPath, currentChilds.toString()));
                 });
                 zkChildListener = childChangeListeners.get(serviceListener);
