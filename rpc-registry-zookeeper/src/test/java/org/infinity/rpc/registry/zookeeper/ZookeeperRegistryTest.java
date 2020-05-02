@@ -124,19 +124,20 @@ public class ZookeeperRegistryTest {
     }
 
     @Test
-    public void testSubscribe() throws Exception {
+    public void testSubscribeServiceListener() throws Exception {
         ServiceListener serviceListener = (refUrl, registryUrl, urls) -> {
-            if (!urls.isEmpty()) {
+            if (CollectionUtils.isNotEmpty(urls)) {
                 Assert.assertTrue(urls.contains(providerUrl));
             }
         };
-        registry.subscribeService(clientUrl, serviceListener);
+        registry.subscribeServiceListener(clientUrl, serviceListener);
         Assert.assertTrue(containsServiceListener(clientUrl, serviceListener));
+
         registry.doRegister(providerUrl);
         registry.doActivate(providerUrl);
         Thread.sleep(2000);
 
-        registry.unsubscribeService(clientUrl, serviceListener);
+        registry.unsubscribeServiceListener(clientUrl, serviceListener);
         Assert.assertFalse(containsServiceListener(clientUrl, serviceListener));
     }
 
@@ -152,7 +153,7 @@ public class ZookeeperRegistryTest {
                 Assert.assertTrue(commandString.equals(command));
             }
         };
-        registry.subscribeCommand(clientUrl, commandListener);
+        registry.subscribeCommandListener(clientUrl, commandListener);
         Assert.assertTrue(containsCommandListener(clientUrl, commandListener));
 
         String commandPath = ZookeeperUtils.getCommandPath(clientUrl);
@@ -164,7 +165,7 @@ public class ZookeeperRegistryTest {
 
         zkClient.delete(commandPath);
 
-        registry.unsubscribeCommand(clientUrl, commandListener);
+        registry.unsubscribeCommandListener(clientUrl, commandListener);
         Assert.assertFalse(containsCommandListener(clientUrl, commandListener));
     }
 

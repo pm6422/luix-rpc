@@ -124,13 +124,13 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
                     groupServiceCache.remove(gk);
                     Url urlTemp = urlCopy.copy();
                     urlTemp.addParameter(Url.PARAM_GROUP, gk);
-                    registry.unsubscribeService(urlTemp, this);
+                    registry.unsubscribeServiceListener(urlTemp, this);
                 }
             }
             // 当指令从有改到无时，或者没有流量切换指令时，会触发取消订阅所有的group，需要重新订阅本组的service
             if ("".equals(commandString) || weights.isEmpty()) {
                 log.info("reSub service" + refUrl.toSimpleString());
-                registry.subscribeService(refUrl, this);
+                registry.subscribeServiceListener(refUrl, this);
             }
         } else {
             log.info("command not change. url:" + serviceUrl.toSimpleString());
@@ -295,7 +295,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
                 Url urlTemp = url.copy();
                 urlTemp.addParameter(Url.PARAM_GROUP, key);
                 finalResult.addAll(discoverOneGroup(urlTemp));
-                registry.subscribeService(urlTemp, this);
+                registry.subscribeServiceListener(urlTemp, this);
             }
         }
         return finalResult;

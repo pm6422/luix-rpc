@@ -26,8 +26,8 @@ public abstract class CommandFailbackRegistry extends FailbackRegistry {
         CommandServiceManager manager = getCommandServiceManager(urlCopy);
         manager.addNotifyListener(listener);
 
-        subscribeService(urlCopy, manager);
-        subscribeCommand(urlCopy, manager);
+        subscribeServiceListener(urlCopy, manager);
+        subscribeCommandListener(urlCopy, manager);
 
         List<Url> urls = doDiscover(urlCopy);
         if (urls != null && urls.size() > 0) {
@@ -41,8 +41,8 @@ public abstract class CommandFailbackRegistry extends FailbackRegistry {
         CommandServiceManager manager = commandManagerMap.get(urlCopy);
 
         manager.removeNotifyListener(listener);
-        unsubscribeService(urlCopy, manager);
-        unsubscribeCommand(urlCopy, manager);
+        unsubscribeServiceListener(urlCopy, manager);
+        unsubscribeCommandListener(urlCopy, manager);
 
     }
 
@@ -108,13 +108,13 @@ public abstract class CommandFailbackRegistry extends FailbackRegistry {
         return commandManagerMap;
     }
 
-    protected abstract void subscribeService(Url url, ServiceListener listener);
+    protected abstract void subscribeServiceListener(Url url, ServiceListener listener);
 
-    protected abstract void subscribeCommand(Url url, CommandListener listener);
+    protected abstract void unsubscribeServiceListener(Url url, ServiceListener listener);
 
-    protected abstract void unsubscribeService(Url url, ServiceListener listener);
+    protected abstract void subscribeCommandListener(Url url, CommandListener listener);
 
-    protected abstract void unsubscribeCommand(Url url, CommandListener listener);
+    protected abstract void unsubscribeCommandListener(Url url, CommandListener listener);
 
     protected abstract List<Url> discoverProviders(Url url);
 

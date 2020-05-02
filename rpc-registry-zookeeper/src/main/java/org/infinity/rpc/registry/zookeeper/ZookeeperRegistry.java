@@ -108,7 +108,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 ConcurrentHashMap<ServiceListener, IZkChildListener> childChangeListeners = serviceListeners.get(url);
                 if (childChangeListeners != null) {
                     for (Map.Entry e : childChangeListeners.entrySet()) {
-                        subscribeService(url, (ServiceListener) e.getKey());
+                        subscribeServiceListener(url, (ServiceListener) e.getKey());
                     }
                 }
             }
@@ -117,7 +117,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 ConcurrentHashMap<CommandListener, IZkDataListener> dataChangeListeners = commandListeners.get(url);
                 if (dataChangeListeners != null) {
                     for (Map.Entry e : dataChangeListeners.entrySet()) {
-                        subscribeCommand(url, (CommandListener) e.getKey());
+                        subscribeCommandListener(url, (CommandListener) e.getKey());
                     }
                 }
             }
@@ -341,7 +341,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     }
 
     @Override
-    protected void subscribeService(Url url, ServiceListener serviceListener) {
+    protected void subscribeServiceListener(Url url, ServiceListener serviceListener) {
         try {
             clientLock.lock();
             Map<ServiceListener, IZkChildListener> childChangeListeners = serviceListeners.get(url);
@@ -377,7 +377,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     }
 
     @Override
-    protected void subscribeCommand(Url url, final CommandListener commandListener) {
+    protected void subscribeCommandListener(Url url, final CommandListener commandListener) {
         try {
             clientLock.lock();
             ConcurrentHashMap<CommandListener, IZkDataListener> dataChangeListeners = commandListeners.get(url);
@@ -414,7 +414,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     }
 
     @Override
-    protected void unsubscribeService(Url url, ServiceListener serviceListener) {
+    protected void unsubscribeServiceListener(Url url, ServiceListener serviceListener) {
         try {
             clientLock.lock();
             Map<ServiceListener, IZkChildListener> childChangeListeners = serviceListeners.get(url);
@@ -433,7 +433,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     }
 
     @Override
-    protected void unsubscribeCommand(Url url, CommandListener commandListener) {
+    protected void unsubscribeCommandListener(Url url, CommandListener commandListener) {
         try {
             clientLock.lock();
             Map<CommandListener, IZkDataListener> dataChangeListeners = commandListeners.get(url);
