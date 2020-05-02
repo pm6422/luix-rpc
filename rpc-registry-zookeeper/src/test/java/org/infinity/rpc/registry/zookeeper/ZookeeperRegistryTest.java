@@ -134,6 +134,7 @@ public class ZookeeperRegistryTest {
         Assert.assertTrue(containsServiceListener(clientUrl, serviceListener));
 
         registry.doRegister(providerUrl);
+        // add provider url to active node, so provider list changes will trigger the IZkChildListener
         registry.doActivate(providerUrl);
         Thread.sleep(2000);
 
@@ -146,7 +147,7 @@ public class ZookeeperRegistryTest {
     }
 
     @Test
-    public void subAndUnsubCommand() throws Exception {
+    public void testSubscribeCommandListener() throws Exception {
         String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
         CommandListener commandListener = (refUrl, commandString) -> {
             if (commandString != null) {

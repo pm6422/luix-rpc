@@ -208,11 +208,11 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     /**
      * Delete specified directory
      *
-     * @param url      url
-     * @param nodeType directory
+     * @param url              url
+     * @param activeStatusNode directory
      */
-    private void removeNode(Url url, ZookeeperActiveStatusNode nodeType) {
-        String nodePath = ZookeeperUtils.getAddressPath(url, nodeType);
+    private void removeNode(Url url, ZookeeperActiveStatusNode activeStatusNode) {
+        String nodePath = ZookeeperUtils.getAddressPath(url, activeStatusNode);
         if (zkClient.exists(nodePath)) {
             zkClient.delete(nodePath);
         }
@@ -352,25 +352,48 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
             if (zkChildListener == null) {
                 childChangeListeners.putIfAbsent(serviceListener, (parentPath, currentChilds) -> {
+                    // trigger user customized service listener
                     serviceListener.onSubscribe(url, getRegistryUrl(), readUrl(currentChilds, parentPath, url));
-                    log.info(String.format("[ZookeeperRegistry] service list change: path=%s, currentChilds=%s", parentPath, currentChilds.toString()));
+                    log.info("Provider addresses list changed with current value {} under path [{}]", currentChilds.toString(), parentPath);
                 });
                 zkChildListener = childChangeListeners.get(serviceListener);
             }
 
             try {
-                // 防止旧节点未正常注销
+                // Remove dirty data
                 removeNode(url, ZookeeperActiveStatusNode.CLIENT);
                 createNode(url, ZookeeperActiveStatusNode.CLIENT);
             } catch (Exception e) {
-                log.warn("[ZookeeperRegistry] subscribe service: create node error, path=%s, msg=%s", ZookeeperUtils.getAddressPath(url, ZookeeperActiveStatusNode.CLIENT), e.getMessage());
+                log.warn(MessageFormat.format("Failed to remove or create the node with path [{0}]", ZookeeperUtils.getAddressPath(url, ZookeeperActiveStatusNode.CLIENT)), e);
             }
 
-            String serverTypePath = ZookeeperUtils.getActiveNodePath(url, ZookeeperActiveStatusNode.ACTIVE_SERVER);
-            zkClient.subscribeChildChanges(serverTypePath, zkChildListener);
-            log.info(String.format("[ZookeeperRegistry] subscribe service: path=%s, info=%s", ZookeeperUtils.getAddressPath(url, ZookeeperActiveStatusNode.ACTIVE_SERVER), url.toFullStr()));
+            String path = ZookeeperUtils.getActiveNodePath(url, ZookeeperActiveStatusNode.ACTIVE_SERVER);
+            // Bind the path with zookeeper child change listener, any the childs under the path changes will trigger the zkChildListener
+            zkClient.subscribeChildChanges(path, zkChildListener);
+            log.info("Subscribed the listener for the path [{}]", ZookeeperUtils.getAddressPath(url, ZookeeperActiveStatusNode.ACTIVE_SERVER));
         } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to subscribe %s to zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
+            throw new RuntimeException(MessageFormat.format("Failed to subscribe listeners for url [{}]", url), e);
+        } finally {
+            clientLock.unlock();
+        }
+    }
+
+    @Override
+    protected void unsubscribeServiceListener(Url url, ServiceListener serviceListener) {
+        try {
+            clientLock.lock();
+            Map<ServiceListener, IZkChildListener> childChangeListeners = serviceListeners.get(url);
+            if (childChangeListeners == null) {
+                return;
+            }
+            IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
+            if (zkChildListener != null) {
+                // Unbind the path with zookeeper child change listener
+                zkClient.unsubscribeChildChanges(ZookeeperUtils.getActiveNodePath(url, ZookeeperActiveStatusNode.CLIENT), zkChildListener);
+                childChangeListeners.remove(serviceListener);
+            }
+        } catch (Throwable e) {
+            throw new RuntimeException(MessageFormat.format("Failed to unsubscribe listeners for url [{}]", url), e);
         } finally {
             clientLock.unlock();
         }
@@ -380,7 +403,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     protected void subscribeCommandListener(Url url, final CommandListener commandListener) {
         try {
             clientLock.lock();
-            ConcurrentHashMap<CommandListener, IZkDataListener> dataChangeListeners = commandListeners.get(url);
+            Map<CommandListener, IZkDataListener> dataChangeListeners = commandListeners.get(url);
             if (dataChangeListeners == null) {
                 commandListeners.putIfAbsent(url, new ConcurrentHashMap<>());
                 dataChangeListeners = commandListeners.get(url);
@@ -389,13 +412,13 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             if (zkDataListener == null) {
                 dataChangeListeners.putIfAbsent(commandListener, new IZkDataListener() {
                     @Override
-                    public void handleDataChange(String dataPath, Object data) throws Exception {
+                    public void handleDataChange(String dataPath, Object data) {
                         commandListener.onSubscribe(url, (String) data);
                         log.info(String.format("[ZookeeperRegistry] command data change: path=%s, command=%s", dataPath, (String) data));
                     }
 
                     @Override
-                    public void handleDataDeleted(String dataPath) throws Exception {
+                    public void handleDataDeleted(String dataPath) {
                         commandListener.onSubscribe(url, null);
                         log.info(String.format("[ZookeeperRegistry] command deleted: path=%s", dataPath));
                     }
@@ -408,25 +431,6 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             log.info(String.format("[ZookeeperRegistry] subscribe command: path=%s, info=%s", commandPath, url.toFullStr()));
         } catch (Throwable e) {
             throw new RuntimeException(String.format("Failed to subscribe %s to zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
-        } finally {
-            clientLock.unlock();
-        }
-    }
-
-    @Override
-    protected void unsubscribeServiceListener(Url url, ServiceListener serviceListener) {
-        try {
-            clientLock.lock();
-            Map<ServiceListener, IZkChildListener> childChangeListeners = serviceListeners.get(url);
-            if (childChangeListeners != null) {
-                IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
-                if (zkChildListener != null) {
-                    zkClient.unsubscribeChildChanges(ZookeeperUtils.getActiveNodePath(url, ZookeeperActiveStatusNode.CLIENT), zkChildListener);
-                    childChangeListeners.remove(serviceListener);
-                }
-            }
-        } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to unsubscribe service %s to zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
         } finally {
             clientLock.unlock();
         }
