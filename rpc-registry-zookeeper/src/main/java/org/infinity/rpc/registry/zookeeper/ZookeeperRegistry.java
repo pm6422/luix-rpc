@@ -326,6 +326,11 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
         return urls;
     }
 
+    /**
+     * Read command json content of specified url
+     * @param url url
+     * @return comamnd json string
+     */
     @Override
     protected String discoverCommand(Url url) {
         try {
@@ -336,10 +341,15 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             }
             return command;
         } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to discover command [{0}] from zookeeper [{1}] with the error: {2}", url, getRegistryUrl(), e.getMessage()), e);
+            throw new RuntimeException(MessageFormat.format("Failed to discover command [{0}] from zookeeper [{1}]", url, getRegistryUrl()), e);
         }
     }
 
+    /**
+     *
+     * @param url
+     * @param serviceListener
+     */
     @Override
     protected void subscribeServiceListener(Url url, ServiceListener serviceListener) {
         try {
@@ -430,7 +440,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             zkClient.subscribeDataChanges(commandPath, zkDataListener);
             log.info(String.format("[ZookeeperRegistry] subscribe command: path=%s, info=%s", commandPath, url.toFullStr()));
         } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to subscribe %s to zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
+            throw new RuntimeException(String.format("Failed to subscribe %s to zookeeper(%s)", url, getRegistryUrl()), e);
         } finally {
             clientLock.unlock();
         }
@@ -449,7 +459,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                 }
             }
         } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to unsubscribe command %s to zookeeper(%s), cause: %s", url, getRegistryUrl(), e.getMessage()), e);
+            throw new RuntimeException(String.format("Failed to unsubscribe command %s to zookeeper(%s)", url, getRegistryUrl()), e);
         } finally {
             clientLock.unlock();
         }
