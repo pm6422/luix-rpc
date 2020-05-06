@@ -11,7 +11,6 @@ import org.infinity.rpc.core.server.ProviderWrapperHolder;
 import org.infinity.rpc.core.switcher.DefaultSwitcherService;
 import org.infinity.rpc.core.switcher.SwitcherService;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
-import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 
 import java.util.Arrays;
 import java.util.List;
@@ -73,7 +72,9 @@ public class RpcLifecycle {
         }
         log.info("Starting the RPC server");
         initConfig();
+        registerShutdownHook();
         registerProviders(rpcProperties);
+
         DefaultSwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
         // referProviders();
         log.info("Started the RPC server");
@@ -86,6 +87,10 @@ public class RpcLifecycle {
      * Initialize the RPC server
      */
     private void initConfig() {
+    }
+
+    private void registerShutdownHook() {
+        ShutdownHook.register();
     }
 
     /**
@@ -152,7 +157,6 @@ public class RpcLifecycle {
         }
 
         unregisterProviders();
-        ShutdownHook.runNow(true);
     }
 
     /**

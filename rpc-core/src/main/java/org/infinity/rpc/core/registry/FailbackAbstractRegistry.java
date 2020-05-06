@@ -28,7 +28,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     private static ScheduledExecutorService                    retryExecutor      = Executors.newScheduledThreadPool(1);
 
     static {
-        ShutdownHook.register(() -> {
+        ShutdownHook.add(() -> {
             if (!retryExecutor.isShutdown()) {
                 retryExecutor.shutdown();
             }

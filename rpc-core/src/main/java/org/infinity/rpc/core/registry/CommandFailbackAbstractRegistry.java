@@ -16,7 +16,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
 
     public CommandFailbackAbstractRegistry(Url url) {
         super(url);
-        commandManagerMap = new ConcurrentHashMap<Url, CommandServiceManager>();
+        commandManagerMap = new ConcurrentHashMap<>();
         log.info("CommandFailbackRegistry init. url: " + url.toSimpleString());
     }
 

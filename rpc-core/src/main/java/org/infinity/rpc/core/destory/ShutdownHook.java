@@ -33,18 +33,25 @@ public class ShutdownHook extends Thread {
     private ShutdownHook() {
     }
 
-    public static synchronized void register(Closable closable, int priority) {
+    public static synchronized void add(Closable closable, int priority) {
         INSTANCE.RESOURCES.add(new ClosableObject(closable, priority));
-        log.info("Registered the class [{}] to {}", closable.getClass(), ShutdownHook.class.getSimpleName());
+        log.info("Added the close method of class [{}] to {}", closable.getClass(), ShutdownHook.class.getSimpleName());
     }
 
     /**
-     * Only global resources are allowed to be register to ShutDownHook, don't register connections to it.
+     * Only global resources are allowed to add to it.
      *
      * @param closable
      */
-    public static void register(Closable closable) {
-        register(closable, DEFAULT_PRIORITY);
+    public static void add(Closable closable) {
+        add(closable, DEFAULT_PRIORITY);
+    }
+
+    /**
+     * Register the ShutdownHook to system runtime
+     */
+    public static void register() {
+        Runtime.getRuntime().addShutdownHook(INSTANCE);
     }
 
     public static void runNow(boolean sync) {
