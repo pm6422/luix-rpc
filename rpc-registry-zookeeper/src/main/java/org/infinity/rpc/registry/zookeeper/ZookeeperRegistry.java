@@ -17,6 +17,7 @@ import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,6 +28,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Zookeeper registry implementation used to subscribe, unsubscribe, register or unregister data.
  */
 @Slf4j
+@ThreadSafe
 public class ZookeeperRegistry extends CommandFailbackRegistry implements Closable {
     private final Lock                                                           clientLock           = new ReentrantLock();
     private final Lock                                                           serverLock           = new ReentrantLock();

@@ -2,12 +2,14 @@ package org.infinity.rpc.core.registry;
 
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
+@ThreadSafe
 public abstract class AbstractRegistryFactory implements RegistryFactory {
     /**
      * Object lock

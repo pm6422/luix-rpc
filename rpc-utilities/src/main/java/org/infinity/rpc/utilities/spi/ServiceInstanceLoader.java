@@ -6,6 +6,7 @@ import org.infinity.rpc.utilities.spi.annotation.Scope;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
@@ -35,6 +36,7 @@ import java.util.concurrent.ConcurrentMap;
  * @param <T>
  */
 @Slf4j
+@ThreadSafe
 public class ServiceInstanceLoader<T> {
     /**
      * Service directory prefix
@@ -279,6 +281,7 @@ public class ServiceInstanceLoader<T> {
 
     /**
      * Create a service loader or get it from cache if exists
+     *
      * @param serviceInterface
      * @param <T>
      * @return

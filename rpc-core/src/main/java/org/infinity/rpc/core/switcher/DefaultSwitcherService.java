@@ -4,6 +4,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ServiceName(DefaultSwitcherService.SERVICE_NAME)
+@ThreadSafe
 public class DefaultSwitcherService implements SwitcherService {
     public static final String                              SERVICE_NAME = "defaultSwitcherService";
     private final       Map<String, Switcher>               switcherMap  = new ConcurrentHashMap<>();
