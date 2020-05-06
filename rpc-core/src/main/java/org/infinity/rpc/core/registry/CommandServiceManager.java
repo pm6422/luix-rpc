@@ -19,7 +19,6 @@ package org.infinity.rpc.core.registry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.registry.*;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.NotifyListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
@@ -44,10 +43,10 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
     }
 
     private          Url                               refUrl;
-    private          ConcurrentHashSet<NotifyListener> notifySet;
-    private          CommandFailbackRegistry           registry;
+    private ConcurrentHashSet<NotifyListener> notifySet;
+    private CommandFailbackAbstractRegistry   registry;
     // service cache
-    private          Map<String, List<Url>>            groupServiceCache;
+    private Map<String, List<Url>>            groupServiceCache;
     // command cache
     private          String                            commandStringCache = "";
     private volatile RpcCommand                        commandCache;
@@ -328,7 +327,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
         notifySet.remove(notifyListener);
     }
 
-    public void setRegistry(CommandFailbackRegistry registry) {
+    public void setRegistry(CommandFailbackAbstractRegistry registry) {
         this.registry = registry;
     }
 

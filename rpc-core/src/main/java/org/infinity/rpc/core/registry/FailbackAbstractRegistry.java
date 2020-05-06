@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * The registry can automatically recover when encountered the failure.
  */
 @Slf4j
-public abstract class FailbackRegistry extends AbstractRegistry {
+public abstract class FailbackAbstractRegistry extends AbstractRegistry {
 
     private        Set<Url>                                    failedRegistered   = new ConcurrentHashSet<>();
     private        Set<Url>                                    failedUnregistered = new ConcurrentHashSet<>();
@@ -35,7 +35,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         });
     }
 
-    public FailbackRegistry(Url url) {
+    public FailbackAbstractRegistry(Url url) {
         super(url);
         long retryPeriod = url.getIntParameter(Url.PARAM_RETRY_INTERVAL);
         retryExecutor.scheduleAtFixedRate(() -> {

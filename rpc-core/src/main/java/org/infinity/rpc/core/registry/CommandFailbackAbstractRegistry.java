@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public abstract class CommandFailbackRegistry extends FailbackRegistry {
+public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRegistry {
     private ConcurrentHashMap<Url, CommandServiceManager> commandManagerMap;
 
-    public CommandFailbackRegistry(Url url) {
+    public CommandFailbackAbstractRegistry(Url url) {
         super(url);
         commandManagerMap = new ConcurrentHashMap<Url, CommandServiceManager>();
         log.info("CommandFailbackRegistry init. url: " + url.toSimpleString());
