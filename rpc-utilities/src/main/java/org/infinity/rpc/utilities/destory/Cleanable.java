@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.destory;
+package org.infinity.rpc.utilities.destory;
 
 public interface Cleanable<T> {
     void cleanup();

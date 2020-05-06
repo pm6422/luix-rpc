@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.destory;
+package org.infinity.rpc.utilities.destory;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

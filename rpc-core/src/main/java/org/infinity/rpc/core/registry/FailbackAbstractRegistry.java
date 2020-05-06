@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.registry;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.destory.ShutdownHook;
+import org.infinity.rpc.utilities.destory.ShutdownHook;
 import org.infinity.rpc.core.registry.listener.NotifyListener;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 
