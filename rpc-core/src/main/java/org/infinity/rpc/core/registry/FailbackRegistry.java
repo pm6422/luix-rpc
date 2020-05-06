@@ -12,15 +12,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * The registry can automatically recover when encountered the failure.
+ */
 @Slf4j
 public abstract class FailbackRegistry extends AbstractRegistry {
 
-    private Set<Url>                                                  failedRegistered   = new ConcurrentHashSet<>();
-    private Set<Url>                                                  failedUnregistered = new ConcurrentHashSet<>();
-    private ConcurrentHashMap<Url, ConcurrentHashSet<NotifyListener>> failedSubscribed   = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<Url, ConcurrentHashSet<NotifyListener>> failedUnsubscribed = new ConcurrentHashMap<>();
-
-    private static ScheduledExecutorService retryExecutor = Executors.newScheduledThreadPool(1);
+    private        Set<Url>                                    failedRegistered   = new ConcurrentHashSet<>();
+    private        Set<Url>                                    failedUnregistered = new ConcurrentHashSet<>();
+    private        Map<Url, ConcurrentHashSet<NotifyListener>> failedSubscribed   = new ConcurrentHashMap<>();
+    private        Map<Url, ConcurrentHashSet<NotifyListener>> failedUnsubscribed = new ConcurrentHashMap<>();
+    /**
+     * A retry thread pool can execute task periodically
+     */
+    private static ScheduledExecutorService                    retryExecutor      = Executors.newScheduledThreadPool(1);
 
     static {
         ShutdownHook.registerShutdownHook(() -> {
@@ -142,7 +147,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         }
     }
 
-    private void addToFailedMap(ConcurrentHashMap<Url, ConcurrentHashSet<NotifyListener>> failedMap, Url url, NotifyListener listener) {
+    private void addToFailedMap(Map<Url, ConcurrentHashSet<NotifyListener>> failedMap, Url url, NotifyListener listener) {
         Set<NotifyListener> listeners = failedMap.get(url);
         if (listeners == null) {
             failedMap.putIfAbsent(url, new ConcurrentHashSet<NotifyListener>());
