@@ -2,6 +2,7 @@ package org.infinity.rpc.core.config.spring;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.destory.ShutdownHook;
 import org.infinity.rpc.core.netty.NettyServer;
 import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
@@ -149,7 +150,9 @@ public class RpcLifecycle {
             // not yet started or already stopped
             return;
         }
+
         unregisterProviders();
+        ShutdownHook.runNow(true);
     }
 
     /**

@@ -33,7 +33,7 @@ public class ShutdownHook extends Thread {
     private ShutdownHook() {
     }
 
-    public static synchronized void registerShutdownHook(Closable closable, int priority) {
+    public static synchronized void register(Closable closable, int priority) {
         INSTANCE.RESOURCES.add(new ClosableObject(closable, priority));
         log.info("Registered the class [{}] to {}", closable.getClass(), ShutdownHook.class.getSimpleName());
     }
@@ -43,8 +43,8 @@ public class ShutdownHook extends Thread {
      *
      * @param closable
      */
-    public static void registerShutdownHook(Closable closable) {
-        registerShutdownHook(closable, DEFAULT_PRIORITY);
+    public static void register(Closable closable) {
+        register(closable, DEFAULT_PRIORITY);
     }
 
     public static void runNow(boolean sync) {
