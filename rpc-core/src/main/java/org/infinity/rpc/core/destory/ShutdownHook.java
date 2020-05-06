@@ -51,6 +51,7 @@ public class ShutdownHook extends Thread {
         if (sync) {
             INSTANCE.run();
         } else {
+            // Thread.start() will call the run() method on some proper occasion
             INSTANCE.start();
         }
     }
@@ -61,6 +62,7 @@ public class ShutdownHook extends Thread {
     }
 
     private synchronized void closeAll() {
+        // Sort by priority
         Collections.sort(RESOURCES);
         log.info("Start to close global resource due to priority");
         for (ClosableObject resource : RESOURCES) {
@@ -69,9 +71,8 @@ public class ShutdownHook extends Thread {
             } catch (Exception e) {
                 log.error("Failed to close " + resource.closable.getClass(), e);
             }
-            log.info("Success to close " + resource.closable.getClass());
+            log.info("Closed the {}" + resource.closable.getClass());
         }
-        log.info("Success to close all the resource!");
         RESOURCES.clear();
     }
 
@@ -80,6 +81,11 @@ public class ShutdownHook extends Thread {
         private Closable closable;
         private int      priority;
 
+        /**
+         * Lower values have higher priority
+         * @param o object
+         * @return
+         */
         @Override
         public int compareTo(ClosableObject o) {
             if (this.priority > o.priority) {
