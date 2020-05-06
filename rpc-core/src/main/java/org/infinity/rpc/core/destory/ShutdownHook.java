@@ -64,7 +64,12 @@ public class ShutdownHook extends Thread {
     }
 
     /**
-     * This method will be automatically invoked by system.
+     * This method will be automatically invoked under below occasions:
+     * - Program normal exit
+     * - System.exit()
+     * - Interruption triggered by Ctrl+C
+     * - System close
+     * - kill pid command
      */
     @Override
     public void run() {
