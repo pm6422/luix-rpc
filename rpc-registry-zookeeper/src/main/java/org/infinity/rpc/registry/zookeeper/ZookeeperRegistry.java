@@ -328,8 +328,9 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
 
     /**
      * Read command json content of specified url
+     *
      * @param url url
-     * @return comamnd json string
+     * @return command json string
      */
     @Override
     protected String discoverCommand(Url url) {
@@ -346,7 +347,6 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
     }
 
     /**
-     *
      * @param url
      * @param serviceListener
      */
@@ -378,7 +378,7 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
             }
 
             String path = ZookeeperUtils.getActiveNodePath(url, ZookeeperActiveStatusNode.ACTIVE_SERVER);
-            // Bind the path with zookeeper child change listener, any the childs under the path changes will trigger the zkChildListener
+            // Bind the path with zookeeper child change listener, any the child list changes under the path will trigger the zkChildListener
             zkClient.subscribeChildChanges(path, zkChildListener);
             log.info("Subscribed the listener for the path [{}]", ZookeeperUtils.getAddressPath(url, ZookeeperActiveStatusNode.ACTIVE_SERVER));
         } catch (Throwable e) {
@@ -424,19 +424,20 @@ public class ZookeeperRegistry extends CommandFailbackRegistry implements Closab
                     @Override
                     public void handleDataChange(String dataPath, Object data) {
                         commandListener.onSubscribe(url, (String) data);
-                        log.info(String.format("[ZookeeperRegistry] command data change: path=%s, command=%s", dataPath, (String) data));
+                        log.info("Command data changed with current value {} under path [{}]", data.toString(), dataPath);
                     }
 
                     @Override
                     public void handleDataDeleted(String dataPath) {
                         commandListener.onSubscribe(url, null);
-                        log.info(String.format("[ZookeeperRegistry] command deleted: path=%s", dataPath));
+                        log.info("Command data deleted under path [{}]", dataPath);
                     }
                 });
                 zkDataListener = dataChangeListeners.get(commandListener);
             }
 
             String commandPath = ZookeeperUtils.getCommandPath(url);
+            // Bind the path with zookeeper data change listener, any the data changes under the path will trigger the zkDataListener
             zkClient.subscribeDataChanges(commandPath, zkDataListener);
             log.info(String.format("[ZookeeperRegistry] subscribe command: path=%s, info=%s", commandPath, url.toFullStr()));
         } catch (Throwable e) {

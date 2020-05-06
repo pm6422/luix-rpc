@@ -20,6 +20,9 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 @Slf4j
 public class ZookeeperRegistryTest {
     private static ZookeeperRegistry registry;
@@ -74,49 +77,50 @@ public class ZookeeperRegistryTest {
 
         registry.doRegister(providerUrl);
         deactivateList = zkClient.getChildren(inactivePath);
-        Assert.assertTrue(deactivateList.contains(node));
+        assertTrue(deactivateList.contains(node));
 
         registry.doActivate(providerUrl);
         deactivateList = zkClient.getChildren(inactivePath);
-        Assert.assertFalse(deactivateList.contains(node));
+        assertFalse(deactivateList.contains(node));
         activateList = zkClient.getChildren(activePath);
-        Assert.assertTrue(activateList.contains(node));
+        assertTrue(activateList.contains(node));
 
         registry.doDeactivate(providerUrl);
         deactivateList = zkClient.getChildren(inactivePath);
-        Assert.assertTrue(deactivateList.contains(node));
+        assertTrue(deactivateList.contains(node));
         activateList = zkClient.getChildren(activePath);
-        Assert.assertFalse(activateList.contains(node));
+        assertFalse(activateList.contains(node));
 
         registry.doUnregister(providerUrl);
         deactivateList = zkClient.getChildren(inactivePath);
-        Assert.assertFalse(deactivateList.contains(node));
+        assertFalse(deactivateList.contains(node));
         activateList = zkClient.getChildren(activePath);
-        Assert.assertFalse(activateList.contains(node));
+        assertFalse(activateList.contains(node));
     }
 
     @Test
     public void testDiscoverProviders() {
         registry.doRegister(providerUrl);
         List<Url> results = registry.discoverProviders(clientUrl);
-        Assert.assertTrue(results.isEmpty());
+        assertTrue(results.isEmpty());
 
         registry.doActivate(providerUrl);
         results = registry.discoverProviders(clientUrl);
-        Assert.assertTrue(CollectionUtils.isNotEmpty(results));
-        Assert.assertTrue(results.contains(providerUrl));
+        assertTrue(CollectionUtils.isNotEmpty(results));
+        assertTrue(results.contains(providerUrl));
     }
 
     @Test
     public void testDiscoverCommand() {
         String result = registry.discoverCommand(clientUrl);
-        Assert.assertTrue(StringUtils.isEmpty(result));
+        assertTrue(StringUtils.isEmpty(result));
 
         String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
         String commandPath = ZookeeperUtils.getCommandPath(clientUrl);
         if (!zkClient.exists(commandPath)) {
             zkClient.createPersistent(commandPath, true);
         }
+        // Write command to zookeeper node
         zkClient.writeData(commandPath, command);
 
         result = registry.discoverCommand(clientUrl);
@@ -127,19 +131,19 @@ public class ZookeeperRegistryTest {
     public void testSubscribeServiceListener() throws Exception {
         ServiceListener serviceListener = (refUrl, registryUrl, urls) -> {
             if (CollectionUtils.isNotEmpty(urls)) {
-                Assert.assertTrue(urls.contains(providerUrl));
+                assertTrue(urls.contains(providerUrl));
             }
         };
         registry.subscribeServiceListener(clientUrl, serviceListener);
-        Assert.assertTrue(containsServiceListener(clientUrl, serviceListener));
+        assertTrue(containsServiceListener(clientUrl, serviceListener));
 
         registry.doRegister(providerUrl);
-        // add provider url to active node, so provider list changes will trigger the IZkChildListener
+        // add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener
         registry.doActivate(providerUrl);
         Thread.sleep(2000);
 
         registry.unsubscribeServiceListener(clientUrl, serviceListener);
-        Assert.assertFalse(containsServiceListener(clientUrl, serviceListener));
+        assertFalse(containsServiceListener(clientUrl, serviceListener));
     }
 
     private boolean containsServiceListener(Url clientUrl, ServiceListener serviceListener) {
@@ -150,24 +154,25 @@ public class ZookeeperRegistryTest {
     public void testSubscribeCommandListener() throws Exception {
         String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
         CommandListener commandListener = (refUrl, commandString) -> {
-            if (commandString != null) {
-                Assert.assertTrue(commandString.equals(command));
+            if (StringUtils.isNotEmpty(commandString)) {
+                assertTrue(commandString.equals(command));
             }
         };
         registry.subscribeCommandListener(clientUrl, commandListener);
-        Assert.assertTrue(containsCommandListener(clientUrl, commandListener));
+        assertTrue(containsCommandListener(clientUrl, commandListener));
 
         String commandPath = ZookeeperUtils.getCommandPath(clientUrl);
         if (!zkClient.exists(commandPath)) {
             zkClient.createPersistent(commandPath, true);
         }
+        // Write command to zookeeper node, so command list changes will trigger the IZkDataListener
         zkClient.writeData(commandPath, command);
         Thread.sleep(2000);
 
         zkClient.delete(commandPath);
 
         registry.unsubscribeCommandListener(clientUrl, commandListener);
-        Assert.assertFalse(containsCommandListener(clientUrl, commandListener));
+        assertFalse(containsCommandListener(clientUrl, commandListener));
     }
 
     private boolean containsCommandListener(Url clientUrl, CommandListener commandListener) {
