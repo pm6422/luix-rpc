@@ -15,17 +15,17 @@ import java.util.List;
 @ThreadSafe
 public class ShutdownHook extends Thread {
     /**
-     * Lower values have higher cleanup priority which means to be closed earlier
+     * Lower values have higher cleanup priority which means to be cleanup earlier
      */
-    private static final int                  DEFAULT_PRIORITY = 20;
+    private static final int                   DEFAULT_PRIORITY = 20;
     /**
      * Eager instance initialized while class load
      */
-    private static final ShutdownHook         INSTANCE         = new ShutdownHook();
+    private static final ShutdownHook          INSTANCE         = new ShutdownHook();
     /**
      * Resource list to be cleanup
      */
-    private static final List<ClosableObject> RESOURCES        = new ArrayList<>();
+    private static final List<CleanableObject> RESOURCES        = new ArrayList<>();
 
     /**
      * Prohibit instantiate an instance outside the class
@@ -33,18 +33,18 @@ public class ShutdownHook extends Thread {
     private ShutdownHook() {
     }
 
-    public static synchronized void add(Closable closable, int priority) {
-        INSTANCE.RESOURCES.add(new ClosableObject(closable, priority));
-        log.info("Added the close method of class [{}] to {}", closable.getClass(), ShutdownHook.class.getSimpleName());
+    public static synchronized void add(Cleanable cleanable, int priority) {
+        INSTANCE.RESOURCES.add(new CleanableObject(cleanable, priority));
+        log.info("Added the cleanup method of class [{}] to {}", cleanable.getClass().getSimpleName(), ShutdownHook.class.getSimpleName());
     }
 
     /**
      * Only global resources are allowed to add to it.
      *
-     * @param closable
+     * @param cleanable
      */
-    public static void add(Closable closable) {
-        add(closable, DEFAULT_PRIORITY);
+    public static void add(Cleanable cleanable) {
+        add(cleanable, DEFAULT_PRIORITY);
     }
 
     /**
@@ -63,38 +63,41 @@ public class ShutdownHook extends Thread {
         }
     }
 
+    /**
+     * This method will be automatically invoked by system.
+     */
     @Override
     public void run() {
-        closeAll();
+        cleanup();
     }
 
-    private synchronized void closeAll() {
+    private synchronized void cleanup() {
         // Sort by priority
         Collections.sort(RESOURCES);
-        log.info("Start to close global resource due to priority");
-        for (ClosableObject resource : RESOURCES) {
+        for (CleanableObject resource : RESOURCES) {
             try {
-                resource.closable.close();
+                resource.cleanable.cleanup();
             } catch (Exception e) {
-                log.error("Failed to close " + resource.closable.getClass(), e);
+                log.error("Failed to cleanup " + resource.cleanable.getClass().getSimpleName(), e);
             }
-            log.info("Closed the {}" + resource.closable.getClass());
+            log.info("Cleaned up the {}", resource.cleanable.getClass().getSimpleName());
         }
         RESOURCES.clear();
     }
 
     @AllArgsConstructor
-    private static class ClosableObject implements Comparable<ClosableObject> {
-        private Closable closable;
-        private int      priority;
+    private static class CleanableObject implements Comparable<CleanableObject> {
+        private Cleanable cleanable;
+        private int       priority;
 
         /**
          * Lower values have higher priority
+         *
          * @param o object
          * @return
          */
         @Override
-        public int compareTo(ClosableObject o) {
+        public int compareTo(CleanableObject o) {
             if (this.priority > o.priority) {
                 return -1;
             } else if (this.priority == o.priority) {

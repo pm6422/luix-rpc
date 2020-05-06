@@ -9,7 +9,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.zookeeper.Watcher;
-import org.infinity.rpc.core.destory.Closable;
+import org.infinity.rpc.core.destory.Cleanable;
 import org.infinity.rpc.core.registry.CommandFailbackAbstractRegistry;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.registry.listener.CommandListener;
@@ -29,7 +29,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @Slf4j
 @ThreadSafe
-public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implements Closable {
+public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implements Cleanable {
     private final Lock                                                           clientLock           = new ReentrantLock();
     private final Lock                                                           serverLock           = new ReentrantLock();
     private final Set<Url>                                                       availableServiceUrls = new ConcurrentHashSet<>();
@@ -469,7 +469,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     @Override
-    public void close() {
+    public void cleanup() {
         this.zkClient.close();
     }
 
