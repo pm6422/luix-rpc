@@ -89,6 +89,9 @@ public class RpcLifecycle {
     private void initConfig() {
     }
 
+    /**
+     * Register the shutdown hook to system runtime
+     */
     private void registerShutdownHook() {
         ShutdownHook.register();
     }
