@@ -9,13 +9,13 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.zookeeper.Watcher;
-import org.infinity.rpc.utilities.destory.Cleanable;
 import org.infinity.rpc.core.registry.CommandFailbackAbstractRegistry;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
+import org.infinity.rpc.utilities.destory.Cleanable;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.text.MessageFormat;
@@ -33,7 +33,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     private final Lock                                                           clientLock           = new ReentrantLock();
     private final Lock                                                           serverLock           = new ReentrantLock();
     private final Set<Url>                                                       availableServiceUrls = new ConcurrentHashSet<>();
-    private final Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> serviceListeners     = new ConcurrentHashMap<>();
+    private final Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> providerListeners    = new ConcurrentHashMap<>();
     private final Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>  commandListeners     = new ConcurrentHashMap<>();
     private       ZkClient                                                       zkClient;
 
@@ -54,8 +54,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             @Override
             public void handleNewSession() throws Exception {
                 log.info("Received a new zookeeper session notification");
-                reconnectService();
-                reconnectClient();
+                reregisterProviders();
+                reregisterListeners();
             }
 
             @Override
@@ -68,9 +68,10 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
-     * Re-register the providers
+     * Re-register the providers after a new zookeeper session
+     * e.g, Zookeeper was shutdown after the infinity application startup, then zookeeper startup again will cause a new session.
      */
-    private void reconnectService() {
+    private void reregisterProviders() {
         Collection<Url> allRegisteredServices = super.getRegisteredServiceUrls();
         if (CollectionUtils.isEmpty(allRegisteredServices)) {
             return;
@@ -90,37 +91,43 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 }
                 doActivate(availableServiceUrl);
             }
-            log.info("[{}] reconnect: available services {}", registryClassName, availableServiceUrls);
+            log.info("Re-registered the provider urls after a new zookeeper session");
         } finally {
             serverLock.unlock();
         }
     }
 
-    private void reconnectClient() {
-        if (MapUtils.isEmpty(serviceListeners)) {
-            return;
-        }
+    /**
+     * Re-register the provider and command listeners after a new zookeeper session
+     * e.g, Zookeeper was shutdown after the infinity application startup, then zookeeper startup again will cause a new session.
+     */
+    private void reregisterListeners() {
         try {
             clientLock.lock();
-            for (Map.Entry entry : serviceListeners.entrySet()) {
-                Url url = (Url) entry.getKey();
-                ConcurrentHashMap<ServiceListener, IZkChildListener> childChangeListeners = serviceListeners.get(url);
-                if (childChangeListeners != null) {
-                    for (Map.Entry e : childChangeListeners.entrySet()) {
-                        subscribeServiceListener(url, (ServiceListener) e.getKey());
+            if (MapUtils.isNotEmpty(providerListeners)) {
+                for (Map.Entry<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> entry : providerListeners.entrySet()) {
+                    Url url = entry.getKey();
+                    ConcurrentHashMap<ServiceListener, IZkChildListener> childChangeListeners = providerListeners.get(url);
+                    if (MapUtils.isNotEmpty(childChangeListeners)) {
+                        for (Map.Entry<ServiceListener, IZkChildListener> e : childChangeListeners.entrySet()) {
+                            subscribeServiceListener(url, e.getKey());
+                        }
                     }
                 }
+                log.info("Re-registered the provider listeners after a new zookeeper session");
             }
-            for (Map.Entry entry : commandListeners.entrySet()) {
-                Url url = (Url) entry.getKey();
-                ConcurrentHashMap<CommandListener, IZkDataListener> dataChangeListeners = commandListeners.get(url);
-                if (dataChangeListeners != null) {
-                    for (Map.Entry e : dataChangeListeners.entrySet()) {
-                        subscribeCommandListener(url, (CommandListener) e.getKey());
+            if (MapUtils.isNotEmpty(commandListeners)) {
+                for (Map.Entry<Url, ConcurrentHashMap<CommandListener, IZkDataListener>> entry : commandListeners.entrySet()) {
+                    Url url = entry.getKey();
+                    ConcurrentHashMap<CommandListener, IZkDataListener> dataChangeListeners = commandListeners.get(url);
+                    if (MapUtils.isNotEmpty(dataChangeListeners)) {
+                        for (Map.Entry<CommandListener, IZkDataListener> e : dataChangeListeners.entrySet()) {
+                            subscribeCommandListener(url, e.getKey());
+                        }
                     }
                 }
+                log.info("Re-registered the command listeners after a new zookeeper session");
             }
-            log.info("[{}] reconnect all clients", registryClassName);
         } finally {
             clientLock.unlock();
         }
@@ -353,10 +360,10 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     protected void subscribeServiceListener(Url url, ServiceListener serviceListener) {
         try {
             clientLock.lock();
-            Map<ServiceListener, IZkChildListener> childChangeListeners = serviceListeners.get(url);
+            Map<ServiceListener, IZkChildListener> childChangeListeners = providerListeners.get(url);
             if (childChangeListeners == null) {
-                serviceListeners.putIfAbsent(url, new ConcurrentHashMap<>());
-                childChangeListeners = serviceListeners.get(url);
+                providerListeners.putIfAbsent(url, new ConcurrentHashMap<>());
+                childChangeListeners = providerListeners.get(url);
             }
             IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
             if (zkChildListener == null) {
@@ -391,7 +398,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     protected void unsubscribeServiceListener(Url url, ServiceListener serviceListener) {
         try {
             clientLock.lock();
-            Map<ServiceListener, IZkChildListener> childChangeListeners = serviceListeners.get(url);
+            Map<ServiceListener, IZkChildListener> childChangeListeners = providerListeners.get(url);
             if (childChangeListeners == null) {
                 return;
             }
@@ -470,8 +477,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         this.zkClient.close();
     }
 
-    public Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> getServiceListeners() {
-        return serviceListeners;
+    public Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> getProviderListeners() {
+        return providerListeners;
     }
 
     public Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>> getCommandListeners() {

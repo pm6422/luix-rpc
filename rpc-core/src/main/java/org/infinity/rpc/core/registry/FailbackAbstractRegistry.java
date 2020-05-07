@@ -159,7 +159,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     }
 
     /**
-     * Register the url
+     * Register the url to registry
      *
      * @param url url
      */
@@ -171,6 +171,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         try {
             super.register(url);
         } catch (Exception e) {
+            // In extreme cases, it can cause register failure
             if (isCheckingUrls(getRegistryUrl(), url)) {
                 throw new RuntimeException(MessageFormat.format("Failed to register the url [{0}] to registry [{1}] by using [{2}]", url, getRegistryUrl(), registryClassName), e);
             }
@@ -178,6 +179,11 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         }
     }
 
+    /**
+     * Unregister the url from registry
+     *
+     * @param url url
+     */
     @Override
     public void unregister(Url url) {
         failedRegisteredUrl.remove(url);
@@ -186,22 +192,27 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         try {
             super.unregister(url);
         } catch (Exception e) {
+            // In extreme cases, it can cause register failure
             if (isCheckingUrls(getRegistryUrl(), url)) {
-                throw new RuntimeException(String.format("[%s] false to unregistery %s to %s", registryClassName, url, getRegistryUrl()), e);
+                throw new RuntimeException(MessageFormat.format("Failed to unregister the url [{0}] to registry [{1}] by using [{2}]", url, getRegistryUrl(), registryClassName), e);
             }
             failedUnregisteredUrl.add(url);
         }
     }
 
+    /**
+     * @param url
+     * @param listener
+     */
     @Override
     public void subscribe(Url url, NotifyListener listener) {
-        removeForFailedSubAndUnsub(url, listener);
+        removeFailedListener(url, listener);
 
         try {
             super.subscribe(url, listener);
         } catch (Exception e) {
-            List<Url> cachedUrls = getCachedUrls(url);
-            if (cachedUrls != null && cachedUrls.size() > 0) {
+            List<Url> cachedUrls = super.getCachedUrls(url);
+            if (CollectionUtils.isNotEmpty(cachedUrls)) {
                 listener.onSubscribe(getRegistryUrl(), cachedUrls);
             } else if (isCheckingUrls(getRegistryUrl(), url)) {
                 log.warn(String.format("[%s] false to subscribe %s from %s", registryClassName, url, getRegistryUrl()), e);
@@ -213,7 +224,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
 
     @Override
     public void unsubscribe(Url url, NotifyListener listener) {
-        removeForFailedSubAndUnsub(url, listener);
+        removeFailedListener(url, listener);
 
         try {
             super.unsubscribe(url, listener);
@@ -226,6 +237,26 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         }
     }
 
+    private boolean isCheckingUrls(Url... urls) {
+        for (Url url : urls) {
+            if (!Boolean.parseBoolean(url.getParameter(Url.PARAM_CHECK_HEALTH))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void removeFailedListener(Url url, NotifyListener listener) {
+        Set<NotifyListener> listeners = failedSubscription.get(url);
+        if (CollectionUtils.isNotEmpty(listeners)) {
+            listeners.remove(listener);
+        }
+        listeners = failedUnsubscription.get(url);
+        if (CollectionUtils.isNotEmpty(listeners)) {
+            listeners.remove(listener);
+        }
+    }
+
     @Override
     public List<Url> discover(Url url) {
         try {
@@ -234,26 +265,6 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             // 如果discover失败，返回一个empty list吧，毕竟是个下行动作，
             log.warn(String.format("Failed to discover url:%s in registry (%s)", url, getRegistryUrl()), e);
             return Collections.EMPTY_LIST;
-        }
-    }
-
-    private boolean isCheckingUrls(Url... urls) {
-        for (Url url : urls) {
-            if (!Boolean.parseBoolean(url.getParameter(UrlParam.check.getName(), UrlParam.check.getValue()))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void removeForFailedSubAndUnsub(Url url, NotifyListener listener) {
-        Set<NotifyListener> listeners = failedSubscription.get(url);
-        if (listeners != null) {
-            listeners.remove(listener);
-        }
-        listeners = failedUnsubscription.get(url);
-        if (listeners != null) {
-            listeners.remove(listener);
         }
     }
 

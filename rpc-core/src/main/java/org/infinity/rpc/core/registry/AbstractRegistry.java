@@ -18,11 +18,17 @@ import static org.infinity.rpc.core.switcher.SwitcherService.REGISTRY_HEARTBEAT_
  */
 @Slf4j
 public abstract class AbstractRegistry implements Registry {
-    private Map<Url, Map<String, List<Url>>> subscribedCategoryResponses = new ConcurrentHashMap<>();
+    /**
+     * The subclass name
+     */
+    protected String registryClassName = this.getClass().getSimpleName();
+    /**
+     * Registry url
+     */
+    private   Url    registryUrl;
 
-    private   Url      registryUrl;
-    private   Set<Url> registeredServiceUrls = new ConcurrentHashSet<>();
-    protected String   registryClassName     = this.getClass().getSimpleName();
+    private Map<Url, Map<String, List<Url>>> subscribedCategoryResponses = new ConcurrentHashMap<>();
+    private Set<Url>                         registeredServiceUrls       = new ConcurrentHashSet<>();
 
     public AbstractRegistry(Url Url) {
         this.registryUrl = Url.copy();
@@ -60,7 +66,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Register url
+     * Register url to registry
      *
      * @param url url
      */

@@ -122,6 +122,9 @@ public class RpcLifecycle {
                 infinityProperties.getRegistry().getHost(),
                 infinityProperties.getRegistry().getPort(),
                 Registrable.class.getName());
+
+        // Assign values to parameters
+        registryUrl.addParameter(Url.PARAM_CHECK_HEALTH, Url.PARAM_CHECK_HEALTH_DEFAULT_VALUE);
         registryUrl.addParameter(Url.PARAM_ADDRESS, registryUrl.getAddress());
         registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, infinityProperties.getRegistry().getConnectTimeout().toString());
         registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, infinityProperties.getRegistry().getSessionTimeout().toString());
@@ -143,7 +146,8 @@ public class RpcLifecycle {
                 NetworkIpUtils.INTRANET_IP,
                 infinityProperties.getProtocol().getPort(),
                 providerWrapper.getProviderInterface());
-        // assign values to parameters
+
+        // Assign values to parameters
         providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, Url.PARAM_CHECK_HEALTH_DEFAULT_VALUE);
         providerUrl.addParameter(Url.PARAM_GROUP, infinityProperties.getApplication().getGroup());
         return providerUrl;

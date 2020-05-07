@@ -147,7 +147,7 @@ public class ZookeeperRegistryTest {
     }
 
     private boolean containsServiceListener(Url clientUrl, ServiceListener serviceListener) {
-        return registry.getServiceListeners().get(clientUrl).containsKey(serviceListener);
+        return registry.getProviderListeners().get(clientUrl).containsKey(serviceListener);
     }
 
     @Test
