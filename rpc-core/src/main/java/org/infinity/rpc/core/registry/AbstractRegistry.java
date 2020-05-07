@@ -193,7 +193,7 @@ public abstract class AbstractRegistry implements Registry {
         if (listener == null || urls == null) {
             return;
         }
-        Map<String, List<Url>> nodeTypeUrlsInRs = new HashMap<String, List<Url>>();
+        Map<String, List<Url>> nodeTypeUrlsInRs = new HashMap<>();
         for (Url sUrl : urls) {
             String nodeType = sUrl.getParameter(UrlParam.nodeType.getName(), UrlParam.nodeType.getValue());
             List<Url> oneNodeTypeUrls = nodeTypeUrlsInRs.get(nodeType);
