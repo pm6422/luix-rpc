@@ -1,9 +1,11 @@
 package org.infinity.rpc.core.registry;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.utilities.destory.ShutdownHook;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.registry.listener.NotifyListener;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
+import org.infinity.rpc.utilities.destory.ShutdownHook;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -13,38 +15,144 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * The registry can automatically recover when encountered the failure.
+ * The registry can automatically recover services when encountered the failure.
  */
 @Slf4j
 public abstract class FailbackAbstractRegistry extends AbstractRegistry {
 
-    private        Set<Url>                                    failedRegistered   = new ConcurrentHashSet<>();
-    private        Set<Url>                                    failedUnregistered = new ConcurrentHashSet<>();
-    private        Map<Url, ConcurrentHashSet<NotifyListener>> failedSubscribed   = new ConcurrentHashMap<>();
-    private        Map<Url, ConcurrentHashSet<NotifyListener>> failedUnsubscribed = new ConcurrentHashMap<>();
+    private Set<Url>                                    failedRegisteredUrl   = new ConcurrentHashSet<>();
+    private Set<Url>                                    failedUnregisteredUrl = new ConcurrentHashSet<>();
+    private Map<Url, ConcurrentHashSet<NotifyListener>> failedSubscription    = new ConcurrentHashMap<>();
+    private Map<Url, ConcurrentHashSet<NotifyListener>> failedUnsubscription  = new ConcurrentHashMap<>();
+
     /**
-     * A retry thread pool can execute task periodically
+     * A retry single thread pool can reconnect registry periodically
      */
-    private static ScheduledExecutorService                    retryExecutor      = Executors.newScheduledThreadPool(1);
+    private static ScheduledExecutorService retryThreadPool = Executors.newScheduledThreadPool(1);
 
     static {
         ShutdownHook.add(() -> {
-            if (!retryExecutor.isShutdown()) {
-                retryExecutor.shutdown();
+            if (!retryThreadPool.isShutdown()) {
+                retryThreadPool.shutdown();
             }
         });
     }
 
     public FailbackAbstractRegistry(Url url) {
         super(url);
-        long retryPeriod = url.getIntParameter(Url.PARAM_RETRY_INTERVAL);
-        retryExecutor.scheduleAtFixedRate(() -> {
+        scheduleRetry(url);
+    }
+
+    /**
+     * Schedule the retry attempt periodically
+     *
+     * @param url url
+     */
+    private void scheduleRetry(Url url) {
+        long retryInterval = url.getIntParameter(Url.PARAM_RETRY_INTERVAL);
+        // Retry to connect registry at retry interval
+        retryThreadPool.scheduleAtFixedRate(() -> {
+            // Do retry task
+            doRetry();
+        }, retryInterval, retryInterval, TimeUnit.MILLISECONDS);
+    }
+
+    private void doRetry() {
+        doRetryFailedRegistration();
+        doRetryFailedUnregistration();
+        doRetryFailedSubscription();
+        doRetryFailedUnsubscription();
+    }
+
+    private void doRetryFailedRegistration() {
+        if (CollectionUtils.isEmpty(failedRegisteredUrl)) {
+            return;
+        }
+        Iterator<Url> iterator = failedRegisteredUrl.iterator();
+        while (iterator.hasNext()) {
+            Url url = iterator.next();
             try {
-                retry();
+                super.register(url);
             } catch (Exception e) {
-                log.warn(String.format("[%s] False when retry in failback registry", registryClassName), e);
+                log.warn(MessageFormat.format("Failed to retry to register [{0}] by {1} and it will be retry later!", url, registryClassName), e);
             }
-        }, retryPeriod, retryPeriod, TimeUnit.MILLISECONDS);
+            iterator.remove();
+        }
+        log.info("Retried to register urls by {}", registryClassName);
+    }
+
+    private void doRetryFailedUnregistration() {
+        if (CollectionUtils.isEmpty(failedUnregisteredUrl)) {
+            return;
+        }
+        Iterator<Url> iterator = failedUnregisteredUrl.iterator();
+        while (iterator.hasNext()) {
+            Url url = iterator.next();
+            try {
+                super.unregister(url);
+            } catch (Exception e) {
+                log.warn(MessageFormat.format("Failed to retry to unregister [{0}] by {1} and it will be retry later!", url, registryClassName), e);
+            }
+            iterator.remove();
+        }
+        log.info("Retried to unregister urls by {}", registryClassName);
+    }
+
+    private void doRetryFailedSubscription() {
+        if (MapUtils.isEmpty(failedSubscription)) {
+            return;
+        }
+        Map<Url, Set<NotifyListener>> failed = new HashMap<Url, Set<NotifyListener>>(failedSubscription);
+        for (Map.Entry<Url, Set<NotifyListener>> entry : new HashMap<Url, Set<NotifyListener>>(failed).entrySet()) {
+            if (entry.getValue() == null || entry.getValue().size() == 0) {
+                failed.remove(entry.getKey());
+            }
+        }
+        if (failed.size() > 0) {
+            log.info("[{}] Retry subscribe {}", registryClassName, failed);
+            try {
+                for (Map.Entry<Url, Set<NotifyListener>> entry : failed.entrySet()) {
+                    Url url = entry.getKey();
+                    Set<NotifyListener> listeners = entry.getValue();
+                    for (NotifyListener listener : listeners) {
+                        super.subscribe(url, listener);
+                        listeners.remove(listener);
+                    }
+                }
+            } catch (Exception e) {
+                log.warn(String.format("[%s] Failed to retry subscribe, retry later, failedSubscribed.size=%s, cause=%s",
+                        registryClassName, failedSubscription.size(), e.getMessage()), e);
+            }
+        }
+    }
+
+    private void doRetryFailedUnsubscription() {
+        if (MapUtils.isEmpty(failedUnsubscription)) {
+            return;
+        }
+
+        Map<Url, Set<NotifyListener>> failed = new HashMap<Url, Set<NotifyListener>>(failedUnsubscription);
+        for (Map.Entry<Url, Set<NotifyListener>> entry : new HashMap<Url, Set<NotifyListener>>(failed).entrySet()) {
+            if (entry.getValue() == null || entry.getValue().size() == 0) {
+                failed.remove(entry.getKey());
+            }
+        }
+        if (failed.size() > 0) {
+            log.info("[{}] Retry unsubscribe {}", registryClassName, failed);
+            try {
+                for (Map.Entry<Url, Set<NotifyListener>> entry : failed.entrySet()) {
+                    Url url = entry.getKey();
+                    Set<NotifyListener> listeners = entry.getValue();
+                    for (NotifyListener listener : listeners) {
+                        super.unsubscribe(url, listener);
+                        listeners.remove(listener);
+                    }
+                }
+            } catch (Exception e) {
+                log.warn(String.format("[%s] Failed to retry unsubscribe, retry later, failedUnsubscribed.size=%s, cause=%s",
+                        registryClassName, failedUnsubscription.size(), e.getMessage()), e);
+            }
+        }
     }
 
     /**
@@ -54,8 +162,8 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      */
     @Override
     public void register(Url url) {
-        failedRegistered.remove(url);
-        failedUnregistered.remove(url);
+        failedRegisteredUrl.remove(url);
+        failedUnregisteredUrl.remove(url);
 
         try {
             super.register(url);
@@ -63,14 +171,14 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             if (isCheckingUrls(getRegistryUrl(), url)) {
                 throw new RuntimeException(MessageFormat.format("Failed to register the url [{0}] to registry [{1}] by using [{2}]", url, getRegistryUrl(), registryClassName), e);
             }
-            failedRegistered.add(url);
+            failedRegisteredUrl.add(url);
         }
     }
 
     @Override
     public void unregister(Url url) {
-        failedRegistered.remove(url);
-        failedUnregistered.remove(url);
+        failedRegisteredUrl.remove(url);
+        failedUnregisteredUrl.remove(url);
 
         try {
             super.unregister(url);
@@ -78,7 +186,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             if (isCheckingUrls(getRegistryUrl(), url)) {
                 throw new RuntimeException(String.format("[%s] false to unregistery %s to %s", registryClassName, url, getRegistryUrl()), e);
             }
-            failedUnregistered.add(url);
+            failedUnregisteredUrl.add(url);
         }
     }
 
@@ -96,7 +204,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
                 log.warn(String.format("[%s] false to subscribe %s from %s", registryClassName, url, getRegistryUrl()), e);
                 throw new RuntimeException(String.format("[%s] false to subscribe %s from %s", registryClassName, url, getRegistryUrl()), e);
             }
-            addToFailedMap(failedSubscribed, url, listener);
+            addToFailedMap(failedSubscription, url, listener);
         }
     }
 
@@ -111,12 +219,11 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
                 throw new RuntimeException(String.format("[%s] false to unsubscribe %s from %s", registryClassName, url, getRegistryUrl()),
                         e);
             }
-            addToFailedMap(failedUnsubscribed, url, listener);
+            addToFailedMap(failedUnsubscription, url, listener);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<Url> discover(Url url) {
         try {
             return super.discover(url);
@@ -137,11 +244,11 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     }
 
     private void removeForFailedSubAndUnsub(Url url, NotifyListener listener) {
-        Set<NotifyListener> listeners = failedSubscribed.get(url);
+        Set<NotifyListener> listeners = failedSubscription.get(url);
         if (listeners != null) {
             listeners.remove(listener);
         }
-        listeners = failedUnsubscribed.get(url);
+        listeners = failedUnsubscription.get(url);
         if (listeners != null) {
             listeners.remove(listener);
         }
@@ -154,84 +261,5 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             listeners = failedMap.get(url);
         }
         listeners.add(listener);
-    }
-
-    private void retry() {
-        if (!failedRegistered.isEmpty()) {
-            Set<Url> failed = new HashSet<Url>(failedRegistered);
-            log.info("[{}] Retry register {}", registryClassName, failed);
-            try {
-                for (Url url : failed) {
-                    super.register(url);
-                    failedRegistered.remove(url);
-                }
-            } catch (Exception e) {
-                log.warn(String.format("[%s] Failed to retry register, retry later, failedRegistered.size=%s, cause=%s",
-                        registryClassName, failedRegistered.size(), e.getMessage()), e);
-            }
-
-        }
-        if (!failedUnregistered.isEmpty()) {
-            Set<Url> failed = new HashSet<Url>(failedUnregistered);
-            log.info("[{}] Retry unregister {}", registryClassName, failed);
-            try {
-                for (Url url : failed) {
-                    super.unregister(url);
-                    failedUnregistered.remove(url);
-                }
-            } catch (Exception e) {
-                log.warn(String.format("[%s] Failed to retry unregister, retry later, failedUnregistered.size=%s, cause=%s",
-                        registryClassName, failedUnregistered.size(), e.getMessage()), e);
-            }
-
-        }
-        if (!failedSubscribed.isEmpty()) {
-            Map<Url, Set<NotifyListener>> failed = new HashMap<Url, Set<NotifyListener>>(failedSubscribed);
-            for (Map.Entry<Url, Set<NotifyListener>> entry : new HashMap<Url, Set<NotifyListener>>(failed).entrySet()) {
-                if (entry.getValue() == null || entry.getValue().size() == 0) {
-                    failed.remove(entry.getKey());
-                }
-            }
-            if (failed.size() > 0) {
-                log.info("[{}] Retry subscribe {}", registryClassName, failed);
-                try {
-                    for (Map.Entry<Url, Set<NotifyListener>> entry : failed.entrySet()) {
-                        Url url = entry.getKey();
-                        Set<NotifyListener> listeners = entry.getValue();
-                        for (NotifyListener listener : listeners) {
-                            super.subscribe(url, listener);
-                            listeners.remove(listener);
-                        }
-                    }
-                } catch (Exception e) {
-                    log.warn(String.format("[%s] Failed to retry subscribe, retry later, failedSubscribed.size=%s, cause=%s",
-                            registryClassName, failedSubscribed.size(), e.getMessage()), e);
-                }
-            }
-        }
-        if (!failedUnsubscribed.isEmpty()) {
-            Map<Url, Set<NotifyListener>> failed = new HashMap<Url, Set<NotifyListener>>(failedUnsubscribed);
-            for (Map.Entry<Url, Set<NotifyListener>> entry : new HashMap<Url, Set<NotifyListener>>(failed).entrySet()) {
-                if (entry.getValue() == null || entry.getValue().size() == 0) {
-                    failed.remove(entry.getKey());
-                }
-            }
-            if (failed.size() > 0) {
-                log.info("[{}] Retry unsubscribe {}", registryClassName, failed);
-                try {
-                    for (Map.Entry<Url, Set<NotifyListener>> entry : failed.entrySet()) {
-                        Url url = entry.getKey();
-                        Set<NotifyListener> listeners = entry.getValue();
-                        for (NotifyListener listener : listeners) {
-                            super.unsubscribe(url, listener);
-                            listeners.remove(listener);
-                        }
-                    }
-                } catch (Exception e) {
-                    log.warn(String.format("[%s] Failed to retry unsubscribe, retry later, failedUnsubscribed.size=%s, cause=%s",
-                            registryClassName, failedUnsubscribed.size(), e.getMessage()), e);
-                }
-            }
-        }
     }
 }
