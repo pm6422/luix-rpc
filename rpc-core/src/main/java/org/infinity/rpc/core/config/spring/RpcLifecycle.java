@@ -144,6 +144,7 @@ public class RpcLifecycle {
                 infinityProperties.getProtocol().getPort(),
                 providerWrapper.getProviderInterface());
         // assign values to parameters
+        providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, Url.PARAM_CHECK_HEALTH_DEFAULT_VALUE);
         providerUrl.addParameter(Url.PARAM_GROUP, infinityProperties.getApplication().getGroup());
         return providerUrl;
     }

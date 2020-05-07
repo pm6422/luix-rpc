@@ -47,10 +47,10 @@ public class ZookeeperRegistryTest {
         registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, new InfinityProperties().getRegistry().getRetryInterval().toString());
 
         clientUrl = Url.of("infinity", "127.0.0.1", 0, provider);
-        clientUrl.addParameter("group", Url.PARAM_GROUP_VALUE);
+        clientUrl.addParameter("group", Url.PARAM_GROUP_DEFAULT_VALUE);
 
         providerUrl = Url.of("infinity", "127.0.0.1", 8001, provider);
-        providerUrl.addParameter("group", Url.PARAM_GROUP_VALUE);
+        providerUrl.addParameter("group", Url.PARAM_GROUP_DEFAULT_VALUE);
 
         zookeeper = new EmbeddedZookeeper();
         zookeeper.start();

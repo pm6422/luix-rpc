@@ -1,6 +1,5 @@
 package org.infinity.rpc.core.registry;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -37,13 +36,16 @@ public class Url implements Serializable {
      */
     private              String  path;
 
-    public static final String PARAM_GROUP           = "group";
-    public static final String PARAM_GROUP_VALUE     = "default-group";
+    public static final String PARAM_GROUP                      = "group";
+    public static final String PARAM_GROUP_DEFAULT_VALUE        = "default-group";
 
-    public static final String PARAM_ADDRESS         = "address";
-    public static final String PARAM_CONNECT_TIMEOUT = "connectTimeout";
-    public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
-    public static final String PARAM_RETRY_INTERVAL  = "retryInterval";
+    public static final String PARAM_CHECK_HEALTH               = "checkHealth";
+    public static final String PARAM_CHECK_HEALTH_DEFAULT_VALUE = "true";
+
+    public static final String PARAM_ADDRESS                    = "address";
+    public static final String PARAM_CONNECT_TIMEOUT            = "connectTimeout";
+    public static final String PARAM_SESSION_TIMEOUT            = "sessionTimeout";
+    public static final String PARAM_RETRY_INTERVAL             = "retryInterval";
 
     /**
      * Extended parameters
@@ -106,6 +108,7 @@ public class Url implements Serializable {
 
     /**
      * Composition of host + port
+     *
      * @return
      */
     public String getAddress() {
@@ -126,7 +129,7 @@ public class Url implements Serializable {
 
     private void initialize() {
         parameters = new HashMap<>();
-        parameters.put(PARAM_GROUP, PARAM_GROUP_VALUE);
+        parameters.put(PARAM_GROUP, PARAM_GROUP_DEFAULT_VALUE);
     }
 
     private void checkIntegrity() {

@@ -96,9 +96,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         }
     }
 
-    /**
-     *
-     */
     private void reconnectClient() {
         if (MapUtils.isEmpty(serviceListeners)) {
             return;
