@@ -74,7 +74,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             try {
                 super.register(url);
             } catch (Exception e) {
-                log.warn(MessageFormat.format("Failed to retry to register [{0}] by {1} and it will be retry later!", url, registryClassName), e);
+                log.warn(MessageFormat.format("Failed to retry to register [{0}] by [{1}] and it will be retry later!", url, registryClassName), e);
             }
             iterator.remove();
         }
@@ -91,7 +91,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             try {
                 super.unregister(url);
             } catch (Exception e) {
-                log.warn(MessageFormat.format("Failed to retry to unregister [{0}] by {1} and it will be retry later!", url, registryClassName), e);
+                log.warn(MessageFormat.format("Failed to retry to unregister [{0}] by [{1}] and it will be retry later!", url, registryClassName), e);
             }
             iterator.remove();
         }
@@ -102,57 +102,60 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         if (MapUtils.isEmpty(failedSubscription)) {
             return;
         }
-        Map<Url, Set<NotifyListener>> failed = new HashMap<Url, Set<NotifyListener>>(failedSubscription);
-        for (Map.Entry<Url, Set<NotifyListener>> entry : new HashMap<Url, Set<NotifyListener>>(failed).entrySet()) {
-            if (entry.getValue() == null || entry.getValue().size() == 0) {
-                failed.remove(entry.getKey());
+        // Do the clean empty value task
+        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedSubscription.entrySet()) {
+            if (CollectionUtils.isEmpty(entry.getValue())) {
+                failedSubscription.remove(entry.getKey());
             }
         }
-        if (failed.size() > 0) {
-            log.info("[{}] Retry subscribe {}", registryClassName, failed);
-            try {
-                for (Map.Entry<Url, Set<NotifyListener>> entry : failed.entrySet()) {
-                    Url url = entry.getKey();
-                    Set<NotifyListener> listeners = entry.getValue();
-                    for (NotifyListener listener : listeners) {
-                        super.subscribe(url, listener);
-                        listeners.remove(listener);
-                    }
+        if (MapUtils.isEmpty(failedSubscription)) {
+            return;
+        }
+        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedSubscription.entrySet()) {
+            Url url = entry.getKey();
+            Iterator<NotifyListener> iterator = entry.getValue().iterator();
+            while (iterator.hasNext()) {
+                NotifyListener listener = iterator.next();
+                try {
+                    super.subscribe(url, listener);
+                } catch (Exception e) {
+                    log.warn(MessageFormat.format("Failed to retry to subscribe listener [{0}] to url [{1}] by [{2}] " +
+                            "and it will be retry later!", listener.getClass().getSimpleName(), url, registryClassName), e);
                 }
-            } catch (Exception e) {
-                log.warn(String.format("[%s] Failed to retry subscribe, retry later, failedSubscribed.size=%s, cause=%s",
-                        registryClassName, failedSubscription.size(), e.getMessage()), e);
+                iterator.remove();
             }
         }
+        log.info("Retried to subscribe listener to urls by {}", registryClassName);
     }
 
     private void doRetryFailedUnsubscription() {
         if (MapUtils.isEmpty(failedUnsubscription)) {
             return;
         }
-
-        Map<Url, Set<NotifyListener>> failed = new HashMap<Url, Set<NotifyListener>>(failedUnsubscription);
-        for (Map.Entry<Url, Set<NotifyListener>> entry : new HashMap<Url, Set<NotifyListener>>(failed).entrySet()) {
-            if (entry.getValue() == null || entry.getValue().size() == 0) {
-                failed.remove(entry.getKey());
+        // Do the clean empty value task
+        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedUnsubscription.entrySet()) {
+            if (CollectionUtils.isEmpty(entry.getValue())) {
+                failedUnsubscription.remove(entry.getKey());
             }
         }
-        if (failed.size() > 0) {
-            log.info("[{}] Retry unsubscribe {}", registryClassName, failed);
-            try {
-                for (Map.Entry<Url, Set<NotifyListener>> entry : failed.entrySet()) {
-                    Url url = entry.getKey();
-                    Set<NotifyListener> listeners = entry.getValue();
-                    for (NotifyListener listener : listeners) {
-                        super.unsubscribe(url, listener);
-                        listeners.remove(listener);
-                    }
+        if (MapUtils.isEmpty(failedUnsubscription)) {
+            return;
+        }
+        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedUnsubscription.entrySet()) {
+            Url url = entry.getKey();
+            Iterator<NotifyListener> iterator = entry.getValue().iterator();
+            while (iterator.hasNext()) {
+                NotifyListener listener = iterator.next();
+                try {
+                    super.unsubscribe(url, listener);
+                } catch (Exception e) {
+                    log.warn(MessageFormat.format("Failed to retry to unsubscribe listener [{0}] to url [{1}] by [{2}] " +
+                            "and it will be retry later!", listener.getClass().getSimpleName(), url, registryClassName), e);
                 }
-            } catch (Exception e) {
-                log.warn(String.format("[%s] Failed to retry unsubscribe, retry later, failedUnsubscribed.size=%s, cause=%s",
-                        registryClassName, failedUnsubscription.size(), e.getMessage()), e);
+                iterator.remove();
             }
         }
+        log.info("Retried to unsubscribe listener to urls by {}", registryClassName);
     }
 
     /**
