@@ -32,8 +32,11 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
+/**
+ * command service manager for a url
+ */
 @Slf4j
-public class CommandServiceManager implements CommandListener, ServiceListener {
+public class CommandServiceListener implements CommandListener, ServiceListener {
 
     public static final String  MOTAN_COMMAND_SWITCHER = "feature.motanrpc.command.enable";
     private static      Pattern IP_PATTERN             = Pattern.compile("^!?[0-9.]*\\*?$");
@@ -42,26 +45,45 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
         DefaultSwitcherService.getInstance().initSwitcher(MOTAN_COMMAND_SWITCHER, true);
     }
 
-    private          Url                               refUrl;
-    private ConcurrentHashSet<NotifyListener> notifySet;
-    private CommandFailbackAbstractRegistry   registry;
+    private          Set<NotifyListener>             notifyListeners    = new ConcurrentHashSet<>();
     // service cache
-    private Map<String, List<Url>>            groupServiceCache;
+    private          Map<String, List<Url>>          groupServiceCache  = new ConcurrentHashMap<>();
+    private          Url                             refUrl;
+    private          CommandFailbackAbstractRegistry registry;
+    private          String                          commandStringCache = "";
     // command cache
-    private          String                            commandStringCache = "";
-    private volatile RpcCommand                        commandCache;
+    private volatile RpcCommand                      commandCache;
 
-    public CommandServiceManager(Url refUrl) {
-        log.info("CommandServiceManager init url:" + refUrl.toFullStr());
+    public CommandServiceListener(Url refUrl, CommandFailbackAbstractRegistry registry) {
         this.refUrl = refUrl;
-        notifySet = new ConcurrentHashSet<NotifyListener>();
-        groupServiceCache = new ConcurrentHashMap<String, List<Url>>();
+        this.registry = registry;
+        log.info("Created command service manager for url [{}]", refUrl.toFullStr());
+    }
 
+    /**
+     * Add notify listener to container
+     *
+     * @param notifyListener notify listener to be added
+     */
+    public void addNotifyListener(NotifyListener notifyListener) {
+        notifyListeners.add(notifyListener);
+    }
+
+    /**
+     * Remove notify listener from container
+     *
+     * @param notifyListener notify listener to be removed
+     */
+    public void removeNotifyListener(NotifyListener notifyListener) {
+        notifyListeners.remove(notifyListener);
+    }
+
+    public Set<NotifyListener> getNotifyListeners() {
+        return notifyListeners;
     }
 
     @Override
     public void onSubscribe(Url serviceUrl, Url registryUrl, List<Url> urls) {
-
         if (registry == null) {
             throw new RuntimeException("registry must be set.");
         }
@@ -80,7 +102,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
             finalResult.addAll(discoverOneGroup(refUrl));
         }
 
-        for (NotifyListener notifyListener : notifySet) {
+        for (NotifyListener notifyListener : notifyListeners) {
             notifyListener.onSubscribe(registry.getRegistryUrl(), finalResult);
         }
 
@@ -138,7 +160,7 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
             return;
         }
 
-        for (NotifyListener notifyListener : notifySet) {
+        for (NotifyListener notifyListener : notifyListeners) {
             notifyListener.onSubscribe(registry.getRegistryUrl(), finalResult);
         }
     }
@@ -317,18 +339,6 @@ public class CommandServiceManager implements CommandListener, ServiceListener {
         commandCache = RpcCommandUtils.stringToCommand(commandStringCache);
         log.info("CommandServiceManager set commandcache. commandstring:" + commandStringCache + ", comandcache "
                 + (commandCache == null ? "is null." : "is not null."));
-    }
-
-    public void addNotifyListener(NotifyListener notifyListener) {
-        notifySet.add(notifyListener);
-    }
-
-    public void removeNotifyListener(NotifyListener notifyListener) {
-        notifySet.remove(notifyListener);
-    }
-
-    public void setRegistry(CommandFailbackAbstractRegistry registry) {
-        this.registry = registry;
     }
 
     private void weightConfigError() {

@@ -8,6 +8,7 @@ import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.registry.listener.CommandListener;
+import org.infinity.rpc.core.registry.listener.NotifyListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.registry.zookeeper.service.TestDummyService;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
@@ -128,6 +129,22 @@ public class ZookeeperRegistryTests {
 
         result = registry.discoverCommand(clientUrl);
         Assert.assertEquals(command, result);
+    }
+
+    @Test
+    public void testSubscribe() {
+        testDiscoverProviders();
+
+        NotifyListener notifyListener = (registryUrl, urls) -> {
+            System.out.println(registryUrl);
+        };
+        registry.subscribe(clientUrl, notifyListener);
+        assertTrue(containsSubscribeListener(clientUrl, notifyListener));
+
+    }
+
+    private boolean containsSubscribeListener(Url clientUrl, NotifyListener notifyListener) {
+        return registry.getCommandManagerMap().get(clientUrl).getNotifyListeners().contains(notifyListener);
     }
 
     @Test

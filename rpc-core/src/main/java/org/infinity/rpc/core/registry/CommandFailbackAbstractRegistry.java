@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.registry;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.NotifyListener;
@@ -8,29 +9,29 @@ import org.infinity.rpc.core.registry.listener.ServiceListener;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRegistry {
-    private ConcurrentHashMap<Url, CommandServiceManager> commandManagerMap;
+    private Map<Url, CommandServiceListener> commandManagerMap = new ConcurrentHashMap<>();
 
     public CommandFailbackAbstractRegistry(Url url) {
         super(url);
-        commandManagerMap = new ConcurrentHashMap<>();
         log.info("CommandFailbackRegistry init. url: " + url.toSimpleString());
     }
 
     protected void doSubscribe(Url url, final NotifyListener listener) {
         log.info("CommandFailbackRegistry subscribe. url: " + url.toSimpleString());
         Url urlCopy = url.copy();
-        CommandServiceManager manager = getCommandServiceManager(urlCopy);
+        CommandServiceListener manager = getCommandServiceManager(urlCopy);
         manager.addNotifyListener(listener);
 
         subscribeServiceListener(urlCopy, manager);
         subscribeCommandListener(urlCopy, manager);
 
         List<Url> urls = doDiscover(urlCopy);
-        if (urls != null && urls.size() > 0) {
+        if (CollectionUtils.isNotEmpty(urls)) {
             this.notify(urlCopy, listener, urls);
         }
     }
@@ -38,7 +39,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
     protected void doUnsubscribe(Url url, NotifyListener listener) {
         log.info("CommandFailbackRegistry unsubscribe. url: " + url.toSimpleString());
         Url urlCopy = url.copy();
-        CommandServiceManager manager = commandManagerMap.get(urlCopy);
+        CommandServiceListener manager = commandManagerMap.get(urlCopy);
 
         manager.removeNotifyListener(listener);
         unsubscribeServiceListener(urlCopy, manager);
@@ -55,7 +56,6 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
         RpcCommand rpcCommand = null;
         if (StringUtils.isNotEmpty(commandStr)) {
             rpcCommand = RpcCommandUtils.stringToCommand(commandStr);
-
         }
 
         log.info("CommandFailbackRegistry discover command. commandStr: " + commandStr + ", rpccommand "
@@ -63,8 +63,8 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
 
         if (rpcCommand != null) {
             rpcCommand.sort();
-            CommandServiceManager manager = getCommandServiceManager(urlCopy);
-            finalResult = manager.discoverServiceWithCommand(urlCopy, new HashMap<String, Integer>(), rpcCommand);
+            CommandServiceListener manager = getCommandServiceManager(urlCopy);
+            finalResult = manager.discoverServiceWithCommand(urlCopy, new HashMap<>(), rpcCommand);
 
             // 在subscribeCommon时，可能订阅完马上就notify，导致首次notify指令时，可能还有其他service没有完成订阅，
             // 此处先对manager更新指令，避免首次订阅无效的问题。
@@ -74,7 +74,6 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
         }
 
         log.info("CommandFailbackRegistry discover size: " + (finalResult == null ? "0" : finalResult.size()));
-
         return finalResult;
     }
 
@@ -83,7 +82,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
         Url urlCopy = url.copy();
 
         if (rpcCommand != null) {
-            CommandServiceManager manager = getCommandServiceManager(urlCopy);
+            CommandServiceListener manager = getCommandServiceManager(urlCopy);
             finalResult = manager.discoverServiceWithCommand(urlCopy, new HashMap<String, Integer>(), rpcCommand, previewIP);
         } else {
             finalResult = discoverProviders(urlCopy);
@@ -92,19 +91,22 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
         return finalResult;
     }
 
-    private CommandServiceManager getCommandServiceManager(Url urlCopy) {
-        CommandServiceManager manager = commandManagerMap.get(urlCopy);
+    private CommandServiceListener getCommandServiceManager(Url urlCopy) {
+        CommandServiceListener manager = commandManagerMap.get(urlCopy);
         if (manager == null) {
-            manager = new CommandServiceManager(urlCopy);
-            manager.setRegistry(this);
-            CommandServiceManager manager1 = commandManagerMap.putIfAbsent(urlCopy, manager);
-            if (manager1 != null) manager = manager1;
+            // Pass the specified registry instance to CommandServiceManager, e.g, ZookeeperRegistry
+            manager = new CommandServiceListener(urlCopy, this);
+            CommandServiceListener serviceManager = commandManagerMap.putIfAbsent(urlCopy, manager);
+            if (serviceManager != null) {
+                // Key exists in map, return old data
+                manager = serviceManager;
+            }
         }
         return manager;
     }
 
     // for UnitTest
-    public ConcurrentHashMap<Url, CommandServiceManager> getCommandManagerMap() {
+    public Map<Url, CommandServiceListener> getCommandManagerMap() {
         return commandManagerMap;
     }
 

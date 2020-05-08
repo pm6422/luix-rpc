@@ -152,7 +152,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Subscribe the url to specified listener
+     * Subscribe the url to specified listener todo: modify comments
      *
      * @param url      url
      * @param listener listener
@@ -251,7 +251,7 @@ public abstract class AbstractRegistry implements Registry {
         }
         Map<String, List<Url>> cUrls = subscribedCategoryResponses.get(refUrl);
         if (cUrls == null) {
-            subscribedCategoryResponses.putIfAbsent(refUrl, new ConcurrentHashMap<String, List<Url>>());
+            subscribedCategoryResponses.putIfAbsent(refUrl, new ConcurrentHashMap<>());
             cUrls = subscribedCategoryResponses.get(refUrl);
         }
 

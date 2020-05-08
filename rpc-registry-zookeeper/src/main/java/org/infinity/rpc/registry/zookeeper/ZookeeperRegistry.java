@@ -267,7 +267,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
-     * Discover providers url for single node or cluster environment
+     * Discover providers url under single node or cluster environment
      *
      * @param url url
      * @return provider urls
