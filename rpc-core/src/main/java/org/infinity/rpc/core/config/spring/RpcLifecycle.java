@@ -163,7 +163,6 @@ public class RpcLifecycle {
             // not yet started or already stopped
             return;
         }
-
         unregisterProviders();
     }
 

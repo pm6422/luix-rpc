@@ -37,12 +37,12 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
             long elapsed = System.currentTimeMillis() - start;
             log.debug("Created registry [{}] in {} ms", registry.getClass().getSimpleName(), elapsed);
             if (registry == null) {
-                throw new RuntimeException("Failed to create registry for url:" + url);
+                throw new RuntimeException("Registry must NOT be null!");
             }
             registriesCache.put(registryUri, registry);
             return registry;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create registry for url:" + url);
+            throw new RuntimeException("Failed to create registry for url [" + url + "]");
         } finally {
             lock.unlock();
         }
