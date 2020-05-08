@@ -6,6 +6,7 @@ import org.I0Itec.zkclient.IZkDataListener;
 import org.I0Itec.zkclient.IZkStateListener;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.zookeeper.Watcher;
@@ -375,9 +376,10 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
             if (zkChildListener == null) {
                 childChangeListeners.putIfAbsent(serviceListener, (parentPath, currentChilds) -> {
-                    // trigger user customized service listener
-                    serviceListener.onSubscribe(url, getRegistryUrl(), readUrl(currentChilds, parentPath, url));
-                    log.info("Provider addresses list changed with current value {} under path [{}]", currentChilds.toString(), parentPath);
+                    List<String> childs = ListUtils.emptyIfNull(currentChilds);
+                    // Trigger user customized service listener
+                    serviceListener.onSubscribe(url, getRegistryUrl(), readUrl(childs, parentPath, url));
+                    log.info("Provider addresses list changed with current value {} under path [{}]", childs.toString(), parentPath);
                 });
                 zkChildListener = childChangeListeners.get(serviceListener);
             }
