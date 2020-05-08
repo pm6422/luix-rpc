@@ -10,10 +10,6 @@ public enum UrlParam {
 
     /************************** SPI end ******************************/
 //    registryRetryPeriod("registryRetryPeriod", TimeUnit.SECONDS.toMillis(30)),
-
-//    group("group", "default-group"),
-    codec("codec", "motan"),// todo
-    check("check", "true"),
     nodeType("nodeType", "service"),
     // 切换group时，各个group的权重比。默认无权重
     weights("weights", "");

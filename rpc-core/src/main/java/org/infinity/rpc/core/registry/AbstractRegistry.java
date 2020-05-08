@@ -33,6 +33,16 @@ public abstract class AbstractRegistry implements Registry {
 
     private Map<Url, Map<String, List<Url>>> subscribedCategoryResponses = new ConcurrentHashMap<>();
 
+    @Override
+    public Url getRegistryUrl() {
+        return registryUrl;
+    }
+
+    @Override
+    public Collection<Url> getRegisteredProviderUrls() {
+        return registeredProviderUrls;
+    }
+
 
     public AbstractRegistry(Url Url) {
         this.registryUrl = Url.copy();
@@ -40,12 +50,12 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Register a heartbeat switcher to perceive service state change
+     * Register a heartbeat switcher to perceive provider state change
      */
     private void registerSwitcherListener() {
         DefaultSwitcherService.getInstance().initSwitcher(REGISTRY_HEARTBEAT_SWITCHER, false);
 
-        // Register anonymous inner class of AbstractRegistry as listener
+        // Register anonymous inner class of AbstractRegistry as a listener
         DefaultSwitcherService.getInstance().registerListener(REGISTRY_HEARTBEAT_SWITCHER, (name, switchOn) -> {
             if (StringUtils.isNotEmpty(name) && switchOn != null) {
                 if (switchOn) {
@@ -59,16 +69,6 @@ public abstract class AbstractRegistry implements Registry {
         });
     }
 
-    @Override
-    public Url getRegistryUrl() {
-        return registryUrl;
-    }
-
-    @Override
-    public Collection<Url> getRegisteredProviderUrls() {
-        return registeredProviderUrls;
-    }
-
     /**
      * Register url to registry
      *
@@ -80,17 +80,21 @@ public abstract class AbstractRegistry implements Registry {
             log.warn("Url must NOT be null!");
             return;
         }
-        Url copy = removeUnnecessaryParams(url.copy());
-        doRegister(copy);
+        doRegister(removeUnnecessaryParams(url.copy()));
         log.info("Registered the url [{}] to registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
         // Added it to the container after registered
         registeredProviderUrls.add(url);
-        // available if heartbeat switcher already open
+        // Move the url to active node of registry if heartbeat switcher already open
         if (DefaultSwitcherService.getInstance().isOn(REGISTRY_HEARTBEAT_SWITCHER)) {
             activate(url);
         }
     }
 
+    /**
+     * Unregister url from registry
+     *
+     * @param url url
+     */
     @Override
     public void unregister(Url url) {
         if (url == null) {
@@ -103,26 +107,54 @@ public abstract class AbstractRegistry implements Registry {
         registeredProviderUrls.remove(url);
     }
 
+    /**
+     * Register the url to 'active' node of registry
+     *
+     * @param url url
+     */
     @Override
     public void activate(Url url) {
-        log.info("Activate the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
         if (url != null) {
             doActivate(removeUnnecessaryParams(url.copy()));
         } else {
             doActivate(null);
         }
+        log.info("Activated the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
     }
 
+    /**
+     * Register the url to 'inactive' node of registry
+     *
+     * @param url url
+     */
     @Override
     public void deactivate(Url url) {
-        log.info("Deactivate the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
         if (url != null) {
             doDeactivate(removeUnnecessaryParams(url.copy()));
         } else {
             doDeactivate(null);
         }
+        log.info("Deactivated the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
     }
 
+    /**
+     * Remove the unnecessary url param to register to registry in order to not to be seen by consumer
+     *
+     * @param url url
+     */
+    private Url removeUnnecessaryParams(Url url) {
+        // codec parameter can not be registered to registry,
+        // because client side may could not request successfully if client side does not have the codec.
+        url.getParameters().remove(Url.PARAM_CODEC);
+        return url;
+    }
+
+    /**
+     * Subscribe the url to specified listener
+     *
+     * @param url      url
+     * @param listener listener
+     */
     @Override
     public void subscribe(Url url, NotifyListener listener) {
         if (url == null) {
@@ -133,10 +165,17 @@ public abstract class AbstractRegistry implements Registry {
             log.warn("Listener must NOT be null!");
             return;
         }
-        doSubscribe(url.copy(), listener);
+        // TODO: url copy mechanism
+        doSubscribe(url, listener);
         log.info("Subscribed the url [{}] to listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
     }
 
+    /**
+     * Unsubscribe the url from specified listener
+     *
+     * @param url      url
+     * @param listener listener
+     */
     @Override
     public void unsubscribe(Url url, NotifyListener listener) {
         if (url == null) {
@@ -147,7 +186,8 @@ public abstract class AbstractRegistry implements Registry {
             log.warn("Listener must NOT be null!");
             return;
         }
-        doUnsubscribe(url.copy(), listener);
+        // TODO: url copy mechanism
+        doUnsubscribe(url, listener);
         log.info("Unsubscribed the url [{}] from listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
     }
 
@@ -157,10 +197,10 @@ public abstract class AbstractRegistry implements Registry {
             log.warn("Url must NOT be null!");
             return Collections.EMPTY_LIST;
         }
-        url = url.copy();
+        Url copy = url.copy();
         List<Url> results = new ArrayList<>();
 
-        Map<String, List<Url>> categoryUrls = subscribedCategoryResponses.get(url);
+        Map<String, List<Url>> categoryUrls = subscribedCategoryResponses.get(copy);
         if (MapUtils.isNotEmpty(categoryUrls)) {
             for (List<Url> Urls : categoryUrls.values()) {
                 for (Url tempUrl : Urls) {
@@ -168,7 +208,7 @@ public abstract class AbstractRegistry implements Registry {
                 }
             }
         } else {
-            List<Url> discoveredUrls = doDiscover(url);
+            List<Url> discoveredUrls = doDiscover(copy);
             if (CollectionUtils.isNotEmpty(discoveredUrls)) {
                 for (Url u : discoveredUrls) {
                     results.add(u.copy());
@@ -219,17 +259,6 @@ public abstract class AbstractRegistry implements Registry {
         for (List<Url> us : nodeTypeUrlsInRs.values()) {
             listener.onSubscribe(getRegistryUrl(), us);
         }
-    }
-
-    /**
-     * 移除不必提交到注册中心的参数。这些参数不需要被client端感知。
-     *
-     * @param url
-     */
-    private Url removeUnnecessaryParams(Url url) {
-        // codec参数不能提交到注册中心，如果client端没有对应的codec会导致client端不能正常请求。
-        url.getParameters().remove(UrlParam.codec.getName());
-        return url;
     }
 
     protected abstract void doRegister(Url url);

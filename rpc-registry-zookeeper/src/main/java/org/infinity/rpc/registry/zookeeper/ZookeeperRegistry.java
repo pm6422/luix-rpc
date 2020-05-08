@@ -134,21 +134,22 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
-     * Register specified url info to zookeeper inactive node
+     * Register specified url info to zookeeper active node
      *
-     * @param url
+     * @param url url
      */
     @Override
     protected void doActivate(Url url) {
         try {
             serverLock.lock();
             if (url == null) {
+                // Register all provider urls to 'active' node if parameter url is null
                 availableServiceUrls.addAll(super.getRegisteredProviderUrls());
                 for (Url u : super.getRegisteredProviderUrls()) {
                     // Remove the dirty data node
                     removeNode(u, ZookeeperActiveStatusNode.ACTIVE_SERVER);
                     removeNode(u, ZookeeperActiveStatusNode.INACTIVE_SERVER);
-                    // Create data under available server node
+                    // Create data under 'active' node
                     createNode(u, ZookeeperActiveStatusNode.ACTIVE_SERVER);
                 }
             } else {
@@ -156,7 +157,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 // Remove the dirty data node
                 removeNode(url, ZookeeperActiveStatusNode.ACTIVE_SERVER);
                 removeNode(url, ZookeeperActiveStatusNode.INACTIVE_SERVER);
-                // Create data under available server node
+                // Create data under 'active' node
                 createNode(url, ZookeeperActiveStatusNode.ACTIVE_SERVER);
             }
         } finally {
@@ -164,17 +165,23 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         }
     }
 
+    /**
+     * Register specified url info to zookeeper inactive node
+     *
+     * @param url url
+     */
     @Override
     protected void doDeactivate(Url url) {
         try {
             serverLock.lock();
             if (url == null) {
+                // Register all provider urls to 'inactive' node if parameter url is null
                 availableServiceUrls.removeAll(getRegisteredProviderUrls());
                 for (Url u : getRegisteredProviderUrls()) {
                     // Remove the dirty data node
                     removeNode(u, ZookeeperActiveStatusNode.ACTIVE_SERVER);
                     removeNode(u, ZookeeperActiveStatusNode.INACTIVE_SERVER);
-                    // Create data under available server node
+                    // Create data under 'inactive' node
                     createNode(u, ZookeeperActiveStatusNode.INACTIVE_SERVER);
                 }
             } else {
@@ -182,7 +189,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 // Remove the dirty data node
                 removeNode(url, ZookeeperActiveStatusNode.ACTIVE_SERVER);
                 removeNode(url, ZookeeperActiveStatusNode.INACTIVE_SERVER);
-                // Create data under available server node
+                // Create data under 'inactive' node
                 createNode(url, ZookeeperActiveStatusNode.INACTIVE_SERVER);
             }
         } finally {

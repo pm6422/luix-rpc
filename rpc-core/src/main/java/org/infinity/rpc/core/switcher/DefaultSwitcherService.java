@@ -57,7 +57,7 @@ public class DefaultSwitcherService implements SwitcherService {
         if (CollectionUtils.isEmpty(listeners)) {
             return;
         }
-        // trigger the change event
+        // Invoke the change event
         listeners.forEach(listener -> listener.onSubscribe(name, value));
     }
 

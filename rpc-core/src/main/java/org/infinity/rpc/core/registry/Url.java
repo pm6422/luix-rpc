@@ -36,16 +36,19 @@ public class Url implements Serializable {
      */
     private              String  path;
 
-    public static final String PARAM_GROUP                      = "group";
-    public static final String PARAM_GROUP_DEFAULT_VALUE        = "default-group";
+    public static final String PARAM_GROUP               = "group";
+    public static final String PARAM_GROUP_DEFAULT_VALUE = "default-group";
 
     public static final String PARAM_CHECK_HEALTH               = "checkHealth";
     public static final String PARAM_CHECK_HEALTH_DEFAULT_VALUE = "true";
 
-    public static final String PARAM_ADDRESS                    = "address";
-    public static final String PARAM_CONNECT_TIMEOUT            = "connectTimeout";
-    public static final String PARAM_SESSION_TIMEOUT            = "sessionTimeout";
-    public static final String PARAM_RETRY_INTERVAL             = "retryInterval";
+    public static final String PARAM_CODEC               = "codec";
+    public static final String PARAM_CODEC_DEFAULT_VALUE = "infinity";
+
+    public static final String PARAM_ADDRESS         = "address";
+    public static final String PARAM_CONNECT_TIMEOUT = "connectTimeout";
+    public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
+    public static final String PARAM_RETRY_INTERVAL  = "retryInterval";
 
     /**
      * Extended parameters
