@@ -24,7 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Slf4j
-public class ZookeeperRegistryTest {
+public class ZookeeperRegistryTests {
     private static ZookeeperRegistry registry;
     private static Url               registryUrl;
     private static Url               providerUrl;

@@ -21,17 +21,19 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * The subclass name
      */
-    protected String   registryClassName      = this.getClass().getSimpleName();
+    protected String                           registryClassName           = this.getClass().getSimpleName();
     /**
      * Registry url
      */
-    private   Url      registryUrl;
+    private   Url                              registryUrl;
     /**
      * Registered provider urls
      */
-    private   Set<Url> registeredProviderUrls = new ConcurrentHashSet<>();
-
-    private Map<Url, Map<String, List<Url>>> subscribedCategoryResponses = new ConcurrentHashMap<>();
+    private   Set<Url>                         registeredProviderUrls      = new ConcurrentHashSet<>();
+    /**
+     *
+     */
+    private   Map<Url, Map<String, List<Url>>> subscribedCategoryResponses = new ConcurrentHashMap<>();
 
     @Override
     public Url getRegistryUrl() {
@@ -224,7 +226,7 @@ public abstract class AbstractRegistry implements Registry {
             return null;
         }
 
-        List<Url> Urls = new ArrayList<Url>();
+        List<Url> Urls = new ArrayList<>();
         for (List<Url> us : rsUrls.values()) {
             for (Url tempUrl : us) {
                 Urls.add(tempUrl.copy());
