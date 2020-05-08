@@ -72,20 +72,20 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * e.g, Zookeeper was shutdown after the infinity application startup, then zookeeper startup again will cause a new session.
      */
     private void reregisterProviders() {
-        Collection<Url> allRegisteredServices = super.getRegisteredServiceUrls();
+        Collection<Url> allRegisteredServices = super.getRegisteredProviderUrls();
         if (CollectionUtils.isEmpty(allRegisteredServices)) {
             return;
         }
         try {
             serverLock.lock();
-            for (Url url : super.getRegisteredServiceUrls()) {
+            for (Url url : super.getRegisteredProviderUrls()) {
                 // re-register after a new session
                 doRegister(url);
             }
             log.info("Re-registered all the providers after a reconnection to zookeeper");
 
             for (Url availableServiceUrl : availableServiceUrls) {
-                if (!super.getRegisteredServiceUrls().contains(availableServiceUrl)) {
+                if (!super.getRegisteredProviderUrls().contains(availableServiceUrl)) {
                     log.warn("Url [{}] has not been registered!", availableServiceUrl);
                     continue;
                 }
@@ -143,8 +143,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         try {
             serverLock.lock();
             if (url == null) {
-                availableServiceUrls.addAll(super.getRegisteredServiceUrls());
-                for (Url u : super.getRegisteredServiceUrls()) {
+                availableServiceUrls.addAll(super.getRegisteredProviderUrls());
+                for (Url u : super.getRegisteredProviderUrls()) {
                     // Remove the dirty data node
                     removeNode(u, ZookeeperActiveStatusNode.ACTIVE_SERVER);
                     removeNode(u, ZookeeperActiveStatusNode.INACTIVE_SERVER);
@@ -169,8 +169,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         try {
             serverLock.lock();
             if (url == null) {
-                availableServiceUrls.removeAll(getRegisteredServiceUrls());
-                for (Url u : getRegisteredServiceUrls()) {
+                availableServiceUrls.removeAll(getRegisteredProviderUrls());
+                for (Url u : getRegisteredProviderUrls()) {
                     // Remove the dirty data node
                     removeNode(u, ZookeeperActiveStatusNode.ACTIVE_SERVER);
                     removeNode(u, ZookeeperActiveStatusNode.INACTIVE_SERVER);

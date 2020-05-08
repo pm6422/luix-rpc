@@ -21,14 +21,18 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * The subclass name
      */
-    protected String registryClassName = this.getClass().getSimpleName();
+    protected String   registryClassName      = this.getClass().getSimpleName();
     /**
      * Registry url
      */
-    private   Url    registryUrl;
+    private   Url      registryUrl;
+    /**
+     * Registered provider urls
+     */
+    private   Set<Url> registeredProviderUrls = new ConcurrentHashSet<>();
 
     private Map<Url, Map<String, List<Url>>> subscribedCategoryResponses = new ConcurrentHashMap<>();
-    private Set<Url>                         registeredServiceUrls       = new ConcurrentHashSet<>();
+
 
     public AbstractRegistry(Url Url) {
         this.registryUrl = Url.copy();
@@ -61,8 +65,8 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     @Override
-    public Collection<Url> getRegisteredServiceUrls() {
-        return registeredServiceUrls;
+    public Collection<Url> getRegisteredProviderUrls() {
+        return registeredProviderUrls;
     }
 
     /**
@@ -80,7 +84,7 @@ public abstract class AbstractRegistry implements Registry {
         doRegister(copy);
         log.info("Registered the url [{}] to registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
         // Added it to the container after registered
-        registeredServiceUrls.add(url);
+        registeredProviderUrls.add(url);
         // available if heartbeat switcher already open
         if (DefaultSwitcherService.getInstance().isOn(REGISTRY_HEARTBEAT_SWITCHER)) {
             activate(url);
@@ -96,7 +100,7 @@ public abstract class AbstractRegistry implements Registry {
         doUnregister(removeUnnecessaryParams(url.copy()));
         log.info("Unregistered the url [{}] from registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
         // Removed it from the container after unregistered
-        registeredServiceUrls.remove(url);
+        registeredProviderUrls.remove(url);
     }
 
     @Override

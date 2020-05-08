@@ -12,5 +12,5 @@ public interface Registrable {
 
     void deactivate(Url Url);
 
-    Collection<Url> getRegisteredServiceUrls();
+    Collection<Url> getRegisteredProviderUrls();
 }
