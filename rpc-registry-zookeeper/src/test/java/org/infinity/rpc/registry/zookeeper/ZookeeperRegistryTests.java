@@ -132,22 +132,6 @@ public class ZookeeperRegistryTests {
     }
 
     @Test
-    public void testSubscribe() {
-        testDiscoverProviders();
-
-        NotifyListener notifyListener = (registryUrl, urls) -> {
-            System.out.println(registryUrl);
-        };
-        registry.subscribe(clientUrl, notifyListener);
-        assertTrue(containsSubscribeListener(clientUrl, notifyListener));
-
-    }
-
-    private boolean containsSubscribeListener(Url clientUrl, NotifyListener notifyListener) {
-        return registry.getCommandManagerMap().get(clientUrl).getNotifyListeners().contains(notifyListener);
-    }
-
-    @Test
     public void testSubscribeServiceListener() throws Exception {
         ServiceListener serviceListener = (refUrl, registryUrl, urls) -> {
             if (CollectionUtils.isNotEmpty(urls)) {
@@ -197,5 +181,28 @@ public class ZookeeperRegistryTests {
 
     private boolean containsCommandListener(Url clientUrl, CommandListener commandListener) {
         return registry.getCommandListeners().get(clientUrl).containsKey(commandListener);
+    }
+
+    @Test
+    public void testSubscribe() throws InterruptedException {
+        NotifyListener notifyListener = (registryUrl, urls) -> {
+            if (CollectionUtils.isNotEmpty(urls)) {
+                assertTrue(urls.contains(providerUrl));
+            }
+        };
+        registry.subscribe(clientUrl, notifyListener);
+        assertTrue(containsSubscribeListener(clientUrl, notifyListener));
+
+        registry.doRegister(providerUrl);
+        // add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener
+        registry.doActivate(providerUrl);
+        Thread.sleep(2000);
+
+        registry.unsubscribe(clientUrl, notifyListener);
+        assertFalse(containsSubscribeListener(clientUrl, notifyListener));
+    }
+
+    private boolean containsSubscribeListener(Url clientUrl, NotifyListener notifyListener) {
+        return registry.getCommandServiceListenerCacheMap().get(clientUrl).getNotifyListeners().contains(notifyListener);
     }
 }

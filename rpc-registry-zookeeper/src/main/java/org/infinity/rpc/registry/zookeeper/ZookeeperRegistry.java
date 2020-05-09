@@ -69,6 +69,24 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
+     * Default access modifier for unit test
+     *
+     * @return provider listeners
+     */
+    Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> getProviderListeners() {
+        return providerListeners;
+    }
+
+    /**
+     * Default access modifier for unit test
+     *
+     * @return command listeners
+     */
+    Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>> getCommandListeners() {
+        return commandListeners;
+    }
+
+    /**
      * Re-register the providers after a new zookeeper session
      * e.g, Zookeeper was shutdown after the infinity application startup, then zookeeper startup again will cause a new session.
      */
@@ -361,8 +379,10 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
-     * @param url
-     * @param serviceListener
+     * Monitor the specified zookeeper node whether the child nodes have been changed, and it will invoke custom service listener if child nodes change.
+     *
+     * @param url             url
+     * @param serviceListener service listener
      */
     @Override
     protected void subscribeServiceListener(Url url, ServiceListener serviceListener) {
@@ -403,6 +423,12 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         }
     }
 
+    /**
+     * Unsubscribe the service listener from the specified zookeeper node
+     *
+     * @param url             url
+     * @param serviceListener service listener
+     */
     @Override
     protected void unsubscribeServiceListener(Url url, ServiceListener serviceListener) {
         try {
@@ -424,6 +450,12 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         }
     }
 
+    /**
+     * Monitor the specified zookeeper node whether the data have been changed, and it will invoke custom command listener if data change.
+     *
+     * @param url             url
+     * @param commandListener command listener
+     */
     @Override
     protected void subscribeCommandListener(Url url, final CommandListener commandListener) {
         try {
@@ -462,6 +494,12 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         }
     }
 
+    /**
+     * Unsubscribe the command listener from the specified zookeeper node
+     *
+     * @param url             url
+     * @param commandListener command listener
+     */
     @Override
     protected void unsubscribeCommandListener(Url url, CommandListener commandListener) {
         try {
@@ -481,16 +519,11 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         }
     }
 
+    /**
+     * Do cleanup stuff
+     */
     @Override
     public void cleanup() {
         this.zkClient.close();
-    }
-
-    public Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> getProviderListeners() {
-        return providerListeners;
-    }
-
-    public Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>> getCommandListeners() {
-        return commandListeners;
     }
 }
