@@ -285,7 +285,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
-     * Discover providers url under single node or cluster environment
+     * Discover providers address list under single node or cluster environment
      *
      * @param url url
      * @return provider urls
@@ -365,7 +365,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * @return command json string
      */
     @Override
-    protected String discoverCommand(Url url) {
+    protected String readCommand(Url url) {
         try {
             String commandPath = ZookeeperUtils.getCommandPath(url);
             String command = "";
@@ -379,9 +379,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
-     * Monitor the specified zookeeper node whether the child nodes have been changed, and it will invoke custom service listener if child nodes change.
+     * Monitor the specified zookeeper node linked to url whether the child nodes have been changed, and it will invoke custom service listener if child nodes change.
      *
-     * @param url             url
+     * @param url             url to identify the zookeeper path
      * @param serviceListener service listener
      */
     @Override
@@ -395,13 +395,16 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             }
             IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
             if (zkChildListener == null) {
-                childChangeListeners.putIfAbsent(serviceListener, (parentPath, currentChilds) -> {
-                    List<String> childs = ListUtils.emptyIfNull(currentChilds);
-                    // Trigger user customized service listener
-                    serviceListener.onSubscribe(url, getRegistryUrl(), readUrl(childs, parentPath, url));
-                    log.info("Provider addresses list changed with current value {} under path [{}]", childs.toString(), parentPath);
-                });
-                zkChildListener = childChangeListeners.get(serviceListener);
+                // Trigger user customized listener if child changes
+                zkChildListener = new IZkChildListener() {
+                    @Override
+                    public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
+                        List<String> childs = ListUtils.emptyIfNull(currentChilds);
+                        serviceListener.onSubscribe(url, getRegistryUrl(), readUrl(childs, parentPath, url));
+                        log.info("Provider addresses list changed with current value {} under path [{}]", childs.toString(), parentPath);
+                    }
+                };
+                childChangeListeners.putIfAbsent(serviceListener, zkChildListener);
             }
 
             try {
@@ -426,7 +429,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     /**
      * Unsubscribe the service listener from the specified zookeeper node
      *
-     * @param url             url
+     * @param url             url to identify the zookeeper path
      * @param serviceListener service listener
      */
     @Override
@@ -451,9 +454,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
-     * Monitor the specified zookeeper node whether the data have been changed, and it will invoke custom command listener if data change.
+     * Monitor the specified zookeeper node linked to url whether the data have been changed, and it will invoke custom command listener if data change.
      *
-     * @param url             url
+     * @param url             url to identify the zookeeper path
      * @param commandListener command listener
      */
     @Override
@@ -467,7 +470,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             }
             IZkDataListener zkDataListener = dataChangeListeners.get(commandListener);
             if (zkDataListener == null) {
-                dataChangeListeners.putIfAbsent(commandListener, new IZkDataListener() {
+                // Trigger user customized listener if data changes
+                zkDataListener = new IZkDataListener() {
                     @Override
                     public void handleDataChange(String dataPath, Object data) {
                         commandListener.onSubscribe(url, (String) data);
@@ -479,8 +483,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                         commandListener.onSubscribe(url, null);
                         log.info("Command data deleted under path [{}]", dataPath);
                     }
-                });
-                zkDataListener = dataChangeListeners.get(commandListener);
+                };
+                dataChangeListeners.putIfAbsent(commandListener, zkDataListener);
             }
 
             String commandPath = ZookeeperUtils.getCommandPath(url);
@@ -497,7 +501,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     /**
      * Unsubscribe the command listener from the specified zookeeper node
      *
-     * @param url             url
+     * @param url             url to identify the zookeeper path
      * @param commandListener command listener
      */
     @Override

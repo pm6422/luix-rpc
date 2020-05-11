@@ -202,8 +202,8 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
 
     /**
      * It contains the functionality of method subscribeServiceListener and subscribeCommandListener
-     * @param url
-     * @param listener
+     * @param url client url
+     * @param listener notify listener
      */
     @Override
     public void subscribe(Url url, NotifyListener listener) {

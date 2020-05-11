@@ -45,19 +45,35 @@ public class CommandServiceListener implements CommandListener, ServiceListener 
         DefaultSwitcherService.getInstance().initSwitcher(MOTAN_COMMAND_SWITCHER, true);
     }
 
-    private          Set<NotifyListener>             notifyListeners    = new ConcurrentHashSet<>();
-    // service cache
-    private          Map<String, List<Url>>          groupServiceCache  = new ConcurrentHashMap<>();
-    private          Url                             refUrl;
+    /**
+     * Client url
+     */
+    private          Url                             clientUrl;
+    /**
+     * Registry
+     */
     private          CommandFailbackAbstractRegistry registry;
-    private          String                          commandStringCache = "";
-    // command cache
-    private volatile RpcCommand                      commandCache;
+    /**
+     *
+     */
+    private          Set<NotifyListener>             notifyListeners          = new ConcurrentHashSet<>();
+    /**
+     * Group - address urls map
+     */
+    private          Map<String, List<Url>>          groupAddressUrlsMapCache = new ConcurrentHashMap<>();
+    /**
+     *
+     */
+    private volatile RpcCommand                      rpcCommandCache;
+    /**
+     *
+     */
+    private          String                          rpcCommandStrCache       = "";
 
-    public CommandServiceListener(Url refUrl, CommandFailbackAbstractRegistry registry) {
-        this.refUrl = refUrl;
+    public CommandServiceListener(Url clientUrl, CommandFailbackAbstractRegistry registry) {
+        this.clientUrl = clientUrl;
         this.registry = registry;
-        log.info("Created command service manager for url [{}]", refUrl.toFullStr());
+        log.info("Created command service manager for url [{}]", clientUrl.toFullStr());
     }
 
     /**
@@ -82,30 +98,33 @@ public class CommandServiceListener implements CommandListener, ServiceListener 
         return notifyListeners;
     }
 
+    /**
+     * @param serviceUrl  service url
+     * @param registryUrl registry url
+     * @param addressUrls address urls
+     */
     @Override
-    public void onSubscribe(Url serviceUrl, Url registryUrl, List<Url> urls) {
+    public void onSubscribe(Url serviceUrl, Url registryUrl, List<Url> addressUrls) {
         if (registry == null) {
-            throw new RuntimeException("registry must be set.");
+            throw new RuntimeException("Registry must be instantiated before use!");
         }
 
         Url urlCopy = serviceUrl.copy();
-        String groupName = urlCopy.getParameter(Url.PARAM_GROUP);
-        groupServiceCache.put(groupName, urls);
+        String group = urlCopy.getParameter(Url.PARAM_GROUP);
+        groupAddressUrlsMapCache.put(group, addressUrls);
 
-        List<Url> finalResult = new ArrayList<Url>();
-        if (commandCache != null) {
-            Map<String, Integer> weights = new HashMap<String, Integer>();
-            finalResult = discoverServiceWithCommand(refUrl, weights, commandCache);
+        List<Url> finalResult = new ArrayList<>();
+        if (rpcCommandCache != null) {
+            Map<String, Integer> weights = new HashMap<>();
+            finalResult = discoverServiceWithCommand(clientUrl, weights, rpcCommandCache);
         } else {
-            log.info("command cache is null. service:" + serviceUrl.toSimpleString());
-            // 没有命令时，只返回这个manager实际group对应的结果
-            finalResult.addAll(discoverOneGroup(refUrl));
+            log.info("Discovering the provider urls based on group param of url when RPC command is null");
+            finalResult.addAll(discoverByUrlParamGroup(clientUrl));
         }
 
         for (NotifyListener notifyListener : notifyListeners) {
             notifyListener.onSubscribe(registry.getRegistryUrl(), finalResult);
         }
-
     }
 
     @Override
@@ -120,14 +139,14 @@ public class CommandServiceListener implements CommandListener, ServiceListener 
         List<Url> finalResult = new ArrayList<Url>();
         Url urlCopy = serviceUrl.copy();
 
-        if (!StringUtils.equals(commandString, commandStringCache)) {
-            commandStringCache = commandString;
-            commandCache = RpcCommandUtils.stringToCommand(commandStringCache);
+        if (!StringUtils.equals(commandString, rpcCommandStrCache)) {
+            rpcCommandStrCache = commandString;
+            rpcCommandCache = RpcCommandUtils.convertToCommand(rpcCommandStrCache);
             Map<String, Integer> weights = new HashMap<String, Integer>();
 
-            if (commandCache != null && commandCache.getClientCommandList() != null && !commandCache.getClientCommandList().isEmpty()) {
-                commandCache.sort();
-                finalResult = discoverServiceWithCommand(refUrl, weights, commandCache);
+            if (rpcCommandCache != null && rpcCommandCache.getClientCommandList() != null && !rpcCommandCache.getClientCommandList().isEmpty()) {
+                rpcCommandCache.sort();
+                finalResult = discoverServiceWithCommand(clientUrl, weights, rpcCommandCache);
             } else {
                 // 如果是指令有异常时，应当按没有指令处理，防止错误指令导致服务异常
                 if (StringUtils.isNotBlank(commandString)) {
@@ -135,15 +154,15 @@ public class CommandServiceListener implements CommandListener, ServiceListener 
                     commandString = "";
                 }
                 // 没有命令时，只返回这个manager实际group对应的结果
-                finalResult.addAll(discoverOneGroup(refUrl));
+                finalResult.addAll(discoverByUrlParamGroup(clientUrl));
 
             }
 
             // 指令变化时，删除不再有效的缓存，取消订阅不再有效的group
-            Set<String> groupKeys = groupServiceCache.keySet();
+            Set<String> groupKeys = groupAddressUrlsMapCache.keySet();
             for (String gk : groupKeys) {
                 if (!weights.containsKey(gk)) {
-                    groupServiceCache.remove(gk);
+                    groupAddressUrlsMapCache.remove(gk);
                     Url urlTemp = urlCopy.copy();
                     urlTemp.addParameter(Url.PARAM_GROUP, gk);
                     registry.unsubscribeServiceListener(urlTemp, this);
@@ -151,8 +170,8 @@ public class CommandServiceListener implements CommandListener, ServiceListener 
             }
             // 当指令从有改到无时，或者没有流量切换指令时，会触发取消订阅所有的group，需要重新订阅本组的service
             if ("".equals(commandString) || weights.isEmpty()) {
-                log.info("reSub service" + refUrl.toSimpleString());
-                registry.subscribeServiceListener(refUrl, this);
+                log.info("reSub service" + clientUrl.toSimpleString());
+                registry.subscribeServiceListener(clientUrl, this);
             }
         } else {
             log.info("command not change. url:" + serviceUrl.toSimpleString());
@@ -172,7 +191,7 @@ public class CommandServiceListener implements CommandListener, ServiceListener 
 
     public List<Url> discoverServiceWithCommand(Url serviceUrl, Map<String, Integer> weights, RpcCommand rpcCommand, String localIP) {
         if (rpcCommand == null || CollectionUtils.isEmpty(rpcCommand.getClientCommandList())) {
-            return discoverOneGroup(serviceUrl);
+            return discoverByUrlParamGroup(serviceUrl);
         }
 
         List<Url> mergedResult = new LinkedList<Url>();
@@ -197,7 +216,7 @@ public class CommandServiceListener implements CommandListener, ServiceListener 
                     // 根据计算结果，分别发现各个group的service，合并结果
                     mergedResult.addAll(mergeResult(serviceUrl, weights));
                 } else {
-                    mergedResult.addAll(discoverOneGroup(serviceUrl));
+                    mergedResult.addAll(discoverByUrlParamGroup(serviceUrl));
                 }
 
                 log.info("mergedResult: size-" + mergedResult.size() + " --- " + mergedResult.toString());
@@ -271,7 +290,7 @@ public class CommandServiceListener implements CommandListener, ServiceListener 
 
         List<Url> finalResult = new ArrayList<Url>();
         if (!hit) {
-            finalResult = discoverOneGroup(serviceUrl);
+            finalResult = discoverByUrlParamGroup(serviceUrl);
         } else {
             finalResult.addAll(mergedResult);
         }
@@ -311,34 +330,40 @@ public class CommandServiceListener implements CommandListener, ServiceListener 
         }
 
         for (String key : weights.keySet()) {
-            if (groupServiceCache.containsKey(key)) {
-                finalResult.addAll(groupServiceCache.get(key));
+            if (groupAddressUrlsMapCache.containsKey(key)) {
+                finalResult.addAll(groupAddressUrlsMapCache.get(key));
             } else {
                 Url urlTemp = url.copy();
                 urlTemp.addParameter(Url.PARAM_GROUP, key);
-                finalResult.addAll(discoverOneGroup(urlTemp));
+                finalResult.addAll(discoverByUrlParamGroup(urlTemp));
                 registry.subscribeServiceListener(urlTemp, this);
             }
         }
         return finalResult;
     }
 
-    private List<Url> discoverOneGroup(Url urlCopy) {
-        log.info("CommandServiceManager discover one group. url:" + urlCopy.toSimpleString());
-        String group = urlCopy.getParameter(Url.PARAM_GROUP);
-        List<Url> list = groupServiceCache.get(group);
-        if (list == null) {
-            list = registry.discoverProviders(urlCopy);
-            groupServiceCache.put(group, list);
+    /**
+     * Discover providers address list based on group param of url
+     *
+     * @param clientUrl client url
+     * @return address urls
+     */
+    private List<Url> discoverByUrlParamGroup(Url clientUrl) {
+        String group = clientUrl.getParameter(Url.PARAM_GROUP);
+        List<Url> addressUrls = groupAddressUrlsMapCache.get(group);
+        if (addressUrls == null) {
+            addressUrls = registry.discoverProviders(clientUrl);
+            groupAddressUrlsMapCache.put(group, addressUrls);
         }
-        return list;
+        log.info("Discovered url by param group of url [{}]", clientUrl);
+        return addressUrls;
     }
 
-    public void setCommandCache(String command) {
-        commandStringCache = command;
-        commandCache = RpcCommandUtils.stringToCommand(commandStringCache);
-        log.info("CommandServiceManager set commandcache. commandstring:" + commandStringCache + ", comandcache "
-                + (commandCache == null ? "is null." : "is not null."));
+    public void setRpcCommandCache(String command) {
+        rpcCommandStrCache = command;
+        rpcCommandCache = RpcCommandUtils.convertToCommand(rpcCommandStrCache);
+        log.info("CommandServiceManager set commandcache. commandstring:" + rpcCommandStrCache + ", comandcache "
+                + (rpcCommandCache == null ? "is null." : "is not null."));
     }
 
     private void weightConfigError() {

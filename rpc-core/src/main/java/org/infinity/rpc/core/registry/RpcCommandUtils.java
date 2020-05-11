@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 @Slf4j
 public class RpcCommandUtils {
 
-    public static RpcCommand stringToCommand(String commandString) {
+    public static RpcCommand convertToCommand(String commandString) {
         try {
             return new ObjectMapper().readValue(commandString, RpcCommand.class);
         } catch (Exception e) {

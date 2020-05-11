@@ -154,7 +154,7 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * Subscribe the url to specified listener todo: modify comments
      *
-     * @param url      url
+     * @param url      client url
      * @param listener listener
      */
     @Override

@@ -116,7 +116,7 @@ public class ZookeeperRegistryTests {
 
     @Test
     public void testDiscoverCommand() {
-        String result = registry.discoverCommand(clientUrl);
+        String result = registry.readCommand(clientUrl);
         assertTrue(StringUtils.isEmpty(result));
 
         String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
@@ -127,7 +127,7 @@ public class ZookeeperRegistryTests {
         // Write command to zookeeper node
         zkClient.writeData(commandPath, command);
 
-        result = registry.discoverCommand(clientUrl);
+        result = registry.readCommand(clientUrl);
         Assert.assertEquals(command, result);
     }
 
