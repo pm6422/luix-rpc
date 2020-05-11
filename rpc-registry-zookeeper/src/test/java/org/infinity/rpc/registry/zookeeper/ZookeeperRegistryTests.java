@@ -12,6 +12,7 @@ import org.infinity.rpc.core.registry.listener.NotifyListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.registry.zookeeper.service.TestDummyService;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
+import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -26,13 +27,14 @@ import static org.junit.Assert.assertTrue;
 
 @Slf4j
 public class ZookeeperRegistryTests {
+    private static String            REGISTRY_HOST = "127.0.0.1";
     private static ZookeeperRegistry registry;
     private static Url               registryUrl;
     private static Url               providerUrl;
     private static Url               clientUrl;
     private static EmbeddedZookeeper zookeeper;
     private static ZkClient          zkClient;
-    private static String            provider = TestDummyService.class.getName();
+    private static String            provider      = TestDummyService.class.getName();
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -42,21 +44,21 @@ public class ZookeeperRegistryTests {
         int port = Integer.parseInt(properties.getProperty("clientPort"));
         in.close();
 
-        registryUrl = Url.of("zookeeper", "127.0.0.1", port, Registrable.class.getName());
+        registryUrl = Url.of("zookeeper", REGISTRY_HOST, port, Registrable.class.getName());
         registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, new InfinityProperties().getRegistry().getConnectTimeout().toString());
         registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, new InfinityProperties().getRegistry().getSessionTimeout().toString());
         registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, new InfinityProperties().getRegistry().getRetryInterval().toString());
 
-        clientUrl = Url.of("infinity", "127.0.0.1", 0, provider);
+        clientUrl = Url.of("infinity", NetworkIpUtils.INTRANET_IP, 0, provider);
         clientUrl.addParameter("group", Url.PARAM_GROUP_DEFAULT_VALUE);
 
-        providerUrl = Url.of("infinity", "127.0.0.1", 8001, provider);
+        providerUrl = Url.of("infinity", NetworkIpUtils.INTRANET_IP, 8001, provider);
         providerUrl.addParameter("group", Url.PARAM_GROUP_DEFAULT_VALUE);
 
         zookeeper = new EmbeddedZookeeper();
         zookeeper.start();
         Thread.sleep(1000);
-        zkClient = new ZkClient("127.0.0.1:" + port, 5000);
+        zkClient = new ZkClient(REGISTRY_HOST + ":" + port, 5000);
         registry = new ZookeeperRegistry(registryUrl, zkClient);
 
         // Delete old data

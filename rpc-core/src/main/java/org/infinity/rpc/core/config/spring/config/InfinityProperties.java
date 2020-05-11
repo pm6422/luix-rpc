@@ -117,7 +117,7 @@ InfinityProperties implements InitializingBean {
             }
         }
 
-        // Type name of register center
+        // Name of register center
         private Name    name           = Name.zookeeper;
         // Registry center host name
         private String  host;
