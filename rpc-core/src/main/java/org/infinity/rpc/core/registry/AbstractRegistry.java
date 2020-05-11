@@ -6,6 +6,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.registry.listener.NotifyListener;
 import org.infinity.rpc.core.switcher.DefaultSwitcherService;
+import org.infinity.rpc.utilities.annotation.Event;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 
 import java.util.*;
@@ -54,6 +55,7 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * Register a heartbeat switcher to perceive provider state change
      */
+    @Event
     private void registerSwitcherListener() {
         DefaultSwitcherService.getInstance().initSwitcher(REGISTRY_HEARTBEAT_SWITCHER, false);
 

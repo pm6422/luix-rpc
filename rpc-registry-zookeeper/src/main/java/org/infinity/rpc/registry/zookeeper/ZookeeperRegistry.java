@@ -15,6 +15,7 @@ import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
+import org.infinity.rpc.utilities.annotation.Event;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.infinity.rpc.utilities.destory.Cleanable;
 
@@ -38,6 +39,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     private final Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>  commandListeners     = new ConcurrentHashMap<>();
     private       ZkClient                                                       zkClient;
 
+    @Event
     public ZookeeperRegistry(Url url, ZkClient zkClient) {
         super(url);
         this.zkClient = zkClient;
@@ -381,10 +383,11 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     /**
      * Monitor the specified zookeeper node linked to url whether the child nodes have been changed, and it will invoke custom service listener if child nodes change.
      *
-     * @param url             url to identify the zookeeper path
+     * @param url             client url to identify the zookeeper path
      * @param serviceListener service listener
      */
     @Override
+    @Event
     protected void subscribeServiceListener(Url url, ServiceListener serviceListener) {
         try {
             clientLock.lock();
@@ -456,10 +459,11 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     /**
      * Monitor the specified zookeeper node linked to url whether the data have been changed, and it will invoke custom command listener if data change.
      *
-     * @param url             url to identify the zookeeper path
+     * @param url             client url to identify the zookeeper path
      * @param commandListener command listener
      */
     @Override
+    @Event
     protected void subscribeCommandListener(Url url, final CommandListener commandListener) {
         try {
             clientLock.lock();
