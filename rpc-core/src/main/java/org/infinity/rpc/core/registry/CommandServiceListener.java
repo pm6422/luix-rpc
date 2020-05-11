@@ -99,19 +99,18 @@ public class CommandServiceListener implements CommandListener, ServiceListener 
     }
 
     /**
-     * @param serviceUrl  service url
-     * @param registryUrl registry url
-     * @param addressUrls address urls
+     * @param providerUrl         provider url
+     * @param registryUrl         registry url
+     * @param providerAddressUrls address urls
      */
     @Override
-    public void onSubscribe(Url serviceUrl, Url registryUrl, List<Url> addressUrls) {
+    public void onSubscribe(Url providerUrl, Url registryUrl, List<Url> providerAddressUrls) {
         if (registry == null) {
             throw new RuntimeException("Registry must be instantiated before use!");
         }
 
-        Url urlCopy = serviceUrl.copy();
-        String group = urlCopy.getParameter(Url.PARAM_GROUP);
-        groupAddressUrlsMapCache.put(group, addressUrls);
+        String group = providerUrl.getParameter(Url.PARAM_GROUP);
+        groupAddressUrlsMapCache.put(group, providerAddressUrls);
 
         List<Url> finalResult = new ArrayList<>();
         if (rpcCommandCache != null) {

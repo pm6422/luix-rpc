@@ -89,7 +89,8 @@ public class Url implements Serializable {
         return protocol;
     }
 
-    public void setProtocol(String protocol) {
+    // private access modifier
+    private void setProtocol(String protocol) {
         this.protocol = protocol;
     }
 
@@ -97,7 +98,8 @@ public class Url implements Serializable {
         return host;
     }
 
-    public void setHost(String host) {
+    // private access modifier
+    private void setHost(String host) {
         this.host = host;
     }
 
@@ -105,7 +107,8 @@ public class Url implements Serializable {
         return port;
     }
 
-    public void setPort(Integer port) {
+    // private access modifier
+    private void setPort(Integer port) {
         this.port = port;
     }
 
