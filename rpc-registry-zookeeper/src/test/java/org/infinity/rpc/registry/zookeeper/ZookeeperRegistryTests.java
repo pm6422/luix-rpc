@@ -12,6 +12,7 @@ import org.infinity.rpc.core.registry.listener.NotifyListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.registry.zookeeper.service.TestDummyService;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
+import org.infinity.rpc.utilities.annotation.Event;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -134,6 +135,7 @@ public class ZookeeperRegistryTests {
     }
 
     @Test
+    @Event
     public void testSubscribeServiceListener() throws Exception {
         ServiceListener serviceListener = (refUrl, registryUrl, urls) -> {
             if (CollectionUtils.isNotEmpty(urls)) {
@@ -157,6 +159,7 @@ public class ZookeeperRegistryTests {
     }
 
     @Test
+    @Event
     public void testSubscribeCommandListener() throws Exception {
         String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
         CommandListener commandListener = (refUrl, commandString) -> {
@@ -186,6 +189,7 @@ public class ZookeeperRegistryTests {
     }
 
     @Test
+    @Event
     public void testSubscribe() throws InterruptedException {
         NotifyListener notifyListener = (registryUrl, urls) -> {
             if (CollectionUtils.isNotEmpty(urls)) {
