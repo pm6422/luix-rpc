@@ -114,17 +114,17 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
         String group = clientUrl.getParameter(Url.PARAM_GROUP);
         activeProviderUrlsPerGroupMap.put(group, providerUrls);
 
-        List<Url> result = new ArrayList<>();
+        List<Url> providerUrlList = new ArrayList<>();
         if (rpcCommandCache != null) {
             Map<String, Integer> weights = new HashMap<>();
-            result = discoverServiceWithCommand(this.clientUrl, weights, rpcCommandCache);
+            providerUrlList = discoverServiceWithCommand(this.clientUrl, weights, rpcCommandCache);
         } else {
             log.info("Discovering the active provider urls based on group param of url when RPC command is null");
-            result.addAll(discoverActiveProvidersByGroup(this.clientUrl));
+            providerUrlList.addAll(discoverActiveProvidersByGroup(this.clientUrl));
         }
 
         for (NotifyListener notifyListener : notifyListeners) {
-            notifyListener.onSubscribe(registry.getRegistryUrl(), result);
+            notifyListener.onSubscribe(registry.getRegistryUrl(), providerUrlList);
         }
     }
 

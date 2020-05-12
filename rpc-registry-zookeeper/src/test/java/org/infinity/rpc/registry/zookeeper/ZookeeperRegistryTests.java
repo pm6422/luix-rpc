@@ -197,11 +197,12 @@ public class ZookeeperRegistryTests {
     @Test
     @Event
     public void testSubscribe() throws InterruptedException {
-        NotifyListener notifyListener = (registryUrl, urls) -> {
-            if (CollectionUtils.isNotEmpty(urls)) {
-                assertTrue(urls.contains(providerUrl1));
+        NotifyListener notifyListener = (registryUrl, providerUrls) -> {
+            if (CollectionUtils.isNotEmpty(providerUrls)) {
+                assertTrue(providerUrls.contains(providerUrl1));
             }
         };
+        // subscribe = subscribeServiceListener + subscribeCommandListener
         registry.subscribe(clientUrl, notifyListener);
         assertTrue(containsSubscribeListener(clientUrl, notifyListener));
 
