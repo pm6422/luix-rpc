@@ -58,7 +58,7 @@ public class CommandServiceListener implements CommandListener, ServiceListener 
      */
     private          Set<NotifyListener>             notifyListeners          = new ConcurrentHashSet<>();
     /**
-     * Group - address urls map
+     * Provider address urls map
      */
     private          Map<String, List<Url>>          groupAddressUrlsMapCache = new ConcurrentHashMap<>();
     /**
@@ -99,30 +99,30 @@ public class CommandServiceListener implements CommandListener, ServiceListener 
     }
 
     /**
-     * @param providerUrl         provider url
+     * @param clientUrl           client url
      * @param registryUrl         registry url
      * @param providerAddressUrls address urls
      */
     @Override
-    public void onSubscribe(Url providerUrl, Url registryUrl, List<Url> providerAddressUrls) {
+    public void onSubscribe(Url clientUrl, Url registryUrl, List<Url> providerAddressUrls) {
         if (registry == null) {
             throw new RuntimeException("Registry must be instantiated before use!");
         }
 
-        String group = providerUrl.getParameter(Url.PARAM_GROUP);
+        String group = clientUrl.getParameter(Url.PARAM_GROUP);
         groupAddressUrlsMapCache.put(group, providerAddressUrls);
 
-        List<Url> finalResult = new ArrayList<>();
+        List<Url> result = new ArrayList<>();
         if (rpcCommandCache != null) {
             Map<String, Integer> weights = new HashMap<>();
-            finalResult = discoverServiceWithCommand(clientUrl, weights, rpcCommandCache);
+            result = discoverServiceWithCommand(this.clientUrl, weights, rpcCommandCache);
         } else {
             log.info("Discovering the provider urls based on group param of url when RPC command is null");
-            finalResult.addAll(discoverByUrlParamGroup(clientUrl));
+            result.addAll(discoverByUrlParamGroup(this.clientUrl));
         }
 
         for (NotifyListener notifyListener : notifyListeners) {
-            notifyListener.onSubscribe(registry.getRegistryUrl(), finalResult);
+            notifyListener.onSubscribe(registry.getRegistryUrl(), result);
         }
     }
 
@@ -351,7 +351,7 @@ public class CommandServiceListener implements CommandListener, ServiceListener 
         String group = clientUrl.getParameter(Url.PARAM_GROUP);
         List<Url> addressUrls = groupAddressUrlsMapCache.get(group);
         if (addressUrls == null) {
-            addressUrls = registry.discoverProviders(clientUrl);
+            addressUrls = registry.discoverActiveProviders(clientUrl);
             groupAddressUrlsMapCache.put(group, addressUrls);
         }
         log.info("Discovered url by param group of url [{}]", clientUrl);

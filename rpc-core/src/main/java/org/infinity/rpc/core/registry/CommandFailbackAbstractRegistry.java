@@ -93,7 +93,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
             commandServiceListener.setRpcCommandCache(commandStr);
             log.info("Discovered the command [{}] for url [{}]", commandStr, url);
         } else {
-            urls = discoverProviders(urlCopy);
+            urls = discoverActiveProviders(urlCopy);
             log.info("Discovered the provider urls [{}] for url [{}]", urls, url);
         }
         return urls;
@@ -127,7 +127,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
             CommandServiceListener manager = getCommandServiceListener(urlCopy);
             finalResult = manager.discoverServiceWithCommand(urlCopy, new HashMap<String, Integer>(), rpcCommand, previewIP);
         } else {
-            finalResult = discoverProviders(urlCopy);
+            finalResult = discoverActiveProviders(urlCopy);
         }
 
         return finalResult;
@@ -141,7 +141,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
 
     protected abstract void unsubscribeCommandListener(Url url, CommandListener listener);
 
-    protected abstract List<Url> discoverProviders(Url url);
+    protected abstract List<Url> discoverActiveProviders(Url url);
 
     protected abstract String readCommand(Url url);
 }

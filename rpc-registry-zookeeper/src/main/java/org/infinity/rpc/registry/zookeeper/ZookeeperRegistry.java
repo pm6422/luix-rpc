@@ -264,7 +264,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             // Create a persistent directory
             zkClient.createPersistent(nodeTypePath, true);
         }
-        // Create a temporary node
+        // Create a temporary file, which name is an address(host:port), which content is the full string of the url
         zkClient.createEphemeral(ZookeeperUtils.getAddressPath(url, nodeType), url.toFullStr());
     }
 
@@ -287,40 +287,40 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
-     * Discover providers address list under single node or cluster environment
+     * Discover active providers' address file name list under single node or cluster environment
      *
      * @param url url
      * @return provider urls
      */
     @Override
-    protected List<Url> discoverProviders(Url url) {
+    protected List<Url> discoverActiveProviders(Url url) {
         try {
             String parentPath = ZookeeperUtils.getActiveNodePath(url, ZookeeperActiveStatusNode.ACTIVE_SERVER);
-            List<String> addresses = new ArrayList<>();
+            List<String> addrFiles = new ArrayList<>();
             if (zkClient.exists(parentPath)) {
-                addresses = zkClient.getChildren(parentPath);
+                addrFiles = zkClient.getChildren(parentPath);
             }
-            return readUrl(addresses, parentPath, url);
+            return readProviderUrls(addrFiles, parentPath, url);
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to discover service [{0}] from zookeeper [{1}] with the error: {2}", url, getRegistryUrl(), e.getMessage()), e);
         }
     }
 
     /**
-     * Read address file content as provider url
+     * Read provider urls from address files' data
      *
-     * @param addresses addresses
+     * @param addrFiles address file list
      * @param path      zookeeper path
      * @param url       url
      * @return provider urls
      */
-    private List<Url> readUrl(List<String> addresses, String path, Url url) {
+    private List<Url> readProviderUrls(List<String> addrFiles, String path, Url url) {
         List<Url> urls = new ArrayList<>();
-        if (CollectionUtils.isEmpty(addresses)) {
+        if (CollectionUtils.isEmpty(addrFiles)) {
             return urls;
         }
-        for (String address : addresses) {
-            String addrFilePath = path.concat(Url.PATH_SEPARATOR).concat(address);
+        for (String addrFile : addrFiles) {
+            String addrFilePath = path.concat(Url.PATH_SEPARATOR).concat(addrFile);
             String addrFileData = null;
             try {
                 addrFileData = zkClient.readData(addrFilePath, true);
@@ -340,8 +340,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
 //                newurl = url.copy();
 //                String host = "";
 //                int port = 80;
-//                if (address.indexOf(":") > -1) {
-//                    String[] hp = address.split(":");
+//                if (addrFile.indexOf(":") > -1) {
+//                    String[] hp = addrFile.split(":");
 //                    if (hp.length > 1) {
 //                        host = hp[0];
 //                        try {
@@ -350,7 +350,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
 //                        }
 //                    }
 //                } else {
-//                    host = address;
+//                    host = addrFile;
 //                }
 //                newurl.setHost(host);
 //                newurl.setPort(port);
@@ -403,8 +403,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                     @Override
                     public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
                         List<String> childs = ListUtils.emptyIfNull(currentChilds);
-                        serviceListener.onSubscribe(url, getRegistryUrl(), readUrl(childs, parentPath, url));
-                        log.info("Provider addresses list changed with current value {} under path [{}]", childs.toString(), parentPath);
+                        serviceListener.onSubscribe(url, getRegistryUrl(), readProviderUrls(childs, parentPath, url));
+                        log.info("Provider address file list changed with current value {} under path [{}]", childs.toString(), parentPath);
                     }
                 };
                 childChangeListeners.putIfAbsent(serviceListener, zkChildListener);

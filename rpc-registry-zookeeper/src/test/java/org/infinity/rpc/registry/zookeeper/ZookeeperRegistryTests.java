@@ -23,15 +23,15 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @Slf4j
 public class ZookeeperRegistryTests {
     private static String            REGISTRY_HOST = "127.0.0.1";
     private static ZookeeperRegistry registry;
     private static Url               registryUrl;
-    private static Url               providerUrl;
+    private static Url               providerUrl1;
+    private static Url               providerUrl2;
     private static Url               clientUrl;
     private static EmbeddedZookeeper zookeeper;
     private static ZkClient          zkClient;
@@ -53,8 +53,11 @@ public class ZookeeperRegistryTests {
         clientUrl = Url.of("infinity", NetworkIpUtils.INTRANET_IP, 0, provider);
         clientUrl.addParameter("group", Url.PARAM_GROUP_DEFAULT_VALUE);
 
-        providerUrl = Url.of("infinity", NetworkIpUtils.INTRANET_IP, 8001, provider);
-        providerUrl.addParameter("group", Url.PARAM_GROUP_DEFAULT_VALUE);
+        providerUrl1 = Url.of("infinity", NetworkIpUtils.INTRANET_IP, 2000, provider);
+        providerUrl1.addParameter("group", Url.PARAM_GROUP_DEFAULT_VALUE);
+
+        providerUrl2 = Url.of("infinity", "192.168.100.100", 2000, provider);
+        providerUrl2.addParameter("group", Url.PARAM_GROUP_DEFAULT_VALUE);
 
         zookeeper = new EmbeddedZookeeper();
         zookeeper.start();
@@ -73,48 +76,51 @@ public class ZookeeperRegistryTests {
 
     @Test
     public void testRegisterAndActivate() {
-        String node = providerUrl.getServerPortStr();
-        List<String> activateList;
-        List<String> deactivateList;
+        String node = providerUrl1.getServerPortStr();
+        List<String> activateAddrFiles;
+        List<String> deactivateAddrFiles;
 
-        String inactivePath = ZookeeperUtils.getActiveNodePath(providerUrl, ZookeeperActiveStatusNode.INACTIVE_SERVER);
+        String inactivePath = ZookeeperUtils.getActiveNodePath(providerUrl1, ZookeeperActiveStatusNode.INACTIVE_SERVER);
         log.debug("inactivePath: {}", inactivePath);
-        String activePath = ZookeeperUtils.getActiveNodePath(providerUrl, ZookeeperActiveStatusNode.ACTIVE_SERVER);
+        String activePath = ZookeeperUtils.getActiveNodePath(providerUrl1, ZookeeperActiveStatusNode.ACTIVE_SERVER);
         log.debug("activePath: {}", activePath);
 
-        registry.doRegister(providerUrl);
-        deactivateList = zkClient.getChildren(inactivePath);
-        assertTrue(deactivateList.contains(node));
+        registry.doRegister(providerUrl1);
+        deactivateAddrFiles = zkClient.getChildren(inactivePath);
+        assertTrue(deactivateAddrFiles.contains(node));
 
-        registry.doActivate(providerUrl);
-        deactivateList = zkClient.getChildren(inactivePath);
-        assertFalse(deactivateList.contains(node));
-        activateList = zkClient.getChildren(activePath);
-        assertTrue(activateList.contains(node));
+        registry.doActivate(providerUrl1);
+        deactivateAddrFiles = zkClient.getChildren(inactivePath);
+        assertFalse(deactivateAddrFiles.contains(node));
+        activateAddrFiles = zkClient.getChildren(activePath);
+        assertTrue(activateAddrFiles.contains(node));
 
-        registry.doDeactivate(providerUrl);
-        deactivateList = zkClient.getChildren(inactivePath);
-        assertTrue(deactivateList.contains(node));
-        activateList = zkClient.getChildren(activePath);
-        assertFalse(activateList.contains(node));
+        registry.doDeactivate(providerUrl1);
+        deactivateAddrFiles = zkClient.getChildren(inactivePath);
+        assertTrue(deactivateAddrFiles.contains(node));
+        activateAddrFiles = zkClient.getChildren(activePath);
+        assertFalse(activateAddrFiles.contains(node));
 
-        registry.doUnregister(providerUrl);
-        deactivateList = zkClient.getChildren(inactivePath);
-        assertFalse(deactivateList.contains(node));
-        activateList = zkClient.getChildren(activePath);
-        assertFalse(activateList.contains(node));
+        registry.doUnregister(providerUrl1);
+        deactivateAddrFiles = zkClient.getChildren(inactivePath);
+        assertFalse(deactivateAddrFiles.contains(node));
+        activateAddrFiles = zkClient.getChildren(activePath);
+        assertFalse(activateAddrFiles.contains(node));
     }
 
     @Test
     public void testDiscoverProviders() {
-        registry.doRegister(providerUrl);
-        List<Url> results = registry.discoverProviders(clientUrl);
-        assertTrue(results.isEmpty());
+        registry.doRegister(providerUrl1);
+        registry.doRegister(providerUrl2);
+        List<Url> activeProviderUrls = registry.discoverActiveProviders(clientUrl);
+        assertTrue(activeProviderUrls.isEmpty());
 
-        registry.doActivate(providerUrl);
-        results = registry.discoverProviders(clientUrl);
-        assertTrue(CollectionUtils.isNotEmpty(results));
-        assertTrue(results.contains(providerUrl));
+        registry.doActivate(providerUrl1);
+        registry.doActivate(providerUrl2);
+        activeProviderUrls = registry.discoverActiveProviders(clientUrl);
+        assertEquals(2, activeProviderUrls.size());
+        assertTrue(activeProviderUrls.contains(providerUrl1));
+        assertTrue(activeProviderUrls.contains(providerUrl2));
     }
 
     @Test
@@ -139,15 +145,15 @@ public class ZookeeperRegistryTests {
     public void testSubscribeServiceListener() throws Exception {
         ServiceListener serviceListener = (refUrl, registryUrl, urls) -> {
             if (CollectionUtils.isNotEmpty(urls)) {
-                assertTrue(urls.contains(providerUrl));
+                assertTrue(urls.contains(providerUrl1));
             }
         };
         registry.subscribeServiceListener(clientUrl, serviceListener);
         assertTrue(containsServiceListener(clientUrl, serviceListener));
 
-        registry.doRegister(providerUrl);
+        registry.doRegister(providerUrl1);
         // add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener
-        registry.doActivate(providerUrl);
+        registry.doActivate(providerUrl1);
         Thread.sleep(2000);
 
         registry.unsubscribeServiceListener(clientUrl, serviceListener);
@@ -193,15 +199,15 @@ public class ZookeeperRegistryTests {
     public void testSubscribe() throws InterruptedException {
         NotifyListener notifyListener = (registryUrl, urls) -> {
             if (CollectionUtils.isNotEmpty(urls)) {
-                assertTrue(urls.contains(providerUrl));
+                assertTrue(urls.contains(providerUrl1));
             }
         };
         registry.subscribe(clientUrl, notifyListener);
         assertTrue(containsSubscribeListener(clientUrl, notifyListener));
 
-        registry.doRegister(providerUrl);
+        registry.doRegister(providerUrl1);
         // add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener
-        registry.doActivate(providerUrl);
+        registry.doActivate(providerUrl1);
         Thread.sleep(2000);
 
         registry.unsubscribe(clientUrl, notifyListener);
