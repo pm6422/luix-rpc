@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface ServiceListener {
 
-    void onSubscribe(Url refUrl, Url registryUrl, List<Url> urls);
+    void onSubscribe(Url clientUrl, Url registryUrl, List<Url> providerUrls);
 
 }

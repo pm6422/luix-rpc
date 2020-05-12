@@ -161,7 +161,7 @@ public class ZookeeperRegistryTests {
     }
 
     private boolean containsServiceListener(Url clientUrl, ServiceListener serviceListener) {
-        return registry.getProviderListeners().get(clientUrl).containsKey(serviceListener);
+        return registry.getProviderListenersPerClientUrlMap().get(clientUrl).containsKey(serviceListener);
     }
 
     @Test
@@ -191,7 +191,7 @@ public class ZookeeperRegistryTests {
     }
 
     private boolean containsCommandListener(Url clientUrl, CommandListener commandListener) {
-        return registry.getCommandListeners().get(clientUrl).containsKey(commandListener);
+        return registry.getCommandListenersPerClientUrlMap().get(clientUrl).containsKey(commandListener);
     }
 
     @Test
@@ -215,6 +215,6 @@ public class ZookeeperRegistryTests {
     }
 
     private boolean containsSubscribeListener(Url clientUrl, NotifyListener notifyListener) {
-        return registry.getCommandServiceListenerCacheMap().get(clientUrl).getNotifyListeners().contains(notifyListener);
+        return registry.getCommandServiceListenerPerClientUrlMap().get(clientUrl).getNotifyListeners().contains(notifyListener);
     }
 }

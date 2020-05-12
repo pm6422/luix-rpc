@@ -22,7 +22,7 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * The subclass name
      */
-    protected String                           registryClassName           = this.getClass().getSimpleName();
+    protected String                           registryClassName                          = this.getClass().getSimpleName();
     /**
      * Registry url
      */
@@ -30,11 +30,11 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * Registered provider urls
      */
-    private   Set<Url>                         registeredProviderUrls      = new ConcurrentHashSet<>();
+    private   Set<Url>                         registeredProviderUrls                     = new ConcurrentHashSet<>();
     /**
      *
      */
-    private   Map<Url, Map<String, List<Url>>> subscribedCategoryResponses = new ConcurrentHashMap<>();
+    private   Map<Url, Map<String, List<Url>>> subscribedCategoryResponsesPerClientUrlMap = new ConcurrentHashMap<>();
 
     @Override
     public Url getRegistryUrl() {
@@ -47,8 +47,8 @@ public abstract class AbstractRegistry implements Registry {
     }
 
 
-    public AbstractRegistry(Url Url) {
-        this.registryUrl = Url.copy();
+    public AbstractRegistry(Url registryUrl) {
+        this.registryUrl = registryUrl;
         registerSwitcherListener();
     }
 
@@ -74,71 +74,71 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Register url to registry
+     * Register provider url to registry
      *
-     * @param url url
+     * @param providerUrl provider url
      */
     @Override
-    public void register(Url url) {
-        if (url == null) {
+    public void register(Url providerUrl) {
+        if (providerUrl == null) {
             log.warn("Url must NOT be null!");
             return;
         }
-        doRegister(removeUnnecessaryParams(url.copy()));
-        log.info("Registered the url [{}] to registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+        doRegister(removeUnnecessaryParams(providerUrl.copy()));
+        log.info("Registered the url [{}] to registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
         // Added it to the container after registered
-        registeredProviderUrls.add(url);
+        registeredProviderUrls.add(providerUrl);
         // Move the url to active node of registry if heartbeat switcher already open
         if (DefaultSwitcherService.getInstance().isOn(REGISTRY_HEARTBEAT_SWITCHER)) {
-            activate(url);
+            activate(providerUrl);
         }
     }
 
     /**
-     * Unregister url from registry
+     * Unregister provider url from registry
      *
-     * @param url url
+     * @param providerUrl provider url
      */
     @Override
-    public void unregister(Url url) {
-        if (url == null) {
+    public void unregister(Url providerUrl) {
+        if (providerUrl == null) {
             log.warn("Url must NOT be null!");
             return;
         }
-        doUnregister(removeUnnecessaryParams(url.copy()));
-        log.info("Unregistered the url [{}] from registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+        doUnregister(removeUnnecessaryParams(providerUrl.copy()));
+        log.info("Unregistered the url [{}] from registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
         // Removed it from the container after unregistered
-        registeredProviderUrls.remove(url);
+        registeredProviderUrls.remove(providerUrl);
     }
 
     /**
      * Register the url to 'active' node of registry
      *
-     * @param url url
+     * @param providerUrl provider url
      */
     @Override
-    public void activate(Url url) {
-        if (url != null) {
-            doActivate(removeUnnecessaryParams(url.copy()));
+    public void activate(Url providerUrl) {
+        if (providerUrl != null) {
+            doActivate(removeUnnecessaryParams(providerUrl.copy()));
         } else {
             doActivate(null);
         }
-        log.info("Activated the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+        log.info("Activated the url [{}] on registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
     }
 
     /**
      * Register the url to 'inactive' node of registry
      *
-     * @param url url
+     * @param providerUrl provider url
      */
     @Override
-    public void deactivate(Url url) {
-        if (url != null) {
-            doDeactivate(removeUnnecessaryParams(url.copy()));
+    public void deactivate(Url providerUrl) {
+        if (providerUrl != null) {
+            doDeactivate(removeUnnecessaryParams(providerUrl.copy()));
         } else {
             doDeactivate(null);
         }
-        log.info("Deactivated the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+        log.info("Deactivated the url [{}] on registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
     }
 
     /**
@@ -156,12 +156,12 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * Subscribe the url to specified listener todo: modify comments
      *
-     * @param url      client url
-     * @param listener listener
+     * @param clientUrl client url
+     * @param listener  listener
      */
     @Override
-    public void subscribe(Url url, NotifyListener listener) {
-        if (url == null) {
+    public void subscribe(Url clientUrl, NotifyListener listener) {
+        if (clientUrl == null) {
             log.warn("Url must NOT be null!");
             return;
         }
@@ -170,19 +170,19 @@ public abstract class AbstractRegistry implements Registry {
             return;
         }
         // TODO: url copy mechanism
-        doSubscribe(url, listener);
+        doSubscribe(clientUrl, listener);
         log.info("Subscribed the url [{}] to listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
     }
 
     /**
      * Unsubscribe the url from specified listener
      *
-     * @param url      url
-     * @param listener listener
+     * @param clientUrl provider url
+     * @param listener  listener
      */
     @Override
-    public void unsubscribe(Url url, NotifyListener listener) {
-        if (url == null) {
+    public void unsubscribe(Url clientUrl, NotifyListener listener) {
+        if (clientUrl == null) {
             log.warn("Url must NOT be null!");
             return;
         }
@@ -191,20 +191,20 @@ public abstract class AbstractRegistry implements Registry {
             return;
         }
         // TODO: url copy mechanism
-        doUnsubscribe(url, listener);
+        doUnsubscribe(clientUrl, listener);
         log.info("Unsubscribed the url [{}] from listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
     }
 
     @Override
-    public List<Url> discover(Url url) {
-        if (url == null) {
+    public List<Url> discover(Url clientUrl) {
+        if (clientUrl == null) {
             log.warn("Url must NOT be null!");
             return Collections.EMPTY_LIST;
         }
-        Url copy = url.copy();
+        Url copy = clientUrl.copy();
         List<Url> results = new ArrayList<>();
 
-        Map<String, List<Url>> categoryUrls = subscribedCategoryResponses.get(copy);
+        Map<String, List<Url>> categoryUrls = subscribedCategoryResponsesPerClientUrlMap.get(copy);
         if (MapUtils.isNotEmpty(categoryUrls)) {
             for (List<Url> Urls : categoryUrls.values()) {
                 for (Url tempUrl : Urls) {
@@ -223,7 +223,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     protected List<Url> getCachedUrls(Url url) {
-        Map<String, List<Url>> rsUrls = subscribedCategoryResponses.get(url);
+        Map<String, List<Url>> rsUrls = subscribedCategoryResponsesPerClientUrlMap.get(url);
         if (rsUrls == null || rsUrls.size() == 0) {
             return null;
         }
@@ -237,7 +237,7 @@ public abstract class AbstractRegistry implements Registry {
         return Urls;
     }
 
-    protected void notify(Url refUrl, NotifyListener listener, List<Url> urls) {
+    protected void notify(Url clientUrl, NotifyListener listener, List<Url> urls) {
         if (listener == null || urls == null) {
             return;
         }
@@ -251,10 +251,10 @@ public abstract class AbstractRegistry implements Registry {
             }
             oneNodeTypeUrls.add(sUrl);
         }
-        Map<String, List<Url>> cUrls = subscribedCategoryResponses.get(refUrl);
+        Map<String, List<Url>> cUrls = subscribedCategoryResponsesPerClientUrlMap.get(clientUrl);
         if (cUrls == null) {
-            subscribedCategoryResponses.putIfAbsent(refUrl, new ConcurrentHashMap<>());
-            cUrls = subscribedCategoryResponses.get(refUrl);
+            subscribedCategoryResponsesPerClientUrlMap.putIfAbsent(clientUrl, new ConcurrentHashMap<>());
+            cUrls = subscribedCategoryResponsesPerClientUrlMap.get(clientUrl);
         }
 
         // refresh local Urls cache

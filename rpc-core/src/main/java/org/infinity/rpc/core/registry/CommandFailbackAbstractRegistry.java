@@ -14,24 +14,24 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRegistry {
-    private Map<Url, CommandServiceListener> commandServiceListenerCacheMap = new ConcurrentHashMap<>();
+    private Map<Url, CommandServiceListener> commandServiceListenerPerClientUrlMap = new ConcurrentHashMap<>();
 
-    public CommandFailbackAbstractRegistry(Url url) {
-        super(url);
+    public CommandFailbackAbstractRegistry(Url registryUrl) {
+        super(registryUrl);
     }
 
-    public Map<Url, CommandServiceListener> getCommandServiceListenerCacheMap() {
-        return commandServiceListenerCacheMap;
+    public Map<Url, CommandServiceListener> getCommandServiceListenerPerClientUrlMap() {
+        return commandServiceListenerPerClientUrlMap;
     }
 
     /**
      * It contains the functionality of method subscribeServiceListener and subscribeCommandListener
      *
-     * @param url      client url
-     * @param listener notify listener
+     * @param clientUrl client url
+     * @param listener  notify listener
      */
-    protected void doSubscribe(Url url, final NotifyListener listener) {
-        Url urlCopy = url.copy();
+    protected void doSubscribe(Url clientUrl, final NotifyListener listener) {
+        Url urlCopy = clientUrl.copy();
         // Get or put command service listener from or to cache
         CommandServiceListener commandServiceListener = getCommandServiceListener(urlCopy);
         // Add notify listener to command service listener
@@ -46,37 +46,37 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
         if (CollectionUtils.isNotEmpty(urls)) {
             this.notify(urlCopy, listener, urls);
         }
-        log.info("Subscribed the listener for the url [{}]", url);
+        log.info("Subscribed the listener for the url [{}]", clientUrl);
     }
 
     /**
      * Unsubscribe the service and command listener
      *
-     * @param url      url
-     * @param listener notify listener
+     * @param clientUrl client url
+     * @param listener  notify listener
      */
-    protected void doUnsubscribe(Url url, NotifyListener listener) {
-        Url urlCopy = url.copy();
-        CommandServiceListener commandServiceListener = commandServiceListenerCacheMap.get(urlCopy);
+    protected void doUnsubscribe(Url clientUrl, NotifyListener listener) {
+        Url urlCopy = clientUrl.copy();
+        CommandServiceListener commandServiceListener = commandServiceListenerPerClientUrlMap.get(urlCopy);
         // Remove notify listener from command service listener
         commandServiceListener.removeNotifyListener(listener);
         // Unsubscribe service listener
         unsubscribeServiceListener(urlCopy, commandServiceListener);
         // Unsubscribe command listener
         unsubscribeCommandListener(urlCopy, commandServiceListener);
-        log.info("Unsubscribed the listener for the url [{}]", url);
+        log.info("Unsubscribed the listener for the url [{}]", clientUrl);
     }
 
     /**
      * Discover the provider or command url
      *
-     * @param url url
+     * @param clientUrl url
      * @return
      */
-    protected List<Url> doDiscover(Url url) {
+    protected List<Url> doDiscover(Url clientUrl) {
         List<Url> urls;
 
-        Url urlCopy = url.copy();
+        Url urlCopy = clientUrl.copy();
         // Read command json content of specified url
         String commandStr = readCommand(urlCopy);
         RpcCommand rpcCommand = null;
@@ -91,10 +91,10 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
             // 在subscribeCommon时，可能订阅完马上就notify，导致首次notify指令时，可能还有其他service没有完成订阅，
             // 此处先对manager更新指令，避免首次订阅无效的问题。
             commandServiceListener.setRpcCommandCache(commandStr);
-            log.info("Discovered the command [{}] for url [{}]", commandStr, url);
+            log.info("Discovered the command [{}] for url [{}]", commandStr, clientUrl);
         } else {
             urls = discoverActiveProviders(urlCopy);
-            log.info("Discovered the provider urls [{}] for url [{}]", urls, url);
+            log.info("Discovered the provider urls [{}] for url [{}]", urls, clientUrl);
         }
         return urls;
     }
@@ -102,15 +102,15 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
     /**
      * Get or put command service listener from or to cache
      *
-     * @param url client url
+     * @param clientUrl client url
      * @return command service listener
      */
-    private CommandServiceListener getCommandServiceListener(Url url) {
-        CommandServiceListener manager = commandServiceListenerCacheMap.get(url);
+    private CommandServiceListener getCommandServiceListener(Url clientUrl) {
+        CommandServiceListener manager = commandServiceListenerPerClientUrlMap.get(clientUrl);
         if (manager == null) {
             // Pass the specified registry instance to CommandServiceManager, e.g, ZookeeperRegistry
-            manager = new CommandServiceListener(url, this);
-            CommandServiceListener serviceManager = commandServiceListenerCacheMap.putIfAbsent(url, manager);
+            manager = new CommandServiceListener(clientUrl, this);
+            CommandServiceListener serviceManager = commandServiceListenerPerClientUrlMap.putIfAbsent(clientUrl, manager);
             if (serviceManager != null) {
                 // Key exists in map, return old data
                 manager = serviceManager;
@@ -133,15 +133,15 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
         return finalResult;
     }
 
-    protected abstract void subscribeServiceListener(Url url, ServiceListener listener);
+    protected abstract void subscribeServiceListener(Url clientUrl, ServiceListener listener);
 
-    protected abstract void unsubscribeServiceListener(Url url, ServiceListener listener);
+    protected abstract void unsubscribeServiceListener(Url clientUrl, ServiceListener listener);
 
-    protected abstract void subscribeCommandListener(Url url, CommandListener listener);
+    protected abstract void subscribeCommandListener(Url clientUrl, CommandListener listener);
 
-    protected abstract void unsubscribeCommandListener(Url url, CommandListener listener);
+    protected abstract void unsubscribeCommandListener(Url clientUrl, CommandListener listener);
 
-    protected abstract List<Url> discoverActiveProviders(Url url);
+    protected abstract List<Url> discoverActiveProviders(Url clientUrl);
 
-    protected abstract String readCommand(Url url);
+    protected abstract String readCommand(Url clientUrl);
 }

@@ -20,10 +20,10 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public abstract class FailbackAbstractRegistry extends AbstractRegistry {
 
-    private Set<Url>                                    failedRegisteredUrl   = new ConcurrentHashSet<>();
-    private Set<Url>                                    failedUnregisteredUrl = new ConcurrentHashSet<>();
-    private Map<Url, ConcurrentHashSet<NotifyListener>> failedSubscription    = new ConcurrentHashMap<>();
-    private Map<Url, ConcurrentHashSet<NotifyListener>> failedUnsubscription  = new ConcurrentHashMap<>();
+    private Set<Url>                                    failedRegisteredUrl                 = new ConcurrentHashSet<>();
+    private Set<Url>                                    failedUnregisteredUrl               = new ConcurrentHashSet<>();
+    private Map<Url, ConcurrentHashSet<NotifyListener>> failedSubscriptionPerClientUrlMap   = new ConcurrentHashMap<>();
+    private Map<Url, ConcurrentHashSet<NotifyListener>> failedUnsubscriptionPerClientUrlMap = new ConcurrentHashMap<>();
 
     /**
      * A retry single thread pool can reconnect registry periodically
@@ -38,18 +38,18 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         });
     }
 
-    public FailbackAbstractRegistry(Url url) {
-        super(url);
-        scheduleRetry(url);
+    public FailbackAbstractRegistry(Url registryUrl) {
+        super(registryUrl);
+        scheduleRetry(registryUrl);
     }
 
     /**
-     * Schedule the retry attempt periodically
+     * Schedule the retry registration and subscription process periodically
      *
-     * @param url url
+     * @param registryUrl registry url
      */
-    private void scheduleRetry(Url url) {
-        long retryInterval = url.getIntParameter(Url.PARAM_RETRY_INTERVAL);
+    private void scheduleRetry(Url registryUrl) {
+        long retryInterval = registryUrl.getIntParameter(Url.PARAM_RETRY_INTERVAL);
         // Retry to connect registry at retry interval
         retryThreadPool.scheduleAtFixedRate(() -> {
             // Do retry task
@@ -99,19 +99,19 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     }
 
     private void doRetryFailedSubscription() {
-        if (MapUtils.isEmpty(failedSubscription)) {
+        if (MapUtils.isEmpty(failedSubscriptionPerClientUrlMap)) {
             return;
         }
         // Do the clean empty value task
-        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedSubscription.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedSubscriptionPerClientUrlMap.entrySet()) {
             if (CollectionUtils.isEmpty(entry.getValue())) {
-                failedSubscription.remove(entry.getKey());
+                failedSubscriptionPerClientUrlMap.remove(entry.getKey());
             }
         }
-        if (MapUtils.isEmpty(failedSubscription)) {
+        if (MapUtils.isEmpty(failedSubscriptionPerClientUrlMap)) {
             return;
         }
-        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedSubscription.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedSubscriptionPerClientUrlMap.entrySet()) {
             Url url = entry.getKey();
             Iterator<NotifyListener> iterator = entry.getValue().iterator();
             while (iterator.hasNext()) {
@@ -129,19 +129,19 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     }
 
     private void doRetryFailedUnsubscription() {
-        if (MapUtils.isEmpty(failedUnsubscription)) {
+        if (MapUtils.isEmpty(failedUnsubscriptionPerClientUrlMap)) {
             return;
         }
         // Do the clean empty value task
-        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedUnsubscription.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedUnsubscriptionPerClientUrlMap.entrySet()) {
             if (CollectionUtils.isEmpty(entry.getValue())) {
-                failedUnsubscription.remove(entry.getKey());
+                failedUnsubscriptionPerClientUrlMap.remove(entry.getKey());
             }
         }
-        if (MapUtils.isEmpty(failedUnsubscription)) {
+        if (MapUtils.isEmpty(failedUnsubscriptionPerClientUrlMap)) {
             return;
         }
-        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedUnsubscription.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedUnsubscriptionPerClientUrlMap.entrySet()) {
             Url url = entry.getKey();
             Iterator<NotifyListener> iterator = entry.getValue().iterator();
             while (iterator.hasNext()) {
@@ -161,80 +161,81 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     /**
      * Register the url to registry
      *
-     * @param url url
+     * @param providerUrl url
      */
     @Override
-    public void register(Url url) {
-        failedRegisteredUrl.remove(url);
-        failedUnregisteredUrl.remove(url);
+    public void register(Url providerUrl) {
+        failedRegisteredUrl.remove(providerUrl);
+        failedUnregisteredUrl.remove(providerUrl);
 
         try {
-            super.register(url);
+            super.register(providerUrl);
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
-            if (isCheckingUrls(getRegistryUrl(), url)) {
-                throw new RuntimeException(MessageFormat.format("Failed to register the url [{0}] to registry [{1}] by using [{2}]", url, getRegistryUrl(), registryClassName), e);
+            if (isCheckingUrls(getRegistryUrl(), providerUrl)) {
+                throw new RuntimeException(MessageFormat.format("Failed to register the url [{0}] to registry [{1}] by using [{2}]", providerUrl, getRegistryUrl(), registryClassName), e);
             }
-            failedRegisteredUrl.add(url);
+            failedRegisteredUrl.add(providerUrl);
         }
     }
 
     /**
      * Unregister the url from registry
      *
-     * @param url url
+     * @param providerUrl url
      */
     @Override
-    public void unregister(Url url) {
-        failedRegisteredUrl.remove(url);
-        failedUnregisteredUrl.remove(url);
+    public void unregister(Url providerUrl) {
+        failedRegisteredUrl.remove(providerUrl);
+        failedUnregisteredUrl.remove(providerUrl);
 
         try {
-            super.unregister(url);
+            super.unregister(providerUrl);
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
-            if (isCheckingUrls(getRegistryUrl(), url)) {
-                throw new RuntimeException(MessageFormat.format("Failed to unregister the url [{0}] to registry [{1}] by using [{2}]", url, getRegistryUrl(), registryClassName), e);
+            if (isCheckingUrls(getRegistryUrl(), providerUrl)) {
+                throw new RuntimeException(MessageFormat.format("Failed to unregister the url [{0}] to registry [{1}] by using [{2}]", providerUrl, getRegistryUrl(), registryClassName), e);
             }
-            failedUnregisteredUrl.add(url);
+            failedUnregisteredUrl.add(providerUrl);
         }
     }
 
     /**
      * It contains the functionality of method subscribeServiceListener and subscribeCommandListener
-     * @param url client url
-     * @param listener notify listener
+     *
+     * @param clientUrl client url
+     * @param listener  notify listener
      */
     @Override
-    public void subscribe(Url url, NotifyListener listener) {
-        removeFailedListener(url, listener);
+    public void subscribe(Url clientUrl, NotifyListener listener) {
+        removeFailedListener(clientUrl, listener);
 
         try {
-            super.subscribe(url, listener);
+            super.subscribe(clientUrl, listener);
         } catch (Exception e) {
-            List<Url> cachedUrls = super.getCachedUrls(url);
+            List<Url> cachedUrls = super.getCachedUrls(clientUrl);
             if (CollectionUtils.isNotEmpty(cachedUrls)) {
                 listener.onSubscribe(getRegistryUrl(), cachedUrls);
-            } else if (isCheckingUrls(getRegistryUrl(), url)) {
-                log.warn(String.format("[%s] false to subscribe %s from %s", registryClassName, url, getRegistryUrl()), e);
-                throw new RuntimeException(String.format("[%s] false to subscribe %s from %s", registryClassName, url, getRegistryUrl()), e);
+            } else if (isCheckingUrls(getRegistryUrl(), clientUrl)) {
+                log.warn(String.format("[%s] false to subscribe %s from %s", registryClassName, clientUrl, getRegistryUrl()), e);
+                throw new RuntimeException(String.format("[%s] false to subscribe %s from %s", registryClassName, clientUrl, getRegistryUrl()), e);
             }
-            addToFailedMap(failedSubscription, url, listener);
+            addToFailedMap(failedSubscriptionPerClientUrlMap, clientUrl, listener);
         }
     }
 
     @Override
-    public void unsubscribe(Url url, NotifyListener listener) {
-        removeFailedListener(url, listener);
+    public void unsubscribe(Url clientUrl, NotifyListener listener) {
+        removeFailedListener(clientUrl, listener);
 
         try {
-            super.unsubscribe(url, listener);
+            super.unsubscribe(clientUrl, listener);
         } catch (Exception e) {
-            if (isCheckingUrls(getRegistryUrl(), url)) {
-                throw new RuntimeException(String.format("[%s] false to unsubscribe %s from %s", registryClassName, url, getRegistryUrl()),
+            if (isCheckingUrls(getRegistryUrl(), clientUrl)) {
+                throw new RuntimeException(String.format("[%s] false to unsubscribe %s from %s", registryClassName, clientUrl, getRegistryUrl()),
                         e);
             }
-            addToFailedMap(failedUnsubscription, url, listener);
+            addToFailedMap(failedUnsubscriptionPerClientUrlMap, clientUrl, listener);
         }
     }
 
@@ -247,33 +248,33 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         return true;
     }
 
-    private void removeFailedListener(Url url, NotifyListener listener) {
-        Set<NotifyListener> listeners = failedSubscription.get(url);
+    private void removeFailedListener(Url clientUrl, NotifyListener listener) {
+        Set<NotifyListener> listeners = failedSubscriptionPerClientUrlMap.get(clientUrl);
         if (CollectionUtils.isNotEmpty(listeners)) {
             listeners.remove(listener);
         }
-        listeners = failedUnsubscription.get(url);
+        listeners = failedUnsubscriptionPerClientUrlMap.get(clientUrl);
         if (CollectionUtils.isNotEmpty(listeners)) {
             listeners.remove(listener);
         }
     }
 
     @Override
-    public List<Url> discover(Url url) {
+    public List<Url> discover(Url clientUrl) {
         try {
-            return super.discover(url);
+            return super.discover(clientUrl);
         } catch (Exception e) {
             // 如果discover失败，返回一个empty list吧，毕竟是个下行动作，
-            log.warn(String.format("Failed to discover url:%s in registry (%s)", url, getRegistryUrl()), e);
+            log.warn(String.format("Failed to discover url:%s in registry (%s)", clientUrl, getRegistryUrl()), e);
             return Collections.EMPTY_LIST;
         }
     }
 
-    private void addToFailedMap(Map<Url, ConcurrentHashSet<NotifyListener>> failedMap, Url url, NotifyListener listener) {
-        Set<NotifyListener> listeners = failedMap.get(url);
+    private void addToFailedMap(Map<Url, ConcurrentHashSet<NotifyListener>> failedMap, Url clientUrl, NotifyListener listener) {
+        Set<NotifyListener> listeners = failedMap.get(clientUrl);
         if (listeners == null) {
-            failedMap.putIfAbsent(url, new ConcurrentHashSet<NotifyListener>());
-            listeners = failedMap.get(url);
+            failedMap.putIfAbsent(clientUrl, new ConcurrentHashSet<>());
+            listeners = failedMap.get(clientUrl);
         }
         listeners.add(listener);
     }
