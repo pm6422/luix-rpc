@@ -402,9 +402,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 zkChildListener = new IZkChildListener() {
                     @Override
                     public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
-                        List<String> childs = ListUtils.emptyIfNull(currentChilds);
-                        serviceListener.onSubscribe(clientUrl, getRegistryUrl(), readProviderUrls(childs, parentPath, clientUrl));
-                        log.info("Provider address file list changed with current value {} under path [{}]", childs.toString(), parentPath);
+                        List<String> addrFiles = ListUtils.emptyIfNull(currentChilds);
+                        serviceListener.onSubscribe(clientUrl, getRegistryUrl(), readProviderUrls(addrFiles, parentPath, clientUrl));
+                        log.info("Provider address file list changed with current value {} under path [{}]", addrFiles.toString(), parentPath);
                     }
                 };
                 childChangeListeners.putIfAbsent(serviceListener, zkChildListener);

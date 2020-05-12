@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * command service manager for a url
  */
 @Slf4j
-public class CommandServiceListener implements CommandListener, ServiceListener {
+public class CommandServiceListener implements ServiceListener, CommandListener {
 
     public static final String  MOTAN_COMMAND_SWITCHER = "feature.motanrpc.command.enable";
     private static      Pattern IP_PATTERN             = Pattern.compile("^!?[0-9.]*\\*?$");
@@ -99,6 +99,8 @@ public class CommandServiceListener implements CommandListener, ServiceListener 
     }
 
     /**
+     * Service listener event
+     *
      * @param clientUrl    client url
      * @param registryUrl  registry url
      * @param providerUrls provider urls
@@ -127,6 +129,8 @@ public class CommandServiceListener implements CommandListener, ServiceListener 
     }
 
     /**
+     * Command listener event
+     *
      * @param clientUrl
      * @param commandString
      */
