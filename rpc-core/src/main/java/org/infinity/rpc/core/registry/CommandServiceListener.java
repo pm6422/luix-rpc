@@ -56,19 +56,19 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     /**
      *
      */
-    private          Set<NotifyListener>    notifyListeners            = new ConcurrentHashSet<>();
+    private          Set<NotifyListener>             notifyListeners            = new ConcurrentHashSet<>();
     /**
      * Active provider urls per group map
      */
-    private          Map<String, List<Url>> activeProviderUrlsPerGroup = new ConcurrentHashMap<>();
+    private          Map<String, List<Url>>          activeProviderUrlsPerGroup = new ConcurrentHashMap<>();
     /**
      *
      */
-    private volatile RpcCommand             rpcCommandCache;
+    private volatile RpcCommand                      rpcCommandCache;
     /**
      *
      */
-    private          String                          rpcCommandStrCache            = "";
+    private          String                          rpcCommandStrCache         = "";
 
     public CommandServiceListener(Url clientUrl, CommandFailbackAbstractRegistry registry) {
         this.clientUrl = clientUrl;
