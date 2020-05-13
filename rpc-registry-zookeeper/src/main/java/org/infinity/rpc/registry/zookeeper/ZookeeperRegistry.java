@@ -32,11 +32,11 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 @ThreadSafe
 public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implements Cleanable {
-    private final Lock                                                           clientLock                       = new ReentrantLock();
-    private final Lock                                                           serverLock                       = new ReentrantLock();
-    private final Set<Url>                                                       availableServiceUrls             = new ConcurrentHashSet<>();
-    private final Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> providerListenersPerClientUrlMap = new ConcurrentHashMap<>();
-    private final Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>  commandListenersPerClientUrlMap  = new ConcurrentHashMap<>();
+    private final Lock                                                           clientLock                    = new ReentrantLock();
+    private final Lock                                                           serverLock                    = new ReentrantLock();
+    private final Set<Url>                                                       availableServiceUrls          = new ConcurrentHashSet<>();
+    private final Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> providerListenersPerClientUrl = new ConcurrentHashMap<>();
+    private final Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>  commandListenersPerClientUrl  = new ConcurrentHashMap<>();
     private       ZkClient                                                       zkClient;
 
     @Event
@@ -75,8 +75,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      *
      * @return provider listeners
      */
-    Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> getProviderListenersPerClientUrlMap() {
-        return providerListenersPerClientUrlMap;
+    Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> getProviderListenersPerClientUrl() {
+        return providerListenersPerClientUrl;
     }
 
     /**
@@ -84,8 +84,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      *
      * @return command listeners
      */
-    Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>> getCommandListenersPerClientUrlMap() {
-        return commandListenersPerClientUrlMap;
+    Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>> getCommandListenersPerClientUrl() {
+        return commandListenersPerClientUrl;
     }
 
     /**
@@ -125,10 +125,10 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     private void reregisterListeners() {
         try {
             clientLock.lock();
-            if (MapUtils.isNotEmpty(providerListenersPerClientUrlMap)) {
-                for (Map.Entry<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> entry : providerListenersPerClientUrlMap.entrySet()) {
+            if (MapUtils.isNotEmpty(providerListenersPerClientUrl)) {
+                for (Map.Entry<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> entry : providerListenersPerClientUrl.entrySet()) {
                     Url url = entry.getKey();
-                    ConcurrentHashMap<ServiceListener, IZkChildListener> childChangeListeners = providerListenersPerClientUrlMap.get(url);
+                    ConcurrentHashMap<ServiceListener, IZkChildListener> childChangeListeners = providerListenersPerClientUrl.get(url);
                     if (MapUtils.isNotEmpty(childChangeListeners)) {
                         for (Map.Entry<ServiceListener, IZkChildListener> e : childChangeListeners.entrySet()) {
                             subscribeServiceListener(url, e.getKey());
@@ -137,10 +137,10 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 }
                 log.info("Re-registered the provider listeners after a new zookeeper session");
             }
-            if (MapUtils.isNotEmpty(commandListenersPerClientUrlMap)) {
-                for (Map.Entry<Url, ConcurrentHashMap<CommandListener, IZkDataListener>> entry : commandListenersPerClientUrlMap.entrySet()) {
+            if (MapUtils.isNotEmpty(commandListenersPerClientUrl)) {
+                for (Map.Entry<Url, ConcurrentHashMap<CommandListener, IZkDataListener>> entry : commandListenersPerClientUrl.entrySet()) {
                     Url url = entry.getKey();
-                    ConcurrentHashMap<CommandListener, IZkDataListener> dataChangeListeners = commandListenersPerClientUrlMap.get(url);
+                    ConcurrentHashMap<CommandListener, IZkDataListener> dataChangeListeners = commandListenersPerClientUrl.get(url);
                     if (MapUtils.isNotEmpty(dataChangeListeners)) {
                         for (Map.Entry<CommandListener, IZkDataListener> e : dataChangeListeners.entrySet()) {
                             subscribeCommandListener(url, e.getKey());
@@ -391,10 +391,10 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     protected void subscribeServiceListener(Url clientUrl, ServiceListener serviceListener) {
         try {
             clientLock.lock();
-            Map<ServiceListener, IZkChildListener> childChangeListeners = providerListenersPerClientUrlMap.get(clientUrl);
+            Map<ServiceListener, IZkChildListener> childChangeListeners = providerListenersPerClientUrl.get(clientUrl);
             if (childChangeListeners == null) {
-                providerListenersPerClientUrlMap.putIfAbsent(clientUrl, new ConcurrentHashMap<>());
-                childChangeListeners = providerListenersPerClientUrlMap.get(clientUrl);
+                providerListenersPerClientUrl.putIfAbsent(clientUrl, new ConcurrentHashMap<>());
+                childChangeListeners = providerListenersPerClientUrl.get(clientUrl);
             }
             IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
             if (zkChildListener == null) {
@@ -439,7 +439,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     protected void unsubscribeServiceListener(Url clientUrl, ServiceListener serviceListener) {
         try {
             clientLock.lock();
-            Map<ServiceListener, IZkChildListener> childChangeListeners = providerListenersPerClientUrlMap.get(clientUrl);
+            Map<ServiceListener, IZkChildListener> childChangeListeners = providerListenersPerClientUrl.get(clientUrl);
             if (childChangeListeners == null) {
                 return;
             }
@@ -467,10 +467,10 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     protected void subscribeCommandListener(Url clientUrl, final CommandListener commandListener) {
         try {
             clientLock.lock();
-            Map<CommandListener, IZkDataListener> dataChangeListeners = commandListenersPerClientUrlMap.get(clientUrl);
+            Map<CommandListener, IZkDataListener> dataChangeListeners = commandListenersPerClientUrl.get(clientUrl);
             if (dataChangeListeners == null) {
-                commandListenersPerClientUrlMap.putIfAbsent(clientUrl, new ConcurrentHashMap<>());
-                dataChangeListeners = commandListenersPerClientUrlMap.get(clientUrl);
+                commandListenersPerClientUrl.putIfAbsent(clientUrl, new ConcurrentHashMap<>());
+                dataChangeListeners = commandListenersPerClientUrl.get(clientUrl);
             }
             IZkDataListener zkDataListener = dataChangeListeners.get(commandListener);
             if (zkDataListener == null) {
@@ -512,7 +512,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     protected void unsubscribeCommandListener(Url clientUrl, CommandListener commandListener) {
         try {
             clientLock.lock();
-            Map<CommandListener, IZkDataListener> dataChangeListeners = commandListenersPerClientUrlMap.get(clientUrl);
+            Map<CommandListener, IZkDataListener> dataChangeListeners = commandListenersPerClientUrl.get(clientUrl);
             if (dataChangeListeners != null) {
                 IZkDataListener zkDataListener = dataChangeListeners.get(commandListener);
                 if (zkDataListener != null) {

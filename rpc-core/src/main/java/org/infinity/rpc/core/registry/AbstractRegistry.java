@@ -22,7 +22,7 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * The subclass name
      */
-    protected String                           registryClassName                          = this.getClass().getSimpleName();
+    protected String                           registryClassName                       = this.getClass().getSimpleName();
     /**
      * Registry url
      */
@@ -30,11 +30,11 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * Registered provider urls
      */
-    private   Set<Url>                         registeredProviderUrls                     = new ConcurrentHashSet<>();
+    private   Set<Url>                         registeredProviderUrls                  = new ConcurrentHashSet<>();
     /**
      *
      */
-    private   Map<Url, Map<String, List<Url>>> subscribedCategoryResponsesPerClientUrlMap = new ConcurrentHashMap<>();
+    private   Map<Url, Map<String, List<Url>>> subscribedCategoryResponsesPerClientUrl = new ConcurrentHashMap<>();
 
     @Override
     public Url getRegistryUrl() {
@@ -204,7 +204,7 @@ public abstract class AbstractRegistry implements Registry {
         Url copy = clientUrl.copy();
         List<Url> results = new ArrayList<>();
 
-        Map<String, List<Url>> categoryUrls = subscribedCategoryResponsesPerClientUrlMap.get(copy);
+        Map<String, List<Url>> categoryUrls = subscribedCategoryResponsesPerClientUrl.get(copy);
         if (MapUtils.isNotEmpty(categoryUrls)) {
             for (List<Url> Urls : categoryUrls.values()) {
                 for (Url tempUrl : Urls) {
@@ -223,7 +223,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     protected List<Url> getCachedUrls(Url url) {
-        Map<String, List<Url>> rsUrls = subscribedCategoryResponsesPerClientUrlMap.get(url);
+        Map<String, List<Url>> rsUrls = subscribedCategoryResponsesPerClientUrl.get(url);
         if (rsUrls == null || rsUrls.size() == 0) {
             return null;
         }
@@ -251,10 +251,10 @@ public abstract class AbstractRegistry implements Registry {
             }
             oneNodeTypeUrls.add(sUrl);
         }
-        Map<String, List<Url>> cUrls = subscribedCategoryResponsesPerClientUrlMap.get(clientUrl);
+        Map<String, List<Url>> cUrls = subscribedCategoryResponsesPerClientUrl.get(clientUrl);
         if (cUrls == null) {
-            subscribedCategoryResponsesPerClientUrlMap.putIfAbsent(clientUrl, new ConcurrentHashMap<>());
-            cUrls = subscribedCategoryResponsesPerClientUrlMap.get(clientUrl);
+            subscribedCategoryResponsesPerClientUrl.putIfAbsent(clientUrl, new ConcurrentHashMap<>());
+            cUrls = subscribedCategoryResponsesPerClientUrl.get(clientUrl);
         }
 
         // refresh local Urls cache

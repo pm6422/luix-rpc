@@ -56,15 +56,15 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     /**
      *
      */
-    private          Set<NotifyListener>             notifyListeners               = new ConcurrentHashSet<>();
+    private          Set<NotifyListener>    notifyListeners            = new ConcurrentHashSet<>();
     /**
      * Active provider urls per group map
      */
-    private          Map<String, List<Url>>          activeProviderUrlsPerGroupMap = new ConcurrentHashMap<>();
+    private          Map<String, List<Url>> activeProviderUrlsPerGroup = new ConcurrentHashMap<>();
     /**
      *
      */
-    private volatile RpcCommand                      rpcCommandCache;
+    private volatile RpcCommand             rpcCommandCache;
     /**
      *
      */
@@ -112,7 +112,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
         }
 
         String group = clientUrl.getParameter(Url.PARAM_GROUP);
-        activeProviderUrlsPerGroupMap.put(group, providerUrls);
+        activeProviderUrlsPerGroup.put(group, providerUrls);
 
         List<Url> providerUrlList = new ArrayList<>();
         if (rpcCommandCache != null) {
@@ -167,10 +167,10 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
             }
 
             // 指令变化时，删除不再有效的缓存，取消订阅不再有效的group
-            Set<String> groupKeys = activeProviderUrlsPerGroupMap.keySet();
+            Set<String> groupKeys = activeProviderUrlsPerGroup.keySet();
             for (String gk : groupKeys) {
                 if (!weights.containsKey(gk)) {
-                    activeProviderUrlsPerGroupMap.remove(gk);
+                    activeProviderUrlsPerGroup.remove(gk);
                     Url urlTemp = urlCopy.copy();
                     urlTemp.addParameter(Url.PARAM_GROUP, gk);
                     registry.unsubscribeServiceListener(urlTemp, this);
@@ -338,8 +338,8 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
         }
 
         for (String key : weights.keySet()) {
-            if (activeProviderUrlsPerGroupMap.containsKey(key)) {
-                finalResult.addAll(activeProviderUrlsPerGroupMap.get(key));
+            if (activeProviderUrlsPerGroup.containsKey(key)) {
+                finalResult.addAll(activeProviderUrlsPerGroup.get(key));
             } else {
                 Url urlTemp = url.copy();
                 urlTemp.addParameter(Url.PARAM_GROUP, key);
@@ -358,10 +358,10 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
      */
     private List<Url> discoverActiveProvidersByGroup(Url clientUrl) {
         String group = clientUrl.getParameter(Url.PARAM_GROUP);
-        List<Url> providerUrls = activeProviderUrlsPerGroupMap.get(group);
+        List<Url> providerUrls = activeProviderUrlsPerGroup.get(group);
         if (providerUrls == null) {
             providerUrls = registry.discoverActiveProviders(clientUrl);
-            activeProviderUrlsPerGroupMap.put(group, providerUrls);
+            activeProviderUrlsPerGroup.put(group, providerUrls);
         }
         log.info("Discovered url by param group of url [{}]", clientUrl);
         return providerUrls;

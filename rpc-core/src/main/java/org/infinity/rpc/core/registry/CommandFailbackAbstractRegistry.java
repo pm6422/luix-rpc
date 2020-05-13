@@ -14,14 +14,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRegistry {
-    private Map<Url, CommandServiceListener> commandServiceListenerPerClientUrlMap = new ConcurrentHashMap<>();
+    private Map<Url, CommandServiceListener> commandServiceListenerPerClientUrl = new ConcurrentHashMap<>();
 
     public CommandFailbackAbstractRegistry(Url registryUrl) {
         super(registryUrl);
     }
 
-    public Map<Url, CommandServiceListener> getCommandServiceListenerPerClientUrlMap() {
-        return commandServiceListenerPerClientUrlMap;
+    public Map<Url, CommandServiceListener> getCommandServiceListenerPerClientUrl() {
+        return commandServiceListenerPerClientUrl;
     }
 
     /**
@@ -57,7 +57,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
      */
     protected void doUnsubscribe(Url clientUrl, NotifyListener listener) {
         Url urlCopy = clientUrl.copy();
-        CommandServiceListener commandServiceListener = commandServiceListenerPerClientUrlMap.get(urlCopy);
+        CommandServiceListener commandServiceListener = commandServiceListenerPerClientUrl.get(urlCopy);
         // Remove notify listener from command service listener
         commandServiceListener.removeNotifyListener(listener);
         // Unsubscribe service listener
@@ -106,11 +106,11 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
      * @return command service listener
      */
     private CommandServiceListener getCommandServiceListener(Url clientUrl) {
-        CommandServiceListener listener = commandServiceListenerPerClientUrlMap.get(clientUrl);
+        CommandServiceListener listener = commandServiceListenerPerClientUrl.get(clientUrl);
         if (listener == null) {
             // Pass the specified registry instance to CommandServiceManager, e.g, ZookeeperRegistry
             listener = new CommandServiceListener(clientUrl, this);
-            CommandServiceListener serviceManager = commandServiceListenerPerClientUrlMap.putIfAbsent(clientUrl, listener);
+            CommandServiceListener serviceManager = commandServiceListenerPerClientUrl.putIfAbsent(clientUrl, listener);
             if (serviceManager != null) {
                 // Key exists in map, return old data
                 listener = serviceManager;
