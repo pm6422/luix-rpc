@@ -20,8 +20,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.InputStream;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -219,8 +219,6 @@ public class ZookeeperRegistryTests {
         // Write command to zookeeper node, so command list changes will trigger the IZkDataListener
         zkClient.writeData(commandPath, command);
         Thread.sleep(2000);
-
-        zkClient.delete(commandPath);
 
         registry.unsubscribe(clientUrl, notifyListener);
         assertFalse(containsSubscribeListener(clientUrl, notifyListener));

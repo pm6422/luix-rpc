@@ -208,11 +208,13 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      */
     @Override
     public void subscribe(Url clientUrl, NotifyListener listener) {
+        // Remove failed listener from the set before subscribe
         removeFailedListener(clientUrl, listener);
 
         try {
             super.subscribe(clientUrl, listener);
         } catch (Exception e) {
+            // Add the failed listener to the set if exception occurred
             List<Url> cachedUrls = super.getCachedUrls(clientUrl);
             if (CollectionUtils.isNotEmpty(cachedUrls)) {
                 listener.onSubscribe(getRegistryUrl(), cachedUrls);

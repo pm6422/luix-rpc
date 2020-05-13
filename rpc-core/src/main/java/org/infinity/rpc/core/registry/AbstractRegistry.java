@@ -11,6 +11,7 @@ import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.switcher.SwitcherService.REGISTRY_HEARTBEAT_SWITCHER;
 
@@ -222,19 +223,16 @@ public abstract class AbstractRegistry implements Registry {
         return results;
     }
 
-    protected List<Url> getCachedUrls(Url url) {
-        Map<String, List<Url>> rsUrls = subscribedCategoryResponsesPerClientUrl.get(url);
-        if (rsUrls == null || rsUrls.size() == 0) {
-            return null;
+    protected List<Url> getCachedUrls(Url clientUrl) {
+        Map<String, List<Url>> urls = subscribedCategoryResponsesPerClientUrl.get(clientUrl);
+        if (MapUtils.isEmpty(urls)) {
+            return Collections.emptyList();
         }
-
-        List<Url> Urls = new ArrayList<>();
-        for (List<Url> us : rsUrls.values()) {
-            for (Url tempUrl : us) {
-                Urls.add(tempUrl.copy());
-            }
-        }
-        return Urls;
+        List<Url> results = urls.values()
+                .stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        return results;
     }
 
     protected void notify(Url clientUrl, NotifyListener listener, List<Url> urls) {
