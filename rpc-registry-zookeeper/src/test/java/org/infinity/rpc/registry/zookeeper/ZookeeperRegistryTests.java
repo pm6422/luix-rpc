@@ -168,7 +168,7 @@ public class ZookeeperRegistryTests {
     @Event
     public void testSubscribeCommandListener() throws Exception {
         String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
-        CommandListener commandListener = (refUrl, commandString) -> {
+        CommandListener commandListener = (clientUrl, commandString) -> {
             if (StringUtils.isNotEmpty(commandString)) {
                 assertTrue(commandString.equals(command));
             }
@@ -210,6 +210,17 @@ public class ZookeeperRegistryTests {
         // add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener
         registry.doActivate(providerUrl1);
         Thread.sleep(2000);
+
+        String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
+        String commandPath = ZookeeperUtils.getCommandPath(clientUrl);
+        if (!zkClient.exists(commandPath)) {
+            zkClient.createPersistent(commandPath, true);
+        }
+        // Write command to zookeeper node, so command list changes will trigger the IZkDataListener
+        zkClient.writeData(commandPath, command);
+        Thread.sleep(2000);
+
+        zkClient.delete(commandPath);
 
         registry.unsubscribe(clientUrl, notifyListener);
         assertFalse(containsSubscribeListener(clientUrl, notifyListener));

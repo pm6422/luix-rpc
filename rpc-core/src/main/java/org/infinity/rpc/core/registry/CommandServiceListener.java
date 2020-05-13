@@ -125,6 +125,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
 
         for (NotifyListener notifyListener : notifyListeners) {
             notifyListener.onSubscribe(registry.getRegistryUrl(), providerUrlList);
+            log.debug("Invoked event: {}", notifyListener);
         }
     }
 

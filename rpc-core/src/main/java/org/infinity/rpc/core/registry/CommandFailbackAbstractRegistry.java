@@ -106,17 +106,17 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
      * @return command service listener
      */
     private CommandServiceListener getCommandServiceListener(Url clientUrl) {
-        CommandServiceListener manager = commandServiceListenerPerClientUrlMap.get(clientUrl);
-        if (manager == null) {
+        CommandServiceListener listener = commandServiceListenerPerClientUrlMap.get(clientUrl);
+        if (listener == null) {
             // Pass the specified registry instance to CommandServiceManager, e.g, ZookeeperRegistry
-            manager = new CommandServiceListener(clientUrl, this);
-            CommandServiceListener serviceManager = commandServiceListenerPerClientUrlMap.putIfAbsent(clientUrl, manager);
+            listener = new CommandServiceListener(clientUrl, this);
+            CommandServiceListener serviceManager = commandServiceListenerPerClientUrlMap.putIfAbsent(clientUrl, listener);
             if (serviceManager != null) {
                 // Key exists in map, return old data
-                manager = serviceManager;
+                listener = serviceManager;
             }
         }
-        return manager;
+        return listener;
     }
 
     public List<Url> commandPreview(Url url, RpcCommand rpcCommand, String previewIP) {
