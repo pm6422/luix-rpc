@@ -235,12 +235,12 @@ public abstract class AbstractRegistry implements Registry {
         return results;
     }
 
-    protected void notify(Url clientUrl, NotifyListener listener, List<Url> urls) {
-        if (listener == null || urls == null) {
+    protected void notify(Url clientUrl, NotifyListener listener, List<Url> providerUrls) {
+        if (listener == null || CollectionUtils.isEmpty(providerUrls)) {
             return;
         }
         Map<String, List<Url>> nodeTypeUrlsInRs = new HashMap<>();
-        for (Url sUrl : urls) {
+        for (Url sUrl : providerUrls) {
             String nodeType = sUrl.getParameter(UrlParam.nodeType.getName(), UrlParam.nodeType.getValue());
             List<Url> oneNodeTypeUrls = nodeTypeUrlsInRs.get(nodeType);
             if (oneNodeTypeUrls == null) {

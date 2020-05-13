@@ -20,8 +20,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.InputStream;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Properties;
 
 import static org.junit.Assert.*;
 
@@ -197,6 +197,10 @@ public class ZookeeperRegistryTests {
     @Test
     @Event
     public void testSubscribe() throws InterruptedException {
+        registry.doRegister(providerUrl1);
+        // add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener
+        registry.doActivate(providerUrl1);
+
         NotifyListener notifyListener = (registryUrl, providerUrls) -> {
             if (CollectionUtils.isNotEmpty(providerUrls)) {
                 assertTrue(providerUrls.contains(providerUrl1));
@@ -206,9 +210,6 @@ public class ZookeeperRegistryTests {
         registry.subscribe(clientUrl, notifyListener);
         assertTrue(containsSubscribeListener(clientUrl, notifyListener));
 
-        registry.doRegister(providerUrl1);
-        // add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener
-        registry.doActivate(providerUrl1);
         Thread.sleep(2000);
 
         String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";

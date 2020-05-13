@@ -42,9 +42,9 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
         // Trigger onSubscribe method of commandServiceListener if data change event happens
         subscribeCommandListener(urlCopy, commandServiceListener);
 
-        List<Url> urls = doDiscover(urlCopy);
-        if (CollectionUtils.isNotEmpty(urls)) {
-            this.notify(urlCopy, listener, urls);
+        List<Url> providerUrls = doDiscover(urlCopy);
+        if (CollectionUtils.isNotEmpty(providerUrls)) {
+            this.notify(urlCopy, listener, providerUrls);
         }
         log.info("Subscribed the listener for the url [{}]", clientUrl);
     }
