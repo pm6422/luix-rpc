@@ -23,7 +23,7 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * The subclass name
      */
-    protected String                           registryClassName                       = this.getClass().getSimpleName();
+    protected String                           registryClassName       = this.getClass().getSimpleName();
     /**
      * Registry url
      */
@@ -31,11 +31,11 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * Registered provider urls
      */
-    private   Set<Url>                         registeredProviderUrls                  = new ConcurrentHashSet<>();
+    private   Set<Url>                         registeredProviderUrls  = new ConcurrentHashSet<>();
     /**
      *
      */
-    private   Map<Url, Map<String, List<Url>>> subscribedCategoryResponsesPerClientUrl = new ConcurrentHashMap<>();
+    private   Map<Url, Map<String, List<Url>>> urlsPerTypePerClientUrl = new ConcurrentHashMap<>();
 
     @Override
     public Url getRegistryUrl() {
@@ -205,7 +205,7 @@ public abstract class AbstractRegistry implements Registry {
         Url copy = clientUrl.copy();
         List<Url> results = new ArrayList<>();
 
-        Map<String, List<Url>> categoryUrls = subscribedCategoryResponsesPerClientUrl.get(copy);
+        Map<String, List<Url>> categoryUrls = urlsPerTypePerClientUrl.get(copy);
         if (MapUtils.isNotEmpty(categoryUrls)) {
             for (List<Url> Urls : categoryUrls.values()) {
                 for (Url tempUrl : Urls) {
@@ -224,7 +224,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     protected List<Url> getCachedUrls(Url clientUrl) {
-        Map<String, List<Url>> urls = subscribedCategoryResponsesPerClientUrl.get(clientUrl);
+        Map<String, List<Url>> urls = urlsPerTypePerClientUrl.get(clientUrl);
         if (MapUtils.isEmpty(urls)) {
             return Collections.emptyList();
         }
@@ -235,31 +235,32 @@ public abstract class AbstractRegistry implements Registry {
         return results;
     }
 
-    protected void notify(Url clientUrl, NotifyListener listener, List<Url> providerUrls) {
-        if (listener == null || CollectionUtils.isEmpty(providerUrls)) {
+    protected void notify(Url clientUrl, NotifyListener listener, List<Url> urls) {
+        if (listener == null || CollectionUtils.isEmpty(urls)) {
             return;
         }
-        Map<String, List<Url>> nodeTypeUrlsInRs = new HashMap<>();
-        for (Url sUrl : providerUrls) {
-            String nodeType = sUrl.getParameter(UrlParam.nodeType.getName(), UrlParam.nodeType.getValue());
-            List<Url> oneNodeTypeUrls = nodeTypeUrlsInRs.get(nodeType);
-            if (oneNodeTypeUrls == null) {
-                nodeTypeUrlsInRs.put(nodeType, new ArrayList<Url>());
-                oneNodeTypeUrls = nodeTypeUrlsInRs.get(nodeType);
+        // Group urls by type
+        Map<String, List<Url>> urlsPerType = new HashMap<>();
+        for (Url url : urls) {
+            String type = url.getParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_DEFAULT_VALUE);
+            List<Url> urlList = urlsPerType.get(type);
+            if (urlList == null) {
+                urlList = new ArrayList<>();
+                urlsPerType.put(type, urlList);
             }
-            oneNodeTypeUrls.add(sUrl);
+            urlList.add(url);
         }
-        Map<String, List<Url>> cUrls = subscribedCategoryResponsesPerClientUrl.get(clientUrl);
-        if (cUrls == null) {
-            subscribedCategoryResponsesPerClientUrl.putIfAbsent(clientUrl, new ConcurrentHashMap<>());
-            cUrls = subscribedCategoryResponsesPerClientUrl.get(clientUrl);
+        Map<String, List<Url>> cachedUrlsPerType = urlsPerTypePerClientUrl.get(clientUrl);
+        if (cachedUrlsPerType == null) {
+            cachedUrlsPerType = new ConcurrentHashMap<>();
+            urlsPerTypePerClientUrl.putIfAbsent(clientUrl, cachedUrlsPerType);
         }
 
-        // refresh local Urls cache
-        cUrls.putAll(nodeTypeUrlsInRs);
+        // Update urls cache
+        cachedUrlsPerType.putAll(urlsPerType);
 
-        for (List<Url> us : nodeTypeUrlsInRs.values()) {
-            listener.onSubscribe(getRegistryUrl(), us);
+        for (List<Url> urlList : urlsPerType.values()) {
+            listener.onSubscribe(getRegistryUrl(), urlList);
         }
     }
 

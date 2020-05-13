@@ -31,20 +31,20 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
      * @param listener  notify listener
      */
     protected void doSubscribe(Url clientUrl, final NotifyListener listener) {
-        Url urlCopy = clientUrl.copy();
+        Url clientUrlCopy = clientUrl.copy();
         // Get or put command service listener from or to cache
-        CommandServiceListener commandServiceListener = getCommandServiceListener(urlCopy);
+        CommandServiceListener commandServiceListener = getCommandServiceListener(clientUrlCopy);
         // Add notify listener to command service listener
         commandServiceListener.addNotifyListener(listener);
 
         // Trigger onSubscribe method of commandServiceListener if child change event happens
-        subscribeServiceListener(urlCopy, commandServiceListener);
+        subscribeServiceListener(clientUrlCopy, commandServiceListener);
         // Trigger onSubscribe method of commandServiceListener if data change event happens
-        subscribeCommandListener(urlCopy, commandServiceListener);
+        subscribeCommandListener(clientUrlCopy, commandServiceListener);
 
-        List<Url> providerUrls = doDiscover(urlCopy);
+        List<Url> providerUrls = doDiscover(clientUrlCopy);
         if (CollectionUtils.isNotEmpty(providerUrls)) {
-            this.notify(urlCopy, listener, providerUrls);
+            this.notify(clientUrlCopy, listener, providerUrls);
         }
         log.info("Subscribed the listener for the url [{}]", clientUrl);
     }

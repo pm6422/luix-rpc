@@ -14,11 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @EqualsAndHashCode
 public class Url implements Serializable {
-    private static final long    serialVersionUID   = 2970867582138131181L;
+    private static final long    serialVersionUID                 = 2970867582138131181L;
     // URL Pattern: {protocol}://{host}:{port}/{path}?{parameters}
-    private static final String  URL_PATTERN        = "{0}://{1}:{2}/{3}?{4}";
-    public static final  String  PROTOCOL_SEPARATOR = "://";
-    public static final  String  PATH_SEPARATOR     = "/";
+    private static final String  URL_PATTERN                      = "{0}://{1}:{2}/{3}?{4}";
+    public static final  String  PROTOCOL_SEPARATOR               = "://";
+    public static final  String  PATH_SEPARATOR                   = "/";
     /**
      * RPC protocol
      */
@@ -35,20 +35,33 @@ public class Url implements Serializable {
      * RPC interface fully-qualified name
      */
     private              String  path;
-
-    public static final String PARAM_GROUP               = "group";
-    public static final String PARAM_GROUP_DEFAULT_VALUE = "default-group";
-
-    public static final String PARAM_CHECK_HEALTH               = "checkHealth";
-    public static final String PARAM_CHECK_HEALTH_DEFAULT_VALUE = "true";
-
-    public static final String PARAM_CODEC               = "codec";
-    public static final String PARAM_CODEC_DEFAULT_VALUE = "infinity";
-
-    public static final String PARAM_ADDRESS         = "address";
-    public static final String PARAM_CONNECT_TIMEOUT = "connectTimeout";
-    public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
-    public static final String PARAM_RETRY_INTERVAL  = "retryInterval";
+    /**
+     *
+     */
+    public static final  String  PARAM_GROUP                      = "group";
+    public static final  String  PARAM_GROUP_DEFAULT_VALUE        = "default-group";
+    /**
+     *
+     */
+    public static final  String  PARAM_CHECK_HEALTH               = "checkHealth";
+    public static final  String  PARAM_CHECK_HEALTH_DEFAULT_VALUE = "true";
+    /**
+     *
+     */
+    public static final  String  PARAM_CODEC                      = "codec";
+    public static final  String  PARAM_CODEC_DEFAULT_VALUE        = "infinity";
+    /**
+     *
+     */
+    public static final  String  PARAM_TYPE                       = "type";
+    public static final  String  PARAM_TYPE_DEFAULT_VALUE         = "provider";
+    /**
+     *
+     */
+    public static final  String  PARAM_ADDRESS                    = "address";
+    public static final  String  PARAM_CONNECT_TIMEOUT            = "connectTimeout";
+    public static final  String  PARAM_SESSION_TIMEOUT            = "sessionTimeout";
+    public static final  String  PARAM_RETRY_INTERVAL             = "retryInterval";
 
     /**
      * Extended parameters
@@ -196,7 +209,7 @@ public class Url implements Serializable {
      */
     public String getIdentity() {
         return protocol + PROTOCOL_SEPARATOR + host + ":" + port +
-                "/" + getParameter(UrlParam.nodeType.getName(), UrlParam.nodeType.getValue());
+                "/" + getParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_DEFAULT_VALUE);
     }
 
     public String getGroup() {

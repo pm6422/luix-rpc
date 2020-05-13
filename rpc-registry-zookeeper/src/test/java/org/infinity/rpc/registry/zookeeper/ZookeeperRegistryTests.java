@@ -152,7 +152,7 @@ public class ZookeeperRegistryTests {
         assertTrue(containsServiceListener(clientUrl, serviceListener));
 
         registry.doRegister(providerUrl1);
-        // add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener
+        // Add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener
         registry.doActivate(providerUrl1);
         Thread.sleep(2000);
 
@@ -198,7 +198,7 @@ public class ZookeeperRegistryTests {
     @Event
     public void testSubscribe() throws InterruptedException {
         registry.doRegister(providerUrl1);
-        // add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener
+        // Add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener
         registry.doActivate(providerUrl1);
 
         NotifyListener notifyListener = (registryUrl, providerUrls) -> {
