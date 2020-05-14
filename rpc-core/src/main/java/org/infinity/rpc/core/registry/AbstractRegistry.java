@@ -236,7 +236,13 @@ public abstract class AbstractRegistry implements Registry {
         return results;
     }
 
-    protected List<Url> getCachedUrls(Url clientUrl) {
+    /**
+     * Get provider urls from cache
+     *
+     * @param clientUrl client url
+     * @return provider urls
+     */
+    protected List<Url> getCachedProviderUrls(Url clientUrl) {
         Map<String, List<Url>> urls = providerUrlsPerTypePerClientUrl.get(clientUrl);
         if (MapUtils.isEmpty(urls)) {
             return Collections.emptyList();
@@ -252,7 +258,7 @@ public abstract class AbstractRegistry implements Registry {
      * Group urls by url type parameter, and put it in local cache, then execute the listener
      *
      * @param providerUrls provider urls
-     * @param clientUrl    clientUrl
+     * @param clientUrl    client url
      * @param listener     listener
      */
     protected void notify(List<Url> providerUrls, Url clientUrl, ClientListener listener) {
@@ -262,14 +268,14 @@ public abstract class AbstractRegistry implements Registry {
         // Group urls by type parameter of url
         Map<String, List<Url>> urlsPerType = groupUrls(providerUrls);
 
-        Map<String, List<Url>> cachedUrlsPerType = providerUrlsPerTypePerClientUrl.get(clientUrl);
-        if (cachedUrlsPerType == null) {
-            cachedUrlsPerType = new ConcurrentHashMap<>();
-            providerUrlsPerTypePerClientUrl.putIfAbsent(clientUrl, cachedUrlsPerType);
+        Map<String, List<Url>> cachedProviderUrlsPerType = providerUrlsPerTypePerClientUrl.get(clientUrl);
+        if (cachedProviderUrlsPerType == null) {
+            cachedProviderUrlsPerType = new ConcurrentHashMap<>();
+            providerUrlsPerTypePerClientUrl.putIfAbsent(clientUrl, cachedProviderUrlsPerType);
         }
 
         // Update urls cache
-        cachedUrlsPerType.putAll(urlsPerType);
+        cachedProviderUrlsPerType.putAll(urlsPerType);
 
         for (List<Url> urlList : urlsPerType.values()) {
             listener.onSubscribe(registryUrl, urlList);

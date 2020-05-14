@@ -57,6 +57,9 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         }, retryInterval, retryInterval, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Retry registration for failed record
+     */
     private void doRetry() {
         doRetryFailedRegistration();
         doRetryFailedUnregistration();
@@ -215,7 +218,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             super.subscribe(clientUrl, listener);
         } catch (Exception e) {
             // Add the failed listener to the set if exception occurred
-            List<Url> cachedUrls = super.getCachedUrls(clientUrl);
+            List<Url> cachedUrls = super.getCachedProviderUrls(clientUrl);
             if (CollectionUtils.isNotEmpty(cachedUrls)) {
                 listener.onSubscribe(getRegistryUrl(), cachedUrls);
             } else if (isCheckingUrls(getRegistryUrl(), clientUrl)) {

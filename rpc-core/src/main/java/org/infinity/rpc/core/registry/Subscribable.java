@@ -31,5 +31,4 @@ public interface Subscribable {
      * @param listener  client listener
      */
     void unsubscribe(Url clientUrl, ClientListener listener);
-
 }

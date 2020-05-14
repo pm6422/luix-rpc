@@ -3,13 +3,13 @@ package org.infinity.rpc.registry.zookeeper;
 /**
  * Zookeeper active status node name
  */
-public enum ZookeeperActiveStatusNode {
+public enum ZookeeperNodeName {
 
     ACTIVE("active"),
     INACTIVE("inactive"),
     CLIENT("client");
 
-    ZookeeperActiveStatusNode(String value) {
+    ZookeeperNodeName(String value) {
         this.value = value;
     }
 

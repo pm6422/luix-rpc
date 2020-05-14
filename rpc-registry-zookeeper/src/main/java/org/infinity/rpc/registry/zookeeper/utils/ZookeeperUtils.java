@@ -1,7 +1,7 @@
 package org.infinity.rpc.registry.zookeeper.utils;
 
 import org.infinity.rpc.core.registry.Url;
-import org.infinity.rpc.registry.zookeeper.ZookeeperActiveStatusNode;
+import org.infinity.rpc.registry.zookeeper.ZookeeperNodeName;
 
 public class ZookeeperUtils {
 
@@ -15,7 +15,7 @@ public class ZookeeperUtils {
      * @param node zookeeper active status node
      * @return zookeeper path
      */
-    public static String getAddressPath(Url url, ZookeeperActiveStatusNode node) {
+    public static String getAddressPath(Url url, ZookeeperNodeName node) {
         return getActiveNodePath(url, node) + Url.PATH_SEPARATOR + url.getServerPortStr();
     }
 
@@ -26,7 +26,7 @@ public class ZookeeperUtils {
      * @param node zookeeper active status node
      * @return zookeeper path
      */
-    public static String getActiveNodePath(Url url, ZookeeperActiveStatusNode node) {
+    public static String getActiveNodePath(Url url, ZookeeperNodeName node) {
         return getProviderPath(url) + Url.PATH_SEPARATOR + node.getValue();
     }
 
