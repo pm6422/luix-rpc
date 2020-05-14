@@ -196,28 +196,32 @@ public abstract class AbstractRegistry implements Registry {
         log.info("Unsubscribed the url [{}] from listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
     }
 
+    /**
+     * Get all the provider urls based on the client url
+     *
+     * @param clientUrl client url
+     * @return provider urls
+     */
     @Override
     public List<Url> discover(Url clientUrl) {
         if (clientUrl == null) {
             log.warn("Url must NOT be null!");
             return Collections.EMPTY_LIST;
         }
-        Url copy = clientUrl.copy();
         List<Url> results = new ArrayList<>();
-
-        Map<String, List<Url>> categoryUrls = urlsPerTypePerClientUrl.get(copy);
-        if (MapUtils.isNotEmpty(categoryUrls)) {
-            for (List<Url> Urls : categoryUrls.values()) {
-                for (Url tempUrl : Urls) {
-                    results.add(tempUrl.copy());
-                }
-            }
+        Map<String, List<Url>> urlsPerType = urlsPerTypePerClientUrl.get(clientUrl);
+        if (MapUtils.isNotEmpty(urlsPerType)) {
+            // Get all the provider urls from cache no matter what the type is
+            results = urlsPerType.values()
+                    .stream()
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
         } else {
-            List<Url> discoveredUrls = doDiscover(copy);
+            // Read the provider urls from registry if local cache does not exist
+            List<Url> discoveredUrls = doDiscover(clientUrl);
             if (CollectionUtils.isNotEmpty(discoveredUrls)) {
-                for (Url u : discoveredUrls) {
-                    results.add(u.copy());
-                }
+                // Make a url copy and add to results
+                results = discoveredUrls.stream().map(x -> x.copy()).collect(Collectors.toList());
             }
         }
         return results;
@@ -235,21 +239,20 @@ public abstract class AbstractRegistry implements Registry {
         return results;
     }
 
-    protected void notify(Url clientUrl, NotifyListener listener, List<Url> urls) {
+    /**
+     * Group urls by url type parameter, and put it in local cache, then execute the listener
+     *
+     * @param urls      urls
+     * @param clientUrl clientUrl
+     * @param listener  listener
+     */
+    protected void notify(List<Url> urls, Url clientUrl, NotifyListener listener) {
         if (listener == null || CollectionUtils.isEmpty(urls)) {
             return;
         }
-        // Group urls by type
-        Map<String, List<Url>> urlsPerType = new HashMap<>();
-        for (Url url : urls) {
-            String type = url.getParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_DEFAULT_VALUE);
-            List<Url> urlList = urlsPerType.get(type);
-            if (urlList == null) {
-                urlList = new ArrayList<>();
-                urlsPerType.put(type, urlList);
-            }
-            urlList.add(url);
-        }
+        // Group urls by type parameter of url
+        Map<String, List<Url>> urlsPerType = groupUrls(urls);
+
         Map<String, List<Url>> cachedUrlsPerType = urlsPerTypePerClientUrl.get(clientUrl);
         if (cachedUrlsPerType == null) {
             cachedUrlsPerType = new ConcurrentHashMap<>();
@@ -260,8 +263,28 @@ public abstract class AbstractRegistry implements Registry {
         cachedUrlsPerType.putAll(urlsPerType);
 
         for (List<Url> urlList : urlsPerType.values()) {
-            listener.onSubscribe(getRegistryUrl(), urlList);
+            listener.onSubscribe(registryUrl, urlList);
         }
+    }
+
+    /**
+     * Group urls by type parameter of url
+     *
+     * @param urls urls
+     * @return grouped url per url parameter type
+     */
+    private Map<String, List<Url>> groupUrls(List<Url> urls) {
+        Map<String, List<Url>> urlsPerType = new HashMap<>();
+        for (Url url : urls) {
+            String type = url.getParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_DEFAULT_VALUE);
+            List<Url> urlList = urlsPerType.get(type);
+            if (urlList == null) {
+                urlList = new ArrayList<>();
+                urlsPerType.put(type, urlList);
+            }
+            urlList.add(url);
+        }
+        return urlsPerType;
     }
 
     protected abstract void doRegister(Url url);

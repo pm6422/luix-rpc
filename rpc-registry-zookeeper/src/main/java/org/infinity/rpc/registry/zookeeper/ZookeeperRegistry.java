@@ -50,7 +50,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             }
 
             /**
-             * Called after the zookeeper session has expired and a new session has been created.
+             * Called after the zookeeper session expired or a new zookeeper session
              * You would have to re-create any ephemeral nodes here.
              * @throws Exception On any error
              */
@@ -258,11 +258,11 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     /**
      * Delete specified directory
      *
-     * @param providerUrl      provider url
-     * @param activeStatusNode directory
+     * @param providerUrl provider url
+     * @param dir         directory
      */
-    private void removeNode(Url providerUrl, ZookeeperActiveStatusNode activeStatusNode) {
-        String nodePath = ZookeeperUtils.getAddressPath(providerUrl, activeStatusNode);
+    private void removeNode(Url providerUrl, ZookeeperActiveStatusNode dir) {
+        String nodePath = ZookeeperUtils.getAddressPath(providerUrl, dir);
         if (zkClient.exists(nodePath)) {
             zkClient.delete(nodePath);
         }
@@ -311,10 +311,10 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      *
      * @param addrFiles address file list
      * @param path      zookeeper path
-     * @param url       url
+     * @param clientUrl client url
      * @return provider urls
      */
-    private List<Url> readProviderUrls(List<String> addrFiles, String path, Url url) {
+    private List<Url> readProviderUrls(List<String> addrFiles, String path, Url clientUrl) {
         List<Url> urls = new ArrayList<>();
         if (CollectionUtils.isEmpty(addrFiles)) {
             return urls;
@@ -337,7 +337,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             }
             // TODO: remove the useless code snippet
 //            if (newurl == null) {
-//                newurl = url.copy();
+//                newurl = clientUrl.copy();
 //                String host = "";
 //                int port = 80;
 //                if (addrFile.indexOf(":") > -1) {
@@ -355,7 +355,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
 //                newurl.setHost(host);
 //                newurl.setPort(port);
 //            }
-            urls.add(newurl);
+//            urls.add(newurl);
         }
         return urls;
     }
@@ -421,9 +421,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             String path = ZookeeperUtils.getActiveNodePath(clientUrl, ZookeeperActiveStatusNode.ACTIVE_SERVER);
             // Bind the path with zookeeper child change listener, any the child list changes under the path will trigger the zkChildListener
             zkClient.subscribeChildChanges(path, zkChildListener);
-            log.info("Subscribed the listener for the path [{}]", ZookeeperUtils.getAddressPath(clientUrl, ZookeeperActiveStatusNode.ACTIVE_SERVER));
+            log.info("Subscribed the service listener for the path [{}]", ZookeeperUtils.getAddressPath(clientUrl, ZookeeperActiveStatusNode.ACTIVE_SERVER));
         } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to subscribe listeners for url [{}]", clientUrl), e);
+            throw new RuntimeException(MessageFormat.format("Failed to subscribe service listeners for url [{}]", clientUrl), e);
         } finally {
             clientLock.unlock();
         }
@@ -450,7 +450,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 childChangeListeners.remove(serviceListener);
             }
         } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to unsubscribe listeners for url [{}]", clientUrl), e);
+            throw new RuntimeException(MessageFormat.format("Failed to unsubscribe service listeners for url [{}]", clientUrl), e);
         } finally {
             clientLock.unlock();
         }
@@ -494,9 +494,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             String commandPath = ZookeeperUtils.getCommandPath(clientUrl);
             // Bind the path with zookeeper data change listener, any the data changes under the path will trigger the zkDataListener
             zkClient.subscribeDataChanges(commandPath, zkDataListener);
-            log.info(String.format("[ZookeeperRegistry] subscribe command: path=%s, info=%s", commandPath, clientUrl.toFullStr()));
+            log.info("Subscribed the command listener for the path [{}]", commandPath);
         } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to subscribe %s to zookeeper(%s)", clientUrl, getRegistryUrl()), e);
+            throw new RuntimeException(MessageFormat.format("Failed to subscribe command listeners for url [{}]", clientUrl), e);
         } finally {
             clientLock.unlock();
         }
@@ -521,7 +521,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 }
             }
         } catch (Throwable e) {
-            throw new RuntimeException(String.format("Failed to unsubscribe command %s to zookeeper(%s)", clientUrl, getRegistryUrl()), e);
+            throw new RuntimeException(MessageFormat.format("Failed to unsubscribe command listeners for url [{}]", clientUrl), e);
         } finally {
             clientLock.unlock();
         }

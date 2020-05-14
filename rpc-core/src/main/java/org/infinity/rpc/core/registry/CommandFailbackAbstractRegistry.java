@@ -44,7 +44,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
 
         List<Url> providerUrls = doDiscover(clientUrlCopy);
         if (CollectionUtils.isNotEmpty(providerUrls)) {
-            this.notify(clientUrlCopy, listener, providerUrls);
+            this.notify(providerUrls, clientUrlCopy, listener);
         }
         log.info("Subscribed the listener for the url [{}]", clientUrl);
     }

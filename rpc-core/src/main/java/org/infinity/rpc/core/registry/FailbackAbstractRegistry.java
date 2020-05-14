@@ -261,13 +261,18 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         }
     }
 
+    /**
+     * Get all the provider urls based on the client url
+     *
+     * @param clientUrl client url
+     * @return provider urls
+     */
     @Override
     public List<Url> discover(Url clientUrl) {
         try {
             return super.discover(clientUrl);
         } catch (Exception e) {
-            // 如果discover失败，返回一个empty list吧，毕竟是个下行动作，
-            log.warn(String.format("Failed to discover url:%s in registry (%s)", clientUrl, getRegistryUrl()), e);
+            log.warn(MessageFormat.format("Failed to discover provider urls with client url {0} on registry [{1}]!", clientUrl, getRegistryUrl()), e);
             return Collections.EMPTY_LIST;
         }
     }
