@@ -358,7 +358,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
 //                newurl.setHost(host);
 //                newurl.setPort(port);
 //            }
-//            urls.add(newurl);
+
+            urls.add(newurl);
         }
         return urls;
     }
