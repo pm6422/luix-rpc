@@ -1,16 +1,43 @@
 package org.infinity.rpc.core.registry;
 
-import java.util.Collection;
+import java.util.Set;
 
+/**
+ * The interface class defines the actions of provider
+ */
 public interface Registrable {
+    /**
+     * Register a provider url to registry
+     *
+     * @param providerUrl provider url
+     */
+    void register(Url providerUrl);
 
-    void register(Url url);
+    /**
+     * Unregister provider url from registry
+     *
+     * @param providerUrl provider url
+     */
+    void unregister(Url providerUrl);
 
-    void unregister(Url url);
+    /**
+     * Register the url to 'active' node of registry
+     *
+     * @param providerUrl provider url
+     */
+    void activate(Url providerUrl);
 
-    void activate(Url url);
+    /**
+     * Register the url to 'inactive' node of registry
+     *
+     * @param providerUrl provider url
+     */
+    void deactivate(Url providerUrl);
 
-    void deactivate(Url Url);
-
-    Collection<Url> getRegisteredProviderUrls();
+    /**
+     * Get the registered provider urls
+     *
+     * @return provider urls
+     */
+    Set<Url> getRegisteredProviderUrls();
 }

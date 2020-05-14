@@ -22,10 +22,9 @@ import java.util.List;
 
 
 /**
- * Notify when service changed.
+ * Listener of client used to handle the subscribed event
  */
-
-public interface NotifyListener {
+public interface ClientListener {
 
     void onSubscribe(Url registryUrl, List<Url> providerUrls);
 }

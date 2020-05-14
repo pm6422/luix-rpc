@@ -51,7 +51,7 @@ public class ServiceInstanceLoader<T> {
      */
     private static final Map<String, ServiceInstanceLoader<?>> SERVICE_LOADERS_CACHE       = new ConcurrentHashMap<>();
     /**
-     * The class loader used to locate, load, and instantiate service
+     * The class loader used to locate, load and instantiate service
      */
     private              ClassLoader                           classLoader;
     /**

@@ -3,7 +3,7 @@ package org.infinity.rpc.core.registry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.infinity.rpc.core.registry.listener.NotifyListener;
+import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
 
@@ -22,8 +22,8 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
 
     private Set<Url>                                    failedRegisteredUrl              = new ConcurrentHashSet<>();
     private Set<Url>                                    failedUnregisteredUrl            = new ConcurrentHashSet<>();
-    private Map<Url, ConcurrentHashSet<NotifyListener>> failedSubscriptionPerClientUrl   = new ConcurrentHashMap<>();
-    private Map<Url, ConcurrentHashSet<NotifyListener>> failedUnsubscriptionPerClientUrl = new ConcurrentHashMap<>();
+    private Map<Url, ConcurrentHashSet<ClientListener>> failedSubscriptionPerClientUrl   = new ConcurrentHashMap<>();
+    private Map<Url, ConcurrentHashSet<ClientListener>> failedUnsubscriptionPerClientUrl = new ConcurrentHashMap<>();
 
     /**
      * A retry single thread pool can reconnect registry periodically
@@ -103,7 +103,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             return;
         }
         // Do the clean empty value task
-        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedSubscriptionPerClientUrl.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<ClientListener>> entry : failedSubscriptionPerClientUrl.entrySet()) {
             if (CollectionUtils.isEmpty(entry.getValue())) {
                 failedSubscriptionPerClientUrl.remove(entry.getKey());
             }
@@ -111,11 +111,11 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         if (MapUtils.isEmpty(failedSubscriptionPerClientUrl)) {
             return;
         }
-        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedSubscriptionPerClientUrl.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<ClientListener>> entry : failedSubscriptionPerClientUrl.entrySet()) {
             Url url = entry.getKey();
-            Iterator<NotifyListener> iterator = entry.getValue().iterator();
+            Iterator<ClientListener> iterator = entry.getValue().iterator();
             while (iterator.hasNext()) {
-                NotifyListener listener = iterator.next();
+                ClientListener listener = iterator.next();
                 try {
                     super.subscribe(url, listener);
                 } catch (Exception e) {
@@ -133,7 +133,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             return;
         }
         // Do the clean empty value task
-        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedUnsubscriptionPerClientUrl.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<ClientListener>> entry : failedUnsubscriptionPerClientUrl.entrySet()) {
             if (CollectionUtils.isEmpty(entry.getValue())) {
                 failedUnsubscriptionPerClientUrl.remove(entry.getKey());
             }
@@ -141,11 +141,11 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         if (MapUtils.isEmpty(failedUnsubscriptionPerClientUrl)) {
             return;
         }
-        for (Map.Entry<Url, ConcurrentHashSet<NotifyListener>> entry : failedUnsubscriptionPerClientUrl.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<ClientListener>> entry : failedUnsubscriptionPerClientUrl.entrySet()) {
             Url url = entry.getKey();
-            Iterator<NotifyListener> iterator = entry.getValue().iterator();
+            Iterator<ClientListener> iterator = entry.getValue().iterator();
             while (iterator.hasNext()) {
-                NotifyListener listener = iterator.next();
+                ClientListener listener = iterator.next();
                 try {
                     super.unsubscribe(url, listener);
                 } catch (Exception e) {
@@ -207,7 +207,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      * @param listener  notify listener
      */
     @Override
-    public void subscribe(Url clientUrl, NotifyListener listener) {
+    public void subscribe(Url clientUrl, ClientListener listener) {
         // Remove failed listener from the set before subscribe
         removeFailedListener(clientUrl, listener);
 
@@ -227,7 +227,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     }
 
     @Override
-    public void unsubscribe(Url clientUrl, NotifyListener listener) {
+    public void unsubscribe(Url clientUrl, ClientListener listener) {
         removeFailedListener(clientUrl, listener);
 
         try {
@@ -250,8 +250,8 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         return true;
     }
 
-    private void removeFailedListener(Url clientUrl, NotifyListener listener) {
-        Set<NotifyListener> listeners = failedSubscriptionPerClientUrl.get(clientUrl);
+    private void removeFailedListener(Url clientUrl, ClientListener listener) {
+        Set<ClientListener> listeners = failedSubscriptionPerClientUrl.get(clientUrl);
         if (CollectionUtils.isNotEmpty(listeners)) {
             listeners.remove(listener);
         }
@@ -277,8 +277,8 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         }
     }
 
-    private void addToFailedMap(Map<Url, ConcurrentHashSet<NotifyListener>> failedMap, Url clientUrl, NotifyListener listener) {
-        Set<NotifyListener> listeners = failedMap.get(clientUrl);
+    private void addToFailedMap(Map<Url, ConcurrentHashSet<ClientListener>> failedMap, Url clientUrl, ClientListener listener) {
+        Set<ClientListener> listeners = failedMap.get(clientUrl);
         if (listeners == null) {
             failedMap.putIfAbsent(clientUrl, new ConcurrentHashSet<>());
             listeners = failedMap.get(clientUrl);

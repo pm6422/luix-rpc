@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
+ * Url used to represent a provider or client or registry
  */
 @EqualsAndHashCode
 public class Url implements Serializable {

@@ -5,8 +5,8 @@ package org.infinity.rpc.registry.zookeeper;
  */
 public enum ZookeeperActiveStatusNode {
 
-    ACTIVE_SERVER("active"),
-    INACTIVE_SERVER("inactive"),
+    ACTIVE("active"),
+    INACTIVE("inactive"),
     CLIENT("client");
 
     ZookeeperActiveStatusNode(String value) {

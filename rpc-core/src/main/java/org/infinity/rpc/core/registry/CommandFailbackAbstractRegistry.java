@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.registry.listener.CommandListener;
-import org.infinity.rpc.core.registry.listener.NotifyListener;
+import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 
 import java.util.HashMap;
@@ -30,7 +30,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
      * @param clientUrl client url
      * @param listener  notify listener
      */
-    protected void doSubscribe(Url clientUrl, final NotifyListener listener) {
+    protected void doSubscribe(Url clientUrl, final ClientListener listener) {
         Url clientUrlCopy = clientUrl.copy();
         // Get or put command service listener from or to cache
         CommandServiceListener commandServiceListener = getCommandServiceListener(clientUrlCopy);
@@ -55,7 +55,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
      * @param clientUrl client url
      * @param listener  notify listener
      */
-    protected void doUnsubscribe(Url clientUrl, NotifyListener listener) {
+    protected void doUnsubscribe(Url clientUrl, ClientListener listener) {
         Url urlCopy = clientUrl.copy();
         CommandServiceListener commandServiceListener = commandServiceListenerPerClientUrl.get(urlCopy);
         // Remove notify listener from command service listener

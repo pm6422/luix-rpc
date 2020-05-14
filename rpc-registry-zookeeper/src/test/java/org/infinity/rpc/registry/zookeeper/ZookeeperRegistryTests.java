@@ -8,7 +8,7 @@ import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.registry.listener.CommandListener;
-import org.infinity.rpc.core.registry.listener.NotifyListener;
+import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.registry.zookeeper.service.TestDummyService;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
@@ -80,9 +80,9 @@ public class ZookeeperRegistryTests {
         List<String> activateAddrFiles;
         List<String> deactivateAddrFiles;
 
-        String inactivePath = ZookeeperUtils.getActiveNodePath(providerUrl1, ZookeeperActiveStatusNode.INACTIVE_SERVER);
+        String inactivePath = ZookeeperUtils.getActiveNodePath(providerUrl1, ZookeeperActiveStatusNode.INACTIVE);
         log.debug("inactivePath: {}", inactivePath);
-        String activePath = ZookeeperUtils.getActiveNodePath(providerUrl1, ZookeeperActiveStatusNode.ACTIVE_SERVER);
+        String activePath = ZookeeperUtils.getActiveNodePath(providerUrl1, ZookeeperActiveStatusNode.ACTIVE);
         log.debug("activePath: {}", activePath);
 
         registry.doRegister(providerUrl1);
@@ -109,7 +109,7 @@ public class ZookeeperRegistryTests {
     }
 
     @Test
-    public void testDiscoverProviders() {
+    public void testDiscoverProviders() throws InterruptedException {
         registry.doRegister(providerUrl1);
         registry.doRegister(providerUrl2);
         List<Url> activeProviderUrls = registry.discoverActiveProviders(clientUrl);
@@ -201,14 +201,14 @@ public class ZookeeperRegistryTests {
         // Add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener
         registry.doActivate(providerUrl1);
 
-        NotifyListener notifyListener = (registryUrl, providerUrls) -> {
+        ClientListener clientListener = (registryUrl, providerUrls) -> {
             if (CollectionUtils.isNotEmpty(providerUrls)) {
                 assertTrue(providerUrls.contains(providerUrl1));
             }
         };
         // subscribe = subscribeServiceListener + subscribeCommandListener
-        registry.subscribe(clientUrl, notifyListener);
-        assertTrue(containsSubscribeListener(clientUrl, notifyListener));
+        registry.subscribe(clientUrl, clientListener);
+        assertTrue(containsSubscribeListener(clientUrl, clientListener));
 
         Thread.sleep(2000);
 
@@ -221,11 +221,11 @@ public class ZookeeperRegistryTests {
         zkClient.writeData(commandPath, command);
         Thread.sleep(2000);
 
-        registry.unsubscribe(clientUrl, notifyListener);
-        assertFalse(containsSubscribeListener(clientUrl, notifyListener));
+        registry.unsubscribe(clientUrl, clientListener);
+        assertFalse(containsSubscribeListener(clientUrl, clientListener));
     }
 
-    private boolean containsSubscribeListener(Url clientUrl, NotifyListener notifyListener) {
-        return registry.getCommandServiceListenerPerClientUrl().get(clientUrl).getNotifyListeners().contains(notifyListener);
+    private boolean containsSubscribeListener(Url clientUrl, ClientListener clientListener) {
+        return registry.getCommandServiceListenerPerClientUrl().get(clientUrl).getClientListeners().contains(clientListener);
     }
 }

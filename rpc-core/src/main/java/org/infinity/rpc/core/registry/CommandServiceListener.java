@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.registry.listener.CommandListener;
-import org.infinity.rpc.core.registry.listener.NotifyListener;
+import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.switcher.DefaultSwitcherService;
 import org.infinity.rpc.core.switcher.SwitcherService;
@@ -56,7 +56,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     /**
      *
      */
-    private          Set<NotifyListener>             notifyListeners            = new ConcurrentHashSet<>();
+    private          Set<ClientListener>             clientListeners            = new ConcurrentHashSet<>();
     /**
      * Active provider urls per group map
      */
@@ -79,23 +79,23 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     /**
      * Add notify listener to container
      *
-     * @param notifyListener notify listener to be added
+     * @param clientListener notify listener to be added
      */
-    public void addNotifyListener(NotifyListener notifyListener) {
-        notifyListeners.add(notifyListener);
+    public void addNotifyListener(ClientListener clientListener) {
+        clientListeners.add(clientListener);
     }
 
     /**
      * Remove notify listener from container
      *
-     * @param notifyListener notify listener to be removed
+     * @param clientListener notify listener to be removed
      */
-    public void removeNotifyListener(NotifyListener notifyListener) {
-        notifyListeners.remove(notifyListener);
+    public void removeNotifyListener(ClientListener clientListener) {
+        clientListeners.remove(clientListener);
     }
 
-    public Set<NotifyListener> getNotifyListeners() {
-        return notifyListeners;
+    public Set<ClientListener> getClientListeners() {
+        return clientListeners;
     }
 
     /**
@@ -123,9 +123,9 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
             providerUrlList.addAll(discoverActiveProvidersByGroup(this.clientUrl));
         }
 
-        for (NotifyListener notifyListener : notifyListeners) {
-            notifyListener.onSubscribe(registry.getRegistryUrl(), providerUrlList);
-            log.debug("Invoked event: {}", notifyListener);
+        for (ClientListener clientListener : clientListeners) {
+            clientListener.onSubscribe(registry.getRegistryUrl(), providerUrlList);
+            log.debug("Invoked event: {}", clientListener);
         }
     }
 
@@ -187,8 +187,8 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
             return;
         }
 
-        for (NotifyListener notifyListener : notifyListeners) {
-            notifyListener.onSubscribe(registry.getRegistryUrl(), result);
+        for (ClientListener clientListener : clientListeners) {
+            clientListener.onSubscribe(registry.getRegistryUrl(), result);
         }
     }
 
