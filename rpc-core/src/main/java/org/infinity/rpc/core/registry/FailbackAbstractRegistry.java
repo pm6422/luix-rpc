@@ -74,11 +74,11 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             try {
                 super.register(url);
             } catch (Exception e) {
-                log.warn(MessageFormat.format("Failed to retry to register [{0}] by [{1}] and it will be retry later!", url, registryClassName), e);
+                log.warn(MessageFormat.format("Failed to retry to register [{0}] by [{1}] and it will be retry later!", url, getRegistryClassName()), e);
             }
             iterator.remove();
         }
-        log.info("Retried to register urls by {}", registryClassName);
+        log.info("Retried to register urls by {}", getRegistryClassName());
     }
 
     private void doRetryFailedUnregistration() {
@@ -91,11 +91,11 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             try {
                 super.unregister(url);
             } catch (Exception e) {
-                log.warn(MessageFormat.format("Failed to retry to unregister [{0}] by [{1}] and it will be retry later!", url, registryClassName), e);
+                log.warn(MessageFormat.format("Failed to retry to unregister [{0}] by [{1}] and it will be retry later!", url, getRegistryClassName()), e);
             }
             iterator.remove();
         }
-        log.info("Retried to unregister urls by {}", registryClassName);
+        log.info("Retried to unregister urls by {}", getRegistryClassName());
     }
 
     private void doRetryFailedSubscription() {
@@ -120,12 +120,12 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
                     super.subscribe(url, listener);
                 } catch (Exception e) {
                     log.warn(MessageFormat.format("Failed to retry to subscribe listener [{0}] to url [{1}] by [{2}] " +
-                            "and it will be retry later!", listener.getClass().getSimpleName(), url, registryClassName), e);
+                            "and it will be retry later!", listener.getClass().getSimpleName(), url, getRegistryClassName()), e);
                 }
                 iterator.remove();
             }
         }
-        log.info("Retried to subscribe listener to urls by {}", registryClassName);
+        log.info("Retried to subscribe listener to urls by {}", getRegistryClassName());
     }
 
     private void doRetryFailedUnsubscription() {
@@ -150,12 +150,12 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
                     super.unsubscribe(url, listener);
                 } catch (Exception e) {
                     log.warn(MessageFormat.format("Failed to retry to unsubscribe listener [{0}] to url [{1}] by [{2}] " +
-                            "and it will be retry later!", listener.getClass().getSimpleName(), url, registryClassName), e);
+                            "and it will be retry later!", listener.getClass().getSimpleName(), url, getRegistryClassName()), e);
                 }
                 iterator.remove();
             }
         }
-        log.info("Retried to unsubscribe listener to urls by {}", registryClassName);
+        log.info("Retried to unsubscribe listener to urls by {}", getRegistryClassName());
     }
 
     /**
@@ -173,7 +173,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
             if (isCheckingUrls(getRegistryUrl(), providerUrl)) {
-                throw new RuntimeException(MessageFormat.format("Failed to register the url [{0}] to registry [{1}] by using [{2}]", providerUrl, getRegistryUrl(), registryClassName), e);
+                throw new RuntimeException(MessageFormat.format("Failed to register the url [{0}] to registry [{1}] by using [{2}]", providerUrl, getRegistryUrl(), getRegistryClassName()), e);
             }
             failedRegisteredUrl.add(providerUrl);
         }
@@ -194,7 +194,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
             if (isCheckingUrls(getRegistryUrl(), providerUrl)) {
-                throw new RuntimeException(MessageFormat.format("Failed to unregister the url [{0}] to registry [{1}] by using [{2}]", providerUrl, getRegistryUrl(), registryClassName), e);
+                throw new RuntimeException(MessageFormat.format("Failed to unregister the url [{0}] to registry [{1}] by using [{2}]", providerUrl, getRegistryUrl(), getRegistryClassName()), e);
             }
             failedUnregisteredUrl.add(providerUrl);
         }
@@ -219,8 +219,8 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             if (CollectionUtils.isNotEmpty(cachedUrls)) {
                 listener.onSubscribe(getRegistryUrl(), cachedUrls);
             } else if (isCheckingUrls(getRegistryUrl(), clientUrl)) {
-                log.warn(String.format("[%s] false to subscribe %s from %s", registryClassName, clientUrl, getRegistryUrl()), e);
-                throw new RuntimeException(String.format("[%s] false to subscribe %s from %s", registryClassName, clientUrl, getRegistryUrl()), e);
+                log.warn(String.format("[%s] false to subscribe %s from %s", getRegistryClassName(), clientUrl, getRegistryUrl()), e);
+                throw new RuntimeException(String.format("[%s] false to subscribe %s from %s", getRegistryClassName(), clientUrl, getRegistryUrl()), e);
             }
             addToFailedMap(failedSubscriptionPerClientUrl, clientUrl, listener);
         }
@@ -234,7 +234,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             super.unsubscribe(clientUrl, listener);
         } catch (Exception e) {
             if (isCheckingUrls(getRegistryUrl(), clientUrl)) {
-                throw new RuntimeException(String.format("[%s] false to unsubscribe %s from %s", registryClassName, clientUrl, getRegistryUrl()),
+                throw new RuntimeException(String.format("[%s] false to unsubscribe %s from %s", getRegistryClassName(), clientUrl, getRegistryUrl()),
                         e);
             }
             addToFailedMap(failedUnsubscriptionPerClientUrl, clientUrl, listener);
