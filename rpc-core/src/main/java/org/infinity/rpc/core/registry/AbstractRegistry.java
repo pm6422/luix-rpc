@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.switcher.DefaultSwitcherService;
 import org.infinity.rpc.utilities.annotation.Event;
@@ -171,14 +172,8 @@ public abstract class AbstractRegistry implements Registry {
      */
     @Override
     public void subscribe(Url clientUrl, ClientListener listener) {
-        if (clientUrl == null) {
-            log.warn("Url must NOT be null!");
-            return;
-        }
-        if (listener == null) {
-            log.warn("Listener must NOT be null!");
-            return;
-        }
+        Validate.notNull(clientUrl, "Url must NOT be null!");
+        Validate.notNull(listener, "Client listener must NOT be null!");
         // TODO: url copy mechanism
         doSubscribe(clientUrl, listener);
         log.info("Subscribed the url [{}] to listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
@@ -192,14 +187,8 @@ public abstract class AbstractRegistry implements Registry {
      */
     @Override
     public void unsubscribe(Url clientUrl, ClientListener listener) {
-        if (clientUrl == null) {
-            log.warn("Url must NOT be null!");
-            return;
-        }
-        if (listener == null) {
-            log.warn("Listener must NOT be null!");
-            return;
-        }
+        Validate.notNull(clientUrl, "Url must NOT be null!");
+        Validate.notNull(listener, "Client listener must NOT be null!");
         // TODO: url copy mechanism
         doUnsubscribe(clientUrl, listener);
         log.info("Unsubscribed the url [{}] from listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
