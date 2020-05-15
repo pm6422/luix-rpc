@@ -164,7 +164,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     /**
      * Register the url to registry
      *
-     * @param providerUrl url
+     * @param providerUrl provider url
      */
     @Override
     public void register(Url providerUrl) {
@@ -175,8 +175,9 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             super.register(providerUrl);
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
-            if (isCheckingUrls(getRegistryUrl(), providerUrl)) {
-                throw new RuntimeException(MessageFormat.format("Failed to register the url [{0}] to registry [{1}] by using [{2}]", providerUrl, getRegistryUrl(), getRegistryClassName()), e);
+            if (checkAllHealth(getRegistryUrl(), providerUrl)) {
+                throw new RuntimeException(MessageFormat.format("Failed to register provider [{0}] to registry [{1}] by using [{2}]",
+                        providerUrl, getRegistryUrl(), getRegistryClassName()), e);
             }
             failedRegisteredUrl.add(providerUrl);
         }
@@ -185,7 +186,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     /**
      * Unregister the url from registry
      *
-     * @param providerUrl url
+     * @param providerUrl provider url
      */
     @Override
     public void unregister(Url providerUrl) {
@@ -196,8 +197,9 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             super.unregister(providerUrl);
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
-            if (isCheckingUrls(getRegistryUrl(), providerUrl)) {
-                throw new RuntimeException(MessageFormat.format("Failed to unregister the url [{0}] to registry [{1}] by using [{2}]", providerUrl, getRegistryUrl(), getRegistryClassName()), e);
+            if (checkAllHealth(getRegistryUrl(), providerUrl)) {
+                throw new RuntimeException(MessageFormat.format("Failed to unregister provider [{0}] from registry [{1}] by using [{2}]",
+                        providerUrl, getRegistryUrl(), getRegistryClassName()), e);
             }
             failedUnregisteredUrl.add(providerUrl);
         }
@@ -207,7 +209,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      * It contains the functionality of method subscribeServiceListener and subscribeCommandListener
      *
      * @param clientUrl client url
-     * @param listener  notify listener
+     * @param listener  client listener
      */
     @Override
     public void subscribe(Url clientUrl, ClientListener listener) {
@@ -218,17 +220,24 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             super.subscribe(clientUrl, listener);
         } catch (Exception e) {
             // Add the failed listener to the set if exception occurred
-            List<Url> cachedUrls = super.getCachedProviderUrls(clientUrl);
-            if (CollectionUtils.isNotEmpty(cachedUrls)) {
-                listener.onSubscribe(getRegistryUrl(), cachedUrls);
-            } else if (isCheckingUrls(getRegistryUrl(), clientUrl)) {
-                log.warn(String.format("[%s] false to subscribe %s from %s", getRegistryClassName(), clientUrl, getRegistryUrl()), e);
-                throw new RuntimeException(String.format("[%s] false to subscribe %s from %s", getRegistryClassName(), clientUrl, getRegistryUrl()), e);
+            List<Url> cachedProviderUrls = super.getCachedProviderUrls(clientUrl);
+            if (CollectionUtils.isNotEmpty(cachedProviderUrls)) {
+                // Notify if the cached provider urls not empty
+                listener.onSubscribe(getRegistryUrl(), cachedProviderUrls);
+            } else if (checkAllHealth(getRegistryUrl(), clientUrl)) {
+                throw new RuntimeException(MessageFormat.format("Failed to subscribe the listener [{0}] to the client [{1}] on registry [{2}] by using [{3}]",
+                        listener, clientUrl, getRegistryUrl(), getRegistryClassName()), e);
             }
             addToFailedMap(failedSubscriptionPerClientUrl, clientUrl, listener);
         }
     }
 
+    /**
+     * It contains the functionality of method unsubscribeServiceListener and unsubscribeCommandListener
+     *
+     * @param clientUrl client url
+     * @param listener  client listener
+     */
     @Override
     public void unsubscribe(Url clientUrl, ClientListener listener) {
         removeFailedListener(clientUrl, listener);
@@ -236,32 +245,22 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         try {
             super.unsubscribe(clientUrl, listener);
         } catch (Exception e) {
-            if (isCheckingUrls(getRegistryUrl(), clientUrl)) {
-                throw new RuntimeException(String.format("[%s] false to unsubscribe %s from %s", getRegistryClassName(), clientUrl, getRegistryUrl()),
-                        e);
+            if (checkAllHealth(getRegistryUrl(), clientUrl)) {
+                throw new RuntimeException(MessageFormat.format("Failed to unsubscribe the listener [{0}] from the client [{1}] on registry [{2}] by using [{3}]",
+                        listener, clientUrl, getRegistryUrl(), getRegistryClassName()), e);
             }
             addToFailedMap(failedUnsubscriptionPerClientUrl, clientUrl, listener);
         }
     }
 
-    private boolean isCheckingUrls(Url... urls) {
-        for (Url url : urls) {
-            if (!Boolean.parseBoolean(url.getParameter(Url.PARAM_CHECK_HEALTH))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void removeFailedListener(Url clientUrl, ClientListener listener) {
-        Set<ClientListener> listeners = failedSubscriptionPerClientUrl.get(clientUrl);
-        if (CollectionUtils.isNotEmpty(listeners)) {
-            listeners.remove(listener);
-        }
-        listeners = failedUnsubscriptionPerClientUrl.get(clientUrl);
-        if (CollectionUtils.isNotEmpty(listeners)) {
-            listeners.remove(listener);
-        }
+    /**
+     * Check whether all the urls contain the PARAM_CHECK_HEALTH of {@link Url}
+     *
+     * @param urls urls
+     * @return true: all the urls contain PARAM_CHECK_HEALTH, false: any url does not contain PARAM_CHECK_HEALTH
+     */
+    private boolean checkAllHealth(Url... urls) {
+        return Arrays.asList(urls).stream().allMatch(url -> Boolean.parseBoolean(url.getParameter(Url.PARAM_CHECK_HEALTH)));
     }
 
     /**
@@ -287,5 +286,16 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             listeners = failedMap.get(clientUrl);
         }
         listeners.add(listener);
+    }
+
+    private void removeFailedListener(Url clientUrl, ClientListener listener) {
+        Set<ClientListener> listeners = failedSubscriptionPerClientUrl.get(clientUrl);
+        if (CollectionUtils.isNotEmpty(listeners)) {
+            listeners.remove(listener);
+        }
+        listeners = failedUnsubscriptionPerClientUrl.get(clientUrl);
+        if (CollectionUtils.isNotEmpty(listeners)) {
+            listeners.remove(listener);
+        }
     }
 }
