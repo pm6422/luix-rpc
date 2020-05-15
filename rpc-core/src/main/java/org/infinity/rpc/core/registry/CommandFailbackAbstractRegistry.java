@@ -5,7 +5,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.CommandListener;
-import org.infinity.rpc.core.registry.listener.ServiceListener;
 
 import java.util.HashMap;
 import java.util.List;
@@ -135,15 +134,9 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
         return finalResult;
     }
 
-    protected abstract void subscribeServiceListener(Url clientUrl, ServiceListener listener);
-
-    protected abstract void unsubscribeServiceListener(Url clientUrl, ServiceListener listener);
-
     protected abstract void subscribeCommandListener(Url clientUrl, CommandListener listener);
 
     protected abstract void unsubscribeCommandListener(Url clientUrl, CommandListener listener);
-
-    protected abstract List<Url> discoverActiveProviders(Url clientUrl);
 
     protected abstract String readCommand(Url clientUrl);
 }

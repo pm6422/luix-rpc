@@ -6,6 +6,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.registry.listener.ClientListener;
+import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.switcher.DefaultSwitcherService;
 import org.infinity.rpc.utilities.annotation.Event;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
@@ -295,9 +296,15 @@ public abstract class AbstractRegistry implements Registry {
 
     protected abstract void doDeactivate(Url url);
 
+    protected abstract List<Url> discoverActiveProviders(Url clientUrl);
+
     protected abstract void doSubscribe(Url url, ClientListener listener);
 
     protected abstract void doUnsubscribe(Url url, ClientListener listener);
+
+    protected abstract void subscribeServiceListener(Url clientUrl, ServiceListener listener);
+
+    protected abstract void unsubscribeServiceListener(Url clientUrl, ServiceListener listener);
 
     protected abstract List<Url> doDiscover(Url url);
 }
