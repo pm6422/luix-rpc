@@ -19,6 +19,7 @@ package org.infinity.rpc.core.registry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.core.registry.*;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
@@ -33,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
- * command service manager for a url
+ * Command service listener for a client
  */
 @Slf4j
 public class CommandServiceListener implements ServiceListener, CommandListener {
@@ -324,7 +325,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     }
 
     private List<Url> mergeResult(Url url, Map<String, Integer> weights) {
-        List<Url> finalResult = new ArrayList<Url>();
+        List<Url> finalResult = new ArrayList<>();
 
         if (weights.size() > 1) {
             // 将所有group及权重拼接成一个rule的URL，并作为第一个元素添加到最终结果中

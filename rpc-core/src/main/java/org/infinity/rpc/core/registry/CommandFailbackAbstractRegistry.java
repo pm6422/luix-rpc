@@ -3,8 +3,8 @@ package org.infinity.rpc.core.registry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ClientListener;
+import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 
 import java.util.HashMap;
@@ -26,15 +26,16 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
 
     /**
      * It contains the functionality of method subscribeServiceListener and subscribeCommandListener
+     * And execute the listener
      *
      * @param clientUrl client url
-     * @param listener  notify listener
+     * @param listener  client listener
      */
     protected void doSubscribe(Url clientUrl, final ClientListener listener) {
         Url clientUrlCopy = clientUrl.copy();
         // Create a new command service listener or get it from cache
         CommandServiceListener commandServiceListener = getCommandServiceListener(clientUrlCopy);
-        // Add notify listener to command service listener
+        // Add client listener to command service listener, and use command service listener to manage listener
         commandServiceListener.addNotifyListener(listener);
 
         // Trigger onSubscribe method of commandServiceListener if child change event happens
@@ -44,6 +45,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
 
         List<Url> providerUrls = doDiscover(clientUrlCopy);
         if (CollectionUtils.isNotEmpty(providerUrls)) {
+            // Invoke the listener
             this.notify(providerUrls, clientUrlCopy, listener);
         }
         log.info("Subscribed the listener for the url [{}]", clientUrl);
@@ -53,7 +55,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
      * Unsubscribe the service and command listener
      *
      * @param clientUrl client url
-     * @param listener  notify listener
+     * @param listener  client listener
      */
     protected void doUnsubscribe(Url clientUrl, ClientListener listener) {
         Url urlCopy = clientUrl.copy();

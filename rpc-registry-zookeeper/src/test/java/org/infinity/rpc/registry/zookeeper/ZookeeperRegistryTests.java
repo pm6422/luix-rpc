@@ -206,7 +206,7 @@ public class ZookeeperRegistryTests {
                 assertTrue(providerUrls.contains(providerUrl1));
             }
         };
-        // subscribe = subscribeServiceListener + subscribeCommandListener
+        // subscribe = subscribeServiceListener + subscribeCommandListener+ execute the clientListener
         registry.subscribe(clientUrl, clientListener);
         assertTrue(containsSubscribeListener(clientUrl, clientListener));
 
