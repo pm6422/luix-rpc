@@ -175,7 +175,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             super.register(providerUrl);
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
-            if (checkAllHealth(getRegistryUrl(), providerUrl)) {
+            if (forceCheckHealth(getRegistryUrl(), providerUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to register provider [{0}] to registry [{1}] by using [{2}]",
                         providerUrl, getRegistryUrl(), getRegistryClassName()), e);
             }
@@ -197,7 +197,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             super.unregister(providerUrl);
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
-            if (checkAllHealth(getRegistryUrl(), providerUrl)) {
+            if (forceCheckHealth(getRegistryUrl(), providerUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to unregister provider [{0}] from registry [{1}] by using [{2}]",
                         providerUrl, getRegistryUrl(), getRegistryClassName()), e);
             }
@@ -213,18 +213,18 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      */
     @Override
     public void subscribe(Url clientUrl, ClientListener listener) {
-        // Remove failed listener from the set before subscribe
+        // Remove failed listener from the local cache before subscribe
         removeFailedListener(clientUrl, listener);
 
         try {
             super.subscribe(clientUrl, listener);
         } catch (Exception e) {
-            // Add the failed listener to the set if exception occurred
+            // Add the failed listener to the local cache if exception occurred in order to retry later
             List<Url> cachedProviderUrls = super.getCachedProviderUrls(clientUrl);
             if (CollectionUtils.isNotEmpty(cachedProviderUrls)) {
                 // Notify if the cached provider urls not empty
                 listener.onSubscribe(getRegistryUrl(), cachedProviderUrls);
-            } else if (checkAllHealth(getRegistryUrl(), clientUrl)) {
+            } else if (forceCheckHealth(getRegistryUrl(), clientUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to subscribe the listener [{0}] to the client [{1}] on registry [{2}] by using [{3}]",
                         listener, clientUrl, getRegistryUrl(), getRegistryClassName()), e);
             }
@@ -245,7 +245,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         try {
             super.unsubscribe(clientUrl, listener);
         } catch (Exception e) {
-            if (checkAllHealth(getRegistryUrl(), clientUrl)) {
+            if (forceCheckHealth(getRegistryUrl(), clientUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to unsubscribe the listener [{0}] from the client [{1}] on registry [{2}] by using [{3}]",
                         listener, clientUrl, getRegistryUrl(), getRegistryClassName()), e);
             }
@@ -259,7 +259,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      * @param urls urls
      * @return true: all the urls contain PARAM_CHECK_HEALTH, false: any url does not contain PARAM_CHECK_HEALTH
      */
-    private boolean checkAllHealth(Url... urls) {
+    private boolean forceCheckHealth(Url... urls) {
         return !Arrays.asList(urls).stream().anyMatch(url -> !Boolean.parseBoolean(url.getParameter(Url.PARAM_CHECK_HEALTH)));
     }
 
