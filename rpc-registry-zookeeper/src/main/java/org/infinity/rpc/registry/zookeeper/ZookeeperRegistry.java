@@ -55,7 +55,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             }
 
             /**
-             * Called after the zookeeper session expired or a new zookeeper session
+             * Called after the zookeeper session expired or a new zookeeper session, e,g restart zookeeper
              * You would have to re-create any ephemeral nodes here.
              * @throws Exception On any error
              */
