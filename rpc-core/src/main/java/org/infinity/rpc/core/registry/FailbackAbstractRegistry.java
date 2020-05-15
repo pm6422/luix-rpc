@@ -260,7 +260,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      * @return true: all the urls contain PARAM_CHECK_HEALTH, false: any url does not contain PARAM_CHECK_HEALTH
      */
     private boolean checkAllHealth(Url... urls) {
-        return Arrays.asList(urls).stream().allMatch(url -> Boolean.parseBoolean(url.getParameter(Url.PARAM_CHECK_HEALTH)));
+        return !Arrays.asList(urls).stream().anyMatch(url -> !Boolean.parseBoolean(url.getParameter(Url.PARAM_CHECK_HEALTH)));
     }
 
     /**
