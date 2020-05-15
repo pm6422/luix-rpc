@@ -9,6 +9,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.zookeeper.Watcher;
 import org.infinity.rpc.core.registry.CommandFailbackAbstractRegistry;
 import org.infinity.rpc.core.registry.Url;
@@ -45,6 +46,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Event
     public ZookeeperRegistry(Url registryUrl, ZkClient zkClient) {
         super(registryUrl);
+        Validate.notNull(zkClient, "Zookeeper client must NOT be null!");
         this.zkClient = zkClient;
         IZkStateListener zkStateListener = new IZkStateListener() {
             @Override

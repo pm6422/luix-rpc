@@ -59,6 +59,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     public AbstractRegistry(Url registryUrl) {
+        Validate.notNull(registryUrl, "Registry url must NOT be null!");
         this.registryUrl = registryUrl;
         registerSwitcherListener();
     }
@@ -91,10 +92,7 @@ public abstract class AbstractRegistry implements Registry {
      */
     @Override
     public void register(Url providerUrl) {
-        if (providerUrl == null) {
-            log.warn("Url must NOT be null!");
-            return;
-        }
+        Validate.notNull(providerUrl, "Provider url must NOT be null!");
         doRegister(removeUnnecessaryParams(providerUrl.copy()));
         log.info("Registered the url [{}] to registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
         // Added it to the cache after registered
@@ -112,10 +110,7 @@ public abstract class AbstractRegistry implements Registry {
      */
     @Override
     public void unregister(Url providerUrl) {
-        if (providerUrl == null) {
-            log.warn("Url must NOT be null!");
-            return;
-        }
+        Validate.notNull(providerUrl, "Provider url must NOT be null!");
         doUnregister(removeUnnecessaryParams(providerUrl.copy()));
         log.info("Unregistered the url [{}] from registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
         // Removed it from the container after unregistered
@@ -172,9 +167,9 @@ public abstract class AbstractRegistry implements Registry {
      */
     @Override
     public void subscribe(Url clientUrl, ClientListener listener) {
-        Validate.notNull(clientUrl, "Url must NOT be null!");
+        Validate.notNull(clientUrl, "Client url must NOT be null!");
         Validate.notNull(listener, "Client listener must NOT be null!");
-        // TODO: url copy mechanism
+
         doSubscribe(clientUrl, listener);
         log.info("Subscribed the url [{}] to listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
     }
@@ -187,9 +182,9 @@ public abstract class AbstractRegistry implements Registry {
      */
     @Override
     public void unsubscribe(Url clientUrl, ClientListener listener) {
-        Validate.notNull(clientUrl, "Url must NOT be null!");
+        Validate.notNull(clientUrl, "Client url must NOT be null!");
         Validate.notNull(listener, "Client listener must NOT be null!");
-        // TODO: url copy mechanism
+
         doUnsubscribe(clientUrl, listener);
         log.info("Unsubscribed the url [{}] from listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
     }

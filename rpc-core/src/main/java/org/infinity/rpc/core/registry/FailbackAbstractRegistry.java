@@ -3,6 +3,7 @@ package org.infinity.rpc.core.registry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
@@ -168,6 +169,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      */
     @Override
     public void register(Url providerUrl) {
+        Validate.notNull(providerUrl, "Provider url must NOT be null!");
         failedRegisteredUrl.remove(providerUrl);
         failedUnregisteredUrl.remove(providerUrl);
 
@@ -190,6 +192,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      */
     @Override
     public void unregister(Url providerUrl) {
+        Validate.notNull(providerUrl, "Provider url must NOT be null!");
         failedRegisteredUrl.remove(providerUrl);
         failedUnregisteredUrl.remove(providerUrl);
 
@@ -213,6 +216,9 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      */
     @Override
     public void subscribe(Url clientUrl, ClientListener listener) {
+        Validate.notNull(clientUrl, "Client url must NOT be null!");
+        Validate.notNull(listener, "Client listener must NOT be null!");
+
         // Remove failed listener from the local cache before subscribe
         removeFailedListener(clientUrl, listener);
 
@@ -240,6 +246,9 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      */
     @Override
     public void unsubscribe(Url clientUrl, ClientListener listener) {
+        Validate.notNull(clientUrl, "Client url must NOT be null!");
+        Validate.notNull(listener, "Client listener must NOT be null!");
+
         removeFailedListener(clientUrl, listener);
 
         try {
@@ -271,6 +280,10 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      */
     @Override
     public List<Url> discover(Url clientUrl) {
+        if (clientUrl == null) {
+            log.warn("Url must NOT be null!");
+            return Collections.EMPTY_LIST;
+        }
         try {
             return super.discover(clientUrl);
         } catch (Exception e) {
