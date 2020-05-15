@@ -32,6 +32,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Zookeeper registry implementation used to subscribe, unsubscribe, register or unregister data.
+ * Zookeeper has three vital listeners:
+ * - IZkStateListener: It will be triggered when a new zk session created.
+ * - IZkDataListener: It will be triggered when the file data has been changed.
+ * - IZkChildListener: It will be triggered when the files under the node has been changed.
  */
 @Slf4j
 @ThreadSafe
