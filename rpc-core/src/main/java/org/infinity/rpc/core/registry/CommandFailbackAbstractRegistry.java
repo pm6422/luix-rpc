@@ -32,7 +32,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
      */
     protected void doSubscribe(Url clientUrl, final ClientListener listener) {
         Url clientUrlCopy = clientUrl.copy();
-        // Get or put command service listener from or to cache
+        // Create a new command service listener or get it from cache
         CommandServiceListener commandServiceListener = getCommandServiceListener(clientUrlCopy);
         // Add notify listener to command service listener
         commandServiceListener.addNotifyListener(listener);
