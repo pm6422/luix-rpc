@@ -50,6 +50,7 @@ public class ZookeeperRegistryTests {
         registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, new InfinityProperties().getRegistry().getSessionTimeout().toString());
         registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, new InfinityProperties().getRegistry().getRetryInterval().toString());
 
+        // client url use the provider path, but port is 0
         clientUrl = Url.of("infinity", NetworkIpUtils.INTRANET_IP, 0, provider);
         clientUrl.addParameter("group", Url.PARAM_GROUP_DEFAULT_VALUE);
 

@@ -1,5 +1,7 @@
 package org.infinity.rpc.core.registry;
 
+import java.util.List;
+
 /**
  * Registry interface
  */
@@ -17,4 +19,6 @@ public interface Registry extends Registrable, Subscribable {
      * @return registry url
      */
     Url getRegistryUrl();
+
+    List<String> discoverActiveProviderAddress(String providerPath);
 }

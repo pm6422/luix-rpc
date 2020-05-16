@@ -20,12 +20,12 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
     /**
      * Get or create a registry
      *
-     * @param url url
+     * @param registryUrl registry url
      * @return registry
      */
     @Override
-    public Registry getRegistry(Url url) {
-        String registryUri = url.getUri();
+    public Registry getRegistry(Url registryUrl) {
+        String registryUri = registryUrl.getUri();
         try {
             lock.lock();
             Registry registry = registriesCache.get(registryUri);
@@ -33,7 +33,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
                 return registry;
             }
             long start = System.currentTimeMillis();
-            registry = createRegistry(url);
+            registry = createRegistry(registryUrl);
             long elapsed = System.currentTimeMillis() - start;
             log.debug("Created registry [{}] in {} ms", registry.getClass().getSimpleName(), elapsed);
             if (registry == null) {
@@ -42,7 +42,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
             registriesCache.put(registryUri, registry);
             return registry;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create registry for url [" + url + "]");
+            throw new RuntimeException("Failed to create registry for url [" + registryUrl + "]");
         } finally {
             lock.unlock();
         }

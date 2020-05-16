@@ -311,7 +311,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             }
             return readProviderUrls(addrFiles, parentPath, clientUrl);
         } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to discover service [{0}] from zookeeper [{1}] with the error: {2}", clientUrl, getRegistryUrl(), e.getMessage()), e);
+            throw new RuntimeException(MessageFormat.format("Failed to discover provider [{0}] from registry [{1}] with the error: {2}", clientUrl, getRegistryUrl(), e.getMessage()), e);
         }
     }
 
@@ -369,6 +369,21 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         }
         return urls;
     }
+
+    @Override
+    public List<String> discoverActiveProviderAddress(String providerPath) {
+        try {
+            String parentPath = ZookeeperUtils.getActiveProviderAddress(providerPath);
+            List<String> addrFiles = new ArrayList<>();
+            if (zkClient.exists(parentPath)) {
+                addrFiles = zkClient.getChildren(parentPath);
+            }
+            return addrFiles;
+        } catch (Throwable e) {
+            throw new RuntimeException(MessageFormat.format("Failed to discover providers from registry [{0}] with the error: {1}", getRegistryUrl(), e.getMessage()), e);
+        }
+    }
+
 
     /**
      * Read command json content of specified url
@@ -544,4 +559,5 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     public void cleanup() {
         this.zkClient.close();
     }
+
 }

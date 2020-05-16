@@ -2,17 +2,14 @@ package org.infinity.rpc.core.config.spring;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.utilities.destory.ShutdownHook;
-import org.infinity.rpc.core.netty.NettyServer;
-import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.server.ProviderWrapper;
 import org.infinity.rpc.core.server.ProviderWrapperHolder;
 import org.infinity.rpc.core.switcher.DefaultSwitcherService;
 import org.infinity.rpc.core.switcher.SwitcherService;
+import org.infinity.rpc.utilities.destory.ShutdownHook;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -63,9 +60,9 @@ public class RpcLifecycle {
     /**
      * Start the RPC server
      *
-     * @param rpcProperties RPC configuration properties
+     * @param infinityProperties RPC configuration properties
      */
-    public void start(InfinityProperties rpcProperties) {
+    public void start(InfinityProperties infinityProperties, List<Url> registryUrls) {
         if (!started.compareAndSet(false, true)) {
             // already started
             return;
@@ -73,14 +70,12 @@ public class RpcLifecycle {
         log.info("Starting the RPC server");
         initConfig();
         registerShutdownHook();
-        registerProviders(rpcProperties);
+        registerProviders(infinityProperties, registryUrls);
 
         DefaultSwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
         // referProviders();
         log.info("Started the RPC server");
         log.info("Starting the netty server");
-        NettyServer nettyServer = new NettyServer(rpcProperties.getProtocol().getHost(), rpcProperties.getProtocol().getPort());
-        nettyServer.startNettyServer();
     }
 
     /**
@@ -101,36 +96,13 @@ public class RpcLifecycle {
      *
      * @param infinityProperties RPC configuration properties
      */
-    private void registerProviders(InfinityProperties infinityProperties) {
+    private void registerProviders(InfinityProperties infinityProperties, List<Url> registryUrls) {
         // TODO: consider using the async thread pool to speed up the startup process
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
-            List<Url> registryUrls = createRegistryUrls(infinityProperties);
             Url providerUrl = createProviderUrl(infinityProperties, providerWrapper);
             // DO the providers registering
             providerWrapper.register(registryUrls, providerUrl);
         });
-    }
-
-    /**
-     * Create registry urls
-     *
-     * @param infinityProperties configuration properties
-     * @return registry urls
-     */
-    private List<Url> createRegistryUrls(InfinityProperties infinityProperties) {
-        Url registryUrl = Url.of(infinityProperties.getRegistry().getName().value(),
-                infinityProperties.getRegistry().getHost(),
-                infinityProperties.getRegistry().getPort(),
-                Registrable.class.getName());
-
-        // Assign values to parameters
-        registryUrl.addParameter(Url.PARAM_CHECK_HEALTH, Url.PARAM_CHECK_HEALTH_DEFAULT_VALUE);
-        registryUrl.addParameter(Url.PARAM_ADDRESS, registryUrl.getAddress());
-        registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, infinityProperties.getRegistry().getConnectTimeout().toString());
-        registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, infinityProperties.getRegistry().getSessionTimeout().toString());
-        registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, infinityProperties.getRegistry().getRetryInterval().toString());
-        // TODO: Support multiple registry centers
-        return Arrays.asList(registryUrl);
     }
 
     /**
@@ -158,7 +130,7 @@ public class RpcLifecycle {
      *
      * @param rpcProperties RPC configuration properties
      */
-    public void stop(InfinityProperties rpcProperties) {
+    public void stop(InfinityProperties rpcProperties, List<Url> registryUrls) {
         if (!started.compareAndSet(true, false) || !stopped.compareAndSet(false, true)) {
             // not yet started or already stopped
             return;

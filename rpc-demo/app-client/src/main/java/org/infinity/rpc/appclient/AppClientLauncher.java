@@ -6,13 +6,19 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.rpc.appclient.config.ApplicationConstants;
 import org.infinity.rpc.appclient.utils.NetworkIpUtils;
 import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
+import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.netty.NettyServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.Assert;
@@ -26,12 +32,12 @@ import java.util.Date;
 
 @EnableRpc
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class, MongoDataAutoConfiguration.class})
-public class AppClientLauncher {
+public class AppClientLauncher implements ApplicationContextAware {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppClientLauncher.class);
-
+    private static final Logger                         LOGGER = LoggerFactory.getLogger(AppClientLauncher.class);
     @Autowired
-    private Environment env;
+    private              Environment                    env;
+    private static       ConfigurableApplicationContext applicationContext;
 
     /**
      * Entrance method which used to run the application. Spring profiles can be configured with a program arguments
@@ -44,6 +50,10 @@ public class AppClientLauncher {
         SpringApplication app = new SpringApplication(AppClientLauncher.class);
         Environment env = app.run(args).getEnvironment();
         printAppInfo(env);
+        InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
+        NettyServer nettyServer = new NettyServer(infinityProperties.getProtocol().getHost(), infinityProperties.getProtocol().getPort());
+        nettyServer.startNettyServer();
+        nettyServer.startNettyServer();
     }
 
     private static void printAppInfo(Environment env) throws IOException {
@@ -74,5 +84,10 @@ public class AppClientLauncher {
             LOGGER.error("Misconfigured application with an illegal profile '{}'!", activeProfile);
             System.exit(0);
         });
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = (ConfigurableApplicationContext) applicationContext;
     }
 }

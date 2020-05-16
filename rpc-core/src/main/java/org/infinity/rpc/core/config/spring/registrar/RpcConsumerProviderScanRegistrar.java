@@ -5,6 +5,7 @@ import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.config.spring.RpcLifecycleApplicationListener;
 import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
 import org.infinity.rpc.core.config.spring.bean.registry.AnnotatedBeanDefinitionRegistry;
+import org.infinity.rpc.core.config.spring.client.ConsumerBeanPostProcessor;
 import org.infinity.rpc.core.config.spring.server.ProviderBeanDefinitionRegistryPostProcessor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -40,7 +41,7 @@ public class RpcConsumerProviderScanRegistrar implements ImportBeanDefinitionReg
         String[] scanBasePackages = attributes.getStringArray("scanBasePackages");
 //        Class<?> currentClass = ClassUtils.resolveClassName(metadata.getClassName(), classLoader);
         // Keep sequence
-        Set<String> packagesToScan = new LinkedHashSet<String>(Arrays.asList(scanBasePackages));
+        Set<String> packagesToScan = new LinkedHashSet<>(Arrays.asList(scanBasePackages));
         if (packagesToScan.isEmpty()) {
             String packageName = ClassUtils.getPackageName(metadata.getClassName());
             log.debug("Default scan base package: [{}]", packageName);
@@ -78,7 +79,7 @@ public class RpcConsumerProviderScanRegistrar implements ImportBeanDefinitionReg
      * @param registry
      */
     private void registerConsumerDefinitionRegistryPostProcessor(Set<String> scanBasePackages, BeanDefinitionRegistry registry) {
-//        registerBeanDefinition(scanBasePackages, registry, ConsumerBeanPostProcessor.class);
+        registerBeanDefinition(scanBasePackages, registry, ConsumerBeanPostProcessor.class);
     }
 
     private void registerBeanDefinition(Set<String> scanBasePackages, BeanDefinitionRegistry registry, Class clazz) {

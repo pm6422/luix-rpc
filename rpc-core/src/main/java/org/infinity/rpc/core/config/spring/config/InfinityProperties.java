@@ -66,8 +66,8 @@ InfinityProperties implements InitializingBean {
                 this.value = value;
             }
 
-            public Registry.Name fromValue(String value) {
-                return Registry.Name.valueOf(value);
+            public Name fromValue(String value) {
+                return Name.valueOf(value);
             }
 
             public String value() {
@@ -89,8 +89,7 @@ InfinityProperties implements InitializingBean {
         }
 
         private void checkIntegrity() {
-            // todo
-
+            Validate.notNull(port, "Protocol port must NOT be null! Please check your configuration.");
         }
 
         private void checkValidity() {

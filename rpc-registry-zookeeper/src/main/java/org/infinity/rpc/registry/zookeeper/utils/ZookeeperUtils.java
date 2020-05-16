@@ -30,6 +30,12 @@ public class ZookeeperUtils {
         return getProviderPath(url) + Url.PATH_SEPARATOR + node.getValue();
     }
 
+    //todo: refactor
+    public static String getActiveProviderAddress(String providerPath) {
+        return ZOOKEEPER_REGISTRY_NAMESPACE + Url.PATH_SEPARATOR + Url.PARAM_GROUP_DEFAULT_VALUE +
+                Url.PATH_SEPARATOR + providerPath + Url.PATH_SEPARATOR + ZookeeperNodeName.ACTIVE.getValue();
+    }
+
     /**
      * Get the zookeeper provider full path of specified url
      *

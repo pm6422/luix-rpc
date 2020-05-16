@@ -102,8 +102,9 @@ infinity:
         id: ${info.artifact.id}
         name: ${info.artifact.name}
         env: ${spring.profiles.active}
-    transport-protocol:
-        port: @app.rpc.port@
+    registry:
+        connectTimeout: 1000
+        sessionTimeout: 60000
 server:
     # It can be overridden by `--server.port` value passed in the commandline or `-Dserver.port` set in `JAVA_OPTS`
     port: @app.server.port@
