@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.config.spring;
+package org.infinity.rpc.core.config.spring.startup;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

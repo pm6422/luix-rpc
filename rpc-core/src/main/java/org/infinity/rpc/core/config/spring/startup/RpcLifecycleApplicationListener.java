@@ -1,7 +1,9 @@
-package org.infinity.rpc.core.config.spring;
+package org.infinity.rpc.core.config.spring.startup;
 
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.config.spring.startup.ExecuteOnceApplicationListener;
+import org.infinity.rpc.core.config.spring.startup.RpcLifecycle;
 import org.infinity.rpc.core.registry.Url;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ApplicationContextEvent;
@@ -20,8 +22,8 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
     @Autowired
     private       InfinityProperties rpcProperties;
     @Autowired
-    private       List<Url>          registryUrls;
-    private final RpcLifecycle       rpcLifecycle;
+    private       List<Url>    registryUrls;
+    private final RpcLifecycle rpcLifecycle;
 
     public RpcLifecycleApplicationListener() {
         this.rpcLifecycle = RpcLifecycle.getInstance();

@@ -2,7 +2,7 @@ package org.infinity.rpc.core.config.spring.registrar;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
-import org.infinity.rpc.core.config.spring.RpcLifecycleApplicationListener;
+import org.infinity.rpc.core.config.spring.startup.RpcLifecycleApplicationListener;
 import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
 import org.infinity.rpc.core.config.spring.bean.registry.AnnotatedBeanDefinitionRegistry;
 import org.infinity.rpc.core.config.spring.client.ConsumerBeanPostProcessor;

@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.config.spring;
+package org.infinity.rpc.core.config.spring.startup;
 
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.netty.NettyServer;

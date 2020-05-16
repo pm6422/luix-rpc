@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.config.spring;
+package org.infinity.rpc.core.config.spring.startup;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
