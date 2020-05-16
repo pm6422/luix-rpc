@@ -49,9 +49,6 @@ public class AppServerLauncher implements ApplicationContextAware {
         SpringApplication app = new SpringApplication(AppServerLauncher.class);
         Environment env = app.run(args).getEnvironment();
         printAppInfo(env);
-        InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
-        NettyServer nettyServer = new NettyServer(infinityProperties.getProtocol().getHost(), infinityProperties.getProtocol().getPort());
-        nettyServer.startNettyServer();
     }
 
     private static void printAppInfo(Environment env) throws IOException {

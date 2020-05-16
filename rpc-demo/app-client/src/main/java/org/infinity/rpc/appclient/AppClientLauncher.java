@@ -6,8 +6,6 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.rpc.appclient.config.ApplicationConstants;
 import org.infinity.rpc.appclient.utils.NetworkIpUtils;
 import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
-import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.netty.NettyServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -50,10 +48,6 @@ public class AppClientLauncher implements ApplicationContextAware {
         SpringApplication app = new SpringApplication(AppClientLauncher.class);
         Environment env = app.run(args).getEnvironment();
         printAppInfo(env);
-        InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
-        NettyServer nettyServer = new NettyServer(infinityProperties.getProtocol().getHost(), infinityProperties.getProtocol().getPort());
-        nettyServer.startNettyServer();
-        nettyServer.startNettyServer();
     }
 
     private static void printAppInfo(Environment env) throws IOException {

@@ -9,6 +9,8 @@ import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +23,7 @@ import java.util.List;
 @Slf4j
 @EnableConfigurationProperties({InfinityProperties.class})
 @Configuration
-public class RpcClientAutoConfiguration {
+public class RpcAutoConfiguration {
 
     @Autowired
     private InfinityProperties infinityProperties;
@@ -74,5 +76,10 @@ public class RpcClientAutoConfiguration {
         // Get the property registry factory by protocol value
         RegistryFactory registryFactory = ServiceInstanceLoader.getServiceLoader(RegistryFactory.class).load(protocol);
         return registryFactory;
+    }
+
+    @Bean
+    public ApplicationRunner nettyServerApplicationRunner() {
+        return new NettyServerApplicationRunner();
     }
 }
