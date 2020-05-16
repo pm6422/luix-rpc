@@ -2,7 +2,7 @@ package org.infinity.rpc.appserver.controller;
 
 import io.swagger.annotations.Api;
 import org.infinity.rpc.appserver.config.ApplicationProperties;
-import org.infinity.rpc.appserver.utils.NetworkIpUtils;
+import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

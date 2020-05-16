@@ -6,9 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
-public class NettyServerApplicationRunner implements ApplicationRunner {
+public class NettyServerApplicationRunner implements ApplicationRunner, Ordered {
 
     @Autowired
     private InfinityProperties infinityProperties;
@@ -17,5 +18,10 @@ public class NettyServerApplicationRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         NettyServer nettyServer = new NettyServer(infinityProperties.getProtocol().getHost(), infinityProperties.getProtocol().getPort());
         nettyServer.startNettyServer();
+    }
+
+    @Override
+    public int getOrder() {
+        return Integer.MAX_VALUE;
     }
 }

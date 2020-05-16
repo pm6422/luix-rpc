@@ -1,13 +1,8 @@
 package org.infinity.rpc.appserver;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.rpc.appserver.config.ApplicationConstants;
-import org.infinity.rpc.appserver.utils.NetworkIpUtils;
 import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
-import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.netty.NettyServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -19,15 +14,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.Assert;
-import org.springframework.util.StreamUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Date;
 
 @EnableRpc
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
@@ -47,26 +38,7 @@ public class AppServerLauncher implements ApplicationContextAware {
      */
     public static void main(String[] args) throws Exception {
         SpringApplication app = new SpringApplication(AppServerLauncher.class);
-        Environment env = app.run(args).getEnvironment();
-        printAppInfo(env);
-    }
-
-    private static void printAppInfo(Environment env) throws IOException {
-        String appBanner = StreamUtils.copyToString(new ClassPathResource("config/banner-app.txt").getInputStream(),
-                Charset.defaultCharset());
-        LOGGER.info(appBanner, env.getProperty("spring.application.name"),
-                StringUtils.isEmpty(env.getProperty("server.ssl.key-store")) ? "http" : "https",
-                NetworkIpUtils.INTRANET_IP,
-                env.getProperty("server.port"),
-                StringUtils.defaultString(env.getProperty("server.servlet.context-path")),
-                StringUtils.isEmpty(env.getProperty("server.ssl.key-store")) ? "http" : "https",
-                NetworkIpUtils.INTERNET_IP,
-                env.getProperty("server.port"),
-                StringUtils.defaultString(env.getProperty("server.servlet.context-path")),
-                org.springframework.util.StringUtils.arrayToCommaDelimitedString(env.getActiveProfiles()),
-                env.getProperty("PID"),
-                Charset.defaultCharset(),
-                env.getProperty("LOG_PATH") + "-" + DateFormatUtils.ISO_8601_EXTENDED_DATE_FORMAT.format(new Date()) + ".log");
+        app.run(args);
     }
 
     @PostConstruct
