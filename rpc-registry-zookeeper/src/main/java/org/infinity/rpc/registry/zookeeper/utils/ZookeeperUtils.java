@@ -1,7 +1,9 @@
 package org.infinity.rpc.registry.zookeeper.utils;
 
 import org.infinity.rpc.core.registry.Url;
-import org.infinity.rpc.registry.zookeeper.ZookeeperNodeName;
+import org.infinity.rpc.registry.zookeeper.ZookeeperStatusNode;
+
+import static org.infinity.rpc.core.registry.Url.PATH_SEPARATOR;
 
 public class ZookeeperUtils {
 
@@ -9,60 +11,87 @@ public class ZookeeperUtils {
     public static final String ZOOKEEPER_REGISTRY_COMMAND   = "/command";
 
     /**
-     * Get the zookeeper address full path of specified node
+     * Get the provider address full path of specified node
      *
      * @param url  url
      * @param node zookeeper active status node
-     * @return zookeeper path
+     * @return address full path
      */
-    public static String getAddressPath(Url url, ZookeeperNodeName node) {
-        return getActiveNodePath(url, node) + Url.PATH_SEPARATOR + url.getServerPortStr();
+    public static String getAddressPath(Url url, ZookeeperStatusNode node) {
+        return getActiveNodePath(url, node) + PATH_SEPARATOR + url.getServerPortStr();
     }
 
     /**
-     * Get the zookeeper active status full path of specified node
+     * Get the provider status node full path under specified group and status node
      *
      * @param url  url
      * @param node zookeeper active status node
-     * @return zookeeper path
+     * @return provider status node full path
      */
-    public static String getActiveNodePath(Url url, ZookeeperNodeName node) {
-        return getProviderPath(url) + Url.PATH_SEPARATOR + node.getValue();
-    }
-
-    //todo: refactor
-    public static String getActiveProviderAddress(String providerPath) {
-        return ZOOKEEPER_REGISTRY_NAMESPACE + Url.PATH_SEPARATOR + Url.PARAM_GROUP_DEFAULT_VALUE +
-                Url.PATH_SEPARATOR + providerPath + Url.PATH_SEPARATOR + ZookeeperNodeName.ACTIVE.getValue();
+    public static String getActiveNodePath(Url url, ZookeeperStatusNode node) {
+        return getActiveNodePath(url.getGroup(), url.getPath(), node);
     }
 
     /**
-     * Get the zookeeper provider full path of specified url
+     * Get the provider status node full path under specified group and status node
+     *
+     * @param group        zookeeper group node
+     * @param providerPath provider class fully-qualified name
+     * @param node         status node
+     * @return provider status node full path
+     */
+    public static String getActiveNodePath(String group, String providerPath, ZookeeperStatusNode node) {
+        return getProviderPath(group, providerPath) + PATH_SEPARATOR + node.getValue();
+    }
+
+    /**
+     * Get the provider full path under specified group node
      *
      * @param url url
-     * @return zookeeper path
+     * @return provider full path
      */
     public static String getProviderPath(Url url) {
-        return getGroupPath(url) + Url.PATH_SEPARATOR + url.getPath();
+        return getProviderPath(url.getGroup(), url.getPath());
     }
 
     /**
-     * Get the zookeeper command full path of specified url
+     * Get the provider full path under specified group node
+     *
+     * @param group        group
+     * @param providerPath provider class fully-qualified name
+     * @return provider full path
+     */
+    public static String getProviderPath(String group, String providerPath) {
+        return getGroupPath(group) + PATH_SEPARATOR + providerPath;
+    }
+
+    /**
+     * Get the command full path
      *
      * @param url url
-     * @return zookeeper path
+     * @return command full path
      */
     public static String getCommandPath(Url url) {
         return getGroupPath(url) + ZOOKEEPER_REGISTRY_COMMAND;
     }
 
     /**
-     * Get the zookeeper group full path of specified url
+     * Get the group node full path
      *
      * @param url url
-     * @return zookeeper path
+     * @return group node full path
      */
     public static String getGroupPath(Url url) {
-        return ZOOKEEPER_REGISTRY_NAMESPACE + Url.PATH_SEPARATOR + url.getGroup();
+        return getGroupPath(url.getGroup());
+    }
+
+    /**
+     * Get the group node full path
+     *
+     * @param group group
+     * @return group node full path
+     */
+    public static String getGroupPath(String group) {
+        return ZOOKEEPER_REGISTRY_NAMESPACE + PATH_SEPARATOR + group;
     }
 }
