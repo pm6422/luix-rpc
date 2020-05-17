@@ -133,9 +133,8 @@ public class ZookeeperUtils {
     }
 
     public static List<String> getProvidersByGroup(ZkClient zkClient, String group) {
-        List<String> services = getChildren(zkClient, getGroupPath(group));
-//        services.remove("command");
-        return services;
+        List<String> providers = getChildren(zkClient, getGroupPath(group));
+        return providers;
     }
 
     public static List<Map<String, String>> getNodes(ZkClient zkClient, String group, String providerPath, String statusNode) {
