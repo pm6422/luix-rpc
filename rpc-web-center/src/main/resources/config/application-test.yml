@@ -9,3 +9,9 @@
 # ===================================================================
 # Application specific properties
 # ===================================================================
+infinity:
+  registry:
+    name: zookeeper
+    address: localhost:2181
+
+

@@ -8,6 +8,8 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
+import java.text.MessageFormat;
+
 @ServiceName("zookeeper")
 @Slf4j
 public class ZookeeperRegistryFactory extends AbstractRegistryFactory {
@@ -24,7 +26,7 @@ public class ZookeeperRegistryFactory extends AbstractRegistryFactory {
             ZkClient zkClient = createZkClient(registryUrl.getParameter(Url.PARAM_ADDRESS), sessionTimeout, connectTimeout);
             return new ZookeeperRegistry(registryUrl, zkClient);
         } catch (ZkException e) {
-            log.error("Failed to connect zookeeper server with error: {}", e.getMessage());
+            log.error(MessageFormat.format("Failed to connect zookeeper server with error: {0}", e.getMessage()), e);
             return null;
         }
     }

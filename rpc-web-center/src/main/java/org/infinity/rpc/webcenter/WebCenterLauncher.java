@@ -1,12 +1,13 @@
 package org.infinity.rpc.webcenter;
 
+import org.infinity.rpc.core.config.spring.RpcAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 
 import java.io.IOException;
 
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
+@SpringBootApplication(exclude = {RpcAutoConfiguration.class, SecurityAutoConfiguration.class})
 public class WebCenterLauncher {
     /**
      * Entrance method which used to run the application. Spring profiles can be configured with a program arguments

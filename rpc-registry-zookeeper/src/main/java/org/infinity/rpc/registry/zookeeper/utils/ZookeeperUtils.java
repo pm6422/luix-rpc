@@ -138,12 +138,16 @@ public class ZookeeperUtils {
         return services;
     }
 
-    public static List<Map<String, String>> getNodes(ZkClient zkClient, String group, String providerPath, ZookeeperStatusNode node) {
+    public static List<Map<String, String>> getNodes(ZkClient zkClient, String group, String providerPath, String statusNode) {
+        return getNodes(zkClient, group, providerPath, ZookeeperStatusNode.fromValue(statusNode));
+    }
+
+    public static List<Map<String, String>> getNodes(ZkClient zkClient, String group, String providerPath, ZookeeperStatusNode statusNode) {
         List<Map<String, String>> result = new ArrayList<>();
-        List<String> nodes = getChildren(zkClient, getStatusNodePath(group, providerPath, node));
+        List<String> nodes = getChildren(zkClient, getStatusNodePath(group, providerPath, statusNode));
         for (String nodeName : nodes) {
             Map<String, String> nodeMap = new HashMap<>();
-            String info = zkClient.readData(getAddressPath(group, providerPath, node, nodeName), true);
+            String info = zkClient.readData(getAddressPath(group, providerPath, statusNode, nodeName), true);
             nodeMap.put("host", nodeName);
             nodeMap.put("info", info);
             result.add(nodeMap);
