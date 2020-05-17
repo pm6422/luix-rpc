@@ -49,9 +49,16 @@ management: # Management http server configuration, used by ManagementServerProp
                 request:
                     autotime:
                         enabled: true
+info: # These configuration can be exported to Environment, accessing URL /info can get these properties
+    artifact:
+        id: @project.artifactId@
+        name: @project.name@
+        version: @project.version@
+    project:
+        package: org.infinity.rpc.webcenter
 spring:
     application:
-        name: @project.name@
+        name: ${info.artifact.name}
     profiles:
         # The commented value for `active` can be replaced with valid spring profiles to load.
         # Otherwise, it will be filled in by maven when building the WAR file
@@ -90,19 +97,27 @@ spring:
     data:
         mongodb:
             auto-index-creation: false
+infinity:
+    application:
+        id: ${info.artifact.id}
+        name: ${info.artifact.name}
+        env: ${spring.profiles.active}
+    registry:
+        connectTimeout: 1000
+        sessionTimeout: 60000
 server:
     # It can be overridden by `--server.port` value passed in the commandline or `-Dserver.port` set in `JAVA_OPTS`
     port: @app.server.port@
     servlet:
         session:
             cookie:
-                name: ${spring.application.name}
+                name: ${info.artifact.name}
             timeout: 1D # Session timeout in 1 day, Note: this parameter can control the login expiration
             # and this statement can effect spring session, used by SessionProperties
 logging:
     config: classpath:config/logback-spring.xml
     file:
-        path: ${user.home}${file.separator}Log${file.separator}${spring.application.name}${file.separator}${spring.application.name}
+        path: ${user.home}${file.separator}Log${file.separator}${info.artifact.id}${file.separator}${info.artifact.id}
     level:
         root: DEBUG
         ${info.project.package}: DEBUG
