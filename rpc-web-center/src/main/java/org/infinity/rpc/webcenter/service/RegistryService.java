@@ -11,7 +11,7 @@ public interface RegistryService {
 
     List<String> getProvidersByGroup(String group);
 
-    List<AddressInfo> getNodes(String group, String service, String statusNode);
+    List<AddressInfo> getNodes(String group, String provider, String statusNode);
 
     Map<String, Map<String, List<AddressInfo>>> getAllNodes(String group);
 }

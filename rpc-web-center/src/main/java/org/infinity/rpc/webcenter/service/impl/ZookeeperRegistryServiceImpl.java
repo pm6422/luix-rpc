@@ -27,8 +27,8 @@ public class ZookeeperRegistryServiceImpl implements RegistryService {
     }
 
     @Override
-    public List<AddressInfo> getNodes(String group, String service, String statusNode) {
-        return ZookeeperUtils.getNodes(zkClient, group, service, statusNode);
+    public List<AddressInfo> getNodes(String group, String provider, String statusNode) {
+        return ZookeeperUtils.getNodes(zkClient, group, provider, statusNode);
     }
 
     @Override

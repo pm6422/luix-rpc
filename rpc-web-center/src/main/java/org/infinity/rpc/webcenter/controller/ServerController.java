@@ -4,9 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
 import org.infinity.rpc.webcenter.service.RegistryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,10 +36,7 @@ public class ServerController {
      * @return providers
      */
     @GetMapping("api/{group}/providers")
-    public ResponseEntity<List<String>> getProvidersByGroup(@PathVariable("group") String group) {
-        if (StringUtils.isEmpty(group)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+    public ResponseEntity<List<String>> getProvidersByGroup(@PathVariable(value = "group", required = true) String group) {
         List<String> providers = registryService.getProvidersByGroup(group);
         return ResponseEntity.ok().body(providers);
     }
@@ -56,6 +51,22 @@ public class ServerController {
     @GetMapping("api/{group}/nodes")
     public ResponseEntity<Map<String, Map<String, List<AddressInfo>>>> getNodesByGroup(@PathVariable(value = "group", required = true) String group) {
         Map<String, Map<String, List<AddressInfo>>> nodes = registryService.getAllNodes(group);
+        return ResponseEntity.ok().body(nodes);
+    }
+
+    /**
+     * Get provider node
+     *
+     * @param group      group
+     * @param provider   provider
+     * @param statusNode statusNode
+     * @return address info list
+     */
+    @GetMapping("api/{group}/{provider}/{statusNode}/nodes")
+    public ResponseEntity<List<AddressInfo>> getProviderNode(@PathVariable(value = "group", required = true) String group,
+                                                             @PathVariable(value = "provider", required = true) String provider,
+                                                             @PathVariable(value = "statusNode", required = true) String statusNode) {
+        List<AddressInfo> nodes = registryService.getNodes(group, provider, statusNode);
         return ResponseEntity.ok().body(nodes);
     }
 }
