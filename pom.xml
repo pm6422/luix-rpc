@@ -11,6 +11,7 @@
         <module>rpc-common</module>
         <module>rpc-core</module>
         <module>rpc-registry-zookeeper</module>
+        <module>rpc-web-center</module>
         <module>rpc-demo</module>
     </modules>
     <packaging>pom</packaging>
