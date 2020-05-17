@@ -1,7 +1,11 @@
 package org.infinity.rpc.registry.zookeeper.utils;
 
+import org.I0Itec.zkclient.ZkClient;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.registry.zookeeper.ZookeeperStatusNode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.infinity.rpc.core.registry.Url.PATH_SEPARATOR;
 
@@ -93,5 +97,19 @@ public class ZookeeperUtils {
      */
     public static String getGroupPath(String group) {
         return ZOOKEEPER_REGISTRY_NAMESPACE + PATH_SEPARATOR + group;
+    }
+
+    /**
+     * Get all child nodes under the path
+     *
+     * @param path zookeeper directory path
+     * @return child nodes
+     */
+    public static List<String> getZookeeperChildren(ZkClient zkClient, String path) {
+        List<String> children = new ArrayList<>();
+        if (zkClient.exists(path)) {
+            children = zkClient.getChildren(path);
+        }
+        return children;
     }
 }

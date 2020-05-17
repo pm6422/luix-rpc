@@ -305,10 +305,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     protected List<Url> discoverActiveProviders(Url clientUrl) {
         try {
             String parentPath = ZookeeperUtils.getActiveNodePath(clientUrl, ZookeeperStatusNode.ACTIVE);
-            List<String> addrFiles = new ArrayList<>();
-            if (zkClient.exists(parentPath)) {
-                addrFiles = zkClient.getChildren(parentPath);
-            }
+            List<String> addrFiles = ZookeeperUtils.getZookeeperChildren(zkClient, parentPath);
             return readProviderUrls(addrFiles, parentPath, clientUrl);
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to discover provider [{0}] from registry [{1}] with the error: {2}", clientUrl, getRegistryUrl(), e.getMessage()), e);
@@ -374,25 +371,11 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     public List<String> discoverActiveProviderAddress(String providerPath) {
         try {
             String parentPath = ZookeeperUtils.getActiveNodePath(Url.PARAM_GROUP_DEFAULT_VALUE, providerPath, ZookeeperStatusNode.ACTIVE);
-            List<String> addrFiles = getZookeeperChildren(parentPath);
+            List<String> addrFiles = ZookeeperUtils.getZookeeperChildren(zkClient, parentPath);
             return addrFiles;
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to discover providers from registry [{0}] with the error: {1}", getRegistryUrl(), e.getMessage()), e);
         }
-    }
-
-    /**
-     * Get all child nodes under the path
-     *
-     * @param path zookeeper directory path
-     * @return child nodes
-     */
-    private List<String> getZookeeperChildren(String path) {
-        List<String> children = new ArrayList<>();
-        if (zkClient.exists(path)) {
-            children = zkClient.getChildren(path);
-        }
-        return children;
     }
 
     /**
