@@ -12,9 +12,7 @@ import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,14 +20,9 @@ import java.util.List;
 
 @Slf4j
 @EnableConfigurationProperties({InfinityProperties.class})
-@Configuration
 public class RpcAutoConfiguration {
-
     @Autowired
     private InfinityProperties infinityProperties;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     /**
      * Create registry urls
