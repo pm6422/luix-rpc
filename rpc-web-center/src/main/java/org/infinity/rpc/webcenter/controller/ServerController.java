@@ -1,6 +1,7 @@
 package org.infinity.rpc.webcenter.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
 import org.infinity.rpc.webcenter.service.RegistryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -42,5 +44,18 @@ public class ServerController {
         }
         List<String> providers = registryService.getProvidersByGroup(group);
         return ResponseEntity.ok().body(providers);
+    }
+
+
+    /**
+     * Get nodes by group
+     *
+     * @param group group
+     * @return nodes
+     */
+    @GetMapping("api/{group}/nodes")
+    public ResponseEntity<Map<String, Map<String, List<AddressInfo>>>> getNodesByGroup(@PathVariable(value = "group", required = true) String group) {
+        Map<String, Map<String, List<AddressInfo>>> nodes = registryService.getAllNodes(group);
+        return ResponseEntity.ok().body(nodes);
     }
 }

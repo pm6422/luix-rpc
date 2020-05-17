@@ -1,5 +1,7 @@
 package org.infinity.rpc.webcenter.service;
 
+import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
+
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +11,7 @@ public interface RegistryService {
 
     List<String> getProvidersByGroup(String group);
 
-    List<Map<String, String>> getNodes(String group, String service, String statusNode);
+    List<AddressInfo> getNodes(String group, String service, String statusNode);
 
-    List<Map<String, List<Map<String, String>>>> getAllNodes(String group);
+    Map<String, Map<String, List<AddressInfo>>> getAllNodes(String group);
 }

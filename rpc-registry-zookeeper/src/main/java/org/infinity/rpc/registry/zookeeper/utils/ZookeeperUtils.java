@@ -137,35 +137,36 @@ public class ZookeeperUtils {
         return providers;
     }
 
-    public static List<Map<String, String>> getNodes(ZkClient zkClient, String group, String providerPath, String statusNode) {
+    public static List<AddressInfo> getNodes(ZkClient zkClient, String group, String providerPath, String statusNode) {
         return getNodes(zkClient, group, providerPath, ZookeeperStatusNode.fromValue(statusNode));
     }
 
-    public static List<Map<String, String>> getNodes(ZkClient zkClient, String group, String providerPath, ZookeeperStatusNode statusNode) {
-        List<Map<String, String>> result = new ArrayList<>();
+    public static List<AddressInfo> getNodes(ZkClient zkClient, String group, String providerPath, ZookeeperStatusNode statusNode) {
+        List<AddressInfo> result = new ArrayList<>();
         List<String> nodes = getChildren(zkClient, getStatusNodePath(group, providerPath, statusNode));
         for (String nodeName : nodes) {
-            Map<String, String> nodeMap = new HashMap<>();
+            AddressInfo addressInfo = new AddressInfo();
             String info = zkClient.readData(getAddressPath(group, providerPath, statusNode, nodeName), true);
-            nodeMap.put("host", nodeName);
-            nodeMap.put("info", info);
-            result.add(nodeMap);
+            addressInfo.setAddress(nodeName);
+            addressInfo.setContents(info);
+            result.add(addressInfo);
         }
         return result;
     }
 
-    public static List<Map<String, List<Map<String, String>>>> getAllNodes(ZkClient zkClient, String group) {
-        List<Map<String, List<Map<String, String>>>> results = new ArrayList<>();
+    public static Map<String, Map<String, List<AddressInfo>>> getAllNodes(ZkClient zkClient, String group) {
+        Map<String, Map<String, List<AddressInfo>>> results = new HashMap<>();
         List<String> services = getProvidersByGroup(zkClient, group);
         for (String serviceName : services) {
-            Map<String, List<Map<String, String>>> service = new HashMap();
-            List<Map<String, String>> availableServer = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.ACTIVE);
+            Map<String, List<AddressInfo>> service = new HashMap();
+            List<AddressInfo> availableServer = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.ACTIVE);
             service.put(ZookeeperStatusNode.ACTIVE.getValue(), availableServer);
-            List<Map<String, String>> unavailableServer = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.INACTIVE);
+            List<AddressInfo> unavailableServer = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.INACTIVE);
             service.put(ZookeeperStatusNode.INACTIVE.getValue(), unavailableServer);
-            List<Map<String, String>> clientNode = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.CLIENT);
+            List<AddressInfo> clientNode = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.CLIENT);
             service.put(ZookeeperStatusNode.CLIENT.getValue(), clientNode);
-            results.add(service);
+
+            results.put(serviceName, service);
         }
         return results;
     }

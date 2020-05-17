@@ -1,6 +1,7 @@
 package org.infinity.rpc.webcenter.service.impl;
 
 import org.I0Itec.zkclient.ZkClient;
+import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.webcenter.service.RegistryService;
 
@@ -26,12 +27,12 @@ public class ZookeeperRegistryServiceImpl implements RegistryService {
     }
 
     @Override
-    public List<Map<String, String>> getNodes(String group, String service, String statusNode) {
+    public List<AddressInfo> getNodes(String group, String service, String statusNode) {
         return ZookeeperUtils.getNodes(zkClient, group, service, statusNode);
     }
 
     @Override
-    public List<Map<String, List<Map<String, String>>>> getAllNodes(String group) {
+    public Map<String, Map<String, List<AddressInfo>>> getAllNodes(String group) {
         return ZookeeperUtils.getAllNodes(zkClient, group);
     }
 }
