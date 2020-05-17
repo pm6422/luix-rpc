@@ -369,9 +369,16 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
 
     @Override
     public List<String> discoverActiveProviderAddress(String providerPath) {
+        List<String> addrFiles = new ArrayList<>();
         try {
-            String parentPath = ZookeeperUtils.getStatusNodePath(Url.PARAM_GROUP_DEFAULT_VALUE, providerPath, ZookeeperStatusNode.ACTIVE);
-            List<String> addrFiles = ZookeeperUtils.getChildren(zkClient, parentPath);
+            List<String> groups = ZookeeperUtils.getGroups(zkClient);
+            if (CollectionUtils.isEmpty(groups)) {
+                return addrFiles;
+            }
+            for (String group : groups) {
+                String parentPath = ZookeeperUtils.getStatusNodePath(group, providerPath, ZookeeperStatusNode.ACTIVE);
+                addrFiles.addAll(CollectionUtils.emptyIfNull(ZookeeperUtils.getChildren(zkClient, parentPath)));
+            }
             return addrFiles;
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to discover providers from registry [{0}] with the error: {1}", getRegistryUrl(), e.getMessage()), e);
