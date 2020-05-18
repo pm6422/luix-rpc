@@ -40,6 +40,7 @@ public class Url implements Serializable {
      */
     public static final  String  PARAM_GROUP                      = "group";
     public static final  String  PARAM_GROUP_DEFAULT_VALUE        = "default-group";
+    public static final  String  PARAM_GROUP_APPLICATION          = "application";
     /**
      *
      */

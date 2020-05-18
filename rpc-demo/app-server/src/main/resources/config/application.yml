@@ -101,6 +101,9 @@ infinity:
     application:
         id: ${info.artifact.id}
         name: ${info.artifact.name}
+        description: RPC Server Demo
+        team: Infinity Team
+        owner: louis
         env: ${spring.profiles.active}
     registry:
         connectTimeout: 1000

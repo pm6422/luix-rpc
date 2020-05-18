@@ -36,6 +36,7 @@ public class InfinityProperties implements InitializingBean {
     }
 
     private void initialize() {
+        application.initialize();
         protocol.initialize();
         registry.initialize();
     }
@@ -48,10 +49,24 @@ public class InfinityProperties implements InitializingBean {
         private String name;
         // Application description
         private String description;
-        // Group used to discover services
-        private String group;
+        // Responsible team
+        private String team;
+        // Application owner
+        private String owner;
         // Environment variable, e.g. dev, test or prod
         private String env;
+
+        public void initialize() {
+            checkIntegrity();
+            checkValidity();
+        }
+
+        private void checkIntegrity() {
+            Validate.notNull(name, "Application name must NOT be null! Please check your configuration.");
+        }
+
+        private void checkValidity() {
+        }
     }
 
     @Data

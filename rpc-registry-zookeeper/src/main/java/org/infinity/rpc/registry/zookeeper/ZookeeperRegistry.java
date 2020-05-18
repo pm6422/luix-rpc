@@ -164,6 +164,27 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
+     * Register specified url info to zookeeper
+     *
+     * @param providerUrl provider url
+     */
+    @Override
+    protected void doRegister(Url providerUrl) {
+        try {
+            serverLock.lock();
+            // Remove old node in order to avoid using dirty data
+            removeNode(providerUrl, ZookeeperStatusNode.ACTIVE);
+            removeNode(providerUrl, ZookeeperStatusNode.INACTIVE);
+            // Create data under 'inactive' node
+            createNode(providerUrl, ZookeeperStatusNode.INACTIVE);
+        } catch (Throwable e) {
+            throw new RuntimeException(MessageFormat.format("Failed to register [{0}] to zookeeper [{1}] with the error: {2}", providerUrl, getRegistryUrl(), e.getMessage()), e);
+        } finally {
+            serverLock.unlock();
+        }
+    }
+
+    /**
      * Register specified url info to zookeeper 'active' node
      *
      * @param providerUrl provider url
@@ -222,27 +243,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 // Create data under 'inactive' node
                 createNode(providerUrl, ZookeeperStatusNode.INACTIVE);
             }
-        } finally {
-            serverLock.unlock();
-        }
-    }
-
-    /**
-     * Register specified url info to zookeeper
-     *
-     * @param providerUrl provider url
-     */
-    @Override
-    protected void doRegister(Url providerUrl) {
-        try {
-            serverLock.lock();
-            // Remove old node in order to avoid using dirty data
-            removeNode(providerUrl, ZookeeperStatusNode.ACTIVE);
-            removeNode(providerUrl, ZookeeperStatusNode.INACTIVE);
-            // Create data under unavailable server node
-            createNode(providerUrl, ZookeeperStatusNode.INACTIVE);
-        } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to register [{0}] to zookeeper [{1}] with the error: {2}", providerUrl, getRegistryUrl(), e.getMessage()), e);
         } finally {
             serverLock.unlock();
         }
