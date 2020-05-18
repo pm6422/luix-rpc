@@ -72,9 +72,8 @@ public class RpcLifecycle {
         log.info("Starting the RPC server");
         initConfig();
         registerShutdownHook();
-        registerProviders(infinityProperties, registryUrls);
-        // Do NOT need to register application if provider registration failure
         registerApplication(infinityProperties, registryUrls);
+        registerProviders(infinityProperties, registryUrls);
         DefaultSwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
         // referProviders();
         log.info("Started the RPC server");
@@ -104,7 +103,7 @@ public class RpcLifecycle {
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
             Url providerUrl = createProviderUrl(infinityProperties, providerWrapper);
             // DO the providers registering
-            providerWrapper.register(registryUrls, providerUrl);
+            providerWrapper.register(infinityProperties.getApplication().toApp(), registryUrls, providerUrl);
         });
     }
 

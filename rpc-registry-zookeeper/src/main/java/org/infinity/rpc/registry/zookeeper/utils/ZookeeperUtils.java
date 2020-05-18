@@ -14,7 +14,6 @@ import static org.infinity.rpc.core.registry.Url.PATH_SEPARATOR;
 public class ZookeeperUtils {
 
     public static final String ZOOKEEPER_REGISTRY_NAMESPACE = "/infinity";
-    public static final String ZOOKEEPER_APPLICATION        = "/application";
 
 
     public static final String ZOOKEEPER_REGISTRY_COMMAND = "/command";
@@ -180,6 +179,10 @@ public class ZookeeperUtils {
      * @param appName application name @return group node full path
      */
     public static String getApplicationPath(String appName) {
-        return ZOOKEEPER_REGISTRY_NAMESPACE + ZOOKEEPER_APPLICATION + PATH_SEPARATOR + appName;
+        return getGroupPath(Url.PARAM_GROUP_APPLICATION) + PATH_SEPARATOR + appName;
+    }
+
+    public static String getAppProvidersPath(String appName) {
+        return getGroupPath(Url.PARAM_GROUP_APP_PROVIDERS) + PATH_SEPARATOR + appName;
     }
 }

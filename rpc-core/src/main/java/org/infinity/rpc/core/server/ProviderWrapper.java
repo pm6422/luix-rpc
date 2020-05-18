@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.server;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.Url;
@@ -64,13 +65,18 @@ public class ProviderWrapper<T> {
 
     /**
      * Register the RPC provider to registry
+     *
+     * @param app          application info
+     * @param registryUrls registry urls
+     * @param providerUrl  provider url
      */
-    public void register(List<Url> registryUrls, Url providerUrl) {
+    public void register(App app, List<Url> registryUrls, Url providerUrl) {
         for (Url registryUrl : registryUrls) {
             // Register provider URL to all the registries
             RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(registryUrl.getProtocol());
             Registry registry = registryFactoryImpl.getRegistry(registryUrl);
             registry.register(providerUrl);
+            registry.registerAppProvider(app, providerUrl);
         }
         log.debug("Registered RPC provider [{}] to registry", providerInterface);
     }

@@ -178,22 +178,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      */
     @Override
     public void registerApplication(App app) {
-        // Remove old node in order to avoid using dirty data
-        removeApplicationNode(app.getName());
         // Create data under 'application' node
         createApplicationNode(app);
-    }
-
-    /**
-     * Delete specified application directory
-     *
-     * @param appName application name
-     */
-    private void removeApplicationNode(String appName) {
-        String appNodePath = ZookeeperUtils.getApplicationPath(appName);
-        if (zkClient.exists(appNodePath)) {
-            zkClient.delete(appNodePath);
-        }
     }
 
     /**
@@ -207,15 +193,51 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             // Create a persistent directory
             zkClient.createPersistent(appNodePath, true);
         }
-        // Create temporary files and temporary files will be deleted automatically after closed zk session
+
         for (Field field : App.class.getDeclaredFields()) {
             try {
                 field.setAccessible(true);
-                zkClient.createEphemeral(appNodePath + Url.PATH_SEPARATOR + field.getName(), field.get(app));
+                String filePath = appNodePath + Url.PATH_SEPARATOR + field.getName();
+                if (!zkClient.exists(filePath)) {
+                    // Create temporary files and temporary files will be deleted automatically after closed zk session
+                    zkClient.createEphemeral(filePath, field.get(app));
+                }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(MessageFormat.format("Failed to register application [{0}] to zookeeper [{1}] with the error: {2}", app.getName(), getRegistryUrl(), e.getMessage()), e);
             }
         }
+    }
+
+    /**
+     * Register application provider info to registry
+     *
+     * @param app         application info
+     * @param providerUrl provider url
+     */
+    @Override
+    public void registerAppProvider(App app, Url providerUrl) {
+        // Create data under 'app-providers/app-name' node
+        createAppNode(app, providerUrl);
+    }
+
+    /**
+     * Create zookeeper persistent directory and ephemeral root node
+     *
+     * @param app         application info
+     * @param providerUrl url
+     */
+    private void createAppNode(App app, Url providerUrl) {
+        String appNodePath = ZookeeperUtils.getAppProvidersPath(app.getName());
+        if (!zkClient.exists(appNodePath)) {
+            // Create a persistent directory
+            zkClient.createPersistent(appNodePath, true);
+        }
+
+        String filePath = appNodePath + Url.PATH_SEPARATOR + providerUrl.getPath();
+        // Create a temporary file which content is the full string of the url
+        // And temporary files will be deleted automatically after closed zk session
+        // Append multiple provider url to file contents
+        zkClient.createEphemeral(filePath, providerUrl.toFullStr());
     }
 
     /**
