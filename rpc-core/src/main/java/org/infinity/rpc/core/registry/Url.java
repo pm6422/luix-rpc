@@ -14,11 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @EqualsAndHashCode
 public class Url implements Serializable {
-    private static final long    serialVersionUID                  = 2970867582138131181L;
+    private static final long    serialVersionUID                 = 2970867582138131181L;
     // URL Pattern: {protocol}://{host}:{port}/{path}?{parameters}
-    private static final String  URL_PATTERN                       = "{0}://{1}:{2}/{3}?{4}";
-    public static final  String  PROTOCOL_SEPARATOR                = "://";
-    public static final  String  PATH_SEPARATOR                    = "/";
+    private static final String  URL_PATTERN                      = "{0}://{1}:{2}/{3}?{4}";
+    public static final  String  PROTOCOL_SEPARATOR               = "://";
+    public static final  String  PATH_SEPARATOR                   = "/";
     /**
      * RPC protocol
      */
@@ -38,32 +38,32 @@ public class Url implements Serializable {
     /**
      *
      */
-    public static final  String  PARAM_GROUP                       = "group";
-    public static final  String  PARAM_GROUP_DEFAULT_VALUE         = "default-group";
-    public static final  String  PARAM_GROUP_APPLICATION           = "application";
-    public static final  String  PARAM_GROUP_APPLICATION_PROVIDERS = "application-providers";
+    public static final  String  PARAM_GROUP                      = "group";
+    public static final  String  PARAM_GROUP_PROVIDER             = "provider";
+    public static final  String  PARAM_GROUP_APPLICATION          = "application";
+    public static final  String  PARAM_GROUP_APPLICATION_PROVIDER = "application-provider";
     /**
      *
      */
-    public static final  String  PARAM_CHECK_HEALTH                = "checkHealth";
-    public static final  String  PARAM_CHECK_HEALTH_DEFAULT_VALUE  = "true";
+    public static final  String  PARAM_CHECK_HEALTH               = "checkHealth";
+    public static final  String  PARAM_CHECK_HEALTH_DEFAULT_VALUE = "true";
     /**
      *
      */
-    public static final  String  PARAM_CODEC                       = "codec";
-    public static final  String  PARAM_CODEC_DEFAULT_VALUE         = "infinity";
+    public static final  String  PARAM_CODEC                      = "codec";
+    public static final  String  PARAM_CODEC_DEFAULT_VALUE        = "infinity";
     /**
      *
      */
-    public static final  String  PARAM_TYPE                        = "type";
-    public static final  String  PARAM_TYPE_DEFAULT_VALUE          = "provider";
+    public static final  String  PARAM_TYPE                       = "type";
+    public static final  String  PARAM_TYPE_DEFAULT_VALUE         = "provider";
     /**
      *
      */
-    public static final  String  PARAM_ADDRESS                     = "address";
-    public static final  String  PARAM_CONNECT_TIMEOUT             = "connectTimeout";
-    public static final  String  PARAM_SESSION_TIMEOUT             = "sessionTimeout";
-    public static final  String  PARAM_RETRY_INTERVAL              = "retryInterval";
+    public static final  String  PARAM_ADDRESS                    = "address";
+    public static final  String  PARAM_CONNECT_TIMEOUT            = "connectTimeout";
+    public static final  String  PARAM_SESSION_TIMEOUT            = "sessionTimeout";
+    public static final  String  PARAM_RETRY_INTERVAL             = "retryInterval";
 
     /**
      * Extended parameters
@@ -150,7 +150,7 @@ public class Url implements Serializable {
 
     private void initialize() {
         parameters = new HashMap<>();
-        parameters.put(PARAM_GROUP, PARAM_GROUP_DEFAULT_VALUE);
+        parameters.put(PARAM_GROUP, PARAM_GROUP_PROVIDER);
     }
 
     private void checkIntegrity() {

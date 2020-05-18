@@ -52,13 +52,13 @@ public class ZookeeperRegistryTests {
 
         // client url use the provider path, but port is 0
         clientUrl = Url.of("infinity", NetworkIpUtils.INTRANET_IP, 0, provider);
-        clientUrl.addParameter("group", Url.PARAM_GROUP_DEFAULT_VALUE);
+        clientUrl.addParameter("group", Url.PARAM_GROUP_PROVIDER);
 
         providerUrl1 = Url.of("infinity", NetworkIpUtils.INTRANET_IP, 2000, provider);
-        providerUrl1.addParameter("group", Url.PARAM_GROUP_DEFAULT_VALUE);
+        providerUrl1.addParameter("group", Url.PARAM_GROUP_PROVIDER);
 
         providerUrl2 = Url.of("infinity", "192.168.100.100", 2000, provider);
-        providerUrl2.addParameter("group", Url.PARAM_GROUP_DEFAULT_VALUE);
+        providerUrl2.addParameter("group", Url.PARAM_GROUP_PROVIDER);
 
         zookeeper = new EmbeddedZookeeper();
         zookeeper.start();
