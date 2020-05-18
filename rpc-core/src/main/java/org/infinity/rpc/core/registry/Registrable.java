@@ -40,4 +40,10 @@ public interface Registrable {
      * @return provider urls
      */
     Set<Url> getRegisteredProviderUrls();
+    /**
+     * Register application info to registry
+     *
+     * @param app application info
+     */
+    void registerApplication(App app);
 }

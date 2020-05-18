@@ -2,6 +2,8 @@ package org.infinity.rpc.core.config.spring.startup;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.registry.Registry;
+import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.server.ProviderWrapper;
 import org.infinity.rpc.core.server.ProviderWrapperHolder;
@@ -71,7 +73,8 @@ public class RpcLifecycle {
         initConfig();
         registerShutdownHook();
         registerProviders(infinityProperties, registryUrls);
-
+        // Do NOT need to register application if provider registration failure
+        registerApplication(infinityProperties, registryUrls);
         DefaultSwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
         // referProviders();
         log.info("Started the RPC server");
@@ -122,6 +125,22 @@ public class RpcLifecycle {
         // Assign values to parameters
         providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, Url.PARAM_CHECK_HEALTH_DEFAULT_VALUE);
         return providerUrl;
+    }
+
+    /**
+     * Register application information to registry
+     *
+     * @param infinityProperties configuration properties
+     * @param registryUrls       registry urls
+     */
+    private void registerApplication(InfinityProperties infinityProperties, List<Url> registryUrls) {
+        for (Url registryUrl : registryUrls) {
+            // Register provider URL to all the registries
+            RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(registryUrl.getProtocol());
+            Registry registry = registryFactoryImpl.getRegistry(registryUrl);
+            registry.registerApplication(infinityProperties.getApplication().toApp());
+        }
+        log.debug("Registered RPC server application [{}] to registry", infinityProperties.getApplication().getName());
     }
 
     /**

@@ -53,22 +53,10 @@ public class RpcAutoConfiguration {
         List<Registry> registries = new ArrayList<>();
         for (Url registryUrl : registryUrls) {
             // Register provider URL to all the registries
-            RegistryFactory registryFactoryImpl = getRegistryFactory(infinityProperties.getRegistry().getName().value());
+            RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(infinityProperties.getRegistry().getName().value());
             registries.add(registryFactoryImpl.getRegistry(registryUrl));
         }
         return new RpcConsumerProxy(registries);
-    }
-
-    /**
-     * Get the registry factory based on protocol
-     *
-     * @param protocol protocol
-     * @return registry factory
-     */
-    private RegistryFactory getRegistryFactory(String protocol) {
-        // Get the property registry factory by protocol value
-        RegistryFactory registryFactory = ServiceInstanceLoader.getServiceLoader(RegistryFactory.class).load(protocol);
-        return registryFactory;
     }
 
     @Bean

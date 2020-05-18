@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.Url;
-import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -69,23 +68,11 @@ public class ProviderWrapper<T> {
     public void register(List<Url> registryUrls, Url providerUrl) {
         for (Url registryUrl : registryUrls) {
             // Register provider URL to all the registries
-            RegistryFactory registryFactoryImpl = getRegistryFactory(registryUrl);
+            RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(registryUrl.getProtocol());
             Registry registry = registryFactoryImpl.getRegistry(registryUrl);
             registry.register(providerUrl);
         }
         log.debug("Registered RPC provider [{}] to registry", providerInterface);
-    }
-
-
-    /**
-     * Get the registry factory based on protocol
-     * @param url url
-     * @return registry factory
-     */
-    private RegistryFactory getRegistryFactory(Url url) {
-        // Get the property registry factory by protocol value
-        RegistryFactory registryFactory = ServiceInstanceLoader.getServiceLoader(RegistryFactory.class).load(url.getProtocol());
-        return registryFactory;
     }
 
     /**
