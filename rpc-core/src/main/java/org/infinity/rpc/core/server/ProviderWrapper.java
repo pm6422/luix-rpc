@@ -76,7 +76,7 @@ public class ProviderWrapper<T> {
             RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(registryUrl.getProtocol());
             Registry registry = registryFactoryImpl.getRegistry(registryUrl);
             registry.register(providerUrl);
-            registry.registerAppProvider(app, providerUrl);
+            registry.registerApplicationProvider(app, providerUrl);
         }
         log.debug("Registered RPC provider [{}] to registry", providerInterface);
     }

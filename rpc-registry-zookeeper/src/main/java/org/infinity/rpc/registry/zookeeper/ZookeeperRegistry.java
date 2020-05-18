@@ -215,9 +215,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * @param providerUrl provider url
      */
     @Override
-    public void registerAppProvider(App app, Url providerUrl) {
-        // Create data under 'app-providers/app-name' node
-        createAppNode(app, providerUrl);
+    public void registerApplicationProvider(App app, Url providerUrl) {
+        // Create data under 'application-providers/app-name' node
+        createApplicationProviderNode(app, providerUrl);
     }
 
     /**
@@ -226,8 +226,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * @param app         application info
      * @param providerUrl url
      */
-    private void createAppNode(App app, Url providerUrl) {
-        String appNodePath = ZookeeperUtils.getAppProvidersPath(app.getName());
+    private void createApplicationProviderNode(App app, Url providerUrl) {
+        String appNodePath = ZookeeperUtils.getApplicationProviderPath(app.getName());
         if (!zkClient.exists(appNodePath)) {
             // Create a persistent directory
             zkClient.createPersistent(appNodePath, true);

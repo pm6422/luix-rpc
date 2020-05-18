@@ -176,13 +176,20 @@ public class ZookeeperUtils {
     /**
      * Get the full path of specified application node
      *
-     * @param appName application name @return group node full path
+     * @param appName application name
+     * @return specified application node full path
      */
     public static String getApplicationPath(String appName) {
         return getGroupPath(Url.PARAM_GROUP_APPLICATION) + PATH_SEPARATOR + appName;
     }
 
-    public static String getAppProvidersPath(String appName) {
-        return getGroupPath(Url.PARAM_GROUP_APP_PROVIDERS) + PATH_SEPARATOR + appName;
+    /**
+     * Get the full path of specified application provider
+     *
+     * @param appName application name
+     * @return specified application provider node full path
+     */
+    public static String getApplicationProviderPath(String appName) {
+        return getGroupPath(Url.PARAM_GROUP_APPLICATION_PROVIDERS) + PATH_SEPARATOR + appName;
     }
 }

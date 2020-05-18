@@ -54,5 +54,5 @@ public interface Registrable {
      * @param app         application info
      * @param providerUrl provider url
      */
-    void registerAppProvider(App app, Url providerUrl);
+    void registerApplicationProvider(App app, Url providerUrl);
 }
