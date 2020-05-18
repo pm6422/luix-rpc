@@ -7,6 +7,6 @@ ${AnsiColor.WHITE}████████████████████�
                 ${AnsiColor.RED}██   ██ ██       ██████      ███ ███  ███████ ██████       ██████ ███████ ██   ████    ██    ███████ ██   ██ 
                                                                                                              
 ${AnsiColor.WHITE}████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-                                            ${AnsiColor.BRIGHT_BLUE}:: Powered by Spring Boot ${spring-boot.version} ::
-                                            ${AnsiColor.MAGENTA}:: Infinity Organization ::
-                                            ${AnsiColor.YELLOW}:: Designed by Louis 😊 ::${AnsiColor.DEFAULT}
+                                            ${AnsiColor.RED}:: Powered by Spring Boot ${spring-boot.version} ::
+                                            ${AnsiColor.RED}:: Infinity Organization ::
+                                            ${AnsiColor.RED}:: Created by 🅛🅞🅤🅘🅢 ::${AnsiColor.DEFAULT}
