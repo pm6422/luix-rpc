@@ -34,7 +34,7 @@ public interface RegistryFactory {
      * @return registry factory
      */
     static RegistryFactory getInstance(String protocol) {
-        // Get the property registry factory by protocol value
+        // Get the proper registry factory by protocol value
         RegistryFactory registryFactory = ServiceInstanceLoader.getServiceLoader(RegistryFactory.class).load(protocol);
         return registryFactory;
     }

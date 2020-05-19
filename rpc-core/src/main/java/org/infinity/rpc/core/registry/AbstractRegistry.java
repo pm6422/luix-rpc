@@ -127,10 +127,10 @@ public abstract class AbstractRegistry implements Registry {
     public void activate(Url providerUrl) {
         if (providerUrl != null) {
             doActivate(removeUnnecessaryParams(providerUrl.copy()));
+            log.info("Activated the url [{}] on registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
         } else {
             doActivate(null);
         }
-        log.info("Activated the url [{}] on registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
     }
 
     /**
@@ -142,10 +142,10 @@ public abstract class AbstractRegistry implements Registry {
     public void deactivate(Url providerUrl) {
         if (providerUrl != null) {
             doDeactivate(removeUnnecessaryParams(providerUrl.copy()));
+            log.info("Deactivated the url [{}] on registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
         } else {
             doDeactivate(null);
         }
-        log.info("Deactivated the url [{}] on registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
     }
 
     /**
