@@ -39,8 +39,8 @@ public class DatabaseInitialSetup {
         mongoTemplate.save(new AppAuthority(APP_NAME, Authority.ANONYMOUS));
     }
 
-    @ChangeSet(order = "03", author = "Louis", id = "addUserAndAuthories", runAlways = true)
-    public void addUserAndAuthories(MongoTemplate mongoTemplate) {
+    @ChangeSet(order = "03", author = "Louis", id = "addUserAndAuthorities", runAlways = true)
+    public void addUserAndAuthorities(MongoTemplate mongoTemplate) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         // Creates 'user' user and corresponding authorities
         User userRoleUser = new User();
@@ -122,6 +122,17 @@ public class DatabaseInitialSetup {
     @ChangeSet(order = "04", author = "Louis", id = "addAuthorityAdminMenu", runAlways = true)
     public void addAuthorityAdminMenu(MongoTemplate mongoTemplate) {
 
+        AdminMenu serviceDiscovery = new AdminMenu(APP_NAME, "service-discovery", "服务发现", 1, "service-discovery", 000, null);
+        mongoTemplate.save(serviceDiscovery);
+
+        AdminMenu appList = new AdminMenu(APP_NAME, "app-list", "应用列表", 2, "service-discovery.app-list",
+                001, serviceDiscovery.getId());
+        mongoTemplate.save(appList);
+
+        AdminMenu providerList = new AdminMenu(APP_NAME, "provider-list", "服务提供者", 2, "service-discovery.provider-list",
+                002, serviceDiscovery.getId());
+        mongoTemplate.save(providerList);
+
         AdminMenu userAuthority = new AdminMenu(APP_NAME, "user-authority", "用户权限", 1, "user-authority", 100, null);
         mongoTemplate.save(userAuthority);
 
@@ -133,11 +144,11 @@ public class DatabaseInitialSetup {
                 userAuthority.getId());
         mongoTemplate.save(userList);
 
-        AdminMenu app = new AdminMenu(APP_NAME, "app", "应用系统", 1, "app", 200, null);
-        mongoTemplate.save(app);
+//        AdminMenu app = new AdminMenu(APP_NAME, "app", "应用系统", 1, "app", 200, null);
+//        mongoTemplate.save(app);
 
-        AdminMenu appList = new AdminMenu(APP_NAME, "app-list", "应用", 2, "app.app-list", 201, app.getId());
-        mongoTemplate.save(appList);
+//        AdminMenu appList = new AdminMenu(APP_NAME, "app-list", "应用", 2, "app.app-list", 201, app.getId());
+//        mongoTemplate.save(appList);
 
         AdminMenu adminMenuAuthority = new AdminMenu(APP_NAME, "admin-menu-authority", "菜单权限", 1,
                 "admin-menu-authority", 300, null);
@@ -171,15 +182,21 @@ public class DatabaseInitialSetup {
         mongoTemplate.save(oAuth2ApprovalDetails);
 
         //AuthorityAdminMenu
+        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, serviceDiscovery.getId()));
+
+        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, appList.getId()));
+
+        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, providerList.getId()));
+
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, userAuthority.getId()));
 
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, authorityList.getId()));
 
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, userList.getId()));
 
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, app.getId()));
-
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, appList.getId()));
+//        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, app.getId()));
+//
+//        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, appList.getId()));
 
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, adminMenuAuthority.getId()));
 

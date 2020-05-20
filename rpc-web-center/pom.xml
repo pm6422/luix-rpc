@@ -13,7 +13,7 @@
     <artifactId>rpc-web-center</artifactId>
     <version>1.0.0</version>
     <packaging>war</packaging>
-    <name>rpc-web-center</name>
+    <name>RpcWebCenter</name>
 
     <!--
         *************************************************************************************
