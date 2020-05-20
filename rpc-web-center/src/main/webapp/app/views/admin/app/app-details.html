@@ -24,28 +24,28 @@
                 <div class="ibox-content">
                     <table class="table table-bordered">
                         <thead>
-                        <tr>
-                            <th>参数名称</th>
-                            <th>参数值</th>
-                        </tr>
+                            <tr>
+                                <th>参数名称</th>
+                                <th>参数值</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>应用名称:</td>
-                            <td>{{vm.entity.name}}</td>
-                        </tr>
-                        <tr>
-                            <td>应用权限:</td>
-                            <td>
-                                <ul class="list-unstyled m-b-none">
-                                    <li ng-repeat="item in vm.entity.authorities"><span>{{item}}</span></li>
-                                </ul>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>是否可用:</td>
-                            <td>{{vm.entity.enabled}}</td>
-                        </tr>
+                            <tr>
+                                <td>应用名称:</td>
+                                <td>{{vm.entity.name}}</td>
+                            </tr>
+                            <tr>
+                                <td>应用权限:</td>
+                                <td>
+                                    <ul class="list-unstyled m-b-none">
+                                        <li ng-repeat="item in vm.entity.authorities"><span>{{item}}</span></li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>是否可用:</td>
+                                <td>{{vm.entity.enabled}}</td>
+                            </tr>
                         </tbody>
                     </table>
                     <div class="text-right">

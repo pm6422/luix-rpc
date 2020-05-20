@@ -8,13 +8,13 @@ basePath = '';
 
 // list of files / patterns to load in the browser
 files = [
-    JASMINE,
-    JASMINE_ADAPTER,
-    'lib/jquery-1.9.1.js',
-    'lib/angular.js',
-    'test/lib/angular/angular-mocks.js',
-    'build/ng-grid.debug.js',
-    'test/unit/*Spec.js'
+  JASMINE,
+  JASMINE_ADAPTER,
+  'lib/jquery-1.9.1.js',
+  'lib/angular.js',
+  'test/lib/angular/angular-mocks.js',
+  'build/ng-grid.debug.js',
+  'test/unit/*Spec.js'
 ];
 
 // list of files to exclude

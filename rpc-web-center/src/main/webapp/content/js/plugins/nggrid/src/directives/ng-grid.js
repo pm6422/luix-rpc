@@ -1,15 +1,12 @@
 ﻿ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', '$timeout', '$parse', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils, $timeout, $parse) {
     var ngGridDirective = {
         scope: true,
-        compile: function () {
+        compile: function() {
             return {
-                pre: function ($scope, iElement, iAttrs) {
+                pre: function($scope, iElement, iAttrs) {
                     var $element = $(iElement);
                     var options = $scope.$eval(iAttrs.ngGrid);
-                    options.gridDim = new ngDimension({
-                        outerHeight: $($element).height(),
-                        outerWidth: $($element).width()
-                    });
+                    options.gridDim = new ngDimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
                     var grid = new ngGrid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse);
 
                     // if columndefs are a string of a property ont he scope watch for changes and rebuild columns.
@@ -30,9 +27,9 @@
                             domUtilityService.RebuildGrid($scope, grid);
                         });
                     } else {
-                        grid.buildColumns();
-                    }
-
+						grid.buildColumns();
+					}
+					
                     // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                     if (typeof options.data == "string") {
                         var dataWatcher = function (a) {
@@ -58,11 +55,11 @@
                             $scope.$emit("ngGridEventData", grid.gridId);
                         };
                         $scope.$parent.$watch(options.data, dataWatcher);
-                        $scope.$parent.$watch(options.data + '.length', function () {
+                        $scope.$parent.$watch(options.data + '.length', function() {
                             dataWatcher($scope.$eval(options.data));
                         });
                     }
-
+					
                     grid.footerController = new ngFooter($scope, grid);
                     //set the right styling on the container
                     iElement.addClass("ngGrid").addClass(grid.gridId.toString());
@@ -83,7 +80,7 @@
                         if (grid.rowCache[rowIndex]) {
                             if (grid.rowCache[rowIndex].clone) {
                                 grid.rowCache[rowIndex].clone.setSelection(state ? true : false);
-                            }
+                            } 
                             grid.rowCache[rowIndex].setSelection(state ? true : false);
                         }
                     };
@@ -98,7 +95,7 @@
                     // method for user to set the groups programatically
                     options.groupBy = function (field) {
                         if (field) {
-                            $scope.groupBy($scope.columns.filter(function (c) {
+                            $scope.groupBy($scope.columns.filter(function(c) {
                                 return c.field == field;
                             })[0]);
                         } else {
@@ -114,18 +111,18 @@
                         if (col) col.sort();
                     };
                     // the grid Id, entity, scope for convenience
-                    options.gridId = grid.gridId;
-                    options.ngGrid = grid;
-                    options.$gridScope = $scope;
-                    $scope.$on('ngGridEventDigestGrid', function () {
-                        domUtilityService.digest($scope.$parent);
-                    });
-
-                    $scope.$on('ngGridEventDigestGridParent', function () {
-                        domUtilityService.digest($scope.$parent);
-                    });
+					options.gridId = grid.gridId;
+					options.ngGrid = grid;
+					options.$gridScope = $scope;
+					$scope.$on('ngGridEventDigestGrid', function(){
+						domUtilityService.digest($scope.$parent);
+					});			
+					
+					$scope.$on('ngGridEventDigestGridParent', function(){
+						domUtilityService.digest($scope.$parent);
+					});
                     // set up the columns 
-                    $scope.$evalAsync(function () {
+                    $scope.$evalAsync(function() {
                         $scope.adjustScrollLeft(0);
                     });
                     //initialize plugins.
@@ -133,7 +130,7 @@
                         if (typeof p === 'function') {
                             p = p.call(this);
                         }
-                        p.init($scope.$new(), grid, {SortService: sortService, DomUtilityService: domUtilityService});
+                        p.init($scope.$new(), grid, { SortService: sortService, DomUtilityService: domUtilityService });
                         options.plugins[$utils.getInstanceType(p)] = p;
                     });
                     //send initi finalize notification.

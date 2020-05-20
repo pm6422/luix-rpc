@@ -27,9 +27,7 @@
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <label class="control-label">应用</label>
-                                <select class="form-control" ng-model="vm.criteria.app"
-                                        ng-options="item.name as item.name for item in vm.apps"
-                                        ng-change="vm.transition()">
+                                <select class="form-control" ng-model="vm.criteria.app" ng-options="item.name as item.name for item in vm.apps" ng-change="vm.transition()">
                                     <option value="">请选择...</option>
                                 </select>
                             </div>

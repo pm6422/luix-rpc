@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 
 import java.io.IOException;
 
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
+@SpringBootApplication
 public class WebCenterLauncher {
     /**
      * Entrance method which used to run the application. Spring profiles can be configured with a program arguments

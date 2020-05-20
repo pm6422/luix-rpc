@@ -9,7 +9,7 @@
     self.isGroupedBy = false;
     self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
     self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
-    self.enableCellEdit = config.enableCellEdit || colDef.enableCellEdit;
+	self.enableCellEdit = config.enableCellEdit || colDef.enableCellEdit;
     self.headerRowHeight = config.headerRowHeight;
     self.displayName = colDef.displayName || colDef.field;
     self.index = config.index;
@@ -41,10 +41,10 @@
     self.cursor = self.sortable ? 'pointer' : 'default';
     self.headerCellTemplate = colDef.headerCellTemplate || $templateCache.get('headerCellTemplate.html');
     self.cellTemplate = colDef.cellTemplate || $templateCache.get('cellTemplate.html').replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
-    if (self.enableCellEdit) {
-        self.cellEditTemplate = $templateCache.get('cellEditTemplate.html');
-        self.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('editableCellTemplate.html');
-    }
+	if(self.enableCellEdit) {
+	    self.cellEditTemplate = $templateCache.get('cellEditTemplate.html');
+	    self.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('editableCellTemplate.html');
+	}
     if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
         self.cellTemplate = $.ajax({
             type: "GET",
@@ -52,7 +52,7 @@
             async: false
         }).responseText;
     }
-    if (self.enableCellEdit && colDef.editableCellTemplate && !TEMPLATE_REGEXP.test(colDef.editableCellTemplate)) {
+	if (self.enableCellEdit && colDef.editableCellTemplate && !TEMPLATE_REGEXP.test(colDef.editableCellTemplate)) {
         self.editableCellTemplate = $.ajax({
             type: "GET",
             url: colDef.editableCellTemplate,
@@ -71,22 +71,22 @@
         classes += "col" + self.index + " colt" + self.index;
         return classes;
     };
-    self.groupedByClass = function () {
+    self.groupedByClass = function() {
         return self.isGroupedBy ? "ngGroupedByIcon" : "ngGroupIcon";
     };
-    self.toggleVisible = function () {
+    self.toggleVisible = function() {
         self.visible = !self.visible;
     };
-    self.showSortButtonUp = function () {
+    self.showSortButtonUp = function() {
         return self.sortable ? self.sortDirection === DESC : self.sortable;
     };
-    self.showSortButtonDown = function () {
+    self.showSortButtonDown = function() {
         return self.sortable ? self.sortDirection === ASC : self.sortable;
     };
-    self.noSortVisible = function () {
+    self.noSortVisible = function() {
         return !self.sortDirection;
     };
-    self.sort = function (evt) {
+    self.sort = function(evt) {
         if (!self.sortable) {
             return true; // column sorting is disabled, do nothing
         }
@@ -95,10 +95,10 @@
         config.sortCallback(self, evt);
         return false;
     };
-    self.gripClick = function () {
+    self.gripClick = function() {
         clicks++; //count clicks
         if (clicks === 1) {
-            timer = setTimeout(function () {
+            timer = setTimeout(function() {
                 //Here you can add a single click action.
                 clicks = 0; //after action performed, reset counter
             }, delay);
@@ -108,7 +108,7 @@
             clicks = 0; //after action performed, reset counter
         }
     };
-    self.gripOnMouseDown = function (event) {
+    self.gripOnMouseDown = function(event) {
         if (event.ctrlKey && !self.pinned) {
             self.toggleVisible();
             domUtilityService.BuildStyles($scope, grid);
@@ -121,7 +121,7 @@
         $(document).mouseup(self.gripOnMouseUp);
         return false;
     };
-    self.onMouseMove = function (event) {
+    self.onMouseMove = function(event) {
         var diff = event.clientX - self.startMousePosition;
         var newWidth = diff + self.origWidth;
         self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
@@ -136,7 +136,7 @@
         domUtilityService.digest($scope);
         return false;
     };
-    self.copy = function () {
+    self.copy = function() {
         var ret = new ngColumn(config, $scope, grid, domUtilityService, $templateCache);
         ret.isClone = true;
         ret.orig = self;

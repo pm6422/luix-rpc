@@ -4,7 +4,7 @@
  */
 (function () {
     'use strict';
-
+    
     angular.module('smartcloudserviceApp', [
         'ui.router',                    // Routing
         'oc.lazyLoad',                  // ocLazyLoad
@@ -24,8 +24,8 @@
         'checklist-model',
         'ngFileUpload'
     ])
-        .run(run);
-
+    .run(run);
+    
     run.$inject = ['StateHandler'];
 
     function run(StateHandler) {

@@ -16,7 +16,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
             if (self.lastClickedRow) {
                 var rowsArr;
                 if ($scope.configGroups.length > 0) {
-                    rowsArr = grid.rowFactory.parsedData.filter(function (row) {
+                    rowsArr = grid.rowFactory.parsedData.filter(function(row) {
                         return !row.isAggRow;
                     });
                 } else {
@@ -32,10 +32,10 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
                     thisIndx = thisIndx ^ prevIndx;
                     prevIndx = thisIndx ^ prevIndx;
                     thisIndx = thisIndx ^ prevIndx;
-                    thisIndx--;
+					thisIndx--;
                 } else {
-                    prevIndx++;
-                }
+					prevIndx++;
+				}
                 var rows = [];
                 for (; prevIndx <= thisIndx; prevIndx++) {
                     rows.push(rowsArr[prevIndx]);
@@ -71,7 +71,7 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
         } else if (!evt.keyCode) {
             self.setSelection(rowItem, !rowItem.selected);
         }
-        self.lastClickedRow = rowItem;
+		self.lastClickedRow = rowItem;
         return true;
     };
 
@@ -92,30 +92,30 @@ var ngSelectionProvider = function (grid, $scope, $parse) {
 
     // just call this func and hand it the rowItem you want to select (or de-select)    
     self.setSelection = function (rowItem, isSelected) {
-        if (grid.config.enableRowSelection) {
-            rowItem.selected = isSelected;
-            if (rowItem.clone) {
-                rowItem.clone.selected = isSelected;
-            }
-            if (!isSelected) {
-                var indx = self.selectedItems.indexOf(rowItem.entity);
-                if (indx != -1) {
-                    self.selectedItems.splice(indx, 1);
-                }
-            } else {
-                if (self.selectedItems.indexOf(rowItem.entity) === -1) {
-                    if (!self.multi && self.selectedItems.length > 0) {
-                        self.toggleSelectAll(false, true);
-                        rowItem.selected = isSelected;
-                        if (rowItem.clone) {
-                            rowItem.clone.selected = isSelected;
-                        }
-                    }
-                    self.selectedItems.push(rowItem.entity);
-                }
-            }
-            rowItem.afterSelectionChange(rowItem);
-        }
+		if(grid.config.enableRowSelection){
+		    rowItem.selected = isSelected;
+		    if (rowItem.clone) {
+		        rowItem.clone.selected = isSelected;
+		    }
+			if (!isSelected) {
+				var indx = self.selectedItems.indexOf(rowItem.entity);
+				if(indx != -1){
+					self.selectedItems.splice(indx, 1);
+				}
+			} else {
+				if (self.selectedItems.indexOf(rowItem.entity) === -1) {
+					if(!self.multi && self.selectedItems.length > 0){
+						self.toggleSelectAll(false, true);
+						rowItem.selected = isSelected;
+						if (rowItem.clone) {
+						    rowItem.clone.selected = isSelected;
+						}
+					}
+					self.selectedItems.push(rowItem.entity);
+				}
+			}
+			rowItem.afterSelectionChange(rowItem);
+		}
     };
     // @return - boolean indicating if all items are selected or not
     // @val - boolean indicating whether to select all/de-select all

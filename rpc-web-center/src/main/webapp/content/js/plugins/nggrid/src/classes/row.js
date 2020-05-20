@@ -6,23 +6,23 @@ var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
     self.rowClasses = config.rowClasses;
     self.entity = entity;
     self.selectionProvider = selectionProvider;
-    self.selected = selectionProvider.getSelection(entity);
+	self.selected = selectionProvider.getSelection(entity);
     self.cursor = enableRowSelection ? 'pointer' : 'default';
-    self.setSelection = function (isSelected) {
-        self.selectionProvider.setSelection(self, isSelected);
-        self.selectionProvider.lastClickedRow = self;
-    };
-    self.continueSelection = function (event) {
+	self.setSelection = function(isSelected) {
+		self.selectionProvider.setSelection(self, isSelected);
+		self.selectionProvider.lastClickedRow = self;
+	};
+    self.continueSelection = function(event) {
         self.selectionProvider.ChangeSelection(self, event);
     };
-    self.ensureEntity = function (expected) {
+    self.ensureEntity = function(expected) {
         if (self.entity != expected) {
             // Update the entity and determine our selected property
             self.entity = expected;
             self.selected = self.selectionProvider.getSelection(self.entity);
         }
     };
-    self.toggleSelected = function (event) {
+    self.toggleSelected = function(event) {
         if (!enableRowSelection && !config.enableCellSelection) {
             return true;
         }
@@ -47,7 +47,7 @@ var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
     self.alternatingRowClass = function () {
         var isEven = (self.rowIndex % 2) === 0;
         var classes = {
-            'ngRow': true,
+            'ngRow' : true,
             'selected': self.selected,
             'even': isEven,
             'odd': !isEven,
@@ -59,7 +59,7 @@ var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
     self.beforeSelectionChange = config.beforeSelectionChangeCallback;
     self.afterSelectionChange = config.afterSelectionChangeCallback;
 
-    self.getProperty = function (path) {
+    self.getProperty = function(path) {
         return $utils.evalProperty(self.entity, path);
     };
     self.copy = function () {

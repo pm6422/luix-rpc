@@ -8,7 +8,7 @@
     self.fieldMap = {};
 
     self.evalFilter = function () {
-        var filterFunc = function (item) {
+        var filterFunc = function(item) {
             for (var x = 0, len = searchConditions.length; x < len; x++) {
                 var condition = searchConditions[x];
                 //Search entire row
@@ -66,13 +66,14 @@
         if (searchConditions.length === 0) {
             grid.filteredRows = grid.rowCache;
         } else {
-            grid.filteredRows = grid.rowCache.filter(function (row) {
+            grid.filteredRows = grid.rowCache.filter(function(row) {
                 return filterFunc(row.entity);
             });
         }
-        for (var i = 0; i < grid.filteredRows.length; i++) {
+        for (var i = 0; i < grid.filteredRows.length; i++)
+        {
             grid.filteredRows[i].rowIndex = i;
-
+            
         }
         grid.rowFactory.filteredRowsChanged();
     };
@@ -130,31 +131,29 @@
                     });
                 }
             }
-        }
-        ;
+        };
     };
-    $scope.$watch(function () {
-        return grid.config.filterOptions.filterText;
-    }, function (a) {
-        $scope.filterText = a;
-    });
-    $scope.$watch('filterText', function (a) {
-        if (!self.extFilter) {
-            $scope.$emit('ngGridEventFilter', a);
+	$scope.$watch(function() {
+	    return grid.config.filterOptions.filterText;
+	}, function(a){
+		$scope.filterText = a;
+	});
+	$scope.$watch('filterText', function(a){
+		if(!self.extFilter){
+			$scope.$emit('ngGridEventFilter', a);
             buildSearchConditions(a);
             self.evalFilter();
         }
-    });
+	});
     if (!self.extFilter) {
         $scope.$watch('columns', function (cs) {
             for (var i = 0; i < cs.length; i++) {
                 var col = cs[i];
-                if (col.field)
-                    self.fieldMap[col.field.split('.')[0]] = col;
-                if (col.displayName)
-                    self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
-            }
-            ;
+				if(col.field)
+					self.fieldMap[col.field.split('.')[0]] = col;
+				if(col.displayName)
+					self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
+            };
         });
     }
 };

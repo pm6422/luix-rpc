@@ -8,7 +8,7 @@ angular
     .filter('capitalize', capitalize)
     .filter('nullToWhite', nullToWhite);
 
-function words() {
+function words () {
     return function (input, words) {
         if (isNaN(words)) {
             return input;
@@ -22,12 +22,11 @@ function words() {
                 input = inputWords.slice(0, words).join(' ') + '...';
             }
         }
-
+        
         return input;
     }
 }
-
-function characters() {
+function characters () {
     return function (input, chars, breakOnWord) {
         if (isNaN(chars)) {
             return input;
@@ -45,7 +44,7 @@ function characters() {
                     input = input.substr(0, lastspace);
                 }
             } else {
-                while (input.charAt(input.length - 1) === ' ') {
+                while (input.charAt(input.length-1) === ' ') {
                     input = input.substr(0, input.length - 1);
                 }
             }
@@ -54,8 +53,7 @@ function characters() {
         return input;
     }
 }
-
-function capitalize() {
+function capitalize () {
     return function (input) {
         if (input !== null) {
             input = input.toLowerCase();
@@ -63,8 +61,7 @@ function capitalize() {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
 }
-
-function nullToWhite() {
+function nullToWhite () {
     return function (input) {
         var result = input;
         if (input === undefined || input === null || input === "null") {

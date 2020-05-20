@@ -1,14 +1,14 @@
 /*! Angular-PDF Version: 1.3.0 | Released under an MIT license */
-(function () {
+(function() {
 
     'use strict';
 
-    angular.module('pdf', []).directive('ngPdf', ['$window', function ($window) {
+    angular.module('pdf', []).directive('ngPdf', [ '$window', function($window) {
         var renderTask = null;
         var pdfLoaderTask = null;
         var debug = false;
 
-        var backingScale = function (canvas) {
+        var backingScale = function(canvas) {
             var ctx = canvas.getContext('2d');
             var dpr = window.devicePixelRatio || 1;
             var bsr = ctx.webkitBackingStorePixelRatio ||
@@ -20,7 +20,7 @@
             return dpr / bsr;
         };
 
-        var setCanvasDimensions = function (canvas, w, h) {
+        var setCanvasDimensions = function(canvas, w, h) {
             var ratio = backingScale(canvas);
             canvas.width = Math.floor(w * ratio);
             canvas.height = Math.floor(h * ratio);
@@ -31,10 +31,10 @@
         };
         return {
             restrict: 'E',
-            templateUrl: function (element, attr) {
+            templateUrl: function(element, attr) {
                 return attr.templateUrl ? attr.templateUrl : 'partials/viewer.html';
             },
-            link: function (scope, element, attrs) {
+            link: function(scope, element, attrs) {
                 element.css('display', 'block');
                 var url = scope.pdfUrl;
                 var httpHeaders = scope.httpHeaders;
@@ -50,8 +50,8 @@
                 var ctx = canvas.getContext('2d');
                 var windowEl = angular.element($window);
 
-                windowEl.on('scroll', function () {
-                    scope.$apply(function () {
+                windowEl.on('scroll', function() {
+                    scope.$apply(function() {
                         scope.scroll = windowEl[0].scrollY;
                     });
                 });
@@ -59,12 +59,12 @@
                 PDFJS.disableWorker = true;
                 scope.pageNum = pageToDisplay;
 
-                scope.renderPage = function (num) {
+                scope.renderPage = function(num) {
                     if (renderTask) {
                         renderTask._internalRenderTask.cancel();
                     }
 
-                    pdfDoc.getPage(num).then(function (page) {
+                    pdfDoc.getPage(num).then(function(page) {
                         var viewport;
                         var pageWidthScale;
                         var renderContext;
@@ -85,7 +85,7 @@
                         };
 
                         renderTask = page.render(renderContext);
-                        renderTask.promise.then(function () {
+                        renderTask.promise.then(function() {
                             if (typeof scope.onPageRender === 'function') {
                                 scope.onPageRender();
                             }
@@ -95,7 +95,7 @@
                     });
                 };
 
-                scope.goPrevious = function () {
+                scope.goPrevious = function() {
                     if (scope.pageToDisplay <= 1) {
                         return;
                     }
@@ -103,7 +103,7 @@
                     scope.pageNum = scope.pageToDisplay;
                 };
 
-                scope.goNext = function () {
+                scope.goNext = function() {
                     if (scope.pageToDisplay >= pdfDoc.numPages) {
                         return;
                     }
@@ -111,30 +111,30 @@
                     scope.pageNum = scope.pageToDisplay;
                 };
 
-                scope.zoomIn = function () {
+                scope.zoomIn = function() {
                     pageFit = false;
                     scale = parseFloat(scale) + 0.2;
                     scope.renderPage(scope.pageToDisplay);
                     return scale;
                 };
 
-                scope.zoomOut = function () {
+                scope.zoomOut = function() {
                     pageFit = false;
                     scale = parseFloat(scale) - 0.2;
                     scope.renderPage(scope.pageToDisplay);
                     return scale;
                 };
 
-                scope.fit = function () {
+                scope.fit = function() {
                     pageFit = true;
                     scope.renderPage(scope.pageToDisplay);
                 }
 
-                scope.changePage = function () {
+                scope.changePage = function() {
                     scope.renderPage(scope.pageToDisplay);
                 };
 
-                scope.rotate = function () {
+                scope.rotate = function() {
                     if (canvas.getAttribute('class') === 'rotate0') {
                         canvas.setAttribute('class', 'rotate90');
                     } else if (canvas.getAttribute('class') === 'rotate90') {
@@ -167,7 +167,7 @@
                     if (url && url.length) {
                         pdfLoaderTask = PDFJS.getDocument(params, null, null, scope.onProgress);
                         pdfLoaderTask.then(
-                            function (_pdfDoc) {
+                            function(_pdfDoc) {
                                 if (typeof scope.onLoad === 'function') {
                                     scope.onLoad();
                                 }
@@ -175,10 +175,10 @@
                                 pdfDoc = _pdfDoc;
                                 scope.renderPage(scope.pageToDisplay);
 
-                                scope.$apply(function () {
+                                scope.$apply(function() {
                                     scope.pageCount = _pdfDoc.numPages;
                                 });
-                            }, function (error) {
+                            }, function(error) {
                                 if (error) {
                                     if (typeof scope.onError === 'function') {
                                         scope.onError(error);
@@ -189,14 +189,14 @@
                     }
                 }
 
-                scope.$watch('pageNum', function (newVal) {
+                scope.$watch('pageNum', function(newVal) {
                     scope.pageToDisplay = parseInt(newVal);
                     if (pdfDoc !== null) {
                         scope.renderPage(scope.pageToDisplay);
                     }
                 });
 
-                scope.$watch('pdfUrl', function (newVal) {
+                scope.$watch('pdfUrl', function(newVal) {
                     if (newVal !== '') {
                         if (debug) {
                             console.log('pdfUrl value change detected: ', scope.pdfUrl);
@@ -215,5 +215,5 @@
 
             }
         };
-    }]);
+    } ]);
 })();

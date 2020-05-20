@@ -10,5 +10,5 @@
     ngPagerFirstTitle: '回到首页',
     ngPagerNextTitle: '下一页',
     ngPagerPrevTitle: '上一页',
-    ngPagerLastTitle: '前往尾页'
+    ngPagerLastTitle: '前往尾页' 
 };

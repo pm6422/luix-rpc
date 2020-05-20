@@ -27,22 +27,21 @@
             <div class="ibox">
                 <div class="ibox-content">
                     <table class="table table-condensed table-striped table-bordered table-responsive"
-                           style="table-layout:fixed" ng-hide="filteredConfig.length == 0">
+                        style="table-layout:fixed" ng-hide="filteredConfig.length == 0">
                         <thead>
                         <tr>
-                            <th ng-click="predicate = 'prefix'; reverse=!reverse" class="col-sm-4"><span>Mappings</span>
-                            </th>
+                            <th ng-click="predicate = 'prefix'; reverse=!reverse" class="col-sm-4"><span>Mappings</span></th>
                             <th class="col-sm-8">Handler</th>
                         </tr>
                         </thead>
-
+                
                         <tr ng-repeat="entry in filtered = (vm.items | filter:filter | orderBy:predicate:reverse)">
                             <td class="break"><span>{{entry.url}}</span></td>
                             <td class="break"><span>{{entry.handler}}</span></td>
                         </tr>
                     </table>
                 </div>
-            </div>
+           </div>
         </div>
     </div>
 </div>

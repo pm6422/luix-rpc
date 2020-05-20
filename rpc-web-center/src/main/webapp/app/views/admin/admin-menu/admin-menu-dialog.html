@@ -1,14 +1,12 @@
 <form name="editForm" role="form" novalidate ng-submit="vm.save()" show-validation-directive>
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="vm.cancel()">&times;
-        </button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="vm.cancel()">&times;</button>
         <h4 class="modal-title">{{vm.pageTitle}}</h4>
     </div>
     <div class="modal-body">
         <div class="form-group">
             <label class="control-label">应用</label>
-            <select class="form-control" ng-model="vm.entity.appName" name="appName"
-                    ng-options="item.name as item.name for item in vm.apps" ng-change="vm.searchParentMenus()" required>
+            <select class="form-control" ng-model="vm.entity.appName" name="appName" ng-options="item.name as item.name for item in vm.apps" ng-change="vm.searchParentMenus()" required>
                 <option value="">请选择...</option>
             </select>
             <div ng-show="editForm.appName.$invalid">

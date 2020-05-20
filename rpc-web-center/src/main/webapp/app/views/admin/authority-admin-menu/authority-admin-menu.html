@@ -26,9 +26,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="control-label">应用</label>
-                                <select class="form-control" ng-model="vm.criteria.appName"
-                                        ng-options="item.name as item.name for item in vm.apps"
-                                        ng-change="vm.searchAuthorities()">
+                                <select class="form-control" ng-model="vm.criteria.appName" ng-options="item.name as item.name for item in vm.apps" ng-change="vm.searchAuthorities()">
                                     <option value="">请选择...</option>
                                 </select>
                             </div>
@@ -36,9 +34,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="control-label">权限</label>
-                                <select class="form-control" ng-model="vm.criteria.authorityName"
-                                        ng-options="item.authorityName as item.authorityName for item in vm.authorities"
-                                        ng-change="vm.searchMenus()" ng-disabled="vm.criteria.appName == null" required>
+                                <select class="form-control" ng-model="vm.criteria.authorityName" ng-options="item.authorityName as item.authorityName for item in vm.authorities" ng-change="vm.searchMenus()" ng-disabled="vm.criteria.appName == null" required>
                                     <option value="">请选择...</option>
                                 </select>
                             </div>
@@ -68,14 +64,13 @@
 </div>
 <script type="text/ng-template" id="/treeView.html">
     <ul class="tree-view">
-        <li ng-repeat="item in treeData" ng-include="itemTemplateUrl || '/treeItem.html'"></li>
+        <li ng-repeat="item in treeData" ng-include="itemTemplateUrl || '/treeItem.html'" ></li>
     </ul>
 </script>
 
 <script type="text/ng-template" id="/treeItem.html">
     <i ng-click="itemExpended(item, $event);" class="{{getItemIcon(item)}}"></i>
-    <input type="checkbox" ng-model="item[checkField]" class="check-box" ng-if="canChecked"
-           ng-checked="item[checkField]" ng-click="isCheck(treeData, item)">
+    <input type="checkbox" ng-model="item[checkField]" class="check-box" ng-if="canChecked" ng-checked="item[checkField]" ng-click="isCheck(treeData, item)">
     <span class='text-field' ng-click="warpCallback('itemClicked', item, $event);">{{item[textField]}}</span>
     <ul ng-if="!isLeaf(item)" ng-show="!item.$$isExpend">
         <li ng-repeat="item in item[childrenField]" ng-include="itemTemplateUrl || '/treeItem.html'">

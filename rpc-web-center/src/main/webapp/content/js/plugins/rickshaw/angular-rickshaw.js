@@ -25,7 +25,7 @@
 /* global Rickshaw */
 
 angular.module('angular-rickshaw', [])
-    .directive('rickshaw', function ($compile) {
+    .directive('rickshaw', function($compile) {
         return {
             restrict: 'EA',
             scope: {
@@ -34,7 +34,7 @@ angular.module('angular-rickshaw', [])
                 features: '=rickshawFeatures'
             },
             // replace: true,
-            link: function (scope, element, attrs) {
+            link: function(scope, element, attrs) {
                 function getSettings(el) {
                     var settings = angular.copy(scope.options);
                     settings.element = el;
@@ -117,17 +117,17 @@ angular.module('angular-rickshaw', [])
                     }
                 }
 
-                scope.$watch('options', function (newValue, oldValue) {
+                scope.$watch('options', function(newValue, oldValue) {
                     if (!angular.equals(newValue, oldValue)) {
                         update();
                     }
                 });
-                scope.$watch('series', function (newValue, oldValue) {
+                scope.$watch('series', function(newValue, oldValue) {
                     if (!angular.equals(newValue, oldValue)) {
                         update();
                     }
                 });
-                scope.$watch('features', function (newValue, oldValue) {
+                scope.$watch('features', function(newValue, oldValue) {
                     if (!angular.equals(newValue, oldValue)) {
                         update();
                     }
@@ -135,7 +135,7 @@ angular.module('angular-rickshaw', [])
 
                 update();
             },
-            controller: function ($scope, $element, $attrs) {
+            controller: function($scope, $element, $attrs) {
             }
         };
     });

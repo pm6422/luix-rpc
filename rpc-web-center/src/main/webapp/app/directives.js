@@ -43,11 +43,11 @@ angular
  */
 function pageRibbonDirective($rootScope, ProfileService) {
     return {
-        replace: true,
-        restrict: 'AE',
-        template: '<div class="ribbon hidden"><a href="" >{{ribbonEnv}}</a></div>',
-        link: function (scope, element) {
-            ProfileService.getProfileInfo().then(function (response) {
+        replace : true,
+        restrict : 'AE',
+        template : '<div class="ribbon hidden"><a href="" >{{ribbonEnv}}</a></div>',
+        link: function(scope, element) {
+            ProfileService.getProfileInfo().then(function(response) {
                 if (response.ribbonEnv) {
                     scope.ribbonEnv = response.ribbonEnv.toUpperCase();
                     element.addClass(response.ribbonEnv);
@@ -57,19 +57,18 @@ function pageRibbonDirective($rootScope, ProfileService) {
         }
     }
 }
-
 /**
  * pageTitleDirective - Directive for set Page title - mata title
  */
 function pageTitleDirective($rootScope, $timeout, APP_NAME) {
     return {
-        link: function (scope, element) {
-            var listener = function (event, toState, toParams, fromState, fromParams) {
+        link: function(scope, element) {
+            var listener = function(event, toState, toParams, fromState, fromParams) {
                 // Default title - load on Dashboard
                 var title = APP_NAME + ' | Dashboard';
                 // Create your own title pattern
                 if (toState.data && toState.data.pageTitle) title = APP_NAME + ' | ' + toState.data.pageTitle;
-                $timeout(function () {
+                $timeout(function() {
                     element.text(title);
                 });
             };
@@ -77,14 +76,13 @@ function pageTitleDirective($rootScope, $timeout, APP_NAME) {
         }
     }
 }
-
 /**
  * sideNavigationDirective - Directive for run metsiMenu on sidebar navigation
  */
 function sideNavigationDirective($timeout) {
     return {
         restrict: 'A',
-        link: function (scope, element) {
+        link: function(scope, element) {
 //            // Call the metsiMenu plugin and plug it to sidebar navigation
 //            $timeout(function(){
 //                element.metisMenu();
@@ -92,7 +90,7 @@ function sideNavigationDirective($timeout) {
 
             // Collapse menu in mobile mode after click on element
             var menuElement = $('#side-menu a:not([href$="\\#"])');
-            menuElement.click(function () {
+            menuElement.click(function(){
                 if ($(window).width() < 769) {
                     $("body").toggleClass("mini-navbar");
                 }
@@ -109,7 +107,6 @@ function sideNavigationDirective($timeout) {
         }
     };
 }
-
 /**
  * iboxToolsDirective - Directive for iBox tools elements in right corner of ibox
  */
@@ -177,7 +174,7 @@ function iboxToolsFullScreenDirective($timeout) {
                 $('body').toggleClass('fullscreen-ibox-mode');
                 icon.toggleClass('fa-expand').toggleClass('fa-compress');
                 ibox.toggleClass('fullscreen');
-                setTimeout(function () {
+                setTimeout(function() {
                     $(window).trigger('resize');
                 }, 100);
             }
@@ -187,7 +184,7 @@ function iboxToolsFullScreenDirective($timeout) {
 
 /**
  * minimalizeSidebarDirective - Directive for minimalize sidebar
- */
+*/
 function minimalizeSidebarDirective($timeout) {
     return {
         restrict: 'A',
@@ -203,7 +200,7 @@ function minimalizeSidebarDirective($timeout) {
                         function () {
                             $('#side-menu').fadeIn(400);
                         }, 200);
-                } else if ($('body').hasClass('fixed-sidebar')) {
+                } else if ($('body').hasClass('fixed-sidebar')){
                     $('#side-menu').hide();
                     setTimeout(
                         function () {
@@ -217,7 +214,6 @@ function minimalizeSidebarDirective($timeout) {
         }
     };
 }
-
 /**
  * sortDirective
  */
@@ -229,7 +225,7 @@ function sortDirective() {
             ascending: '=',
             callback: '&'
         },
-        controller: function ($scope, $element) {
+        controller: function($scope, $element) {
             var vm = this;
 
             vm.applyClass = applyClass;
@@ -240,7 +236,7 @@ function sortDirective() {
             $scope.$watchGroup(['vm.predicate', 'vm.ascending'], vm.triggerApply);
             vm.triggerApply();
 
-            function applyClass(element) {
+            function applyClass (element) {
                 var thisIcon = element.find('span.fa'),
                     sortIcon = 'fa-sort',
                     sortAsc = 'fa-sort-amount-asc',
@@ -256,7 +252,7 @@ function sortDirective() {
                 thisIcon.addClass(add);
             }
 
-            function resetClasses() {
+            function resetClasses () {
                 var allThIcons = $element.find('span.fa'),
                     sortIcon = 'fa-sort',
                     sortAsc = 'fa-sort-amount-asc',
@@ -265,7 +261,7 @@ function sortDirective() {
                 allThIcons.addClass(sortIcon);
             }
 
-            function sort(field) {
+            function sort (field) {
                 if (field !== vm.predicate) {
                     vm.ascending = true;
                 } else {
@@ -276,7 +272,7 @@ function sortDirective() {
                 vm.callback();
             }
 
-            function triggerApply(values) {
+            function triggerApply (values)  {
                 vm.resetClasses();
                 if (values && values[0] !== '_score') {
                     vm.applyClass($element.find('th[sort-by-directive=\'' + values[0] + '\']'));
@@ -287,7 +283,6 @@ function sortDirective() {
         bindToController: true
     }
 }
-
 /**
  * sortByDirective
  */
@@ -296,14 +291,13 @@ function sortByDirective($rootScope, ProfileService) {
         restrict: 'A',
         scope: false,
         require: '^sortDirective',
-        link: function (scope, element, attrs, parentCtrl) {
+        link: function(scope, element, attrs, parentCtrl) {
             element.bind('click', function () {
                 parentCtrl.sort(attrs.sortByDirective);
             });
         }
     }
 }
-
 /**
  * showValidationDirective
  */
@@ -312,16 +306,16 @@ function showValidationDirective() {
         restrict: 'A',
         require: 'form',
         link: function (scope, element) {
-            element.find('.form-group').each(function () {
+            element.find('.form-group').each(function() {
                 var $formGroup = angular.element(this);
                 var $inputs = $formGroup.find('input[ng-model],textarea[ng-model],select[ng-model]');
 
                 if ($inputs.length > 0) {
-                    $inputs.each(function () {
+                    $inputs.each(function() {
                         var $input = angular.element(this);
-                        scope.$watch(function () {
+                        scope.$watch(function() {
                             return $input.hasClass('ng-invalid') && $input.hasClass('ng-dirty');
-                        }, function (isInvalid) {
+                        }, function(isInvalid) {
                             $formGroup.toggleClass('has-error', isInvalid);
                         });
                     });
@@ -330,7 +324,6 @@ function showValidationDirective() {
         }
     };
 }
-
 /**
  * hasAuthorityDirective
  */
@@ -365,16 +358,15 @@ function hasAuthorityDirective(PrincipalService) {
             if (authority.length > 0) {
                 defineVisibility(true);
 
-                scope.$watch(function () {
+                scope.$watch(function() {
                     return PrincipalService.isAuthenticated();
-                }, function () {
+                }, function() {
                     defineVisibility(true);
                 });
             }
         }
     };
 }
-
 /**
  * hasAnyAuthorityDirective
  */
@@ -407,16 +399,15 @@ function hasAnyAuthorityDirective(PrincipalService) {
             if (authorities.length > 0) {
                 defineVisibility(true);
 
-                scope.$watch(function () {
+                scope.$watch(function() {
                     return PrincipalService.isAuthenticated();
-                }, function () {
+                }, function() {
                     defineVisibility(true);
                 });
             }
         }
     };
 }
-
 /**
  * passwordStrengthBarDirective
  */
@@ -434,7 +425,7 @@ function passwordStrengthBarDirective() {
             passwordToCheck: '='
         },
         link: function (scope, iElement) {
-            var strength = {
+        	var strength = {
                 colors: ['#F00', '#F90', '#FF0', '#9F0', '#0F0'],
                 mesureStrength: function (p) {
 
@@ -470,17 +461,21 @@ function passwordStrengthBarDirective() {
                     var idx = 0;
                     if (s <= 10) {
                         idx = 0;
-                    } else if (s <= 20) {
+                    }
+                    else if (s <= 20) {
                         idx = 1;
-                    } else if (s <= 30) {
+                    }
+                    else if (s <= 30) {
                         idx = 2;
-                    } else if (s <= 40) {
+                    }
+                    else if (s <= 40) {
                         idx = 3;
-                    } else {
+                    }
+                    else {
                         idx = 4;
                     }
 
-                    return {idx: idx + 1, col: this.colors[idx]};
+                    return { idx: idx + 1, col: this.colors[idx] };
                 }
             };
             scope.$watch('passwordToCheck', function (password) {
@@ -488,15 +483,14 @@ function passwordStrengthBarDirective() {
                     var c = strength.getColor(strength.mesureStrength(password));
                     iElement.removeClass('ng-hide');
                     iElement.find('ul').children('li')
-                        .css({'background-color': '#DDD'})
+                        .css({ 'background-color': '#DDD' })
                         .slice(0, c.idx)
-                        .css({'background-color': c.col});
+                        .css({ 'background-color': c.col });
                 }
             });
         }
     };
 }
-
 /**
  * 参数说明
  *  tree-data：树形数组
@@ -641,7 +635,6 @@ function treeView() {
         }
     };
 }
-
 /**
  * does not work
  */
@@ -649,10 +642,10 @@ function jhiAlert() {
     return {
         restrict: 'A',
         template: '<div class="alerts" ng-cloak="">' +
-            '<div ng-repeat="alert in $ctrl.alerts" ng-class="[alert.position, {\'toast\': alert.toast}]">' +
-            '<uib-alert ng-cloak="" type="{{alert.type}}" close="alert.close($ctrl.alerts)"><pre ng-bind-html="alert.msg"></pre></uib-alert>' +
-            '</div>' +
-            '</div>',
+                      '<div ng-repeat="alert in $ctrl.alerts" ng-class="[alert.position, {\'toast\': alert.toast}]">' +
+                          '<uib-alert ng-cloak="" type="{{alert.type}}" close="alert.close($ctrl.alerts)"><pre ng-bind-html="alert.msg"></pre></uib-alert>' +
+                      '</div>' +
+                  '</div>',
         controller: function ($scope, AlertUtils) {
             var vm = this;
 
@@ -663,7 +656,6 @@ function jhiAlert() {
         }
     };
 }
-
 /**
  * does not work
  */
@@ -671,16 +663,16 @@ function jhiAlertError() {
     return {
         restrict: 'A',
         template: '<div class="alerts" ng-cloak="">' +
-            '<div ng-repeat="alert in $ctrl.alerts" ng-class="[alert.position, {\'toast\': alert.toast}]">' +
-            '<uib-alert ng-cloak="" type="{{alert.type}}" close="alert.close($ctrl.alerts)"><pre>{{ alert.msg }}</pre></uib-alert>' +
-            '</div>' +
-            '</div>',
+                      '<div ng-repeat="alert in $ctrl.alerts" ng-class="[alert.position, {\'toast\': alert.toast}]">' +
+                          '<uib-alert ng-cloak="" type="{{alert.type}}" close="alert.close($ctrl.alerts)"><pre>{{ alert.msg }}</pre></uib-alert>' +
+                      '</div>' +
+                  '</div>',
         controller: function ($rootScope, $scope, AlertUtils) {
             var vm = this;
 
             vm.alerts = [];
 
-            function addErrorAlert(message, key, data) {
+            function addErrorAlert (message, key, data) {
                 vm.alerts.push(
                     AlertUtils.add(
                         {
@@ -699,39 +691,39 @@ function jhiAlertError() {
                 var i;
                 event.stopPropagation();
                 switch (httpResponse.status) {
-                    // connection refused, server not reachable
-                    case 0:
-                        addErrorAlert('Server not reachable', 'error.server.not.reachable');
-                        break;
-                    case 400:
-                        var errorHeader = httpResponse.headers('X-Error-Message');
-                        if (errorHeader) {
-                            addErrorAlert(decodeURIComponent(errorHeader), decodeURIComponent(errorHeader));
-                        } else if (httpResponse.data && httpResponse.data.fieldErrors) {
-                            for (i = 0; i < httpResponse.data.fieldErrors.length; i++) {
-                                var fieldError = httpResponse.data.fieldErrors[i];
-                                addErrorAlert(fieldError.defaultMessage);
-                            }
-                        } else if (httpResponse.data && httpResponse.data.message) {
-                            addErrorAlert(httpResponse.data.message, httpResponse.data.message, httpResponse.data);
-                        } else {
-                            addErrorAlert(httpResponse.data);
+                // connection refused, server not reachable
+                case 0:
+                    addErrorAlert('Server not reachable', 'error.server.not.reachable');
+                    break;
+                case 400:
+                    var errorHeader = httpResponse.headers('X-Error-Message');
+                    if (errorHeader) {
+                        addErrorAlert(decodeURIComponent(errorHeader), decodeURIComponent(errorHeader));
+                    } else if (httpResponse.data && httpResponse.data.fieldErrors) {
+                        for (i = 0; i < httpResponse.data.fieldErrors.length; i++) {
+                            var fieldError = httpResponse.data.fieldErrors[i];
+                            addErrorAlert(fieldError.defaultMessage);
                         }
-                        break;
-                    case 404:
-                        addErrorAlert('Not found', 'error.url.not.found');
-                        break;
-                    default:
-                        if (httpResponse.data && httpResponse.data.message) {
-                            addErrorAlert(httpResponse.data.message);
-                        } else {
-                            addErrorAlert(angular.toJson(httpResponse));
-                        }
+                    } else if (httpResponse.data && httpResponse.data.message) {
+                        addErrorAlert(httpResponse.data.message, httpResponse.data.message, httpResponse.data);
+                    } else {
+                        addErrorAlert(httpResponse.data);
+                    }
+                    break;
+                case 404:
+                    addErrorAlert('Not found', 'error.url.not.found');
+                    break;
+                default:
+                    if (httpResponse.data && httpResponse.data.message) {
+                        addErrorAlert(httpResponse.data.message);
+                    } else {
+                        addErrorAlert(angular.toJson(httpResponse));
+                    }
                 }
             });
 
             $scope.$on('$destroy', function () {
-                if (angular.isDefined(cleanHttpErrorListener) && cleanHttpErrorListener !== null) {
+                if(angular.isDefined(cleanHttpErrorListener) && cleanHttpErrorListener !== null){
                     cleanHttpErrorListener();
                     vm.alerts = [];
                 }
@@ -739,14 +731,13 @@ function jhiAlertError() {
         }
     };
 }
-
 /**
  * responsibleVideo - Directive for responsive video
  */
 function responsiveVideo() {
     return {
         restrict: 'A',
-        link: function (scope, element) {
+        link:  function(scope, element) {
             var figure = element;
             var video = element.children();
             video
@@ -755,7 +746,7 @@ function responsiveVideo() {
                 .removeAttr('width');
 
             //We can use $watch on $window.innerWidth also.
-            $(window).resize(function () {
+            $(window).resize(function() {
                 var newWidth = figure.width();
                 video
                     .width(newWidth)
@@ -764,7 +755,6 @@ function responsiveVideo() {
         }
     }
 }
-
 function closeOffCanvas() {
     return {
         restrict: 'A',
@@ -809,10 +799,10 @@ function vectorMap() {
                     ]
                 },
             });
-            var destroyMap = function () {
+            var destroyMap = function(){
                 element.remove();
             };
-            scope.$on('$destroy', function () {
+            scope.$on('$destroy', function() {
                 destroyMap();
             });
         }
@@ -834,7 +824,7 @@ function sparkline() {
             scope.$watch(scope.sparkData, function () {
                 render();
             });
-            scope.$watch(scope.sparkOptions, function () {
+            scope.$watch(scope.sparkOptions, function(){
                 render();
             });
             var render = function () {
@@ -843,7 +833,6 @@ function sparkline() {
         }
     }
 }
-
 /**
  * icheck - Directive for custom checkbox icheck
  */
@@ -851,12 +840,12 @@ function icheck($timeout) {
     return {
         restrict: 'A',
         require: 'ngModel',
-        link: function ($scope, element, $attrs, ngModel) {
-            return $timeout(function () {
+        link: function($scope, element, $attrs, ngModel) {
+            return $timeout(function() {
                 var value;
                 value = $attrs['value'];
 
-                $scope.$watch($attrs['ngModel'], function (newValue) {
+                $scope.$watch($attrs['ngModel'], function(newValue){
                     $(element).iCheck('update');
                 });
 
@@ -864,7 +853,7 @@ function icheck($timeout) {
                     checkboxClass: 'icheckbox_square-green',
                     radioClass: 'iradio_square-green'
 
-                }).on('ifChanged', function (event) {
+                }).on('ifChanged', function(event) {
                     if ($(element).attr('type') === 'checkbox' && $attrs['ngModel']) {
                         $scope.$apply(function () {
                             return ngModel.$setViewValue(event.target.checked);
@@ -902,7 +891,7 @@ function ionRangeSlider() {
 function dropZone() {
     return {
         restrict: 'C',
-        link: function (scope, element, attrs) {
+        link: function(scope, element, attrs) {
 
             var config = {
                 url: 'http://localhost:8080/upload',
@@ -914,12 +903,12 @@ function dropZone() {
             };
 
             var eventHandlers = {
-                'addedfile': function (file) {
+                'addedfile': function(file) {
                     scope.file = file;
-                    if (this.files[1] != null) {
+                    if (this.files[1]!=null) {
                         this.removeFile(this.files[0]);
                     }
-                    scope.$apply(function () {
+                    scope.$apply(function() {
                         scope.fileAdded = true;
                     });
                 },
@@ -931,15 +920,15 @@ function dropZone() {
 
             dropzone = new Dropzone(element[0], config);
 
-            angular.forEach(eventHandlers, function (handler, event) {
+            angular.forEach(eventHandlers, function(handler, event) {
                 dropzone.on(event, handler);
             });
 
-            scope.processDropzone = function () {
+            scope.processDropzone = function() {
                 dropzone.processQueue();
             };
 
-            scope.resetDropzone = function () {
+            scope.resetDropzone = function() {
                 dropzone.removeAllFiles();
             }
         }
@@ -952,8 +941,8 @@ function dropZone() {
 function chatSlimScroll($timeout) {
     return {
         restrict: 'A',
-        link: function (scope, element) {
-            $timeout(function () {
+        link: function(scope, element) {
+            $timeout(function(){
                 element.slimscroll({
                     height: '234px',
                     railOpacity: 0.4
@@ -967,18 +956,18 @@ function chatSlimScroll($timeout) {
 /**
  * customValid - Directive for custom validation example
  */
-function customValid() {
+function customValid(){
     return {
         require: 'ngModel',
-        link: function (scope, ele, attrs, c) {
-            scope.$watch(attrs.ngModel, function () {
+        link: function(scope, ele, attrs, c) {
+            scope.$watch(attrs.ngModel, function() {
 
                 // You can call a $http method here
                 // Or create custom validation
 
                 var validText = "Inspinia";
 
-                if (scope.extras == validText) {
+                if(scope.extras == validText) {
                     c.$setValidity('cvalid', true);
                 } else {
                     c.$setValidity('cvalid', false);
@@ -993,11 +982,11 @@ function customValid() {
 /**
  * fullScroll - Directive for slimScroll with 100%
  */
-function fullScroll($timeout) {
+function fullScroll($timeout){
     return {
         restrict: 'A',
-        link: function (scope, element) {
-            $timeout(function () {
+        link: function(scope, element) {
+            $timeout(function(){
                 element.slimscroll({
                     height: '100%',
                     railOpacity: 0.9
@@ -1011,14 +1000,14 @@ function fullScroll($timeout) {
 /**
  * slimScroll - Directive for slimScroll with custom height
  */
-function slimScroll($timeout) {
+function slimScroll($timeout){
     return {
         restrict: 'A',
         scope: {
             boxHeight: '@'
         },
-        link: function (scope, element) {
-            $timeout(function () {
+        link: function(scope, element) {
+            $timeout(function(){
                 element.slimscroll({
                     height: scope.boxHeight,
                     railOpacity: 0.9
@@ -1035,16 +1024,15 @@ function slimScroll($timeout) {
 function clockPicker() {
     return {
         restrict: 'A',
-        link: function (scope, element) {
-            element.clockpicker();
+        link: function(scope, element) {
+                element.clockpicker();
         }
     };
 }
-
 /**
  * landingScrollspy - Directive for scrollspy in landing page
  */
-function landingScrollspy() {
+function landingScrollspy(){
     return {
         restrict: 'A',
         link: function (scope, element, attrs) {
@@ -1059,10 +1047,10 @@ function landingScrollspy() {
 /**
  * fitHeight - Directive for set height fit to window height
  */
-function fitHeight() {
+function fitHeight(){
     return {
         restrict: 'A',
-        link: function (scope, element) {
+        link: function(scope, element) {
             element.css("height", $(window).height() + "px");
             element.css("min-height", $(window).height() + "px");
         }
@@ -1072,14 +1060,14 @@ function fitHeight() {
 /**
  * truncate - Directive for truncate string
  */
-function truncate($timeout) {
+function truncate($timeout){
     return {
         restrict: 'A',
         scope: {
             truncateOptions: '='
         },
-        link: function (scope, element) {
-            $timeout(function () {
+        link: function(scope, element) {
+            $timeout(function(){
                 element.dotdotdot(scope.truncateOptions);
 
             });
@@ -1098,7 +1086,7 @@ function touchSpin() {
             spinOptions: '='
         },
         link: function (scope, element, attrs) {
-            scope.$watch(scope.spinOptions, function () {
+            scope.$watch(scope.spinOptions, function(){
                 render();
             });
             var render = function () {
@@ -1107,25 +1095,23 @@ function touchSpin() {
         }
     }
 }
-
 /**
  * markdownEditor - Directive for Bootstrap Markdown
  */
 function markdownEditor() {
     return {
         restrict: "A",
-        require: 'ngModel',
-        link: function (scope, element, attrs, ngModel) {
+        require:  'ngModel',
+        link:     function (scope, element, attrs, ngModel) {
             $(element).markdown({
-                savable: false,
-                onChange: function (e) {
+                savable:false,
+                onChange: function(e){
                     ngModel.$setViewValue(e.getContent());
                 }
             });
         }
     }
 }
-
 /**
  * passwordMeter - Directive for jQuery Password Strength Meter
  */
@@ -1136,7 +1122,7 @@ function passwordMeter() {
             pwOptions: '='
         },
         link: function (scope, element, attrs) {
-            scope.$watch(scope.pwOptions, function () {
+            scope.$watch(scope.pwOptions, function(){
                 render();
             });
             var render = function () {

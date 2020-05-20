@@ -1,14 +1,12 @@
 <form name="editForm" role="form" novalidate ng-submit="vm.save()" show-validation-directive>
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="vm.cancel()">&times;
-        </button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="vm.cancel()">&times;</button>
         <h4 class="modal-title">{{vm.pageTitle}}</h4>
     </div>
     <div class="modal-body">
         <div class="form-group">
             <label class="control-label">应用名称</label>
-            <input type="text" class="form-control" name="name" ng-model="vm.entity.name" required ng-maxlength="20"
-                   ng-disabled="vm.mode == 'edit'">
+            <input type="text" class="form-control" name="name" ng-model="vm.entity.name" required ng-maxlength="20" ng-disabled="vm.mode == 'edit'">
             <div ng-show="editForm.name.$invalid">
                 <p class="help-block" ng-show="editForm.name.$error.required">
                     必填字段
@@ -19,10 +17,15 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="control-label">权限名称</label>
+            <select class="form-control" multiple name="authority" ng-model="vm.entity.authorities"
+                    ng-options="authority for authority in vm.authorities">
+            </select>
+        </div>
+        <div class="form-group">
             <label class="control-label">是否可用</label>
             <div class="onoffswitch">
-                <input type="checkbox" id="enabled" ng-model="vm.entity.enabled" class="onoffswitch-checkbox"
-                       ng-disabled="vm.entity.name === null">
+                <input type="checkbox" id="enabled" ng-model="vm.entity.enabled" class="onoffswitch-checkbox" ng-disabled="vm.entity.name === null">
                 <label class="onoffswitch-label" for="enabled">
                     <span class="onoffswitch-inner"></span>
                     <span class="onoffswitch-switch"></span>

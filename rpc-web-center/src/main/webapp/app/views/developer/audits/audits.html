@@ -9,15 +9,13 @@
             <div class="col-md-2">
                 <div class="form-group">
                     <label class="control-label" for="login">开始时间</label>
-                    <input type="date" class="input-sm form-control" name="start" ng-model="vm.fromDate"
-                           ng-change="vm.loadAll()" required/>
+                    <input type="date" class="input-sm form-control" name="start" ng-model="vm.fromDate" ng-change="vm.loadAll()" required/>
                 </div>
             </div>
             <div class="col-sm-2 col-sm-offset-4">
                 <div class="form-group">
                     <label class="control-label" for="login">结束时间</label>
-                    <input type="date" class="input-sm form-control" name="end" ng-model="vm.toDate"
-                           ng-change="vm.loadAll()" required/>
+                    <input type="date" class="input-sm form-control" name="end" ng-model="vm.toDate" ng-change="vm.loadAll()" required/>
                 </div>
             </div>
         </div>
@@ -29,16 +27,13 @@
                     <table class="table table-condensed table-striped table-bordered table-responsive">
                         <thead>
                         <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.loadAll()">
-                            <th sort-by-directive="auditEventDate"><span>Event Time</span><span
-                                    class="fa fa-sort"></span></th>
+                            <th sort-by-directive="auditEventDate"><span>Event Time</span><span class="fa fa-sort"></span></th>
                             <th sort-by-directive="principal"><span>User</span><span class="fa fa-sort"></span></th>
-                            <th sort-by-directive="auditEventType"><span>Event Type</span><span
-                                    class="fa fa-sort"></span></th>
+                            <th sort-by-directive="auditEventType"><span>Event Type</span><span class="fa fa-sort"></span></th>
                             <th><span>Extra data</span></th>
                         </tr>
                         </thead>
-                        <tr ng-repeat="entity in vm.entities | filter:filter | orderBy:predicate:reverse"
-                            ng-hide="entity.filtered">
+                        <tr ng-repeat="entity in vm.entities | filter:filter | orderBy:predicate:reverse" ng-hide="entity.filtered">
                             <td><span>{{entity.auditEventDate| date:'yyyy/MM/dd HH:mm:ss'}}</span></td>
                             <td><small>{{entity.principal}}</small></td>
                             <td>{{entity.auditEventType}}</td>
@@ -49,12 +44,10 @@
                         </tr>
                     </table>
                     <div class="text-center">
-                        <uib-pagination class="pagination-sm" items-per-page="vm.itemsPerPage"
-                                        total-items="vm.totalItems" ng-model="vm.page"
-                                        ng-change="vm.loadAll()"></uib-pagination>
+                        <uib-pagination class="pagination-sm" items-per-page="vm.itemsPerPage" total-items="vm.totalItems" ng-model="vm.page" ng-change="vm.loadAll()"></uib-pagination>
                     </div>
                 </div>
-            </div>
+           </div>
         </div>
     </div>
 </div>

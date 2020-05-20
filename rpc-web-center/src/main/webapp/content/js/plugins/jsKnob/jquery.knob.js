@@ -10,7 +10,7 @@
  *
  * Thanks to vor, eskimoblood, spiffistan, FabrizioC
  */
-(function ($) {
+(function($) {
 
     /**
      * Kontrol library
@@ -80,46 +80,46 @@
                     ._draw();
             };
 
-            if (this.$.data('kontroled')) return;
+            if(this.$.data('kontroled')) return;
             this.$.data('kontroled', true);
 
             this.extend();
             this.o = $.extend(
                 {
                     // Config
-                    min: this.$.data('min') !== undefined ? this.$.data('min') : 0,
-                    max: this.$.data('max') !== undefined ? this.$.data('max') : 100,
-                    stopper: true,
-                    readOnly: this.$.data('readonly') || (this.$.attr('readonly') === 'readonly'),
+                    min : this.$.data('min') !== undefined ? this.$.data('min') : 0,
+                    max : this.$.data('max') !== undefined ? this.$.data('max') : 100,
+                    stopper : true,
+                    readOnly : this.$.data('readonly') || (this.$.attr('readonly') === 'readonly'),
 
                     // UI
-                    cursor: (this.$.data('cursor') === true && 30) ||
+                    cursor : (this.$.data('cursor') === true && 30) ||
                         this.$.data('cursor') || 0,
-                    thickness: (
+                    thickness : (
                         this.$.data('thickness') &&
-                        Math.max(Math.min(this.$.data('thickness'), 1), 0.01)
-                    ) || 0.35,
-                    lineCap: this.$.data('linecap') || 'butt',
-                    width: this.$.data('width') || 200,
-                    height: this.$.data('height') || 200,
-                    displayInput: this.$.data('displayinput') == null || this.$.data('displayinput'),
-                    displayPrevious: this.$.data('displayprevious'),
-                    fgColor: this.$.data('fgcolor') || '#87CEEB',
+                            Math.max(Math.min(this.$.data('thickness'), 1), 0.01)
+                        ) || 0.35,
+                    lineCap : this.$.data('linecap') || 'butt',
+                    width : this.$.data('width') || 200,
+                    height : this.$.data('height') || 200,
+                    displayInput : this.$.data('displayinput') == null || this.$.data('displayinput'),
+                    displayPrevious : this.$.data('displayprevious'),
+                    fgColor : this.$.data('fgcolor') || '#87CEEB',
                     inputColor: this.$.data('inputcolor'),
                     font: this.$.data('font') || 'Arial',
                     fontWeight: this.$.data('font-weight') || 'bold',
-                    inline: false,
-                    step: this.$.data('step') || 1,
+                    inline : false,
+                    step : this.$.data('step') || 1,
                     rotation: this.$.data('rotation'),
 
                     // Hooks
-                    draw: null, // function () {}
-                    change: null, // function (value) {}
-                    cancel: null, // function () {}
-                    release: null, // function (value) {}
+                    draw : null, // function () {}
+                    change : null, // function (value) {}
+                    cancel : null, // function () {}
+                    release : null, // function (value) {}
 
                     // Output formatting, allows to add unit: %, ms ...
-                    format: function (v) {
+                    format: function(v) {
                         return v;
                     },
                     parse: function (v) {
@@ -130,17 +130,17 @@
 
             // finalize options
             this.o.flip = this.o.rotation === 'anticlockwise' || this.o.rotation === 'acw';
-            if (!this.o.inputColor) {
+            if(!this.o.inputColor) {
                 this.o.inputColor = this.o.fgColor;
             }
 
             // routing value
-            if (this.$.is('fieldset')) {
+            if(this.$.is('fieldset')) {
 
                 // fieldset = array of integer
                 this.v = {};
                 this.i = this.$.find('input');
-                this.i.each(function (k) {
+                this.i.each(function(k) {
                     var $this = $(this);
                     s.i[k] = $this;
                     s.v[k] = s.o.parse($this.val());
@@ -198,11 +198,9 @@
 
             if (!this.c) {
                 throw {
-                    name: "CanvasNotSupportedException",
-                    message: "Canvas not supported. Please use excanvas on IE8.0.",
-                    toString: function () {
-                        return this.name + ": " + this.message
-                    }
+                    name:        "CanvasNotSupportedException",
+                    message:     "Canvas not supported. Please use excanvas on IE8.0.",
+                    toString:    function(){return this.name + ": " + this.message}
                 }
             }
 
@@ -210,11 +208,11 @@
             this.scale = (window.devicePixelRatio || 1) /
                 (
                     this.c.webkitBackingStorePixelRatio ||
-                    this.c.mozBackingStorePixelRatio ||
-                    this.c.msBackingStorePixelRatio ||
-                    this.c.oBackingStorePixelRatio ||
-                    this.c.backingStorePixelRatio || 1
-                );
+                        this.c.mozBackingStorePixelRatio ||
+                        this.c.msBackingStorePixelRatio ||
+                        this.c.oBackingStorePixelRatio ||
+                        this.c.backingStorePixelRatio || 1
+                    );
 
             // detects relative width / height
             this.relativeWidth = ((this.o.width % 1 !== 0) &&
@@ -254,15 +252,15 @@
             return this;
         };
 
-        this._carve = function () {
-            if (this.relative) {
+        this._carve = function() {
+            if(this.relative) {
                 var w = this.relativeWidth ?
-                    this.$div.parent().width() *
-                    parseInt(this.o.width) / 100 :
-                    this.$div.parent().width(),
+                        this.$div.parent().width() *
+                            parseInt(this.o.width) / 100 :
+                        this.$div.parent().width(),
                     h = this.relativeHeight ?
                         this.$div.parent().height() *
-                        parseInt(this.o.height) / 100 :
+                            parseInt(this.o.height) / 100 :
                         this.$div.parent().height();
 
                 // apply relative
@@ -338,12 +336,12 @@
             k.c.d
                 .bind("touchmove.k", touchMove)
                 .bind(
-                    "touchend.k"
-                    , function () {
-                        k.c.d.unbind('touchmove.k touchend.k');
-                        s.val(s.cv);
-                    }
-                );
+                "touchend.k"
+                , function () {
+                    k.c.d.unbind('touchmove.k touchend.k');
+                    s.val(s.cv);
+                }
+            );
 
             return this;
         };
@@ -368,28 +366,28 @@
             k.c.d
                 .bind("mousemove.k", mouseMove)
                 .bind(
-                    // Escape key cancel current change
-                    "keyup.k"
-                    , function (e) {
-                        if (e.keyCode === 27) {
-                            k.c.d.unbind("mouseup.k mousemove.k keyup.k");
+                // Escape key cancel current change
+                "keyup.k"
+                , function (e) {
+                    if (e.keyCode === 27) {
+                        k.c.d.unbind("mouseup.k mousemove.k keyup.k");
 
-                            if (
-                                s.eH
+                        if (
+                            s.eH
                                 && (s.eH() === false)
                             ) return;
 
-                            s.cancel();
-                        }
+                        s.cancel();
                     }
-                )
+                }
+            )
                 .bind(
-                    "mouseup.k"
-                    , function (e) {
-                        k.c.d.unbind('mousemove.k mouseup.k keyup.k');
-                        s.val(s.cv);
-                    }
-                );
+                "mouseup.k"
+                , function (e) {
+                    k.c.d.unbind('mousemove.k mouseup.k keyup.k');
+                    s.val(s.cv);
+                }
+            );
 
             return this;
         };
@@ -406,27 +404,27 @@
             if (!this.o.readOnly) {
                 this.$c
                     .bind(
-                        "mousedown"
-                        , function (e) {
-                            e.preventDefault();
-                            s._xy()._mouse(e);
-                        }
-                    )
+                    "mousedown"
+                    , function (e) {
+                        e.preventDefault();
+                        s._xy()._mouse(e);
+                    }
+                )
                     .bind(
-                        "touchstart"
-                        , function (e) {
-                            e.preventDefault();
-                            s._xy()._touch(e);
-                        }
-                    );
+                    "touchstart"
+                    , function (e) {
+                        e.preventDefault();
+                        s._xy()._touch(e);
+                    }
+                );
 
                 this.listen();
             } else {
                 this.$.attr('readonly', 'readonly');
             }
 
-            if (this.relative) {
-                $(window).resize(function () {
+            if(this.relative) {
+                $(window).resize(function() {
                     s._carve()
                         .init();
                     s._draw();
@@ -458,43 +456,32 @@
             this.$c[0].width = this.$c[0].width;
         };
 
-        this._validate = function (v) {
-            return (~~(((v < 0) ? -0.5 : 0.5) + (v / this.o.step))) * this.o.step;
+        this._validate = function(v) {
+            return (~~ (((v < 0) ? -0.5 : 0.5) + (v/this.o.step))) * this.o.step;
         };
 
         // Abstract methods
-        this.listen = function () {
-        }; // on start, one time
-        this.extend = function () {
-        }; // each time configure triggered
-        this.init = function () {
-        }; // each time configure triggered
-        this.change = function (v) {
-        }; // on change
-        this.val = function (v) {
-        }; // on release
-        this.xy2val = function (x, y) {
-        }; //
-        this.draw = function () {
-        }; // on change / on release
-        this.clear = function () {
-            this._clear();
-        };
+        this.listen = function () {}; // on start, one time
+        this.extend = function () {}; // each time configure triggered
+        this.init = function () {}; // each time configure triggered
+        this.change = function (v) {}; // on change
+        this.val = function (v) {}; // on release
+        this.xy2val = function (x, y) {}; //
+        this.draw = function () {}; // on change / on release
+        this.clear = function () { this._clear(); };
 
         // Utils
         this.h2rgba = function (h, a) {
             var rgb;
-            h = h.substring(1, 7)
-            rgb = [parseInt(h.substring(0, 2), 16)
-                , parseInt(h.substring(2, 4), 16)
-                , parseInt(h.substring(4, 6), 16)];
+            h = h.substring(1,7)
+            rgb = [parseInt(h.substring(0,2),16)
+                ,parseInt(h.substring(2,4),16)
+                ,parseInt(h.substring(4,6),16)];
             return "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + a + ")";
         };
 
         this.copy = function (f, t) {
-            for (var i in f) {
-                t[i] = f[i];
-            }
+            for (var i in f) { t[i] = f[i]; }
         };
     };
 
@@ -511,15 +498,15 @@
         this.lineWidth = null;
         this.cursorExt = null;
         this.w2 = null;
-        this.PI2 = 2 * Math.PI;
+        this.PI2 = 2*Math.PI;
 
         this.extend = function () {
             this.o = $.extend(
                 {
-                    bgColor: this.$.data('bgcolor') || '#EEEEEE',
-                    angleOffset: this.$.data('angleoffset') || 0,
-                    angleArc: this.$.data('anglearc') || 360,
-                    inline: true
+                    bgColor : this.$.data('bgcolor') || '#EEEEEE',
+                    angleOffset : this.$.data('angleoffset') || 0,
+                    angleArc : this.$.data('anglearc') || 360,
+                    inline : true
                 }, this.o
             );
         };
@@ -532,8 +519,8 @@
 
                 if (
                     triggerRelease !== false && (v != this.v) && this.rH &&
-                    (this.rH(v) === false)
-                ) return;
+                        (this.rH(v) === false)
+                    ) return;
 
                 this.cv = this.o.stopper ? max(min(v, this.o.max), this.o.min) : v;
                 this.v = this.cv;
@@ -549,21 +536,21 @@
 
             a = Math.atan2(
                 x - (this.x + this.w2)
-                , -(y - this.y - this.w2)
+                , - (y - this.y - this.w2)
             ) - this.angleOffset;
 
             if (this.o.flip) {
                 a = this.angleArc - a - this.PI2;
             }
 
-            if (this.angleArc != this.PI2 && (a < 0) && (a > -0.5)) {
+            if(this.angleArc != this.PI2 && (a < 0) && (a > -0.5)) {
                 // if isset angleArc option, set to min if .5 under min
                 a = 0;
             } else if (a < 0) {
                 a += this.PI2;
             }
 
-            ret = ~~(0.5 + (a * (this.o.max - this.o.min) / this.angleArc))
+            ret = ~~ (0.5 + (a * (this.o.max - this.o.min) / this.angleArc))
                 + this.o.min;
 
             this.o.stopper && (ret = max(min(ret, this.o.max), this.o.min));
@@ -578,94 +565,92 @@
                     e.preventDefault();
 
                     var ori = e.originalEvent
-                        , deltaX = ori.detail || ori.wheelDeltaX
-                        , deltaY = ori.detail || ori.wheelDeltaY
-                        , v = s._validate(s.o.parse(s.$.val()))
-                        + (deltaX > 0 || deltaY > 0 ? s.o.step : deltaX < 0 || deltaY < 0 ? -s.o.step : 0);
+                        ,deltaX = ori.detail || ori.wheelDeltaX
+                        ,deltaY = ori.detail || ori.wheelDeltaY
+                        ,v = s._validate(s.o.parse(s.$.val()))
+                            + (deltaX>0 || deltaY>0 ? s.o.step : deltaX<0 || deltaY<0 ? -s.o.step : 0);
 
                     v = max(min(v, s.o.max), s.o.min);
 
                     s.val(v, false);
 
-                    if (s.rH) {
+                    if(s.rH) {
                         // Handle mousewheel stop
                         clearTimeout(mwTimerStop);
-                        mwTimerStop = setTimeout(function () {
+                        mwTimerStop = setTimeout(function() {
                             s.rH(v);
                             mwTimerStop = null;
                         }, 100);
 
                         // Handle mousewheel releases
-                        if (!mwTimerRelease) {
-                            mwTimerRelease = setTimeout(function () {
-                                if (mwTimerStop) s.rH(v);
+                        if(!mwTimerRelease) {
+                            mwTimerRelease = setTimeout(function() {
+                                if(mwTimerStop) s.rH(v);
                                 mwTimerRelease = null;
                             }, 200);
                         }
                     }
                 }
-                , kval, to, m = 1, kv = {37: -s.o.step, 38: s.o.step, 39: s.o.step, 40: -s.o.step};
+                , kval, to, m = 1, kv = {37:-s.o.step, 38:s.o.step, 39:s.o.step, 40:-s.o.step};
 
             this.$
                 .bind(
-                    "keydown"
-                    , function (e) {
-                        var kc = e.keyCode;
+                "keydown"
+                ,function (e) {
+                    var kc = e.keyCode;
 
-                        // numpad support
-                        if (kc >= 96 && kc <= 105) {
-                            kc = e.keyCode = kc - 48;
-                        }
+                    // numpad support
+                    if(kc >= 96 && kc <= 105) {
+                        kc = e.keyCode = kc - 48;
+                    }
 
-                        kval = parseInt(String.fromCharCode(kc));
+                    kval = parseInt(String.fromCharCode(kc));
 
-                        if (isNaN(kval)) {
+                    if (isNaN(kval)) {
 
-                            (kc !== 13)         // enter
+                        (kc !== 13)         // enter
                             && (kc !== 8)       // bs
                             && (kc !== 9)       // tab
                             && (kc !== 189)     // -
                             && (kc !== 190 || s.$.val().match(/\./))     // . only allowed once
-                            && e.preventDefault();
+                        && e.preventDefault();
 
-                            // arrows
-                            if ($.inArray(kc, [37, 38, 39, 40]) > -1) {
-                                e.preventDefault();
+                        // arrows
+                        if ($.inArray(kc,[37,38,39,40]) > -1) {
+                            e.preventDefault();
 
-                                var v = s.o.parse(s.$.val()) + kv[kc] * m;
-                                s.o.stopper && (v = max(min(v, s.o.max), s.o.min));
+                            var v = s.o.parse(s.$.val()) + kv[kc] * m;
+                            s.o.stopper && (v = max(min(v, s.o.max), s.o.min));
 
-                                s.change(v);
-                                s._draw();
+                            s.change(v);
+                            s._draw();
 
-                                // long time keydown speed-up
-                                to = window.setTimeout(
-                                    function () {
-                                        m *= 2;
-                                    }, 30
-                                );
-                            }
+                            // long time keydown speed-up
+                            to = window.setTimeout(
+                                function () { m *= 2; }, 30
+                            );
                         }
                     }
-                )
+                }
+            )
                 .bind(
-                    "keyup"
-                    , function (e) {
-                        if (isNaN(kval)) {
-                            if (to) {
-                                window.clearTimeout(to);
-                                to = null;
-                                m = 1;
-                                s.val(s.$.val());
-                            }
-                        } else {
-                            // kval postcond
-                            (s.$.val() > s.o.max && s.$.val(s.o.max))
-                            || (s.$.val() < s.o.min && s.$.val(s.o.min));
+                "keyup"
+                ,function (e) {
+                    if (isNaN(kval)) {
+                        if (to) {
+                            window.clearTimeout(to);
+                            to = null;
+                            m = 1;
+                            s.val(s.$.val());
                         }
-
+                    } else {
+                        // kval postcond
+                        (s.$.val() > s.o.max && s.$.val(s.o.max))
+                        || (s.$.val() < s.o.min && s.$.val(s.o.min));
                     }
-                );
+
+                }
+            );
 
             this.$c.bind("mousewheel DOMMouseScroll", mw);
             this.$.bind("mousewheel DOMMouseScroll", mw)
@@ -675,8 +660,8 @@
 
             if (
                 this.v < this.o.min
-                || this.v > this.o.max
-            ) this.v = this.o.min;
+                    || this.v > this.o.max
+                ) this.v = this.o.min;
 
             this.$.val(this.v);
             this.w2 = this.w / 2;
@@ -707,24 +692,24 @@
             ) + 2;
 
             this.o.displayInput
-            && this.i.css({
-                'width': ((this.w / 2 + 4) >> 0) + 'px'
-                , 'height': ((this.w / 3) >> 0) + 'px'
-                , 'position': 'absolute'
-                , 'vertical-align': 'middle'
-                , 'margin-top': ((this.w / 3) >> 0) + 'px'
-                , 'margin-left': '-' + ((this.w * 3 / 4 + 2) >> 0) + 'px'
-                , 'border': 0
-                , 'background': 'none'
-                , 'font': this.o.fontWeight + ' ' + ((this.w / s) >> 0) + 'px ' + this.o.font
-                , 'text-align': 'center'
-                , 'color': this.o.inputColor || this.o.fgColor
-                , 'padding': '0px'
-                , '-webkit-appearance': 'none'
+                && this.i.css({
+                'width' : ((this.w / 2 + 4) >> 0) + 'px'
+                ,'height' : ((this.w / 3) >> 0) + 'px'
+                ,'position' : 'absolute'
+                ,'vertical-align' : 'middle'
+                ,'margin-top' : ((this.w / 3) >> 0) + 'px'
+                ,'margin-left' : '-' + ((this.w * 3 / 4 + 2) >> 0) + 'px'
+                ,'border' : 0
+                ,'background' : 'none'
+                ,'font' : this.o.fontWeight + ' ' + ((this.w / s) >> 0) + 'px ' + this.o.font
+                ,'text-align' : 'center'
+                ,'color' : this.o.inputColor || this.o.fgColor
+                ,'padding' : '0px'
+                ,'-webkit-appearance': 'none'
             })
             || this.i.css({
-                'width': '0px'
-                , 'visibility': 'hidden'
+                'width' : '0px'
+                ,'visibility' : 'hidden'
             });
         };
 
@@ -748,7 +733,7 @@
                 ea = sa + v + 0.00001;
             }
             this.o.cursor
-            && (sa = ea - this.cursorExt)
+                && (sa = ea - this.cursorExt)
             && (ea = ea + this.cursorExt);
             return {
                 s: sa,
@@ -782,7 +767,7 @@
             }
 
             c.beginPath();
-            c.strokeStyle = r ? this.o.fgColor : this.fgColor;
+            c.strokeStyle = r ? this.o.fgColor : this.fgColor ;
             c.arc(this.xy, this.xy, this.radius, a.s, a.e, a.d);
             c.stroke();
         };

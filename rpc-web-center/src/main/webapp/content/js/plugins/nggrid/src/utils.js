@@ -1,10 +1,10 @@
 ﻿if (!String.prototype.trim) {
-    String.prototype.trim = function () {
+    String.prototype.trim = function() {
         return this.replace(/^\s+|\s+$/g, '');
     };
 }
 if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function (elt /*, from*/) {
+    Array.prototype.indexOf = function(elt /*, from*/) {
         var len = this.length >>> 0;
         var from = Number(arguments[1]) || 0;
         from = (from < 0) ? Math.ceil(from) : Math.floor(from);
@@ -20,7 +20,7 @@ if (!Array.prototype.indexOf) {
     };
 }
 if (!Array.prototype.filter) {
-    Array.prototype.filter = function (fun /*, thisp */) {
+    Array.prototype.filter = function(fun /*, thisp */) {
         "use strict";
         var t = Object(this);
         var len = t.length >>> 0;

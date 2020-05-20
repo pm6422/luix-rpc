@@ -46,23 +46,23 @@
                         <table class="table table-condensed table-striped table-bordered table-responsive"
                                style="table-layout:fixed" ng-hide="filtered.length == 0">
                             <thead>
-                            <tr>
-                                <th class="col-sm-4">Property</th>
-                                <th class="col-sm-8">Value</th>
-                            </tr>
+                                <tr>
+                                    <th class="col-sm-4">Property</th>
+                                    <th class="col-sm-8">Value</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="item in filtered = (value | filter:filter)">
-                                <td class="break">{{item.key}}</td>
-                                <td class="break">
-                                    <span class="pull-right label label-primary break">{{item.val}}</span>
-                                </td>
-                            </tr>
+                                <tr ng-repeat="item in filtered = (value | filter:filter)">
+                                    <td class="break">{{item.key}}</td>
+                                    <td class="break">
+                                        <span class="pull-right label label-primary break">{{item.val}}</span>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
+           </div>
         </div>
     </div>
 </div>
