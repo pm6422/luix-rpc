@@ -129,6 +129,7 @@ application:
         cache: # Used by the CachingHttpHeadersFilter
             timeToLiveInDays: 31
     swagger:
+        enabled: true
         api:
             title: Infinity RPC Web Center
             description: Infinity RPC Web Center 接口文档

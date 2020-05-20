@@ -90,7 +90,7 @@ function NavbarController($rootScope, $scope, $translate, $state, ProfileService
 
     ProfileService.getProfileInfo().then(function (response) {
         vm.inProduction = response.inProduction;
-        vm.swaggerDisabled = response.swaggerDisabled;
+        vm.swaggerEnabled = response.swaggerDisabled;
     });
 
     vm.toggleNavbar = toggleNavbar;

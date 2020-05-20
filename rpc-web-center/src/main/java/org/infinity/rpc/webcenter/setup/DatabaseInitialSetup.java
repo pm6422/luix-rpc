@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 @ChangeLog(order = "001")
 public class DatabaseInitialSetup {
 
-    private static final String APP_NAME = "rpc-web-center";
+    private static final String APP_NAME = "RpcWebCenter";
 
     @ChangeSet(order = "01", author = "Louis", id = "addApps", runAlways = true)
     public void addApps(MongoTemplate mongoTemplate) {
