@@ -807,7 +807,50 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 pageTitle: '服务发现'
             }
         })
-        .state('service-discovery.app-list', {
+        .state('service-discovery.service-app-list', {
+            url: '/app-list?page&sort',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/service-app/service-app-list.html',
+                    controller: 'ServiceAppListController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: '应用列表'
+            },
+            params: {
+                page: {
+                    value: '1',
+                    squash: true
+                },
+                sort: {
+                    value: 'name,asc',
+                    squash: true
+                }
+            },
+            resolve: {
+                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
+                    return {
+                        page: PaginationUtils.parsePage($stateParams.page),
+                        sort: $stateParams.sort,
+                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
+                        ascending: PaginationUtils.parseAscending($stateParams.sort)
+                    };
+                }],
+                criteria: ['$stateParams', function ($stateParams) {
+                    return {};
+                }]
+            }
+        })
+        .state('app', {
+            abstract: true,
+            parent: 'admin',
+            data: {
+                pageTitle: '应用系统'
+            }
+        })
+        .state('app.app-list', {
             url: '/app-list?page&sort',
             views: {
                 'content@': {

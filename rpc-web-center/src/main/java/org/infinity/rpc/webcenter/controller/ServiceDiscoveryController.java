@@ -1,10 +1,15 @@
 package org.infinity.rpc.webcenter.controller;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
+import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.service.RegistryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,11 +17,22 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+
 @RestController
 @Slf4j
-public class ServerController {
+public class ServiceDiscoveryController {
     @Autowired
     private RegistryService registryService;
+
+    @ApiOperation("获取所有应用")
+    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
+    @GetMapping("api/service-discovery/apps")
+    @Secured({Authority.ADMIN})
+    public ResponseEntity<List<String>> findAll() {
+        List<String> applications = registryService.getAllApplications();
+        return ResponseEntity.ok(applications);
+    }
 
     /**
      * Get all the groups

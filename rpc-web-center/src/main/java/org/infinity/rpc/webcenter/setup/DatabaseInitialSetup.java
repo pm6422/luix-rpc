@@ -125,9 +125,9 @@ public class DatabaseInitialSetup {
         AdminMenu serviceDiscovery = new AdminMenu(APP_NAME, "service-discovery", "服务发现", 1, "service-discovery", 000, null);
         mongoTemplate.save(serviceDiscovery);
 
-        AdminMenu appList = new AdminMenu(APP_NAME, "app-list", "应用列表", 2, "service-discovery.app-list",
+        AdminMenu serviceAppList = new AdminMenu(APP_NAME, "service-app-list", "应用", 2, "service-discovery.service-app-list",
                 001, serviceDiscovery.getId());
-        mongoTemplate.save(appList);
+        mongoTemplate.save(serviceAppList);
 
         AdminMenu providerList = new AdminMenu(APP_NAME, "provider-list", "服务提供者", 2, "service-discovery.provider-list",
                 002, serviceDiscovery.getId());
@@ -144,11 +144,11 @@ public class DatabaseInitialSetup {
                 userAuthority.getId());
         mongoTemplate.save(userList);
 
-//        AdminMenu app = new AdminMenu(APP_NAME, "app", "应用系统", 1, "app", 200, null);
-//        mongoTemplate.save(app);
+        AdminMenu app = new AdminMenu(APP_NAME, "app", "应用系统", 1, "app", 200, null);
+        mongoTemplate.save(app);
 
-//        AdminMenu appList = new AdminMenu(APP_NAME, "app-list", "应用", 2, "app.app-list", 201, app.getId());
-//        mongoTemplate.save(appList);
+        AdminMenu appList = new AdminMenu(APP_NAME, "app-list", "应用", 2, "app.app-list", 201, app.getId());
+        mongoTemplate.save(appList);
 
         AdminMenu adminMenuAuthority = new AdminMenu(APP_NAME, "admin-menu-authority", "菜单权限", 1,
                 "admin-menu-authority", 300, null);
@@ -162,29 +162,29 @@ public class DatabaseInitialSetup {
                 "admin-menu-authority.authority-admin-menu", 302, adminMenuAuthority.getId());
         mongoTemplate.save(authorityAdminMenu);
 
-        AdminMenu security = new AdminMenu(APP_NAME, "security", "安全信息", 1, "security", 400, null);
-        mongoTemplate.save(security);
-
-        AdminMenu oAuth2ClientDetails = new AdminMenu(APP_NAME, "oauth2-client-list", "单点登录客户端", 2,
-                "security.oauth2-client-list", 401, security.getId());
-        mongoTemplate.save(oAuth2ClientDetails);
-
-        AdminMenu oAuth2AccessTokenDetails = new AdminMenu(APP_NAME, "oauth2-access-token-list", "访问令牌", 2,
-                "security.oauth2-access-token-list", 402, security.getId());
-        mongoTemplate.save(oAuth2AccessTokenDetails);
-
-        AdminMenu oAuth2RefreshTokenDetails = new AdminMenu(APP_NAME, "oauth2-refresh-token-list", "刷新令牌", 2,
-                "security.oauth2-refresh-token-list", 403, security.getId());
-        mongoTemplate.save(oAuth2RefreshTokenDetails);
-
-        AdminMenu oAuth2ApprovalDetails = new AdminMenu(APP_NAME, "oauth2-approval-list", "登录授权", 2,
-                "security.oauth2-approval-list", 404, security.getId());
-        mongoTemplate.save(oAuth2ApprovalDetails);
+//        AdminMenu security = new AdminMenu(APP_NAME, "security", "安全信息", 1, "security", 400, null);
+//        mongoTemplate.save(security);
+//
+//        AdminMenu oAuth2ClientDetails = new AdminMenu(APP_NAME, "oauth2-client-list", "单点登录客户端", 2,
+//                "security.oauth2-client-list", 401, security.getId());
+//        mongoTemplate.save(oAuth2ClientDetails);
+//
+//        AdminMenu oAuth2AccessTokenDetails = new AdminMenu(APP_NAME, "oauth2-access-token-list", "访问令牌", 2,
+//                "security.oauth2-access-token-list", 402, security.getId());
+//        mongoTemplate.save(oAuth2AccessTokenDetails);
+//
+//        AdminMenu oAuth2RefreshTokenDetails = new AdminMenu(APP_NAME, "oauth2-refresh-token-list", "刷新令牌", 2,
+//                "security.oauth2-refresh-token-list", 403, security.getId());
+//        mongoTemplate.save(oAuth2RefreshTokenDetails);
+//
+//        AdminMenu oAuth2ApprovalDetails = new AdminMenu(APP_NAME, "oauth2-approval-list", "登录授权", 2,
+//                "security.oauth2-approval-list", 404, security.getId());
+//        mongoTemplate.save(oAuth2ApprovalDetails);
 
         //AuthorityAdminMenu
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, serviceDiscovery.getId()));
 
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, appList.getId()));
+        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, serviceAppList.getId()));
 
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, providerList.getId()));
 
@@ -204,15 +204,15 @@ public class DatabaseInitialSetup {
 
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, authorityAdminMenu.getId()));
 
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, security.getId()));
-
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, oAuth2ClientDetails.getId()));
-
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, oAuth2AccessTokenDetails.getId()));
-
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, oAuth2RefreshTokenDetails.getId()));
-
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, oAuth2ApprovalDetails.getId()));
+//        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, security.getId()));
+//
+//        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, oAuth2ClientDetails.getId()));
+//
+//        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, oAuth2AccessTokenDetails.getId()));
+//
+//        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, oAuth2RefreshTokenDetails.getId()));
+//
+//        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, oAuth2ApprovalDetails.getId()));
     }
 
     @ChangeSet(order = "05", author = "Louis", id = "addOAuth2ClientDetails", runAlways = true)
