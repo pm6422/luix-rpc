@@ -42,17 +42,6 @@ public class AppController {
     @Autowired
     private              HttpHeaderCreator httpHeaderCreator;
 
-//    @ApiOperation("获取应用列表")
-//    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
-//    @GetMapping("/api/app/apps")
-//    @Secured({Authority.ADMIN})
-//    public ResponseEntity<List<AppDTO>> find(Pageable pageable) throws URISyntaxException {
-//        Page<App> apps = appRepository.findAll(pageable);
-//        List<AppDTO> DTOs = apps.getContent().stream().map(entity -> entity.asDTO()).collect(Collectors.toList());
-//        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(apps, "/api/app/apps");
-//        return ResponseEntity.ok().headers(headers).body(DTOs);
-//    }
-
     @ApiOperation("获取所有应用")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
     @GetMapping("/api/app/apps/all")

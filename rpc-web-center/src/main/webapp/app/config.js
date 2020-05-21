@@ -800,14 +800,14 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('app', {
+        .state('service-discovery', {
             abstract: true,
             parent: 'admin',
             data: {
-                pageTitle: '应用系统'
+                pageTitle: '服务发现'
             }
         })
-        .state('app.app-list', {
+        .state('service-discovery.app-list', {
             url: '/app-list?page&sort',
             views: {
                 'content@': {

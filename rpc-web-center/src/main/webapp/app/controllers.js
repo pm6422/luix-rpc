@@ -1731,86 +1731,12 @@ function AppListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONST
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.links = null;
-    vm.loadAll = loadAll;
-    vm.loadPage = loadPage;
-    vm.checkPressEnter = checkPressEnter;
-    vm.page = 1;
-    vm.setEnabled = setEnabled;
-    vm.totalItems = null;
-    vm.entities = [];
-    vm.predicate = pagingParams.predicate;
-    vm.reverse = pagingParams.ascending;
-    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
-    vm.transition = transition;
-    vm.criteria = criteria;
-    vm.del = del;
+    vm.items = null;
+    vm.refresh = refresh;
+    vm.refresh();
 
-    vm.loadAll();
-
-    function loadAll() {
-        AppService.query({
-            page: pagingParams.page - 1,
-            size: vm.itemsPerPage,
-            sort: sort()
-        }, function (result, headers) {
-            vm.links = ParseLinksUtils.parse(headers('link'));
-            vm.totalItems = headers('X-Total-Count');
-            vm.page = pagingParams.page;
-            vm.entities = result;
-        });
-    }
-
-    function sort() {
-        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
-        if (vm.predicate !== 'name') {
-            // default sort column
-            result.push('name,asc');
-        }
-        return result;
-    }
-
-    function loadPage(page) {
-        vm.page = page;
-        vm.transition();
-    }
-
-    function transition() {
-        $state.transitionTo($state.$current, {
-            page: vm.page,
-            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')
-        });
-    }
-
-    function checkPressEnter($event) {
-        //按下enter键重新查询数据
-        if ($event.keyCode == 13) {
-            vm.transition();
-        }
-    }
-
-    function setEnabled(entity, enabled) {
-        entity.enabled = enabled;
-        AppService.update(entity,
-            function () {
-                vm.loadAll();
-            },
-            function () {
-                entity.enabled = !enabled;
-            });
-    }
-
-    function del(name) {
-        AlertUtils.createDeleteConfirmation('数据有可能被其他数据所引用，删除之后可能出现一些问题，您确定删除吗?', function (isConfirm) {
-            if (isConfirm) {
-                AppService.del({extension: name},
-                    function () {
-                        vm.loadAll();
-                    },
-                    function () {
-                    });
-            }
-        });
+    function refresh() {
+        vm.items = AppService.queryAll();
     }
 }
 
