@@ -35,4 +35,9 @@ public class ZookeeperRegistryServiceImpl implements RegistryService {
     public Map<String, Map<String, List<AddressInfo>>> getAllNodes(String group) {
         return ZookeeperUtils.getAllNodes(zkClient, group);
     }
+
+    @Override
+    public List<String> getAllApplications() {
+        return ZookeeperUtils.getAllApplications(zkClient);
+    }
 }

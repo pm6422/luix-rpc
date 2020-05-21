@@ -192,4 +192,12 @@ public class ZookeeperUtils {
     public static String getApplicationProviderPath(String appName) {
         return getGroupPath(Url.PARAM_GROUP_APPLICATION_PROVIDER) + PATH_SEPARATOR + appName;
     }
+
+    public static String getApplicationPath() {
+        return getGroupPath(Url.PARAM_GROUP_APPLICATION);
+    }
+
+    public static List<String> getAllApplications(ZkClient zkClient) {
+        return getChildren(zkClient, getGroupPath(Url.PARAM_GROUP_APPLICATION));
+    }
 }
