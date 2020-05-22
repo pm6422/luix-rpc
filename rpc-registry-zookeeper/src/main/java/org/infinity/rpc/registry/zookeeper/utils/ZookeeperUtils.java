@@ -134,6 +134,7 @@ public class ZookeeperUtils {
         return getChildren(zkClient, ZOOKEEPER_REGISTRY_NAMESPACE);
     }
 
+    @Deprecated
     public static List<String> getProvidersByGroup(ZkClient zkClient, String group) {
         List<String> providers = getChildren(zkClient, getGroupPath(group));
         return providers;

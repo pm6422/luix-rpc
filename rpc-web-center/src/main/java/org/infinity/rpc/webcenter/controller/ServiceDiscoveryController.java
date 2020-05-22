@@ -1,5 +1,6 @@
 package org.infinity.rpc.webcenter.controller;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -20,6 +21,7 @@ import java.util.Map;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 @RestController
+@Api(tags = "服务发现")
 @Slf4j
 public class ServiceDiscoveryController {
     @Autowired
@@ -29,9 +31,31 @@ public class ServiceDiscoveryController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
     @GetMapping("api/service-discovery/apps")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<List<String>> findAll() {
+    public ResponseEntity<List<String>> findApps() {
         List<String> applications = registryService.getAllApplications();
         return ResponseEntity.ok(applications);
+    }
+
+    @ApiOperation("获取所有服务提供者")
+    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
+    @GetMapping("api/service-discovery/providers")
+    @Secured({Authority.ADMIN})
+    public ResponseEntity<Map<String, Map<String, List<AddressInfo>>>> findProviders() {
+        Map<String, Map<String, List<AddressInfo>>> nodes = registryService.getAllNodes("provider");
+        return ResponseEntity.ok().body(nodes);
+    }
+
+    /**
+     * Get provider node
+     *
+     * @param statusNode statusNode
+     * @return address info list
+     */
+    @GetMapping("api/service-discovery/{providerName}/{statusNode}/nodes")
+    public ResponseEntity<List<AddressInfo>> getProviderNode(@PathVariable(value = "providerName", required = true) String providerName,
+                                                             @PathVariable(value = "statusNode", required = true) String statusNode) {
+        List<AddressInfo> nodes = registryService.getNodes("provider", providerName, statusNode);
+        return ResponseEntity.ok().body(nodes);
     }
 
     /**
@@ -39,50 +63,21 @@ public class ServiceDiscoveryController {
      *
      * @return groups
      */
-    @GetMapping("api/groups")
-    public ResponseEntity<List<String>> getAllGroups() {
-        List<String> result = registryService.getGroups();
-        return ResponseEntity.ok().body(result);
-    }
+//    @GetMapping("api/service-discovery/groups")
+//    public ResponseEntity<List<String>> getAllGroups() {
+//        List<String> result = registryService.getGroups();
+//        return ResponseEntity.ok().body(result);
+//    }
 
-    /**
-     * Get providers by group
-     *
-     * @param group group
-     * @return providers
-     */
-    @GetMapping("api/{group}/providers")
-    public ResponseEntity<List<String>> getProvidersByGroup(@PathVariable(value = "group", required = true) String group) {
-        List<String> providers = registryService.getProvidersByGroup(group);
-        return ResponseEntity.ok().body(providers);
-    }
-
-
-    /**
-     * Get nodes by group
-     *
-     * @param group group
-     * @return nodes
-     */
-    @GetMapping("api/{group}/nodes")
-    public ResponseEntity<Map<String, Map<String, List<AddressInfo>>>> getNodesByGroup(@PathVariable(value = "group", required = true) String group) {
-        Map<String, Map<String, List<AddressInfo>>> nodes = registryService.getAllNodes(group);
-        return ResponseEntity.ok().body(nodes);
-    }
-
-    /**
-     * Get provider node
-     *
-     * @param group      group
-     * @param provider   provider
-     * @param statusNode statusNode
-     * @return address info list
-     */
-    @GetMapping("api/{group}/{provider}/{statusNode}/nodes")
-    public ResponseEntity<List<AddressInfo>> getProviderNode(@PathVariable(value = "group", required = true) String group,
-                                                             @PathVariable(value = "provider", required = true) String provider,
-                                                             @PathVariable(value = "statusNode", required = true) String statusNode) {
-        List<AddressInfo> nodes = registryService.getNodes(group, provider, statusNode);
-        return ResponseEntity.ok().body(nodes);
-    }
+//    /**
+//     * Get providers
+//     *
+//     * @param group group
+//     * @return providers
+//     */
+//    @GetMapping("api/service-discovery/{group}/providers")
+//    public ResponseEntity<List<String>> getProvidersByGroup(@PathVariable(value = "group", required = true) String group) {
+//        List<String> providers = registryService.getProvidersByGroup(group);
+//        return ResponseEntity.ok().body(providers);
+//    }
 }
