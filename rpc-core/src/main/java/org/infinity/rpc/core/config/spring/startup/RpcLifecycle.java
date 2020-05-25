@@ -124,6 +124,7 @@ public class RpcLifecycle {
 
         // Assign values to parameters
         providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, Url.PARAM_CHECK_HEALTH_DEFAULT_VALUE);
+        providerUrl.addParameter(Url.PARAM_APP, infinityProperties.getApplication().getName());
         return providerUrl;
     }
 

@@ -843,6 +843,42 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
+        .state('service-discovery.provider-list', {
+            url: '/provider-list?page&sort',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/provider/provider-list.html',
+                    controller: 'ProviderListController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: '服务提供者'
+            },
+            params: {
+                page: {
+                    value: '1',
+                    squash: true
+                },
+                sort: {
+                    value: 'name,asc',
+                    squash: true
+                }
+            },
+            resolve: {
+                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
+                    return {
+                        page: PaginationUtils.parsePage($stateParams.page),
+                        sort: $stateParams.sort,
+                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
+                        ascending: PaginationUtils.parseAscending($stateParams.sort)
+                    };
+                }],
+                criteria: ['$stateParams', function ($stateParams) {
+                    return {};
+                }]
+            }
+        })
         .state('app', {
             abstract: true,
             parent: 'admin',

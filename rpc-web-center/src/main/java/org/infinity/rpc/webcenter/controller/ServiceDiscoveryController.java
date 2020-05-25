@@ -5,8 +5,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
 import org.infinity.rpc.webcenter.domain.Authority;
+import org.infinity.rpc.webcenter.entity.Provider;
 import org.infinity.rpc.webcenter.service.RegistryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,9 +43,17 @@ public class ServiceDiscoveryController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
     @GetMapping("api/service-discovery/providers")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<Map<String, Map<String, List<AddressInfo>>>> findProviders() {
-        Map<String, Map<String, List<AddressInfo>>> nodes = registryService.getAllNodes("provider");
-        return ResponseEntity.ok().body(nodes);
+    public ResponseEntity<List<Provider>> findProviders() {
+        List<Provider> providers = new ArrayList<>();
+        Map<String, Map<String, List<AddressInfo>>> nodeMap = registryService.getAllNodes("provider");
+        if (MapUtils.isNotEmpty(nodeMap)) {
+            for (Map.Entry<String, Map<String, List<AddressInfo>>> entry : nodeMap.entrySet()) {
+                List<AddressInfo> activeProviders = entry.getValue().get("active");
+                List<AddressInfo> inactiveProviders = entry.getValue().get("inactive");
+                providers.add(Provider.of(entry.getKey(), activeProviders, inactiveProviders));
+            }
+        }
+        return ResponseEntity.ok().body(providers);
     }
 
     /**

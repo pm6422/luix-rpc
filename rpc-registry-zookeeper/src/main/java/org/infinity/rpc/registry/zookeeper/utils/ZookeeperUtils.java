@@ -14,9 +14,7 @@ import static org.infinity.rpc.core.registry.Url.PATH_SEPARATOR;
 public class ZookeeperUtils {
 
     public static final String ZOOKEEPER_REGISTRY_NAMESPACE = "/infinity";
-
-
-    public static final String ZOOKEEPER_REGISTRY_COMMAND = "/command";
+    public static final String ZOOKEEPER_REGISTRY_COMMAND   = "/command";
 
     /**
      * Get the provider address full path of specified node

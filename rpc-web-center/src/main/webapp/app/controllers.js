@@ -34,6 +34,7 @@ angular
     .controller('ScheduleController', ScheduleController)
     .controller('ControlController', ControlController)
     .controller('ServiceAppListController', ServiceAppListController)
+    .controller('ProviderListController', ProviderListController)
     .controller('AppListController', AppListController)
     .controller('AppDialogController', AppDialogController)
     .controller('AppDetailsController', AppDetailsController)
@@ -1431,6 +1432,24 @@ function ServiceAppListController($state, $http) {
 
     function refresh() {
         $http.get('api/service-discovery/apps').then(function (response) {
+            vm.items = response.data;
+        });
+    }
+}
+/**
+ * ProviderListController
+ */
+function ProviderListController($state, $http) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
+    vm.items = null;
+    vm.refresh = refresh;
+    vm.refresh();
+
+    function refresh() {
+        $http.get('api/service-discovery/providers').then(function (response) {
             vm.items = response.data;
         });
     }

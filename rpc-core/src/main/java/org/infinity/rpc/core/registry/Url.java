@@ -64,6 +64,7 @@ public class Url implements Serializable {
     public static final  String  PARAM_CONNECT_TIMEOUT            = "connectTimeout";
     public static final  String  PARAM_SESSION_TIMEOUT            = "sessionTimeout";
     public static final  String  PARAM_RETRY_INTERVAL             = "retryInterval";
+    public static final  String  PARAM_APP                        = "app";
 
     /**
      * Extended parameters
