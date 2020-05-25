@@ -162,10 +162,10 @@ public class ZookeeperUtils {
         List<String> services = getProvidersByGroup(zkClient, group);
         for (String serviceName : services) {
             Map<String, List<AddressInfo>> service = new HashMap();
-            List<AddressInfo> availableServer = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.ONLINE);
-            service.put(ZookeeperStatusNode.ONLINE.getValue(), availableServer);
-            List<AddressInfo> unavailableServer = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.OFFLINE);
-            service.put(ZookeeperStatusNode.OFFLINE.getValue(), unavailableServer);
+            List<AddressInfo> availableServer = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.ACTIVE);
+            service.put(ZookeeperStatusNode.ACTIVE.getValue(), availableServer);
+            List<AddressInfo> unavailableServer = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.INACTIVE);
+            service.put(ZookeeperStatusNode.INACTIVE.getValue(), unavailableServer);
             List<AddressInfo> clientNode = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.CLIENT);
             service.put(ZookeeperStatusNode.CLIENT.getValue(), clientNode);
 

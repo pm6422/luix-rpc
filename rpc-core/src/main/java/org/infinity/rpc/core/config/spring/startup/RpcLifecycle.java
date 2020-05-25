@@ -74,6 +74,7 @@ public class RpcLifecycle {
         registerShutdownHook();
         registerApplication(infinityProperties, registryUrls);
         registerProviders(infinityProperties, registryUrls);
+        // Delayed exposure providers
         DefaultSwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
         // referProviders();
         log.info("Started the RPC server");

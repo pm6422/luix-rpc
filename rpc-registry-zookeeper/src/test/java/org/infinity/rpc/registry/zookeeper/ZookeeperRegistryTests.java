@@ -81,9 +81,9 @@ public class ZookeeperRegistryTests {
         List<String> activateAddrFiles;
         List<String> deactivateAddrFiles;
 
-        String inactivePath = ZookeeperUtils.getStatusNodePath(providerUrl1, ZookeeperStatusNode.OFFLINE);
+        String inactivePath = ZookeeperUtils.getStatusNodePath(providerUrl1, ZookeeperStatusNode.INACTIVE);
         log.debug("inactivePath: {}", inactivePath);
-        String activePath = ZookeeperUtils.getStatusNodePath(providerUrl1, ZookeeperStatusNode.ONLINE);
+        String activePath = ZookeeperUtils.getStatusNodePath(providerUrl1, ZookeeperStatusNode.ACTIVE);
         log.debug("activePath: {}", activePath);
 
         registry.doRegister(providerUrl1);
