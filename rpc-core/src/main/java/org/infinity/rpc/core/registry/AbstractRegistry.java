@@ -119,7 +119,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Register the url to 'active' node of registry
+     * Register the url to 'online' node of registry
      *
      * @param providerUrl provider url
      */
@@ -134,7 +134,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Register the url to 'inactive' node of registry
+     * Register the url to 'offline' node of registry
      *
      * @param providerUrl provider url
      */

@@ -7,8 +7,8 @@ import java.util.Arrays;
  */
 public enum ZookeeperStatusNode {
 
-    ACTIVE("active"),
-    INACTIVE("inactive"),
+    ONLINE("online"),
+    OFFLINE("offline"),
     CLIENT("client");
 
     ZookeeperStatusNode(String value) {

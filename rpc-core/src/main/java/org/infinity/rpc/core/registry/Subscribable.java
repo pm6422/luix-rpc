@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface Subscribable {
     /**
-     * Discover all the provider urls of the client, including 'inactive' urls
+     * Discover all the provider urls of the client, including 'offline' urls
      *
      * @param clientUrl client url
      * @return provider urls
