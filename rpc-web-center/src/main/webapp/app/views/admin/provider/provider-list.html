@@ -40,11 +40,12 @@
                     <table class="table table-condensed table-striped table-bordered table-responsive"
                            style="table-layout:fixed" ng-hide="filteredConfig.length == 0">
                         <thead>
-                        <tr>
-                            <th class="col-sm-1">Application</th>
-                            <th ng-click="predicate = 'prefix'; reverse=!reverse" class="col-sm-4"><span>Provider</span></th>
-                            <th class="col-sm-2">Actions</th>
-                        </tr>
+                            <tr>
+                                <th class="col-sm-1">Application</th>
+                                <th ng-click="predicate = 'prefix'; reverse=!reverse" class="col-sm-4"><span>Provider</span></th>
+<!--                                <th class="col-sm-1">Active</th>-->
+                                <th class="col-sm-2">Actions</th>
+                            </tr>
                         </thead>
                         <tr ng-repeat="entry in filtered = (vm.items | filter:filter | orderBy:predicate:reverse)">
                             <td class="break"><span>{{entry.app}}</span></td>
@@ -53,6 +54,9 @@
                                 <div class="btn-group">
                                     <button class="btn-white btn btn-xs" ui-sref=".view({name: entry.name})">View</button>
                                     <button class="btn-white btn btn-xs" ng-click="vm.deactivate(entry.name)">Deactivate</button>
+                                    <button class="btn-white btn btn-xs" ui-sref=".view({name: entry.name})">Priority</button>
+                                    <button class="btn-white btn btn-xs" ui-sref=".view({name: entry.name})">Load Balance</button>
+                                    <button class="btn-white btn btn-xs" ui-sref=".view({name: entry.name})">Route</button>
                                 </div>
                             </td>
                         </tr>
