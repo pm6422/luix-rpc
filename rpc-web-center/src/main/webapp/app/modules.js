@@ -22,7 +22,8 @@
         'angles',                        // AngularJS Chart JS
         'jsonFormatter',                 // AngularJS JSON formatter
         'checklist-model',
-        'ngFileUpload'
+        'ngFileUpload',
+        'ui.footable'                    // AngularJS FooTable
     ])
     .run(run);
     
