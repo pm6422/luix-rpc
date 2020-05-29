@@ -16,9 +16,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * 获取到接口对应的代理对象，被代理对象的所有的方法调用时都会执行invoke方法
- */
 @Slf4j
 public class RpcConsumerProxy {
     private List<Registry> registries;
@@ -46,13 +43,13 @@ public class RpcConsumerProxy {
                 return ClassUtils.getShortNameAsProperty(RpcConsumerProxy.class);
             }
 
-            // 创建请求对象，包含类名，方法名，参数类型和实际参数值
+            // Create request object, including class name, method, parameter types, arguments
             RpcRequest rpcRequest = new RpcRequest(UUID.randomUUID().toString(), method.getDeclaringClass().getName(), method.getName(), method.getParameterTypes(), invocation.getArguments());
             log.debug("RPC request: {}", rpcRequest);
-            // 创建client对象，并且发送消息到服务端
+            // Create client object and send message to server side
             RpcClient rpcClient = new RpcClient(rpcRequest, registries);
             RpcResponse rpcResponse = rpcClient.send();
-            // 返回调用结果
+            // Get response
             return rpcResponse.getResult();
         }
     }

@@ -18,74 +18,72 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * RPC通信客户端，向服务端发送请求，并接受服务端的响应
+ * RPC client used to send the request from client to server, and receive the response
  */
 @Slf4j
 public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
-    // 消息请求对象
+    /**
+     * RPC request
+     */
     private RpcRequest     rpcRequest;
-    // 消息响应对象
+    /**
+     * RPC response
+     */
     private RpcResponse    rpcResponse;
-    // 同步锁
-    private Object         object = new Object();
+    /**
+     * Thread lock
+     */
+    private Object         lock = new Object();
+    /**
+     * Registries
+     */
     private List<Registry> registries;
 
-    //构造函数
     public RpcClient(RpcRequest rpcRequest, List<Registry> registries) {
         this.rpcRequest = rpcRequest;
         this.registries = registries;
     }
 
-    /**
-     * 发送消息
-     *
-     * @return 响应结果
-     * @throws Exception
-     */
     public RpcResponse send() throws Exception {
-        // 创建一个socket通信对象
+        // Create a socket
         Bootstrap client = new Bootstrap();
-        // 创建一个通信组，负责Channel(通道)的I/O事件的处理
+        // Create async communication event group to handle Channel I/O event
         NioEventLoopGroup loopGroup = new NioEventLoopGroup();
         try {
-            client.group(loopGroup)// 设置参数
-                    .channel(NioSocketChannel.class)// 使用异步socket通信
+            client.group(loopGroup)// Configure
+                    .channel(NioSocketChannel.class)// Use async socket
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new RpcEncoder(RpcRequest.class))//1.编码请求对象
-                                    .addLast(new RpcDecoder(RpcResponse.class))//2.解码响应对象
-                                    .addLast(RpcClient.this);//3.发送请求对象
+                            ch.pipeline().addLast(new RpcEncoder(RpcRequest.class))//1. Encode request object
+                                    .addLast(new RpcDecoder(RpcResponse.class))//2. Decode response object
+                                    .addLast(RpcClient.this);//3. Send request
                         }
                     }).option(ChannelOption.SO_KEEPALIVE, true);
 
             if (CollectionUtils.isEmpty(registries)) {
                 return rpcResponse;
             }
-            // todo: 支持多个注册中心,客户端负载均衡算法获取一个服务器地址
+            // TODO: need to support multiple registry
             Registry registry = registries.get(0);
             List<String> activeProviderAddress = registry.discoverActiveProviderAddress(rpcRequest.getClassName());
             String serverAddress = discoverRpcServer(activeProviderAddress);
             String[] hostAndPortParts = serverAddress.split(":");
             ChannelFuture future = client.connect(hostAndPortParts[0], Integer.valueOf(hostAndPortParts[1])).sync();
             future.channel().writeAndFlush(this.rpcRequest).sync();
-            synchronized (object) {
-                object.wait();// 线程阻塞，程序暂停继续执行，等待notify后继续执行
+            synchronized (lock) {
+                lock.wait();// Program pause here waiting for notification event
             }
             if (this.rpcResponse != null) {
-                future.channel().closeFuture().sync();// 等待服务端关闭socket
+                future.channel().closeFuture().sync();// Wait for server side close the socket
             }
             return this.rpcResponse;
         } finally {
-            loopGroup.shutdownGracefully();// 优雅关闭socket
+            // Close the socket
+            loopGroup.shutdownGracefully();
         }
     }
 
-    /**
-     * 随机返回一台服务器地址信息，用于负载均衡
-     *
-     * @return
-     */
     private String discoverRpcServer(List<String> providerAddresses) {
         int size = providerAddresses.size();
         if (size == 0) {
@@ -100,17 +98,14 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcResponse msg) throws Exception {
         this.rpcResponse = msg;
-        synchronized (object) {
-            // 刷新缓存
+        synchronized (lock) {
+            // Refresh cache
             ctx.flush();
-            // 唤醒等待
-            object.notifyAll();
+            // Wait for notification
+            lock.notifyAll();
         }
     }
 
-    /**
-     * 异常处理
-     */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         ctx.close();

@@ -14,7 +14,7 @@ import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
 
 /**
- * Netty服务器类
+ * Netty server
  */
 @Slf4j
 public class NettyServer {
@@ -32,36 +32,36 @@ public class NettyServer {
      * Start netty server
      */
     public void startNettyServer() {
-        // 创建服务端的通信对象
+        // Create the server communication object
         ServerBootstrap server = new ServerBootstrap();
-        // 创建异步通信的事件组 用于建立TCP连接的
+        // Create async communication event group to establish TCP connection
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
-        // 创建异步通信的事件组，用于处理Channel(通道)的I/O事件
+        // Create async communication event group to handle Channel I/O event
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
-            // 开始设置server的相关参数
+            // Configure the server
             server.group(bossGroup, workerGroup)
-                    // 启动异步ServerSocket
+                    // Start a sync communication
                     .channel(NioServerSocketChannel.class)
-                    // 初始化通道信息
+                    // Initialize channel
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new RpcDecoder(RpcRequest.class))//1.解码请求对象
-                                    .addLast(new RpcEncoder(RpcResponse.class))//2.编码响应对象
-                                    .addLast(new NettyServerHandler());//3.请求处理
+                            ch.pipeline().addLast(new RpcDecoder(RpcRequest.class))//1. Decode request object
+                                    .addLast(new RpcEncoder(RpcResponse.class))//2. Encode response object
+                                    .addLast(new NettyServerHandler());//3. Process request
                         }
                     }).option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
-            // 开启异步通信服务
+            // Start a async communication process
             ChannelFuture future = server.bind(host, port).sync();
             log.info("Started netty server on [{}]", address);
-            // 线程阻塞在此，程序暂停执行，等待通信完成
+            // Program will be paused here until communication process finished
             future.channel().closeFuture().sync();
         } catch (Exception e) {
             log.error("Failed to start netty with error: {}", e.getMessage());
         } finally {
-            // 优雅的关闭socket
+            // Close the socket
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
