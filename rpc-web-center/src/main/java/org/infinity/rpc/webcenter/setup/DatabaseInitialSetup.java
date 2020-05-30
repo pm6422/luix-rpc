@@ -188,21 +188,21 @@ public class DatabaseInitialSetup {
 
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, providerList.getId()));
 
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, userAuthority.getId()));
-
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, authorityList.getId()));
-
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, userList.getId()));
+//        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, userAuthority.getId()));
+//
+//        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, authorityList.getId()));
+//
+//        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, userList.getId()));
 
 //        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, app.getId()));
 //
 //        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, appList.getId()));
 
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, adminMenuAuthority.getId()));
-
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, adminMenuList.getId()));
-
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, authorityAdminMenu.getId()));
+//        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, adminMenuAuthority.getId()));
+//
+//        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, adminMenuList.getId()));
+//
+//        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, authorityAdminMenu.getId()));
 
 //        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, security.getId()));
 //
