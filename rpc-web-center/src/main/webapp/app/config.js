@@ -866,6 +866,14 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        {
+                            name: 'angular-peity',
+                            files: ['content/js/plugins/peity/jquery.peity.min.js', 'content/js/plugins/peity/angular-peity.js']
+                        }
+                    ]);
+                },
                 pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
                     return {
                         page: PaginationUtils.parsePage($stateParams.page),
@@ -876,6 +884,27 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }],
                 criteria: ['$stateParams', function ($stateParams) {
                     return {};
+                }]
+            }
+        })
+        .state('service-discovery.provider-list.view', {
+            url: '/view',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/provider/provider-details.html',
+                    controller: 'ProviderDetailsController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: '查看服务提供者信息'
+            },
+            params: {
+                'entity': {}
+            },
+            resolve: {
+                entity: ['$stateParams', function ($stateParams) {
+                    return $stateParams.entity;
                 }]
             }
         })

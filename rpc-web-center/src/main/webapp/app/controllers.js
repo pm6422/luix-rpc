@@ -35,6 +35,7 @@ angular
     .controller('ControlController', ControlController)
     .controller('ServiceAppListController', ServiceAppListController)
     .controller('ProviderListController', ProviderListController)
+    .controller('ProviderDetailsController', ProviderDetailsController)
     .controller('AppListController', AppListController)
     .controller('AppDialogController', AppDialogController)
     .controller('AppDetailsController', AppDetailsController)
@@ -1446,13 +1447,44 @@ function ProviderListController($state, $http) {
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
     vm.items = null;
     vm.refresh = refresh;
+    vm.view = view;
     vm.refresh();
 
     function refresh() {
         $http.get('api/service-discovery/providers').then(function (response) {
             vm.items = response.data;
+            if(response.data) {
+                for (var i = 0; i < response.data.length; i++) {
+                    vm.items[i].status = {
+                        options: {
+                            fill: ["green", "red"]
+                        }
+                    };
+                    if(_.isEmpty(response.data[i].activeProviders)) {
+                        vm.items[i].status.data = [0, 1];
+                    }
+                    else {
+                        vm.items[i].status.data = [1, 0];
+                    }
+                }
+            }
         });
     }
+
+    function view(entity) {
+        $state.go('.view', {'entity' : entity});
+    }
+}
+/**
+ * ProviderDetailsController
+ */
+function ProviderDetailsController($state, $stateParams, entity) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
+    vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
+    vm.entity = entity;
 }
 /**
  * AuthorityListController
