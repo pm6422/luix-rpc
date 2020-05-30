@@ -6,6 +6,7 @@ import org.apache.commons.lang3.Validate;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -300,10 +301,15 @@ public class Url implements Serializable {
         StringBuilder builder = new StringBuilder();
         builder.append(getUri()).append("?");
 
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+        Iterator<Map.Entry<String, String>> iterator = parameters.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, String> entry = iterator.next();
             String name = entry.getKey();
             String value = entry.getValue();
-            builder.append(name).append("=").append(value).append("&");
+            builder.append(name).append("=").append(value);
+            if (iterator.hasNext()) {
+                builder.append("&");
+            }
         }
         return builder.toString();
     }
