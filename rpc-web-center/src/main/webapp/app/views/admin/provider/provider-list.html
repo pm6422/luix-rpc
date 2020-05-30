@@ -20,15 +20,7 @@
             <div class="col-sm-12">
                 <div class="form-group">
                     <label class="control-label">Filter</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Filter by keyword" ng-model="filter">
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-warning" ng-click="vm.refresh()">
-                                <span class="fa fa-refresh"></span>&nbsp;
-                                <span>Refresh</span>
-                            </button>
-                        </span>
-                    </div>
+                    <input id="filter" type="text" class="form-control" placeholder="Filter by provider">
                 </div>
             </div>
         </div>
@@ -37,37 +29,46 @@
         <div class="col-lg-12">
             <div class="ibox">
                 <div class="ibox-content">
-                    <table class="footable table toggle-arrow-tiny">
+                    <table class="footable table toggle-arrow-tiny" data-page-size="10" data-filter=#filter>
                         <thead>
-                        <tr>
-                            <th data-toggle="true">Provider</th>
-                            <th class="col-sm-1" data-sort-ignore="true">Status</th>
-                            <th data-sort-ignore="true">Actions</th>
-                            <th data-hide="all">Application</th>
-                            <th data-hide="all">Active providers</th>
-                        </tr>
+                            <tr>
+                                <th data-toggle="true">Provider</th>
+                                <th class="col-sm-1" data-sort-ignore="true">Status</th>
+                                <th data-sort-ignore="true">Actions</th>
+                                <th data-hide="all">Application</th>
+                                <th data-hide="all">Active providers</th>
+                                <th data-hide="all">Registered time</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="item in vm.items" on-footable-finish-render>
-                            <td>{{item.name}}</td>
-                            <td><pie-chart data="item.status.data" options="item.status.options"></pie-chart></td>
-                            <td>
-                                <div class="btn-group">
-<!--                                    <button class="btn-white btn btn-xs" ng-click="vm.view(item)">View</button>-->
-                                    <button class="btn-white btn btn-xs" ng-click="vm.deactivate(item)">Deactivate</button>
-                                    <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Priority</button>
-                                    <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Load Balance</button>
-                                    <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Route</button>
-                                </div>
-                            </td>
-                            <td>{{item.app}}</td>
-                            <td>
-                                <ul class="list-unstyled m-b-none">
-                                    <li ng-repeat="activeProvider in item.activeProviders"><span>{{activeProvider.contents}}</span></li>
-                                </ul>
-                            </td>
-                        </tr>
+                            <tr on-footable-finish-render ng-repeat="item in vm.items">
+                                <td>{{item.name}}</td>
+                                <td><pie-chart data="item.status.data" options="item.status.options"></pie-chart></td>
+                                <td>
+                                    <div class="btn-group">
+    <!--                                    <button class="btn-white btn btn-xs" ng-click="vm.view(item)">View</button>-->
+                                        <button class="btn-white btn btn-xs" ng-click="vm.deactivate(item)">Deactivate</button>
+                                        <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Priority</button>
+                                        <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Load Balance</button>
+                                        <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Route</button>
+                                    </div>
+                                </td>
+                                <td>{{item.app}}</td>
+                                <td>
+                                    <ul class="list-unstyled m-b-none">
+                                        <li ng-repeat="activeProvider in item.activeProviders"><span>{{activeProvider.contents}}</span></li>
+                                    </ul>
+                                </td>
+                                <td>{{item.registeredTime}}</td>
+                            </tr>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5">
+                                    <ul class="pagination pull-right"></ul>
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
