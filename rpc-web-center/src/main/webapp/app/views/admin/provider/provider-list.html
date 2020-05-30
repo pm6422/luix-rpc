@@ -37,28 +37,37 @@
         <div class="col-lg-12">
             <div class="ibox">
                 <div class="ibox-content">
-                    <table class="table table-condensed table-striped table-bordered table-responsive"
-                           style="table-layout:fixed" ng-hide="filteredConfig.length == 0">
+                    <table class="footable table toggle-arrow-tiny">
                         <thead>
-                            <tr>
-                                <th ng-click="predicate = 'prefix'; reverse=!reverse" class="col-sm-4"><span>Provider</span></th>
-                                <th class="col-sm-1">Status</th>
-                                <th class="col-sm-2">Actions</th>
-                            </tr>
+                        <tr>
+                            <th data-toggle="true">Provider</th>
+                            <th class="col-sm-1">Status</th>
+                            <th>Actions</th>
+                            <th data-hide="all">Application</th>
+                            <th data-hide="all">Active providers</th>
+                        </tr>
                         </thead>
-                        <tr ng-repeat="entry in filtered = (vm.items | filter:filter | orderBy:predicate:reverse)">
-                            <td><span>{{entry.name}}</span></td>
-                            <td><pie-chart data="entry.status.data" options="entry.status.options"></pie-chart></td>
+                        <tbody>
+                        <tr ng-repeat="item in vm.items" on-finish-render="vm.initFooTable()">
+                            <td>{{item.name}}</td>
+                            <td><pie-chart data="item.status.data" options="item.status.options"></pie-chart></td>
                             <td>
                                 <div class="btn-group">
-                                    <button class="btn-white btn btn-xs" ng-click="vm.view(entry)">View</button>
-                                    <button class="btn-white btn btn-xs" ng-click="vm.deactivate(entry)">Deactivate</button>
-                                    <button class="btn-white btn btn-xs" ui-sref=".view({name: entry.name})">Priority</button>
-                                    <button class="btn-white btn btn-xs" ui-sref=".view({name: entry.name})">Load Balance</button>
-                                    <button class="btn-white btn btn-xs" ui-sref=".view({name: entry.name})">Route</button>
+                                    <button class="btn-white btn btn-xs" ng-click="vm.view(item)">View</button>
+                                    <button class="btn-white btn btn-xs" ng-click="vm.deactivate(item)">Deactivate</button>
+                                    <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Priority</button>
+                                    <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Load Balance</button>
+                                    <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Route</button>
                                 </div>
                             </td>
+                            <td>{{item.app}}</td>
+                            <td>
+                                <ul class="list-unstyled m-b-none">
+                                    <li ng-repeat="activeProvider in item.activeProviders"><span>{{activeProvider.contents}}</span></li>
+                                </ul>
+                            </td>
                         </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>

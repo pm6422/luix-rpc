@@ -36,7 +36,8 @@ angular
     .directive('truncate', truncate)
     .directive('touchSpin', touchSpin)
     .directive('markdownEditor', markdownEditor)
-    .directive('passwordMeter', passwordMeter);
+    .directive('passwordMeter', passwordMeter)
+    .directive('onFinishRender', onFinishRender);
 
 /**
  * pageRibbonDirective
@@ -1130,4 +1131,31 @@ function passwordMeter() {
             };
         }
     }
+}
+/**
+ * footable onFinishRender
+ */
+function onFinishRender() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attr) {
+            if (scope.$last === true) {
+                scope.$evalAsync(attr.onFinishRender);
+            }
+            // var footableTable = element;
+            // if( !scope.$last ) {
+            //     return false;
+            // }
+            //
+            // scope.$evalAsync(function(){
+            //     if (!footableTable.hasClass('footable-loaded')) {
+            //         footableTable.footable();
+            //     }
+            //
+            //     footableTable.trigger('footable_initialized');
+            //     footableTable.trigger('footable_resize');
+            //     // footableTable.data('footable').redraw();
+            // });
+        }
+    };
 }
