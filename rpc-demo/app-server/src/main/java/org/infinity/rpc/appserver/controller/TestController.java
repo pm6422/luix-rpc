@@ -2,6 +2,7 @@ package org.infinity.rpc.appserver.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.infinity.app.common.service.AppService;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.registry.Registry;
@@ -21,13 +22,10 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @Api(tags = "测试")
+@Slf4j
 public class TestController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestController.class);
-
     @Autowired
     private List<Url> registryUrls;
-
     @Autowired
     private InfinityProperties infinityProperties;
 
@@ -42,9 +40,9 @@ public class TestController {
     public void testThreadSafe(@RequestParam(value = "key", required = true) String key) throws InterruptedException {
         Set<String> keys = new HashSet<>();
         if (keys.contains(key)) {
-            LOGGER.error("Key {} already existed, request is not threadsafe!", key);
+            log.error("Key {} already existed, request is not threadsafe!", key);
         } else {
-            LOGGER.debug(key);
+            log.debug(key);
             keys.add(key);
         }
 
@@ -54,9 +52,9 @@ public class TestController {
     @ApiOperation("测试注册provider")
     @GetMapping("/open-api/test/register-provider")
     public void registerProvider() {
-        Registry registry = RegistryFactory.getInstance(InfinityProperties.Registry.Name.zookeeper.value()).getRegistry(registryUrls.get(0));
+        Registry registry = RegistryFactory.getInstance(infinityProperties.getRegistry().getName().value()).getRegistry(registryUrls.get(0));
         Url providerUrl = Url.of(
-                InfinityProperties.Protocol.Name.infinity.value(),
+                infinityProperties.getProtocol().getName().value(),
                 "192.168.0.1",
                 infinityProperties.getProtocol().getPort(),
                 AppService.class.getName());

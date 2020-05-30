@@ -37,6 +37,7 @@
                                 <th data-sort-ignore="true">Actions</th>
                                 <th data-hide="all">Application</th>
                                 <th data-hide="all">Active providers</th>
+                                <th data-hide="all">Inactive providers</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -46,7 +47,6 @@
                                 <td>
                                     <div class="btn-group">
     <!--                                    <button class="btn-white btn btn-xs" ng-click="vm.view(item)">View</button>-->
-                                        <button class="btn-white btn btn-xs" ng-click="vm.deactivate(item)">Deactivate</button>
                                         <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Priority</button>
                                         <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Load Balance</button>
                                         <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Route</button>
@@ -55,7 +55,18 @@
                                 <td>{{item.app}}</td>
                                 <td>
                                     <ul class="list-unstyled m-b-none">
-                                        <li ng-repeat="activeProvider in item.activeProviders"><span><small>{{activeProvider.contents}}</small></span></li>
+                                        <li ng-repeat="activeProvider in item.activeProviders">
+                                            <span><small>{{activeProvider.contents}}</small></span>&nbsp;&nbsp;&nbsp;
+                                            <button class="btn-white btn btn-xs" ng-click="vm.deactivate(activeProvider.contents)">Deactivate</button>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <ul class="list-unstyled m-b-none">
+                                        <li ng-repeat="inactiveProvider in item.inactiveProviders">
+                                            <span><small>{{inactiveProvider.contents}}</small></span>&nbsp;&nbsp;&nbsp;
+                                            <button class="btn-white btn btn-xs" ng-click="vm.activate(inactiveProvider.contents)">Activate</button>
+                                        </li>
                                     </ul>
                                 </td>
                             </tr>

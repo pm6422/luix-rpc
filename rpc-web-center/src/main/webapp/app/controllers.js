@@ -1447,6 +1447,8 @@ function ProviderListController($state, $http) {
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
     vm.items = null;
     vm.refresh = refresh;
+    vm.deactivate = deactivate;
+    vm.activate = activate;
     vm.view = view;
     vm.refresh();
 
@@ -1473,6 +1475,14 @@ function ProviderListController($state, $http) {
 
     function view(entity) {
         $state.go('.view', {'entity' : entity});
+    }
+
+    function deactivate(url) {
+        $http.post('api/service-discovery/deactivate', url);
+    }
+
+    function activate(url) {
+        $http.post('api/service-discovery/activate', url);
     }
 }
 /**
