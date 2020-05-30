@@ -37,7 +37,7 @@ angular
     .directive('touchSpin', touchSpin)
     .directive('markdownEditor', markdownEditor)
     .directive('passwordMeter', passwordMeter)
-    .directive('onFinishRender', onFinishRender);
+    .directive('onFootableFinishRender', onFootableFinishRender);
 
 /**
  * pageRibbonDirective
@@ -1133,29 +1133,24 @@ function passwordMeter() {
     }
 }
 /**
- * footable onFinishRender
+ * footable onFinishRender event
+ * https://stackoverflow.com/questions/20243339/footable-along-with-angular-js
  */
-function onFinishRender() {
+function onFootableFinishRender() {
     return {
         restrict: 'A',
         link: function(scope, element, attr) {
-            if (scope.$last === true) {
-                scope.$evalAsync(attr.onFinishRender);
+            if (scope.$last) {
+                var footableTable = element.parents('table');
+                scope.$evalAsync(function(){
+                    if (!footableTable.hasClass('footable-loaded')) {
+                        footableTable.footable();
+                    }
+                    footableTable.trigger('footable_initialized');
+                    footableTable.trigger('footable_resize');
+                    footableTable.data('footable').redraw();
+                });
             }
-            // var footableTable = element;
-            // if( !scope.$last ) {
-            //     return false;
-            // }
-            //
-            // scope.$evalAsync(function(){
-            //     if (!footableTable.hasClass('footable-loaded')) {
-            //         footableTable.footable();
-            //     }
-            //
-            //     footableTable.trigger('footable_initialized');
-            //     footableTable.trigger('footable_resize');
-            //     // footableTable.data('footable').redraw();
-            // });
         }
     };
 }

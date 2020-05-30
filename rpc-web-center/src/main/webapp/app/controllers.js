@@ -1450,10 +1450,6 @@ function ProviderListController($state, $http) {
     vm.view = view;
     vm.refresh();
 
-    vm.initFooTable = function() {
-        angular.element('.footable').footable();
-    };
-
     function refresh() {
         $http.get('api/service-discovery/providers').then(function (response) {
             vm.items = response.data;

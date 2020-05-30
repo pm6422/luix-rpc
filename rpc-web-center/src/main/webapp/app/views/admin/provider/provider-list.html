@@ -48,7 +48,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="item in vm.items" on-finish-render="vm.initFooTable()">
+                        <tr ng-repeat="item in vm.items" on-footable-finish-render>
                             <td>{{item.name}}</td>
                             <td><pie-chart data="item.status.data" options="item.status.options"></pie-chart></td>
                             <td>
