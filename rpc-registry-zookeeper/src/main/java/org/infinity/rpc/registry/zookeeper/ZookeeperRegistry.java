@@ -10,6 +10,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.zookeeper.Watcher;
 import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.CommandFailbackAbstractRegistry;
@@ -24,10 +25,7 @@ import org.infinity.rpc.utilities.destory.Cleanable;
 import javax.annotation.concurrent.ThreadSafe;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -252,7 +250,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             // Remove old node in order to avoid using dirty data
             removeNode(providerUrl, ZookeeperStatusNode.ACTIVE);
             removeNode(providerUrl, ZookeeperStatusNode.INACTIVE);
-            // Create data under 'offline' node
+            // Create data under 'inactive' node
             createNode(providerUrl, ZookeeperStatusNode.INACTIVE);
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to register [{0}] to zookeeper [{1}] with the error: {2}", providerUrl, getRegistryUrl(), e.getMessage()), e);
@@ -262,7 +260,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
-     * Register specified url info to zookeeper 'online' node
+     * Register specified url info to zookeeper 'active' node
      *
      * @param providerUrl provider url
      */
@@ -271,13 +269,15 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         try {
             providerLock.lock();
             if (providerUrl == null) {
-                // Register all provider urls to 'online' node if parameter url is null
+                // Register all provider urls to 'active' node if parameter url is null
                 activeProviderUrls.addAll(super.getRegisteredProviderUrls());
                 for (Url u : super.getRegisteredProviderUrls()) {
                     // Remove the dirty data node
                     removeNode(u, ZookeeperStatusNode.ACTIVE);
                     removeNode(u, ZookeeperStatusNode.INACTIVE);
-                    // Create data under 'online' node
+                    // Add registered time parameter
+                    u.addParameter(Url.PARAM_ACTIVATED_TIME, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+                    // Create data under 'active' node
                     createNode(u, ZookeeperStatusNode.ACTIVE);
                 }
             } else {
@@ -285,7 +285,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 // Remove the dirty data node
                 removeNode(providerUrl, ZookeeperStatusNode.ACTIVE);
                 removeNode(providerUrl, ZookeeperStatusNode.INACTIVE);
-                // Create data under 'online' node
+                // Add registered time parameter
+                providerUrl.addParameter(Url.PARAM_ACTIVATED_TIME, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+                // Create data under 'active' node
                 createNode(providerUrl, ZookeeperStatusNode.ACTIVE);
             }
         } finally {
@@ -303,13 +305,13 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         try {
             providerLock.lock();
             if (providerUrl == null) {
-                // Register all provider urls to 'offline' node if parameter url is null
+                // Register all provider urls to 'inactive' node if parameter url is null
                 activeProviderUrls.removeAll(getRegisteredProviderUrls());
                 for (Url u : getRegisteredProviderUrls()) {
                     // Remove the dirty data node
                     removeNode(u, ZookeeperStatusNode.ACTIVE);
                     removeNode(u, ZookeeperStatusNode.INACTIVE);
-                    // Create data under 'offline' node
+                    // Create data under 'inactive' node
                     createNode(u, ZookeeperStatusNode.INACTIVE);
                 }
             } else {
@@ -317,7 +319,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 // Remove the dirty data node
                 removeNode(providerUrl, ZookeeperStatusNode.ACTIVE);
                 removeNode(providerUrl, ZookeeperStatusNode.INACTIVE);
-                // Create data under 'offline' node
+                // Create data under 'inactive' node
                 createNode(providerUrl, ZookeeperStatusNode.INACTIVE);
             }
         } finally {

@@ -11,6 +11,7 @@ import java.util.List;
 public class Provider {
     private String            name;
     private String            app;
+    private String            activatedTime;
     private List<AddressInfo> activeProviders;
     private List<AddressInfo> inactiveProviders;
 

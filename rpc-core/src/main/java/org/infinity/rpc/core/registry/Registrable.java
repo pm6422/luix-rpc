@@ -21,14 +21,14 @@ public interface Registrable {
     void unregister(Url providerUrl);
 
     /**
-     * Register the url to 'online' node of registry
+     * Register the url to 'active' node of registry
      *
      * @param providerUrl provider url
      */
     void activate(Url providerUrl);
 
     /**
-     * Register the url to 'offline' node of registry
+     * Register the url to 'inactive' node of registry
      *
      * @param providerUrl provider url
      */
