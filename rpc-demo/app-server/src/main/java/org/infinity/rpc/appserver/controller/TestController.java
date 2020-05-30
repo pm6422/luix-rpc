@@ -58,7 +58,7 @@ public class TestController {
         Url providerUrl = Url.of(
                 InfinityProperties.Protocol.Name.infinity.value(),
                 "192.168.0.1",
-                26100,
+                infinityProperties.getProtocol().getPort(),
                 AppService.class.getName());
 
         // Assign values to parameters
