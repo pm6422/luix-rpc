@@ -1457,7 +1457,7 @@ function ProviderListController($state, $http) {
                 for (var i = 0; i < response.data.length; i++) {
                     vm.items[i].status = {
                         options: {
-                            fill: ["green", "red"]
+                            fill: ["#1ab394", "red"]
                         }
                     };
                     if(_.isEmpty(response.data[i].activeProviders)) {
