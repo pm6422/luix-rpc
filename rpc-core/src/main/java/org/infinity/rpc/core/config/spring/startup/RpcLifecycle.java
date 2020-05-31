@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.config.spring.startup;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
@@ -13,6 +14,7 @@ import org.infinity.rpc.utilities.destory.ShutdownHook;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -100,12 +102,17 @@ public class RpcLifecycle {
      * @param infinityProperties RPC configuration properties
      */
     private void registerProviders(InfinityProperties infinityProperties, List<Url> registryUrls) {
-        // TODO: consider using the async thread pool to speed up the startup process
-        ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
-            Url providerUrl = createProviderUrl(infinityProperties, providerWrapper);
-            // DO the providers registering
-            providerWrapper.register(infinityProperties.getApplication().toApp(), registryUrls, providerUrl);
-        });
+        Map<String, ProviderWrapper> wrappers = ProviderWrapperHolder.getInstance().getWrappers();
+        if (MapUtils.isNotEmpty(wrappers))
+            // TODO: consider using the async thread pool to speed up the startup process
+            wrappers.forEach((name, providerWrapper) -> {
+                Url providerUrl = createProviderUrl(infinityProperties, providerWrapper);
+                // DO the providers registering
+                providerWrapper.register(infinityProperties.getApplication().toApp(), registryUrls, providerUrl);
+            });
+        else {
+            log.info("No providers found for registering");
+        }
     }
 
     /**
