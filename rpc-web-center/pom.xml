@@ -21,6 +21,7 @@
         *************************************************************************************
     -->
     <properties>
+        <app.rpc.port>2${app.server.port}</app.rpc.port>
         <app.server.port>6030</app.server.port>
         <java.version>1.8</java.version>
 

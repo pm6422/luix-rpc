@@ -6,12 +6,10 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
-import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
-import org.infinity.rpc.webcenter.config.InfinityRegistryProperties;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.entity.Provider;
 import org.infinity.rpc.webcenter.service.RegistryService;
@@ -32,9 +30,9 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 @Slf4j
 public class ServiceDiscoveryController {
     @Autowired
-    private RegistryService            registryService;
+    private RegistryService registryService;
     @Autowired
-    private InfinityRegistryProperties infinityRegistryProperties;
+    private List<Url>       registryUrls;
 
     @ApiOperation("获取所有应用")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
@@ -90,20 +88,10 @@ public class ServiceDiscoveryController {
     }
 
     private Registry getRegistry() {
-        infinityRegistryProperties.initialize();
-        Url registryUrl = Url.of(infinityRegistryProperties.getName().value(),
-                infinityRegistryProperties.getHost(),
-                infinityRegistryProperties.getPort(),
-                Registrable.class.getName());
-
-        // Assign values to parameters
-        registryUrl.addParameter(Url.PARAM_CHECK_HEALTH, Url.PARAM_CHECK_HEALTH_DEFAULT_VALUE);
-        registryUrl.addParameter(Url.PARAM_ADDRESS, registryUrl.getAddress());
-        registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, infinityRegistryProperties.getConnectTimeout().toString());
-        registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, infinityRegistryProperties.getSessionTimeout().toString());
-        registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, infinityRegistryProperties.getRetryInterval().toString());
-
-        return RegistryFactory.getInstance(infinityRegistryProperties.getName().value()).getRegistry(registryUrl);
+        // TODO: Support multiple registry centers
+        Url registryUrl = registryUrls.get(0);
+        RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(registryUrl.getProtocol());
+        return registryFactoryImpl.getRegistry(registryUrl);
     }
 
     /**
