@@ -41,11 +41,23 @@
                            style="table-layout:fixed" ng-hide="filteredConfig.length == 0">
                         <thead>
                         <tr>
-                            <th ng-click="predicate = 'prefix'; reverse=!reverse" class="col-sm-4"><span>Application</span></th>
+                            <th ng-click="predicate = 'prefix'; reverse=!reverse" class="col-sm-1"><span>ID</span> <span class="fa fa-sort"></span></th>
+                            <th class="col-sm-1">Name</th>
+                            <th class="col-sm-1">Team</th>
+                            <th class="col-sm-1">Owner</th>
+                            <th class="col-sm-1">Environment</th>
+                            <th class="col-sm-2">Latest Registered time</th>
+                            <th class="col-sm-3">Description</th>
                         </tr>
                         </thead>
-                        <tr ng-repeat="entry in filtered = (vm.items | filter:filter | orderBy:predicate:reverse)">
-                            <td class="break"><span>{{entry}}</span></td>
+                        <tr ng-repeat="item in filtered = (vm.items | filter:filter | orderBy:predicate:reverse)">
+                            <td><span>{{item.id}}</span></td>
+                            <td><span>{{item.name}}</span></td>
+                            <td><span>{{item.team}}</span></td>
+                            <td><span>{{item.owner}}</span></td>
+                            <td><span>{{item.env}}</span></td>
+                            <td><span>{{item.latestRegisteredTime | date:'yyyy/MM/dd HH:mm:ss'}}</span></td>
+                            <td class="break"><span>{{item.description}}</span></td>
                         </tr>
                     </table>
                 </div>

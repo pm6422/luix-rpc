@@ -1,5 +1,7 @@
 package org.infinity.rpc.registry.zookeeper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.IZkDataListener;
@@ -23,7 +25,6 @@ import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.infinity.rpc.utilities.destory.Cleanable;
 
 import javax.annotation.concurrent.ThreadSafe;
-import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -186,23 +187,19 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * @param app application info
      */
     private void createApplicationNode(App app) {
-        String appNodePath = ZookeeperUtils.getApplicationPath(app.getName());
+        String appNodePath = ZookeeperUtils.getApplicationPath(app.getId());
         if (!zkClient.exists(appNodePath)) {
             // Create a persistent directory
             zkClient.createPersistent(appNodePath, true);
         }
-
-        for (Field field : App.class.getDeclaredFields()) {
-            try {
-                field.setAccessible(true);
-                String filePath = appNodePath + Url.PATH_SEPARATOR + field.getName();
-                if (!zkClient.exists(filePath)) {
-                    // Create temporary files and temporary files will be deleted automatically after closed zk session
-                    zkClient.createEphemeral(filePath, field.get(app));
-                }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(MessageFormat.format("Failed to register application [{0}] to zookeeper [{1}] with the error: {2}", app.getName(), getRegistryUrl(), e.getMessage()), e);
-            }
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            // Override the old data every time
+            app.setLatestRegisteredTime(DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+            String jsonStr = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(app);
+            zkClient.createEphemeral(ZookeeperUtils.getApplicationInfoPath(app.getId()), jsonStr);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(MessageFormat.format("Failed to register application [{0}] to zookeeper [{1}] with the error: {2}", app.getName(), getRegistryUrl(), e.getMessage()), e);
         }
     }
 

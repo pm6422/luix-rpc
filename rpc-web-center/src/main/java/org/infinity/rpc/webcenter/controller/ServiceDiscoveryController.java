@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.Url;
@@ -38,8 +39,8 @@ public class ServiceDiscoveryController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
     @GetMapping("api/service-discovery/apps")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<List<String>> findApps() {
-        List<String> applications = registryService.getAllApplications();
+    public ResponseEntity<List<App>> findApps() {
+        List<App> applications = registryService.getAllApplications();
         return ResponseEntity.ok(applications);
     }
 

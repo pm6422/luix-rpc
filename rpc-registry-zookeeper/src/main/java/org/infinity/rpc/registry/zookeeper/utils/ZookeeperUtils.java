@@ -182,6 +182,10 @@ public class ZookeeperUtils {
         return getGroupPath(Url.PARAM_GROUP_APPLICATION) + PATH_SEPARATOR + appName;
     }
 
+    public static String getApplicationInfoPath(String appName) {
+        return getApplicationPath(appName) + PATH_SEPARATOR + "info";
+    }
+
     /**
      * Get the full path of specified application provider
      *

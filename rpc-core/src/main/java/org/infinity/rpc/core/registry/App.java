@@ -1,9 +1,10 @@
 package org.infinity.rpc.core.registry;
 
 import lombok.Data;
-import org.infinity.rpc.utilities.id.ShortIdWorker;
+import lombok.ToString;
 
 @Data
+@ToString
 public class App {
     // Application ID
     private String id;
@@ -17,4 +18,6 @@ public class App {
     private String owner;
     // Environment variable, e.g. dev, test or prod
     private String env;
+    // Latest registered time
+    private String latestRegisteredTime;
 }
