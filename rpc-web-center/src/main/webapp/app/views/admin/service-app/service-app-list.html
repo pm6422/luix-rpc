@@ -58,7 +58,10 @@
                             <td><span>{{item.owner}}</span></td>
                             <td><span>{{item.env}}</span></td>
                             <td><span>{{item.latestRegisteredTime | date:'yyyy/MM/dd HH:mm:ss'}}</span></td>
-                            <td><span>aa</span></td>
+                            <td>
+                                <i class="fa fa-circle text-navy" ng-show="item.name"></i>
+                                <i class="fa fa-circle text-danger" ng-show="!item.name"></i>
+                            </td>
                             <td class="break"><span>{{item.description}}</span></td>
                         </tr>
                     </table>
