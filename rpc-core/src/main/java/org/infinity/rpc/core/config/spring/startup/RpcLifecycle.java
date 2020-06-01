@@ -161,16 +161,15 @@ public class RpcLifecycle {
             // not yet started or already stopped
             return;
         }
-        unregisterProviders();
+        unregisterProviders(registryUrls);
     }
 
     /**
      * Unregister RPC providers from registry
      */
-    private void unregisterProviders() {
+    private void unregisterProviders(List<Url> registryUrls) {
         ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
-            // TODO: unregister from registry
-            providerWrapper.unregister();
+            providerWrapper.unregister(registryUrls);
         });
     }
 }

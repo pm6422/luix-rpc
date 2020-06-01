@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.server;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
@@ -8,6 +9,7 @@ import org.infinity.rpc.core.registry.Url;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Set;
 
 /**
  * PRC provider configuration wrapper
@@ -84,7 +86,19 @@ public class ProviderWrapper<T> {
     /**
      * Unregister the RPC provider from registry
      */
-    public void unregister() {
+    public void unregister(List<Url> registryUrls) {
+        // TODO: the method is never be invoked
+        for (Url registryUrl : registryUrls) {
+            RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(registryUrl.getProtocol());
+            Registry registry = registryFactoryImpl.getRegistry(registryUrl);
+            Set<Url> registeredProviderUrls = registry.getRegisteredProviderUrls();
+            if (CollectionUtils.isEmpty(registeredProviderUrls)) {
+                return;
+            }
+            registeredProviderUrls.forEach(registeredProviderUrl -> {
+                registry.unregister(registeredProviderUrl);
+            });
+        }
         log.debug("Unregistered RPC provider [{}] from registry", providerInterface);
     }
 }
