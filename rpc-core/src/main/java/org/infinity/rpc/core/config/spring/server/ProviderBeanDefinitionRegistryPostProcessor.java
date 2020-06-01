@@ -62,7 +62,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     private void registerBeans(BeanDefinitionRegistry registry, Set<String> scanBasePackages) {
         Set<String> resolvedScanBasePackages = resolvePackagePlaceholders(scanBasePackages);
         if (CollectionUtils.isEmpty(resolvedScanBasePackages)) {
-            log.warn("No scan package to register bean!");
+            log.warn("No scan package to register providers!");
             return;
         }
         registerProviders(registry, resolvedScanBasePackages);
@@ -82,7 +82,9 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         ClassPathBeanDefinitionRegistryScanner providerScanner = createProviderScanner(registry, beanNameGenerator);
 
         resolvedScanBasePackages.forEach(scanBasePackage -> {
+            // Register provider first
             registerProviderInstances(providerScanner, scanBasePackage);
+            // Then register provider wrapper
             registerProviderWrappers(registry, beanNameGenerator, providerScanner, scanBasePackage);
         });
     }
@@ -176,7 +178,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(providerBeanClass);
         addPropertyValue(builder, "providerInterface", providerInterfaceClass.getName());
         addPropertyValue(builder, "providerInstanceName", providerInstanceName);
-        // obtain the instance and inject
+        // Obtain the instance and inject
         addPropertyReference(builder, "providerInstance", providerInstanceName);
         return builder.getBeanDefinition();
     }

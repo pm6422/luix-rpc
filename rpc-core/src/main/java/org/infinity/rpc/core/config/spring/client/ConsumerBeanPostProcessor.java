@@ -30,7 +30,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
 
 
     public ConsumerBeanPostProcessor(String[] scanBasePackages) {
-        Assert.notEmpty(scanBasePackages, "Consumer scan packages must not be empty!");
+        Assert.notEmpty(scanBasePackages, "Consumer scan packages must NOT be empty!");
         this.scanBasePackages = scanBasePackages;
     }
 
@@ -177,5 +177,6 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        // Leave blank intentionally
     }
 }
