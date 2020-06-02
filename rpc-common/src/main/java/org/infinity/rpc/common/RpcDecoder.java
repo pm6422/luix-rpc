@@ -14,11 +14,11 @@ public class RpcDecoder extends ByteToMessageDecoder {
     }
 
     @Override
-    //解码方法,把字节数组转换为消息对象
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         //消息的长度
         int size = in.readableBytes();
-        if (size < 4) {//保证所有的消息都完全接受完成
+        //保证所有的消息都完全接受完成
+        if (size < 4) {
             return;
         }
         byte[] bytes = new byte[size];
