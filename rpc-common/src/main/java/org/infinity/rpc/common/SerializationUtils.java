@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 序列化工具类（基于Protostuff实现）用于把对象序列化字节数组, 把字节数组反序列化对象
+ * ProtoStuff serialization tool used to serialize or deserialize object
  */
 public class SerializationUtils {
 
@@ -21,12 +21,6 @@ public class SerializationUtils {
 
     private SerializationUtils() {
     }
-    /**
-     * 获取类的schema
-     * @param cls
-     * @return
-     */
-    @SuppressWarnings("unchecked")
     private static <T> Schema<T> getSchema(Class<T> cls) {
         Schema<T> schema = (Schema<T>) cachedSchema.get(cls);
         if (schema == null) {
@@ -38,10 +32,6 @@ public class SerializationUtils {
         return schema;
     }
 
-    /**
-     * 序列化（对象 -> 字节数组）
-     */
-    @SuppressWarnings("unchecked")
     public static <T> byte[] serialize(T obj) {
         Class<T> cls = (Class<T>) obj.getClass();
         LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
@@ -55,9 +45,6 @@ public class SerializationUtils {
         }
     }
 
-    /**
-     * 反序列化（字节数组 -> 对象）
-     */
     public static <T> T deserialize(byte[] data, Class<T> cls) {
         try {
             /*
