@@ -41,10 +41,11 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 @ThreadSafe
 public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implements Cleanable {
+    private       ZkClient                                                       zkClient;
     /**
      * Used to resolve concurrency problems for subscribe or unsubscribe service listeners
      */
-    private final Lock                                                           clientLock                    = new ReentrantLock();
+    private final Lock                                                           listenerLock                  = new ReentrantLock();
     /**
      * Used to resolve concurrency problems for register or unregister providers
      */
@@ -52,7 +53,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     private final Set<Url>                                                       activeProviderUrls            = new ConcurrentHashSet<>();
     private final Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> providerListenersPerClientUrl = new ConcurrentHashMap<>();
     private final Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>  commandListenersPerClientUrl  = new ConcurrentHashMap<>();
-    private       ZkClient                                                       zkClient;
 
     @Event
     public ZookeeperRegistry(Url registryUrl, ZkClient zkClient) {
@@ -140,7 +140,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      */
     private void reregisterListeners() {
         try {
-            clientLock.lock();
+            listenerLock.lock();
             if (MapUtils.isNotEmpty(providerListenersPerClientUrl)) {
                 for (Map.Entry<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> entry : providerListenersPerClientUrl.entrySet()) {
                     Url url = entry.getKey();
@@ -166,7 +166,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 log.info("Re-registered the command listeners after a new zookeeper session");
             }
         } finally {
-            clientLock.unlock();
+            listenerLock.unlock();
         }
     }
 
@@ -492,7 +492,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Event
     protected void subscribeServiceListener(Url clientUrl, ServiceListener serviceListener) {
         try {
-            clientLock.lock();
+            listenerLock.lock();
             Map<ServiceListener, IZkChildListener> childChangeListeners = providerListenersPerClientUrl.get(clientUrl);
             if (childChangeListeners == null) {
                 providerListenersPerClientUrl.putIfAbsent(clientUrl, new ConcurrentHashMap<>());
@@ -527,7 +527,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to subscribe service listeners for url [{}]", clientUrl), e);
         } finally {
-            clientLock.unlock();
+            listenerLock.unlock();
         }
     }
 
@@ -540,7 +540,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Override
     protected void unsubscribeServiceListener(Url clientUrl, ServiceListener serviceListener) {
         try {
-            clientLock.lock();
+            listenerLock.lock();
             Map<ServiceListener, IZkChildListener> childChangeListeners = providerListenersPerClientUrl.get(clientUrl);
             if (childChangeListeners == null) {
                 return;
@@ -554,7 +554,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to unsubscribe service listeners for url [{}]", clientUrl), e);
         } finally {
-            clientLock.unlock();
+            listenerLock.unlock();
         }
     }
 
@@ -568,7 +568,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Event
     protected void subscribeCommandListener(Url clientUrl, final CommandListener commandListener) {
         try {
-            clientLock.lock();
+            listenerLock.lock();
             Map<CommandListener, IZkDataListener> dataChangeListeners = commandListenersPerClientUrl.get(clientUrl);
             if (dataChangeListeners == null) {
                 commandListenersPerClientUrl.putIfAbsent(clientUrl, new ConcurrentHashMap<>());
@@ -600,7 +600,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to subscribe command listeners for url [{}]", clientUrl), e);
         } finally {
-            clientLock.unlock();
+            listenerLock.unlock();
         }
     }
 
@@ -613,7 +613,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Override
     protected void unsubscribeCommandListener(Url clientUrl, CommandListener commandListener) {
         try {
-            clientLock.lock();
+            listenerLock.lock();
             Map<CommandListener, IZkDataListener> dataChangeListeners = commandListenersPerClientUrl.get(clientUrl);
             if (dataChangeListeners != null) {
                 IZkDataListener zkDataListener = dataChangeListeners.get(commandListener);
@@ -625,7 +625,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to unsubscribe command listeners for url [{}]", clientUrl), e);
         } finally {
-            clientLock.unlock();
+            listenerLock.unlock();
         }
     }
 
