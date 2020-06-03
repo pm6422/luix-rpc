@@ -108,22 +108,25 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * Re-register the providers after a new zookeeper session
      * e.g, Zookeeper was shutdown after the infinity application startup, then zookeeper startup again will cause a new session.
      */
-    private void reregisterProviders() {
+    protected void reregisterProviders() {
         Set<Url> allRegisteredProviders = super.getRegisteredProviderUrls();
         if (CollectionUtils.isEmpty(allRegisteredProviders)) {
             return;
         }
+
+        providerLock.lock();
         try {
-            providerLock.lock();
-            for (Url url : super.getRegisteredProviderUrls()) {
-                // re-register after a new session
+            for (Url url : allRegisteredProviders) {
+                // Re-register after a new session
                 doRegister(url);
             }
             log.info("Re-registered all the providers after a reconnection to zookeeper");
 
             for (Url activeProviderUrl : activeProviderUrls) {
+                // It must make a urls copy, otherwise in some cases, allRegisteredProvidersCopy.contains(activeProviderUrl) may return false.
+                HashSet<Url> allRegisteredProvidersCopy = new HashSet<>(allRegisteredProviders);
                 // Only registered provider can be re-registered
-                if (!allRegisteredProviders.contains(activeProviderUrl)) {
+                if (!allRegisteredProvidersCopy.contains(activeProviderUrl)) {
                     log.warn("Url [{}] has not been registered!", activeProviderUrl);
                     continue;
                 }
@@ -139,7 +142,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * Re-register the provider and command listeners after a new zookeeper session
      * e.g, Zookeeper was shutdown after the infinity application startup, then zookeeper startup again will cause a new session.
      */
-    private void reregisterListeners() {
+    protected void reregisterListeners() {
         try {
             listenerLock.lock();
             if (MapUtils.isNotEmpty(providerListenersPerClientUrl)) {

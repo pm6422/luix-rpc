@@ -7,9 +7,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
-import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ClientListener;
+import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
+import org.infinity.rpc.core.switcher.DefaultSwitcherService;
+import org.infinity.rpc.core.switcher.SwitcherService;
 import org.infinity.rpc.registry.zookeeper.service.TestDummyService;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.utilities.annotation.Event;
@@ -228,5 +230,31 @@ public class ZookeeperRegistryTests {
 
     private boolean containsSubscribeListener(Url clientUrl, ClientListener clientListener) {
         return registry.getCommandServiceListenerPerClientUrl().get(clientUrl).getClientListeners().contains(clientListener);
+    }
+
+    @Test
+    public void testReregister() throws InterruptedException {
+        String node = providerUrl1.getServerPortStr();
+        List<String> activateAddrFiles;
+        List<String> deactivateAddrFiles;
+
+        String inactivePath = ZookeeperUtils.getStatusNodePath(providerUrl1, ZookeeperStatusNode.INACTIVE);
+        log.debug("inactivePath: {}", inactivePath);
+        String activePath = ZookeeperUtils.getStatusNodePath(providerUrl1, ZookeeperStatusNode.ACTIVE);
+        log.debug("activePath: {}", activePath);
+
+        registry.register(providerUrl1);
+        DefaultSwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
+        activateAddrFiles = zkClient.getChildren(activePath);
+        deactivateAddrFiles = zkClient.getChildren(inactivePath);
+
+//        Thread.sleep(10000L);
+        registry.reregisterProviders();
+
+        activateAddrFiles = zkClient.getChildren(activePath);
+        deactivateAddrFiles = zkClient.getChildren(inactivePath);
+
+        assertTrue(activateAddrFiles.contains(node));
+        assertTrue(deactivateAddrFiles.isEmpty());
     }
 }
