@@ -24,9 +24,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Slf4j
-public class RpcConsumerProviderScanRegistrar implements ImportBeanDefinitionRegistrar {
+public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionRegistrar {
 
-    public RpcConsumerProviderScanRegistrar() {
+    public RpcProviderConsumerScanRegistrar() {
     }
 
     @Override
