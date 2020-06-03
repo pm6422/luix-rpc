@@ -123,10 +123,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             log.info("Re-registered all the providers after a reconnection to zookeeper");
 
             for (Url activeProviderUrl : activeProviderUrls) {
-                // It must make a urls copy, otherwise in some cases, allRegisteredProvidersCopy.contains(activeProviderUrl) may return false.
-                HashSet<Url> allRegisteredProvidersCopy = new HashSet<>(allRegisteredProviders);
                 // Only registered provider can be re-registered
-                if (!allRegisteredProvidersCopy.contains(activeProviderUrl)) {
+                if (!allRegisteredProviders.contains(activeProviderUrl)) {
                     log.warn("Url [{}] has not been registered!", activeProviderUrl);
                     continue;
                 }
@@ -271,25 +269,30 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             providerLock.lock();
             if (providerUrl == null) {
                 // Register all provider urls to 'active' node if parameter url is null
+                // Do NOT save Url.PARAM_ACTIVATED_TIME to activeProviderUrls
                 activeProviderUrls.addAll(super.getRegisteredProviderUrls());
                 for (Url u : super.getRegisteredProviderUrls()) {
-                    // Remove the dirty data node
-                    removeNode(u, ZookeeperStatusNode.ACTIVE);
-                    removeNode(u, ZookeeperStatusNode.INACTIVE);
+                    Url copy = u.copy();
                     // Add registered time parameter
-                    u.addParameter(Url.PARAM_ACTIVATED_TIME, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+                    copy.addParameter(Url.PARAM_ACTIVATED_TIME, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+                    // Remove the dirty data node
+                    removeNode(copy, ZookeeperStatusNode.ACTIVE);
+                    removeNode(copy, ZookeeperStatusNode.INACTIVE);
                     // Create data under 'active' node
-                    createNode(u, ZookeeperStatusNode.ACTIVE);
+                    createNode(copy, ZookeeperStatusNode.ACTIVE);
                 }
             } else {
+                // Do NOT save Url.PARAM_ACTIVATED_TIME to activeProviderUrls
                 activeProviderUrls.add(providerUrl);
-                // Remove the dirty data node
-                removeNode(providerUrl, ZookeeperStatusNode.ACTIVE);
-                removeNode(providerUrl, ZookeeperStatusNode.INACTIVE);
+
+                Url copy = providerUrl.copy();
                 // Add registered time parameter
-                providerUrl.addParameter(Url.PARAM_ACTIVATED_TIME, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+                copy.addParameter(Url.PARAM_ACTIVATED_TIME, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+                // Remove the dirty data node
+                removeNode(copy, ZookeeperStatusNode.ACTIVE);
+                removeNode(copy, ZookeeperStatusNode.INACTIVE);
                 // Create data under 'active' node
-                createNode(providerUrl, ZookeeperStatusNode.ACTIVE);
+                createNode(copy, ZookeeperStatusNode.ACTIVE);
             }
         } finally {
             providerLock.unlock();
