@@ -109,8 +109,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * e.g, Zookeeper was shutdown after the infinity application startup, then zookeeper startup again will cause a new session.
      */
     private void reregisterProviders() {
-        Set<Url> allRegisteredServices = super.getRegisteredProviderUrls();
-        if (CollectionUtils.isEmpty(allRegisteredServices)) {
+        Set<Url> allRegisteredProviders = super.getRegisteredProviderUrls();
+        if (CollectionUtils.isEmpty(allRegisteredProviders)) {
             return;
         }
         try {
@@ -121,12 +121,13 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             }
             log.info("Re-registered all the providers after a reconnection to zookeeper");
 
-            for (Url availableServiceUrl : activeProviderUrls) {
-                if (!super.getRegisteredProviderUrls().contains(availableServiceUrl)) {
-                    log.warn("Url [{}] has not been registered!", availableServiceUrl);
+            for (Url activeProviderUrl : activeProviderUrls) {
+                // Only registered provider can be re-registered
+                if (!allRegisteredProviders.contains(activeProviderUrl)) {
+                    log.warn("Url [{}] has not been registered!", activeProviderUrl);
                     continue;
                 }
-                doActivate(availableServiceUrl);
+                doActivate(activeProviderUrl);
             }
             log.info("Re-registered the provider urls after a new zookeeper session");
         } finally {
