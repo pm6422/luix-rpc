@@ -32,6 +32,7 @@ public class NettyServer {
      * Start netty server
      */
     public void startNettyServer() {
+        log.info("Starting the netty server");
         // Create the server communication object
         ServerBootstrap server = new ServerBootstrap();
         // Create async communication event group to establish TCP connection
