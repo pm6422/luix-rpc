@@ -271,6 +271,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 // Register all provider urls to 'active' node if parameter url is null
                 // Do NOT save Url.PARAM_ACTIVATED_TIME to activeProviderUrls
                 activeProviderUrls.addAll(super.getRegisteredProviderUrls());
+
                 for (Url u : super.getRegisteredProviderUrls()) {
                     Url copy = u.copy();
                     // Add registered time parameter
