@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Url used to represent a provider or client or registry
  */
 @EqualsAndHashCode
-public class Url implements Serializable {
+public final class Url implements Serializable {
     private static final long    serialVersionUID                 = 2970867582138131181L;
     // URL Pattern: {protocol}://{host}:{port}/{path}?{parameters}
     private static final String  URL_PATTERN                      = "{0}://{1}:{2}/{3}?{4}";
