@@ -3,8 +3,8 @@ package org.infinity.rpc.webcenter.config;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.exception.ZkException;
+import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.registry.Url;
-import org.infinity.rpc.registry.zookeeper.ZookeeperRegistry;
 import org.infinity.rpc.webcenter.service.RegistryService;
 import org.infinity.rpc.webcenter.service.impl.ZookeeperRegistryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.text.MessageFormat;
 import java.util.List;
 
 @Configuration
@@ -33,8 +32,7 @@ public class ZookeeperRegistryConfiguration {
             ZkClient zkClient = createZkClient(registryUrl.getParameter(Url.PARAM_ADDRESS), sessionTimeout, connectTimeout);
             return new ZookeeperRegistryServiceImpl(zkClient);
         } catch (ZkException e) {
-            log.error(MessageFormat.format("Failed to connect zookeeper server with error: {0}", e.getMessage()), e);
-            return null;
+            throw new RpcFrameworkException("Failed to connect zookeeper server with error", e);
         }
     }
 

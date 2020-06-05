@@ -64,7 +64,7 @@ public class ZookeeperRegistryServiceImpl implements RegistryService {
                 apps.add(app);
             }
         } catch (JsonProcessingException e) {
-            log.error("Failed to read application info from zookeeper!", e);
+            log.error("Failed to read application info from zookeeper", e);
         }
         return apps;
     }
