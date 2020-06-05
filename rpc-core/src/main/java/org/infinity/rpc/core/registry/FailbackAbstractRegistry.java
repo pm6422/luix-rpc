@@ -6,7 +6,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
-import org.infinity.rpc.utilities.destory.RpcShutdownHook;
+import org.infinity.rpc.utilities.destory.ShutdownHook;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -32,7 +32,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     private static ScheduledExecutorService retryThreadPool = Executors.newScheduledThreadPool(1);
 
     static {
-        RpcShutdownHook.add(() -> {
+        ShutdownHook.add(() -> {
             if (!retryThreadPool.isShutdown()) {
                 retryThreadPool.shutdown();
             }

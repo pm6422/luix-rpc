@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Slf4j
 @ThreadSafe
-public class RpcShutdownHook extends Thread {
+public class ShutdownHook extends Thread {
     /**
      * Lower values have higher cleanup priority which means to be cleanup earlier
      */
@@ -22,7 +22,7 @@ public class RpcShutdownHook extends Thread {
     /**
      * Eager instance initialized while class load
      */
-    private static final RpcShutdownHook       INSTANCE         = new RpcShutdownHook();
+    private static final ShutdownHook          INSTANCE         = new ShutdownHook();
     /**
      * Resource list to be cleanup
      */
@@ -31,12 +31,12 @@ public class RpcShutdownHook extends Thread {
     /**
      * Prohibit instantiate an instance outside the class
      */
-    private RpcShutdownHook() {
+    private ShutdownHook() {
     }
 
     public static synchronized void add(Cleanable cleanable, int priority) {
         INSTANCE.RESOURCES.add(new CleanableObject(cleanable, priority));
-        log.info("Added the cleanup method of class [{}] to {}", cleanable.getClass().getSimpleName(), RpcShutdownHook.class.getSimpleName());
+        log.info("Added the cleanup method of class [{}] to {}", cleanable.getClass().getSimpleName(), ShutdownHook.class.getSimpleName());
     }
 
     /**
