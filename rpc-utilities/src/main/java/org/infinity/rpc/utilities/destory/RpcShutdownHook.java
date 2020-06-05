@@ -10,10 +10,11 @@ import java.util.List;
 
 /**
  * A utility used to clean up the resources
+ *
  */
 @Slf4j
 @ThreadSafe
-public class ShutdownHook extends Thread {
+public class RpcShutdownHook extends Thread {
     /**
      * Lower values have higher cleanup priority which means to be cleanup earlier
      */
@@ -21,7 +22,7 @@ public class ShutdownHook extends Thread {
     /**
      * Eager instance initialized while class load
      */
-    private static final ShutdownHook          INSTANCE         = new ShutdownHook();
+    private static final RpcShutdownHook       INSTANCE         = new RpcShutdownHook();
     /**
      * Resource list to be cleanup
      */
@@ -30,12 +31,12 @@ public class ShutdownHook extends Thread {
     /**
      * Prohibit instantiate an instance outside the class
      */
-    private ShutdownHook() {
+    private RpcShutdownHook() {
     }
 
     public static synchronized void add(Cleanable cleanable, int priority) {
         INSTANCE.RESOURCES.add(new CleanableObject(cleanable, priority));
-        log.info("Added the cleanup method of class [{}] to {}", cleanable.getClass().getSimpleName(), ShutdownHook.class.getSimpleName());
+        log.info("Added the cleanup method of class [{}] to {}", cleanable.getClass().getSimpleName(), RpcShutdownHook.class.getSimpleName());
     }
 
     /**
@@ -70,6 +71,7 @@ public class ShutdownHook extends Thread {
      * - Interruption triggered by Ctrl+C
      * - System close
      * - kill pid command
+     * - zookeeper connection failed while startup
      */
     @Override
     public void run() {
