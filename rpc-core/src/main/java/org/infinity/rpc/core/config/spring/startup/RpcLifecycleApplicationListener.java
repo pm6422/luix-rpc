@@ -2,8 +2,6 @@ package org.infinity.rpc.core.config.spring.startup;
 
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.config.spring.startup.ExecuteOnceApplicationListener;
-import org.infinity.rpc.core.config.spring.startup.RpcLifecycle;
 import org.infinity.rpc.core.registry.Url;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ApplicationContextEvent;
@@ -39,6 +37,7 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
         if (event instanceof ContextRefreshedEvent) {
             onContextRefreshedEvent((ContextRefreshedEvent) event);
         } else if (event instanceof ContextClosedEvent) {
+            // ContextClosedEvent will be triggered while encountering startup error but no any exception thrown
             onContextClosedEvent((ContextClosedEvent) event);
         }
     }
@@ -48,7 +47,7 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
     }
 
     private void onContextClosedEvent(ContextClosedEvent event) {
-        rpcLifecycle.stop(rpcProperties, registryUrls);
+        rpcLifecycle.destroy(rpcProperties, registryUrls);
     }
 
     @Override

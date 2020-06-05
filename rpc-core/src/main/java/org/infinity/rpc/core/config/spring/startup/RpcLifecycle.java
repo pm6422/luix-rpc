@@ -153,7 +153,7 @@ public class RpcLifecycle {
      *
      * @param rpcProperties RPC configuration properties
      */
-    public void stop(InfinityProperties rpcProperties, List<Url> registryUrls) {
+    public void destroy(InfinityProperties rpcProperties, List<Url> registryUrls) {
         if (!started.compareAndSet(true, false) || !stopped.compareAndSet(false, true)) {
             // not yet started or already stopped
             return;
