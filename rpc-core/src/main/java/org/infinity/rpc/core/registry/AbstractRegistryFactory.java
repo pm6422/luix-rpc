@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.registry;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.exception.RpcFrameworkException;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Map;
@@ -36,13 +37,10 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
             registry = createRegistry(registryUrl);
             long elapsed = System.currentTimeMillis() - start;
             log.debug("Created registry [{}] in {} ms", registry.getClass().getSimpleName(), elapsed);
-            if (registry == null) {
-                throw new RuntimeException("Registry must NOT be null!");
-            }
             registriesCache.put(registryUri, registry);
             return registry;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create registry for url [" + registryUrl + "]");
+            throw new RpcFrameworkException("Failed to create registry for url [" + registryUrl + "]", e);
         } finally {
             lock.unlock();
         }

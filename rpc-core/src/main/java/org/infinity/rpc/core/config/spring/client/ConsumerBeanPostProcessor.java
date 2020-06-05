@@ -23,11 +23,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanPostProcessor, BeanFactoryPostProcessor {
-    private             ApplicationContext                  applicationContext;
-    private             String[]                            scanBasePackages;
+    private       ApplicationContext                  applicationContext;
+    private       String[]                            scanBasePackages;
     // Consumers are not injected into bean factory, they are saved in this map.
-    private final       Map<String, RpcConsumerFactoryBean> rpcConsumerFactoryBeanMap = new ConcurrentHashMap<>();
-
+    private final Map<String, RpcConsumerFactoryBean> rpcConsumerFactoryBeanPerInterfaceName = new ConcurrentHashMap<>();
 
     public ConsumerBeanPostProcessor(String[] scanBasePackages) {
         Assert.notEmpty(scanBasePackages, "Consumer scan packages must NOT be empty!");
@@ -155,10 +154,10 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
         }
 
         String key = interfaceName;
-        RpcConsumerFactoryBean rpcConsumerFactoryBean = rpcConsumerFactoryBeanMap.get(key);
+        RpcConsumerFactoryBean rpcConsumerFactoryBean = rpcConsumerFactoryBeanPerInterfaceName.get(key);
         if (rpcConsumerFactoryBean == null) {
             rpcConsumerFactoryBean = new RpcConsumerFactoryBean<T>();
-            rpcConsumerFactoryBeanMap.putIfAbsent(key, rpcConsumerFactoryBean);
+            rpcConsumerFactoryBeanPerInterfaceName.putIfAbsent(key, rpcConsumerFactoryBean);
         }
         return rpcConsumerFactoryBean.getObject(rpcConsumerProxy, consumerInterface);
     }
