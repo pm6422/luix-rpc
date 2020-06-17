@@ -8,6 +8,8 @@ import org.springframework.beans.factory.FactoryBean;
 
 /**
  * PRC consumer configuration wrapper
+ * And the class implements the {@link FactoryBean} interface means that
+ * the class is used as a factory for an object to expose, not directly as a bean instance that will be exposed itself.
  */
 @Slf4j
 @Data
@@ -53,7 +55,7 @@ public class ConsumerWrapper implements FactoryBean, DisposableBean {
     /**
      * Check whether is a singleton or not
      *
-     * @return true: singleton, false: not singleton
+     * @return true: singleton, false: prototype
      */
     @Override
     public boolean isSingleton() {

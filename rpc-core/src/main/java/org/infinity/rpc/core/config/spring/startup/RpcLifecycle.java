@@ -48,7 +48,8 @@ public class RpcLifecycle {
      * The singleton instance holder static inner class
      */
     private static class SingletonHolder {
-        private static final RpcLifecycle INSTANCE = new RpcLifecycle();// static variable will be instantiated on class loading.
+        // static variable will be instantiated on class loading.
+        private static final RpcLifecycle INSTANCE = new RpcLifecycle();
     }
 
     public AtomicBoolean getStarted() {

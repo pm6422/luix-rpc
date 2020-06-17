@@ -21,10 +21,14 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The class implements {@link BeanPostProcessor} means that
+ * all spring bean will be processed by {@link ConsumerBeanPostProcessor#postProcessBeforeInitialization(Object, String)} after initialized bean
+ */
 @Slf4j
 public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanPostProcessor, BeanFactoryPostProcessor {
-    private       ApplicationContext                  applicationContext;
     private       String[]                            scanBasePackages;
+    private       ApplicationContext                  applicationContext;
     // Consumers are not injected into bean factory, they are saved in this map.
     private final Map<String, RpcConsumerFactoryBean> rpcConsumerFactoryBeanPerInterfaceName = new ConcurrentHashMap<>();
 
@@ -41,9 +45,9 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
     /**
      * Inject RPC consumer proxy
      *
-     * @param bean
-     * @param beanName
-     * @return
+     * @param bean     bean instance
+     * @param beanName bean name
+     * @return processed bean instance
      * @throws BeansException
      */
     @Override
@@ -80,9 +84,9 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
     /**
      * Method dependency injection by reflection
      *
-     * @param bean
-     * @param clazz
-     * @param rpcConsumerProxy
+     * @param bean             bean instance
+     * @param clazz            bean class
+     * @param rpcConsumerProxy RPC consumer proxy instance
      */
     private void setConsumerOnMethod(Object bean, Class clazz, RpcConsumerProxy rpcConsumerProxy) {
         Method[] methods = clazz.getMethods();
@@ -112,9 +116,9 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
     /**
      * Field dependency injection by reflection
      *
-     * @param bean
-     * @param clazz
-     * @param rpcConsumerProxy
+     * @param bean             bean instance
+     * @param clazz            bean class
+     * @param rpcConsumerProxy RPC consumer proxy instance
      */
     private void setConsumerOnField(Object bean, Class clazz, RpcConsumerProxy rpcConsumerProxy) {
         Field[] fields = clazz.getDeclaredFields();
@@ -128,7 +132,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
                 if (fieldAnnotation != null) {
                     Object value = getConsumerProxy(fieldAnnotation, field.getType(), rpcConsumerProxy);
                     if (value != null) {
-                        // if field annotated with the @Consumer
+                        // If field annotated with the @Consumer
                         field.set(bean, value);
                     }
                 }
@@ -139,6 +143,16 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
         }
     }
 
+    /**
+     * Get consumer proxy instance
+     *
+     * @param consumer         consumer annotation
+     * @param consumerClass    consumer class
+     * @param rpcConsumerProxy RPC consumer proxy
+     * @param <T>              class type
+     * @return consumer proxy instance
+     * @throws Exception if any exception thrown
+     */
     private <T> Object getConsumerProxy(Consumer consumer, Class<T> consumerClass, RpcConsumerProxy rpcConsumerProxy) throws Exception {
         String interfaceName;
         Class<T> consumerInterface;
@@ -163,19 +177,22 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
     }
 
     /**
-     * @param bean
-     * @param beanName
-     * @return
-     * @throws BeansException
+     * @param bean     bean instance
+     * @param beanName bean name
+     * @return bean instance
+     * @throws BeansException if any {@link BeansException} thrown
      */
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         return bean;
     }
 
-
+    /**
+     * @param beanFactory bean factory
+     * @throws BeansException if any {@link BeansException} thrown
+     */
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        // Leave blank intentionally
+        // Leave blank intentionally for now
     }
 }
