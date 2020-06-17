@@ -34,7 +34,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             Class<?>[] parameterTypes = rpcRequest.getParameterTypes();
             Object[] args = rpcRequest.getArgs();
             // Get the service instance
-            Object serviceImpl = ProviderWrapperHolder.getInstance().getWrappers().get(className).getProviderInstance();
+            Object serviceImpl = ProviderWrapperHolder.getInstance().getWrappers().get(className).getInstance();
             if (serviceImpl == null) {
                 throw new RuntimeException("Service provider class can NOT be found with the name: ".concat(className));
             }

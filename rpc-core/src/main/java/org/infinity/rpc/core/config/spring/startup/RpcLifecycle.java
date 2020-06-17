@@ -122,7 +122,7 @@ public class RpcLifecycle {
                 infinityProperties.getProtocol().getName().value(),
                 NetworkIpUtils.INTRANET_IP,
                 infinityProperties.getProtocol().getPort(),
-                providerWrapper.getProviderInterface());
+                providerWrapper.getInterfaceName());
 
         // Assign values to parameters
         providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, Url.PARAM_CHECK_HEALTH_DEFAULT_VALUE);

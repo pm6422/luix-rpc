@@ -10,7 +10,6 @@ public class ProviderWrapperHolder {
      */
     private final Map<String, ProviderWrapper> wrapperCache = new ConcurrentHashMap<>();
 
-
     /**
      * Prohibit instantiate an instance outside the class
      */
@@ -37,7 +36,7 @@ public class ProviderWrapperHolder {
         return wrapperCache;
     }
 
-    public void addProvider(String name, ProviderWrapper providerWrapper) {
+    public void addWrapper(String name, ProviderWrapper providerWrapper) {
         wrapperCache.putIfAbsent(name, providerWrapper);
     }
 }

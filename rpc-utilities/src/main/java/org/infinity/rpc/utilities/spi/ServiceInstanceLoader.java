@@ -164,7 +164,7 @@ public class ServiceInstanceLoader<T> {
 
         if (!serviceImplClassNames.contains(line)) {
             serviceImplClassNames.add(line);
-            log.debug("[{}] implementation: [{}]", type.getName().substring(type.getName().lastIndexOf(".") + 1), line);
+            log.debug("Created the implementation [{}] of interface [{}]", line, type.getName().substring(type.getName().lastIndexOf(".") + 1));
         }
     }
 
