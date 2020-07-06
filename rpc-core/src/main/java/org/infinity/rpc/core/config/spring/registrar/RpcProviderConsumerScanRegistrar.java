@@ -5,9 +5,11 @@ import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.config.spring.RpcAutoConfiguration;
 import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
 import org.infinity.rpc.core.config.spring.bean.registry.AnnotatedBeanDefinitionRegistry;
+import org.infinity.rpc.core.config.spring.client.ConsumerAnnotationBeanPostProcessor;
 import org.infinity.rpc.core.config.spring.client.ConsumerBeanPostProcessor;
 import org.infinity.rpc.core.config.spring.server.ProviderBeanDefinitionRegistryPostProcessor;
 import org.infinity.rpc.core.config.spring.startup.RpcLifecycleApplicationListener;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -23,6 +25,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static org.infinity.rpc.core.config.spring.bean.registry.AnnotatedBeanDefinitionRegistry.registerInfrastructureBean;
+
 @Slf4j
 public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionRegistrar {
 
@@ -36,6 +40,7 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
         registerRpcLifecycleApplicationListener(registry);
         registerProviderDefinitionRegistryPostProcessor(scanBasePackages, registry);
         registerConsumerDefinitionRegistryPostProcessor(scanBasePackages, registry);
+        registerConsumerAnnotationBeanPostProcessor(registry);
     }
 
     private Set<String> getScanBasePackages(AnnotationMetadata metadata) {
@@ -91,6 +96,15 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
      */
     private void registerConsumerDefinitionRegistryPostProcessor(Set<String> scanBasePackages, BeanDefinitionRegistry registry) {
         registerBeanDefinition(scanBasePackages, registry, ConsumerBeanPostProcessor.class);
+    }
+
+    /**
+     * Registers {@link ConsumerAnnotationBeanPostProcessor} into {@link BeanFactory}
+     *
+     * @param registry {@link BeanDefinitionRegistry}
+     */
+    private void registerConsumerAnnotationBeanPostProcessor(BeanDefinitionRegistry registry) {
+        registerInfrastructureBean(registry, ConsumerAnnotationBeanPostProcessor.BEAN_NAME, ConsumerAnnotationBeanPostProcessor.class);
     }
 
     private void registerBeanDefinition(Set<String> scanBasePackages, BeanDefinitionRegistry registry, Class clazz) {

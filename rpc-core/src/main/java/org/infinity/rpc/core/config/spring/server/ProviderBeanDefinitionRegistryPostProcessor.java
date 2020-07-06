@@ -12,6 +12,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.*;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
@@ -22,6 +23,8 @@ import org.springframework.util.StringUtils;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.infinity.rpc.core.config.spring.utils.AnnotationUtils.getAnnotationAttributes;
 
 /**
  * Register provider bean and provider wrapper to spring context.

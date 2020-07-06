@@ -12,4 +12,9 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Consumer {
     Class<?> interfaceClass() default void.class;
+
+    /**
+     * Timeout value for service invocation, default value is 0
+     */
+    int timeout() default 0;
 }

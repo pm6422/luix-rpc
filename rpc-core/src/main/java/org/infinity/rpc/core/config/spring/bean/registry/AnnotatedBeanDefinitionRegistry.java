@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.ClassUtils;
@@ -34,6 +35,27 @@ public abstract class AnnotatedBeanDefinitionRegistry {
 
     private static Class<?>[] filterNotYetRegistered(BeanDefinitionRegistry registry, Class<?>[] classes) {
         return Arrays.asList(classes).stream().filter(clazz -> !registered(registry, clazz)).toArray(Class<?>[]::new);
+    }
+
+    /**
+     * Register Infrastructure Bean
+     *
+     * @param beanDefinitionRegistry {@link BeanDefinitionRegistry}
+     * @param beanType               the type of bean
+     * @param beanName               the name of bean
+     * @return if registered at first time, return <code>true</code>, or <code>false</code>
+     */
+    public static boolean registerInfrastructureBean(BeanDefinitionRegistry beanDefinitionRegistry, String beanName, Class<?> beanType) {
+        if (beanDefinitionRegistry.containsBeanDefinition(beanName)) {
+            return false;
+        }
+        RootBeanDefinition beanDefinition = new RootBeanDefinition(beanType);
+        // Set a INFRASTRUCTURE role
+        beanDefinition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+        beanDefinitionRegistry.registerBeanDefinition(beanName, beanDefinition);
+
+        log.info("Registered the infrastructure bean definition [{}] with name [{}]", beanDefinition, beanName);
+        return true;
     }
 
     /**

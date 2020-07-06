@@ -15,64 +15,68 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @EqualsAndHashCode
 public final class Url implements Serializable {
-    private static final long    serialVersionUID                 = 2970867582138131181L;
-    // URL Pattern: {protocol}://{host}:{port}/{path}?{parameters}
-    private static final String  URL_PATTERN                      = "{0}://{1}:{2}/{3}?{4}";
-    private static final String  PROTOCOL_SEPARATOR               = "://";
-    public static final  String  PATH_SEPARATOR                   = "/";
+    private static final long                serialVersionUID                 = 2970867582138131181L;
+    /**
+     * URL Pattern: {protocol}://{host}:{port}/{path}?{parameters}
+     */
+    private static final String              URL_PATTERN                      = "{0}://{1}:{2}/{3}?{4}";
+    private static final String              PROTOCOL_SEPARATOR               = "://";
+    public static final  String              PATH_SEPARATOR                   = "/";
     /**
      * RPC protocol
      */
-    private              String  protocol;
+    private              String              protocol;
     /**
      * RPC server or client host name
      */
-    private              String  host;
+    private              String              host;
     /**
      * RPC server or client port
      */
-    private              Integer port;
+    private              Integer             port;
     /**
      * RPC interface fully-qualified name
      */
-    private              String  path;
+    private              String              path;
     /**
      *
      */
-    public static final  String  PARAM_GROUP                      = "group";
-    public static final  String  PARAM_GROUP_PROVIDER             = "provider";
-    public static final  String  PARAM_GROUP_APPLICATION          = "application";
-    public static final  String  PARAM_GROUP_APPLICATION_PROVIDER = "application-provider";
+    public static final  String              PARAM_GROUP                      = "group";
+    public static final  String              PARAM_GROUP_PROVIDER             = "provider";
+    public static final  String              PARAM_GROUP_APPLICATION          = "application";
+    public static final  String              PARAM_GROUP_APPLICATION_PROVIDER = "application-provider";
     /**
      *
      */
-    public static final  String  PARAM_CHECK_HEALTH               = "checkHealth";
-    public static final  String  PARAM_CHECK_HEALTH_DEFAULT_VALUE = "true";
+    public static final  String              PARAM_CHECK_HEALTH               = "checkHealth";
+    public static final  String              PARAM_CHECK_HEALTH_DEFAULT_VALUE = "true";
     /**
      *
      */
-    public static final  String  PARAM_CODEC                      = "codec";
-    public static final  String  PARAM_CODEC_DEFAULT_VALUE        = "infinity";
+    public static final  String              PARAM_CODEC                      = "codec";
+    public static final  String              PARAM_CODEC_DEFAULT_VALUE        = "infinity";
     /**
      *
      */
-    public static final  String  PARAM_TYPE                       = "type";
-    public static final  String  PARAM_TYPE_DEFAULT_VALUE         = "provider";
+    public static final  String              PARAM_TYPE                       = "type";
+    public static final  String              PARAM_TYPE_DEFAULT_VALUE         = "provider";
     /**
      *
      */
-    public static final  String  PARAM_ADDRESS                    = "address";
-    public static final  String  PARAM_CONNECT_TIMEOUT            = "connectTimeout";
-    public static final  String  PARAM_SESSION_TIMEOUT            = "sessionTimeout";
-    public static final  String  PARAM_RETRY_INTERVAL             = "retryInterval";
-    public static final  String  PARAM_APP                        = "app";
-    public static final  String  PARAM_ACTIVATED_TIME             = "activatedTime";
-
+    public static final  String              PARAM_ADDRESS                    = "address";
+    public static final  String              PARAM_CONNECT_TIMEOUT            = "connectTimeout";
+    public static final  String              PARAM_SESSION_TIMEOUT            = "sessionTimeout";
+    public static final  String              PARAM_RETRY_INTERVAL             = "retryInterval";
+    public static final  String              PARAM_APP                        = "app";
+    public static final  String              PARAM_ACTIVATED_TIME             = "activatedTime";
     /**
      * Extended parameters
      */
-    private                    Map<String, String> parameters;
-    private volatile transient Map<String, Number> numbers;
+    private              Map<String, String> parameters;
+    /**
+     * non-transient fields can be used to generate equals() and hashcode() by lombok
+     */
+    private transient    Map<String, Number> numbers;
 
     /**
      * Prohibit instantiate an instance outside the class
@@ -250,7 +254,7 @@ public final class Url implements Serializable {
         String host = null;
         int port = 0;
         String path = null;
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         int i = url.indexOf("?"); // separator between body and parameters
         if (i >= 0) {
             String[] parts = url.substring(i + 1).split("\\&");
@@ -318,7 +322,11 @@ public final class Url implements Serializable {
         return protocol + PROTOCOL_SEPARATOR + host + ":" + port + PATH_SEPARATOR + path;
     }
 
-    // 包含协议、host、port、path、group
+    /**
+     * Including protocol, host, port, group
+     *
+     * @return combination string
+     */
     public String toSimpleString() {
         return getUri() + "?group=" + getGroup();
     }
