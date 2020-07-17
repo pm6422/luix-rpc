@@ -25,13 +25,12 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 public class AdminMenuController {
 
     private static final Logger           LOGGER = LoggerFactory.getLogger(AdminMenuController.class);
-    @Consumer(timeout = 10000)
     private              AdminMenuService adminMenuService;
 
-//    @Consumer(timeout = 10000)
-//    public void setAdminMenuService(AdminMenuService adminMenuService) {
-//        this.adminMenuService = adminMenuService;
-//    }
+    @Consumer(timeout = 10000)
+    public void setAdminMenuService(AdminMenuService adminMenuService) {
+        this.adminMenuService = adminMenuService;
+    }
 
     @ApiOperation("查询菜单")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})

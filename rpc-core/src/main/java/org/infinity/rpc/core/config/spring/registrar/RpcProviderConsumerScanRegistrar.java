@@ -40,7 +40,7 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
         registerRpcLifecycleApplicationListener(registry);
         registerProviderDefinitionRegistryPostProcessor(scanBasePackages, registry);
         registerConsumerDefinitionRegistryPostProcessor(scanBasePackages, registry);
-        registerConsumerAnnotationBeanPostProcessor(registry);
+//        registerConsumerAnnotationBeanPostProcessor(registry);
     }
 
     private Set<String> getScanBasePackages(AnnotationMetadata metadata) {

@@ -8,6 +8,7 @@ import org.springframework.core.annotation.AnnotationAttributes;
 
 import static org.infinity.rpc.core.config.spring.utils.AnnotationUtils.getAttributes;
 
+@Deprecated
 public class ConsumerAnnotationBeanPostProcessor extends AbstractAnnotationBeanPostProcessor {
     /**
      * The bean name of {@link ConsumerAnnotationBeanPostProcessor}
@@ -32,12 +33,14 @@ public class ConsumerAnnotationBeanPostProcessor extends AbstractAnnotationBeanP
      * @return The name of bean that annotated Dubbo's {@link org.infinity.rpc.core.client.annotation.Consumer @Consumer} in local Spring {@link ApplicationContext}
      */
     private String buildConsumerBeanName(AnnotationAttributes attributes, Class<?> consumerInterfaceType) {
+        // TODO: refactor
         return consumerInterfaceType.getClass().getSimpleName();
     }
 
     @Override
     protected Object doGetInjectedBean(AnnotationAttributes attributes, Object bean, String beanName, Class<?> injectedType,
                                        InjectionMetadata.InjectedElement injectedElement) throws Exception {
+        String referencedBeanName = buildConsumerBeanName(attributes, injectedType);
 
         return null;
     }

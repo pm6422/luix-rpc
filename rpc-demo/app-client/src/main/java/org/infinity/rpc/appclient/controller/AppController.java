@@ -33,7 +33,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 public class AppController {
 
     private static final Logger            LOGGER = LoggerFactory.getLogger(AppController.class);
-    @Consumer
+    @Consumer(timeout = 10000)
     private              AppService        appService;
     @Autowired
     private              HttpHeaderCreator httpHeaderCreator;

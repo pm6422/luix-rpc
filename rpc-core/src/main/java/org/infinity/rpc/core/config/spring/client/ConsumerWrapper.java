@@ -1,8 +1,8 @@
 package org.infinity.rpc.core.config.spring.client;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -13,54 +13,24 @@ import org.springframework.beans.factory.FactoryBean;
  */
 @Slf4j
 @Data
-public class ConsumerWrapper implements FactoryBean, DisposableBean {
+@Builder
+public class ConsumerWrapper implements DisposableBean {
     /**
-     * The consumer interface fully-qualified name
+     * The consumer interface class fully-qualified name
      */
-    private   String           interfaceName;
+    private             String   interfaceName;
     /**
      * The interface class of the consumer
      */
-    protected Class<?>         interfaceClass;
+    protected           Class<?> interfaceClass;
     /**
      * The consumer instance simple name, also known as bean name
      */
-    private   String           instanceName;
+    private             String   instanceName;
     /**
-     * The consumer proxy instance
+     * The consumer proxy instance, refer the return type of {@link org.infinity.rpc.core.client.proxy.RpcConsumerProxy#getProxy(Class)}
      */
-    private   RpcConsumerProxy instance;
-
-    /**
-     * Get the consumer proxy
-     *
-     * @return consumer proxy
-     * @throws Exception if any exception occurred
-     */
-    @Override
-    public Object getObject() throws Exception {
-        return instance;
-    }
-
-    /**
-     * Get the consumer interface class
-     *
-     * @return consumer interface class
-     */
-    @Override
-    public Class<?> getObjectType() {
-        return getInterfaceClass();
-    }
-
-    /**
-     * Check whether is a singleton or not
-     *
-     * @return true: singleton, false: prototype
-     */
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
+    private             Object   proxyInstance;
 
     @Override
     public void destroy() throws Exception {

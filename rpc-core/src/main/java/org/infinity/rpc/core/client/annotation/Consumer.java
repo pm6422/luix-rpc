@@ -11,10 +11,18 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Consumer {
+    // The interface class of consumer class
     Class<?> interfaceClass() default void.class;
 
-    /**
-     * Timeout value for service invocation, default value is 0
-     */
+    // The interface class name of consumer class
+    // For the generic consumer instance must provide interfaceName attribute
+    String interfaceName() default "";
+
+    // The generic call indicator,
+    // if we only have the provider interface name, method name and arguments,
+    // we can initiate a generic call to service provider without service provider jar dependency
+    boolean generic() default false;
+
+    // Timeout value for service invocation
     int timeout() default 0;
 }

@@ -32,26 +32,27 @@ import static org.infinity.rpc.core.config.spring.utils.AnnotationUtils.getAnnot
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
 
+@Deprecated
 @Slf4j
 @ThreadSafe
 public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
         implements MergedBeanDefinitionPostProcessor, EnvironmentAware {
 
-    private final        Class<? extends Annotation>                       annotationType;
-    private              Environment                                       environment;
-    private final static int                                               CACHE_SIZE                            = 32;
-    private final        ConcurrentMap<String, AnnotatedInjectionMetadata> annotatedInjectionMetadataPerBeanName = new ConcurrentHashMap<>(CACHE_SIZE);
-    private final        ConcurrentMap<String, Object>                     injectedObjectsCache                  = new ConcurrentHashMap<>(CACHE_SIZE);
+    private static final int                                                          CACHE_SIZE                            = 32;
+    private              Class<? extends Annotation>                                  targetAnnotation;
+    private              Environment                                                  environment;
+    private              ConcurrentMap<String, AnnotatedFieldMethodInjectionMetadata> annotatedInjectionMetadataPerBeanName = new ConcurrentHashMap<>(CACHE_SIZE);
+    private              ConcurrentMap<String, Object>                                injectedObjectsCache                  = new ConcurrentHashMap<>(CACHE_SIZE);
 
     /**
-     * @param annotationType the multiple types of {@link Annotation annotations}
+     * @param targetAnnotation the multiple types of {@link Annotation annotations}
      */
-    public AbstractAnnotationBeanPostProcessor(Class<? extends Annotation> annotationType) {
-        this.annotationType = annotationType;
+    public AbstractAnnotationBeanPostProcessor(Class<? extends Annotation> targetAnnotation) {
+        this.targetAnnotation = targetAnnotation;
     }
 
-    public final Class<? extends Annotation> getAnnotationType() {
-        return annotationType;
+    public final Class<? extends Annotation> getTargetAnnotation() {
+        return targetAnnotation;
     }
 
     @Override
@@ -67,26 +68,26 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
      * Post-process the given merged bean definition for the specified bean
      *
      * @param beanDefinition the merged bean definition for the bean
-     * @param beanType       the actual type of the managed bean instance
+     * @param beanType       the type of the managed bean instance
      * @param beanName       the name of the bean
      */
     @Override
     public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
         if (beanType != null) {
-            InjectionMetadata metadata = findInjectionMetadata(beanName, beanType, null);
+            InjectionMetadata metadata = findAnnotatedFieldMethodInjectionMetadata(beanName, beanType, null);
             metadata.checkConfigMembers(beanDefinition);
         }
     }
 
     @Override
     public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeanCreationException {
-        InjectionMetadata metadata = findInjectionMetadata(beanName, bean.getClass(), pvs);
+        InjectionMetadata metadata = findAnnotatedFieldMethodInjectionMetadata(beanName, bean.getClass(), pvs);
         try {
             metadata.inject(bean, beanName, pvs);
         } catch (BeanCreationException ex) {
             throw ex;
         } catch (Throwable ex) {
-            throw new BeanCreationException(beanName, "Failed to inject the [" + getAnnotationType().getSimpleName() + "] dependency!", ex);
+            throw new BeanCreationException(beanName, "Failed to inject the [" + getTargetAnnotation().getSimpleName() + "] dependency!", ex);
         }
         return pvs;
     }
@@ -94,31 +95,31 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
     /**
      * Find the annotation metadata info to be injected
      *
-     * @param beanName
-     * @param clazz
+     * @param beanName the name of the bean
+     * @param beanType the type of the managed bean instance
      * @param pvs
      * @return
      */
-    private InjectionMetadata findInjectionMetadata(String beanName, Class<?> clazz, PropertyValues pvs) {
+    private InjectionMetadata findAnnotatedFieldMethodInjectionMetadata(String beanName, Class<?> beanType, PropertyValues pvs) {
         // Fall back to class name as cache key, for backwards compatibility with custom callers.
-        String cacheKey = StringUtils.isNotEmpty(beanName) ? beanName : clazz.getName();
+        String cacheKey = StringUtils.isNotEmpty(beanName) ? beanName : beanType.getName();
         // Quick check on the concurrent map first, with minimal locking.
-        AnnotatedInjectionMetadata metadata = this.annotatedInjectionMetadataPerBeanName.get(cacheKey);
-        if (InjectionMetadata.needsRefresh(metadata, clazz)) {
+        AnnotatedFieldMethodInjectionMetadata metadata = this.annotatedInjectionMetadataPerBeanName.get(cacheKey);
+        if (InjectionMetadata.needsRefresh(metadata, beanType)) {
             synchronized (this.annotatedInjectionMetadataPerBeanName) {
                 // thread-safe atomic operation
                 metadata = this.annotatedInjectionMetadataPerBeanName.get(cacheKey);
-                if (InjectionMetadata.needsRefresh(metadata, clazz)) {
+                if (InjectionMetadata.needsRefresh(metadata, beanType)) {
                     if (metadata != null) {
                         metadata.clear(pvs);
                     }
                     try {
                         // Build the annotation metadata info based on annotated field and methods
-                        metadata = buildAnnotatedMetadata(clazz);
+                        metadata = buildAnnotatedFieldMethodMetadata(beanType);
                         // thread-safe atomic operation
                         this.annotatedInjectionMetadataPerBeanName.put(cacheKey, metadata);
                     } catch (NoClassDefFoundError err) {
-                        throw new IllegalStateException("Failed to find annotation metadata info on class [" + clazz.getName() + "]", err);
+                        throw new IllegalStateException("Failed to find annotation metadata info on class [" + beanType.getName() + "]", err);
                     }
                 }
             }
@@ -129,31 +130,32 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
     /**
      * Build the annotation metadata info based on annotated fields and methods
      *
-     * @param beanClass bean class used to find annotations
+     * @param beanClass bean class used to find annotated elements
      * @return annotation metadata
      */
-    private AnnotatedInjectionMetadata buildAnnotatedMetadata(final Class<?> beanClass) {
-        Collection<AnnotatedFieldElement> fieldElements = findFieldAnnotationMetadata(beanClass);
-        Collection<AnnotatedMethodElement> methodElements = findMethodAnnotationMetadata(beanClass);
-        return new AnnotatedInjectionMetadata(beanClass, fieldElements, methodElements);
+    private AnnotatedFieldMethodInjectionMetadata buildAnnotatedFieldMethodMetadata(final Class<?> beanClass) {
+        Collection<AnnotatedFieldElement> annotatedFieldElements = findAnnotatedFieldElements(beanClass);
+        Collection<AnnotatedMethodElement> annotatedMethodElements = findAnnotatedMethodElements(beanClass);
+        return new AnnotatedFieldMethodInjectionMetadata(beanClass, annotatedFieldElements, annotatedMethodElements);
     }
 
     /**
-     * Find annotation metadata info {@link AnnotatedFieldElement} from annotated fields
+     * Iterate all the fields of the bean class to find
+     * annotation metadata info {@link AnnotatedFieldElement} from target annotated fields
      *
-     * @param beanClass bean class used to find annotations
+     * @param beanClass bean class used to find target annotated field
      * @return found annotation metadata
      */
-    private List<AnnotatedFieldElement> findFieldAnnotationMetadata(Class<?> beanClass) {
+    private List<AnnotatedFieldElement> findAnnotatedFieldElements(Class<?> beanClass) {
         List<AnnotatedFieldElement> annotatedFieldElements = new LinkedList<>();
         // Iterate all the fields of the bean class
         ReflectionUtils.doWithFields(beanClass, field -> {
-            // Get the @Consumer annotation attributes value of field,
-            // and it will be null if no @Consumer annotation presents on the field
-            AnnotationAttributes annotationAttributes = getAnnotationAttributes(field, annotationType, getEnvironment(), true, true);
+            // Get the target annotation, like @Consumer annotation attributes value of field,
+            // and it will be null if no annotation presents on the field
+            AnnotationAttributes annotationAttributes = getAnnotationAttributes(field, targetAnnotation, getEnvironment(), true, true);
             if (annotationAttributes != null) {
                 if (Modifier.isStatic(field.getModifiers())) {
-                    log.warn("Annotation [{}] must NOT present on the static field [{}]", annotationType.getName(), field.getName());
+                    log.warn("Annotation [{}] must NOT present on the static field [{}]", targetAnnotation.getName(), field.getName());
                     return;
                 }
                 annotatedFieldElements.add(new AnnotatedFieldElement(field, annotationAttributes));
@@ -163,12 +165,13 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
     }
 
     /**
-     * Find annotation metadata info {@link AnnotatedFieldElement} from annotated methods
+     * Iterate all the methods of the bean class to find
+     * annotation metadata info {@link AnnotatedFieldElement} from target annotated methods
      *
-     * @param beanClass bean class used to find annotations
+     * @param beanClass bean class used to find target annotated method
      * @return found annotation metadata
      */
-    private List<AnnotatedMethodElement> findMethodAnnotationMetadata(final Class<?> beanClass) {
+    private List<AnnotatedMethodElement> findAnnotatedMethodElements(Class<?> beanClass) {
         List<AnnotatedMethodElement> elements = new LinkedList<>();
         // Iterate all the methods of the bean class
         ReflectionUtils.doWithMethods(beanClass, method -> {
@@ -178,16 +181,16 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
             if (!isVisibilityBridgeMethodPair(method, bridgedMethod)) {
                 return;
             }
-            // Get the @Consumer annotation attributes value of field,
+            // Get the target annotation, like @Consumer annotation attributes value of field,
             // and it will be null if no @Consumer annotation presents on the field
-            AnnotationAttributes annotationAttributes = getAnnotationAttributes(bridgedMethod, annotationType, getEnvironment(), true, true);
+            AnnotationAttributes annotationAttributes = getAnnotationAttributes(bridgedMethod, targetAnnotation, getEnvironment(), true, true);
             if (annotationAttributes != null && method.equals(ClassUtils.getMostSpecificMethod(method, beanClass))) {
                 if (Modifier.isStatic(method.getModifiers())) {
-                    log.warn("Annotation [@{}] must NOT present on the static method [{}]", annotationType.getName(), method.getName());
+                    log.warn("Annotation [@{}] must NOT present on the static method [{}]", targetAnnotation.getName(), method.getName());
                     return;
                 }
                 if (method.getParameterTypes().length == 0) {
-                    log.warn("[@{}] annotated method must provider parameter", annotationType.getName());
+                    log.warn("[@{}] annotated method must have parameter", targetAnnotation.getName());
                 }
                 PropertyDescriptor pd = BeanUtils.findPropertyForMethod(bridgedMethod, beanClass);
                 elements.add(new AnnotatedMethodElement(method, pd, annotationAttributes));
@@ -267,24 +270,44 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
     /**
      * {@link Annotation Annotated} {@link InjectionMetadata} implementation
      */
-    private class AnnotatedInjectionMetadata extends InjectionMetadata {
-        private final Collection<AnnotatedFieldElement>  fieldElements;
-        private final Collection<AnnotatedMethodElement> methodElements;
+    private class AnnotatedFieldMethodInjectionMetadata extends InjectionMetadata {
+        private final Collection<AnnotatedFieldElement>  annotatedFieldElements;
+        private final Collection<AnnotatedMethodElement> annotatedMethodElements;
 
-        public AnnotatedInjectionMetadata(Class<?> targetClass,
-                                          Collection<AnnotatedFieldElement> fieldElements,
-                                          Collection<AnnotatedMethodElement> methodElements) {
-            super(targetClass, CollectionUtils.union(fieldElements, methodElements));
-            this.fieldElements = fieldElements;
-            this.methodElements = methodElements;
+        public AnnotatedFieldMethodInjectionMetadata(Class<?> targetClass, Collection<AnnotatedFieldElement> annotatedFieldElements, Collection<AnnotatedMethodElement> annotatedMethodElements) {
+            super(targetClass, CollectionUtils.union(annotatedFieldElements, annotatedMethodElements));
+            this.annotatedFieldElements = annotatedFieldElements;
+            this.annotatedMethodElements = annotatedMethodElements;
         }
 
-        public Collection<AnnotatedFieldElement> getFieldElements() {
-            return fieldElements;
+        public Collection<AnnotatedFieldElement> getAnnotatedFieldElements() {
+            return annotatedFieldElements;
         }
 
-        public Collection<AnnotatedMethodElement> getMethodElements() {
-            return methodElements;
+        public Collection<AnnotatedMethodElement> getAnnotatedMethodElements() {
+            return annotatedMethodElements;
+        }
+    }
+
+    /**
+     * {@link Annotation Annotated} {@link Field} {@link InjectionMetadata.InjectedElement}
+     */
+    public class AnnotatedFieldElement extends InjectionMetadata.InjectedElement {
+        private final Field                field;
+        private final AnnotationAttributes attributes;
+
+        protected AnnotatedFieldElement(Field field, AnnotationAttributes attributes) {
+            super(field, null);
+            this.field = field;
+            this.attributes = attributes;
+        }
+
+        @Override
+        protected void inject(Object bean, String beanName, PropertyValues pvs) throws Throwable {
+            Class<?> injectedType = field.getType();
+            Object injectedObject = getInjectedObject(attributes, bean, beanName, injectedType, this);
+            ReflectionUtils.makeAccessible(field);
+            field.set(bean, injectedObject);
         }
     }
 
@@ -292,9 +315,8 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
      * {@link Annotation Annotated} {@link Method} {@link InjectionMetadata.InjectedElement}
      */
     private class AnnotatedMethodElement extends InjectionMetadata.InjectedElement {
-        private final    Method               method;
-        private final    AnnotationAttributes attributes;
-        private volatile Object               object;
+        private final Method               method;
+        private final AnnotationAttributes attributes;
 
         protected AnnotatedMethodElement(Method method, PropertyDescriptor pd, AnnotationAttributes attributes) {
             super(method, pd);
@@ -311,26 +333,5 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
         }
     }
 
-    /**
-     * {@link Annotation Annotated} {@link Field} {@link InjectionMetadata.InjectedElement}
-     */
-    public class AnnotatedFieldElement extends InjectionMetadata.InjectedElement {
-        private final    Field                field;
-        private final    AnnotationAttributes attributes;
-        private volatile Object               bean;
 
-        protected AnnotatedFieldElement(Field field, AnnotationAttributes attributes) {
-            super(field, null);
-            this.field = field;
-            this.attributes = attributes;
-        }
-
-        @Override
-        protected void inject(Object bean, String beanName, PropertyValues pvs) throws Throwable {
-            Class<?> injectedType = field.getType();
-            Object injectedObject = getInjectedObject(attributes, bean, beanName, injectedType, this);
-            ReflectionUtils.makeAccessible(field);
-            field.set(bean, injectedObject);
-        }
-    }
 }

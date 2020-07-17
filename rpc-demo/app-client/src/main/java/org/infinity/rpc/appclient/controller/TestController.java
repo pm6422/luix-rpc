@@ -2,8 +2,13 @@ package org.infinity.rpc.appclient.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.infinity.app.common.service.AppService;
+import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
+import org.infinity.rpc.core.config.spring.client.ConsumerWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +22,9 @@ import java.util.concurrent.TimeUnit;
 public class TestController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestController.class);
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /**
      * 测试结果显示为线程安全
@@ -34,7 +42,13 @@ public class TestController {
             LOGGER.debug(key);
             keys.add(key);
         }
-
         TimeUnit.MILLISECONDS.sleep(1000);
+    }
+
+    @ApiOperation("测试获取AppService")
+    @GetMapping("/open-api/test/app-service")
+    public Object testGetAppService() throws InterruptedException {
+        Object bean = applicationContext.getBean(RpcConsumerProxy.CONSUMER_PROXY_BEAN.concat(":").concat(AppService.class.getName()));
+        return bean;
     }
 }

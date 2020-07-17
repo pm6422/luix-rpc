@@ -167,6 +167,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
                 throw new IllegalStateException("The @Provider annotation of RPC service provider must specify interfaceClass attribute value " +
                         "if the bean implements more than one interfaces!");
             }
+            //  TODO: interfaceName handle
         }
         return interfaceClass;
     }
