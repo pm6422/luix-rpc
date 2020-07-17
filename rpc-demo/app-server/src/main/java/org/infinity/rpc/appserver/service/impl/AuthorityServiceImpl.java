@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Provider
@@ -34,5 +35,25 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Override
     public Page<Authority> findAll(Pageable pageable) {
         return authorityRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<Authority> findAll() {
+        return authorityRepository.findAll();
+    }
+
+    @Override
+    public Optional<Authority> findById(String id) {
+        return authorityRepository.findById(id);
+    }
+
+    @Override
+    public void save(Authority authority) {
+        authorityRepository.save(authority);
+    }
+
+    @Override
+    public void deleteById(String id) {
+        authorityRepository.deleteById(id);
     }
 }
