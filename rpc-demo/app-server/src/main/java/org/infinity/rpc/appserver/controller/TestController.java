@@ -5,12 +5,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.app.common.service.AppService;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.config.spring.server.ProviderWrapperBeanNameBuilder;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.Url;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,9 +25,11 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class TestController {
     @Autowired
-    private List<Url> registryUrls;
+    private List<Url>          registryUrls;
     @Autowired
     private InfinityProperties infinityProperties;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /**
      * 测试结果显示为线程安全
@@ -64,5 +66,19 @@ public class TestController {
         providerUrl.addParameter(Url.PARAM_APP, infinityProperties.getApplication().getName());
 
         registry.register(providerUrl);
+    }
+
+    @ApiOperation("测试获取AppService provider wrapper")
+    @GetMapping("/open-api/test/app-service-provider-wrapper")
+    public void testGetAppServiceProviderWrapper() {
+        Object bean = applicationContext.getBean(ProviderWrapperBeanNameBuilder.PROVIDER_WRAPPER_BEAN_PREFIX.concat(":").concat(AppService.class.getName()));
+        log.info(bean.toString());
+    }
+
+    @ApiOperation("测试获取AppService provider")
+    @GetMapping("/open-api/test/app-service-provider")
+    public void testGetAppServiceProvider() {
+        Object bean = applicationContext.getBean(AppService.class);
+        log.info(bean.toString());
     }
 }

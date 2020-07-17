@@ -7,7 +7,6 @@ import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.Url;
-import org.infinity.rpc.core.server.ProviderWrapperHolder;
 import org.springframework.beans.factory.DisposableBean;
 
 import javax.annotation.PostConstruct;

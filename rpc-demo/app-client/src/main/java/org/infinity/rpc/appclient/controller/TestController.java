@@ -44,9 +44,9 @@ public class TestController {
         TimeUnit.MILLISECONDS.sleep(1000);
     }
 
-    @ApiOperation("测试获取AppService")
-    @GetMapping("/open-api/test/app-service")
-    public Object testGetAppService() throws InterruptedException {
+    @ApiOperation("测试获取AppService consumer wrapper")
+    @GetMapping("/open-api/test/app-service-consumer-wrapper")
+    public Object testGetAppServiceConsumerWrapper() {
         Object bean = applicationContext.getBean(ConsumerWrapperBeanNameBuilder.CONSUMER_WRAPPER_BEAN_PREFIX.concat(":").concat(AppService.class.getName()));
         return bean;
     }

@@ -23,8 +23,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.infinity.rpc.core.config.spring.utils.AnnotationUtils.getAnnotationAttributes;
-
 /**
  * Register provider bean and provider wrapper to spring context.
  */
@@ -86,7 +84,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
             // Register provider first
             registerProviderInstances(providerScanner, scanBasePackage);
             // Then register provider wrapper
-            registerProviderWrappers(registry, beanNameGenerator, providerScanner, scanBasePackage);
+            registerProviderWrapperBeans(registry, beanNameGenerator, providerScanner, scanBasePackage);
         });
     }
 
@@ -103,14 +101,14 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         log.info("Registered RPC provider instances to spring context");
     }
 
-    private void registerProviderWrappers(BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator, ClassPathBeanDefinitionRegistryScanner providerScanner, String scanBasePackage) {
+    private void registerProviderWrapperBeans(BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator, ClassPathBeanDefinitionRegistryScanner providerScanner, String scanBasePackage) {
         // Next we need to register ProviderBean which is the wrapper of service provider to spring context
         Set<BeanDefinitionHolder> providerBeanDefinitionHolders = findProviderBeanDefinitionHolders(providerScanner, scanBasePackage, registry, beanNameGenerator);
         if (CollectionUtils.isEmpty(providerBeanDefinitionHolders)) {
             return;
         }
         providerBeanDefinitionHolders.forEach(providerBeanDefinitionHolder -> {
-            registerProviderWrapper(providerBeanDefinitionHolder, registry, providerScanner);
+            registerProviderWrapperBean(providerBeanDefinitionHolder, registry, providerScanner);
         });
     }
 
@@ -126,18 +124,18 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         return beanDefinitionHolders;
     }
 
-    private void registerProviderWrapper(BeanDefinitionHolder providerBeanDefinitionHolder, BeanDefinitionRegistry registry, ClassPathBeanDefinitionRegistryScanner providerScanner) {
+    private void registerProviderWrapperBean(BeanDefinitionHolder providerBeanDefinitionHolder, BeanDefinitionRegistry registry, ClassPathBeanDefinitionRegistryScanner providerScanner) {
         Class<?> providerBeanClass = resolveProviderClass(providerBeanDefinitionHolder);
         Provider providerAnnotation = findProviderAnnotation(providerBeanClass);
         Class<?> providerInterfaceClass = findProviderInterface(providerAnnotation, providerBeanClass);
 
-        String providerWrapperName = generateProviderWrapperName(providerInterfaceClass);
-        AbstractBeanDefinition wrapperDefinition = buildProviderWrapperDefinition(ProviderWrapper.class, providerInterfaceClass, providerBeanDefinitionHolder.getBeanName());
+        String providerWrapperBeanName = buildProviderWrapperBeanName(providerInterfaceClass);
+        AbstractBeanDefinition wrapperBeanDefinition = buildProviderWrapperDefinition(ProviderWrapper.class, providerInterfaceClass, providerBeanDefinitionHolder.getBeanName());
 
         // Check duplicated candidate bean
-        if (providerScanner.checkCandidate(providerWrapperName, wrapperDefinition)) {
-            registry.registerBeanDefinition(providerWrapperName, wrapperDefinition);
-            log.info("Registered RPC provider wrapper [{}] to spring context", providerWrapperName);
+        if (providerScanner.checkCandidate(providerWrapperBeanName, wrapperBeanDefinition)) {
+            registry.registerBeanDefinition(providerWrapperBeanName, wrapperBeanDefinition);
+            log.info("Registered RPC provider wrapper [{}] to spring context", providerWrapperBeanName);
         }
     }
 
@@ -171,21 +169,21 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         return interfaceClass;
     }
 
-    private String generateProviderWrapperName(Class<?> interfaceClass) {
-        ProviderWrapperBeanNameBuilder builder = ProviderWrapperBeanNameBuilder.builder(interfaceClass, environment);
-        return builder.build();
+    private String buildProviderWrapperBeanName(Class<?> interfaceClass) {
+        return ProviderWrapperBeanNameBuilder.builder(interfaceClass, environment).build();
     }
 
-    private AbstractBeanDefinition buildProviderWrapperDefinition(Class<?> providerBeanClass, Class<?> providerInterfaceClass, String providerInstanceName) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(providerBeanClass);
+    private AbstractBeanDefinition buildProviderWrapperDefinition(Class<?> providerWrapperClass, Class<?> providerInterfaceClass, String providerInstanceName) {
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(providerWrapperClass);
         addPropertyValue(builder, "interfaceName", providerInterfaceClass.getName());
+        addPropertyValue(builder, "interfaceClass", providerInterfaceClass);
         addPropertyValue(builder, "instanceName", providerInstanceName);
         // Obtain the instance by instance name and inject
         addPropertyReference(builder, "instance", providerInstanceName);
         return builder.getBeanDefinition();
     }
 
-    private void addPropertyValue(BeanDefinitionBuilder builder, String propertyName, String propertyValue) {
+    private void addPropertyValue(BeanDefinitionBuilder builder, String propertyName, Object propertyValue) {
         builder.addPropertyValue(propertyName, propertyValue);
     }
 

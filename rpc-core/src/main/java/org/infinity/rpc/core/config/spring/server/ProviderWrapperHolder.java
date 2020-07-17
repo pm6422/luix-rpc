@@ -1,6 +1,4 @@
-package org.infinity.rpc.core.server;
-
-import org.infinity.rpc.core.config.spring.server.ProviderWrapper;
+package org.infinity.rpc.core.config.spring.server;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -7,7 +7,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
-import org.infinity.rpc.core.server.ProviderWrapperHolder;
+import org.infinity.rpc.core.config.spring.server.ProviderWrapperHolder;
 
 import java.lang.reflect.Method;
 import java.util.UUID;
