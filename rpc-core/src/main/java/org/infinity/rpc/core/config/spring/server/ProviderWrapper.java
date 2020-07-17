@@ -25,7 +25,7 @@ public class ProviderWrapper<T> implements DisposableBean {
     /**
      * The provider interface fully-qualified name
      */
-    private   String   interfaceName;
+    private String   interfaceName;
     /**
      * The interface class of the provider
      */
@@ -33,11 +33,11 @@ public class ProviderWrapper<T> implements DisposableBean {
     /**
      * The provider instance simple name, also known as bean name
      */
-    private   String   instanceName;
+    private String   instanceName;
     /**
      * The provider instance
      */
-    private   T        instance;
+    private T        instance;
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition

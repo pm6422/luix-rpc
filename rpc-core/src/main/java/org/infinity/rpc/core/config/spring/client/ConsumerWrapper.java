@@ -36,19 +36,4 @@ public class ConsumerWrapper<T> implements DisposableBean {
     public void destroy() throws Exception {
         // Leave blank intentionally for now
     }
-
-    private Class<?> getInterfaceClass() {
-        if (interfaceClass != null) {
-            return interfaceClass;
-        }
-        try {
-            if (interfaceName != null && interfaceName.length() > 0) {
-                interfaceClass = Class.forName(interfaceName, true, Thread.currentThread().getContextClassLoader());
-            }
-        } catch (ClassNotFoundException t) {
-            throw new IllegalStateException(t.getMessage(), t);
-        }
-
-        return interfaceClass;
-    }
 }
