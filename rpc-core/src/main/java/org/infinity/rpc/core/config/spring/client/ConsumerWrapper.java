@@ -14,23 +14,23 @@ import org.springframework.beans.factory.FactoryBean;
 @Slf4j
 @Data
 @Builder
-public class ConsumerWrapper implements DisposableBean {
+public class ConsumerWrapper<T> implements DisposableBean {
     /**
      * The consumer interface class fully-qualified name
      */
-    private             String   interfaceName;
+    private String   interfaceName;
     /**
      * The interface class of the consumer
      */
-    protected           Class<?> interfaceClass;
+    private Class<?> interfaceClass;
     /**
      * The consumer instance simple name, also known as bean name
      */
-    private             String   instanceName;
+    private String   instanceName;
     /**
      * The consumer proxy instance, refer the return type of {@link org.infinity.rpc.core.client.proxy.RpcConsumerProxy#getProxy(Class)}
      */
-    private             Object   proxyInstance;
+    private T        proxyInstance;
 
     @Override
     public void destroy() throws Exception {

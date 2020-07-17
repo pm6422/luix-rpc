@@ -29,7 +29,7 @@ public class ProviderWrapper<T> implements DisposableBean {
     /**
      * The interface class of the provider
      */
-    protected Class<?> interfaceClass;
+    private Class<?> interfaceClass;
     /**
      * The provider instance simple name, also known as bean name
      */

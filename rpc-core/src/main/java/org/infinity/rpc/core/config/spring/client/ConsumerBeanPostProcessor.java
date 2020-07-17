@@ -191,8 +191,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
      * @return consumer proxy instance
      * @throws Exception if any exception thrown
      */
-    private <T> Object getConsumerProxy(Class<?> interfaceClass, RpcConsumerProxy rpcConsumerProxy) throws
-            Exception {
+    private <T> Object getConsumerProxy(Class<T> interfaceClass, RpcConsumerProxy rpcConsumerProxy) throws Exception {
         String key = interfaceClass.getName();
         RpcConsumerFactoryBean rpcConsumerFactoryBean = rpcConsumerFactoryBeanPerInterfaceName.get(key);
         if (rpcConsumerFactoryBean == null) {
@@ -202,14 +201,14 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
         return rpcConsumerFactoryBean.getObject(rpcConsumerProxy, interfaceClass);
     }
 
-    private void registerConsumerWrapperBean(Class<?> interfaceClass, Object proxyInstance) {
+    private <T> void registerConsumerWrapperBean(Class<?> interfaceClass, T proxyInstance) {
         // Build the consumer bean name
         String consumerWrapperBeanName = buildConsumerWrapperBeanName(interfaceClass);
 
         ConsumerWrapper consumerWrapper = ConsumerWrapper.builder()
-                .instanceName(consumerWrapperBeanName)
                 .interfaceClass(interfaceClass)
                 .interfaceName(interfaceClass.getName())
+                .instanceName(consumerWrapperBeanName)
                 .proxyInstance(proxyInstance)
                 .build();
 
