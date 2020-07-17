@@ -81,10 +81,10 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
         }
         // Activate bean initialization
         RpcConsumerProxy rpcConsumerProxy = applicationContext.getBean(RpcConsumerProxy.class);
-        // Method dependency injection by reflection
-        setConsumerOnMethod(bean, clazz, rpcConsumerProxy);
         // Field dependency injection by reflection
         setConsumerOnField(bean, clazz, rpcConsumerProxy);
+        // Method dependency injection by reflection
+        setConsumerOnMethod(bean, clazz, rpcConsumerProxy);
         return bean;
     }
 
