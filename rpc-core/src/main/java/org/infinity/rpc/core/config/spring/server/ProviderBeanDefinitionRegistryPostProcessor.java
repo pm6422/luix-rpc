@@ -187,8 +187,15 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         builder.addPropertyValue(propertyName, propertyValue);
     }
 
-    private void addPropertyReference(BeanDefinitionBuilder builder, String propertyName, String providerInstanceName) {
-        builder.addPropertyReference(propertyName, environment.resolvePlaceholders(providerInstanceName));
+    /**
+     * Obtain the instance by instance name and inject
+     *
+     * @param builder      bean definition builder
+     * @param propertyName property name
+     * @param instanceName provider instance name
+     */
+    private void addPropertyReference(BeanDefinitionBuilder builder, String propertyName, String instanceName) {
+        builder.addPropertyReference(propertyName, environment.resolvePlaceholders(instanceName));
     }
 
     @Override

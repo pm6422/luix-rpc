@@ -38,8 +38,8 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
         Set<String> scanBasePackages = getScanBasePackages(importingClassMetadata);
         registerRpcAutoConfiguration(registry);
         registerRpcLifecycleApplicationListener(registry);
-        registerProviderDefinitionRegistryPostProcessor(scanBasePackages, registry);
-        registerConsumerDefinitionRegistryPostProcessor(scanBasePackages, registry);
+        registerProviderBeanDefinitionRegistryPostProcessor(scanBasePackages, registry);
+        registerConsumerBeanPostProcessor(scanBasePackages, registry);
 //        registerConsumerAnnotationBeanPostProcessor(registry);
     }
 
@@ -84,7 +84,7 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
      * @param scanBasePackages
      * @param registry
      */
-    private void registerProviderDefinitionRegistryPostProcessor(Set<String> scanBasePackages, BeanDefinitionRegistry registry) {
+    private void registerProviderBeanDefinitionRegistryPostProcessor(Set<String> scanBasePackages, BeanDefinitionRegistry registry) {
         registerBeanDefinition(scanBasePackages, registry, ProviderBeanDefinitionRegistryPostProcessor.class);
     }
 
@@ -94,7 +94,7 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
      * @param scanBasePackages
      * @param registry
      */
-    private void registerConsumerDefinitionRegistryPostProcessor(Set<String> scanBasePackages, BeanDefinitionRegistry registry) {
+    private void registerConsumerBeanPostProcessor(Set<String> scanBasePackages, BeanDefinitionRegistry registry) {
         registerBeanDefinition(scanBasePackages, registry, ConsumerBeanPostProcessor.class);
     }
 
