@@ -18,7 +18,6 @@ import java.util.UUID;
 
 @Slf4j
 public class RpcConsumerProxy {
-    public static final String         CONSUMER_PROXY_BEAN = "ConsumerProxyBean";
     private             List<Registry> registries;
 
     public RpcConsumerProxy(List<Registry> registries) {

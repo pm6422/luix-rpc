@@ -12,7 +12,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.*;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
-import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
@@ -173,7 +172,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     }
 
     private String generateProviderWrapperName(Class<?> interfaceClass) {
-        ProviderWrapperNameBuilder builder = ProviderWrapperNameBuilder.create(interfaceClass, environment);
+        ProviderWrapperBeanNameBuilder builder = ProviderWrapperBeanNameBuilder.builder(interfaceClass, environment);
         return builder.build();
     }
 

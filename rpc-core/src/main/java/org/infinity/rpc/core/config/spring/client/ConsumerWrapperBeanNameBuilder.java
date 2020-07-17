@@ -17,17 +17,17 @@
 package org.infinity.rpc.core.config.spring.client;
 
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
 import org.springframework.core.env.Environment;
 
 /**
- * Consumer {@link org.infinity.rpc.core.client.annotation.Consumer @Consumer} Bean Builder
+ * Consumer {@link org.infinity.rpc.core.client.annotation.Consumer @Consumer} wrapper bean Builder
  */
-public class ConsumerWrapperBeanNameGenerator {
-    private static final String      SEPARATOR = ":";
+public class ConsumerWrapperBeanNameBuilder {
+    public static final  String      CONSUMER_WRAPPER_BEAN_PREFIX = "ConsumerWrapperBean";
+    private static final String      SEPARATOR                    = ":";
     // Required
-    private final        String      interfaceName;
-    private final        Environment environment;
+    private final        Class<?>    interfaceClass;
+    private final        Environment env;
     // Optional
     private              String      version;
     private              String      group;
@@ -35,24 +35,13 @@ public class ConsumerWrapperBeanNameGenerator {
     /**
      * Prohibit instantiate an instance outside the class
      */
-    private ConsumerWrapperBeanNameGenerator(Class<?> interfaceClass, Environment environment) {
-        this(interfaceClass.getName(), environment);
+    private ConsumerWrapperBeanNameBuilder(Class<?> interfaceClass, Environment env) {
+        this.interfaceClass = interfaceClass;
+        this.env = env;
     }
 
-    /**
-     * Prohibit instantiate an instance outside the class
-     */
-    private ConsumerWrapperBeanNameGenerator(String interfaceName, Environment environment) {
-        this.interfaceName = interfaceName;
-        this.environment = environment;
-    }
-
-    public static ConsumerWrapperBeanNameGenerator builder(Class<?> interfaceClass, Environment environment) {
-        return new ConsumerWrapperBeanNameGenerator(interfaceClass, environment);
-    }
-
-    public static ConsumerWrapperBeanNameGenerator builder(String interfaceName, Environment environment) {
-        return new ConsumerWrapperBeanNameGenerator(interfaceName, environment);
+    public static ConsumerWrapperBeanNameBuilder builder(Class<?> interfaceClass, Environment environment) {
+        return new ConsumerWrapperBeanNameBuilder(interfaceClass, environment);
     }
 
     private static void append(StringBuilder builder, String value) {
@@ -61,26 +50,26 @@ public class ConsumerWrapperBeanNameGenerator {
         }
     }
 
-    public ConsumerWrapperBeanNameGenerator group(String group) {
+    public ConsumerWrapperBeanNameBuilder group(String group) {
         this.group = group;
         return this;
     }
 
-    public ConsumerWrapperBeanNameGenerator version(String version) {
+    public ConsumerWrapperBeanNameBuilder version(String version) {
         this.version = version;
         return this;
     }
 
     public String build() {
-        StringBuilder beanNameBuilder = new StringBuilder(RpcConsumerProxy.CONSUMER_PROXY_BEAN);
+        StringBuilder beanNameBuilder = new StringBuilder(CONSUMER_WRAPPER_BEAN_PREFIX);
         // Required
-        append(beanNameBuilder, interfaceName);
+        append(beanNameBuilder, interfaceClass.getName());
         // Optional
         append(beanNameBuilder, version);
         append(beanNameBuilder, group);
         // Build and remove last ":"
         String rawBeanName = beanNameBuilder.toString();
         // Resolve placeholders
-        return environment.resolvePlaceholders(rawBeanName);
+        return env.resolvePlaceholders(rawBeanName);
     }
 }

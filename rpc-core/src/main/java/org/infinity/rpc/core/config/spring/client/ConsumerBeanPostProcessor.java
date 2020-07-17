@@ -227,7 +227,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
      * @return The name of bean that annotated {@link Consumer @Consumer} in spring context
      */
     private String buildConsumerWrapperBeanName(Class<?> defaultInterfaceClass) {
-        return ConsumerWrapperBeanNameGenerator.builder(defaultInterfaceClass, environment).build();
+        return ConsumerWrapperBeanNameBuilder.builder(defaultInterfaceClass, environment).build();
     }
 
     private boolean existsConsumerWrapperBean(String consumerWrapperBeanName) {

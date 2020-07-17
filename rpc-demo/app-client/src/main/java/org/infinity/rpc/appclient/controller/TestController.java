@@ -3,8 +3,7 @@ package org.infinity.rpc.appclient.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.infinity.app.common.service.AppService;
-import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
-import org.infinity.rpc.core.config.spring.client.ConsumerWrapper;
+import org.infinity.rpc.core.config.spring.client.ConsumerWrapperBeanNameBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +47,7 @@ public class TestController {
     @ApiOperation("测试获取AppService")
     @GetMapping("/open-api/test/app-service")
     public Object testGetAppService() throws InterruptedException {
-        Object bean = applicationContext.getBean(RpcConsumerProxy.CONSUMER_PROXY_BEAN.concat(":").concat(AppService.class.getName()));
+        Object bean = applicationContext.getBean(ConsumerWrapperBeanNameBuilder.CONSUMER_WRAPPER_BEAN_PREFIX.concat(":").concat(AppService.class.getName()));
         return bean;
     }
 }
