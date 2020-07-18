@@ -4,8 +4,10 @@ import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.exception.InfinityConfigurationException;
+import org.infinity.rpc.core.protocol.constants.ProtocolName;
 import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.RegistryFactory;
+import org.infinity.rpc.core.registry.constants.RegistryName;
 import org.infinity.rpc.utilities.id.ShortIdWorker;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.springframework.beans.BeanUtils;
@@ -78,31 +80,14 @@ public class InfinityProperties implements InitializingBean {
 
     @Data
     public static class Protocol {
-        public enum Name {
-            infinity("infinity");
-
-            private String value;
-
-            Name(String value) {
-                this.value = value;
-            }
-
-            public Name fromName(String name) {
-                return Name.valueOf(name);
-            }
-
-            public String value() {
-                return value;
-            }
-        }
-
         // Name of protocol
-        // SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type, and check whether value is valid during application startup.
-        private Name    name = Name.infinity;
+        // SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type,
+        // and check whether value is valid or not during application startup.
+        private ProtocolName name = ProtocolName.infinity;
         // Host name of the RPC server
-        private String  host = NetworkIpUtils.INTRANET_IP;
+        private String       host = NetworkIpUtils.INTRANET_IP;
         // Port number of the RPC server
-        private Integer port;
+        private Integer      port;
 
         public void initialize() {
             checkIntegrity();
@@ -119,40 +104,22 @@ public class InfinityProperties implements InitializingBean {
 
     @Data
     public static class Registry {
-        public enum Name {
-            zookeeper("zookeeper");
-
-            private String value;
-
-            Name(String value) {
-                this.value = value;
-            }
-
-            public Name fromName(String name) {
-                return Name.valueOf(name);
-            }
-
-            public String value() {
-                return value;
-            }
-        }
-
         // Name of register center
-        private Name    name           = Name.zookeeper;
+        private RegistryName name           = RegistryName.zookeeper;
         // Registry center host name
-        private String  host;
+        private String       host;
         // Registry center port number
-        private Integer port;
+        private Integer      port;
         // Registry center server address
-        private String  address;
+        private String       address;
         // 注册中心连接超时时间(毫秒)
-        private Integer connectTimeout = Math.toIntExact(TimeUnit.SECONDS.toMillis(1));
+        private Integer      connectTimeout = Math.toIntExact(TimeUnit.SECONDS.toMillis(1));
         // 注册中心会话超时时间(毫秒)
-        private Integer sessionTimeout = Math.toIntExact(TimeUnit.MINUTES.toMillis(1));
+        private Integer      sessionTimeout = Math.toIntExact(TimeUnit.MINUTES.toMillis(1));
         // 注册中心连接失败后重试的时间间隔(毫秒)
-        private Integer retryInterval  = Math.toIntExact(TimeUnit.SECONDS.toMillis(30));
+        private Integer      retryInterval  = Math.toIntExact(TimeUnit.SECONDS.toMillis(30));
         // 注册中心请求超时时间(毫秒)
-        private Integer requestTimeout;
+        private Integer      requestTimeout;
 
         public void initialize() {
             checkIntegrity();
@@ -172,9 +139,9 @@ public class InfinityProperties implements InitializingBean {
         }
 
         private void checkValidity() {
-            Optional.ofNullable(RegistryFactory.getInstance(name.value))
+            Optional.ofNullable(RegistryFactory.getInstance(name.getValue()))
                     .orElseThrow(() -> new InfinityConfigurationException("Failed to load the proper registry factory, " +
-                            "please check whether the dependency [rpc-registry-" + name.value + "] is in your class path!"));
+                            "please check whether the dependency [rpc-registry-" + name.getValue() + "] is in your class path!"));
         }
     }
 }

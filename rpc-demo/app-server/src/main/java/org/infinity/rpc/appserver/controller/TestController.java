@@ -54,9 +54,9 @@ public class TestController {
     @ApiOperation("测试注册provider")
     @GetMapping("/open-api/test/register-provider")
     public void registerProvider() {
-        Registry registry = RegistryFactory.getInstance(infinityProperties.getRegistry().getName().value()).getRegistry(registryUrls.get(0));
+        Registry registry = RegistryFactory.getInstance(infinityProperties.getRegistry().getName().getValue()).getRegistry(registryUrls.get(0));
         Url providerUrl = Url.of(
-                infinityProperties.getProtocol().getName().value(),
+                infinityProperties.getProtocol().getName().getValue(),
                 "192.168.0.1",
                 infinityProperties.getProtocol().getPort(),
                 AppService.class.getName());

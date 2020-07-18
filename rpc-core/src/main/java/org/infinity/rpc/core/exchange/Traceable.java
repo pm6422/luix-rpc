@@ -1,0 +1,32 @@
+package org.infinity.rpc.core.exchange;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+
+public interface Traceable<T> {
+    AtomicLong          SENDING_TIME  = new AtomicLong();
+    AtomicLong          RECEIVED_TIME = new AtomicLong();
+    Map<String, String> TRACES        = new ConcurrentHashMap<>();
+
+    /**
+     * The timestamp format is compatible with the different systems
+     *
+     * @param sendingTime
+     */
+    T sendingTime(long sendingTime);
+
+    long getSendingTime();
+
+    RpcRequestBuilder receivedTime(long receivedTime);
+
+    long getReceivedTime();
+
+    long getElapsedTime();
+
+    Map<String, String> getTraces();
+
+    T trace(String key, String value);
+
+    String getTrace(String key);
+}

@@ -120,7 +120,7 @@ public class RpcLifecycle {
      */
     private Url createProviderUrl(InfinityProperties infinityProperties, ProviderWrapper providerWrapper) {
         Url providerUrl = Url.of(
-                infinityProperties.getProtocol().getName().value(),
+                infinityProperties.getProtocol().getName().getValue(),
                 NetworkIpUtils.INTRANET_IP,
                 infinityProperties.getProtocol().getPort(),
                 providerWrapper.getInterfaceName());

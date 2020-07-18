@@ -8,7 +8,6 @@ import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.Url;
-import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,7 +31,7 @@ public class RpcAutoConfiguration {
      */
     @Bean
     public List<Url> registryUrls(InfinityProperties infinityProperties) {
-        Url registryUrl = Url.of(infinityProperties.getRegistry().getName().value(),
+        Url registryUrl = Url.of(infinityProperties.getRegistry().getName().getValue(),
                 infinityProperties.getRegistry().getHost(),
                 infinityProperties.getRegistry().getPort(),
                 Registrable.class.getName());
@@ -53,7 +52,7 @@ public class RpcAutoConfiguration {
         List<Registry> registries = new ArrayList<>();
         for (Url registryUrl : registryUrls) {
             // Register provider URL to all the registries
-            RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(infinityProperties.getRegistry().getName().value());
+            RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(infinityProperties.getRegistry().getName().getValue());
             registries.add(registryFactoryImpl.getRegistry(registryUrl));
         }
         return new RpcConsumerProxy(registries);
