@@ -1,14 +1,16 @@
 package org.infinity.rpc.core.exchange;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 
 import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Data
+@Getter
+@ToString
 @Builder
 public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     private static final long                serialVersionUID = -6259178379027752471L;

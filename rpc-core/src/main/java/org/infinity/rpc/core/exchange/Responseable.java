@@ -1,12 +1,32 @@
 package org.infinity.rpc.core.exchange;
 
-public interface Responseable {
+public interface Responseable<T> {
     /**
      * Request ID
      *
      * @return
      */
     long getRequestId();
+
+    /**
+     * Protocol
+     *
+     * @return
+     */
+    String getProtocol();
+
+    /**
+     * Protocol version
+     *
+     * @return
+     */
+    byte getProtocolVersion();
+
+    /**
+     * Timeout in milliseconds
+     * @return
+     */
+    int getProcessingTimeout();
 
     /**
      * <pre>
@@ -29,25 +49,11 @@ public interface Responseable {
      */
     Exception getException();
 
-    /**
-     *
-     */
-    void setElapsedTime();
+    T elapsedTime(long elapsedTime);
 
     /**
      * @return
      */
     long getElapsedTime();
 
-    /**
-     * Timeout in milliseconds
-     * @return
-     */
-    int getProcessingTimeout();
-
-    /**
-     *
-     * @return
-     */
-    String getProtocolVersion();
 }

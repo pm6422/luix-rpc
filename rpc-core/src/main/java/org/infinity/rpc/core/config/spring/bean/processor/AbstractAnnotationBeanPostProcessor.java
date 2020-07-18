@@ -3,6 +3,7 @@ package org.infinity.rpc.core.config.spring.bean.processor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanCreationException;
@@ -119,7 +120,7 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
                         // thread-safe atomic operation
                         this.annotatedInjectionMetadataPerBeanName.put(cacheKey, metadata);
                     } catch (NoClassDefFoundError err) {
-                        throw new IllegalStateException("Failed to find annotation metadata info on class [" + beanType.getName() + "]", err);
+                        throw new RpcConfigurationException("Failed to find annotation metadata info on class [" + beanType.getName() + "]", err);
                     }
                 }
             }

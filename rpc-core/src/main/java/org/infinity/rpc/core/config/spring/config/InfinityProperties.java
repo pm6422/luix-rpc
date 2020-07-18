@@ -3,7 +3,7 @@ package org.infinity.rpc.core.config.spring.config;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.infinity.rpc.core.exception.InfinityConfigurationException;
+import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.protocol.constants.ProtocolName;
 import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.RegistryFactory;
@@ -140,7 +140,7 @@ public class InfinityProperties implements InitializingBean {
 
         private void checkValidity() {
             Optional.ofNullable(RegistryFactory.getInstance(name.getValue()))
-                    .orElseThrow(() -> new InfinityConfigurationException("Failed to load the proper registry factory, " +
+                    .orElseThrow(() -> new RpcConfigurationException("Failed to load the proper registry factory, " +
                             "please check whether the dependency [rpc-registry-" + name.getValue() + "] is in your class path!"));
         }
     }

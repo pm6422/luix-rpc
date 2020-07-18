@@ -32,13 +32,13 @@ public class ClassPathBeanDefinitionRegistryScanner extends ClassPathBeanDefinit
 
     /**
      * Expose method to public
+     *
      * @param beanName
      * @param beanDefinition
      * @return
-     * @throws IllegalStateException
      */
     @Override
-    public boolean checkCandidate(String beanName, BeanDefinition beanDefinition) throws IllegalStateException {
+    public boolean checkCandidate(String beanName, BeanDefinition beanDefinition) {
         return super.checkCandidate(beanName, beanDefinition);
     }
 }

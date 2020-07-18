@@ -3,6 +3,7 @@ package org.infinity.rpc.core.registry;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.infinity.rpc.core.exception.RpcConfigurationException;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -274,13 +275,13 @@ public final class Url implements Serializable {
         }
         i = url.indexOf("://");
         if (i >= 0) {
-            if (i == 0) throw new IllegalStateException("url missing protocol: \"" + url + "\"");
+            if (i == 0) throw new RpcConfigurationException("url missing protocol: \"" + url + "\"");
             protocol = url.substring(0, i);
             url = url.substring(i + 3);
         } else {
             i = url.indexOf(":/");
             if (i >= 0) {
-                if (i == 0) throw new IllegalStateException("url missing protocol: \"" + url + "\"");
+                if (i == 0) throw new RpcConfigurationException("url missing protocol: \"" + url + "\"");
                 protocol = url.substring(0, i);
                 url = url.substring(i + 1);
             }

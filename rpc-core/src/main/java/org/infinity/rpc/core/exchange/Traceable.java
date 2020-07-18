@@ -18,7 +18,7 @@ public interface Traceable<T> {
 
     long getSendingTime();
 
-    RpcRequestBuilder receivedTime(long receivedTime);
+    T receivedTime(long receivedTime);
 
     long getReceivedTime();
 

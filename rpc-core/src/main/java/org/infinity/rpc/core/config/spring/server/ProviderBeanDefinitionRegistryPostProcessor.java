@@ -3,6 +3,7 @@ package org.infinity.rpc.core.config.spring.server;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.bean.DefaultBeanNameGenerator;
 import org.infinity.rpc.core.config.spring.bean.registry.ClassPathBeanDefinitionRegistryScanner;
+import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -154,14 +155,14 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         Class<?> interfaceClass;
 
         if (interfaceClasses.length == 0) {
-            throw new IllegalStateException("The RPC service provider bean must implement more than one interfaces!");
+            throw new RpcConfigurationException("The RPC service provider bean must implement more than one interfaces!");
         } else if (interfaceClasses.length == 1) {
             interfaceClass = interfaceClasses[0];
         } else {
             // Get service interface from annotation if a instance has more than one declared interfaces
             interfaceClass = providerAnnotation.interfaceClass();
             if (void.class.equals(providerAnnotation.interfaceClass())) {
-                throw new IllegalStateException("The @Provider annotation of RPC service provider must specify interfaceClass attribute value " +
+                throw new RpcConfigurationException("The @Provider annotation of RPC service provider must specify interfaceClass attribute value " +
                         "if the bean implements more than one interfaces!");
             }
             //  TODO: interfaceName handle
