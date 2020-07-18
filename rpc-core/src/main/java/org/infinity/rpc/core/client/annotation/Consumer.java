@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * RPC consumer annotation
+ * Please refer {@link org.infinity.rpc.core.constant.ConsumerProviderAnnotationAttributes} for the property definition
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})

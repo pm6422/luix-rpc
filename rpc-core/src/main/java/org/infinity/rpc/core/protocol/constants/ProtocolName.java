@@ -1,6 +1,8 @@
 package org.infinity.rpc.core.protocol.constants;
 
-public enum ProtocolName {
+import org.infinity.rpc.utilities.lang.EnumValueFieldHoldable;
+
+public enum ProtocolName implements EnumValueFieldHoldable {
     infinity("infinity");
 
     private String value;
@@ -9,10 +11,7 @@ public enum ProtocolName {
         this.value = value;
     }
 
-    public ProtocolName fromName(String name) {
-        return ProtocolName.valueOf(name);
-    }
-
+    @Override
     public String getValue() {
         return value;
     }

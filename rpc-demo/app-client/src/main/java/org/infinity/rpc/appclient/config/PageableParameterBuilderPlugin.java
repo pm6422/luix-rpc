@@ -29,8 +29,7 @@ import static springfox.documentation.spi.schema.contexts.ModelContext.inputPara
 @ConditionalOnProperty(prefix = "application.swagger", value = "enabled", havingValue = "true")
 public class PageableParameterBuilderPlugin implements ParameterBuilderPlugin {
     private final TypeNameExtractor nameExtractor;
-
-    private final TypeResolver resolver;
+    private final TypeResolver      resolver;
 
     @Autowired
     public PageableParameterBuilderPlugin(TypeNameExtractor nameExtractor, TypeResolver resolver) {

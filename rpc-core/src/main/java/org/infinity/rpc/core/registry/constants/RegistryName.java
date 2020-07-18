@@ -1,6 +1,8 @@
 package org.infinity.rpc.core.registry.constants;
 
-public enum RegistryName {
+import org.infinity.rpc.utilities.lang.EnumValueFieldHoldable;
+
+public enum RegistryName implements EnumValueFieldHoldable {
     zookeeper("zookeeper");
 
     private String value;
@@ -9,10 +11,7 @@ public enum RegistryName {
         this.value = value;
     }
 
-    public RegistryName fromName(String name) {
-        return RegistryName.valueOf(name);
-    }
-
+    @Override
     public String getValue() {
         return value;
     }
