@@ -9,9 +9,9 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Builder
 @Getter
 @ToString
-@Builder
 public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     private static final long                serialVersionUID = -6259178379027752471L;
     private              long                requestId;

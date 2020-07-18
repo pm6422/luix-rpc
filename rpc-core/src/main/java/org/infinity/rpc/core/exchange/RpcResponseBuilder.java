@@ -15,9 +15,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 
+@Builder
 @Getter
 @ToString
-@Builder
 @Slf4j
 public class RpcResponseBuilder implements Responseable, Traceable, Callbackable, Serializable {
     private static final long serialVersionUID = 882479213033600079L;
