@@ -70,6 +70,7 @@ public final class Url implements Serializable {
     public static final  String              PARAM_RETRY_INTERVAL             = "retryInterval";
     public static final  String              PARAM_APP                        = "app";
     public static final  String              PARAM_ACTIVATED_TIME             = "activatedTime";
+
     /**
      * Extended parameters
      */

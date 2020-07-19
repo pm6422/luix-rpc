@@ -9,10 +9,7 @@ import org.infinity.rpc.core.exception.RpcInvocationException;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 
 @Builder
@@ -28,18 +25,21 @@ public class RpcResponseBuilder implements Responseable, Traceable, Callbackable
     private           int                            processingTimeout;
     private           Object                         result;
     private           Exception                      exception;
-    private           Map<String, String>            attachments     = new ConcurrentHashMap<>();
-    private transient List<Pair<Runnable, Executor>> tasks           = new CopyOnWriteArrayList();
+
+    @Override
+    public Map<String, String> getAttachments() {
+        return ATTACHMENTS;
+    }
 
     @Override
     public RpcResponseBuilder attachment(String key, String value) {
-        attachments.put(key, value);
+        ATTACHMENTS.putIfAbsent(key, value);
         return this;
     }
 
     @Override
     public String getAttachment(String key) {
-        return attachments.get(key);
+        return ATTACHMENTS.get(key);
     }
 
     public Object getResult() {
@@ -103,7 +103,7 @@ public class RpcResponseBuilder implements Responseable, Traceable, Callbackable
     @Override
     public RpcResponseBuilder finishCallback(Runnable runnable, Executor executor) {
         if (!FINISHED.get()) {
-            tasks.add(Pair.of(runnable, executor));
+            TASKS.add(Pair.of(runnable, executor));
         }
         return this;
     }
@@ -113,7 +113,7 @@ public class RpcResponseBuilder implements Responseable, Traceable, Callbackable
         if (!FINISHED.compareAndSet(false, true)) {
             return;
         }
-        for (Pair<Runnable, Executor> task : tasks) {
+        for (Pair<Runnable, Executor> task : TASKS) {
             Runnable runnable = task.getKey();
             Executor executor = task.getValue();
             if (executor == null) {

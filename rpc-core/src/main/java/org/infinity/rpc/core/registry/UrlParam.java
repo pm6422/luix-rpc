@@ -1,7 +1,5 @@
 package org.infinity.rpc.core.registry;
 
-import java.util.concurrent.TimeUnit;
-
 public enum UrlParam {
     // registry connect timeout
 //    registryConnectTimeout("connectTimeout", TimeUnit.SECONDS.toMillis(1)),
@@ -11,6 +9,9 @@ public enum UrlParam {
     /************************** SPI end ******************************/
 //    registryRetryPeriod("registryRetryPeriod", TimeUnit.SECONDS.toMillis(30)),
 //    nodeType("nodeType", "service"),
+
+    /** request id from http interface **/
+    requestIdFromClient("requestIdFromClient", 0),
     // 切换group时，各个group的权重比。默认无权重
     weights("weights", "");
 

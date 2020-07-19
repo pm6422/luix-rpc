@@ -1,8 +1,11 @@
 package org.infinity.rpc.core.exchange;
 
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public interface Requestable<T> extends Exchangable {
+
+    AtomicInteger RETRIES = new AtomicInteger(0);
+
     /**
      * Provider interface name
      *
@@ -23,6 +26,13 @@ public interface Requestable<T> extends Exchangable {
      * @return
      */
     Object[] getMethodArguments();
+
+    /**
+     * Invocation retries count
+     * @param retries
+     * @return
+     */
+    T retries(int retries);
 
     /**
      * Retries count

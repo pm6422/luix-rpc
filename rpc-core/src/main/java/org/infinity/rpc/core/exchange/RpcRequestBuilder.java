@@ -7,7 +7,6 @@ import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Builder
 @Getter
@@ -20,18 +19,21 @@ public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     private              String              interfaceName;
     private              String              methodName;
     private              Object[]            methodArguments;
-    private              int                 retries          = 0;
-    private              Map<String, String> attachments      = new ConcurrentHashMap<>();
+
+    @Override
+    public Map<String, String> getAttachments() {
+        return ATTACHMENTS;
+    }
 
     @Override
     public RpcRequestBuilder attachment(String key, String value) {
-        attachments.put(key, value);
+        ATTACHMENTS.putIfAbsent(key, value);
         return this;
     }
 
     @Override
     public String getAttachment(String key) {
-        return attachments.get(key);
+        return ATTACHMENTS.get(key);
     }
 
     @Override
@@ -81,5 +83,16 @@ public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     @Override
     public String getTrace(String key) {
         return TRACES.get(key);
+    }
+
+    @Override
+    public RpcRequestBuilder retries(int retries) {
+        RETRIES.compareAndSet(0, retries);
+        return this;
+    }
+
+    @Override
+    public int getRetries() {
+        return RETRIES.get();
     }
 }
