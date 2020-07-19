@@ -2,28 +2,7 @@ package org.infinity.rpc.core.exchange;
 
 import java.util.Map;
 
-public interface Requestable<T> {
-    /**
-     * Request ID
-     *
-     * @return
-     */
-    long getRequestId();
-
-    /**
-     * Protocol
-     *
-     * @return
-     */
-    String getProtocol();
-
-    /**
-     * Protocol version
-     *
-     * @return
-     */
-    byte getProtocolVersion();
-
+public interface Requestable<T> extends Exchangable {
     /**
      * Provider interface name
      *
@@ -51,27 +30,4 @@ public interface Requestable<T> {
      * @return
      */
     int getRetries();
-
-    /**
-     * Attachments
-     *
-     * @return
-     */
-    Map<String, String> getAttachments();
-
-    /**
-     * Add attachment
-     *
-     * @param key
-     * @param value
-     */
-    T attachment(String key, String value);
-
-    /**
-     * Get attachment
-     *
-     * @param key
-     * @return
-     */
-    String getAttachment(String key);
 }

@@ -28,9 +28,20 @@ public class RpcResponseBuilder implements Responseable, Traceable, Callbackable
     private           int                            processingTimeout;
     private           Object                         result;
     private           Exception                      exception;
-    private           long                           elapsedTime;
     private           Map<String, String>            attachments     = new ConcurrentHashMap<>();
+    private           long                           elapsedTime;
     private transient List<Pair<Runnable, Executor>> tasks           = new CopyOnWriteArrayList();
+
+    @Override
+    public RpcResponseBuilder attachment(String key, String value) {
+        attachments.put(key, value);
+        return this;
+    }
+
+    @Override
+    public String getAttachment(String key) {
+        return attachments.get(key);
+    }
 
     public Object getResult() {
         if (exception != null) {
@@ -39,12 +50,6 @@ public class RpcResponseBuilder implements Responseable, Traceable, Callbackable
                     new RpcInvocationException(exception.getMessage(), exception);
         }
         return result;
-    }
-
-    @Override
-    public RpcResponseBuilder elapsedTime(long elapsedTime) {
-        this.elapsedTime = elapsedTime;
-        return this;
     }
 
     @Override
@@ -61,6 +66,12 @@ public class RpcResponseBuilder implements Responseable, Traceable, Callbackable
     @Override
     public RpcResponseBuilder receivedTime(long receivedTime) {
         RECEIVED_TIME.compareAndSet(0, receivedTime);
+        return this;
+    }
+
+    @Override
+    public RpcResponseBuilder elapsedTime(long elapsedTime) {
+        this.elapsedTime = elapsedTime;
         return this;
     }
 

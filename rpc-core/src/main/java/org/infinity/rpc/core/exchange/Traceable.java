@@ -22,6 +22,8 @@ public interface Traceable<T> {
 
     long getReceivedTime();
 
+    T elapsedTime(long elapsedTime);
+
     long getElapsedTime();
 
     Map<String, String> getTraces();
