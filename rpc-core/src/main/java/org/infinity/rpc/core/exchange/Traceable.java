@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public interface Traceable<T> {
     AtomicLong          SENDING_TIME  = new AtomicLong();
     AtomicLong          RECEIVED_TIME = new AtomicLong();
+    AtomicLong          ELAPSED_TIME  = new AtomicLong();
     Map<String, String> TRACES        = new ConcurrentHashMap<>();
 
     /**

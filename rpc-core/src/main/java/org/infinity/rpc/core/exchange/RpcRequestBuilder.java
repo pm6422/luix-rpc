@@ -22,7 +22,6 @@ public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     private              Object[]            methodArguments;
     private              int                 retries          = 0;
     private              Map<String, String> attachments      = new ConcurrentHashMap<>();
-    private              long                elapsedTime;
 
     @Override
     public RpcRequestBuilder attachment(String key, String value) {
@@ -33,12 +32,6 @@ public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     @Override
     public String getAttachment(String key) {
         return attachments.get(key);
-    }
-
-    @Override
-    public RpcRequestBuilder elapsedTime(long elapsedTime) {
-        this.elapsedTime = elapsedTime;
-        return this;
     }
 
     @Override
@@ -61,6 +54,12 @@ public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     @Override
     public long getReceivedTime() {
         return RECEIVED_TIME.get();
+    }
+
+    @Override
+    public RpcRequestBuilder elapsedTime(long elapsedTime) {
+        ELAPSED_TIME.compareAndSet(0, elapsedTime);
+        return this;
     }
 
     @Override
