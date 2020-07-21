@@ -25,7 +25,7 @@ public class RepetitionTest {
     public void singleThreadTest() throws InterruptedException {
         Set<Long> set = new HashSet<>();
         int maxTimes = 10000 * 10;
-        Sequence sequence = new Sequence(0);
+        Sequence sequence = new Sequence(1L, false, false);
         // Single thread
         ExecutorService threadPool = Executors.newFixedThreadPool(1);
 
@@ -43,28 +43,55 @@ public class RepetitionTest {
     }
 
     /**
-     * multi-thread test
+     * Can Not guarantee unique on multi-threads env
      *
      * @throws InterruptedException
      */
-//    @Test
-//    public void multiThreadThreadTest() throws InterruptedException {
-//        Set<Long> set = new HashSet<>();
-//        int maxTimes = 10000 * 10;
-//        Sequence sequence = new Sequence(0);
-//        // Two threads
-//        ExecutorService threadPool = Executors.newFixedThreadPool(2);
-//
-//        IntStream.range(0, maxTimes).forEach(i -> {
-//            threadPool.execute(() -> {
-//                log.debug("Active thread count: {}", Thread.activeCount());
-//                set.add(sequence.nextId());
-//            });
-//        });
-//
-//        threadPool.shutdown();
-//        if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
-//            Assert.assertEquals(maxTimes, set.size());
-//        }
-//    }
+    @Test
+    public void multiThreadNotThreadSafeTest() throws InterruptedException {
+        Set<Long> set = new HashSet<>();
+        int maxTimes = 10000 * 10;
+        Sequence sequence = new Sequence(1L, false, false);
+        // Multi-threads
+        ExecutorService threadPool = Executors.newFixedThreadPool(4);
+
+        IntStream.range(0, maxTimes).forEach(i -> {
+            threadPool.execute(() -> {
+                log.debug("Active thread count: {}", Thread.activeCount());
+                set.add(sequence.nextId());
+            });
+        });
+
+        threadPool.shutdown();
+        if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
+            // not equal
+            Assert.assertNotEquals(maxTimes, set.size());
+        }
+    }
+
+    /**
+     * Can guarantee unique on multi-threads env
+     *
+     * @throws InterruptedException
+     */
+    @Test
+    public void multiThreadThreadSafeTest() throws InterruptedException {
+        Set<Long> set = new HashSet<>();
+        int maxTimes = 10000 * 10;
+        // Multi-threads
+        ExecutorService threadPool = Executors.newFixedThreadPool(8);
+
+        IntStream.range(0, maxTimes).forEach(i -> {
+            threadPool.execute(() -> {
+                long requestId = MotanRequestIdGenerator.getRequestId();
+                System.out.println(requestId);
+            });
+        });
+
+        threadPool.shutdown();
+        if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
+            // equals
+            Assert.assertEquals(maxTimes, set.size());
+        }
+    }
 }

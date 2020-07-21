@@ -17,14 +17,14 @@ import java.util.concurrent.Executor;
 @ToString
 @Slf4j
 public class RpcResponseBuilder implements Responseable, Traceable, Callbackable, Serializable {
-    private static final long serialVersionUID = 882479213033600079L;
-
-    private           long                           requestId;
-    private           String                         protocol;
-    private           byte                           protocolVersion = ProtocolVersion.VERSION_1.getVersion();
-    private           int                            processingTimeout;
-    private           Object                         result;
-    private           Exception                      exception;
+    private static final long      serialVersionUID = 882479213033600079L;
+    //cannot guarantee unique on concurrent env
+//    private           long                           requestId;
+    private              String    protocol;
+    private              byte      protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
+    private              int       processingTimeout;
+    private              Object    result;
+    private              Exception exception;
 
     @Override
     public Map<String, String> getAttachments() {
