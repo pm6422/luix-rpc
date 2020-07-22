@@ -2,7 +2,6 @@ package org.infinity.rpc.utilities.id;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
-import org.infinity.rpc.utilities.id.sequence.SnowFlakeSequence;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -129,6 +128,34 @@ public class RepetitionTest {
         threadPool.shutdown();
         if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
             // equals
+            Assert.assertEquals(maxTimes, set.size());
+        }
+    }
+
+    /**
+     * Can guarantee unique by using short id generator on multi-threads environment
+     *
+     * @throws InterruptedException
+     */
+    @Test
+    public void multiThreadUniqueTest4() throws InterruptedException {
+        // thread-safe container
+        Set<Long> set = new ConcurrentHashSet<>();
+        int maxTimes = 10000 * 10;
+
+        // Multi-threads
+        ExecutorService threadPool = Executors.newFixedThreadPool(8);
+
+        IntStream.range(0, maxTimes).forEach(i -> {
+            threadPool.execute(() -> {
+                long requestId = IdGenerator.generateShortId();
+                set.add(requestId);
+            });
+        });
+
+        threadPool.shutdown();
+        if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
+            // not equals
             Assert.assertEquals(maxTimes, set.size());
         }
     }

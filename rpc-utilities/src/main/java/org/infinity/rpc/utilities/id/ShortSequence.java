@@ -1,13 +1,14 @@
-package org.infinity.rpc.utilities.id.sequence;
+package org.infinity.rpc.utilities.id;
 
 import javax.annotation.concurrent.NotThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * 12位ID
- * 
+ * 12位ID，如：306554419571
+ *
  * @author Polim
  */
-@NotThreadSafe
+@ThreadSafe
 public class ShortSequence {
 
     private final static long twepoch            = 1288834974657L;
@@ -24,15 +25,18 @@ public class ShortSequence {
     // 时间毫秒左移22位
     private final static long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
 
-    private final static long sequenceMask       = -1L ^ (-1L << sequenceBits);
+    private final static long sequenceMask = -1L ^ (-1L << sequenceBits);
 
-    private static long       lastTimestamp      = -1L;
+    private static long lastTimestamp = -1L;
 
-    private long              sequence           = 0L;
-    private final long        workerId           = 0L;
-    private final long        datacenterId       = 0L;
+    private       long sequence     = 0L;
+    private final long workerId     = 0L;
+    private final long datacenterId = 0L;
 
-    public synchronized long nextId() {
+    /**
+     * @return 12位ID，如：306554419571
+     */
+    protected synchronized long nextId() {
         long timestamp = timeGen();
         if (timestamp < lastTimestamp) {
             throw new RuntimeException("Clock moved backwards.  Refusing to generate id for "

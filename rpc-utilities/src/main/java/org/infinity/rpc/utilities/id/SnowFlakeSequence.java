@@ -1,4 +1,4 @@
-package org.infinity.rpc.utilities.id.sequence;
+package org.infinity.rpc.utilities.id;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.net.InetAddress;
@@ -45,6 +45,7 @@ public final class SnowFlakeSequence {
     private final static long START_TIME = 1519740777809L;
 
     /**
+     * 支持多数据中心
      * dataCenterId占用的位数：2
      **/
     private final static long DATA_CENTER_ID_BITS = 2L;
@@ -76,6 +77,7 @@ public final class SnowFlakeSequence {
     private final static long SEQUENCE_MASK = ~(-1L << SEQUENCE_BITS);
 
     private final long workerId;
+    //支持多数据中心
     private final long dataCenterId;
     private       long sequence      = 0L;
     private       long lastTimestamp = -1L;
@@ -86,10 +88,18 @@ public final class SnowFlakeSequence {
     private final  boolean           randomSequence;
     private final  ThreadLocalRandom tlr     = ThreadLocalRandom.current();
 
+    /**
+     * @param dataCenterId 数据中心ID,数据范围为0~3
+     */
     public SnowFlakeSequence(long dataCenterId) {
         this(dataCenterId, 0x000000FF & getLastIPAddress(), false, 5L, false);
     }
 
+    /**
+     * @param dataCenterId   数据中心ID,数据范围为0~3
+     * @param clock          true表示解决高并发下获取时间戳的性能问题
+     * @param randomSequence true表示使用毫秒内的随机序列(超过范围则取余)
+     */
     public SnowFlakeSequence(long dataCenterId, boolean clock, boolean randomSequence) {
         this(dataCenterId, 0x000000FF & getLastIPAddress(), clock, 5L, randomSequence);
     }
@@ -123,7 +133,7 @@ public final class SnowFlakeSequence {
      *
      * @return long
      */
-    public synchronized Long nextId() {
+    protected synchronized Long nextId() {
         long currentTimestamp = this.timeGen();
 
         // 闰秒：如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过，这个时候应当抛出异常
@@ -209,6 +219,7 @@ public final class SnowFlakeSequence {
     }
 
     /**
+     * TODO：网卡获取有BUG
      * 用IP地址最后几个字节标示
      * <p>
      * eg:192.168.1.30->30
@@ -220,6 +231,7 @@ public final class SnowFlakeSequence {
             return LAST_IP;
         }
 
+        // TODO：网卡获取有BUG
         try {
             InetAddress inetAddress = InetAddress.getLocalHost();
             byte[] addressByte = inetAddress.getAddress();

@@ -1,7 +1,5 @@
 package org.infinity.rpc.utilities.id;
 
-import org.infinity.rpc.utilities.id.sequence.SnowFlakeSequence;
-
 public class SequenceTest2 {
 
     public static void main(String[] args) throws Exception {

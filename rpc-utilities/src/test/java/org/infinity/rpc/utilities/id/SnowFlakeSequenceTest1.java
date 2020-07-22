@@ -1,6 +1,5 @@
 package org.infinity.rpc.utilities.id;
 
-import org.infinity.rpc.utilities.id.sequence.SnowFlakeSequence;
 import org.junit.Test;
 
 public class SnowFlakeSequenceTest1 {

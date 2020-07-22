@@ -1,19 +1,15 @@
 package org.infinity.rpc.utilities.id;
 
-import org.infinity.rpc.utilities.id.sequence.ShortSequence;
-import org.infinity.rpc.utilities.id.sequence.SnowFlakeSequence;
-import org.infinity.rpc.utilities.id.sequence.TimestampSequence;
-
 import javax.annotation.concurrent.ThreadSafe;
 
 @ThreadSafe
 public class IdGenerator {
-    private IdGenerator() {
-    }
-
+    private static final ShortSequence     SHORT_SEQUENCE      = new ShortSequence();
     // 毫秒内固定起始值开始
     private static final SnowFlakeSequence SNOW_FLAKE_SEQUENCE = new SnowFlakeSequence(1L, false, false);
-    private static final ShortSequence     shortSequence       = new ShortSequence();
+
+    private IdGenerator() {
+    }
 
     /**
      * Thread-safe
@@ -42,6 +38,6 @@ public class IdGenerator {
      * @return
      */
     public static long generateShortId() {
-        return shortSequence.nextId();
+        return SHORT_SEQUENCE.nextId();
     }
 }

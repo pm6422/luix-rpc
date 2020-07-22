@@ -1,4 +1,4 @@
-package org.infinity.rpc.utilities.id.sequence;
+package org.infinity.rpc.utilities.id;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.atomic.AtomicLong;
@@ -23,7 +23,7 @@ public class TimestampSequence {
      *
      * @return
      */
-    public static long nextId() {
+    protected static long nextId() {
         long currentTime = System.currentTimeMillis();
         long count = offset.incrementAndGet();
         while (count >= MAX_COUNT_PER_MILLIS) {
