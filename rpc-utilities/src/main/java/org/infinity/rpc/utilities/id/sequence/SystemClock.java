@@ -1,4 +1,4 @@
-package org.infinity.rpc.utilities.id;
+package org.infinity.rpc.utilities.id.sequence;
 
 import java.sql.Timestamp;
 import java.util.concurrent.ScheduledExecutorService;

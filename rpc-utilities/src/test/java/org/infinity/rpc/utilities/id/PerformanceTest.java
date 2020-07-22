@@ -2,6 +2,7 @@ package org.infinity.rpc.utilities.id;
 
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.junit.ContiPerfRule;
+import org.infinity.rpc.utilities.id.sequence.SnowFlakeSequence;
 import org.junit.Rule;
 import org.junit.Test;
 

@@ -1,14 +1,14 @@
-package org.infinity.rpc.utilities.id;
+package org.infinity.rpc.utilities.id.sequence;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
 /**
- * 二进制42位，十进制12位ID (42(毫秒))
+ * 12位ID
  * 
  * @author Polim
  */
 @NotThreadSafe
-public class ShortIdWorker {
+public class ShortSequence {
 
     private final static long twepoch            = 1288834974657L;
     // 机器标识位数

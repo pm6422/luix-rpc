@@ -1,4 +1,4 @@
-package org.infinity.rpc.utilities.id;
+package org.infinity.rpc.utilities.id.sequence;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.atomic.AtomicLong;

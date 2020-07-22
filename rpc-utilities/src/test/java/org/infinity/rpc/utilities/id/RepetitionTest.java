@@ -2,6 +2,7 @@ package org.infinity.rpc.utilities.id;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
+import org.infinity.rpc.utilities.id.sequence.SnowFlakeSequence;
 import org.junit.Assert;
 import org.junit.Test;
 

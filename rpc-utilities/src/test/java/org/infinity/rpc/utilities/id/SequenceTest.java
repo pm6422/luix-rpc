@@ -1,5 +1,7 @@
 package org.infinity.rpc.utilities.id;
 
+import org.infinity.rpc.utilities.id.sequence.SnowFlakeSequence;
+
 import java.util.HashSet;
 import java.util.Set;
 

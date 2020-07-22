@@ -8,7 +8,7 @@ import org.infinity.rpc.core.protocol.constants.ProtocolName;
 import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.constants.RegistryName;
-import org.infinity.rpc.utilities.id.ShortIdWorker;
+import org.infinity.rpc.utilities.id.sequence.ShortSequence;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -47,7 +47,7 @@ public class InfinityProperties implements InitializingBean {
     @Data
     public static class Application {
         // Application ID
-        private String id = "ID-" + new ShortIdWorker().nextId();
+        private String id = "ID-" + new ShortSequence().nextId();
         // Application name
         private String name;
         // Application description
