@@ -13,8 +13,7 @@ import java.util.Map;
 @ToString
 public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     private static final long     serialVersionUID = -6259178379027752471L;
-    // cannot guarantee unique on concurrent env
-//    private              long                requestId;
+    private              long     requestId;
     private              String   protocol;
     private              byte     protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
     private              String   interfaceName;

@@ -10,12 +10,12 @@ import org.junit.Test;
  */
 public class PerformanceTest {
     @Rule
-    public  ContiPerfRule i        = new ContiPerfRule();
-    private Sequence      sequence = new Sequence(0);
+    public  ContiPerfRule     i                 = new ContiPerfRule();
+    private SnowFlakeSequence snowFlakeSequence = new SnowFlakeSequence(0);
 
     @Test
     @PerfTest(invocations = 200000, threads = 16)
     public void test1() {
-        sequence.nextId();
+        snowFlakeSequence.nextId();
     }
 }

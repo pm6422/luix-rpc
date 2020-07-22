@@ -1,6 +1,5 @@
 package org.infinity.rpc.utilities.id;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.annotation.concurrent.ThreadSafe;
 import java.net.InetAddress;
 import java.util.concurrent.ThreadLocalRandom;
@@ -38,7 +37,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @version 3.0
  */
 @ThreadSafe
-public final class Sequence {
+public final class SnowFlakeSequence {
 
     /**
      * 起始时间戳
@@ -87,11 +86,11 @@ public final class Sequence {
     private final  boolean           randomSequence;
     private final  ThreadLocalRandom tlr     = ThreadLocalRandom.current();
 
-    public Sequence(long dataCenterId) {
+    public SnowFlakeSequence(long dataCenterId) {
         this(dataCenterId, 0x000000FF & getLastIPAddress(), false, 5L, false);
     }
 
-    public Sequence(long dataCenterId, boolean clock, boolean randomSequence) {
+    public SnowFlakeSequence(long dataCenterId, boolean clock, boolean randomSequence) {
         this(dataCenterId, 0x000000FF & getLastIPAddress(), clock, 5L, randomSequence);
     }
 
@@ -104,7 +103,7 @@ public final class Sequence {
      * @param timeOffset     允许时间回拨的毫秒量,建议5ms
      * @param randomSequence true表示使用毫秒内的随机序列(超过范围则取余)
      */
-    public Sequence(long dataCenterId, long workerId, boolean clock, long timeOffset, boolean randomSequence) {
+    public SnowFlakeSequence(long dataCenterId, long workerId, boolean clock, long timeOffset, boolean randomSequence) {
         if (dataCenterId > MAX_DATA_CENTER_ID || dataCenterId < 0) {
             throw new IllegalArgumentException("Data Center Id can't be greater than " + MAX_DATA_CENTER_ID + " or less than 0");
         }

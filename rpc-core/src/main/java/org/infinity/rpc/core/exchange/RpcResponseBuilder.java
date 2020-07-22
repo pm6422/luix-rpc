@@ -18,8 +18,7 @@ import java.util.concurrent.Executor;
 @Slf4j
 public class RpcResponseBuilder implements Responseable, Traceable, Callbackable, Serializable {
     private static final long      serialVersionUID = 882479213033600079L;
-    //cannot guarantee unique on concurrent env
-//    private           long                           requestId;
+    private              long      requestId;
     private              String    protocol;
     private              byte      protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
     private              int       processingTimeout;

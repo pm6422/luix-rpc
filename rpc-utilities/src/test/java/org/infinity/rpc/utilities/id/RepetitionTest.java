@@ -26,14 +26,14 @@ public class RepetitionTest {
         // thread-safe container
         Set<Long> set = new ConcurrentHashSet<>();
         int maxTimes = 10000 * 10;
-        Sequence sequence = new Sequence(1L, false, false);
+        SnowFlakeSequence snowFlakeSequence = new SnowFlakeSequence(1L, false, false);
         // Single thread
         ExecutorService threadPool = Executors.newFixedThreadPool(1);
 
         IntStream.range(0, maxTimes).forEach(i -> {
             threadPool.execute(() -> {
                 log.debug("Active thread count: {}", Thread.activeCount());
-                set.add(sequence.nextId());
+                set.add(snowFlakeSequence.nextId());
             });
         });
 
@@ -54,14 +54,14 @@ public class RepetitionTest {
         Set<Long> set = new ConcurrentHashSet<>();
         int maxTimes = 10000 * 10;
 
-        Sequence sequence = new Sequence(1L, false, false);
+        SnowFlakeSequence snowFlakeSequence = new SnowFlakeSequence(1L, false, false);
 
         // Multi-threads
         ExecutorService threadPool = Executors.newFixedThreadPool(8);
 
         IntStream.range(0, maxTimes).forEach(i -> {
             threadPool.execute(() -> {
-                long requestId = sequence.nextId();
+                long requestId = snowFlakeSequence.nextId();
                 System.out.println(requestId);
                 set.add(requestId);
             });
@@ -90,7 +90,36 @@ public class RepetitionTest {
 
         IntStream.range(0, maxTimes).forEach(i -> {
             threadPool.execute(() -> {
-                long requestId = RequestIdGenerator.getRequestId();
+                long requestId = IdGenerator.generateSnowFlakeId();
+                System.out.println(requestId);
+                set.add(requestId);
+            });
+        });
+
+        threadPool.shutdown();
+        if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
+            // equals
+            Assert.assertEquals(maxTimes, set.size());
+        }
+    }
+
+    /**
+     * Can guarantee unique on multi-threads environment
+     *
+     * @throws InterruptedException
+     */
+    @Test
+    public void multiThreadUniqueTest3() throws InterruptedException {
+        // thread-safe container
+        Set<Long> set = new ConcurrentHashSet<>();
+        int maxTimes = 10000 * 10;
+
+        // Multi-threads
+        ExecutorService threadPool = Executors.newFixedThreadPool(8);
+
+        IntStream.range(0, maxTimes).forEach(i -> {
+            threadPool.execute(() -> {
+                long requestId = IdGenerator.generateTimestampId();
                 System.out.println(requestId);
                 set.add(requestId);
             });

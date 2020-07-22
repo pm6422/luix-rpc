@@ -7,8 +7,8 @@ public class SequenceTest {
 	
 	public static void main(String[] args) {
 		Set<Long> set = new HashSet<Long>();
-		final Sequence idWorker1 = new Sequence(0);
-		final Sequence idWorker2 = new Sequence(1);
+		final SnowFlakeSequence idWorker1 = new SnowFlakeSequence(0);
+		final SnowFlakeSequence idWorker2 = new SnowFlakeSequence(1);
 		Thread t1 = new Thread(new IdWorkThread(set, idWorker1));
 		Thread t2 = new Thread(new IdWorkThread(set, idWorker2));
 		t1.setDaemon(true);
@@ -23,10 +23,10 @@ public class SequenceTest {
 	}
 	
 	static class IdWorkThread implements Runnable {
-		private Set<Long> set;
-		private Sequence idWorker;
+		private Set<Long>         set;
+		private SnowFlakeSequence idWorker;
 
-		public IdWorkThread(Set<Long> set, Sequence idWorker) {
+		public IdWorkThread(Set<Long> set, SnowFlakeSequence idWorker) {
 			this.set = set;
 			this.idWorker = idWorker;
 		}

@@ -11,7 +11,7 @@ public interface Exchangable<T> {
      *
      * @return
      */
-//    long getRequestId();
+    long getRequestId();
 
     /**
      * Protocol

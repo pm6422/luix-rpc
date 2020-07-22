@@ -11,11 +11,9 @@ import java.util.concurrent.atomic.AtomicLong;
  * 	目前是currentTimeMillis * (2^20) + offset.incrementAndGet()
  * 	通过requestId / (2^20 * 1000) 能够得到秒
  * </pre>
- *
- * @author maijunsheng
  */
 @ThreadSafe
-public class MotanRequestIdGenerator {
+public class TimestampSequence {
     protected static final AtomicLong offset               = new AtomicLong(0);
     protected static final int        BITS                 = 20;
     protected static final long       MAX_COUNT_PER_MILLIS = 1 << BITS;
@@ -25,11 +23,11 @@ public class MotanRequestIdGenerator {
      *
      * @return
      */
-    public static long getRequestId() {
+    public static long nextId() {
         long currentTime = System.currentTimeMillis();
         long count = offset.incrementAndGet();
         while (count >= MAX_COUNT_PER_MILLIS) {
-            synchronized (MotanRequestIdGenerator.class) {
+            synchronized (TimestampSequence.class) {
                 if (offset.get() >= MAX_COUNT_PER_MILLIS) {
                     offset.set(0);
                 }
@@ -37,10 +35,5 @@ public class MotanRequestIdGenerator {
             count = offset.incrementAndGet();
         }
         return (currentTime << BITS) + count;
-    }
-
-    public static long getRequestIdFromClient() {
-        // TODO 上下文requestId
-        return 0;
     }
 }
