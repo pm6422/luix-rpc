@@ -1,10 +1,10 @@
 package org.infinity.rpc.utilities.id;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,7 +23,8 @@ public class RepetitionTest {
      */
     @Test
     public void singleThreadTest() throws InterruptedException {
-        Set<Long> set = new HashSet<>();
+        // thread-safe container
+        Set<Long> set = new ConcurrentHashSet<>();
         int maxTimes = 10000 * 10;
         Sequence sequence = new Sequence(1L, false, false);
         // Single thread
@@ -43,13 +44,14 @@ public class RepetitionTest {
     }
 
     /**
-     * Can Not guarantee unique on multi-threads env
+     * Can guarantee unique on single-threads environment
      *
      * @throws InterruptedException
      */
     @Test
-    public void multiThreadNotThreadSafeTest() throws InterruptedException {
-        Set<Long> set = new HashSet<>();
+    public void multiThreadUniqueTest() throws InterruptedException {
+        // thread-safe container
+        Set<Long> set = new ConcurrentHashSet<>();
         int maxTimes = 10000 * 10;
         Sequence sequence = new Sequence(1L, false, false);
         // Multi-threads
@@ -70,21 +72,23 @@ public class RepetitionTest {
     }
 
     /**
-     * Can guarantee unique on multi-threads env
+     * Can guarantee unique on multi-threads environment
      *
      * @throws InterruptedException
      */
     @Test
     public void multiThreadThreadSafeTest() throws InterruptedException {
-        Set<Long> set = new HashSet<>();
+        // thread-safe container
+        Set<Long> set = new ConcurrentHashSet<>();
         int maxTimes = 10000 * 10;
         // Multi-threads
         ExecutorService threadPool = Executors.newFixedThreadPool(8);
 
         IntStream.range(0, maxTimes).forEach(i -> {
             threadPool.execute(() -> {
-                long requestId = MotanRequestIdGenerator.getRequestId();
+                long requestId = RequestIdGenerator.getRequestId();
                 System.out.println(requestId);
+                set.add(requestId);
             });
         });
 

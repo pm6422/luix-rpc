@@ -1,6 +1,7 @@
 package org.infinity.rpc.utilities.id;
 
 import javax.annotation.concurrent.NotThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
 import java.net.InetAddress;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -36,7 +37,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author lry
  * @version 3.0
  */
-@NotThreadSafe
+@ThreadSafe
 public final class Sequence {
 
     /**
