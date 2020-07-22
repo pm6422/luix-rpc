@@ -131,7 +131,7 @@ public final class SnowFlakeSequence {
     /**
      * 获取ID
      *
-     * @return long
+     * @return 18 bits length，like：317297928250941551
      */
     protected synchronized Long nextId() {
         long currentTimestamp = this.timeGen();

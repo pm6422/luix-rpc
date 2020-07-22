@@ -21,7 +21,7 @@ public class TimestampSequence {
     /**
      * 获取 requestId
      *
-     * @return
+     * @return 19 bits length，like：1672888135850179037
      */
     protected static long nextId() {
         long currentTime = System.currentTimeMillis();

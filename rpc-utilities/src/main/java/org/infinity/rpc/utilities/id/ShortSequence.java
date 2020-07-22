@@ -34,7 +34,7 @@ public class ShortSequence {
     private final long datacenterId = 0L;
 
     /**
-     * @return 12位ID，如：306554419571
+     * @return 12 bits length，like：306554419571
      */
     protected synchronized long nextId() {
         long timestamp = timeGen();

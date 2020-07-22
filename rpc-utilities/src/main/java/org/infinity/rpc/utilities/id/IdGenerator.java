@@ -15,7 +15,7 @@ public class IdGenerator {
      * Thread-safe
      * Can guarantee unique on multi-threads environment
      *
-     * @return
+     * @return 18 bits length，like：317297928250941551
      */
     public static long generateSnowFlakeId() {
         return SNOW_FLAKE_SEQUENCE.nextId();
@@ -25,17 +25,17 @@ public class IdGenerator {
      * Thread-safe
      * Can guarantee unique on multi-threads environment
      *
-     * @return
+     * @return 19 bits length，like：1672888135850179037
      */
     public static long generateTimestampId() {
         return TimestampSequence.nextId();
     }
 
     /**
-     * Non-thread-safe
-     * Can Not guarantee unique on multi-threads environment
+     * Thread-safe
+     * Can guarantee unique on multi-threads environment
      *
-     * @return
+     * @return 12 bits length，like：306554419571
      */
     public static long generateShortId() {
         return SHORT_SEQUENCE.nextId();

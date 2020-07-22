@@ -23,7 +23,7 @@ public class RepetitionTest {
      */
     @Test
     public void singleThreadTest() throws InterruptedException {
-        // thread-safe container
+        // Thread-safe container
         Set<Long> set = new ConcurrentHashSet<>();
         int maxTimes = 10000 * 10;
         SnowFlakeSequence snowFlakeSequence = new SnowFlakeSequence(1L, false, false);
@@ -48,40 +48,14 @@ public class RepetitionTest {
      *
      * @throws InterruptedException
      */
-    @Test
-    public void multiThreadUniqueTest1() throws InterruptedException {
-        // thread-safe container
-        Set<Long> set = new ConcurrentHashSet<>();
-        int maxTimes = 10000 * 10;
-
-        SnowFlakeSequence snowFlakeSequence = new SnowFlakeSequence(1L, false, false);
-
-        // Multi-threads
-        ExecutorService threadPool = Executors.newFixedThreadPool(8);
-
-        IntStream.range(0, maxTimes).forEach(i -> {
-            threadPool.execute(() -> {
-                long requestId = snowFlakeSequence.nextId();
-                System.out.println(requestId);
-                set.add(requestId);
-            });
-        });
-
-        threadPool.shutdown();
-        if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
-            // equals
-            Assert.assertEquals(maxTimes, set.size());
-        }
-    }
-
     /**
      * Can guarantee unique on multi-threads environment
      *
      * @throws InterruptedException
      */
     @Test
-    public void multiThreadUniqueTest2() throws InterruptedException {
-        // thread-safe container
+    public void multiThreadUniqueTestForSnowFlakeId() throws InterruptedException {
+        // Thread-safe container
         Set<Long> set = new ConcurrentHashSet<>();
         int maxTimes = 10000 * 10;
 
@@ -109,8 +83,8 @@ public class RepetitionTest {
      * @throws InterruptedException
      */
     @Test
-    public void multiThreadUniqueTest3() throws InterruptedException {
-        // thread-safe container
+    public void multiThreadUniqueTestForTimestampId() throws InterruptedException {
+        // Thread-safe container
         Set<Long> set = new ConcurrentHashSet<>();
         int maxTimes = 10000 * 10;
 
@@ -138,10 +112,10 @@ public class RepetitionTest {
      * @throws InterruptedException
      */
     @Test
-    public void multiThreadUniqueTest4() throws InterruptedException {
+    public void multiThreadUniqueTestForShortId() throws InterruptedException {
         // thread-safe container
         Set<Long> set = new ConcurrentHashSet<>();
-        int maxTimes = 10000 * 10;
+        int maxTimes = 100 * 10;
 
         // Multi-threads
         ExecutorService threadPool = Executors.newFixedThreadPool(8);
@@ -155,7 +129,7 @@ public class RepetitionTest {
 
         threadPool.shutdown();
         if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
-            // not equals
+            // equals
             Assert.assertEquals(maxTimes, set.size());
         }
     }
