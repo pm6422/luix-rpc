@@ -1,6 +1,6 @@
 package org.infinity.rpc.utilities.id;
 
-import javax.annotation.concurrent.NotThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.atomic.AtomicLong;
 
 
@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author maijunsheng
  */
-@NotThreadSafe
+@ThreadSafe
 public class MotanRequestIdGenerator {
     protected static final AtomicLong offset               = new AtomicLong(0);
     protected static final int        BITS                 = 20;
@@ -40,7 +40,7 @@ public class MotanRequestIdGenerator {
     }
 
     public static long getRequestIdFromClient() {
-        // TODO 上下文 requestid
+        // TODO 上下文requestId
         return 0;
     }
 }

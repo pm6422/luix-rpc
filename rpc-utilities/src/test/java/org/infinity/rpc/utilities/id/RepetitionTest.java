@@ -49,25 +49,28 @@ public class RepetitionTest {
      * @throws InterruptedException
      */
     @Test
-    public void multiThreadUniqueTest() throws InterruptedException {
+    public void multiThreadUniqueTest1() throws InterruptedException {
         // thread-safe container
         Set<Long> set = new ConcurrentHashSet<>();
         int maxTimes = 10000 * 10;
+
         Sequence sequence = new Sequence(1L, false, false);
+
         // Multi-threads
-        ExecutorService threadPool = Executors.newFixedThreadPool(4);
+        ExecutorService threadPool = Executors.newFixedThreadPool(8);
 
         IntStream.range(0, maxTimes).forEach(i -> {
             threadPool.execute(() -> {
-                log.debug("Active thread count: {}", Thread.activeCount());
-                set.add(sequence.nextId());
+                long requestId = sequence.nextId();
+                System.out.println(requestId);
+                set.add(requestId);
             });
         });
 
         threadPool.shutdown();
         if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
-            // not equal
-            Assert.assertNotEquals(maxTimes, set.size());
+            // equals
+            Assert.assertEquals(maxTimes, set.size());
         }
     }
 
@@ -77,10 +80,11 @@ public class RepetitionTest {
      * @throws InterruptedException
      */
     @Test
-    public void multiThreadThreadSafeTest() throws InterruptedException {
+    public void multiThreadUniqueTest2() throws InterruptedException {
         // thread-safe container
         Set<Long> set = new ConcurrentHashSet<>();
         int maxTimes = 10000 * 10;
+
         // Multi-threads
         ExecutorService threadPool = Executors.newFixedThreadPool(8);
 
