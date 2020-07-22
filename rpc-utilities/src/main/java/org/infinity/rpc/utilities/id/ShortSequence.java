@@ -1,9 +1,9 @@
 package org.infinity.rpc.utilities.id;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
+ * Bad performance
  * 12位ID，如：306554419571
  *
  * @author Polim

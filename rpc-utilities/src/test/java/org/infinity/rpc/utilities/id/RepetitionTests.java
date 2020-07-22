@@ -5,6 +5,7 @@ import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,14 +16,14 @@ import java.util.stream.IntStream;
  * 重复性测试
  */
 @Slf4j
-public class RepetitionTest {
+public class RepetitionTests {
     /**
      * single thread test
      *
      * @throws InterruptedException
      */
     @Test
-    public void singleThreadTest() throws InterruptedException {
+    public void testSingleThread() throws InterruptedException {
         // Thread-safe container
         Set<Long> set = new ConcurrentHashSet<>();
         int maxTimes = 10000 * 10;
@@ -131,6 +132,44 @@ public class RepetitionTest {
         if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
             // equals
             Assert.assertEquals(maxTimes, set.size());
+        }
+    }
+
+    @Test
+    public void testOnMultipleDataCenters() {
+        Set<Long> set = new HashSet<>();
+        SnowFlakeSequence sequence1 = new SnowFlakeSequence(0);
+        SnowFlakeSequence sequence2 = new SnowFlakeSequence(1);
+        Thread t1 = new Thread(new IdWorkThread(set, sequence1));
+        Thread t2 = new Thread(new IdWorkThread(set, sequence2));
+        t1.setDaemon(true);
+        t2.setDaemon(true);
+        t1.start();
+        t2.start();
+        try {
+            Thread.sleep(30000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    class IdWorkThread implements Runnable {
+        private Set<Long>         set;
+        private SnowFlakeSequence idWorker;
+
+        public IdWorkThread(Set<Long> set, SnowFlakeSequence idWorker) {
+            this.set = set;
+            this.idWorker = idWorker;
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                long id = idWorker.nextId();
+                if (!set.add(id)) {
+                    System.out.println("Found duplicated id:" + id);
+                }
+            }
         }
     }
 }
