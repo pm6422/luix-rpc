@@ -3,27 +3,39 @@ package org.infinity.rpc.core.exchange;
 import lombok.Data;
 import org.infinity.rpc.core.registry.UrlParam;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.HashMap;
 import java.util.Map;
 
+@ThreadSafe
 @Data
 public class RpcExchangeContext {
-    private static final ThreadLocal<RpcExchangeContext> LOCAL_CONTEXT = ThreadLocal.withInitial(() -> new RpcExchangeContext());
+    /**
+     * Create a new {@link RpcExchangeContext} for each thread
+     */
+    private static final ThreadLocal<RpcExchangeContext> THREAT_LOCAL_CONTEXT = ThreadLocal.withInitial(() -> new RpcExchangeContext());
     private              String                          clientRequestId;
     private              Requestable                     request;
+    private              boolean                         asyncCall            = false;
     private              Responseable                    response;
     /**
      * RPC context attachment. not same as request attachments
      */
-    private              Map<String, String>             attachments   = new HashMap<>();
-    private              Map<Object, Object>             attributes    = new HashMap<>();
+    private              Map<String, String>             attachments          = new HashMap<>();
+    private              Map<Object, Object>             attributes           = new HashMap<>();
 
-    public static RpcExchangeContext getContext() {
-        return LOCAL_CONTEXT.get();
+    /**
+     * Prohibit instantiate an instance outside the class
+     */
+    private RpcExchangeContext() {
+    }
+
+    public static RpcExchangeContext getThreadRpcContext() {
+        return THREAT_LOCAL_CONTEXT.get();
     }
 
     public static void destroy() {
-        LOCAL_CONTEXT.remove();
+        THREAT_LOCAL_CONTEXT.remove();
     }
 
     /**
@@ -39,13 +51,13 @@ public class RpcExchangeContext {
             String clientRequestId = request.getAttachment(UrlParam.requestIdFromClient.getName());
             context.setClientRequestId(clientRequestId);
         }
-        LOCAL_CONTEXT.set(context);
+        THREAT_LOCAL_CONTEXT.set(context);
         return context;
     }
 
     public static RpcExchangeContext initialize() {
         RpcExchangeContext context = new RpcExchangeContext();
-        LOCAL_CONTEXT.set(context);
+        THREAT_LOCAL_CONTEXT.set(context);
         return context;
     }
 

@@ -13,11 +13,13 @@ import java.util.Map;
 @ToString
 public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     private static final long     serialVersionUID = -6259178379027752471L;
+    private              String   clientRequestId;
     private              long     requestId;
     private              String   protocol;
     private              byte     protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
     private              String   interfaceName;
     private              String   methodName;
+    private              String[] parameterTypeNames;
     private              Object[] methodArguments;
 
     @Override
@@ -83,6 +85,12 @@ public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     @Override
     public String getTrace(String key) {
         return TRACES.get(key);
+    }
+
+    @Override
+    public RpcRequestBuilder clientRequestId(String clientRequestId) {
+        this.clientRequestId = clientRequestId;
+        return this;
     }
 
     @Override

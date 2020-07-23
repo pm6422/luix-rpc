@@ -1,14 +1,8 @@
 package org.infinity.rpc.core.client.proxy;
 
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exchange.Requestable;
 import org.infinity.rpc.core.exchange.RpcExchangeContext;
-import org.infinity.rpc.core.registry.UrlParam;
 import org.infinity.rpc.core.switcher.SwitcherService;
-
-import java.util.Map;
 
 public abstract class AbstractRpcConsumerInvocationHandler<T> {
     protected String          interfaceName;
@@ -20,23 +14,27 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
     }
 
     protected Object invokeRequest(Requestable request, Class returnType, boolean async) throws Throwable {
-        RpcExchangeContext context = RpcExchangeContext.getContext();
-        context.addAttribute(RpcConstants.ASYNC_SUFFIX, async);
+        RpcExchangeContext threadRpcContext = RpcExchangeContext.getThreadRpcContext();
+        threadRpcContext.setAsyncCall(async);
 
-        // set rpc context attachments to request
-        Map<String, String> attachments = context.getAttachments();
-        if (MapUtils.isNotEmpty(attachments)) {
-            for (Map.Entry<String, String> entry : attachments.entrySet()) {
-                request.attachment(entry.getKey(), entry.getValue());
-            }
-        }
-
-        // add to attachment if client request id is set
-        if (StringUtils.isNotBlank(context.getClientRequestId())) {
-            request.attachment(UrlParam.requestIdFromClient.getName(), context.getClientRequestId());
-        }
+        // Copy values from context to request object
+        copyFromContextToRequest(threadRpcContext, request);
 
         return null;
+    }
+
+    /**
+     * Copy values from context to request object
+     *
+     * @param threadRpcContext RPC context object
+     * @param request          request object
+     */
+    private void copyFromContextToRequest(RpcExchangeContext threadRpcContext, Requestable request) {
+        // Copy attachments from RPC context to request object
+        threadRpcContext.getAttachments().entrySet().forEach(entry -> request.attachment(entry.getKey(), entry.getValue()));
+
+        // Copy client request id from RPC context to request object
+        request.clientRequestId(threadRpcContext.getClientRequestId());
     }
 
 }

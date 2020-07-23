@@ -17,9 +17,9 @@ public class RpcConsumerInvocationHandler extends AbstractRpcConsumerInvocationH
 
         RpcRequestBuilder request = RpcRequestBuilder.builder()
                 .requestId(IdGenerator.generateTimestampId())
-                .methodArguments(args)
-                .methodName(method.getName())
                 .interfaceName(interfaceName)
+                .methodName(method.getName())
+                .methodArguments(args)
                 .build();
 
         boolean async = false;

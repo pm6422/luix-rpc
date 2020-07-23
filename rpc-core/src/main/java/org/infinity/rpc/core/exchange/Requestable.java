@@ -7,6 +7,18 @@ public interface Requestable<T> extends Exchangable {
     AtomicInteger RETRIES = new AtomicInteger(0);
 
     /**
+     * Get client request ID
+     *
+     * @return
+     */
+    String getClientRequestId();
+
+    /**
+     * Set client request ID
+     */
+    T clientRequestId(String clientRequestId);
+
+    /**
      * Provider interface name
      *
      * @return
@@ -28,7 +40,8 @@ public interface Requestable<T> extends Exchangable {
     Object[] getMethodArguments();
 
     /**
-     * Invocation retries count
+     * Set call retries count
+     *
      * @param retries
      * @return
      */

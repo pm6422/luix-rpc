@@ -11,7 +11,7 @@ public enum UrlParam {
 //    nodeType("nodeType", "service"),
 
     /** request id from http interface **/
-    requestIdFromClient("requestIdFromClient", 0),
+//    requestIdFromClient("requestIdFromClient", 0),
     // 切换group时，各个group的权重比。默认无权重
     weights("weights", "");
 
