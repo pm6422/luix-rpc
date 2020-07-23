@@ -37,7 +37,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @version 3.0
  */
 @ThreadSafe
-public final class SnowFlakeSequence {
+public final class SnowFlakeId {
 
     /**
      * 起始时间戳
@@ -91,7 +91,7 @@ public final class SnowFlakeSequence {
     /**
      * @param dataCenterId 数据中心ID,数据范围为0~3
      */
-    public SnowFlakeSequence(long dataCenterId) {
+    public SnowFlakeId(long dataCenterId) {
         this(dataCenterId, 0x000000FF & getLastIPAddress(), false, 5L, false);
     }
 
@@ -100,7 +100,7 @@ public final class SnowFlakeSequence {
      * @param clock          true表示解决高并发下获取时间戳的性能问题
      * @param randomSequence true表示使用毫秒内的随机序列(超过范围则取余)
      */
-    public SnowFlakeSequence(long dataCenterId, boolean clock, boolean randomSequence) {
+    public SnowFlakeId(long dataCenterId, boolean clock, boolean randomSequence) {
         this(dataCenterId, 0x000000FF & getLastIPAddress(), clock, 5L, randomSequence);
     }
 
@@ -113,7 +113,7 @@ public final class SnowFlakeSequence {
      * @param timeOffset     允许时间回拨的毫秒量,建议5ms
      * @param randomSequence true表示使用毫秒内的随机序列(超过范围则取余)
      */
-    public SnowFlakeSequence(long dataCenterId, long workerId, boolean clock, long timeOffset, boolean randomSequence) {
+    public SnowFlakeId(long dataCenterId, long workerId, boolean clock, long timeOffset, boolean randomSequence) {
         if (dataCenterId > MAX_DATA_CENTER_ID || dataCenterId < 0) {
             throw new IllegalArgumentException("Data Center Id can't be greater than " + MAX_DATA_CENTER_ID + " or less than 0");
         }

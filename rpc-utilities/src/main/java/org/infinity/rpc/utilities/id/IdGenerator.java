@@ -4,9 +4,9 @@ import javax.annotation.concurrent.ThreadSafe;
 
 @ThreadSafe
 public class IdGenerator {
-    private static final ShortSequence     SHORT_SEQUENCE      = new ShortSequence();
+    private static final ShortId     SHORT_SEQUENCE      = new ShortId();
     // 毫秒内固定起始值开始
-    private static final SnowFlakeSequence SNOW_FLAKE_SEQUENCE = new SnowFlakeSequence(1L, false, false);
+    private static final SnowFlakeId SNOW_FLAKE_SEQUENCE = new SnowFlakeId(1L, false, false);
 
     private IdGenerator() {
     }
@@ -28,7 +28,7 @@ public class IdGenerator {
      * @return 19 bits length，like：1672888135850179037
      */
     public static long generateTimestampId() {
-        return TimestampSequence.nextId();
+        return TimestampId.nextId();
     }
 
     /**

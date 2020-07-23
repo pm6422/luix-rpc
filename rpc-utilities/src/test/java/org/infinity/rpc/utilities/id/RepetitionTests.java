@@ -27,14 +27,14 @@ public class RepetitionTests {
         // Thread-safe container
         Set<Long> set = new ConcurrentHashSet<>();
         int maxTimes = 10000 * 10;
-        SnowFlakeSequence snowFlakeSequence = new SnowFlakeSequence(1L, false, false);
+        SnowFlakeId snowFlakeId = new SnowFlakeId(1L, false, false);
         // Single thread
         ExecutorService threadPool = Executors.newFixedThreadPool(1);
 
         IntStream.range(0, maxTimes).forEach(i -> {
             threadPool.execute(() -> {
                 log.debug("Active thread count: {}", Thread.activeCount());
-                set.add(snowFlakeSequence.nextId());
+                set.add(snowFlakeId.nextId());
             });
         });
 
@@ -138,8 +138,8 @@ public class RepetitionTests {
     @Test
     public void testOnMultipleDataCenters() {
         Set<Long> set = new HashSet<>();
-        SnowFlakeSequence sequence1 = new SnowFlakeSequence(0);
-        SnowFlakeSequence sequence2 = new SnowFlakeSequence(1);
+        SnowFlakeId sequence1 = new SnowFlakeId(0);
+        SnowFlakeId sequence2 = new SnowFlakeId(1);
         Thread t1 = new Thread(new IdWorkThread(set, sequence1));
         Thread t2 = new Thread(new IdWorkThread(set, sequence2));
         t1.setDaemon(true);
@@ -154,10 +154,10 @@ public class RepetitionTests {
     }
 
     class IdWorkThread implements Runnable {
-        private Set<Long>         set;
-        private SnowFlakeSequence idWorker;
+        private Set<Long>   set;
+        private SnowFlakeId idWorker;
 
-        public IdWorkThread(Set<Long> set, SnowFlakeSequence idWorker) {
+        public IdWorkThread(Set<Long> set, SnowFlakeId idWorker) {
             this.set = set;
             this.idWorker = idWorker;
         }
