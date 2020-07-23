@@ -18,7 +18,7 @@ public class ConsumerWrapper<T> implements DisposableBean {
     /**
      * The consumer interface class fully-qualified name
      */
-    private String   interfaceName;
+//    private String   interfaceName;
     /**
      * The interface class of the consumer
      */
@@ -35,5 +35,16 @@ public class ConsumerWrapper<T> implements DisposableBean {
     @Override
     public void destroy() throws Exception {
         // Leave blank intentionally for now
+    }
+
+    public T getProxyInstance() {
+        if (proxyInstance == null) {
+            initProxyInstance();
+        }
+        return proxyInstance;
+    }
+
+    private void initProxyInstance() {
+        //todo
     }
 }

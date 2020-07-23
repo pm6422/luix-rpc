@@ -124,7 +124,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
                     if (annotationAttributes != null) {
                         // Found the @Consumer annotated field
                         Class<?> interfaceClass = AnnotationUtils.resolveInterfaceClass(annotationAttributes, field.getType());
-                        Object consumerProxy = getConsumerProxy(interfaceClass, rpcConsumerProxy);
+                        Object consumerProxy = getConsumerProxyInstance(interfaceClass, rpcConsumerProxy);
                         if (consumerProxy != null) {
                             // TODO: Register consumer proxy bean definition
                             // Register consumer proxy bean to spring context
@@ -165,7 +165,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
                     if (annotationAttributes != null) {
                         // Found the @Consumer annotated method
                         Class<?> interfaceClass = AnnotationUtils.resolveInterfaceClass(annotationAttributes, method.getParameterTypes()[0]);
-                        Object consumerProxy = getConsumerProxy(interfaceClass, rpcConsumerProxy);
+                        Object consumerProxy = getConsumerProxyInstance(interfaceClass, rpcConsumerProxy);
                         if (consumerProxy != null) {
                             // TODO: Register consumer proxy bean definition
                             // Register consumer proxy bean to spring context
@@ -191,8 +191,9 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
      * @return consumer proxy instance
      * @throws Exception if any exception thrown
      */
-    private <T> Object getConsumerProxy(Class<T> interfaceClass, RpcConsumerProxy rpcConsumerProxy) throws Exception {
+    private <T> Object getConsumerProxyInstance(Class<T> interfaceClass, RpcConsumerProxy rpcConsumerProxy) throws Exception {
         String key = interfaceClass.getName();
+        // TODO: RpcConsumerFactoryBean 没啥用 可以删除
         RpcConsumerFactoryBean rpcConsumerFactoryBean = rpcConsumerFactoryBeanPerInterfaceName.get(key);
         if (rpcConsumerFactoryBean == null) {
             rpcConsumerFactoryBean = new RpcConsumerFactoryBean<T>();
@@ -207,7 +208,6 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
 
         ConsumerWrapper consumerWrapper = ConsumerWrapper.builder()
                 .interfaceClass(interfaceClass)
-                .interfaceName(interfaceClass.getName())
                 .instanceName(consumerWrapperBeanName)
                 .proxyInstance(proxyInstance)
                 .build();

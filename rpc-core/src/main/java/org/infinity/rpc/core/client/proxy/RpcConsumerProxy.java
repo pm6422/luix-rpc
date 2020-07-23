@@ -25,9 +25,7 @@ public class RpcConsumerProxy {
 
     public <T> T getProxy(Class<T> interfaceClass) {
         Assert.notNull(interfaceClass, "Consumer interface class must not be null!");
-
         Object proxy = Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class<?>[]{interfaceClass}, new ConsumerInvocationHandler());
-
         return (T) proxy;
     }
 
