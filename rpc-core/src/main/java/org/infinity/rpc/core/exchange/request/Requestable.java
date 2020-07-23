@@ -1,4 +1,6 @@
-package org.infinity.rpc.core.exchange;
+package org.infinity.rpc.core.exchange.request;
+
+import org.infinity.rpc.core.exchange.Exchangable;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

@@ -1,4 +1,6 @@
-package org.infinity.rpc.core.exchange;
+package org.infinity.rpc.core.exchange.response;
+
+import org.infinity.rpc.core.exchange.Exchangable;
 
 public interface Responseable<T> extends Exchangable {
     /**

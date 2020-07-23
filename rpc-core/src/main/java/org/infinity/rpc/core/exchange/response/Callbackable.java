@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange;
+package org.infinity.rpc.core.exchange.response;
 
 import org.apache.commons.lang3.tuple.Pair;
 

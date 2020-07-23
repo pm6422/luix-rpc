@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange;
+package org.infinity.rpc.core.exchange.response;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -6,6 +6,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.exception.RpcInvocationException;
+import org.infinity.rpc.core.exchange.Traceable;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 
 import java.io.Serializable;

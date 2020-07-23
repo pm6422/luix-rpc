@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.client.proxy;
 
-import org.infinity.rpc.core.exchange.Requestable;
-import org.infinity.rpc.core.exchange.RpcExchangeContext;
+import org.infinity.rpc.core.exchange.request.Requestable;
+import org.infinity.rpc.core.exchange.request.RequestContext;
 import org.infinity.rpc.core.switcher.SwitcherService;
 
 public abstract class AbstractRpcConsumerInvocationHandler<T> {
@@ -14,7 +14,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
     }
 
     protected Object invokeRequest(Requestable request, Class returnType, boolean async) throws Throwable {
-        RpcExchangeContext threadRpcContext = RpcExchangeContext.getThreadRpcContext();
+        RequestContext threadRpcContext = RequestContext.getThreadRpcContext();
         threadRpcContext.setAsyncCall(async);
 
         // Copy values from context to request object
@@ -29,7 +29,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
      * @param threadRpcContext RPC context object
      * @param request          request object
      */
-    private void copyFromContextToRequest(RpcExchangeContext threadRpcContext, Requestable request) {
+    private void copyFromContextToRequest(RequestContext threadRpcContext, Requestable request) {
         // Copy attachments from RPC context to request object
         threadRpcContext.getAttachments().entrySet().forEach(entry -> request.attachment(entry.getKey(), entry.getValue()));
 

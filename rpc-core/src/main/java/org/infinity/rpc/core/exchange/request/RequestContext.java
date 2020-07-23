@@ -1,7 +1,7 @@
-package org.infinity.rpc.core.exchange;
+package org.infinity.rpc.core.exchange.request;
 
 import lombok.Data;
-import org.infinity.rpc.core.registry.UrlParam;
+import org.infinity.rpc.core.exchange.response.Responseable;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.HashMap;
@@ -9,28 +9,28 @@ import java.util.Map;
 
 @ThreadSafe
 @Data
-public class RpcExchangeContext {
+public class RequestContext {
     /**
-     * Create a new {@link RpcExchangeContext} for each thread
+     * Create a new {@link RequestContext} for each thread
      */
-    private static final ThreadLocal<RpcExchangeContext> THREAT_LOCAL_CONTEXT = ThreadLocal.withInitial(() -> new RpcExchangeContext());
-    private              String                          clientRequestId;
-    private              Requestable                     request;
-    private              boolean                         asyncCall            = false;
-    private              Responseable                    response;
+    private static final ThreadLocal<RequestContext> THREAT_LOCAL_CONTEXT = ThreadLocal.withInitial(() -> new RequestContext());
+    private              String                      clientRequestId;
+    private              Requestable                 request;
+    private              boolean                     asyncCall            = false;
+    private              Responseable                response;
     /**
      * RPC context attachment. not same as request attachments
      */
-    private              Map<String, String>             attachments          = new HashMap<>();
+    private              Map<String, String>         attachments          = new HashMap<>();
     private              Map<Object, Object>             attributes           = new HashMap<>();
 
     /**
      * Prohibit instantiate an instance outside the class
      */
-    private RpcExchangeContext() {
+    private RequestContext() {
     }
 
-    public static RpcExchangeContext getThreadRpcContext() {
+    public static RequestContext getThreadRpcContext() {
         return THREAT_LOCAL_CONTEXT.get();
     }
 
@@ -44,19 +44,19 @@ public class RpcExchangeContext {
      * @param request
      * @return
      */
-    public static RpcExchangeContext initialize(Requestable request) {
-        RpcExchangeContext context = new RpcExchangeContext();
+    public static RequestContext initialize(Requestable request) {
+        RequestContext context = new RequestContext();
         if (request != null) {
             context.setRequest(request);
-            String clientRequestId = request.getAttachment(UrlParam.requestIdFromClient.getName());
+            String clientRequestId = request.getClientRequestId();
             context.setClientRequestId(clientRequestId);
         }
         THREAT_LOCAL_CONTEXT.set(context);
         return context;
     }
 
-    public static RpcExchangeContext initialize() {
-        RpcExchangeContext context = new RpcExchangeContext();
+    public static RequestContext initialize() {
+        RequestContext context = new RequestContext();
         THREAT_LOCAL_CONTEXT.set(context);
         return context;
     }
