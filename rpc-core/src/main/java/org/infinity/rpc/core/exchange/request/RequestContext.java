@@ -13,7 +13,7 @@ public class RequestContext {
     /**
      * Create a new {@link RequestContext} for each thread
      */
-    private static final ThreadLocal<RequestContext> THREAT_LOCAL_CONTEXT = ThreadLocal.withInitial(() -> new RequestContext());
+    private static final ThreadLocal<RequestContext> THREAT_LOCAL_CONTEXT = ThreadLocal.withInitial(RequestContext::new);
     private              String                      clientRequestId;
     private              Requestable                 request;
     private              boolean                     asyncCall            = false;
