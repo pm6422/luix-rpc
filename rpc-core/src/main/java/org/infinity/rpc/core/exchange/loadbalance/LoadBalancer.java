@@ -20,13 +20,13 @@ public interface LoadBalancer<T> {
      * @param request
      * @return
      */
-    Requester<T> selectOne(Requestable request);
+    Requester<T> selectNode(Requestable request);
 
     /**
      * @param request
      * @return
      */
-    List<Requester<T>> select(Requestable request);
+    List<Requester<T>> selectNodes(Requestable request);
 
 //
 //    void setWeightString(String weightString);

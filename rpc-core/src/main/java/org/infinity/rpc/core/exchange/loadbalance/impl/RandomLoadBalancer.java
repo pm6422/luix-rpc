@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RandomLoadBalancer<T> extends AbstractLoadBalancer<T> {
 
     @Override
-    protected Requester doSelectOne(Requestable request) {
+    protected Requester doSelectNode(Requestable request) {
         int index = getIndex(requesters);
         for (int i = 0; i < requesters.size(); i++) {
             Requester<T> requester = requesters.get((i + index) % requesters.size());
@@ -25,7 +25,7 @@ public class RandomLoadBalancer<T> extends AbstractLoadBalancer<T> {
     }
 
     @Override
-    protected List<Requester<T>> doSelect(Requestable request) {
+    protected List<Requester<T>> doSelectNodes(Requestable request) {
         List<Requester<T>> selected = new ArrayList<>();
 
         int index = getIndex(requesters);

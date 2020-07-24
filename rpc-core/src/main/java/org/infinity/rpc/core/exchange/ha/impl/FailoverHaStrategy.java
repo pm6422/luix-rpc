@@ -16,7 +16,7 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 public class FailoverHaStrategy<T> extends AbstractHaStrategy<T> {
     @Override
     public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
-        Requester<T> requester = loadBalancer.selectOne(request);
+        Requester<T> requester = loadBalancer.selectNode(request);
         Url url = requester.getUrl();
         int tryCount = 0;
         // TODO
@@ -24,6 +24,10 @@ public class FailoverHaStrategy<T> extends AbstractHaStrategy<T> {
 //                request.getParamtersDesc(),
 //                UrlParam.retries.getName(),
 //                UrlParam.retries.getIntValue());
+
+        if (tryCount < 0) {
+            tryCount = 0;
+        }
 
         for (int i = 0; i <= tryCount; i++) {
             try {
@@ -39,6 +43,7 @@ public class FailoverHaStrategy<T> extends AbstractHaStrategy<T> {
                 log.warn(String.format("FailoverHaStrategy Call false for request:%s error=%s", request, e.getMessage()));
             }
         }
+        // TODO: check remove
         throw new RpcFrameworkException("FailoverHaStrategy.call should not come here!");
     }
 }

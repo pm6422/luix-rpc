@@ -17,7 +17,7 @@ public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
     }
 
     @Override
-    public Requester<T> selectOne(Requestable request) {
+    public Requester<T> selectNode(Requestable request) {
         // Make a copy for thread safe purpose
         List<Requester<T>> requesters = new ArrayList<>(this.requesters);
 
@@ -28,7 +28,7 @@ public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
 
         Requester<T> requester = null;
         if (requesters.size() > 1) {
-            requester = doSelectOne(request);
+            requester = doSelectNode(request);
         } else if (requesters.size() == 1 && requesters.get(0).isAvailable()) {
             requester = requesters.get(0);
         }
@@ -40,7 +40,7 @@ public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
     }
 
     @Override
-    public List<Requester<T>> select(Requestable request) {
+    public List<Requester<T>> selectNodes(Requestable request) {
         List<Requester<T>> selected = new ArrayList<>();
 
         // Make a copy for thread safe purpose
@@ -51,7 +51,7 @@ public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
             throw new RpcInvocationException("No available requester for RPC call for now!");
         }
         if (requesters.size() > 1) {
-            selected = doSelect(request);
+            selected = doSelectNodes(request);
         } else if (requesters.size() == 1 && requesters.get(0).isAvailable()) {
             selected.add(requesters.get(0));
         }
@@ -66,7 +66,7 @@ public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
         return requesters;
     }
 
-    protected abstract Requester<T> doSelectOne(Requestable request);
+    protected abstract Requester<T> doSelectNode(Requestable request);
 
-    protected abstract List<Requester<T>> doSelect(Requestable request);
+    protected abstract List<Requester<T>> doSelectNodes(Requestable request);
 }
