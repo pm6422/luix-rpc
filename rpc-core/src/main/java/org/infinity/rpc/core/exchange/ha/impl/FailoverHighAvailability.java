@@ -28,7 +28,7 @@ public class FailoverHighAvailability<T> extends AbstractHighAvailability<T> {
         // Select more than one nodes
         List<Requester<T>> requesters = loadBalancer.selectNodes(request);
         Url url = requesters.get(0).getUrl();
-        int maxRetries = 0;
+        int maxRetries = 1;
         // TODO
 //        int tryCount = url.getMethodParameter(request.getMethodName(),
 //                request.getParamtersDesc(),
