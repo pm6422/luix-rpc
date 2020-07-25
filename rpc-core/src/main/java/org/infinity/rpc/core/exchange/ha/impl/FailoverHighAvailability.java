@@ -28,17 +28,18 @@ public class FailoverHighAvailability<T> extends AbstractHighAvailability<T> {
         // Select more than one nodes
         List<Requester<T>> requesters = loadBalancer.selectNodes(request);
         Url url = requesters.get(0).getUrl();
-        int maxRetriesCount = 0;
+        int maxRetries = 0;
         // TODO
 //        int tryCount = url.getMethodParameter(request.getMethodName(),
 //                request.getParamtersDesc(),
 //                UrlParam.retries.getName(),
 //                UrlParam.retries.getIntValue());
 
-        if (maxRetriesCount < 0) {
+        if (maxRetries < 0) {
+            // TODO: move to retries parameter setting validation part
             throw new RpcConfigurationException("Retries can NOT be a negative number!");
         }
-        for (int i = 0; i <= maxRetriesCount; i++) {
+        for (int i = 0; i <= maxRetries; i++) {
             try {
                 Requester<T> requester = requesters.get(i % requesters.size());
                 request.retries(i);
@@ -47,7 +48,7 @@ public class FailoverHighAvailability<T> extends AbstractHighAvailability<T> {
                 if (ExceptionUtils.isBizException(e)) {
                     // Throw the exception when it's a business one
                     throw e;
-                } else if (i >= maxRetriesCount) {
+                } else if (i >= maxRetries) {
                     // Throw the exception when it exceeds the max retries count
                     throw e;
                 }
