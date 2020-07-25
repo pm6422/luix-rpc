@@ -12,6 +12,7 @@ import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.utils.ExceptionUtils;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 /**
@@ -26,8 +27,8 @@ public class FailoverHighAvailability<T> extends AbstractHighAvailability<T> {
     @Override
     public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
         // Select more than one nodes
-        List<Requester<T>> requesters = loadBalancer.selectNodes(request);
-        Url url = requesters.get(0).getUrl();
+        List<Requester<T>> availableRequesters = loadBalancer.selectNodes(request);
+        Url url = availableRequesters.get(0).getUrl();
         int maxRetries = 1;
         // TODO
 //        int tryCount = url.getMethodParameter(request.getMethodName(),
@@ -40,8 +41,8 @@ public class FailoverHighAvailability<T> extends AbstractHighAvailability<T> {
             throw new RpcConfigurationException("Retries can NOT be a negative number!");
         }
         for (int i = 0; i <= maxRetries; i++) {
+            Requester<T> requester = availableRequesters.get(i % availableRequesters.size());
             try {
-                Requester<T> requester = requesters.get(i % requesters.size());
                 request.retries(i);
                 return requester.call(request);
             } catch (RuntimeException e) {
@@ -53,10 +54,9 @@ public class FailoverHighAvailability<T> extends AbstractHighAvailability<T> {
                     throw e;
                 }
                 // If one of the nodes fails, try to use another backup available one
-                log.warn(String.format("FailoverHaStrategy Call false for request:%s error=%s", request, e.getMessage()));
+                log.warn(MessageFormat.format("Failed to call the url: {0}", requester.getUrl()), e);
             }
         }
-        // TODO: check remove
-        throw new RpcFrameworkException("FailoverHaStrategy.call should not come here!");
+        throw new RpcFrameworkException("Failed to call all the urls!");
     }
 }

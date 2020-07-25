@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exchange.ha.AbstractHighAvailability;
 import org.infinity.rpc.core.exchange.loadbalance.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
+import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
@@ -11,8 +12,8 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
  * Fail-fast fault tolerance high availability mechanism
  * to see is the "fail-fast" from the literal meaning, found errors in the system as much as possible,
  * so that the system can be pre-configured in accordance with the process execution error,
- * the corresponding mode is "fault-tolerant (fault tolerance ).
- * " With JAVA collection (Collection) fast failure, for example,
+ * the corresponding mode is "fault-tolerant (fault tolerance)"
+ * With JAVA collection fast failure, for example,
  * when multiple threads are operating on the same set of content, it may generate fail-fast event.
  * For example: When a thread A iterator to traverse through a collection process,
  * the content if the set is changed by the other thread;
@@ -23,10 +24,11 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
  * @param <T>
  */
 @Slf4j
-@ServiceName("failover")
+@ServiceName("failfast")
 public class FailfastHighAvailability<T> extends AbstractHighAvailability<T> {
     @Override
     public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
-        return null;
+        Requester<T> availableRequester = loadBalancer.selectNode(request);
+        return availableRequester.call(request);
     }
 }
