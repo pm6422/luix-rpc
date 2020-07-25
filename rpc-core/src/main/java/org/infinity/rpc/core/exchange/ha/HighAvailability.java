@@ -8,7 +8,7 @@ import org.infinity.rpc.utilities.spi.annotation.Scope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
 @Spi(scope = Scope.PROTOTYPE)
-public interface HaStrategy<T> {
+public interface HighAvailability<T> {
 
     void setUrl(Url url);
 
