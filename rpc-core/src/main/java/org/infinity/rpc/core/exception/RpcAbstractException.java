@@ -16,7 +16,7 @@
 
 package org.infinity.rpc.core.exception;
 
-import org.infinity.rpc.core.exchange.request.RequestContext;
+import org.infinity.rpc.core.exchange.request.impl.RequestContext;
 
 public abstract class RpcAbstractException extends RuntimeException {
     private static final long serialVersionUID = -8742311167276890503L;

@@ -1,9 +1,10 @@
-package org.infinity.rpc.core.exchange.request;
+package org.infinity.rpc.core.exchange.request.impl;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import org.infinity.rpc.core.exchange.Traceable;
+import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 
 import java.io.Serializable;

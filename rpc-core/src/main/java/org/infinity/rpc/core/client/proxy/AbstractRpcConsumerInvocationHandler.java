@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.client.proxy;
 
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.core.exchange.request.RequestContext;
+import org.infinity.rpc.core.exchange.request.impl.RequestContext;
 import org.infinity.rpc.core.switcher.SwitcherService;
 
 public abstract class AbstractRpcConsumerInvocationHandler<T> {
