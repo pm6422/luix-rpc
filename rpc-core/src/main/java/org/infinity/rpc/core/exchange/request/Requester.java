@@ -7,6 +7,12 @@ import org.infinity.rpc.core.registry.Url;
  * The initiator of the RPC request
  */
 public interface Requester<T> {
+
+    /**
+     * @return
+     */
+    Class<T> getInterfaceClass();
+
     /**
      * @param available
      */
@@ -21,6 +27,11 @@ public interface Requester<T> {
      * @return
      */
     Url getUrl();
+
+    /**
+     * @return
+     */
+    Url getProviderUrl();
 
     /**
      *

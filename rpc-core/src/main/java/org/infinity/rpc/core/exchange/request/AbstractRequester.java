@@ -7,15 +7,31 @@ import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.registry.Url;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public abstract class AbstractRequester<T> implements Requester<T> {
-    protected          AtomicBoolean initialized = new AtomicBoolean(false);
-    protected volatile boolean       available   = false;
+    protected          AtomicBoolean initialized        = new AtomicBoolean(false);
+    protected volatile boolean       available          = false;
+    protected          Class<T>      interfaceClass;
     protected          Url           url;
+    protected          Url           providerUrl;
+    protected          AtomicInteger activeRefererCount = new AtomicInteger(0);
 
-    public AbstractRequester(Url url) {
+    public AbstractRequester(Class<T> interfaceClass, Url url) {
+        this.interfaceClass = interfaceClass;
         this.url = url;
+    }
+
+    public AbstractRequester(Class<T> interfaceClass, Url url, Url providerUrl) {
+        this.interfaceClass = interfaceClass;
+        this.url = url;
+        this.providerUrl = providerUrl;
+    }
+
+    @Override
+    public Class<T> getInterfaceClass() {
+        return interfaceClass;
     }
 
     @Override
@@ -31,6 +47,11 @@ public abstract class AbstractRequester<T> implements Requester<T> {
     @Override
     public Url getUrl() {
         return url;
+    }
+
+    @Override
+    public Url getProviderUrl() {
+        return providerUrl;
     }
 
     @Override
@@ -56,6 +77,13 @@ public abstract class AbstractRequester<T> implements Requester<T> {
 
     @Override
     public Responseable call(Requestable request) {
+        if (!isAvailable()) {
+            // todo: refactor log
+            throw new RpcFrameworkException("Requester is NOT available for now!");
+        }
+
+
+
         return null;
     }
 }
