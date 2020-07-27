@@ -64,6 +64,11 @@ public abstract class AbstractRequester<T> implements Requester<T> {
 
     protected abstract boolean doInit();
 
+    @Override
+    public void destroy() {
+
+    }
+
     protected void increaseProcessingCount() {
         processingCount.incrementAndGet();
     }

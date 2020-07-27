@@ -1,6 +1,5 @@
 package org.infinity.rpc.core.exchange.request.impl;
 
-import io.netty.util.concurrent.FutureListener;
 import org.infinity.rpc.core.exchange.request.AbstractRequester;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
@@ -38,9 +37,9 @@ public class DefaultRequester<T> extends AbstractRequester<T> {
     @Override
     protected Responseable doCall(Requestable request) {
 //        try {
-            request.attachment(Url.PARAM_GROUP, providerUrl.getGroup());
+        request.attachment(Url.PARAM_GROUP, providerUrl.getGroup());
 
-            return null;
+        return null;
 //            return client.request(request);
 //        } catch (TransportException exception) {
 //            throw new MotanServiceException("DefaultRpcReferer call Error: url=" + url.getUri(), exception);
