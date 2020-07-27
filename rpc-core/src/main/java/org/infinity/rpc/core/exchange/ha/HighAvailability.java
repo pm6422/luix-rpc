@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.exchange.ha;
 
-import org.infinity.rpc.core.exchange.loadbalance.LoadBalancer;
+import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.registry.Url;

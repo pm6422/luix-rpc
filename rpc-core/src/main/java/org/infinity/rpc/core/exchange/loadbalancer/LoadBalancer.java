@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.loadbalance;
+package org.infinity.rpc.core.exchange.loadbalancer;
 
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.Requester;

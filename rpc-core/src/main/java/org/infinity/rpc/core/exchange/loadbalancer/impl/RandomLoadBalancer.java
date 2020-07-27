@@ -1,6 +1,6 @@
-package org.infinity.rpc.core.exchange.loadbalance.impl;
+package org.infinity.rpc.core.exchange.loadbalancer.impl;
 
-import org.infinity.rpc.core.exchange.loadbalance.AbstractLoadBalancer;
+import org.infinity.rpc.core.exchange.loadbalancer.AbstractLoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;

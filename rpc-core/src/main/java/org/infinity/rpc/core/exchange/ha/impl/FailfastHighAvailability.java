@@ -2,7 +2,7 @@ package org.infinity.rpc.core.exchange.ha.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exchange.ha.AbstractHighAvailability;
-import org.infinity.rpc.core.exchange.loadbalance.LoadBalancer;
+import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.core.exchange.response.Responseable;

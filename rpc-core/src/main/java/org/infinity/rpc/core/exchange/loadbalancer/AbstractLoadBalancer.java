@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.loadbalance;
+package org.infinity.rpc.core.exchange.loadbalancer;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.exception.RpcInvocationException;
