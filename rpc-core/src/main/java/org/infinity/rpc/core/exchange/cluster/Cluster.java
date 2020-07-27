@@ -18,11 +18,11 @@ public interface Cluster<T> extends RpcCallable<T> {
      */
     void onRefresh(List<Requester<T>> requesters);
 
-    void setLoadBalancer(LoadBalancer<T> loadBalance);
+    void setLoadBalancer(LoadBalancer<T> loadBalancer);
 
     LoadBalancer<T> getLoadBalancer();
 
-    void setHighAvailability(HighAvailability<T> haStrategy);
+    void setHighAvailability(HighAvailability<T> highAvailability);
 
     List<Requester<T>> getRequesters();
 }

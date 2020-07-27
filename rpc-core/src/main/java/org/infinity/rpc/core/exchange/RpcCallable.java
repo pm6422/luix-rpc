@@ -11,11 +11,6 @@ public interface RpcCallable<T> {
     Class<T> getInterfaceClass();
 
     /**
-     * @param available
-     */
-    void setAvailable(boolean available);
-
-    /**
      * @return
      */
     boolean isAvailable();

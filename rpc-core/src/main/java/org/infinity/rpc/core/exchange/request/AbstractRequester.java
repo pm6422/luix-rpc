@@ -28,7 +28,6 @@ public abstract class AbstractRequester<T> implements Requester<T> {
         return interfaceClass;
     }
 
-    @Override
     public void setAvailable(boolean available) {
         this.available = available;
     }
