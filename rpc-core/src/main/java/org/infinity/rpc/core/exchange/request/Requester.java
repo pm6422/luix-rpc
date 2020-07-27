@@ -26,11 +26,6 @@ public interface Requester<T> {
     /**
      * @return
      */
-    Url getUrl();
-
-    /**
-     * @return
-     */
     Url getProviderUrl();
 
     /**

@@ -11,21 +11,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public abstract class AbstractRequester<T> implements Requester<T> {
-    protected          AtomicBoolean initialized        = new AtomicBoolean(false);
-    protected volatile boolean       available          = false;
+    protected          AtomicBoolean initialized     = new AtomicBoolean(false);
+    protected volatile boolean       available       = false;
     protected          Class<T>      interfaceClass;
-    protected          Url           url;
     protected          Url           providerUrl;
-    protected          AtomicInteger activeRefererCount = new AtomicInteger(0);
+    protected          AtomicInteger processingCount = new AtomicInteger(0);
 
-    public AbstractRequester(Class<T> interfaceClass, Url url) {
-        this.interfaceClass = interfaceClass;
-        this.url = url;
-    }
 
-    public AbstractRequester(Class<T> interfaceClass, Url url, Url providerUrl) {
+    public AbstractRequester(Class<T> interfaceClass, Url providerUrl) {
         this.interfaceClass = interfaceClass;
-        this.url = url;
         this.providerUrl = providerUrl;
     }
 
@@ -42,11 +36,6 @@ public abstract class AbstractRequester<T> implements Requester<T> {
     @Override
     public boolean isAvailable() {
         return available;
-    }
-
-    @Override
-    public Url getUrl() {
-        return url;
     }
 
     @Override
@@ -75,6 +64,12 @@ public abstract class AbstractRequester<T> implements Requester<T> {
 
     protected abstract boolean doInit();
 
+    protected void increaseProcessingCount() {
+        processingCount.incrementAndGet();
+    }
+
+    protected abstract void decreaseProcessingCount(Requestable request, Responseable response);
+
     @Override
     public Responseable call(Requestable request) {
         if (!isAvailable()) {
@@ -82,8 +77,15 @@ public abstract class AbstractRequester<T> implements Requester<T> {
             throw new RpcFrameworkException("Requester is NOT available for now!");
         }
 
-
-
-        return null;
+        increaseProcessingCount();
+        Responseable response = null;
+        try {
+            response = doCall(request);
+            return response;
+        } finally {
+            decreaseProcessingCount(request, response);
+        }
     }
+
+    protected abstract Responseable doCall(Requestable request);
 }
