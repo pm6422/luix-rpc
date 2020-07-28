@@ -52,6 +52,11 @@ public class DefaultCluster<T> implements Cluster<T> {
     }
 
     @Override
+    public void setProviderUrl(Url providerUrl) {
+        this.providerUrl = providerUrl;
+    }
+
+    @Override
     public void setLoadBalancer(LoadBalancer<T> loadBalancer) {
         this.loadBalancer = loadBalancer;
     }
