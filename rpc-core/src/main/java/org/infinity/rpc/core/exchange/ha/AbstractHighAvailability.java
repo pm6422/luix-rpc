@@ -7,7 +7,7 @@ public abstract class AbstractHighAvailability<T> implements HighAvailability<T>
     protected Url url;
 
     @Override
-    public void setUrl(Url url) {
+    public void setProviderUrl(Url url) {
         this.url = url;
     }
 }

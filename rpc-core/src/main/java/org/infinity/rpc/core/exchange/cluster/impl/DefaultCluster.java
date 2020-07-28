@@ -11,6 +11,7 @@ import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -65,16 +66,42 @@ public class DefaultCluster<T> implements Cluster<T> {
     }
 
     @Override
+    public synchronized void onRefresh(List<Requester<T>> requesters) {
+        if (CollectionUtils.isEmpty(requesters)) {
+            return;
+        }
+
+        loadBalancer.onRefresh(requesters);
+
+        List<Requester<T>> oldRequesters = this.requesters;
+        this.requesters = requesters;
+        highAvailability.setProviderUrl(providerUrl);
+
+        if(CollectionUtils.isEmpty(oldRequesters)) {
+            return;
+        }
+
+        List<Requester<T>> delayDestroyRequesters = new ArrayList<>();
+        for (Requester<T> oldRequester : oldRequesters) {
+            if (requesters.contains(oldRequester)) {
+                continue;
+            }
+
+            // Destroy the old requester if old requester is useless
+            delayDestroyRequesters.add(oldRequester);
+        }
+
+        if(CollectionUtils.isNotEmpty(delayDestroyRequesters)) {
+
+        }
+    }
+
+    @Override
     public void destroy() {
         available.set(false);
         for (Requester<T> requester : this.requesters) {
             requester.destroy();
         }
-    }
-
-    @Override
-    public synchronized void onRefresh(List<Requester<T>> requesters) {
-
     }
 
     @Override
