@@ -147,8 +147,8 @@ public class DefaultCluster<T> implements Cluster<T> {
             if (cause instanceof RpcAbstractException) {
                 throw (RpcAbstractException) cause;
             } else {
-                RpcServiceException motanException = new RpcServiceException("Failed to call the request!", cause);
-                throw motanException;
+                RpcServiceException ex = new RpcServiceException("Failed to call the request!", cause);
+                throw ex;
             }
         }
 
