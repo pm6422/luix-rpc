@@ -4,15 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
+import org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
-import org.infinity.rpc.utilities.destory.ShutdownHook;
 
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -25,19 +23,6 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     private Set<Url>                                    failedUnregisteredUrl            = new ConcurrentHashSet<>();
     private Map<Url, ConcurrentHashSet<ClientListener>> failedSubscriptionPerClientUrl   = new ConcurrentHashMap<>();
     private Map<Url, ConcurrentHashSet<ClientListener>> failedUnsubscriptionPerClientUrl = new ConcurrentHashMap<>();
-
-    /**
-     * A retry single thread pool can reconnect registry periodically
-     */
-    private static ScheduledExecutorService retryThreadPool = Executors.newScheduledThreadPool(1);
-
-    static {
-        ShutdownHook.add(() -> {
-            if (!retryThreadPool.isShutdown()) {
-                retryThreadPool.shutdown();
-            }
-        });
-    }
 
     public FailbackAbstractRegistry(Url registryUrl) {
         super(registryUrl);
@@ -52,10 +37,9 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     private void scheduleRetry(Url registryUrl) {
         long retryInterval = registryUrl.getIntParameter(Url.PARAM_RETRY_INTERVAL);
         // Retry to connect registry at retry interval
-        retryThreadPool.scheduleAtFixedRate(() -> {
-            // Do retry task
-            doRetry();
-        }, retryInterval, retryInterval, TimeUnit.MILLISECONDS);
+        ScheduledDestroyThreadPool.schedulePeriodicalTask(ScheduledDestroyThreadPool.RETRY_THREAD_POOL,
+                retryInterval, retryInterval, TimeUnit.MILLISECONDS,
+                () -> doRetry());
     }
 
     /**

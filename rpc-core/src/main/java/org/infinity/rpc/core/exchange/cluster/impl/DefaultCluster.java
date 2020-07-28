@@ -2,6 +2,7 @@ package org.infinity.rpc.core.exchange.cluster.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.exchange.ha.HighAvailability;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
@@ -11,18 +12,23 @@ import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_REQUESTER_THREAD_POOL;
 
 @Slf4j
 @ServiceName("default")
 public class DefaultCluster<T> implements Cluster<T> {
-    private HighAvailability<T> highAvailability;
-    private LoadBalancer<T>     loadBalancer;
-    private Url                 providerUrl;
-    private List<Requester<T>>  requesters;
-    private AtomicBoolean       available = new AtomicBoolean(false);
+    private static final int                 DELAY_TIME = 1000;
+    private              HighAvailability<T> highAvailability;
+    private              LoadBalancer<T>     loadBalancer;
+    private              Url                 providerUrl;
+    private              List<Requester<T>>  requesters;
+    private              AtomicBoolean       available  = new AtomicBoolean(false);
 
     @Override
     public Class<T> getInterfaceClass() {
@@ -77,7 +83,7 @@ public class DefaultCluster<T> implements Cluster<T> {
         this.requesters = requesters;
         highAvailability.setProviderUrl(providerUrl);
 
-        if(CollectionUtils.isEmpty(oldRequesters)) {
+        if (CollectionUtils.isEmpty(oldRequesters)) {
             return;
         }
 
@@ -91,8 +97,16 @@ public class DefaultCluster<T> implements Cluster<T> {
             delayDestroyRequesters.add(oldRequester);
         }
 
-        if(CollectionUtils.isNotEmpty(delayDestroyRequesters)) {
-
+        if (CollectionUtils.isNotEmpty(delayDestroyRequesters)) {
+            ScheduledDestroyThreadPool.scheduleDelayTask(DESTROY_REQUESTER_THREAD_POOL, DELAY_TIME, TimeUnit.MILLISECONDS, () -> {
+                for (Requester<?> requester : delayDestroyRequesters) {
+                    try {
+                        requester.destroy();
+                    } catch (Exception e) {
+                        log.error(MessageFormat.format("Failed to destroy the requester with url: {0}", requester.getProviderUrl().getUri()), e);
+                    }
+                }
+            });
         }
     }
 
