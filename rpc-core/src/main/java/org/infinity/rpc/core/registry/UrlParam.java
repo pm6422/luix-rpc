@@ -16,6 +16,7 @@ public enum UrlParam {
 //    requestIdFromClient("requestIdFromClient", 0),
     // 切换group时，各个group的权重比。默认无权重
 
+    throwException("throwException", "true"),
     retries("retries", 0),
     weights("weights", "");
 

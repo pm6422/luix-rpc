@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.client.proxy;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exchange.request.impl.RpcRequestBuilder;
+import org.infinity.rpc.core.exchange.request.impl.RpcRequest;
 import org.infinity.rpc.utilities.id.IdGenerator;
 
 import java.lang.reflect.InvocationHandler;
@@ -15,7 +15,7 @@ public class RpcConsumerInvocationHandler extends AbstractRpcConsumerInvocationH
 
         }
 
-        RpcRequestBuilder request = RpcRequestBuilder.builder()
+        RpcRequest request = RpcRequest.builder()
                 .requestId(IdGenerator.generateTimestampId())
                 .interfaceName(interfaceName)
                 .methodName(method.getName())

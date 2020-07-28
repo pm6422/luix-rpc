@@ -3,13 +3,19 @@ package org.infinity.rpc.core.exchange.cluster.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool;
+import org.infinity.rpc.core.exception.RpcAbstractException;
+import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.exchange.ha.HighAvailability;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.core.exchange.response.Responseable;
+import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.registry.UrlParam;
+import org.infinity.rpc.core.utils.ExceptionUtils;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.text.MessageFormat;
@@ -121,6 +127,31 @@ public class DefaultCluster<T> implements Cluster<T> {
 
     @Override
     public Responseable call(Requestable request) {
-        return null;
+        if (available.get()) {
+            try {
+                return highAvailability.call(request, loadBalancer);
+            } catch (Exception e) {
+                return callFalse(request, e);
+            }
+        }
+        return callFalse(request, new RpcServiceException(RpcErrorMsgConstant.SERVICE_NOT_FOUND));
+    }
+
+    private Responseable callFalse(Requestable request, Exception cause) {
+        if (ExceptionUtils.isBizException(cause)) {
+            // Throw the exception if it is business one
+            throw (RuntimeException) cause;
+        }
+
+        if (Boolean.parseBoolean(getProviderUrl().getParameter(UrlParam.throwException.getName(), UrlParam.throwException.getValue()))) {
+            if (cause instanceof RpcAbstractException) {
+                throw (RpcAbstractException) cause;
+            } else {
+                RpcServiceException motanException = new RpcServiceException("Failed to call the request!", cause);
+                throw motanException;
+            }
+        }
+
+        return RpcResponse.buildErrorResponse(request, cause);
     }
 }

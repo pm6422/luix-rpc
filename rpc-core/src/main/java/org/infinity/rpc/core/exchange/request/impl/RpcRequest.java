@@ -13,7 +13,7 @@ import java.util.Map;
 @Builder
 @Getter
 @ToString
-public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
+public class RpcRequest implements Requestable, Traceable, Serializable {
     private static final long     serialVersionUID = -6259178379027752471L;
     private              String   clientRequestId;
     private              long     requestId;
@@ -30,7 +30,7 @@ public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     }
 
     @Override
-    public RpcRequestBuilder attachment(String key, String value) {
+    public RpcRequest attachment(String key, String value) {
         ATTACHMENTS.putIfAbsent(key, value);
         return this;
     }
@@ -41,7 +41,7 @@ public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     }
 
     @Override
-    public RpcRequestBuilder sendingTime(long sendingTime) {
+    public RpcRequest sendingTime(long sendingTime) {
         SENDING_TIME.compareAndSet(0, sendingTime);
         return this;
     }
@@ -52,7 +52,7 @@ public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     }
 
     @Override
-    public RpcRequestBuilder receivedTime(long receivedTime) {
+    public RpcRequest receivedTime(long receivedTime) {
         RECEIVED_TIME.compareAndSet(0, receivedTime);
         return this;
     }
@@ -63,7 +63,7 @@ public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     }
 
     @Override
-    public RpcRequestBuilder elapsedTime(long elapsedTime) {
+    public RpcRequest elapsedTime(long elapsedTime) {
         ELAPSED_TIME.compareAndSet(0, elapsedTime);
         return this;
     }
@@ -79,7 +79,7 @@ public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     }
 
     @Override
-    public RpcRequestBuilder trace(String key, String value) {
+    public RpcRequest trace(String key, String value) {
         TRACES.putIfAbsent(key, value);
         return this;
     }
@@ -90,13 +90,13 @@ public class RpcRequestBuilder implements Requestable, Traceable, Serializable {
     }
 
     @Override
-    public RpcRequestBuilder clientRequestId(String clientRequestId) {
+    public RpcRequest clientRequestId(String clientRequestId) {
         this.clientRequestId = clientRequestId;
         return this;
     }
 
     @Override
-    public RpcRequestBuilder retries(int retries) {
+    public RpcRequest retries(int retries) {
         RETRIES.compareAndSet(0, retries);
         return this;
     }

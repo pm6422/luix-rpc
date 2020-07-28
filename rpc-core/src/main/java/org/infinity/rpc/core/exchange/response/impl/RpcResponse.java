@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.exception.RpcInvocationException;
 import org.infinity.rpc.core.exchange.Traceable;
+import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Callbackable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
@@ -19,7 +20,7 @@ import java.util.concurrent.Executor;
 @Getter
 @ToString
 @Slf4j
-public class RpcResponseBuilder implements Responseable, Traceable, Callbackable, Serializable {
+public class RpcResponse implements Responseable, Traceable, Callbackable, Serializable {
     private static final long      serialVersionUID = 882479213033600079L;
     private              long      requestId;
     private              String    protocol;
@@ -34,7 +35,7 @@ public class RpcResponseBuilder implements Responseable, Traceable, Callbackable
     }
 
     @Override
-    public RpcResponseBuilder attachment(String key, String value) {
+    public RpcResponse attachment(String key, String value) {
         ATTACHMENTS.putIfAbsent(key, value);
         return this;
     }
@@ -54,7 +55,7 @@ public class RpcResponseBuilder implements Responseable, Traceable, Callbackable
     }
 
     @Override
-    public RpcResponseBuilder sendingTime(long sendingTime) {
+    public RpcResponse sendingTime(long sendingTime) {
         SENDING_TIME.compareAndSet(0, sendingTime);
         return this;
     }
@@ -65,7 +66,7 @@ public class RpcResponseBuilder implements Responseable, Traceable, Callbackable
     }
 
     @Override
-    public RpcResponseBuilder receivedTime(long receivedTime) {
+    public RpcResponse receivedTime(long receivedTime) {
         RECEIVED_TIME.compareAndSet(0, receivedTime);
         return this;
     }
@@ -76,7 +77,7 @@ public class RpcResponseBuilder implements Responseable, Traceable, Callbackable
     }
 
     @Override
-    public RpcResponseBuilder elapsedTime(long elapsedTime) {
+    public RpcResponse elapsedTime(long elapsedTime) {
         ELAPSED_TIME.compareAndSet(0, elapsedTime);
         return this;
     }
@@ -92,7 +93,7 @@ public class RpcResponseBuilder implements Responseable, Traceable, Callbackable
     }
 
     @Override
-    public RpcResponseBuilder trace(String key, String value) {
+    public RpcResponse trace(String key, String value) {
         TRACES.putIfAbsent(key, value);
         return this;
     }
@@ -103,7 +104,7 @@ public class RpcResponseBuilder implements Responseable, Traceable, Callbackable
     }
 
     @Override
-    public RpcResponseBuilder finishCallback(Runnable runnable, Executor executor) {
+    public RpcResponse finishCallback(Runnable runnable, Executor executor) {
         if (!FINISHED.get()) {
             TASKS.add(Pair.of(runnable, executor));
         }
@@ -128,5 +129,17 @@ public class RpcResponseBuilder implements Responseable, Traceable, Callbackable
                 }
             }
         }
+    }
+
+    public static RpcResponse buildErrorResponse(Requestable request, Exception e) {
+        return buildErrorResponse(request.getRequestId(), request.getProtocolVersion(), e);
+    }
+
+    private static RpcResponse buildErrorResponse(long requestId, byte protocolVersion, Exception e) {
+        RpcResponse response = RpcResponse.builder()
+                .requestId(requestId)
+                .protocolVersion(protocolVersion)
+                .exception(e).build();
+        return response;
     }
 }
