@@ -156,6 +156,6 @@ public class DefaultCluster<T> implements Cluster<T> {
                 throw ex;
             }
         }
-        return RpcResponse.buildErrorResponse(request, cause);
+        return RpcResponse.error(request, cause);
     }
 }

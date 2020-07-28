@@ -131,11 +131,11 @@ public class RpcResponse implements Responseable, Traceable, Callbackable, Seria
         }
     }
 
-    public static RpcResponse buildErrorResponse(Requestable request, Exception e) {
-        return buildErrorResponse(request.getRequestId(), request.getProtocolVersion(), e);
+    public static RpcResponse error(Requestable request, Exception e) {
+        return error(request.getRequestId(), request.getProtocolVersion(), e);
     }
 
-    private static RpcResponse buildErrorResponse(long requestId, byte protocolVersion, Exception e) {
+    private static RpcResponse error(long requestId, byte protocolVersion, Exception e) {
         RpcResponse response = RpcResponse.builder()
                 .requestId(requestId)
                 .protocolVersion(protocolVersion)
