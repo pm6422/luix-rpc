@@ -3,11 +3,11 @@ package org.infinity.rpc.core.config.spring.startup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.config.spring.server.ProviderWrapper;
+import org.infinity.rpc.core.config.spring.server.ProviderWrapperHolder;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.Url;
-import org.infinity.rpc.core.config.spring.server.ProviderWrapper;
-import org.infinity.rpc.core.config.spring.server.ProviderWrapperHolder;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 
@@ -93,6 +93,22 @@ public class RpcLifecycle {
     }
 
     /**
+     * Register application information to registry
+     *
+     * @param infinityProperties configuration properties
+     * @param registryUrls       registry urls
+     */
+    private void registerApplication(InfinityProperties infinityProperties, List<Url> registryUrls) {
+        for (Url registryUrl : registryUrls) {
+            // Register provider URL to all the registries
+            RegistryFactory registryFactory = RegistryFactory.getInstance(registryUrl.getProtocol());
+            Registry registry = registryFactory.getRegistry(registryUrl);
+            registry.registerApplication(infinityProperties.getApplication().toApp());
+        }
+        log.debug("Registered RPC server application [{}] to registry", infinityProperties.getApplication().getName());
+    }
+
+    /**
      * Register RPC providers to registry
      *
      * @param infinityProperties RPC configuration properties
@@ -129,22 +145,6 @@ public class RpcLifecycle {
         providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, Url.PARAM_CHECK_HEALTH_DEFAULT_VALUE);
         providerUrl.addParameter(Url.PARAM_APP, infinityProperties.getApplication().getName());
         return providerUrl;
-    }
-
-    /**
-     * Register application information to registry
-     *
-     * @param infinityProperties configuration properties
-     * @param registryUrls       registry urls
-     */
-    private void registerApplication(InfinityProperties infinityProperties, List<Url> registryUrls) {
-        for (Url registryUrl : registryUrls) {
-            // Register provider URL to all the registries
-            RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(registryUrl.getProtocol());
-            Registry registry = registryFactoryImpl.getRegistry(registryUrl);
-            registry.registerApplication(infinityProperties.getApplication().toApp());
-        }
-        log.debug("Registered RPC server application [{}] to registry", infinityProperties.getApplication().getName());
     }
 
     /**

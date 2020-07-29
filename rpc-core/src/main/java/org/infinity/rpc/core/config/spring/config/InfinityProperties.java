@@ -26,10 +26,12 @@ import java.util.regex.Pattern;
 @ConfigurationProperties(prefix = "infinity")
 @Data
 public class InfinityProperties implements InitializingBean {
-    public static final Pattern     COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
-    private             Application application         = new Application();
-    private             Protocol    protocol            = new Protocol();
-    private             Registry    registry            = new Registry();
+    public static final Pattern           COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
+    private             ApplicationConfig application         = new ApplicationConfig();
+    // TODO: support multiple protocols
+    private             ProtocolConfig    protocol            = new ProtocolConfig();
+    // TODO: support multiple registries
+    private             RegistryConfig    registry            = new RegistryConfig();
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -45,7 +47,7 @@ public class InfinityProperties implements InitializingBean {
     }
 
     @Data
-    public static class Application {
+    public static class ApplicationConfig {
         // Application ID
         private String id = "ID-" + IdGenerator.generateShortId();
         // Application name
@@ -79,7 +81,7 @@ public class InfinityProperties implements InitializingBean {
     }
 
     @Data
-    public static class Protocol {
+    public static class ProtocolConfig {
         // Name of protocol
         // SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type,
         // and check whether value is valid or not during application startup.
@@ -103,7 +105,7 @@ public class InfinityProperties implements InitializingBean {
     }
 
     @Data
-    public static class Registry {
+    public static class RegistryConfig {
         // Name of register center
         private RegistryName name           = RegistryName.zookeeper;
         // Registry center host name
