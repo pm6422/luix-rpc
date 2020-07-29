@@ -2,6 +2,7 @@ package org.infinity.rpc.core.config.spring.startup;
 
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.Url;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ApplicationContextEvent;
@@ -19,7 +20,6 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
 
     @Autowired
     private       InfinityProperties rpcProperties;
-    @Autowired
     private       List<Url>    registryUrls;
     private final RpcLifecycle rpcLifecycle;
 
@@ -29,7 +29,8 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
 
     @PostConstruct
     public void init() {
-        Validate.notNull(rpcProperties, "RPC properties must NOT be null!");
+        Validate.notNull(rpcProperties, "Infinity properties must NOT be null!");
+        registryUrls = Registry.getRegistryUrls(rpcProperties);
     }
 
     @Override

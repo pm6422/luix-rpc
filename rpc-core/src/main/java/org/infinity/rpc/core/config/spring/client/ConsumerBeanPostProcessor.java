@@ -205,7 +205,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
 
     private <T> void registerConsumerWrapperBean(Class<?> interfaceClass, T proxyInstance) {
         InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
-        // Build the consumer bean name
+        // Build the consumer wrapper bean name
         String consumerWrapperBeanName = buildConsumerWrapperBeanName(interfaceClass);
 
         ConsumerWrapper consumerWrapper = ConsumerWrapper.builder()
@@ -218,6 +218,9 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
         if (!existsConsumerWrapperBean(consumerWrapperBeanName)) {
             if (!beanFactory.containsBean(consumerWrapperBeanName)) {
                 beanFactory.registerSingleton(consumerWrapperBeanName, consumerWrapper);
+                ConsumerWrapper wrapper = applicationContext.getBean(consumerWrapperBeanName, ConsumerWrapper.class);
+                // Initialize the consumer wrapper
+                wrapper.init();
             }
         }
     }

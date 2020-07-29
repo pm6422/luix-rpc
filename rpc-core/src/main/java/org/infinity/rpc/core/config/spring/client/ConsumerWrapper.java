@@ -40,6 +40,10 @@ public class ConsumerWrapper<T> implements DisposableBean {
      * The consumer proxy instance, refer the return type of {@link org.infinity.rpc.core.client.proxy.RpcConsumerProxy#getProxy(Class)}
      */
     private T                  proxyInstance;
+    /**
+     *
+     */
+    private List<Cluster<T>>   clusters;
 
     @Override
     public void destroy() {
@@ -48,15 +52,15 @@ public class ConsumerWrapper<T> implements DisposableBean {
 
     public T getProxyInstance() {
         if (proxyInstance == null) {
-            initProxyInstance();
+            init();
         }
         return proxyInstance;
     }
 
-    public synchronized void initProxyInstance() {
+    public synchronized void init() {
         // One cluster for one protocol
         // Only one server node under a cluster can receive the request
-        List<Cluster<T>> clusters = new ArrayList<>(Arrays.asList(infinityProperties.getProtocol()).size());
+        clusters = new ArrayList<>(Arrays.asList(infinityProperties.getProtocol()).size());
         for (InfinityProperties.ProtocolConfig protocolConfig : Arrays.asList(infinityProperties.getProtocol())) {
             clusters.add(createCluster(protocolConfig));
         }
