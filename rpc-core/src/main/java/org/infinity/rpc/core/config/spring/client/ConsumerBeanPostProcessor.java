@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.RpcConsumerFactoryBean;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
+import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.config.spring.utils.AnnotationUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
@@ -203,10 +204,13 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
     }
 
     private <T> void registerConsumerWrapperBean(Class<?> interfaceClass, T proxyInstance) {
+        InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
         // Build the consumer bean name
         String consumerWrapperBeanName = buildConsumerWrapperBeanName(interfaceClass);
 
         ConsumerWrapper consumerWrapper = ConsumerWrapper.builder()
+                .protocolConfigs(Arrays.asList(infinityProperties.getProtocol()))
+                .registryConfigs(Arrays.asList(infinityProperties.getRegistry()))
                 .interfaceClass(interfaceClass)
                 .instanceName(consumerWrapperBeanName)
                 .proxyInstance(proxyInstance)

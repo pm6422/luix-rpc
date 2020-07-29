@@ -4,9 +4,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.exchange.cluster.Cluster;
+import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,6 +55,17 @@ public class ConsumerWrapper<T> implements DisposableBean {
     }
 
     public synchronized void initProxyInstance() {
+        // One cluster per protocol
+        List<Cluster<T>> clusters = new ArrayList<>(protocolConfigs.size());
+        for (InfinityProperties.ProtocolConfig protocolConfig : protocolConfigs) {
+            clusters.add(createCluster(protocolConfig));
+        }
+    }
 
+    private Cluster<T> createCluster(InfinityProperties.ProtocolConfig protocolConfig) {
+
+        Cluster cluster = ServiceInstanceLoader.getServiceLoader(Cluster.class).load(protocolConfig.getName().name());
+
+        return cluster;
     }
 }

@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @Slf4j
 public class RpcConsumerProxy {
-    private             List<Registry> registries;
+    private List<Registry> registries;
 
     public RpcConsumerProxy(InfinityProperties infinityProperties) {
         this.registries = Registry.getRegistry(infinityProperties);
