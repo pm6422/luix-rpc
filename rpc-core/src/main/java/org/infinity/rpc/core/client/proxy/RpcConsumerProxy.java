@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
 import org.infinity.rpc.core.client.RpcClient;
+import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.registry.Registry;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -19,8 +20,8 @@ import java.util.UUID;
 public class RpcConsumerProxy {
     private             List<Registry> registries;
 
-    public RpcConsumerProxy(List<Registry> registries) {
-        this.registries = registries;
+    public RpcConsumerProxy(InfinityProperties infinityProperties) {
+        this.registries = Registry.getRegistry(infinityProperties);
     }
 
     public <T> T getProxy(Class<T> interfaceClass) {

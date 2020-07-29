@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.registry.Registry;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -19,23 +18,26 @@ import java.util.List;
 @Data
 @Builder
 public class ConsumerWrapper<T> implements DisposableBean {
-    protected List<InfinityProperties.ProtocolConfig> protocols;
     /**
      *
      */
-    private List<Registry>                            registries;
+    private List<InfinityProperties.ProtocolConfig> protocolConfigs;
+    /**
+     *
+     */
+    private List<InfinityProperties.RegistryConfig> registryConfigs;
     /**
      * The interface class of the consumer
      */
-    private Class<?>       interfaceClass;
+    private Class<?>                                interfaceClass;
     /**
      * The consumer instance simple name, also known as bean name
      */
-    private String   instanceName;
+    private String                                  instanceName;
     /**
      * The consumer proxy instance, refer the return type of {@link org.infinity.rpc.core.client.proxy.RpcConsumerProxy#getProxy(Class)}
      */
-    private T        proxyInstance;
+    private T                                       proxyInstance;
 
     @Override
     public void destroy() {
