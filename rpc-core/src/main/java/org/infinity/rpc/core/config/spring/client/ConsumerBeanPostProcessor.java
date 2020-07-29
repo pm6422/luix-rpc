@@ -209,8 +209,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
         String consumerWrapperBeanName = buildConsumerWrapperBeanName(interfaceClass);
 
         ConsumerWrapper consumerWrapper = ConsumerWrapper.builder()
-                .protocolConfigs(Arrays.asList(infinityProperties.getProtocol()))
-                .registryConfigs(Arrays.asList(infinityProperties.getRegistry()))
+                .infinityProperties(infinityProperties)
                 .interfaceClass(interfaceClass)
                 .instanceName(consumerWrapperBeanName)
                 .proxyInstance(proxyInstance)

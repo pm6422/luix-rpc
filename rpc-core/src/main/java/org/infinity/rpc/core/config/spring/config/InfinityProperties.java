@@ -85,11 +85,17 @@ public class InfinityProperties implements InitializingBean {
         // Name of protocol
         // SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type,
         // and check whether value is valid or not during application startup.
-        private ProtocolName name = ProtocolName.infinity;
+        private ProtocolName name             = ProtocolName.infinity;
         // Host name of the RPC server
-        private String       host = NetworkIpUtils.INTRANET_IP;
+        private String       host             = NetworkIpUtils.INTRANET_IP;
         // Port number of the RPC server
         private Integer      port;
+        // Cluster implementation
+        private String       cluster          = "default";
+        // Cluster loadBalancer implementation
+        private String       loadBalancer     = "random";
+        // High availability strategy
+        private String       highAvailability = "failover";
 
         public void initialize() {
             checkIntegrity();

@@ -136,13 +136,13 @@ public class DefaultCluster<T> implements Cluster<T> {
             try {
                 return highAvailability.call(request, loadBalancer);
             } catch (Exception e) {
-                return handleFailedResponse(request, e);
+                return handleError(request, e);
             }
         }
-        return handleFailedResponse(request, new RpcServiceException(RpcErrorMsgConstant.SERVICE_NOT_FOUND));
+        return handleError(request, new RpcServiceException(RpcErrorMsgConstant.SERVICE_NOT_FOUND));
     }
 
-    private Responseable handleFailedResponse(Requestable request, Exception cause) {
+    private Responseable handleError(Requestable request, Exception cause) {
         if (ExceptionUtils.isBizException(cause)) {
             // Throw the exception if it is business one
             throw (RuntimeException) cause;

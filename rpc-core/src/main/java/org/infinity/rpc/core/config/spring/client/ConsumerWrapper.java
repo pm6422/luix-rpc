@@ -5,11 +5,14 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
+import org.infinity.rpc.core.exchange.ha.HighAvailability;
+import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,23 +27,19 @@ public class ConsumerWrapper<T> implements DisposableBean {
     /**
      *
      */
-    private List<InfinityProperties.ProtocolConfig> protocolConfigs;
-    /**
-     *
-     */
-    private List<InfinityProperties.RegistryConfig> registryConfigs;
+    private InfinityProperties infinityProperties;
     /**
      * The interface class of the consumer
      */
-    private Class<?>                                interfaceClass;
+    private Class<?>           interfaceClass;
     /**
      * The consumer instance simple name, also known as bean name
      */
-    private String                                  instanceName;
+    private String             instanceName;
     /**
      * The consumer proxy instance, refer the return type of {@link org.infinity.rpc.core.client.proxy.RpcConsumerProxy#getProxy(Class)}
      */
-    private T                                       proxyInstance;
+    private T                  proxyInstance;
 
     @Override
     public void destroy() {
@@ -55,17 +54,22 @@ public class ConsumerWrapper<T> implements DisposableBean {
     }
 
     public synchronized void initProxyInstance() {
-        // One cluster per protocol
-        List<Cluster<T>> clusters = new ArrayList<>(protocolConfigs.size());
-        for (InfinityProperties.ProtocolConfig protocolConfig : protocolConfigs) {
+        // One cluster for one protocol
+        // Only one server node under a cluster can receive the request
+        List<Cluster<T>> clusters = new ArrayList<>(Arrays.asList(infinityProperties.getProtocol()).size());
+        for (InfinityProperties.ProtocolConfig protocolConfig : Arrays.asList(infinityProperties.getProtocol())) {
             clusters.add(createCluster(protocolConfig));
         }
     }
 
     private Cluster<T> createCluster(InfinityProperties.ProtocolConfig protocolConfig) {
-
-        Cluster cluster = ServiceInstanceLoader.getServiceLoader(Cluster.class).load(protocolConfig.getName().name());
-
+        Cluster<T> cluster = ServiceInstanceLoader.getServiceLoader(Cluster.class).load(protocolConfig.getCluster());
+        LoadBalancer<T> loadBalancer = ServiceInstanceLoader.getServiceLoader(LoadBalancer.class).load(protocolConfig.getLoadBalancer());
+        HighAvailability<T> ha = ServiceInstanceLoader.getServiceLoader(HighAvailability.class).load(protocolConfig.getHighAvailability());
+//        ha.setProviderUrl();
+        cluster.setLoadBalancer(loadBalancer);
+        cluster.setHighAvailability(ha);
+//        cluster.setProviderUrl();
         return cluster;
     }
 }
