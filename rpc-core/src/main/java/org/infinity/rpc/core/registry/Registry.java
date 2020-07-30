@@ -1,5 +1,6 @@
 package org.infinity.rpc.core.registry;
 
+import org.infinity.rpc.core.subscribe.Subscribable;
 import org.infinity.rpc.core.url.Url;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.registry;
+package org.infinity.rpc.core.subscribe;
 
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.registry;
+package org.infinity.rpc.core.subscribe;
 
 import java.util.Collections;
 import java.util.Comparator;

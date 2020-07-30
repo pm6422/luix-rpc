@@ -5,6 +5,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.CommandListener;
+import org.infinity.rpc.core.subscribe.RpcCommand;
+import org.infinity.rpc.core.subscribe.RpcCommandUtils;
 import org.infinity.rpc.core.url.Url;
 
 import java.util.HashMap;

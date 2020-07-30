@@ -14,13 +14,14 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.registry;
+package org.infinity.rpc.core.subscribe;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.subscribe.RpcCommand;
 
 import java.util.LinkedList;
 import java.util.Map;
