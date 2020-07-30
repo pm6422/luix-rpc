@@ -9,7 +9,6 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
-import org.infinity.rpc.utilities.network.NetworkIpUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -135,9 +134,8 @@ public class RpcLifecycle {
      * @return provider url
      */
     private Url createProviderUrl(InfinityProperties infinityProperties, ProviderWrapper providerWrapper) {
-        Url providerUrl = Url.of(
+        Url providerUrl = Url.providerUrl(
                 infinityProperties.getProtocol().getName().getValue(),
-                NetworkIpUtils.INTRANET_IP,
                 infinityProperties.getProtocol().getPort(),
                 providerWrapper.getInterfaceName());
 

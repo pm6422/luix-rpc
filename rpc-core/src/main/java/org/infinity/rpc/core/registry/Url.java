@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
+import org.infinity.rpc.utilities.network.NetworkIpUtils;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -111,6 +112,10 @@ public final class Url implements Serializable {
 
     public static Url of(String protocol, String host, Integer port) {
         return of(protocol, host, port, "", new HashMap<>());
+    }
+
+    public static Url providerUrl(String protocol, Integer port, String path) {
+        return of(protocol, NetworkIpUtils.INTRANET_IP, port, path, new HashMap<>());
     }
 
     public static Url clientUrl(String protocol, String host, String path) {
