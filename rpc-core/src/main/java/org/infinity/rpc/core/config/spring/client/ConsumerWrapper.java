@@ -73,6 +73,7 @@ public class ConsumerWrapper<T> implements DisposableBean {
         Cluster<T> cluster = ServiceInstanceLoader.getServiceLoader(Cluster.class).load(protocolConfig.getCluster());
         LoadBalancer<T> loadBalancer = ServiceInstanceLoader.getServiceLoader(LoadBalancer.class).load(protocolConfig.getLoadBalancer());
         HighAvailability<T> ha = ServiceInstanceLoader.getServiceLoader(HighAvailability.class).load(protocolConfig.getHighAvailability());
+
         ha.setClientUrl(clientUrl);
         cluster.setLoadBalancer(loadBalancer);
         cluster.setHighAvailability(ha);
