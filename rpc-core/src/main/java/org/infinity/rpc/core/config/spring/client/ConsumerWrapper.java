@@ -62,8 +62,7 @@ public class ConsumerWrapper<T> implements DisposableBean {
     public synchronized void init() {
         clusters = new ArrayList<>(Arrays.asList(infinityProperties.getProtocol()).size());
         for (InfinityProperties.ProtocolConfig protocolConfig : Arrays.asList(infinityProperties.getProtocol())) {
-            // One cluster for one protocol
-            // Only one server node under a cluster can receive the request
+            // One cluster for one protocol, only one server node under a cluster can receive the request
             clusters.add(createCluster(protocolConfig));
         }
     }
@@ -72,9 +71,8 @@ public class ConsumerWrapper<T> implements DisposableBean {
         Cluster<T> cluster = ServiceInstanceLoader.getServiceLoader(Cluster.class).load(protocolConfig.getCluster());
         LoadBalancer<T> loadBalancer = ServiceInstanceLoader.getServiceLoader(LoadBalancer.class).load(protocolConfig.getLoadBalancer());
         HighAvailability<T> ha = ServiceInstanceLoader.getServiceLoader(HighAvailability.class).load(protocolConfig.getHighAvailability());
+        ha.setClientUrl(Url.clientUrl(protocolConfig.getName().name(), NetworkIpUtils.INTRANET_IP, interfaceClass.getName()));
 
-        Url clientUrl = Url.clientUrl(protocolConfig.getName().name(), NetworkIpUtils.INTRANET_IP, interfaceClass.getName());
-        ha.setClientUrl(clientUrl);
         cluster.setLoadBalancer(loadBalancer);
         cluster.setHighAvailability(ha);
         return cluster;
