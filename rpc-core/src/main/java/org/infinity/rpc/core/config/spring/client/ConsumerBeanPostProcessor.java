@@ -215,12 +215,13 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
                 .proxyInstance(proxyInstance)
                 .build();
 
+        // TODO: implements initialization after registering singleton
+        // Initialize the consumer wrapper
+        consumerWrapper.init();
+
         if (!existsConsumerWrapperBean(consumerWrapperBeanName)) {
             if (!beanFactory.containsBean(consumerWrapperBeanName)) {
                 beanFactory.registerSingleton(consumerWrapperBeanName, consumerWrapper);
-                ConsumerWrapper wrapper = applicationContext.getBean(consumerWrapperBeanName, ConsumerWrapper.class);
-                // Initialize the consumer wrapper
-                wrapper.init();
             }
         }
     }
