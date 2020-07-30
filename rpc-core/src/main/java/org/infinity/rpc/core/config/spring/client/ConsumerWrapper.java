@@ -45,6 +45,10 @@ public class ConsumerWrapper<T> implements DisposableBean {
     /**
      *
      */
+    private String             directUrl;
+    /**
+     *
+     */
     private List<Cluster<T>>   clusters;
 
     @Override

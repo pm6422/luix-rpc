@@ -37,10 +37,9 @@ public interface Registry extends Registrable, Subscribable {
      * @return registry urls
      */
     static List<Url> getRegistryUrls(InfinityProperties infinityProperties) {
-        Url registryUrl = Url.of(infinityProperties.getRegistry().getName().getValue(),
+        Url registryUrl = Url.registryUrl(infinityProperties.getRegistry().getName().getValue(),
                 infinityProperties.getRegistry().getHost(),
-                infinityProperties.getRegistry().getPort(),
-                Registrable.class.getName());
+                infinityProperties.getRegistry().getPort());
 
         // Assign values to parameters
         registryUrl.addParameter(Url.PARAM_CHECK_HEALTH, Url.PARAM_CHECK_HEALTH_DEFAULT_VALUE);

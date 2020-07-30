@@ -49,7 +49,7 @@ public class ZookeeperRegistryTests {
         int zkPort = Integer.parseInt(properties.getProperty("clientPort"));
         in.close();
 
-        registryUrl = Url.of(RegistryName.zookeeper.name(), REGISTRY_HOST, zkPort, Registrable.class.getName());
+        registryUrl = Url.registryUrl(RegistryName.zookeeper.name(), REGISTRY_HOST, zkPort);
         registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, new InfinityProperties().getRegistry().getConnectTimeout().toString());
         registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, new InfinityProperties().getRegistry().getSessionTimeout().toString());
         registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, new InfinityProperties().getRegistry().getRetryInterval().toString());

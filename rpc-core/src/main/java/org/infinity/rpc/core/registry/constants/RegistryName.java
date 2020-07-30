@@ -4,6 +4,7 @@ import org.infinity.rpc.utilities.lang.EnumValueFieldHoldable;
 
 public enum RegistryName implements EnumValueFieldHoldable {
     zookeeper("zookeeper"),
+    local("local"),
     direct("direct");
 
     private String value;

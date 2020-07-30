@@ -122,6 +122,10 @@ public final class Url implements Serializable {
         return of(protocol, host, CLIENT_URL_PORT, path, new HashMap<>());
     }
 
+    public static Url registryUrl(String protocol, String host, Integer port) {
+        return of(protocol, host, port, Registrable.class.getName(), new HashMap<>());
+    }
+
     public String getProtocol() {
         return protocol;
     }

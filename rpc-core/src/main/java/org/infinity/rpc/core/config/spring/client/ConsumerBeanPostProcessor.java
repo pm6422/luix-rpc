@@ -129,7 +129,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
                         if (consumerProxy != null) {
                             // TODO: Register consumer proxy bean definition
                             // Register consumer proxy bean to spring context
-                            registerConsumerWrapperBean(interfaceClass, consumerProxy);
+                            registerConsumerWrapperBean(interfaceClass, consumerProxy, annotationAttributes);
                             // Inject consumer proxy instance
                             field.set(bean, consumerProxy);
                         }
@@ -170,7 +170,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
                         if (consumerProxy != null) {
                             // TODO: Register consumer proxy bean definition
                             // Register consumer proxy bean to spring context
-                            registerConsumerWrapperBean(interfaceClass, consumerProxy);
+                            registerConsumerWrapperBean(interfaceClass, consumerProxy, annotationAttributes);
                             // Inject consumer proxy instance
                             method.invoke(bean, new Object[]{consumerProxy});
                         }
@@ -203,7 +203,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
         return rpcConsumerFactoryBean.getObject(rpcConsumerProxy, interfaceClass);
     }
 
-    private <T> void registerConsumerWrapperBean(Class<?> interfaceClass, T proxyInstance) {
+    private <T> void registerConsumerWrapperBean(Class<?> interfaceClass, T proxyInstance, AnnotationAttributes annotationAttributes) {
         InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
         // Build the consumer wrapper bean name
         String consumerWrapperBeanName = buildConsumerWrapperBeanName(interfaceClass);
@@ -213,6 +213,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
                 .interfaceClass(interfaceClass)
                 .instanceName(consumerWrapperBeanName)
                 .proxyInstance(proxyInstance)
+                .directUrl(annotationAttributes.getString("timeout"))
                 .build();
 
         // TODO: call initialization after registering singleton inside ConsumerWrapper class

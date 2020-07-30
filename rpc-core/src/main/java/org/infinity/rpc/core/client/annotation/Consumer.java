@@ -26,4 +26,7 @@ public @interface Consumer {
 
     // Timeout value for service invocation
     int timeout() default 0;
+
+    // Provider url used to connect provider directly without third party registry
+    String directUrl() default "";
 }
