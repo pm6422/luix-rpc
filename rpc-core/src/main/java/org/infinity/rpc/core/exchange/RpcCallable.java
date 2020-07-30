@@ -16,11 +16,6 @@ public interface RpcCallable<T> {
     boolean isAvailable();
 
     /**
-     * @return
-     */
-    Url getClientUrl();
-
-    /**
      * Initiate a RPC call
      *
      * @param request request object

@@ -10,4 +10,9 @@ public abstract class AbstractHighAvailability<T> implements HighAvailability<T>
     public void setClientUrl(Url clientUrl) {
         this.clientUrl = clientUrl;
     }
+
+    @Override
+    public Url getClientUrl() {
+        return clientUrl;
+    }
 }

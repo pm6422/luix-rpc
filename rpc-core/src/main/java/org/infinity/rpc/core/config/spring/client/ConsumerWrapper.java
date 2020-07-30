@@ -69,15 +69,14 @@ public class ConsumerWrapper<T> implements DisposableBean {
     }
 
     private Cluster<T> createCluster(InfinityProperties.ProtocolConfig protocolConfig) {
-        Url clientUrl = Url.clientUrl(protocolConfig.getName().name(), NetworkIpUtils.INTRANET_IP, interfaceClass.getName());
         Cluster<T> cluster = ServiceInstanceLoader.getServiceLoader(Cluster.class).load(protocolConfig.getCluster());
         LoadBalancer<T> loadBalancer = ServiceInstanceLoader.getServiceLoader(LoadBalancer.class).load(protocolConfig.getLoadBalancer());
         HighAvailability<T> ha = ServiceInstanceLoader.getServiceLoader(HighAvailability.class).load(protocolConfig.getHighAvailability());
 
+        Url clientUrl = Url.clientUrl(protocolConfig.getName().name(), NetworkIpUtils.INTRANET_IP, interfaceClass.getName());
         ha.setClientUrl(clientUrl);
         cluster.setLoadBalancer(loadBalancer);
         cluster.setHighAvailability(ha);
-        cluster.setClientUrl(clientUrl);
         return cluster;
     }
 }

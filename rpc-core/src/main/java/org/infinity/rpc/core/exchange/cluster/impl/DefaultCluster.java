@@ -13,7 +13,6 @@ import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
-import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.core.registry.UrlParam;
 import org.infinity.rpc.core.utils.ExceptionUtils;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
@@ -31,9 +30,8 @@ import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_R
 public class DefaultCluster<T> implements Cluster<T> {
     private static final int                 DELAY_TIME = 1000;
     private              HighAvailability<T> highAvailability;
-    private              LoadBalancer<T>    loadBalancer;
-    private              Url                clientUrl;
-    private              List<Requester<T>> requesters;
+    private              LoadBalancer<T>     loadBalancer;
+    private              List<Requester<T>>  requesters;
     private              AtomicBoolean       available  = new AtomicBoolean(false);
 
     @Override
@@ -44,16 +42,6 @@ public class DefaultCluster<T> implements Cluster<T> {
     @Override
     public boolean isAvailable() {
         return available.get();
-    }
-
-    @Override
-    public Url getClientUrl() {
-        return clientUrl;
-    }
-
-    @Override
-    public void setClientUrl(Url clientUrl) {
-        this.clientUrl = clientUrl;
     }
 
     @Override
@@ -92,7 +80,6 @@ public class DefaultCluster<T> implements Cluster<T> {
 
         List<Requester<T>> oldRequesters = this.requesters;
         this.requesters = requesters;
-        highAvailability.setClientUrl(clientUrl);
 
         if (CollectionUtils.isEmpty(oldRequesters)) {
             return;
@@ -148,7 +135,7 @@ public class DefaultCluster<T> implements Cluster<T> {
             throw (RuntimeException) cause;
         }
 
-        if (Boolean.parseBoolean(getClientUrl().getParameter(UrlParam.throwException.getName(), UrlParam.throwException.getValue()))) {
+        if (Boolean.parseBoolean(highAvailability.getClientUrl().getParameter(UrlParam.throwException.getName(), UrlParam.throwException.getValue()))) {
             if (cause instanceof RpcAbstractException) {
                 throw (RpcAbstractException) cause;
             } else {

@@ -12,5 +12,7 @@ public interface HighAvailability<T> {
 
     void setClientUrl(Url clientUrl);
 
+    Url getClientUrl();
+
     Responseable call(Requestable request, LoadBalancer<T> loadBalancer);
 }
