@@ -10,7 +10,7 @@ import org.infinity.rpc.utilities.spi.annotation.Spi;
 @Spi(scope = Scope.PROTOTYPE)
 public interface HighAvailability<T> {
 
-    void setProviderUrl(Url url);
+    void setClientUrl(Url clientUrl);
 
     Responseable call(Requestable request, LoadBalancer<T> loadBalancer);
 }

@@ -4,10 +4,10 @@ import org.infinity.rpc.core.registry.Url;
 
 public abstract class AbstractHighAvailability<T> implements HighAvailability<T> {
 
-    protected Url url;
+    protected Url clientUrl;
 
     @Override
-    public void setProviderUrl(Url url) {
-        this.url = url;
+    public void setClientUrl(Url clientUrl) {
+        this.clientUrl = clientUrl;
     }
 }

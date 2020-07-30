@@ -42,38 +42,38 @@ public final class Url implements Serializable {
 
     // ◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘
     // Constants definitions
-    public static final int    CLIENT_URL_PORT                  = 0;
+    private static final int    CLIENT_URL_PORT                  = 0;
     /**
      *
      */
-    public static final String PARAM_GROUP                      = "group";
-    public static final String PARAM_GROUP_PROVIDER             = "provider";
-    public static final String PARAM_GROUP_APPLICATION          = "application";
-    public static final String PARAM_GROUP_APPLICATION_PROVIDER = "application-provider";
+    public static final  String PARAM_GROUP                      = "group";
+    public static final  String PARAM_GROUP_PROVIDER             = "provider";
+    public static final  String PARAM_GROUP_APPLICATION          = "application";
+    public static final  String PARAM_GROUP_APPLICATION_PROVIDER = "application-provider";
     /**
      *
      */
-    public static final String PARAM_CHECK_HEALTH               = "checkHealth";
-    public static final String PARAM_CHECK_HEALTH_DEFAULT_VALUE = "true";
+    public static final  String PARAM_CHECK_HEALTH               = "checkHealth";
+    public static final  String PARAM_CHECK_HEALTH_DEFAULT_VALUE = "true";
     /**
      *
      */
-    public static final String PARAM_CODEC                      = "codec";
-    public static final String PARAM_CODEC_DEFAULT_VALUE        = "infinity";
+    public static final  String PARAM_CODEC                      = "codec";
+    public static final  String PARAM_CODEC_DEFAULT_VALUE        = "infinity";
     /**
      *
      */
-    public static final String PARAM_TYPE                       = "type";
-    public static final String PARAM_TYPE_DEFAULT_VALUE         = "provider";
+    public static final  String PARAM_TYPE                       = "type";
+    public static final  String PARAM_TYPE_DEFAULT_VALUE         = "provider";
     /**
      *
      */
-    public static final String PARAM_ADDRESS                    = "address";
-    public static final String PARAM_CONNECT_TIMEOUT            = "connectTimeout";
-    public static final String PARAM_SESSION_TIMEOUT            = "sessionTimeout";
-    public static final String PARAM_RETRY_INTERVAL             = "retryInterval";
-    public static final String PARAM_APP                        = "app";
-    public static final String PARAM_ACTIVATED_TIME             = "activatedTime";
+    public static final  String PARAM_ADDRESS                    = "address";
+    public static final  String PARAM_CONNECT_TIMEOUT            = "connectTimeout";
+    public static final  String PARAM_SESSION_TIMEOUT            = "sessionTimeout";
+    public static final  String PARAM_RETRY_INTERVAL             = "retryInterval";
+    public static final  String PARAM_APP                        = "app";
+    public static final  String PARAM_ACTIVATED_TIME             = "activatedTime";
 
     /**
      * Extended parameters
@@ -111,6 +111,10 @@ public final class Url implements Serializable {
 
     public static Url of(String protocol, String host, Integer port) {
         return of(protocol, host, port, "", new HashMap<>());
+    }
+
+    public static Url clientUrl(String protocol, String host, String path) {
+        return of(protocol, host, CLIENT_URL_PORT, path, new HashMap<>());
     }
 
     public String getProtocol() {

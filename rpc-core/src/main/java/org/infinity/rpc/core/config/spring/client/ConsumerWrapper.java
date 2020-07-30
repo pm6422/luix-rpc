@@ -7,12 +7,11 @@ import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.exchange.ha.HighAvailability;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
+import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,22 +60,23 @@ public class ConsumerWrapper<T> implements DisposableBean {
     }
 
     public synchronized void init() {
-        // One cluster for one protocol
-        // Only one server node under a cluster can receive the request
         clusters = new ArrayList<>(Arrays.asList(infinityProperties.getProtocol()).size());
         for (InfinityProperties.ProtocolConfig protocolConfig : Arrays.asList(infinityProperties.getProtocol())) {
+            // One cluster for one protocol
+            // Only one server node under a cluster can receive the request
             clusters.add(createCluster(protocolConfig));
         }
     }
 
     private Cluster<T> createCluster(InfinityProperties.ProtocolConfig protocolConfig) {
+        Url clientUrl = Url.clientUrl(protocolConfig.getName().name(), NetworkIpUtils.INTRANET_IP, interfaceClass.getName());
         Cluster<T> cluster = ServiceInstanceLoader.getServiceLoader(Cluster.class).load(protocolConfig.getCluster());
         LoadBalancer<T> loadBalancer = ServiceInstanceLoader.getServiceLoader(LoadBalancer.class).load(protocolConfig.getLoadBalancer());
         HighAvailability<T> ha = ServiceInstanceLoader.getServiceLoader(HighAvailability.class).load(protocolConfig.getHighAvailability());
-//        ha.setProviderUrl();
+        ha.setClientUrl(clientUrl);
         cluster.setLoadBalancer(loadBalancer);
         cluster.setHighAvailability(ha);
-//        cluster.setProviderUrl();
+        cluster.setClientUrl(clientUrl);
         return cluster;
     }
 }

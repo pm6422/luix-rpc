@@ -19,7 +19,7 @@ public interface Cluster<T> extends RpcCallable<T> {
      */
     void onRefresh(List<Requester<T>> requesters);
 
-    void setProviderUrl(Url providerUrl);
+    void setClientUrl(Url providerUrl);
 
     void setLoadBalancer(LoadBalancer<T> loadBalancer);
 

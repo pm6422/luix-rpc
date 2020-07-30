@@ -6,6 +6,8 @@ import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.config.spring.utils.AnnotationUtils;
+import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;

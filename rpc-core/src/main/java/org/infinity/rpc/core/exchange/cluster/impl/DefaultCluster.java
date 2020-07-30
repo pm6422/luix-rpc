@@ -31,9 +31,9 @@ import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_R
 public class DefaultCluster<T> implements Cluster<T> {
     private static final int                 DELAY_TIME = 1000;
     private              HighAvailability<T> highAvailability;
-    private              LoadBalancer<T>     loadBalancer;
-    private              Url                 providerUrl;
-    private              List<Requester<T>>  requesters;
+    private              LoadBalancer<T>    loadBalancer;
+    private              Url                clientUrl;
+    private              List<Requester<T>> requesters;
     private              AtomicBoolean       available  = new AtomicBoolean(false);
 
     @Override
@@ -47,13 +47,13 @@ public class DefaultCluster<T> implements Cluster<T> {
     }
 
     @Override
-    public Url getProviderUrl() {
-        return providerUrl;
+    public Url getClientUrl() {
+        return clientUrl;
     }
 
     @Override
-    public void setProviderUrl(Url providerUrl) {
-        this.providerUrl = providerUrl;
+    public void setClientUrl(Url clientUrl) {
+        this.clientUrl = clientUrl;
     }
 
     @Override
@@ -92,7 +92,7 @@ public class DefaultCluster<T> implements Cluster<T> {
 
         List<Requester<T>> oldRequesters = this.requesters;
         this.requesters = requesters;
-        highAvailability.setProviderUrl(providerUrl);
+        highAvailability.setClientUrl(clientUrl);
 
         if (CollectionUtils.isEmpty(oldRequesters)) {
             return;
@@ -113,9 +113,9 @@ public class DefaultCluster<T> implements Cluster<T> {
                 for (Requester<?> requester : delayDestroyRequesters) {
                     try {
                         requester.destroy();
-                        log.info("Destroyed the requester with url: {}", requester.getProviderUrl().getUri());
+                        log.info("Destroyed the requester with url: {}", requester.getClientUrl().getUri());
                     } catch (Exception e) {
-                        log.error(MessageFormat.format("Failed to destroy the requester with url: {0}", requester.getProviderUrl().getUri()), e);
+                        log.error(MessageFormat.format("Failed to destroy the requester with url: {0}", requester.getClientUrl().getUri()), e);
                     }
                 }
             });
@@ -148,7 +148,7 @@ public class DefaultCluster<T> implements Cluster<T> {
             throw (RuntimeException) cause;
         }
 
-        if (Boolean.parseBoolean(getProviderUrl().getParameter(UrlParam.throwException.getName(), UrlParam.throwException.getValue()))) {
+        if (Boolean.parseBoolean(getClientUrl().getParameter(UrlParam.throwException.getName(), UrlParam.throwException.getValue()))) {
             if (cause instanceof RpcAbstractException) {
                 throw (RpcAbstractException) cause;
             } else {

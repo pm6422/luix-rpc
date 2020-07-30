@@ -18,7 +18,7 @@ public interface RpcCallable<T> {
     /**
      * @return
      */
-    Url getProviderUrl();
+    Url getClientUrl();
 
     /**
      * Initiate a RPC call
