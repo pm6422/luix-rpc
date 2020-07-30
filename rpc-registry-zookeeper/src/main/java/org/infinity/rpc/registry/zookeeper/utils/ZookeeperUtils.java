@@ -1,7 +1,7 @@
 package org.infinity.rpc.registry.zookeeper.utils;
 
 import org.I0Itec.zkclient.ZkClient;
-import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.ZookeeperStatusNode;
 
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.infinity.rpc.core.registry.Url.PATH_SEPARATOR;
+import static org.infinity.rpc.core.url.Url.PATH_SEPARATOR;
 
 public class ZookeeperUtils {
 

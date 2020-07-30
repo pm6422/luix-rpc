@@ -2,7 +2,6 @@ package org.infinity.rpc.core.exchange;
 
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.registry.Url;
 
 public interface RpcCallable<T> {
     /**

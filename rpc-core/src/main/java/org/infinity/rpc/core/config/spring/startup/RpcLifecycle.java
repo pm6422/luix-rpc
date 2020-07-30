@@ -7,7 +7,7 @@ import org.infinity.rpc.core.config.spring.server.ProviderWrapper;
 import org.infinity.rpc.core.config.spring.server.ProviderWrapperHolder;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
-import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
 
 import java.util.List;

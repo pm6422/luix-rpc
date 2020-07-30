@@ -3,6 +3,7 @@ package org.infinity.rpc.core.registry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.infinity.rpc.core.url.Url;
 
 import java.util.List;
 

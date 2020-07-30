@@ -6,7 +6,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
-import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.url.Url;
 import org.springframework.beans.factory.DisposableBean;
 
 import javax.annotation.PostConstruct;

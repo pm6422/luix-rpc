@@ -3,7 +3,7 @@ package org.infinity.rpc.core.exchange.request.impl;
 import org.infinity.rpc.core.exchange.request.AbstractRequester;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.url.Url;
 
 import java.util.concurrent.Future;
 

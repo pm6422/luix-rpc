@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.registry;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.url.Url;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.support.AbstractApplicationContext;

@@ -19,12 +19,13 @@ package org.infinity.rpc.core.registry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.registry.*;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.switcher.DefaultSwitcherService;
 import org.infinity.rpc.core.switcher.SwitcherService;
+import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.core.url.UrlParam;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
@@ -49,11 +50,11 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     /**
      * Client url
      */
-    private          Url                             clientUrl;
+    private Url                             clientUrl;
     /**
      * Registry
      */
-    private          CommandFailbackAbstractRegistry registry;
+    private CommandFailbackAbstractRegistry registry;
     /**
      *
      */

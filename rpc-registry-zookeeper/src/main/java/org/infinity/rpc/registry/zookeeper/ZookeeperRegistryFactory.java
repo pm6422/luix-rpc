@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.infinity.rpc.core.registry.AbstractRegistryFactory;
 import org.infinity.rpc.core.registry.Registry;
-import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 @ServiceName("zookeeper")

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.switcher.DefaultSwitcherService;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.annotation.Event;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 
@@ -25,15 +26,15 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * The registry subclass name
      */
-    private String                           registryClassName               = this.getClass().getSimpleName();
+    private String   registryClassName               = this.getClass().getSimpleName();
     /**
      * Registry url
      */
-    private Url                              registryUrl;
+    private Url      registryUrl;
     /**
      * Registered provider urls cache
      */
-    private Set<Url>                         registeredProviderUrls          = new ConcurrentHashSet<>();
+    private Set<Url> registeredProviderUrls          = new ConcurrentHashSet<>();
     /**
      * Provider urls cache grouped by 'type' parameter value of {@link Url}
      */

@@ -8,7 +8,7 @@ import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.ExceptionUtils;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 

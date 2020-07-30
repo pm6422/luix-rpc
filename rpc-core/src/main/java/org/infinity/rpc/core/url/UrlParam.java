@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.registry;
+package org.infinity.rpc.core.url;
 
 public enum UrlParam {
     // registry connect timeout

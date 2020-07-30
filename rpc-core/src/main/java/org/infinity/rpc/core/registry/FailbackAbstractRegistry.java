@@ -6,6 +6,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool;
 import org.infinity.rpc.core.registry.listener.ClientListener;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 
 import java.text.MessageFormat;
@@ -19,8 +20,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public abstract class FailbackAbstractRegistry extends AbstractRegistry {
 
-    private Set<Url>                                    failedRegisteredUrl              = new ConcurrentHashSet<>();
-    private Set<Url>                                    failedUnregisteredUrl            = new ConcurrentHashSet<>();
+    private Set<Url> failedRegisteredUrl   = new ConcurrentHashSet<>();
+    private Set<Url> failedUnregisteredUrl = new ConcurrentHashSet<>();
     private Map<Url, ConcurrentHashSet<ClientListener>> failedSubscriptionPerClientUrl   = new ConcurrentHashMap<>();
     private Map<Url, ConcurrentHashSet<ClientListener>> failedUnsubscriptionPerClientUrl = new ConcurrentHashMap<>();
 

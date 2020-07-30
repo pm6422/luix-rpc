@@ -16,7 +16,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.zookeeper.Watcher;
 import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.CommandFailbackAbstractRegistry;
-import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;

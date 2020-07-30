@@ -1,9 +1,10 @@
-package org.infinity.rpc.core.registry;
+package org.infinity.rpc.core.url;
 
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
+import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 
 import java.io.Serializable;

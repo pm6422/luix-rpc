@@ -7,7 +7,7 @@ import org.infinity.rpc.core.config.spring.startup.NettyServerApplicationRunner;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryConfig;
 import org.infinity.rpc.core.registry.RegistryFactory;
-import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.url.Url;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -68,7 +68,7 @@ public class RpcAutoConfiguration {
 
     @Bean
     public RpcConsumerProxy rpcConsumerProxy() {
-        return new RpcConsumerProxy(infinityProperties);
+        return new RpcConsumerProxy(getRegistry(infinityProperties));
     }
 
     @Bean

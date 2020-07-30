@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.registry.listener;
 
-import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.url.Url;
 
 import java.util.List;
 

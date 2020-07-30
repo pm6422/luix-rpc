@@ -2,7 +2,7 @@ package org.infinity.rpc.webcenter.entity;
 
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
 
 import java.util.List;

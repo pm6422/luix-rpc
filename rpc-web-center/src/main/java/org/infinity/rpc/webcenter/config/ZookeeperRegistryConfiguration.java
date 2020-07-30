@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.exception.ZkException;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
-import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.webcenter.service.RegistryService;
 import org.infinity.rpc.webcenter.service.impl.ZookeeperRegistryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
