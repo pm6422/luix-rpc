@@ -6,6 +6,7 @@ import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.config.spring.utils.AnnotationUtils;
+import org.infinity.rpc.core.registry.RegistryConfig;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -205,11 +206,13 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
 
     private <T> void registerConsumerWrapperBean(Class<?> interfaceClass, T proxyInstance, AnnotationAttributes annotationAttributes) {
         InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
+        RegistryConfig registryConfig = applicationContext.getBean(RegistryConfig.class);
         // Build the consumer wrapper bean name
         String consumerWrapperBeanName = buildConsumerWrapperBeanName(interfaceClass);
 
         ConsumerWrapper consumerWrapper = ConsumerWrapper.builder()
                 .infinityProperties(infinityProperties)
+                .registryConfig(registryConfig)
                 .interfaceClass(interfaceClass)
                 .instanceName(consumerWrapperBeanName)
                 .proxyInstance(proxyInstance)

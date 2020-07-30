@@ -2,8 +2,7 @@ package org.infinity.rpc.core.config.spring.startup;
 
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.registry.Registry;
-import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.registry.RegistryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;
@@ -11,7 +10,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 
 /**
  * The spring application listener used to start and stop the RPC application.
@@ -19,9 +17,10 @@ import java.util.List;
 public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListener implements Ordered {
 
     @Autowired
-    private       InfinityProperties rpcProperties;
-    private       List<Url>    registryUrls;
-    private final RpcLifecycle rpcLifecycle;
+    private       InfinityProperties infinityProperties;
+    @Autowired
+    private       RegistryConfig     registryConfig;
+    private final RpcLifecycle       rpcLifecycle;
 
     public RpcLifecycleApplicationListener() {
         this.rpcLifecycle = RpcLifecycle.getInstance();
@@ -29,8 +28,7 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
 
     @PostConstruct
     public void init() {
-        Validate.notNull(rpcProperties, "Infinity properties must NOT be null!");
-        registryUrls = Registry.getRegistryUrls(rpcProperties);
+        Validate.notNull(infinityProperties, "Infinity properties must NOT be null!");
     }
 
     @Override
@@ -44,11 +42,11 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
     }
 
     private void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        rpcLifecycle.start(rpcProperties, registryUrls);
+        rpcLifecycle.start(infinityProperties, registryConfig.getRegistryUrls());
     }
 
     private void onContextClosedEvent(ContextClosedEvent event) {
-        rpcLifecycle.destroy(rpcProperties, registryUrls);
+        rpcLifecycle.destroy(infinityProperties, registryConfig.getRegistryUrls());
     }
 
     @Override

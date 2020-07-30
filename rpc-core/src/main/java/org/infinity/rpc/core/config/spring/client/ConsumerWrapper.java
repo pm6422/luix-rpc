@@ -7,6 +7,7 @@ import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.exchange.ha.HighAvailability;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
+import org.infinity.rpc.core.registry.RegistryConfig;
 import org.infinity.rpc.core.registry.Url;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
@@ -30,6 +31,10 @@ public class ConsumerWrapper<T> implements DisposableBean {
      *
      */
     private InfinityProperties infinityProperties;
+    /**
+     *
+     */
+    private RegistryConfig     registryConfig;
     /**
      * The interface class of the consumer
      */
