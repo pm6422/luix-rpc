@@ -6,8 +6,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.protocol.constants.ProtocolName;
 import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.core.registry.Url;
+import org.infinity.rpc.core.registry.constants.RegistryName;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
@@ -44,28 +46,28 @@ public class ZookeeperRegistryTests {
         Properties properties = new Properties();
         InputStream in = EmbeddedZookeeper.class.getResourceAsStream("/zoo.cfg");
         properties.load(in);
-        int port = Integer.parseInt(properties.getProperty("clientPort"));
+        int zkPort = Integer.parseInt(properties.getProperty("clientPort"));
         in.close();
 
-        registryUrl = Url.of("zookeeper", REGISTRY_HOST, port, Registrable.class.getName());
+        registryUrl = Url.of(RegistryName.zookeeper.name(), REGISTRY_HOST, zkPort, Registrable.class.getName());
         registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, new InfinityProperties().getRegistry().getConnectTimeout().toString());
         registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, new InfinityProperties().getRegistry().getSessionTimeout().toString());
         registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, new InfinityProperties().getRegistry().getRetryInterval().toString());
 
         // client url use the provider path, but port is 0
-        clientUrl = Url.of("infinity", NetworkIpUtils.INTRANET_IP, 0, provider);
+        clientUrl = Url.of(ProtocolName.infinity.name(), NetworkIpUtils.INTRANET_IP, Url.CLIENT_URL_PORT, provider);
         clientUrl.addParameter("group", Url.PARAM_GROUP_PROVIDER);
 
-        providerUrl1 = Url.of("infinity", NetworkIpUtils.INTRANET_IP, 2000, provider);
+        providerUrl1 = Url.of(ProtocolName.infinity.name(), NetworkIpUtils.INTRANET_IP, 2000, provider);
         providerUrl1.addParameter("group", Url.PARAM_GROUP_PROVIDER);
 
-        providerUrl2 = Url.of("infinity", "192.168.100.100", 2000, provider);
+        providerUrl2 = Url.of(ProtocolName.infinity.name(), "192.168.100.100", 2000, provider);
         providerUrl2.addParameter("group", Url.PARAM_GROUP_PROVIDER);
 
         zookeeper = new EmbeddedZookeeper();
         zookeeper.start();
         Thread.sleep(1000);
-        zkClient = new ZkClient(REGISTRY_HOST + ":" + port, 5000);
+        zkClient = new ZkClient(REGISTRY_HOST + ":" + zkPort, 5000);
         registry = new ZookeeperRegistry(registryUrl, zkClient);
 
         // Delete old data
