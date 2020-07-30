@@ -13,6 +13,7 @@ import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
+import org.infinity.rpc.core.registry.RegistryConfig;
 import org.infinity.rpc.core.registry.UrlParam;
 import org.infinity.rpc.core.utils.ExceptionUtils;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
@@ -29,10 +30,16 @@ import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_R
 @ServiceName("default")
 public class DefaultCluster<T> implements Cluster<T> {
     private static final int                 DELAY_TIME = 1000;
+    private              RegistryConfig      registryConfig;
     private              HighAvailability<T> highAvailability;
     private              LoadBalancer<T>     loadBalancer;
     private              List<Requester<T>>  requesters;
     private              AtomicBoolean       available  = new AtomicBoolean(false);
+
+    @Override
+    public void setRegistryConfig(RegistryConfig registryConfig) {
+        this.registryConfig = registryConfig;
+    }
 
     @Override
     public Class<T> getInterfaceClass() {
