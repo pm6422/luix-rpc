@@ -26,19 +26,19 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * The registry subclass name
      */
-    private String   registryClassName               = this.getClass().getSimpleName();
+    private   String                           registryClassName               = this.getClass().getSimpleName();
     /**
      * Registry url
      */
-    private Url      registryUrl;
+    protected Url                              registryUrl;
     /**
      * Registered provider urls cache
      */
-    private Set<Url> registeredProviderUrls          = new ConcurrentHashSet<>();
+    private   Set<Url>                         registeredProviderUrls          = new ConcurrentHashSet<>();
     /**
      * Provider urls cache grouped by 'type' parameter value of {@link Url}
      */
-    private Map<Url, Map<String, List<Url>>> providerUrlsPerTypePerClientUrl = new ConcurrentHashMap<>();
+    private   Map<Url, Map<String, List<Url>>> providerUrlsPerTypePerClientUrl = new ConcurrentHashMap<>();
 
     @Override
     public String getRegistryClassName() {

@@ -27,4 +27,5 @@ import java.util.List;
 public interface ClientListener {
 
     void onSubscribe(Url registryUrl, List<Url> providerUrls);
+
 }

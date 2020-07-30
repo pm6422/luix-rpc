@@ -1,22 +1,43 @@
 package org.infinity.rpc.core.registry.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.registry.AbstractRegistry;
 import org.infinity.rpc.core.registry.App;
+import org.infinity.rpc.core.registry.constants.RegistryName;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.destory.Cleanable;
+import org.infinity.rpc.utilities.network.AddressUtils;
 
 import javax.annotation.concurrent.ThreadSafe;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import static org.infinity.rpc.core.url.Url.PARAM_ADDRESS;
 
 @Slf4j
 @ThreadSafe
 public class DirectRegistry extends AbstractRegistry implements Cleanable {
+    private List<Url>        directUrls    = new ArrayList<>();
+    private Map<Url, Object> subscribeUrls = new ConcurrentHashMap();
 
     public DirectRegistry(Url registryUrl) {
         super(registryUrl);
+        parseDirectUrls(registryUrl.getParameter(PARAM_ADDRESS));
+    }
+
+    private void parseDirectUrls(String address) {
+        List<Pair<String, Integer>> hostPortList = AddressUtils.parseAddress(address);
+        hostPortList.forEach(hostPortPair -> {
+            // Use empty string as path
+            directUrls.add(Url.of(RegistryName.direct.name(), hostPortPair.getLeft(), hostPortPair.getRight(), StringUtils.EMPTY));
+        });
     }
 
     @Override
@@ -45,47 +66,56 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
     }
 
     @Override
-    protected void doSubscribe(Url url, ClientListener listener) {
-
+    protected void doSubscribe(Url clientUrl, ClientListener listener) {
+        subscribeUrls.putIfAbsent(clientUrl, 1);
+        // Notify
+        listener.onSubscribe(registryUrl, doDiscover(clientUrl));
     }
 
     @Override
-    protected void doUnsubscribe(Url url, ClientListener listener) {
-
+    protected void doUnsubscribe(Url clientUrl, ClientListener listener) {
+        subscribeUrls.remove(clientUrl);
+        // Notify
+        listener.onSubscribe(registryUrl, doDiscover(clientUrl));
     }
 
     @Override
     protected void subscribeServiceListener(Url clientUrl, ServiceListener listener) {
-
+        // Do nothing
     }
 
     @Override
     protected void unsubscribeServiceListener(Url clientUrl, ServiceListener listener) {
-
+        // Do nothing
     }
 
     @Override
-    protected List<Url> doDiscover(Url url) {
-        return null;
+    protected List<Url> doDiscover(Url clientUrl) {
+        List results = directUrls
+                .stream()
+                .map(directUrl -> Url.of(clientUrl.getProtocol(), directUrl.getHost(), directUrl.getPort(), StringUtils.EMPTY))
+                .collect(Collectors.toList());
+        return results;
     }
 
     @Override
     public List<String> discoverActiveProviderAddress(String providerPath) {
+        // TODO
         return null;
     }
 
     @Override
     public void registerApplication(App app) {
-
+        // Do nothing
     }
 
     @Override
     public void registerApplicationProvider(App app, Url providerUrl) {
-
+        // Do nothing
     }
 
     @Override
     public void cleanup() {
-
+        // Do nothing
     }
 }
