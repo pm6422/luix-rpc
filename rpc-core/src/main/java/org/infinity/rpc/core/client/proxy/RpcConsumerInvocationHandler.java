@@ -7,8 +7,12 @@ import org.infinity.rpc.utilities.id.IdGenerator;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @param <T>
+ */
 @Slf4j
 public class RpcConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationHandler<T> implements InvocationHandler {
 
@@ -18,9 +22,18 @@ public class RpcConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocati
         super.clusters = clusters;
     }
 
+    /**
+     * Call this method every time when all the methods of RPC consumer been invoked
+     *
+     * @param proxy
+     * @param method consumer method
+     * @param args   consumer method arguments
+     * @return RPC invocation result
+     * @throws Throwable if any exception throws
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (isLocalMethod(method)) {
+        if (isDerivedFromObject(method)) {
 
         }
 
@@ -31,21 +44,22 @@ public class RpcConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocati
                 .methodArguments(args)
                 .build();
 
-        boolean async = false;
+        boolean async = Arrays.asList(args).stream().anyMatch(arg -> (arg instanceof AsyncRequestFlag) && (AsyncRequestFlag.ASYNC.equals(arg)));
         Class returnType = getRealReturnType(async, this.clazz, method, method.getName());
-        return invokeRequest(request, returnType, async);
+        return processRequest(request, returnType, async);
     }
 
     /**
-     * toString,equals,hashCode,finalize等接口未声明的方法不进行远程调用
+     * Check whether the method is derived from {@link Object} class.
+     * For example, toString, equals, hashCode, finalize
      *
-     * @param method
-     * @return
+     * @param method method
+     * @return true: method derived from Object class, false: otherwise
      */
-    public boolean isLocalMethod(Method method) {
+    public boolean isDerivedFromObject(Method method) {
         if (method.getDeclaringClass().equals(Object.class)) {
             try {
-                Method interfaceMethod = clazz.getDeclaredMethod(method.getName(), method.getParameterTypes());
+                clazz.getDeclaredMethod(method.getName(), method.getParameterTypes());
                 return false;
             } catch (Exception e) {
                 return true;

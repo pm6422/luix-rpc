@@ -14,7 +14,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
     protected Class<T>         clazz;
     protected SwitcherService  switcherService;
 
-    protected Object invokeRequest(Requestable request, Class returnType, boolean async) throws Throwable {
+    protected Object processRequest(Requestable request, Class returnType, boolean async) {
         RequestContext threadRpcContext = RequestContext.getThreadRpcContext();
         threadRpcContext.setAsyncCall(async);
 
