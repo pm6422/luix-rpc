@@ -28,5 +28,5 @@ public @interface Consumer {
     int timeout() default 0;
 
     // Provider url used to connect provider directly without third party registry
-    String directUrl() default "aa";
+    String directUrl() default "";
 }

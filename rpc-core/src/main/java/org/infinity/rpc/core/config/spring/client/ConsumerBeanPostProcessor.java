@@ -25,6 +25,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import static org.infinity.rpc.core.config.spring.utils.AnnotationUtils.getAnnotationAttributes;
 
@@ -113,7 +114,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
                     }
 
                     // Get @Consumer annotation attributes value of field, and it will be null if no annotation presents on the field
-                    AnnotationAttributes annotationAttributes = getAnnotationAttributes(field, Consumer.class, environment, true, true);
+                    AnnotationAttributes annotationAttributes = getAnnotationAttributes(field, Consumer.class, environment, false, true);
                     if (annotationAttributes != null) {
                         // Found the @Consumer annotated field
                         Class<?> interfaceClass = AnnotationUtils.resolveInterfaceClass(annotationAttributes, field.getType());
@@ -150,7 +151,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
                     // for the generic erasure occasion
                     Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
                     // Get @Consumer annotation attributes value of method, and it will be null if no annotation presents on the field
-                    AnnotationAttributes annotationAttributes = getAnnotationAttributes(bridgedMethod, Consumer.class, environment, true, true);
+                    AnnotationAttributes annotationAttributes = getAnnotationAttributes(bridgedMethod, Consumer.class, environment, false, true);
                     if (annotationAttributes != null) {
                         // Found the @Consumer annotated method
                         Class<?> interfaceClass = AnnotationUtils.resolveInterfaceClass(annotationAttributes, method.getParameterTypes()[0]);
@@ -184,8 +185,9 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
 //                        .instanceName(consumerWrapperBeanName)
 //                        .directUrl(annotationAttributes.getString("timeout"))
 //                        .build();
+
                 ConsumerWrapper consumerWrapper = new ConsumerWrapper(infinityProperties, registryConfig, interfaceClass,
-                        consumerWrapperBeanName, annotationAttributes.getNumber("timeout"));
+                        consumerWrapperBeanName, new HashMap<>(annotationAttributes));
                 beanFactory.registerSingleton(consumerWrapperBeanName, consumerWrapper);
                 return consumerWrapper;
             }

@@ -33,7 +33,7 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 public class AuthorityController {
 
     private static final Logger            LOGGER = LoggerFactory.getLogger(AuthorityController.class);
-    @Consumer(timeout = 1000)
+    @Consumer
     private              AuthorityService  authorityService;
     @Autowired
     private              HttpHeaderCreator httpHeaderCreator;

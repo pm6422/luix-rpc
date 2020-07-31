@@ -17,6 +17,7 @@ import org.springframework.beans.factory.FactoryBean;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * PRC consumer configuration wrapper
@@ -63,12 +64,14 @@ public class ConsumerWrapper<T> implements DisposableBean {
      */
     private List<Cluster<T>>    clusters;
 
-    public ConsumerWrapper(InfinityProperties infinityProperties, RegistryConfig registryConfig, Class<T> interfaceClass, String instanceName,int timeout) {
+    public ConsumerWrapper(InfinityProperties infinityProperties, RegistryConfig registryConfig,
+                           Class<T> interfaceClass, String instanceName, Map<String, Object> consumerAttributesMap) {
         this.infinityProperties = infinityProperties;
         this.registryConfig = registryConfig;
         this.interfaceClass = interfaceClass;
         this.instanceName = instanceName;
-        this.timeout = timeout;
+        this.directUrl = (String) consumerAttributesMap.get("directUrl");
+        this.timeout = (int) consumerAttributesMap.get("timeout");
 
         // Initialize the consumer wrapper
         this.init();
