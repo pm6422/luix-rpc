@@ -1,7 +1,6 @@
 package org.infinity.rpc.core.config.spring;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.config.spring.startup.NettyServerApplicationRunner;
 import org.infinity.rpc.core.registry.Registry;
@@ -25,7 +24,8 @@ public class RpcAutoConfiguration {
 
     @Bean
     public RegistryConfig registryConfig() {
-        return new RegistryConfig(getRegistryUrls(infinityProperties), getRegistry(infinityProperties));
+        List<Url> registryUrls = getRegistryUrls(infinityProperties);
+        return new RegistryConfig(registryUrls, getRegistry(registryUrls));
     }
 
     /**
@@ -52,11 +52,10 @@ public class RpcAutoConfiguration {
     }
 
     /**
-     * @param infinityProperties
+     * @param registryUrls
      * @return
      */
-    private List<Registry> getRegistry(InfinityProperties infinityProperties) {
-        List<Url> registryUrls = getRegistryUrls(infinityProperties);
+    private List<Registry> getRegistry(List<Url> registryUrls) {
         List<Registry> registries = new ArrayList<>();
         for (Url registryUrl : registryUrls) {
             // Register provider URL to all the registries
@@ -64,11 +63,6 @@ public class RpcAutoConfiguration {
             registries.add(registryFactory.getRegistry(registryUrl));
         }
         return registries;
-    }
-
-    @Bean
-    public RpcConsumerProxy rpcConsumerProxy() {
-        return new RpcConsumerProxy(getRegistry(infinityProperties));
     }
 
     @Bean

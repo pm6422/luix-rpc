@@ -1,8 +1,8 @@
 package org.infinity.rpc.core.config.spring.client;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.exchange.ha.HighAvailability;
@@ -24,56 +24,64 @@ import java.util.List;
  * the class is used as a factory for an object to expose, not directly as a bean instance that will be exposed itself.
  */
 @Slf4j
-@Data
-@Builder
+@Getter
 public class ConsumerWrapper<T> implements DisposableBean {
     /**
      *
      */
-    private InfinityProperties infinityProperties;
+    private InfinityProperties  infinityProperties;
     /**
      *
      */
-    private RegistryConfig     registryConfig;
+    private RegistryConfig      registryConfig;
     /**
      * The interface class of the consumer
      */
-    private Class<?>           interfaceClass;
+    private Class<T>            interfaceClass;
     /**
      * The consumer instance simple name, also known as bean name
      */
-    private String             instanceName;
-    /**
-     * The consumer proxy instance, refer the return type of {@link org.infinity.rpc.core.client.proxy.RpcConsumerProxy#getProxy(Class)}
-     */
-    private T                  proxyInstance;
+    private String              instanceName;
     /**
      *
      */
-    private String             directUrl;
+    private RpcConsumerProxy<T> rpcConsumerProxy = new RpcConsumerProxy<>();
+    /**
+     * The consumer proxy instance, refer the return type of {@link org.infinity.rpc.core.client.proxy.RpcConsumerProxy#getProxy(Class, List, List)}
+     */
+    private T                   proxyInstance;
     /**
      *
      */
-    private List<Cluster<T>>   clusters;
+    private String              directUrl;
+    /**
+     *
+     */
+    private int                 timeout;
+    /**
+     *
+     */
+    private List<Cluster<T>>    clusters;
 
-    @Override
-    public void destroy() {
-        // Leave blank intentionally for now
+    public ConsumerWrapper(InfinityProperties infinityProperties, RegistryConfig registryConfig, Class<T> interfaceClass, String instanceName,int timeout) {
+        this.infinityProperties = infinityProperties;
+        this.registryConfig = registryConfig;
+        this.interfaceClass = interfaceClass;
+        this.instanceName = instanceName;
+        this.timeout = timeout;
+
+        // Initialize the consumer wrapper
+        this.init();
     }
 
-    public T getProxyInstance() {
-        if (proxyInstance == null) {
-            init();
-        }
-        return proxyInstance;
-    }
-
-    public synchronized void init() {
+    public void init() {
         clusters = new ArrayList<>(Arrays.asList(infinityProperties.getProtocol()).size());
         for (InfinityProperties.ProtocolConfig protocolConfig : Arrays.asList(infinityProperties.getProtocol())) {
             // One cluster for one protocol, only one server node under a cluster can receive the request
             clusters.add(createCluster(protocolConfig));
         }
+
+        proxyInstance = rpcConsumerProxy.getProxy(interfaceClass, clusters, registryConfig.getRegistries());
     }
 
     private Cluster<T> createCluster(InfinityProperties.ProtocolConfig protocolConfig) {
@@ -85,5 +93,17 @@ public class ConsumerWrapper<T> implements DisposableBean {
         cluster.setLoadBalancer(loadBalancer);
         cluster.setHighAvailability(ha);
         return cluster;
+    }
+
+    public T getProxyInstance() {
+        if (proxyInstance == null) {
+            init();
+        }
+        return proxyInstance;
+    }
+
+    @Override
+    public void destroy() {
+        // Leave blank intentionally for now
     }
 }
