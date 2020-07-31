@@ -1,14 +1,23 @@
 package org.infinity.rpc.core.client.proxy;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.exchange.request.impl.RpcRequest;
 import org.infinity.rpc.utilities.id.IdGenerator;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.List;
 
 @Slf4j
-public class RpcConsumerInvocationHandler extends AbstractRpcConsumerInvocationHandler implements InvocationHandler {
+public class RpcConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationHandler<T> implements InvocationHandler {
+
+    public RpcConsumerInvocationHandler(Class<T> interfaceClass, List<Cluster<T>> clusters) {
+        super.interfaceClass = interfaceClass;
+        super.interfaceName = interfaceClass.getName();
+        super.clusters = clusters;
+    }
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (isLocalMethod(method)) {

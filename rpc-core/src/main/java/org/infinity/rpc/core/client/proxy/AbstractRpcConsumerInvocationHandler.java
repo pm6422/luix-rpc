@@ -1,17 +1,18 @@
 package org.infinity.rpc.core.client.proxy;
 
+import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.impl.RequestContext;
 import org.infinity.rpc.core.switcher.SwitcherService;
 
+import java.util.List;
+
 public abstract class AbstractRpcConsumerInvocationHandler<T> {
-    protected String          interfaceName;
-    protected Class<T>        clazz;
-    protected SwitcherService switcherService;
-
-    protected void initialize() {
-
-    }
+    protected List<Cluster<T>> clusters;
+    protected Class<T>         interfaceClass;
+    protected String           interfaceName;
+    protected Class<T>         clazz;
+    protected SwitcherService  switcherService;
 
     protected Object invokeRequest(Requestable request, Class returnType, boolean async) throws Throwable {
         RequestContext threadRpcContext = RequestContext.getThreadRpcContext();
