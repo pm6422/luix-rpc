@@ -15,15 +15,15 @@ public class RequestContext {
      * Create a new {@link RequestContext} for each thread
      */
     private static final ThreadLocal<RequestContext> THREAT_LOCAL_CONTEXT = ThreadLocal.withInitial(RequestContext::new);
-    private String      clientRequestId;
-    private Requestable request;
-    private boolean     asyncCall            = false;
+    private              String                      clientRequestId;
+    private              Requestable                 request;
+    private              boolean                     asyncCall            = false;
     private              Responseable                response;
     /**
      * RPC context attachment. not same as request attachments
      */
     private              Map<String, String>         attachments          = new HashMap<>();
-    private              Map<Object, Object>             attributes           = new HashMap<>();
+    private              Map<Object, Object>         attributes           = new HashMap<>();
 
     /**
      * Prohibit instantiate an instance outside the class

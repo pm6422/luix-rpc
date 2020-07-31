@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.client.proxy;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.exchange.request.impl.RpcRequest;
 import org.infinity.rpc.utilities.id.IdGenerator;
@@ -16,10 +17,11 @@ import java.util.List;
 @Slf4j
 public class RpcConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationHandler<T> implements InvocationHandler {
 
-    public RpcConsumerInvocationHandler(Class<T> interfaceClass, List<Cluster<T>> clusters) {
+    public RpcConsumerInvocationHandler(Class<T> interfaceClass, List<Cluster<T>> clusters, InfinityProperties infinityProperties) {
         super.interfaceClass = interfaceClass;
         super.interfaceName = interfaceClass.getName();
         super.clusters = clusters;
+        super.infinityProperties = infinityProperties;
     }
 
     /**
@@ -44,9 +46,8 @@ public class RpcConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocati
                 .methodArguments(args)
                 .build();
 
-        boolean async = Arrays.asList(args).stream().anyMatch(arg -> (arg instanceof AsyncRequestFlag) && (AsyncRequestFlag.ASYNC.equals(arg)));
-        Class returnType = getRealReturnType(async, this.clazz, method, method.getName());
-        return processRequest(request, returnType, async);
+        boolean async = isAsyncCall(args);
+        return processRequest(request, method.getReturnType(), async);
     }
 
     /**
@@ -59,7 +60,7 @@ public class RpcConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocati
     public boolean isDerivedFromObject(Method method) {
         if (method.getDeclaringClass().equals(Object.class)) {
             try {
-                clazz.getDeclaredMethod(method.getName(), method.getParameterTypes());
+                interfaceClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
                 return false;
             } catch (Exception e) {
                 return true;
@@ -68,17 +69,18 @@ public class RpcConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocati
         return false;
     }
 
-    private Class<?> getRealReturnType(boolean asyncCall, Class<?> clazz, Method method, String methodName) {
-        if (asyncCall) {
-            try {
-                Method m = clazz.getMethod(methodName, method.getParameterTypes());
-                return m.getReturnType();
-            } catch (Exception e) {
-                log.warn("RefererInvocationHandler get real return type fail. err:" + e.getMessage());
-                return method.getReturnType();
-            }
-        } else {
-            return method.getReturnType();
+    /**
+     * It is a asynchronous request if any argument of the method is type of AsyncRequestFlag.ASYNC
+     *
+     * @param args method arguments
+     * @return
+     */
+    private boolean isAsyncCall(Object[] args) {
+        if (args == null) {
+            return false;
         }
+        return Arrays.asList(args)
+                .stream()
+                .anyMatch(arg -> (arg instanceof AsyncRequestFlag) && (AsyncRequestFlag.ASYNC.equals(arg)));
     }
 }

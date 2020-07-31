@@ -30,5 +30,7 @@ public interface Cluster<T> extends RpcCallable<T> {
 
     void setHighAvailability(HighAvailability<T> highAvailability);
 
+    HighAvailability<T> getHighAvailability();
+
     List<Requester<T>> getRequesters();
 }

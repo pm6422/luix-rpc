@@ -67,6 +67,11 @@ public class DefaultCluster<T> implements Cluster<T> {
     }
 
     @Override
+    public HighAvailability<T> getHighAvailability() {
+        return highAvailability;
+    }
+
+    @Override
     public List<Requester<T>> getRequesters() {
         return requesters;
     }

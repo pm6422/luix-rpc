@@ -80,11 +80,13 @@ public class ConsumerWrapper<T> implements DisposableBean {
     public void init() {
         clusters = new ArrayList<>(Arrays.asList(infinityProperties.getProtocol()).size());
         for (InfinityProperties.ProtocolConfig protocolConfig : Arrays.asList(infinityProperties.getProtocol())) {
+            // 当配置多个protocol的时候，比如A,B,C，
+            // 那么正常情况下只会使用A，如果A被开关降级，那么就会使用B，B也被降级，那么会使用C
             // One cluster for one protocol, only one server node under a cluster can receive the request
             clusters.add(createCluster(protocolConfig));
         }
 
-        proxyInstance = rpcConsumerProxy.getProxy(interfaceClass, clusters, registryConfig.getRegistries());
+        proxyInstance = rpcConsumerProxy.getProxy(interfaceClass, clusters, registryConfig.getRegistries(), infinityProperties);
     }
 
     private Cluster<T> createCluster(InfinityProperties.ProtocolConfig protocolConfig) {
@@ -95,6 +97,8 @@ public class ConsumerWrapper<T> implements DisposableBean {
 
         cluster.setLoadBalancer(loadBalancer);
         cluster.setHighAvailability(ha);
+        // Initialize
+        cluster.init();
         return cluster;
     }
 

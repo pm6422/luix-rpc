@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
 import org.infinity.rpc.core.client.RpcClient;
+import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.registry.Registry;
 import org.springframework.util.ClassUtils;
@@ -15,21 +16,23 @@ import java.util.UUID;
 
 @Slf4j
 public class ConsumerInvocationHandler<T> implements InvocationHandler {
-    private Class<T>         interfaceClass;
-    private List<Cluster<T>> clusters;
+    private Class<T>           interfaceClass;
+    private List<Cluster<T>>   clusters;
     @Deprecated
-    private List<Registry>   registries;
+    private List<Registry>     registries;
+    private InfinityProperties infinityProperties;
 
-    public ConsumerInvocationHandler(Class<T> interfaceClass, List<Cluster<T>> clusters, List<Registry> registries) {
+    public ConsumerInvocationHandler(Class<T> interfaceClass, List<Cluster<T>> clusters, List<Registry> registries, InfinityProperties infinityProperties) {
         this.interfaceClass = interfaceClass;
         this.clusters = clusters;
         this.registries = registries;
+        this.infinityProperties = infinityProperties;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         // TODO: replace with new logic
-        new RpcConsumerInvocationHandler(interfaceClass, clusters).invoke(proxy, method, args);
+        new RpcConsumerInvocationHandler(interfaceClass, clusters, infinityProperties).invoke(proxy, method, args);
 
         if (method.getDeclaringClass() == Object.class && method.getName().equals("toString")) {
             // Object proxy = result.getProxy(consumerInterface.getClassLoader()); 在IDE上光标放到proxy就会看到调用toString()
