@@ -98,13 +98,6 @@ public class ConsumerWrapper<T> implements DisposableBean {
         return cluster;
     }
 
-    public T getProxyInstance() {
-        if (proxyInstance == null) {
-            init();
-        }
-        return proxyInstance;
-    }
-
     @Override
     public void destroy() {
         // Leave blank intentionally for now
