@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ClusterListener<T> implements ClientListener {
+public class ClusterClientListener<T> implements ClientListener {
     private       Cluster<T>                   cluster;
     private       List<Url>                    registryUrls;
     private       Url                          clientUrl;
     private       Class<T>                     interfaceClass;
     private final Map<Url, List<Requester<T>>> registryRequestersPerClientUrl = new ConcurrentHashMap<>();
 
-    public ClusterListener(Class<T> interfaceClass, List<Url> registryUrls) {
+    public ClusterClientListener(Class<T> interfaceClass, List<Url> registryUrls) {
         this.interfaceClass = interfaceClass;
         this.registryUrls = registryUrls;
     }

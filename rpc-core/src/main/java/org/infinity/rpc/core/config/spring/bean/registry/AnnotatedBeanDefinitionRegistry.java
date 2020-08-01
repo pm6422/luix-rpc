@@ -34,7 +34,7 @@ public abstract class AnnotatedBeanDefinitionRegistry {
     }
 
     private static Class<?>[] filterNotYetRegistered(BeanDefinitionRegistry registry, Class<?>[] classes) {
-        return Arrays.asList(classes).stream().filter(clazz -> !registered(registry, clazz)).toArray(Class<?>[]::new);
+        return Arrays.stream(classes).filter(clazz -> !registered(registry, clazz)).toArray(Class<?>[]::new);
     }
 
     /**

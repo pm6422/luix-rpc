@@ -1,8 +1,6 @@
 package org.infinity.rpc.core.client.proxy;
 
-import org.infinity.rpc.utilities.lang.EnumValueFieldHoldable;
-
-public enum AsyncRequestFlag implements EnumValueFieldHoldable {
+public enum AsyncRequestFlag {
     ASYNC("async"),
     SYNC("sync");
 
@@ -12,8 +10,4 @@ public enum AsyncRequestFlag implements EnumValueFieldHoldable {
         this.value = value;
     }
 
-    @Override
-    public String getValue() {
-        return value;
-    }
 }

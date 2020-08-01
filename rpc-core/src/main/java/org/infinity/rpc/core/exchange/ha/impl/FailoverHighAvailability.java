@@ -25,7 +25,7 @@ import java.util.List;
 @ServiceName("failover")
 public class FailoverHighAvailability<T> extends AbstractHighAvailability<T> {
     @Override
-    public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
+    public Responseable<T> call(Requestable<T> request, LoadBalancer<T> loadBalancer) {
         // Select more than one nodes
         List<Requester<T>> availableRequesters = loadBalancer.selectNodes(request);
         Url url = availableRequesters.get(0).getClientUrl();

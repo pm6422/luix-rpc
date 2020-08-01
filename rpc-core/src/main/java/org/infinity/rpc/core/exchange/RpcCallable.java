@@ -5,12 +5,12 @@ import org.infinity.rpc.core.exchange.response.Responseable;
 
 public interface RpcCallable<T> {
     /**
-     * @return
+     * @return interface class
      */
     Class<T> getInterfaceClass();
 
     /**
-     * @return
+     * @return true: available, false: unavailable
      */
     boolean isAvailable();
 
@@ -20,7 +20,7 @@ public interface RpcCallable<T> {
      * @param request request object
      * @return response object
      */
-    Responseable call(Requestable request);
+    Responseable<T> call(Requestable<T> request);
 
     /**
      *

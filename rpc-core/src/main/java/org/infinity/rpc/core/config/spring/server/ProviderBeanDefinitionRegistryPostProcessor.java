@@ -78,7 +78,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     }
 
     private void registerProviders(BeanDefinitionRegistry registry, Set<String> resolvedScanBasePackages) {
-        BeanNameGenerator beanNameGenerator = DefaultBeanNameGenerator.create(registry);
+        BeanNameGenerator beanNameGenerator = DefaultBeanNameGenerator.create();
         ClassPathBeanDefinitionRegistryScanner providerScanner = createProviderScanner(registry, beanNameGenerator);
 
         resolvedScanBasePackages.forEach(scanBasePackage -> {

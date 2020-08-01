@@ -1,5 +1,6 @@
 package org.infinity.rpc.core.config.spring.client;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
@@ -26,6 +27,7 @@ import java.util.Map;
  */
 @Slf4j
 @Getter
+@Builder
 public class ConsumerWrapper<T> implements DisposableBean {
     /**
      *
@@ -48,7 +50,7 @@ public class ConsumerWrapper<T> implements DisposableBean {
      */
     private RpcConsumerProxy<T> rpcConsumerProxy = new RpcConsumerProxy<>();
     /**
-     * The consumer proxy instance, refer the return type of {@link org.infinity.rpc.core.client.proxy.RpcConsumerProxy#getProxy(Class, List, List)}
+     * The consumer proxy instance, refer the return type of {@link org.infinity.rpc.core.client.proxy.RpcConsumerProxy#getProxy(Class, List, List, InfinityProperties)}
      */
     private T                   proxyInstance;
     /**

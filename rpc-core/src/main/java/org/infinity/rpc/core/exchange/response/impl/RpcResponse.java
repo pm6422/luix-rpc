@@ -20,7 +20,7 @@ import java.util.concurrent.Executor;
 @Getter
 @ToString
 @Slf4j
-public class RpcResponse implements Responseable, Traceable, Callbackable, Serializable {
+public class RpcResponse<T> implements Responseable<T>, Traceable, Callbackable, Serializable {
     private static final long      serialVersionUID = 882479213033600079L;
     private              long      requestId;
     private              String    protocol;

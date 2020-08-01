@@ -34,7 +34,7 @@ public class DefaultCluster<T> implements Cluster<T> {
     private              HighAvailability<T> highAvailability;
     private              LoadBalancer<T>     loadBalancer;
     private              List<Requester<T>>  requesters;
-    private              AtomicBoolean       available  = new AtomicBoolean(false);
+    private              final AtomicBoolean       available  = new AtomicBoolean(false);
 
     @Override
     public void setRegistryConfig(RegistryConfig registryConfig) {
@@ -130,7 +130,7 @@ public class DefaultCluster<T> implements Cluster<T> {
     }
 
     @Override
-    public Responseable call(Requestable request) {
+    public Responseable<T> call(Requestable<T> request) {
         if (available.get()) {
             try {
                 return highAvailability.call(request, loadBalancer);
@@ -141,7 +141,7 @@ public class DefaultCluster<T> implements Cluster<T> {
         return handleError(request, new RpcServiceException(RpcErrorMsgConstant.SERVICE_NOT_FOUND));
     }
 
-    private Responseable handleError(Requestable request, Exception cause) {
+    private Responseable<T> handleError(Requestable<T> request, Exception cause) {
         if (ExceptionUtils.isBizException(cause)) {
             // Throw the exception if it is business one
             throw (RuntimeException) cause;
