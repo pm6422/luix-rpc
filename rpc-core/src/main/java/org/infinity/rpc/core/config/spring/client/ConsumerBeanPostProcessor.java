@@ -170,7 +170,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
         }
     }
 
-    private <T> ConsumerWrapper<T> registerConsumerWrapper(Class<T> interfaceClass, AnnotationAttributes annotationAttributes) {
+    private ConsumerWrapper<?> registerConsumerWrapper(Class<?> interfaceClass, AnnotationAttributes annotationAttributes) {
         InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
         RegistryConfig registryConfig = applicationContext.getBean(RegistryConfig.class);
         // Build the consumer wrapper bean name
@@ -187,7 +187,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
 //                        .directUrl(annotationAttributes.getString("timeout"))
 //                        .build();
 
-                ConsumerWrapper<T> consumerWrapper = new ConsumerWrapper<>(infinityProperties, registryConfig, interfaceClass,
+                ConsumerWrapper<?> consumerWrapper = new ConsumerWrapper<>(infinityProperties, registryConfig, interfaceClass,
                         consumerWrapperBeanName, new HashMap<>(annotationAttributes));
                 beanFactory.registerSingleton(consumerWrapperBeanName, consumerWrapper);
                 return consumerWrapper;

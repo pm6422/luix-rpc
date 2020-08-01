@@ -27,7 +27,6 @@ import java.util.Map;
  */
 @Slf4j
 @Getter
-@Builder
 public class ConsumerWrapper<T> implements DisposableBean {
     /**
      *
