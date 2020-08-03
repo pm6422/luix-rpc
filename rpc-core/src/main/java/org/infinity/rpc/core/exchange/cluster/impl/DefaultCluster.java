@@ -112,9 +112,9 @@ public class DefaultCluster<T> implements Cluster<T> {
                 for (Requester<?> requester : delayDestroyRequesters) {
                     try {
                         requester.destroy();
-                        log.info("Destroyed the requester with url: {}", requester.getClientUrl().getUri());
+                        log.info("Destroyed the requester with url: {}", requester.getProviderUrl().getUri());
                     } catch (Exception e) {
-                        log.error(MessageFormat.format("Failed to destroy the requester with url: {0}", requester.getClientUrl().getUri()), e);
+                        log.error(MessageFormat.format("Failed to destroy the requester with url: {0}", requester.getProviderUrl().getUri()), e);
                     }
                 }
             });

@@ -28,7 +28,7 @@ public class FailoverHighAvailability<T> extends AbstractHighAvailability<T> {
     public Responseable call(Requestable<T> request, LoadBalancer<T> loadBalancer) {
         // Select more than one nodes
         List<Requester<T>> availableRequesters = loadBalancer.selectNodes(request);
-        Url url = availableRequesters.get(0).getClientUrl();
+        Url url = availableRequesters.get(0).getProviderUrl();
         int maxRetries = 1;
         // TODO
 //        int tryCount = url.getMethodParameter(request.getMethodName(),
@@ -54,7 +54,7 @@ public class FailoverHighAvailability<T> extends AbstractHighAvailability<T> {
                     throw e;
                 }
                 // If one of the nodes fails, try to use another backup available one
-                log.warn(MessageFormat.format("Failed to call the url: {0}", requester.getClientUrl()), e);
+                log.warn(MessageFormat.format("Failed to call the url: {0}", requester.getProviderUrl()), e);
             }
         }
         throw new RpcFrameworkException("Failed to call all the urls!");

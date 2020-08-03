@@ -38,7 +38,7 @@ public abstract class AbstractRequester<T> implements Requester<T> {
     }
 
     @Override
-    public Url getClientUrl() {
+    public Url getProviderUrl() {
         return providerUrl;
     }
 

@@ -8,6 +8,6 @@ import org.infinity.rpc.core.url.Url;
  */
 public interface Requester<T> extends RpcCallable<T> {
 
-    Url getClientUrl();
+    Url getProviderUrl();
 
 }

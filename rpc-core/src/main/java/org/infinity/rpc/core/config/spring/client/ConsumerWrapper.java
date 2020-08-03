@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
+import org.infinity.rpc.core.exchange.cluster.listener.ClusterClientListener;
 import org.infinity.rpc.core.exchange.ha.HighAvailability;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.registry.RegistryConfig;
@@ -51,6 +52,7 @@ public class ConsumerWrapper<T> implements DisposableBean {
      * The consumer proxy instance, refer the return type of {@link org.infinity.rpc.core.client.proxy.RpcConsumerProxy#getProxy(Class, List, List, InfinityProperties)}
      */
     private T                   proxyInstance;
+    private Url                 clientUrl;
     /**
      *
      */
@@ -78,6 +80,8 @@ public class ConsumerWrapper<T> implements DisposableBean {
     }
 
     public void init() {
+        clientUrl = Url.clientUrl(infinityProperties.getProtocol().getName().name(), NetworkIpUtils.INTRANET_IP, interfaceClass.getName());
+
         clusters = new ArrayList<>(Arrays.asList(infinityProperties.getProtocol()).size());
         for (InfinityProperties.ProtocolConfig protocolConfig : Arrays.asList(infinityProperties.getProtocol())) {
             // 当配置多个protocol的时候，比如A,B,C，
@@ -87,13 +91,16 @@ public class ConsumerWrapper<T> implements DisposableBean {
         }
 
         proxyInstance = rpcConsumerProxy.getProxy(interfaceClass, clusters, registryConfig.getRegistries(), infinityProperties);
+
+        ClusterClientListener clusterClientListener = new ClusterClientListener(interfaceClass, registryConfig.getRegistryUrls(), clientUrl);
+
     }
 
     private Cluster<T> createCluster(InfinityProperties.ProtocolConfig protocolConfig) {
         Cluster<T> cluster = ServiceInstanceLoader.getServiceLoader(Cluster.class).load(protocolConfig.getCluster());
         LoadBalancer<T> loadBalancer = ServiceInstanceLoader.getServiceLoader(LoadBalancer.class).load(protocolConfig.getLoadBalancer());
         HighAvailability<T> ha = ServiceInstanceLoader.getServiceLoader(HighAvailability.class).load(protocolConfig.getHighAvailability());
-        ha.setClientUrl(Url.clientUrl(protocolConfig.getName().name(), NetworkIpUtils.INTRANET_IP, interfaceClass.getName()));
+        ha.setClientUrl(clientUrl);
 
         cluster.setLoadBalancer(loadBalancer);
         cluster.setHighAvailability(ha);
