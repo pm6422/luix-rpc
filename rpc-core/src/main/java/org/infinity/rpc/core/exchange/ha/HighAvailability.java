@@ -14,5 +14,5 @@ public interface HighAvailability<T> {
 
     Url getClientUrl();
 
-    Responseable<T> call(Requestable<T> request, LoadBalancer<T> loadBalancer);
+    Responseable call(Requestable<T> request, LoadBalancer<T> loadBalancer);
 }

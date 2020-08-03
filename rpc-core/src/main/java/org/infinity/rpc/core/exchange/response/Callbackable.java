@@ -8,7 +8,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public interface Callbackable<T> {
-    List<Pair<Runnable, Executor>> TASKS = new CopyOnWriteArrayList();
+    List<Pair<Runnable, Executor>> TASKS = new CopyOnWriteArrayList<>();
 
     AtomicBoolean FINISHED = new AtomicBoolean();
 

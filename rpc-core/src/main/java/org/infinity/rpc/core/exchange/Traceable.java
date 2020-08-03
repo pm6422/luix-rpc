@@ -10,11 +10,7 @@ public interface Traceable<T> {
     AtomicLong          ELAPSED_TIME  = new AtomicLong();
     Map<String, String> TRACES        = new ConcurrentHashMap<>();
 
-    /**
-     * The timestamp format is compatible with the different systems
-     *
-     * @param sendingTime
-     */
+    // The timestamp format is compatible with the different systems
     T sendingTime(long sendingTime);
 
     long getSendingTime();

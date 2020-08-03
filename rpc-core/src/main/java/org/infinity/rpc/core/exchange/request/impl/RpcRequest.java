@@ -13,16 +13,16 @@ import java.util.Map;
 @Builder
 @Getter
 @ToString
-public class RpcRequest implements Requestable, Traceable, Serializable {
+public class RpcRequest implements Requestable<RpcRequest>, Traceable<RpcRequest>, Serializable {
     private static final long     serialVersionUID = -6259178379027752471L;
     private              String   clientRequestId;
-    private              long     requestId;
-    private              String   protocol;
-    private              byte     protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
-    private              String   interfaceName;
-    private              String   methodName;
-    private              String[] parameterTypeNames;
-    private              Object[] methodArguments;
+    private final        long     requestId;
+    private final        String   protocol;
+    private final        byte     protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
+    private final        String   interfaceName;
+    private final        String   methodName;
+    private final        String[] parameterTypeNames;
+    private final        Object[] methodArguments;
 
     @Override
     public Map<String, String> getAttachments() {

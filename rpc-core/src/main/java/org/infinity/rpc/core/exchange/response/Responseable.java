@@ -1,11 +1,24 @@
 package org.infinity.rpc.core.exchange.response;
 
-import org.infinity.rpc.core.exchange.Exchangable;
+public interface Responseable {
+    /**
+     * Protocol
+     *
+     * @return
+     */
+    String getProtocol();
 
-public interface Responseable<T> extends Exchangable {
+    /**
+     * Protocol version
+     *
+     * @return
+     */
+    byte getProtocolVersion();
+
     /**
      * Timeout in milliseconds
-     * @return
+     *
+     * @return processing timeout
      */
     int getProcessingTimeout();
 
@@ -15,7 +28,7 @@ public interface Responseable<T> extends Exchangable {
      * </pre>
      * Response result
      *
-     * @return
+     * @return response result
      */
     Object getResult();
 
@@ -26,7 +39,7 @@ public interface Responseable<T> extends Exchangable {
      * 		该方法不会阻塞，无论该request是处理中还是处理完成
      * </pre>
      *
-     * @return
+     * @return Exception
      */
     Exception getException();
 }

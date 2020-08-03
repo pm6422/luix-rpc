@@ -2,6 +2,7 @@ package org.infinity.rpc.core.exchange;
 
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
+import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 
 public interface RpcCallable<T> {
     /**
@@ -20,7 +21,7 @@ public interface RpcCallable<T> {
      * @param request request object
      * @return response object
      */
-    Responseable<T> call(Requestable<T> request);
+    Responseable call(Requestable<T> request);
 
     /**
      *

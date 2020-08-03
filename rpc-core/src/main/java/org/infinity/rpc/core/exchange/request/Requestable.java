@@ -4,7 +4,7 @@ import org.infinity.rpc.core.exchange.Exchangable;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public interface Requestable<T> extends Exchangable {
+public interface Requestable<T> extends Exchangable<T> {
 
     AtomicInteger RETRIES = new AtomicInteger(0);
 
@@ -55,4 +55,18 @@ public interface Requestable<T> extends Exchangable {
      * @return
      */
     int getRetries();
+
+    /**
+     * Protocol
+     *
+     * @return
+     */
+    String getProtocol();
+
+    /**
+     * Protocol version
+     *
+     * @return
+     */
+    byte getProtocolVersion();
 }

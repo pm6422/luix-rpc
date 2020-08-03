@@ -6,6 +6,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.exception.RpcInvocationException;
+import org.infinity.rpc.core.exchange.Exchangable;
 import org.infinity.rpc.core.exchange.Traceable;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Callbackable;
@@ -20,14 +21,34 @@ import java.util.concurrent.Executor;
 @Getter
 @ToString
 @Slf4j
-public class RpcResponse<T> implements Responseable<T>, Traceable, Callbackable, Serializable {
+public class RpcResponse implements Exchangable<RpcResponse>, Responseable, Traceable<RpcResponse>, Callbackable<RpcResponse>, Serializable {
     private static final long      serialVersionUID = 882479213033600079L;
-    private              long      requestId;
-    private              String    protocol;
+    private final        long      requestId;
+    private final        String    protocol;
     private              byte      protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
-    private              int       processingTimeout;
-    private              Object    result;
-    private              Exception exception;
+    private final        int       processingTimeout;
+    private final        Object    result;
+    private final        Exception exception;
+
+    @Override
+    public long getRequestId() {
+        return 0;
+    }
+
+    @Override
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public RpcResponse protocolVersion(byte protocolVersion) {
+        this.protocolVersion = protocolVersion;
+        return this;
+    }
+
+    @Override
+    public byte getProtocolVersion() {
+        return protocolVersion;
+    }
 
     @Override
     public Map<String, String> getAttachments() {
@@ -45,6 +66,11 @@ public class RpcResponse<T> implements Responseable<T>, Traceable, Callbackable,
         return ATTACHMENTS.get(key);
     }
 
+    @Override
+    public int getProcessingTimeout() {
+        return 0;
+    }
+
     public Object getResult() {
         if (exception != null) {
             throw (exception instanceof RuntimeException) ?
@@ -52,6 +78,11 @@ public class RpcResponse<T> implements Responseable<T>, Traceable, Callbackable,
                     new RpcInvocationException(exception.getMessage(), exception);
         }
         return result;
+    }
+
+    @Override
+    public Exception getException() {
+        return null;
     }
 
     @Override
@@ -131,15 +162,14 @@ public class RpcResponse<T> implements Responseable<T>, Traceable, Callbackable,
         }
     }
 
-    public static RpcResponse error(Requestable request, Exception e) {
+    public static RpcResponse error(Requestable<?> request, Exception e) {
         return error(request.getRequestId(), request.getProtocolVersion(), e);
     }
 
     private static RpcResponse error(long requestId, byte protocolVersion, Exception e) {
-        RpcResponse response = RpcResponse.builder()
+        return RpcResponse.builder()
                 .requestId(requestId)
                 .protocolVersion(protocolVersion)
                 .exception(e).build();
-        return response;
     }
 }

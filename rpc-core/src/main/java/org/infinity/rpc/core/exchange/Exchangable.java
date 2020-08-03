@@ -14,20 +14,6 @@ public interface Exchangable<T> {
     long getRequestId();
 
     /**
-     * Protocol
-     *
-     * @return
-     */
-    String getProtocol();
-
-    /**
-     * Protocol version
-     *
-     * @return
-     */
-    byte getProtocolVersion();
-
-    /**
      * Attachments
      *
      * @return
