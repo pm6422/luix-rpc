@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 @ConfigurationProperties(prefix = "infinity")
 @Data
 public class InfinityProperties implements InitializingBean {
-    public static final Pattern           COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
     private             ApplicationConfig application         = new ApplicationConfig();
     // TODO: support multiple protocols
     private             ProtocolConfig    protocol            = new ProtocolConfig();
@@ -44,112 +43,5 @@ public class InfinityProperties implements InitializingBean {
         application.initialize();
         protocol.initialize();
         registry.initialize();
-    }
-
-    @Data
-    public static class ApplicationConfig {
-        // Application ID
-        private String id = "ID-" + IdGenerator.generateShortId();
-        // Application name
-        private String name;
-        // Application description
-        private String description;
-        // Responsible team
-        private String team;
-        // Application owner
-        private String owner;
-        // Environment variable, e.g. dev, test or prod
-        private String env;
-
-        public void initialize() {
-            checkIntegrity();
-            checkValidity();
-        }
-
-        private void checkIntegrity() {
-            Validate.notNull(name, "Application name must NOT be null! Please check your configuration.");
-        }
-
-        private void checkValidity() {
-        }
-
-        public App toApp() {
-            App app = new App();
-            BeanUtils.copyProperties(this, app);
-            return app;
-        }
-    }
-
-    @Data
-    public static class ProtocolConfig {
-        // Name of protocol
-        // SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type,
-        // and check whether value is valid or not during application startup.
-        private ProtocolName name             = ProtocolName.infinity;
-        // Host name of the RPC server
-        private String       host             = NetworkIpUtils.INTRANET_IP;
-        // Port number of the RPC server
-        private Integer      port;
-        // Cluster implementation
-        private String       cluster          = "default";
-        // Cluster loadBalancer implementation
-        private String       loadBalancer     = "random";
-        // High availability strategy
-        private String       highAvailability = "failover";
-
-        public void initialize() {
-            checkIntegrity();
-            checkValidity();
-        }
-
-        private void checkIntegrity() {
-            Validate.notNull(port, "Protocol port must NOT be null! Please check your configuration.");
-        }
-
-        private void checkValidity() {
-        }
-    }
-
-    @Data
-    public static class RegistryConfig {
-        // Name of register center
-        private RegistryName name           = RegistryName.zookeeper;
-        // Registry center host name
-        private String       host;
-        // Registry center port number
-        private Integer      port;
-        // Registry center server address
-        private String       address;
-        // 注册中心连接超时时间(毫秒)
-        private Integer      connectTimeout = Math.toIntExact(TimeUnit.SECONDS.toMillis(1));
-        // 注册中心会话超时时间(毫秒)
-        private Integer      sessionTimeout = Math.toIntExact(TimeUnit.MINUTES.toMillis(1));
-        // 注册中心连接失败后重试的时间间隔(毫秒)
-        private Integer      retryInterval  = Math.toIntExact(TimeUnit.SECONDS.toMillis(30));
-        // 注册中心请求超时时间(毫秒)
-        private Integer      requestTimeout;
-
-        public void initialize() {
-            checkIntegrity();
-            checkValidity();
-            if (StringUtils.isNotEmpty(address) && StringUtils.isEmpty(host) && port == null) {
-                String[] splitParts = COLON_SPLIT_PATTERN.split(address);
-                host = splitParts[0];
-                port = Integer.parseInt(splitParts[1]);
-            }
-            if (StringUtils.isEmpty(address) && StringUtils.isNotEmpty(host) && port != null) {
-                address = host + ":" + port;
-            }
-        }
-
-        private void checkIntegrity() {
-            // todo
-        }
-
-        private void checkValidity() {
-            Optional.ofNullable(RegistryFactory.getInstance(name.getValue()))
-                    .orElseThrow(() -> new RpcConfigurationException("Failed to load the proper registry factory, " +
-                            "please check whether the dependency [rpc-registry-" + name.getValue() + "] is in your class path!"));
-        }
     }
 }
