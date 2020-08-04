@@ -26,6 +26,11 @@ public final class Url implements Serializable {
     private static final String  PROTOCOL_SEPARATOR = "://";
     public static final  String  PATH_SEPARATOR     = "/";
     /**
+     * Url type
+     * TODO: add
+     */
+    private              UrlType urlType;
+    /**
      * RPC protocol
      */
     private              String  protocol;
