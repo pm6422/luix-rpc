@@ -2,7 +2,7 @@ package org.infinity.rpc.core.switcher;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
-import org.infinity.rpc.utilities.spi.annotation.ServiceName;
+import org.infinity.rpc.utilities.spi.annotation.NameAs;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@ServiceName(DefaultSwitcherService.SERVICE_NAME)
+@NameAs(DefaultSwitcherService.SERVICE_NAME)
 @ThreadSafe
 public class DefaultSwitcherService implements SwitcherService {
     public static final String                              SERVICE_NAME = "defaultSwitcherService";

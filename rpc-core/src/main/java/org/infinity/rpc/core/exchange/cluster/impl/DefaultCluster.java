@@ -16,7 +16,7 @@ import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.registry.RegistryConfig;
 import org.infinity.rpc.core.url.UrlParam;
 import org.infinity.rpc.core.utils.ExceptionUtils;
-import org.infinity.rpc.utilities.spi.annotation.ServiceName;
+import org.infinity.rpc.utilities.spi.annotation.NameAs;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_REQUESTER_THREAD_POOL;
 
 @Slf4j
-@ServiceName("default")
+@NameAs("default")
 public class DefaultCluster<T> implements Cluster<T> {
     private static final int                 DELAY_TIME = 1000;
     private              RegistryConfig      registryConfig;
