@@ -3,7 +3,7 @@ package org.infinity.rpc.utilities.spi;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.utilities.spi.annotation.Scope;
-import org.infinity.rpc.utilities.spi.annotation.NameAs;
+import org.infinity.rpc.utilities.spi.annotation.NamedAs;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -247,8 +247,8 @@ public class ServiceInstanceLoader<T> {
     }
 
     private String getSpiServiceName(Class<?> clz) {
-        NameAs nameAs = clz.getAnnotation(NameAs.class);
-        String name = (nameAs != null && !"".equals(nameAs.value())) ? nameAs.value() : clz.getSimpleName();
+        NamedAs namedAs = clz.getAnnotation(NamedAs.class);
+        String name = (namedAs != null && !"".equals(namedAs.value())) ? namedAs.value() : clz.getSimpleName();
         return name;
     }
 

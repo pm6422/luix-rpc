@@ -10,7 +10,7 @@ import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.ExceptionUtils;
-import org.infinity.rpc.utilities.spi.annotation.NameAs;
+import org.infinity.rpc.utilities.spi.annotation.NamedAs;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.List;
  * @param <T>
  */
 @Slf4j
-@NameAs("failover")
+@NamedAs("failover")
 public class FailoverHighAvailability<T> extends AbstractHighAvailability<T> {
     @Override
     public Responseable call(Requestable<T> request, LoadBalancer<T> loadBalancer) {
