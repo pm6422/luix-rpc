@@ -13,7 +13,7 @@ import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
-import org.infinity.rpc.core.registry.RegistryConfig;
+import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.UrlParam;
 import org.infinity.rpc.core.utils.ExceptionUtils;
 import org.infinity.rpc.utilities.spi.annotation.NamedAs;
@@ -30,15 +30,15 @@ import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_R
 @NamedAs("default")
 public class DefaultCluster<T> implements Cluster<T> {
     private static final int                 DELAY_TIME = 1000;
-    private              RegistryConfig      registryConfig;
+    private              RegistryInfo        registryInfo;
     private              HighAvailability<T> highAvailability;
     private              LoadBalancer<T>     loadBalancer;
     private              List<Requester<T>>  requesters;
     private              final AtomicBoolean       available  = new AtomicBoolean(false);
 
     @Override
-    public void setRegistryConfig(RegistryConfig registryConfig) {
-        this.registryConfig = registryConfig;
+    public void setRegistryInfo(RegistryInfo registryInfo) {
+        this.registryInfo = registryInfo;
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.config.spring.server.ProviderWrapperBeanNameBuilder;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
+import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.Url;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class TestController {
     @Autowired
-    private List<Url>          registryUrls;
+    private RegistryInfo       registryInfo;
     @Autowired
     private InfinityProperties infinityProperties;
     @Autowired
@@ -54,7 +54,7 @@ public class TestController {
     @ApiOperation("测试注册provider")
     @GetMapping("/open-api/test/register-provider")
     public void registerProvider() {
-        Registry registry = RegistryFactory.getInstance(infinityProperties.getRegistry().getName().getValue()).getRegistry(registryUrls.get(0));
+        Registry registry = RegistryFactory.getInstance(infinityProperties.getRegistry().getName().getValue()).getRegistry(registryInfo.getRegistryUrls().get(0));
         Url providerUrl = Url.of(
                 infinityProperties.getProtocol().getName().getValue(),
                 "192.168.0.1",

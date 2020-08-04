@@ -2,7 +2,7 @@ package org.infinity.rpc.core.config.spring.startup;
 
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.registry.RegistryConfig;
+import org.infinity.rpc.core.registry.RegistryInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;
@@ -19,7 +19,7 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
     @Autowired
     private       InfinityProperties infinityProperties;
     @Autowired
-    private       RegistryConfig     registryConfig;
+    private       RegistryInfo       registryInfo;
     private final RpcLifecycle       rpcLifecycle;
 
     public RpcLifecycleApplicationListener() {
@@ -42,11 +42,11 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
     }
 
     private void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        rpcLifecycle.start(infinityProperties, registryConfig.getRegistryUrls());
+        rpcLifecycle.start(infinityProperties, registryInfo.getRegistryUrls());
     }
 
     private void onContextClosedEvent(ContextClosedEvent event) {
-        rpcLifecycle.destroy(infinityProperties, registryConfig.getRegistryUrls());
+        rpcLifecycle.destroy(infinityProperties, registryInfo.getRegistryUrls());
     }
 
     @Override

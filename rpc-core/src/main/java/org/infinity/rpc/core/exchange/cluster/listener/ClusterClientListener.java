@@ -6,6 +6,7 @@ import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.Registry;
+import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
@@ -29,13 +30,13 @@ public class ClusterClientListener<T> implements ClientListener {
         this.interfaceClass = interfaceClass;
         this.registryUrls = registryUrls;
         this.clientUrl = clientUrl;
-        this.protocol = ServiceInstanceLoader.getServiceLoader(Protocol.class).load(clientUrl.getProtocol());
+        this.protocol = Protocol.getInstance(clientUrl.getProtocol());
         init();
     }
 
     private void init() {
         for (Url registryUrl : registryUrls) {
-            Registry registry = ServiceInstanceLoader.getServiceLoader(Registry.class).load(registryUrl.getProtocol());
+            Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             registry.subscribe(clientUrl, this);
         }
     }

@@ -31,12 +31,12 @@ public interface RegistryFactory {
     /**
      * Get the registry factory based on protocol
      *
-     * @param protocol protocol
+     * @param protocolName protocol name
      * @return registry factory
      */
-    static RegistryFactory getInstance(String protocol) {
-        // Get the proper registry factory by protocol value
-        RegistryFactory registryFactory = ServiceInstanceLoader.getServiceLoader(RegistryFactory.class).load(protocol);
+    static RegistryFactory getInstance(String protocolName) {
+        // Get the proper registry factory by protocol name
+        RegistryFactory registryFactory = ServiceInstanceLoader.getServiceLoader(RegistryFactory.class).load(protocolName);
         return registryFactory;
     }
 }

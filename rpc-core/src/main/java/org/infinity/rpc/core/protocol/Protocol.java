@@ -2,6 +2,7 @@ package org.infinity.rpc.core.protocol;
 
 import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Scope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
@@ -13,4 +14,16 @@ public interface Protocol {
     //    <T> Exporter<T> createExporter(Provider<T> provider, URL url);
 
     void destroy();
+
+    /**
+     * Get the protocol instance based on protocol name
+     *
+     * @param protocolName protocol name
+     * @return protocol instance
+     */
+    static Protocol getInstance(String protocolName) {
+        // Get the proper protocol by protocol name
+        Protocol protocol = ServiceInstanceLoader.getServiceLoader(Protocol.class).load(protocolName);
+        return protocol;
+    }
 }

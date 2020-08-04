@@ -4,11 +4,12 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.config.spring.config.ProtocolConfig;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.exchange.cluster.listener.ClusterClientListener;
 import org.infinity.rpc.core.exchange.ha.HighAvailability;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
-import org.infinity.rpc.core.registry.RegistryConfig;
+import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
@@ -31,15 +32,15 @@ public class ConsumerWrapper<T> implements DisposableBean {
     /**
      *
      */
-    private InfinityProperties  infinityProperties;
+    private InfinityProperties infinityProperties;
     /**
      *
      */
-    private RegistryConfig      registryConfig;
+    private RegistryInfo       registryInfo;
     /**
      * The interface class of the consumer
      */
-    private Class<T>            interfaceClass;
+    private Class<T>           interfaceClass;
     /**
      * The consumer instance simple name, also known as bean name
      */
@@ -66,10 +67,10 @@ public class ConsumerWrapper<T> implements DisposableBean {
      */
     private List<Cluster<T>>    clusters;
 
-    public ConsumerWrapper(InfinityProperties infinityProperties, RegistryConfig registryConfig,
+    public ConsumerWrapper(InfinityProperties infinityProperties, RegistryInfo registryInfo,
                            Class<T> interfaceClass, String instanceName, Map<String, Object> consumerAttributesMap) {
         this.infinityProperties = infinityProperties;
-        this.registryConfig = registryConfig;
+        this.registryInfo = registryInfo;
         this.interfaceClass = interfaceClass;
         this.instanceName = instanceName;
         this.directUrl = (String) consumerAttributesMap.get("directUrl");
@@ -83,20 +84,20 @@ public class ConsumerWrapper<T> implements DisposableBean {
         clientUrl = Url.clientUrl(infinityProperties.getProtocol().getName().name(), NetworkIpUtils.INTRANET_IP, interfaceClass.getName());
 
         clusters = new ArrayList<>(Arrays.asList(infinityProperties.getProtocol()).size());
-        for (InfinityProperties.ProtocolConfig protocolConfig : Arrays.asList(infinityProperties.getProtocol())) {
+        for (ProtocolConfig protocolConfig : Arrays.asList(infinityProperties.getProtocol())) {
             // 当配置多个protocol的时候，比如A,B,C，
             // 那么正常情况下只会使用A，如果A被开关降级，那么就会使用B，B也被降级，那么会使用C
             // One cluster for one protocol, only one server node under a cluster can receive the request
             clusters.add(createCluster(protocolConfig));
         }
 
-        proxyInstance = rpcConsumerProxy.getProxy(interfaceClass, clusters, registryConfig.getRegistries(), infinityProperties);
+        proxyInstance = rpcConsumerProxy.getProxy(interfaceClass, clusters, registryInfo.getRegistries(), infinityProperties);
 
-        ClusterClientListener clusterClientListener = new ClusterClientListener(interfaceClass, registryConfig.getRegistryUrls(), clientUrl);
+        ClusterClientListener clusterClientListener = new ClusterClientListener(interfaceClass, registryInfo.getRegistryUrls(), clientUrl);
 
     }
 
-    private Cluster<T> createCluster(InfinityProperties.ProtocolConfig protocolConfig) {
+    private Cluster<T> createCluster(ProtocolConfig protocolConfig) {
         Cluster<T> cluster = ServiceInstanceLoader.getServiceLoader(Cluster.class).load(protocolConfig.getCluster());
         LoadBalancer<T> loadBalancer = ServiceInstanceLoader.getServiceLoader(LoadBalancer.class).load(protocolConfig.getLoadBalancer());
         HighAvailability<T> ha = ServiceInstanceLoader.getServiceLoader(HighAvailability.class).load(protocolConfig.getHighAvailability());

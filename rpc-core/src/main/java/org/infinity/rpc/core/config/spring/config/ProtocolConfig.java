@@ -3,8 +3,8 @@ package org.infinity.rpc.core.config.spring.config;
 import lombok.Data;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
+import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.protocol.constants.ProtocolName;
-import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 
 import java.util.Optional;
@@ -36,9 +36,8 @@ public class ProtocolConfig {
     }
 
     private void checkValidity() {
-        // todo: correct messages
-        Optional.ofNullable(RegistryFactory.getInstance(name.getValue()))
-                .orElseThrow(() -> new RpcConfigurationException("Failed to load the proper registry factory, " +
-                        "please check whether the dependency [rpc-registry-" + name.getValue() + "] is in your class path!"));
+        Optional.ofNullable(Protocol.getInstance(name.getValue()))
+                .orElseThrow(() -> new RpcConfigurationException("Failed to load the proper protocol instance, " +
+                        "please check whether the correct dependency is in your class path!"));
     }
 }

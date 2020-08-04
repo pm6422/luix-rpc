@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.config.spring.startup.NettyServerApplicationRunner;
 import org.infinity.rpc.core.registry.Registry;
-import org.infinity.rpc.core.registry.RegistryConfig;
+import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +23,9 @@ public class RpcAutoConfiguration {
     private InfinityProperties infinityProperties;
 
     @Bean
-    public RegistryConfig registryConfig() {
+    public RegistryInfo registryInfo() {
         List<Url> registryUrls = getRegistryUrls(infinityProperties);
-        return new RegistryConfig(registryUrls, getRegistry(registryUrls));
+        return new RegistryInfo(registryUrls, getRegistry(registryUrls));
     }
 
     /**

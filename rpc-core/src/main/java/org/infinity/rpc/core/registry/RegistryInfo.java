@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @Getter
 @AllArgsConstructor
-public class RegistryConfig {
+public class RegistryInfo {
     private List<Url>      registryUrls;
     private List<Registry> registries;
 }

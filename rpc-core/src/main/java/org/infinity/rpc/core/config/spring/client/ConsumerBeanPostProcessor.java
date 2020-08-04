@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.config.spring.utils.AnnotationUtils;
-import org.infinity.rpc.core.registry.RegistryConfig;
+import org.infinity.rpc.core.registry.RegistryInfo;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -172,7 +172,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
 
     private ConsumerWrapper<?> registerConsumerWrapper(Class<?> interfaceClass, AnnotationAttributes annotationAttributes) {
         InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
-        RegistryConfig registryConfig = applicationContext.getBean(RegistryConfig.class);
+        RegistryInfo registryInfo = applicationContext.getBean(RegistryInfo.class);
         // Build the consumer wrapper bean name
         String consumerWrapperBeanName = buildConsumerWrapperBeanName(interfaceClass);
 
@@ -187,7 +187,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
 //                        .directUrl(annotationAttributes.getString("timeout"))
 //                        .build();
 
-                ConsumerWrapper<?> consumerWrapper = new ConsumerWrapper<>(infinityProperties, registryConfig, interfaceClass,
+                ConsumerWrapper<?> consumerWrapper = new ConsumerWrapper<>(infinityProperties, registryInfo, interfaceClass,
                         consumerWrapperBeanName, new HashMap<>(annotationAttributes));
                 beanFactory.registerSingleton(consumerWrapperBeanName, consumerWrapper);
                 return consumerWrapper;
