@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.exchange.request.Requester;
+import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;
@@ -17,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class ClusterClientListener<T> implements ClientListener {
+    private       Protocol                     protocol;
     private       Cluster<T>                   cluster;
     private       List<Url>                    registryUrls;
     private       Url                          clientUrl;
@@ -27,6 +29,7 @@ public class ClusterClientListener<T> implements ClientListener {
         this.interfaceClass = interfaceClass;
         this.registryUrls = registryUrls;
         this.clientUrl = clientUrl;
+        this.protocol = ServiceInstanceLoader.getServiceLoader(Protocol.class).load(clientUrl.getProtocol());
         init();
     }
 
@@ -48,9 +51,9 @@ public class ClusterClientListener<T> implements ClientListener {
         List<Requester<T>> newRequesters = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
             Requester<T> requester = getExistingRequester(providerUrl, registryRequestersPerRegistryUrl.get(registryUrl));
-            if(requester == null)  {
+            if (requester == null) {
                 Url providerUrlCopy = providerUrl.copy();
-                // todo:
+                requester = protocol.createRequester(interfaceClass, providerUrlCopy);
             }
             if (requester != null) {
                 newRequesters.add(requester);
