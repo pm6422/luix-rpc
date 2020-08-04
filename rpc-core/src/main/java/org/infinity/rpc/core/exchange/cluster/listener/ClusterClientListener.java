@@ -74,9 +74,9 @@ public class ClusterClientListener<T> implements ClientListener {
         if (requesters == null) {
             return null;
         }
-        for (Requester<T> r : requesters) {
-            if (Objects.equals(providerUrl, r.getProviderUrl())) {
-                return r;
+        for (Requester<T> requester : requesters) {
+            if (Objects.equals(providerUrl, requester.getProviderUrl())) {
+                return requester;
             }
         }
         return null;
