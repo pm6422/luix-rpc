@@ -98,7 +98,7 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
      *
      * @param beanName the name of the bean
      * @param beanType the type of the managed bean instance
-     * @param pvs
+     * @param pvs      information and value for the bean properties
      * @return
      */
     private InjectionMetadata findAnnotatedFieldMethodInjectionMetadata(String beanName, Class<?> beanType, PropertyValues pvs) {
@@ -211,21 +211,17 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
      * @return An injected object
      * @throws Exception If getting is failed
      */
-    protected Object getInjectedObject(AnnotationAttributes attributes, Object bean, String beanName, Class<?> injectedType,
-                                       InjectionMetadata.InjectedElement injectedElement) throws Exception {
-
+    protected synchronized Object getInjectedObject(AnnotationAttributes attributes, Object bean, String beanName, Class<?> injectedType,
+                                                    InjectionMetadata.InjectedElement injectedElement) throws Exception {
         String cacheKey = buildInjectedObjectCacheKey(attributes, bean, beanName, injectedType, injectedElement);
 
         Object injectedObject = injectedObjectsCache.get(cacheKey);
-
         if (injectedObject == null) {
             injectedObject = doGetInjectedBean(attributes, bean, beanName, injectedType, injectedElement);
             // Customized inject-object if necessary
             injectedObjectsCache.putIfAbsent(cacheKey, injectedObject);
         }
-
         return injectedObject;
-
     }
 
     /**

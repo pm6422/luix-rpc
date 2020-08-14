@@ -32,6 +32,7 @@ import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
@@ -40,6 +41,7 @@ import java.util.regex.Pattern;
  * Command service listener for a client
  */
 @Slf4j
+@NotThreadSafe
 public class CommandServiceListener implements ServiceListener, CommandListener {
 
     public static final String  MOTAN_COMMAND_SWITCHER = "feature.motanrpc.command.enable";

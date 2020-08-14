@@ -1,10 +1,11 @@
 package org.infinity.rpc.core.config.spring.server;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@ThreadSafe
 public class ProviderWrapperHolder {
-
     /**
      * RPC provider wrapper map
      */
@@ -32,11 +33,11 @@ public class ProviderWrapperHolder {
         private static final ProviderWrapperHolder INSTANCE = new ProviderWrapperHolder();// static variable will be instantiated on class loading.
     }
 
-    public Map<String, ProviderWrapper> getWrappers() {
+    public synchronized Map<String, ProviderWrapper> getWrappers() {
         return wrapperCache;
     }
 
-    public void addWrapper(String name, ProviderWrapper providerWrapper) {
+    public synchronized void addWrapper(String name, ProviderWrapper providerWrapper) {
         wrapperCache.putIfAbsent(name, providerWrapper);
     }
 }

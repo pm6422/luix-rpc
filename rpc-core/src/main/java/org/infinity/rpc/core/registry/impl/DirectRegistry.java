@@ -66,14 +66,14 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
     }
 
     @Override
-    protected void doSubscribe(Url clientUrl, ClientListener listener) {
+    protected synchronized void doSubscribe(Url clientUrl, ClientListener listener) {
         subscribeUrls.putIfAbsent(clientUrl, 1);
         // Notify
         listener.onSubscribe(registryUrl, doDiscover(clientUrl));
     }
 
     @Override
-    protected void doUnsubscribe(Url clientUrl, ClientListener listener) {
+    protected synchronized void doUnsubscribe(Url clientUrl, ClientListener listener) {
         subscribeUrls.remove(clientUrl);
         // Notify
         listener.onSubscribe(registryUrl, doDiscover(clientUrl));

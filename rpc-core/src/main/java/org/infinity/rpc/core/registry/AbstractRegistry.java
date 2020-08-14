@@ -12,6 +12,7 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.annotation.Event;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ import static org.infinity.rpc.core.switcher.SwitcherService.REGISTRY_HEARTBEAT_
  * Abstract registry
  */
 @Slf4j
+@NotThreadSafe
 public abstract class AbstractRegistry implements Registry {
     /**
      * The registry subclass name

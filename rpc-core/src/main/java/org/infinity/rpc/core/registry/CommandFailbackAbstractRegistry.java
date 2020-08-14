@@ -9,12 +9,14 @@ import org.infinity.rpc.core.subscribe.RpcCommand;
 import org.infinity.rpc.core.subscribe.RpcCommandUtils;
 import org.infinity.rpc.core.url.Url;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
+@NotThreadSafe
 public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRegistry {
     private Map<Url, CommandServiceListener> commandServiceListenerPerClientUrl = new ConcurrentHashMap<>();
 

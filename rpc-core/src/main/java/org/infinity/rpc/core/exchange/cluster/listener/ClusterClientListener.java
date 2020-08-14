@@ -11,6 +11,7 @@ import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
+@ThreadSafe
 public class ClusterClientListener<T> implements ClientListener {
     private       Protocol                     protocol;
     private       Cluster<T>                   cluster;
@@ -83,7 +85,7 @@ public class ClusterClientListener<T> implements ClientListener {
         return null;
     }
 
-    private void onRegistryEmpty(Url excludeRegistryUrl) {
+    private synchronized void onRegistryEmpty(Url excludeRegistryUrl) {
         boolean noMoreOtherRefers = registryRequestersPerRegistryUrl.size() == 1 && registryRequestersPerRegistryUrl.containsKey(excludeRegistryUrl);
         if (noMoreOtherRefers) {
             log.warn(String.format("Ignore notify for no more referers in this cluster, registry: %s, cluster=%s", excludeRegistryUrl, clientUrl));
@@ -93,7 +95,7 @@ public class ClusterClientListener<T> implements ClientListener {
         }
     }
 
-    private void refreshCluster() {
+    private synchronized void refreshCluster() {
         List<Requester<T>> requesters = new ArrayList<>();
         for (List<Requester<T>> refs : registryRequestersPerRegistryUrl.values()) {
             requesters.addAll(refs);
