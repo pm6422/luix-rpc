@@ -5,9 +5,9 @@ import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.core.exchange.request.impl.DefaultRequester;
 import org.infinity.rpc.core.protocol.AbstractProtocol;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.spi.annotation.NamedAs;
+import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
-@NamedAs("infinity")
+@ServiceName("infinity")
 @Slf4j
 public class InfinityProtocol extends AbstractProtocol {
     @Override

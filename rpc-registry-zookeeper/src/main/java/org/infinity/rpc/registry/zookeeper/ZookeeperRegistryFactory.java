@@ -5,9 +5,9 @@ import org.I0Itec.zkclient.ZkClient;
 import org.infinity.rpc.core.registry.AbstractRegistryFactory;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.spi.annotation.NamedAs;
+import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
-@NamedAs("zookeeper")
+@ServiceName("zookeeper")
 @Slf4j
 public class ZookeeperRegistryFactory extends AbstractRegistryFactory {
     /**

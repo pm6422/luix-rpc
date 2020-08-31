@@ -5,12 +5,12 @@ import org.infinity.rpc.core.exchange.ha.HighAvailability;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.core.registry.RegistryInfo;
-import org.infinity.rpc.utilities.spi.annotation.Scope;
+import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
 import java.util.List;
 
-@Spi(scope = Scope.PROTOTYPE)
+@Spi(scope = ServiceInstanceScope.PROTOTYPE)
 public interface Cluster<T> extends RpcCallable<T> {
     /**
      * @param registryInfo

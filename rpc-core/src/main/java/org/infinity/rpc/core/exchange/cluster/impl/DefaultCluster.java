@@ -16,7 +16,7 @@ import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.UrlParam;
 import org.infinity.rpc.core.utils.ExceptionUtils;
-import org.infinity.rpc.utilities.spi.annotation.NamedAs;
+import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -27,14 +27,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_REQUESTER_THREAD_POOL;
 
 @Slf4j
-@NamedAs("default")
+@ServiceName("default")
 public class DefaultCluster<T> implements Cluster<T> {
     private static final int                 DELAY_TIME = 1000;
     private              RegistryInfo        registryInfo;
     private              HighAvailability<T> highAvailability;
     private              LoadBalancer<T>     loadBalancer;
     private              List<Requester<T>>  requesters;
-    private              final AtomicBoolean       available  = new AtomicBoolean(false);
+    private final        AtomicBoolean       available  = new AtomicBoolean(false);
 
     @Override
     public void setRegistryInfo(RegistryInfo registryInfo) {

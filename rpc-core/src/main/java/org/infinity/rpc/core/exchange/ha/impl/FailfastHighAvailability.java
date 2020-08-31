@@ -6,7 +6,7 @@ import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.utilities.spi.annotation.NamedAs;
+import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 /**
  * Fail-fast fault tolerance high availability mechanism
@@ -24,7 +24,7 @@ import org.infinity.rpc.utilities.spi.annotation.NamedAs;
  * @param <T>
  */
 @Slf4j
-@NamedAs("failfast")
+@ServiceName("failfast")
 public class FailfastHighAvailability<T> extends AbstractHighAvailability<T> {
     @Override
     public Responseable call(Requestable<T> request, LoadBalancer<T> loadBalancer) {

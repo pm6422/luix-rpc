@@ -4,10 +4,10 @@ import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.spi.annotation.Scope;
+import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
-@Spi(scope = Scope.PROTOTYPE)
+@Spi(scope = ServiceInstanceScope.PROTOTYPE)
 public interface HighAvailability<T> {
 
     void setClientUrl(Url clientUrl);

@@ -1,12 +1,12 @@
 package org.infinity.rpc.core.switcher;
 
 
-import org.infinity.rpc.utilities.spi.annotation.Scope;
+import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
 import java.util.List;
 
-@Spi(scope = Scope.SINGLETON)
+@Spi(scope = ServiceInstanceScope.SINGLETON)
 public interface SwitcherService {
     String REGISTRY_HEARTBEAT_SWITCHER = "feature.configserver.heartbeat";
 

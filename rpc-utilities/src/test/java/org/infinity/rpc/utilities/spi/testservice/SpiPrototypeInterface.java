@@ -1,9 +1,9 @@
 package org.infinity.rpc.utilities.spi.testservice;
 
-import org.infinity.rpc.utilities.spi.annotation.Scope;
+import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
-@Spi(scope = Scope.PROTOTYPE)
+@Spi(scope = ServiceInstanceScope.PROTOTYPE)
 public interface SpiPrototypeInterface {
     long spiHello();
 }

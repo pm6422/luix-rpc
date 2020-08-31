@@ -1,10 +1,10 @@
 package org.infinity.rpc.utilities.spi.testservice;
 
-import org.infinity.rpc.utilities.spi.annotation.NamedAs;
+import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-@NamedAs("spiPrototypeTest2")
+@ServiceName("spiPrototypeTest2")
 public class SpiPrototypeTestImpl2 implements SpiPrototypeInterface {
     private static AtomicLong counter = new AtomicLong(0);
     private long index = 0;

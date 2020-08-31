@@ -7,6 +7,6 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 public @interface Spi {
 
-    Scope scope() default Scope.SINGLETON;
+    ServiceInstanceScope scope() default ServiceInstanceScope.SINGLETON;
 
 }

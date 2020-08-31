@@ -2,12 +2,12 @@ package org.infinity.rpc.core.exchange.loadbalancer;
 
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.Requester;
-import org.infinity.rpc.utilities.spi.annotation.Scope;
+import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
 import java.util.List;
 
-@Spi(scope = Scope.PROTOTYPE)
+@Spi(scope = ServiceInstanceScope.PROTOTYPE)
 public interface LoadBalancer<T> {
     /**
      * Refresh requesters when online or offline
