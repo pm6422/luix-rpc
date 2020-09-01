@@ -6,6 +6,7 @@ import org.infinity.rpc.common.RpcResponse;
 import org.infinity.rpc.core.client.RpcClient;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
+import org.infinity.rpc.core.exchange.cluster.ClusterHolder;
 import org.infinity.rpc.core.registry.Registry;
 import org.springframework.util.ClassUtils;
 
@@ -17,14 +18,12 @@ import java.util.UUID;
 @Slf4j
 public class ConsumerInvocationHandler<T> implements InvocationHandler {
     private Class<T>           interfaceClass;
-    private List<Cluster<T>>   clusters;
     @Deprecated
     private List<Registry>     registries;
     private InfinityProperties infinityProperties;
 
-    public ConsumerInvocationHandler(Class<T> interfaceClass, List<Cluster<T>> clusters, List<Registry> registries, InfinityProperties infinityProperties) {
+    public ConsumerInvocationHandler(Class<T> interfaceClass, List<Registry> registries, InfinityProperties infinityProperties) {
         this.interfaceClass = interfaceClass;
-        this.clusters = clusters;
         this.registries = registries;
         this.infinityProperties = infinityProperties;
     }
@@ -38,7 +37,7 @@ public class ConsumerInvocationHandler<T> implements InvocationHandler {
             return ClassUtils.getShortNameAsProperty(RpcConsumerProxy.class);
         }
 
-        new RpcConsumerInvocationHandler(interfaceClass, clusters, infinityProperties).invoke(proxy, method, args);
+        new RpcConsumerInvocationHandler(interfaceClass, infinityProperties).invoke(proxy, method, args);
 
         // Create request object, including class name, method, parameter types, arguments
         RpcRequest rpcRequest = new RpcRequest(UUID.randomUUID().toString(), method.getDeclaringClass().getName(), method.getName(), method.getParameterTypes(), args);

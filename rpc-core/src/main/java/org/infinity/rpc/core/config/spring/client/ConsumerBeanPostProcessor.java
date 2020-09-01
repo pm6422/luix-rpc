@@ -3,7 +3,10 @@ package org.infinity.rpc.core.config.spring.client;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.config.spring.config.ProtocolConfig;
 import org.infinity.rpc.core.config.spring.utils.AnnotationUtils;
+import org.infinity.rpc.core.exchange.cluster.Cluster;
+import org.infinity.rpc.core.exchange.cluster.ClusterHolder;
 import org.infinity.rpc.core.registry.RegistryInfo;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
@@ -77,11 +80,34 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
         if (!matchScanPackages(clazz)) {
             return bean;
         }
+
+        // Initialize cluster
+        initCluster();
+
         // Field dependency injection by reflection
         setConsumerOnField(bean, clazz);
+
         // Method dependency injection by reflection
         setConsumerOnMethod(bean, clazz);
         return bean;
+    }
+
+    private void initCluster() {
+        if (ClusterHolder.getInstance().empty()) {
+            InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
+            // todo: support multiple protocols
+            for (ProtocolConfig protocolConfig : Arrays.asList(infinityProperties.getProtocol())) {
+                // 当配置多个protocol的时候，比如A,B,C，
+                // 那么正常情况下只会使用A，如果A被开关降级，那么就会使用B，B也被降级，那么会使用C
+                // One cluster for one protocol, only one server node under a cluster can receive the request
+                Cluster cluster = Cluster.createCluster(protocolConfig.getCluster(),
+                        protocolConfig.getLoadBalancer(),
+                        protocolConfig.getHighAvailability(),
+                        null);
+                // Use protocol name as cluster name
+                ClusterHolder.getInstance().addCluster(protocolConfig.getName().name(), cluster);
+            }
+        }
     }
 
     private Class<?> getTargetClass(Object bean) {

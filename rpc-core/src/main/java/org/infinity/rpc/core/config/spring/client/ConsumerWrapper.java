@@ -59,10 +59,6 @@ public class ConsumerWrapper<T> implements DisposableBean {
      *
      */
     private int                 timeout;
-    /**
-     *
-     */
-    private List<Cluster<T>>    clusters;
 
     public ConsumerWrapper(InfinityProperties infinityProperties, RegistryInfo registryInfo,
                            Class<T> interfaceClass, String instanceName, Map<String, Object> consumerAttributesMap) {
@@ -79,22 +75,8 @@ public class ConsumerWrapper<T> implements DisposableBean {
 
     public void init() {
         clientUrl = Url.clientUrl(infinityProperties.getProtocol().getName().name(), NetworkIpUtils.INTRANET_IP, interfaceClass.getName());
-
-        // TODO: move to outside
-        clusters = new ArrayList<>(Arrays.asList(infinityProperties.getProtocol()).size());
-        for (ProtocolConfig protocolConfig : Arrays.asList(infinityProperties.getProtocol())) {
-            // 当配置多个protocol的时候，比如A,B,C，
-            // 那么正常情况下只会使用A，如果A被开关降级，那么就会使用B，B也被降级，那么会使用C
-            // One cluster for one protocol, only one server node under a cluster can receive the request
-            Cluster cluster = Cluster.createCluster(protocolConfig.getCluster(),
-                    protocolConfig.getLoadBalancer(),
-                    protocolConfig.getHighAvailability(),
-                    clientUrl);
-            clusters.add(cluster);
-        }
-
-        proxyInstance = rpcConsumerProxy.getProxy(interfaceClass, clusters, registryInfo.getRegistries(), infinityProperties);
-        ClusterClientListener clusterClientListener = new ClusterClientListener(clusters, interfaceClass, registryInfo.getRegistryUrls(), clientUrl);
+        proxyInstance = rpcConsumerProxy.getProxy(interfaceClass, registryInfo.getRegistries(), infinityProperties);
+        ClusterClientListener clusterClientListener = new ClusterClientListener(interfaceClass, registryInfo.getRegistryUrls(), clientUrl);
 
     }
 

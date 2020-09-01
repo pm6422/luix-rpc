@@ -1,9 +1,9 @@
 package org.infinity.rpc.core.exchange.cluster.listener;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
+import org.infinity.rpc.core.exchange.cluster.ClusterHolder;
 import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.Registry;
@@ -20,14 +20,12 @@ import java.util.stream.Collectors;
 @ThreadSafe
 public class ClusterClientListener<T> implements ClientListener {
     private       Protocol                     protocol;
-    private       List<Cluster<T>>             clusters;
     private       List<Url>                    registryUrls;
     private       Url                          clientUrl;
     private       Class<T>                     interfaceClass;
     private final Map<Url, List<Requester<T>>> requestersPerRegistryUrl = new ConcurrentHashMap<>();
 
-    public ClusterClientListener(List<Cluster<T>> clusters, Class<T> interfaceClass, List<Url> registryUrls, Url clientUrl) {
-        this.clusters = clusters;
+    public ClusterClientListener(Class<T> interfaceClass, List<Url> registryUrls, Url clientUrl) {
         this.interfaceClass = interfaceClass;
         this.registryUrls = registryUrls;
         this.clientUrl = clientUrl;
@@ -98,6 +96,7 @@ public class ClusterClientListener<T> implements ClientListener {
                 .collect(Collectors.toList());
 
         // Loop all the cluster and update requesters
-        clusters.stream().forEach(cluster -> cluster.onRefresh(all));
+        List<Cluster<T>> clusters = ClusterHolder.getInstance().getClusters();
+        clusters.forEach(c -> c.onRefresh(all));
     }
 }

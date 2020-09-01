@@ -36,6 +36,7 @@ public interface Cluster<T> extends RpcCallable<T> {
 
     List<Requester<T>> getRequesters();
 
+    // todo: remove clientUrl param
     static <T> Cluster<T> createCluster(String clusterName, String loadBalancerName, String haName, Url clientUrl) {
         Cluster<T> cluster = ServiceInstanceLoader.getServiceLoader(Cluster.class).load(clusterName);
         LoadBalancer<T> loadBalancer = ServiceInstanceLoader.getServiceLoader(LoadBalancer.class).load(loadBalancerName);
