@@ -47,6 +47,10 @@ public interface Cluster<T> extends RpcCallable<T> {
         cluster.setHighAvailability(ha);
         // Initialize
         cluster.init();
+
+        // Add to cluster holder
+        ClusterHolder.getInstance().addCluster(clusterName, cluster);
+
         return cluster;
     }
 }

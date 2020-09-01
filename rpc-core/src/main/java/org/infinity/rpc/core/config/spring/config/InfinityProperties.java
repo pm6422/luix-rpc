@@ -36,10 +36,10 @@ public class InfinityProperties implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         Validate.notNull(application, "Application must NOT the null, please check your configuration!");
         Validate.notNull(registry, "Registry must NOT the null, please check your configuration!");
-        initialize();
+        init();
     }
 
-    private void initialize() {
+    private void init() {
         application.initialize();
         protocol.initialize();
         registry.initialize();

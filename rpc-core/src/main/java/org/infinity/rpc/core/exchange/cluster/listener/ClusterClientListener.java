@@ -90,13 +90,13 @@ public class ClusterClientListener<T> implements ClientListener {
     }
 
     private synchronized void refreshCluster() {
-        List<Requester<T>> all = requestersPerRegistryUrl.values()
+        List<Requester<T>> allRequesters = requestersPerRegistryUrl.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
         // Loop all the cluster and update requesters
         List<Cluster<T>> clusters = ClusterHolder.getInstance().getClusters();
-        clusters.forEach(c -> c.onRefresh(all));
+        clusters.forEach(c -> c.onRefresh(allRequesters));
     }
 }

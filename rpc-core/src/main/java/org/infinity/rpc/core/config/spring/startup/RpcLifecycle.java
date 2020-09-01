@@ -3,13 +3,16 @@ package org.infinity.rpc.core.config.spring.startup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.config.spring.config.ProtocolConfig;
 import org.infinity.rpc.core.config.spring.server.ProviderWrapper;
 import org.infinity.rpc.core.config.spring.server.ProviderWrapperHolder;
+import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -70,7 +73,7 @@ public class RpcLifecycle {
             return;
         }
         log.info("Starting the RPC server");
-        initConfig();
+        initConfig(infinityProperties);
         registerShutdownHook();
         registerApplication(infinityProperties, registryUrls);
         registerProviders(infinityProperties, registryUrls);
@@ -81,7 +84,21 @@ public class RpcLifecycle {
     /**
      * Initialize the RPC server
      */
-    private void initConfig() {
+    private void initConfig(InfinityProperties infinityProperties) {
+        createClusters(infinityProperties);
+    }
+
+    private void createClusters(InfinityProperties infinityProperties) {
+        // todo: support multiple protocols
+        for (ProtocolConfig protocolConfig : Arrays.asList(infinityProperties.getProtocol())) {
+            // 当配置多个protocol的时候，比如A,B,C，
+            // 那么正常情况下只会使用A，如果A被开关降级，那么就会使用B，B也被降级，那么会使用C
+            // One cluster for one protocol, only one server node under a cluster can receive the request
+            Cluster.createCluster(protocolConfig.getCluster(),
+                    protocolConfig.getLoadBalancer(),
+                    protocolConfig.getHighAvailability(),
+                    null);
+        }
     }
 
     /**
