@@ -39,7 +39,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
         // 当配置多个protocol的时候，比如A,B,C，
         // 那么正常情况下只会使用A，如果A被开关降级，那么就会使用B，B也被降级，那么会使用C
         for (Cluster<T> cluster : clusters) {
-//            Url clientUrl = cluster.getHighAvailability().getClientUrl();
+            Url clientUrl = cluster.getHighAvailability().getClientUrl();
 
             request.attachment(Url.PARAM_APP, infinityProperties.getApplication().getName());
 
