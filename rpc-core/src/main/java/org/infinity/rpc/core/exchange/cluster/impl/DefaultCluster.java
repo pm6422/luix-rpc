@@ -1,5 +1,6 @@
 package org.infinity.rpc.core.exchange.cluster.impl;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool;
@@ -37,7 +38,7 @@ public class DefaultCluster<T> implements Cluster<T> {
     private final        AtomicBoolean       available  = new AtomicBoolean(false);
 
     @Override
-    public void setRegistryInfo(RegistryInfo registryInfo) {
+    public void setRegistryInfo(@NonNull RegistryInfo registryInfo) {
         this.registryInfo = registryInfo;
     }
 
@@ -52,7 +53,7 @@ public class DefaultCluster<T> implements Cluster<T> {
     }
 
     @Override
-    public void setLoadBalancer(LoadBalancer<T> loadBalancer) {
+    public void setLoadBalancer(@NonNull LoadBalancer<T> loadBalancer) {
         this.loadBalancer = loadBalancer;
     }
 
@@ -62,7 +63,7 @@ public class DefaultCluster<T> implements Cluster<T> {
     }
 
     @Override
-    public void setHighAvailability(HighAvailability<T> highAvailability) {
+    public void setHighAvailability(@NonNull HighAvailability<T> highAvailability) {
         this.highAvailability = highAvailability;
     }
 

@@ -9,7 +9,6 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
@@ -37,10 +36,19 @@ public class ClusterClientListener<T> implements ClientListener {
     }
 
     private void init() {
+        initCluster();
         for (Url registryUrl : registryUrls) {
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             registry.subscribe(clientUrl, this);
         }
+    }
+
+    private void initCluster() {
+        String clusterName = clientUrl.getParameter(Url.PARAM_CLUSTER, Url.PARAM_CLUSTER_DEFAULT_VALUE);
+        String loadBalancerName = clientUrl.getParameter(Url.PARAM_LOAD_BALANCER, Url.PARAM_LOAD_BALANCER_DEFAULT_VALUE);
+        String haName = clientUrl.getParameter(Url.PARAM_HA, Url.PARAM_HA_DEFAULT_VALUE);
+
+        cluster = Cluster.createCluster(clusterName, loadBalancerName, haName, clientUrl);
     }
 
     @Override

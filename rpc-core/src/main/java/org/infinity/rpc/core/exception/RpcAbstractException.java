@@ -68,8 +68,8 @@ public abstract class RpcAbstractException extends RuntimeException {
     public String getMessage() {
         String message = getOriginMessage();
 
-        return "error_message: " + message + ", status: " + rpcErrorMsg.getStatus() + ", error_code: " + rpcErrorMsg.getErrorCode()
-                + ",r=" + RequestContext.getThreadRpcContext().getRequestId();
+        return "errorMsg: " + message + ", status: " + rpcErrorMsg.getStatus() + ", errorCode: " + rpcErrorMsg.getErrorCode()
+                + ", requestId: " + RequestContext.getThreadRpcContext().getRequestId();
     }
 
     public String getOriginMessage() {

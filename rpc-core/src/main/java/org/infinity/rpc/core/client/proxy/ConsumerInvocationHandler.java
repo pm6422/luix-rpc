@@ -31,14 +31,14 @@ public class ConsumerInvocationHandler<T> implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        // TODO: replace with new logic
-        new RpcConsumerInvocationHandler(interfaceClass, clusters, infinityProperties).invoke(proxy, method, args);
-
         if (method.getDeclaringClass() == Object.class && method.getName().equals("toString")) {
             // Object proxy = result.getProxy(consumerInterface.getClassLoader()); 在IDE上光标放到proxy就会看到调用toString()
+            // IDE may call the Object.toString() method if you set some break pointers.
             log.trace("Invoked Object.toString() by view proxy instance on IDE debugger");
             return ClassUtils.getShortNameAsProperty(RpcConsumerProxy.class);
         }
+
+        new RpcConsumerInvocationHandler(interfaceClass, clusters, infinityProperties).invoke(proxy, method, args);
 
         // Create request object, including class name, method, parameter types, arguments
         RpcRequest rpcRequest = new RpcRequest(UUID.randomUUID().toString(), method.getDeclaringClass().getName(), method.getName(), method.getParameterTypes(), args);

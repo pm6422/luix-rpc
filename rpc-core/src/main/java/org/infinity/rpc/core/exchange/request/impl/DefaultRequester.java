@@ -15,7 +15,8 @@ public class DefaultRequester<T> extends AbstractRequester<T> {
 
     @Override
     protected boolean doInit() {
-        return false;
+        // todo: open client
+        return true;
     }
 
     @Override

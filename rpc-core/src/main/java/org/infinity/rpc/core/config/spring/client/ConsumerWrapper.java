@@ -7,12 +7,9 @@ import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.config.spring.config.ProtocolConfig;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.exchange.cluster.listener.ClusterClientListener;
-import org.infinity.rpc.core.exchange.ha.HighAvailability;
-import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
-import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -32,15 +29,15 @@ public class ConsumerWrapper<T> implements DisposableBean {
     /**
      *
      */
-    private InfinityProperties infinityProperties;
+    private InfinityProperties  infinityProperties;
     /**
      *
      */
-    private RegistryInfo       registryInfo;
+    private RegistryInfo        registryInfo;
     /**
      * The interface class of the consumer
      */
-    private Class<T>           interfaceClass;
+    private Class<T>            interfaceClass;
     /**
      * The consumer instance simple name, also known as bean name
      */
@@ -88,26 +85,16 @@ public class ConsumerWrapper<T> implements DisposableBean {
             // 当配置多个protocol的时候，比如A,B,C，
             // 那么正常情况下只会使用A，如果A被开关降级，那么就会使用B，B也被降级，那么会使用C
             // One cluster for one protocol, only one server node under a cluster can receive the request
-            clusters.add(createCluster(protocolConfig));
+            clusters.add(Cluster.createCluster(protocolConfig.getCluster(),
+                    protocolConfig.getLoadBalancer(),
+                    protocolConfig.getHighAvailability(),
+                    clientUrl));
         }
 
         proxyInstance = rpcConsumerProxy.getProxy(interfaceClass, clusters, registryInfo.getRegistries(), infinityProperties);
 
         ClusterClientListener clusterClientListener = new ClusterClientListener(interfaceClass, registryInfo.getRegistryUrls(), clientUrl);
 
-    }
-
-    private Cluster<T> createCluster(ProtocolConfig protocolConfig) {
-        Cluster<T> cluster = ServiceInstanceLoader.getServiceLoader(Cluster.class).load(protocolConfig.getCluster());
-        LoadBalancer<T> loadBalancer = ServiceInstanceLoader.getServiceLoader(LoadBalancer.class).load(protocolConfig.getLoadBalancer());
-        HighAvailability<T> ha = ServiceInstanceLoader.getServiceLoader(HighAvailability.class).load(protocolConfig.getHighAvailability());
-        ha.setClientUrl(clientUrl);
-
-        cluster.setLoadBalancer(loadBalancer);
-        cluster.setHighAvailability(ha);
-        // Initialize
-        cluster.init();
-        return cluster;
     }
 
     @Override
