@@ -1,5 +1,6 @@
 package org.infinity.rpc.core.exchange.cluster.listener;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
@@ -11,23 +12,22 @@ import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;
 
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Slf4j
 @ThreadSafe
 public class ClusterClientListener<T> implements ClientListener {
     private       Protocol                     protocol;
-    private       Cluster<T>                   cluster;
+    private       List<Cluster<T>>             clusters;
     private       List<Url>                    registryUrls;
     private       Url                          clientUrl;
     private       Class<T>                     interfaceClass;
-    private final Map<Url, List<Requester<T>>> registryRequestersPerRegistryUrl = new ConcurrentHashMap<>();
+    private final Map<Url, List<Requester<T>>> requestersPerRegistryUrl = new ConcurrentHashMap<>();
 
-    public ClusterClientListener(Class<T> interfaceClass, List<Url> registryUrls, Url clientUrl) {
+    public ClusterClientListener(List<Cluster<T>> clusters, Class<T> interfaceClass, List<Url> registryUrls, Url clientUrl) {
+        this.clusters = clusters;
         this.interfaceClass = interfaceClass;
         this.registryUrls = registryUrls;
         this.clientUrl = clientUrl;
@@ -36,19 +36,10 @@ public class ClusterClientListener<T> implements ClientListener {
     }
 
     private void init() {
-        initCluster();
         for (Url registryUrl : registryUrls) {
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             registry.subscribe(clientUrl, this);
         }
-    }
-
-    private void initCluster() {
-        String clusterName = clientUrl.getParameter(Url.PARAM_CLUSTER, Url.PARAM_CLUSTER_DEFAULT_VALUE);
-        String loadBalancerName = clientUrl.getParameter(Url.PARAM_LOAD_BALANCER, Url.PARAM_LOAD_BALANCER_DEFAULT_VALUE);
-        String haName = clientUrl.getParameter(Url.PARAM_HA, Url.PARAM_HA_DEFAULT_VALUE);
-
-        cluster = Cluster.createCluster(clusterName, loadBalancerName, haName, clientUrl);
     }
 
     @Override
@@ -61,7 +52,7 @@ public class ClusterClientListener<T> implements ClientListener {
 
         List<Requester<T>> newRequesters = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
-            Requester<T> requester = getExistingRequester(providerUrl, registryRequestersPerRegistryUrl.get(registryUrl));
+            Requester<T> requester = getExistingRequester(providerUrl, requestersPerRegistryUrl.get(registryUrl));
             if (requester == null) {
                 Url providerUrlCopy = providerUrl.copy();
                 requester = protocol.createRequester(interfaceClass, providerUrlCopy);
@@ -76,38 +67,37 @@ public class ClusterClientListener<T> implements ClientListener {
             return;
         }
 
-        // 此处不销毁referers，由cluster进行销毁
-        registryRequestersPerRegistryUrl.put(registryUrl, newRequesters);
+        // 此处不销毁requesters，由cluster进行销毁
+        requestersPerRegistryUrl.put(registryUrl, newRequesters);
         refreshCluster();
     }
 
     private Requester<T> getExistingRequester(Url providerUrl, List<Requester<T>> requesters) {
-        if (requesters == null) {
-            return null;
-        }
-        for (Requester<T> requester : requesters) {
-            if (Objects.equals(providerUrl, requester.getProviderUrl())) {
-                return requester;
-            }
-        }
-        return null;
+        return CollectionUtils.isEmpty(requesters) ? null :
+                requesters
+                        .stream()
+                        .filter(requester -> Objects.equals(providerUrl, requester.getProviderUrl()))
+                        .findFirst()
+                        .orElseGet(null);
     }
 
     private synchronized void onRegistryEmpty(Url excludeRegistryUrl) {
-        boolean noMoreOtherRefers = registryRequestersPerRegistryUrl.size() == 1 && registryRequestersPerRegistryUrl.containsKey(excludeRegistryUrl);
+        boolean noMoreOtherRefers = requestersPerRegistryUrl.size() == 1 && requestersPerRegistryUrl.containsKey(excludeRegistryUrl);
         if (noMoreOtherRefers) {
-            log.warn(String.format("Ignore notify for no more referers in this cluster, registry: %s, cluster=%s", excludeRegistryUrl, clientUrl));
+            log.warn(String.format("Ignore notify for no more requesters on this cluster, registry: %s, cluster=%s", excludeRegistryUrl, clientUrl));
         } else {
-            registryRequestersPerRegistryUrl.remove(excludeRegistryUrl);
+            requestersPerRegistryUrl.remove(excludeRegistryUrl);
             refreshCluster();
         }
     }
 
     private synchronized void refreshCluster() {
-        List<Requester<T>> requesters = new ArrayList<>();
-        for (List<Requester<T>> refs : registryRequestersPerRegistryUrl.values()) {
-            requesters.addAll(refs);
-        }
-        cluster.onRefresh(requesters);
+        List<Requester<T>> all = requestersPerRegistryUrl.values()
+                .stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+
+        // Loop all the cluster and update requesters
+        clusters.stream().forEach(cluster -> cluster.onRefresh(all));
     }
 }
