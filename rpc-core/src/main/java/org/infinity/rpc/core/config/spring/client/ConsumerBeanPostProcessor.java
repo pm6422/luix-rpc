@@ -92,6 +92,21 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
         return bean;
     }
 
+    private Class<?> getTargetClass(Object bean) {
+        if (isProxyBean(bean)) {
+            return AopUtils.getTargetClass(bean);
+        }
+        return bean.getClass();
+    }
+
+    private boolean isProxyBean(Object bean) {
+        return AopUtils.isAopProxy(bean);
+    }
+
+    private boolean matchScanPackages(Class<?> clazz) {
+        return Arrays.stream(scanBasePackages).anyMatch(pkg -> clazz.getName().startsWith(pkg));
+    }
+
     private void initCluster() {
         if (ClusterHolder.getInstance().empty()) {
             InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
@@ -108,21 +123,6 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
                 ClusterHolder.getInstance().addCluster(protocolConfig.getName().name(), cluster);
             }
         }
-    }
-
-    private Class<?> getTargetClass(Object bean) {
-        if (isProxyBean(bean)) {
-            return AopUtils.getTargetClass(bean);
-        }
-        return bean.getClass();
-    }
-
-    private boolean isProxyBean(Object bean) {
-        return AopUtils.isAopProxy(bean);
-    }
-
-    private boolean matchScanPackages(Class<?> clazz) {
-        return Arrays.stream(scanBasePackages).anyMatch(pkg -> clazz.getName().startsWith(pkg));
     }
 
     /**
