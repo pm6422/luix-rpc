@@ -22,8 +22,6 @@ public class RpcConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocati
         super.interfaceClass = interfaceClass;
         super.interfaceName = interfaceClass.getName();
         super.infinityProperties = infinityProperties;
-        List<Cluster<T>> clusters = ClusterHolder.getInstance().getClusters();
-        super.clusters = clusters;
     }
 
     /**
