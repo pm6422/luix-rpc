@@ -10,8 +10,10 @@ import org.infinity.rpc.utilities.spi.annotation.Spi;
 @Spi(scope = ServiceInstanceScope.PROTOTYPE)
 public interface HighAvailability<T> {
 
+    // TODO: check use
     void setClientUrl(Url clientUrl);
 
+    // TODO: check use
     Url getClientUrl();
 
     Responseable call(Requestable<T> request, LoadBalancer<T> loadBalancer);
