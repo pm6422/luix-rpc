@@ -10,7 +10,6 @@ import org.infinity.rpc.core.url.Url;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,7 +45,7 @@ public class ConsumerWrapper<T> implements DisposableBean {
      */
     private final int                 timeout;
     /**
-     * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(Class, List, InfinityProperties)}
+     * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(Class, InfinityProperties)}
      */
     private       T                   proxyInstance;
     /**
@@ -73,7 +72,7 @@ public class ConsumerWrapper<T> implements DisposableBean {
     public void init() {
         clientUrl = Url.clientUrl(infinityProperties.getProtocol().getName().name(), interfaceClass.getName());
         consumerListener = ConsumerListener.of(interfaceClass, registryInfo.getRegistryUrls(), clientUrl);
-        proxyInstance = ConsumerProxy.getProxy(interfaceClass, registryInfo.getRegistries(), infinityProperties);
+        proxyInstance = ConsumerProxy.getProxy(interfaceClass, infinityProperties);
     }
 
     @Override

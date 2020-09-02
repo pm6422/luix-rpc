@@ -10,22 +10,20 @@ import org.infinity.rpc.core.exchange.request.impl.RequestContext;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.switcher.SwitcherService;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.core.url.UrlParam;
 
 import java.util.List;
 
 @Slf4j
 public abstract class AbstractRpcConsumerInvocationHandler<T> {
     protected Class<T>           interfaceClass;
-    protected String             interfaceName;
     protected SwitcherService    switcherService;
     protected InfinityProperties infinityProperties;
 
     /**
-     * @param request
-     * @param returnType
-     * @param async
-     * @return
+     * @param request    RPC request
+     * @param returnType return type of method
+     * @param async      async call flag
+     * @return return result of method
      */
     protected Object processRequest(Requestable request, Class returnType, boolean async) {
         RequestContext threadRpcContext = RequestContext.getThreadRpcContext();
