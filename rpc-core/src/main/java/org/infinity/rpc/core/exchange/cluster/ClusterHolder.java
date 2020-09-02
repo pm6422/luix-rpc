@@ -3,10 +3,10 @@ package org.infinity.rpc.core.exchange.cluster;
 import org.apache.commons.collections4.MapUtils;
 
 import javax.annotation.concurrent.ThreadSafe;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @ThreadSafe
 public class ClusterHolder<T> {
@@ -26,7 +26,7 @@ public class ClusterHolder<T> {
     }
 
     public synchronized List<Cluster<T>> getClusters() {
-        return clusterMap.values().stream().collect(Collectors.toList());
+        return new ArrayList<>(clusterMap.values());
     }
 
     public synchronized void addCluster(String name, Cluster<T> cluster) {
@@ -38,6 +38,7 @@ public class ClusterHolder<T> {
      *
      * @return singleton instance {@link ClusterHolder}
      */
+    @SuppressWarnings({"rawtypes"})
     public static ClusterHolder getInstance() {
         return ClusterHolder.SingletonHolder.INSTANCE;
     }
@@ -46,6 +47,7 @@ public class ClusterHolder<T> {
      * The singleton instance holder static inner class
      */
     private static class SingletonHolder {
-        private static final ClusterHolder INSTANCE = new ClusterHolder();// static variable will be instantiated on class loading.
+        @SuppressWarnings({"rawtypes"})
+        private static final ClusterHolder INSTANCE = new ClusterHolder<>();// static variable will be instantiated on class loading.
     }
 }
