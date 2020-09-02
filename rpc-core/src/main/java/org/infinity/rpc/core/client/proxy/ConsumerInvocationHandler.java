@@ -5,8 +5,6 @@ import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
 import org.infinity.rpc.core.client.RpcClient;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.exchange.cluster.Cluster;
-import org.infinity.rpc.core.exchange.cluster.ClusterHolder;
 import org.infinity.rpc.core.registry.Registry;
 import org.springframework.util.ClassUtils;
 
@@ -34,7 +32,7 @@ public class ConsumerInvocationHandler<T> implements InvocationHandler {
             // Object proxy = result.getProxy(consumerInterface.getClassLoader()); 在IDE上光标放到proxy就会看到调用toString()
             // IDE may call the Object.toString() method if you set some break pointers.
             log.trace("Invoked Object.toString() by view proxy instance on IDE debugger");
-            return ClassUtils.getShortNameAsProperty(RpcConsumerProxy.class);
+            return ClassUtils.getShortNameAsProperty(ConsumerProxy.class);
         }
 
         new RpcConsumerInvocationHandler(interfaceClass, infinityProperties).invoke(proxy, method, args);

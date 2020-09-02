@@ -2,7 +2,7 @@ package org.infinity.rpc.core.config.spring.client;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
+import org.infinity.rpc.core.client.proxy.ConsumerProxy;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.exchange.cluster.listener.ConsumerListener;
 import org.infinity.rpc.core.registry.RegistryInfo;
@@ -24,43 +24,39 @@ public class ConsumerWrapper<T> implements DisposableBean {
     /**
      *
      */
-    private InfinityProperties  infinityProperties;
+    private final InfinityProperties  infinityProperties;
     /**
      *
      */
-    private RegistryInfo        registryInfo;
+    private final RegistryInfo        registryInfo;
     /**
      * The interface class of the consumer
      */
-    private Class<T>            interfaceClass;
+    private final Class<T>            interfaceClass;
     /**
      * The consumer instance simple name, also known as bean name
      */
-    private String              instanceName;
+    private final String              instanceName;
     /**
      *
      */
-    private RpcConsumerProxy<T> rpcConsumerProxy = new RpcConsumerProxy<>();
-    /**
-     * The consumer proxy instance, refer the return type of {@link org.infinity.rpc.core.client.proxy.RpcConsumerProxy#getProxy(Class, List, List, InfinityProperties)}
-     */
-    private T                   proxyInstance;
+    private final String              directUrl;
     /**
      *
      */
-    private ConsumerListener    consumerListener;
+    private final int                 timeout;
+    /**
+     * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(Class, List, InfinityProperties)}
+     */
+    private       T                   proxyInstance;
     /**
      *
      */
-    private Url                 clientUrl;
+    private       ConsumerListener<T> consumerListener;
     /**
      *
      */
-    private String              directUrl;
-    /**
-     *
-     */
-    private int                 timeout;
+    private       Url                 clientUrl;
 
     public ConsumerWrapper(InfinityProperties infinityProperties, RegistryInfo registryInfo,
                            Class<T> interfaceClass, String instanceName, Map<String, Object> consumerAttributesMap) {
@@ -71,14 +67,13 @@ public class ConsumerWrapper<T> implements DisposableBean {
         this.directUrl = (String) consumerAttributesMap.get("directUrl");
         this.timeout = (int) consumerAttributesMap.get("timeout");
 
-        // Initialize the consumer wrapper
         this.init();
     }
 
     public void init() {
         clientUrl = Url.clientUrl(infinityProperties.getProtocol().getName().name(), interfaceClass.getName());
         consumerListener = ConsumerListener.of(interfaceClass, registryInfo.getRegistryUrls(), clientUrl);
-        proxyInstance = rpcConsumerProxy.getProxy(interfaceClass, registryInfo.getRegistries(), infinityProperties);
+        proxyInstance = ConsumerProxy.getProxy(interfaceClass, registryInfo.getRegistries(), infinityProperties);
     }
 
     @Override
