@@ -10,8 +10,8 @@ import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.exchange.ha.HighAvailability;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
+import org.infinity.rpc.core.exchange.request.ProtocolRequester;
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.core.exchange.request.Requester;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.registry.RegistryInfo;
@@ -30,12 +30,12 @@ import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_R
 @Slf4j
 @ServiceName("default")
 public class DefaultCluster<T> implements Cluster<T> {
-    private static final int                 DELAY_TIME = 1000;
-    private              RegistryInfo        registryInfo;
-    private              HighAvailability<T> highAvailability;
-    private              LoadBalancer<T>     loadBalancer;
-    private              List<Requester<T>>  requesters;
-    private final        AtomicBoolean       available  = new AtomicBoolean(false);
+    private static final int                        DELAY_TIME = 1000;
+    private              RegistryInfo               registryInfo;
+    private              HighAvailability<T>        highAvailability;
+    private              LoadBalancer<T>            loadBalancer;
+    private              List<ProtocolRequester<T>> protocolRequesters;
+    private final        AtomicBoolean              available  = new AtomicBoolean(false);
 
     @Override
     public void setRegistryInfo(@NonNull RegistryInfo registryInfo) {
@@ -44,7 +44,7 @@ public class DefaultCluster<T> implements Cluster<T> {
 
     @Override
     public Class<T> getInterfaceClass() {
-        return CollectionUtils.isEmpty(requesters) ? null : requesters.get(0).getInterfaceClass();
+        return CollectionUtils.isEmpty(protocolRequesters) ? null : protocolRequesters.get(0).getInterfaceClass();
     }
 
     @Override
@@ -73,49 +73,49 @@ public class DefaultCluster<T> implements Cluster<T> {
     }
 
     @Override
-    public List<Requester<T>> getRequesters() {
-        return requesters;
+    public List<ProtocolRequester<T>> getRequesters() {
+        return protocolRequesters;
     }
 
     @Override
     public void init() {
-        onRefresh(requesters);
+        onRefresh(protocolRequesters);
         available.set(true);
     }
 
     @Override
-    public synchronized void onRefresh(List<Requester<T>> requesters) {
-        if (CollectionUtils.isEmpty(requesters)) {
+    public synchronized void onRefresh(List<ProtocolRequester<T>> protocolRequesters) {
+        if (CollectionUtils.isEmpty(protocolRequesters)) {
             return;
         }
 
-        loadBalancer.onRefresh(requesters);
+        loadBalancer.onRefresh(protocolRequesters);
 
-        List<Requester<T>> oldRequesters = this.requesters;
-        this.requesters = requesters;
+        List<ProtocolRequester<T>> oldProtocolRequesters = this.protocolRequesters;
+        this.protocolRequesters = protocolRequesters;
 
-        if (CollectionUtils.isEmpty(oldRequesters)) {
+        if (CollectionUtils.isEmpty(oldProtocolRequesters)) {
             return;
         }
 
-        List<Requester<T>> delayDestroyRequesters = new ArrayList<>();
-        for (Requester<T> oldRequester : oldRequesters) {
-            if (requesters.contains(oldRequester)) {
+        List<ProtocolRequester<T>> delayDestroyProtocolRequesters = new ArrayList<>();
+        for (ProtocolRequester<T> oldProtocolRequester : oldProtocolRequesters) {
+            if (protocolRequesters.contains(oldProtocolRequester)) {
                 continue;
             }
 
             // Destroy the old requester if old requester is useless
-            delayDestroyRequesters.add(oldRequester);
+            delayDestroyProtocolRequesters.add(oldProtocolRequester);
         }
 
-        if (CollectionUtils.isNotEmpty(delayDestroyRequesters)) {
+        if (CollectionUtils.isNotEmpty(delayDestroyProtocolRequesters)) {
             ScheduledDestroyThreadPool.scheduleDelayTask(DESTROY_REQUESTER_THREAD_POOL, DELAY_TIME, TimeUnit.MILLISECONDS, () -> {
-                for (Requester<?> requester : delayDestroyRequesters) {
+                for (ProtocolRequester<?> protocolRequester : delayDestroyProtocolRequesters) {
                     try {
-                        requester.destroy();
-                        log.info("Destroyed the requester with url: {}", requester.getProviderUrl().getUri());
+                        protocolRequester.destroy();
+                        log.info("Destroyed the requester with url: {}", protocolRequester.getProviderUrl().getUri());
                     } catch (Exception e) {
-                        log.error(MessageFormat.format("Failed to destroy the requester with url: {0}", requester.getProviderUrl().getUri()), e);
+                        log.error(MessageFormat.format("Failed to destroy the requester with url: {0}", protocolRequester.getProviderUrl().getUri()), e);
                     }
                 }
             });
@@ -125,8 +125,8 @@ public class DefaultCluster<T> implements Cluster<T> {
     @Override
     public void destroy() {
         available.set(false);
-        for (Requester<T> requester : this.requesters) {
-            requester.destroy();
+        for (ProtocolRequester<T> protocolRequester : this.protocolRequesters) {
+            protocolRequester.destroy();
         }
     }
 

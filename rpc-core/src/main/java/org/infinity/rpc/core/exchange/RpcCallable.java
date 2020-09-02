@@ -2,15 +2,18 @@ package org.infinity.rpc.core.exchange;
 
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 
 public interface RpcCallable<T> {
     /**
+     * Get provider interface class
+     *
      * @return interface class
      */
     Class<T> getInterfaceClass();
 
     /**
+     * Check whether it is available
+     *
      * @return true: available, false: unavailable
      */
     boolean isAvailable();
@@ -24,9 +27,12 @@ public interface RpcCallable<T> {
     Responseable call(Requestable<T> request);
 
     /**
-     *
+     * Initialize
      */
     void init();
 
+    /**
+     * Do some cleanup task
+     */
     void destroy();
 }

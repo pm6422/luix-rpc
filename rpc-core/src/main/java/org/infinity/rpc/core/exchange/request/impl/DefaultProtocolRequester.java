@@ -1,15 +1,15 @@
 package org.infinity.rpc.core.exchange.request.impl;
 
-import org.infinity.rpc.core.exchange.request.AbstractRequester;
+import org.infinity.rpc.core.exchange.request.AbstractProtocolRequester;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.url.Url;
 
 import java.util.concurrent.Future;
 
-public class DefaultRequester<T> extends AbstractRequester<T> {
+public class DefaultProtocolRequester<T> extends AbstractProtocolRequester<T> {
 
-    public DefaultRequester(Class<T> interfaceClass, Url providerUrl) {
+    public DefaultProtocolRequester(Class<T> interfaceClass, Url providerUrl) {
         super(interfaceClass, providerUrl);
     }
 

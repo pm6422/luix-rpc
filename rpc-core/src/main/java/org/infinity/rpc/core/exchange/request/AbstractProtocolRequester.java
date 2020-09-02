@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
-public abstract class AbstractRequester<T> implements Requester<T> {
+public abstract class AbstractProtocolRequester<T> implements ProtocolRequester<T> {
     protected          AtomicBoolean initialized     = new AtomicBoolean(false);
     protected volatile boolean       available       = false;
     protected          Class<T>      interfaceClass;
@@ -18,7 +18,7 @@ public abstract class AbstractRequester<T> implements Requester<T> {
     protected          AtomicInteger processingCount = new AtomicInteger(0);
 
 
-    public AbstractRequester(Class<T> interfaceClass, Url providerUrl) {
+    public AbstractProtocolRequester(Class<T> interfaceClass, Url providerUrl) {
         this.interfaceClass = interfaceClass;
         this.providerUrl = providerUrl;
     }
@@ -45,18 +45,16 @@ public abstract class AbstractRequester<T> implements Requester<T> {
     @Override
     public void init() {
         if (!initialized.compareAndSet(false, true)) {
-            // todo: refactor log
-            log.warn("Requester {} already initialized!", this.getClass().getSimpleName());
+            log.warn("Protocol requester {} has been already initialized!", this.getClass().getSimpleName());
             return;
         }
 
         boolean result = doInit();
 
         if (!result) {
-            log.error("Failed to initialize the requester {}!", this.getClass().getSimpleName());
-            throw new RpcFrameworkException("Failed to initialize the requester " + this.getClass().getSimpleName() + "!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+            throw new RpcFrameworkException("Failed to initialize the protocol requester!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         } else {
-            log.info("Initialized the requester {}", this.getClass().getSimpleName());
+            log.info("Initialized the protocol requester");
             available = true;
         }
     }
@@ -77,8 +75,7 @@ public abstract class AbstractRequester<T> implements Requester<T> {
     @Override
     public Responseable call(Requestable request) {
         if (!isAvailable()) {
-            // todo: refactor log
-            throw new RpcFrameworkException("Requester is NOT available for now!");
+            throw new RpcFrameworkException("No available protocol requester found for now!");
         }
 
         increaseProcessingCount();

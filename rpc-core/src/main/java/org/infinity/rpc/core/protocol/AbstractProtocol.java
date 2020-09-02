@@ -3,30 +3,27 @@ package org.infinity.rpc.core.protocol;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
-import org.infinity.rpc.core.exchange.request.Requester;
+import org.infinity.rpc.core.exchange.request.ProtocolRequester;
 import org.infinity.rpc.core.url.Url;
 
 @Slf4j
 public abstract class AbstractProtocol implements Protocol {
     @Override
-    public <T> Requester<T> createRequester(Class<T> interfaceClass, Url providerUrl) {
-        if (providerUrl == null) {
-            throw new RpcFrameworkException(this.getClass().getSimpleName() + " refer Error: url is null",
-                    RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
-        }
+    public <T> ProtocolRequester<T> createRequester(Class<T> interfaceClass, Url providerUrl) {
         if (interfaceClass == null) {
-            throw new RpcFrameworkException(this.getClass().getSimpleName() + " refer Error: class is null, url=" + providerUrl,
-                    RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+            throw new RpcFrameworkException("Provider interface must NOT be null!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+        }
+        if (providerUrl == null) {
+            throw new RpcFrameworkException("Provider url must NOT be null!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
         long start = System.currentTimeMillis();
-        Requester<T> requester = doCreate(interfaceClass, providerUrl);
-        requester.init();
-
-        log.info(this.getClass().getSimpleName() + " refer Success: url=" + providerUrl + ", cost:" + (System.currentTimeMillis() - start));
-        return requester;
+        ProtocolRequester<T> protocolRequester = doCreate(interfaceClass, providerUrl);
+        protocolRequester.init();
+        log.info("Created protocol requester for url {} in {} ms", providerUrl, System.currentTimeMillis() - start);
+        return protocolRequester;
     }
 
-    protected abstract <T> Requester<T> doCreate(Class<T> interfaceClass, Url providerUrl);
+    protected abstract <T> ProtocolRequester<T> doCreate(Class<T> interfaceClass, Url providerUrl);
 
     @Override
     public void destroy() {

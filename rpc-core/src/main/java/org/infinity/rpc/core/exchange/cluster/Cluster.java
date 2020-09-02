@@ -3,7 +3,7 @@ package org.infinity.rpc.core.exchange.cluster;
 import org.infinity.rpc.core.exchange.RpcCallable;
 import org.infinity.rpc.core.exchange.ha.HighAvailability;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
-import org.infinity.rpc.core.exchange.request.Requester;
+import org.infinity.rpc.core.exchange.request.ProtocolRequester;
 import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
@@ -22,9 +22,9 @@ public interface Cluster<T> extends RpcCallable<T> {
     /**
      * Refresh requesters when online or offline
      *
-     * @param requesters
+     * @param protocolRequesters
      */
-    void onRefresh(List<Requester<T>> requesters);
+    void onRefresh(List<ProtocolRequester<T>> protocolRequesters);
 
     void setLoadBalancer(LoadBalancer<T> loadBalancer);
 
@@ -34,7 +34,7 @@ public interface Cluster<T> extends RpcCallable<T> {
 
     HighAvailability<T> getHighAvailability();
 
-    List<Requester<T>> getRequesters();
+    List<ProtocolRequester<T>> getRequesters();
 
     // todo: remove clientUrl param
     static <T> Cluster<T> createCluster(String clusterName, String loadBalancerName, String haName, Url clientUrl) {

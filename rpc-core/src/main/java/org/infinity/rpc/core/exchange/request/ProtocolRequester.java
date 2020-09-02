@@ -5,8 +5,10 @@ import org.infinity.rpc.core.url.Url;
 
 /**
  * The initiator of the RPC request
+ * It used to call the RPC provider
+ * One requester for a protocol
  */
-public interface Requester<T> extends RpcCallable<T> {
+public interface ProtocolRequester<T> extends RpcCallable<T> {
 
     Url getProviderUrl();
 

@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exchange.ha.AbstractHighAvailability;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.core.exchange.request.Requester;
+import org.infinity.rpc.core.exchange.request.ProtocolRequester;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
@@ -28,7 +28,7 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 public class FailfastHighAvailability<T> extends AbstractHighAvailability<T> {
     @Override
     public Responseable call(Requestable<T> request, LoadBalancer<T> loadBalancer) {
-        Requester<T> availableRequester = loadBalancer.selectNode(request);
-        return availableRequester.call(request);
+        ProtocolRequester<T> availableProtocolRequester = loadBalancer.selectNode(request);
+        return availableProtocolRequester.call(request);
     }
 }
