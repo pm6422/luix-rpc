@@ -7,13 +7,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.protocol.constants.ProtocolName;
-import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.registry.constants.RegistryName;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.switcher.DefaultSwitcherService;
 import org.infinity.rpc.core.switcher.SwitcherService;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.service.TestDummyService;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.utilities.annotation.Event;
@@ -54,7 +54,7 @@ public class ZookeeperRegistryTests {
         registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, new InfinityProperties().getRegistry().getRetryInterval().toString());
 
         // client url has the same protocol and provider path to provider, but port is 0
-        clientUrl = Url.clientUrl(ProtocolName.infinity.name(), NetworkIpUtils.INTRANET_IP, provider);
+        clientUrl = Url.clientUrl(ProtocolName.infinity.name(), provider);
         clientUrl.addParameter("group", Url.PARAM_GROUP_PROVIDER);
 
         providerUrl1 = Url.of(ProtocolName.infinity.name(), NetworkIpUtils.INTRANET_IP, 2000, provider);

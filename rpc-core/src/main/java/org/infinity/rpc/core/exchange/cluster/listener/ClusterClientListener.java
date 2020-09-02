@@ -10,6 +10,7 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.utilities.annotation.Event;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.*;
@@ -30,21 +31,20 @@ public class ClusterClientListener<T> implements ClientListener {
         this.registryUrls = registryUrls;
         this.clientUrl = clientUrl;
         this.protocol = Protocol.getInstance(clientUrl.getProtocol());
-        init();
     }
 
-    private void init() {
-        for (Url registryUrl : registryUrls) {
-            Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
-            registry.subscribe(clientUrl, this);
-        }
-    }
-
+    /**
+     * Monitor the providers change event, e.g. child change event for zookeeper
+     *
+     * @param registryUrl  registry url
+     * @param providerUrls provider urls
+     */
     @Override
+    @Event
     public synchronized void onSubscribe(Url registryUrl, List<Url> providerUrls) {
         if (CollectionUtils.isEmpty(providerUrls)) {
-            onRegistryEmpty(registryUrl);
-            log.warn("ClusterSupport config change notify, urls is empty: registry={} service={} urls=[]", registryUrl.getUri(), clientUrl.getIdentity());
+            log.info("No available providers on registry: {} for now!", registryUrl.getUri());
+            removeInactiveRegistry(registryUrl);
             return;
         }
 
@@ -61,7 +61,7 @@ public class ClusterClientListener<T> implements ClientListener {
         }
 
         if (CollectionUtils.isEmpty(newRequesters)) {
-            onRegistryEmpty(registryUrl);
+            removeInactiveRegistry(registryUrl);
             return;
         }
 
@@ -79,12 +79,14 @@ public class ClusterClientListener<T> implements ClientListener {
                         .orElseGet(null);
     }
 
-    private synchronized void onRegistryEmpty(Url excludeRegistryUrl) {
-        boolean noMoreOtherRefers = requestersPerRegistryUrl.size() == 1 && requestersPerRegistryUrl.containsKey(excludeRegistryUrl);
-        if (noMoreOtherRefers) {
-            log.warn(String.format("Ignore notify for no more requesters on this cluster, registry: %s, cluster=%s", excludeRegistryUrl, clientUrl));
-        } else {
-            requestersPerRegistryUrl.remove(excludeRegistryUrl);
+    /**
+     * Remove the inactive registry
+     *
+     * @param inactiveRegistryUrl
+     */
+    private synchronized void removeInactiveRegistry(Url inactiveRegistryUrl) {
+        if (requestersPerRegistryUrl.size() > 1) {
+            requestersPerRegistryUrl.remove(inactiveRegistryUrl);
             refreshCluster();
         }
     }
@@ -98,5 +100,16 @@ public class ClusterClientListener<T> implements ClientListener {
         // Loop all the cluster and update requesters
         List<Cluster<T>> clusters = ClusterHolder.getInstance().getClusters();
         clusters.forEach(c -> c.onRefresh(allRequesters));
+    }
+
+    /**
+     * Subscribe this client listener to all the registries
+     */
+    public void subscribeToRegistries() {
+        for (Url registryUrl : registryUrls) {
+            Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
+            // Bind this listener to the client
+            registry.subscribe(clientUrl, this);
+        }
     }
 }

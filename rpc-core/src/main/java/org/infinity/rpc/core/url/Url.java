@@ -137,8 +137,8 @@ public final class Url implements Serializable {
         return of(protocol, NetworkIpUtils.INTRANET_IP, port, path, new HashMap<>());
     }
 
-    public static Url clientUrl(String protocol, String host, String path) {
-        return of(protocol, host, CLIENT_URL_PORT, path, new HashMap<>());
+    public static Url clientUrl(String protocol, String path) {
+        return of(protocol, NetworkIpUtils.INTRANET_IP, CLIENT_URL_PORT, path, new HashMap<>());
     }
 
     public static Url registryUrl(String protocol, String host, Integer port) {

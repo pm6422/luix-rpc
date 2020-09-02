@@ -4,17 +4,12 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.proxy.RpcConsumerProxy;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.config.spring.config.ProtocolConfig;
-import org.infinity.rpc.core.exchange.cluster.Cluster;
 import org.infinity.rpc.core.exchange.cluster.listener.ClusterClientListener;
 import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -74,10 +69,11 @@ public class ConsumerWrapper<T> implements DisposableBean {
     }
 
     public void init() {
-        clientUrl = Url.clientUrl(infinityProperties.getProtocol().getName().name(), NetworkIpUtils.INTRANET_IP, interfaceClass.getName());
+        clientUrl = Url.clientUrl(infinityProperties.getProtocol().getName().name(), interfaceClass.getName());
         proxyInstance = rpcConsumerProxy.getProxy(interfaceClass, registryInfo.getRegistries(), infinityProperties);
-        ClusterClientListener clusterClientListener = new ClusterClientListener(interfaceClass, registryInfo.getRegistryUrls(), clientUrl);
 
+        ClusterClientListener clusterClientListener = new ClusterClientListener(interfaceClass, registryInfo.getRegistryUrls(), clientUrl);
+        clusterClientListener.subscribeToRegistries();
     }
 
     @Override

@@ -2,15 +2,12 @@ package org.infinity.rpc.core.client.proxy;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.exchange.cluster.Cluster;
-import org.infinity.rpc.core.exchange.cluster.ClusterHolder;
 import org.infinity.rpc.core.exchange.request.impl.RpcRequest;
 import org.infinity.rpc.utilities.id.IdGenerator;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @param <T>
@@ -34,7 +31,7 @@ public class RpcConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocati
      * @throws Throwable if any exception throws
      */
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) {
         if (isDerivedFromObject(method)) {
 
         }
