@@ -41,6 +41,8 @@ public class ConsumerListener<T> implements ClientListener {
         listener.registryUrls = registryUrls;
         listener.clientUrl = clientUrl;
         listener.protocol = Protocol.getInstance(clientUrl.getProtocol());
+
+        // Subscribe this client listener to all the registries
         listener.subscribe();
         return listener;
     }
