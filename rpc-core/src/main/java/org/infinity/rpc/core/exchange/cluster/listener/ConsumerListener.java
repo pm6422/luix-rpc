@@ -19,18 +19,30 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @ThreadSafe
-public class ClusterClientListener<T> implements ClientListener {
-    private       Protocol                     protocol;
-    private       List<Url>                    registryUrls;
-    private       Url                          clientUrl;
+public class ConsumerListener<T> implements ClientListener {
+    private       Protocol                             protocol;
+    private       List<Url>                            registryUrls;
+    private       Url                                  clientUrl;
+    /**
+     * The interface class of the consumer
+     */
     private       Class<T>                             interfaceClass;
     private final Map<Url, List<ProtocolRequester<T>>> requestersPerRegistryUrl = new ConcurrentHashMap<>();
 
-    public ClusterClientListener(Class<T> interfaceClass, List<Url> registryUrls, Url clientUrl) {
-        this.interfaceClass = interfaceClass;
-        this.registryUrls = registryUrls;
-        this.clientUrl = clientUrl;
-        this.protocol = Protocol.getInstance(clientUrl.getProtocol());
+    /**
+     * Prohibit instantiate an instance outside the class
+     */
+    private ConsumerListener() {
+    }
+
+    public static <T> ConsumerListener<T> of(Class<T> interfaceClass, List<Url> registryUrls, Url clientUrl) {
+        ConsumerListener<T> listener = new ConsumerListener<>();
+        listener.interfaceClass = interfaceClass;
+        listener.registryUrls = registryUrls;
+        listener.clientUrl = clientUrl;
+        listener.protocol = Protocol.getInstance(clientUrl.getProtocol());
+        listener.subscribe();
+        return listener;
     }
 
     /**
@@ -82,7 +94,7 @@ public class ClusterClientListener<T> implements ClientListener {
     /**
      * Remove the inactive registry
      *
-     * @param inactiveRegistryUrl
+     * @param inactiveRegistryUrl inactive registry url
      */
     private synchronized void removeInactiveRegistry(Url inactiveRegistryUrl) {
         if (requestersPerRegistryUrl.size() > 1) {
@@ -105,7 +117,7 @@ public class ClusterClientListener<T> implements ClientListener {
     /**
      * Subscribe this client listener to all the registries
      */
-    public void subscribeToRegistries() {
+    private void subscribe() {
         for (Url registryUrl : registryUrls) {
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             // Bind this listener to the client
