@@ -66,7 +66,6 @@ public class ClusterClientListener<T> implements ClientListener {
             return;
         }
 
-        // 此处不销毁requesters，由cluster进行销毁
         requestersPerRegistryUrl.put(registryUrl, newProtocolRequesters);
         refreshCluster();
     }
