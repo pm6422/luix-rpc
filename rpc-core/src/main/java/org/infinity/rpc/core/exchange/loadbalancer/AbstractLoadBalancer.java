@@ -8,6 +8,10 @@ import org.infinity.rpc.core.exchange.request.ProtocolRequester;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ * @param <T>: The interface class of the provider
+ */
 public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
     protected List<ProtocolRequester<T>> protocolRequesters;
 

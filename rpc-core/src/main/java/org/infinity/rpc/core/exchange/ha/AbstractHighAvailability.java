@@ -2,6 +2,10 @@ package org.infinity.rpc.core.exchange.ha;
 
 import org.infinity.rpc.core.url.Url;
 
+/**
+ *
+ * @param <T>: The interface class of the provider
+ */
 public abstract class AbstractHighAvailability<T> implements HighAvailability<T> {
 
     protected Url clientUrl;

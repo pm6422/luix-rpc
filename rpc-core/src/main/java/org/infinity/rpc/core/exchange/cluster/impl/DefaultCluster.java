@@ -27,6 +27,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_REQUESTER_THREAD_POOL;
 
+/**
+ *
+ * @param <T>: The interface class of the provider
+ */
 @Slf4j
 @ServiceName("default")
 public class DefaultCluster<T> implements Cluster<T> {

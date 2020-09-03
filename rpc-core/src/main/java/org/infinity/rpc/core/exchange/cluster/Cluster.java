@@ -12,6 +12,10 @@ import org.infinity.rpc.utilities.spi.annotation.Spi;
 
 import java.util.List;
 
+/**
+ *
+ * @param <T>: The interface class of the provider
+ */
 @Spi(scope = ServiceInstanceScope.PROTOTYPE)
 public interface Cluster<T> extends RpcCallable<T> {
     /**

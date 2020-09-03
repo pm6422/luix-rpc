@@ -9,6 +9,10 @@ import org.infinity.rpc.core.url.Url;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ *
+ * @param <T>: The interface class of the provider
+ */
 @Slf4j
 public abstract class AbstractProtocolRequester<T> implements ProtocolRequester<T> {
     protected          AtomicBoolean initialized     = new AtomicBoolean(false);

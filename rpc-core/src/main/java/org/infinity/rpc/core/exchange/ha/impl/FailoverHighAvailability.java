@@ -19,7 +19,7 @@ import java.util.List;
  * Failover fault tolerance high availability mechanism
  * "failover" is a backup mode of operation, when the main component exception that functions to the backup components.
  *
- * @param <T>
+ * @param <T>: The interface class of the provider
  */
 @Slf4j
 @ServiceName("failover")

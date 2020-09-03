@@ -21,7 +21,7 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
  * ConcurrentModificationException will throw an exception (error found a good set execution error process),
  * resulting in fail-fast event.
  *
- * @param <T>
+ * @param <T>: The interface class of the provider
  */
 @Slf4j
 @ServiceName("failfast")

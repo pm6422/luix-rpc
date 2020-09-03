@@ -7,6 +7,10 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
+/**
+ *
+ * @param <T>: The interface class of the provider
+ */
 @Spi(scope = ServiceInstanceScope.PROTOTYPE)
 public interface HighAvailability<T> {
 

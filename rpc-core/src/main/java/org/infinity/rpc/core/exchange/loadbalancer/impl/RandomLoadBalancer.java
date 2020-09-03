@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ *
+ * @param <T>: The interface class of the provider
+ */
 @ServiceName("random")
 public class RandomLoadBalancer<T> extends AbstractLoadBalancer<T> {
 

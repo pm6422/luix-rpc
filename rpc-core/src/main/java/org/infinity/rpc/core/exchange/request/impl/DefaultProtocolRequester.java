@@ -7,6 +7,10 @@ import org.infinity.rpc.core.url.Url;
 
 import java.util.concurrent.Future;
 
+/**
+ *
+ * @param <T>: The interface class of the provider
+ */
 public class DefaultProtocolRequester<T> extends AbstractProtocolRequester<T> {
 
     public DefaultProtocolRequester(Class<T> interfaceClass, Url providerUrl) {

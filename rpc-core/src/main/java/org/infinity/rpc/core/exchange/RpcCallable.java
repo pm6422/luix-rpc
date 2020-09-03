@@ -3,6 +3,10 @@ package org.infinity.rpc.core.exchange;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 
+/**
+ *
+ * @param <T>: The interface class of the provider
+ */
 public interface RpcCallable<T> {
     /**
      * Get provider interface class
