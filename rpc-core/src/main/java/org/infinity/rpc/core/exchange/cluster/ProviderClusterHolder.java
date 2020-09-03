@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ThreadSafe
-public class ClusterHolder<T> {
+public class ProviderClusterHolder<T> {
     /**
      * Cluster map
      */
@@ -18,7 +18,7 @@ public class ClusterHolder<T> {
     /**
      * Prohibit instantiate an instance outside the class
      */
-    private ClusterHolder() {
+    private ProviderClusterHolder() {
     }
 
     public synchronized boolean empty() {
@@ -36,11 +36,11 @@ public class ClusterHolder<T> {
     /**
      * Get the singleton instance
      *
-     * @return singleton instance {@link ClusterHolder}
+     * @return singleton instance {@link ProviderClusterHolder}
      */
     @SuppressWarnings({"rawtypes"})
-    public static ClusterHolder getInstance() {
-        return ClusterHolder.SingletonHolder.INSTANCE;
+    public static ProviderClusterHolder getInstance() {
+        return ProviderClusterHolder.SingletonHolder.INSTANCE;
     }
 
     /**
@@ -48,6 +48,6 @@ public class ClusterHolder<T> {
      */
     private static class SingletonHolder {
         @SuppressWarnings({"rawtypes"})
-        private static final ClusterHolder INSTANCE = new ClusterHolder<>();// static variable will be instantiated on class loading.
+        private static final ProviderClusterHolder INSTANCE = new ProviderClusterHolder<>();// static variable will be instantiated on class loading.
     }
 }

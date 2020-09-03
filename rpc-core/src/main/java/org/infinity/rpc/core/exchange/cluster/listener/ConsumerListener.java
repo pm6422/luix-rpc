@@ -3,7 +3,7 @@ package org.infinity.rpc.core.exchange.cluster.listener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
-import org.infinity.rpc.core.exchange.cluster.ClusterHolder;
+import org.infinity.rpc.core.exchange.cluster.ProviderClusterHolder;
 import org.infinity.rpc.core.exchange.request.ProviderRequester;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.Registry;
@@ -112,7 +112,7 @@ public class ConsumerListener<T> implements ClientListener {
                 .collect(Collectors.toList());
 
         // Loop all the cluster and update requesters
-        List<ProviderCluster<T>> providerClusters = ClusterHolder.getInstance().getClusters();
+        List<ProviderCluster<T>> providerClusters = ProviderClusterHolder.getInstance().getClusters();
         providerClusters.forEach(c -> c.onRefresh(allProviderRequesters));
     }
 

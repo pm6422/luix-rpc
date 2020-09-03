@@ -1,13 +1,14 @@
 package org.infinity.rpc.core.exchange.loadbalancer;
 
-import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.ProviderRequester;
+import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
 import java.util.List;
 
 /**
+ * {@link org.infinity.rpc.core.exchange.ha.ClusterHighAvailability} select providers via load balancer.
  *
  * @param <T>: The interface class of the provider
  */

@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
-import org.infinity.rpc.core.exchange.cluster.ClusterHolder;
+import org.infinity.rpc.core.exchange.cluster.ProviderClusterHolder;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.impl.RequestContext;
 import org.infinity.rpc.core.exchange.response.Responseable;
@@ -42,7 +42,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
 
         // The RPC framework supports multiple protocols
         // One cluster for one protocol
-        List<ProviderCluster<T>> providerClusters = ClusterHolder.getInstance().getClusters();
+        List<ProviderCluster<T>> providerClusters = ProviderClusterHolder.getInstance().getClusters();
         for (ProviderCluster<T> providerCluster : providerClusters) {
             Url clientUrl = providerCluster.getHighAvailability().getClientUrl();
             request.addAttachment(Url.PARAM_APP, infinityProperties.getApplication().getName());

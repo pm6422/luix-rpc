@@ -48,13 +48,13 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
         ClusterHighAvailability<T> ha = ServiceInstanceLoader.getServiceLoader(ClusterHighAvailability.class).load(haName);
         ha.setClientUrl(clientUrl);
 
-        providerCluster.setLoadBalancer(loadBalancer);
         providerCluster.setHighAvailability(ha);
+        providerCluster.setLoadBalancer(loadBalancer);
         // Initialize
         providerCluster.init();
 
         // Add to cluster holder
-        ClusterHolder.getInstance().addCluster(clusterName, providerCluster);
+        ProviderClusterHolder.getInstance().addCluster(clusterName, providerCluster);
 
         return providerCluster;
     }

@@ -28,16 +28,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_REQUESTER_THREAD_POOL;
 
 /**
- *
  * @param <T>: The interface class of the provider
  */
 @Slf4j
 @ServiceName("default")
 public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     private static final int                        DELAY_TIME = 1000;
-    private RegistryInfo               registryInfo;
-    private ClusterHighAvailability<T> clusterHighAvailability;
-    private LoadBalancer<T>            loadBalancer;
+    private              RegistryInfo               registryInfo;
+    private              ClusterHighAvailability<T> clusterHighAvailability;
+    private              LoadBalancer<T>            loadBalancer;
     private              List<ProviderRequester<T>> providerRequesters;
     private final        AtomicBoolean              available  = new AtomicBoolean(false);
 
