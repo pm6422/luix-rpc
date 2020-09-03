@@ -13,7 +13,7 @@ import org.infinity.rpc.utilities.spi.annotation.Spi;
 import java.util.List;
 
 /**
- *
+ * One cluster for one protocol, only one server node under a cluster can receive the request
  * @param <T>: The interface class of the provider
  */
 @Spi(scope = ServiceInstanceScope.PROTOTYPE)

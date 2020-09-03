@@ -37,7 +37,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
         threadRpcContext.setAsyncCall(async);
 
         // Copy values from context to request object
-        copyFromContextToRequest(threadRpcContext, request);
+        copyContextToRequest(threadRpcContext, request);
 
 //        RequestContext.initialize(request);
 
@@ -69,7 +69,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
      * @param threadRpcContext RPC context object
      * @param request          request object
      */
-    private void copyFromContextToRequest(RequestContext threadRpcContext, Requestable request) {
+    private void copyContextToRequest(RequestContext threadRpcContext, Requestable request) {
         // Copy attachments from RPC context to request object
         threadRpcContext.getAttachments().forEach(request::addAttachment);
 
