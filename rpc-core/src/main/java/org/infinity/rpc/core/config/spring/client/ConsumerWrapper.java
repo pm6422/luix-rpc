@@ -16,6 +16,8 @@ import java.util.Map;
  * PRC consumer configuration wrapper
  * And the class implements the {@link FactoryBean} interface means that
  * the class is used as a factory for an object to expose, not directly as a bean instance that will be exposed itself.
+ *
+ * @param <T>: The interface class of the consumer
  */
 @Slf4j
 @Getter

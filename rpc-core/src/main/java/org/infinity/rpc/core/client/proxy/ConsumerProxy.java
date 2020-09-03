@@ -9,6 +9,12 @@ import java.lang.reflect.Proxy;
 
 @Slf4j
 public class ConsumerProxy {
+    /**
+     * @param interfaceClass     The interface class of the consumer
+     * @param infinityProperties properties
+     * @param <T>                The interface class of the consumer
+     * @return The consumer proxy instance
+     */
     @SuppressWarnings({"unchecked"})
     public static <T> T getProxy(Class<T> interfaceClass, InfinityProperties infinityProperties) {
         Assert.notNull(interfaceClass, "Consumer interface class must not be null!");

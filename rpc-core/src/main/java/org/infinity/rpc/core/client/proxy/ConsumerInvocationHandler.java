@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
- * @param <T>
+ * @param <T>: The interface class of the consumer
  */
 @Slf4j
 public class ConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationHandler<T> implements InvocationHandler {
@@ -49,7 +49,7 @@ public class ConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationH
 
     /**
      * Check whether the method is derived from {@link Object} class.
-     * For example, toString, equals, hashCode, finalize
+     * e.g, toString, equals, hashCode, finalize
      *
      * @param method method
      * @return true: method derived from Object class, false: otherwise

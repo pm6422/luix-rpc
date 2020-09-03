@@ -13,8 +13,15 @@ import org.infinity.rpc.core.url.Url;
 
 import java.util.List;
 
+/**
+ *
+ * @param <T>: The interface class of the consumer
+ */
 @Slf4j
 public abstract class AbstractRpcConsumerInvocationHandler<T> {
+    /**
+     * The interface class of the consumer
+     */
     protected Class<T>           interfaceClass;
     protected SwitcherService    switcherService;
     protected InfinityProperties infinityProperties;
@@ -64,7 +71,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
      */
     private void copyFromContextToRequest(RequestContext threadRpcContext, Requestable request) {
         // Copy attachments from RPC context to request object
-        threadRpcContext.getAttachments().entrySet().forEach(entry -> request.attachment(entry.getKey(), entry.getValue()));
+        threadRpcContext.getAttachments().forEach(request::attachment);
 
         // Copy client request id from RPC context to request object
         request.clientRequestId(threadRpcContext.getClientRequestId());
