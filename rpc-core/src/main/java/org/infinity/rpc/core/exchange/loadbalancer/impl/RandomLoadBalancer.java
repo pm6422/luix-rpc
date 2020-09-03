@@ -31,7 +31,6 @@ public class RandomLoadBalancer<T> extends AbstractLoadBalancer<T> {
     @Override
     protected List<ProviderRequester<T>> doSelectNodes(Requestable request) {
         List<ProviderRequester<T>> selected = new ArrayList<>();
-
         int index = getIndex(providerRequesters);
         for (int i = 0; i < providerRequesters.size(); i++) {
             ProviderRequester<T> providerRequester = providerRequesters.get((i + index) % providerRequesters.size());

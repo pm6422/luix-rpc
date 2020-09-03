@@ -137,7 +137,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     public Responseable call(Requestable request) {
         if (available.get()) {
             try {
-                return clusterHighAvailability.call(request, loadBalancer);
+                return clusterHighAvailability.call(loadBalancer, request);
             } catch (Exception e) {
                 return handleError(request, e);
             }

@@ -8,7 +8,7 @@ import org.infinity.rpc.utilities.spi.annotation.Spi;
 import java.util.List;
 
 /**
- * {@link org.infinity.rpc.core.exchange.ha.ClusterHighAvailability} select providers via load balancer.
+ * {@link org.infinity.rpc.core.exchange.ha.ClusterHighAvailability} select providers via load balance algorithm.
  *
  * @param <T>: The interface class of the provider
  */
@@ -17,24 +17,26 @@ public interface LoadBalancer<T> {
     /**
      * Refresh requesters when online or offline
      *
-     * @param providerRequesters
+     * @param providerRequesters new discovered provider requesters
      */
     void onRefresh(List<ProviderRequester<T>> providerRequesters);
 
     /**
-     * @param request
-     * @return
+     * Select provider node via load balance algorithm
+     *
+     * @param request RPC request instance
+     * @return selected provider requester
      */
-    ProviderRequester<T> selectNode(Requestable request);
+    ProviderRequester<T> selectProviderNode(Requestable request);
 
     /**
-     * @param request
-     * @return
+     * Select multiple provider nodes via load balance algorithm
+     *
+     * @param request RPC request instance
+     * @return selected provider requesters
      */
-    List<ProviderRequester<T>> selectNodes(Requestable request);
+    List<ProviderRequester<T>> selectProviderNodes(Requestable request);
 
 //
 //    void setWeightString(String weightString);
-
-
 }

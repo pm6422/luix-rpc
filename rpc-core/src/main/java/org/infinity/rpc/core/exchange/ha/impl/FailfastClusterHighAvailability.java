@@ -27,8 +27,8 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 @ServiceName("failfast")
 public class FailfastClusterHighAvailability<T> extends AbstractClusterHighAvailability<T> {
     @Override
-    public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
-        ProviderRequester<T> availableProviderRequester = loadBalancer.selectNode(request);
+    public Responseable call(LoadBalancer<T> loadBalancer, Requestable request) {
+        ProviderRequester<T> availableProviderRequester = loadBalancer.selectProviderNode(request);
         return availableProviderRequester.call(request);
     }
 }

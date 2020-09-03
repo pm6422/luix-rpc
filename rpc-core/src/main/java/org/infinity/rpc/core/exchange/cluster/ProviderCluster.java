@@ -43,6 +43,7 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
 
     // todo: remove clientUrl param
     static <T> ProviderCluster<T> createCluster(String clusterName, String loadBalancerName, String haName, Url clientUrl) {
+        // It support one cluster for one protocol for now, but do not support one cluster for one provider
         ProviderCluster<T> providerCluster = ServiceInstanceLoader.getServiceLoader(ProviderCluster.class).load(clusterName);
         LoadBalancer<T> loadBalancer = ServiceInstanceLoader.getServiceLoader(LoadBalancer.class).load(loadBalancerName);
         ClusterHighAvailability<T> ha = ServiceInstanceLoader.getServiceLoader(ClusterHighAvailability.class).load(haName);

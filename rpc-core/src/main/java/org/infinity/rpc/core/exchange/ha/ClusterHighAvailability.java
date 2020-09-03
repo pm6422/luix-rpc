@@ -8,7 +8,6 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
 /**
- *
  * @param <T>: The interface class of the provider
  */
 @Spi(scope = ServiceInstanceScope.PROTOTYPE)
@@ -20,5 +19,5 @@ public interface ClusterHighAvailability<T> {
     // TODO: check use
     Url getClientUrl();
 
-    Responseable call(Requestable request, LoadBalancer<T> loadBalancer);
+    Responseable call(LoadBalancer<T> loadBalancer, Requestable request);
 }

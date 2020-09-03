@@ -2,14 +2,13 @@ package org.infinity.rpc.core.exchange.loadbalancer;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.exception.RpcInvocationException;
-import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.ProviderRequester;
+import org.infinity.rpc.core.exchange.request.Requestable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @param <T>: The interface class of the provider
  */
 public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
@@ -21,15 +20,14 @@ public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
     }
 
     @Override
-    public ProviderRequester<T> selectNode(Requestable request) {
+    public ProviderRequester<T> selectProviderNode(Requestable request) {
         if (CollectionUtils.isEmpty(this.providerRequesters)) {
-            // TODO: change log
-            throw new RpcInvocationException("No available requester for RPC call for now!");
+            throw new RpcInvocationException("No available provider requester for RPC call for now! " +
+                    "Please check whether there are available providers now!");
         }
 
         // Make a copy for thread safe purpose
         List<ProviderRequester<T>> providerRequesters = new ArrayList<>(this.providerRequesters);
-
         ProviderRequester<T> providerRequester = null;
         if (providerRequesters.size() > 1) {
             providerRequester = doSelectNode(request);
@@ -37,35 +35,31 @@ public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
             providerRequester = providerRequesters.get(0);
         }
         if (providerRequester == null) {
-            // TODO: change log
-            throw new RpcInvocationException("No available requester for RPC call for now!");
+            // Provider may be lost when executing doSelect
+            throw new RpcInvocationException("No available provider requester for RPC call for now! " +
+                    "Please check whether there are available providers now!");
         }
         return providerRequester;
     }
 
     @Override
-    public List<ProviderRequester<T>> selectNodes(Requestable request) {
+    public List<ProviderRequester<T>> selectProviderNodes(Requestable request) {
         if (CollectionUtils.isEmpty(this.providerRequesters)) {
-            // TODO: change log
-            throw new RpcInvocationException("No available requester for RPC call for now!");
+            throw new RpcInvocationException("No available provider requester for RPC call for now! " +
+                    "Please check whether there are available providers now!");
         }
         // Make a copy for thread safe purpose
         List<ProviderRequester<T>> providerRequesters = new ArrayList<>(this.providerRequesters);
-
         List<ProviderRequester<T>> selected = new ArrayList<>();
-
-        if (CollectionUtils.isEmpty(providerRequesters)) {
-            // TODO: change log
-            throw new RpcInvocationException("No available requester for RPC call for now!");
-        }
         if (providerRequesters.size() > 1) {
             selected = doSelectNodes(request);
         } else if (providerRequesters.size() == 1 && providerRequesters.get(0).isAvailable()) {
             selected.add(providerRequesters.get(0));
         }
         if (CollectionUtils.isEmpty(selected)) {
-            // TODO: change log
-            throw new RpcInvocationException("No available requester for RPC call for now!");
+            // Provider may be lost when executing doSelect
+            throw new RpcInvocationException("No available provider requester for RPC call for now! " +
+                    "Please check whether there are available providers now!");
         }
         return selected;
     }
@@ -74,7 +68,19 @@ public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
         return providerRequesters;
     }
 
+    /**
+     * Select one node
+     *
+     * @param request request instance
+     * @return selected provider requester
+     */
     protected abstract ProviderRequester<T> doSelectNode(Requestable request);
 
+    /**
+     * Select multiple nodes
+     *
+     * @param request request instance
+     * @return selected provider requesters
+     */
     protected abstract List<ProviderRequester<T>> doSelectNodes(Requestable request);
 }

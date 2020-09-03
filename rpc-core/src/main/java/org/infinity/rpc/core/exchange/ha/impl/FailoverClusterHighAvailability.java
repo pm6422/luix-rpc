@@ -5,8 +5,8 @@ import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.ha.AbstractClusterHighAvailability;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
-import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.ProviderRequester;
+import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.ExceptionUtils;
@@ -25,9 +25,9 @@ import java.util.List;
 @ServiceName("failover")
 public class FailoverClusterHighAvailability<T> extends AbstractClusterHighAvailability<T> {
     @Override
-    public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
+    public Responseable call(LoadBalancer<T> loadBalancer, Requestable request) {
         // Select more than one nodes
-        List<ProviderRequester<T>> availableProviderRequesters = loadBalancer.selectNodes(request);
+        List<ProviderRequester<T>> availableProviderRequesters = loadBalancer.selectProviderNodes(request);
         Url url = availableProviderRequesters.get(0).getProviderUrl();
         int maxRetries = 1;
         // TODO
