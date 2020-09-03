@@ -6,7 +6,7 @@ import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.config.spring.config.ProtocolConfig;
 import org.infinity.rpc.core.config.spring.server.ProviderWrapper;
 import org.infinity.rpc.core.config.spring.server.ProviderWrapperHolder;
-import org.infinity.rpc.core.exchange.cluster.Cluster;
+import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
@@ -94,7 +94,7 @@ public class RpcLifecycle {
             // 当配置多个protocol的时候，比如A,B,C，
             // 那么正常情况下只会使用A，如果A被开关降级，那么就会使用B，B也被降级，那么会使用C
             // One cluster for one protocol, only one server node under a cluster can receive the request
-            Cluster.createCluster(protocolConfig.getCluster(),
+            ProviderCluster.createCluster(protocolConfig.getCluster(),
                     protocolConfig.getLoadBalancer(),
                     protocolConfig.getHighAvailability(),
                     null);

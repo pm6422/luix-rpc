@@ -6,7 +6,7 @@ import org.infinity.rpc.core.url.Url;
  *
  * @param <T>: The interface class of the provider
  */
-public abstract class AbstractHighAvailability<T> implements HighAvailability<T> {
+public abstract class AbstractClusterHighAvailability<T> implements ClusterHighAvailability<T> {
 
     protected Url clientUrl;
 

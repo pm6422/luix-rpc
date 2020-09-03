@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.exchange.loadbalancer;
 
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.core.exchange.request.ProtocolRequester;
+import org.infinity.rpc.core.exchange.request.ProviderRequester;
 import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
@@ -16,21 +16,21 @@ public interface LoadBalancer<T> {
     /**
      * Refresh requesters when online or offline
      *
-     * @param protocolRequesters
+     * @param providerRequesters
      */
-    void onRefresh(List<ProtocolRequester<T>> protocolRequesters);
+    void onRefresh(List<ProviderRequester<T>> providerRequesters);
 
     /**
      * @param request
      * @return
      */
-    ProtocolRequester<T> selectNode(Requestable request);
+    ProviderRequester<T> selectNode(Requestable request);
 
     /**
      * @param request
      * @return
      */
-    List<ProtocolRequester<T>> selectNodes(Requestable request);
+    List<ProviderRequester<T>> selectNodes(Requestable request);
 
 //
 //    void setWeightString(String weightString);

@@ -13,7 +13,7 @@ public class ClusterHolder<T> {
     /**
      * Cluster map
      */
-    private final Map<String, Cluster<T>> clusterMap = new ConcurrentHashMap<>();
+    private final Map<String, ProviderCluster<T>> clusterMap = new ConcurrentHashMap<>();
 
     /**
      * Prohibit instantiate an instance outside the class
@@ -25,12 +25,12 @@ public class ClusterHolder<T> {
         return MapUtils.isEmpty(clusterMap);
     }
 
-    public synchronized List<Cluster<T>> getClusters() {
+    public synchronized List<ProviderCluster<T>> getClusters() {
         return new ArrayList<>(clusterMap.values());
     }
 
-    public synchronized void addCluster(String name, Cluster<T> cluster) {
-        clusterMap.putIfAbsent(name, cluster);
+    public synchronized void addCluster(String name, ProviderCluster<T> providerCluster) {
+        clusterMap.putIfAbsent(name, providerCluster);
     }
 
     /**

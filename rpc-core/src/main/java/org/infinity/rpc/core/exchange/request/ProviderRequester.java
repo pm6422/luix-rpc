@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.exchange.request;
 
-import org.infinity.rpc.core.exchange.RpcCallable;
+import org.infinity.rpc.core.exchange.ProviderCallable;
 import org.infinity.rpc.core.url.Url;
 
 /**
@@ -10,7 +10,7 @@ import org.infinity.rpc.core.url.Url;
  *
  * @param <T>: The interface class of the provider
  */
-public interface ProtocolRequester<T> extends RpcCallable<T> {
+public interface ProviderRequester<T> extends ProviderCallable<T> {
 
     Url getProviderUrl();
 

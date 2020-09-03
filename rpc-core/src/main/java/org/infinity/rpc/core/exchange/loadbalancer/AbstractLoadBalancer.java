@@ -3,7 +3,7 @@ package org.infinity.rpc.core.exchange.loadbalancer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.exception.RpcInvocationException;
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.core.exchange.request.ProtocolRequester;
+import org.infinity.rpc.core.exchange.request.ProviderRequester;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,55 +13,55 @@ import java.util.List;
  * @param <T>: The interface class of the provider
  */
 public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
-    protected List<ProtocolRequester<T>> protocolRequesters;
+    protected List<ProviderRequester<T>> providerRequesters;
 
     @Override
-    public void onRefresh(List<ProtocolRequester<T>> protocolRequesters) {
-        this.protocolRequesters = protocolRequesters;
+    public void onRefresh(List<ProviderRequester<T>> providerRequesters) {
+        this.providerRequesters = providerRequesters;
     }
 
     @Override
-    public ProtocolRequester<T> selectNode(Requestable request) {
-        if (CollectionUtils.isEmpty(this.protocolRequesters)) {
+    public ProviderRequester<T> selectNode(Requestable request) {
+        if (CollectionUtils.isEmpty(this.providerRequesters)) {
             // TODO: change log
             throw new RpcInvocationException("No available requester for RPC call for now!");
         }
 
         // Make a copy for thread safe purpose
-        List<ProtocolRequester<T>> protocolRequesters = new ArrayList<>(this.protocolRequesters);
+        List<ProviderRequester<T>> providerRequesters = new ArrayList<>(this.providerRequesters);
 
-        ProtocolRequester<T> protocolRequester = null;
-        if (protocolRequesters.size() > 1) {
-            protocolRequester = doSelectNode(request);
-        } else if (protocolRequesters.size() == 1 && protocolRequesters.get(0).isAvailable()) {
-            protocolRequester = protocolRequesters.get(0);
+        ProviderRequester<T> providerRequester = null;
+        if (providerRequesters.size() > 1) {
+            providerRequester = doSelectNode(request);
+        } else if (providerRequesters.size() == 1 && providerRequesters.get(0).isAvailable()) {
+            providerRequester = providerRequesters.get(0);
         }
-        if (protocolRequester == null) {
+        if (providerRequester == null) {
             // TODO: change log
             throw new RpcInvocationException("No available requester for RPC call for now!");
         }
-        return protocolRequester;
+        return providerRequester;
     }
 
     @Override
-    public List<ProtocolRequester<T>> selectNodes(Requestable request) {
-        if (CollectionUtils.isEmpty(this.protocolRequesters)) {
+    public List<ProviderRequester<T>> selectNodes(Requestable request) {
+        if (CollectionUtils.isEmpty(this.providerRequesters)) {
             // TODO: change log
             throw new RpcInvocationException("No available requester for RPC call for now!");
         }
         // Make a copy for thread safe purpose
-        List<ProtocolRequester<T>> protocolRequesters = new ArrayList<>(this.protocolRequesters);
+        List<ProviderRequester<T>> providerRequesters = new ArrayList<>(this.providerRequesters);
 
-        List<ProtocolRequester<T>> selected = new ArrayList<>();
+        List<ProviderRequester<T>> selected = new ArrayList<>();
 
-        if (CollectionUtils.isEmpty(protocolRequesters)) {
+        if (CollectionUtils.isEmpty(providerRequesters)) {
             // TODO: change log
             throw new RpcInvocationException("No available requester for RPC call for now!");
         }
-        if (protocolRequesters.size() > 1) {
+        if (providerRequesters.size() > 1) {
             selected = doSelectNodes(request);
-        } else if (protocolRequesters.size() == 1 && protocolRequesters.get(0).isAvailable()) {
-            selected.add(protocolRequesters.get(0));
+        } else if (providerRequesters.size() == 1 && providerRequesters.get(0).isAvailable()) {
+            selected.add(providerRequesters.get(0));
         }
         if (CollectionUtils.isEmpty(selected)) {
             // TODO: change log
@@ -70,11 +70,11 @@ public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
         return selected;
     }
 
-    public List<ProtocolRequester<T>> getRequesters() {
-        return protocolRequesters;
+    public List<ProviderRequester<T>> getRequesters() {
+        return providerRequesters;
     }
 
-    protected abstract ProtocolRequester<T> doSelectNode(Requestable request);
+    protected abstract ProviderRequester<T> doSelectNode(Requestable request);
 
-    protected abstract List<ProtocolRequester<T>> doSelectNodes(Requestable request);
+    protected abstract List<ProviderRequester<T>> doSelectNodes(Requestable request);
 }

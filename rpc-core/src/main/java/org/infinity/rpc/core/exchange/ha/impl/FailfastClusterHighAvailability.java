@@ -1,10 +1,10 @@
 package org.infinity.rpc.core.exchange.ha.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exchange.ha.AbstractHighAvailability;
+import org.infinity.rpc.core.exchange.ha.AbstractClusterHighAvailability;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.core.exchange.request.ProtocolRequester;
+import org.infinity.rpc.core.exchange.request.ProviderRequester;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
@@ -25,10 +25,10 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
  */
 @Slf4j
 @ServiceName("failfast")
-public class FailfastHighAvailability<T> extends AbstractHighAvailability<T> {
+public class FailfastClusterHighAvailability<T> extends AbstractClusterHighAvailability<T> {
     @Override
     public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
-        ProtocolRequester<T> availableProtocolRequester = loadBalancer.selectNode(request);
-        return availableProtocolRequester.call(request);
+        ProviderRequester<T> availableProviderRequester = loadBalancer.selectNode(request);
+        return availableProviderRequester.call(request);
     }
 }

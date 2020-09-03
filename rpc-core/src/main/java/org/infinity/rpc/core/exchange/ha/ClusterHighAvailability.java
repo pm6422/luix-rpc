@@ -12,7 +12,7 @@ import org.infinity.rpc.utilities.spi.annotation.Spi;
  * @param <T>: The interface class of the provider
  */
 @Spi(scope = ServiceInstanceScope.PROTOTYPE)
-public interface HighAvailability<T> {
+public interface ClusterHighAvailability<T> {
 
     // TODO: check use
     void setClientUrl(Url clientUrl);

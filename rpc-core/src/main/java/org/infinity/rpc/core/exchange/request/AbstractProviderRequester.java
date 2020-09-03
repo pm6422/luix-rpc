@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @param <T>: The interface class of the provider
  */
 @Slf4j
-public abstract class AbstractProtocolRequester<T> implements ProtocolRequester<T> {
+public abstract class AbstractProviderRequester<T> implements ProviderRequester<T> {
     protected          AtomicBoolean initialized     = new AtomicBoolean(false);
     protected volatile boolean       available       = false;
     protected          Class<T>      interfaceClass;
@@ -22,7 +22,7 @@ public abstract class AbstractProtocolRequester<T> implements ProtocolRequester<
     protected          AtomicInteger processingCount = new AtomicInteger(0);
 
 
-    public AbstractProtocolRequester(Class<T> interfaceClass, Url providerUrl) {
+    public AbstractProviderRequester(Class<T> interfaceClass, Url providerUrl) {
         this.interfaceClass = interfaceClass;
         this.providerUrl = providerUrl;
     }

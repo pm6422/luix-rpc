@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.protocol;
 
-import org.infinity.rpc.core.exchange.request.ProtocolRequester;
+import org.infinity.rpc.core.exchange.request.ProviderRequester;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
@@ -9,7 +9,7 @@ import org.infinity.rpc.utilities.spi.annotation.Spi;
 @Spi(scope = ServiceInstanceScope.SINGLETON)
 public interface Protocol {
 
-    <T> ProtocolRequester<T> createRequester(Class<T> interfaceClass, Url providerUrl);
+    <T> ProviderRequester<T> createRequester(Class<T> interfaceClass, Url providerUrl);
 
     //    <T> Exporter<T> createExporter(Provider<T> provider, URL url);
 

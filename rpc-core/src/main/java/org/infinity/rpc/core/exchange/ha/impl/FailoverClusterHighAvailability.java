@@ -3,10 +3,10 @@ package org.infinity.rpc.core.exchange.ha.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
-import org.infinity.rpc.core.exchange.ha.AbstractHighAvailability;
+import org.infinity.rpc.core.exchange.ha.AbstractClusterHighAvailability;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.core.exchange.request.ProtocolRequester;
+import org.infinity.rpc.core.exchange.request.ProviderRequester;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.ExceptionUtils;
@@ -23,12 +23,12 @@ import java.util.List;
  */
 @Slf4j
 @ServiceName("failover")
-public class FailoverHighAvailability<T> extends AbstractHighAvailability<T> {
+public class FailoverClusterHighAvailability<T> extends AbstractClusterHighAvailability<T> {
     @Override
     public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
         // Select more than one nodes
-        List<ProtocolRequester<T>> availableProtocolRequesters = loadBalancer.selectNodes(request);
-        Url url = availableProtocolRequesters.get(0).getProviderUrl();
+        List<ProviderRequester<T>> availableProviderRequesters = loadBalancer.selectNodes(request);
+        Url url = availableProviderRequesters.get(0).getProviderUrl();
         int maxRetries = 1;
         // TODO
 //        int tryCount = url.getMethodParameter(request.getMethodName(),
@@ -41,10 +41,10 @@ public class FailoverHighAvailability<T> extends AbstractHighAvailability<T> {
             throw new RpcConfigurationException("Retries can NOT be a negative number!");
         }
         for (int i = 0; i <= maxRetries; i++) {
-            ProtocolRequester<T> protocolRequester = availableProtocolRequesters.get(i % availableProtocolRequesters.size());
+            ProviderRequester<T> providerRequester = availableProviderRequesters.get(i % availableProviderRequesters.size());
             try {
                 request.setRetries(i);
-                return protocolRequester.call(request);
+                return providerRequester.call(request);
             } catch (RuntimeException e) {
                 if (ExceptionUtils.isBizException(e)) {
                     // Throw the exception when it's a business one
@@ -54,7 +54,7 @@ public class FailoverHighAvailability<T> extends AbstractHighAvailability<T> {
                     throw e;
                 }
                 // If one of the nodes fails, try to use another backup available one
-                log.warn(MessageFormat.format("Failed to call the url: {0}", protocolRequester.getProviderUrl()), e);
+                log.warn(MessageFormat.format("Failed to call the url: {0}", providerRequester.getProviderUrl()), e);
             }
         }
         throw new RpcFrameworkException("Failed to call all the urls!");

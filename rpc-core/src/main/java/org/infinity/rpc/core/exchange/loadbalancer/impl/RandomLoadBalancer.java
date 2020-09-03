@@ -2,7 +2,7 @@ package org.infinity.rpc.core.exchange.loadbalancer.impl;
 
 import org.infinity.rpc.core.exchange.loadbalancer.AbstractLoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.core.exchange.request.ProtocolRequester;
+import org.infinity.rpc.core.exchange.request.ProviderRequester;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.util.ArrayList;
@@ -17,32 +17,32 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RandomLoadBalancer<T> extends AbstractLoadBalancer<T> {
 
     @Override
-    protected ProtocolRequester doSelectNode(Requestable request) {
-        int index = getIndex(protocolRequesters);
-        for (int i = 0; i < protocolRequesters.size(); i++) {
-            ProtocolRequester<T> protocolRequester = protocolRequesters.get((i + index) % protocolRequesters.size());
-            if (protocolRequester.isAvailable()) {
-                return protocolRequester;
+    protected ProviderRequester doSelectNode(Requestable request) {
+        int index = getIndex(providerRequesters);
+        for (int i = 0; i < providerRequesters.size(); i++) {
+            ProviderRequester<T> providerRequester = providerRequesters.get((i + index) % providerRequesters.size());
+            if (providerRequester.isAvailable()) {
+                return providerRequester;
             }
         }
         return null;
     }
 
     @Override
-    protected List<ProtocolRequester<T>> doSelectNodes(Requestable request) {
-        List<ProtocolRequester<T>> selected = new ArrayList<>();
+    protected List<ProviderRequester<T>> doSelectNodes(Requestable request) {
+        List<ProviderRequester<T>> selected = new ArrayList<>();
 
-        int index = getIndex(protocolRequesters);
-        for (int i = 0; i < protocolRequesters.size(); i++) {
-            ProtocolRequester<T> protocolRequester = protocolRequesters.get((i + index) % protocolRequesters.size());
-            if (protocolRequester.isAvailable()) {
-                selected.add(protocolRequester);
+        int index = getIndex(providerRequesters);
+        for (int i = 0; i < providerRequesters.size(); i++) {
+            ProviderRequester<T> providerRequester = providerRequesters.get((i + index) % providerRequesters.size());
+            if (providerRequester.isAvailable()) {
+                selected.add(providerRequester);
             }
         }
         return selected;
     }
 
-    private int getIndex(List<ProtocolRequester<T>> protocolRequesters) {
-        return (int) (ThreadLocalRandom.current().nextDouble() * protocolRequesters.size());
+    private int getIndex(List<ProviderRequester<T>> providerRequesters) {
+        return (int) (ThreadLocalRandom.current().nextDouble() * providerRequesters.size());
     }
 }

@@ -7,7 +7,7 @@ import org.infinity.rpc.core.exchange.response.Responseable;
  *
  * @param <T>: The interface class of the provider
  */
-public interface RpcCallable<T> {
+public interface ProviderCallable<T> {
     /**
      * Get provider interface class
      *
