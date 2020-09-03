@@ -25,7 +25,7 @@ import java.util.List;
 @ServiceName("failover")
 public class FailoverHighAvailability<T> extends AbstractHighAvailability<T> {
     @Override
-    public Responseable call(Requestable<T> request, LoadBalancer<T> loadBalancer) {
+    public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
         // Select more than one nodes
         List<ProtocolRequester<T>> availableProtocolRequesters = loadBalancer.selectNodes(request);
         Url url = availableProtocolRequesters.get(0).getProviderUrl();
@@ -43,7 +43,7 @@ public class FailoverHighAvailability<T> extends AbstractHighAvailability<T> {
         for (int i = 0; i <= maxRetries; i++) {
             ProtocolRequester<T> protocolRequester = availableProtocolRequesters.get(i % availableProtocolRequesters.size());
             try {
-                request.retries(i);
+                request.setRetries(i);
                 return protocolRequester.call(request);
             } catch (RuntimeException e) {
                 if (ExceptionUtils.isBizException(e)) {

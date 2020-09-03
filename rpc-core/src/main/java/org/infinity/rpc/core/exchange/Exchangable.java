@@ -3,7 +3,7 @@ package org.infinity.rpc.core.exchange;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public interface Exchangable<T> {
+public interface Exchangable {
     Map<String, String> ATTACHMENTS = new ConcurrentHashMap<>();
 
     /**
@@ -26,7 +26,7 @@ public interface Exchangable<T> {
      * @param key
      * @param value
      */
-    T attachment(String key, String value);
+    void addAttachment(String key, String value);
 
     /**
      * Get attachment

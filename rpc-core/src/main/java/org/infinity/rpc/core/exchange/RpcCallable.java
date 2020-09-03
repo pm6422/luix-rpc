@@ -28,7 +28,7 @@ public interface RpcCallable<T> {
      * @param request request object
      * @return response object
      */
-    Responseable call(Requestable<T> request);
+    Responseable call(Requestable request);
 
     /**
      * Initialize

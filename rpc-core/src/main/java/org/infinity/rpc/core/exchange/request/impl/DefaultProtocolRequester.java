@@ -42,7 +42,7 @@ public class DefaultProtocolRequester<T> extends AbstractProtocolRequester<T> {
     @Override
     protected Responseable doCall(Requestable request) {
 //        try {
-        request.attachment(Url.PARAM_GROUP, providerUrl.getGroup());
+        request.addAttachment(Url.PARAM_GROUP, providerUrl.getGroup());
 
         return null;
 //            return client.request(request);

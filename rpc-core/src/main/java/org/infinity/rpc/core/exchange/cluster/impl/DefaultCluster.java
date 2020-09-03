@@ -135,7 +135,7 @@ public class DefaultCluster<T> implements Cluster<T> {
     }
 
     @Override
-    public Responseable call(Requestable<T> request) {
+    public Responseable call(Requestable request) {
         if (available.get()) {
             try {
                 return highAvailability.call(request, loadBalancer);
@@ -146,7 +146,7 @@ public class DefaultCluster<T> implements Cluster<T> {
         return handleError(request, new RpcServiceException(RpcErrorMsgConstant.SERVICE_NOT_FOUND));
     }
 
-    private Responseable handleError(Requestable<T> request, Exception cause) {
+    private Responseable handleError(Requestable request, Exception cause) {
         if (ExceptionUtils.isBizException(cause)) {
             // Throw the exception if it is business one
             throw (RuntimeException) cause;

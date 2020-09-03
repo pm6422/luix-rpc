@@ -36,12 +36,11 @@ public class ConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationH
             return ClassUtils.getShortNameAsProperty(ConsumerProxy.class);
         }
 
-        RpcRequest request = RpcRequest.builder()
-                .requestId(IdGenerator.generateTimestampId())
-                .interfaceName(interfaceClass.getName())
-                .methodName(method.getName())
-                .methodArguments(args)
-                .build();
+        RpcRequest request = new RpcRequest();
+        request.setRequestId(IdGenerator.generateTimestampId());
+        request.setInterfaceName(interfaceClass.getName());
+        request.setMethodName(method.getName());
+        request.setMethodArguments(args);
 
         boolean async = isAsyncCall(args);
         return processRequest(request, method.getReturnType(), async);

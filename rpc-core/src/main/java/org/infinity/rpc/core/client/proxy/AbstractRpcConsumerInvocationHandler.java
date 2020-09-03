@@ -47,7 +47,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
         for (Cluster<T> cluster : clusters) {
             Url clientUrl = cluster.getHighAvailability().getClientUrl();
 
-            request.attachment(Url.PARAM_APP, infinityProperties.getApplication().getName());
+            request.addAttachment(Url.PARAM_APP, infinityProperties.getApplication().getName());
 
             Responseable response = null;
             boolean throwException = true;
@@ -71,10 +71,10 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
      */
     private void copyFromContextToRequest(RequestContext threadRpcContext, Requestable request) {
         // Copy attachments from RPC context to request object
-        threadRpcContext.getAttachments().forEach(request::attachment);
+        threadRpcContext.getAttachments().forEach(request::addAttachment);
 
         // Copy client request id from RPC context to request object
-        request.clientRequestId(threadRpcContext.getClientRequestId());
+        request.setClientRequestId(threadRpcContext.getClientRequestId());
     }
 
 }

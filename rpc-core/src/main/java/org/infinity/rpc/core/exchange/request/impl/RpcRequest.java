@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.exchange.request.impl;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.infinity.rpc.core.exchange.Traceable;
 import org.infinity.rpc.core.exchange.request.Requestable;
@@ -10,19 +10,19 @@ import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 import java.io.Serializable;
 import java.util.Map;
 
-@Builder
-@Getter
+@Data
+@NoArgsConstructor
 @ToString
-public class RpcRequest implements Requestable<RpcRequest>, Traceable<RpcRequest>, Serializable {
+public class RpcRequest implements Requestable, Traceable, Serializable {
     private static final long     serialVersionUID = -6259178379027752471L;
     private              String   clientRequestId;
-    private final        long     requestId;
-    private final        String   protocol;
-    private final        byte     protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
-    private final        String   interfaceName;
-    private final        String   methodName;
-    private final        String[] parameterTypeNames;
-    private final        Object[] methodArguments;
+    private              long     requestId;
+    private              String   protocol;
+    private              byte     protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
+    private              String   interfaceName;
+    private              String   methodName;
+    private              String[] parameterTypeNames;
+    private              Object[] methodArguments;
 
     @Override
     public Map<String, String> getAttachments() {
@@ -30,9 +30,8 @@ public class RpcRequest implements Requestable<RpcRequest>, Traceable<RpcRequest
     }
 
     @Override
-    public RpcRequest attachment(String key, String value) {
+    public void addAttachment(String key, String value) {
         ATTACHMENTS.putIfAbsent(key, value);
-        return this;
     }
 
     @Override
@@ -41,9 +40,8 @@ public class RpcRequest implements Requestable<RpcRequest>, Traceable<RpcRequest
     }
 
     @Override
-    public RpcRequest sendingTime(long sendingTime) {
+    public void setSendingTime(long sendingTime) {
         SENDING_TIME.compareAndSet(0, sendingTime);
-        return this;
     }
 
     @Override
@@ -52,9 +50,8 @@ public class RpcRequest implements Requestable<RpcRequest>, Traceable<RpcRequest
     }
 
     @Override
-    public RpcRequest receivedTime(long receivedTime) {
+    public void setReceivedTime(long receivedTime) {
         RECEIVED_TIME.compareAndSet(0, receivedTime);
-        return this;
     }
 
     @Override
@@ -63,9 +60,8 @@ public class RpcRequest implements Requestable<RpcRequest>, Traceable<RpcRequest
     }
 
     @Override
-    public RpcRequest elapsedTime(long elapsedTime) {
+    public void setElapsedTime(long elapsedTime) {
         ELAPSED_TIME.compareAndSet(0, elapsedTime);
-        return this;
     }
 
     @Override
@@ -79,9 +75,8 @@ public class RpcRequest implements Requestable<RpcRequest>, Traceable<RpcRequest
     }
 
     @Override
-    public RpcRequest trace(String key, String value) {
+    public void addTrace(String key, String value) {
         TRACES.putIfAbsent(key, value);
-        return this;
     }
 
     @Override
@@ -90,15 +85,13 @@ public class RpcRequest implements Requestable<RpcRequest>, Traceable<RpcRequest
     }
 
     @Override
-    public RpcRequest clientRequestId(String clientRequestId) {
+    public void setClientRequestId(String clientRequestId) {
         this.clientRequestId = clientRequestId;
-        return this;
     }
 
     @Override
-    public RpcRequest retries(int retries) {
+    public void setRetries(int retries) {
         RETRIES.compareAndSet(0, retries);
-        return this;
     }
 
     @Override

@@ -4,28 +4,28 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-public interface Traceable<T> {
+public interface Traceable {
     AtomicLong          SENDING_TIME  = new AtomicLong();
     AtomicLong          RECEIVED_TIME = new AtomicLong();
     AtomicLong          ELAPSED_TIME  = new AtomicLong();
     Map<String, String> TRACES        = new ConcurrentHashMap<>();
 
-    // The timestamp format is compatible with the different systems
-    T sendingTime(long sendingTime);
+    // Timestamp is a compatible format for the different systems
+    void setSendingTime(long sendingTime);
 
     long getSendingTime();
 
-    T receivedTime(long receivedTime);
+    void setReceivedTime(long receivedTime);
 
     long getReceivedTime();
 
-    T elapsedTime(long elapsedTime);
+    void setElapsedTime(long elapsedTime);
 
     long getElapsedTime();
 
     Map<String, String> getTraces();
 
-    T trace(String key, String value);
+    void addTrace(String key, String value);
 
     String getTrace(String key);
 }

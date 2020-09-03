@@ -27,7 +27,7 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 @ServiceName("failfast")
 public class FailfastHighAvailability<T> extends AbstractHighAvailability<T> {
     @Override
-    public Responseable call(Requestable<T> request, LoadBalancer<T> loadBalancer) {
+    public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
         ProtocolRequester<T> availableProtocolRequester = loadBalancer.selectNode(request);
         return availableProtocolRequester.call(request);
     }

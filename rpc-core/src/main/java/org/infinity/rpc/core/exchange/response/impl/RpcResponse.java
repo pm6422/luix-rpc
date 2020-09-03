@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.exchange.response.impl;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -17,23 +17,18 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-@Builder
-@Getter
+@Data
+@NoArgsConstructor
 @ToString
 @Slf4j
-public class RpcResponse implements Exchangable<RpcResponse>, Responseable, Traceable<RpcResponse>, Callbackable<RpcResponse>, Serializable {
+public class RpcResponse implements Exchangable, Responseable, Traceable, Callbackable, Serializable {
     private static final long      serialVersionUID = 882479213033600079L;
-    private final        long      requestId;
-    private final        String    protocol;
+    private              long      requestId;
+    private              String    protocol;
     private              byte      protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
-    private final        int       processingTimeout;
-    private final        Object    result;
-    private final        Exception exception;
-
-    @Override
-    public long getRequestId() {
-        return 0;
-    }
+    private              int       processingTimeout;
+    private              Object    result;
+    private              Exception exception;
 
     @Override
     public String getProtocol() {
@@ -56,9 +51,8 @@ public class RpcResponse implements Exchangable<RpcResponse>, Responseable, Trac
     }
 
     @Override
-    public RpcResponse attachment(String key, String value) {
+    public void addAttachment(String key, String value) {
         ATTACHMENTS.putIfAbsent(key, value);
-        return this;
     }
 
     @Override
@@ -86,9 +80,8 @@ public class RpcResponse implements Exchangable<RpcResponse>, Responseable, Trac
     }
 
     @Override
-    public RpcResponse sendingTime(long sendingTime) {
+    public void setSendingTime(long sendingTime) {
         SENDING_TIME.compareAndSet(0, sendingTime);
-        return this;
     }
 
     @Override
@@ -97,9 +90,8 @@ public class RpcResponse implements Exchangable<RpcResponse>, Responseable, Trac
     }
 
     @Override
-    public RpcResponse receivedTime(long receivedTime) {
+    public void setReceivedTime(long receivedTime) {
         RECEIVED_TIME.compareAndSet(0, receivedTime);
-        return this;
     }
 
     @Override
@@ -108,9 +100,8 @@ public class RpcResponse implements Exchangable<RpcResponse>, Responseable, Trac
     }
 
     @Override
-    public RpcResponse elapsedTime(long elapsedTime) {
+    public void setElapsedTime(long elapsedTime) {
         ELAPSED_TIME.compareAndSet(0, elapsedTime);
-        return this;
     }
 
     @Override
@@ -124,9 +115,8 @@ public class RpcResponse implements Exchangable<RpcResponse>, Responseable, Trac
     }
 
     @Override
-    public RpcResponse trace(String key, String value) {
+    public void addTrace(String key, String value) {
         TRACES.putIfAbsent(key, value);
-        return this;
     }
 
     @Override
@@ -162,14 +152,15 @@ public class RpcResponse implements Exchangable<RpcResponse>, Responseable, Trac
         }
     }
 
-    public static RpcResponse error(Requestable<?> request, Exception e) {
+    public static RpcResponse error(Requestable request, Exception e) {
         return error(request.getRequestId(), request.getProtocolVersion(), e);
     }
 
     private static RpcResponse error(long requestId, byte protocolVersion, Exception e) {
-        return RpcResponse.builder()
-                .requestId(requestId)
-                .protocolVersion(protocolVersion)
-                .exception(e).build();
+        RpcResponse rpcResponse = new RpcResponse();
+        rpcResponse.setRequestId(requestId);
+        rpcResponse.setProtocolVersion(protocolVersion);
+        rpcResponse.setException(e);
+        return rpcResponse;
     }
 }
