@@ -14,7 +14,7 @@ import org.infinity.rpc.utilities.spi.annotation.Spi;
  * @param <T>: The interface class of the provider
  */
 @Spi(scope = ServiceInstanceScope.PROTOTYPE)
-public interface ClusterFaultToleranceStrategy<T> {
+public interface FaultToleranceStrategy<T> {
 
     // TODO: check use
     void setClientUrl(Url clientUrl);

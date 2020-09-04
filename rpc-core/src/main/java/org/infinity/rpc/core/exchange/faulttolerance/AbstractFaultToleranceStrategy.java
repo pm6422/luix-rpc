@@ -6,7 +6,7 @@ import org.infinity.rpc.core.url.Url;
  *
  * @param <T>: The interface class of the provider
  */
-public abstract class AbstractClusterFaultToleranceStrategy<T> implements ClusterFaultToleranceStrategy<T> {
+public abstract class AbstractFaultToleranceStrategy<T> implements FaultToleranceStrategy<T> {
 
     protected Url clientUrl;
 

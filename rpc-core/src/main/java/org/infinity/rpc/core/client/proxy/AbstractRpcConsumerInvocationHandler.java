@@ -44,7 +44,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
         // One cluster for one protocol
         List<ProviderCluster<T>> providerClusters = ProviderClusterHolder.getInstance().getClusters();
         for (ProviderCluster<T> providerCluster : providerClusters) {
-            Url clientUrl = providerCluster.getHighAvailability().getClientUrl();
+            Url clientUrl = providerCluster.getFaultToleranceStrategy().getClientUrl();
             request.addAttachment(Url.PARAM_APP, infinityProperties.getApplication().getName());
 
             Responseable response = null;

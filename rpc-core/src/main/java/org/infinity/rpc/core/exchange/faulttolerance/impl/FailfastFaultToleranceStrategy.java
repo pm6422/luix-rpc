@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.exchange.faulttolerance.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exchange.faulttolerance.AbstractClusterFaultToleranceStrategy;
+import org.infinity.rpc.core.exchange.faulttolerance.AbstractFaultToleranceStrategy;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.ProviderRequester;
@@ -25,7 +25,7 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
  */
 @Slf4j
 @ServiceName("failfast")
-public class FailfastFaultToleranceStrategy<T> extends AbstractClusterFaultToleranceStrategy<T> {
+public class FailfastFaultToleranceStrategy<T> extends AbstractFaultToleranceStrategy<T> {
     @Override
     public Responseable call(LoadBalancer<T> loadBalancer, Requestable request) {
         ProviderRequester<T> availableProviderRequester = loadBalancer.selectProviderNode(request);

@@ -3,7 +3,7 @@ package org.infinity.rpc.core.exchange.faulttolerance.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
-import org.infinity.rpc.core.exchange.faulttolerance.AbstractClusterFaultToleranceStrategy;
+import org.infinity.rpc.core.exchange.faulttolerance.AbstractFaultToleranceStrategy;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.ProviderRequester;
 import org.infinity.rpc.core.exchange.request.Requestable;
@@ -23,7 +23,7 @@ import java.util.List;
  */
 @Slf4j
 @ServiceName("failover")
-public class FailoverFaultToleranceStrategy<T> extends AbstractClusterFaultToleranceStrategy<T> {
+public class FailoverFaultToleranceStrategy<T> extends AbstractFaultToleranceStrategy<T> {
     @Override
     public Responseable call(LoadBalancer<T> loadBalancer, Requestable request) {
         // Select more than one nodes
