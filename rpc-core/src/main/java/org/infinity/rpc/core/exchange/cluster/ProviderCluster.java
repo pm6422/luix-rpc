@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.exchange.cluster;
 
 import org.infinity.rpc.core.exchange.ProviderCallable;
-import org.infinity.rpc.core.exchange.ha.ClusterHighAvailability;
+import org.infinity.rpc.core.exchange.faulttolerance.ClusterFaultToleranceStrategy;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.ProviderRequester;
 import org.infinity.rpc.core.registry.RegistryInfo;
@@ -35,21 +35,21 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
 
     LoadBalancer<T> getLoadBalancer();
 
-    void setHighAvailability(ClusterHighAvailability<T> clusterHighAvailability);
+    void setFaultToleranceStrategy(ClusterFaultToleranceStrategy<T> clusterFaultToleranceStrategy);
 
-    ClusterHighAvailability<T> getHighAvailability();
+    ClusterFaultToleranceStrategy<T> getHighAvailability();
 
     List<ProviderRequester<T>> getRequesters();
 
     // todo: remove clientUrl param
-    static <T> ProviderCluster<T> createCluster(String clusterName, String loadBalancerName, String haName, Url clientUrl) {
+    static <T> ProviderCluster<T> createCluster(String clusterName, String loadBalancerName, String faultToleranceName, Url clientUrl) {
         // It support one cluster for one protocol for now, but do not support one cluster for one provider
         ProviderCluster<T> providerCluster = ServiceInstanceLoader.getServiceLoader(ProviderCluster.class).load(clusterName);
         LoadBalancer<T> loadBalancer = ServiceInstanceLoader.getServiceLoader(LoadBalancer.class).load(loadBalancerName);
-        ClusterHighAvailability<T> ha = ServiceInstanceLoader.getServiceLoader(ClusterHighAvailability.class).load(haName);
-        ha.setClientUrl(clientUrl);
+        ClusterFaultToleranceStrategy<T> faultTolerance = ServiceInstanceLoader.getServiceLoader(ClusterFaultToleranceStrategy.class).load(faultToleranceName);
+        faultTolerance.setClientUrl(clientUrl);
 
-        providerCluster.setHighAvailability(ha);
+        providerCluster.setFaultToleranceStrategy(faultTolerance);
         providerCluster.setLoadBalancer(loadBalancer);
         // Initialize
         providerCluster.init();

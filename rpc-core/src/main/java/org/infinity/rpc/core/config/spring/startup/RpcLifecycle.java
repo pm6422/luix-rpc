@@ -96,7 +96,7 @@ public class RpcLifecycle {
             // One cluster for one protocol, only one server node under a cluster can receive the request
             ProviderCluster.createCluster(protocolConfig.getCluster(),
                     protocolConfig.getLoadBalancer(),
-                    protocolConfig.getHighAvailability(),
+                    protocolConfig.getFaultTolerance(),
                     null);
         }
     }

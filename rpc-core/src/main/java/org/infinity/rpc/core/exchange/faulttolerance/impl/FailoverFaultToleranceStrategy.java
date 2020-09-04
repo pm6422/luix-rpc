@@ -1,9 +1,9 @@
-package org.infinity.rpc.core.exchange.ha.impl;
+package org.infinity.rpc.core.exchange.faulttolerance.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
-import org.infinity.rpc.core.exchange.ha.AbstractClusterHighAvailability;
+import org.infinity.rpc.core.exchange.faulttolerance.AbstractClusterFaultToleranceStrategy;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.ProviderRequester;
 import org.infinity.rpc.core.exchange.request.Requestable;
@@ -16,14 +16,14 @@ import java.text.MessageFormat;
 import java.util.List;
 
 /**
- * Failover fault tolerance high availability mechanism
- * "failover" is a backup mode of operation, when the main component exception that functions to the backup components.
+ * Failover fault tolerance strategy
+ * "failover" is a backup mode of operation, when the primary system exception that functions to the secondary system.
  *
  * @param <T>: The interface class of the provider
  */
 @Slf4j
 @ServiceName("failover")
-public class FailoverClusterHighAvailability<T> extends AbstractClusterHighAvailability<T> {
+public class FailoverFaultToleranceStrategy<T> extends AbstractClusterFaultToleranceStrategy<T> {
     @Override
     public Responseable call(LoadBalancer<T> loadBalancer, Requestable request) {
         // Select more than one nodes

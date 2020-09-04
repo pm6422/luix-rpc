@@ -1,7 +1,7 @@
-package org.infinity.rpc.core.exchange.ha.impl;
+package org.infinity.rpc.core.exchange.faulttolerance.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exchange.ha.AbstractClusterHighAvailability;
+import org.infinity.rpc.core.exchange.faulttolerance.AbstractClusterFaultToleranceStrategy;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.ProviderRequester;
@@ -9,7 +9,7 @@ import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 /**
- * Fail-fast fault tolerance high availability mechanism
+ * Fail-fast fault tolerance strategy
  * to see is the "fail-fast" from the literal meaning, found errors in the system as much as possible,
  * so that the system can be pre-configured in accordance with the process execution error,
  * the corresponding mode is "fault-tolerant (fault tolerance)"
@@ -25,7 +25,7 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
  */
 @Slf4j
 @ServiceName("failfast")
-public class FailfastClusterHighAvailability<T> extends AbstractClusterHighAvailability<T> {
+public class FailfastFaultToleranceStrategy<T> extends AbstractClusterFaultToleranceStrategy<T> {
     @Override
     public Responseable call(LoadBalancer<T> loadBalancer, Requestable request) {
         ProviderRequester<T> availableProviderRequester = loadBalancer.selectProviderNode(request);

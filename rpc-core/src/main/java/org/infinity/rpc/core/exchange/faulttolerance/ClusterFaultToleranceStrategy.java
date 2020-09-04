@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.ha;
+package org.infinity.rpc.core.exchange.faulttolerance;
 
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
@@ -8,10 +8,13 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
 /**
+ * Fault tolerance refers to the ability of a system to continue operating without interruption
+ * when one or more of its components fail.
+ *
  * @param <T>: The interface class of the provider
  */
 @Spi(scope = ServiceInstanceScope.PROTOTYPE)
-public interface ClusterHighAvailability<T> {
+public interface ClusterFaultToleranceStrategy<T> {
 
     // TODO: check use
     void setClientUrl(Url clientUrl);

@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.ha;
+package org.infinity.rpc.core.exchange.faulttolerance;
 
 import org.infinity.rpc.core.url.Url;
 
@@ -6,7 +6,7 @@ import org.infinity.rpc.core.url.Url;
  *
  * @param <T>: The interface class of the provider
  */
-public abstract class AbstractClusterHighAvailability<T> implements ClusterHighAvailability<T> {
+public abstract class AbstractClusterFaultToleranceStrategy<T> implements ClusterFaultToleranceStrategy<T> {
 
     protected Url clientUrl;
 
