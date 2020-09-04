@@ -20,7 +20,7 @@ public interface LoadBalancer<T> {
      *
      * @param providerRequesters new discovered provider requesters
      */
-    void onRefresh(List<ProviderRequester<T>> providerRequesters);
+    void refresh(List<ProviderRequester<T>> providerRequesters);
 
     /**
      * Select provider node via load balance algorithm

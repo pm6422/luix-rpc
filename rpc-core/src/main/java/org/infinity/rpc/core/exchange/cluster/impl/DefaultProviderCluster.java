@@ -82,17 +82,17 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
 
     @Override
     public void init() {
-        onRefresh(providerRequesters);
+        refresh(providerRequesters);
         available.set(true);
     }
 
     @Override
-    public synchronized void onRefresh(List<ProviderRequester<T>> providerRequesters) {
+    public synchronized void refresh(List<ProviderRequester<T>> providerRequesters) {
         if (CollectionUtils.isEmpty(providerRequesters)) {
             return;
         }
 
-        loadBalancer.onRefresh(providerRequesters);
+        loadBalancer.refresh(providerRequesters);
 
         List<ProviderRequester<T>> oldProviderRequesters = this.providerRequesters;
         this.providerRequesters = providerRequesters;

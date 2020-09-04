@@ -15,7 +15,7 @@ public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
     protected List<ProviderRequester<T>> providerRequesters;
 
     @Override
-    public void onRefresh(List<ProviderRequester<T>> providerRequesters) {
+    public void refresh(List<ProviderRequester<T>> providerRequesters) {
         this.providerRequesters = providerRequesters;
     }
 

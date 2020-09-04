@@ -113,7 +113,7 @@ public class ConsumerListener<T> implements ClientListener {
 
         // Loop all the cluster and update requesters
         List<ProviderCluster<T>> providerClusters = ProviderClusterHolder.getInstance().getClusters();
-        providerClusters.forEach(c -> c.onRefresh(allProviderRequesters));
+        providerClusters.forEach(c -> c.refresh(allProviderRequesters));
     }
 
     /**

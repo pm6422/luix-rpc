@@ -25,11 +25,11 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
     void setRegistryInfo(RegistryInfo registryInfo);
 
     /**
-     * Refresh requesters when online or offline
+     * Refresh requesters when providers is online or offline
      *
      * @param providerRequesters
      */
-    void onRefresh(List<ProviderRequester<T>> providerRequesters);
+    void refresh(List<ProviderRequester<T>> providerRequesters);
 
     void setLoadBalancer(LoadBalancer<T> loadBalancer);
 
