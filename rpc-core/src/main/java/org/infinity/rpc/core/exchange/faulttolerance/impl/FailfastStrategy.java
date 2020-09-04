@@ -25,7 +25,7 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
  */
 @Slf4j
 @ServiceName("failfast")
-public class FailfastFaultToleranceStrategy<T> extends AbstractFaultToleranceStrategy<T> {
+public class FailfastStrategy<T> extends AbstractFaultToleranceStrategy<T> {
     @Override
     public Responseable call(LoadBalancer<T> loadBalancer, Requestable request) {
         ProviderRequester<T> availableProviderRequester = loadBalancer.selectProviderNode(request);

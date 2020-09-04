@@ -23,7 +23,7 @@ import java.util.List;
  */
 @Slf4j
 @ServiceName("failover")
-public class FailoverFaultToleranceStrategy<T> extends AbstractFaultToleranceStrategy<T> {
+public class FailoverStrategy<T> extends AbstractFaultToleranceStrategy<T> {
     @Override
     public Responseable call(LoadBalancer<T> loadBalancer, Requestable request) {
         // Select more than one nodes
