@@ -215,7 +215,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             List<Url> cachedProviderUrls = super.getCachedProviderUrls(clientUrl);
             if (CollectionUtils.isNotEmpty(cachedProviderUrls)) {
                 // Notify if the cached provider urls not empty
-                listener.onSubscribe(getRegistryUrl(), cachedProviderUrls);
+                listener.onNotify(getRegistryUrl(), cachedProviderUrls);
             } else if (forceCheckHealth(getRegistryUrl(), clientUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to subscribe the listener [{0}] to the client [{1}] on registry [{2}] by using [{3}]",
                         listener, clientUrl, getRegistryUrl(), getRegistryClassName()), e);

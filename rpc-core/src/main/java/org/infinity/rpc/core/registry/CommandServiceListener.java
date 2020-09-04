@@ -28,6 +28,7 @@ import org.infinity.rpc.core.switcher.DefaultSwitcherService;
 import org.infinity.rpc.core.switcher.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.url.UrlParam;
+import org.infinity.rpc.utilities.annotation.Event;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
@@ -111,8 +112,9 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
      * @param registryUrl  registry url
      * @param providerUrls provider urls
      */
+    @Event
     @Override
-    public void onSubscribe(Url clientUrl, Url registryUrl, List<Url> providerUrls) {
+    public void onNotify(Url clientUrl, Url registryUrl, List<Url> providerUrls) {
         if (registry == null) {
             throw new RuntimeException("Registry must be instantiated before use!");
         }
@@ -130,7 +132,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
         }
 
         for (ClientListener clientListener : clientListeners) {
-            clientListener.onSubscribe(registry.getRegistryUrl(), providerUrlList);
+            clientListener.onNotify(registry.getRegistryUrl(), providerUrlList);
             log.debug("Invoked event: {}", clientListener);
         }
     }
@@ -141,8 +143,9 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
      * @param clientUrl
      * @param commandString
      */
+    @Event
     @Override
-    public void onSubscribe(Url clientUrl, String commandString) {
+    public void onNotify(Url clientUrl, String commandString) {
         log.info("CommandServiceManager notify command. service:" + clientUrl.toSimpleString() + ", command:" + commandString);
 
         if (!ServiceInstanceLoader.getServiceLoader(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME).isOn(MOTAN_COMMAND_SWITCHER) || commandString == null) {
@@ -194,7 +197,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
         }
 
         for (ClientListener clientListener : clientListeners) {
-            clientListener.onSubscribe(registry.getRegistryUrl(), result);
+            clientListener.onNotify(registry.getRegistryUrl(), result);
         }
     }
 

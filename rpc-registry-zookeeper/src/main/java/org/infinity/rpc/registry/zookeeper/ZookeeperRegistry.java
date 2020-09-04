@@ -513,7 +513,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                     @Override
                     public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
                         List<String> addrFiles = ListUtils.emptyIfNull(currentChilds);
-                        serviceListener.onSubscribe(clientUrl, getRegistryUrl(), readProviderUrls(addrFiles, parentPath, clientUrl));
+                        serviceListener.onNotify(clientUrl, getRegistryUrl(), readProviderUrls(addrFiles, parentPath, clientUrl));
                         log.info("Provider address files changed with current value {} under path [{}]", addrFiles.toString(), parentPath);
                     }
                 };
@@ -588,13 +588,13 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 zkDataListener = new IZkDataListener() {
                     @Override
                     public void handleDataChange(String dataPath, Object data) {
-                        commandListener.onSubscribe(clientUrl, (String) data);
+                        commandListener.onNotify(clientUrl, (String) data);
                         log.info("Command data changed with current value {} under path [{}]", data.toString(), dataPath);
                     }
 
                     @Override
                     public void handleDataDeleted(String dataPath) {
-                        commandListener.onSubscribe(clientUrl, null);
+                        commandListener.onNotify(clientUrl, null);
                         log.info("Command data deleted under path [{}]", dataPath);
                     }
                 };

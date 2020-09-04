@@ -267,7 +267,7 @@ public abstract class AbstractRegistry implements Registry {
 
         for (List<Url> urlList : urlsPerType.values()) {
             // Execute listener
-            listener.onSubscribe(registryUrl, urlList);
+            listener.onNotify(registryUrl, urlList);
         }
     }
 

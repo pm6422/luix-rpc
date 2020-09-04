@@ -7,5 +7,5 @@ import org.infinity.rpc.core.url.Url;
  */
 public interface CommandListener {
 
-    void onSubscribe(Url clientUrl, String commandString);
+    void onNotify(Url clientUrl, String commandString);
 }

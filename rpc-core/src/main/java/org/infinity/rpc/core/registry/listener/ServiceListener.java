@@ -9,5 +9,5 @@ import java.util.List;
  */
 public interface ServiceListener {
 
-    void onSubscribe(Url clientUrl, Url registryUrl, List<Url> providerUrls);
+    void onNotify(Url clientUrl, Url registryUrl, List<Url> providerUrls);
 }

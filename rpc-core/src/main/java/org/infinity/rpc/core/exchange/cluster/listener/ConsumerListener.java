@@ -55,7 +55,7 @@ public class ConsumerListener<T> implements ClientListener {
      */
     @Override
     @Event
-    public synchronized void onSubscribe(Url registryUrl, List<Url> providerUrls) {
+    public synchronized void onNotify(Url registryUrl, List<Url> providerUrls) {
         if (CollectionUtils.isEmpty(providerUrls)) {
             log.info("No available providers found on registry: {} for now!", registryUrl.getUri());
             removeInactiveRegistry(registryUrl);
