@@ -28,9 +28,9 @@ public class FailoverStrategy<T> extends AbstractFaultToleranceStrategy<T> {
     public Responseable call(LoadBalancer<T> loadBalancer, Requestable request) {
         // Select more than one nodes
         List<ProviderRequester<T>> availableProviderRequesters = loadBalancer.selectProviderNodes(request);
-        Url url = availableProviderRequesters.get(0).getProviderUrl();
         int maxRetries = 1;
-        // TODO
+        // TODO: get retry per provider configuration
+        Url url = availableProviderRequesters.get(0).getProviderUrl();
 //        int tryCount = url.getMethodParameter(request.getMethodName(),
 //                request.getParamtersDesc(),
 //                UrlParam.retries.getName(),

@@ -12,12 +12,16 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Provider {
+    // Interface class of provider
     Class<?> interfaceClass() default void.class;
 
-    // The interface class name of consumer class
-    // For the generic consumer instance must provide interfaceName attribute
+    // The interface class name of provider
+    // For the generic call must provide interfaceName attribute
     String interfaceName() default "";
 
     // Timeout value for service invocation
     int timeout() default 0;
+
+    // Retries attempt count
+    int retries = 0;
 }

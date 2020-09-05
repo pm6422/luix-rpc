@@ -130,6 +130,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         Provider providerAnnotation = findProviderAnnotation(providerBeanClass);
         Class<?> providerInterfaceClass = findProviderInterface(providerAnnotation, providerBeanClass);
 
+
         String providerWrapperBeanName = buildProviderWrapperBeanName(providerInterfaceClass);
         AbstractBeanDefinition wrapperBeanDefinition = buildProviderWrapperDefinition(ProviderWrapper.class, providerInterfaceClass, providerBeanDefinitionHolder.getBeanName());
 

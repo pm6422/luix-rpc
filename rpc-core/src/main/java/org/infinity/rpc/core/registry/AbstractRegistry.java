@@ -265,9 +265,9 @@ public abstract class AbstractRegistry implements Registry {
         // Update urls cache
         cachedProviderUrlsPerType.putAll(urlsPerType);
 
-        for (List<Url> urlList : urlsPerType.values()) {
+        for (List<Url> providerUrlList : urlsPerType.values()) {
             // Execute listener
-            listener.onNotify(registryUrl, urlList);
+            listener.onNotify(registryUrl, providerUrlList);
         }
     }
 
