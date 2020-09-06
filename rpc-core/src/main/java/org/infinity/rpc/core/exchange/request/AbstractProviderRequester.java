@@ -10,17 +10,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- *
  * @param <T>: The interface class of the provider
  */
 @Slf4j
 public abstract class AbstractProviderRequester<T> implements ProviderRequester<T> {
-    protected          AtomicBoolean initialized     = new AtomicBoolean(false);
     protected volatile boolean       available       = false;
+    protected          AtomicBoolean initialized     = new AtomicBoolean(false);
+    protected          AtomicInteger processingCount = new AtomicInteger(0);
     protected          Class<T>      interfaceClass;
     protected          Url           providerUrl;
-    protected          AtomicInteger processingCount = new AtomicInteger(0);
-
 
     public AbstractProviderRequester(Class<T> interfaceClass, Url providerUrl) {
         this.interfaceClass = interfaceClass;
@@ -49,16 +47,15 @@ public abstract class AbstractProviderRequester<T> implements ProviderRequester<
     @Override
     public void init() {
         if (!initialized.compareAndSet(false, true)) {
-            log.warn("Protocol requester {} has been already initialized!", this.getClass().getSimpleName());
+            log.warn("Provider requester {} has been already initialized!", this.getClass().getSimpleName());
             return;
         }
 
         boolean result = doInit();
-
         if (!result) {
-            throw new RpcFrameworkException("Failed to initialize the protocol requester!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+            throw new RpcFrameworkException("Failed to initialize the provider requester!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         } else {
-            log.info("Initialized the protocol requester");
+            log.info("Initialized the provider requester");
             available = true;
         }
     }
@@ -70,27 +67,27 @@ public abstract class AbstractProviderRequester<T> implements ProviderRequester<
 
     }
 
-    protected void increaseProcessingCount() {
-        processingCount.incrementAndGet();
-    }
-
-    protected abstract void decreaseProcessingCount(Requestable request, Responseable response);
-
     @Override
     public Responseable call(Requestable request) {
         if (!isAvailable()) {
-            throw new RpcFrameworkException("No available protocol requester found for now!");
+            throw new RpcFrameworkException("No available provider requester found for now!");
         }
 
-        increaseProcessingCount();
+        addProcessingCount();
         Responseable response = null;
         try {
             response = doCall(request);
             return response;
         } finally {
-            decreaseProcessingCount(request, response);
+            reduceProcessingCount(request, response);
         }
     }
 
     protected abstract Responseable doCall(Requestable request);
+
+    protected void addProcessingCount() {
+        processingCount.incrementAndGet();
+    }
+
+    protected abstract void reduceProcessingCount(Requestable request, Responseable response);
 }

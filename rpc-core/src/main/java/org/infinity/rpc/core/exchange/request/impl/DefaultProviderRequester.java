@@ -24,7 +24,7 @@ public class DefaultProviderRequester<T> extends AbstractProviderRequester<T> {
     }
 
     @Override
-    protected void decreaseProcessingCount(Requestable request, Responseable response) {
+    protected void reduceProcessingCount(Requestable request, Responseable response) {
         if (response == null || !(response instanceof Future)) {
             processingCount.decrementAndGet();
             return;
