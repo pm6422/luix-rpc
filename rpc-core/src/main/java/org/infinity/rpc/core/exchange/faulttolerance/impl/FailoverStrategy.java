@@ -36,10 +36,6 @@ public class FailoverStrategy<T> extends AbstractFaultToleranceStrategy<T> {
 //                UrlParam.retries.getName(),
 //                UrlParam.retries.getIntValue());
 
-        if (maxRetries < 0) {
-            // TODO: move to retries parameter setting validation part
-            throw new RpcConfigurationException("Retries can NOT be a negative number!");
-        }
         for (int i = 0; i <= maxRetries; i++) {
             ProviderRequester<T> providerRequester = availableProviderRequesters.get(i % availableProviderRequesters.size());
             try {

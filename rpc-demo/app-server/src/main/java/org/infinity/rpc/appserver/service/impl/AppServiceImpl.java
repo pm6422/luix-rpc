@@ -13,7 +13,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 import java.util.Set;
 
-@Provider
+@Provider(retries = 1)
 public class AppServiceImpl implements AppService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppServiceImpl.class);

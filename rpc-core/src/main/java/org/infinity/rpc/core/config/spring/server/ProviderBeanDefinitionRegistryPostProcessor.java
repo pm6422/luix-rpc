@@ -20,7 +20,13 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,10 +36,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentAware, ResourceLoaderAware, BeanClassLoaderAware, BeanDefinitionRegistryPostProcessor {
 
-    private Set<String>    scanBasePackages;
-    private Environment    environment;
-    private ResourceLoader resourceLoader;
-    private ClassLoader    classLoader;
+    private              Set<String>      scanBasePackages;
+    private              Environment      environment;
+    private              ResourceLoader   resourceLoader;
+    private              ClassLoader      classLoader;
+    private static final ValidatorFactory VALIDATOR_FACTORY = Validation.buildDefaultValidatorFactory();
 
     public ProviderBeanDefinitionRegistryPostProcessor(Set<String> scanBasePackages) {
         this.scanBasePackages = scanBasePackages;
@@ -69,12 +76,11 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     }
 
     private Set<String> resolvePackagePlaceholders(Set<String> scanBasePackages) {
-        Set<String> resolvedPkgs = scanBasePackages
+        return scanBasePackages
                 .stream()
                 .filter(x -> StringUtils.hasText(x))
                 .map(x -> environment.resolvePlaceholders(x.trim()))
                 .collect(Collectors.toSet());
-        return resolvedPkgs;
     }
 
     private void registerProviders(BeanDefinitionRegistry registry, Set<String> resolvedScanBasePackages) {
@@ -132,7 +138,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
 
 
         String providerWrapperBeanName = buildProviderWrapperBeanName(providerInterfaceClass);
-        AbstractBeanDefinition wrapperBeanDefinition = buildProviderWrapperDefinition(ProviderWrapper.class, providerInterfaceClass, providerBeanDefinitionHolder.getBeanName());
+        AbstractBeanDefinition wrapperBeanDefinition = buildProviderWrapperDefinition(ProviderWrapper.class, providerInterfaceClass, providerAnnotation, providerBeanDefinitionHolder.getBeanName());
 
         // Check duplicated candidate bean
         if (providerScanner.checkCandidate(providerWrapperBeanName, wrapperBeanDefinition)) {
@@ -175,18 +181,49 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         return ProviderWrapperBeanNameBuilder.builder(interfaceClass, environment).build();
     }
 
-    private AbstractBeanDefinition buildProviderWrapperDefinition(Class<?> providerWrapperClass, Class<?> providerInterfaceClass, String providerInstanceName) {
+    private AbstractBeanDefinition buildProviderWrapperDefinition(Class<?> providerWrapperClass, Class<?> providerInterfaceClass, Provider providerAnnotation, String providerInstanceName) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(providerWrapperClass);
-        addPropertyValue(builder, "interfaceName", providerInterfaceClass.getName());
-        addPropertyValue(builder, "interfaceClass", providerInterfaceClass);
-        addPropertyValue(builder, "instanceName", providerInstanceName);
+        addPropertyValue(builder, "interfaceName", providerInterfaceClass.getName(), providerWrapperClass, false);
+        addPropertyValue(builder, "interfaceClass", providerInterfaceClass, providerWrapperClass, false);
+        addPropertyValue(builder, "instanceName", providerInstanceName, providerWrapperClass, false);
+        addPropertyValue(builder, "retries", providerAnnotation.retries(), providerWrapperClass, true);
+        addPropertyValue(builder, "checkHealth", providerAnnotation.checkHealth(), providerWrapperClass, false);
         // Obtain the instance by instance name and inject
         addPropertyReference(builder, "instance", providerInstanceName);
+
         return builder.getBeanDefinition();
     }
 
-    private void addPropertyValue(BeanDefinitionBuilder builder, String propertyName, Object propertyValue) {
+    private void addPropertyValue(BeanDefinitionBuilder builder, String propertyName, Object propertyValue, Class<?> providerWrapperClass, boolean validate) {
+        if (validate) {
+            validatePropertyValue(providerWrapperClass, propertyName, propertyValue);
+        }
         builder.addPropertyValue(propertyName, propertyValue);
+    }
+
+    private void validatePropertyValue(Class<?> providerWrapperClass, String propertyName, Object propertyValue) {
+        try {
+            List<String> messages = doValidate(providerWrapperClass, propertyName, propertyValue);
+            if (!CollectionUtils.isEmpty(messages)) {
+                for (String message : messages) {
+                    throw new RuntimeException(message);
+                }
+            }
+        } catch (Exception e) {
+            // Re-throw the exception
+            throw new RpcConfigurationException(e.getMessage());
+        }
+    }
+
+    private static <T> List<String> doValidate(Class<T> beanType, String propertyName, Object propertyValue) {
+        Validator validator = VALIDATOR_FACTORY.getValidator();
+        Set<ConstraintViolation<T>> constraintViolations = validator.validateValue(beanType, propertyName, propertyValue);
+
+        List<String> messageList = new ArrayList<>();
+        for (ConstraintViolation<T> constraintViolation : constraintViolations) {
+            messageList.add(constraintViolation.getMessage());
+        }
+        return messageList;
     }
 
     /**

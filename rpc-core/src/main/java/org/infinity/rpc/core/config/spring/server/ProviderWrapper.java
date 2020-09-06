@@ -10,6 +10,7 @@ import org.infinity.rpc.core.url.Url;
 import org.springframework.beans.factory.DisposableBean;
 
 import javax.annotation.PostConstruct;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Set;
 
@@ -33,6 +34,21 @@ public class ProviderWrapper<T> implements DisposableBean {
      * The provider instance simple name, also known as bean name
      */
     private String   instanceName;
+    /**
+     * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
+     */
+    @Min(value = 0, message = "The [timeout] property of @Provider must NOT be a negative number!")
+    private int      timeout;
+    /**
+     * The max retry times of RPC request
+     * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
+     */
+    @Min(value = 0, message = "The [retries] property of @Provider must NOT be a negative number!")
+    private int      retries;
+    /**
+     * Indicator to monitor health
+     */
+    private boolean  checkHealth;
     /**
      * The provider instance
      */

@@ -22,6 +22,9 @@ public @interface Provider {
     // Timeout value for service invocation
     int timeout() default 0;
 
-    // Retries attempt count
-    int retries = 0;
+    // The max retry times of RPC request
+    int retries() default 0;
+
+    // Indicator to monitor health
+    boolean checkHealth() default true;
 }
