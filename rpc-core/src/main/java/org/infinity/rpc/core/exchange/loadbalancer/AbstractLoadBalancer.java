@@ -64,12 +64,12 @@ public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
         return selected;
     }
 
-    public List<ProviderRequester<T>> getRequesters() {
+    public List<ProviderRequester<T>> getProviderRequesters() {
         return providerRequesters;
     }
 
     /**
-     * Select one node
+     * Select one provider node
      *
      * @param request request instance
      * @return selected provider requester
@@ -77,7 +77,7 @@ public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
     protected abstract ProviderRequester<T> doSelectNode(Requestable request);
 
     /**
-     * Select multiple nodes
+     * Select multiple provider nodes
      *
      * @param request request instance
      * @return selected provider requesters

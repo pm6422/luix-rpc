@@ -43,10 +43,10 @@ public class FailoverStrategy<T> extends AbstractFaultToleranceStrategy<T> {
                 }
                 // If one of the provider nodes fails, try to use another backup available one
                 // todo: refactor the message
-                log.warn(MessageFormat.format("Failed to call the url: {0}", providerRequester.getProviderUrl()), e);
+                log.warn(MessageFormat.format("Failed to call the provider: {0}", providerRequester.getProviderUrl()), e);
             }
         }
         // todo: refactor the message
-        throw new RpcFrameworkException("Failed to call all the urls!");
+        throw new RpcFrameworkException("Failed to call all the providers!");
     }
 }
