@@ -1,6 +1,4 @@
-package org.infinity.rpc.core.utils;
-
-import org.infinity.rpc.core.exception.RpcBizException;
+package org.infinity.rpc.core.exception;
 
 public abstract class ExceptionUtils {
 

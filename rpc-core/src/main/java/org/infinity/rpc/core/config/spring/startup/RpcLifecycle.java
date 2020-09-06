@@ -159,7 +159,7 @@ public class RpcLifecycle {
         // Assign values to parameters
         providerUrl.addParameter(Url.PARAM_APP, infinityProperties.getApplication().getName());
         providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, String.valueOf(providerWrapper.isCheckHealth()));
-        providerUrl.addParameter(Url.PARAM_RETRIES, String.valueOf(providerWrapper.getRetries()));
+        providerUrl.addParameter(Url.PARAM_MAX_RETRIES, String.valueOf(providerWrapper.getMaxRetries()));
         return providerUrl;
     }
 

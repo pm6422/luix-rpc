@@ -23,7 +23,7 @@ public @interface Provider {
     int timeout() default 0;
 
     // The max retry times of RPC request
-    int retries() default 0;
+    int maxRetries() default 0;
 
     // Indicator to monitor health
     boolean checkHealth() default true;

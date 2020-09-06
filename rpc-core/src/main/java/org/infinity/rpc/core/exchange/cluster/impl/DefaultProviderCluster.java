@@ -16,7 +16,7 @@ import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.UrlParam;
-import org.infinity.rpc.core.utils.ExceptionUtils;
+import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.text.MessageFormat;

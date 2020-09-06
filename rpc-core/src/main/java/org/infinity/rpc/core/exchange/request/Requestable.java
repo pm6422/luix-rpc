@@ -21,8 +21,8 @@ public interface Requestable extends Exchangable {
     // Provider method arguments
     Object[] getMethodArguments();
 
-    // Set call retries count
-    void setRetries(int retries);
+    // Set the number of RPC request retry
+    void setNumberOfRetry(int numberOfRetry);
 
     int getRetries();
 

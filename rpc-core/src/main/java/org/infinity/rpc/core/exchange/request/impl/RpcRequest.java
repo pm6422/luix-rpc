@@ -90,7 +90,7 @@ public class RpcRequest implements Requestable, Traceable, Serializable {
     }
 
     @Override
-    public void setRetries(int retries) {
+    public void setNumberOfRetry(int retries) {
         RETRIES.compareAndSet(0, retries);
     }
 
