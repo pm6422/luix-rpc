@@ -3,7 +3,7 @@ package org.infinity.rpc.core.exchange.cluster;
 import org.infinity.rpc.core.exchange.ProviderCallable;
 import org.infinity.rpc.core.exchange.faulttolerance.FaultToleranceStrategy;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
-import org.infinity.rpc.core.exchange.request.ProviderRequester;
+import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
@@ -25,11 +25,11 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
     void setRegistryInfo(RegistryInfo registryInfo);
 
     /**
-     * Refresh requesters when providers is online or offline
+     * Refresh provider callers when providers is online or offline
      *
-     * @param providerRequesters
+     * @param providerCallers
      */
-    void refresh(List<ProviderRequester<T>> providerRequesters);
+    void refresh(List<ProviderCaller<T>> providerCallers);
 
     void setLoadBalancer(LoadBalancer<T> loadBalancer);
 
@@ -39,7 +39,7 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
 
     FaultToleranceStrategy<T> getFaultToleranceStrategy();
 
-    List<ProviderRequester<T>> getRequesters();
+    List<ProviderCaller<T>> getProviderCallers();
 
     // todo: remove clientUrl param
     static <T> ProviderCluster<T> createCluster(String clusterName, String loadBalancerName, String faultToleranceName, Url clientUrl) {

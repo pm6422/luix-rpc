@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
 import org.infinity.rpc.core.exchange.cluster.ProviderClusterHolder;
-import org.infinity.rpc.core.exchange.request.ProviderRequester;
+import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
@@ -26,8 +26,8 @@ public class ConsumerListener<T> implements ClientListener {
     /**
      * The interface class of the consumer
      */
-    private       Class<T>                             interfaceClass;
-    private final Map<Url, List<ProviderRequester<T>>> requestersPerRegistryUrl = new ConcurrentHashMap<>();
+    private       Class<T>                          interfaceClass;
+    private final Map<Url, List<ProviderCaller<T>>> callersPerRegistryUrl = new ConcurrentHashMap<>();
 
     /**
      * Prohibit instantiate an instance outside the class
@@ -62,33 +62,33 @@ public class ConsumerListener<T> implements ClientListener {
             return;
         }
 
-        List<ProviderRequester<T>> newProviderRequesters = new ArrayList<>();
+        List<ProviderCaller<T>> newProviderCallers = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
-            List<ProviderRequester<T>> providerRequesters = requestersPerRegistryUrl.get(registryUrl);
-            ProviderRequester<T> providerRequester = findRequesterByProviderUrl(providerRequesters, providerUrl);
-            if (providerRequester == null) {
+            List<ProviderCaller<T>> providerCallers = callersPerRegistryUrl.get(registryUrl);
+            ProviderCaller<T> providerCaller = findCallerByProviderUrl(providerCallers, providerUrl);
+            if (providerCaller == null) {
                 Url providerUrlCopy = providerUrl.copy();
-                providerRequester = protocol.createRequester(interfaceClass, providerUrlCopy);
+                providerCaller = protocol.createProviderCaller(interfaceClass, providerUrlCopy);
             }
-            if (providerRequester != null) {
-                newProviderRequesters.add(providerRequester);
+            if (providerCaller != null) {
+                newProviderCallers.add(providerCaller);
             }
         }
 
-        if (CollectionUtils.isEmpty(newProviderRequesters)) {
+        if (CollectionUtils.isEmpty(newProviderCallers)) {
             removeInactiveRegistry(registryUrl);
             return;
         }
 
-        requestersPerRegistryUrl.put(registryUrl, newProviderRequesters);
+        callersPerRegistryUrl.put(registryUrl, newProviderCallers);
         refreshCluster();
     }
 
-    private ProviderRequester<T> findRequesterByProviderUrl(List<ProviderRequester<T>> providerRequesters, Url providerUrl) {
-        return CollectionUtils.isEmpty(providerRequesters) ? null :
-                providerRequesters
+    private ProviderCaller<T> findCallerByProviderUrl(List<ProviderCaller<T>> providerCallers, Url providerUrl) {
+        return CollectionUtils.isEmpty(providerCallers) ? null :
+                providerCallers
                         .stream()
-                        .filter(requester -> Objects.equals(providerUrl, requester.getProviderUrl()))
+                        .filter(caller -> Objects.equals(providerUrl, caller.getProviderUrl()))
                         .findFirst()
                         .orElseGet(null);
     }
@@ -99,21 +99,21 @@ public class ConsumerListener<T> implements ClientListener {
      * @param inactiveRegistryUrl inactive registry url
      */
     private synchronized void removeInactiveRegistry(Url inactiveRegistryUrl) {
-        if (requestersPerRegistryUrl.size() > 1) {
-            requestersPerRegistryUrl.remove(inactiveRegistryUrl);
+        if (callersPerRegistryUrl.size() > 1) {
+            callersPerRegistryUrl.remove(inactiveRegistryUrl);
             refreshCluster();
         }
     }
 
     private synchronized void refreshCluster() {
-        List<ProviderRequester<T>> allProviderRequesters = requestersPerRegistryUrl.values()
+        List<ProviderCaller<T>> allProviderCallers = callersPerRegistryUrl.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-        // Loop all the cluster and update requesters
+        // Loop all the cluster and update callers
         List<ProviderCluster<T>> providerClusters = ProviderClusterHolder.getInstance().getClusters();
-        providerClusters.forEach(c -> c.refresh(allProviderRequesters));
+        providerClusters.forEach(c -> c.refresh(allProviderCallers));
     }
 
     /**

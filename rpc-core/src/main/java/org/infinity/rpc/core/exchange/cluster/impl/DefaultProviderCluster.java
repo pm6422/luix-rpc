@@ -10,7 +10,7 @@ import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
 import org.infinity.rpc.core.exchange.faulttolerance.FaultToleranceStrategy;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
-import org.infinity.rpc.core.exchange.request.ProviderRequester;
+import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_REQUESTER_THREAD_POOL;
+import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_CALLER_THREAD_POOL;
 
 /**
  * @param <T>: The interface class of the provider
@@ -36,9 +36,9 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     private static final int                        DELAY_TIME = 1000;
     private RegistryInfo              registryInfo;
     private FaultToleranceStrategy<T> faultToleranceStrategy;
-    private LoadBalancer<T>           loadBalancer;
-    private              List<ProviderRequester<T>> providerRequesters;
-    private final        AtomicBoolean              available  = new AtomicBoolean(false);
+    private LoadBalancer<T>                      loadBalancer;
+    private              List<ProviderCaller<T>> providerCallers;
+    private final        AtomicBoolean           available  = new AtomicBoolean(false);
 
     @Override
     public void setRegistryInfo(@NonNull RegistryInfo registryInfo) {
@@ -47,7 +47,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
 
     @Override
     public Class<T> getInterfaceClass() {
-        return CollectionUtils.isEmpty(providerRequesters) ? null : providerRequesters.get(0).getInterfaceClass();
+        return CollectionUtils.isEmpty(providerCallers) ? null : providerCallers.get(0).getInterfaceClass();
     }
 
     @Override
@@ -76,49 +76,49 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     }
 
     @Override
-    public List<ProviderRequester<T>> getRequesters() {
-        return providerRequesters;
+    public List<ProviderCaller<T>> getProviderCallers() {
+        return providerCallers;
     }
 
     @Override
     public void init() {
-        refresh(providerRequesters);
+        refresh(providerCallers);
         available.set(true);
     }
 
     @Override
-    public synchronized void refresh(List<ProviderRequester<T>> providerRequesters) {
-        if (CollectionUtils.isEmpty(providerRequesters)) {
+    public synchronized void refresh(List<ProviderCaller<T>> providerCallers) {
+        if (CollectionUtils.isEmpty(providerCallers)) {
             return;
         }
 
-        loadBalancer.refresh(providerRequesters);
+        loadBalancer.refresh(providerCallers);
 
-        List<ProviderRequester<T>> oldProviderRequesters = this.providerRequesters;
-        this.providerRequesters = providerRequesters;
+        List<ProviderCaller<T>> oldProviderCallers = this.providerCallers;
+        this.providerCallers = providerCallers;
 
-        if (CollectionUtils.isEmpty(oldProviderRequesters)) {
+        if (CollectionUtils.isEmpty(oldProviderCallers)) {
             return;
         }
 
-        List<ProviderRequester<T>> delayDestroyProviderRequesters = new ArrayList<>();
-        for (ProviderRequester<T> oldProviderRequester : oldProviderRequesters) {
-            if (providerRequesters.contains(oldProviderRequester)) {
+        List<ProviderCaller<T>> delayDestroyProviderCallers = new ArrayList<>();
+        for (ProviderCaller<T> oldProviderCaller : oldProviderCallers) {
+            if (providerCallers.contains(oldProviderCaller)) {
                 continue;
             }
 
-            // Destroy the old requester if old requester is useless
-            delayDestroyProviderRequesters.add(oldProviderRequester);
+            // Destroy the old caller if old caller is useless
+            delayDestroyProviderCallers.add(oldProviderCaller);
         }
 
-        if (CollectionUtils.isNotEmpty(delayDestroyProviderRequesters)) {
-            ScheduledDestroyThreadPool.scheduleDelayTask(DESTROY_REQUESTER_THREAD_POOL, DELAY_TIME, TimeUnit.MILLISECONDS, () -> {
-                for (ProviderRequester<?> providerRequester : delayDestroyProviderRequesters) {
+        if (CollectionUtils.isNotEmpty(delayDestroyProviderCallers)) {
+            ScheduledDestroyThreadPool.scheduleDelayTask(DESTROY_CALLER_THREAD_POOL, DELAY_TIME, TimeUnit.MILLISECONDS, () -> {
+                for (ProviderCaller<?> providerCaller : delayDestroyProviderCallers) {
                     try {
-                        providerRequester.destroy();
-                        log.info("Destroyed the requester with url: {}", providerRequester.getProviderUrl().getUri());
+                        providerCaller.destroy();
+                        log.info("Destroyed the caller with url: {}", providerCaller.getProviderUrl().getUri());
                     } catch (Exception e) {
-                        log.error(MessageFormat.format("Failed to destroy the requester with url: {0}", providerRequester.getProviderUrl().getUri()), e);
+                        log.error(MessageFormat.format("Failed to destroy the caller with url: {0}", providerCaller.getProviderUrl().getUri()), e);
                     }
                 }
             });
@@ -128,8 +128,8 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     @Override
     public void destroy() {
         available.set(false);
-        for (ProviderRequester<T> providerRequester : this.providerRequesters) {
-            providerRequester.destroy();
+        for (ProviderCaller<T> providerCaller : this.providerCallers) {
+            providerCaller.destroy();
         }
     }
 

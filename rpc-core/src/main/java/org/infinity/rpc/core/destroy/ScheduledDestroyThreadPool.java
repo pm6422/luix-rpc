@@ -10,14 +10,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class ScheduledDestroyThreadPool {
-    public static final String RETRY_THREAD_POOL             = "RETRY_THREAD_POOL";
-    public static final String DESTROY_REQUESTER_THREAD_POOL = "DESTROY_REQUESTER_THREAD_POOL";
+    public static final String RETRY_THREAD_POOL          = "RETRY_THREAD_POOL";
+    public static final String DESTROY_CALLER_THREAD_POOL = "DESTROY_CALLER_THREAD_POOL";
 
     private static final Map<String, ScheduledExecutorService> THREAD_POOL_MAP = new HashMap<>();
 
     static {
         THREAD_POOL_MAP.put(RETRY_THREAD_POOL, Executors.newScheduledThreadPool(1));
-        THREAD_POOL_MAP.put(DESTROY_REQUESTER_THREAD_POOL, Executors.newScheduledThreadPool(1));
+        THREAD_POOL_MAP.put(DESTROY_CALLER_THREAD_POOL, Executors.newScheduledThreadPool(1));
     }
 
     /**

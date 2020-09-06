@@ -5,7 +5,7 @@ import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.faulttolerance.AbstractFaultToleranceStrategy;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
-import org.infinity.rpc.core.exchange.request.ProviderRequester;
+import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.url.Url;
@@ -26,15 +26,15 @@ public class FailoverStrategy<T> extends AbstractFaultToleranceStrategy<T> {
     @Override
     public Responseable call(LoadBalancer<T> loadBalancer, Requestable request) {
         // Select multiple nodes
-        List<ProviderRequester<T>> availableProviderRequesters = loadBalancer.selectProviderNodes(request);
-        int maxRetries = availableProviderRequesters.get(0).getProviderUrl().getIntParameter(Url.PARAM_MAX_RETRIES);
+        List<ProviderCaller<T>> availableProviderCallers = loadBalancer.selectProviderNodes(request);
+        int maxRetries = availableProviderCallers.get(0).getProviderUrl().getIntParameter(Url.PARAM_MAX_RETRIES);
 
         // Retry the RPC request operation till the max retry times
         for (int i = 0; i <= maxRetries; i++) {
-            ProviderRequester<T> providerRequester = availableProviderRequesters.get(i % availableProviderRequesters.size());
+            ProviderCaller<T> providerCaller = availableProviderCallers.get(i % availableProviderCallers.size());
             try {
                 request.setNumberOfRetry(i);
-                return providerRequester.call(request);
+                return providerCaller.call(request);
             } catch (RuntimeException e) {
                 if (ExceptionUtils.isBizException(e) || i >= maxRetries) {
                     // Throw the exception if it's a business one
@@ -43,7 +43,7 @@ public class FailoverStrategy<T> extends AbstractFaultToleranceStrategy<T> {
                 }
                 // If one of the provider nodes fails, try to use another backup available one
                 // todo: refactor the message
-                log.warn(MessageFormat.format("Failed to call the provider: {0}", providerRequester.getProviderUrl()), e);
+                log.warn(MessageFormat.format("Failed to call the provider: {0}", providerCaller.getProviderUrl()), e);
             }
         }
         // todo: refactor the message

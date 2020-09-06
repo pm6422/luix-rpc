@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.exchange.loadbalancer;
 
 import org.infinity.rpc.core.exchange.faulttolerance.FaultToleranceStrategy;
-import org.infinity.rpc.core.exchange.request.ProviderRequester;
+import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
@@ -16,27 +16,27 @@ import java.util.List;
 @Spi(scope = ServiceInstanceScope.PROTOTYPE)
 public interface LoadBalancer<T> {
     /**
-     * Refresh requesters when online or offline
+     * Refresh provider callers when online or offline
      *
-     * @param providerRequesters new discovered provider requesters
+     * @param providerCallers new discovered provider callers
      */
-    void refresh(List<ProviderRequester<T>> providerRequesters);
+    void refresh(List<ProviderCaller<T>> providerCallers);
 
     /**
      * Select provider node via load balance algorithm
      *
      * @param request RPC request instance
-     * @return selected provider requester
+     * @return selected provider caller
      */
-    ProviderRequester<T> selectProviderNode(Requestable request);
+    ProviderCaller<T> selectProviderNode(Requestable request);
 
     /**
      * Select multiple provider nodes via load balance algorithm
      *
      * @param request RPC request instance
-     * @return selected provider requesters
+     * @return selected provider callers
      */
-    List<ProviderRequester<T>> selectProviderNodes(Requestable request);
+    List<ProviderCaller<T>> selectProviderNodes(Requestable request);
 
 //
 //    void setWeightString(String weightString);

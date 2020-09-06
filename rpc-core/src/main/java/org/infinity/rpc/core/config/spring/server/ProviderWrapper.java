@@ -43,7 +43,7 @@ public class ProviderWrapper<T> implements DisposableBean {
      * The max retry times of RPC request
      * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
      */
-    @Min(value = 0, message = "The [retries] property of @Provider must NOT be a negative number!")
+    @Min(value = 0, message = "The [maxRetries] property of @Provider must NOT be a negative number!")
     private int      maxRetries;
     /**
      * Indicator to monitor health

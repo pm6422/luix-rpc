@@ -2,7 +2,7 @@ package org.infinity.rpc.core.exchange.loadbalancer.impl;
 
 import org.infinity.rpc.core.exchange.loadbalancer.AbstractLoadBalancer;
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.core.exchange.request.ProviderRequester;
+import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.util.ArrayList;
@@ -17,31 +17,31 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RandomLoadBalancer<T> extends AbstractLoadBalancer<T> {
 
     @Override
-    protected ProviderRequester<T> doSelectNode(Requestable request) {
-        int index = getIndex(providerRequesters);
-        for (int i = 0; i < providerRequesters.size(); i++) {
-            ProviderRequester<T> providerRequester = providerRequesters.get((i + index) % providerRequesters.size());
-            if (providerRequester.isAvailable()) {
-                return providerRequester;
+    protected ProviderCaller<T> doSelectNode(Requestable request) {
+        int index = getIndex(providerCallers);
+        for (int i = 0; i < providerCallers.size(); i++) {
+            ProviderCaller<T> providerCaller = providerCallers.get((i + index) % providerCallers.size());
+            if (providerCaller.isAvailable()) {
+                return providerCaller;
             }
         }
         return null;
     }
 
     @Override
-    protected List<ProviderRequester<T>> doSelectNodes(Requestable request) {
-        List<ProviderRequester<T>> selected = new ArrayList<>();
-        int index = getIndex(providerRequesters);
-        for (int i = 0; i < providerRequesters.size(); i++) {
-            ProviderRequester<T> providerRequester = providerRequesters.get((i + index) % providerRequesters.size());
-            if (providerRequester.isAvailable()) {
-                selected.add(providerRequester);
+    protected List<ProviderCaller<T>> doSelectNodes(Requestable request) {
+        List<ProviderCaller<T>> selected = new ArrayList<>();
+        int index = getIndex(providerCallers);
+        for (int i = 0; i < providerCallers.size(); i++) {
+            ProviderCaller<T> providerCaller = providerCallers.get((i + index) % providerCallers.size());
+            if (providerCaller.isAvailable()) {
+                selected.add(providerCaller);
             }
         }
         return selected;
     }
 
-    private int getIndex(List<ProviderRequester<T>> providerRequesters) {
-        return (int) (ThreadLocalRandom.current().nextDouble() * providerRequesters.size());
+    private int getIndex(List<ProviderCaller<T>> providerCallers) {
+        return (int) (ThreadLocalRandom.current().nextDouble() * providerCallers.size());
     }
 }

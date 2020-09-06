@@ -13,14 +13,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @param <T>: The interface class of the provider
  */
 @Slf4j
-public abstract class AbstractProviderRequester<T> implements ProviderRequester<T> {
+public abstract class AbstractProviderCaller<T> implements ProviderCaller<T> {
     protected volatile boolean       available       = false;
     protected          AtomicBoolean initialized     = new AtomicBoolean(false);
     protected          AtomicInteger processingCount = new AtomicInteger(0);
     protected          Class<T>      interfaceClass;
     protected          Url           providerUrl;
 
-    public AbstractProviderRequester(Class<T> interfaceClass, Url providerUrl) {
+    public AbstractProviderCaller(Class<T> interfaceClass, Url providerUrl) {
         this.interfaceClass = interfaceClass;
         this.providerUrl = providerUrl;
     }
@@ -47,15 +47,15 @@ public abstract class AbstractProviderRequester<T> implements ProviderRequester<
     @Override
     public void init() {
         if (!initialized.compareAndSet(false, true)) {
-            log.warn("Provider requester {} has been already initialized!", this.getClass().getSimpleName());
+            log.warn("Provider caller {} has been already initialized!", this.getClass().getSimpleName());
             return;
         }
 
         boolean result = doInit();
         if (!result) {
-            throw new RpcFrameworkException("Failed to initialize the provider requester!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+            throw new RpcFrameworkException("Failed to initialize the provider caller!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         } else {
-            log.info("Initialized the provider requester");
+            log.info("Initialized the provider caller");
             available = true;
         }
     }
@@ -70,7 +70,7 @@ public abstract class AbstractProviderRequester<T> implements ProviderRequester<
     @Override
     public Responseable call(Requestable request) {
         if (!isAvailable()) {
-            throw new RpcFrameworkException("No available provider requester found for now!");
+            throw new RpcFrameworkException("No available provider caller found for now!");
         }
 
         addProcessingCount();

@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.exchange.request.impl;
 
-import org.infinity.rpc.core.exchange.request.AbstractProviderRequester;
+import org.infinity.rpc.core.exchange.request.AbstractProviderCaller;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.url.Url;
@@ -11,9 +11,9 @@ import java.util.concurrent.Future;
  *
  * @param <T>: The interface class of the provider
  */
-public class DefaultProviderRequester<T> extends AbstractProviderRequester<T> {
+public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
 
-    public DefaultProviderRequester(Class<T> interfaceClass, Url providerUrl) {
+    public DefaultProviderCaller(Class<T> interfaceClass, Url providerUrl) {
         super(interfaceClass, providerUrl);
     }
 
