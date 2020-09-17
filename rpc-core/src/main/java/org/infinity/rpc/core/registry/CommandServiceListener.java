@@ -28,7 +28,7 @@ import org.infinity.rpc.core.switcher.DefaultSwitcherService;
 import org.infinity.rpc.core.switcher.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.url.UrlParam;
-import org.infinity.rpc.utilities.annotation.Event;
+import org.infinity.rpc.utilities.annotation.EventMarker;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
@@ -112,7 +112,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
      * @param registryUrl  registry url
      * @param providerUrls provider urls
      */
-    @Event
+    @EventMarker
     @Override
     public void onNotify(Url clientUrl, Url registryUrl, List<Url> providerUrls) {
         if (registry == null) {
@@ -143,7 +143,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
      * @param clientUrl
      * @param commandString
      */
-    @Event
+    @EventMarker
     @Override
     public void onNotify(Url clientUrl, String commandString) {
         log.info("CommandServiceManager notify command. service:" + clientUrl.toSimpleString() + ", command:" + commandString);

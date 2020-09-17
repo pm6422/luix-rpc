@@ -28,7 +28,7 @@ public abstract class AddressUtils {
     private static Pair<String, Integer> parseHostPort(String addr) {
         String[] hostAndPort = addr.split(":");
         String host = hostAndPort[0];
-        Integer port = Integer.parseInt(hostAndPort[1]);
+        int port = Integer.parseInt(hostAndPort[1]);
         if (port < 0 || port > 65535) {
             throw new IllegalArgumentException("Illegal port range!");
         }

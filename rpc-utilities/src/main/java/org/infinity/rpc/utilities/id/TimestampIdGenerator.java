@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * </pre>
  */
 @ThreadSafe
-public class TimestampId {
+final class TimestampIdGenerator {
     protected static final AtomicLong offset               = new AtomicLong(0);
     protected static final int        BITS                 = 20;
     protected static final long       MAX_COUNT_PER_MILLIS = 1 << BITS;
@@ -27,7 +27,7 @@ public class TimestampId {
         long currentTime = System.currentTimeMillis();
         long count = offset.incrementAndGet();
         while (count >= MAX_COUNT_PER_MILLIS) {
-            synchronized (TimestampId.class) {
+            synchronized (TimestampIdGenerator.class) {
                 if (offset.get() >= MAX_COUNT_PER_MILLIS) {
                     offset.set(0);
                 }

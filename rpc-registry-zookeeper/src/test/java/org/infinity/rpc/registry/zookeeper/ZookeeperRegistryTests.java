@@ -16,7 +16,7 @@ import org.infinity.rpc.core.switcher.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.service.TestDummyService;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
-import org.infinity.rpc.utilities.annotation.Event;
+import org.infinity.rpc.utilities.annotation.EventMarker;
 import org.infinity.rpc.utilities.network.NetworkIpUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -145,7 +145,7 @@ public class ZookeeperRegistryTests {
     }
 
     @Test
-    @Event
+    @EventMarker
     public void testSubscribeServiceListener() throws Exception {
         ServiceListener serviceListener = (refUrl, registryUrl, urls) -> {
             if (CollectionUtils.isNotEmpty(urls)) {
@@ -169,7 +169,7 @@ public class ZookeeperRegistryTests {
     }
 
     @Test
-    @Event
+    @EventMarker
     public void testSubscribeCommandListener() throws Exception {
         String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
         CommandListener commandListener = (clientUrl, commandString) -> {
@@ -199,7 +199,7 @@ public class ZookeeperRegistryTests {
     }
 
     @Test
-    @Event
+    @EventMarker
     public void testSubscribe() throws InterruptedException {
         registry.doRegister(providerUrl1);
         // Add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener

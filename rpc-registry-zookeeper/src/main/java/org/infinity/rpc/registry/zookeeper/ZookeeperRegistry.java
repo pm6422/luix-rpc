@@ -20,7 +20,7 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
-import org.infinity.rpc.utilities.annotation.Event;
+import org.infinity.rpc.utilities.annotation.EventMarker;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.infinity.rpc.utilities.destory.Cleanable;
 
@@ -54,7 +54,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     private final Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> providerListenersPerClientUrl = new ConcurrentHashMap<>();
     private final Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>  commandListenersPerClientUrl  = new ConcurrentHashMap<>();
 
-    @Event
+    @EventMarker
     public ZookeeperRegistry(Url registryUrl, ZkClient zkClient) {
         super(registryUrl);
         Validate.notNull(zkClient, "Zookeeper client must NOT be null!");
@@ -497,7 +497,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * @param serviceListener service listener
      */
     @Override
-    @Event
+    @EventMarker
     protected void subscribeServiceListener(Url clientUrl, ServiceListener serviceListener) {
         try {
             listenerLock.lock();
@@ -573,7 +573,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * @param commandListener command listener
      */
     @Override
-    @Event
+    @EventMarker
     protected void subscribeCommandListener(Url clientUrl, final CommandListener commandListener) {
         try {
             listenerLock.lock();

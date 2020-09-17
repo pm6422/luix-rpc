@@ -10,7 +10,7 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.annotation.Event;
+import org.infinity.rpc.utilities.annotation.EventMarker;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.*;
@@ -54,7 +54,7 @@ public class ConsumerListener<T> implements ClientListener {
      * @param providerUrls provider urls
      */
     @Override
-    @Event
+    @EventMarker
     public synchronized void onNotify(Url registryUrl, List<Url> providerUrls) {
         if (CollectionUtils.isEmpty(providerUrls)) {
             log.info("No available providers found on registry: {} for now!", registryUrl.getUri());

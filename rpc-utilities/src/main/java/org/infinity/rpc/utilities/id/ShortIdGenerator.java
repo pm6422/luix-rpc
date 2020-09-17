@@ -9,7 +9,7 @@ import javax.annotation.concurrent.ThreadSafe;
  * @author Polim
  */
 @ThreadSafe
-public class ShortId {
+final class ShortIdGenerator {
 
     private final static long twepoch            = 1288834974657L;
     // 机器标识位数

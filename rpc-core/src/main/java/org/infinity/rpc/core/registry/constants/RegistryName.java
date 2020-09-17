@@ -1,8 +1,8 @@
 package org.infinity.rpc.core.registry.constants;
 
-import org.infinity.rpc.utilities.lang.EnumValueFieldHoldable;
+import org.infinity.rpc.utilities.lang.EnumValueHoldable;
 
-public enum RegistryName implements EnumValueFieldHoldable {
+public enum RegistryName implements EnumValueHoldable {
     zookeeper("zookeeper"),
     local("local"),
     direct("direct");

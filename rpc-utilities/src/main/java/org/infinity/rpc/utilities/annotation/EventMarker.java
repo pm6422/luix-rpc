@@ -3,10 +3,10 @@ package org.infinity.rpc.utilities.annotation;
 import java.lang.annotation.*;
 
 /**
- * A symbol used to identify the event mechanism connect to the method
+ * A marker used to identify there is an event
  */
 @Documented
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.CLASS)
-public @interface Event {
+public @interface EventMarker {
 }

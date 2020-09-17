@@ -1,5 +1,6 @@
 package org.infinity.rpc.utilities.collection;
 
+import java.io.Serializable;
 import java.util.AbstractSet;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -7,7 +8,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E>, java.io.Serializable {
+public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E>, Serializable {
 
     private static final long serialVersionUID = -8672117787651310382L;
 

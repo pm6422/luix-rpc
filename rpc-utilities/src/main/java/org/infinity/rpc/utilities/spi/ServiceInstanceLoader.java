@@ -53,19 +53,19 @@ public class ServiceInstanceLoader<T> {
     /**
      * The class loader used to locate, load and instantiate service
      */
-    private              ClassLoader                           classLoader;
+    private final        ClassLoader                           classLoader;
     /**
      * The interface representing the service being loaded
      */
-    private              Class<T>                              serviceInterface;
+    private final        Class<T>                              serviceInterface;
     /**
      * The loaded service classes
      */
-    private              Map<String, Class<T>>                 serviceImplClasses;
+    private final        Map<String, Class<T>>                 serviceImplClasses;
     /**
      * The loaded service instances
      */
-    private              Map<String, T>                        serviceImplInstances        = new ConcurrentHashMap<String, T>();
+    private final        Map<String, T>                        serviceImplInstances        = new ConcurrentHashMap<>();
 
     /**
      * Prohibit instantiate an instance outside the class
@@ -76,21 +76,23 @@ public class ServiceInstanceLoader<T> {
 
     /**
      * Prohibit instantiate an instance outside the class
+     *
+     * @param classLoader      class loader
+     * @param serviceInterface service interface
      */
     private ServiceInstanceLoader(ClassLoader classLoader, Class<T> serviceInterface) {
         this.classLoader = classLoader;
         this.serviceInterface = serviceInterface;
-        serviceImplClasses = loadImplClasses(SERVICE_DIR_PREFIX);
+        serviceImplClasses = loadImplClasses();
     }
 
     /**
      * Load service instance based on service configuration file
      *
-     * @param serviceDirPrefix
-     * @return
+     * @return service instances map
      */
-    private ConcurrentMap<String, Class<T>> loadImplClasses(String serviceDirPrefix) {
-        String serviceFileName = serviceDirPrefix.concat(serviceInterface.getName());
+    private ConcurrentMap<String, Class<T>> loadImplClasses() {
+        String serviceFileName = SERVICE_DIR_PREFIX.concat(serviceInterface.getName());
         List<String> serviceImplClassNames = new ArrayList<>();
         try {
             Enumeration<URL> urls;
@@ -168,8 +170,9 @@ public class ServiceInstanceLoader<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private ConcurrentMap<String, Class<T>> loadImplClass(List<String> implClassNames) {
-        ConcurrentMap<String, Class<T>> map = new ConcurrentHashMap<String, Class<T>>();
+        ConcurrentMap<String, Class<T>> map = new ConcurrentHashMap<>();
         for (String implClassName : implClassNames) {
             try {
                 Class<T> clz;
@@ -228,7 +231,7 @@ public class ServiceInstanceLoader<T> {
     private void checkConstructorPublic(Class<T> clz) {
         Constructor<?>[] constructors = clz.getConstructors();
 
-        if (constructors == null || constructors.length == 0) {
+        if (constructors.length == 0) {
             failThrows(clz, "Error has no public no-args constructor");
         }
 
@@ -248,26 +251,24 @@ public class ServiceInstanceLoader<T> {
 
     private String getSpiServiceName(Class<?> clz) {
         ServiceName serviceName = clz.getAnnotation(ServiceName.class);
-        String name = (serviceName != null && !"".equals(serviceName.value())) ? serviceName.value() : clz.getSimpleName();
-        return name;
+        return (serviceName != null && !"".equals(serviceName.value())) ? serviceName.value() : clz.getSimpleName();
     }
 
     /**
      * Get the service loader by service interface type
      *
      * @param serviceInterface provider interface with @Spi annotation
-     * @param <T>
+     * @param <T>              service interface type
      * @return the singleton service loader instance
      */
     public static <T> ServiceInstanceLoader<T> getServiceLoader(Class<T> serviceInterface) {
         checkValidity(serviceInterface);
-        ServiceInstanceLoader<T> loader = createServiceLoader(serviceInterface);
-        return loader;
+        return createServiceLoader(serviceInterface);
     }
 
     private static <T> void checkValidity(Class<T> serviceInterface) {
         if (serviceInterface == null) {
-            failThrows(serviceInterface, "Service interface must NOT be null!");
+            failThrows(null, "Service interface must NOT be null!");
         }
 
         if (!serviceInterface.isInterface()) {
@@ -282,14 +283,15 @@ public class ServiceInstanceLoader<T> {
     /**
      * Create a service loader or get it from cache if exists
      *
-     * @param serviceInterface
-     * @param <T>
-     * @return
+     * @param serviceInterface service interface
+     * @param <T>              service interface type
+     * @return service instance loader cache instance
      */
+    @SuppressWarnings("unchecked")
     private static synchronized <T> ServiceInstanceLoader<T> createServiceLoader(Class<T> serviceInterface) {
         ServiceInstanceLoader<T> loader = (ServiceInstanceLoader<T>) SERVICE_LOADERS_CACHE.get(serviceInterface.getName());
         if (loader == null) {
-            loader = new ServiceInstanceLoader<T>(serviceInterface);
+            loader = new ServiceInstanceLoader<>(serviceInterface);
             SERVICE_LOADERS_CACHE.put(serviceInterface.getName(), loader);
         }
         return loader;
