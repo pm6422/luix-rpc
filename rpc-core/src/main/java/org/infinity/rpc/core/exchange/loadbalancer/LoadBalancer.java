@@ -3,7 +3,7 @@ package org.infinity.rpc.core.exchange.loadbalancer;
 import org.infinity.rpc.core.exchange.faulttolerance.FaultToleranceStrategy;
 import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
+import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @param <T>: The interface class of the provider
  */
-@Spi(scope = ServiceInstanceScope.PROTOTYPE)
+@Spi(scope = SpiScope.PROTOTYPE)
 public interface LoadBalancer<T> {
     /**
      * Refresh provider callers when online or offline

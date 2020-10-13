@@ -37,7 +37,7 @@ public class AppClientLauncher implements ApplicationContextAware {
      * @param args
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         SpringApplication app = new SpringApplication(AppClientLauncher.class);
         app.run(args);
     }

@@ -2,7 +2,7 @@ package org.infinity.rpc.utilities.spi;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
-import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
+import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
@@ -318,7 +318,7 @@ public class ServiceInstanceLoader<T> {
 
         try {
             Spi spi = serviceInterface.getAnnotation(Spi.class);
-            if (spi.scope() == ServiceInstanceScope.SINGLETON) {
+            if (spi.scope() == SpiScope.SINGLETON) {
                 return getSingletonServiceImpl(name);
             } else {
                 return getPrototypeServiceImpl(name);

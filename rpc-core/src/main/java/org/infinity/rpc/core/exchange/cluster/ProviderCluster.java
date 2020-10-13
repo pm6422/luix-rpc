@@ -7,7 +7,7 @@ import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
-import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
+import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @param <T>: The interface class of the provider
  */
-@Spi(scope = ServiceInstanceScope.PROTOTYPE)
+@Spi(scope = SpiScope.PROTOTYPE)
 public interface ProviderCluster<T> extends ProviderCallable<T> {
     /**
      * @param registryInfo

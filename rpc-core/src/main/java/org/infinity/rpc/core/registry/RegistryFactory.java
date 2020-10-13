@@ -3,13 +3,13 @@ package org.infinity.rpc.core.registry;
 
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
-import org.infinity.rpc.utilities.spi.annotation.ServiceInstanceScope;
+import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
 /**
  * Registry factory used to create registry
  */
-@Spi(scope = ServiceInstanceScope.SINGLETON)
+@Spi(scope = SpiScope.SINGLETON)
 public interface RegistryFactory {
 
     /**

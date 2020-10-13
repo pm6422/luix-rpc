@@ -20,8 +20,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public abstract class FailbackAbstractRegistry extends AbstractRegistry {
 
-    private Set<Url> failedRegisteredUrl   = new ConcurrentHashSet<>();
-    private Set<Url> failedUnregisteredUrl = new ConcurrentHashSet<>();
+    private Set<Url>                                    failedRegisteredUrl              = new ConcurrentHashSet<>();
+    private Set<Url>                                    failedUnregisteredUrl            = new ConcurrentHashSet<>();
     private Map<Url, ConcurrentHashSet<ClientListener>> failedSubscriptionPerClientUrl   = new ConcurrentHashMap<>();
     private Map<Url, ConcurrentHashSet<ClientListener>> failedUnsubscriptionPerClientUrl = new ConcurrentHashMap<>();
 
