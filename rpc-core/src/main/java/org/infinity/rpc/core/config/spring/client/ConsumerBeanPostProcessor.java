@@ -1,9 +1,12 @@
 package org.infinity.rpc.core.config.spring.client;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.config.spring.utils.AnnotationUtils;
+import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
+import org.infinity.rpc.core.exchange.cluster.ProviderClusterHolder;
 import org.infinity.rpc.core.registry.RegistryInfo;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
@@ -60,6 +63,15 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
     public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
         Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory, "It requires an instance of ConfigurableListableBeanFactory");
         this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
+    }
+
+    /**
+     * @param beanFactory bean factory
+     * @throws BeansException if any {@link BeansException} thrown
+     */
+    @Override
+    public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        // Leave blank intentionally for now
     }
 
     /**
@@ -222,14 +234,5 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
     @Override
     public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
         return bean;
-    }
-
-    /**
-     * @param beanFactory bean factory
-     * @throws BeansException if any {@link BeansException} thrown
-     */
-    @Override
-    public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        // Leave blank intentionally for now
     }
 }

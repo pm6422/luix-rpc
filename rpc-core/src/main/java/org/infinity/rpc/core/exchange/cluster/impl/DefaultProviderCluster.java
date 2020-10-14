@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool;
+import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcAbstractException;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcServiceException;
@@ -16,7 +17,6 @@ import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.UrlParam;
-import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.text.MessageFormat;
@@ -33,12 +33,12 @@ import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_C
 @Slf4j
 @ServiceName("default")
 public class DefaultProviderCluster<T> implements ProviderCluster<T> {
-    private static final int                        DELAY_TIME = 1000;
-    private RegistryInfo              registryInfo;
-    private FaultToleranceStrategy<T> faultToleranceStrategy;
-    private LoadBalancer<T>                      loadBalancer;
-    private              List<ProviderCaller<T>> providerCallers;
-    private final        AtomicBoolean           available  = new AtomicBoolean(false);
+    private static final int                       DELAY_TIME = 1000;
+    private              RegistryInfo              registryInfo;
+    private              FaultToleranceStrategy<T> faultToleranceStrategy;
+    private              LoadBalancer<T>           loadBalancer;
+    private              List<ProviderCaller<T>>   providerCallers;
+    private final        AtomicBoolean             available  = new AtomicBoolean(false);
 
     @Override
     public void setRegistryInfo(@NonNull RegistryInfo registryInfo) {
