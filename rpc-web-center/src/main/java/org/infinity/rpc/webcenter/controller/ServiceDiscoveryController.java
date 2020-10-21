@@ -9,6 +9,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
+import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
 import org.infinity.rpc.webcenter.domain.Authority;
@@ -33,7 +34,7 @@ public class ServiceDiscoveryController {
     @Autowired
     private RegistryService registryService;
     @Autowired
-    private List<Url>       registryUrls;
+    private RegistryInfo    registryInfo;
 
     @ApiOperation("获取所有应用")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
@@ -90,7 +91,7 @@ public class ServiceDiscoveryController {
 
     private Registry getRegistry() {
         // TODO: Support multiple registry centers
-        Url registryUrl = registryUrls.get(0);
+        Url registryUrl = registryInfo.getRegistryUrls().get(0);
         RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(registryUrl.getProtocol());
         return registryFactoryImpl.getRegistry(registryUrl);
     }
