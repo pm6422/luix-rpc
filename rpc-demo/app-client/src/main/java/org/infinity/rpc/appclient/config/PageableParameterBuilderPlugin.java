@@ -29,9 +29,9 @@ import static springfox.documentation.spi.schema.contexts.ModelContext.inputPara
 @ConditionalOnProperty(prefix = "application.swagger", value = "enabled", havingValue = "true")
 public class PageableParameterBuilderPlugin implements ParameterBuilderPlugin {
     private final TypeNameExtractor nameExtractor;
-    private final TypeResolver      resolver;
 
-    @Autowired
+    private final TypeResolver resolver;
+
     public PageableParameterBuilderPlugin(TypeNameExtractor nameExtractor, TypeResolver resolver) {
         this.nameExtractor = nameExtractor;
         this.resolver = resolver;
@@ -53,7 +53,7 @@ public class PageableParameterBuilderPlugin implements ParameterBuilderPlugin {
     public void apply(ParameterContext context) {
         MethodParameter parameter = context.methodParameter();
         Class<?> type = parameter.getParameterType();
-        if (type != null && Pageable.class.isAssignableFrom(type)) {
+        if (Pageable.class.isAssignableFrom(type)) {
             Function<ResolvedType, ? extends ModelReference> factory = createModelRefFactory(context);
 
             ModelReference intModel = factory.apply(resolver.resolve(Integer.TYPE));
@@ -61,15 +61,14 @@ public class PageableParameterBuilderPlugin implements ParameterBuilderPlugin {
 
             List<Parameter> parameters = newArrayList(
                     context.parameterBuilder().parameterType("query").name("page").modelRef(intModel)
-                            .description("请求的页码，从0开始。").build(),
+                            .description("请求的页码(从0开始)").build(),
                     context.parameterBuilder().parameterType("query").name("size").modelRef(intModel)
                             .description("每页大小").build(),
                     context.parameterBuilder().parameterType("query").name("sort").modelRef(stringModel)
-                            .allowMultiple(true).description("排序格式: property,asc or desc。 " + "默认为升序。 " + "支持多个字段排序。")
+                            .allowMultiple(true).description("排序方式(默认为升序): property,asc 或 property,desc")
                             .build());
 
             context.getOperationContext().operationBuilder().parameters(parameters);
         }
     }
-
 }
