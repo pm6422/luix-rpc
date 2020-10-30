@@ -43,7 +43,7 @@ public class ExceptionTranslatorAdvice {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processBeanValidationError(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorDTO> processBeanValidationException(MethodArgumentNotValidException ex) {
         String warnMessage = messageSource.getMessage(ErrorCodeConstants.WARN_FIELDS_VALIDATION_ERROR, null,
                 ApplicationConstants.SYSTEM_LOCALE);
         // warn级别记录用户输入错误，error级别只记录系统逻辑出错、异常、或者重要的错误信息
@@ -58,7 +58,7 @@ public class ExceptionTranslatorAdvice {
      */
     @ExceptionHandler(BindException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processFieldValidationError(BindException ex) {
+    public ResponseEntity<ErrorDTO> processFieldValidationException(BindException ex) {
         String warnMessage = messageSource.getMessage(ErrorCodeConstants.WARN_FIELDS_VALIDATION_ERROR, null,
                 ApplicationConstants.SYSTEM_LOCALE);
         // warn级别记录用户输入错误，error级别只记录系统逻辑出错、异常、或者重要的错误信息
@@ -73,7 +73,7 @@ public class ExceptionTranslatorAdvice {
      */
     @ExceptionHandler(FieldValidationException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processFieldValidationError(FieldValidationException ex) {
+    public ResponseEntity<ErrorDTO> processFieldValidationException(FieldValidationException ex) {
         String warnMessage = messageSource.getMessage(ErrorCodeConstants.WARN_FIELDS_VALIDATION_ERROR, null,
                 ApplicationConstants.SYSTEM_LOCALE);
         // warn级别记录用户输入错误，error级别只记录系统逻辑出错、异常、或者重要的错误信息
@@ -88,7 +88,7 @@ public class ExceptionTranslatorAdvice {
      */
     @ExceptionHandler(LoginUserNotExistException.class)
     @ResponseBody
-    public ResponseEntity<ParameterizedErrorDTO> processLoginUserNotExistError(LoginUserNotExistException ex) {
+    public ResponseEntity<ParameterizedErrorDTO> processLoginUserNotExistException(LoginUserNotExistException ex) {
         String errorMessage = messageSource.getMessage(ErrorCodeConstants.ERROR_LOGIN_USER_NOT_EXIST,
                 new Object[]{ex.getUserName()}, ApplicationConstants.SYSTEM_LOCALE);
         ex.setMessage(errorMessage);
@@ -104,7 +104,7 @@ public class ExceptionTranslatorAdvice {
      */
     @ExceptionHandler(NoAuthorityException.class)
     @ResponseBody
-    public ResponseEntity<ParameterizedErrorDTO> processNoAuthorityError(NoAuthorityException ex) {
+    public ResponseEntity<ParameterizedErrorDTO> processNoAuthorityException(NoAuthorityException ex) {
         String errorMessage = messageSource.getMessage(ErrorCodeConstants.ERROR_NO_AUTHORITIES,
                 new Object[]{ex.getUserName()}, ApplicationConstants.SYSTEM_LOCALE);
         ex.setMessage(errorMessage);
@@ -119,7 +119,7 @@ public class ExceptionTranslatorAdvice {
      */
     @ExceptionHandler(NoDataException.class)
     @ResponseBody
-    public ResponseEntity<ParameterizedErrorDTO> processDataNotExistError(NoDataException ex) {
+    public ResponseEntity<ParameterizedErrorDTO> processNoDataException(NoDataException ex) {
         String errorMessage = messageSource.getMessage(ErrorCodeConstants.ERROR_DATA_NOT_EXIST,
                 new Object[]{ex.getId()}, ApplicationConstants.SYSTEM_LOCALE);
         ex.setMessage(errorMessage);
@@ -134,7 +134,7 @@ public class ExceptionTranslatorAdvice {
      */
     @ExceptionHandler(CustomParameterizedException.class)
     @ResponseBody
-    public ResponseEntity<ParameterizedErrorDTO> processCustomParameterizedError(CustomParameterizedException ex) {
+    public ResponseEntity<ParameterizedErrorDTO> processCustomParameterizedException(CustomParameterizedException ex) {
         LOGGER.error(ex.getMessage());
         return ResponseEntity.badRequest().headers(httpHeaderCreator.createErrorHeader(ex.getCode(), ex.getParams()))
                 .body(ex.getErrorDTO());
@@ -145,7 +145,7 @@ public class ExceptionTranslatorAdvice {
      */
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processAccessDeniedExcpetion(AccessDeniedException ex) {
+    public ResponseEntity<ErrorDTO> processAccessDeniedException(AccessDeniedException ex) {
         String warnMessage = messageSource.getMessage(ErrorCodeConstants.WARN_ACCESS_DENIED, null,
                 ApplicationConstants.SYSTEM_LOCALE);
         LOGGER.warn(warnMessage);
@@ -197,7 +197,7 @@ public class ExceptionTranslatorAdvice {
     }
 
     private ErrorDTO processFieldErrors(List<FieldError> fieldErrors) {
-        List<FieldError> newFieldErrors = new ArrayList<FieldError>();
+        List<FieldError> newFieldErrors = new ArrayList<>();
         for (FieldError fieldError : fieldErrors) {
             String defaultMessage = StringUtils.isEmpty(fieldError.getDefaultMessage())
                     ? messageSource.getMessage(fieldError.getCodes()[0], fieldError.getArguments(),
@@ -208,9 +208,8 @@ public class ExceptionTranslatorAdvice {
                     defaultMessage);
             newFieldErrors.add(newFieldError);
         }
-        ErrorDTO dto = new ErrorDTO(ErrorCodeConstants.WARN_FIELDS_VALIDATION_ERROR, messageSource
+        return new ErrorDTO(ErrorCodeConstants.WARN_FIELDS_VALIDATION_ERROR, messageSource
                 .getMessage(ErrorCodeConstants.WARN_FIELDS_VALIDATION_ERROR, null, ApplicationConstants.SYSTEM_LOCALE),
                 newFieldErrors);
-        return dto;
     }
 }
