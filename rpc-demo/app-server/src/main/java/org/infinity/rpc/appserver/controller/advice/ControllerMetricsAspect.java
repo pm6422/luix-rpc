@@ -1,9 +1,10 @@
-package org.infinity.rpc.appclient.config;
+package org.infinity.rpc.appserver.controller.advice;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.infinity.rpc.appserver.config.ApplicationProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StopWatch;
@@ -13,7 +14,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
-import static org.infinity.rpc.appclient.config.ApplicationConstants.CONTROLLER_PACKAGE;
+import static org.infinity.rpc.appserver.config.ApplicationConstants.CONTROLLER_PACKAGE;
+
 
 /**
  * Aspect for logging execution of Spring components.
@@ -22,11 +24,11 @@ import static org.infinity.rpc.appclient.config.ApplicationConstants.CONTROLLER_
 @ConditionalOnProperty(prefix = "application.service-metrics", value = "enabled", havingValue = "true")
 @Configuration
 @Slf4j
-public class ServiceMetricsAspect {
+public class ControllerMetricsAspect {
 
     private final ApplicationProperties applicationProperties;
 
-    public ServiceMetricsAspect(ApplicationProperties applicationProperties) {
+    public ControllerMetricsAspect(ApplicationProperties applicationProperties) {
         this.applicationProperties = applicationProperties;
     }
 
@@ -42,11 +44,12 @@ public class ServiceMetricsAspect {
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletResponse response = servletRequestAttributes != null ? servletRequestAttributes.getResponse() : null;
             if (response != null) {
+                // Store execution time to each http header
                 response.setHeader("ELAPSED", "" + elapsed + "ms");
             }
 
             if (elapsed > applicationProperties.getServiceMetrics().getSlowExecutionThreshold()) {
-                log.warn("Slow execution: {}.{}() in {} ms",
+                log.warn("Slowly executed {}.{}() in {} ms",
                         joinPoint.getSignature().getDeclaringType().getSimpleName(), joinPoint.getSignature().getName(), elapsed);
             }
             return result;
