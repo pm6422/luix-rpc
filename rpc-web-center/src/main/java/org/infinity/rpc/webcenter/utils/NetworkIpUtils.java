@@ -35,13 +35,13 @@ public class NetworkIpUtils {
     private static String getInternetIp() {
         try {
             Enumeration<NetworkInterface> networks = NetworkInterface.getNetworkInterfaces();
-            InetAddress ip = null;
+            InetAddress ip;
             Enumeration<InetAddress> addrs;
             while (networks.hasMoreElements()) {
                 addrs = networks.nextElement().getInetAddresses();
                 while (addrs.hasMoreElements()) {
                     ip = addrs.nextElement();
-                    if (ip != null && ip instanceof Inet4Address && !ip.isSiteLocalAddress()
+                    if (ip instanceof Inet4Address && !ip.isSiteLocalAddress()
                             && !ip.getHostAddress().equals(INTRANET_IP)) {
                         return ip.getHostAddress();
                     }
