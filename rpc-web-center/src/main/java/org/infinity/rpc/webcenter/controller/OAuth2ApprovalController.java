@@ -8,7 +8,7 @@ import org.infinity.rpc.webcenter.dto.MongoOAuth2ApprovalDTO;
 import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.OAuth2ApprovalRepository;
 import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
-import org.infinity.rpc.webcenter.utils.PaginationUtils;
+import org.infinity.rpc.webcenter.utils.HttpHeaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +72,7 @@ public class OAuth2ApprovalController {
 
         List<MongoOAuth2ApprovalDTO> DTOs = approvals.getContent().stream().map(entity -> entity.asDTO())
                 .collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(approvals,
+        HttpHeaders headers = generatePageHeaders(approvals,
                 "/api/oauth2-approval/approvals");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }

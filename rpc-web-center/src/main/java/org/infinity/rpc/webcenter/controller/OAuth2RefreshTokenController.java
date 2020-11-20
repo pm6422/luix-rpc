@@ -7,7 +7,7 @@ import org.infinity.rpc.webcenter.dto.MongoOAuth2RefreshTokenDTO;
 import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.OAuth2RefreshTokenRepository;
 import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
-import org.infinity.rpc.webcenter.utils.PaginationUtils;
+import org.infinity.rpc.webcenter.utils.HttpHeaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class OAuth2RefreshTokenController {
         Page<MongoOAuth2RefreshToken> tokens = oAuth2RefreshTokenRepository.findAll(Example.of(probe), pageable);
         List<MongoOAuth2RefreshTokenDTO> DTOs = tokens.getContent().stream().map(entity -> entity.asDTO())
                 .collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(tokens, "/api/oauth2-refresh-token/tokens");
+        HttpHeaders headers = generatePageHeaders(tokens, "/api/oauth2-refresh-token/tokens");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 

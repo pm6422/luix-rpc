@@ -12,7 +12,7 @@ import org.infinity.rpc.webcenter.repository.DictRepository;
 import org.infinity.rpc.webcenter.service.DictItemService;
 import org.infinity.rpc.webcenter.service.DictService;
 import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
-import org.infinity.rpc.webcenter.utils.PaginationUtils;
+import org.infinity.rpc.webcenter.utils.HttpHeaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +99,7 @@ public class DictItemController {
             dto.setDictName(dictCodeDictNameMap.get(dto.getDictCode()));
             return entity.asDTO();
         }).collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(dictItems, "/api/dict-item/items");
+        HttpHeaders headers = generatePageHeaders(dictItems, "/api/dict-item/items");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 

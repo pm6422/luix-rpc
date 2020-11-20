@@ -11,7 +11,7 @@ import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.AdminMenuRepository;
 import org.infinity.rpc.webcenter.service.AdminMenuService;
 import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
-import org.infinity.rpc.webcenter.utils.PaginationUtils;
+import org.infinity.rpc.webcenter.utils.HttpHeaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +82,7 @@ public class AdminMenuController {
                 : adminMenuRepository.findByAppName(pageable, appName);
         List<AdminMenuDTO> DTOs = adminMenus.getContent().stream().map(entity -> entity.asDTO())
                 .collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(adminMenus, "/api/admin-menu/menus");
+        HttpHeaders headers = generatePageHeaders(adminMenus, "/api/admin-menu/menus");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 

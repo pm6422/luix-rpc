@@ -10,7 +10,7 @@ import org.infinity.rpc.webcenter.repository.AppAuthorityRepository;
 import org.infinity.rpc.webcenter.repository.AppRepository;
 import org.infinity.rpc.webcenter.service.AppService;
 import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
-import org.infinity.rpc.webcenter.utils.PaginationUtils;
+import org.infinity.rpc.webcenter.utils.HttpHeaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +65,7 @@ public class AppController {
     public ResponseEntity<List<AppDTO>> find(Pageable pageable) throws URISyntaxException {
         Page<App> apps = appRepository.findAll(pageable);
         List<AppDTO> DTOs = apps.getContent().stream().map(entity -> entity.asDTO()).collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(apps, "/api/app/apps");
+        HttpHeaders headers = generatePageHeaders(apps, "/api/app/apps");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 

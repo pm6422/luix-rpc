@@ -10,7 +10,7 @@ import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.AppAuthorityRepository;
 import org.infinity.rpc.webcenter.service.AppAuthorityService;
 import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
-import org.infinity.rpc.webcenter.utils.PaginationUtils;
+import org.infinity.rpc.webcenter.utils.HttpHeaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +82,7 @@ public class AppAuthorityController {
                 appName, authorityName);
         List<AppAuthorityDTO> DTOs = appAuthorities.getContent().stream().map(entity -> entity.asDTO())
                 .collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(appAuthorities,
+        HttpHeaders headers = generatePageHeaders(appAuthorities,
                 "/api/app-authority/app-authorities");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }

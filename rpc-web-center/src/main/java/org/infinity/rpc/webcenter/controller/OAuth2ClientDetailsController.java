@@ -9,7 +9,7 @@ import org.infinity.rpc.webcenter.exception.FieldValidationException;
 import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.OAuth2ClientDetailsRepository;
 import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
-import org.infinity.rpc.webcenter.utils.PaginationUtils;
+import org.infinity.rpc.webcenter.utils.HttpHeaderUtils;
 import org.infinity.rpc.webcenter.utils.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +89,7 @@ public class OAuth2ClientDetailsController {
                 : new PageImpl<>(mongoTemplate.find(query, MongoOAuth2ClientDetails.class), pageable, totalCount);
         List<MongoOAuth2ClientDetailsDTO> DTOs = clientDetails.getContent().stream()
                 .map(entity -> entity.asDTO()).collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(clientDetails,
+        HttpHeaders headers = generatePageHeaders(clientDetails,
                 "/api/oauth2-client/clients");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }

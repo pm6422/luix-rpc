@@ -7,7 +7,7 @@ import org.infinity.rpc.webcenter.dto.MongoOAuth2AccessTokenDTO;
 import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.OAuth2AccessTokenRepository;
 import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
-import org.infinity.rpc.webcenter.utils.PaginationUtils;
+import org.infinity.rpc.webcenter.utils.HttpHeaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class OAuth2AccessTokenController {
         Page<MongoOAuth2AccessToken> tokens = oAuth2AccessTokenRepository.findAll(Example.of(probe), pageable);
         List<MongoOAuth2AccessTokenDTO> DTOs = tokens.getContent().stream().map(entity -> entity.asDTO())
                 .collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(tokens, "/api/oauth2-access-token/tokens");
+        HttpHeaders headers = generatePageHeaders(tokens, "/api/oauth2-access-token/tokens");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 

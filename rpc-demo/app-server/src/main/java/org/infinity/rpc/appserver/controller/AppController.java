@@ -7,7 +7,6 @@ import org.infinity.app.common.service.AppService;
 import org.infinity.rpc.appserver.exception.NoDataException;
 import org.infinity.rpc.appserver.repository.AppRepository;
 import org.infinity.rpc.appserver.utils.HttpHeaderCreator;
-import org.infinity.rpc.appserver.utils.PaginationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.*;
+import static org.infinity.rpc.appserver.utils.HttpHeaderUtils.generatePageHeaders;
 
 /**
  * REST controller for managing apps.
@@ -56,7 +56,7 @@ public class AppController {
     public ResponseEntity<List<AppDTO>> find(Pageable pageable) throws URISyntaxException {
         Page<App> apps = appRepository.findAll(pageable);
         List<AppDTO> DTOs = apps.getContent().stream().map(entity -> entity.asDTO()).collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(apps, "/api/app/apps");
+        HttpHeaders headers = generatePageHeaders(apps, "/api/app/apps");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 

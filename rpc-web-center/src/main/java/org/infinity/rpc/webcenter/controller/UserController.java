@@ -15,10 +15,9 @@ import org.infinity.rpc.webcenter.repository.UserAuthorityRepository;
 import org.infinity.rpc.webcenter.repository.UserProfilePhotoRepository;
 import org.infinity.rpc.webcenter.repository.UserRepository;
 import org.infinity.rpc.webcenter.security.AjaxLogoutSuccessHandler;
-import org.infinity.rpc.webcenter.service.MailService;
 import org.infinity.rpc.webcenter.service.UserService;
 import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
-import org.infinity.rpc.webcenter.utils.PaginationUtils;
+import org.infinity.rpc.webcenter.utils.HttpHeaderUtils;
 import org.infinity.rpc.webcenter.utils.RandomUtils;
 import org.infinity.rpc.webcenter.utils.SecurityUtils;
 import org.slf4j.Logger;
@@ -119,7 +118,7 @@ public class UserController {
                 : userService.findByLogin(pageable, login);
         List<ManagedUserDTO> DTOs = users.getContent().stream().map(entity -> new ManagedUserDTO(entity, null))
                 .collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(users, "/api/user/users");
+        HttpHeaders headers = generatePageHeaders(users, "/api/user/users");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 

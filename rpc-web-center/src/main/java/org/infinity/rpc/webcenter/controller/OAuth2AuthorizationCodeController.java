@@ -7,7 +7,7 @@ import org.infinity.rpc.webcenter.dto.MongoOAuth2AuthorizationCodeDTO;
 import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.OAuth2AuthorizationCodeRepository;
 import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
-import org.infinity.rpc.webcenter.utils.PaginationUtils;
+import org.infinity.rpc.webcenter.utils.HttpHeaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +61,7 @@ public class OAuth2AuthorizationCodeController {
                 pageable);
         List<MongoOAuth2AuthorizationCodeDTO> DTOs = codes.getContent().stream().map(entity -> entity.asDTO())
                 .collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(codes,
+        HttpHeaders headers = generatePageHeaders(codes,
                 "/api/oauth2-authorization-code/codes");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }

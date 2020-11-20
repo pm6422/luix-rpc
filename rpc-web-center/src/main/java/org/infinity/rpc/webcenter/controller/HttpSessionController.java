@@ -7,7 +7,7 @@ import org.infinity.rpc.webcenter.domain.HttpSession;
 import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.HttpSessionRepository;
 import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
-import org.infinity.rpc.webcenter.utils.PaginationUtils;
+import org.infinity.rpc.webcenter.utils.HttpHeaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class HttpSessionController {
     public ResponseEntity<List<HttpSession>> find(Pageable pageable,
                                                   @ApiParam(value = "用户名称", required = false) @RequestParam(value = "principal", required = false) String principal) throws URISyntaxException {
         Page<HttpSession> sessions = StringUtils.isEmpty(principal) ? httpSessionRepository.findAll(pageable) : httpSessionRepository.findByPrincipal(pageable, principal);
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(sessions, "/api/http-session/sessions");
+        HttpHeaders headers = generatePageHeaders(sessions, "/api/http-session/sessions");
         return ResponseEntity.ok().headers(headers).body(sessions.getContent());
     }
 

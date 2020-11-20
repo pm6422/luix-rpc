@@ -6,7 +6,6 @@ import org.infinity.app.common.dto.AuthorityDTO;
 import org.infinity.app.common.service.AuthorityService;
 import org.infinity.rpc.appclient.exception.NoDataException;
 import org.infinity.rpc.appclient.utils.HttpHeaderCreator;
-import org.infinity.rpc.appclient.utils.PaginationUtils;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +23,7 @@ import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.infinity.rpc.appclient.utils.HttpHeaderUtils.generatePageHeaders;
 
 /**
  * REST controller for managing authorities.
@@ -45,7 +45,7 @@ public class AuthorityController {
         Page<Authority> authorities = authorityService.findAll(pageable);
         List<AuthorityDTO> DTOs = authorities.getContent().stream().map(auth -> auth.asDTO())
                 .collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(authorities, "/api/authority/authorities");
+        HttpHeaders headers = generatePageHeaders(authorities, "/api/authority/authorities");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 

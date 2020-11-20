@@ -9,7 +9,7 @@ import org.infinity.rpc.webcenter.exception.FieldValidationException;
 import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.DictRepository;
 import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
-import org.infinity.rpc.webcenter.utils.PaginationUtils;
+import org.infinity.rpc.webcenter.utils.HttpHeaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +65,7 @@ public class DictController {
         Page<Dict> dicts = StringUtils.isEmpty(dictName) ? dictRepository.findAll(pageable)
                 : dictRepository.findByDictName(pageable, dictName);
         List<DictDTO> DTOs = dicts.getContent().stream().map(entity -> entity.asDTO()).collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(dicts, "/api/dict/dicts");
+        HttpHeaders headers = generatePageHeaders(dicts, "/api/dict/dicts");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 

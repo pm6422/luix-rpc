@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiParam;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.domain.PersistentAuditEvent;
 import org.infinity.rpc.webcenter.repository.PersistenceAuditEventRepository;
-import org.infinity.rpc.webcenter.utils.PaginationUtils;
+import org.infinity.rpc.webcenter.utils.HttpHeaderUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -41,7 +41,7 @@ public class UserAuditEventController {
                                                                          @ApiParam(value = "开始日期") @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
                                                                          @ApiParam(value = "结束日期") @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) throws URISyntaxException {
         Page<PersistentAuditEvent> userAuditEvents = persistenceAuditEventRepository.findByAuditEventDateBetween(pageable, from, to);
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(userAuditEvents, "/api/user-audit-event/user-audit-events");
+        HttpHeaders headers = generatePageHeaders(userAuditEvents, "/api/user-audit-event/user-audit-events");
         return ResponseEntity.ok().headers(headers).body(userAuditEvents.getContent());
     }
 }

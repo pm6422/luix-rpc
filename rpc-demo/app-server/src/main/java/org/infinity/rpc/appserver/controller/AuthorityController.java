@@ -6,7 +6,6 @@ import org.infinity.app.common.dto.AuthorityDTO;
 import org.infinity.rpc.appserver.exception.NoDataException;
 import org.infinity.rpc.appserver.repository.AuthorityRepository;
 import org.infinity.rpc.appserver.utils.HttpHeaderCreator;
-import org.infinity.rpc.appserver.utils.PaginationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.*;
+import static org.infinity.rpc.appserver.utils.HttpHeaderUtils.generatePageHeaders;
 
 /**
  * REST controller for managing authorities.
@@ -56,7 +56,7 @@ public class AuthorityController {
         Page<Authority> authorities = authorityRepository.findAll(pageable);
         List<AuthorityDTO> DTOs = authorities.getContent().stream().map(auth -> auth.asDTO())
                 .collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(authorities, "/api/authority/authorities");
+        HttpHeaders headers = generatePageHeaders(authorities, "/api/authority/authorities");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 

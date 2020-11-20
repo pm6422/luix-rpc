@@ -6,7 +6,7 @@ import org.infinity.rpc.webcenter.dto.AuthorityDTO;
 import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.AuthorityRepository;
 import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
-import org.infinity.rpc.webcenter.utils.PaginationUtils;
+import org.infinity.rpc.webcenter.utils.HttpHeaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +59,7 @@ public class AuthorityController {
         Page<Authority> authorities = authorityRepository.findAll(pageable);
         List<AuthorityDTO> DTOs = authorities.getContent().stream().map(auth -> auth.asDTO())
                 .collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtils.generatePaginationHttpHeaders(authorities, "/api/authority/authorities");
+        HttpHeaders headers = generatePageHeaders(authorities, "/api/authority/authorities");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 
