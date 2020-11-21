@@ -2,13 +2,13 @@ package org.infinity.rpc.webcenter.controller;
 
 import com.google.common.collect.ImmutableMap;
 import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.domain.User;
 import org.infinity.rpc.webcenter.domain.UserAuthority;
 import org.infinity.rpc.webcenter.domain.UserProfilePhoto;
-import org.infinity.rpc.webcenter.dto.ManagedUserDTO;
 import org.infinity.rpc.webcenter.dto.ResetKeyAndPasswordDTO;
 import org.infinity.rpc.webcenter.dto.UserDTO;
 import org.infinity.rpc.webcenter.exception.FieldValidationException;
@@ -19,17 +19,13 @@ import org.infinity.rpc.webcenter.repository.UserAuthorityRepository;
 import org.infinity.rpc.webcenter.repository.UserProfilePhotoRepository;
 import org.infinity.rpc.webcenter.repository.UserRepository;
 import org.infinity.rpc.webcenter.service.AuthorityService;
-import org.infinity.rpc.webcenter.service.MailService;
 import org.infinity.rpc.webcenter.service.UserProfilePhotoService;
 import org.infinity.rpc.webcenter.service.UserService;
 import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
-import org.infinity.rpc.webcenter.utils.RandomUtils;
 import org.infinity.rpc.webcenter.utils.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.GrantedAuthority;
@@ -56,25 +52,36 @@ import static javax.servlet.http.HttpServletResponse.*;
  */
 @RestController
 @Api(tags = "账号管理")
+@Slf4j
 public class AccountController {
 
     private static final Logger                     LOGGER = LoggerFactory.getLogger(AccountController.class);
-    @Autowired
-    private              UserService                userService;
-    @Autowired
-    private              UserRepository             userRepository;
-    @Autowired
-    private              UserAuthorityRepository    userAuthorityRepository;
-    @Autowired
-    private              UserProfilePhotoRepository userProfilePhotoRepository;
-    @Autowired
-    private              UserProfilePhotoService    userProfilePhotoService;
-    @Autowired
-    private              AuthorityService           authorityService;
-    @Autowired
-    private              HttpHeaderCreator          httpHeaderCreator;
-    @Autowired
-    private              TokenStore                 tokenStore;
+    private final        UserService                userService;
+    private final        UserRepository             userRepository;
+    private final        UserAuthorityRepository    userAuthorityRepository;
+    private final        UserProfilePhotoRepository userProfilePhotoRepository;
+    private final        UserProfilePhotoService    userProfilePhotoService;
+    private final        AuthorityService           authorityService;
+    private final        HttpHeaderCreator          httpHeaderCreator;
+    private final        TokenStore                 tokenStore;
+
+    public AccountController(UserService userService,
+                             UserRepository userRepository,
+                             UserAuthorityRepository userAuthorityRepository,
+                             UserProfilePhotoRepository userProfilePhotoRepository,
+                             UserProfilePhotoService userProfilePhotoService,
+                             AuthorityService authorityService,
+                             HttpHeaderCreator httpHeaderCreator,
+                             TokenStore tokenStore) {
+        this.userService = userService;
+        this.userRepository = userRepository;
+        this.userAuthorityRepository = userAuthorityRepository;
+        this.userProfilePhotoRepository = userProfilePhotoRepository;
+        this.userProfilePhotoService = userProfilePhotoService;
+        this.authorityService = authorityService;
+        this.httpHeaderCreator = httpHeaderCreator;
+        this.tokenStore = tokenStore;
+    }
 
     @ApiOperation(value = "获取访问令牌", notes = "登录成功返回当前访问令牌", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
@@ -85,7 +92,7 @@ public class AccountController {
             return ResponseEntity.ok(
                     StringUtils.substringAfter(token.toLowerCase(), OAuth2AccessToken.BEARER_TYPE.toLowerCase()).trim());
         }
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(StringUtils.EMPTY);
     }
 
     @ApiOperation(value = "验证当前用户是否已经登录，理论上不会返回false，因为未登录则会出错", notes = "登录成功返回当前用户名", response = String.class)
@@ -111,6 +118,9 @@ public class AccountController {
     @Secured({Authority.USER})
     public ResponseEntity<UserDTO> getCurrentUser() {
         Optional<User> user = userService.findOneByUserName(SecurityUtils.getCurrentUserName());
+        if (!user.isPresent()) {
+            throw new NoDataException("No current user!");
+        }
         List<UserAuthority> userAuthorities = userAuthorityRepository.findByUserId(user.get().getId());
 
         if (CollectionUtils.isEmpty(userAuthorities)) {
@@ -151,9 +161,8 @@ public class AccountController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功激活"),
             @ApiResponse(code = SC_BAD_REQUEST, message = "激活码不存在")})
     @GetMapping("/open-api/account/activate/{key:[0-9]+}")
-    public ResponseEntity<Void> activateAccount(@ApiParam(value = "激活码", required = true) @PathVariable String key) {
+    public void activateAccount(@ApiParam(value = "激活码", required = true) @PathVariable String key) {
         userService.activateRegistration(key).orElseThrow(() -> new NoDataException(key));
-        return ResponseEntity.ok(null);
     }
 
     @ApiOperation("获取权限值列表")
@@ -161,7 +170,7 @@ public class AccountController {
     @GetMapping("/api/account/authority-names")
     @Secured({Authority.USER})
     public ResponseEntity<List<String>> getAuthorityNames(
-            @ApiParam(value = "是否可用,null代表全部", required = false, allowableValues = "false,true,null") @RequestParam(value = "enabled", required = false) Boolean enabled) {
+            @ApiParam(value = "是否可用,null代表全部", allowableValues = "false,true,null") @RequestParam(value = "enabled", required = false) Boolean enabled) {
         List<String> authorities = enabled == null ? authorityService.findAllAuthorityNames()
                 : authorityService.findAllAuthorityNames(enabled);
         return ResponseEntity.ok(authorities);
@@ -234,6 +243,7 @@ public class AccountController {
     @Secured({Authority.USER})
     public void uploadProfilePhoto(@ApiParam(value = "文件描述", required = true) @RequestPart String description,
                                    @ApiParam(value = "用户头像文件", required = true) @RequestPart MultipartFile file) throws IOException {
+        log.debug("upload file with name {} and description {}", file.getOriginalFilename(), description);
         Optional<UserProfilePhoto> existingPhoto = userProfilePhotoRepository.findByUserName(SecurityUtils.getCurrentUserName());
         if (existingPhoto.isPresent()) {
             // Update if existing
@@ -257,7 +267,6 @@ public class AccountController {
         // @RestController下使用return forwardUrl; 不好使
         String forwardUrl = "forward:".concat(UserController.GET_PROFILE_PHOTO_URL).concat(SecurityUtils.getCurrentUserName());
         LOGGER.info(forwardUrl);
-        ModelAndView mav = new ModelAndView(forwardUrl);
-        return mav;
+        return new ModelAndView(forwardUrl);
     }
 }

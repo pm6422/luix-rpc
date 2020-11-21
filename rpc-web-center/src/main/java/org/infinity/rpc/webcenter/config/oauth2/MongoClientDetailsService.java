@@ -40,6 +40,7 @@ public class MongoClientDetailsService implements ClientDetailsService, ClientRe
         if (mongoClientDetails.isPresent()) {
             throw new ClientAlreadyExistsException("Client already exists: " + clientDetails.getClientId());
         }
+        //todo: logic problem
         saveClientDetails(mongoClientDetails.get(), clientDetails);
     }
 
