@@ -1,6 +1,6 @@
-package org.infinity.rpc.appserver.utils;
+package org.infinity.rpc.webcenter.component;
 
-import org.infinity.rpc.appserver.config.ApplicationConstants;
+import org.infinity.rpc.webcenter.config.ApplicationConstants;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;

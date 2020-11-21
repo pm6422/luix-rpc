@@ -5,7 +5,7 @@ import org.infinity.app.common.domain.Authority;
 import org.infinity.app.common.dto.AuthorityDTO;
 import org.infinity.rpc.appserver.exception.NoDataException;
 import org.infinity.rpc.appserver.repository.AuthorityRepository;
-import org.infinity.rpc.appserver.utils.HttpHeaderCreator;
+import org.infinity.rpc.appserver.component.HttpHeaderCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

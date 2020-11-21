@@ -1,4 +1,4 @@
-package org.infinity.rpc.appclient.utils;
+package org.infinity.rpc.appclient.component;
 
 import org.infinity.rpc.appclient.config.ApplicationConstants;
 import org.springframework.context.MessageSource;

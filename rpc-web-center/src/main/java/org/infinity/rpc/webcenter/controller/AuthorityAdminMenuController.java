@@ -11,7 +11,7 @@ import org.infinity.rpc.webcenter.repository.AdminMenuRepository;
 import org.infinity.rpc.webcenter.repository.AuthorityAdminMenuRepository;
 import org.infinity.rpc.webcenter.service.AdminMenuService;
 import org.infinity.rpc.webcenter.service.AuthorityService;
-import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
+import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.utils.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

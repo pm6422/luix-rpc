@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.webcenter.config.ApplicationConstants;
 import org.infinity.rpc.webcenter.dto.ParameterizedErrorDTO;
 import org.infinity.rpc.webcenter.exception.*;
-import org.infinity.rpc.webcenter.utils.HttpHeaderCreator;
+import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;

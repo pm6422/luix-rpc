@@ -5,7 +5,7 @@ import org.infinity.app.common.domain.App;
 import org.infinity.app.common.dto.AppDTO;
 import org.infinity.app.common.service.AppService;
 import org.infinity.rpc.appclient.exception.NoDataException;
-import org.infinity.rpc.appclient.utils.HttpHeaderCreator;
+import org.infinity.rpc.appclient.component.HttpHeaderCreator;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
