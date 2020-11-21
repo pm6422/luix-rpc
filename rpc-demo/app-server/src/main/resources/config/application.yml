@@ -147,8 +147,6 @@ application:
         license: 1.0
         license-url: http://www.apache.org/licenses/LICENSE-2.0.html
         host:
-    aop-logging:
-        enabled: true
     service-metrics:
         enabled: true
         slowExecutionThreshold: 300 # unit: ms
