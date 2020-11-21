@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.*;
+import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 /**
  * REST controller for managing the app authority.
@@ -81,8 +82,7 @@ public class AppAuthorityController {
                 appName, authorityName);
         List<AppAuthorityDTO> DTOs = appAuthorities.getContent().stream().map(entity -> entity.asDTO())
                 .collect(Collectors.toList());
-        HttpHeaders headers = generatePageHeaders(appAuthorities,
-                "/api/app-authority/app-authorities");
+        HttpHeaders headers = generatePageHeaders(appAuthorities, "/api/app-authority/app-authorities");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 

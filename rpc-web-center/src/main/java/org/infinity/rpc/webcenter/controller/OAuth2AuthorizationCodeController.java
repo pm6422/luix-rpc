@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
 @Api(tags = "登录授权码信息")
@@ -60,8 +61,7 @@ public class OAuth2AuthorizationCodeController {
                 pageable);
         List<MongoOAuth2AuthorizationCodeDTO> DTOs = codes.getContent().stream().map(entity -> entity.asDTO())
                 .collect(Collectors.toList());
-        HttpHeaders headers = generatePageHeaders(codes,
-                "/api/oauth2-authorization-code/codes");
+        HttpHeaders headers = generatePageHeaders(codes, "/api/oauth2-authorization-code/codes");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 

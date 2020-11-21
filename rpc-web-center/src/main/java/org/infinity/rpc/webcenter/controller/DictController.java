@@ -2,13 +2,13 @@ package org.infinity.rpc.webcenter.controller;
 
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.domain.Dict;
 import org.infinity.rpc.webcenter.dto.DictDTO;
 import org.infinity.rpc.webcenter.exception.FieldValidationException;
 import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.DictRepository;
-import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.*;
+import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
 @Api(tags = "数据字典")

@@ -21,6 +21,8 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
+
 /**
  * REST controller for managing the user audit events.
  */

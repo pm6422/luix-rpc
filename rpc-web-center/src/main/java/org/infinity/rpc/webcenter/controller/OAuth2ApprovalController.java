@@ -2,12 +2,12 @@ package org.infinity.rpc.webcenter.controller;
 
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.domain.MongoOAuth2Approval;
 import org.infinity.rpc.webcenter.dto.MongoOAuth2ApprovalDTO;
 import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.OAuth2ApprovalRepository;
-import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
 @Api(tags = "登录授权信息")
@@ -71,8 +72,7 @@ public class OAuth2ApprovalController {
 
         List<MongoOAuth2ApprovalDTO> DTOs = approvals.getContent().stream().map(entity -> entity.asDTO())
                 .collect(Collectors.toList());
-        HttpHeaders headers = generatePageHeaders(approvals,
-                "/api/oauth2-approval/approvals");
+        HttpHeaders headers = generatePageHeaders(approvals, "/api/oauth2-approval/approvals");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 

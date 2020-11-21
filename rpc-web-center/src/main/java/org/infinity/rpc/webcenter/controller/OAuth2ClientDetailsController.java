@@ -1,7 +1,9 @@
 package org.infinity.rpc.webcenter.controller;
 
 import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.utilities.id.IdGenerator;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.domain.MongoOAuth2ClientDetails;
 import org.infinity.rpc.webcenter.dto.MongoOAuth2ClientDetailsDTO;
@@ -33,24 +35,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.*;
+import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
 @Api(tags = "单点登录客户端信息")
+@Slf4j
 public class OAuth2ClientDetailsController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2ClientDetailsController.class);
+    private final OAuth2ClientDetailsRepository oAuth2ClientDetailsRepository;
 
-    @Autowired
-    private OAuth2ClientDetailsRepository oAuth2ClientDetailsRepository;
+    private final MongoTemplate mongoTemplate;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    private final HttpHeaderCreator httpHeaderCreator;
 
-    @Autowired
-    private HttpHeaderCreator httpHeaderCreator;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public OAuth2ClientDetailsController(OAuth2ClientDetailsRepository oAuth2ClientDetailsRepository,
+                                         MongoTemplate mongoTemplate, HttpHeaderCreator httpHeaderCreator,
+                                         PasswordEncoder passwordEncoder) {
+        this.oAuth2ClientDetailsRepository = oAuth2ClientDetailsRepository;
+        this.mongoTemplate = mongoTemplate;
+        this.httpHeaderCreator = httpHeaderCreator;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @ApiOperation("创建单点登录客户端信息")
     @ApiResponses(value = {@ApiResponse(code = SC_CREATED, message = "成功创建"),
@@ -59,13 +66,13 @@ public class OAuth2ClientDetailsController {
     @Secured(Authority.ADMIN)
     public ResponseEntity<Void> create(
             @ApiParam(value = "单点登录客户端信息", required = true) @Valid @RequestBody MongoOAuth2ClientDetailsDTO dto) {
-        LOGGER.debug("REST create oauth client detail: {}", dto);
-        dto.setClientId(StringUtils.defaultIfEmpty(dto.getClientId(), RandomUtils.generateId()));
+        log.debug("REST create oauth client detail: {}", dto);
+        dto.setClientId(StringUtils.defaultIfEmpty(dto.getClientId(), "" + IdGenerator.generateSnowFlakeId()));
         oAuth2ClientDetailsRepository.findById(dto.getClientId()).ifPresent((existingEntity) -> {
             throw new FieldValidationException("oAuth2ClientDetailsDTO", "clientId", dto.getClientId(),
                     "error.oauth2.client.id.exists", dto.getClientId());
         });
-        dto.setRawClientSecret(StringUtils.defaultIfEmpty(dto.getClientSecret(), RandomUtils.generateId()));
+        dto.setRawClientSecret(StringUtils.defaultIfEmpty(dto.getClientSecret(), "" + IdGenerator.generateSnowFlakeId()));
         dto.setClientSecret(passwordEncoder.encode(dto.getRawClientSecret()));
         oAuth2ClientDetailsRepository.save(MongoOAuth2ClientDetails.of(dto));
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -78,7 +85,7 @@ public class OAuth2ClientDetailsController {
     @GetMapping("/api/oauth2-client/clients")
     @Secured(Authority.ADMIN)
     public ResponseEntity<List<MongoOAuth2ClientDetailsDTO>> find(Pageable pageable,
-                                                                  @ApiParam(value = "客户端ID", required = false) @RequestParam(value = "clientId", required = false) String clientId)
+                                                                  @ApiParam(value = "客户端ID") @RequestParam(value = "clientId", required = false) String clientId)
             throws URISyntaxException {
         Query query = Query.query(Criteria.where("clientId").is(clientId));
         long totalCount = mongoTemplate.count(query, MongoOAuth2ClientDetails.class);
@@ -87,9 +94,8 @@ public class OAuth2ClientDetailsController {
                 ? oAuth2ClientDetailsRepository.findAll(pageable)
                 : new PageImpl<>(mongoTemplate.find(query, MongoOAuth2ClientDetails.class), pageable, totalCount);
         List<MongoOAuth2ClientDetailsDTO> DTOs = clientDetails.getContent().stream()
-                .map(entity -> entity.asDTO()).collect(Collectors.toList());
-        HttpHeaders headers = generatePageHeaders(clientDetails,
-                "/api/oauth2-client/clients");
+                .map(MongoOAuth2ClientDetails::asDTO).collect(Collectors.toList());
+        HttpHeaders headers = generatePageHeaders(clientDetails, "/api/oauth2-client/clients");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 
@@ -121,7 +127,7 @@ public class OAuth2ClientDetailsController {
     @Secured(Authority.ADMIN)
     public ResponseEntity<Void> update(
             @ApiParam(value = "新的单点登录客户端信息", required = true) @Valid @RequestBody MongoOAuth2ClientDetailsDTO dto) {
-        LOGGER.debug("REST request to update oauth client detail: {}", dto);
+        log.debug("REST request to update oauth client detail: {}", dto);
         oAuth2ClientDetailsRepository.findById(dto.getClientId())
                 .orElseThrow(() -> new NoDataException(dto.getClientId()));
         oAuth2ClientDetailsRepository.save(MongoOAuth2ClientDetails.of(dto));
@@ -137,7 +143,7 @@ public class OAuth2ClientDetailsController {
     @DeleteMapping("/api/oauth2-client/clients/{id}")
     @Secured(Authority.ADMIN)
     public ResponseEntity<Void> delete(@ApiParam(value = "客户端ID", required = true) @PathVariable String id) {
-        LOGGER.debug("REST request to delete oauth client detail: {}", id);
+        log.debug("REST request to delete oauth client detail: {}", id);
         oAuth2ClientDetailsRepository.findById(id).orElseThrow(() -> new NoDataException(id));
         oAuth2ClientDetailsRepository.deleteById(id);
         return ResponseEntity.ok()

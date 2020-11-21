@@ -29,62 +29,6 @@ public class TestController {
     @Autowired
     private UserRepository userRepository;
 
-    @ApiOperation("测试审计功能")
-    @GetMapping("/api/test/user-audit")
-    @Secured(Authority.DEVELOPER)
-    public ResponseEntity<Void> testAudit() {
-        User user1 = new User();
-        user1.setUserName("test");
-        user1.setFirstName("");
-        user1.setLastName("Test");
-        user1.setEmail("test@localhost");
-        user1.setMobileNo("16000899479");
-        // Raw password: user
-        user1.setPasswordHash("$2a$10$VEjxo0jq2YG9Rbk2HmX9S.k1uZBGYUHdUcid3g/vfiEl7lwWgOH/K");
-        user1.setActivated(true);
-        user1.setActivationKey(null);
-        user1.setResetKey(null);
-        user1.setResetTime(null);
-        user1.setEnabled(true);
-
-        User result = userRepository.save(user1);
-        LOGGER.debug(user1.toString());
-
-        result.setEnabled(false);
-        result.setModifiedBy("QQQQQQ");// Current account will override this value
-        result = userRepository.save(result);
-        LOGGER.debug(result.toString());
-
-        userRepository.deleteById(user1.getId());
-
-        User user2 = new User();
-        user2.setId(RandomUtils.generateId());
-        user2.setUserName("test");
-        user2.setFirstName("");
-        user2.setLastName("Test");
-        user2.setEmail("test@localhost");
-        user2.setMobileNo("16000899479");
-        // Raw password: user
-        user2.setPasswordHash("$2a$10$VEjxo0jq2YG9Rbk2HmX9S.k1uZBGYUHdUcid3g/vfiEl7lwWgOH/K");
-        user2.setActivated(true);
-        user2.setActivationKey(null);
-        user2.setResetKey(null);
-        user2.setResetTime(null);
-        user2.setEnabled(true);
-        user2.setModifiedBy("AAAA");
-
-        result = userRepository.save(user2);
-        LOGGER.debug(user2.toString());
-
-        result.setEnabled(false);
-        result = userRepository.save(result);
-        LOGGER.debug(result.toString());
-
-        userRepository.deleteById(user2.getId());
-
-        return ResponseEntity.ok(null);
-    }
-
     /**
      * 测试结果显示为线程安全
      *

@@ -1,6 +1,7 @@
 package org.infinity.rpc.webcenter.controller;
 
 import io.swagger.annotations.*;
+import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.App;
 import org.infinity.rpc.webcenter.domain.AppAuthority;
 import org.infinity.rpc.webcenter.domain.Authority;
@@ -9,7 +10,6 @@ import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.AppAuthorityRepository;
 import org.infinity.rpc.webcenter.repository.AppRepository;
 import org.infinity.rpc.webcenter.service.AppService;
-import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.*;
+import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 /**
  * REST controller for managing apps.
