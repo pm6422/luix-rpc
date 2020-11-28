@@ -12,7 +12,6 @@ import org.springframework.beans.factory.DisposableBean;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.Min;
 import java.util.List;
-import java.util.Set;
 
 /**
  * PRC provider configuration wrapper
@@ -94,11 +93,11 @@ public class ProviderWrapper<T> implements DisposableBean {
         for (Url registryUrl : registryUrls) {
             RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(registryUrl.getProtocol());
             Registry registry = registryFactoryImpl.getRegistry(registryUrl);
-            Set<Url> registeredProviderUrls = registry.getRegisteredProviderUrls();
-            if (CollectionUtils.isEmpty(registeredProviderUrls)) {
+            if (registry == null || CollectionUtils.isEmpty(registry.getRegisteredProviderUrls())) {
+                log.warn("No registry found!");
                 return;
             }
-            registeredProviderUrls.forEach(registeredProviderUrl -> {
+            registry.getRegisteredProviderUrls().forEach(registeredProviderUrl -> {
                 registry.unregister(registeredProviderUrl);
             });
         }
