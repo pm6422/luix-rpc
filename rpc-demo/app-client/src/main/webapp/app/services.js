@@ -489,7 +489,7 @@ function HealthService($rootScope, $http) {
 
     function transformHealthData(data) {
         var response = [];
-        flattenHealthData(response, null, data.details);
+        flattenHealthData(response, null, data.components);
         return response;
     }
 
