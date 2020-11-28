@@ -1,4 +1,4 @@
-package org.infinity.rpc.appserver.config;
+package org.infinity.rpc.webcenter.config;
 
 import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
