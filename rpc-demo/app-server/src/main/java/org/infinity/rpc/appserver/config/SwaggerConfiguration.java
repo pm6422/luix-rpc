@@ -1,5 +1,6 @@
 package org.infinity.rpc.appserver.config;
 
+import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +35,7 @@ import static springfox.documentation.builders.PathSelectors.regex;
  */
 @Configuration
 @EnableSwagger2
+@EnableKnife4j
 @ConditionalOnProperty(prefix = "application.swagger", value = "enabled", havingValue = "true")
 @Slf4j
 public class SwaggerConfiguration {

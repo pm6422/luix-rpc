@@ -134,11 +134,11 @@ application:
     swagger:
         enabled: true
         api:
-            title: Passport Server API
-            description: Passport Server 接口文档
+            title: RPC App Server API
+            description: RPC App Server 接口文档
         open-api:
-            title: Passport Server Open API
-            description: Passport Server 开放接口文档
+            title: RPC App Server Open API
+            description: RPC App Server 开放接口文档
         version: @project.version@
         terms-of-service-url: http://www.infinity.org
         contact-name: Louis
