@@ -42,7 +42,7 @@ public class AuthorityController {
     @ApiResponses(value = {@ApiResponse(code = SC_CREATED, message = "成功创建")})
     @PostMapping("/api/authority/authorities")
     public ResponseEntity<Void> create(
-            @ApiParam(value = "权限信息", required = true) @Valid @RequestBody AuthorityDTO dto) {
+            @ApiParam(value = "权限", required = true) @Valid @RequestBody AuthorityDTO dto) {
         log.debug("REST request to create authority: {}", dto);
         authorityRepository.insert(Authority.of(dto));
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -61,9 +61,9 @@ public class AuthorityController {
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 
-    @ApiOperation("根据权限名称检索权限信息")
+    @ApiOperation("根据权限名称检索权限")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索"),
-            @ApiResponse(code = SC_BAD_REQUEST, message = "权限信息不存在")})
+            @ApiResponse(code = SC_BAD_REQUEST, message = "权限不存在")})
     @GetMapping("/api/authority/authorities/{name}")
     public ResponseEntity<AuthorityDTO> findById(
             @ApiParam(value = "权限名称", required = true) @PathVariable String name) {
@@ -71,12 +71,12 @@ public class AuthorityController {
         return ResponseEntity.ok(authority.asDTO());
     }
 
-    @ApiOperation("更新权限信息")
+    @ApiOperation("更新权限")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功更新"),
-            @ApiResponse(code = SC_BAD_REQUEST, message = "权限信息不存在")})
+            @ApiResponse(code = SC_BAD_REQUEST, message = "权限不存在")})
     @PutMapping("/api/authority/authorities")
     public ResponseEntity<Void> update(
-            @ApiParam(value = "新的权限信息", required = true) @Valid @RequestBody AuthorityDTO dto) {
+            @ApiParam(value = "新的权限", required = true) @Valid @RequestBody AuthorityDTO dto) {
         log.debug("REST request to update authority: {}", dto);
         authorityRepository.findById(dto.getName()).orElseThrow(() -> new NoDataException(dto.getName()));
         authorityRepository.save(Authority.of(dto));
@@ -85,9 +85,9 @@ public class AuthorityController {
                 .build();
     }
 
-    @ApiOperation(value = "根据名称删除权限信息", notes = "数据有可能被其他数据所引用，删除之后可能出现一些问题")
+    @ApiOperation(value = "根据名称删除权限", notes = "数据有可能被其他数据所引用，删除之后可能出现一些问题")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功删除"),
-            @ApiResponse(code = SC_BAD_REQUEST, message = "权限信息不存在")})
+            @ApiResponse(code = SC_BAD_REQUEST, message = "权限不存在")})
     @DeleteMapping("/api/authority/authorities/{name}")
     public ResponseEntity<Void> delete(@ApiParam(value = "权限名称", required = true) @PathVariable String name) {
         log.debug("REST request to delete authority: {}", name);

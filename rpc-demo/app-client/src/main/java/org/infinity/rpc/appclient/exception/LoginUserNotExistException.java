@@ -6,9 +6,9 @@ public class LoginUserNotExistException extends RuntimeException {
 
     private static final long serialVersionUID = 3389857462571862367L;
 
-    private String userName;
+    private final String userName;
 
-    private String message;
+    private String            message;
 
     public LoginUserNotExistException(String userName) {
         super();

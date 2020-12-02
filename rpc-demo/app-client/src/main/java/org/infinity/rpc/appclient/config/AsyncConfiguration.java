@@ -21,8 +21,11 @@ import java.util.concurrent.Executor;
 @Slf4j
 public class AsyncConfiguration implements AsyncConfigurer {
 
-    @Autowired
-    private              TaskExecutionProperties taskExecutionProperties;
+    private final TaskExecutionProperties taskExecutionProperties;
+
+    public AsyncConfiguration(TaskExecutionProperties taskExecutionProperties) {
+        this.taskExecutionProperties = taskExecutionProperties;
+    }
 
     @Override
     @Bean(name = "asyncTaskExecutor")

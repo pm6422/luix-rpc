@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "系统")
 public class SystemController {
 
-    @Autowired
-    private ApplicationProperties applicationProperties;
+    private final ApplicationProperties applicationProperties;
+
+    public SystemController(ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
+    }
 
     @GetMapping("/api/system/internet-ip")
     public ResponseEntity<String> getInternetIp() {

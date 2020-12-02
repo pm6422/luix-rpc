@@ -15,7 +15,7 @@ management: # Management http server configuration, used by ManagementServerProp
     endpoint:
         health: # used by HealthEndpointProperties, Note: it will show health details if it has the access token by Ajax
             enabled: true
-            show-details: WHEN_AUTHORIZED
+            show-details: ALWAYS
         httptrace:
             enabled: true
         shutdown:

@@ -1,28 +1,25 @@
 package org.infinity.rpc.appclient.dto;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 
 /**
  * DTO for sending a parameterized error message.
  */
+@Data
+@NoArgsConstructor
 public class ParameterizedErrorDTO implements Serializable {
 
     private static final long serialVersionUID = -2060518823145626799L;
 
-    private final String message;
+    private String message;
 
-    private final Object[] params;
+    private Object[] params;
 
     public ParameterizedErrorDTO(String message, Object... params) {
         this.message = message;
         this.params = params;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public Object[] getParams() {
-        return params;
     }
 }
