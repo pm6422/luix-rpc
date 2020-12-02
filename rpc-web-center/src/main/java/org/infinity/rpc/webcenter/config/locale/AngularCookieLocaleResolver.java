@@ -1,17 +1,18 @@
 package org.infinity.rpc.webcenter.config.locale;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.util.WebUtils;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 
 /**
@@ -21,18 +22,19 @@ import java.util.TimeZone;
  * <p>
  * This class will check if a double quote has been added, if so it will remove it.
  */
+@Slf4j
 public class AngularCookieLocaleResolver extends CookieLocaleResolver {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AngularCookieLocaleResolver.class);
-
     @Override
-    public Locale resolveLocale(HttpServletRequest request) {
+    @Nonnull
+    public Locale resolveLocale(@Nonnull HttpServletRequest request) {
         parseLocaleCookieIfNecessary(request);
         return (Locale) request.getAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME);
     }
 
     @Override
-    public LocaleContext resolveLocaleContext(final HttpServletRequest request) {
+    @Nonnull
+    public LocaleContext resolveLocaleContext(@Nonnull final HttpServletRequest request) {
         parseLocaleCookieIfNecessary(request);
         return new TimeZoneAwareLocaleContext() {
             @Override
@@ -48,7 +50,7 @@ public class AngularCookieLocaleResolver extends CookieLocaleResolver {
     }
 
     @Override
-    public void addCookie(HttpServletResponse response, String cookieValue) {
+    public void addCookie(@Nonnull HttpServletResponse response, @Nonnull String cookieValue) {
         // Mandatory cookie modification for angular to support the locale switching on the server side.
         cookieValue = "%22" + cookieValue + "%22";
         super.addCookie(response, cookieValue);
@@ -57,7 +59,7 @@ public class AngularCookieLocaleResolver extends CookieLocaleResolver {
     private void parseLocaleCookieIfNecessary(HttpServletRequest request) {
         if (request.getAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME) == null) {
             // Retrieve and parse cookie value.
-            Cookie cookie = WebUtils.getCookie(request, getCookieName());
+            Cookie cookie = WebUtils.getCookie(request, Objects.requireNonNull(getCookieName()));
             Locale locale = null;
             TimeZone timeZone = null;
             if (cookie != null) {
@@ -77,8 +79,8 @@ public class AngularCookieLocaleResolver extends CookieLocaleResolver {
                 if (timeZonePart != null) {
                     timeZone = StringUtils.parseTimeZoneString(timeZonePart);
                 }
-                if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("Parsed cookie value [" + cookie.getValue() + "] into locale '" + locale + "'"
+                if (log.isTraceEnabled()) {
+                    log.trace("Parsed cookie value [" + cookie.getValue() + "] into locale '" + locale + "'"
                             + (timeZone != null ? " and time zone '" + timeZone.getID() + "'" : ""));
                 }
             }

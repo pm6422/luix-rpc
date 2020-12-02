@@ -1,11 +1,12 @@
 package org.infinity.rpc.webcenter.service.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.webcenter.domain.DictItem;
+import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.DictItemRepository;
 import org.infinity.rpc.webcenter.service.DictItemService;
 import org.infinity.rpc.webcenter.service.DictService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,11 +16,14 @@ import java.util.Map;
 @Service
 public class DictItemServiceImpl implements DictItemService {
 
-    @Autowired
-    private DictItemRepository dictItemRepository;
+    private final DictItemRepository dictItemRepository;
 
-    @Autowired
-    private DictService        dictService;
+    private final DictService dictService;
+
+    public DictItemServiceImpl(DictItemRepository dictItemRepository, DictService dictService) {
+        this.dictItemRepository = dictItemRepository;
+        this.dictService = dictService;
+    }
 
     @Override
     public DictItem insert(String dictCode, String dictItemCode, String dictItemName, String remark, Boolean enabled) {
@@ -32,9 +36,9 @@ public class DictItemServiceImpl implements DictItemService {
 
     @Override
     public void update(String id, String dictCode, String dictItemCode, String dictItemName, String remark,
-            Boolean enabled) {
+                       Boolean enabled) {
         Map<String, String> findDictCodeDictNameMap = dictService.findDictCodeDictNameMap();
-        DictItem existingDictItem = dictItemRepository.findById(id).get();
+        DictItem existingDictItem = dictItemRepository.findById(id).orElseThrow(() -> new NoDataException(id));
         existingDictItem.setDictCode(dictCode);
         existingDictItem.setDictName(findDictCodeDictNameMap.get(dictCode));
         existingDictItem.setDictItemCode(dictItemCode);
@@ -45,16 +49,12 @@ public class DictItemServiceImpl implements DictItemService {
     }
 
     @Override
-    public Page<DictItem> findByDictCodeAndDictItemNameCombinations(Pageable pageable, String dictCode,
-            String dictItemName) {
-        if (StringUtils.isEmpty(dictCode) && StringUtils.isEmpty(dictItemName)) {
-            return dictItemRepository.findAll(pageable);
-        } else if (StringUtils.isNotEmpty(dictCode) && StringUtils.isNotEmpty(dictItemName)) {
-            return dictItemRepository.findByDictCodeAndDictItemName(pageable, dictCode, dictItemName);
-        } else if (StringUtils.isNotEmpty(dictCode) && StringUtils.isEmpty(dictItemName)) {
-            return dictItemRepository.findByDictCode(pageable, dictCode);
-        } else {
-            return dictItemRepository.findByDictItemName(pageable, dictItemName);
-        }
+    public Page<DictItem> find(Pageable pageable, String dictCode, String dictItemName) {
+        DictItem probe = new DictItem();
+        probe.setDictCode(dictCode);
+        probe.setDictItemName(dictItemName);
+        // Ignore query parameter if it has a null value
+        ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
+        return dictItemRepository.findAll(Example.of(probe, matcher), pageable);
     }
 }

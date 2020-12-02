@@ -1,6 +1,9 @@
 package org.infinity.rpc.webcenter.domain;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,6 +15,9 @@ import java.time.Instant;
  * Http会话
  */
 @Document(collection = "HttpSession")
+@Data
+@EqualsAndHashCode
+@NoArgsConstructor
 public class HttpSession implements Serializable {
 
     private static final long     serialVersionUID = -1L;
@@ -28,63 +34,4 @@ public class HttpSession implements Serializable {
     @ApiModelProperty("失效时间")
     private              Instant  expireAt;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getPrincipal() {
-        return principal;
-    }
-
-    public void setPrincipal(String principal) {
-        this.principal = principal;
-    }
-
-    public Instant getCreated() {
-        return created;
-    }
-
-    public void setCreated(Instant created) {
-        this.created = created;
-    }
-
-    public Instant getAccessed() {
-        return accessed;
-    }
-
-    public void setAccessed(Instant accessed) {
-        this.accessed = accessed;
-    }
-
-    public Duration getInterval() {
-        return interval;
-    }
-
-    public void setInterval(Duration interval) {
-        this.interval = interval;
-    }
-
-    public Instant getExpireAt() {
-        return expireAt;
-    }
-
-    public void setExpireAt(Instant expireAt) {
-        this.expireAt = expireAt;
-    }
-
-    @Override
-    public String toString() {
-        return "HttpSession{" +
-                "id='" + id + '\'' +
-                ", principal='" + principal + '\'' +
-                ", created=" + created +
-                ", accessed=" + accessed +
-                ", interval=" + interval +
-                ", expireAt=" + expireAt +
-                '}';
-    }
 }

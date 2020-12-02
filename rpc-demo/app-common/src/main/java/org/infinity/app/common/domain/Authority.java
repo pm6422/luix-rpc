@@ -93,7 +93,7 @@ public class Authority implements Serializable {
         return result;
     }
 
-    public AuthorityDTO asDTO() {
+    public AuthorityDTO toDTO() {
         return new AuthorityDTO(this.getName(), this.getSystemLevel(), this.getEnabled());
     }
 

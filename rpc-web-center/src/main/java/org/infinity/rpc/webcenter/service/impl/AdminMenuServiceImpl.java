@@ -9,7 +9,10 @@ import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.AdminMenuRepository;
 import org.infinity.rpc.webcenter.service.AdminMenuService;
 import org.infinity.rpc.webcenter.service.AuthorityAdminMenuService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,16 +22,28 @@ import java.util.stream.Collectors;
 @Service
 public class AdminMenuServiceImpl implements AdminMenuService {
 
-    @Autowired
-    private AdminMenuRepository       adminMenuRepository;
-    @Autowired
-    private AuthorityAdminMenuService authorityAdminMenuService;
+    private final AdminMenuRepository       adminMenuRepository;
+    private final AuthorityAdminMenuService authorityAdminMenuService;
+
+    public AdminMenuServiceImpl(AdminMenuRepository adminMenuRepository,
+                                AuthorityAdminMenuService authorityAdminMenuService) {
+        this.adminMenuRepository = adminMenuRepository;
+        this.authorityAdminMenuService = authorityAdminMenuService;
+    }
+
+    @Override
+    public Page<AdminMenu> find(Pageable pageable, String appName) {
+        // Ignore query parameter if it has a null value
+        ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
+        Example<AdminMenu> queryExample = Example.of(new AdminMenu(appName), matcher);
+        return adminMenuRepository.findAll(queryExample, pageable);
+    }
 
     @Override
     public List<MenuTreeNode> getAllAuthorityMenus(String appName, String enabledAuthority) {
-        Set<String> adminMenuIds = authorityAdminMenuService.findAdminMenuIdSetByAuthorityNameIn(Arrays.asList(enabledAuthority));
+        Set<String> adminMenuIds = authorityAdminMenuService.findAdminMenuIdSetByAuthorityNameIn(Collections.singletonList(enabledAuthority));
         List<AdminMenuDTO> allAdminMenus = adminMenuRepository.findByAppName(appName).stream().map(menu -> {
-            AdminMenuDTO dto = menu.asDTO();
+            AdminMenuDTO dto = menu.toDTO();
             if (adminMenuIds.contains(menu.getId())) {
                 dto.setChecked(true);
             }
@@ -44,20 +59,20 @@ public class AdminMenuServiceImpl implements AdminMenuService {
         }
 
         Set<String> adminMenuIds = authorityAdminMenuService.findAdminMenuIdSetByAuthorityNameIn(enabledAuthorities);
-        if (CollectionUtils.isNotEmpty(adminMenuIds)) {
-            List<AdminMenu> adminMenus = adminMenuRepository.findByAppNameAndIdIn(appName, adminMenuIds);
-            return this.groupAdminMenu(adminMenus);
+        if (CollectionUtils.isEmpty(adminMenuIds)) {
+            return Collections.emptyList();
         }
-        return Collections.emptyList();
+        List<AdminMenu> adminMenus = adminMenuRepository.findByAppNameAndIdIn(appName, adminMenuIds);
+        return this.groupAdminMenu(adminMenus);
     }
 
     private List<MenuTreeNode> groupAdminMenuDTO(List<AdminMenuDTO> menus) {
-        MenuTree tree = new MenuTree(menus.stream().map(menu -> menu.asNode()).collect(Collectors.toList()));
+        MenuTree tree = new MenuTree(menus.stream().map(AdminMenuDTO::asNode).collect(Collectors.toList()));
         return tree.getChildren();
     }
 
     private List<MenuTreeNode> groupAdminMenu(List<AdminMenu> menus) {
-        MenuTree tree = new MenuTree(menus.stream().map(menu -> menu.asNode()).collect(Collectors.toList()));
+        MenuTree tree = new MenuTree(menus.stream().map(AdminMenu::asNode).collect(Collectors.toList()));
         return tree.getChildren();
     }
 
@@ -95,11 +110,11 @@ public class AdminMenuServiceImpl implements AdminMenuService {
 
     private void adjustSeq(String id, int moveIndex, BiFunction<LinkedList<AdminMenu>, AdminMenu, Boolean> func) {
         AdminMenu current = adminMenuRepository.findById(id).orElseThrow(() -> new NoDataException(id));
-        List<AdminMenu> existings = adminMenuRepository.findByAppNameAndLevelOrderBySequenceAsc(current.getAppName(), current.getLevel());
-        if (CollectionUtils.isNotEmpty(existings) && existings.size() == 1) {
+        List<AdminMenu> existingList = adminMenuRepository.findByAppNameAndLevelOrderBySequenceAsc(current.getAppName(), current.getLevel());
+        if (CollectionUtils.isNotEmpty(existingList) && existingList.size() == 1) {
             return;
         }
-        LinkedList<AdminMenu> linkedList = new LinkedList<>(existings);
+        LinkedList<AdminMenu> linkedList = new LinkedList<>(existingList);
         int currentIndex = linkedList.indexOf(current);
 
         if (func.apply(linkedList, current)) {

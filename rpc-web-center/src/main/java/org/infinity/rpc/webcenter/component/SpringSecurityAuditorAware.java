@@ -1,10 +1,11 @@
-package org.infinity.rpc.webcenter.security;
+package org.infinity.rpc.webcenter.component;
 
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.utils.SecurityUtils;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 /**
@@ -14,6 +15,7 @@ import java.util.Optional;
 public class SpringSecurityAuditorAware implements AuditorAware<String> {
 
     @Override
+    @Nonnull
     public Optional<String> getCurrentAuditor() {
         String userName = SecurityUtils.getCurrentUserName();
         return Optional.of(userName != null ? userName : Authority.SYSTEM_ACCOUNT);

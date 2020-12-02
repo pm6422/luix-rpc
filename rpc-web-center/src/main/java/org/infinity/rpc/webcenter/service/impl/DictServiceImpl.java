@@ -3,7 +3,10 @@ package org.infinity.rpc.webcenter.service.impl;
 import org.infinity.rpc.webcenter.domain.Dict;
 import org.infinity.rpc.webcenter.repository.DictRepository;
 import org.infinity.rpc.webcenter.service.DictService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -12,8 +15,19 @@ import java.util.stream.Collectors;
 @Service
 public class DictServiceImpl implements DictService {
 
-    @Autowired
-    private DictRepository dictRepository;
+    private final DictRepository dictRepository;
+
+    public DictServiceImpl(DictRepository dictRepository) {
+        this.dictRepository = dictRepository;
+    }
+
+    @Override
+    public Page<Dict> find(Pageable pageable, String dictName, Boolean enabled) {
+        // Ignore query parameter if it has a null value
+        ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
+        Example<Dict> queryExample = Example.of(new Dict(dictName, enabled), matcher);
+        return dictRepository.findAll(queryExample, pageable);
+    }
 
     @Override
     public Map<String, String> findDictCodeDictNameMap() {

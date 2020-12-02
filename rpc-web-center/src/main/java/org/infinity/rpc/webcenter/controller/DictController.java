@@ -1,7 +1,7 @@
 package org.infinity.rpc.webcenter.controller;
 
 import io.swagger.annotations.*;
-import org.apache.commons.lang3.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.domain.Dict;
@@ -9,9 +9,7 @@ import org.infinity.rpc.webcenter.dto.DictDTO;
 import org.infinity.rpc.webcenter.exception.FieldValidationException;
 import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.DictRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.infinity.rpc.webcenter.service.DictService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,21 +28,28 @@ import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeade
 
 @RestController
 @Api(tags = "数据字典")
+@Slf4j
 public class DictController {
 
-    private static final Logger            LOGGER = LoggerFactory.getLogger(DictController.class);
-    @Autowired
-    private              DictRepository    dictRepository;
-    @Autowired
-    private              HttpHeaderCreator httpHeaderCreator;
+    private final DictRepository    dictRepository;
+    private final DictService       dictService;
+    private final HttpHeaderCreator httpHeaderCreator;
+
+    public DictController(DictRepository dictRepository,
+                          DictService dictService,
+                          HttpHeaderCreator httpHeaderCreator) {
+        this.dictRepository = dictRepository;
+        this.dictService = dictService;
+        this.httpHeaderCreator = httpHeaderCreator;
+    }
 
     @ApiOperation("创建数据字典")
     @ApiResponses(value = {@ApiResponse(code = SC_CREATED, message = "成功创建"),
             @ApiResponse(code = SC_BAD_REQUEST, message = "字典名已存在")})
     @PostMapping("/api/dict/dicts")
     @Secured(Authority.DEVELOPER)
-    public ResponseEntity<Void> create(@ApiParam(value = "数据字典信息", required = true) @Valid @RequestBody DictDTO dto) {
-        LOGGER.debug("REST request to create dict: {}", dto);
+    public ResponseEntity<Void> create(@ApiParam(value = "数据字典", required = true) @Valid @RequestBody DictDTO dto) {
+        log.debug("REST request to create dict: {}", dto);
         dictRepository.findOneByDictCode(dto.getDictCode()).ifPresent((existingEntity) -> {
             throw new FieldValidationException("dictDTO", "dictCode", dto.getDictCode(), "error.dict.exists",
                     dto.getDictCode());
@@ -55,66 +59,50 @@ public class DictController {
                 .headers(httpHeaderCreator.createSuccessHeader("notification.dict.created", dto.getDictName())).build();
     }
 
-    @ApiOperation("获取数据字典分页列表")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
+    @ApiOperation("(分页)检索数据字典列表")
+    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("/api/dict/dicts")
     @Secured(Authority.DEVELOPER)
     public ResponseEntity<List<DictDTO>> find(Pageable pageable,
-                                              @ApiParam(value = "字典名称", required = false) @RequestParam(value = "dictName", required = false) String dictName)
+                                              @ApiParam(value = "字典名称") @RequestParam(value = "dictName", required = false) String dictName,
+                                              @ApiParam(value = "是否可用,null代表全部", allowableValues = "false,true,null") @RequestParam(value = "enabled", required = false) Boolean enabled)
             throws URISyntaxException {
-        Page<Dict> dicts = StringUtils.isEmpty(dictName) ? dictRepository.findAll(pageable)
-                : dictRepository.findByDictName(pageable, dictName);
-        List<DictDTO> DTOs = dicts.getContent().stream().map(entity -> entity.asDTO()).collect(Collectors.toList());
+        Page<Dict> dicts = dictService.find(pageable, dictName, enabled);
+        List<DictDTO> DTOs = dicts.getContent().stream().map(Dict::toDTO).collect(Collectors.toList());
         HttpHeaders headers = generatePageHeaders(dicts, "/api/dict/dicts");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 
-    @ApiOperation("根据字典ID检索数据字典信息")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取"),
+    @ApiOperation("根据ID检索数据字典")
+    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索"),
             @ApiResponse(code = SC_BAD_REQUEST, message = "数据字典不存在")})
     @GetMapping("/api/dict/dicts/{id}")
     @Secured({Authority.DEVELOPER, Authority.USER})
     public ResponseEntity<DictDTO> findById(@ApiParam(value = "字典编号", required = true) @PathVariable String id) {
         Dict entity = dictRepository.findById(id).orElseThrow(() -> new NoDataException(id));
-        return ResponseEntity.ok(entity.asDTO());
+        return ResponseEntity.ok(entity.toDTO());
     }
 
-    @ApiOperation("根据字典的状态获取数据字典")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
-    @GetMapping("/api/dict/all")
-    @Secured({Authority.DEVELOPER, Authority.USER})
-    public ResponseEntity<List<DictDTO>> findByEnabled(
-            @ApiParam(value = "是否可用,null代表全部", required = false, allowableValues = "false,true,null") @RequestParam(value = "enabled", required = false) Boolean enabled) {
-        List<Dict> dicts = new ArrayList<Dict>();
-        if (enabled == null) {
-            dicts = dictRepository.findAll();
-        } else {
-            dicts = dictRepository.findByEnabled(enabled);
-        }
-        List<DictDTO> dictDTOs = dicts.stream().map(dict -> dict.asDTO()).collect(Collectors.toList());
-        return ResponseEntity.ok(dictDTOs);
-    }
-
-    @ApiOperation("更新数据字典信息")
+    @ApiOperation("更新数据字典")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功更新"),
             @ApiResponse(code = SC_BAD_REQUEST, message = "数据字典不存在")})
     @PutMapping("/api/dict/dicts")
     @Secured(Authority.DEVELOPER)
-    public ResponseEntity<Void> update(@ApiParam(value = "新的数据字典信息", required = true) @Valid @RequestBody DictDTO dto) {
-        LOGGER.debug("REST request to update dict: {}", dto);
+    public ResponseEntity<Void> update(@ApiParam(value = "新的数据字典", required = true) @Valid @RequestBody DictDTO dto) {
+        log.debug("REST request to update dict: {}", dto);
         dictRepository.findById(dto.getId()).orElseThrow(() -> new NoDataException(dto.getId()));
         dictRepository.save(Dict.of(dto));
         return ResponseEntity.ok()
                 .headers(httpHeaderCreator.createSuccessHeader("notification.dict.updated", dto.getDictName())).build();
     }
 
-    @ApiOperation(value = "根据字典ID删除数据字典信息", notes = "数据有可能被其他数据所引用，删除之后可能出现一些问题")
+    @ApiOperation(value = "根据ID删除数据字典", notes = "数据有可能被其他数据所引用，删除之后可能出现一些问题")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功删除"),
             @ApiResponse(code = SC_BAD_REQUEST, message = "数据字典不存在")})
     @DeleteMapping("/api/dict/dicts/{id}")
     @Secured(Authority.DEVELOPER)
     public ResponseEntity<Void> delete(@ApiParam(value = "字典编号", required = true) @PathVariable String id) {
-        LOGGER.debug("REST request to delete dict: {}", id);
+        log.debug("REST request to delete dict: {}", id);
         Dict dict = dictRepository.findById(id).orElseThrow(() -> new NoDataException(id));
         dictRepository.deleteById(id);
         return ResponseEntity.ok()

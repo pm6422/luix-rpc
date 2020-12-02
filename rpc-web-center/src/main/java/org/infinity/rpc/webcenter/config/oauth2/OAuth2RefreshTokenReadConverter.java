@@ -1,11 +1,11 @@
 package org.infinity.rpc.webcenter.config.oauth2;
 
+import java.util.Date;
+
 import org.bson.Document;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.oauth2.common.DefaultExpiringOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
-
-import java.util.Date;
 
 /**
  * Deserialize back into an OAuth2RefreshToken Object made necessary because
@@ -15,8 +15,7 @@ public class OAuth2RefreshTokenReadConverter implements Converter<Document, OAut
 
     @Override
     public OAuth2RefreshToken convert(Document source) {
-        DefaultExpiringOAuth2RefreshToken oAuth2RefreshToken = new DefaultExpiringOAuth2RefreshToken(
+        return new DefaultExpiringOAuth2RefreshToken(
                 (String) source.get("value"), (Date) source.get("expiration"));
-        return oAuth2RefreshToken;
     }
 }

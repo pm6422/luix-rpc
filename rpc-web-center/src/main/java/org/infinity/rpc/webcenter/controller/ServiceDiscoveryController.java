@@ -15,7 +15,6 @@ import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.entity.Provider;
 import org.infinity.rpc.webcenter.service.RegistryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -31,10 +30,13 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 @Api(tags = "服务发现")
 @Slf4j
 public class ServiceDiscoveryController {
-    @Autowired
-    private RegistryService registryService;
-    @Autowired
-    private RegistryInfo    registryInfo;
+    private final RegistryService registryService;
+    private final RegistryInfo    registryInfo;
+
+    public ServiceDiscoveryController(RegistryService registryService, RegistryInfo registryInfo) {
+        this.registryService = registryService;
+        this.registryInfo = registryInfo;
+    }
 
     @ApiOperation("获取所有应用")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
@@ -69,8 +71,8 @@ public class ServiceDiscoveryController {
      * @return address info list
      */
     @GetMapping("api/service-discovery/{providerName}/{statusNode}/nodes")
-    public ResponseEntity<List<AddressInfo>> getProviderNode(@PathVariable(value = "providerName", required = true) String providerName,
-                                                             @PathVariable(value = "statusNode", required = true) String statusNode) {
+    public ResponseEntity<List<AddressInfo>> getProviderNode(@PathVariable(value = "providerName") String providerName,
+                                                             @PathVariable(value = "statusNode") String statusNode) {
         List<AddressInfo> nodes = registryService.getNodes("provider", providerName, statusNode);
         return ResponseEntity.ok().body(nodes);
     }

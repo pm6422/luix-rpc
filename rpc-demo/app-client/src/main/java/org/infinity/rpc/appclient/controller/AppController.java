@@ -55,7 +55,7 @@ public class AppController {
     @GetMapping("/api/app/apps")
     public ResponseEntity<List<AppDTO>> find(Pageable pageable) throws URISyntaxException {
         Page<App> apps = appService.findAll(pageable);
-        List<AppDTO> DTOs = apps.getContent().stream().map(App::asDTO).collect(Collectors.toList());
+        List<AppDTO> DTOs = apps.getContent().stream().map(App::toDTO).collect(Collectors.toList());
         HttpHeaders headers = generatePageHeaders(apps, "/api/app/apps");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }

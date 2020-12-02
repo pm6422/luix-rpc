@@ -1,8 +1,6 @@
 package org.infinity.rpc.webcenter.repository;
 
 import org.infinity.rpc.webcenter.domain.AdminMenu;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -24,11 +22,7 @@ public interface AdminMenuRepository extends MongoRepository<AdminMenu, String> 
 
     List<AdminMenu> findByAppName(String appName);
 
-    Page<AdminMenu> findByAppName(Pageable pageable, String appName);
-
     List<AdminMenu> findByAppNameAndLevel(String appName, Integer level);
-
-    List<AdminMenu> findByLevel(Integer level);
 
     List<AdminMenu> findByAppNameAndLevelOrderBySequenceAsc(String appName, Integer level);
 

@@ -1,15 +1,13 @@
 package org.infinity.rpc.webcenter.controller;
 
 import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.domain.MongoOAuth2AuthorizationCode;
 import org.infinity.rpc.webcenter.dto.MongoOAuth2AuthorizationCodeDTO;
 import org.infinity.rpc.webcenter.exception.NoDataException;
 import org.infinity.rpc.webcenter.repository.OAuth2AuthorizationCodeRepository;
-import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,62 +26,64 @@ import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeade
 
 @RestController
 @Api(tags = "登录授权码信息")
+@Slf4j
 public class OAuth2AuthorizationCodeController {
 
-    private static final Logger                            LOGGER = LoggerFactory.getLogger(OAuth2AuthorizationCodeController.class);
-    @Autowired
-    private              OAuth2AuthorizationCodeRepository oAuth2AuthorizationCodeRepository;
-    @Autowired
-    private              HttpHeaderCreator                 httpHeaderCreator;
+    private final OAuth2AuthorizationCodeRepository oAuth2AuthorizationCodeRepository;
+    private final HttpHeaderCreator                 httpHeaderCreator;
+
+    public OAuth2AuthorizationCodeController(OAuth2AuthorizationCodeRepository oAuth2AuthorizationCodeRepository,
+                                             HttpHeaderCreator httpHeaderCreator) {
+        this.oAuth2AuthorizationCodeRepository = oAuth2AuthorizationCodeRepository;
+        this.httpHeaderCreator = httpHeaderCreator;
+    }
 
     /**
      * Authorization code will be deleted immediately after authentication process.
      * So the database will be always empty.
      *
-     * @param pageable
-     * @param authorizationCodelId
-     * @param code
-     * @return
-     * @throws URISyntaxException
+     * @param pageable            pagination info
+     * @param authorizationCodeId authorization code id
+     * @param code                authorization code
+     * @return code list
+     * @throws URISyntaxException if exception occurs
      */
-    @ApiOperation("获取授权码信息信息分页列表")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
+    @ApiOperation("(分页)检索授权码列表")
+    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("/api/oauth2-authorization-code/codes")
     @Secured(Authority.ADMIN)
     public ResponseEntity<List<MongoOAuth2AuthorizationCodeDTO>> find(Pageable pageable,
-                                                                      @ApiParam(value = "授权码ID", required = false) @RequestParam(value = "authorizationCodelId", required = false) String authorizationCodelId,
-                                                                      @ApiParam(value = "授权码", required = false) @RequestParam(value = "code", required = false) String code)
+                                                                      @ApiParam(value = "授权码ID") @RequestParam(value = "authorizationCodeId", required = false) String authorizationCodeId,
+                                                                      @ApiParam(value = "授权码") @RequestParam(value = "code", required = false) String code)
             throws URISyntaxException {
         MongoOAuth2AuthorizationCode probe = new MongoOAuth2AuthorizationCode();
-        probe.setId(authorizationCodelId);
+        probe.setId(authorizationCodeId);
         probe.setCode(code);
-        Page<MongoOAuth2AuthorizationCode> codes = oAuth2AuthorizationCodeRepository.findAll(Example.of(probe),
-                pageable);
-        List<MongoOAuth2AuthorizationCodeDTO> DTOs = codes.getContent().stream().map(entity -> entity.asDTO())
+        Page<MongoOAuth2AuthorizationCode> codes = oAuth2AuthorizationCodeRepository.findAll(Example.of(probe), pageable);
+        List<MongoOAuth2AuthorizationCodeDTO> DTOs = codes.getContent().stream().map(MongoOAuth2AuthorizationCode::toDTO)
                 .collect(Collectors.toList());
         HttpHeaders headers = generatePageHeaders(codes, "/api/oauth2-authorization-code/codes");
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 
-    @ApiOperation("根据授权码信息ID检索授权码信息信息")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取"),
-            @ApiResponse(code = SC_BAD_REQUEST, message = "授权码信息信息不存在")})
+    @ApiOperation("根据ID检索授权码")
+    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索"),
+            @ApiResponse(code = SC_BAD_REQUEST, message = "授权码不存在")})
     @GetMapping("/api/oauth2-authorization-code/codes/{id}")
     @Secured({Authority.ADMIN})
     public ResponseEntity<MongoOAuth2AuthorizationCodeDTO> findById(
-            @ApiParam(value = "授权码信息ID", required = true) @PathVariable String id) {
-        MongoOAuth2AuthorizationCode entity = oAuth2AuthorizationCodeRepository.findById(id)
-                .orElseThrow(() -> new NoDataException(id));
-        return ResponseEntity.ok(entity.asDTO());
+            @ApiParam(value = "授权码ID", required = true) @PathVariable String id) {
+        MongoOAuth2AuthorizationCode entity = oAuth2AuthorizationCodeRepository.findById(id).orElseThrow(() -> new NoDataException(id));
+        return ResponseEntity.ok(entity.toDTO());
     }
 
-    @ApiOperation(value = "根据授权码信息ID删除授权码信息信息", notes = "数据有可能被其他数据所引用，删除之后可能出现一些问题")
+    @ApiOperation(value = "根据ID删除授权码", notes = "数据有可能被其他数据所引用，删除之后可能出现一些问题")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功删除"),
-            @ApiResponse(code = SC_BAD_REQUEST, message = "授权码信息信息不存在")})
+            @ApiResponse(code = SC_BAD_REQUEST, message = "授权码不存在")})
     @DeleteMapping("/api/oauth2-authorization-code/codes/{id}")
     @Secured(Authority.ADMIN)
-    public ResponseEntity<Void> delete(@ApiParam(value = "授权码信息ID", required = true) @PathVariable String id) {
-        LOGGER.debug("REST request to delete oauth2 authorization code: {}", id);
+    public ResponseEntity<Void> delete(@ApiParam(value = "授权码ID", required = true) @PathVariable String id) {
+        log.debug("REST request to delete oauth2 authorization code: {}", id);
         oAuth2AuthorizationCodeRepository.findById(id).orElseThrow(() -> new NoDataException(id));
         oAuth2AuthorizationCodeRepository.deleteById(id);
         return ResponseEntity.ok()

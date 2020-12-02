@@ -2,10 +2,11 @@ package org.infinity.rpc.webcenter.config;
 
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.zalando.problem.ProblemModule;
+
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import org.zalando.problem.violations.ConstraintViolationProblemModule;
 
 @Configuration

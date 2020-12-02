@@ -8,7 +8,6 @@ import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.webcenter.service.RegistryService;
 import org.infinity.rpc.webcenter.service.impl.ZookeeperRegistryServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +17,11 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class ZookeeperRegistryConfiguration {
 
-    @Autowired
-    private RegistryInfo registryInfo;
+    private final RegistryInfo registryInfo;
+
+    public ZookeeperRegistryConfiguration(RegistryInfo registryInfo) {
+        this.registryInfo = registryInfo;
+    }
 
     @Bean
     public RegistryService registryService() {

@@ -1,10 +1,8 @@
 package org.infinity.rpc.webcenter.config.oauth2;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.webcenter.domain.MongoOAuth2Approval;
 import org.infinity.rpc.webcenter.repository.OAuth2ApprovalRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.approval.Approval;
 import org.springframework.security.oauth2.provider.approval.ApprovalStore;
 import org.springframework.stereotype.Component;
@@ -15,14 +13,16 @@ import java.util.Date;
 import java.util.List;
 
 @Component
+@Slf4j
 public class MongoApprovalStore implements ApprovalStore {
 
-    private final Log                logger                    = LogFactory.getLog(getClass());
+    private final OAuth2ApprovalRepository oAuth2ApprovalRepository;
 
-    @Autowired
-    private OAuth2ApprovalRepository oAuth2ApprovalRepository;
+    private boolean handleRevocationsAsExpiry = false;
 
-    private boolean                  handleRevocationsAsExpiry = false;
+    public MongoApprovalStore(OAuth2ApprovalRepository oAuth2ApprovalRepository) {
+        this.oAuth2ApprovalRepository = oAuth2ApprovalRepository;
+    }
 
     public void setHandleRevocationsAsExpiry(boolean handleRevocationsAsExpiry) {
         this.handleRevocationsAsExpiry = handleRevocationsAsExpiry;
@@ -30,7 +30,7 @@ public class MongoApprovalStore implements ApprovalStore {
 
     @Override
     public boolean addApprovals(Collection<Approval> approvals) {
-        logger.debug(String.format("adding approvals: [%s]", approvals));
+        log.debug("Adding approvals: {}", approvals);
 
         for (final Approval approval : approvals) {
             List<MongoOAuth2Approval> mongoDBApprovals = this.oAuth2ApprovalRepository
@@ -48,11 +48,10 @@ public class MongoApprovalStore implements ApprovalStore {
     }
 
     private void updateApproval(final MongoOAuth2Approval mongoDBApproval, final Approval approval) {
-        logger.debug(String.format("refreshing approval: [%s]", approval));
+        log.debug("Refreshing approval: {}", approval);
 
         mongoDBApproval.setExpiresAt(approval.getExpiresAt());
-        mongoDBApproval
-                .setStatus(approval.getStatus() == null ? Approval.ApprovalStatus.APPROVED : approval.getStatus());
+        mongoDBApproval.setStatus(approval.getStatus() == null ? Approval.ApprovalStatus.APPROVED : approval.getStatus());
         mongoDBApproval.setLastUpdatedAt(approval.getLastUpdatedAt());
         mongoDBApproval.setUserId(approval.getUserId());
         mongoDBApproval.setClientId(approval.getClientId());
@@ -63,7 +62,7 @@ public class MongoApprovalStore implements ApprovalStore {
 
     @Override
     public boolean revokeApprovals(Collection<Approval> approvals) {
-        logger.debug(String.format("Revoking approvals: [%s]", approvals));
+        log.debug("Revoking approvals: {}", approvals);
         boolean success = true;
 
         for (final Approval approval : approvals) {

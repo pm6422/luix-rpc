@@ -1,7 +1,8 @@
 package org.infinity.rpc.webcenter.domain;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,14 +19,12 @@ import java.util.Map;
  * Persist AuditEvent managed by the Spring Boot actuator @see org.springframework.boot.actuate.audit.AuditEvent
  */
 @Document(collection = "PersistentAuditEvent")
+@Data
 @EqualsAndHashCode
-@ToString
+@NoArgsConstructor
 public class PersistentAuditEvent implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    @Id
-    private String id;
 
     @NotNull
     private String principal;
@@ -41,51 +40,4 @@ public class PersistentAuditEvent implements Serializable {
 
     private Map<String, String> data = new HashMap<>();
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getPrincipal() {
-        return principal;
-    }
-
-    public void setPrincipal(String principal) {
-        this.principal = principal;
-    }
-
-    public Instant getAuditEventDate() {
-        return auditEventDate;
-    }
-
-    public void setAuditEventDate(Instant auditEventDate) {
-        this.auditEventDate = auditEventDate;
-    }
-
-    public String getAuditEventType() {
-        return auditEventType;
-    }
-
-    public void setAuditEventType(String auditEventType) {
-        this.auditEventType = auditEventType;
-    }
-
-    public Map<String, String> getData() {
-        return data;
-    }
-
-    public void setData(Map<String, String> data) {
-        this.data = data;
-    }
-
-    public Date getExpiration() {
-        return expiration;
-    }
-
-    public void setExpiration(Date expiration) {
-        this.expiration = expiration;
-    }
 }

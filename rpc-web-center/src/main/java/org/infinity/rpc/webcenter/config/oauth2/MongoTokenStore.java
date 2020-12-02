@@ -4,7 +4,6 @@ import org.infinity.rpc.webcenter.domain.MongoOAuth2AccessToken;
 import org.infinity.rpc.webcenter.domain.MongoOAuth2RefreshToken;
 import org.infinity.rpc.webcenter.repository.OAuth2AccessTokenRepository;
 import org.infinity.rpc.webcenter.repository.OAuth2RefreshTokenRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -28,13 +27,16 @@ import java.util.Objects;
 @Component
 public class MongoTokenStore implements TokenStore {
 
-    @Autowired
-    private OAuth2AccessTokenRepository oAuth2AccessTokenRepository;
+    private final OAuth2AccessTokenRepository oAuth2AccessTokenRepository;
 
-    @Autowired
-    private OAuth2RefreshTokenRepository oAuth2RefreshTokenRepository;
+    private final OAuth2RefreshTokenRepository oAuth2RefreshTokenRepository;
 
-    private AuthenticationKeyGenerator authenticationKeyGenerator = new DefaultAuthenticationKeyGenerator();
+    private final AuthenticationKeyGenerator authenticationKeyGenerator = new DefaultAuthenticationKeyGenerator();
+
+    public MongoTokenStore(OAuth2AccessTokenRepository oAuth2AccessTokenRepository, OAuth2RefreshTokenRepository oAuth2RefreshTokenRepository) {
+        this.oAuth2AccessTokenRepository = oAuth2AccessTokenRepository;
+        this.oAuth2RefreshTokenRepository = oAuth2RefreshTokenRepository;
+    }
 
     @Override
     public OAuth2Authentication readAuthentication(OAuth2AccessToken token) {
@@ -56,15 +58,13 @@ public class MongoTokenStore implements TokenStore {
 
     @Override
     public OAuth2AccessToken readAccessToken(String tokenValue) {
-        return oAuth2AccessTokenRepository.findById(tokenValue).map(MongoOAuth2AccessToken::getoAuth2AccessToken)
+        return oAuth2AccessTokenRepository.findById(tokenValue).map(MongoOAuth2AccessToken::getOAuth2AccessToken)
                 .orElse(null);
     }
 
     @Override
     public void removeAccessToken(OAuth2AccessToken token) {
-        oAuth2AccessTokenRepository.findById(token.getValue()).ifPresent((existingToken) -> {
-            oAuth2AccessTokenRepository.delete(existingToken);
-        });
+        oAuth2AccessTokenRepository.findById(token.getValue()).ifPresent(oAuth2AccessTokenRepository::delete);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class MongoTokenStore implements TokenStore {
 
     @Override
     public OAuth2RefreshToken readRefreshToken(String tokenValue) {
-        return oAuth2RefreshTokenRepository.findById(tokenValue).map(MongoOAuth2RefreshToken::getoAuth2RefreshToken)
+        return oAuth2RefreshTokenRepository.findById(tokenValue).map(MongoOAuth2RefreshToken::getOAuth2RefreshToken)
                 .orElse(null);
     }
 
@@ -86,9 +86,7 @@ public class MongoTokenStore implements TokenStore {
 
     @Override
     public void removeRefreshToken(OAuth2RefreshToken token) {
-        oAuth2RefreshTokenRepository.findById(token.getValue()).ifPresent((existingToken) -> {
-            oAuth2RefreshTokenRepository.delete(existingToken);
-        });
+        oAuth2RefreshTokenRepository.findById(token.getValue()).ifPresent(oAuth2RefreshTokenRepository::delete);
     }
 
     @Override
@@ -103,7 +101,7 @@ public class MongoTokenStore implements TokenStore {
     public OAuth2AccessToken getAccessToken(OAuth2Authentication authentication) {
         MongoOAuth2AccessToken token = oAuth2AccessTokenRepository
                 .findByAuthenticationId(authenticationKeyGenerator.extractKey(authentication));
-        return token == null ? null : token.getoAuth2AccessToken();
+        return token == null ? null : token.getOAuth2AccessToken();
     }
 
     @Override
@@ -121,7 +119,7 @@ public class MongoTokenStore implements TokenStore {
     private Collection<OAuth2AccessToken> extractAccessTokens(List<MongoOAuth2AccessToken> tokens) {
         List<OAuth2AccessToken> accessTokens = new ArrayList<>();
         for (MongoOAuth2AccessToken token : tokens) {
-            accessTokens.add(token.getoAuth2AccessToken());
+            accessTokens.add(token.getOAuth2AccessToken());
         }
         return accessTokens;
     }

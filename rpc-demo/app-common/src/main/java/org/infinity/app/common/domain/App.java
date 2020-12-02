@@ -67,7 +67,7 @@ public class App implements Serializable {
         return result;
     }
 
-    public AppDTO asDTO() {
+    public AppDTO toDTO() {
         return new AppDTO(this.getName(), this.getEnabled());
     }
 

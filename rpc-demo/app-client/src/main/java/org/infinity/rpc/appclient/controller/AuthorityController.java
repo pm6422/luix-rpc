@@ -44,7 +44,7 @@ public class AuthorityController {
     @GetMapping("/api/authority/authorities")
     public ResponseEntity<List<AuthorityDTO>> find(Pageable pageable) throws URISyntaxException {
         Page<Authority> authorities = authorityService.findAll(pageable);
-        List<AuthorityDTO> DTOs = authorities.getContent().stream().map(Authority::asDTO)
+        List<AuthorityDTO> DTOs = authorities.getContent().stream().map(Authority::toDTO)
                 .collect(Collectors.toList());
         HttpHeaders headers = generatePageHeaders(authorities, "/api/authority/authorities");
         return ResponseEntity.ok().headers(headers).body(DTOs);
@@ -57,7 +57,7 @@ public class AuthorityController {
     public ResponseEntity<AuthorityDTO> findById(
             @ApiParam(value = "权限名称", required = true) @PathVariable String name) {
         Authority authority = authorityService.findById(name).orElseThrow(() -> new NoDataException(name));
-        return ResponseEntity.ok(authority.asDTO());
+        return ResponseEntity.ok(authority.toDTO());
     }
 
     @ApiOperation("更新权限")

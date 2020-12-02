@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.infinity.rpc.webcenter.config.ApplicationProperties;
 import org.infinity.rpc.webcenter.entity.ProfileInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,13 +17,16 @@ import java.util.List;
 @Api(tags = "系统环境")
 public class ProfileController {
 
-    @Autowired
-    private Environment env;
+    private final Environment env;
 
-    @Autowired
-    private ApplicationProperties applicationProperties;
+    private final ApplicationProperties applicationProperties;
 
-    @ApiOperation("获取系统Profile")
+    public ProfileController(Environment env, ApplicationProperties applicationProperties) {
+        this.env = env;
+        this.applicationProperties = applicationProperties;
+    }
+
+    @ApiOperation("检索系统Profile")
     @GetMapping("/open-api/profile-info")
     public ResponseEntity<ProfileInfo> getProfileInfo() {
         ProfileInfo profileInfo = new ProfileInfo(env.getActiveProfiles(), applicationProperties.getSwagger().isEnabled(), getRibbonEnv());
@@ -34,7 +36,6 @@ public class ProfileController {
     private String getRibbonEnv() {
         String[] activeProfiles = env.getActiveProfiles();
         String[] displayOnActiveProfiles = applicationProperties.getRibbon().getDisplayOnActiveProfiles();
-
         if (displayOnActiveProfiles == null) {
             return null;
         }

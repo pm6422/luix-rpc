@@ -17,7 +17,7 @@ import java.util.Map;
 @Slf4j
 public class ZookeeperRegistryServiceImpl implements RegistryService {
 
-    private ZkClient zkClient;
+    private final ZkClient zkClient;
 
     public ZookeeperRegistryServiceImpl(ZkClient zkClient) {
         this.zkClient = zkClient;

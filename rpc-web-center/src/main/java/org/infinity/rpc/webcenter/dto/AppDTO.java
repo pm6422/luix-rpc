@@ -2,6 +2,9 @@ package org.infinity.rpc.webcenter.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -10,6 +13,9 @@ import java.util.Set;
  * A DTO representing an App.
  */
 @ApiModel("应用DTO")
+@Data
+@EqualsAndHashCode
+@NoArgsConstructor
 public class AppDTO implements Serializable {
 
     private static final long serialVersionUID = 6131756179263179005L;
@@ -23,9 +29,6 @@ public class AppDTO implements Serializable {
     @ApiModelProperty(value = "权限名称")
     private Set<String>       authorities;
 
-    public AppDTO() {
-    }
-
     public AppDTO(String name, Boolean enabled) {
         super();
         this.name = name;
@@ -37,34 +40,5 @@ public class AppDTO implements Serializable {
         this.name = name;
         this.enabled = enabled;
         this.authorities = authorities;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<String> getAuthorities() {
-        return authorities;
-    }
-
-    public void setAuthorities(Set<String> authorities) {
-        this.authorities = authorities;
-    }
-
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    @Override
-    public String toString() {
-        return "AppDTO [name=" + name + ", enabled=" + enabled + ", authorities=" + authorities + "]";
     }
 }

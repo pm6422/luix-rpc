@@ -3,7 +3,8 @@ package org.infinity.rpc.webcenter.service.impl;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.repository.AuthorityRepository;
 import org.infinity.rpc.webcenter.service.AuthorityService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,20 +13,23 @@ import java.util.stream.Collectors;
 @Service
 public class AuthorityServiceImpl implements AuthorityService {
 
-    @Autowired
-    private AuthorityRepository authorityRepository;
+    private final AuthorityRepository authorityRepository;
 
-    @Override
-    public List<String> findAllAuthorityNames(Boolean enabled) {
-        List<String> results = authorityRepository.findByEnabled(enabled).stream().map(Authority::getName)
-                .collect(Collectors.toList());
-        return results;
+    public AuthorityServiceImpl(AuthorityRepository authorityRepository) {
+        this.authorityRepository = authorityRepository;
     }
 
     @Override
-    public List<String> findAllAuthorityNames() {
-        List<String> results = authorityRepository.findAll().stream().map(Authority::getName)
+    public List<String> findAllAuthorityNames(Boolean enabled) {
+        return authorityRepository.findByEnabled(enabled).stream().map(Authority::getName)
                 .collect(Collectors.toList());
-        return results;
+    }
+
+    @Override
+    public List<Authority> find(Boolean enabled) {
+        // Ignore query parameter if it has a null value
+        ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
+        Example<Authority> queryExample = Example.of(new Authority(enabled), matcher);
+        return authorityRepository.findAll(queryExample);
     }
 }
