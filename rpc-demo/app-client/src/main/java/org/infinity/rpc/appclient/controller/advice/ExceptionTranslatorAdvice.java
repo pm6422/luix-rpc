@@ -1,11 +1,11 @@
-package org.infinity.rpc.appserver.controller.advice;
+package org.infinity.rpc.appclient.controller.advice;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.appserver.component.HttpHeaderCreator;
-import org.infinity.rpc.appserver.config.ApplicationConstants;
-import org.infinity.rpc.appserver.dto.ParameterizedErrorDTO;
-import org.infinity.rpc.appserver.exception.*;
+import org.infinity.rpc.appclient.component.HttpHeaderCreator;
+import org.infinity.rpc.appclient.config.ApplicationConstants;
+import org.infinity.rpc.appclient.dto.ParameterizedErrorDTO;
+import org.infinity.rpc.appclient.exception.*;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;
