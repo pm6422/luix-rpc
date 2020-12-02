@@ -5,13 +5,13 @@ import org.infinity.rpc.appserver.dto.ParameterizedErrorDTO;
 /**
  * Custom, parameterized exception, which can be translated on the client side.
  * For example:
- *
+ * 
  * <pre>
  * throw new CustomParameterizedException(&quot;myCustomError&quot;, &quot;hello&quot;, &quot;world&quot;);
  * </pre>
- * <p>
+ * 
  * Can be translated with:
- *
+ * 
  * <pre>
  * "error.myCustomError" :  "The server says {{params[0]}} to {{params[1]}}"
  * </pre>
@@ -20,11 +20,11 @@ public class CustomParameterizedException extends RuntimeException {
 
     private static final long serialVersionUID = -8337754906302089776L;
 
-    private final String code;
+    private final String      code;
 
-    private final String message;
+    private final String      message;
 
-    private final Object[] params;
+    private final Object[]    params;
 
     public CustomParameterizedException(String code, String message, Object... params) {
         super(message);

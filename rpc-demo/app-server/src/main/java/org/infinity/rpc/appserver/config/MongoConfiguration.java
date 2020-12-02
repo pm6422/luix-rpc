@@ -4,10 +4,10 @@ import com.github.mongobee.Mongobee;
 import com.mongodb.MongoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.appserver.setup.DatabaseInitialSetup;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -27,10 +27,14 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 @Slf4j
 public class MongoConfiguration {
 
-    @Autowired
-    private MongoMappingContext mongoMappingContext;
-    @Autowired
-    private MongoDbFactory      mongoDbFactory;
+    private final MongoMappingContext mongoMappingContext;
+    private final MongoDbFactory      mongoDbFactory;
+
+    // Use @Lazy to fix dependencies problems
+    public MongoConfiguration(@Lazy MongoMappingContext mongoMappingContext, MongoDbFactory mongoDbFactory) {
+        this.mongoMappingContext = mongoMappingContext;
+        this.mongoDbFactory = mongoDbFactory;
+    }
 
     @Bean
     public ValidatingMongoEventListener validatingMongoEventListener() {
@@ -72,9 +76,9 @@ public class MongoConfiguration {
 
     @EventListener(ApplicationReadyEvent.class)
     public void initIndicesAfterStartup() {
-        if (mongoMappingContext instanceof MongoMappingContext) {
+        if (mongoMappingContext != null) {
             for (BasicMongoPersistentEntity<?> persistentEntity : mongoMappingContext.getPersistentEntities()) {
-                Class clazz = persistentEntity.getType();
+                Class<?> clazz = persistentEntity.getType();
                 if (clazz.isAnnotationPresent(Document.class)) {
                     MongoPersistentEntityIndexResolver resolver = new MongoPersistentEntityIndexResolver(mongoMappingContext);
                     IndexOperations indexOps = mongoTemplate().indexOps(clazz);

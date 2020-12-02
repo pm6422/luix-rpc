@@ -6,7 +6,6 @@ import org.infinity.app.common.entity.MenuTreeNode;
 import org.infinity.app.common.service.AdminMenuService;
 import org.infinity.rpc.appserver.repository.AdminMenuRepository;
 import org.infinity.rpc.core.server.annotation.Provider;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,8 +13,11 @@ import java.util.stream.Collectors;
 @Provider
 public class AdminMenuServiceImpl implements AdminMenuService {
 
-    @Autowired
-    private AdminMenuRepository       adminMenuRepository;
+    private final AdminMenuRepository adminMenuRepository;
+
+    public AdminMenuServiceImpl(AdminMenuRepository adminMenuRepository) {
+        this.adminMenuRepository = adminMenuRepository;
+    }
 
     @Override
     public List<MenuTreeNode> getMenus() {
@@ -24,7 +26,7 @@ public class AdminMenuServiceImpl implements AdminMenuService {
     }
 
     private List<MenuTreeNode> groupAdminMenu(List<AdminMenu> menus) {
-        MenuTree tree = new MenuTree(menus.stream().map(menu -> menu.asNode()).collect(Collectors.toList()));
+        MenuTree tree = new MenuTree(menus.stream().map(AdminMenu::asNode).collect(Collectors.toList()));
         return tree.getChildren();
     }
 }

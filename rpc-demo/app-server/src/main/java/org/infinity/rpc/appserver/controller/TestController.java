@@ -10,46 +10,26 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.Url;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @Api(tags = "测试")
 @Slf4j
 public class TestController {
-    @Autowired
-    private RegistryInfo       registryInfo;
-    @Autowired
-    private InfinityProperties infinityProperties;
-    @Autowired
-    private ApplicationContext applicationContext;
+    private final RegistryInfo       registryInfo;
+    private final InfinityProperties infinityProperties;
+    private final ApplicationContext applicationContext;
 
-    /**
-     * 测试结果显示为线程安全
-     *
-     * @param key
-     * @throws InterruptedException
-     */
-    @ApiOperation("测试Request线程安全")
-    @GetMapping("/open-api/test/threadsafe")
-    public void testThreadSafe(@RequestParam(value = "key", required = true) String key) throws InterruptedException {
-        Set<String> keys = new HashSet<>();
-        if (keys.contains(key)) {
-            log.error("Key {} already existed, request is not threadsafe!", key);
-        } else {
-            log.debug(key);
-            keys.add(key);
-        }
-
-        TimeUnit.MILLISECONDS.sleep(1000);
+    public TestController(RegistryInfo registryInfo,
+                          InfinityProperties infinityProperties,
+                          ApplicationContext applicationContext) {
+        this.registryInfo = registryInfo;
+        this.infinityProperties = infinityProperties;
+        this.applicationContext = applicationContext;
     }
+
 
     @ApiOperation("测试注册provider")
     @GetMapping("/open-api/test/register-provider")

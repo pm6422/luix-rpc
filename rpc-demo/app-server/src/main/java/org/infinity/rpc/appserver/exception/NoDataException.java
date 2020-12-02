@@ -6,9 +6,9 @@ public class NoDataException extends RuntimeException {
 
     private static final long serialVersionUID = 3389857462571862367L;
 
-    private String id;
+    private final String id;
 
-    private String message;
+    private String            message;
 
     public NoDataException(String id) {
         super();

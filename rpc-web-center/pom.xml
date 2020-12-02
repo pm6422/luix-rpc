@@ -11,9 +11,9 @@
 
     <groupId>org.infinity</groupId>
     <artifactId>rpc-web-center</artifactId>
-    <name>rpc-web-center</name>
     <version>1.0.0</version>
     <packaging>war</packaging>
+    <name>rpc-web-center</name>
 
     <!--
         *************************************************************************************

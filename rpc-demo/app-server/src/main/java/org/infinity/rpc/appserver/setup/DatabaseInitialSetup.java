@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @ChangeLog(order = "001")
 public class DatabaseInitialSetup {
 
-    private static final String APP_NAME = "app-client";
+    private static final String APP_NAME = "app-server";
 
     @ChangeSet(order = "01", author = "Louis", id = "addApps", runAlways = true)
     public void addApps(MongoTemplate mongoTemplate) {
