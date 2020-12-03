@@ -87,6 +87,10 @@ spring:
             enabled: true
             max-file-size: 30MB
             max-request-size: 30MB
+    session: # used by MongoIndexedSessionRepository
+        store-type: MONGODB
+        mongodb:
+            collection-name: HttpSession
     mail: # specific mail property, used by MailProperties
         host: smtp.exmail.qq.com
         username: admin@pm6422.org
@@ -144,6 +148,7 @@ application:
         host:
     service-metrics:
         enabled: true
+        slowExecutionThreshold: 300 # unit: ms
     ribbon:
         # comma separated list of profiles to show a ribbon on the GUI
         display-on-active-profiles: dev,test,demo,preprod
