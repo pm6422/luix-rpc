@@ -702,7 +702,6 @@ function HttpSessionService($resource) {
 function DictService($resource) {
     var service = $resource('api/dict/:extension/:id', {}, {
         'query': {method: 'GET', isArray: true, params: {extension: 'dicts'}},
-        'queryAll': {method: 'GET', isArray: true, params: {extension: 'all'}},
         'get': {
             method: 'GET',
             transformResponse: function (data) {
@@ -721,7 +720,6 @@ function DictService($resource) {
 function DictItemService($resource) {
     var service = $resource('api/dict-item/:extension/:id', {}, {
         'query': {method: 'GET', isArray: true, params: {extension: 'items'}},
-        'queryByDictCode': {method: 'GET', isArray: true, params: {extension: 'dict-code'}},
         'get': {
             method: 'GET',
             transformResponse: function (data) {
@@ -1159,7 +1157,6 @@ function AuthorityAdminMenuService($resource) {
 function AppService($resource) {
     var service = $resource('api/app/apps/:extension', {}, {
         'query': {method: 'GET', isArray: true},
-        'queryAll': {method: 'GET', isArray: true, params: {extension: 'all'}},
         'get': {
             method: 'GET',
             transformResponse: function (data) {
@@ -1179,7 +1176,6 @@ function AppService($resource) {
 function AuthorityService($resource) {
     var service = $resource('api/authority/authorities/:extension', {}, {
         'query': {method: 'GET', isArray: true},
-        'queryAll': {method: 'GET', isArray: true, params: {extension: 'all'}},
         'get': {
             method: 'GET',
             transformResponse: function (data) {
@@ -1199,7 +1195,6 @@ function AuthorityService($resource) {
 function AppAuthorityService($resource) {
     var service = $resource('api/app-authority/:extension/:id', {}, {
         'query': {method: 'GET', isArray: true, params: {extension: 'app-authorities'}},
-        'queryByAppName': {method: 'GET', isArray: true, params: {extension: 'app-name'}},
         'get': {
             method: 'GET',
             transformResponse: function (data) {
