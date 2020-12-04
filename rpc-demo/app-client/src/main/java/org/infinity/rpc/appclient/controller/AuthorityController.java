@@ -39,7 +39,7 @@ public class AuthorityController {
         this.httpHeaderCreator = httpHeaderCreator;
     }
 
-    @ApiOperation("(分页)检索权限列表")
+    @ApiOperation("分页检索权限列表")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("/api/authority/authorities")
     public ResponseEntity<List<AuthorityDTO>> find(Pageable pageable) throws URISyntaxException {
