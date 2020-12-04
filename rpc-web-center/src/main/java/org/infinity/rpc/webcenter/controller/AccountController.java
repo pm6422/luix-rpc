@@ -14,6 +14,7 @@ import org.infinity.rpc.webcenter.domain.UserProfilePhoto;
 import org.infinity.rpc.webcenter.dto.ManagedUserDTO;
 import org.infinity.rpc.webcenter.dto.ResetKeyAndPasswordDTO;
 import org.infinity.rpc.webcenter.dto.UserDTO;
+import org.infinity.rpc.webcenter.event.LogoutEvent;
 import org.infinity.rpc.webcenter.exception.FieldValidationException;
 import org.infinity.rpc.webcenter.exception.NoAuthorityException;
 import org.infinity.rpc.webcenter.exception.NoDataException;
@@ -26,6 +27,7 @@ import org.infinity.rpc.webcenter.service.UserProfilePhotoService;
 import org.infinity.rpc.webcenter.service.UserService;
 import org.infinity.rpc.webcenter.utils.RandomUtils;
 import org.infinity.rpc.webcenter.utils.SecurityUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -68,8 +70,9 @@ public class AccountController {
     private final        UserProfilePhotoService    userProfilePhotoService;
     private final        AuthorityService           authorityService;
     private final        MailService                mailService;
-    private final        HttpHeaderCreator          httpHeaderCreator;
     private final        TokenStore                 tokenStore;
+    private final        ApplicationEventPublisher  applicationEventPublisher;
+    private final        HttpHeaderCreator          httpHeaderCreator;
 
     public AccountController(UserService userService,
                              UserRepository userRepository,
@@ -78,8 +81,9 @@ public class AccountController {
                              UserProfilePhotoService userProfilePhotoService,
                              AuthorityService authorityService,
                              MailService mailService,
-                             HttpHeaderCreator httpHeaderCreator,
-                             TokenStore tokenStore) {
+                             TokenStore tokenStore,
+                             ApplicationEventPublisher applicationEventPublisher,
+                             HttpHeaderCreator httpHeaderCreator) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.userAuthorityRepository = userAuthorityRepository;
@@ -88,6 +92,7 @@ public class AccountController {
         this.authorityService = authorityService;
         this.mailService = mailService;
         this.httpHeaderCreator = httpHeaderCreator;
+        this.applicationEventPublisher = applicationEventPublisher;
         this.tokenStore = tokenStore;
     }
 
@@ -223,6 +228,8 @@ public class AccountController {
     @Secured({Authority.USER})
     public ResponseEntity<Void> changePassword(@ApiParam(value = "新密码", required = true) @RequestBody String newPassword) {
         userService.changePassword(SecurityUtils.getCurrentUserName(), newPassword);
+        // Logout asynchronously
+        applicationEventPublisher.publishEvent(new LogoutEvent(this));
         return ResponseEntity.ok()
                 .headers(httpHeaderCreator.createSuccessHeader("notification.password.changed")).build();
     }

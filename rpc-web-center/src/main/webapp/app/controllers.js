@@ -485,6 +485,7 @@ function PasswordController($state, PasswordService, PrincipalService) {
             PasswordService.update(vm.password,
                 function (response) {
                     vm.isSaving = false;
+                    $state.go('login');
                 },
                 function (response) {
                     vm.isSaving = false;
@@ -1232,7 +1233,7 @@ function DictItemListController($state, AlertUtils, ParseLinksUtils, PAGINATION_
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
-    vm.dicts = DictService.queryAll();
+    vm.dicts = DictService.query();
     vm.links = null;
     vm.loadAll = loadAll;
     vm.loadPage = loadPage;
@@ -1327,7 +1328,7 @@ function DictItemDialogController($state, $stateParams, $uibModalInstance, DictS
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
-    vm.dicts = DictService.queryAll({enabled: true});
+    vm.dicts = DictService.query({enabled: true});
     vm.mode = $state.current.data.mode;
     vm.entity = entity;
     vm.isSaving = false;
@@ -1951,7 +1952,7 @@ function AdminMenuListController($state, AlertUtils, ParseLinksUtils, PAGINATION
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.apps = AppService.queryAll();
+    vm.apps = AppService.query();
     vm.links = null;
     vm.loadAll = loadAll;
     vm.loadPage = loadPage;
@@ -2049,7 +2050,7 @@ function AdminMenuDialogController($state, $stateParams, $uibModalInstance, Admi
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.mode = $state.current.data.mode;
-    vm.apps = AppService.queryAll();
+    vm.apps = AppService.query();
     vm.searchParentMenus = searchParentMenus;
     vm.entity = entity;
     vm.isSaving = false;
@@ -2102,7 +2103,7 @@ function AuthorityAdminMenuController($state, AuthorityAdminMenuService, AppAuth
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.apps = AppService.queryAll();
+    vm.apps = AppService.query();
     vm.authorities = [];
     vm.allMenus = [];
     vm.isSaving = false;
@@ -2112,7 +2113,7 @@ function AuthorityAdminMenuController($state, AuthorityAdminMenuService, AppAuth
 
     function searchAuthorities() {
         if (vm.criteria && vm.criteria.appName) {
-            vm.authorities = AppAuthorityService.queryByAppName({id: vm.criteria.appName});
+            vm.authorities = AppAuthorityService.query({appName: vm.criteria.appName});
         }
         else {
             vm.authorities = [];
