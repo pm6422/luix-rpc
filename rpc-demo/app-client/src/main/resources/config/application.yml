@@ -138,7 +138,7 @@ application:
         license: 1.0
         license-url: http://www.apache.org/licenses/LICENSE-2.0.html
         host:
-    elapsed-time-metrics:
+    elapsed-time-logging:
         enabled: true
         slow-execution-threshold: 300 # unit: ms
     ribbon:
