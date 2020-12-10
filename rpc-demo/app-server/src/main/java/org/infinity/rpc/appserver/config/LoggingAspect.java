@@ -16,7 +16,7 @@ import java.util.Arrays;
 @ConditionalOnProperty(prefix = "application.aop-logging", value = "enabled", havingValue = "true")
 @Configuration
 @Slf4j
-public class LoggingAspectConfiguration {
+public class LoggingAspect {
 
     /**
      * Refer to http://www.imooc.com/article/297283
