@@ -142,7 +142,7 @@ application:
         host:
     aop-logging:
         enabled: true
-    service-metrics:
+    elapsed-time-metrics:
         enabled: true
         slowExecutionThreshold: 300 # unit: ms
     ribbon:
