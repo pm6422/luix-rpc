@@ -123,7 +123,7 @@ logging:
 application:
     http:
         cache: # Used by the CachingHttpHeadersFilter
-            timeToLiveInDays: 31
+            time-to-live-in-days: 31
     swagger:
         enabled: true
         api:
@@ -142,9 +142,9 @@ application:
         host:
     aop-logging:
         enabled: true
-    elapsed-time-metrics:
+    elapsed-time-logging:
         enabled: true
-        slowExecutionThreshold: 300 # unit: ms
+        slow-execution-threshold: 300 # unit: ms
     ribbon:
         # comma separated list of profiles to show a ribbon on the GUI
         display-on-active-profiles: dev,test,demo,preprod

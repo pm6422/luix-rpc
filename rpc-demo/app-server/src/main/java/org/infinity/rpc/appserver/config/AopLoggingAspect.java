@@ -10,13 +10,13 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Arrays;
 
 /**
- * Aspect for logging execution of controller Spring components.
+ * Aspect for logging execution arguments and result of the method.
  */
 @Aspect
 @ConditionalOnProperty(prefix = "application.aop-logging", value = "enabled", havingValue = "true")
 @Configuration
 @Slf4j
-public class LoggingAspect {
+public class AopLoggingAspect {
 
     /**
      * Refer to http://www.imooc.com/article/297283
