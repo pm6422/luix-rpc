@@ -2,9 +2,6 @@ package org.infinity.rpc.appclient.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.appclient.filter.CachingHttpHeadersFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.MimeMappings;
 import org.springframework.boot.web.server.WebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
