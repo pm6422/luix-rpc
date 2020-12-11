@@ -34,7 +34,6 @@ public class AdminMenu implements Serializable {
     private Integer sequence;
     private String  parentId;
 
-
     public AdminMenu(String name, String label, Integer level, String url,
                      Integer sequence, String parentId) {
         super();
