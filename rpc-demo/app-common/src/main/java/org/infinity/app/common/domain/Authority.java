@@ -1,5 +1,8 @@
 package org.infinity.app.common.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.infinity.app.common.dto.AuthorityDTO;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,6 +13,9 @@ import java.io.Serializable;
  * Spring Data MongoDB collection for the Authority entity.
  */
 @Document(collection = "Authority")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Authority implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -32,66 +38,6 @@ public class Authority implements Serializable {
     private Boolean systemLevel;
 
     private Boolean enabled;
-
-    public Authority(String name, Boolean systemLevel, Boolean enabled) {
-        super();
-        this.name = name;
-        this.systemLevel = systemLevel;
-        this.enabled = enabled;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Boolean getSystemLevel() {
-        return systemLevel;
-    }
-
-    public void setSystemLevel(Boolean systemAuthority) {
-        this.systemLevel = systemAuthority;
-    }
-
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass() != that.getClass()) {
-            return false;
-        }
-        Authority other = (Authority) that;
-        return (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
-                && (this.getSystemLevel() == null ? other.getSystemLevel() == null
-                : this.getSystemLevel().equals(other.getSystemLevel()))
-                && (this.getEnabled() == null ? other.getEnabled() == null
-                : this.getEnabled().equals(other.getEnabled()));
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        result = prime * result + ((getSystemLevel() == null) ? 0 : getSystemLevel().hashCode());
-        result = prime * result + ((getEnabled() == null) ? 0 : getEnabled().hashCode());
-        return result;
-    }
 
     public AuthorityDTO toDTO() {
         return new AuthorityDTO(this.getName(), this.getSystemLevel(), this.getEnabled());
