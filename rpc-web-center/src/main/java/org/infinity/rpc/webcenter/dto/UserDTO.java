@@ -3,8 +3,8 @@ package org.infinity.rpc.webcenter.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.infinity.rpc.webcenter.domain.User;
 import org.infinity.rpc.webcenter.domain.base.AbstractAuditableDomain;
 
@@ -20,7 +20,7 @@ import java.util.Set;
  */
 @ApiModel("用户DTO")
 @Data
-@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @NoArgsConstructor
 public class UserDTO extends AbstractAuditableDomain implements Serializable {
 

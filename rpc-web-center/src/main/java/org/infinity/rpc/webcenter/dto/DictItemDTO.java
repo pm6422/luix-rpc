@@ -3,8 +3,7 @@ package org.infinity.rpc.webcenter.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.infinity.rpc.webcenter.domain.base.AbstractAuditableDomain;
 
 import javax.validation.constraints.NotNull;
@@ -14,8 +13,7 @@ import java.io.Serializable;
 
 @ApiModel("数据字典项DTO")
 @Data
-@EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
+@ToString(callSuper = true)
 public class DictItemDTO extends AbstractAuditableDomain implements Serializable {
 
     private static final long serialVersionUID = -3707895016151729120L;

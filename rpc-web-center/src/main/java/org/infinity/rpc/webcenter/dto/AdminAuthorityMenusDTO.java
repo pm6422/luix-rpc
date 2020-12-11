@@ -3,7 +3,6 @@ package org.infinity.rpc.webcenter.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -11,7 +10,6 @@ import java.util.List;
 
 @ApiModel("管理系统菜单列表DTO")
 @Data
-@EqualsAndHashCode
 public class AdminAuthorityMenusDTO implements Serializable {
 
     private static final long serialVersionUID = -3119877507448443380L;

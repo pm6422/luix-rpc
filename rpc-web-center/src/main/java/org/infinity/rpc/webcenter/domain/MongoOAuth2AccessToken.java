@@ -1,8 +1,8 @@
 package org.infinity.rpc.webcenter.domain;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.infinity.rpc.webcenter.domain.base.AbstractAuditableDomain;
 import org.infinity.rpc.webcenter.dto.MongoOAuth2AccessTokenDTO;
 import org.springframework.beans.BeanUtils;
@@ -17,7 +17,7 @@ import java.util.Date;
 
 @Document(collection = "MongoOAuth2AccessToken")
 @Data
-@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @NoArgsConstructor
 public class MongoOAuth2AccessToken extends AbstractAuditableDomain implements Serializable {
 

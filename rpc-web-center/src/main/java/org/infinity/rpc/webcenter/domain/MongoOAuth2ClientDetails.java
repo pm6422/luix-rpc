@@ -1,7 +1,6 @@
 package org.infinity.rpc.webcenter.domain;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.infinity.rpc.webcenter.dto.MongoOAuth2ClientDetailsDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.annotation.Id;
@@ -12,7 +11,6 @@ import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 
 @Document(collection = "MongoOAuth2ClientDetails")
 @Data
-@EqualsAndHashCode(callSuper = true)
 public class MongoOAuth2ClientDetails extends BaseClientDetails implements ClientDetails {
 
     private static final long serialVersionUID = 1L;

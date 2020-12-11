@@ -3,6 +3,7 @@ package org.infinity.rpc.webcenter.domain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.bson.types.Binary;
 import org.infinity.rpc.webcenter.domain.base.AbstractAuditableDomain;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -17,7 +18,7 @@ import java.io.Serializable;
  */
 @Document(collection = "UserProfilePhoto")
 @Data
-@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @NoArgsConstructor
 public class UserProfilePhoto extends AbstractAuditableDomain implements Serializable {
 

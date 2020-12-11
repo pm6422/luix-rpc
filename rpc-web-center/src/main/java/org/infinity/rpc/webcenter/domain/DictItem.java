@@ -3,6 +3,7 @@ package org.infinity.rpc.webcenter.domain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.infinity.rpc.webcenter.domain.base.AbstractAuditableDomain;
 import org.infinity.rpc.webcenter.dto.DictItemDTO;
 import org.springframework.beans.BeanUtils;
@@ -15,7 +16,7 @@ import java.io.Serializable;
  */
 @Document(collection = "DictItem")
 @Data
-@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @NoArgsConstructor
 public class DictItem extends AbstractAuditableDomain implements Serializable {
 

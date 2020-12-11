@@ -1,7 +1,6 @@
 package org.infinity.rpc.webcenter.domain;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.infinity.rpc.webcenter.dto.MongoOAuth2AuthorizationCodeDTO;
 import org.springframework.beans.BeanUtils;
@@ -14,7 +13,6 @@ import java.io.Serializable;
 
 @Document(collection = "MongoOAuth2AuthorizationCode")
 @Data
-@EqualsAndHashCode
 @NoArgsConstructor
 public class MongoOAuth2AuthorizationCode implements Serializable {
 

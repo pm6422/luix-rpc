@@ -2,8 +2,6 @@ package org.infinity.rpc.webcenter.domain;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -20,8 +18,6 @@ import java.time.Instant;
  */
 @Document(collection = "HttpSession")
 @Data
-@EqualsAndHashCode
-@NoArgsConstructor
 public class HttpSession implements Serializable {
 
     private static final long     serialVersionUID = -1L;

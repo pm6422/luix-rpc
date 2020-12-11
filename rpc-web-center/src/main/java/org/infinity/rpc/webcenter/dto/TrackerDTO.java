@@ -2,8 +2,6 @@ package org.infinity.rpc.webcenter.dto;
 
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
@@ -12,8 +10,6 @@ import java.time.Instant;
  */
 @ApiModel("用户追踪")
 @Data
-@EqualsAndHashCode
-@NoArgsConstructor
 public class TrackerDTO {
 
     private String sessionId;

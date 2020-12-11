@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.infinity.rpc.webcenter.domain.base.AbstractAuditableDomain;
 import org.infinity.rpc.webcenter.entity.MenuTreeNode;
 import org.springframework.cglib.beans.BeanCopier;
@@ -16,8 +17,7 @@ import java.io.Serializable;
 
 @ApiModel("管理系统菜单DTO")
 @Data
-@EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
+@ToString(callSuper = true)
 public class AdminMenuDTO extends AbstractAuditableDomain implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -1,7 +1,6 @@
 package org.infinity.rpc.webcenter.domain;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.infinity.rpc.webcenter.dto.MongoOAuth2ApprovalDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.annotation.Id;
@@ -13,7 +12,6 @@ import java.io.Serializable;
 
 @Document(collection = "MongoOAuth2Approval")
 @Data
-@EqualsAndHashCode(callSuper = true)
 public class MongoOAuth2Approval extends Approval implements Serializable {
 
     private static final long serialVersionUID = 1L;

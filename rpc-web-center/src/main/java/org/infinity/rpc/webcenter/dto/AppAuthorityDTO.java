@@ -3,8 +3,6 @@ package org.infinity.rpc.webcenter.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -13,8 +11,6 @@ import java.io.Serializable;
  */
 @ApiModel("应用权限DTO")
 @Data
-@EqualsAndHashCode
-@NoArgsConstructor
 public class AppAuthorityDTO implements Serializable {
 
     private static final long serialVersionUID = 6131756179263179005L;

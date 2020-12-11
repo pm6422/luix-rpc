@@ -1,8 +1,6 @@
 package org.infinity.rpc.webcenter.domain;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -20,8 +18,6 @@ import java.util.Map;
  */
 @Document(collection = "PersistentAuditEvent")
 @Data
-@EqualsAndHashCode
-@NoArgsConstructor
 public class PersistentAuditEvent implements Serializable {
 
     private static final long serialVersionUID = 1L;

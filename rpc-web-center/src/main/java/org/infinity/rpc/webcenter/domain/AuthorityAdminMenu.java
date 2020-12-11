@@ -1,7 +1,6 @@
 package org.infinity.rpc.webcenter.domain;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,7 +14,6 @@ import java.io.Serializable;
  */
 @Document(collection = "AuthorityAdminMenu")
 @Data
-@EqualsAndHashCode
 @NoArgsConstructor
 public class AuthorityAdminMenu implements Serializable {
 

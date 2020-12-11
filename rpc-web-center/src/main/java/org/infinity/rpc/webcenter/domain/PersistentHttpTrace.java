@@ -1,8 +1,6 @@
 package org.infinity.rpc.webcenter.domain;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
@@ -13,8 +11,6 @@ import java.time.Instant;
  */
 @Document(collection = "PersistentHttpTrace")
 @Data
-@EqualsAndHashCode
-@NoArgsConstructor
 public class PersistentHttpTrace implements Serializable {
 
     private static final long    serialVersionUID = 4090431427130666650L;
