@@ -14,6 +14,7 @@ public class JacksonConfiguration {
 
     /**
      * Support for Java date and time API.
+     *
      * @return the corresponding Jackson module.
      */
     @Bean
@@ -26,24 +27,30 @@ public class JacksonConfiguration {
         return new Jdk8Module();
     }
 
-    /*
+    /**
      * Jackson Afterburner module to speed up serialization/deserialization.
+     *
+     * @return module instance
      */
     @Bean
     public AfterburnerModule afterburnerModule() {
         return new AfterburnerModule();
     }
 
-    /*
+    /**
      * Module for serialization/deserialization of RFC7807 Problem.
+     *
+     * @return module instance
      */
     @Bean
     public ProblemModule problemModule() {
         return new ProblemModule();
     }
 
-    /*
+    /**
      * Module for serialization/deserialization of ConstraintViolationProblem.
+     *
+     * @return module instance
      */
     @Bean
     public ConstraintViolationProblemModule constraintViolationProblemModule() {
