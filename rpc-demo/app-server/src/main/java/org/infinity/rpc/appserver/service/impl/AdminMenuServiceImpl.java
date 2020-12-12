@@ -1,12 +1,13 @@
 package org.infinity.rpc.appserver.service.impl;
 
 import org.infinity.app.common.domain.AdminMenu;
-import org.infinity.app.common.entity.MenuTree;
-import org.infinity.app.common.entity.MenuTreeNode;
+import org.infinity.app.common.dto.AdminMenuTreeDTO;
 import org.infinity.app.common.service.AdminMenuService;
 import org.infinity.rpc.appserver.repository.AdminMenuRepository;
 import org.infinity.rpc.core.server.annotation.Provider;
+import org.thymeleaf.util.StringUtils;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,13 +21,36 @@ public class AdminMenuServiceImpl implements AdminMenuService {
     }
 
     @Override
-    public List<MenuTreeNode> getMenus() {
+    public List<AdminMenuTreeDTO> getMenus() {
         List<AdminMenu> adminMenus = adminMenuRepository.findAll();
-        return this.groupAdminMenu(adminMenus);
+        return generateTree(adminMenus);
     }
 
-    private List<MenuTreeNode> groupAdminMenu(List<AdminMenu> menus) {
-        MenuTree tree = new MenuTree(menus.stream().map(AdminMenu::toNode).collect(Collectors.toList()));
-        return tree.getChildren();
+    private List<AdminMenuTreeDTO> generateTree(List<AdminMenu> menus) {
+        // 根节点
+        List<AdminMenuTreeDTO> rootMenus = menus.stream()
+                .filter(menu -> StringUtils.isEmpty(menu.getParentId()))
+                .map(AdminMenu::toTreeDTO)
+                .sorted(Comparator.comparing(AdminMenuTreeDTO::getSequence))
+                .collect(Collectors.toList());
+        rootMenus.forEach(rootMenu -> {
+            // 给根节点设置子节点
+            rootMenu.setChildren(getChildren(rootMenu.getId(), menus));
+        });
+        return rootMenus;
+    }
+
+    private List<AdminMenuTreeDTO> getChildren(String parentId, List<AdminMenu> menus) {
+        // 子菜单
+        List<AdminMenuTreeDTO> childMenus = menus.stream()
+                .filter(menu -> parentId.equals(menu.getParentId()))
+                .map(AdminMenu::toTreeDTO)
+                .sorted(Comparator.comparing(AdminMenuTreeDTO::getSequence))
+                .collect(Collectors.toList());
+        // 递归
+        for (AdminMenuTreeDTO childMenu : childMenus) {
+            childMenu.setChildren(getChildren(childMenu.getId(), menus));
+        }
+        return childMenus;
     }
 }

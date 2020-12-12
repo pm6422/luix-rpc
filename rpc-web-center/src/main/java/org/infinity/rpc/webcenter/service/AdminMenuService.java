@@ -1,7 +1,7 @@
 package org.infinity.rpc.webcenter.service;
 
 import org.infinity.rpc.webcenter.domain.AdminMenu;
-import org.infinity.rpc.webcenter.entity.MenuTreeNode;
+import org.infinity.rpc.webcenter.dto.AdminMenuTreeDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,11 +11,11 @@ public interface AdminMenuService {
 
     Page<AdminMenu> find(Pageable pageable, String appName);
 
-    List<MenuTreeNode> getAllAuthorityMenus(String appName, String enabledAuthority);
+    List<AdminMenu> getUserAuthorityLinks(String appName);
 
-    List<MenuTreeNode> getAuthorityMenus(String appName, List<String> enabledAuthorities);
+    List<AdminMenuTreeDTO> getUserAuthorityMenus(String appName);
 
-    List<AdminMenu> getAuthorityLinks(String appName, List<String> enabledAuthorities);
+    List<AdminMenuTreeDTO> getAuthorityMenus(String appName, String authorityName);
 
     void raiseSeq(String id);
 

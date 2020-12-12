@@ -3,12 +3,8 @@ package org.infinity.rpc.webcenter.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.infinity.rpc.webcenter.domain.base.AbstractAuditableDomain;
-import org.infinity.rpc.webcenter.entity.MenuTreeNode;
-import org.springframework.cglib.beans.BeanCopier;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -26,6 +22,8 @@ public class AdminMenuDTO extends AbstractAuditableDomain implements Serializabl
     private String  id;
     @ApiModelProperty("应用名称")
     private String  appName;
+    @ApiModelProperty("父菜单ID")
+    private String  parentId;
     @Size(min = 1, max = 100)
     @ApiModelProperty("管理菜单名")
     private String  name;
@@ -41,15 +39,6 @@ public class AdminMenuDTO extends AbstractAuditableDomain implements Serializabl
     @Max(999)
     @ApiModelProperty("菜单排序序号")
     private Integer sequence;
-    @ApiModelProperty("父菜单ID")
-    private String  parentId;
     @ApiModelProperty("是否选中")
     private Boolean checked;
-
-    public MenuTreeNode asNode() {
-        MenuTreeNode dto = new MenuTreeNode();
-        BeanCopier beanCopier = BeanCopier.create(AdminMenuDTO.class, MenuTreeNode.class, false);
-        beanCopier.copy(this, dto, null);
-        return dto;
-    }
 }

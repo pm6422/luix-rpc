@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.app.common.entity.MenuTreeNode;
+import org.infinity.app.common.dto.AdminMenuTreeDTO;
 import org.infinity.app.common.service.AdminMenuService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,8 +32,8 @@ public class AdminMenuController {
     @ApiOperation("检索所有菜单")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
     @GetMapping("/api/admin-menu/menus")
-    public ResponseEntity<List<MenuTreeNode>> find() {
-        List<MenuTreeNode> results = adminMenuService.getMenus();
+    public ResponseEntity<List<AdminMenuTreeDTO>> find() {
+        List<AdminMenuTreeDTO> results = adminMenuService.getMenus();
         return ResponseEntity.ok(results);
     }
 }
