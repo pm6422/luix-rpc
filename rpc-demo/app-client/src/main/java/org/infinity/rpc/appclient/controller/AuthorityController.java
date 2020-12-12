@@ -46,7 +46,7 @@ public class AuthorityController {
         Page<Authority> authorities = authorityService.findAll(pageable);
         List<AuthorityDTO> DTOs = authorities.getContent().stream().map(Authority::toDTO)
                 .collect(Collectors.toList());
-        HttpHeaders headers = generatePageHeaders(authorities, "/api/authority/authorities");
+        HttpHeaders headers = generatePageHeaders(authorities);
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 

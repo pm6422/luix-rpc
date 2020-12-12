@@ -81,7 +81,7 @@ public class AppAuthorityController {
             throws URISyntaxException {
         Page<AppAuthority> appAuthorities = appAuthorityService.find(pageable, appName, authorityName);
         List<AppAuthorityDTO> DTOs = appAuthorities.getContent().stream().map(AppAuthority::toDTO).collect(Collectors.toList());
-        HttpHeaders headers = generatePageHeaders(appAuthorities, "/api/app-authority/app-authorities");
+        HttpHeaders headers = generatePageHeaders(appAuthorities);
         return ResponseEntity.ok().headers(headers).body(DTOs);
     }
 
