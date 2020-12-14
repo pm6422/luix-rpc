@@ -8,7 +8,6 @@ import org.infinity.app.common.dto.AdminMenuDTO;
 import org.infinity.app.common.dto.AdminMenuTreeDTO;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
