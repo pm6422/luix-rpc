@@ -9,7 +9,7 @@
         .constant('COMPANY_NAME', 'Infinity Organization')
         .constant('PAGINATION_CONSTANTS', {
             'itemsPerPage': 10
-        })
+         })
         //        .constant('ENV', '@spring.profiles.active@')
         .constant('DEBUG_INFO_ENABLED', true);
 })();

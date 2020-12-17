@@ -68,6 +68,7 @@ spring:
         basename: i18n/messages
     mvc:
         locale: zh_CN
+        basename: i18n/messages
     task:
         execution:
             thread-name-prefix: ${spring.application.name}-task-
