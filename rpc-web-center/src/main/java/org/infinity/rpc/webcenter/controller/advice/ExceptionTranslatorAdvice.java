@@ -5,12 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.webcenter.config.ApplicationConstants;
+import org.infinity.rpc.webcenter.component.MessageCreator;
 import org.infinity.rpc.webcenter.dto.ErrorDTO;
 import org.infinity.rpc.webcenter.exception.DuplicationException;
 import org.infinity.rpc.webcenter.exception.NoAuthorityException;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
-import org.springframework.context.MessageSource;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,10 +44,10 @@ public class ExceptionTranslatorAdvice {
     public static final String SYS_EXCEPTION_CODE         = "ES7001";
     public static final String CONCURRENCY_EXCEPTION_CODE = "ES7002";
 
-    private final MessageSource messageSource;
+    private final MessageCreator messageCreator;
 
-    public ExceptionTranslatorAdvice(MessageSource messageSource) {
-        this.messageSource = messageSource;
+    public ExceptionTranslatorAdvice(MessageCreator messageCreator) {
+        this.messageCreator = messageCreator;
     }
 
     /**
@@ -123,7 +122,7 @@ public class ExceptionTranslatorAdvice {
     @ResponseBody
     public ResponseEntity<ErrorDTO> processNoAuthorityException(NoAuthorityException ex) {
         log.warn("No authority: ", ex);
-        ErrorDTO error = ErrorDTO.builder().code(INVALID_REQUEST_PARAM_CODE).message(getMessage(NO_AUTH_CODE, ex.getUserName())).build();
+        ErrorDTO error = ErrorDTO.builder().code(INVALID_REQUEST_PARAM_CODE).message(messageCreator.getMessage(NO_AUTH_CODE, ex.getUserName())).build();
         // Http status: 400
         return ResponseEntity.badRequest().body(error);
     }
@@ -140,7 +139,7 @@ public class ExceptionTranslatorAdvice {
         } catch (JsonProcessingException e) {
             log.error("Failed to serialize to json string!", e);
         }
-        ErrorDTO error = ErrorDTO.builder().code(INVALID_REQUEST_PARAM_CODE).message(getMessage(DUPLICATED_DATA_CODE, jsonString)).build();
+        ErrorDTO error = ErrorDTO.builder().code(INVALID_REQUEST_PARAM_CODE).message(messageCreator.getMessage(DUPLICATED_DATA_CODE, jsonString)).build();
         return ResponseEntity.badRequest().body(error);
     }
 
@@ -148,7 +147,7 @@ public class ExceptionTranslatorAdvice {
     @ResponseBody
     public ResponseEntity<ErrorDTO> processAccessDeniedException(AccessDeniedException ex) {
         log.warn("Access denied: ", ex);
-        ErrorDTO error = ErrorDTO.builder().code(INVALID_REQUEST_PARAM_CODE).message(getMessage(ACCESS_DENIED_CODE)).build();
+        ErrorDTO error = ErrorDTO.builder().code(INVALID_REQUEST_PARAM_CODE).message(messageCreator.getMessage(ACCESS_DENIED_CODE)).build();
         // Http status: 403
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
@@ -157,7 +156,7 @@ public class ExceptionTranslatorAdvice {
     @ResponseBody
     public ResponseEntity<ErrorDTO> processNoDataFoundException(NoDataFoundException ex) {
         log.warn("No data found: ", ex);
-        ErrorDTO error = ErrorDTO.builder().code(INVALID_REQUEST_PARAM_CODE).message(getMessage(NO_DATA_FOUND_CODE, ex.getId())).build();
+        ErrorDTO error = ErrorDTO.builder().code(INVALID_REQUEST_PARAM_CODE).message(messageCreator.getMessage(NO_DATA_FOUND_CODE, ex.getId())).build();
         // Http status: 404
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
@@ -174,7 +173,7 @@ public class ExceptionTranslatorAdvice {
     @ResponseBody
     public ResponseEntity<ErrorDTO> processConcurrencyException(ConcurrencyFailureException ex) {
         log.warn("Found concurrency exception: ", ex);
-        ErrorDTO error = ErrorDTO.builder().code(SYS_ERROR_CODE).message(getMessage(CONCURRENCY_EXCEPTION_CODE)).build();
+        ErrorDTO error = ErrorDTO.builder().code(SYS_ERROR_CODE).message(messageCreator.getMessage(CONCURRENCY_EXCEPTION_CODE)).build();
         // Http status: 409
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
@@ -183,7 +182,7 @@ public class ExceptionTranslatorAdvice {
     @ResponseBody
     public ResponseEntity<ErrorDTO> processException(Throwable throwable) {
         log.warn("Found exception: ", throwable);
-        ErrorDTO error = ErrorDTO.builder().code(SYS_ERROR_CODE).message(getMessage(SYS_EXCEPTION_CODE)).build();
+        ErrorDTO error = ErrorDTO.builder().code(SYS_ERROR_CODE).message(messageCreator.getMessage(SYS_EXCEPTION_CODE)).build();
         // Http status: 500
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
@@ -194,7 +193,7 @@ public class ExceptionTranslatorAdvice {
             String defaultMessage = fieldError.getDefaultMessage();
             if (StringUtils.isEmpty(defaultMessage)
                     && fieldError.getCodes() != null) {
-                defaultMessage = getMessage(fieldError.getCodes()[0], fieldError.getArguments());
+                defaultMessage = messageCreator.getMessage(fieldError.getCodes()[0], fieldError.getArguments());
             }
             ErrorDTO.ErrorField errorField = ErrorDTO.ErrorField.builder()
                     .field(fieldError.getField())
@@ -205,12 +204,8 @@ public class ExceptionTranslatorAdvice {
         }
         return ErrorDTO.builder()
                 .code(INVALID_REQUEST_PARAM_CODE)
-                .message(getMessage(INVALID_REQUEST_PARAM_CODE))
+                .message(messageCreator.getMessage(INVALID_REQUEST_PARAM_CODE))
                 .errorFields(errorFields)
                 .build();
-    }
-
-    private String getMessage(String code, Object... arguments) {
-        return messageSource.getMessage(code, arguments, ApplicationConstants.SYSTEM_LOCALE);
     }
 }
