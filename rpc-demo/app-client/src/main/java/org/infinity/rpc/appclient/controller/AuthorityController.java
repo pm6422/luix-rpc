@@ -6,7 +6,7 @@ import org.infinity.app.common.domain.Authority;
 import org.infinity.app.common.dto.AuthorityDTO;
 import org.infinity.app.common.service.AuthorityService;
 import org.infinity.rpc.appclient.component.HttpHeaderCreator;
-import org.infinity.rpc.appclient.exception.NoDataException;
+import org.infinity.rpc.appclient.exception.NoDataFoundException;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,7 +56,7 @@ public class AuthorityController {
     @GetMapping("/api/authority/authorities/{name}")
     public ResponseEntity<AuthorityDTO> findById(
             @ApiParam(value = "权限名称", required = true) @PathVariable String name) {
-        Authority authority = authorityService.findById(name).orElseThrow(() -> new NoDataException(name));
+        Authority authority = authorityService.findById(name).orElseThrow(() -> new NoDataFoundException(name));
         return ResponseEntity.ok(authority.toDTO());
     }
 
@@ -67,7 +67,7 @@ public class AuthorityController {
     public ResponseEntity<Void> update(
             @ApiParam(value = "新的权限", required = true) @Valid @RequestBody AuthorityDTO dto) {
         log.debug("REST request to update authority: {}", dto);
-        authorityService.findById(dto.getName()).orElseThrow(() -> new NoDataException(dto.getName()));
+        authorityService.findById(dto.getName()).orElseThrow(() -> new NoDataFoundException(dto.getName()));
         authorityService.save(Authority.of(dto));
         return ResponseEntity.ok()
                 .headers(httpHeaderCreator.createSuccessHeader("notification.authority.updated", dto.getName()))
@@ -80,7 +80,7 @@ public class AuthorityController {
     @DeleteMapping("/api/authority/authorities/{name}")
     public ResponseEntity<Void> delete(@ApiParam(value = "权限名称", required = true) @PathVariable String name) {
         log.debug("REST request to delete authority: {}", name);
-        authorityService.findById(name).orElseThrow(() -> new NoDataException(name));
+        authorityService.findById(name).orElseThrow(() -> new NoDataFoundException(name));
         authorityService.deleteById(name);
         return ResponseEntity.ok()
                 .headers(httpHeaderCreator.createSuccessHeader("notification.authority.deleted", name)).build();

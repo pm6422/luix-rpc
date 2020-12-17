@@ -1,11 +1,13 @@
 package org.infinity.rpc.appserver.controller;
 
+import com.google.common.collect.ImmutableMap;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.app.common.domain.Authority;
 import org.infinity.app.common.dto.AuthorityDTO;
 import org.infinity.rpc.appserver.component.HttpHeaderCreator;
-import org.infinity.rpc.appserver.exception.NoDataException;
+import org.infinity.rpc.appserver.exception.DuplicationException;
+import org.infinity.rpc.appserver.exception.NoDataFoundException;
 import org.infinity.rpc.appserver.repository.AuthorityRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,9 +46,12 @@ public class AuthorityController {
     public ResponseEntity<Void> create(
             @ApiParam(value = "权限", required = true) @Valid @RequestBody AuthorityDTO dto) {
         log.debug("REST request to create authority: {}", dto);
+        authorityRepository.findById(dto.getName()).ifPresent(app -> {
+            throw new DuplicationException(ImmutableMap.of("name", dto.getName()));
+        });
         authorityRepository.insert(Authority.of(dto));
         return ResponseEntity.status(HttpStatus.CREATED)
-                .headers(httpHeaderCreator.createSuccessHeader("notification.authority.created", dto.getName()))
+                .headers(httpHeaderCreator.createSuccessHeader("SM1001", dto.getName()))
                 .build();
     }
 
@@ -67,7 +72,7 @@ public class AuthorityController {
     @GetMapping("/api/authority/authorities/{name}")
     public ResponseEntity<AuthorityDTO> findById(
             @ApiParam(value = "权限名称", required = true) @PathVariable String name) {
-        Authority authority = authorityRepository.findById(name).orElseThrow(() -> new NoDataException(name));
+        Authority authority = authorityRepository.findById(name).orElseThrow(() -> new NoDataFoundException(name));
         return ResponseEntity.ok(authority.toDTO());
     }
 
@@ -78,10 +83,10 @@ public class AuthorityController {
     public ResponseEntity<Void> update(
             @ApiParam(value = "新的权限", required = true) @Valid @RequestBody AuthorityDTO dto) {
         log.debug("REST request to update authority: {}", dto);
-        authorityRepository.findById(dto.getName()).orElseThrow(() -> new NoDataException(dto.getName()));
+        authorityRepository.findById(dto.getName()).orElseThrow(() -> new NoDataFoundException(dto.getName()));
         authorityRepository.save(Authority.of(dto));
         return ResponseEntity.ok()
-                .headers(httpHeaderCreator.createSuccessHeader("notification.authority.updated", dto.getName()))
+                .headers(httpHeaderCreator.createSuccessHeader("SM1002", dto.getName()))
                 .build();
     }
 
@@ -91,9 +96,9 @@ public class AuthorityController {
     @DeleteMapping("/api/authority/authorities/{name}")
     public ResponseEntity<Void> delete(@ApiParam(value = "权限名称", required = true) @PathVariable String name) {
         log.debug("REST request to delete authority: {}", name);
-        authorityRepository.findById(name).orElseThrow(() -> new NoDataException(name));
+        authorityRepository.findById(name).orElseThrow(() -> new NoDataFoundException(name));
         authorityRepository.deleteById(name);
         return ResponseEntity.ok()
-                .headers(httpHeaderCreator.createSuccessHeader("notification.authority.deleted", name)).build();
+                .headers(httpHeaderCreator.createSuccessHeader("SM1003", name)).build();
     }
 }
