@@ -6,7 +6,7 @@ import org.infinity.app.common.domain.App;
 import org.infinity.app.common.dto.AppDTO;
 import org.infinity.app.common.service.AppService;
 import org.infinity.rpc.appclient.component.HttpHeaderCreator;
-import org.infinity.rpc.appclient.exception.NoDataException;
+import org.infinity.rpc.appclient.exception.NoDataFoundException;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +47,7 @@ public class AppController {
         log.debug("REST request to create app: {}", dto);
         appService.insert(dto.getName(), dto.getEnabled(), dto.getAuthorities());
         return ResponseEntity.status(HttpStatus.CREATED)
-                .headers(httpHeaderCreator.createSuccessHeader("notification.app.created", dto.getName())).build();
+                .headers(httpHeaderCreator.createSuccessHeader("SM1001", dto.getName())).build();
     }
 
     @ApiOperation("分页检索应用列表")
@@ -65,7 +65,7 @@ public class AppController {
             @ApiResponse(code = SC_BAD_REQUEST, message = "应用不存在")})
     @GetMapping("/api/app/apps/{name}")
     public ResponseEntity<AppDTO> findById(@ApiParam(value = "应用名称", required = true) @PathVariable String name) {
-        App app = appService.findById(name).orElseThrow(() -> new NoDataException(name));
+        App app = appService.findById(name).orElseThrow(() -> new NoDataFoundException(name));
         return ResponseEntity.ok(new AppDTO(name, app.getEnabled()));
     }
 
@@ -75,10 +75,10 @@ public class AppController {
     @PutMapping("/api/app/apps")
     public ResponseEntity<Void> update(@ApiParam(value = "新的应用", required = true) @Valid @RequestBody AppDTO dto) {
         log.debug("REST request to update app: {}", dto);
-        appService.findById(dto.getName()).orElseThrow(() -> new NoDataException(dto.getName()));
+        appService.findById(dto.getName()).orElseThrow(() -> new NoDataFoundException(dto.getName()));
         appService.update(dto.getName(), dto.getEnabled(), dto.getAuthorities());
         return ResponseEntity.ok()
-                .headers(httpHeaderCreator.createSuccessHeader("notification.app.updated", dto.getName())).build();
+                .headers(httpHeaderCreator.createSuccessHeader("SM1002", dto.getName())).build();
     }
 
     @ApiOperation(value = "根据名称删除应用", notes = "数据有可能被其他数据所引用，删除之后可能出现一些问题")
@@ -87,9 +87,9 @@ public class AppController {
     @DeleteMapping("/api/app/apps/{name}")
     public ResponseEntity<Void> delete(@ApiParam(value = "应用名称", required = true) @PathVariable String name) {
         log.debug("REST request to delete app: {}", name);
-        appService.findById(name).orElseThrow(() -> new NoDataException(name));
+        appService.findById(name).orElseThrow(() -> new NoDataFoundException(name));
         appService.deleteById(name);
         return ResponseEntity.ok()
-                .headers(httpHeaderCreator.createSuccessHeader("notification.app.deleted", name)).build();
+                .headers(httpHeaderCreator.createSuccessHeader("SM1003", name)).build();
     }
 }
