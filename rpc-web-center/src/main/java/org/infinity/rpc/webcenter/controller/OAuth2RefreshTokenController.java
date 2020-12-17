@@ -6,7 +6,7 @@ import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.domain.MongoOAuth2RefreshToken;
 import org.infinity.rpc.webcenter.dto.MongoOAuth2RefreshTokenDTO;
-import org.infinity.rpc.webcenter.exception.NoDataException;
+import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.OAuth2RefreshTokenRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -69,7 +69,7 @@ public class OAuth2RefreshTokenController {
     @Secured({Authority.ADMIN})
     public ResponseEntity<MongoOAuth2RefreshTokenDTO> findById(
             @ApiParam(value = "刷新令牌ID", required = true) @PathVariable String id) {
-        MongoOAuth2RefreshToken entity = oAuth2RefreshTokenRepository.findById(id).orElseThrow(() -> new NoDataException(id));
+        MongoOAuth2RefreshToken entity = oAuth2RefreshTokenRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         return ResponseEntity.ok(entity.toDTO());
     }
 
@@ -80,10 +80,10 @@ public class OAuth2RefreshTokenController {
     @Secured(Authority.ADMIN)
     public ResponseEntity<Void> delete(@ApiParam(value = "刷新令牌ID", required = true) @PathVariable String id) {
         log.debug("REST request to delete oauth2 access token: {}", id);
-        oAuth2RefreshTokenRepository.findById(id).orElseThrow(() -> new NoDataException(id));
+        oAuth2RefreshTokenRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         oAuth2RefreshTokenRepository.deleteById(id);
         return ResponseEntity.ok()
-                .headers(httpHeaderCreator.createSuccessHeader("notification.oauth2.refresh.token.deleted", id))
+                .headers(httpHeaderCreator.createSuccessHeader("SM1003", id))
                 .build();
     }
 }

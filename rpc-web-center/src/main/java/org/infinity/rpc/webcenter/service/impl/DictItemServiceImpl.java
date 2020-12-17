@@ -1,7 +1,7 @@
 package org.infinity.rpc.webcenter.service.impl;
 
 import org.infinity.rpc.webcenter.domain.DictItem;
-import org.infinity.rpc.webcenter.exception.NoDataException;
+import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.DictItemRepository;
 import org.infinity.rpc.webcenter.service.DictItemService;
 import org.infinity.rpc.webcenter.service.DictService;
@@ -38,7 +38,7 @@ public class DictItemServiceImpl implements DictItemService {
     public void update(String id, String dictCode, String dictItemCode, String dictItemName, String remark,
                        Boolean enabled) {
         Map<String, String> findDictCodeDictNameMap = dictService.findDictCodeDictNameMap();
-        DictItem existingDictItem = dictItemRepository.findById(id).orElseThrow(() -> new NoDataException(id));
+        DictItem existingDictItem = dictItemRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         existingDictItem.setDictCode(dictCode);
         existingDictItem.setDictName(findDictCodeDictNameMap.get(dictCode));
         existingDictItem.setDictItemCode(dictItemCode);

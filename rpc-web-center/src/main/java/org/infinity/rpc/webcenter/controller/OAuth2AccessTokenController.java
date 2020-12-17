@@ -6,7 +6,7 @@ import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.domain.MongoOAuth2AccessToken;
 import org.infinity.rpc.webcenter.dto.MongoOAuth2AccessTokenDTO;
-import org.infinity.rpc.webcenter.exception.NoDataException;
+import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.OAuth2AccessTokenRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -25,7 +25,7 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
-@Api(tags = "访问令牌信息")
+@Api(tags = "访问令牌")
 @Slf4j
 public class OAuth2AccessTokenController {
 
@@ -68,7 +68,7 @@ public class OAuth2AccessTokenController {
     public ResponseEntity<MongoOAuth2AccessTokenDTO> findById(
             @ApiParam(value = "访问令牌ID", required = true) @PathVariable String id) {
         MongoOAuth2AccessToken entity = oAuth2AccessTokenRepository.findById(id)
-                .orElseThrow(() -> new NoDataException(id));
+                .orElseThrow(() -> new NoDataFoundException(id));
         return ResponseEntity.ok(entity.toDTO());
     }
 
@@ -79,9 +79,9 @@ public class OAuth2AccessTokenController {
     @Secured(Authority.ADMIN)
     public ResponseEntity<Void> delete(@ApiParam(value = "访问令牌ID", required = true) @PathVariable String id) {
         log.debug("REST request to delete oauth2 access token: {}", id);
-        oAuth2AccessTokenRepository.findById(id).orElseThrow(() -> new NoDataException(id));
+        oAuth2AccessTokenRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         oAuth2AccessTokenRepository.deleteById(id);
         return ResponseEntity.ok()
-                .headers(httpHeaderCreator.createSuccessHeader("notification.oauth2.access.token.deleted", id)).build();
+                .headers(httpHeaderCreator.createSuccessHeader("SM1003", id)).build();
     }
 }

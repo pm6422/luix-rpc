@@ -6,7 +6,7 @@ import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.domain.MongoOAuth2AuthorizationCode;
 import org.infinity.rpc.webcenter.dto.MongoOAuth2AuthorizationCodeDTO;
-import org.infinity.rpc.webcenter.exception.NoDataException;
+import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.OAuth2AuthorizationCodeRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -25,7 +25,7 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
-@Api(tags = "登录授权码信息")
+@Api(tags = "登录授权码")
 @Slf4j
 public class OAuth2AuthorizationCodeController {
 
@@ -73,7 +73,7 @@ public class OAuth2AuthorizationCodeController {
     @Secured({Authority.ADMIN})
     public ResponseEntity<MongoOAuth2AuthorizationCodeDTO> findById(
             @ApiParam(value = "授权码ID", required = true) @PathVariable String id) {
-        MongoOAuth2AuthorizationCode entity = oAuth2AuthorizationCodeRepository.findById(id).orElseThrow(() -> new NoDataException(id));
+        MongoOAuth2AuthorizationCode entity = oAuth2AuthorizationCodeRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         return ResponseEntity.ok(entity.toDTO());
     }
 
@@ -84,10 +84,10 @@ public class OAuth2AuthorizationCodeController {
     @Secured(Authority.ADMIN)
     public ResponseEntity<Void> delete(@ApiParam(value = "授权码ID", required = true) @PathVariable String id) {
         log.debug("REST request to delete oauth2 authorization code: {}", id);
-        oAuth2AuthorizationCodeRepository.findById(id).orElseThrow(() -> new NoDataException(id));
+        oAuth2AuthorizationCodeRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         oAuth2AuthorizationCodeRepository.deleteById(id);
         return ResponseEntity.ok()
-                .headers(httpHeaderCreator.createSuccessHeader("notification.oauth2.authorization.code.deleted", id))
+                .headers(httpHeaderCreator.createSuccessHeader("SM1003", id))
                 .build();
     }
 }

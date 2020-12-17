@@ -3,7 +3,7 @@ package org.infinity.rpc.webcenter.service.impl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.webcenter.domain.AdminMenu;
 import org.infinity.rpc.webcenter.dto.AdminMenuTreeDTO;
-import org.infinity.rpc.webcenter.exception.NoDataException;
+import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.AdminMenuRepository;
 import org.infinity.rpc.webcenter.service.AdminMenuService;
 import org.infinity.rpc.webcenter.service.AuthorityAdminMenuService;
@@ -140,7 +140,7 @@ public class AdminMenuServiceImpl implements AdminMenuService {
     }
 
     private void adjustSeq(String id, int moveIndex, BiFunction<LinkedList<AdminMenu>, AdminMenu, Boolean> func) {
-        AdminMenu current = adminMenuRepository.findById(id).orElseThrow(() -> new NoDataException(id));
+        AdminMenu current = adminMenuRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         List<AdminMenu> existingList = adminMenuRepository.findByAppNameAndLevelOrderBySequenceAsc(current.getAppName(), current.getLevel());
         if (CollectionUtils.isNotEmpty(existingList) && existingList.size() == 1) {
             return;

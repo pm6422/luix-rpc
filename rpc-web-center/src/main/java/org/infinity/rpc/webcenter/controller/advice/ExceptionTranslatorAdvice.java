@@ -14,6 +14,7 @@ import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.ConstraintViolationException;
-import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,7 +143,7 @@ public class ExceptionTranslatorAdvice {
         return ResponseEntity.badRequest().body(error);
     }
 
-    @ExceptionHandler(java.nio.file.AccessDeniedException.class)
+    @ExceptionHandler(AccessDeniedException.class)
     @ResponseBody
     public ResponseEntity<ErrorDTO> processAccessDeniedException(AccessDeniedException ex) {
         log.warn("Access denied: ", ex);

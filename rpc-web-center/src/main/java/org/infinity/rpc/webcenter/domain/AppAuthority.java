@@ -1,7 +1,6 @@
 package org.infinity.rpc.webcenter.domain;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.infinity.rpc.webcenter.dto.AppAuthorityDTO;
 import org.springframework.beans.BeanUtils;

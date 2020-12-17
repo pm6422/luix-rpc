@@ -7,7 +7,7 @@ import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.domain.MongoOAuth2Approval;
 import org.infinity.rpc.webcenter.dto.MongoOAuth2ApprovalDTO;
-import org.infinity.rpc.webcenter.exception.NoDataException;
+import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.OAuth2ApprovalRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -29,7 +29,7 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
-@Api(tags = "登录授权信息")
+@Api(tags = "登录授权")
 @Slf4j
 public class OAuth2ApprovalController {
 
@@ -84,7 +84,7 @@ public class OAuth2ApprovalController {
     @Secured({Authority.ADMIN})
     public ResponseEntity<MongoOAuth2ApprovalDTO> findById(
             @ApiParam(value = "授权ID", required = true) @PathVariable String id) {
-        MongoOAuth2Approval entity = oAuth2ApprovalRepository.findById(id).orElseThrow(() -> new NoDataException(id));
+        MongoOAuth2Approval entity = oAuth2ApprovalRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         return ResponseEntity.ok(entity.toDTO());
     }
 
@@ -95,9 +95,9 @@ public class OAuth2ApprovalController {
     @Secured(Authority.ADMIN)
     public ResponseEntity<Void> delete(@ApiParam(value = "授权ID", required = true) @PathVariable String id) {
         log.debug("REST request to delete oauth2 approval: {}", id);
-        oAuth2ApprovalRepository.findById(id).orElseThrow(() -> new NoDataException(id));
+        oAuth2ApprovalRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         oAuth2ApprovalRepository.deleteById(id);
         return ResponseEntity.ok()
-                .headers(httpHeaderCreator.createSuccessHeader("notification.oauth2.approval.deleted", id)).build();
+                .headers(httpHeaderCreator.createSuccessHeader("SM1003", id)).build();
     }
 }

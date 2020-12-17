@@ -1,8 +1,10 @@
 package org.infinity.rpc.appserver.service.impl;
 
+import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.app.common.domain.App;
 import org.infinity.app.common.service.AppService;
+import org.infinity.rpc.appserver.exception.DuplicationException;
 import org.infinity.rpc.appserver.repository.AppRepository;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.springframework.data.domain.Page;
@@ -33,6 +35,9 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public App insert(String name, Boolean enabled, Set<String> authorityNames) {
+        appRepository.findById(name).ifPresent(app -> {
+            throw new DuplicationException(ImmutableMap.of("name", name));
+        });
         App newApp = new App(name, enabled);
         appRepository.save(newApp);
         log.debug("Created Information for app: {}", newApp);

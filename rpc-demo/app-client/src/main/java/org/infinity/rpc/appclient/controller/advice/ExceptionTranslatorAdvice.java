@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.ConstraintViolationException;
-import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -141,15 +140,6 @@ public class ExceptionTranslatorAdvice {
         }
         ErrorDTO error = ErrorDTO.builder().code(INVALID_REQUEST_PARAM_CODE).message(messageCreator.getMessage(DUPLICATED_DATA_CODE, jsonString)).build();
         return ResponseEntity.badRequest().body(error);
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    @ResponseBody
-    public ResponseEntity<ErrorDTO> processAccessDeniedException(AccessDeniedException ex) {
-        log.warn("Access denied: ", ex);
-        ErrorDTO error = ErrorDTO.builder().code(INVALID_REQUEST_PARAM_CODE).message(messageCreator.getMessage(ACCESS_DENIED_CODE)).build();
-        // Http status: 403
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
 
     @ExceptionHandler(NoDataFoundException.class)
