@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,7 +55,7 @@ public class AppController {
     @ApiOperation("分页检索应用列表")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("/api/app/apps")
-    public ResponseEntity<List<AppDTO>> find(Pageable pageable) throws URISyntaxException {
+    public ResponseEntity<List<AppDTO>> find(Pageable pageable) {
         Page<App> apps = appRepository.findAll(pageable);
         List<AppDTO> DTOs = apps.getContent().stream().map(App::toDTO).collect(Collectors.toList());
         HttpHeaders headers = generatePageHeaders(apps);

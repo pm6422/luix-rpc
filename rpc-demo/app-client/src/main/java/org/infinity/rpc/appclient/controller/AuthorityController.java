@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +41,7 @@ public class AuthorityController {
     @ApiOperation("分页检索权限列表")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("/api/authority/authorities")
-    public ResponseEntity<List<AuthorityDTO>> find(Pageable pageable) throws URISyntaxException {
+    public ResponseEntity<List<AuthorityDTO>> find(Pageable pageable) {
         Page<Authority> authorities = authorityService.findAll(pageable);
         List<AuthorityDTO> DTOs = authorities.getContent().stream().map(Authority::toDTO)
                 .collect(Collectors.toList());
