@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.AdminMenu;
 import org.infinity.rpc.webcenter.domain.Authority;
-import org.infinity.rpc.webcenter.dto.AdminMenuDTO;
 import org.infinity.rpc.webcenter.exception.DuplicationException;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.AdminMenuRepository;
@@ -28,7 +27,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.*;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
@@ -58,15 +56,15 @@ public class AdminMenuController {
     @PostMapping("/api/admin-menu/menus")
     @Secured({Authority.ADMIN})
     public ResponseEntity<Void> create(
-            @ApiParam(value = "菜单", required = true) @Valid @RequestBody AdminMenuDTO dto) {
-        log.debug("REST request to create admin menu: {}", dto);
-        adminMenuRepository.findOneByAppNameAndLevelAndSequence(dto.getAppName(), dto.getLevel(), dto.getSequence())
+            @ApiParam(value = "菜单", required = true) @Valid @RequestBody AdminMenu entity) {
+        log.debug("REST request to create admin menu: {}", entity);
+        adminMenuRepository.findOneByAppNameAndLevelAndSequence(entity.getAppName(), entity.getLevel(), entity.getSequence())
                 .ifPresent((existingEntity) -> {
-                    throw new DuplicationException(ImmutableMap.of("appName", dto.getAppName(), "level", dto.getLevel(), "sequence", dto.getSequence()));
+                    throw new DuplicationException(ImmutableMap.of("appName", entity.getAppName(), "level", entity.getLevel(), "sequence", entity.getSequence()));
                 });
-        adminMenuRepository.save(AdminMenu.of(dto));
+        adminMenuRepository.insert(entity);
         return ResponseEntity.status(HttpStatus.CREATED).headers(
-                httpHeaderCreator.createSuccessHeader("SM1001", dto.getName()))
+                httpHeaderCreator.createSuccessHeader("SM1001", entity.getName()))
                 .build();
     }
 
@@ -74,12 +72,11 @@ public class AdminMenuController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("/api/admin-menu/menus")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<List<AdminMenuDTO>> find(Pageable pageable,
-                                                   @ApiParam(value = "应用名称") @RequestParam(value = "appName", required = false) String appName) {
+    public ResponseEntity<List<AdminMenu>> find(Pageable pageable,
+                                                @ApiParam(value = "应用名称") @RequestParam(value = "appName", required = false) String appName) {
         Page<AdminMenu> adminMenus = adminMenuService.find(pageable, appName);
-        List<AdminMenuDTO> DTOs = adminMenus.getContent().stream().map(AdminMenu::toDTO).collect(Collectors.toList());
         HttpHeaders headers = generatePageHeaders(adminMenus);
-        return ResponseEntity.ok().headers(headers).body(DTOs);
+        return ResponseEntity.ok().headers(headers).body(adminMenus.getContent());
     }
 
     @ApiOperation("根据ID检索菜单")
@@ -87,20 +84,19 @@ public class AdminMenuController {
             @ApiResponse(code = SC_BAD_REQUEST, message = "菜单不存在")})
     @GetMapping("/api/admin-menu/menus/{id}")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<AdminMenuDTO> findById(@ApiParam(value = "菜单ID", required = true) @PathVariable String id) {
-        AdminMenu entity = adminMenuRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
-        return ResponseEntity.ok(entity.toDTO());
+    public ResponseEntity<AdminMenu> findById(@ApiParam(value = "菜单ID", required = true) @PathVariable String id) {
+        AdminMenu domain = adminMenuRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        return ResponseEntity.ok(domain);
     }
 
     @ApiOperation("检索父类菜单")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("/api/admin-menu/parent-menus/{appName}/{level:[0-9]+}")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<List<AdminMenuDTO>> findAllParentMenu(
+    public ResponseEntity<List<AdminMenu>> findAllParentMenu(
             @ApiParam(value = "应用名称", required = true) @PathVariable String appName,
             @ApiParam(value = "菜单级别", required = true) @PathVariable Integer level) {
-        List<AdminMenuDTO> all = adminMenuRepository.findByAppNameAndLevel(appName, level).stream()
-                .map(AdminMenu::toDTO).collect(Collectors.toList());
+        List<AdminMenu> all = adminMenuRepository.findByAppNameAndLevel(appName, level);
         return ResponseEntity.ok(all);
     }
 
@@ -110,13 +106,11 @@ public class AdminMenuController {
     @PutMapping("/api/admin-menu/menus")
     @Secured({Authority.ADMIN})
     public ResponseEntity<Void> update(
-            @ApiParam(value = "新的菜单", required = true) @Valid @RequestBody AdminMenuDTO dto) {
-        log.debug("REST request to update admin menu: {}", dto);
-        adminMenuRepository.findById(dto.getId()).orElseThrow(() -> new NoDataFoundException(dto.getId()));
-        adminMenuRepository.save(AdminMenu.of(dto));
-        return ResponseEntity.ok().headers(
-                httpHeaderCreator.createSuccessHeader("SM1002", dto.getName()))
-                .build();
+            @ApiParam(value = "新的菜单", required = true) @Valid @RequestBody AdminMenu domain) {
+        log.debug("REST request to update admin menu: {}", domain);
+        adminMenuRepository.findById(domain.getId()).orElseThrow(() -> new NoDataFoundException(domain.getId()));
+        adminMenuRepository.save(domain);
+        return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getName())).build();
     }
 
     @ApiOperation("根据ID删除管理菜单")
@@ -128,27 +122,7 @@ public class AdminMenuController {
         log.debug("REST request to delete admin menu: {}", id);
         AdminMenu adminMenu = adminMenuRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         adminMenuRepository.deleteById(id);
-        return ResponseEntity.ok().headers(
-                httpHeaderCreator.createSuccessHeader("SM1003", adminMenu.getName()))
-                .build();
-    }
-
-    @ApiOperation(value = "导入管理菜单", notes = "输入文件格式：每行先后appName,name,label,level,url,sequence数列，列之间使用tab分隔，行之间使用回车换行")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功导入")})
-    @PostMapping(value = "/api/admin-menu/menus/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Secured({Authority.ADMIN})
-    public void importData(@ApiParam(value = "文件", required = true) @RequestPart MultipartFile file) throws IOException {
-        List<String> lines = IOUtils.readLines(file.getInputStream(), StandardCharsets.UTF_8);
-        List<AdminMenu> list = new ArrayList<>();
-        for (String line : lines) {
-            if (StringUtils.isNotEmpty(line)) {
-                String[] lineParts = line.split("\t");
-                AdminMenu entity = new AdminMenu(lineParts[0], lineParts[1], lineParts[2],
-                        Integer.parseInt(lineParts[3]), lineParts[4], Integer.parseInt(lineParts[5]), null);
-                list.add(entity);
-            }
-        }
-        adminMenuRepository.insert(list);
+        return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", adminMenu.getName())).build();
     }
 
     @ApiOperation("根据ID提升管理菜单顺序")
@@ -179,5 +153,23 @@ public class AdminMenuController {
             menu.setId(null);
         });
         adminMenuRepository.saveAll(sourceMenus);
+    }
+
+    @ApiOperation(value = "导入管理菜单", notes = "输入文件格式：每行先后appName,name,label,level,url,sequence数列，列之间使用tab分隔，行之间使用回车换行")
+    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功导入")})
+    @PostMapping(value = "/api/admin-menu/menus/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({Authority.ADMIN})
+    public void importData(@ApiParam(value = "文件", required = true) @RequestPart MultipartFile file) throws IOException {
+        List<String> lines = IOUtils.readLines(file.getInputStream(), StandardCharsets.UTF_8);
+        List<AdminMenu> list = new ArrayList<>();
+        for (String line : lines) {
+            if (StringUtils.isNotEmpty(line)) {
+                String[] lineParts = line.split("\t");
+                AdminMenu entity = new AdminMenu(lineParts[0], lineParts[1], lineParts[2],
+                        Integer.parseInt(lineParts[3]), lineParts[4], Integer.parseInt(lineParts[5]), null);
+                list.add(entity);
+            }
+        }
+        adminMenuRepository.insert(list);
     }
 }

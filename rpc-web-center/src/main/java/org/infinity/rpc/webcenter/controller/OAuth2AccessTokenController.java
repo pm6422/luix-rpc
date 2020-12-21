@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.domain.MongoOAuth2AccessToken;
-import org.infinity.rpc.webcenter.dto.MongoOAuth2AccessTokenDTO;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.OAuth2AccessTokenRepository;
 import org.springframework.data.domain.Example;
@@ -16,9 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URISyntaxException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -42,22 +39,19 @@ public class OAuth2AccessTokenController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("/api/oauth2-access-token/tokens")
     @Secured(Authority.ADMIN)
-    public ResponseEntity<List<MongoOAuth2AccessTokenDTO>> find(Pageable pageable,
-                                                                @ApiParam(value = "访问令牌ID") @RequestParam(value = "tokenId", required = false) String tokenId,
-                                                                @ApiParam(value = "客户端ID") @RequestParam(value = "clientId", required = false) String clientId,
-                                                                @ApiParam(value = "用户名") @RequestParam(value = "userName", required = false) String userName,
-                                                                @ApiParam(value = "刷新令牌") @RequestParam(value = "refreshToken", required = false) String refreshToken)
-            throws URISyntaxException {
+    public ResponseEntity<List<MongoOAuth2AccessToken>> find(Pageable pageable,
+                                                             @ApiParam(value = "访问令牌ID") @RequestParam(value = "tokenId", required = false) String tokenId,
+                                                             @ApiParam(value = "客户端ID") @RequestParam(value = "clientId", required = false) String clientId,
+                                                             @ApiParam(value = "用户名") @RequestParam(value = "userName", required = false) String userName,
+                                                             @ApiParam(value = "刷新令牌") @RequestParam(value = "refreshToken", required = false) String refreshToken) {
         MongoOAuth2AccessToken probe = new MongoOAuth2AccessToken();
         probe.setId(tokenId);
         probe.setClientId(clientId);
         probe.setUserName(userName);
         probe.setRefreshToken(refreshToken);
         Page<MongoOAuth2AccessToken> tokens = oAuth2AccessTokenRepository.findAll(Example.of(probe), pageable);
-        List<MongoOAuth2AccessTokenDTO> DTOs = tokens.getContent().stream().map(MongoOAuth2AccessToken::toDTO)
-                .collect(Collectors.toList());
         HttpHeaders headers = generatePageHeaders(tokens);
-        return ResponseEntity.ok().headers(headers).body(DTOs);
+        return ResponseEntity.ok().headers(headers).body(tokens.getContent());
     }
 
     @ApiOperation("根据ID检索访问令牌")
@@ -65,11 +59,10 @@ public class OAuth2AccessTokenController {
             @ApiResponse(code = SC_BAD_REQUEST, message = "访问令牌不存在")})
     @GetMapping("/api/oauth2-access-token/tokens/{id}")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<MongoOAuth2AccessTokenDTO> findById(
+    public ResponseEntity<MongoOAuth2AccessToken> findById(
             @ApiParam(value = "访问令牌ID", required = true) @PathVariable String id) {
-        MongoOAuth2AccessToken entity = oAuth2AccessTokenRepository.findById(id)
-                .orElseThrow(() -> new NoDataFoundException(id));
-        return ResponseEntity.ok(entity.toDTO());
+        MongoOAuth2AccessToken domain = oAuth2AccessTokenRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        return ResponseEntity.ok(domain);
     }
 
     @ApiOperation(value = "根据ID删除访问令牌", notes = "数据有可能被其他数据所引用，删除之后可能出现一些问题")

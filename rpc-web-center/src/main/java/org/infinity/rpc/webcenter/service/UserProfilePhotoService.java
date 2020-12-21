@@ -1,10 +1,13 @@
 package org.infinity.rpc.webcenter.service;
 
+import org.infinity.rpc.webcenter.domain.User;
 import org.infinity.rpc.webcenter.domain.UserProfilePhoto;
 
 public interface UserProfilePhotoService {
 
-    UserProfilePhoto insert(String userName, byte[] photoData);
+    void insert(String userId, byte[] photoData);
 
-    void update(String id, String userName, byte[] photoData);
+    void update(UserProfilePhoto photo, byte[] photoData);
+
+    void save(User user, byte[] photoData);
 }

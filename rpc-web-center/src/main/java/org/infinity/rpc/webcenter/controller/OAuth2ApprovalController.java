@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.domain.MongoOAuth2Approval;
-import org.infinity.rpc.webcenter.dto.MongoOAuth2ApprovalDTO;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.OAuth2ApprovalRepository;
 import org.springframework.data.domain.Page;
@@ -20,9 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URISyntaxException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -51,11 +48,10 @@ public class OAuth2ApprovalController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("/api/oauth2-approval/approvals")
     @Secured(Authority.ADMIN)
-    public ResponseEntity<List<MongoOAuth2ApprovalDTO>> find(Pageable pageable,
-                                                             @ApiParam(value = "授权ID") @RequestParam(value = "approvalId", required = false) String approvalId,
-                                                             @ApiParam(value = "客户端ID") @RequestParam(value = "clientId", required = false) String clientId,
-                                                             @ApiParam(value = "用户名") @RequestParam(value = "userName", required = false) String userName)
-            throws URISyntaxException {
+    public ResponseEntity<List<MongoOAuth2Approval>> find(Pageable pageable,
+                                                          @ApiParam(value = "授权ID") @RequestParam(value = "approvalId", required = false) String approvalId,
+                                                          @ApiParam(value = "客户端ID") @RequestParam(value = "clientId", required = false) String clientId,
+                                                          @ApiParam(value = "用户名") @RequestParam(value = "userName", required = false) String userName) {
         Query query = new Query();
         if (StringUtils.isNotEmpty(approvalId)) {
             query.addCriteria(Criteria.where("id").is(approvalId));
@@ -68,13 +64,9 @@ public class OAuth2ApprovalController {
         }
         long totalCount = mongoTemplate.count(query, MongoOAuth2Approval.class);
         query.with(pageable);
-        Page<MongoOAuth2Approval> approvals = new PageImpl<>(
-                mongoTemplate.find(query, MongoOAuth2Approval.class), pageable, totalCount);
-
-        List<MongoOAuth2ApprovalDTO> DTOs = approvals.getContent().stream().map(MongoOAuth2Approval::toDTO)
-                .collect(Collectors.toList());
+        Page<MongoOAuth2Approval> approvals = new PageImpl<>(mongoTemplate.find(query, MongoOAuth2Approval.class), pageable, totalCount);
         HttpHeaders headers = generatePageHeaders(approvals);
-        return ResponseEntity.ok().headers(headers).body(DTOs);
+        return ResponseEntity.ok().headers(headers).body(approvals.getContent());
     }
 
     @ApiOperation("根据ID检索授权")
@@ -82,10 +74,10 @@ public class OAuth2ApprovalController {
             @ApiResponse(code = SC_BAD_REQUEST, message = "授权不存在")})
     @GetMapping("/api/oauth2-approval/approvals/{id}")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<MongoOAuth2ApprovalDTO> findById(
+    public ResponseEntity<MongoOAuth2Approval> findById(
             @ApiParam(value = "授权ID", required = true) @PathVariable String id) {
-        MongoOAuth2Approval entity = oAuth2ApprovalRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
-        return ResponseEntity.ok(entity.toDTO());
+        MongoOAuth2Approval domain = oAuth2ApprovalRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        return ResponseEntity.ok(domain);
     }
 
     @ApiOperation(value = "根据ID删除授权", notes = "数据有可能被其他数据所引用，删除之后可能出现一些问题")

@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
@@ -45,7 +46,7 @@ public class DatabaseInitialSetup {
         // Creates 'user' user and corresponding authorities
         User userRoleUser = new User();
         userRoleUser.setUserName("user");
-        userRoleUser.setFirstName("");
+        userRoleUser.setFirstName("User");
         userRoleUser.setLastName("User");
         userRoleUser.setEmail("user@localhost");
         userRoleUser.setMobileNo("15000899479");
@@ -63,7 +64,7 @@ public class DatabaseInitialSetup {
         // Creates 'admin' user and corresponding authorities
         User adminRoleUser = new User();
         adminRoleUser.setUserName("admin");
-        adminRoleUser.setFirstName("");
+        adminRoleUser.setFirstName("Admin");
         adminRoleUser.setLastName("Admin");
         adminRoleUser.setEmail("admin@localhost");
         adminRoleUser.setMobileNo("15000899477");
@@ -82,7 +83,7 @@ public class DatabaseInitialSetup {
         // Creates 'system' user and corresponding authorities
         User adminRoleSystemUser = new User();
         adminRoleSystemUser.setUserName("system");
-        adminRoleSystemUser.setFirstName("");
+        adminRoleSystemUser.setFirstName("System");
         adminRoleSystemUser.setLastName("System");
         adminRoleSystemUser.setEmail("system@localhost");
         adminRoleSystemUser.setMobileNo("15000899422");
@@ -101,8 +102,8 @@ public class DatabaseInitialSetup {
         // Creates 'louis' user and corresponding authorities
         User developerRoleUser = new User();
         developerRoleUser.setUserName("louis");
-        developerRoleUser.setFirstName("");
-        developerRoleUser.setLastName("🅛🅞🅤🅘🅢");
+        developerRoleUser.setFirstName("Louis");
+        developerRoleUser.setLastName("Liu");
         developerRoleUser.setEmail("louis@localhost");
         developerRoleUser.setMobileNo("15000899488");
         // Raw password: louis
@@ -122,15 +123,15 @@ public class DatabaseInitialSetup {
     @ChangeSet(order = "04", author = "Louis", id = "addAuthorityAdminMenu", runAlways = true)
     public void addAuthorityAdminMenu(MongoTemplate mongoTemplate) {
 
-        AdminMenu serviceDiscovery = new AdminMenu(APP_NAME, "service-discovery", "服务发现", 1, "service-discovery", 000, null);
+        AdminMenu serviceDiscovery = new AdminMenu(APP_NAME, "service-discovery", "服务发现", 1, "service-discovery", 10, null);
         mongoTemplate.save(serviceDiscovery);
 
         AdminMenu serviceAppList = new AdminMenu(APP_NAME, "service-app-list", "应用", 2, "service-discovery.service-app-list",
-                001, serviceDiscovery.getId());
+                11, serviceDiscovery.getId());
         mongoTemplate.save(serviceAppList);
 
         AdminMenu providerList = new AdminMenu(APP_NAME, "provider-list", "服务提供者", 2, "service-discovery.provider-list",
-                002, serviceDiscovery.getId());
+                12, serviceDiscovery.getId());
         mongoTemplate.save(providerList);
 
         AdminMenu userAuthority = new AdminMenu(APP_NAME, "user-authority", "用户权限", 1, "user-authority", 100, null);
@@ -224,12 +225,12 @@ public class DatabaseInitialSetup {
                 new BCryptPasswordEncoder().encode(MongoOAuth2ClientDetails.INTERNAL_RAW_CLIENT_SECRET));
         oAuth2ClientDetails.setScope(Arrays.asList("read", "write"));
         // It will auto approve if autoApproveScopes exactly match the scopes.
-        oAuth2ClientDetails.setAutoApproveScopes(Arrays.asList("read"));
+        oAuth2ClientDetails.setAutoApproveScopes(Collections.singletonList("read"));
         oAuth2ClientDetails.setAuthorizedGrantTypes(
                 Arrays.asList("password", "authorization_code", "refresh_token", "client_credentials"));
         // Note: localhost and 127.0.0.1 must be save twice.
         oAuth2ClientDetails.setRegisteredRedirectUri(
-                new HashSet<String>(Arrays.asList("http://127.0.0.1:8010/login", "http://localhost:8010/login")));
+                new HashSet<>(Arrays.asList("http://127.0.0.1:8010/login", "http://localhost:8010/login")));
         oAuth2ClientDetails.setAccessTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7));
         oAuth2ClientDetails.setRefreshTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7));
         // 这个authority还不知道其作用

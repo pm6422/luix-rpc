@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.webcenter.domain.App;
 import org.infinity.rpc.webcenter.domain.AppAuthority;
+import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.AppAuthorityRepository;
 import org.infinity.rpc.webcenter.repository.AppRepository;
 import org.infinity.rpc.webcenter.service.AppService;
@@ -35,7 +36,7 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public void update(String name, Boolean enabled, Set<String> authorityNames) {
-        appRepository.findById(name).ifPresent(app -> {
+        appRepository.findById(name).map(app -> {
             app.setEnabled(enabled);
             appRepository.save(app);
             log.debug("Updated app: {}", app);
@@ -47,6 +48,7 @@ public class AppServiceImpl implements AppService {
             } else {
                 appAuthorityRepository.deleteByAppName(app.getName());
             }
-        });
+            return app;
+        }).orElseThrow(() -> new NoDataFoundException(name));
     }
 }

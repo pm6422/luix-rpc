@@ -211,7 +211,7 @@ function NavbarController($rootScope, $scope, $translate, $state, Authentication
 
     ProfileService.getProfileInfo().then(function (response) {
         vm.inProduction = response.inProduction;
-        vm.swaggerEnabled = response.swaggerDisabled;
+        vm.swaggerEnabled = response.swaggerEnabled;
     });
 
     vm.logout = logout;
@@ -358,7 +358,7 @@ function RegisterController($state, $timeout, AuthenticationService, RegisterSer
             vm.passwordNotMatch = true;
         } else {
             vm.isSaving = true;
-            RegisterService.save(vm.registerAccount,
+            RegisterService.create(vm.registerAccount,
                 function (account) {
                     vm.isSaving = false;
                     vm.passwordNotMatch = false;
@@ -414,7 +414,7 @@ function ForgotPasswordController($state, $timeout, PasswordResetInitService) {
     function requestReset() {
         vm.isSaving = true;
         vm.success = false;
-        PasswordResetInitService.save(vm.email,
+        PasswordResetInitService.create(vm.email,
             function (response) {
                 vm.isSaving = false;
                 vm.success = true;
@@ -449,7 +449,7 @@ function ResetPasswordController($state, $stateParams, $timeout, PasswordResetFi
         vm.success = false;
         vm.error = false;
         vm.isSaving = true;
-        PasswordResetFinishService.save({key: $stateParams.key, newPassword: vm.password},
+        PasswordResetFinishService.create({key: $stateParams.key, newPassword: vm.password},
             function (response) {
                 vm.success = true;
                 vm.isSaving = false;
@@ -482,7 +482,7 @@ function PasswordController($state, PasswordService, PrincipalService) {
         } else {
             vm.passwordNotMatch = false;
             vm.isSaving = true;
-            PasswordService.update(vm.password,
+            PasswordService.update({'newPassword': vm.password},
                 function (response) {
                     vm.isSaving = false;
                     $state.go('login');
@@ -1208,7 +1208,7 @@ function DictDialogController($state, $stateParams, $uibModalInstance, DictServi
         if (vm.mode == 'edit') {
             DictService.update(vm.entity, onSaveSuccess, onSaveError);
         } else {
-            DictService.save(vm.entity, onSaveSuccess, onSaveError);
+            DictService.create(vm.entity, onSaveSuccess, onSaveError);
         }
     }
 
@@ -1340,7 +1340,7 @@ function DictItemDialogController($state, $stateParams, $uibModalInstance, DictS
         if (vm.mode == 'edit') {
             DictItemService.update(vm.entity, onSaveSuccess, onSaveError);
         } else {
-            DictItemService.save(vm.entity, onSaveSuccess, onSaveError);
+            DictItemService.create(vm.entity, onSaveSuccess, onSaveError);
         }
     }
 
@@ -1606,7 +1606,7 @@ function AuthorityDialogController($state, $stateParams, $uibModalInstance, Auth
         if (vm.mode == 'edit') {
             AuthorityService.update(vm.entity, onSaveSuccess, onSaveError);
         } else {
-            AuthorityService.save(vm.entity, onSaveSuccess, onSaveError);
+            AuthorityService.create(vm.entity, onSaveSuccess, onSaveError);
         }
     }
 
@@ -1764,12 +1764,16 @@ function UserDialogController($state, $stateParams, $uibModalInstance, UserServi
     vm.save = save;
     vm.cancel = cancel;
 
+    if (vm.mode == 'create') {
+        vm.entity.authorities = ["ROLE_USER"];
+    }
+
     function save() {
         vm.isSaving = true;
         if (vm.mode == 'edit') {
             UserService.update(vm.entity, onSaveSuccess, onSaveError);
         } else {
-            UserService.save(vm.entity, onSaveSuccess, onSaveError);
+            UserService.create(vm.entity, onSaveSuccess, onSaveError);
         }
     }
 
@@ -1914,7 +1918,7 @@ function AppDialogController($state, $stateParams, $uibModalInstance, AppService
         if (vm.mode == 'edit') {
             AppService.update(vm.entity, onSaveSuccess, onSaveError);
         } else {
-            AppService.save(vm.entity, onSaveSuccess, onSaveError);
+            AppService.create(vm.entity, onSaveSuccess, onSaveError);
         }
     }
 
@@ -2068,7 +2072,7 @@ function AdminMenuDialogController($state, $stateParams, $uibModalInstance, Admi
         if (vm.mode == 'edit') {
             AdminMenuService.update(vm.entity, onSaveSuccess, onSaveError);
         } else {
-            AdminMenuService.save(vm.entity, onSaveSuccess, onSaveError);
+            AdminMenuService.create(vm.entity, onSaveSuccess, onSaveError);
         }
     }
 
@@ -2285,7 +2289,7 @@ function OAuth2ClientDialogController($scope, $state, $stateParams, $uibModalIns
         if (vm.mode == 'edit') {
             OAuth2ClientService.update(vm.entity, onSaveSuccess, onSaveError);
         } else {
-            OAuth2ClientService.save(vm.entity, onSaveSuccess, onSaveError);
+            OAuth2ClientService.create(vm.entity, onSaveSuccess, onSaveError);
         }
     }
 

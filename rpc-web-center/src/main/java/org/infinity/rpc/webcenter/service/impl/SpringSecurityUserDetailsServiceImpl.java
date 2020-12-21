@@ -1,6 +1,7 @@
 package org.infinity.rpc.webcenter.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.webcenter.config.oauth2.SecurityUser;
 import org.infinity.rpc.webcenter.domain.User;
 import org.infinity.rpc.webcenter.exception.UserDisabledException;
 import org.infinity.rpc.webcenter.exception.UserNotActivatedException;
@@ -27,7 +28,8 @@ public class SpringSecurityUserDetailsServiceImpl implements org.springframework
     private final UserAuthorityRepository userAuthorityRepository;
 
     // Use @Lazy to fix dependencies problems
-    public SpringSecurityUserDetailsServiceImpl(@Lazy UserService userService, UserAuthorityRepository userAuthorityRepository) {
+    public SpringSecurityUserDetailsServiceImpl(@Lazy UserService userService,
+                                                UserAuthorityRepository userAuthorityRepository) {
         this.userService = userService;
         this.userAuthorityRepository = userAuthorityRepository;
     }
@@ -50,7 +52,7 @@ public class SpringSecurityUserDetailsServiceImpl implements org.springframework
         List<GrantedAuthority> grantedAuthorities = userAuthorityRepository.findByUserId(userFromDatabase.getId())
                 .stream().map(userAuthority -> new SimpleGrantedAuthority(userAuthority.getAuthorityName()))
                 .collect(Collectors.toList());
-        return new org.springframework.security.core.userdetails.User(userFromDatabase.getUserName(),
+        return new SecurityUser(userFromDatabase.getId(), userFromDatabase.getUserName(),
                 userFromDatabase.getPasswordHash(), grantedAuthorities);
     }
 }

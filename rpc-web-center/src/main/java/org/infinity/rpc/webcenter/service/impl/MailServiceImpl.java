@@ -31,7 +31,10 @@ public class MailServiceImpl implements MailService {
     private final        MessageSource        messageSource;
     private final        SpringTemplateEngine templateEngine;
 
-    public MailServiceImpl(MailProperties mailProperties, JavaMailSenderImpl javaMailSender, MessageSource messageSource, SpringTemplateEngine templateEngine) {
+    public MailServiceImpl(MailProperties mailProperties,
+                           JavaMailSenderImpl javaMailSender,
+                           MessageSource messageSource,
+                           SpringTemplateEngine templateEngine) {
         this.mailProperties = mailProperties;
         this.javaMailSender = javaMailSender;
         this.messageSource = messageSource;
@@ -77,20 +80,20 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendActivationEmail(User user, String baseUrl) {
         log.debug("Sending activation e-mail to '{}'", user.getEmail());
-        sendEmailFromTemplate(user, "email/activation-email", "email.activation.title", baseUrl);
+        sendEmailFromTemplate(user, "email/activation-email", "emailActivationTitle", baseUrl);
     }
 
     @Async
     @Override
     public void sendCreationEmail(User user, String baseUrl) {
         log.debug("Sending creation e-mail to '{}'", user.getEmail());
-        sendEmailFromTemplate(user, "email/creation-email", "email.activation.title", baseUrl);
+        sendEmailFromTemplate(user, "email/creation-email", "emailActivationTitle", baseUrl);
     }
 
     @Async
     @Override
     public void sendPasswordResetMail(User user, String baseUrl) {
         log.debug("Sending password reset e-mail to '{}'", user.getEmail());
-        sendEmailFromTemplate(user, "email/password-reset-email", "email.reset.title", baseUrl);
+        sendEmailFromTemplate(user, "email/password-reset-email", "emailResetTitle", baseUrl);
     }
 }

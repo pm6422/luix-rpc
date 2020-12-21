@@ -3,10 +3,10 @@ package org.infinity.rpc.webcenter.domain;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -23,10 +23,11 @@ public class AuthorityAdminMenu implements Serializable {
     private String id;
 
     @NotNull
-    @Size(min = 1, max = 20)
+    @Indexed
     private String authorityName;
 
     @NotNull
+    @Indexed
     private String adminMenuId;
 
     public AuthorityAdminMenu(String authorityName, String adminMenuId) {

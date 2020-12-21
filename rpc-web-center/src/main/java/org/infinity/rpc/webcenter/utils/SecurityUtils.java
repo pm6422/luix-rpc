@@ -1,12 +1,12 @@
 package org.infinity.rpc.webcenter.utils;
 
+import org.infinity.rpc.webcenter.config.oauth2.SecurityUser;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.CollectionUtils;
 
@@ -17,19 +17,19 @@ import java.util.Collection;
  */
 public abstract class SecurityUtils {
     /**
-     * Return the current user, or throws an exception, if the user is not
-     * authenticated yet.
+     * Return the current user, or throws an exception, if the user is not authenticated yet.
      *
      * @return the current user
      */
-    public static User getCurrentUser() {
+    public static SecurityUser getCurrentUser() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         if (authentication != null) {
-            if (authentication.getPrincipal() instanceof User) {
-                return (User) authentication.getPrincipal();
+            if (authentication.getPrincipal() instanceof SecurityUser) {
+                return (SecurityUser) authentication.getPrincipal();
             } else if (authentication.getPrincipal() instanceof String) {
-                return new User((String) authentication.getPrincipal(), "", authentication.getAuthorities());
+                return new SecurityUser("", (String) authentication.getPrincipal(), "",
+                        authentication.getAuthorities());
             }
         }
         throw new IllegalStateException("User not found!");
@@ -83,8 +83,7 @@ public abstract class SecurityUtils {
      * If the current user has a specific authority (security role).
      *
      * <p>
-     * The name of this method comes from the isUserInRole() method in the
-     * Servlet API
+     * The name of this method comes from the isUserInRole() method in the Servlet API
      * </p>
      *
      * @param role the authority to check

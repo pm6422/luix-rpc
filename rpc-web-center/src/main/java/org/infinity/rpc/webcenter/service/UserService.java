@@ -1,30 +1,21 @@
 package org.infinity.rpc.webcenter.service;
 
 import org.infinity.rpc.webcenter.domain.User;
-import org.infinity.rpc.webcenter.dto.UserDTO;
 import org.infinity.rpc.webcenter.dto.UserNameAndPasswordDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import javax.validation.Valid;
-import java.time.Instant;
 import java.util.Optional;
-import java.util.Set;
 
 public interface UserService {
 
-    void changePassword(@Valid UserNameAndPasswordDTO dto);
+    void changePassword(UserNameAndPasswordDTO dto);
 
-    User insert(String userName, String rawPassword, String firstName, String lastName, String email, String mobileNo,
-                String activationKey, Boolean activated, Boolean enabled, String remarks, String resetKey,
-                Instant resetTime, Set<String> authorityNames);
+    User insert(User user, String rawPassword);
 
-    void updateWithCheck(UserDTO dto);
+    void update(User dto);
 
-    void update(String userName, String firstName, String lastName, String email, String mobileNo, String modifiedBy,
-                Boolean activated, Boolean enabled, String remarks, Set<String> authorityNames);
-
-    Optional<User> findOneByUserName(String userName);
+    User findOneByUserName(String userName);
 
     Optional<User> findOneByEmail(String email);
 
@@ -40,4 +31,5 @@ public interface UserService {
 
     User completePasswordReset(String newRawPassword, String resetKey);
 
+    void deleteByUserName(String userName);
 }
