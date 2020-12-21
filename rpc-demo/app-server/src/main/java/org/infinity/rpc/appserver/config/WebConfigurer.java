@@ -1,10 +1,13 @@
 package org.infinity.rpc.appserver.config;
 
+import io.undertow.server.DefaultByteBufferPool;
+import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.appserver.filter.CachingHttpHeadersFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;
 import org.springframework.boot.web.server.MimeMappings;
 import org.springframework.boot.web.server.WebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
@@ -31,7 +34,7 @@ import static java.net.URLDecoder.decode;
  */
 @Configuration
 @Slf4j
-public class WebConfigurer implements ServletContextInitializer, WebServerFactoryCustomizer<WebServerFactory> {
+public class WebConfigurer implements ServletContextInitializer, WebServerFactoryCustomizer<UndertowServletWebServerFactory> {
     private final Environment           env;
     private final ApplicationProperties applicationProperties;
 
@@ -55,27 +58,36 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
      * Customize the Servlet engine: Mime types, the document root, the cache.
      */
     @Override
-    public void customize(WebServerFactory server) {
-        setMimeMappings(server);
+    public void customize(UndertowServletWebServerFactory factory) {
+        setWebSocketDeploymentInfo(factory);
+        setMimeMappings(factory);
         // When running in an IDE or with ./mvnw spring-boot:run, set location of the static web assets.
-        setLocationForStaticAssets(server);
+        setLocationForStaticAssets(factory);
     }
 
-    private void setMimeMappings(WebServerFactory server) {
-        if (server instanceof ConfigurableServletWebServerFactory) {
+    private void setWebSocketDeploymentInfo(UndertowServletWebServerFactory factory) {
+        factory.addDeploymentInfoCustomizers(deploymentInfo -> {
+            WebSocketDeploymentInfo webSocketDeploymentInfo = new WebSocketDeploymentInfo();
+            webSocketDeploymentInfo.setBuffers(new DefaultByteBufferPool(false, 1024));
+            deploymentInfo.addServletContextAttribute("io.undertow.websockets.jsr.WebSocketDeploymentInfo", webSocketDeploymentInfo);
+        });
+    }
+
+    private void setMimeMappings(WebServerFactory factory) {
+        if (factory instanceof ConfigurableServletWebServerFactory) {
             MimeMappings mappings = new MimeMappings(MimeMappings.DEFAULT);
             // IE issue, see https://github.com/jhipster/generator-jhipster/pull/711
             mappings.add("html", MediaType.TEXT_HTML_VALUE + ";charset=" + StandardCharsets.UTF_8.name().toLowerCase());
             // CloudFoundry issue, see https://github.com/cloudfoundry/gorouter/issues/64
             mappings.add("json", MediaType.TEXT_HTML_VALUE + ";charset=" + StandardCharsets.UTF_8.name().toLowerCase());
-            ConfigurableServletWebServerFactory servletWebServer = (ConfigurableServletWebServerFactory) server;
+            ConfigurableServletWebServerFactory servletWebServer = (ConfigurableServletWebServerFactory) factory;
             servletWebServer.setMimeMappings(mappings);
         }
     }
 
-    private void setLocationForStaticAssets(WebServerFactory server) {
-        if (server instanceof ConfigurableServletWebServerFactory) {
-            ConfigurableServletWebServerFactory servletWebServer = (ConfigurableServletWebServerFactory) server;
+    private void setLocationForStaticAssets(WebServerFactory factory) {
+        if (factory instanceof ConfigurableServletWebServerFactory) {
+            ConfigurableServletWebServerFactory servletWebServer = (ConfigurableServletWebServerFactory) factory;
             File root;
             String prefixPath = resolvePathPrefix();
             root = new File(prefixPath + "src/main/webapp/");

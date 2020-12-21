@@ -3,6 +3,7 @@ package org.infinity.rpc.appserver.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.infinity.rpc.appserver.config.ApplicationConstants;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @ApiModel("Profile信息")
 @Data
+@NoArgsConstructor
 public class ProfileInfoDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,38 +37,6 @@ public class ProfileInfoDTO implements Serializable {
         if (springBootProfiles.contains(ApplicationConstants.SPRING_PROFILE_PROD)) {
             this.inProduction = true;
         }
-        this.swaggerEnabled = swaggerEnabled;
-    }
-
-    public String[] getActiveProfiles() {
-        return activeProfiles;
-    }
-
-    public void setActiveProfiles(String[] activeProfiles) {
-        this.activeProfiles = activeProfiles;
-    }
-
-    public String getRibbonEnv() {
-        return ribbonEnv;
-    }
-
-    public void setRibbonEnv(String ribbonEnv) {
-        this.ribbonEnv = ribbonEnv;
-    }
-
-    public boolean isInProduction() {
-        return inProduction;
-    }
-
-    public void setInProduction(boolean inProduction) {
-        this.inProduction = inProduction;
-    }
-
-    public boolean isSwaggerEnabled() {
-        return swaggerEnabled;
-    }
-
-    public void setSwaggerEnabled(boolean swaggerEnabled) {
         this.swaggerEnabled = swaggerEnabled;
     }
 }

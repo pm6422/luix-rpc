@@ -13,9 +13,9 @@ public interface AppService {
 
     Optional<App> findById(String id);
 
-    App insert(String name, Boolean enabled, Set<String> authorityNames);
+    App insert(App domain);
 
-    void update(String name, Boolean enabled, Set<String> authorityNames);
+    void update(App domain);
 
     void deleteById(String id);
 }

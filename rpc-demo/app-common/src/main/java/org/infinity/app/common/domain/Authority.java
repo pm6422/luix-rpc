@@ -1,17 +1,22 @@
 package org.infinity.app.common.domain;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.infinity.app.common.dto.AuthorityDTO;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
  * Spring Data MongoDB collection for the Authority entity.
  */
+@ApiModel("权限")
 @Document(collection = "Authority")
 @Data
 @NoArgsConstructor
@@ -32,19 +37,21 @@ public class Authority implements Serializable {
 
     public static final String SYSTEM_ACCOUNT = "system";
 
+    @ApiModelProperty(value = "权限名称", required = true)
+    @NotNull
+    @Size(min = 3, max = 16)
+    @Pattern(regexp = "^[A-Z_]+$", message = "{EP5902}")
     @Id
     private String name;
 
+    @ApiModelProperty(value = "是否为系统权限")
     private Boolean systemLevel;
 
+    @ApiModelProperty(value = "是否可用")
     private Boolean enabled;
 
-    public AuthorityDTO toDTO() {
-        return new AuthorityDTO(this.getName(), this.getSystemLevel(), this.getEnabled());
+    public Authority(Boolean enabled) {
+        this.enabled = enabled;
     }
 
-    public static Authority of(AuthorityDTO dto) {
-        Authority target = new Authority(dto.getName(), dto.getSystemLevel(), dto.getEnabled());
-        return target;
-    }
 }

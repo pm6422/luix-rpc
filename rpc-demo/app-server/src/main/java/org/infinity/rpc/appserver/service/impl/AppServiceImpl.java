@@ -1,17 +1,15 @@
 package org.infinity.rpc.appserver.service.impl;
 
-import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.app.common.domain.App;
 import org.infinity.app.common.service.AppService;
-import org.infinity.rpc.appserver.exception.DuplicationException;
+import org.infinity.rpc.appserver.exception.NoDataFoundException;
 import org.infinity.rpc.appserver.repository.AppRepository;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Provider(maxRetries = 1)
 @Slf4j
@@ -34,23 +32,20 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public App insert(String name, Boolean enabled, Set<String> authorityNames) {
-        appRepository.findById(name).ifPresent(app -> {
-            throw new DuplicationException(ImmutableMap.of("name", name));
-        });
-        App newApp = new App(name, enabled);
-        appRepository.save(newApp);
-        log.debug("Created Information for app: {}", newApp);
-        return newApp;
+    public App insert(App domain) {
+        appRepository.save(domain);
+        log.debug("Created Information for app: {}", domain);
+        return domain;
     }
 
     @Override
-    public void update(String name, Boolean enabled, Set<String> authorityNames) {
-        appRepository.findById(name).ifPresent(app -> {
-            app.setEnabled(enabled);
+    public void update(App domain) {
+        appRepository.findById(domain.getName()).map(app -> {
+            app.setEnabled(domain.getEnabled());
             appRepository.save(app);
             log.debug("Updated app: {}", app);
-        });
+            return app;
+        }).orElseThrow(() -> new NoDataFoundException(domain.getName()));
     }
 
     @Override

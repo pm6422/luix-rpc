@@ -3,8 +3,7 @@ package org.infinity.rpc.appserver.component;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.infinity.rpc.utilities.network.NetworkIpUtils;
-
+import org.infinity.rpc.appserver.utils.NetworkUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
@@ -30,11 +29,11 @@ public class PrintAppInfoApplicationRunner implements ApplicationRunner {
                 Charset.defaultCharset());
         log.info(appBanner, env.getProperty("spring.application.name"),
                 StringUtils.isEmpty(env.getProperty("server.ssl.key-store")) ? "http" : "https",
-                NetworkIpUtils.INTRANET_IP,
+                NetworkUtils.INTRANET_IP,
                 env.getProperty("server.port"),
                 StringUtils.defaultString(env.getProperty("server.servlet.context-path")),
                 StringUtils.isEmpty(env.getProperty("server.ssl.key-store")) ? "http" : "https",
-                NetworkIpUtils.INTERNET_IP,
+                NetworkUtils.INTERNET_IP,
                 env.getProperty("server.port"),
                 StringUtils.defaultString(env.getProperty("server.servlet.context-path")),
                 org.springframework.util.StringUtils.arrayToCommaDelimitedString(env.getActiveProfiles()),

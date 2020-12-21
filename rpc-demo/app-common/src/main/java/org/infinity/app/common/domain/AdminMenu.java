@@ -1,21 +1,23 @@
 package org.infinity.app.common.domain;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.infinity.app.common.domain.base.AbstractAuditableDomain;
-import org.infinity.app.common.dto.AdminMenuDTO;
 import org.infinity.app.common.dto.AdminMenuTreeDTO;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
+import javax.validation.constraints.*;
 import java.io.Serializable;
 
 /**
  * Spring Data MongoDB collection for the AdminMenu entity.
  */
+@ApiModel("管理系统菜单")
 @Document(collection = "AdminMenu")
 @Data
 @ToString(callSuper = true)
@@ -25,22 +27,40 @@ public class AdminMenu extends AbstractAuditableDomain implements Serializable {
     public static final  String FIELD_LEVEL      = "level";
     public static final  String FIELD_SEQUENCE   = "sequence";
 
-    private String  name;
-    private String  label;
-    @Field(FIELD_LEVEL)
+    @ApiModelProperty(value = "菜单名称", required = true)
+    @NotNull
+    @Size(min = 1, max = 30)
+    @Pattern(regexp = "^[a-z0-9-]+$", message = "{EP5901}")
+    private String name;
+
+    @ApiModelProperty(value = "菜单显示文本", required = true)
+    @NotNull
+    @Size(min = 1, max = 30)
+    private String label;
+
+    @ApiModelProperty(value = "菜单层级", required = true)
+    @Min(1)
+    @Max(9)
     private Integer level;
-    private String  url;
-    @Field(FIELD_SEQUENCE)
+
+    @ApiModelProperty(value = "菜单链接地址", required = true)
+    @NotNull
+    @Size(min = 3, max = 200)
+    private String url;
+
+    @ApiModelProperty(value = "菜单排序序号", required = true)
+    @Min(1)
+    @Max(999)
     private Integer sequence;
-    private String  parentId;
-    /**
-     * DO NOT persist to DB
-     */
+
+    @ApiModelProperty("父菜单ID")
+    private String parentId;
+
+    @ApiModelProperty("是否选中")
     @Transient
     private Boolean checked;
 
-    public AdminMenu(String name, String label, Integer level, String url,
-                     Integer sequence, String parentId) {
+    public AdminMenu(String name, String label, Integer level, String url, Integer sequence, String parentId) {
         super();
         this.name = name;
         this.label = label;
@@ -48,20 +68,6 @@ public class AdminMenu extends AbstractAuditableDomain implements Serializable {
         this.url = url;
         this.sequence = sequence;
         this.parentId = parentId;
-    }
-
-    public AdminMenuDTO toDTO() {
-        AdminMenuDTO dto = new AdminMenuDTO();
-        BeanCopier beanCopier = BeanCopier.create(AdminMenu.class, AdminMenuDTO.class, false);
-        beanCopier.copy(this, dto, null);
-        return dto;
-    }
-
-    public static AdminMenu of(AdminMenuDTO dto) {
-        AdminMenu dest = new AdminMenu();
-        BeanCopier beanCopier = BeanCopier.create(AdminMenuDTO.class, AdminMenu.class, false);
-        beanCopier.copy(dto, dest, null);
-        return dest;
     }
 
     public AdminMenuTreeDTO toTreeDTO() {

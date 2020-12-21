@@ -3,7 +3,6 @@ package org.infinity.rpc.appclient.controller;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.app.common.domain.Authority;
-import org.infinity.app.common.dto.AuthorityDTO;
 import org.infinity.app.common.service.AuthorityService;
 import org.infinity.rpc.appclient.component.HttpHeaderCreator;
 import org.infinity.rpc.appclient.exception.NoDataFoundException;
@@ -41,22 +40,19 @@ public class AuthorityController {
     @ApiOperation("分页检索权限列表")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("/api/authority/authorities")
-    public ResponseEntity<List<AuthorityDTO>> find(Pageable pageable) {
+    public ResponseEntity<List<Authority>> find(Pageable pageable) {
         Page<Authority> authorities = authorityService.findAll(pageable);
-        List<AuthorityDTO> DTOs = authorities.getContent().stream().map(Authority::toDTO)
-                .collect(Collectors.toList());
-        HttpHeaders headers = generatePageHeaders(authorities);
-        return ResponseEntity.ok().headers(headers).body(DTOs);
+        return ResponseEntity.ok().headers(generatePageHeaders(authorities)).body(authorities.getContent());
     }
 
     @ApiOperation("根据权限名称检索权限")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索"),
             @ApiResponse(code = SC_BAD_REQUEST, message = "权限不存在")})
     @GetMapping("/api/authority/authorities/{name}")
-    public ResponseEntity<AuthorityDTO> findById(
+    public ResponseEntity<Authority> findById(
             @ApiParam(value = "权限名称", required = true) @PathVariable String name) {
         Authority authority = authorityService.findById(name).orElseThrow(() -> new NoDataFoundException(name));
-        return ResponseEntity.ok(authority.toDTO());
+        return ResponseEntity.ok(authority);
     }
 
     @ApiOperation("更新权限")
@@ -64,12 +60,11 @@ public class AuthorityController {
             @ApiResponse(code = SC_BAD_REQUEST, message = "权限不存在")})
     @PutMapping("/api/authority/authorities")
     public ResponseEntity<Void> update(
-            @ApiParam(value = "新的权限", required = true) @Valid @RequestBody AuthorityDTO dto) {
-        log.debug("REST request to update authority: {}", dto);
-        authorityService.findById(dto.getName()).orElseThrow(() -> new NoDataFoundException(dto.getName()));
-        authorityService.save(Authority.of(dto));
+            @ApiParam(value = "新的权限", required = true) @Valid @RequestBody Authority domain) {
+        log.debug("REST request to update authority: {}", domain);
+        authorityService.save(domain);
         return ResponseEntity.ok()
-                .headers(httpHeaderCreator.createSuccessHeader("notification.authority.updated", dto.getName()))
+                .headers(httpHeaderCreator.createSuccessHeader("notification.authority.updated", domain.getName()))
                 .build();
     }
 
