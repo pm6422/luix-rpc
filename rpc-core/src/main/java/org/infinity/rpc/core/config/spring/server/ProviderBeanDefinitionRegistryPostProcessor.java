@@ -1,7 +1,6 @@
 package org.infinity.rpc.core.config.spring.server;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.config.spring.bean.DefaultBeanNameGenerator;
 import org.infinity.rpc.core.config.spring.bean.registry.ClassPathBeanDefinitionRegistryScanner;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
@@ -17,6 +16,7 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -312,7 +312,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     private void validatePropertyValue(Class<?> beanType, String propertyName, Object propertyValue) {
         try {
             List<String> messages = doValidate(beanType, propertyName, propertyValue);
-            Validate.isTrue(CollectionUtils.isEmpty(messages), String.join(",", messages));
+            Assert.isTrue(CollectionUtils.isEmpty(messages), String.join(",", messages));
         } catch (Exception e) {
             // Re-throw the exception
             throw new RpcConfigurationException(e.getMessage());

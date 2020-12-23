@@ -1,7 +1,6 @@
 package org.infinity.rpc.core.config.spring.registrar;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.config.spring.RpcAutoConfiguration;
 import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
 import org.infinity.rpc.core.config.spring.bean.registry.AnnotatedBeanDefinitionRegistry;
@@ -16,6 +15,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.Nonnull;
@@ -58,7 +58,7 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
         if (packagesToScan.isEmpty()) {
             String packageName = ClassUtils.getPackageName(metadata.getClassName());
             log.debug("Default scan base package: [{}]", packageName);
-            Validate.notEmpty(packageName, "Consumer and provider scan base packages must not be empty!");
+            Assert.hasText(packageName, "Consumer and provider scan base packages must not be empty!");
             return Collections.singleton(packageName);
         } else {
             log.debug("User defined scan base packages: [{}]", packagesToScan);
