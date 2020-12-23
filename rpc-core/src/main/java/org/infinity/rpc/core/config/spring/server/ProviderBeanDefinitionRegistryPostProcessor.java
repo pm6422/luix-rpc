@@ -32,7 +32,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Register provider bean and provider wrapper to spring context.
+ * Register provider bean and provider wrapper under specified scan base packages to spring context
+ * by {@link BeanDefinitionRegistry}
  */
 @Slf4j
 public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentAware, ResourceLoaderAware,
