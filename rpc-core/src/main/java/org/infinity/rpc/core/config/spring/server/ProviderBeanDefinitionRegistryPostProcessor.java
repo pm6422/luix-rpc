@@ -311,7 +311,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     private void validatePropertyValue(Class<?> beanType, String propertyName, Object propertyValue) {
         try {
             List<String> messages = doValidate(beanType, propertyName, propertyValue);
-            Validate.isTrue(CollectionUtils.isEmpty(messages), messages.stream().collect(Collectors.joining(",")));
+            Validate.isTrue(CollectionUtils.isEmpty(messages), String.join(",", messages));
         } catch (Exception e) {
             // Re-throw the exception
             throw new RpcConfigurationException(e.getMessage());
