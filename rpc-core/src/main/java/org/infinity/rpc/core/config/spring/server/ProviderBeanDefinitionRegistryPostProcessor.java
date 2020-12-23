@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.config.spring.server;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.config.spring.bean.DefaultBeanNameGenerator;
 import org.infinity.rpc.core.config.spring.bean.registry.ClassPathBeanDefinitionRegistryScanner;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
@@ -23,9 +24,11 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Nonnull;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
-import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -308,11 +311,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     private void validatePropertyValue(Class<?> beanType, String propertyName, Object propertyValue) {
         try {
             List<String> messages = doValidate(beanType, propertyName, propertyValue);
-            if (!CollectionUtils.isEmpty(messages)) {
-                for (String message : messages) {
-                    throw new RuntimeException(message);
-                }
-            }
+            Validate.isTrue(CollectionUtils.isEmpty(messages), messages.stream().collect(Collectors.joining(",")));
         } catch (Exception e) {
             // Re-throw the exception
             throw new RpcConfigurationException(e.getMessage());
@@ -320,14 +319,9 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     }
 
     private static <T> List<String> doValidate(Class<T> beanType, String propertyName, Object propertyValue) {
-        Validator validator = VALIDATOR_FACTORY.getValidator();
-        Set<ConstraintViolation<T>> constraintViolations = validator.validateValue(beanType, propertyName, propertyValue);
-
-        List<String> messageList = new ArrayList<>();
-        for (ConstraintViolation<T> constraintViolation : constraintViolations) {
-            messageList.add(constraintViolation.getMessage());
-        }
-        return messageList;
+        Set<ConstraintViolation<T>> constraintViolations = VALIDATOR_FACTORY.getValidator()
+                .validateValue(beanType, propertyName, propertyValue);
+        return constraintViolations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
     }
 
     /**
