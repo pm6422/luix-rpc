@@ -7,7 +7,7 @@ import org.springframework.core.env.Environment;
  * Consumer {@link org.infinity.rpc.core.server.annotation.Provider @Provider} wrapper bean Builder
  */
 public final class ProviderWrapperBeanNameBuilder {
-    public static final  String      PROVIDER_WRAPPER_BEAN_PREFIX = "ProviderWrapperBean";
+    public static final  String      PROVIDER_WRAPPER_BEAN_PREFIX = "ProviderWrapper";
     private static final String      SEPARATOR                    = ":";
     // Required
     private final        Class<?>    interfaceClass;
