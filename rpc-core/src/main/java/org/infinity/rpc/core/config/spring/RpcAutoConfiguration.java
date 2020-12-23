@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -24,17 +24,17 @@ public class RpcAutoConfiguration {
 
     @Bean
     public RegistryInfo registryInfo() {
-        List<Url> registryUrls = getRegistryUrls(infinityProperties);
+        List<Url> registryUrls = createRegistryUrls(infinityProperties);
         return new RegistryInfo(registryUrls, getRegistry(registryUrls));
     }
 
     /**
      * Create registry urls
      *
-     * @param infinityProperties configuration properties
+     * @param infinityProperties infinity configuration properties
      * @return registry urls
      */
-    private List<Url> getRegistryUrls(InfinityProperties infinityProperties) {
+    private List<Url> createRegistryUrls(InfinityProperties infinityProperties) {
         Url registryUrl = Url.registryUrl(infinityProperties.getRegistry().getName().getValue(),
                 infinityProperties.getRegistry().getHost(),
                 infinityProperties.getRegistry().getPort());
@@ -47,13 +47,12 @@ public class RpcAutoConfiguration {
         registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, infinityProperties.getRegistry().getRetryInterval().toString());
 
         // TODO: Support multiple registry centers
-        List<Url> urls = Arrays.asList(registryUrl);
-        return urls;
+        return Collections.singletonList(registryUrl);
     }
 
     /**
-     * @param registryUrls
-     * @return
+     * @param registryUrls registry urls
+     * @return registries
      */
     private List<Registry> getRegistry(List<Url> registryUrls) {
         List<Registry> registries = new ArrayList<>();

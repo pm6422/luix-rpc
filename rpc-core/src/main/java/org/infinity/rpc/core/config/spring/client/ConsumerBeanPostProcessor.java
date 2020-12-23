@@ -1,12 +1,9 @@
 package org.infinity.rpc.core.config.spring.client;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.config.spring.utils.AnnotationUtils;
-import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
-import org.infinity.rpc.core.exchange.cluster.ProviderClusterHolder;
 import org.infinity.rpc.core.registry.RegistryInfo;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
@@ -34,11 +31,12 @@ import java.util.HashMap;
 import static org.infinity.rpc.core.config.spring.utils.AnnotationUtils.getAnnotationAttributes;
 
 /**
- * The class implements {@link BeanPostProcessor} means that
- * all spring bean will be processed by {@link ConsumerBeanPostProcessor#postProcessBeforeInitialization(Object, String)} after initialized bean
+ * The class implements {@link BeanPostProcessor} means that all spring beans will be processed by
+ * {@link ConsumerBeanPostProcessor#postProcessBeforeInitialization(Object, String)} after initialized bean
  */
 @Slf4j
-public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanPostProcessor, BeanFactoryPostProcessor, EnvironmentAware, BeanFactoryAware {
+public class ConsumerBeanPostProcessor implements ApplicationContextAware,
+        BeanPostProcessor, BeanFactoryPostProcessor, EnvironmentAware, BeanFactoryAware {
     private final String[]                        scanBasePackages;
     private       ApplicationContext              applicationContext;
     private       Environment                     environment;
@@ -61,7 +59,8 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
 
     @Override
     public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
-        Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory, "It requires an instance of ConfigurableListableBeanFactory");
+        Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory,
+                "It requires an instance of ConfigurableListableBeanFactory");
         this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
     }
 
@@ -129,7 +128,8 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
                     }
 
                     // Get @Consumer annotation attributes value of field, and it will be null if no annotation presents on the field
-                    AnnotationAttributes annotationAttributes = getAnnotationAttributes(field, Consumer.class, environment, false, true);
+                    AnnotationAttributes annotationAttributes =
+                            getAnnotationAttributes(field, Consumer.class, environment, false, true);
                     if (annotationAttributes != null) {
                         // Found the @Consumer annotated field
                         Class<?> interfaceClass = AnnotationUtils.resolveInterfaceClass(annotationAttributes, field.getType());
@@ -166,7 +166,8 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware, BeanP
                     // for the generic erasure occasion
                     Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
                     // Get @Consumer annotation attributes value of method, and it will be null if no annotation presents on the field
-                    AnnotationAttributes annotationAttributes = getAnnotationAttributes(bridgedMethod, Consumer.class, environment, false, true);
+                    AnnotationAttributes annotationAttributes = getAnnotationAttributes(bridgedMethod,
+                            Consumer.class, environment, false, true);
                     if (annotationAttributes != null) {
                         // Found the @Consumer annotated method
                         Class<?> interfaceClass = AnnotationUtils.resolveInterfaceClass(annotationAttributes, method.getParameterTypes()[0]);

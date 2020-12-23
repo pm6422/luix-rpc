@@ -5,11 +5,9 @@ import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.config.spring.RpcAutoConfiguration;
 import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
 import org.infinity.rpc.core.config.spring.bean.registry.AnnotatedBeanDefinitionRegistry;
-import org.infinity.rpc.core.config.spring.client.ConsumerAnnotationBeanPostProcessor;
 import org.infinity.rpc.core.config.spring.client.ConsumerBeanPostProcessor;
 import org.infinity.rpc.core.config.spring.server.ProviderBeanDefinitionRegistryPostProcessor;
 import org.infinity.rpc.core.config.spring.startup.RpcLifecycleApplicationListener;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -20,12 +18,8 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.ClassUtils;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import static org.infinity.rpc.core.config.spring.bean.registry.AnnotatedBeanDefinitionRegistry.registerInfrastructureBean;
+import javax.annotation.Nonnull;
+import java.util.*;
 
 @Slf4j
 public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionRegistrar {
@@ -33,8 +27,15 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
     public RpcProviderConsumerScanRegistrar() {
     }
 
+    /**
+     * Register service providers and consumers bean definitions
+     *
+     * @param importingClassMetadata annotation metadata of the importing class
+     * @param registry               current bean definition registry
+     */
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+    public void registerBeanDefinitions(@Nonnull AnnotationMetadata importingClassMetadata,
+                                        @Nonnull BeanDefinitionRegistry registry) {
         Set<String> scanBasePackages = getScanBasePackages(importingClassMetadata);
         registerRpcAutoConfiguration(registry);
         registerRpcLifecycleApplicationListener(registry);
@@ -43,11 +44,16 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
 //        registerConsumerAnnotationBeanPostProcessor(registry);
     }
 
+    /**
+     * Get the packages to be scanned for service providers and consumers
+     *
+     * @param metadata annotation metadata
+     * @return packages to be scanned
+     */
     private Set<String> getScanBasePackages(AnnotationMetadata metadata) {
         AnnotationAttributes attributes = AnnotationAttributes.fromMap(metadata.getAnnotationAttributes(EnableRpc.class.getName()));
-        String[] scanBasePackages = attributes.getStringArray("scanBasePackages");
-//        Class<?> currentClass = ClassUtils.resolveClassName(metadata.getClassName(), classLoader);
-        // Keep sequence
+        String[] scanBasePackages = Objects.requireNonNull(attributes).getStringArray("scanBasePackages");
+        // Keep order
         Set<String> packagesToScan = new LinkedHashSet<>(Arrays.asList(scanBasePackages));
         if (packagesToScan.isEmpty()) {
             String packageName = ClassUtils.getPackageName(metadata.getClassName());
@@ -61,57 +67,64 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
     }
 
     /**
-     * Register RPC auto configuration
+     * Register bean of RPC auto configuration
      *
-     * @param registry
+     * @param registry current bean definition registry
      */
     private void registerRpcAutoConfiguration(BeanDefinitionRegistry registry) {
         AnnotatedBeanDefinitionRegistry.registerBeans(registry, RpcAutoConfiguration.class);
     }
 
     /**
-     * Register RPC provider and consumer start and stop listener
+     * Register bean of RPC lifecycle listener
      *
-     * @param registry
+     * @param registry current bean definition registry
      */
     private void registerRpcLifecycleApplicationListener(BeanDefinitionRegistry registry) {
         AnnotatedBeanDefinitionRegistry.registerBeans(registry, RpcLifecycleApplicationListener.class);
     }
 
     /**
-     * Register beans with @Provider annotation
+     * Register bean definition of service providers with @Provider annotation
      *
-     * @param scanBasePackages
-     * @param registry
+     * @param scanBasePackages packages to be scanned
+     * @param registry         current bean definition registry
      */
     private void registerProviderBeanDefinitionRegistryPostProcessor(Set<String> scanBasePackages, BeanDefinitionRegistry registry) {
         registerBeanDefinition(scanBasePackages, registry, ProviderBeanDefinitionRegistryPostProcessor.class);
     }
 
     /**
-     * Register beans with @Consumer annotation
+     * Register bean definition of service consumers with @Consumer annotation
      *
-     * @param scanBasePackages
-     * @param registry
+     * @param scanBasePackages packages to be scanned
+     * @param registry         current bean definition registry
      */
     private void registerConsumerBeanPostProcessor(Set<String> scanBasePackages, BeanDefinitionRegistry registry) {
         registerBeanDefinition(scanBasePackages, registry, ConsumerBeanPostProcessor.class);
     }
 
     /**
-     * Registers {@link ConsumerAnnotationBeanPostProcessor} into {@link BeanFactory}
-     *
-     * @param registry {@link BeanDefinitionRegistry}
+     * @param scanBasePackages packages to be scanned
+     * @param registry         current bean definition registry
+     * @param clazz            class to be registered
      */
-    private void registerConsumerAnnotationBeanPostProcessor(BeanDefinitionRegistry registry) {
-        registerInfrastructureBean(registry, ConsumerAnnotationBeanPostProcessor.BEAN_NAME, ConsumerAnnotationBeanPostProcessor.class);
-    }
-
-    private void registerBeanDefinition(Set<String> scanBasePackages, BeanDefinitionRegistry registry, Class clazz) {
+    private void registerBeanDefinition(Set<String> scanBasePackages, BeanDefinitionRegistry registry, Class<?> clazz) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(clazz);
         builder.addConstructorArgValue(scanBasePackages);
         builder.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
         AbstractBeanDefinition beanDefinition = builder.getBeanDefinition();
         BeanDefinitionReaderUtils.registerWithGeneratedName(beanDefinition, registry);
     }
+
+    //    /**
+//     * Registers {@link ConsumerAnnotationBeanPostProcessor} into {@link BeanFactory}
+//     *
+//     * @param registry {@link BeanDefinitionRegistry}
+//     */
+//    private void registerConsumerAnnotationBeanPostProcessor(BeanDefinitionRegistry registry) {
+//        registerInfrastructureBean(registry, ConsumerAnnotationBeanPostProcessor.BEAN_NAME, ConsumerAnnotationBeanPostProcessor.class);
+//    }
+
+
 }
