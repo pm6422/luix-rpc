@@ -29,7 +29,6 @@ public class InfinityProperties {
     @NotNull
     private RegistryConfig    registry;
 
-
     @PostConstruct
     private void init() {
         application.init();
