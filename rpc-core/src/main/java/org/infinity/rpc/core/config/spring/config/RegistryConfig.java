@@ -5,12 +5,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.constants.RegistryName;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 @Data
+@Validated
 public class RegistryConfig {
     private static final Pattern      COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
     // Name of register center
