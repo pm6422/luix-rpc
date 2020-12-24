@@ -30,7 +30,7 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.url.UrlParam;
 import org.infinity.rpc.utilities.annotation.EventMarker;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
-import org.infinity.rpc.utilities.network.NetworkIpUtils;
+import org.infinity.rpc.utilities.network.NetworkUtils;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -202,7 +202,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     }
 
     public List<Url> discoverServiceWithCommand(Url providerUrl, Map<String, Integer> weights, RpcCommand rpcCommand) {
-        String localIP = NetworkIpUtils.INTRANET_IP;
+        String localIP = NetworkUtils.INTRANET_IP;
         return this.discoverServiceWithCommand(providerUrl, weights, rpcCommand, localIP);
     }
 

@@ -17,7 +17,7 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.service.TestDummyService;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.utilities.annotation.EventMarker;
-import org.infinity.rpc.utilities.network.NetworkIpUtils;
+import org.infinity.rpc.utilities.network.NetworkUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -57,7 +57,7 @@ public class ZookeeperRegistryTests {
         clientUrl = Url.clientUrl(ProtocolName.infinity.name(), provider);
         clientUrl.addParameter("group", Url.PARAM_GROUP_PROVIDER);
 
-        providerUrl1 = Url.of(ProtocolName.infinity.name(), NetworkIpUtils.INTRANET_IP, 2000, provider);
+        providerUrl1 = Url.of(ProtocolName.infinity.name(), NetworkUtils.INTRANET_IP, 2000, provider);
         providerUrl1.addParameter("group", Url.PARAM_GROUP_PROVIDER);
 
         providerUrl2 = Url.of(ProtocolName.infinity.name(), "192.168.100.100", 2000, provider);

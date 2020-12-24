@@ -6,22 +6,28 @@ import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.protocol.constants.ProtocolName;
-import org.infinity.rpc.utilities.network.NetworkIpUtils;
+import org.infinity.rpc.utilities.network.NetworkUtils;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 @Data
+@Validated
 public class ProtocolConfig {
     /**
      * Name of protocol
      * SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type,
      * and check whether value is valid or not during application startup.
      */
+    @NotNull
     private ProtocolName name           = ProtocolName.infinity;
     /**
      * Host name of the RPC server
      */
-    private String       host           = NetworkIpUtils.INTRANET_IP;
+    @NotEmpty
+    private String       host           = NetworkUtils.INTRANET_IP;
     /**
      * Port number of the RPC server
      */
