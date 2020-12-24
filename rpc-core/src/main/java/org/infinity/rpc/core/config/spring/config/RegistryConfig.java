@@ -1,12 +1,15 @@
 package org.infinity.rpc.core.config.spring.config;
 
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.constants.RegistryName;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -15,38 +18,49 @@ import java.util.regex.Pattern;
 @Validated
 public class RegistryConfig {
     private static final Pattern      COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
-    // Name of register center
+    /**
+     * Name of register center
+     */
+    @NotNull
     private              RegistryName name                = RegistryName.zookeeper;
-    // Registry center host name
-    private              String       host;
-    // Registry center port number
+    /**
+     * Registry center host name
+     */
+    @NotEmpty
+    private              String       host                = "localhost";
+    /**
+     * Registry center port number
+     */
+    @NotNull
+    @Positive
     private              Integer      port;
-    // Registry center server address
-    private              String       address;
-    // 注册中心连接超时时间(毫秒)
+    /**
+     * 注册中心连接超时时间(毫秒)
+     */
+    @PositiveOrZero
     private              Integer      connectTimeout      = Math.toIntExact(TimeUnit.SECONDS.toMillis(1));
-    // 注册中心会话超时时间(毫秒)
+    /**
+     * 注册中心会话超时时间(毫秒)
+     */
+    @PositiveOrZero
     private              Integer      sessionTimeout      = Math.toIntExact(TimeUnit.MINUTES.toMillis(1));
-    // 注册中心连接失败后重试的时间间隔(毫秒)
+    /**
+     * 注册中心连接失败后重试的时间间隔(毫秒)
+     */
+    @PositiveOrZero
     private              Integer      retryInterval       = Math.toIntExact(TimeUnit.SECONDS.toMillis(30));
-    // 注册中心请求超时时间(毫秒)
+    /**
+     * 注册中心请求超时时间(毫秒)
+     */
+    @PositiveOrZero
     private              Integer      requestTimeout;
 
-    public void initialize() {
+    public void init() {
         checkIntegrity();
         checkValidity();
-        if (StringUtils.isNotEmpty(address) && StringUtils.isEmpty(host) && port == null) {
-            String[] splitParts = COLON_SPLIT_PATTERN.split(address);
-            host = splitParts[0];
-            port = Integer.parseInt(splitParts[1]);
-        }
-        if (StringUtils.isEmpty(address) && StringUtils.isNotEmpty(host) && port != null) {
-            address = host + ":" + port;
-        }
     }
 
     private void checkIntegrity() {
-        // todo
     }
 
     private void checkValidity() {

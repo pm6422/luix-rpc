@@ -12,22 +12,34 @@ import java.util.Optional;
 
 @Data
 public class ProtocolConfig {
-    // Name of protocol
-    // SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type,
-    // and check whether value is valid or not during application startup.
+    /**
+     * Name of protocol
+     * SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type,
+     * and check whether value is valid or not during application startup.
+     */
     private ProtocolName name           = ProtocolName.infinity;
-    // Host name of the RPC server
+    /**
+     * Host name of the RPC server
+     */
     private String       host           = NetworkIpUtils.INTRANET_IP;
-    // Port number of the RPC server
+    /**
+     * Port number of the RPC server
+     */
     private Integer      port;
-    // Cluster implementation
+    /**
+     * Cluster implementation
+     */
     private String       cluster        = "default";
-    // Cluster loadBalancer implementation
+    /**
+     * Cluster loadBalancer implementation
+     */
     private String       loadBalancer   = "random";
-    // Fault tolerance strategy
+    /**
+     * Fault tolerance strategy
+     */
     private String       faultTolerance = "failover";
 
-    public void initialize() {
+    public void init() {
         checkIntegrity();
         checkValidity();
         // Initialize provider cluster before consumer initialization
