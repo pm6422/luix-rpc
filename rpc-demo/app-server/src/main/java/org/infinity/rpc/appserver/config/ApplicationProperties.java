@@ -6,6 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+
 /**
  * Properties specific to Application.
  *
@@ -80,7 +82,8 @@ public class ApplicationProperties {
 
     @Data
     public static class AopLogging {
-        private boolean enabled;
+        private boolean      enabled;
+        private List<String> loggingMethods;
     }
 
     @Data
