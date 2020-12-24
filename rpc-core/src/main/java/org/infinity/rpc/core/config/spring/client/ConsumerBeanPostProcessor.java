@@ -60,7 +60,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
     @Override
     public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
         Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory,
-                "It requires an instance of ConfigurableListableBeanFactory");
+                "It requires an instance of ".concat(ConfigurableListableBeanFactory.class.getSimpleName()));
         this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
     }
 
