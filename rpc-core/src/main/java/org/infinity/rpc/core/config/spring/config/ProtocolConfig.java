@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.Optional;
 
 @Data
@@ -31,18 +32,23 @@ public class ProtocolConfig {
     /**
      * Port number of the RPC server
      */
+    @NotNull
+    @Positive
     private Integer      port;
     /**
      * Cluster implementation
      */
+    @NotEmpty
     private String       cluster        = "default";
     /**
      * Cluster loadBalancer implementation
      */
+    @NotEmpty
     private String       loadBalancer   = "random";
     /**
      * Fault tolerance strategy
      */
+    @NotEmpty
     private String       faultTolerance = "failover";
 
     public void init() {
@@ -53,7 +59,6 @@ public class ProtocolConfig {
     }
 
     private void checkIntegrity() {
-        Validate.notNull(port, "Protocol port must NOT be null! Please check your configuration.");
     }
 
     private void checkValidity() {
