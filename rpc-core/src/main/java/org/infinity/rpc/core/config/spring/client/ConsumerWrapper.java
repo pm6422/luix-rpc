@@ -32,7 +32,7 @@ public class ConsumerWrapper<T> implements DisposableBean {
      */
     private final Class<T>            interfaceClass;
     /**
-     * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(Class, ConsumerWrapper)}
+     * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(ConsumerWrapper)}
      */
     private final T                   proxyInstance;
     /**
