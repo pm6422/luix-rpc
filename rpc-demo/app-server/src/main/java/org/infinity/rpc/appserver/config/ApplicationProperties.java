@@ -83,8 +83,8 @@ public class ApplicationProperties {
     @Data
     public static class AopLogging {
         private boolean      enabled;
-        private boolean      methodsWhitelistMode;
-        private List<String> loggingMethods;
+        private boolean      methodWhitelistMode;
+        private List<String> methodWhitelist;
     }
 
     @Data

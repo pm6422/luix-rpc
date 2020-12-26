@@ -92,12 +92,12 @@ public class AopLoggingAspect {
     }
 
     private boolean needLog(ProceedingJoinPoint joinPoint) {
-        if (!applicationProperties.getAopLogging().isMethodsWhitelistMode()) {
+        if (!applicationProperties.getAopLogging().isMethodWhitelistMode()) {
             return true;
         }
         String method = joinPoint.getSignature().getDeclaringType().getSimpleName() + "." +
                 joinPoint.getSignature().getName();
-        return applicationProperties.getAopLogging().getLoggingMethods().contains(method);
+        return applicationProperties.getAopLogging().getMethodWhitelist().contains(method);
     }
 
     private boolean isValidArgument(Object argument) {
