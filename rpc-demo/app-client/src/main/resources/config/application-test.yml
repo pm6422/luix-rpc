@@ -12,7 +12,8 @@
 infinity:
     registry:
         name: zookeeper
-        address: localhost:2181
+        host: localhost
+        port: 2181
     protocol:
         port: @app.rpc.port@
 # ===================================================================
