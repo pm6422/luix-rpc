@@ -197,22 +197,19 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
         return AnnotationUtils.getAnnotationAttributes(element, Consumer.class, env, false, true);
     }
 
-    private ConsumerWrapper<?> registerConsumerWrapper(Class<?> type, AnnotationAttributes annotationAttributes) {
+    private ConsumerWrapper<?> registerConsumerWrapper(Class<?> consumerType, AnnotationAttributes annotationAttributes) {
         // Resolve the interface class of the consumer proxy instance
-        Class<?> interfaceClass = AnnotationUtils.resolveInterfaceClass(annotationAttributes, type);
+        Class<?> consumerInterfaceClass = AnnotationUtils.resolveInterfaceClass(annotationAttributes, consumerType);
 
         // Build the consumer wrapper bean name
-        String consumerWrapperBeanName = buildConsumerWrapperBeanName(interfaceClass);
+        String consumerWrapperBeanName = buildConsumerWrapperBeanName(consumerInterfaceClass);
 
         if (registeredConsumerWrapper(consumerWrapperBeanName)) {
             // Return the instance if it already be registered
             return applicationContext.getBean(consumerWrapperBeanName, ConsumerWrapper.class);
         }
 
-        InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
-        RegistryInfo registryInfo = applicationContext.getBean(RegistryInfo.class);
-        ConsumerWrapper<?> consumerWrapper = new ConsumerWrapper<>(infinityProperties, registryInfo, interfaceClass,
-                consumerWrapperBeanName, new HashMap<>(annotationAttributes));
+        ConsumerWrapper<?> consumerWrapper = createConsumerWrapper(consumerWrapperBeanName, consumerInterfaceClass, annotationAttributes);
         // Register the consumer wrapper instance with singleton scope
         beanFactory.registerSingleton(consumerWrapperBeanName, consumerWrapper);
         return consumerWrapper;
@@ -230,6 +227,16 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
 
     private boolean registeredConsumerWrapper(String consumerWrapperBeanName) {
         return applicationContext.containsBean(consumerWrapperBeanName);
+    }
+
+    private ConsumerWrapper<?> createConsumerWrapper(String consumerWrapperBeanName,
+                                                     Class<?> consumerInterfaceClass,
+                                                     AnnotationAttributes annotationAttributes) {
+        InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
+        RegistryInfo registryInfo = applicationContext.getBean(RegistryInfo.class);
+        ConsumerWrapper<?> consumerWrapper = new ConsumerWrapper<>(consumerWrapperBeanName, consumerInterfaceClass);
+        consumerWrapper.init(infinityProperties, registryInfo.getRegistryUrls(), new HashMap<>(annotationAttributes));
+        return consumerWrapper;
     }
 
     /**
