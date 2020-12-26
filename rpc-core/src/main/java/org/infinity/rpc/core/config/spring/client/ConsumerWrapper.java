@@ -68,6 +68,7 @@ public class ConsumerWrapper<T> implements DisposableBean {
         this.directUrl = (String) consumerAttributesMap.get("directUrl");
         this.timeout = (int) consumerAttributesMap.get("timeout");
 
+        // @TODO invoke outside
         this.init();
     }
 

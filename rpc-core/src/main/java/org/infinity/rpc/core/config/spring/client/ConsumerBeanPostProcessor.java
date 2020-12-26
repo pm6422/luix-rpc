@@ -22,13 +22,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static org.infinity.rpc.core.config.spring.utils.AnnotationUtils.getAnnotationAttributes;
 
 /**
  * The class implements {@link BeanPostProcessor} means that all spring beans will be processed by
@@ -39,7 +39,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
         BeanPostProcessor, BeanFactoryPostProcessor, EnvironmentAware, BeanFactoryAware {
     private final String[]                        scanBasePackages;
     private       ApplicationContext              applicationContext;
-    private       Environment                     environment;
+    private       Environment                     env;
     private       ConfigurableListableBeanFactory beanFactory;
 
     public ConsumerBeanPostProcessor(String[] scanBasePackages) {
@@ -53,8 +53,8 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
     }
 
     @Override
-    public void setEnvironment(@NonNull Environment environment) {
-        this.environment = environment;
+    public void setEnvironment(@NonNull Environment env) {
+        this.env = env;
     }
 
     @Override
@@ -74,10 +74,10 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
     }
 
     /**
-     * Inject RPC consumer proxy
+     * Inject RPC consumer proxy and register {@link ConsumerWrapper} instance
      *
-     * @param bean     bean instance
-     * @param beanName bean name
+     * @param bean     bean instance to be injected
+     * @param beanName bean name to be injected
      * @return processed bean instance
      * @throws BeansException if BeansException throws
      */
@@ -89,16 +89,19 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
             return bean;
         }
 
-        // Field dependency injection by reflection
-        setConsumerOnField(bean, clazz);
+        // Inject consumer proxy instances to fields
+        injectConsumerToField(bean, clazz);
 
-        // Method dependency injection by reflection
-        setConsumerOnMethod(bean, clazz);
+        // Inject consumer proxy instances to method parameters
+        injectConsumerToSetterMethodParam(bean, clazz);
+
+        // @todo Inject consumer proxy instances to constructor
         return bean;
     }
 
     private Class<?> getTargetClass(Object bean) {
         if (isProxyBean(bean)) {
+            // Get class of the bean if it is a proxy bean
             return AopUtils.getTargetClass(bean);
         }
         return bean.getClass();
@@ -113,103 +116,106 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
     }
 
     /**
-     * Field dependency injection by reflection
+     * Inject RPC consumer proxy instances to fields which annotated with {@link Consumer} by reflection
+     * and register its {@link ConsumerWrapper} instance to spring context
      *
-     * @param bean      bean instance
-     * @param beanClass bean class used to be injected with {@link Consumer} annotated field
+     * @param bean      bean instance to be injected
+     * @param beanClass bean class to be injected
      */
-    private void setConsumerOnField(Object bean, Class<?> beanClass) {
+    private void injectConsumerToField(Object bean, Class<?> beanClass) {
         Field[] fields = beanClass.getDeclaredFields();
         for (Field field : fields) {
-            if (!Modifier.isStatic(field.getModifiers())) {
-                try {
-                    if (!field.isAccessible()) {
-                        field.setAccessible(true);
-                    }
-
-                    // Get @Consumer annotation attributes value of field, and it will be null if no annotation presents on the field
-                    AnnotationAttributes annotationAttributes =
-                            getAnnotationAttributes(field, Consumer.class, environment, false, true);
-                    if (annotationAttributes != null) {
-                        // Found the @Consumer annotated field
-                        Class<?> interfaceClass = AnnotationUtils.resolveInterfaceClass(annotationAttributes, field.getType());
-                        // TODO: Register consumer wrapper bean definition
-                        // Register consumer wrapper bean to spring context
-                        ConsumerWrapper<?> consumerWrapper = registerConsumerWrapper(interfaceClass, annotationAttributes);
-                        // Inject consumer proxy instance
-                        field.set(bean, consumerWrapper.getProxyInstance());
-                    }
-                } catch (Throwable t) {
-                    throw new BeanInitializationException("Failed to set RPC consumer proxy by field reflection" + field.getName()
-                            + " in class " + bean.getClass().getName(), t);
+            if (Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+            try {
+                if (!field.isAccessible()) {
+                    field.setAccessible(true);
                 }
+
+                // Get @Consumer annotation attribute values of field, and it will be null if no annotation presents on the field
+                AnnotationAttributes attributes = getConsumerAnnotationAttributes(field);
+                if (attributes == null) {
+                    // No @Consumer annotated field found
+                    continue;
+                }
+                // TODO: Register consumer wrapper bean definition
+                // Register consumer wrapper instance to spring context
+                ConsumerWrapper<?> consumerWrapper = registerConsumerWrapper(field.getType(), attributes);
+                // Inject RPC consumer proxy instance
+                field.set(bean, consumerWrapper.getProxyInstance());
+            } catch (Throwable t) {
+                throw new BeanInitializationException("Failed to inject RPC consumer proxy to field [" + field.getName()
+                        + "] of " + bean.getClass().getName(), t);
             }
         }
     }
 
     /**
-     * Method dependency injection by reflection
+     * Inject RPC consumer proxy instances to setter method parameters which annotated with {@link Consumer} by reflection
+     * and register its {@link ConsumerWrapper} instance to spring context
      *
-     * @param bean      bean instance
-     * @param beanClass bean class used to be injected with {@link Consumer} annotated method
+     * @param bean      bean instance to be injected
+     * @param beanClass bean class to be injected
      */
-    private void setConsumerOnMethod(Object bean, Class<?> beanClass) {
+    private void injectConsumerToSetterMethodParam(Object bean, Class<?> beanClass) {
         Method[] methods = beanClass.getMethods();
         for (Method method : methods) {
-            String methodName = method.getName();
-            if (methodName.length() > 3 && methodName.startsWith("set")
-                    && method.getParameterTypes().length == 1
-                    && Modifier.isPublic(method.getModifiers())
-                    && !Modifier.isStatic(method.getModifiers())) {
-                try {
-                    // The Java compiler generates the bridge method, in order to be compatible with the byte code under previous JDK version of JDK 1.5,
-                    // for the generic erasure occasion
-                    Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
-                    // Get @Consumer annotation attributes value of method, and it will be null if no annotation presents on the field
-                    AnnotationAttributes annotationAttributes = getAnnotationAttributes(bridgedMethod,
-                            Consumer.class, environment, false, true);
-                    if (annotationAttributes != null) {
-                        // Found the @Consumer annotated method
-                        Class<?> interfaceClass = AnnotationUtils.resolveInterfaceClass(annotationAttributes, method.getParameterTypes()[0]);
-                        // TODO: Register consumer wrapper bean definition
-                        // Register consumer wrapper bean to spring context
-                        ConsumerWrapper<?> consumerWrapper = registerConsumerWrapper(interfaceClass, annotationAttributes);
-                        // Inject consumer proxy instance
-                        method.invoke(bean, consumerWrapper.getProxyInstance());
-                    }
-                } catch (Throwable t) {
-                    throw new BeanInitializationException("Failed to set RPC consumer proxy by setter method " + methodName
-                            + " in class " + bean.getClass().getName(), t);
+            if (!isSetterMethod(method)) {
+                continue;
+            }
+            try {
+                // The Java compiler generates the bridge method, in order to be compatible with the byte code
+                // under previous JDK version of JDK 1.5, for the generic erasure occasion
+                Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
+                // Get @Consumer annotation attribute values of method, and it will be null if no annotation presents on the field
+                AnnotationAttributes attributes = getConsumerAnnotationAttributes(bridgedMethod);
+                if (attributes == null) {
+                    // No method with @Consumer annotated parameter found
+                    continue;
                 }
+                // TODO: Register consumer wrapper bean definition
+                // Register consumer wrapper instance to spring context
+                ConsumerWrapper<?> consumerWrapper = registerConsumerWrapper(method.getParameterTypes()[0], attributes);
+                // Inject RPC consumer proxy instance
+                method.invoke(bean, consumerWrapper.getProxyInstance());
+            } catch (Throwable t) {
+                throw new BeanInitializationException("Failed to inject RPC consumer proxy to parameter of method ["
+                        + method.getName() + "] of " + bean.getClass().getName(), t);
             }
         }
     }
 
-    private ConsumerWrapper<?> registerConsumerWrapper(Class<?> interfaceClass, AnnotationAttributes annotationAttributes) {
-        InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
-        RegistryInfo registryInfo = applicationContext.getBean(RegistryInfo.class);
+    private boolean isSetterMethod(Method method) {
+        return method.getName().startsWith("set")
+                && method.getParameterTypes().length == 1
+                && Modifier.isPublic(method.getModifiers())
+                && !Modifier.isStatic(method.getModifiers());
+    }
+
+    private AnnotationAttributes getConsumerAnnotationAttributes(AnnotatedElement element) {
+        return AnnotationUtils.getAnnotationAttributes(element, Consumer.class, env, false, true);
+    }
+
+    private ConsumerWrapper<?> registerConsumerWrapper(Class<?> type, AnnotationAttributes annotationAttributes) {
+        // Resolve the interface class of the consumer proxy instance
+        Class<?> interfaceClass = AnnotationUtils.resolveInterfaceClass(annotationAttributes, type);
+
         // Build the consumer wrapper bean name
         String consumerWrapperBeanName = buildConsumerWrapperBeanName(interfaceClass);
 
-        if (!existsConsumerWrapperBean(consumerWrapperBeanName)) {
-            if (!beanFactory.containsBean(consumerWrapperBeanName)) {
-                // lombok plugin bug: not support generic
-//                ConsumerWrapper consumerWrapper = ConsumerWrapper.builder()
-//                        .infinityProperties(infinityProperties)
-//                        .registryConfig(registryConfig)
-//                        .interfaceClass(interfaceClass)
-//                        .instanceName(consumerWrapperBeanName)
-//                        .directUrl(annotationAttributes.getString("timeout"))
-//                        .build();
-
-                ConsumerWrapper<?> consumerWrapper = new ConsumerWrapper<>(infinityProperties, registryInfo, interfaceClass,
-                        consumerWrapperBeanName, new HashMap<>(annotationAttributes));
-                beanFactory.registerSingleton(consumerWrapperBeanName, consumerWrapper);
-                return consumerWrapper;
-            }
+        if (registeredConsumerWrapper(consumerWrapperBeanName)) {
+            // Return the instance if it already be registered
+            return applicationContext.getBean(consumerWrapperBeanName, ConsumerWrapper.class);
         }
 
-        return applicationContext.getBean(consumerWrapperBeanName, ConsumerWrapper.class);
+        InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
+        RegistryInfo registryInfo = applicationContext.getBean(RegistryInfo.class);
+        ConsumerWrapper<?> consumerWrapper = new ConsumerWrapper<>(infinityProperties, registryInfo, interfaceClass,
+                consumerWrapperBeanName, new HashMap<>(annotationAttributes));
+        // Register the consumer wrapper instance with singleton scope
+        beanFactory.registerSingleton(consumerWrapperBeanName, consumerWrapper);
+        return consumerWrapper;
     }
 
     /**
@@ -219,10 +225,10 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
      * @return The name of bean that annotated {@link Consumer @Consumer} in spring context
      */
     private String buildConsumerWrapperBeanName(Class<?> defaultInterfaceClass) {
-        return ConsumerWrapperBeanNameBuilder.builder(defaultInterfaceClass, environment).build();
+        return ConsumerWrapperBeanNameBuilder.builder(defaultInterfaceClass, env).build();
     }
 
-    private boolean existsConsumerWrapperBean(String consumerWrapperBeanName) {
+    private boolean registeredConsumerWrapper(String consumerWrapperBeanName) {
         return applicationContext.containsBean(consumerWrapperBeanName);
     }
 

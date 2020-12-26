@@ -1,11 +1,11 @@
 package org.infinity.rpc.core.config.spring.utils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
+import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 import java.lang.annotation.Annotation;
@@ -237,18 +237,17 @@ public abstract class AnnotationUtils {
      * @return the interface name if found
      */
     public static String resolveInterfaceName(AnnotationAttributes attributes, Class<?> defaultInterfaceClass) {
-        Validate.isTrue(defaultInterfaceClass.isInterface(), "defaultInterfaceClass must be an interface class!");
-        Validate.isTrue(validateGeneric(attributes), "The " + INTERFACE_NAME + " attribute of @Consumer must NOT be empty for a generic consumer!");
+        Assert.isTrue(defaultInterfaceClass.isInterface(), "defaultInterfaceClass must be an interface class!");
+        Assert.isTrue(AssertGeneric(attributes), "The " + INTERFACE_NAME + " attribute of @Consumer must NOT be empty for a generic consumer!");
 
         return resolveInterfaceClass(attributes, defaultInterfaceClass).getName();
     }
 
     /**
-     *
      * @param attributes
      * @return
      */
-    private static boolean validateGeneric(AnnotationAttributes attributes) {
+    private static boolean AssertGeneric(AnnotationAttributes attributes) {
         Boolean generic = getAttributeValue(attributes, GENERIC);
         if (Boolean.TRUE.equals(generic)) {
             // Generic call must have the interfaceName attribute
@@ -279,8 +278,8 @@ public abstract class AnnotationUtils {
      * @return the {@link Class class} of provider interface
      */
     public static Class<?> resolveInterfaceClass(AnnotationAttributes attributes, Class<?> defaultInterfaceClass) {
-        Validate.isTrue(defaultInterfaceClass.isInterface(), "defaultInterfaceClass must be an interface class!");
-        Validate.isTrue(validateGeneric(attributes), "The " + INTERFACE_NAME + " attribute of @Consumer must NOT be empty for a generic consumer!");
+        Assert.isTrue(defaultInterfaceClass.isInterface(), "defaultInterfaceClass must be an interface class!");
+        Assert.isTrue(AssertGeneric(attributes), "The " + INTERFACE_NAME + " attribute of @Consumer must NOT be empty for a generic consumer!");
 
         ClassLoader classLoader = defaultInterfaceClass != null ? defaultInterfaceClass.getClassLoader() : Thread.currentThread().getContextClassLoader();
         Class<?> interfaceClass = getAttributeValue(attributes, INTERFACE_CLASS);
@@ -304,8 +303,8 @@ public abstract class AnnotationUtils {
             }
         }
 
-        Validate.notNull(interfaceClass, "Missconfigured the provider or consumer service!");
-        Validate.isTrue(interfaceClass.isInterface(), "The annotated type must be an interface!");
+        Assert.notNull(interfaceClass, "Missconfigured the provider or consumer service!");
+        Assert.isTrue(interfaceClass.isInterface(), "The annotated type must be an interface!");
         return interfaceClass;
     }
 }
