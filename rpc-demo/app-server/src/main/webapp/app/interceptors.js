@@ -74,6 +74,8 @@ function authInterceptor($rootScope, $q, $location, $localStorage, $sessionStora
             config.headers.Authorization = 'Bearer ' + token.access_token;
         }
 
+        // Generate request ID
+        config.headers['X-REQUEST-ID'] = 'R' + Date.now() + (Math.random() * 100000).toFixed();
         return config;
     }
 }
