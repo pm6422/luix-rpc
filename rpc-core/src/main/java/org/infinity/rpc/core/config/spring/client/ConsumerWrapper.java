@@ -41,15 +41,16 @@ public class ConsumerWrapper<T> implements DisposableBean {
     /**
      *
      */
+    private       Url                 clientUrl;
+    /**
+     *
+     */
     private       String              directUrl;
     /**
      *
      */
     private       int                 timeout;
-    /**
-     *
-     */
-    private       Url                 clientUrl;
+
 
     public ConsumerWrapper(String consumerWrapperBeanName, Class<T> interfaceClass) {
         this.consumerWrapperBeanName = consumerWrapperBeanName;
