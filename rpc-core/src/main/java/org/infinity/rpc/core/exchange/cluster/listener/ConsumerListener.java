@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @ThreadSafe
 public class ConsumerListener<T> implements ClientListener {
-    private       Protocol                             protocol;
-    private       List<Url>                            registryUrls;
-    private       Url                                  clientUrl;
+    private       Protocol                          protocol;
+    private       List<Url>                         registryUrls;
+    private       Url                               clientUrl;
     /**
      * The interface class of the consumer
      */

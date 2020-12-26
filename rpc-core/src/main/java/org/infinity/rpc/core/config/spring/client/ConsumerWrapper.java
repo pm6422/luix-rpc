@@ -58,11 +58,11 @@ public class ConsumerWrapper<T> implements DisposableBean {
 
     public void init(InfinityProperties infinityProperties, List<Url> registryUrls, Map<String, Object> consumerAttributesMap) {
         proxyInstance = ConsumerProxy.getProxy(interfaceClass, infinityProperties);
+        clientUrl = Url.clientUrl(infinityProperties.getProtocol().getName().name(), interfaceClass.getName());
         consumerListener = ConsumerListener.of(interfaceClass, registryUrls, clientUrl);
-        this.clientUrl = Url.clientUrl(infinityProperties.getProtocol().getName().name(), interfaceClass.getName());
         // Set attribute values of @Consumer annotation
-        this.directUrl = (String) consumerAttributesMap.get("directUrl");
-        this.timeout = (int) consumerAttributesMap.get("timeout");
+        directUrl = (String) consumerAttributesMap.get("directUrl");
+        timeout = (int) consumerAttributesMap.get("timeout");
     }
 
     @Override
