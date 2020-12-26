@@ -16,9 +16,9 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.zookeeper.Watcher;
 import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.CommandFailbackAbstractRegistry;
-import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.utilities.annotation.EventMarker;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
@@ -199,6 +199,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             // Override the old data every time
             app.setLatestRegisteredTime(DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
             String jsonStr = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(app);
+            zkClient.delete(ZookeeperUtils.getApplicationInfoPath(app.getId()));
             zkClient.createEphemeral(ZookeeperUtils.getApplicationInfoPath(app.getId()), jsonStr);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(MessageFormat.format("Failed to register application [{0}] to zookeeper [{1}] with the error: {2}", app.getName(), getRegistryUrl(), e.getMessage()), e);
@@ -234,6 +235,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         // Create a temporary file which content is the full string of the url
         // And temporary files will be deleted automatically after closed zk session
         // Append multiple provider url to file contents
+        zkClient.delete(filePath);
         zkClient.createEphemeral(filePath, providerUrl.toFullStr());
     }
 
