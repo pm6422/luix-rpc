@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.client.proxy;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.config.spring.client.ConsumerWrapper;
 import org.infinity.rpc.core.exchange.request.impl.RpcRequest;
 import org.infinity.rpc.utilities.id.IdGenerator;
 import org.springframework.util.ClassUtils;
@@ -16,9 +16,8 @@ import java.util.Arrays;
 @Slf4j
 public class ConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationHandler<T> implements InvocationHandler {
 
-    public ConsumerInvocationHandler(Class<T> interfaceClass, InfinityProperties infinityProperties) {
-        super.interfaceClass = interfaceClass;
-        super.infinityProperties = infinityProperties;
+    public ConsumerInvocationHandler(ConsumerWrapper<T> wrapper) {
+        consumerWrapper = wrapper;
     }
 
     /**
@@ -38,7 +37,7 @@ public class ConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationH
 
         RpcRequest request = new RpcRequest();
         request.setRequestId(IdGenerator.generateTimestampId());
-        request.setInterfaceName(interfaceClass.getName());
+        request.setInterfaceName(consumerWrapper.getInterfaceClass().getName());
         request.setMethodName(method.getName());
         request.setMethodArguments(args);
 
@@ -56,7 +55,7 @@ public class ConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationH
     public boolean isDerivedFromObject(Method method) {
         if (method.getDeclaringClass().equals(Object.class)) {
             try {
-                interfaceClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
+                consumerWrapper.getInterfaceClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
                 return false;
             } catch (Exception e) {
                 return true;

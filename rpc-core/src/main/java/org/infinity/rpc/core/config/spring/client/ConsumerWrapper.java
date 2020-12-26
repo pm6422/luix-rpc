@@ -8,6 +8,7 @@ import org.infinity.rpc.core.exchange.cluster.listener.ConsumerListener;
 import org.infinity.rpc.core.url.Url;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Map;
@@ -31,9 +32,9 @@ public class ConsumerWrapper<T> implements DisposableBean {
      */
     private final Class<T>            interfaceClass;
     /**
-     * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(Class, InfinityProperties)}
+     * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(Class, ConsumerWrapper)}
      */
-    private       T                   proxyInstance;
+    private final T                   proxyInstance;
     /**
      *
      */
@@ -53,12 +54,15 @@ public class ConsumerWrapper<T> implements DisposableBean {
 
 
     public ConsumerWrapper(String consumerWrapperBeanName, Class<T> interfaceClass) {
+        Assert.hasText(consumerWrapperBeanName, "Consumer wrapper bean name must not be empty!");
+        Assert.notNull(interfaceClass, "Consumer interface class must not be null!");
+
         this.consumerWrapperBeanName = consumerWrapperBeanName;
         this.interfaceClass = interfaceClass;
+        this.proxyInstance = ConsumerProxy.getProxy(this);
     }
 
     public void init(InfinityProperties infinityProperties, List<Url> registryUrls, Map<String, Object> consumerAttributesMap) {
-        proxyInstance = ConsumerProxy.getProxy(interfaceClass, infinityProperties);
         clientUrl = Url.clientUrl(infinityProperties.getProtocol().getName().name(), interfaceClass.getName());
         consumerListener = ConsumerListener.of(interfaceClass, registryUrls, clientUrl);
         // Set attribute values of @Consumer annotation

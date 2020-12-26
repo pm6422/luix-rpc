@@ -36,7 +36,7 @@ public class ConsumerInvocationHandler1<T> implements InvocationHandler {
             return ClassUtils.getShortNameAsProperty(ConsumerProxy.class);
         }
 
-        new ConsumerInvocationHandler(interfaceClass, infinityProperties).invoke(proxy, method, args);
+//        new ConsumerInvocationHandler(interfaceClass).invoke(proxy, method, args);
 
         // Create request object, including class name, method, parameter types, arguments
         RpcRequest rpcRequest = new RpcRequest(UUID.randomUUID().toString(), method.getDeclaringClass().getName(), method.getName(), method.getParameterTypes(), args);

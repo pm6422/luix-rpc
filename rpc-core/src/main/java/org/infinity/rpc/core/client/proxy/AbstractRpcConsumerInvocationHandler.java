@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.client.proxy;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.config.spring.config.InfinityProperties;
+import org.infinity.rpc.core.config.spring.client.ConsumerWrapper;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
 import org.infinity.rpc.core.exchange.cluster.ProviderClusterHolder;
@@ -18,12 +18,8 @@ import java.util.List;
  */
 @Slf4j
 public abstract class AbstractRpcConsumerInvocationHandler<T> {
-    /**
-     * The interface class of the consumer
-     */
-    protected Class<T>           interfaceClass;
+    protected ConsumerWrapper<T> consumerWrapper;
     protected SwitcherService    switcherService;
-    protected InfinityProperties infinityProperties;
 
     /**
      * @param request    RPC request
@@ -45,7 +41,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
         List<ProviderCluster<T>> providerClusters = ProviderClusterHolder.getInstance().getClusters();
         for (ProviderCluster<T> providerCluster : providerClusters) {
             Url clientUrl = providerCluster.getFaultToleranceStrategy().getClientUrl();
-            request.addAttachment(Url.PARAM_APP, infinityProperties.getApplication().getName());
+//            request.addAttachment(Url.PARAM_APP, infinityProperties.getApplication().getName());
 
             Responseable response = null;
             boolean throwException = true;
