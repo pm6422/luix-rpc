@@ -18,17 +18,19 @@ package org.infinity.rpc.core.config.spring.client;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
+import org.springframework.util.Assert;
 
 /**
- * Consumer {@link org.infinity.rpc.core.client.annotation.Consumer @Consumer} wrapper bean Builder
+ * RPC consumer wrapper bean name builder
  */
 public class ConsumerWrapperBeanNameBuilder {
     public static final  String      CONSUMER_WRAPPER_BEAN_PREFIX = "ConsumerWrapperBean";
     private static final String      SEPARATOR                    = ":";
-    // Required
+    /**
+     * Consumer interface class
+     */
     private final        Class<?>    interfaceClass;
     private final        Environment env;
-    // Optional
     private              String      version;
     private              String      group;
 
@@ -36,6 +38,8 @@ public class ConsumerWrapperBeanNameBuilder {
      * Prohibit instantiate an instance outside the class
      */
     private ConsumerWrapperBeanNameBuilder(Class<?> interfaceClass, Environment env) {
+        Assert.notNull(interfaceClass, "Consumer interface class must not be null!");
+        Assert.notNull(env, "Environment must not be null!");
         this.interfaceClass = interfaceClass;
         this.env = env;
     }
