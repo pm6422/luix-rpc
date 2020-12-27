@@ -204,25 +204,25 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
     /**
      * Register consumer wrapper to spring context
      *
-     * @param annotationAttributes   {@link AnnotationAttributes annotation attributes}
+     * @param attributes   {@link AnnotationAttributes annotation attributes}
      * @param consumerInterfaceClass Consumer interface class
      * @return ConsumerWrapper instance
      */
-    private ConsumerWrapper<?> registerConsumerWrapper(AnnotationAttributes annotationAttributes, Class<?> consumerInterfaceClass) {
+    private ConsumerWrapper<?> registerConsumerWrapper(AnnotationAttributes attributes, Class<?> consumerInterfaceClass) {
         // Resolve the interface class of the consumer proxy instance
-        Class<?> resolvedConsumerInterfaceClass = AnnotationUtils.resolveInterfaceClass(annotationAttributes, consumerInterfaceClass);
+        Class<?> resolvedConsumerInterfaceClass = AnnotationUtils.resolveInterfaceClass(attributes, consumerInterfaceClass);
 
         // Build the consumer wrapper bean name
-        String consumerWrapperBeanName = buildConsumerWrapperBeanName(resolvedConsumerInterfaceClass);
+        String beanName = buildConsumerWrapperBeanName(resolvedConsumerInterfaceClass);
 
-        if (registeredConsumerWrapper(consumerWrapperBeanName)) {
+        if (registeredConsumerWrapper(beanName)) {
             // Return the instance if it already be registered
-            return applicationContext.getBean(consumerWrapperBeanName, ConsumerWrapper.class);
+            return applicationContext.getBean(beanName, ConsumerWrapper.class);
         }
 
-        ConsumerWrapper<?> consumerWrapper = createConsumerWrapper(consumerWrapperBeanName, resolvedConsumerInterfaceClass, annotationAttributes);
+        ConsumerWrapper<?> consumerWrapper = createConsumerWrapper(beanName, resolvedConsumerInterfaceClass, attributes);
         // Register the consumer wrapper instance with singleton scope
-        beanFactory.registerSingleton(consumerWrapperBeanName, consumerWrapper);
+        beanFactory.registerSingleton(beanName, consumerWrapper);
         return consumerWrapper;
     }
 
