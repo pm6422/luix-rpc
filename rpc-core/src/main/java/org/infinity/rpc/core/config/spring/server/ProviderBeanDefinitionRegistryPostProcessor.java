@@ -3,6 +3,7 @@ package org.infinity.rpc.core.config.spring.server;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.bean.DefaultBeanNameGenerator;
 import org.infinity.rpc.core.config.spring.bean.registry.ClassPathBeanDefinitionRegistryScanner;
+import org.infinity.rpc.core.config.spring.utils.AnnotationUtils;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.springframework.beans.BeansException;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.*;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
@@ -41,7 +43,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
 
     private static final ValidatorFactory VALIDATOR_FACTORY = Validation.buildDefaultValidatorFactory();
     private final        Set<String>      scanBasePackages;
-    private              Environment      environment;
+    private              Environment      env;
     private              ResourceLoader   resourceLoader;
     private              ClassLoader      classLoader;
 
@@ -51,7 +53,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
 
     @Override
     public void setEnvironment(@Nonnull Environment environment) {
-        this.environment = environment;
+        this.env = environment;
     }
 
     @Override
@@ -103,7 +105,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         return scanBasePackages
                 .stream()
                 .filter(StringUtils::hasText)
-                .map(x -> environment.resolvePlaceholders(x.trim()))
+                .map(x -> env.resolvePlaceholders(x.trim()))
                 .collect(Collectors.toSet());
     }
 
@@ -134,7 +136,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
      */
     private ClassPathBeanDefinitionRegistryScanner createProviderScanner(BeanDefinitionRegistry registry,
                                                                          BeanNameGenerator beanNameGenerator) {
-        ClassPathBeanDefinitionRegistryScanner scanner = new ClassPathBeanDefinitionRegistryScanner(registry, environment, resourceLoader);
+        ClassPathBeanDefinitionRegistryScanner scanner = new ClassPathBeanDefinitionRegistryScanner(registry, env, resourceLoader);
         scanner.setBeanNameGenerator(beanNameGenerator);
         scanner.addIncludeFilter(new AnnotationTypeFilter(Provider.class));
         return scanner;
@@ -206,7 +208,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
                                              ClassPathBeanDefinitionRegistryScanner providerScanner) {
         Class<?> providerInstanceClass = resolveProviderClass(providerBeanDefinitionHolder);
         Provider providerAnnotation = findProviderAnnotation(providerInstanceClass);
-        Class<?> providerInterfaceClass = findProviderInterface(providerAnnotation, providerInstanceClass);
+        Class<?> providerInterfaceClass = resolveProviderInterface(providerAnnotation, providerInstanceClass);
 
         String providerWrapperBeanName = buildProviderWrapperBeanName(providerInterfaceClass);
         AbstractBeanDefinition wrapperBeanDefinition = buildProviderWrapperDefinition(
@@ -244,28 +246,14 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     /**
      * Get provider interface class
      *
-     * @param providerAnnotation {@link Provider} annotation
-     * @param providerBeanClass  provider class
+     * @param providerAnnotation    {@link Provider} annotation
+     * @param providerInstanceClass provider instance class, e.g AppServiceImpl
      * @return provider interface
      */
-    private Class<?> findProviderInterface(Provider providerAnnotation, Class<?> providerBeanClass) {
-        Class<?>[] interfaceClasses = providerBeanClass.getInterfaces();
-        Class<?> interfaceClass;
-
-        if (interfaceClasses.length == 0) {
-            throw new RpcConfigurationException("The RPC service provider bean must implement more than one interfaces!");
-        } else if (interfaceClasses.length == 1) {
-            interfaceClass = interfaceClasses[0];
-        } else {
-            // Get service interface from annotation if a instance has more than one declared interfaces
-            interfaceClass = providerAnnotation.interfaceClass();
-            if (void.class.equals(providerAnnotation.interfaceClass())) {
-                throw new RpcConfigurationException("The @Provider annotation of RPC service provider must specify interfaceClass attribute value " +
-                        "if the bean implements more than one interfaces!");
-            }
-            //  TODO: interfaceName handle
-        }
-        return interfaceClass;
+    private Class<?> resolveProviderInterface(Provider providerAnnotation, Class<?> providerInstanceClass) {
+        AnnotationAttributes annotationAttributes = AnnotationUtils
+                .getAnnotationAttributes(providerInstanceClass, Provider.class, env, false, true);
+        return AnnotationUtils.resolveInterfaceClass(annotationAttributes, providerInstanceClass);
     }
 
     /**
@@ -275,7 +263,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
      * @return provider wrapper bean name
      */
     private String buildProviderWrapperBeanName(Class<?> interfaceClass) {
-        return ProviderWrapperBeanNameBuilder.builder(interfaceClass, environment).build();
+        return ProviderWrapperBeanNameBuilder.builder(interfaceClass, env).build();
     }
 
     /**
@@ -333,7 +321,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
      * @param instanceName provider instance name
      */
     private void addPropertyReference(BeanDefinitionBuilder builder, String propertyName, String instanceName) {
-        builder.addPropertyReference(propertyName, environment.resolvePlaceholders(instanceName));
+        builder.addPropertyReference(propertyName, env.resolvePlaceholders(instanceName));
     }
 
     @Override

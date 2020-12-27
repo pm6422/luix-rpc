@@ -136,7 +136,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
                 }
                 // TODO: Register consumer wrapper bean definition
                 // Register consumer wrapper instance to spring context
-                ConsumerWrapper<?> consumerWrapper = registerConsumerWrapper(field.getType(), attributes);
+                ConsumerWrapper<?> consumerWrapper = registerConsumerWrapper(attributes, field.getType());
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
@@ -174,7 +174,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
                 }
                 // TODO: Register consumer wrapper bean definition
                 // Register consumer wrapper instance to spring context
-                ConsumerWrapper<?> consumerWrapper = registerConsumerWrapper(method.getParameterTypes()[0], attributes);
+                ConsumerWrapper<?> consumerWrapper = registerConsumerWrapper(attributes, method.getParameterTypes()[0]);
                 // Inject RPC consumer proxy instance
                 method.invoke(bean, consumerWrapper.getProxyInstance());
             } catch (Throwable t) {
@@ -201,19 +201,26 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
         return AnnotationUtils.getAnnotationAttributes(element, Consumer.class, env, false, true);
     }
 
-    private ConsumerWrapper<?> registerConsumerWrapper(Class<?> consumerType, AnnotationAttributes annotationAttributes) {
+    /**
+     * Register consumer wrapper to spring context
+     *
+     * @param annotationAttributes   {@link AnnotationAttributes annotation attributes}
+     * @param consumerInterfaceClass Consumer interface class
+     * @return ConsumerWrapper instance
+     */
+    private ConsumerWrapper<?> registerConsumerWrapper(AnnotationAttributes annotationAttributes, Class<?> consumerInterfaceClass) {
         // Resolve the interface class of the consumer proxy instance
-        Class<?> consumerInterfaceClass = AnnotationUtils.resolveInterfaceClass(consumerType, annotationAttributes);
+        Class<?> resolvedConsumerInterfaceClass = AnnotationUtils.resolveInterfaceClass(annotationAttributes, consumerInterfaceClass);
 
         // Build the consumer wrapper bean name
-        String consumerWrapperBeanName = buildConsumerWrapperBeanName(consumerInterfaceClass);
+        String consumerWrapperBeanName = buildConsumerWrapperBeanName(resolvedConsumerInterfaceClass);
 
         if (registeredConsumerWrapper(consumerWrapperBeanName)) {
             // Return the instance if it already be registered
             return applicationContext.getBean(consumerWrapperBeanName, ConsumerWrapper.class);
         }
 
-        ConsumerWrapper<?> consumerWrapper = createConsumerWrapper(consumerWrapperBeanName, consumerInterfaceClass, annotationAttributes);
+        ConsumerWrapper<?> consumerWrapper = createConsumerWrapper(consumerWrapperBeanName, resolvedConsumerInterfaceClass, annotationAttributes);
         // Register the consumer wrapper instance with singleton scope
         beanFactory.registerSingleton(consumerWrapperBeanName, consumerWrapper);
         return consumerWrapper;

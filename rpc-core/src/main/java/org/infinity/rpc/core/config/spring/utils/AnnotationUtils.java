@@ -3,6 +3,7 @@ package org.infinity.rpc.core.config.spring.utils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.annotation.Consumer;
+import org.infinity.rpc.core.server.annotation.Provider;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
@@ -241,47 +242,44 @@ public abstract class AnnotationUtils {
     /**
      * Resolve the interface name from {@link AnnotationAttributes} or defaultInterfaceClass
      *
-     * @param defaultInterfaceClass the annotated {@link Class class}
-     * @param attributes            {@link AnnotationAttributes} instance, e.g {@link Consumer @Consumer}
+     * @param attributes               {@link AnnotationAttributes} instance, e.g {@link Consumer @Consumer} or {@link Provider @Provider}
+     * @param instanceOrInterfaceClass provider instance class, e.g AppServiceImpl or consumer interface class, e.g AppService
      * @return the interface name if found
      */
-    public static String resolveInterfaceName(Class<?> defaultInterfaceClass, AnnotationAttributes attributes) {
-        Assert.isTrue(defaultInterfaceClass.isInterface(), "defaultInterfaceClass must be an interface class!");
-        Assert.isTrue(assertGeneric(attributes), "The " + INTERFACE_NAME + " attribute of @Consumer must not be empty for a generic consumer!");
-
-        return resolveInterfaceClass(defaultInterfaceClass, attributes).getName();
+    public static String resolveInterfaceName(AnnotationAttributes attributes, Class<?> instanceOrInterfaceClass) {
+        return resolveInterfaceClass(attributes, instanceOrInterfaceClass).getName();
     }
 
     /**
      * Resolve the {@link Class class} of provider or consumer interface from the specified
      * {@link AnnotationAttributes annotation attributes} and annotated {@link Class class}.
      *
-     * @param defaultInterfaceClass the annotated {@link Class class}
-     * @param attributes            {@link AnnotationAttributes annotation attributes}
+     * @param attributes               {@link AnnotationAttributes annotation attributes}
+     * @param instanceOrInterfaceClass provider instance class, e.g AppServiceImpl or consumer interface class, e.g AppService
      * @return the {@link Class class} of provider interface
      */
-    public static Class<?> resolveInterfaceClass(Class<?> defaultInterfaceClass, AnnotationAttributes attributes) {
-        Assert.notNull(defaultInterfaceClass, "defaultInterfaceClass must not be null!");
-        Assert.isTrue(defaultInterfaceClass.isInterface(), "defaultInterfaceClass must be an interface class!");
+    public static Class<?> resolveInterfaceClass(AnnotationAttributes attributes, Class<?> instanceOrInterfaceClass) {
         Assert.isTrue(assertGeneric(attributes), "The " + INTERFACE_NAME + " attribute of @Consumer must not be empty for a generic consumer!");
 
-        ClassLoader classLoader = defaultInterfaceClass.getClassLoader();
+        // Get interface class from interfaceClass attribute
         Class<?> interfaceClass = getAttributeValue(attributes, INTERFACE_CLASS);
         if (void.class.equals(interfaceClass)) {
             // Get interface class from interfaceName attribute if interfaceClass attribute does NOT present
             interfaceClass = null;
             String interfaceName = getAttributeValue(attributes, INTERFACE_NAME);
             if (StringUtils.isNotEmpty(interfaceName)) {
+                ClassLoader classLoader = instanceOrInterfaceClass != null ? instanceOrInterfaceClass.getClassLoader()
+                        : Thread.currentThread().getContextClassLoader();
                 if (ClassUtils.isPresent(interfaceName, classLoader)) {
                     interfaceClass = ClassUtils.resolveClassName(interfaceName, classLoader);
                 }
             }
         }
-        if (interfaceClass == null) {
+        if (interfaceClass == null && instanceOrInterfaceClass != null) {
             // Continue to get interface class based on defaultInterfaceClass
             // Find all interfaces from the annotated class
             // Supports the hierarchical interface
-            Class<?>[] allInterfaces = ClassUtils.getAllInterfacesForClass(defaultInterfaceClass);
+            Class<?>[] allInterfaces = ClassUtils.getAllInterfacesForClass(instanceOrInterfaceClass);
             if (allInterfaces.length > 0) {
                 interfaceClass = allInterfaces[0];
             }
