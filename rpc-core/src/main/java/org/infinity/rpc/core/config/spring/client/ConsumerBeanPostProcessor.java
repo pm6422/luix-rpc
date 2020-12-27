@@ -203,7 +203,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
 
     private ConsumerWrapper<?> registerConsumerWrapper(Class<?> consumerType, AnnotationAttributes annotationAttributes) {
         // Resolve the interface class of the consumer proxy instance
-        Class<?> consumerInterfaceClass = AnnotationUtils.resolveInterfaceClass(annotationAttributes, consumerType);
+        Class<?> consumerInterfaceClass = AnnotationUtils.resolveInterfaceClass(consumerType, annotationAttributes);
 
         // Build the consumer wrapper bean name
         String consumerWrapperBeanName = buildConsumerWrapperBeanName(consumerInterfaceClass);

@@ -1,5 +1,6 @@
 package org.infinity.rpc.core.config.spring.utils;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -18,7 +19,6 @@ import static org.infinity.rpc.core.constant.ConsumerProviderAnnotationAttribute
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 import static org.springframework.core.annotation.AnnotationUtils.getDefaultValue;
 import static org.springframework.util.ClassUtils.resolveClassName;
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
 import static org.springframework.util.ReflectionUtils.findMethod;
 import static org.springframework.util.ReflectionUtils.invokeMethod;
@@ -82,11 +82,15 @@ public abstract class AnnotationUtils {
                                                                         boolean ignoreDefaultValue,
                                                                         String... ignoreAttributeNames) {
         Annotation annotation = tryGetMergedAnnotation(annotatedElement, annotationType);
-        return annotation == null ? null : getAnnotationAttributes(annotation, propertyResolver, ignoreDefaultValue, ignoreAttributeNames);
+        if (annotation == null) {
+            return null;
+        }
+        return getAnnotationAttributes(annotation, propertyResolver, ignoreDefaultValue, ignoreAttributeNames);
     }
 
     /**
      * Try to get the merged {@link Annotation annotation}
+     * by using the method of {@link org.springframework.core.annotation.AnnotatedElementUtils}
      *
      * @param annotatedElement {@link AnnotatedElement the annotated element}
      * @param annotationType   the {@link Class type} of {@link Annotation annotation}
@@ -95,16 +99,18 @@ public abstract class AnnotationUtils {
      */
     public static Annotation tryGetMergedAnnotation(AnnotatedElement annotatedElement,
                                                     Class<? extends Annotation> annotationType) {
-
-        Annotation mergedAnnotation = null;
         ClassLoader classLoader = annotationType.getClassLoader();
-        if (ClassUtils.isPresent(ANNOTATED_ELEMENT_UTILS_CLASS_NAME, classLoader)) {
-            Class<?> annotatedElementUtilsClass = resolveClassName(ANNOTATED_ELEMENT_UTILS_CLASS_NAME, classLoader);
-            // getMergedAnnotation method appears in the Spring Framework 4.2
-            Method getMergedAnnotationMethod = findMethod(annotatedElementUtilsClass, "getMergedAnnotation", AnnotatedElement.class, Class.class);
-            if (getMergedAnnotationMethod != null) {
-                mergedAnnotation = (Annotation) invokeMethod(getMergedAnnotationMethod, null, annotatedElement, annotationType);
-            }
+        if (!ClassUtils.isPresent(ANNOTATED_ELEMENT_UTILS_CLASS_NAME, classLoader)) {
+            // If no org.springframework.core.annotation.AnnotatedElementUtils class be found under classpath
+            return null;
+        }
+        Annotation mergedAnnotation = null;
+        Class<?> annotatedElementUtilsClass = resolveClassName(ANNOTATED_ELEMENT_UTILS_CLASS_NAME, classLoader);
+        // getMergedAnnotation method appears in the Spring Framework 4.2
+        Method getMergedAnnotationMethod = findMethod(annotatedElementUtilsClass, "getMergedAnnotation",
+                AnnotatedElement.class, Class.class);
+        if (getMergedAnnotationMethod != null) {
+            mergedAnnotation = (Annotation) invokeMethod(getMergedAnnotationMethod, null, annotatedElement, annotationType);
         }
 
         return mergedAnnotation;
@@ -147,13 +153,13 @@ public abstract class AnnotationUtils {
                 org.springframework.core.annotation.AnnotationUtils.getAnnotationAttributes(annotation);
         String[] actualIgnoreAttributeNames = ignoreAttributeNames;
 
-        if (ignoreDefaultValue && !isEmpty(annotationAttributes)) {
+        if (ignoreDefaultValue && MapUtils.isNotEmpty(annotationAttributes)) {
             List<String> attributeNamesToIgnore = new LinkedList<>(Arrays.asList(ignoreAttributeNames));
             for (Map.Entry<String, Object> annotationAttribute : annotationAttributes.entrySet()) {
-                String attributeName = annotationAttribute.getKey();
-                Object attributeValue = annotationAttribute.getValue();
-                if (nullSafeEquals(attributeValue, getDefaultValue(annotation, attributeName))) {
-                    attributeNamesToIgnore.add(attributeName);
+                String attrName = annotationAttribute.getKey();
+                Object attrValue = annotationAttribute.getValue();
+                if (nullSafeEquals(attrValue, getDefaultValue(annotation, attrName))) {
+                    attributeNamesToIgnore.add(attrName);
                 }
             }
             // extends the ignored list
@@ -177,7 +183,6 @@ public abstract class AnnotationUtils {
         Map<String, Object> actualAttributes = new LinkedHashMap<>();
 
         for (Map.Entry<String, Object> annotationAttribute : annotationAttributes.entrySet()) {
-
             String attributeName = annotationAttribute.getKey();
             Object attributeValue = annotationAttribute.getValue();
 
@@ -227,63 +232,38 @@ public abstract class AnnotationUtils {
                                                                boolean ignoreDefaultValue,
                                                                String... ignoreAttributeNames) {
         Annotation annotation = annotatedElement.getAnnotation(annotationType);
-        return annotation == null ? null : getAnnotationAttributes(annotation, propertyResolver, ignoreDefaultValue, ignoreAttributeNames);
+        if (annotation == null) {
+            return null;
+        }
+        return getAnnotationAttributes(annotation, propertyResolver, ignoreDefaultValue, ignoreAttributeNames);
     }
-
 
     /**
      * Resolve the interface name from {@link AnnotationAttributes} or defaultInterfaceClass
      *
-     * @param attributes            {@link AnnotationAttributes} instance, may be {@link org.infinity.rpc.core.server.annotation.Provider @Provider} or {@link Consumer @Consumer}
      * @param defaultInterfaceClass the annotated {@link Class class}
+     * @param attributes            {@link AnnotationAttributes} instance, e.g {@link Consumer @Consumer}
      * @return the interface name if found
      */
-    public static String resolveInterfaceName(AnnotationAttributes attributes, Class<?> defaultInterfaceClass) {
+    public static String resolveInterfaceName(Class<?> defaultInterfaceClass, AnnotationAttributes attributes) {
         Assert.isTrue(defaultInterfaceClass.isInterface(), "defaultInterfaceClass must be an interface class!");
-        Assert.isTrue(assertGeneric(attributes), "The " + INTERFACE_NAME + " attribute of @Consumer must NOT be empty for a generic consumer!");
+        Assert.isTrue(assertGeneric(attributes), "The " + INTERFACE_NAME + " attribute of @Consumer must not be empty for a generic consumer!");
 
-        return resolveInterfaceClass(attributes, defaultInterfaceClass).getName();
-    }
-
-    /**
-     * @param attributes {@link AnnotationAttributes} instance, may be {@link org.infinity.rpc.core.server.annotation.Provider @Provider} or {@link Consumer @Consumer}
-     * @return true: generic call, false: or else
-     */
-    private static boolean assertGeneric(AnnotationAttributes attributes) {
-        Boolean generic = getAttributeValue(attributes, GENERIC);
-        if (Boolean.TRUE.equals(generic)) {
-            // Generic call must have the interfaceName attribute
-            String interfaceName = getAttributeValue(attributes, INTERFACE_NAME);
-            return StringUtils.isNotEmpty(interfaceName);
-        }
-        return true;
-    }
-
-    /**
-     * Get attribute value from a annotation attribute map
-     *
-     * @param attributeMap  attribute map
-     * @param attributeName the key name of attribute map
-     * @param <T>           interface class
-     * @return the attribute value
-     */
-    @SuppressWarnings({"unchecked"})
-    public static <T> T getAttributeValue(Map<String, Object> attributeMap, String attributeName) {
-        return (T) attributeMap.get(attributeName);
+        return resolveInterfaceClass(defaultInterfaceClass, attributes).getName();
     }
 
     /**
      * Resolve the {@link Class class} of provider or consumer interface from the specified
      * {@link AnnotationAttributes annotation attributes} and annotated {@link Class class}.
      *
-     * @param attributes            {@link AnnotationAttributes annotation attributes}
      * @param defaultInterfaceClass the annotated {@link Class class}
+     * @param attributes            {@link AnnotationAttributes annotation attributes}
      * @return the {@link Class class} of provider interface
      */
-    public static Class<?> resolveInterfaceClass(AnnotationAttributes attributes, Class<?> defaultInterfaceClass) {
+    public static Class<?> resolveInterfaceClass(Class<?> defaultInterfaceClass, AnnotationAttributes attributes) {
         Assert.notNull(defaultInterfaceClass, "defaultInterfaceClass must not be null!");
         Assert.isTrue(defaultInterfaceClass.isInterface(), "defaultInterfaceClass must be an interface class!");
-        Assert.isTrue(assertGeneric(attributes), "The " + INTERFACE_NAME + " attribute of @Consumer must NOT be empty for a generic consumer!");
+        Assert.isTrue(assertGeneric(attributes), "The " + INTERFACE_NAME + " attribute of @Consumer must not be empty for a generic consumer!");
 
         ClassLoader classLoader = defaultInterfaceClass.getClassLoader();
         Class<?> interfaceClass = getAttributeValue(attributes, INTERFACE_CLASS);
@@ -310,5 +290,32 @@ public abstract class AnnotationUtils {
         Assert.notNull(interfaceClass, "Mis-configured the provider or consumer service!");
         Assert.isTrue(interfaceClass.isInterface(), "The annotated type must be an interface!");
         return interfaceClass;
+    }
+
+    /**
+     * @param attributes {@link AnnotationAttributes} instance, e.g {@link Consumer @Consumer}
+     * @return true: generic call, false: or else
+     */
+    private static boolean assertGeneric(AnnotationAttributes attributes) {
+        Boolean generic = getAttributeValue(attributes, GENERIC);
+        if (Boolean.TRUE.equals(generic)) {
+            // Generic call must have the interfaceName attribute
+            String interfaceName = getAttributeValue(attributes, INTERFACE_NAME);
+            return StringUtils.isNotEmpty(interfaceName);
+        }
+        return true;
+    }
+
+    /**
+     * Get attribute value from a annotation attribute map
+     *
+     * @param attributeMap  attribute map
+     * @param attributeName the key name of attribute map
+     * @param <T>           interface class
+     * @return the attribute value
+     */
+    @SuppressWarnings({"unchecked"})
+    private static <T> T getAttributeValue(Map<String, Object> attributeMap, String attributeName) {
+        return (T) attributeMap.get(attributeName);
     }
 }
