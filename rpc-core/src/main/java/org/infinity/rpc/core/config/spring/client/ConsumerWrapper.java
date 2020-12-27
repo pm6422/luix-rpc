@@ -13,6 +13,9 @@ import org.springframework.util.Assert;
 import java.util.List;
 import java.util.Map;
 
+import static org.infinity.rpc.core.constant.ConsumerAnnotationAttributes.DIRECT_URL;
+import static org.infinity.rpc.core.constant.ConsumerAnnotationAttributes.TIMEOUT;
+
 /**
  * PRC consumer configuration wrapper
  * And the class implements the {@link FactoryBean} interface means that
@@ -66,8 +69,8 @@ public class ConsumerWrapper<T> implements DisposableBean {
         clientUrl = Url.clientUrl(infinityProperties.getProtocol().getName().name(), interfaceClass.getName());
         consumerListener = ConsumerListener.of(interfaceClass, registryUrls, clientUrl);
         // Set attribute values of @Consumer annotation
-        directUrl = (String) consumerAttributesMap.get("directUrl");
-        timeout = (int) consumerAttributesMap.get("timeout");
+        directUrl = (String) consumerAttributesMap.get(DIRECT_URL);
+        timeout = (int) consumerAttributesMap.get(TIMEOUT);
     }
 
     @Override

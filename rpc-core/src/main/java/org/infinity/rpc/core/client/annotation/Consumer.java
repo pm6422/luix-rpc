@@ -24,6 +24,10 @@ public @interface Consumer {
     // we can initiate a generic call to service provider without service provider jar dependency
     boolean generic() default false;
 
+    String group() default "";
+
+    String version() default "";
+
     // Timeout value for service invocation
     int timeout() default 0;
 

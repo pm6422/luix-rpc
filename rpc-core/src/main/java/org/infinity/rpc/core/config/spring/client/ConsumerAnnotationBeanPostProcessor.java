@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.InjectionMetadata;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationAttributes;
 
-import static org.infinity.rpc.core.config.spring.utils.AnnotationUtils.getAttributes;
+import static org.infinity.rpc.core.config.spring.utils.AnnotationUtils.getResolvedAttributes;
 
 @Deprecated
 public class ConsumerAnnotationBeanPostProcessor extends AbstractAnnotationBeanPostProcessor {
@@ -24,7 +24,7 @@ public class ConsumerAnnotationBeanPostProcessor extends AbstractAnnotationBeanP
                                                  Class<?> injectedType, InjectionMetadata.InjectedElement injectedElement) {
         return buildConsumerBeanName(attributes, injectedType) +
                 "#source=" + (injectedElement.getMember()) +
-                "#attributes=" + getAttributes(attributes, getEnvironment());
+                "#attributes=" + getResolvedAttributes(attributes, getEnvironment());
     }
 
     /**
