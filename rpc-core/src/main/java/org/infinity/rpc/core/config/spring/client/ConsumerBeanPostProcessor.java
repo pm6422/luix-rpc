@@ -93,9 +93,8 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
         injectConsumerToField(bean, clazz);
 
         // Inject consumer proxy instances to method parameters
-        injectConsumerToSetterMethodParam(bean, clazz);
+        injectConsumerToMethodParam(bean, clazz);
 
-        // @todo Inject consumer proxy instances to constructor
         return bean;
     }
 
@@ -125,14 +124,10 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
     private void injectConsumerToField(Object bean, Class<?> beanClass) {
         Field[] fields = beanClass.getDeclaredFields();
         for (Field field : fields) {
-            if (Modifier.isStatic(field.getModifiers())) {
+            if (!isConsumerAnnotatedField(field)) {
                 continue;
             }
             try {
-                if (!field.isAccessible()) {
-                    field.setAccessible(true);
-                }
-
                 // Get @Consumer annotation attribute values of field, and it will be null if no annotation presents on the field
                 AnnotationAttributes attributes = getConsumerAnnotationAttributes(field);
                 if (attributes == null) {
@@ -142,6 +137,9 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
                 // TODO: Register consumer wrapper bean definition
                 // Register consumer wrapper instance to spring context
                 ConsumerWrapper<?> consumerWrapper = registerConsumerWrapper(field.getType(), attributes);
+                if (!field.isAccessible()) {
+                    field.setAccessible(true);
+                }
                 // Inject RPC consumer proxy instance
                 field.set(bean, consumerWrapper.getProxyInstance());
             } catch (Throwable t) {
@@ -158,10 +156,10 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
      * @param bean      bean instance to be injected
      * @param beanClass bean class to be injected
      */
-    private void injectConsumerToSetterMethodParam(Object bean, Class<?> beanClass) {
+    private void injectConsumerToMethodParam(Object bean, Class<?> beanClass) {
         Method[] methods = beanClass.getMethods();
         for (Method method : methods) {
-            if (!isSetterMethod(method)) {
+            if (!isConsumerAnnotatedMethod(method)) {
                 continue;
             }
             try {
@@ -186,11 +184,17 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
         }
     }
 
-    private boolean isSetterMethod(Method method) {
+    private boolean isConsumerAnnotatedField(Field field) {
+        return !Modifier.isStatic(field.getModifiers())
+                && field.isAnnotationPresent(Consumer.class);
+    }
+
+    private boolean isConsumerAnnotatedMethod(Method method) {
         return method.getName().startsWith("set")
                 && method.getParameterTypes().length == 1
                 && Modifier.isPublic(method.getModifiers())
-                && !Modifier.isStatic(method.getModifiers());
+                && !Modifier.isStatic(method.getModifiers())
+                && method.isAnnotationPresent(Consumer.class);
     }
 
     private AnnotationAttributes getConsumerAnnotationAttributes(AnnotatedElement element) {
