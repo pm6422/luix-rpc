@@ -44,7 +44,8 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
             Responseable response;
 //            boolean throwException = true;
             try {
-                // Call chain: provider cluster call => cluster fault tolerance strategy => LB select node => => provider caller call
+                // Call chain: provider cluster call => cluster fault tolerance strategy =>
+                // LB select node => provider caller call
                 // Only one server node under one cluster can process the request
                 response = providerCluster.call(request);
                 return response.getResult();
