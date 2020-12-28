@@ -47,7 +47,8 @@ public class ProviderClusterHolder<T> {
      * The singleton instance holder static inner class
      */
     private static class SingletonHolder {
+        // static variable will be instantiated on class loading.
         @SuppressWarnings({"rawtypes"})
-        private static final ProviderClusterHolder INSTANCE = new ProviderClusterHolder<>();// static variable will be instantiated on class loading.
+        private static final ProviderClusterHolder INSTANCE = new ProviderClusterHolder();
     }
 }

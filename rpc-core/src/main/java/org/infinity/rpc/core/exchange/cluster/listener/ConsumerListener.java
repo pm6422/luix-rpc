@@ -112,6 +112,7 @@ public class ConsumerListener<T> implements ClientListener {
                 .collect(Collectors.toList());
 
         // Loop all the cluster and update callers
+        @SuppressWarnings({"unchecked"})
         List<ProviderCluster<T>> providerClusters = ProviderClusterHolder.getInstance().getClusters();
         providerClusters.forEach(c -> c.refresh(allProviderCallers));
     }

@@ -9,7 +9,6 @@ import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.impl.RequestContext;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.switcher.SwitcherService;
-import org.infinity.rpc.core.url.Url;
 
 import java.util.List;
 
@@ -27,24 +26,23 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
      * @param async      async call flag
      * @return return result of method
      */
-    protected Object processRequest(Requestable request, Class returnType, boolean async) {
+    protected Object processRequest(Requestable request, Class<?> returnType, boolean async) {
         RequestContext threadRpcContext = RequestContext.getThreadRpcContext();
         threadRpcContext.setAsyncCall(async);
 
         // Copy values from context to request object
         copyContextToRequest(threadRpcContext, request);
-
 //        RequestContext.initialize(request);
 
-        // The RPC framework supports multiple protocols
-        // One cluster for one protocol
+        @SuppressWarnings({"unchecked"})
+        // This RPC framework supports multiple protocols, one cluster is created for one protocol
         List<ProviderCluster<T>> providerClusters = ProviderClusterHolder.getInstance().getClusters();
         for (ProviderCluster<T> providerCluster : providerClusters) {
-            Url clientUrl = providerCluster.getFaultToleranceStrategy().getClientUrl();
+//            Url clientUrl = providerCluster.getFaultToleranceStrategy().getClientUrl();
 //            request.addAttachment(Url.PARAM_APP, infinityProperties.getApplication().getName());
 
-            Responseable response = null;
-            boolean throwException = true;
+            Responseable response;
+//            boolean throwException = true;
             try {
                 // Call chain: provider cluster call => cluster fault tolerance strategy => LB select node => => provider caller call
                 // Only one server node under one cluster can process the request

@@ -1,7 +1,5 @@
 package org.infinity.rpc.core.exchange.cluster;
 
-import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.config.spring.config.ProtocolConfig;
 import org.infinity.rpc.core.exchange.ProviderCallable;
 import org.infinity.rpc.core.exchange.faulttolerance.FaultToleranceStrategy;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
@@ -9,10 +7,9 @@ import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
-import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
+import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,17 +19,7 @@ import java.util.List;
  */
 @Spi(scope = SpiScope.PROTOTYPE)
 public interface ProviderCluster<T> extends ProviderCallable<T> {
-    /**
-     * @param registryInfo
-     */
     void setRegistryInfo(RegistryInfo registryInfo);
-
-    /**
-     * Refresh provider callers when providers is online or offline
-     *
-     * @param providerCallers
-     */
-    void refresh(List<ProviderCaller<T>> providerCallers);
 
     void setLoadBalancer(LoadBalancer<T> loadBalancer);
 
@@ -44,7 +31,25 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
 
     List<ProviderCaller<T>> getProviderCallers();
 
-    // todo: remove clientUrl param
+    /**
+     * Refresh provider callers when providers is online or offline
+     *
+     * @param providerCallers provider call
+     */
+    void refresh(List<ProviderCaller<T>> providerCallers);
+
+    /**
+     * Create a provider cluster
+     * todo: remove clientUrl param
+     *
+     * @param clusterName        provider cluster name
+     * @param loadBalancerName   load balancer name
+     * @param faultToleranceName fault tolerance name
+     * @param clientUrl          client url
+     * @param <T>                provider interface class
+     * @return provider cluster
+     */
+    @SuppressWarnings({"unchecked"})
     static <T> ProviderCluster<T> createCluster(String clusterName, String loadBalancerName, String faultToleranceName, Url clientUrl) {
         // It support one cluster for one protocol for now, but do not support one cluster for one provider
         ProviderCluster<T> providerCluster = ServiceInstanceLoader.getServiceLoader(ProviderCluster.class).load(clusterName);

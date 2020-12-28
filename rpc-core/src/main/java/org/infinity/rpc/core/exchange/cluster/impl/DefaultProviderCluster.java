@@ -34,11 +34,11 @@ import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_C
 @ServiceName("default")
 public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     private static final int                       DELAY_TIME = 1000;
+    private final        AtomicBoolean             available  = new AtomicBoolean(false);
     private              RegistryInfo              registryInfo;
     private              FaultToleranceStrategy<T> faultToleranceStrategy;
     private              LoadBalancer<T>           loadBalancer;
     private              List<ProviderCaller<T>>   providerCallers;
-    private final        AtomicBoolean             available  = new AtomicBoolean(false);
 
     @Override
     public void setRegistryInfo(@NonNull RegistryInfo registryInfo) {
@@ -151,12 +151,13 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
             throw (RuntimeException) cause;
         }
 
-        if (Boolean.parseBoolean(faultToleranceStrategy.getClientUrl().getParameter(UrlParam.throwException.getName(), UrlParam.throwException.getValue()))) {
+        String parameter = faultToleranceStrategy.getClientUrl()
+                .getParameter(UrlParam.throwException.getName(), UrlParam.throwException.getValue());
+        if (Boolean.parseBoolean(parameter)) {
             if (cause instanceof RpcAbstractException) {
                 throw (RpcAbstractException) cause;
             } else {
-                RpcServiceException ex = new RpcServiceException("Failed to call the request!", cause);
-                throw ex;
+                throw new RpcServiceException("Failed to call the request!", cause);
             }
         }
         return RpcResponse.error(request, cause);
