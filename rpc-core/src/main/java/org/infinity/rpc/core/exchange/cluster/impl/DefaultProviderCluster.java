@@ -82,6 +82,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
 
     @Override
     public void init() {
+        // todo: remove this statement
         refresh(providerCallers);
         available.set(true);
     }
