@@ -71,6 +71,6 @@ public class ProtocolConfig {
         // 当配置多个protocol的时候，比如A,B,C，
         // 那么正常情况下只会使用A，如果A被开关降级，那么就会使用B，B也被降级，那么会使用C
         // One cluster is created for one protocol, only one server node under a cluster can receive the request
-        ProviderCluster.createCluster(cluster, loadBalancer, faultTolerance, null);
+        ProviderCluster.createCluster(name.name(), cluster, loadBalancer, faultTolerance);
     }
 }

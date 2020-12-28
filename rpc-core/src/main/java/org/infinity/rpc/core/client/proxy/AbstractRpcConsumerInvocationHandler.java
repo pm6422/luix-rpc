@@ -9,6 +9,7 @@ import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.impl.RequestContext;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.switcher.SwitcherService;
+import org.infinity.rpc.core.url.Url;
 
 import java.util.List;
 
@@ -38,8 +39,11 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
         // This RPC framework supports multiple protocols, one cluster is created for one protocol
         List<ProviderCluster<T>> providerClusters = ProviderClusterHolder.getInstance().getClusters();
         for (ProviderCluster<T> providerCluster : providerClusters) {
-//            Url clientUrl = providerCluster.getFaultToleranceStrategy().getClientUrl();
+            Url clientUrl = Url.clientUrl(providerCluster.getProtocol(), consumerWrapper.getInterfaceClass().getName());
+            providerCluster.getFaultToleranceStrategy().setClientUrl(clientUrl);
+
 //            request.addAttachment(Url.PARAM_APP, infinityProperties.getApplication().getName());
+            request.setProtocol(providerCluster.getProtocol());
 
             Responseable response;
 //            boolean throwException = true;

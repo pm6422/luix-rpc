@@ -5,7 +5,6 @@ import org.infinity.rpc.core.exchange.faulttolerance.FaultToleranceStrategy;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.registry.RegistryInfo;
-import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;
@@ -19,6 +18,11 @@ import java.util.List;
  */
 @Spi(scope = SpiScope.PROTOTYPE)
 public interface ProviderCluster<T> extends ProviderCallable<T> {
+
+    void setProtocol(String protocol);
+
+    String getProtocol();
+
     void setRegistryInfo(RegistryInfo registryInfo);
 
     void setLoadBalancer(LoadBalancer<T> loadBalancer);
@@ -42,21 +46,21 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
      * Create a provider cluster
      * todo: remove clientUrl param
      *
+     * @param protocol           protocol name
      * @param clusterName        provider cluster name
      * @param loadBalancerName   load balancer name
      * @param faultToleranceName fault tolerance name
-     * @param clientUrl          client url
      * @param <T>                provider interface class
      * @return provider cluster
      */
     @SuppressWarnings({"unchecked"})
-    static <T> ProviderCluster<T> createCluster(String clusterName, String loadBalancerName, String faultToleranceName, Url clientUrl) {
+    static <T> ProviderCluster<T> createCluster(String protocol, String clusterName, String loadBalancerName, String faultToleranceName) {
         // It support one cluster for one protocol for now, but do not support one cluster for one provider
         ProviderCluster<T> providerCluster = ServiceInstanceLoader.getServiceLoader(ProviderCluster.class).load(clusterName);
         LoadBalancer<T> loadBalancer = ServiceInstanceLoader.getServiceLoader(LoadBalancer.class).load(loadBalancerName);
         FaultToleranceStrategy<T> faultTolerance = ServiceInstanceLoader.getServiceLoader(FaultToleranceStrategy.class).load(faultToleranceName);
-        faultTolerance.setClientUrl(clientUrl);
 
+        providerCluster.setProtocol(protocol);
         providerCluster.setFaultToleranceStrategy(faultTolerance);
         providerCluster.setLoadBalancer(loadBalancer);
         // Initialize

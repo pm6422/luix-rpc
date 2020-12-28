@@ -26,6 +26,8 @@ public interface Requestable extends Exchangable {
 
     int getRetries();
 
+    void setProtocol(String protocol);
+
     String getProtocol();
 
     byte getProtocolVersion();

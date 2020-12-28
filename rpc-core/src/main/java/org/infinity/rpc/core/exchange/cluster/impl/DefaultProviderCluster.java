@@ -35,10 +35,21 @@ import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_C
 public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     private static final int                       DELAY_TIME = 1000;
     private final        AtomicBoolean             available  = new AtomicBoolean(false);
+    private              String                    protocol;
     private              RegistryInfo              registryInfo;
     private              FaultToleranceStrategy<T> faultToleranceStrategy;
     private              LoadBalancer<T>           loadBalancer;
     private              List<ProviderCaller<T>>   providerCallers;
+
+    @Override
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    @Override
+    public String getProtocol() {
+        return protocol;
+    }
 
     @Override
     public void setRegistryInfo(@NonNull RegistryInfo registryInfo) {
