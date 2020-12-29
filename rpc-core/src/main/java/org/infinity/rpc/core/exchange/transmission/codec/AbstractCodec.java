@@ -8,23 +8,24 @@ import java.io.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractCodec implements Codec {
+
     protected static ConcurrentHashMap<Integer, String> serializations = new ConcurrentHashMap<>();
 
-    protected void serialize(ObjectOutput output, Object message, Serializer serialize) throws IOException {
-        if (message == null) {
+    protected void serialize(ObjectOutput output, Object inputObj, Serializer serializer) throws IOException {
+        if (inputObj == null) {
             output.writeObject(null);
-            // return if null
+            // Return if null
             return;
         }
-        output.writeObject(serialize.serialize(message));
+        output.writeObject(serializer.serialize(inputObj));
     }
 
-    protected Object deserialize(byte[] value, Class<?> type, Serializer serialize) throws IOException {
+    protected Object deserialize(byte[] value, Class<?> type, Serializer serializer) throws IOException {
         if (value == null) {
-            // return if null
+            // Return if null
             return null;
         }
-        return serialize.deserialize(value, type);
+        return serializer.deserialize(value, type);
     }
 
     public ObjectInput createInput(InputStream in) {

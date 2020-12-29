@@ -45,7 +45,8 @@ public interface Channel {
     void close();
 
     /**
-     * close the channel with a timeout
+     * Close the channel with a timeout
+     * @param timeout timeout in @todo
      */
     void close(int timeout);
 
