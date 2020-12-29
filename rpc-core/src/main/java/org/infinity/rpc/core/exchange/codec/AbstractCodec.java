@@ -13,15 +13,32 @@ public abstract class AbstractCodec implements Codec {
 
     protected static Map<Integer, String> serializations = new ConcurrentHashMap<>();
 
+    /**
+     * Serialize the input object to byte array first,
+     * then write the byte array to output
+     *
+     * @param output      object output
+     * @param inputObject input object
+     * @param serializer  specified serializer
+     * @throws IOException if any exception thrown
+     */
     protected void serialize(ObjectOutput output, Object inputObject, Serializer serializer) throws IOException {
         if (inputObject == null) {
             output.writeObject(null);
             return;
         }
-        // Serialize the input object to byte array first, then write the byte array to output
         output.writeObject(serializer.serialize(inputObject));
     }
 
+    /**
+     * Deserialize the byte array to output object based on output object type class
+     *
+     * @param bytes            byte array
+     * @param outputObjectType output object type
+     * @param serializer       specified serializer
+     * @return output object
+     * @throws IOException if any exception thrown
+     */
     protected Object deserialize(byte[] bytes, Class<?> outputObjectType, Serializer serializer) throws IOException {
         if (bytes == null) {
             return null;
