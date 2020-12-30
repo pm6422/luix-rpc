@@ -24,10 +24,10 @@ public interface Codec {
      *
      * @param channel  channel
      * @param remoteIp 在服务器端decode request时能获取到客户端的ip
-     * @param buffer   buffer
+     * @param data   data
      * @return output object
      * @throws IOException IOException if IOException thrown
      */
-    Object decode(Channel channel, String remoteIp, byte[] buffer) throws IOException;
+    Object decode(Channel channel, String remoteIp, byte[] data) throws IOException;
 
 }

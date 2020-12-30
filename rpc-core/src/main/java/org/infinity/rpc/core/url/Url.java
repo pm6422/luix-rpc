@@ -87,6 +87,11 @@ public final class Url implements Serializable {
      */
     public static final  String PARAM_HA                          = "ha";
     public static final  String PARAM_HA_DEFAULT_VALUE            = "failover";
+    /**
+     *
+     */
+    public static final  String PARAM_SERIALIZER                          = "serializer";
+    public static final  String PARAM_SERIALIZER_DEFAULT_VALUE            = "hessian2";
 
     public static final String PARAM_ADDRESS         = "address";
     public static final String PARAM_CONNECT_TIMEOUT = "connectTimeout";

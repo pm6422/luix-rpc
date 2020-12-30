@@ -5,6 +5,7 @@ import lombok.ToString;
 /**
  * Response class of RPC
  */
+@Deprecated
 @ToString
 public class RpcResponse {
     // 响应ID

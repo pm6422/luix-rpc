@@ -5,6 +5,7 @@ import lombok.ToString;
 /**
  * Request class of RPC
  */
+@Deprecated
 @ToString
 public class RpcRequest {
     // 请求ID

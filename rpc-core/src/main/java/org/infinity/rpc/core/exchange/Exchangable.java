@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public interface Exchangable {
-    Map<String, String> ATTACHMENTS = new ConcurrentHashMap<>();
 
     /**
      * Request ID
@@ -19,6 +18,12 @@ public interface Exchangable {
      * @return
      */
     Map<String, String> getAttachments();
+
+    /**
+     *
+     * @param attachments
+     */
+    void setAttachments(Map<String, String> attachments);
 
     /**
      * Add attachment

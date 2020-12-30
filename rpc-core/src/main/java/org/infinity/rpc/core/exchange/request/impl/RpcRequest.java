@@ -9,34 +9,42 @@ import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 @NoArgsConstructor
 @ToString
 public class RpcRequest implements Requestable, Traceable, Serializable {
-    private static final long     serialVersionUID = -6259178379027752471L;
-    private              String   clientRequestId;
-    private              long     requestId;
-    private              String   protocol;
-    private              byte     protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
-    private              String   interfaceName;
-    private              String   methodName;
-    private              String[] parameterTypeNames;
-    private              Object[] methodArguments;
+    private static final long                serialVersionUID = -6259178379027752471L;
+    private              String              clientRequestId;
+    private              long                requestId;
+    private              String              protocol;
+    private              byte                protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
+    private              String              interfaceName;
+    private              String              methodName;
+    private              String              parameterTypeList;
+    private              String[]            parameterTypeNames;
+    private              Object[]            methodArguments;
+    private              Map<String, String> attachments      = new ConcurrentHashMap<>();
 
     @Override
     public Map<String, String> getAttachments() {
-        return ATTACHMENTS;
+        return attachments;
+    }
+
+    @Override
+    public void setAttachments(Map<String, String> attachments) {
+        this.attachments = attachments;
     }
 
     @Override
     public void addAttachment(String key, String value) {
-        ATTACHMENTS.putIfAbsent(key, value);
+        attachments.putIfAbsent(key, value);
     }
 
     @Override
     public String getAttachment(String key) {
-        return ATTACHMENTS.get(key);
+        return attachments.get(key);
     }
 
     @Override

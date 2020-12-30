@@ -35,6 +35,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @param <T>
  */
+//todo: rename
 @Slf4j
 @ThreadSafe
 public class ServiceInstanceLoader<T> {
@@ -255,6 +256,7 @@ public class ServiceInstanceLoader<T> {
     }
 
     /**
+     * todo: rename to getLoader
      * Get the service loader by service interface type
      *
      * @param serviceInterface provider interface with @Spi annotation
