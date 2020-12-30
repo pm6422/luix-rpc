@@ -16,57 +16,45 @@
 
 package org.infinity.rpc.core.utils;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 /**
- * 反射相关的辅助类
- *
- * @author maijunsheng
- * @version 创建时间：2013-5-23
+ * A utility used to handle method parameters
  */
-public class MethodParameterReflectUtils {
-    public static final  String     PARAM_CLASS_SPLIT = ",";
-    public static final  String     EMPTY_PARAM       = "void";
-    private static final Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[0];
-
-    private static final ConcurrentMap<String, Class<?>> name2ClassCache = new ConcurrentHashMap<String, Class<?>>();
-    private static final ConcurrentMap<Class<?>, String> class2NameCache = new ConcurrentHashMap<Class<?>, String>();
-
-    private static final String[] PRIMITIVE_NAMES = new String[]{"boolean", "byte", "char", "double", "float", "int", "long", "short",
-            "void"};
-
-    private static final Class<?>[] PRIMITIVE_CLASSES = new Class[]{boolean.class, byte.class, char.class, double.class, float.class,
-            int.class, long.class, short.class, Void.TYPE};
-
-    private static final int PRIMITIVE_CLASS_NAME_MAX_LENGTH = 7;
+public class MethodParameterUtils {
+    private static final   String                PARAM_TYPE_STR_DELIMITER        = ",";
+    protected static final String                VOID                            = "void";
+    private static final   Class<?>[]            EMPTY_CLASS_ARRAY               = new Class<?>[0];
+    private static final   String[]              PRIMITIVE_TYPES                 = new String[]{
+            "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"};
+    private static final   Class<?>[]            PRIMITIVE_CLASSES               = new Class[]{
+            boolean.class, byte.class, char.class, double.class, float.class, int.class, long.class, short.class, Void.TYPE};
+    private static final   int                   PRIMITIVE_CLASS_NAME_MAX_LENGTH = 7;
+    private static final   Map<String, Class<?>> NAME_TO_CLASS_MAP               = new ConcurrentHashMap<>();
+    private static final   Map<Class<?>, String> CLASS_TO_NAME_MAP               = new ConcurrentHashMap<>();
 
     /**
-     * 获取method方式的接口参数，以逗号分割，拼接clz列表。 如果没有参数，那么void表示
+     * Get the parameter type class list string which is separated by comma.
+     * e.g java.util.List,java.lang.Long
      *
-     * @param method
-     * @return
+     * @param method method
+     * @return method parameter type list string
      */
-    public static String getMethodParamDesc(Method method) {
-        if (method.getParameterTypes() == null || method.getParameterTypes().length == 0) {
-            return EMPTY_PARAM;
+    public static String getMethodParamTypeString(Method method) {
+        if (ArrayUtils.isEmpty(method.getParameterTypes())) {
+            return VOID;
         }
-
-        StringBuilder builder = new StringBuilder();
-
-        Class<?>[] clzs = method.getParameterTypes();
-
-        for (Class<?> clz : clzs) {
-            String className = getName(clz);
-            builder.append(className).append(PARAM_CLASS_SPLIT);
-        }
-
-        return builder.substring(0, builder.length() - 1);
+        return Arrays.stream(method.getParameterTypes())
+                .map(MethodParameterUtils::getClassName)
+                .collect(Collectors.joining(PARAM_TYPE_STR_DELIMITER));
     }
 
     /**
@@ -76,7 +64,7 @@ public class MethodParameterReflectUtils {
      * @return
      */
     public static String getMethodDesc(Method method) {
-        String methodParamDesc = getMethodParamDesc(method);
+        String methodParamDesc = getMethodParamTypeString(method);
         return getMethodDesc(method.getName(), methodParamDesc);
     }
 
@@ -95,11 +83,11 @@ public class MethodParameterReflectUtils {
     }
 
     public static Class<?>[] forNames(String classList) throws ClassNotFoundException {
-        if (classList == null || "".equals(classList) || EMPTY_PARAM.equals(classList)) {
+        if (classList == null || "".equals(classList) || VOID.equals(classList)) {
             return EMPTY_CLASS_ARRAY;
         }
 
-        String[] classNames = classList.split(PARAM_CLASS_SPLIT);
+        String[] classNames = classList.split(PARAM_TYPE_STR_DELIMITER);
         Class<?>[] classTypes = new Class<?>[classNames.length];
         for (int i = 0; i < classNames.length; i++) {
             String className = classNames[i];
@@ -115,7 +103,7 @@ public class MethodParameterReflectUtils {
             return null;
         }
 
-        Class<?> clz = name2ClassCache.get(className);
+        Class<?> clz = NAME_TO_CLASS_MAP.get(className);
 
         if (clz != null) {
             return clz;
@@ -124,7 +112,7 @@ public class MethodParameterReflectUtils {
         clz = forNameWithoutCache(className);
 
         // 应该没有内存消耗过多的可能，除非有些代码很恶心，创建特别多的类
-        name2ClassCache.putIfAbsent(className, clz);
+        NAME_TO_CLASS_MAP.putIfAbsent(className, clz);
 
         return clz;
     }
@@ -162,12 +150,12 @@ public class MethodParameterReflectUtils {
      * @param
      * @return
      */
-    public static String getName(Class<?> clz) {
+    public static String getClassName(Class<?> clz) {
         if (clz == null) {
             return null;
         }
 
-        String className = class2NameCache.get(clz);
+        String className = CLASS_TO_NAME_MAP.get(clz);
 
         if (className != null) {
             return className;
@@ -176,7 +164,7 @@ public class MethodParameterReflectUtils {
         className = getNameWithoutCache(clz);
 
         // 与name2ClassCache同样道理，如果没有恶心的代码，这块内存大小应该可控
-        class2NameCache.putIfAbsent(clz, className);
+        CLASS_TO_NAME_MAP.putIfAbsent(clz, className);
 
         return className;
     }
@@ -198,7 +186,7 @@ public class MethodParameterReflectUtils {
     public static Class<?> getPrimitiveClass(String name) {
         // check if is primitive class
         if (name.length() <= PRIMITIVE_CLASS_NAME_MAX_LENGTH) {
-            int index = Arrays.binarySearch(PRIMITIVE_NAMES, name);
+            int index = Arrays.binarySearch(PRIMITIVE_TYPES, name);
             if (index >= 0) {
                 return PRIMITIVE_CLASSES[index];
             }

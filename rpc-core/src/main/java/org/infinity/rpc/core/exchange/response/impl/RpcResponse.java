@@ -15,6 +15,7 @@ import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 @Data
@@ -29,6 +30,7 @@ public class RpcResponse implements Exchangable, Responseable, Traceable, Callba
     private              int       processingTimeout;
     private              Object    result;
     private              Exception exception;
+    private              Map<String, String> attachments      = new ConcurrentHashMap<>();
 
     @Override
     public String getProtocol() {
@@ -47,17 +49,17 @@ public class RpcResponse implements Exchangable, Responseable, Traceable, Callba
 
     @Override
     public Map<String, String> getAttachments() {
-        return ATTACHMENTS;
+        return attachments;
     }
 
     @Override
     public void addAttachment(String key, String value) {
-        ATTACHMENTS.putIfAbsent(key, value);
+        attachments.putIfAbsent(key, value);
     }
 
     @Override
     public String getAttachment(String key) {
-        return ATTACHMENTS.get(key);
+        return attachments.get(key);
     }
 
     @Override
@@ -65,6 +67,7 @@ public class RpcResponse implements Exchangable, Responseable, Traceable, Callba
         return 0;
     }
 
+    @Override
     public Object getResult() {
         if (exception != null) {
             throw (exception instanceof RuntimeException) ?

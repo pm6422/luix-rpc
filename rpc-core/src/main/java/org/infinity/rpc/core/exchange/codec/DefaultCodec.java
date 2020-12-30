@@ -12,7 +12,7 @@ import org.infinity.rpc.core.exchange.serialization.Serializer;
 import org.infinity.rpc.core.exchange.transmission.Channel;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.core.utils.MethodParameterReflectUtils;
+import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.utilities.ByteUtils;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
@@ -218,7 +218,7 @@ public class DefaultCodec extends AbstractCodec {
             return null;
         }
 
-        Class<?>[] classTypes = MethodParameterReflectUtils.forNames(parameterTypeList);
+        Class<?>[] classTypes = MethodParameterUtils.forNames(parameterTypeList);
 
         Object[] paramObjs = new Object[classTypes.length];
 
@@ -262,7 +262,7 @@ public class DefaultCodec extends AbstractCodec {
         }
 
         String className = input.readUTF();
-        Class<?> clz = MethodParameterReflectUtils.forName(className);
+        Class<?> clz = MethodParameterUtils.forName(className);
 
         Object result = deserialize((byte[]) input.readObject(), clz, serialization);
 
