@@ -33,13 +33,13 @@ public class MethodParameterUtilsTest {
         Method method;
         try {
             method = ClassA.class.getMethod("get");
-            assertEquals(VOID, MethodParameterUtils.getMethodParamTypeString(method));
+            assertEquals(VOID, MethodParameterUtils.getMethodParamString(method));
             method = ClassA.class.getMethod("getInt", int.class);
-            assertEquals("int", MethodParameterUtils.getMethodParamTypeString(method));
+            assertEquals("int", MethodParameterUtils.getMethodParamString(method));
             method = ClassA.class.getMethod("getIntLong", int.class, long.class);
-            assertEquals("int,long", MethodParameterUtils.getMethodParamTypeString(method));
+            assertEquals("int,long", MethodParameterUtils.getMethodParamString(method));
             method = ClassA.class.getMethod("getLongWrapper", Long.class);
-            assertEquals("java.lang.Long", MethodParameterUtils.getMethodParamTypeString(method));
+            assertEquals("java.lang.Long", MethodParameterUtils.getMethodParamString(method));
         } catch (Exception e) {
             fail();
         }
@@ -50,17 +50,17 @@ public class MethodParameterUtilsTest {
         Method method;
         try {
             method = ClassA.class.getMethod("get");
-            assertEquals("get(void)", MethodParameterUtils.getMethodDesc(method));
+            assertEquals("get(void)", MethodParameterUtils.getMethodWithParamString(method));
             method = ClassA.class.getMethod("getByte", byte.class);
-            assertEquals("getByte(byte)", MethodParameterUtils.getMethodDesc(method));
+            assertEquals("getByte(byte)", MethodParameterUtils.getMethodWithParamString(method));
             method = ClassA.class.getMethod("getList", List.class);
-            assertEquals("getList(java.util.List)", MethodParameterUtils.getMethodDesc(method));
+            assertEquals("getList(java.util.List)", MethodParameterUtils.getMethodWithParamString(method));
             method = ClassA.class.getMethod("getMap", Map.class);
-            assertEquals("getMap(java.util.Map)", MethodParameterUtils.getMethodDesc(method));
+            assertEquals("getMap(java.util.Map)", MethodParameterUtils.getMethodWithParamString(method));
             method = ClassA.class.getMethod("getStringArray", String[].class);
-            assertEquals("getStringArray(java.lang.String[])", MethodParameterUtils.getMethodDesc(method));
+            assertEquals("getStringArray(java.lang.String[])", MethodParameterUtils.getMethodWithParamString(method));
             method = ClassA.class.getMethod("getIntArray", int[].class);
-            assertEquals("getIntArray(int[])", MethodParameterUtils.getMethodDesc(method));
+            assertEquals("getIntArray(int[])", MethodParameterUtils.getMethodWithParamString(method));
         } catch (Exception e) {
             fail();
         }

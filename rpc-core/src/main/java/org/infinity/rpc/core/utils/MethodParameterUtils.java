@@ -17,6 +17,7 @@
 package org.infinity.rpc.core.utils;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -42,13 +43,13 @@ public class MethodParameterUtils {
     private static final   Map<Class<?>, String> CLASS_TO_NAME_MAP               = new ConcurrentHashMap<>();
 
     /**
-     * Get the parameter type class list string which is separated by comma.
-     * e.g java.util.List,java.lang.Long
+     * Get the method parameter class name list string which is separated by comma.
+     * e.g, java.util.List,java.lang.Long
      *
      * @param method method
-     * @return method parameter type list string
+     * @return method parameter class name list string
      */
-    public static String getMethodParamTypeString(Method method) {
+    public static String getMethodParamString(Method method) {
         if (ArrayUtils.isEmpty(method.getParameterTypes())) {
             return VOID;
         }
@@ -58,32 +59,23 @@ public class MethodParameterUtils {
     }
 
     /**
-     * 获取方法的标示 : method_name + "(" + paramDesc + ")"
+     * Get the method name with its parameter class name list string.
+     * e.g, run(java.util.List,java.lang.Long)
      *
-     * @param method
-     * @return
+     * @param method method
+     * @return method name with parameter class name list string
      */
-    public static String getMethodDesc(Method method) {
-        String methodParamDesc = getMethodParamTypeString(method);
-        return getMethodDesc(method.getName(), methodParamDesc);
-    }
-
-    /**
-     * 获取方法的标示 : method_name + "(" + paramDesc + ")"
-     *
-     * @param
-     * @return
-     */
-    public static String getMethodDesc(String methodName, String paramDesc) {
-        if (paramDesc == null) {
-            return methodName + "()";
+    public static String getMethodWithParamString(Method method) {
+        String methodParamString = getMethodParamString(method);
+        if (StringUtils.isEmpty(methodParamString)) {
+            return method.getName() + "()";
         } else {
-            return methodName + "(" + paramDesc + ")";
+            return method.getName() + "(" + methodParamString + ")";
         }
     }
 
     public static Class<?>[] forNames(String classList) throws ClassNotFoundException {
-        if (classList == null || "".equals(classList) || VOID.equals(classList)) {
+        if (StringUtils.isEmpty(classList) || VOID.equals(classList)) {
             return EMPTY_CLASS_ARRAY;
         }
 
@@ -91,10 +83,8 @@ public class MethodParameterUtils {
         Class<?>[] classTypes = new Class<?>[classNames.length];
         for (int i = 0; i < classNames.length; i++) {
             String className = classNames[i];
-
             classTypes[i] = forName(className);
         }
-
         return classTypes;
     }
 
