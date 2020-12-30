@@ -2,7 +2,7 @@ package org.infinity.rpc.core.registry;
 
 
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
+import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 
@@ -36,7 +36,7 @@ public interface RegistryFactory {
      */
     static RegistryFactory getInstance(String protocolName) {
         // Get the proper registry factory by protocol name
-        RegistryFactory registryFactory = ServiceInstanceLoader.getServiceLoader(RegistryFactory.class).load(protocolName);
+        RegistryFactory registryFactory = ServiceLoader.forClass(RegistryFactory.class).load(protocolName);
         return registryFactory;
     }
 }

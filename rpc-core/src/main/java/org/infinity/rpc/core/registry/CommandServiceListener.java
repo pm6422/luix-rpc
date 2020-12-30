@@ -31,7 +31,7 @@ import org.infinity.rpc.core.url.UrlParam;
 import org.infinity.rpc.utilities.annotation.EventMarker;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.infinity.rpc.utilities.network.NetworkUtils;
-import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
+import org.infinity.rpc.utilities.spi.ServiceLoader;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.*;
@@ -148,7 +148,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     public void onNotify(Url clientUrl, String commandString) {
         log.info("CommandServiceManager notify command. service:" + clientUrl.toSimpleString() + ", command:" + commandString);
 
-        if (!ServiceInstanceLoader.getServiceLoader(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME).isOn(MOTAN_COMMAND_SWITCHER) || commandString == null) {
+        if (!ServiceLoader.forClass(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME).isOn(MOTAN_COMMAND_SWITCHER) || commandString == null) {
             log.info("command reset empty since swither is close.");
             commandString = "";
         }

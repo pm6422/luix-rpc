@@ -2,9 +2,9 @@ package org.infinity.rpc.utilities.spi;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
-import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
+import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.BufferedReader;
@@ -16,11 +16,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * A utility used to load a specified implementation of a service interface.
- * It carries out similar functions as {@link ServiceLoader}
+ * It carries out similar functions as {@link java.util.ServiceLoader}
  * Service providers can be installed in an implementation of the Java platform in the form of
  * jar files placed into any of the usual extension directories. Providers can also be made available by adding them to the
  * application's class path or by some other platform-specific means.
@@ -35,26 +34,25 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @param <T>
  */
-//todo: rename
 @Slf4j
 @ThreadSafe
-public class ServiceInstanceLoader<T> {
+public class ServiceLoader<T> {
     /**
      * Service directory prefix
      */
-    private static final String                                SERVICE_DIR_PREFIX          = "META-INF/services/";
+    private static final String                        SERVICE_DIR_PREFIX          = "META-INF/services/";
     /**
      * Charset of the service configuration file
      */
-    public static final  Charset                               SERVICE_CONFIG_FILE_CHARSET = StandardCharsets.UTF_8;
+    public static final  Charset                       SERVICE_CONFIG_FILE_CHARSET = StandardCharsets.UTF_8;
     /**
      * Cache used to store service loader
      */
-    private static final Map<String, ServiceInstanceLoader<?>> SERVICE_LOADERS_CACHE       = new ConcurrentHashMap<>();
+    private static final Map<String, ServiceLoader<?>> SERVICE_LOADERS_CACHE       = new ConcurrentHashMap<>();
     /**
      * The class loader used to locate, load and instantiate service
      */
-    private final        ClassLoader                           classLoader;
+    private final        ClassLoader                   classLoader;
     /**
      * The interface representing the service being loaded
      */
@@ -71,7 +69,7 @@ public class ServiceInstanceLoader<T> {
     /**
      * Prohibit instantiate an instance outside the class
      */
-    private ServiceInstanceLoader(Class<T> serviceInterface) {
+    private ServiceLoader(Class<T> serviceInterface) {
         this(Thread.currentThread().getContextClassLoader(), serviceInterface);
     }
 
@@ -81,7 +79,7 @@ public class ServiceInstanceLoader<T> {
      * @param classLoader      class loader
      * @param serviceInterface service interface
      */
-    private ServiceInstanceLoader(ClassLoader classLoader, Class<T> serviceInterface) {
+    private ServiceLoader(ClassLoader classLoader, Class<T> serviceInterface) {
         this.classLoader = classLoader;
         this.serviceInterface = serviceInterface;
         serviceImplClasses = loadImplClasses();
@@ -92,7 +90,7 @@ public class ServiceInstanceLoader<T> {
      *
      * @return service instances map
      */
-    private ConcurrentMap<String, Class<T>> loadImplClasses() {
+    private ConcurrentHashMap<String, Class<T>> loadImplClasses() {
         String serviceFileName = SERVICE_DIR_PREFIX.concat(serviceInterface.getName());
         List<String> serviceImplClassNames = new ArrayList<>();
         try {
@@ -104,7 +102,7 @@ public class ServiceInstanceLoader<T> {
             }
 
             if (urls == null || !urls.hasMoreElements()) {
-                return new ConcurrentHashMap<>();
+                return new ConcurrentHashMap<>(0);
             }
 
             while (urls.hasMoreElements()) {
@@ -172,8 +170,8 @@ public class ServiceInstanceLoader<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private ConcurrentMap<String, Class<T>> loadImplClass(List<String> implClassNames) {
-        ConcurrentMap<String, Class<T>> map = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Class<T>> loadImplClass(List<String> implClassNames) {
+        ConcurrentHashMap<String, Class<T>> map = new ConcurrentHashMap<>();
         for (String implClassName : implClassNames) {
             try {
                 Class<T> clz;
@@ -256,14 +254,13 @@ public class ServiceInstanceLoader<T> {
     }
 
     /**
-     * todo: rename to getLoader
      * Get the service loader by service interface type
      *
      * @param serviceInterface provider interface with @Spi annotation
      * @param <T>              service interface type
      * @return the singleton service loader instance
      */
-    public static <T> ServiceInstanceLoader<T> getServiceLoader(Class<T> serviceInterface) {
+    public static <T> ServiceLoader<T> forClass(Class<T> serviceInterface) {
         checkValidity(serviceInterface);
         return createServiceLoader(serviceInterface);
     }
@@ -290,10 +287,10 @@ public class ServiceInstanceLoader<T> {
      * @return service instance loader cache instance
      */
     @SuppressWarnings("unchecked")
-    private static synchronized <T> ServiceInstanceLoader<T> createServiceLoader(Class<T> serviceInterface) {
-        ServiceInstanceLoader<T> loader = (ServiceInstanceLoader<T>) SERVICE_LOADERS_CACHE.get(serviceInterface.getName());
+    private static synchronized <T> ServiceLoader<T> createServiceLoader(Class<T> serviceInterface) {
+        ServiceLoader<T> loader = (ServiceLoader<T>) SERVICE_LOADERS_CACHE.get(serviceInterface.getName());
         if (loader == null) {
-            loader = new ServiceInstanceLoader<>(serviceInterface);
+            loader = new ServiceLoader<>(serviceInterface);
             SERVICE_LOADERS_CACHE.put(serviceInterface.getName(), loader);
         }
         return loader;

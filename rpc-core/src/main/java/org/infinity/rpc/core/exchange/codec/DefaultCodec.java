@@ -14,7 +14,7 @@ import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.MethodParameterReflectUtils;
 import org.infinity.rpc.utilities.ByteUtils;
-import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
+import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 import org.springframework.util.StringUtils;
 
@@ -184,7 +184,7 @@ public class DefaultCodec extends AbstractCodec {
 
     private Serializer getSerializer(Channel channel) {
         String serializerName = channel.getUrl().getParameter(Url.PARAM_SERIALIZER, Url.PARAM_SERIALIZER_DEFAULT_VALUE);
-        return ServiceInstanceLoader.getServiceLoader(Serializer.class).load(serializerName);
+        return ServiceLoader.forClass(Serializer.class).load(serializerName);
     }
 
     private byte[] encodeResponse(Channel channel, RpcResponse value) throws IOException {

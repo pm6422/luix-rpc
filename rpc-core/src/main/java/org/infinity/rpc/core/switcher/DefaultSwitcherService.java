@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.switcher;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.rpc.utilities.spi.ServiceInstanceLoader;
+import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -24,7 +24,7 @@ public class DefaultSwitcherService implements SwitcherService {
      * @return
      */
     public static SwitcherService getInstance() {
-        return ServiceInstanceLoader.getServiceLoader(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME);
+        return ServiceLoader.forClass(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME);
     }
 
     @Override
