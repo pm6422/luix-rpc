@@ -10,7 +10,7 @@ import java.io.IOException;
 public interface Codec {
 
     /**
-     * Encode the input object to bytes array
+     * Encode the input object to byte array
      *
      * @param channel     channel
      * @param inputObject input object

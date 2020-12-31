@@ -47,57 +47,6 @@ public class DefaultCodec extends AbstractCodec {
                 RpcErrorMsgConstant.FRAMEWORK_ENCODE_ERROR);
     }
 
-    @Override
-    public Object decode(Channel channel, String remoteIp, byte[] data) throws IOException {
-        if (data.length <= ProtocolVersion.VERSION_1.getHeaderLength()) {
-            throw new RpcFrameworkException("decode error: format problem", RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
-        }
-
-        short type = ByteUtils.bytes2short(data, 0);
-
-        if (type != MAGIC) {
-            throw new RpcFrameworkException("decode error: magic error", RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
-        }
-
-        if (data[2] != ProtocolVersion.VERSION_1.getVersion()) {
-            throw new RpcFrameworkException("decode error: version error", RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
-        }
-
-        int bodyLength = ByteUtils.bytes2int(data, 12);
-
-        if (ProtocolVersion.VERSION_1.getHeaderLength() + bodyLength != data.length) {
-            throw new RpcFrameworkException("decode error: content length error", RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
-        }
-
-        byte flag = data[3];
-        byte dataType = (byte) (flag & MASK);
-        boolean isResponse = (dataType != RpcConstants.FLAG_REQUEST);
-
-        byte[] body = new byte[bodyLength];
-
-        System.arraycopy(data, ProtocolVersion.VERSION_1.getHeaderLength(), body, 0, bodyLength);
-
-        long requestId = ByteUtils.bytes2long(data, 4);
-        Serializer serializer = getSerializer(channel);
-
-        try {
-            if (isResponse) { // response
-                return decodeResponse(body, dataType, requestId, serializer);
-            } else {
-                return decodeRequest(body, requestId, serializer);
-            }
-        } catch (ClassNotFoundException e) {
-            throw new RpcFrameworkException("decode " + (isResponse ? "response" : "request") + " error: class not found", e,
-                    RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
-        } catch (Exception e) {
-            if (ExceptionUtils.isRpcException(e)) {
-                throw (RuntimeException) e;
-            } else {
-                throw new RpcFrameworkException("decode error: isResponse=" + isResponse, e, RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
-            }
-        }
-    }
-
     private byte[] encodeRequest(Channel channel, RpcRequest request) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ObjectOutput output = createOutput(outputStream);
@@ -173,13 +122,61 @@ public class DefaultCodec extends AbstractCodec {
 
         // 96 - 127 bit : body content length
         ByteUtils.int2bytes(body.length, header, offset);
-
         byte[] data = new byte[header.length + body.length];
 
         System.arraycopy(header, 0, data, 0, header.length);
         System.arraycopy(body, 0, data, header.length, body.length);
-
         return data;
+    }
+
+    @Override
+    public Object decode(Channel channel, String remoteIp, byte[] data) throws IOException {
+        if (data.length <= ProtocolVersion.VERSION_1.getHeaderLength()) {
+            throw new RpcFrameworkException("decode error: format problem", RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
+        }
+
+        short type = ByteUtils.bytes2short(data, 0);
+
+        if (type != MAGIC) {
+            throw new RpcFrameworkException("decode error: magic error", RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
+        }
+
+        if (data[2] != ProtocolVersion.VERSION_1.getVersion()) {
+            throw new RpcFrameworkException("decode error: version error", RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
+        }
+
+        int bodyLength = ByteUtils.bytes2int(data, 12);
+
+        if (ProtocolVersion.VERSION_1.getHeaderLength() + bodyLength != data.length) {
+            throw new RpcFrameworkException("decode error: content length error", RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
+        }
+
+        byte flag = data[3];
+        byte dataType = (byte) (flag & MASK);
+        boolean isResponse = (dataType != RpcConstants.FLAG_REQUEST);
+
+        byte[] body = new byte[bodyLength];
+        System.arraycopy(data, ProtocolVersion.VERSION_1.getHeaderLength(), body, 0, bodyLength);
+
+        long requestId = ByteUtils.bytes2long(data, 4);
+        Serializer serializer = getSerializer(channel);
+
+        try {
+            if (isResponse) {
+                return decodeResponse(body, dataType, requestId, serializer);
+            } else {
+                return decodeRequest(body, requestId, serializer);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new RpcFrameworkException("decode " + (isResponse ? "response" : "request") + " error: class not found", e,
+                    RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
+        } catch (Exception e) {
+            if (ExceptionUtils.isRpcException(e)) {
+                throw (RuntimeException) e;
+            } else {
+                throw new RpcFrameworkException("decode error: isResponse=" + isResponse, e, RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
+            }
+        }
     }
 
     private Serializer getSerializer(Channel channel) {
@@ -188,7 +185,30 @@ public class DefaultCodec extends AbstractCodec {
     }
 
     private byte[] encodeResponse(Channel channel, RpcResponse value) throws IOException {
-        return null;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ObjectOutput output = createOutput(outputStream);
+        Serializer serializer = getSerializer(channel);
+
+        byte flag = 0;
+
+        output.writeLong(value.getElapsedTime());
+
+        if (value.getException() != null) {
+            output.writeUTF(value.getException().getClass().getName());
+            serialize(output, value.getException(), serializer);
+            flag = RpcConstants.FLAG_RESPONSE_EXCEPTION;
+        } else if (value.getResult() == null) {
+            flag = RpcConstants.FLAG_RESPONSE_VOID;
+        } else {
+            output.writeUTF(value.getResult().getClass().getName());
+            serialize(output, value.getResult(), serializer);
+            flag = RpcConstants.FLAG_RESPONSE;
+        }
+
+        output.flush();
+        byte[] body = outputStream.toByteArray();
+        output.close();
+        return encode(body, flag, value.getRequestId());
     }
 
     private Object decodeRequest(byte[] body, long requestId, Serializer serializer) throws IOException, ClassNotFoundException {
@@ -208,7 +228,6 @@ public class DefaultCodec extends AbstractCodec {
         rpcRequest.setAttachments(decodeRequestAttachments(input));
 
         input.close();
-
         return rpcRequest;
     }
 
@@ -219,40 +238,31 @@ public class DefaultCodec extends AbstractCodec {
         }
 
         Class<?>[] classTypes = MethodParameterUtils.forNames(parameterTypeList);
-
         Object[] paramObjs = new Object[classTypes.length];
-
         for (int i = 0; i < classTypes.length; i++) {
             paramObjs[i] = deserialize((byte[]) objectInput.readObject(), classTypes[i], serializer);
         }
-
         return paramObjs;
     }
 
     private Map<String, String> decodeRequestAttachments(ObjectInput input) throws IOException, ClassNotFoundException {
         int size = input.readInt();
-
         if (size <= 0) {
             return null;
         }
 
         Map<String, String> attachments = new HashMap<String, String>();
-
         for (int i = 0; i < size; i++) {
             attachments.put(input.readUTF(), input.readUTF());
         }
-
         return attachments;
     }
 
-    private Object decodeResponse(byte[] body, byte dataType, long requestId, Serializer serialization) throws IOException,
-            ClassNotFoundException {
-
+    private Object decodeResponse(byte[] body, byte dataType, long requestId, Serializer serialization) throws IOException, ClassNotFoundException {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(body);
         ObjectInput input = createInput(inputStream);
 
         long processTime = input.readLong();
-
         RpcResponse response = new RpcResponse();
         response.setRequestId(requestId);
         response.setElapsedTime(processTime);
@@ -263,9 +273,7 @@ public class DefaultCodec extends AbstractCodec {
 
         String className = input.readUTF();
         Class<?> clz = MethodParameterUtils.forName(className);
-
         Object result = deserialize((byte[]) input.readObject(), clz, serialization);
-
         if (dataType == RpcConstants.FLAG_RESPONSE) {
             response.setResult(result);
         } else if (dataType == RpcConstants.FLAG_RESPONSE_EXCEPTION) {
@@ -276,9 +284,7 @@ public class DefaultCodec extends AbstractCodec {
         }
 
         response.setRequestId(requestId);
-
         input.close();
-
         return response;
     }
 }

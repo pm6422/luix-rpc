@@ -33,12 +33,14 @@ import java.util.stream.Collectors;
 public class MethodParameterUtils {
     private static final   String                PARAM_TYPE_STR_DELIMITER        = ",";
     protected static final String                VOID                            = "void";
+    private static final   String                ARRAY_TYPE_SUFFIX               = "[]";
     private static final   Class<?>[]            EMPTY_CLASS_ARRAY               = new Class<?>[0];
     private static final   String[]              PRIMITIVE_TYPES                 = new String[]{
             "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"};
     private static final   Class<?>[]            PRIMITIVE_CLASSES               = new Class[]{
             boolean.class, byte.class, char.class, double.class, float.class, int.class, long.class, short.class, Void.TYPE};
     private static final   int                   PRIMITIVE_CLASS_NAME_MAX_LENGTH = 7;
+    private static final int MAX_NEST_DEPTH = 2;
     private static final   Map<String, Class<?>> NAME_TO_CLASS_MAP               = new ConcurrentHashMap<>();
     private static final   Map<Class<?>, String> CLASS_TO_NAME_MAP               = new ConcurrentHashMap<>();
 
@@ -74,71 +76,96 @@ public class MethodParameterUtils {
         }
     }
 
-    public static Class<?>[] forNames(String classList) throws ClassNotFoundException {
-        if (StringUtils.isEmpty(classList) || VOID.equals(classList)) {
+    /**
+     * Get class list from the class name list string which is separated by comma
+     *
+     * @param classNameList class name list string which is separated by comma
+     * @return class list
+     * @throws ClassNotFoundException if any ClassNotFoundException thrown
+     */
+    public static Class<?>[] forNames(String classNameList) throws ClassNotFoundException {
+        if (StringUtils.isEmpty(classNameList) || VOID.equals(classNameList)) {
             return EMPTY_CLASS_ARRAY;
         }
-
-        String[] classNames = classList.split(PARAM_TYPE_STR_DELIMITER);
+        String[] classNames = classNameList.split(PARAM_TYPE_STR_DELIMITER);
         Class<?>[] classTypes = new Class<?>[classNames.length];
         for (int i = 0; i < classNames.length; i++) {
-            String className = classNames[i];
-            classTypes[i] = forName(className);
+            classTypes[i] = forName(classNames[i]);
         }
         return classTypes;
     }
 
+    /**
+     * Returns the {@code Class} object associated with the class or
+     * interface with the given class string name.
+     *
+     * @param className class name
+     * @return class
+     * @throws ClassNotFoundException if any ClassNotFoundException thrown
+     */
     public static Class<?> forName(String className) throws ClassNotFoundException {
-        if (null == className || "".equals(className)) {
+        if (StringUtils.isEmpty(className)) {
             return null;
         }
 
         Class<?> clz = NAME_TO_CLASS_MAP.get(className);
-
         if (clz != null) {
             return clz;
         }
 
-        clz = forNameWithoutCache(className);
-
-        // 应该没有内存消耗过多的可能，除非有些代码很恶心，创建特别多的类
+        clz = doForName(className);
         NAME_TO_CLASS_MAP.putIfAbsent(className, clz);
-
         return clz;
     }
 
-    private static Class<?> forNameWithoutCache(String className) throws ClassNotFoundException {
-        if (!className.endsWith("[]")) { // not array
-            Class<?> clz = getPrimitiveClass(className);
-
-            clz = (clz != null) ? clz : Class.forName(className, true, Thread.currentThread().getContextClassLoader());
-            return clz;
+    private static Class<?> doForName(String className) throws ClassNotFoundException {
+        if (!className.endsWith(ARRAY_TYPE_SUFFIX)) {
+            // Class name is not array
+            Class<?> clz = getPrimitiveTypeClass(className);
+            if (clz != null) {
+                return clz;
+            }
+            return Class.forName(className, true, Thread.currentThread().getContextClassLoader());
         }
 
-        int dimensionSiz = 0;
-
-        while (className.endsWith("[]")) {
-            dimensionSiz++;
-
+        // Handle array type
+        int dimensionSize = 0;
+        while (className.endsWith(ARRAY_TYPE_SUFFIX)) {
+            dimensionSize++;
             className = className.substring(0, className.length() - 2);
         }
 
-        int[] dimensions = new int[dimensionSiz];
-
-        Class<?> clz = getPrimitiveClass(className);
-
+        int[] dimensions = new int[dimensionSize];
+        Class<?> clz = getPrimitiveTypeClass(className);
         if (clz == null) {
             clz = Class.forName(className, true, Thread.currentThread().getContextClassLoader());
         }
-
         return Array.newInstance(clz, dimensions).getClass();
     }
 
     /**
-     * 需要支持一维数组、二维数组等
+     * Get primitive type class associated with the given class string name.
      *
-     * @param
-     * @return
+     * @param className class name, e.g. int
+     * @return primitive class, e.g. int.class
+     */
+    public static Class<?> getPrimitiveTypeClass(String className) {
+        if (className.length() > PRIMITIVE_CLASS_NAME_MAX_LENGTH) {
+            return null;
+        }
+        // Binary search
+        int index = Arrays.binarySearch(PRIMITIVE_TYPES, className);
+        if (index < 0) {
+            return null;
+        }
+        return PRIMITIVE_CLASSES[index];
+    }
+
+    /**
+     * Returns the class name associated with the class.
+     *
+     * @param clz class
+     * @return class name
      */
     public static String getClassName(Class<?> clz) {
         if (clz == null) {
@@ -146,121 +173,103 @@ public class MethodParameterUtils {
         }
 
         String className = CLASS_TO_NAME_MAP.get(clz);
-
         if (className != null) {
             return className;
         }
 
-        className = getNameWithoutCache(clz);
-
-        // 与name2ClassCache同样道理，如果没有恶心的代码，这块内存大小应该可控
+        className = dogGetClassName(clz);
         CLASS_TO_NAME_MAP.putIfAbsent(clz, className);
-
         return className;
     }
 
-    private static String getNameWithoutCache(Class<?> clz) {
+    private static String dogGetClassName(Class<?> clz) {
         if (!clz.isArray()) {
+            // The class is not array
             return clz.getName();
         }
 
+        // Handle array type
         StringBuilder sb = new StringBuilder();
         while (clz.isArray()) {
             sb.append("[]");
             clz = clz.getComponentType();
         }
-
         return clz.getName() + sb.toString();
     }
 
-    public static Class<?> getPrimitiveClass(String name) {
-        // check if is primitive class
-        if (name.length() <= PRIMITIVE_CLASS_NAME_MAX_LENGTH) {
-            int index = Arrays.binarySearch(PRIMITIVE_TYPES, name);
-            if (index >= 0) {
-                return PRIMITIVE_CLASSES[index];
-            }
-        }
-        return null;
+    /**
+     * Get the method list with the public modifier
+     *
+     * <pre>
+     * 1）Excluding constructor
+     * 2）Excluding Object.class
+     * 3）Including all the public methods derived from super class
+     * </pre>
+     *
+     * @param clz class
+     * @return method list
+     */
+    public static List<Method> getPublicMethod(Class<?> clz) {
+        return Arrays
+                .stream(clz.getMethods()).filter(method -> Modifier.isPublic(method.getModifiers())
+                        && method.getDeclaringClass() != Object.class)
+                .collect(Collectors.toList());
     }
 
     /**
-     * 获取clz public method
+     * Get the default value associated with the type
      *
-     * <pre>
-     *      1）不包含构造函数
-     *      2）不包含Object.class
-     *      3）包含该clz的父类的所有public方法
-     * </pre>
-     *
-     * @param clz
-     * @return
+     * @param type type class
+     * @return default value
      */
-    public static List<Method> getPublicMethod(Class<?> clz) {
-        Method[] methods = clz.getMethods();
-        List<Method> ret = new ArrayList<Method>();
-
-        for (Method method : methods) {
-
-            boolean isPublic = Modifier.isPublic(method.getModifiers());
-            boolean isNotObjectClass = method.getDeclaringClass() != Object.class;
-
-            if (isPublic && isNotObjectClass) {
-                ret.add(method);
-            }
-        }
-
-        return ret;
+    public static Object getEmptyObject(Class<?> type) {
+        return getEmptyObject(type, new HashMap<>(1), 0);
     }
 
-    public static Object getEmptyObject(Class<?> returnType) {
-        return getEmptyObject(returnType, new HashMap<Class<?>, Object>(), 0);
-    }
-
-    private static Object getEmptyObject(Class<?> returnType, Map<Class<?>, Object> emptyInstances, int level) {
-        if (level > 2) {
+    private static Object getEmptyObject(Class<?> type, Map<Class<?>, Object> emptyInstances, int nestDepth) {
+        if (nestDepth > MAX_NEST_DEPTH) {
             return null;
         }
-        if (returnType == null) {
+        if (type == null) {
             return null;
-        } else if (returnType == boolean.class || returnType == Boolean.class) {
+        } else if (type == boolean.class || type == Boolean.class) {
             return false;
-        } else if (returnType == char.class || returnType == Character.class) {
+        } else if (type == char.class || type == Character.class) {
             return '\0';
-        } else if (returnType == byte.class || returnType == Byte.class) {
+        } else if (type == byte.class || type == Byte.class) {
             return (byte) 0;
-        } else if (returnType == short.class || returnType == Short.class) {
+        } else if (type == short.class || type == Short.class) {
             return (short) 0;
-        } else if (returnType == int.class || returnType == Integer.class) {
+        } else if (type == int.class || type == Integer.class) {
             return 0;
-        } else if (returnType == long.class || returnType == Long.class) {
+        } else if (type == long.class || type == Long.class) {
             return 0L;
-        } else if (returnType == float.class || returnType == Float.class) {
+        } else if (type == float.class || type == Float.class) {
             return 0F;
-        } else if (returnType == double.class || returnType == Double.class) {
+        } else if (type == double.class || type == Double.class) {
             return 0D;
-        } else if (returnType.isArray()) {
-            return Array.newInstance(returnType.getComponentType(), 0);
-        } else if (returnType.isAssignableFrom(ArrayList.class)) {
-            return new ArrayList<Object>(0);
-        } else if (returnType.isAssignableFrom(HashSet.class)) {
-            return new HashSet<Object>(0);
-        } else if (returnType.isAssignableFrom(HashMap.class)) {
-            return new HashMap<Object, Object>(0);
-        } else if (String.class.equals(returnType)) {
+        } else if (type.isArray()) {
+            return Array.newInstance(type.getComponentType(), 0);
+        } else if (type.isAssignableFrom(ArrayList.class)) {
+            return new ArrayList<>(0);
+        } else if (type.isAssignableFrom(HashSet.class)) {
+            return new HashSet<>(0);
+        } else if (type.isAssignableFrom(HashMap.class)) {
+            return new HashMap<>(0);
+        } else if (String.class.equals(type)) {
             return "";
-        } else if (!returnType.isInterface()) {
+        } else if (!type.isInterface()) {
             try {
-                Object value = emptyInstances.get(returnType);
+                Object value = emptyInstances.get(type);
                 if (value == null) {
-                    value = returnType.newInstance();
-                    emptyInstances.put(returnType, value);
+                    value = type.newInstance();
+                    emptyInstances.put(type, value);
                 }
                 Class<?> cls = value.getClass();
                 while (cls != null && cls != Object.class) {
                     Field[] fields = cls.getDeclaredFields();
                     for (Field field : fields) {
-                        Object property = getEmptyObject(field.getType(), emptyInstances, level + 1);
+                        Object property = getEmptyObject(field.getType(), emptyInstances, nestDepth + 1);
                         if (property != null) {
                             try {
                                 if (!field.isAccessible()) {
@@ -268,6 +277,7 @@ public class MethodParameterUtils {
                                 }
                                 field.set(value, property);
                             } catch (Throwable e) {
+                                // Leave blank intentionally
                             }
                         }
                     }
