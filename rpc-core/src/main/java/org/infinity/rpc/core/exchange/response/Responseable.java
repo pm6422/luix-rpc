@@ -1,20 +1,8 @@
 package org.infinity.rpc.core.exchange.response;
 
-public interface Responseable {
-    /**
-     * Protocol
-     *
-     * @return
-     */
-    String getProtocol();
+import org.infinity.rpc.core.exchange.Exchangable;
 
-    /**
-     * Protocol version
-     *
-     * @return
-     */
-    byte getProtocolVersion();
-
+public interface Responseable extends Exchangable {
     /**
      * Timeout in milliseconds
      *

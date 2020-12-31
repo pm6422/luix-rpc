@@ -6,6 +6,7 @@ import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
+import org.infinity.rpc.core.exchange.Exchangable;
 import org.infinity.rpc.core.exchange.request.impl.RpcRequest;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.exchange.serialization.Serializer;
@@ -28,11 +29,11 @@ public class DefaultCodec extends AbstractCodec {
     private static final byte  MASK  = 0x07;
 
     @Override
-    public byte[] encode(Channel channel, Object inputObject) {
+    public byte[] encode(Channel channel, Exchangable inputObject) {
         try {
             if (inputObject instanceof RpcRequest) {
                 return encodeRequest(channel, (RpcRequest) inputObject);
-            } else if (inputObject instanceof RpcResponse) {
+            } else {
                 return encodeResponse(channel, (RpcResponse) inputObject);
             }
         } catch (Exception e) {
@@ -43,8 +44,6 @@ public class DefaultCodec extends AbstractCodec {
                         RpcErrorMsgConstant.FRAMEWORK_ENCODE_ERROR);
             }
         }
-        throw new RpcFrameworkException("encode error: message type not support, " + inputObject.getClass(),
-                RpcErrorMsgConstant.FRAMEWORK_ENCODE_ERROR);
     }
 
     private byte[] encodeRequest(Channel channel, RpcRequest request) throws IOException {
@@ -54,9 +53,8 @@ public class DefaultCodec extends AbstractCodec {
         output.writeUTF(request.getMethodName());
         output.writeUTF(request.getParameterTypeList());
 
-        Serializer serializer = getSerializer(channel);
-
         if (ArrayUtils.isNotEmpty(request.getMethodArguments())) {
+            Serializer serializer = getSerializer(channel);
             for (Object arg : request.getMethodArguments()) {
                 // Serialize method arguments
                 serialize(output, arg, serializer);

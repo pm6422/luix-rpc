@@ -1,16 +1,23 @@
 package org.infinity.rpc.core.exchange;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public interface Exchangable {
 
     /**
-     * Request ID
-     *
-     * @return
+     * @return Request ID
      */
     long getRequestId();
+
+    /**
+     * @return Protocol
+     */
+    String getProtocol();
+
+    /**
+     * @return protocol version
+     */
+    byte getProtocolVersion();
 
     /**
      * Attachments
@@ -20,7 +27,6 @@ public interface Exchangable {
     Map<String, String> getAttachments();
 
     /**
-     *
      * @param attachments
      */
     void setAttachments(Map<String, String> attachments);

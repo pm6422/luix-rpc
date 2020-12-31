@@ -6,7 +6,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.exception.RpcInvocationException;
-import org.infinity.rpc.core.exchange.Exchangable;
 import org.infinity.rpc.core.exchange.Traceable;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Callbackable;
@@ -22,14 +21,14 @@ import java.util.concurrent.Executor;
 @NoArgsConstructor
 @ToString
 @Slf4j
-public class RpcResponse implements Exchangable, Responseable, Traceable, Callbackable, Serializable {
-    private static final long      serialVersionUID = 882479213033600079L;
-    private              long      requestId;
-    private              String    protocol;
-    private              byte      protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
-    private              int       processingTimeout;
-    private              Object    result;
-    private              Exception exception;
+public class RpcResponse implements Responseable, Traceable, Callbackable, Serializable {
+    private static final long                serialVersionUID = 882479213033600079L;
+    private              long                requestId;
+    private              String              protocol;
+    private              byte                protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
+    private              int                 processingTimeout;
+    private              Object              result;
+    private              Exception           exception;
     private              Map<String, String> attachments      = new ConcurrentHashMap<>();
 
     @Override

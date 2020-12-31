@@ -1,5 +1,6 @@
 package org.infinity.rpc.core.exchange.codec;
 
+import org.infinity.rpc.core.exchange.Exchangable;
 import org.infinity.rpc.core.exchange.transmission.Channel;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;
@@ -17,7 +18,7 @@ public interface Codec {
      * @return encoded request data
      * @throws IOException if IOException thrown
      */
-    byte[] encode(Channel channel, Object inputObject) throws IOException;
+    byte[] encode(Channel channel, Exchangable inputObject) throws IOException;
 
     /**
      * Decode the input byte array to origin object
