@@ -10,6 +10,7 @@
         <module>rpc-utilities</module>
         <module>rpc-common</module>
         <module>rpc-core</module>
+        <module>rpc-transport-netty4</module>
         <module>rpc-registry-zookeeper</module>
         <module>rpc-web-center</module>
         <module>rpc-demo</module>

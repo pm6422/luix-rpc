@@ -9,7 +9,7 @@
         .constant('COMPANY_NAME', 'Infinity Organization')
         .constant('PAGINATION_CONSTANTS', {
             'itemsPerPage': 10
-        })
+         })
         //        .constant('ENV', 'test')
         .constant('DEBUG_INFO_ENABLED', true);
 })();
