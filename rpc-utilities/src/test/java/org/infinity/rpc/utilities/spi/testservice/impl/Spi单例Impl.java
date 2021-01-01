@@ -1,6 +1,7 @@
 package org.infinity.rpc.utilities.spi.testservice.impl;
 
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
+import org.infinity.rpc.utilities.spi.testservice.SpiSingletonInterface;
 
 import java.util.concurrent.atomic.AtomicLong;
 

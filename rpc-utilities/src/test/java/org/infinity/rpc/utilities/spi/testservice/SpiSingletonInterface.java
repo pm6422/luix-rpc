@@ -1,4 +1,4 @@
-package org.infinity.rpc.utilities.spi.testservice.impl;
+package org.infinity.rpc.utilities.spi.testservice;
 
 
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;

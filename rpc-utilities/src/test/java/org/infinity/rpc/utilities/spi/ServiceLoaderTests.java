@@ -2,7 +2,7 @@ package org.infinity.rpc.utilities.spi;
 
 import junit.framework.TestCase;
 import org.infinity.rpc.utilities.spi.testservice.SpiPrototypeInterface;
-import org.infinity.rpc.utilities.spi.testservice.impl.SpiSingletonInterface;
+import org.infinity.rpc.utilities.spi.testservice.SpiSingletonInterface;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,18 +12,18 @@ public class ServiceLoaderTests extends TestCase {
     public void testSingletonInitialization() {
         // 单例模式下只会构造一次实例
         Assert.assertEquals(1, ServiceLoader.forClass(SpiSingletonInterface.class)
-                .load("spitest").spiHello());
+                .load("singleton").spiHello());
         Assert.assertEquals(1, ServiceLoader.forClass(SpiSingletonInterface.class)
-                .load("spitest").spiHello());
+                .load("singleton").spiHello());
     }
 
     @Test
     public void testPrototypeInitialization() {
         // 多例模式下在每次获取的时候进行实例化
         Assert.assertEquals(1, ServiceLoader.forClass(SpiPrototypeInterface.class)
-                .load("spiPrototypeTest").spiHello());
+                .load("prototype").spiHello());
         Assert.assertEquals(2, ServiceLoader.forClass(SpiPrototypeInterface.class)
-                .load("spiPrototypeTest").spiHello());
+                .load("prototype").spiHello());
     }
 
     @Test
