@@ -315,16 +315,16 @@ public class ServiceLoader<T> {
         try {
             Spi spi = serviceInterface.getAnnotation(Spi.class);
             if (SpiScope.SINGLETON.equals(spi.scope())) {
-                return loadSingleton(name);
+                return createSingleton(name);
             } else {
-                return loadPrototype(name);
+                return createPrototype(name);
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to load service instance: " + name);
         }
     }
 
-    private T loadSingleton(String name) throws InstantiationException, IllegalAccessException {
+    private T createSingleton(String name) throws InstantiationException, IllegalAccessException {
         T obj = singletonInstances.get(name);
         if (obj != null) {
             return obj;
@@ -346,7 +346,7 @@ public class ServiceLoader<T> {
         return obj;
     }
 
-    private T loadPrototype(String name) throws IllegalAccessException, InstantiationException {
+    private T createPrototype(String name) throws IllegalAccessException, InstantiationException {
         Class<T> clz = serviceImplClasses.get(name);
         if (clz == null) {
             return null;
