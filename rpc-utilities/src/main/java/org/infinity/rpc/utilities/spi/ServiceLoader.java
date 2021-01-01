@@ -1,6 +1,9 @@
 package org.infinity.rpc.utilities.spi;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
@@ -14,7 +17,10 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -46,9 +52,13 @@ public class ServiceLoader<T> {
      */
     public static final  Charset                       SERVICE_CONFIG_FILE_CHARSET = StandardCharsets.UTF_8;
     /**
-     * Cache used to store service loader
+     * Cached used to store service loader instance associated with the service interface
      */
     private static final Map<String, ServiceLoader<?>> SERVICE_LOADERS_CACHE       = new ConcurrentHashMap<>();
+    /**
+     * Tab character
+     */
+    private static final String                        TAB                         = "\t";
     /**
      * The class loader used to locate, load and instantiate service
      */
@@ -56,21 +66,46 @@ public class ServiceLoader<T> {
     /**
      * The interface representing the service being loaded
      */
-    private final        Class<T>                              serviceInterface;
+    private final        Class<T>                      serviceInterface;
     /**
-     * The loaded service classes
+     * The loaded service implementation classes associated with the SPI name
      */
-    private final        Map<String, Class<T>>                 serviceImplClasses;
+    private final        Map<String, Class<T>>         serviceImplClasses;
     /**
-     * The loaded service instances
+     * The loaded service implementation singleton instances associated with the SPI name
      */
-    private final        Map<String, T>                        serviceImplInstances        = new ConcurrentHashMap<>();
+    private final        Map<String, T>                singletonInstances          = new ConcurrentHashMap<>();
 
     /**
-     * Prohibit instantiate an instance outside the class
+     * Get the service loader associated with service interface type class
+     *
+     * @param serviceInterface provider interface class annotated @Spi annotation
+     * @param <T>              service interface type
+     * @return the specified singleton service loader instance
      */
-    private ServiceLoader(Class<T> serviceInterface) {
-        this(Thread.currentThread().getContextClassLoader(), serviceInterface);
+    public static <T> ServiceLoader<T> forClass(Class<T> serviceInterface) {
+        Validate.notNull(serviceInterface, "Service interface must not be null!");
+        Validate.isTrue(serviceInterface.isInterface(), "Service interface must be an interface class!");
+        Validate.isTrue(serviceInterface.isAnnotationPresent(Spi.class), "Service interface must be annotated with @Spi annotation!");
+
+        return createServiceLoader(serviceInterface);
+    }
+
+    /**
+     * Create a service loader or get it from cache if exists
+     *
+     * @param serviceInterface service interface
+     * @param <T>              service interface type
+     * @return service instance loader cache instance
+     */
+    @SuppressWarnings("unchecked")
+    private static synchronized <T> ServiceLoader<T> createServiceLoader(Class<T> serviceInterface) {
+        ServiceLoader<T> loader = (ServiceLoader<T>) SERVICE_LOADERS_CACHE.get(serviceInterface.getName());
+        if (loader == null) {
+            loader = new ServiceLoader<>(Thread.currentThread().getContextClassLoader(), serviceInterface);
+            SERVICE_LOADERS_CACHE.put(serviceInterface.getName(), loader);
+        }
+        return loader;
     }
 
     /**
@@ -86,113 +121,149 @@ public class ServiceLoader<T> {
     }
 
     /**
-     * Load service instance based on service configuration file
+     * Load service implementation class based on the service configuration file
      *
-     * @return service instances map
+     * @return service implementation class map
      */
     private ConcurrentHashMap<String, Class<T>> loadImplClasses() {
         String serviceFileName = SERVICE_DIR_PREFIX.concat(serviceInterface.getName());
         List<String> serviceImplClassNames = new ArrayList<>();
         try {
-            Enumeration<URL> urls;
-            if (classLoader == null) {
-                urls = ClassLoader.getSystemResources(serviceFileName);
-            } else {
-                urls = classLoader.getResources(serviceFileName);
-            }
-
-            if (urls == null || !urls.hasMoreElements()) {
+            Enumeration<URL> urls = classLoader != null ? classLoader.getResources(serviceFileName) :
+                    ClassLoader.getSystemResources(serviceFileName);
+            if (CollectionUtils.sizeIsEmpty(urls)) {
                 return new ConcurrentHashMap<>(0);
             }
-
             while (urls.hasMoreElements()) {
-                URL url = urls.nextElement();
-                parseUrl(serviceInterface, url, serviceImplClassNames);
+                readImplClassNames(urls.nextElement(), serviceInterface, serviceImplClassNames);
             }
         } catch (Exception e) {
-            throw new RuntimeException();
-            //todo
-//            throw new MotanFrameworkException(
-//                    "ExtensionLoader loadExtensionClasses error, prefix: " + prefix + " type: " + type.getClass(), e);
+            throw new RuntimeException("Failed to load the spi configuration file: ".concat(serviceFileName), e);
         }
-
         return loadImplClass(serviceImplClassNames);
     }
 
-    private void parseUrl(Class<T> type, URL url, List<String> serviceImplClassNames) throws ServiceConfigurationError {
+    /**
+     * Read the service implementation class
+     *
+     * @param fileUrl          file resource url
+     * @param serviceInterface service interface
+     * @param implClassNames   service implementation class names
+     */
+    private void readImplClassNames(URL fileUrl, Class<T> serviceInterface, List<String> implClassNames) {
+        int lineNum = 0;
         // try-with-resource statement can automatically close the stream after use
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), SERVICE_CONFIG_FILE_CHARSET))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(fileUrl.openStream(), SERVICE_CONFIG_FILE_CHARSET))) {
             String line;
-            int indexNumber = 0;
-
+            // Read and assign value in one statement
             while ((line = reader.readLine()) != null) {
-                indexNumber++;
-                parseLine(type, url, line, indexNumber, serviceImplClassNames);
+                readLine(fileUrl, line, ++lineNum, serviceInterface, implClassNames);
             }
-        } catch (Exception x) {
-            failLog(type, "Error reading spi configuration file", x);
+        } catch (Exception e) {
+            // Catch the exception and continue to read next line
+            log.error("Failed to read the spi configuration file at line: " + lineNum, e);
         }
     }
 
-    private void parseLine(Class<T> type, URL url, String line, int lineNumber, List<String> serviceImplClassNames) throws ServiceConfigurationError {
-        int ci = line.indexOf('#');
-
-        if (ci >= 0) {
-            line = line.substring(0, ci);
+    /**
+     * Read line of the configuration file
+     *
+     * @param fileUrl          file resource url
+     * @param line             line content
+     * @param lineNum          line number
+     * @param serviceInterface service interface
+     * @param implClassNames   service implementation class names
+     */
+    private void readLine(URL fileUrl, String line, int lineNum, Class<T> serviceInterface, List<String> implClassNames) {
+        int poundSignIdx = line.indexOf('#');
+        if (poundSignIdx >= 0) {
+            // Get the line string without the comment suffix
+            line = line.substring(0, poundSignIdx);
         }
 
         line = line.trim();
-
-        if (line.length() <= 0) {
+        if (StringUtils.isEmpty(line)) {
+            // Skip comment line
             return;
         }
 
-        if ((line.indexOf(' ') >= 0) || (line.indexOf('\t') >= 0)) {
-            failThrows(type, url, lineNumber, "Illegal spi configuration-file syntax");
-        }
+        Validate.isTrue(!line.contains(StringUtils.SPACE) && !line.contains(TAB),
+                "Found illegal space or tab key at line: " + lineNum + " of the file " + fileUrl);
 
+        // Returns the character (Unicode code point) at the specified index
+        // Codepoint of character 'a' is 97.
+        // Codepoint of character 'b' is 98.
         int cp = line.codePointAt(0);
-        if (!Character.isJavaIdentifierStart(cp)) {
-            failThrows(type, url, lineNumber, "Illegal spi provider-class name: " + line);
-        }
+        // Determines if the character (Unicode code point) is permissible as the first character in a Java identifier.
+        Validate.isTrue(Character.isJavaIdentifierStart(cp),
+                "Found illegal service class name at line: " + lineNum + " of the file " + fileUrl);
 
         for (int i = Character.charCount(cp); i < line.length(); i += Character.charCount(cp)) {
             cp = line.codePointAt(i);
-            if (!Character.isJavaIdentifierPart(cp) && (cp != '.')) {
-                failThrows(type, url, lineNumber, "Illegal spi provider-class name: " + line);
-            }
+            Validate.isTrue(Character.isJavaIdentifierPart(cp) || cp == '.',
+                    "Found illegal service class name at line: " + lineNum + " of the file " + fileUrl);
         }
 
-        if (!serviceImplClassNames.contains(line)) {
-            serviceImplClassNames.add(line);
-            log.debug("Created the implementation [{}] of interface [{}]", line, type.getName().substring(type.getName().lastIndexOf(".") + 1));
+        if (!implClassNames.contains(line)) {
+            implClassNames.add(line);
         }
     }
 
+    /**
+     * Load the service implementation class associated with the interface class name
+     *
+     * @param implClassNames service implementation class name
+     * @return spi name to service implementation class map
+     */
     @SuppressWarnings("unchecked")
     private ConcurrentHashMap<String, Class<T>> loadImplClass(List<String> implClassNames) {
-        ConcurrentHashMap<String, Class<T>> map = new ConcurrentHashMap<>();
+        if (CollectionUtils.isEmpty(implClassNames)) {
+            return new ConcurrentHashMap<>(0);
+        }
+        ConcurrentHashMap<String, Class<T>> map = new ConcurrentHashMap<>(implClassNames.size());
         for (String implClassName : implClassNames) {
             try {
-                Class<T> clz;
+                Class<T> implClass;
                 if (classLoader == null) {
-                    clz = (Class<T>) Class.forName(implClassName);
+                    implClass = (Class<T>) Class.forName(implClassName);
                 } else {
-                    clz = (Class<T>) Class.forName(implClassName, true, classLoader);
+                    implClass = (Class<T>) Class.forName(implClassName, true, classLoader);
                 }
+                log.debug("Loaded the service implementation [{}] of interface [{}]", implClassName,
+                        serviceInterface.getName().substring(serviceInterface.getName().lastIndexOf(".") + 1));
 
-                checkServiceImplType(clz);
-                String spiName = getSpiServiceName(clz);
-                if (map.containsKey(spiName)) {
-                    failThrows(clz, ":Error spiName already exist " + spiName);
-                } else {
-                    map.put(spiName, clz);
-                }
+                // Validate the implementation class
+                checkServiceImplClass(implClass);
+
+                // SPI service name, e.g, 'failover' strategy
+                String spiName = getSpiServiceName(implClass);
+
+                Validate.isTrue(!map.containsKey(spiName), "Found duplicated SPI name: " + spiName + " for " + implClass.getName());
+                map.put(spiName, implClass);
             } catch (Exception e) {
-                failLog(serviceInterface, "Error load spi class", e);
+                log.error("Failed to load the spi class: " + implClassName, e);
             }
         }
         return map;
+    }
+
+    private void checkServiceImplClass(Class<T> implClass) {
+        Validate.isTrue(Modifier.isPublic(implClass.getModifiers()), implClass.getName() + " must be public!");
+        Validate.isTrue(serviceInterface.isAssignableFrom(implClass), implClass.getName() + " must be the implementation of " + serviceInterface.getName());
+        checkConstructor(implClass);
+    }
+
+    private void checkConstructor(Class<T> implClass) {
+        Constructor<?>[] constructors = implClass.getConstructors();
+        Validate.notEmpty(constructors, implClass.getName() + " has no constructor");
+
+        for (Constructor<?> constructor : constructors) {
+            if (Modifier.isPublic(constructor.getModifiers()) && ArrayUtils.isEmpty(constructor.getParameterTypes())) {
+                // Found the public no-arg constructor
+                return;
+            }
+        }
+        throw new IllegalArgumentException(implClass.getName() + " has no public no-args constructor");
     }
 
     /**
@@ -204,7 +275,7 @@ public class ServiceLoader<T> {
         if (clz == null) {
             return;
         }
-        checkServiceImplType(clz);
+        checkServiceImplClass(clz);
         String spiName = getSpiServiceName(clz);
         synchronized (serviceImplClasses) {
             if (serviceImplClasses.containsKey(spiName)) {
@@ -215,87 +286,6 @@ public class ServiceLoader<T> {
         }
     }
 
-    private void checkServiceImplType(Class<T> clz) {
-        checkClassPublic(clz);
-        checkConstructorPublic(clz);
-        checkClassInherit(clz);
-    }
-
-    private void checkClassPublic(Class<T> clz) {
-        if (!Modifier.isPublic(clz.getModifiers())) {
-            failThrows(clz, "Error is not a public class");
-        }
-    }
-
-    private void checkConstructorPublic(Class<T> clz) {
-        Constructor<?>[] constructors = clz.getConstructors();
-
-        if (constructors.length == 0) {
-            failThrows(clz, "Error has no public no-args constructor");
-        }
-
-        for (Constructor<?> constructor : constructors) {
-            if (Modifier.isPublic(constructor.getModifiers()) && constructor.getParameterTypes().length == 0) {
-                return;
-            }
-        }
-        failThrows(clz, "Error has no public no-args constructor");
-    }
-
-    private void checkClassInherit(Class<T> clz) {
-        if (!serviceInterface.isAssignableFrom(clz)) {
-            failThrows(clz, "Error is not instanceof " + serviceInterface.getName());
-        }
-    }
-
-    private String getSpiServiceName(Class<?> clz) {
-        ServiceName serviceName = clz.getAnnotation(ServiceName.class);
-        return (serviceName != null && !"".equals(serviceName.value())) ? serviceName.value() : clz.getSimpleName();
-    }
-
-    /**
-     * Get the service loader by service interface type
-     *
-     * @param serviceInterface provider interface with @Spi annotation
-     * @param <T>              service interface type
-     * @return the singleton service loader instance
-     */
-    public static <T> ServiceLoader<T> forClass(Class<T> serviceInterface) {
-        checkValidity(serviceInterface);
-        return createServiceLoader(serviceInterface);
-    }
-
-    private static <T> void checkValidity(Class<T> serviceInterface) {
-        if (serviceInterface == null) {
-            failThrows(null, "Service interface must NOT be null!");
-        }
-
-        if (!serviceInterface.isInterface()) {
-            failThrows(serviceInterface, "Service interface must be interface class!");
-        }
-
-        if (!serviceInterface.isAnnotationPresent(Spi.class)) {
-            failThrows(serviceInterface, "Service interface must be specified @Spi annotation!");
-        }
-    }
-
-    /**
-     * Create a service loader or get it from cache if exists
-     *
-     * @param serviceInterface service interface
-     * @param <T>              service interface type
-     * @return service instance loader cache instance
-     */
-    @SuppressWarnings("unchecked")
-    private static synchronized <T> ServiceLoader<T> createServiceLoader(Class<T> serviceInterface) {
-        ServiceLoader<T> loader = (ServiceLoader<T>) SERVICE_LOADERS_CACHE.get(serviceInterface.getName());
-        if (loader == null) {
-            loader = new ServiceLoader<>(serviceInterface);
-            SERVICE_LOADERS_CACHE.put(serviceInterface.getName(), loader);
-        }
-        return loader;
-    }
-
     /**
      * Get service implementation class by name
      *
@@ -304,6 +294,17 @@ public class ServiceLoader<T> {
      */
     public Class<T> getServiceImplClass(String name) {
         return serviceImplClasses.get(name);
+    }
+
+    /**
+     * Get SPI service name from {@link ServiceName}
+     *
+     * @param implClass service implementation class
+     * @return SPI service name
+     */
+    private String getSpiServiceName(Class<?> implClass) {
+        ServiceName serviceName = implClass.getAnnotation(ServiceName.class);
+        return serviceName != null && StringUtils.isNotEmpty(serviceName.value()) ? serviceName.value() : implClass.getSimpleName();
     }
 
     /**
@@ -329,7 +330,7 @@ public class ServiceLoader<T> {
     }
 
     private T getSingletonServiceImpl(String name) throws InstantiationException, IllegalAccessException {
-        T obj = serviceImplInstances.get(name);
+        T obj = singletonInstances.get(name);
         if (obj != null) {
             return obj;
         }
@@ -339,13 +340,13 @@ public class ServiceLoader<T> {
             return null;
         }
 
-        synchronized (serviceImplInstances) {
-            obj = serviceImplInstances.get(name);
+        synchronized (singletonInstances) {
+            obj = singletonInstances.get(name);
             if (obj != null) {
                 return obj;
             }
             obj = clz.newInstance();
-            serviceImplInstances.put(name, obj);
+            singletonInstances.put(name, obj);
         }
         return obj;
     }
@@ -358,10 +359,6 @@ public class ServiceLoader<T> {
         return clz.newInstance();
     }
 
-    private static <T> void failLog(Class<T> type, String msg, Throwable cause) {
-        log.error(type.getName() + ": " + msg, cause);
-    }
-
     private static <T> void failThrows(Class<T> type, String msg, Throwable cause) {
         throw new RuntimeException();
         //todo
@@ -372,9 +369,5 @@ public class ServiceLoader<T> {
         throw new RuntimeException();
         //todo
 //        throw new MotanFrameworkException(type.getName() + ": " + msg);
-    }
-
-    private static <T> void failThrows(Class<T> type, URL url, int line, String msg) throws ServiceConfigurationError {
-        failThrows(type, url + ":" + line + ": " + msg);
     }
 }
