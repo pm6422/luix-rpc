@@ -17,10 +17,7 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -267,22 +264,32 @@ public class ServiceLoader<T> {
     }
 
     /**
+     * Get SPI service name from {@link ServiceName}
+     *
+     * @param implClass service implementation class
+     * @return SPI service name
+     */
+    private String getSpiServiceName(Class<?> implClass) {
+        ServiceName serviceName = implClass.getAnnotation(ServiceName.class);
+        return serviceName != null && StringUtils.isNotEmpty(serviceName.value()) ? serviceName.value() : implClass.getSimpleName();
+    }
+
+    /**
      * Manually add service implementation class to service loader
      *
-     * @param clz class to add to service loader
+     * @param implClass class to add to service loader
      */
-    public void addServiceImplClass(Class<T> clz) {
-        if (clz == null) {
+    public void addServiceImplClass(Class<T> implClass) {
+        if (implClass == null) {
             return;
         }
-        checkServiceImplClass(clz);
-        String spiName = getSpiServiceName(clz);
+        checkServiceImplClass(implClass);
+        String spiName = getSpiServiceName(implClass);
         synchronized (serviceImplClasses) {
             if (serviceImplClasses.containsKey(spiName)) {
-                failThrows(clz, ":Error spiName already exist " + spiName);
-            } else {
-                serviceImplClasses.put(spiName, clz);
+                throw new IllegalArgumentException("Already existing the service implementation class with name: " + spiName);
             }
+            serviceImplClasses.put(spiName, implClass);
         }
     }
 
@@ -297,39 +304,27 @@ public class ServiceLoader<T> {
     }
 
     /**
-     * Get SPI service name from {@link ServiceName}
-     *
-     * @param implClass service implementation class
-     * @return SPI service name
-     */
-    private String getSpiServiceName(Class<?> implClass) {
-        ServiceName serviceName = implClass.getAnnotation(ServiceName.class);
-        return serviceName != null && StringUtils.isNotEmpty(serviceName.value()) ? serviceName.value() : implClass.getSimpleName();
-    }
-
-    /**
      * Get service implementation instance by name
      *
      * @param name service implementation service name
      * @return implementation service instance
      */
     public T load(String name) {
-        Validate.notEmpty(name, "Service name must NOT be empty!");
+        Validate.notEmpty(name, "Service name must not be empty!");
 
         try {
             Spi spi = serviceInterface.getAnnotation(Spi.class);
-            if (spi.scope() == SpiScope.SINGLETON) {
-                return getSingletonServiceImpl(name);
+            if (SpiScope.SINGLETON.equals(spi.scope())) {
+                return loadSingleton(name);
             } else {
-                return getPrototypeServiceImpl(name);
+                return loadPrototype(name);
             }
         } catch (Exception e) {
-            failThrows(serviceInterface, "Error when getExtension " + name, e);
+            throw new RuntimeException("Failed to load service instance: " + name);
         }
-        return null;
     }
 
-    private T getSingletonServiceImpl(String name) throws InstantiationException, IllegalAccessException {
+    private T loadSingleton(String name) throws InstantiationException, IllegalAccessException {
         T obj = singletonInstances.get(name);
         if (obj != null) {
             return obj;
@@ -351,23 +346,11 @@ public class ServiceLoader<T> {
         return obj;
     }
 
-    private T getPrototypeServiceImpl(String name) throws IllegalAccessException, InstantiationException {
+    private T loadPrototype(String name) throws IllegalAccessException, InstantiationException {
         Class<T> clz = serviceImplClasses.get(name);
         if (clz == null) {
             return null;
         }
         return clz.newInstance();
-    }
-
-    private static <T> void failThrows(Class<T> type, String msg, Throwable cause) {
-        throw new RuntimeException();
-        //todo
-//        throw new MotanFrameworkException(type.getName() + ": " + msg, cause);
-    }
-
-    private static <T> void failThrows(Class<T> type, String msg) {
-        throw new RuntimeException();
-        //todo
-//        throw new MotanFrameworkException(type.getName() + ": " + msg);
     }
 }

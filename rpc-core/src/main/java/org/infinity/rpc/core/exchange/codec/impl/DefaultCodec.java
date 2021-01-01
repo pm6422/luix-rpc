@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.codec;
+package org.infinity.rpc.core.exchange.codec.impl;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -7,6 +7,7 @@ import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.Exchangable;
+import org.infinity.rpc.core.exchange.codec.AbstractCodec;
 import org.infinity.rpc.core.exchange.request.impl.RpcRequest;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.exchange.serialization.Serializer;
