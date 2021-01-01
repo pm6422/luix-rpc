@@ -2,7 +2,7 @@ package org.infinity.rpc.utilities.spi;
 
 import junit.framework.TestCase;
 import org.infinity.rpc.utilities.spi.testservice.SpiPrototypeInterface;
-import org.infinity.rpc.utilities.spi.testservice.SpiSingletonInterface;
+import org.infinity.rpc.utilities.spi.testservice.impl.SpiSingletonInterface;
 import org.junit.Assert;
 import org.junit.Test;
 

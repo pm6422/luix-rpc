@@ -1,4 +1,4 @@
-package org.infinity.rpc.utilities.spi.testservice;
+package org.infinity.rpc.utilities.spi.testservice.impl;
 
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 import java.util.concurrent.atomic.AtomicLong;
