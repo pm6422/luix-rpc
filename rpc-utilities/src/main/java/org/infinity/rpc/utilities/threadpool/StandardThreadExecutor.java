@@ -1,5 +1,6 @@
 package org.infinity.rpc.utilities.threadpool;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,7 +22,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class StandardThreadExecutor extends ThreadPoolExecutor {
     public static final int           DEFAULT_CORE_POOL_SIZE  = 20;
     public static final int           DEFAULT_MAX_POOL_SIZE   = 200;
-    public static final int           DEFAULT_KEEP_ALIVE_TIME = 60 * 1000; // 1 minute
+    /**
+     * 1 minute
+     */
+    public static final int           DEFAULT_KEEP_ALIVE_TIME = 60 * 1000;
     /**
      * Processing task count
      */
@@ -97,6 +101,7 @@ public class StandardThreadExecutor extends ThreadPoolExecutor {
         return maxSubmittedTasksCount;
     }
 
+    @Override
     protected void afterExecute(Runnable r, Throwable t) {
         submittedTasksCount.decrementAndGet();
     }
@@ -129,7 +134,7 @@ class ExecutorQueue extends LinkedTransferQueue<Runnable> {
     }
 
     @Override
-    public boolean offer(Runnable o) {
+    public boolean offer(@Nonnull Runnable o) {
         int poolSize = threadPoolExecutor.getPoolSize();
 
         // we are maxed out on threads, simply queue the object
