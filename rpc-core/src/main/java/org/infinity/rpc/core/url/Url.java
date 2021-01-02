@@ -90,8 +90,8 @@ public final class Url implements Serializable {
     /**
      *
      */
-    public static final  String PARAM_SERIALIZER                          = "serializer";
-    public static final  String PARAM_SERIALIZER_DEFAULT_VALUE            = "hessian2";
+    public static final  String PARAM_SERIALIZER                  = "serializer";
+    public static final  String PARAM_SERIALIZER_DEFAULT_VALUE    = "hessian2";
 
     public static final String PARAM_ADDRESS         = "address";
     public static final String PARAM_CONNECT_TIMEOUT = "connectTimeout";
@@ -221,6 +221,32 @@ public final class Url implements Serializable {
         return of(protocol, host, port, path, params);
     }
 
+    public String getParameter(String name, String defaultValue) {
+        String value = getParameter(name);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value;
+    }
+
+    public String getParameter(String name) {
+        return parameters.get(name);
+    }
+
+    public Integer getIntParameter(String name, int defaultValue) {
+        Number n = getNumbers().get(name);
+        if (n != null) {
+            return n.intValue();
+        }
+        String value = parameters.get(name);
+        if (value == null || value.length() == 0) {
+            return defaultValue;
+        }
+        int i = Integer.parseInt(value);
+        getNumbers().put(name, i);
+        return i;
+    }
+
     public Integer getIntParameter(String name) {
         Number n = getNumbers().get(name);
         if (n != null) {
@@ -239,16 +265,20 @@ public final class Url implements Serializable {
         return numbers;
     }
 
-    public String getParameter(String name) {
-        return parameters.get(name);
-    }
-
-    public String getParameter(String name, String defaultValue) {
-        String value = getParameter(name);
+    public Boolean getBooleanParameter(String name, boolean defaultValue) {
+        Boolean value = getBooleanParameter(name);
         if (value == null) {
             return defaultValue;
         }
         return value;
+    }
+
+    public Boolean getBooleanParameter(String name) {
+        String value = parameters.get(name);
+        if (value == null) {
+            return null;
+        }
+        return Boolean.parseBoolean(value);
     }
 
     private void addParameters(Map<String, String> parameters) {

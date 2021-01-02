@@ -1,0 +1,88 @@
+package org.infinity.rpc.core.exchange.transport;
+
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.Validate;
+import org.infinity.rpc.core.exception.RpcServiceException;
+import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.core.url.UrlParam;
+import org.infinity.rpc.utilities.lang.MathUtils;
+import org.infinity.rpc.utilities.threadpool.DefaultThreadFactory;
+import org.infinity.rpc.utilities.threadpool.StandardThreadExecutor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
+
+@Slf4j
+public abstract class AbstractSharedPoolClient extends AbstractClient {
+
+    private static final ThreadPoolExecutor           THREAD_POOL = new StandardThreadExecutor(1, 300,
+            20000, new DefaultThreadFactory(AbstractSharedPoolClient.class.getSimpleName(), true));
+    private final        AtomicInteger                idx         = new AtomicInteger();
+    protected            SharedObjectFactory<Channel> factory;
+    protected            List<Channel>                channels;
+    protected            int                          channelSize;
+
+    public AbstractSharedPoolClient(Url url) {
+        super(url);
+        channelSize = url.getIntParameter(UrlParam.minClientConnection.getName(), UrlParam.minClientConnection.getIntValue());
+        Validate.isTrue(channelSize > 0, "minClientConnection must be a positive number!");
+    }
+
+    protected void initPool() {
+        factory = createChannelFactory();
+        channels = new ArrayList<>(channelSize);
+        IntStream.range(0, channelSize).forEach(x -> channels.add(factory.buildObject()));
+        initConnections(url.getBooleanParameter(UrlParam.asyncInitConnection.getName(), UrlParam.asyncInitConnection.getBooleanValue()));
+    }
+
+    protected void initConnections(boolean async) {
+        if (async) {
+            THREAD_POOL.execute(this::createConnections);
+        } else {
+            createConnections();
+        }
+    }
+
+    private void createConnections() {
+        for (Channel channel : channels) {
+            try {
+                channel.open();
+            } catch (Exception e) {
+                log.error("create connect Error: url=" + url.getUri(), e);
+            }
+        }
+    }
+
+    protected Channel getChannel() {
+        int index = MathUtils.getNonNegativeRange24bit(idx.getAndIncrement());
+        Channel channel;
+
+        for (int i = index; i < channelSize + 1 + index; i++) {
+            channel = channels.get(i % channelSize);
+            if (!channel.isAvailable()) {
+                factory.rebuildObject(channel, i != channelSize + 1);
+            }
+            if (channel.isAvailable()) {
+                return channel;
+            }
+        }
+
+        String errorMsg = this.getClass().getSimpleName() + " getChannel Error: url=" + url.getUri();
+        log.error(errorMsg);
+        throw new RpcServiceException(errorMsg);
+    }
+
+    protected void closeAllChannels() {
+        channels.forEach(Channel::close);
+    }
+
+    /**
+     * Create channel factory
+     *
+     * @return {@link SharedObjectFactory} instance
+     */
+    protected abstract SharedObjectFactory<Channel> createChannelFactory();
+}
