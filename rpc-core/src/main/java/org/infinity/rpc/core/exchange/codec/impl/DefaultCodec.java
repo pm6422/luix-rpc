@@ -11,7 +11,7 @@ import org.infinity.rpc.core.exchange.codec.AbstractCodec;
 import org.infinity.rpc.core.exchange.request.impl.RpcRequest;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.exchange.serialization.Serializer;
-import org.infinity.rpc.core.exchange.transmission.Channel;
+import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.MethodParameterUtils;

@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.transmission.exception;
+package org.infinity.rpc.core.exchange.transport.exception;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

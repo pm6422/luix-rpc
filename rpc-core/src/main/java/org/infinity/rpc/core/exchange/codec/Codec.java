@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.exchange.codec;
 
 import org.infinity.rpc.core.exchange.Exchangable;
-import org.infinity.rpc.core.exchange.transmission.Channel;
+import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 
