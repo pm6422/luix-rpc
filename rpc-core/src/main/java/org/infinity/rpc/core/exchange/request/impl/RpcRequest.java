@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Data
 @NoArgsConstructor
 @ToString
-public class RpcRequest implements Requestable, Traceable, Serializable {
+public class RpcRequest implements Requestable, Serializable {
     private static final long                serialVersionUID = -6259178379027752471L;
     private              String              clientRequestId;
     private              long                requestId;
@@ -22,6 +22,10 @@ public class RpcRequest implements Requestable, Traceable, Serializable {
     private              byte                protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
     private              String              interfaceName;
     private              String              methodName;
+    /**
+     * The method parameter type name list string which is separated by comma.
+     * e.g, java.util.List,java.lang.Long
+     */
     private              String              parameterTypeList;
     private              String[]            parameterTypeNames;
     private              Object[]            methodArguments;

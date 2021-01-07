@@ -3,6 +3,7 @@ package org.infinity.rpc.core.url;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.utilities.network.NetworkUtils;
@@ -35,6 +36,10 @@ public final class Url implements Serializable {
      */
     private              String  protocol;
     /**
+     * RPC protocol version
+     */
+    private              String  version;
+    /**
      * RPC server or client host name
      */
     private              String  host;
@@ -49,57 +54,68 @@ public final class Url implements Serializable {
 
     // ◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘
     // Constants definitions
-    private static final int    CLIENT_URL_PORT                   = 0;
+    private static final int    CLIENT_URL_PORT                     = 0;
     /**
      *
      */
-    public static final  String PARAM_GROUP                       = "group";
-    public static final  String PARAM_GROUP_PROVIDER              = "provider";
-    public static final  String PARAM_GROUP_APPLICATION           = "application";
-    public static final  String PARAM_GROUP_APPLICATION_PROVIDER  = "application-provider";
+    public static final  String PARAM_GROUP                         = "group";
+    public static final  String PARAM_GROUP_PROVIDER                = "provider";
+    public static final  String PARAM_GROUP_APPLICATION             = "application";
+    public static final  String PARAM_GROUP_APPLICATION_PROVIDER    = "application-provider";
     /**
      *
      */
-    public static final  String PARAM_CHECK_HEALTH                = "checkHealth";
-    public static final  String PARAM_CHECK_HEALTH_DEFAULT_VALUE  = "true";
+    public static final  String PARAM_CHECK_HEALTH                  = "checkHealth";
+    public static final  String PARAM_CHECK_HEALTH_DEFAULT_VALUE    = "true";
     /**
      *
      */
-    public static final  String PARAM_CODEC                       = "codec";
-    public static final  String PARAM_CODEC_DEFAULT_VALUE         = "infinity";
+    public static final  String PARAM_CODEC                         = "codec";
+    public static final  String PARAM_CODEC_DEFAULT_VALUE           = "infinity";
     /**
      *
      */
-    public static final  String PARAM_TYPE                        = "type";
-    public static final  String PARAM_TYPE_DEFAULT_VALUE          = "provider";
+    public static final  String PARAM_TYPE                          = "type";
+    public static final  String PARAM_TYPE_DEFAULT_VALUE            = "provider";
     /**
      *
      */
-    public static final  String PARAM_CLUSTER                     = "cluster";
-    public static final  String PARAM_CLUSTER_DEFAULT_VALUE       = "default";
+    public static final  String PARAM_CLUSTER                       = "cluster";
+    public static final  String PARAM_CLUSTER_DEFAULT_VALUE         = "default";
     /**
      *
      */
-    public static final  String PARAM_LOAD_BALANCER               = "loadBalancer";
-    public static final  String PARAM_LOAD_BALANCER_DEFAULT_VALUE = "random";
+    public static final  String PARAM_LOAD_BALANCER                 = "loadBalancer";
+    public static final  String PARAM_LOAD_BALANCER_DEFAULT_VALUE   = "random";
     /**
      *
      */
-    public static final  String PARAM_HA                          = "ha";
-    public static final  String PARAM_HA_DEFAULT_VALUE            = "failover";
+    public static final  String PARAM_HA                            = "ha";
+    public static final  String PARAM_HA_DEFAULT_VALUE              = "failover";
     /**
      *
      */
-    public static final  String PARAM_SERIALIZER                  = "serializer";
-    public static final  String PARAM_SERIALIZER_DEFAULT_VALUE    = "hessian2";
+    public static final  String PARAM_SERIALIZER                    = "serializer";
+    public static final  String PARAM_SERIALIZER_DEFAULT_VALUE      = "hessian2";
+    /**
+     *
+     */
+    public static final  String PARAM_REQUEST_TIMEOUT               = "requestTimeout";
+    public static final  String PARAM_REQUEST_TIMEOUT_DEFAULT_VALUE = "200";
 
-    public static final String PARAM_ADDRESS         = "address";
-    public static final String PARAM_CONNECT_TIMEOUT = "connectTimeout";
-    public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
-    public static final String PARAM_MAX_RETRIES     = "maxRetries";
-    public static final String PARAM_RETRY_INTERVAL  = "retryInterval";
-    public static final String PARAM_APP             = "app";
-    public static final String PARAM_ACTIVATED_TIME  = "activatedTime";
+    public static final String PARAM_ADDRESS               = "address";
+    public static final String PARAM_CONNECT_TIMEOUT       = "connectTimeout";
+    public static final String PARAM_SESSION_TIMEOUT       = "sessionTimeout";
+    public static final String PARAM_MAX_RETRIES           = "maxRetries";
+    public static final String PARAM_RETRY_INTERVAL        = "retryInterval";
+    public static final String PARAM_APP                   = "app";
+    public static final String PARAM_ACTIVATED_TIME        = "activatedTime";
+    public static final String PARAM_MAX_CONTENT_LENGTH    = "maxContentLength";
+    public static final String PARAM_MAX_SERVER_CONNECTION = "maxServerConnection";
+    public static final String PARAM_MAX_CLIENT_CONNECTION = "maxClientConnection";
+    public static final String PARAM_MAX_WORKER_THREAD     = "maxWorkerThread";
+    public static final String PARAM_WORKER_QUEUE_SIZE     = "workerQueueSize";
+    public static final String PARAM_HEART_BEAT_FACTORY    = "heartbeatFactory";
 
     /**
      * Extended parameters
@@ -158,6 +174,10 @@ public final class Url implements Serializable {
     // private access modifier
     private void setProtocol(String protocol) {
         this.protocol = protocol;
+    }
+
+    public String getVersion() {
+        return version;
     }
 
     public String getHost() {
@@ -405,6 +425,7 @@ public final class Url implements Serializable {
         return getUri() + "?group=" + getGroup();
     }
 
+    @Override
     public String toString() {
         return toSimpleString();
     }
@@ -414,5 +435,28 @@ public final class Url implements Serializable {
             return;
         }
         parameters.put(name, value);
+    }
+
+    public Integer getMethodParameter(String methodName, String paramDesc, String name, int defaultValue) {
+        String key = methodName + "(" + paramDesc + ")." + name;
+        Number n = getNumbers().get(key);
+        if (n != null) {
+            return n.intValue();
+        }
+        String value = getMethodParameter(methodName, paramDesc, name);
+        if (value == null || value.length() == 0) {
+            return defaultValue;
+        }
+        int i = Integer.parseInt(value);
+        getNumbers().put(key, i);
+        return i;
+    }
+
+    public String getMethodParameter(String methodName, String paramDesc, String name) {
+        String value = getParameter(RpcConstants.METHOD_CONFIG_PREFIX + methodName + "(" + paramDesc + ")." + name);
+        if (value == null || value.length() == 0) {
+            return getParameter(name);
+        }
+        return value;
     }
 }

@@ -21,7 +21,7 @@ import java.util.concurrent.Executor;
 @NoArgsConstructor
 @ToString
 @Slf4j
-public class RpcResponse implements Responseable, Traceable, Callbackable, Serializable {
+public class RpcResponse implements Responseable, Callbackable, Serializable {
     private static final long                serialVersionUID = 882479213033600079L;
     private              long                requestId;
     private              String              protocol;
@@ -79,6 +79,16 @@ public class RpcResponse implements Responseable, Traceable, Callbackable, Seria
     @Override
     public Exception getException() {
         return null;
+    }
+
+    @Override
+    public void setSerializeNumber(int number) {
+
+    }
+
+    @Override
+    public int getSerializeNumber() {
+        return 0;
     }
 
     @Override

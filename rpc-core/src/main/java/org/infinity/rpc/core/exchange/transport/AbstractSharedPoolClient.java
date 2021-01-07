@@ -62,10 +62,10 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
 
         for (int i = index; i < channelSize + 1 + index; i++) {
             channel = channels.get(i % channelSize);
-            if (!channel.isAvailable()) {
+            if (!channel.isActive()) {
                 factory.rebuildObject(channel, i != channelSize + 1);
             }
-            if (channel.isAvailable()) {
+            if (channel.isActive()) {
                 return channel;
             }
         }

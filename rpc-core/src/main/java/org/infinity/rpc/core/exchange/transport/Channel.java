@@ -52,13 +52,6 @@ public interface Channel {
     InetSocketAddress getRemoteAddress();
 
     /**
-     * Open the channel
-     *
-     * @return true: opened, false: not opened
-     */
-    boolean isOpen();
-
-    /**
      * Check whether it is closed or not
      *
      * @return true: closed, false: not closed
@@ -70,7 +63,7 @@ public interface Channel {
      *
      * @return true: available, false: unavailable
      */
-    boolean isAvailable();
+    boolean isActive();
 
     /**
      * Get the provider url

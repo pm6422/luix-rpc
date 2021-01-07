@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
-import org.infinity.rpc.core.switcher.DefaultSwitcherService;
+import org.infinity.rpc.core.switcher.impl.DefaultSwitcherService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.annotation.EventMarker;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;

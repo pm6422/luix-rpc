@@ -1,6 +1,9 @@
-package org.infinity.rpc.core.switcher;
+package org.infinity.rpc.core.switcher.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.infinity.rpc.core.switcher.Switcher;
+import org.infinity.rpc.core.switcher.SwitcherListener;
+import org.infinity.rpc.core.switcher.SwitcherService;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 

@@ -24,6 +24,12 @@ public class ProtocolConfig {
     @NotNull
     private ProtocolName name           = ProtocolName.infinity;
     /**
+     * Protocol version
+     */
+    @NotNull
+    @Positive
+    private Integer      version        = 1;
+    /**
      * Host name of the RPC server
      */
     @NotEmpty

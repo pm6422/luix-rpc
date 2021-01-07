@@ -18,6 +18,14 @@ public interface Requestable extends Exchangable {
     // Provider method name
     String getMethodName();
 
+    /**
+     * Get the method parameter class name list string which is separated by comma.
+     * e.g, java.util.List,java.lang.Long
+     *
+     * @return method parameter class name list string
+     */
+    String getParameterTypeList();
+
     // Provider method arguments
     Object[] getMethodArguments();
 

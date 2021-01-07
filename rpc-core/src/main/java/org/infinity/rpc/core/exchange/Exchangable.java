@@ -2,7 +2,7 @@ package org.infinity.rpc.core.exchange;
 
 import java.util.Map;
 
-public interface Exchangable {
+public interface Exchangable extends Traceable{
 
     /**
      * @return Request ID

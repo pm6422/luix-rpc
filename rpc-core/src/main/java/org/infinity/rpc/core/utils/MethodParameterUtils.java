@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  */
 public class MethodParameterUtils {
     private static final   String                PARAM_TYPE_STR_DELIMITER        = ",";
-    protected static final String                VOID                            = "void";
+    public static final String                VOID                            = "void";
     private static final   String                ARRAY_TYPE_SUFFIX               = "[]";
     private static final   Class<?>[]            EMPTY_CLASS_ARRAY               = new Class<?>[0];
     private static final   String[]              PRIMITIVE_TYPES                 = new String[]{
@@ -45,13 +45,13 @@ public class MethodParameterUtils {
     private static final   Map<Class<?>, String> CLASS_TO_NAME_MAP               = new ConcurrentHashMap<>();
 
     /**
-     * Get the method parameter class name list string which is separated by comma.
+     * Get the method parameter type name list string which is separated by comma.
      * e.g, java.util.List,java.lang.Long
      *
      * @param method method
      * @return method parameter class name list string
      */
-    public static String getMethodParamString(Method method) {
+    public static String getMethodParamList(Method method) {
         if (ArrayUtils.isEmpty(method.getParameterTypes())) {
             return VOID;
         }
@@ -68,7 +68,7 @@ public class MethodParameterUtils {
      * @return method name with parameter class name list string
      */
     public static String getMethodWithParamString(Method method) {
-        String methodParamString = getMethodParamString(method);
+        String methodParamString = getMethodParamList(method);
         if (StringUtils.isEmpty(methodParamString)) {
             return method.getName() + "()";
         } else {

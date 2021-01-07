@@ -4,13 +4,6 @@ import org.infinity.rpc.core.exchange.Exchangable;
 
 public interface Responseable extends Exchangable {
     /**
-     * Timeout in milliseconds
-     *
-     * @return processing timeout
-     */
-    int getProcessingTimeout();
-
-    /**
      * <pre>
      *  如果正常处理，会返回result，如果处理异常，那么getResult会抛出异常
      * </pre>
@@ -19,6 +12,13 @@ public interface Responseable extends Exchangable {
      * @return response result
      */
     Object getResult();
+
+    /**
+     * Timeout in milliseconds
+     *
+     * @return processing timeout
+     */
+    int getProcessingTimeout();
 
     /**
      * 如果处理异常，那么调用该方法return exception 如果request还没处理完或者request处理正常，那么return null
@@ -30,4 +30,14 @@ public interface Responseable extends Exchangable {
      * @return Exception
      */
     Exception getException();
+
+    /**
+     * set the serialization number.
+     * same to the protocol version, this value only used in server end for compatible.
+     *
+     * @param number
+     */
+    void setSerializeNumber(int number);
+
+    int getSerializeNumber();
 }

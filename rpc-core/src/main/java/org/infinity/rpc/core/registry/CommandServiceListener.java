@@ -24,7 +24,7 @@ import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.subscribe.RpcCommand;
 import org.infinity.rpc.core.subscribe.RpcCommandUtils;
-import org.infinity.rpc.core.switcher.DefaultSwitcherService;
+import org.infinity.rpc.core.switcher.impl.DefaultSwitcherService;
 import org.infinity.rpc.core.switcher.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.url.UrlParam;

@@ -28,6 +28,10 @@ public interface Serializer {
      */
     <T> T deserialize(byte[] bytes, Class<T> outputObjectType) throws IOException;
 
+    byte[] serializeMulti(Object[] data) throws IOException;
+
+    Object[] deserializeMulti(byte[] data, Class<?>[] classes) throws IOException;
+
     /**
      * serialization的唯一编号，用于传输协议中指定序列化方式。每种序列化的编号必须唯一。
      *
