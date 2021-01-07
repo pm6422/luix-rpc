@@ -3,9 +3,6 @@ package org.infinity.rpc.core.switcher.impl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.switcher.Switcher;
 import org.infinity.rpc.core.switcher.SwitcherListener;
-import org.infinity.rpc.core.switcher.SwitcherService;
-import org.infinity.rpc.utilities.spi.ServiceLoader;
-import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.ArrayList;
@@ -14,12 +11,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@ServiceName(DefaultSwitcherService.SERVICE_NAME)
 @NotThreadSafe
-public class DefaultSwitcherService implements SwitcherService {
-    public static final String                              SERVICE_NAME = "defaultSwitcherService";
-    private final       Map<String, Switcher>               switcherMap  = new ConcurrentHashMap<>();
-    private final       Map<String, List<SwitcherListener>> listenerMap  = new ConcurrentHashMap<>();
+public class SwitcherService {
+    public static final String                              REGISTRY_HEARTBEAT_SWITCHER = "feature.configserver.heartbeat";
+    private final       Map<String, Switcher>               switcherMap                 = new ConcurrentHashMap<>();
+    private final       Map<String, List<SwitcherListener>> listenerMap                 = new ConcurrentHashMap<>();
+
+    /**
+     * Prohibit instantiate an instance outside the class
+     */
+    private SwitcherService() {
+    }
 
     /**
      * Get the DefaultSwitcherService instance
@@ -27,25 +29,21 @@ public class DefaultSwitcherService implements SwitcherService {
      * @return
      */
     public static SwitcherService getInstance() {
-        return ServiceLoader.forClass(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME);
+        return SingletonHolder.INSTANCE;
     }
 
-    @Override
     public Switcher getSwitcher(String name) {
         return switcherMap.get(name);
     }
 
-    @Override
     public List<Switcher> getAllSwitchers() {
         return new ArrayList<>(switcherMap.values());
     }
 
-    @Override
     public void initSwitcher(String name, boolean initialValue) {
         setValue(name, initialValue);
     }
 
-    @Override
     public void setValue(String name, boolean value) {
         putSwitcher(Switcher.of(name, value));
         publishChangeEvent(name, value);
@@ -64,13 +62,11 @@ public class DefaultSwitcherService implements SwitcherService {
         listeners.forEach(listener -> listener.onSubscribe(name, value));
     }
 
-    @Override
     public boolean isOn(String name) {
         Switcher switcher = switcherMap.get(name);
         return switcher != null && switcher.isOn();
     }
 
-    @Override
     public boolean isOn(String name, boolean defaultValue) {
         Switcher switcher = switcherMap.get(name);
         if (switcher == null) {
@@ -80,7 +76,6 @@ public class DefaultSwitcherService implements SwitcherService {
         return switcher.isOn();
     }
 
-    @Override
     public void registerListener(String name, SwitcherListener listener) {
         List listeners = Collections.synchronizedList(new ArrayList());
         List existingListeners = listenerMap.putIfAbsent(name, listeners);
@@ -93,7 +88,6 @@ public class DefaultSwitcherService implements SwitcherService {
         }
     }
 
-    @Override
     public void unregisterListener(String name, SwitcherListener listener) {
         List<SwitcherListener> listeners = listenerMap.get(name);
         if (CollectionUtils.isNotEmpty(listeners)) {
@@ -101,12 +95,18 @@ public class DefaultSwitcherService implements SwitcherService {
         }
     }
 
-    @Override
     public void unregisterListeners(String name) {
         List<SwitcherListener> listeners = listenerMap.get(name);
         if (CollectionUtils.isNotEmpty(listeners)) {
             // clean all the listeners
             listeners.clear();
         }
+    }
+
+    /**
+     * The singleton instance holder static inner class
+     */
+    private static class SingletonHolder {
+        private static final SwitcherService INSTANCE = new SwitcherService();// static variable will be instantiated on class loading.
     }
 }

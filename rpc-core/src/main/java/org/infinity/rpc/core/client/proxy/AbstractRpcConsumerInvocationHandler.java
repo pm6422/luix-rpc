@@ -8,7 +8,7 @@ import org.infinity.rpc.core.exchange.cluster.ProviderClusterHolder;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.impl.RequestContext;
 import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.switcher.SwitcherService;
+import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 
 import java.util.List;

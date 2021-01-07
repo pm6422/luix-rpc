@@ -93,7 +93,6 @@ public class RpcConstants {
     public static final String ZOOKEEPER_REGISTRY_NAMESPACE       = "/motan";
     public static final String ZOOKEEPER_REGISTRY_COMMAND         = "/command";
 
-    public static final String REGISTRY_HEARTBEAT_SWITCHER = "feature.configserver.heartbeat";
     public static final String MOTAN_TRACE_INFO_SWITCHER   = "feature.motan.trace.info";
 
     /**

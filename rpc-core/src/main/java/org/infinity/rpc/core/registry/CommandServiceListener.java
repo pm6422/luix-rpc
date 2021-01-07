@@ -24,8 +24,7 @@ import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.subscribe.RpcCommand;
 import org.infinity.rpc.core.subscribe.RpcCommandUtils;
-import org.infinity.rpc.core.switcher.impl.DefaultSwitcherService;
-import org.infinity.rpc.core.switcher.SwitcherService;
+import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.url.UrlParam;
 import org.infinity.rpc.utilities.annotation.EventMarker;
@@ -49,7 +48,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     private static      Pattern IP_PATTERN             = Pattern.compile("^!?[0-9.]*\\*?$");
 
     static {
-        DefaultSwitcherService.getInstance().initSwitcher(MOTAN_COMMAND_SWITCHER, true);
+        SwitcherService.getInstance().initSwitcher(MOTAN_COMMAND_SWITCHER, true);
     }
 
     /**
@@ -148,7 +147,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     public void onNotify(Url clientUrl, String commandString) {
         log.info("CommandServiceManager notify command. service:" + clientUrl.toSimpleString() + ", command:" + commandString);
 
-        if (!ServiceLoader.forClass(SwitcherService.class).load(DefaultSwitcherService.SERVICE_NAME).isOn(MOTAN_COMMAND_SWITCHER) || commandString == null) {
+        if (!SwitcherService.getInstance().isOn(MOTAN_COMMAND_SWITCHER) || commandString == null) {
             log.info("command reset empty since swither is close.");
             commandString = "";
         }

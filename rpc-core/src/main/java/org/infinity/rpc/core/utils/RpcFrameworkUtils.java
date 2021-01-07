@@ -6,7 +6,7 @@ import org.infinity.rpc.core.exchange.Traceable;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
-import org.infinity.rpc.core.switcher.impl.DefaultSwitcherService;
+import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 
 import static org.infinity.rpc.core.constant.ConsumerProviderAnnotationAttributes.GROUP;
@@ -236,7 +236,7 @@ public class RpcFrameworkUtils {
     }
 
     public static void logEvent(Requestable request, String event) {
-        if (DefaultSwitcherService.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
+        if (SwitcherService.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
             logEvent(request, event, System.currentTimeMillis());
         }
     }
@@ -253,13 +253,13 @@ public class RpcFrameworkUtils {
             request.setReceivedTime(time);
             return;
         }
-        if (DefaultSwitcherService.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
+        if (SwitcherService.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
             request.addTrace(event, String.valueOf(time));
         }
     }
 
     public static void logEvent(Responseable response, String event) {
-        if (DefaultSwitcherService.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
+        if (SwitcherService.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
             logEvent(response, event, System.currentTimeMillis());
         }
     }
@@ -276,7 +276,7 @@ public class RpcFrameworkUtils {
             response.setReceivedTime(time);
             return;
         }
-        if (DefaultSwitcherService.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
+        if (SwitcherService.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
             response.addTrace(event, String.valueOf(time));
         }
     }
