@@ -5,17 +5,21 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.constant.RpcConstants;
+import org.infinity.rpc.core.exception.RpcAbstractException;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcServiceException;
+import org.infinity.rpc.core.exchange.ExchangeContext;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.RpcResponseFuture;
+import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.exchange.transport.AbstractSharedPoolClient;
+import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.exchange.transport.SharedObjectFactory;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
-import org.infinity.rpc.core.exchange.transport.exception.TransmissionException;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.url.UrlParam;
+import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 
 import java.util.Map;
 import java.util.concurrent.*;
@@ -60,8 +64,61 @@ public class NettyClient extends AbstractSharedPoolClient {
     }
 
     @Override
-    public Responseable request(Requestable request) throws TransmissionException {
-        return null;
+    public Responseable request(Requestable request) {
+        if (!isActive()) {
+            throw new RpcServiceException("NettyChannel is unavailable: url=" + url.getUri() + request);
+        }
+        boolean isAsync = false;
+        Object async = ExchangeContext.getInstance().getAttribute(RpcConstants.ASYNC_SUFFIX);
+        if (async != null && async instanceof Boolean) {
+            isAsync = (Boolean) async;
+        }
+        return request(request, isAsync);
+    }
+
+    private Responseable request(Requestable request, boolean async) {
+        Channel channel;
+        Responseable response;
+        try {
+            // return channel or throw exception(timeout or connection_fail)
+            channel = getChannel();
+            RpcFrameworkUtils.logEvent(request, RpcConstants.TRACE_CONNECTION);
+
+            if (channel == null) {
+                log.error("NettyClient borrowObject null: url=" + url.getUri() + " " + request);
+                return null;
+            }
+
+            // async request
+            response = channel.request(request);
+        } catch (Exception e) {
+            log.error("NettyClient request Error: url=" + url.getUri() + " " + request + ", " + e.getMessage());
+
+            if (e instanceof RpcAbstractException) {
+                throw (RpcAbstractException) e;
+            } else {
+                throw new RpcServiceException("NettyClient request Error: url=" + url.getUri() + " " + request, e);
+            }
+        }
+
+        // aysnc or sync result
+        response = asyncResponse(response, async);
+
+        return response;
+    }
+
+    /**
+     * 如果async是false，那么同步获取response的数据
+     *
+     * @param response
+     * @param async
+     * @return
+     */
+    private Responseable asyncResponse(Responseable response, boolean async) {
+        if (async || !(response instanceof RpcResponseFuture)) {
+            return response;
+        }
+        return new RpcResponse(response);
     }
 
     @Override
@@ -92,6 +149,10 @@ public class NettyClient extends AbstractSharedPoolClient {
     @Override
     public Url getUrl() {
         return null;
+    }
+
+    public Bootstrap getBootstrap() {
+        return bootstrap;
     }
 
     public RpcResponseFuture removeCallback(long requestId) {

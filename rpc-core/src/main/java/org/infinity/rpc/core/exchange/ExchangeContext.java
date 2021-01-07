@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.request.impl;
+package org.infinity.rpc.core.exchange;
 
 import lombok.Data;
 import org.infinity.rpc.core.exchange.request.Requestable;
@@ -10,28 +10,28 @@ import java.util.Map;
 
 @ThreadSafe
 @Data
-public class RequestContext {
+public class ExchangeContext {
     /**
-     * Create a new {@link RequestContext} for each thread
+     * Create a new {@link ExchangeContext} for each thread
      */
-    private static final ThreadLocal<RequestContext> THREAT_LOCAL_CONTEXT = ThreadLocal.withInitial(RequestContext::new);
-    private              String                      clientRequestId;
-    private              Requestable                 request;
-    private              boolean                     asyncCall            = false;
-    private              Responseable                response;
+    private static final ThreadLocal<ExchangeContext> THREAT_LOCAL_CONTEXT = ThreadLocal.withInitial(ExchangeContext::new);
+    private              boolean                      asyncCall            = false;
+    private              String                       clientRequestId;
+    private              Requestable                  request;
+    private              Responseable                 response;
     /**
      * RPC context attachment. not same as request attachments
      */
-    private              Map<String, String>         attachments          = new HashMap<>();
-    private              Map<Object, Object>         attributes           = new HashMap<>();
+    private              Map<String, String>          attachments          = new HashMap<>();
+    private              Map<Object, Object>          attributes           = new HashMap<>();
 
     /**
      * Prohibit instantiate an instance outside the class
      */
-    private RequestContext() {
+    private ExchangeContext() {
     }
 
-    public static RequestContext getThreadRpcContext() {
+    public static ExchangeContext getInstance() {
         return THREAT_LOCAL_CONTEXT.get();
     }
 
@@ -45,8 +45,8 @@ public class RequestContext {
      * @param request
      * @return
      */
-    public static RequestContext initialize(Requestable request) {
-        RequestContext context = new RequestContext();
+    public static ExchangeContext initialize(Requestable request) {
+        ExchangeContext context = new ExchangeContext();
         if (request != null) {
             context.setRequest(request);
             String clientRequestId = request.getClientRequestId();
@@ -56,8 +56,8 @@ public class RequestContext {
         return context;
     }
 
-    public static RequestContext initialize() {
-        RequestContext context = new RequestContext();
+    public static ExchangeContext initialize() {
+        ExchangeContext context = new ExchangeContext();
         THREAT_LOCAL_CONTEXT.set(context);
         return context;
     }

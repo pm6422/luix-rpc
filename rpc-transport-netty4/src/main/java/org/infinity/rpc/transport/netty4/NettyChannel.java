@@ -28,12 +28,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 public class NettyChannel implements Channel {
-    private volatile ChannelState             state         = ChannelState.UNINITIALIZED;
+    private volatile ChannelState             state = ChannelState.UNINITIALIZED;
     private          NettyClient              nettyClient;
-    private          io.netty.channel.Channel channel       = null;
-    private          InetSocketAddress        remoteAddress = null;
-    private          InetSocketAddress        localAddress  = null;
-    private          ReentrantLock            lock          = new ReentrantLock();
+    private          io.netty.channel.Channel channel;
+    private          InetSocketAddress        remoteAddress;
+    private          InetSocketAddress        localAddress;
+    private          ReentrantLock            lock  = new ReentrantLock();
     private          Codec                    codec;
 
     public NettyChannel(NettyClient nettyClient) {
@@ -91,17 +91,65 @@ public class NettyChannel implements Channel {
     }
 
     @Override
-    public boolean open() {
-        return false;
+    public synchronized boolean open() {
+        if (isActive()) {
+            log.warn("the channel already open, local: " + localAddress + " remote: " + remoteAddress + " url: " + nettyClient.getUrl().getUri());
+            return true;
+        }
+
+        ChannelFuture channelFuture = null;
+        try {
+            long start = System.currentTimeMillis();
+            channelFuture = nettyClient.getBootstrap().connect(remoteAddress);
+            int timeout = nettyClient.getUrl().getIntParameter(Url.PARAM_CONNECT_TIMEOUT, Url.PARAM_CONNECT_TIMEOUT_DEFAULT_VALUE);
+            if (timeout <= 0) {
+                throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+            }
+            // 不去依赖于connectTimeout
+            boolean result = channelFuture.awaitUninterruptibly(timeout, TimeUnit.MILLISECONDS);
+            boolean success = channelFuture.isSuccess();
+
+            if (result && success) {
+                channel = channelFuture.channel();
+                if (channel.localAddress() != null && channel.localAddress() instanceof InetSocketAddress) {
+                    localAddress = (InetSocketAddress) channel.localAddress();
+                }
+                state = ChannelState.ACTIVE;
+                return true;
+            }
+            boolean connected = false;
+            if (channelFuture.channel() != null) {
+                connected = channelFuture.channel().isActive();
+            }
+
+            if (channelFuture.cause() != null) {
+                channelFuture.cancel(true);
+                throw new RpcServiceException("NettyChannel failed to connect to server, url: " + nettyClient.getUrl().getUri() + ", result: " + result + ", success: " + success + ", connected: " + connected, channelFuture.cause());
+            } else {
+                channelFuture.cancel(true);
+                throw new RpcServiceException("NettyChannel connect to server timeout url: " + nettyClient.getUrl().getUri() + ", cost: " + (System.currentTimeMillis() - start) + ", result: " + result + ", success: " + success + ", connected: " + connected);
+            }
+        } catch (RpcServiceException e) {
+            throw e;
+        } catch (Exception e) {
+            if (channelFuture != null) {
+                channelFuture.channel().close();
+            }
+            throw new RpcServiceException("NettyChannel failed to connect to server, url: " + nettyClient.getUrl().getUri(), e);
+        } finally {
+            if (!state.isActive()) {
+                nettyClient.incrErrorCount();
+            }
+        }
     }
 
     @Override
-    public void close() {
+    public synchronized void close() {
         close(0);
     }
 
     @Override
-    public void close(int timeout) {
+    public synchronized void close(int timeout) {
         try {
             state = ChannelState.CLOSED;
             if (channel != null) {

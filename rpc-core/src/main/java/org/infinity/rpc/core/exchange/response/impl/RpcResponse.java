@@ -31,6 +31,22 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
     private              Exception           exception;
     private              Map<String, String> attachments      = new ConcurrentHashMap<>();
 
+
+    public RpcResponse(Responseable response) {
+        this.result = response.getResult();
+        this.exception = response.getException();
+        this.requestId = response.getRequestId();
+        this.setElapsedTime(response.getElapsedTime());
+        this.processingTimeout = response.getProcessingTimeout();
+        this.protocolVersion = response.getProtocolVersion();
+        this.setSerializeNumber(response.getSerializeNumber());
+        this.attachments = response.getAttachments();
+        if (response instanceof Traceable) {
+            this.setReceivedTime(response.getReceivedTime());
+            response.getTraces().entrySet().forEach(entry -> this.addTrace(entry.getKey(), entry.getKey()));
+        }
+    }
+
     @Override
     public String getProtocol() {
         return protocol;

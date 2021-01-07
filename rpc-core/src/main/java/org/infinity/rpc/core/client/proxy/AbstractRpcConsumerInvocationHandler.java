@@ -6,7 +6,7 @@ import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
 import org.infinity.rpc.core.exchange.cluster.ProviderClusterHolder;
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.core.exchange.request.impl.RequestContext;
+import org.infinity.rpc.core.exchange.ExchangeContext;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
@@ -28,7 +28,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
      * @return return result of method
      */
     protected Object processRequest(Requestable request, Class<?> returnType, boolean async) {
-        RequestContext threadRpcContext = RequestContext.getThreadRpcContext();
+        ExchangeContext threadRpcContext = ExchangeContext.getInstance();
         threadRpcContext.setAsyncCall(async);
 
         // Copy values from context to request object
@@ -67,7 +67,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
      * @param threadRpcContext RPC context object
      * @param request          request object
      */
-    private void copyContextToRequest(RequestContext threadRpcContext, Requestable request) {
+    private void copyContextToRequest(ExchangeContext threadRpcContext, Requestable request) {
         // Copy attachments from RPC context to request object
         threadRpcContext.getAttachments().forEach(request::addAttachment);
 
