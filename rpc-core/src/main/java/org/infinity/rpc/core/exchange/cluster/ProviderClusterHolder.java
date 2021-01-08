@@ -16,7 +16,7 @@ public class ProviderClusterHolder<T> {
     private final Map<String, ProviderCluster<T>> clusterMap = new ConcurrentHashMap<>();
 
     /**
-     * Prohibit instantiate an instance outside the class
+     * Prevent instantiation of it outside the class
      */
     private ProviderClusterHolder() {
     }

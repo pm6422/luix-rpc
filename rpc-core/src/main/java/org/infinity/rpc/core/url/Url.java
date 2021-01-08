@@ -171,7 +171,7 @@ public final class Url implements Serializable {
     private transient Map<String, Number> numbers;
 
     /**
-     * Prohibit instantiate an instance outside the class
+     * Prevent instantiation of it outside the class
      */
     private Url() {
     }

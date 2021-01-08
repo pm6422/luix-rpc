@@ -29,7 +29,7 @@ public class ShutdownHook extends Thread {
     private static final List<CleanableObject> RESOURCES        = new ArrayList<>();
 
     /**
-     * Prohibit instantiate an instance outside the class
+     * Prevent instantiation of it outside the class
      */
     private ShutdownHook() {
     }

@@ -35,7 +35,7 @@ public class ConsumerWrapperBeanNameBuilder {
     private              String      group;
 
     /**
-     * Prohibit instantiate an instance outside the class
+     * Prevent instantiation of it outside the class
      */
     private ConsumerWrapperBeanNameBuilder(Class<?> interfaceClass, Environment env) {
         Assert.notNull(interfaceClass, "Consumer interface class must not be null!");

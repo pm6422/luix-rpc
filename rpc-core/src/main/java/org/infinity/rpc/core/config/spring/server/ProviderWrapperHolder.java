@@ -12,7 +12,7 @@ public class ProviderWrapperHolder {
     private final Map<String, ProviderWrapper> wrapperCache = new ConcurrentHashMap<>();
 
     /**
-     * Prohibit instantiate an instance outside the class
+     * Prevent instantiation of it outside the class
      */
     private ProviderWrapperHolder() {
     }

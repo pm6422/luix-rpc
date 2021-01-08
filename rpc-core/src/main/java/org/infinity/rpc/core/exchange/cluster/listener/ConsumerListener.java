@@ -30,7 +30,7 @@ public class ConsumerListener<T> implements ClientListener {
     private final Map<Url, List<ProviderCaller<T>>> callersPerRegistryUrl = new ConcurrentHashMap<>();
 
     /**
-     * Prohibit instantiate an instance outside the class
+     * Prevent instantiation of it outside the class
      */
     private ConsumerListener() {
     }

@@ -18,7 +18,7 @@ public class SwitcherService {
     private final       Map<String, List<SwitcherListener>> listenerMap                 = new ConcurrentHashMap<>();
 
     /**
-     * Prohibit instantiate an instance outside the class
+     * Prevent instantiation of it outside the class
      */
     private SwitcherService() {
     }

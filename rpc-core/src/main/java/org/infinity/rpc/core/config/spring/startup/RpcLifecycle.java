@@ -32,7 +32,7 @@ public class RpcLifecycle {
     private AtomicBoolean stopped = new AtomicBoolean(false);
 
     /**
-     * Prohibit instantiate an instance outside the class
+     * Prevent instantiation of it outside the class
      */
     private RpcLifecycle() {
     }

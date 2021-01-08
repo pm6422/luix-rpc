@@ -14,7 +14,7 @@ public final class ProviderWrapperBeanNameBuilder {
     private final        Environment env;
 
     /**
-     * Prohibit instantiate an instance outside the class
+     * Prevent instantiation of it outside the class
      */
     private ProviderWrapperBeanNameBuilder(Class<?> interfaceClass, Environment env) {
         this.interfaceClass = interfaceClass;

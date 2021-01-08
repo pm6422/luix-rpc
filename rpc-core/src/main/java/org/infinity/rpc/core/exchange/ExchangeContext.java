@@ -26,7 +26,7 @@ public class ExchangeContext {
     private              Map<Object, Object>          attributes           = new HashMap<>();
 
     /**
-     * Prohibit instantiate an instance outside the class
+     * Prevent instantiation of it outside the class
      */
     private ExchangeContext() {
     }

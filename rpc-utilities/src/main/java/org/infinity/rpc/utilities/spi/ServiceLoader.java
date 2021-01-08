@@ -110,7 +110,7 @@ public class ServiceLoader<T> {
     }
 
     /**
-     * Prohibit instantiate an instance outside the class
+     * Prevent instantiation of it outside the class
      *
      * @param classLoader      class loader
      * @param serviceInterface service interface
