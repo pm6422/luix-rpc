@@ -147,6 +147,11 @@ public final class Url implements Serializable {
      */
     public static final  String  PARAM_HEART_BEAT_FACTORY                  = "heartbeatFactory";
     public static final  String  PARAM_HEART_BEAT_FACTORY_DEFAULT_VALUE    = "default";
+    /**
+     *
+     */
+    public static final  String  PARAM_ENDPOINT_FACTORY                  = "endpointFactory";
+    public static final  String  PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE    = "netty";
 
     public static final String PARAM_ADDRESS         = "address";
     public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
