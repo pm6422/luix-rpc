@@ -17,7 +17,10 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -99,6 +102,7 @@ public class ServiceLoader<T> {
     private static synchronized <T> ServiceLoader<T> createServiceLoader(Class<T> serviceInterface) {
         ServiceLoader<T> loader = (ServiceLoader<T>) SERVICE_LOADERS_CACHE.get(serviceInterface.getName());
         if (loader == null) {
+            // Load all the implementation classes
             loader = new ServiceLoader<>(Thread.currentThread().getContextClassLoader(), serviceInterface);
             SERVICE_LOADERS_CACHE.put(serviceInterface.getName(), loader);
         }
@@ -114,6 +118,7 @@ public class ServiceLoader<T> {
     private ServiceLoader(ClassLoader classLoader, Class<T> serviceInterface) {
         this.classLoader = classLoader;
         this.serviceInterface = serviceInterface;
+        // Load all the implementation classes
         serviceImplClasses = loadImplClasses();
     }
 

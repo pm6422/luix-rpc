@@ -235,7 +235,7 @@ public class NettyClient extends AbstractSharedPoolClient {
 
     @Override
     public Url getUrl() {
-        return null;
+        return url;
     }
 
     public Bootstrap getBootstrap() {

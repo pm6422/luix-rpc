@@ -1,11 +1,11 @@
 package org.infinity.rpc.core.exchange.request.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.request.AbstractProviderCaller;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Future;
-import org.infinity.rpc.core.exchange.response.FutureListener;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.transport.Client;
 import org.infinity.rpc.core.exchange.transport.endpoint.EndpointFactory;
@@ -24,8 +24,11 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
 
     public DefaultProviderCaller(Class<T> interfaceClass, Url providerUrl) {
         super(interfaceClass, providerUrl);
-        endpointFactory = ServiceLoader.forClass(EndpointFactory.class)
-                .load(providerUrl.getParameter(Url.PARAM_ENDPOINT_FACTORY, Url.PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE));
+        String endpointFactoryName = providerUrl.getParameter(Url.PARAM_ENDPOINT_FACTORY, Url.PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE);
+        endpointFactory = ServiceLoader.forClass(EndpointFactory.class).load(endpointFactoryName);
+        if (endpointFactory == null) {
+            throw new RpcFrameworkException("Endpoint factory [" + endpointFactoryName + "] must not be null!");
+        }
         client = endpointFactory.createClient(providerUrl);
     }
 

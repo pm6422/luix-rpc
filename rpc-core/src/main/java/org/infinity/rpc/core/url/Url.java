@@ -71,7 +71,7 @@ public final class Url implements Serializable {
      *
      */
     public static final  String  PARAM_CODEC                               = "codec";
-    public static final  String  PARAM_CODEC_DEFAULT_VALUE                 = "infinity";
+    public static final  String  PARAM_CODEC_DEFAULT_VALUE                 = "default";
     /**
      *
      */

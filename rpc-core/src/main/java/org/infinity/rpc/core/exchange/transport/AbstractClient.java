@@ -1,6 +1,8 @@
 package org.infinity.rpc.core.exchange.transport;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.Validate;
+import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.codec.Codec;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.url.Url;
@@ -21,7 +23,12 @@ public abstract class AbstractClient implements Client {
 
     public AbstractClient(Url url) {
         this.url = url;
-        this.codec = ServiceLoader.forClass(Codec.class).load(url.getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
+        String codecName = url.getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE);
+        this.codec = ServiceLoader.forClass(Codec.class).load(codecName);
+        if (codec == null) {
+            throw new RpcFrameworkException("Codec [" + codecName + "] must not be null!");
+        }
+
         log.info("Initializing client with codec {} for url: {}", codec.getClass().getSimpleName(), url);
     }
 
