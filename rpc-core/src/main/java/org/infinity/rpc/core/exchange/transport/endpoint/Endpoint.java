@@ -14,35 +14,11 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.exchange.transport.server;
+package org.infinity.rpc.core.exchange.transport.endpoint;
+
 
 import org.infinity.rpc.core.exchange.transport.Channel;
-import org.infinity.rpc.core.exchange.transport.endpoint.Endpoint;
 
-import java.net.InetSocketAddress;
-import java.util.Collection;
+public interface Endpoint extends Channel {
 
-public interface Server extends Endpoint {
-
-    /**
-     * is server bound
-     *
-     * @return
-     */
-    boolean isBound();
-
-    /**
-     * get channels.
-     *
-     * @return channels
-     */
-    Collection<Channel> getChannels();
-
-    /**
-     * get channel.
-     *
-     * @param remoteAddress
-     * @return channel
-     */
-    Channel getChannel(InetSocketAddress remoteAddress);
 }

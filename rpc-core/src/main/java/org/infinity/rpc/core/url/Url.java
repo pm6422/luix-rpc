@@ -142,6 +142,11 @@ public final class Url implements Serializable {
      */
     public static final  String  PARAM_HOST                                = "host";
     public static final  String  PARAM_HOST_DEFAULT_VALUE                  = "";
+    /**
+     *
+     */
+    public static final  String  PARAM_HEART_BEAT_FACTORY                  = "heartbeatFactory";
+    public static final  String  PARAM_HEART_BEAT_FACTORY_DEFAULT_VALUE    = "default";
 
     public static final String PARAM_ADDRESS         = "address";
     public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
@@ -149,12 +154,7 @@ public final class Url implements Serializable {
     public static final String PARAM_RETRY_INTERVAL  = "retryInterval";
     public static final String PARAM_APP             = "app";
     public static final String PARAM_ACTIVATED_TIME  = "activatedTime";
-
-
     public static final String PARAM_MAX_CLIENT_CONNECTION = "maxClientConnection";
-
-
-    public static final String PARAM_HEART_BEAT_FACTORY = "heartbeatFactory";
 
     /**
      * Extended parameters

@@ -85,7 +85,7 @@ public class RpcConstants {
     public static final int    HEARTBEAT_PERIOD                   = 500;
     public static final String HEARTBEAT_INTERFACE_NAME           = "com.weibo.api.motan.rpc.heartbeat";
     public static final String HEARTBEAT_METHOD_NAME              = "heartbeat";
-    public static final String HHEARTBEAT_PARAM                   = MethodParameterUtils.VOID;
+    public static final String HEARTBEAT_PARAM                    = MethodParameterUtils.VOID;
     /**
      * heartbeat constants end
      */
@@ -93,7 +93,7 @@ public class RpcConstants {
     public static final String ZOOKEEPER_REGISTRY_NAMESPACE       = "/motan";
     public static final String ZOOKEEPER_REGISTRY_COMMAND         = "/command";
 
-    public static final String MOTAN_TRACE_INFO_SWITCHER   = "feature.motan.trace.info";
+    public static final String MOTAN_TRACE_INFO_SWITCHER = "feature.motan.trace.info";
 
     /**
      * 默认的consistent的hash的数量

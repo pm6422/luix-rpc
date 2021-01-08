@@ -260,6 +260,10 @@ public class DefaultResponseFuture implements RpcResponseFuture {
         return 0;
     }
 
+    @Override
+    public void setProtocolVersion(byte protocolVersion) {
+    }
+
     private Object getValueOrThrowable() {
         if (exception != null) {
             throw (exception instanceof RuntimeException) ? (RuntimeException) exception : new RpcServiceException(

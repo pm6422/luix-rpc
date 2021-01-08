@@ -19,6 +19,8 @@ public interface Exchangable extends Traceable{
      */
     byte getProtocolVersion();
 
+    void setProtocolVersion(byte protocolVersion);
+
     /**
      * Attachments
      *

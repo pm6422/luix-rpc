@@ -21,6 +21,7 @@ import org.infinity.rpc.core.exchange.response.RpcResponseFuture;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.exchange.transport.AbstractSharedPoolClient;
 import org.infinity.rpc.core.exchange.transport.Channel;
+import org.infinity.rpc.core.exchange.transport.MessageHandler;
 import org.infinity.rpc.core.exchange.transport.SharedObjectFactory;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.url.Url;
@@ -320,6 +321,25 @@ public class NettyClient extends AbstractSharedPoolClient {
         }
 
         this.callbackMap.put(requestId, responseFuture);
+    }
+
+    @Override
+    public void heartbeat(Requestable request) {
+        // 如果节点还没有初始化或者节点已经被close掉了，那么heartbeat也不需要进行了
+        if (state.isUninitialized() || state.isClosed()) {
+            log.warn("NettyClient heartbeat Error: state={} url={}", state.name(), url.getUri());
+            return;
+        }
+
+        log.info("NettyClient heartbeat request: url={}", url.getUri());
+
+        try {
+            // async request后，如果service is
+            // available，那么将会自动把该client设置成可用
+            request(request, true);
+        } catch (Exception e) {
+            log.error("NettyClient heartbeat Error: url={}, {}", url.getUri(), e.getMessage());
+        }
     }
 
     /**

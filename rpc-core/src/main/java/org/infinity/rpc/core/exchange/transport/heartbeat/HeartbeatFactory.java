@@ -14,35 +14,32 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.exchange.transport.server;
+package org.infinity.rpc.core.exchange.transport.heartbeat;
 
-import org.infinity.rpc.core.exchange.transport.Channel;
-import org.infinity.rpc.core.exchange.transport.endpoint.Endpoint;
 
-import java.net.InetSocketAddress;
-import java.util.Collection;
+import org.infinity.rpc.core.exchange.request.Requestable;
+import org.infinity.rpc.core.exchange.transport.MessageHandler;
+import org.infinity.rpc.utilities.spi.annotation.Spi;
+import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 
-public interface Server extends Endpoint {
+/**
+ * heartbeat的消息保持和正常请求的Request一致，这样以便更能反应service端的可用情况
+ */
+@Spi(scope = SpiScope.SINGLETON)
+public interface HeartbeatFactory {
 
     /**
-     * is server bound
+     * 创建心跳包
      *
      * @return
      */
-    boolean isBound();
+    Requestable createRequest();
 
     /**
-     * get channels.
+     * 包装 handler，支持心跳包的处理
      *
-     * @return channels
+     * @param handler
+     * @return
      */
-    Collection<Channel> getChannels();
-
-    /**
-     * get channel.
-     *
-     * @param remoteAddress
-     * @return channel
-     */
-    Channel getChannel(InetSocketAddress remoteAddress);
+    MessageHandler wrapMessageHandler(MessageHandler handler);
 }
