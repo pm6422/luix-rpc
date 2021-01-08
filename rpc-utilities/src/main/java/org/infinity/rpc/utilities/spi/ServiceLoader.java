@@ -136,6 +136,7 @@ public class ServiceLoader<T> {
                 return Collections.EMPTY_MAP;
             }
             while (urls.hasMoreElements()) {
+                // Loop each file named with 'serviceFileName'
                 readImplClassNames(urls.nextElement(), serviceInterface, serviceImplClassNames);
             }
         } catch (Exception e) {
@@ -145,7 +146,7 @@ public class ServiceLoader<T> {
     }
 
     /**
-     * Read the service implementation class
+     * Read the service implementation class name
      *
      * @param fileUrl          file resource url
      * @param serviceInterface service interface
