@@ -299,16 +299,6 @@ public class ServiceLoader<T> {
     }
 
     /**
-     * Get service implementation class by name
-     *
-     * @param name service implementation service name
-     * @return implementation service class
-     */
-    public Class<T> getServiceImplClass(String name) {
-        return serviceImplClasses.get(name);
-    }
-
-    /**
      * Get service implementation instance by name
      *
      * @param name service implementation service name
