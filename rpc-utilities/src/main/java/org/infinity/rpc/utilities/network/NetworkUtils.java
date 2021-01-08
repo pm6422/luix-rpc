@@ -1,8 +1,6 @@
 package org.infinity.rpc.utilities.network;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
+import java.net.*;
 import java.util.Enumeration;
 
 public class NetworkUtils {
@@ -53,5 +51,19 @@ public class NetworkUtils {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String getHostName(SocketAddress socketAddress) {
+        if (socketAddress == null) {
+            return null;
+        }
+
+        if (socketAddress instanceof InetSocketAddress) {
+            InetAddress addr = ((InetSocketAddress) socketAddress).getAddress();
+            if(addr != null){
+                return addr.getHostAddress();
+            }
+        }
+        return null;
     }
 }

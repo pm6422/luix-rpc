@@ -16,6 +16,7 @@ import org.infinity.rpc.common.RpcResponse;
 /**
  * Netty server
  */
+@Deprecated
 @Slf4j
 public class NettyServer {
     private String host;

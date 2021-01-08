@@ -1,12 +1,18 @@
 package org.infinity.rpc.transport.netty4;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.RpcAbstractException;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.ExchangeContext;
 import org.infinity.rpc.core.exchange.request.Requestable;
@@ -122,18 +128,98 @@ public class NettyClient extends AbstractSharedPoolClient {
     }
 
     @Override
-    public boolean open() {
-        return false;
+    public synchronized boolean open() {
+        if (isActive()) {
+            return true;
+        }
+
+        bootstrap = new Bootstrap();
+        int timeout = getUrl().getIntParameter(Url.PARAM_CONNECT_TIMEOUT, Url.PARAM_CONNECT_TIMEOUT_DEFAULT_VALUE);
+        if (timeout <= 0) {
+            throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+        }
+        bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout);
+        bootstrap.option(ChannelOption.TCP_NODELAY, true);
+        bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+        // 最大响应包限制
+        final int maxContentLength = url.getIntParameter(Url.PARAM_MAX_CONTENT_LENGTH, Url.PARAM_MAX_CONTENT_LENGTH_DEFAULT_VALUE);
+        bootstrap.group(NIO_EVENT_LOOP_GROUP)
+                .channel(NioSocketChannel.class)
+                .handler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel(SocketChannel ch) throws Exception {
+                        ChannelPipeline pipeline = ch.pipeline();
+                        pipeline.addLast("decoder", new NettyDecoder(codec, NettyClient.this, maxContentLength));
+                        pipeline.addLast("encoder", new NettyEncoder());
+                        pipeline.addLast("handler", new NettyChannelHandler(NettyClient.this, new MessageHandler() {
+                            @Override
+                            public Object handle(Channel channel, Object message) {
+                                Responseable response = (Responseable) message;
+                                RpcResponseFuture responseFuture = NettyClient.this.removeCallback(response.getRequestId());
+
+                                if (responseFuture == null) {
+                                    log.warn("NettyClient has response from server, but responseFuture not exist, requestId={}", response.getRequestId());
+                                    return null;
+                                }
+                                if (response.getException() != null) {
+                                    responseFuture.onFailure(response);
+                                } else {
+                                    responseFuture.onSuccess(response);
+                                }
+                                return null;
+                            }
+                        }));
+                    }
+                });
+
+        // 初始化连接池
+        initPool();
+
+        log.info("NettyClient finish Open: url={}", url);
+
+        // 注册统计回调
+//        StatsUtil.registryStatisticCallback(this);
+
+        // 设置可用状态
+        state = ChannelState.ACTIVE;
+        return true;
     }
 
     @Override
-    public void close() {
-
+    public synchronized void close() {
+        close(0);
     }
 
     @Override
-    public void close(int timeout) {
+    public synchronized void close(int timeout) {
+        if (state.isClosed()) {
+            return;
+        }
 
+        try {
+            cleanup();
+            if (state.isUninitialized()) {
+                log.info("NettyClient close fail: state={}, url={}", state.value, url.getUri());
+                return;
+            }
+
+            // 设置close状态
+            state = ChannelState.CLOSED;
+            log.info("NettyClient close Success: url={}", url.getUri());
+        } catch (Exception e) {
+            log.error("NettyClient close Error: url=" + url.getUri(), e);
+        }
+    }
+
+    public void cleanup() {
+        // 取消定期的回收任务
+        timeMonitorFuture.cancel(true);
+        // 清空callback
+        callbackMap.clear();
+        // 关闭client持有的channel
+        closeAllChannels();
+        // 解除统计回调的注册
+//        StatsUtil.unRegistryStatisticCallback(this);
     }
 
     @Override

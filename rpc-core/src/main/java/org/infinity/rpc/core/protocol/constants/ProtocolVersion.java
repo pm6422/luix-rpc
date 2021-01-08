@@ -1,7 +1,9 @@
 package org.infinity.rpc.core.protocol.constants;
 
 public enum ProtocolVersion {
-    VERSION_1((byte) 1, 16);
+    VERSION_1((byte) 1, 16),
+    VERSION_1_Compress((byte) 2, 16),
+    VERSION_2((byte) 3, 13);
 
     private byte version;
     private int  headerLength;

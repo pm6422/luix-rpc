@@ -54,78 +54,107 @@ public final class Url implements Serializable {
 
     // ◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘
     // Constants definitions
-    private static final int    CLIENT_URL_PORT                        = 0;
+    private static final int     CLIENT_URL_PORT                           = 0;
     /**
      *
      */
-    public static final  String PARAM_GROUP                            = "group";
-    public static final  String PARAM_GROUP_PROVIDER                   = "provider";
-    public static final  String PARAM_GROUP_APPLICATION                = "application";
-    public static final  String PARAM_GROUP_APPLICATION_PROVIDER       = "application-provider";
+    public static final  String  PARAM_GROUP                               = "group";
+    public static final  String  PARAM_GROUP_PROVIDER                      = "provider";
+    public static final  String  PARAM_GROUP_APPLICATION                   = "application";
+    public static final  String  PARAM_GROUP_APPLICATION_PROVIDER          = "application-provider";
     /**
      *
      */
-    public static final  String PARAM_CHECK_HEALTH                     = "checkHealth";
-    public static final  String PARAM_CHECK_HEALTH_DEFAULT_VALUE       = "true";
+    public static final  String  PARAM_CHECK_HEALTH                        = "checkHealth";
+    public static final  String  PARAM_CHECK_HEALTH_DEFAULT_VALUE          = "true";
     /**
      *
      */
-    public static final  String PARAM_CODEC                            = "codec";
-    public static final  String PARAM_CODEC_DEFAULT_VALUE              = "infinity";
+    public static final  String  PARAM_CODEC                               = "codec";
+    public static final  String  PARAM_CODEC_DEFAULT_VALUE                 = "infinity";
     /**
      *
      */
-    public static final  String PARAM_TYPE                             = "type";
-    public static final  String PARAM_TYPE_DEFAULT_VALUE               = "provider";
+    public static final  String  PARAM_TYPE                                = "type";
+    public static final  String  PARAM_TYPE_DEFAULT_VALUE                  = "provider";
     /**
      *
      */
-    public static final  String PARAM_CLUSTER                          = "cluster";
-    public static final  String PARAM_CLUSTER_DEFAULT_VALUE            = "default";
+    public static final  String  PARAM_CLUSTER                             = "cluster";
+    public static final  String  PARAM_CLUSTER_DEFAULT_VALUE               = "default";
     /**
      *
      */
-    public static final  String PARAM_LOAD_BALANCER                    = "loadBalancer";
-    public static final  String PARAM_LOAD_BALANCER_DEFAULT_VALUE      = "random";
+    public static final  String  PARAM_LOAD_BALANCER                       = "loadBalancer";
+    public static final  String  PARAM_LOAD_BALANCER_DEFAULT_VALUE         = "random";
     /**
      *
      */
-    public static final  String PARAM_HA                               = "ha";
-    public static final  String PARAM_HA_DEFAULT_VALUE                 = "failover";
+    public static final  String  PARAM_HA                                  = "ha";
+    public static final  String  PARAM_HA_DEFAULT_VALUE                    = "failover";
     /**
      *
      */
-    public static final  String PARAM_SERIALIZER                       = "serializer";
-    public static final  String PARAM_SERIALIZER_DEFAULT_VALUE         = "hessian2";
+    public static final  String  PARAM_SERIALIZER                          = "serializer";
+    public static final  String  PARAM_SERIALIZER_DEFAULT_VALUE            = "hessian2";
     /**
      *
      */
-    public static final  String PARAM_REQUEST_TIMEOUT                  = "requestTimeout";
-    public static final  String PARAM_REQUEST_TIMEOUT_DEFAULT_VALUE    = "200";
+    public static final  String  PARAM_REQUEST_TIMEOUT                     = "requestTimeout";
+    public static final  String  PARAM_REQUEST_TIMEOUT_DEFAULT_VALUE       = "200";
     /**
      *
      */
-    public static final  String PARAM_CONNECT_TIMEOUT                  = "connectTimeout";
-    public static final  int    PARAM_CONNECT_TIMEOUT_DEFAULT_VALUE    = 1000;
+    public static final  String  PARAM_CONNECT_TIMEOUT                     = "connectTimeout";
+    public static final  int     PARAM_CONNECT_TIMEOUT_DEFAULT_VALUE       = 1000;
     /**
      * pool max conn number
      */
-    public static final  String PARAM_MAX_CONTENT_LENGTH               = "maxContentLength";
-    public static final  int    PARAM_MAX_CONTENT_LENGTH_DEFAULT_VALUE = 10 * 1024 * 1024;
+    public static final  String  PARAM_MAX_CONTENT_LENGTH                  = "maxContentLength";
+    public static final  int     PARAM_MAX_CONTENT_LENGTH_DEFAULT_VALUE    = 10 * 1024 * 1024;
+    /**
+     * multi consumers share the same channel
+     */
+    public static final  String  PARAM_SHARE_CHANNEL                       = "shareChannel";
+    public static final  boolean PARAM_SHARE_CHANNEL_DEFAULT_VALUE         = false;
+    /**
+     * max server conn (all clients conn)
+     */
+    public static final  String  PARAM_MAX_SERVER_CONNECTION               = "maxServerConnection";
+    public static final  int     PARAM_MAX_SERVER_CONNECTION_DEFAULT_VALUE = 100000;
+    /**
+     *
+     */
+    public static final  String  PARAM_WORKER_QUEUE_SIZE                   = "workerQueueSize";
+    public static final  int     PARAM_WORKER_QUEUE_SIZE_DEFAULT_VALUE     = 0;
+    /**
+     * service min worker threads
+     */
+    public static final  String  PARAM_MIN_WORKER_THREAD                   = "minWorkerThread";
+    public static final  int     PARAM_MIN_WORKER_THREAD_DEFAULT_VALUE     = 20;
+    /**
+     * service max worker threads
+     */
+    public static final  String  PARAM_MAX_WORKER_THREAD                   = "maxWorkerThread";
+    public static final  int     PARAM_MAX_WORKER_THREAD_DEFAULT_VALUE     = 200;
+    /**
+     *
+     */
+    public static final  String  PARAM_HOST                                = "host";
+    public static final  String  PARAM_HOST_DEFAULT_VALUE                  = "";
+
+    public static final String PARAM_ADDRESS         = "address";
+    public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
+    public static final String PARAM_MAX_RETRIES     = "maxRetries";
+    public static final String PARAM_RETRY_INTERVAL  = "retryInterval";
+    public static final String PARAM_APP             = "app";
+    public static final String PARAM_ACTIVATED_TIME  = "activatedTime";
 
 
-    public static final  String PARAM_ADDRESS                          = "address";
-    public static final  String PARAM_SESSION_TIMEOUT                  = "sessionTimeout";
-    public static final  String PARAM_MAX_RETRIES                      = "maxRetries";
-    public static final  String PARAM_RETRY_INTERVAL                   = "retryInterval";
-    public static final  String PARAM_APP                              = "app";
-    public static final  String PARAM_ACTIVATED_TIME                   = "activatedTime";
-
-    public static final String PARAM_MAX_SERVER_CONNECTION = "maxServerConnection";
     public static final String PARAM_MAX_CLIENT_CONNECTION = "maxClientConnection";
-    public static final String PARAM_MAX_WORKER_THREAD     = "maxWorkerThread";
-    public static final String PARAM_WORKER_QUEUE_SIZE     = "workerQueueSize";
-    public static final String PARAM_HEART_BEAT_FACTORY    = "heartbeatFactory";
+
+
+    public static final String PARAM_HEART_BEAT_FACTORY = "heartbeatFactory";
 
     /**
      * Extended parameters

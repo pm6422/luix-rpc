@@ -31,6 +31,9 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
     private              Exception           exception;
     private              Map<String, String> attachments      = new ConcurrentHashMap<>();
 
+    public RpcResponse(Object result) {
+        this.result = result;
+    }
 
     public RpcResponse(Responseable response) {
         this.result = response.getResult();
