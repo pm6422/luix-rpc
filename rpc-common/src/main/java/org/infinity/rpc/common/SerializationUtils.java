@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * ProtoStuff serialization tool used to serialize or deserialize object
  */
+@Deprecated
 public class SerializationUtils {
 
     private static Map<Class<?>, Schema<?>> cachedSchema = new ConcurrentHashMap<>();

@@ -21,6 +21,7 @@ import java.util.Random;
  * RPC client used to send the request from client to server, and receive the response
  */
 @Slf4j
+@Deprecated
 public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
     /**
      * RPC request
