@@ -46,28 +46,22 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
     @Override
     public void init() {
         executorService = Executors.newScheduledThreadPool(1);
-        executorService.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-
-                for (Map.Entry<Client, HeartbeatFactory> entry : endpoints.entrySet()) {
-                    Client endpoint = entry.getKey();
-
-                    try {
-                        // 如果节点是存活状态，那么没必要走心跳
-                        if (endpoint.isActive()) {
-                            continue;
-                        }
-
-                        HeartbeatFactory factory = entry.getValue();
-                        endpoint.heartbeat(factory.createRequest());
-                    } catch (Exception e) {
-                        log.error("HeartbeatEndpointManager send heartbeat Error: url=" + endpoint.getUrl().getUri() + ", " + e.getMessage());
+        executorService.scheduleWithFixedDelay(() -> {
+            for (Map.Entry<Client, HeartbeatFactory> entry : endpoints.entrySet()) {
+                Client endpoint = entry.getKey();
+                try {
+                    // 如果节点是存活状态，那么没必要走心跳
+                    if (endpoint.isActive()) {
+                        continue;
                     }
+                    HeartbeatFactory factory = entry.getValue();
+                    endpoint.heartbeat(factory.createRequest());
+                } catch (Exception e) {
+                    log.error("HeartbeatEndpointManager send heartbeat Error: url=" + endpoint.getUrl().getUri() + ", " + e.getMessage());
                 }
-
             }
         }, RpcConstants.HEARTBEAT_PERIOD, RpcConstants.HEARTBEAT_PERIOD, TimeUnit.MILLISECONDS);
+
         ShutdownHook.add(() -> {
             if (!executorService.isShutdown()) {
                 executorService.shutdown();
