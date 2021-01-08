@@ -17,10 +17,7 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -60,6 +57,10 @@ public class ServiceLoader<T> {
      */
     private static final String                        TAB                         = "\t";
     /**
+     * The loaded service implementation singleton instances associated with the SPI name
+     */
+    private final        Map<String, T>                singletonInstances          = new ConcurrentHashMap<>();
+    /**
      * The class loader used to locate, load and instantiate service
      */
     private final        ClassLoader                   classLoader;
@@ -71,10 +72,7 @@ public class ServiceLoader<T> {
      * The loaded service implementation classes associated with the SPI name
      */
     private final        Map<String, Class<T>>         serviceImplClasses;
-    /**
-     * The loaded service implementation singleton instances associated with the SPI name
-     */
-    private final        Map<String, T>                singletonInstances          = new ConcurrentHashMap<>();
+
 
     /**
      * Get the service loader associated with service interface type class
@@ -119,7 +117,7 @@ public class ServiceLoader<T> {
         this.classLoader = classLoader;
         this.serviceInterface = serviceInterface;
         // Load all the implementation classes
-        serviceImplClasses = loadImplClasses();
+        this.serviceImplClasses = loadImplClasses();
     }
 
     /**
@@ -127,14 +125,15 @@ public class ServiceLoader<T> {
      *
      * @return service implementation class map
      */
-    private ConcurrentHashMap<String, Class<T>> loadImplClasses() {
+    @SuppressWarnings("unchecked")
+    private Map<String, Class<T>> loadImplClasses() {
         String serviceFileName = SERVICE_DIR_PREFIX.concat(serviceInterface.getName());
         List<String> serviceImplClassNames = new ArrayList<>();
         try {
             Enumeration<URL> urls = classLoader != null ? classLoader.getResources(serviceFileName) :
                     ClassLoader.getSystemResources(serviceFileName);
             if (CollectionUtils.sizeIsEmpty(urls)) {
-                return new ConcurrentHashMap<>(0);
+                return Collections.EMPTY_MAP;
             }
             while (urls.hasMoreElements()) {
                 readImplClassNames(urls.nextElement(), serviceInterface, serviceImplClassNames);
@@ -218,11 +217,11 @@ public class ServiceLoader<T> {
      * @return spi name to service implementation class map
      */
     @SuppressWarnings("unchecked")
-    private ConcurrentHashMap<String, Class<T>> loadImplClass(List<String> implClassNames) {
+    private Map<String, Class<T>> loadImplClass(List<String> implClassNames) {
         if (CollectionUtils.isEmpty(implClassNames)) {
-            return new ConcurrentHashMap<>(0);
+            return Collections.emptyMap();
         }
-        ConcurrentHashMap<String, Class<T>> map = new ConcurrentHashMap<>(implClassNames.size());
+        Map<String, Class<T>> map = new ConcurrentHashMap<>(implClassNames.size());
         for (String implClassName : implClassNames) {
             try {
                 Class<T> implClass;
