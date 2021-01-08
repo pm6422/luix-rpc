@@ -15,7 +15,7 @@ import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
-import org.infinity.rpc.utilities.ByteUtils;
+import org.infinity.rpc.utilities.lang.ByteUtils;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 import org.springframework.util.StringUtils;

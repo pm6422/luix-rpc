@@ -20,6 +20,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.infinity.rpc.utilities.lang.CharacterUtils.TAB;
+
 /**
  * A utility used to load a specified implementation of a service interface.
  * It carries out similar functions as {@link java.util.ServiceLoader}
@@ -52,10 +54,6 @@ public class ServiceLoader<T> {
      * Cached used to store service loader instance associated with the service interface
      */
     private static final Map<String, ServiceLoader<?>> SERVICE_LOADERS_CACHE       = new ConcurrentHashMap<>();
-    /**
-     * Tab character
-     */
-    private static final String                        TAB                         = "\t";
     /**
      * The loaded service implementation singleton instances associated with the SPI name
      */
@@ -130,14 +128,15 @@ public class ServiceLoader<T> {
         String serviceFileName = SERVICE_DIR_PREFIX.concat(serviceInterface.getName());
         List<String> serviceImplClassNames = new ArrayList<>();
         try {
-            Enumeration<URL> urls = classLoader != null ? classLoader.getResources(serviceFileName) :
+            Enumeration<URL> fileUrls = classLoader != null ? classLoader.getResources(serviceFileName) :
                     ClassLoader.getSystemResources(serviceFileName);
-            if (CollectionUtils.sizeIsEmpty(urls)) {
+            if (CollectionUtils.sizeIsEmpty(fileUrls)) {
+                log.warn("Cannot find the spi configuration file with name {}!", serviceFileName);
                 return Collections.EMPTY_MAP;
             }
-            while (urls.hasMoreElements()) {
-                // Loop each file named with 'serviceFileName'
-                readImplClassNames(urls.nextElement(), serviceInterface, serviceImplClassNames);
+            while (fileUrls.hasMoreElements()) {
+                // Loop each spi configuration file
+                readImplClassNames(fileUrls.nextElement(), serviceInterface, serviceImplClassNames);
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to load the spi configuration file: ".concat(serviceFileName), e);

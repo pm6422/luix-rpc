@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.utilities;
+package org.infinity.rpc.utilities.lang;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class ByteUtils {
+public abstract class ByteUtils {
     public static List<Byte> toList(byte[] array) {
         if (array == null) {
             return null;

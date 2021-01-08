@@ -10,7 +10,7 @@ import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
-import org.infinity.rpc.utilities.ByteUtils;
+import org.infinity.rpc.utilities.lang.ByteUtils;
 
 import java.io.IOException;
 
