@@ -52,12 +52,7 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
             return;
         }
         Future future = (Future) response;
-        future.addListener(new FutureListener() {
-            @Override
-            public void operationComplete(Future future) throws Exception {
-                processingCount.decrementAndGet();
-            }
-        });
+        future.addListener(future1 -> processingCount.decrementAndGet());
     }
 
     @Override
