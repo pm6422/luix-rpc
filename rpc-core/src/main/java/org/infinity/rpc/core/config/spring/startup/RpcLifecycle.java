@@ -1,13 +1,10 @@
 package org.infinity.rpc.core.config.spring.startup;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.config.spring.server.ProviderWrapper;
 import org.infinity.rpc.core.config.spring.server.ProviderWrapperHolder;
-import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
-import org.infinity.rpc.core.exchange.cluster.ProviderClusterHolder;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
@@ -25,11 +22,11 @@ public class RpcLifecycle {
     /**
      * The start flag used to identify whether the RPC server already started.
      */
-    private AtomicBoolean started = new AtomicBoolean(false);
+    private final AtomicBoolean started = new AtomicBoolean(false);
     /**
      * The stop flag used to identify whether the RPC server already stopped.
      */
-    private AtomicBoolean stopped = new AtomicBoolean(false);
+    private final AtomicBoolean stopped = new AtomicBoolean(false);
 
     /**
      * Prevent instantiation of it outside the class
@@ -116,17 +113,17 @@ public class RpcLifecycle {
      * @param infinityProperties RPC configuration properties
      */
     private void registerProviders(InfinityProperties infinityProperties, List<Url> registryUrls) {
-        Map<String, ProviderWrapper> wrappers = ProviderWrapperHolder.getInstance().getWrappers();
-        if (MapUtils.isNotEmpty(wrappers))
-            // TODO: consider using the async thread pool to speed up the startup process
-            wrappers.forEach((name, providerWrapper) -> {
-                Url providerUrl = createProviderUrl(infinityProperties, providerWrapper);
-                // DO the providers registering
-                providerWrapper.register(infinityProperties.getApplication().toApp(), registryUrls, providerUrl);
-            });
-        else {
-            log.info("No providers found for registering");
+        Map<String, ProviderWrapper<?>> wrappers = ProviderWrapperHolder.getInstance().getWrappers();
+        if (MapUtils.isEmpty(wrappers)) {
+            log.info("No RPC service providers found for registering to registry!");
+            return;
         }
+        // TODO: consider using the async thread pool to speed up the startup process
+        wrappers.forEach((name, providerWrapper) -> {
+            Url providerUrl = createProviderUrl(infinityProperties, providerWrapper);
+            // DO the providers registering
+            providerWrapper.register(infinityProperties.getApplication().toApp(), registryUrls, providerUrl);
+        });
     }
 
     /**
@@ -136,7 +133,7 @@ public class RpcLifecycle {
      * @param providerWrapper    provider instance wrapper
      * @return provider url
      */
-    private Url createProviderUrl(InfinityProperties infinityProperties, ProviderWrapper providerWrapper) {
+    private Url createProviderUrl(InfinityProperties infinityProperties, ProviderWrapper<?> providerWrapper) {
         Url providerUrl = Url.providerUrl(
                 infinityProperties.getProtocol().getName().getValue(),
                 infinityProperties.getProtocol().getPort(),
@@ -167,8 +164,6 @@ public class RpcLifecycle {
      * Unregister RPC providers from registry
      */
     private void unregisterProviders(List<Url> registryUrls) {
-        ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> {
-            providerWrapper.unregister(registryUrls);
-        });
+        ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> providerWrapper.unregister(registryUrls));
     }
 }

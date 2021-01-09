@@ -63,7 +63,7 @@ public class ProviderWrapper<T> implements DisposableBean {
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         // Leave blank intentionally for now
     }
 
@@ -97,9 +97,7 @@ public class ProviderWrapper<T> implements DisposableBean {
                 log.warn("No registry found!");
                 return;
             }
-            registry.getRegisteredProviderUrls().forEach(registeredProviderUrl -> {
-                registry.unregister(registeredProviderUrl);
-            });
+            registry.getRegisteredProviderUrls().forEach(registry::unregister);
         }
         log.debug("Unregistered RPC provider [{}] from registry", interfaceName);
     }

@@ -9,7 +9,7 @@ public class ProviderWrapperHolder {
     /**
      * RPC provider wrapper map
      */
-    private final Map<String, ProviderWrapper> wrapperCache = new ConcurrentHashMap<>();
+    private final Map<String, ProviderWrapper<?>> wrapperCache = new ConcurrentHashMap<>();
 
     /**
      * Prevent instantiation of it outside the class
@@ -33,11 +33,11 @@ public class ProviderWrapperHolder {
         private static final ProviderWrapperHolder INSTANCE = new ProviderWrapperHolder();// static variable will be instantiated on class loading.
     }
 
-    public synchronized Map<String, ProviderWrapper> getWrappers() {
+    public synchronized Map<String, ProviderWrapper<?>> getWrappers() {
         return wrapperCache;
     }
 
-    public synchronized void addWrapper(String name, ProviderWrapper providerWrapper) {
+    public synchronized void addWrapper(String name, ProviderWrapper<?> providerWrapper) {
         wrapperCache.putIfAbsent(name, providerWrapper);
     }
 }
