@@ -49,7 +49,7 @@ public class DefaultRpcExporter<T> extends AbstractExporter<T> {
 
         ProviderMessageRouter requestRouter = initRequestRouter(providerWrapper.getUrl());
         String endpointFactoryName = providerWrapper.getUrl().getParameter(Url.PARAM_ENDPOINT_FACTORY, Url.PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE);
-        endpointFactory = ServiceLoader.forClass(EndpointFactory.class).load(endpointFactoryName);
+        endpointFactory = EndpointFactory.getInstance(endpointFactoryName);
         server = endpointFactory.createServer(providerWrapper.getUrl(), requestRouter);
     }
 

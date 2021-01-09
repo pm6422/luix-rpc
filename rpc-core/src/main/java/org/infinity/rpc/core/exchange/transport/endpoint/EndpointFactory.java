@@ -19,7 +19,9 @@ package org.infinity.rpc.core.exchange.transport.endpoint;
 import org.infinity.rpc.core.exchange.transport.Client;
 import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exchange.transport.server.Server;
+import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 
@@ -59,4 +61,13 @@ public interface EndpointFactory {
      */
     void safeReleaseResource(Client client, Url url);
 
+    /**
+     * Get endpoint factory instance associated with the specified name
+     *
+     * @param name specified endpoint factory name
+     * @return endpoint factory instance
+     */
+    static EndpointFactory getInstance(String name) {
+        return ServiceLoader.forClass(EndpointFactory.class).load(name);
+    }
 }

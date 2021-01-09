@@ -25,14 +25,12 @@ public interface Protocol {
     void destroy();
 
     /**
-     * Get the protocol instance based on protocol name
+     * Get protocol instance associated with the specified name
      *
-     * @param protocolName protocol name
+     * @param name specified protocol name
      * @return protocol instance
      */
-    static Protocol getInstance(String protocolName) {
-        // Get the proper protocol by protocol name
-        Protocol protocol = ServiceLoader.forClass(Protocol.class).load(protocolName);
-        return protocol;
+    static Protocol getInstance(String name) {
+        return ServiceLoader.forClass(Protocol.class).load(name);
     }
 }
