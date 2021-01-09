@@ -18,7 +18,7 @@ package org.infinity.rpc.core.exchange.transport.heartbeat;
 
 
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.core.exchange.transport.messagehandler.MessageHandler;
+import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 

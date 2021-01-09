@@ -3,6 +3,8 @@ package org.infinity.rpc.core.config.spring.server;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.bean.DefaultBeanNameGenerator;
 import org.infinity.rpc.core.config.spring.bean.registry.ClassPathBeanDefinitionRegistryScanner;
+import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapper;
+import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapperBeanNameBuilder;
 import org.infinity.rpc.core.config.spring.utils.AnnotationUtils;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.server.annotation.Provider;

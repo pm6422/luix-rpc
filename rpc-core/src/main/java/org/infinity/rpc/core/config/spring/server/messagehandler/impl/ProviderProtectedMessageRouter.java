@@ -14,11 +14,11 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.exchange.transport.messagehandler.impl;
+package org.infinity.rpc.core.config.spring.server.messagehandler.impl;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.config.spring.server.ProviderWrapper;
+import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapper;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.request.Requestable;

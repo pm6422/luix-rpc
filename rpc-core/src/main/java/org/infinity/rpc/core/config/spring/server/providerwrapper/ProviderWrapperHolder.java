@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.config.spring.server;
+package org.infinity.rpc.core.config.spring.server.providerwrapper;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Map;

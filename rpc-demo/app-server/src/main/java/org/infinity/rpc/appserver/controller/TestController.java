@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.app.common.service.AppService;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.config.spring.server.ProviderWrapperBeanNameBuilder;
+import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapperBeanNameBuilder;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.RegistryInfo;

@@ -1,6 +1,6 @@
-package org.infinity.rpc.core.exchange.response;
+package org.infinity.rpc.core.config.spring.server.exporter;
 
-import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapper;
 
 /**
  * todo: merge with ProviderCallable
@@ -8,6 +8,11 @@ import org.infinity.rpc.core.url.Url;
  * @param <T>
  */
 public interface Exportable<T> {
+    /**
+     * @return
+     */
+    ProviderWrapper<T> getProviderWrapper();
+
     /**
      * Initialize
      */
@@ -23,9 +28,12 @@ public interface Exportable<T> {
     String desc();
 
     /**
+     *
+     */
+    void unexport();
+
+    /**
      * Do some cleanup task
      */
     void destroy();
-
-    Url getProviderUrl();
 }

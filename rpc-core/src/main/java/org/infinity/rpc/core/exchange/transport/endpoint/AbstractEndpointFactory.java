@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.transport.Client;
-import org.infinity.rpc.core.exchange.transport.messagehandler.MessageHandler;
+import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exchange.transport.endpoint.impl.HeartbeatClientEndpointManager;
 import org.infinity.rpc.core.exchange.transport.heartbeat.HeartbeatFactory;
 import org.infinity.rpc.core.exchange.transport.server.Server;

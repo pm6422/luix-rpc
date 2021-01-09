@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.config.spring.server;
+package org.infinity.rpc.core.config.spring.server.providerwrapper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;

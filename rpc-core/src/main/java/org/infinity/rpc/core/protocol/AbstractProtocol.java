@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.request.ProviderCaller;
-import org.infinity.rpc.core.exchange.response.Exportable;
+import org.infinity.rpc.core.config.spring.server.exporter.Exportable;
 import org.infinity.rpc.core.url.Url;
 
 import java.util.concurrent.ConcurrentHashMap;

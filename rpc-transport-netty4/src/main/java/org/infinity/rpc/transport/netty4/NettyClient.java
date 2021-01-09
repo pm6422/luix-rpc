@@ -21,7 +21,7 @@ import org.infinity.rpc.core.exchange.response.RpcResponseFuture;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.exchange.transport.AbstractSharedPoolClient;
 import org.infinity.rpc.core.exchange.transport.Channel;
-import org.infinity.rpc.core.exchange.transport.messagehandler.MessageHandler;
+import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exchange.transport.SharedObjectFactory;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.url.Url;
