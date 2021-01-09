@@ -4,10 +4,14 @@ import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 
 /**
- *
  * @param <T>: The interface class of the provider
  */
 public interface ProviderCallable<T> {
+    /**
+     * Initialize
+     */
+    void init();
+
     /**
      * Get provider interface class
      *
@@ -29,11 +33,6 @@ public interface ProviderCallable<T> {
      * @return response object
      */
     Responseable call(Requestable request);
-
-    /**
-     * Initialize
-     */
-    void init();
 
     /**
      * Do some cleanup task

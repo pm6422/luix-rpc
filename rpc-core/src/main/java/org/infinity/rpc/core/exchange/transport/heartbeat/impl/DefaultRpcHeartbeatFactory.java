@@ -22,7 +22,7 @@ import org.infinity.rpc.core.exchange.request.impl.RpcRequest;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.exchange.transport.Channel;
-import org.infinity.rpc.core.exchange.transport.MessageHandler;
+import org.infinity.rpc.core.exchange.transport.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exchange.transport.heartbeat.HeartbeatFactory;
 import org.infinity.rpc.utilities.id.IdGenerator;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
@@ -97,8 +97,6 @@ public class DefaultRpcHeartbeatFactory implements HeartbeatFactory {
             }
             return messageHandler.handle(channel, message);
         }
-
-
     }
 
     static class HeartbeatRequest extends RpcRequest {

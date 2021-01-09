@@ -2,7 +2,6 @@ package org.infinity.rpc.core.config.spring;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.config.spring.startup.NettyServerApplicationRunner;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.RegistryInfo;
@@ -64,8 +63,8 @@ public class RpcAutoConfiguration {
         return registries;
     }
 
-    @Bean
-    public ApplicationRunner nettyServerApplicationRunner() {
-        return new NettyServerApplicationRunner();
-    }
+//    @Bean
+//    public ApplicationRunner nettyServerApplicationRunner() {
+//        return new NettyServerApplicationRunner();
+//    }
 }

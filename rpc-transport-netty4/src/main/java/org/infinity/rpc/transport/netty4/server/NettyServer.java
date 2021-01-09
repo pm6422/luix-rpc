@@ -10,7 +10,7 @@ import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.exchange.transport.MessageHandler;
+import org.infinity.rpc.core.exchange.transport.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exchange.transport.callback.StatisticCallback;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.exchange.transport.exception.TransmissionException;

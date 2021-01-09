@@ -17,7 +17,7 @@
 package org.infinity.rpc.core.exchange.transport.endpoint;
 
 import org.infinity.rpc.core.exchange.transport.Client;
-import org.infinity.rpc.core.exchange.transport.MessageHandler;
+import org.infinity.rpc.core.exchange.transport.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exchange.transport.server.Server;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.annotation.Spi;

@@ -35,4 +35,14 @@ public interface Requestable extends Exchangable {
     int getRetries();
 
     void setProtocol(String protocol);
+
+    /**
+     * set the serialization number.
+     * same to the protocol version, this value only used in server end for compatible.
+     *
+     * @param number
+     */
+    void setSerializeNum(int number);
+
+    int getSerializeNum();
 }

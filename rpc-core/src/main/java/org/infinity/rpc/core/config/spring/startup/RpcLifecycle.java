@@ -121,6 +121,7 @@ public class RpcLifecycle {
         // TODO: consider using the async thread pool to speed up the startup process
         wrappers.forEach((name, providerWrapper) -> {
             Url providerUrl = createProviderUrl(infinityProperties, providerWrapper);
+            providerWrapper.setUrl(providerUrl);
             // DO the providers registering
             providerWrapper.register(infinityProperties.getApplication().toApp(), registryUrls, providerUrl);
         });

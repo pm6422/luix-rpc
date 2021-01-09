@@ -3,7 +3,6 @@ package org.infinity.rpc.core.exchange.request.impl;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.infinity.rpc.core.exchange.Traceable;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 
@@ -30,6 +29,10 @@ public class RpcRequest implements Requestable, Serializable {
     private              String[]            parameterTypeNames;
     private              Object[]            methodArguments;
     private              Map<String, String> attachments      = new ConcurrentHashMap<>();
+    /**
+     * Default serialization is hession2
+     */
+    private              int                 serializeNum     = 0;
 
     @Override
     public Map<String, String> getAttachments() {

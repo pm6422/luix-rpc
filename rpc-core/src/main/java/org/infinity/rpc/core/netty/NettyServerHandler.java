@@ -12,6 +12,7 @@ import org.infinity.rpc.core.config.spring.server.ProviderWrapperHolder;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
+@Deprecated
 @Slf4j
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 

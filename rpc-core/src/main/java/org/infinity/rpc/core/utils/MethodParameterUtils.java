@@ -31,18 +31,18 @@ import java.util.stream.Collectors;
  * A utility used to handle method parameters
  */
 public class MethodParameterUtils {
-    private static final   String                PARAM_TYPE_STR_DELIMITER        = ",";
-    public static final String                VOID                            = "void";
-    private static final   String                ARRAY_TYPE_SUFFIX               = "[]";
-    private static final   Class<?>[]            EMPTY_CLASS_ARRAY               = new Class<?>[0];
-    private static final   String[]              PRIMITIVE_TYPES                 = new String[]{
+    private static final String                PARAM_TYPE_STR_DELIMITER        = ",";
+    public static final  String                VOID                            = "void";
+    private static final String                ARRAY_TYPE_SUFFIX               = "[]";
+    private static final Class<?>[]            EMPTY_CLASS_ARRAY               = new Class<?>[0];
+    private static final String[]              PRIMITIVE_TYPES                 = new String[]{
             "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"};
-    private static final   Class<?>[]            PRIMITIVE_CLASSES               = new Class[]{
+    private static final Class<?>[]            PRIMITIVE_CLASSES               = new Class[]{
             boolean.class, byte.class, char.class, double.class, float.class, int.class, long.class, short.class, Void.TYPE};
-    private static final   int                   PRIMITIVE_CLASS_NAME_MAX_LENGTH = 7;
-    private static final int MAX_NEST_DEPTH = 2;
-    private static final   Map<String, Class<?>> NAME_TO_CLASS_MAP               = new ConcurrentHashMap<>();
-    private static final   Map<Class<?>, String> CLASS_TO_NAME_MAP               = new ConcurrentHashMap<>();
+    private static final int                   PRIMITIVE_CLASS_NAME_MAX_LENGTH = 7;
+    private static final int                   MAX_NEST_DEPTH                  = 2;
+    private static final Map<String, Class<?>> NAME_TO_CLASS_MAP               = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, String> CLASS_TO_NAME_MAP               = new ConcurrentHashMap<>();
 
     /**
      * Get the method parameter type name list string which is separated by comma.
@@ -51,7 +51,7 @@ public class MethodParameterUtils {
      * @param method method
      * @return method parameter class name list string
      */
-    public static String getMethodParamList(Method method) {
+    public static String getParamList(Method method) {
         if (ArrayUtils.isEmpty(method.getParameterTypes())) {
             return VOID;
         }
@@ -62,17 +62,28 @@ public class MethodParameterUtils {
 
     /**
      * Get the method name with its parameter class name list string.
-     * e.g, run(java.util.List,java.lang.Long)
+     * e.g, invoke(java.util.List,java.lang.Long)
      *
      * @param method method
      * @return method name with parameter class name list string
      */
-    public static String getMethodWithParamString(Method method) {
-        String methodParamString = getMethodParamList(method);
-        if (StringUtils.isEmpty(methodParamString)) {
-            return method.getName() + "()";
+    public static String getMethodSignature(Method method) {
+        return getMethodSignature(method.getName(), getParamList(method));
+    }
+
+    /**
+     * Get the method name with its parameter class name list string.
+     * e.g, invoke(java.util.List,java.lang.Long)
+     *
+     * @param methodName      method name
+     * @param methodParamList method parameter class name list string
+     * @return method name with parameter class name list string
+     */
+    public static String getMethodSignature(String methodName, String methodParamList) {
+        if (StringUtils.isEmpty(methodParamList)) {
+            return methodName + "()";
         } else {
-            return method.getName() + "(" + methodParamString + ")";
+            return methodName + "(" + methodParamList + ")";
         }
     }
 
