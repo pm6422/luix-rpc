@@ -11,6 +11,7 @@ import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
+import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
@@ -196,6 +197,9 @@ public class ProviderWrapper<T> implements DisposableBean {
      * @param providerUrl  provider url
      */
     public void register(App app, List<Url> registryUrls, Url providerUrl) {
+        // Export RPC provider service
+        Protocol.getInstance(providerUrl.getProtocol()).export(this);
+
         for (Url registryUrl : registryUrls) {
             // Register provider URL to all the registries
             RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(registryUrl.getProtocol());
@@ -203,6 +207,7 @@ public class ProviderWrapper<T> implements DisposableBean {
             registry.register(providerUrl);
             registry.registerApplicationProvider(app, providerUrl);
         }
+
         // Set active to true after registering the RPC provider to registry
         active = true;
         log.debug("Registered RPC provider [{}] to registry", interfaceName);

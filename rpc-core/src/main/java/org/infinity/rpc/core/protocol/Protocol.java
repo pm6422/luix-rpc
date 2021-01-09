@@ -17,7 +17,7 @@ public interface Protocol {
      * 暴露服务
      *
      * @param <T>
-     * @param provider
+     * @param providerWrapper
      * @return
      */
     <T> Exportable<T> export(ProviderWrapper<T> providerWrapper);
