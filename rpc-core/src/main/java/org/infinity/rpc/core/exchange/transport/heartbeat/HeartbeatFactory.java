@@ -17,8 +17,9 @@
 package org.infinity.rpc.core.exchange.transport.heartbeat;
 
 
-import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
+import org.infinity.rpc.core.exchange.request.Requestable;
+import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 
@@ -42,4 +43,14 @@ public interface HeartbeatFactory {
      * @return
      */
     MessageHandler wrapMessageHandler(MessageHandler handler);
+
+    /**
+     * Get heartbeat factory instance associated with the specified name
+     *
+     * @param name specified heartbeat factory name
+     * @return heartbeat factory instance
+     */
+    static HeartbeatFactory getInstance(String name) {
+        return ServiceLoader.forClass(HeartbeatFactory.class).load(name);
+    }
 }

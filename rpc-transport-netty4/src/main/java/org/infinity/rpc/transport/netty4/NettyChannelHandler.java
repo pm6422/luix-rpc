@@ -38,14 +38,14 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
     public NettyChannelHandler(Channel channel, MessageHandler messageHandler) {
         this.channel = channel;
         this.messageHandler = messageHandler;
-        codec = ServiceLoader.forClass(Codec.class).load(channel.getUrl().getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
+        codec = Codec.getInstance(channel.getUrl().getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
     }
 
     public NettyChannelHandler(Channel channel, MessageHandler messageHandler, ThreadPoolExecutor threadPoolExecutor) {
         this.channel = channel;
         this.messageHandler = messageHandler;
         this.threadPoolExecutor = threadPoolExecutor;
-        codec = ServiceLoader.forClass(Codec.class).load(channel.getUrl().getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
+        codec = Codec.getInstance(channel.getUrl().getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
     }
 
     private String getRemoteIp(ChannelHandlerContext ctx) {

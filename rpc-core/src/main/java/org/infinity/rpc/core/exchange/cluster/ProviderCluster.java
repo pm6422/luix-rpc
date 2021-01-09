@@ -4,6 +4,7 @@ import org.infinity.rpc.core.exchange.ProviderCallable;
 import org.infinity.rpc.core.exchange.faulttolerance.FaultToleranceStrategy;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.ProviderCaller;
+import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
@@ -43,6 +44,16 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
     void refresh(List<ProviderCaller<T>> providerCallers);
 
     /**
+     * Get provider cluster instance associated with the specified name
+     *
+     * @param name specified provider cluster name
+     * @return provider cluster instance
+     */
+    static ProviderCluster getInstance(String name) {
+        return ServiceLoader.forClass(ProviderCluster.class).load(name);
+    }
+
+    /**
      * Create a provider cluster
      * todo: remove clientUrl param
      *
@@ -56,9 +67,9 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
     @SuppressWarnings({"unchecked"})
     static <T> ProviderCluster<T> createCluster(String protocol, String clusterName, String loadBalancerName, String faultToleranceName) {
         // It support one cluster for one protocol for now, but do not support one cluster for one provider
-        ProviderCluster<T> providerCluster = ServiceLoader.forClass(ProviderCluster.class).load(clusterName);
-        LoadBalancer<T> loadBalancer = ServiceLoader.forClass(LoadBalancer.class).load(loadBalancerName);
-        FaultToleranceStrategy<T> faultTolerance = ServiceLoader.forClass(FaultToleranceStrategy.class).load(faultToleranceName);
+        ProviderCluster<T> providerCluster = ProviderCluster.getInstance(clusterName);
+        LoadBalancer<T> loadBalancer = LoadBalancer.getInstance(loadBalancerName);
+        FaultToleranceStrategy<T> faultTolerance = FaultToleranceStrategy.getInstance(faultToleranceName);
 
         providerCluster.setProtocol(protocol);
         providerCluster.setFaultToleranceStrategy(faultTolerance);

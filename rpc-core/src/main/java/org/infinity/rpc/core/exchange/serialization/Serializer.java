@@ -1,5 +1,7 @@
 package org.infinity.rpc.core.exchange.serialization;
 
+import org.infinity.rpc.core.protocol.Protocol;
+import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 
@@ -38,4 +40,14 @@ public interface Serializer {
      * @return 由于编码规范限制，序列化方式最大支持32种，因此返回值必须在0-31之间。
      */
     int getSerializationTypeNum();
+
+    /**
+     * Get serializer instance associated with the specified name
+     *
+     * @param name specified serializer name
+     * @return serializer instance
+     */
+    static Serializer getInstance(String name) {
+        return ServiceLoader.forClass(Serializer.class).load(name);
+    }
 }

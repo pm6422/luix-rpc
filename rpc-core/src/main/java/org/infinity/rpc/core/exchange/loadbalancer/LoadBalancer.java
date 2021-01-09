@@ -3,8 +3,9 @@ package org.infinity.rpc.core.exchange.loadbalancer;
 import org.infinity.rpc.core.exchange.faulttolerance.FaultToleranceStrategy;
 import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.utilities.spi.annotation.SpiScope;
+import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
+import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 
 import java.util.List;
 
@@ -37,6 +38,16 @@ public interface LoadBalancer<T> {
      * @return selected provider callers
      */
     List<ProviderCaller<T>> selectProviderNodes(Requestable request);
+
+    /**
+     * Get load balancer instance associated with the specified name
+     *
+     * @param name specified load balancer name
+     * @return load balancer instance
+     */
+    static LoadBalancer getInstance(String name) {
+        return ServiceLoader.forClass(LoadBalancer.class).load(name);
+    }
 
 //
 //    void setWeightString(String weightString);

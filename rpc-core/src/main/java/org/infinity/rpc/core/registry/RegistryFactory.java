@@ -3,8 +3,8 @@ package org.infinity.rpc.core.registry;
 
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
-import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
+import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 
 /**
  * Registry factory used to create registry
@@ -29,14 +29,12 @@ public interface RegistryFactory {
     Registry createRegistry(Url registryUrl);
 
     /**
-     * Get the registry factory based on protocol
+     * Get registry factory instance associated with the specified name
      *
-     * @param protocolName protocol name
-     * @return registry factory
+     * @param name specified registry factory name
+     * @return registry factory instance
      */
-    static RegistryFactory getInstance(String protocolName) {
-        // Get the proper registry factory by protocol name
-        RegistryFactory registryFactory = ServiceLoader.forClass(RegistryFactory.class).load(protocolName);
-        return registryFactory;
+    static RegistryFactory getInstance(String name) {
+        return ServiceLoader.forClass(RegistryFactory.class).load(name);
     }
 }

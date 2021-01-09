@@ -39,7 +39,7 @@ public class NettyChannel implements Channel {
     public NettyChannel(NettyClient nettyClient) {
         this.nettyClient = nettyClient;
         this.remoteAddress = new InetSocketAddress(nettyClient.getUrl().getHost(), nettyClient.getUrl().getPort());
-        codec = ServiceLoader.forClass(Codec.class).load(nettyClient.getUrl().getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
+        codec = Codec.getInstance(nettyClient.getUrl().getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
     }
 
     @Override

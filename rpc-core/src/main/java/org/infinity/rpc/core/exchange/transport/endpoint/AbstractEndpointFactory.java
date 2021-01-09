@@ -166,7 +166,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
     }
 
     private HeartbeatFactory getHeartbeatFactory(String heartbeatFactoryName) {
-        HeartbeatFactory heartbeatFactory = ServiceLoader.forClass(HeartbeatFactory.class).load(heartbeatFactoryName);
+        HeartbeatFactory heartbeatFactory = HeartbeatFactory.getInstance(heartbeatFactoryName);
         if (heartbeatFactory == null) {
             throw new RpcFrameworkException("HeartbeatFactory not exist: " + heartbeatFactoryName);
         }

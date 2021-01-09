@@ -83,7 +83,7 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
         Client client = (Client) endpoint;
         Url url = endpoint.getUrl();
         String heartbeatFactoryName = url.getParameter(Url.PARAM_HEART_BEAT_FACTORY, Url.PARAM_HEART_BEAT_FACTORY_DEFAULT_VALUE);
-        HeartbeatFactory heartbeatFactory = ServiceLoader.forClass(HeartbeatFactory.class).load(heartbeatFactoryName);
+        HeartbeatFactory heartbeatFactory = HeartbeatFactory.getInstance(heartbeatFactoryName);
         if (heartbeatFactory == null) {
             throw new RpcFrameworkException("HeartbeatFactory not exist: " + heartbeatFactoryName);
         }

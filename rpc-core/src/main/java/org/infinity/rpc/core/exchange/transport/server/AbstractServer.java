@@ -25,7 +25,7 @@ public abstract class AbstractServer implements Server {
 
     public AbstractServer(Url url) {
         this.url = url;
-        this.codec = ServiceLoader.forClass(Codec.class).load(url.getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
+        this.codec = Codec.getInstance(url.getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
     }
 
     @Override
