@@ -116,7 +116,7 @@ public final class Url implements Serializable {
      * multi consumers share the same channel
      */
     public static final  String  PARAM_SHARE_CHANNEL                       = "shareChannel";
-    public static final  boolean PARAM_SHARE_CHANNEL_DEFAULT_VALUE         = false;
+    public static final  boolean PARAM_SHARE_CHANNEL_DEFAULT_VALUE         = true;
     /**
      * max server conn (all clients conn)
      */

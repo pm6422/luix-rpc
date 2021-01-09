@@ -2,16 +2,15 @@ package org.infinity.rpc.core.exchange.transport.endpoint;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.transport.Client;
-import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exchange.transport.endpoint.impl.HeartbeatClientEndpointManager;
 import org.infinity.rpc.core.exchange.transport.heartbeat.HeartbeatFactory;
 import org.infinity.rpc.core.exchange.transport.server.Server;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
-import org.infinity.rpc.utilities.spi.ServiceLoader;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,13 +62,12 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
             String ipPort = url.getServerPortStr();
             String protocolKey = RpcFrameworkUtils.getProtocolKey(url);
 
-            boolean shareChannel =
-                    url.getBooleanParameter(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
-
-            if (!shareChannel) { // 独享一个端口
+            boolean shareChannel = url.getBooleanParameter(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
+            if (!shareChannel) {
+                // 独享一个端口
                 log.info(this.getClass().getSimpleName() + " create no_share_channel server: url={}", url);
 
-                // 如果端口已经被使用了，使用该server bind 会有异常
+                // 如果端口已经被使用了，使用该server bind会有异常
                 return innerCreateServer(url, messageHandler);
             }
 
