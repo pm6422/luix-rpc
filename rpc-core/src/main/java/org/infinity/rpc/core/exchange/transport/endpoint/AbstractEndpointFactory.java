@@ -174,9 +174,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
 
     private Client createClient(Url url, EndpointManager endpointManager) {
         Client client = innerCreateClient(url);
-
         endpointManager.addEndpoint(client);
-
         return client;
     }
 

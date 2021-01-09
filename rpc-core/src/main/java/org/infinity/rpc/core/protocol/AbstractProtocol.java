@@ -9,11 +9,12 @@ import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public abstract class AbstractProtocol implements Protocol {
-    protected ConcurrentHashMap<String, Exportable<?>> exporterMap = new ConcurrentHashMap<String, Exportable<?>>();
+    protected Map<String, Exportable<?>> exporterMap = new ConcurrentHashMap<>();
 
     @Override
     public <T> ProviderCaller<T> createProviderCaller(Class<T> interfaceClass, Url providerUrl) {
