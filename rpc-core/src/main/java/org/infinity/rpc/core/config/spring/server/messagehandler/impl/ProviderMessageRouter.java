@@ -87,7 +87,7 @@ public class ProviderMessageRouter implements MessageHandler {
             RpcResponse response = RpcFrameworkUtils.buildErrorResponse(request, exception);
             return response;
         }
-        Method method = provider.findMethod(request.getMethodName(), request.getParameterTypeList());
+        Method method = provider.findMethod(request.getMethodName(), request.getMethodParameters());
         fillParamDesc(request, method);
         processLazyDeserialize(request, method);
         Responseable response = call(request, provider);
@@ -118,9 +118,9 @@ public class ProviderMessageRouter implements MessageHandler {
     }
 
     private void fillParamDesc(Requestable request, Method method) {
-        if (method != null && StringUtils.isBlank(request.getParameterTypeList()) && request instanceof RpcRequest) {
+        if (method != null && StringUtils.isBlank(request.getMethodParameters()) && request instanceof RpcRequest) {
             RpcRequest dr = (RpcRequest) request;
-            dr.setParameterTypeList(MethodParameterUtils.getParamList(method));
+            dr.setMethodParameters(MethodParameterUtils.getMethodParameters(method));
             dr.setMethodName(method.getName());
         }
     }

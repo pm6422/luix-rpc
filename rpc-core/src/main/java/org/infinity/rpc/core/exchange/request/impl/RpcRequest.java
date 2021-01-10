@@ -25,8 +25,7 @@ public class RpcRequest implements Requestable, Serializable {
      * The method parameter type name list string which is separated by comma.
      * e.g, java.util.List,java.lang.Long
      */
-    private              String              parameterTypeList;
-    private              String[]            parameterTypeNames;
+    private              String              methodParameters;
     private              Object[]            methodArguments;
     private              Map<String, String> attachments      = new ConcurrentHashMap<>();
     /**

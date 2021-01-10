@@ -24,7 +24,7 @@ public interface Requestable extends Exchangable {
      *
      * @return method parameter class name list string
      */
-    String getParameterTypeList();
+    String getMethodParameters();
 
     // Provider method arguments
     Object[] getMethodArguments();

@@ -133,11 +133,11 @@ public class ProviderWrapper<T> implements DisposableBean {
      */
     public Responseable invoke(Requestable request) {
         RpcResponse response = new RpcResponse();
-        Method method = findMethod(request.getMethodName(), request.getParameterTypeList());
+        Method method = findMethod(request.getMethodName(), request.getMethodParameters());
         if (method == null) {
             RpcServiceException exception =
                     new RpcServiceException("Service method not exist: " + request.getInterfaceName() + "." + request.getMethodName()
-                            + "(" + request.getParameterTypeList() + ")", RpcErrorMsgConstant.SERVICE_NOT_FOUND);
+                            + "(" + request.getMethodParameters() + ")", RpcErrorMsgConstant.SERVICE_NOT_FOUND);
             response.setException(exception);
             return response;
         }

@@ -82,7 +82,7 @@ public class RpcFrameworkUtils {
      */
     public static String getFullMethodString(Requestable request) {
         return request.getInterfaceName() + "." + request.getMethodName() + "("
-                + request.getParameterTypeList() + ")";
+                + request.getMethodParameters() + ")";
     }
 
     public static String getGroupMethodString(Requestable request) {

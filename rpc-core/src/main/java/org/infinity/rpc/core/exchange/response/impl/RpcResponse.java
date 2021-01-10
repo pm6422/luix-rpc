@@ -24,11 +24,16 @@ import java.util.concurrent.Executor;
 public class RpcResponse implements Responseable, Callbackable, Serializable {
     private static final long                serialVersionUID = 882479213033600079L;
     private              long                requestId;
+    //todo: remove
     private              String              protocol;
     private              byte                protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
     private              int                 processingTimeout;
     private              Object              result;
     private              Exception           exception;
+    /**
+     * default serialization is hession2
+     */
+    private              int                 serializeNumber  = 0;
     private              Map<String, String> attachments      = new ConcurrentHashMap<>();
 
     public RpcResponse(Object result) {
@@ -50,19 +55,9 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
         }
     }
 
-    @Override
-    public String getProtocol() {
-        return protocol;
-    }
-
     public RpcResponse protocolVersion(byte protocolVersion) {
         this.protocolVersion = protocolVersion;
         return this;
-    }
-
-    @Override
-    public byte getProtocolVersion() {
-        return protocolVersion;
     }
 
     @Override
@@ -81,11 +76,6 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
     }
 
     @Override
-    public int getProcessingTimeout() {
-        return 0;
-    }
-
-    @Override
     public Object getResult() {
         if (exception != null) {
             throw (exception instanceof RuntimeException) ?
@@ -93,21 +83,6 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
                     new RpcInvocationException(exception.getMessage(), exception);
         }
         return result;
-    }
-
-    @Override
-    public Exception getException() {
-        return null;
-    }
-
-    @Override
-    public void setSerializeNumber(int number) {
-
-    }
-
-    @Override
-    public int getSerializeNumber() {
-        return 0;
     }
 
     @Override
