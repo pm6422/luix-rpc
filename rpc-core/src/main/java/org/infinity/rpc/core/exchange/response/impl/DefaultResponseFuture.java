@@ -1,8 +1,10 @@
 package org.infinity.rpc.core.exchange.response.impl;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
+import org.infinity.rpc.core.exception.RpcInvocationException;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.Traceable;
 import org.infinity.rpc.core.exchange.TraceableContext;
@@ -19,25 +21,33 @@ import java.io.IOException;
 import java.util.*;
 
 @Slf4j
+@Data
 public class DefaultResponseFuture implements RpcResponseFuture {
 
-    protected final    Object               lock             = new Object();
-    protected volatile FutureState          state            = FutureState.DOING;
-    protected          Object               result           = null;
-    protected          Exception            exception        = null;
-    protected          long                 createTime       = System.currentTimeMillis();
-    protected          int                  timeout          = 0;
-    protected          long                 processTime      = 0;
+    protected final    Object               lock              = new Object();
+    protected volatile FutureState          state             = FutureState.DOING;
+    protected          Object               result            = null;
+    protected          Exception            exception         = null;
+    protected          long                 createTime        = System.currentTimeMillis();
+    //todo: remove
+    private            String               protocol;
+    private            byte                 protocolVersion   = ProtocolVersion.VERSION_1.getVersion();
+    protected          long                 processTime       = 0;
+    protected          int                  processingTimeout = 0;
     protected          Requestable          request;
     protected          List<FutureListener> listeners;
     protected          Url                  serverUrl;
     protected          Class                returnType;
+    /**
+     * default serialization is hession2
+     */
+    private            int                  serializeNumber   = 0;
     private            Map<String, String>  attachments;// rpc协议版本兼容时可以回传一些额外的信息
-    private            TraceableContext     traceableContext = new TraceableContext();
+    private            TraceableContext     traceableContext  = new TraceableContext();
 
-    public DefaultResponseFuture(Requestable requestObj, int timeout, Url serverUrl) {
+    public DefaultResponseFuture(Requestable requestObj, int processingTimeout, Url serverUrl) {
         this.request = requestObj;
-        this.timeout = timeout;
+        this.processingTimeout = processingTimeout;
         this.serverUrl = serverUrl;
     }
 
@@ -70,7 +80,7 @@ public class DefaultResponseFuture implements RpcResponseFuture {
                 return getValueOrThrowable();
             }
 
-            if (timeout <= 0) {
+            if (processingTimeout <= 0) {
                 try {
                     lock.wait();
                 } catch (Exception e) {
@@ -80,7 +90,7 @@ public class DefaultResponseFuture implements RpcResponseFuture {
 
                 return getValueOrThrowable();
             } else {
-                long waitTime = timeout - (System.currentTimeMillis() - createTime);
+                long waitTime = processingTimeout - (System.currentTimeMillis() - createTime);
 
                 if (waitTime > 0) {
                     for (; ; ) {
@@ -92,7 +102,7 @@ public class DefaultResponseFuture implements RpcResponseFuture {
                         if (!isDoing()) {
                             break;
                         } else {
-                            waitTime = timeout - (System.currentTimeMillis() - createTime);
+                            waitTime = processingTimeout - (System.currentTimeMillis() - createTime);
                             if (waitTime <= 0) {
                                 break;
                             }
@@ -109,14 +119,9 @@ public class DefaultResponseFuture implements RpcResponseFuture {
     }
 
     @Override
-    public Exception getException() {
-        return exception;
-    }
-
-    @Override
     public boolean cancel() {
         Exception e = new RpcServiceException(this.getClass().getName() + " task cancel: serverPort=" + serverUrl.getServerPortStr() + " "
-                        + request.toString() + " cost=" + (System.currentTimeMillis() - createTime));
+                + request.toString() + " cost=" + (System.currentTimeMillis() - createTime));
         return cancel(e);
     }
 
@@ -175,11 +180,6 @@ public class DefaultResponseFuture implements RpcResponseFuture {
     }
 
     @Override
-    public long getCreateTime() {
-        return createTime;
-    }
-
-    @Override
     public void setReturnType(Class<?> clazz) {
         this.returnType = clazz;
     }
@@ -202,8 +202,8 @@ public class DefaultResponseFuture implements RpcResponseFuture {
 
             state = FutureState.CANCELLED;
             exception = new RpcServiceException(this.getClass().getName() + " request timeout: serverPort=" + serverUrl.getServerPortStr()
-                            + " " + request + " cost=" + (System.currentTimeMillis() - createTime),
-                            RpcErrorMsgConstant.SERVICE_TIMEOUT);
+                    + " " + request + " cost=" + (System.currentTimeMillis() - createTime),
+                    RpcErrorMsgConstant.SERVICE_TIMEOUT);
 
             lock.notifyAll();
         }
@@ -250,20 +250,6 @@ public class DefaultResponseFuture implements RpcResponseFuture {
         return this.request.getRequestId();
     }
 
-    @Override
-    public String getProtocol() {
-        return null;
-    }
-
-    @Override
-    public byte getProtocolVersion() {
-        return 0;
-    }
-
-    @Override
-    public void setProtocolVersion(byte protocolVersion) {
-    }
-
     private Object getValueOrThrowable() {
         if (exception != null) {
             throw (exception instanceof RuntimeException) ? (RuntimeException) exception : new RpcServiceException(
@@ -282,67 +268,62 @@ public class DefaultResponseFuture implements RpcResponseFuture {
 
     @Override
     public long getElapsedTime() {
-        return processTime;
+        return getReceivedTime() - getSendingTime();
     }
 
     @Override
     public Map<String, String> getTraces() {
-        return null;
+        return TRACES;
     }
 
     @Override
     public void addTrace(String key, String value) {
-
+        TRACES.putIfAbsent(key, value);
     }
 
     @Override
     public String getTrace(String key) {
-        return null;
+        return TRACES.get(key);
     }
 
     @Override
     public void setSendingTime(long sendingTime) {
-
+        SENDING_TIME.compareAndSet(0, sendingTime);
     }
 
     @Override
     public long getSendingTime() {
-        return 0;
+        return SENDING_TIME.get();
     }
 
     @Override
     public void setReceivedTime(long receivedTime) {
-
+        RECEIVED_TIME.compareAndSet(0, receivedTime);
     }
 
     @Override
     public long getReceivedTime() {
-        return 0;
+        return RECEIVED_TIME.get();
     }
 
     @Override
-    public void setElapsedTime(long time) {
-        this.processTime = time;
+    public void setElapsedTime(long elapsedTime) {
+        ELAPSED_TIME.compareAndSet(0, elapsedTime);
     }
 
     @Override
     public Object getResult() {
-        return null;
-    }
-
-    @Override
-    public int getProcessingTimeout() {
-        return timeout;
+        if (exception != null) {
+            throw (exception instanceof RuntimeException) ?
+                    (RuntimeException) exception :
+                    new RpcInvocationException(exception.getMessage(), exception);
+        }
+        return result;
     }
 
     @Override
     public Map<String, String> getAttachments() {
         return attachments != null ? attachments : Collections.<String, String>emptyMap();
-    }
-
-    @Override
-    public void setAttachments(Map<String, String> attachments) {
-
     }
 
     @Override
@@ -355,16 +336,6 @@ public class DefaultResponseFuture implements RpcResponseFuture {
 
     @Override
     public String getAttachment(String key) {
-        return null;
-    }
-
-
-    @Override
-    public void setSerializeNumber(int number) {
-    }
-
-    @Override
-    public int getSerializeNumber() {
-        return 0;
+        return attachments.get(key);
     }
 }

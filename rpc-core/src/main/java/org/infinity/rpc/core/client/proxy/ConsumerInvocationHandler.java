@@ -12,6 +12,7 @@ import java.util.Arrays;
 
 import static org.infinity.rpc.core.constant.ConsumerProviderAnnotationAttributes.GROUP;
 import static org.infinity.rpc.core.constant.ConsumerProviderAnnotationAttributes.VERSION;
+import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodParameters;
 
 /**
  * @param <T>: The interface class of the consumer
@@ -42,6 +43,7 @@ public class ConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationH
         request.setRequestId(IdGenerator.generateTimestampId());
         request.setInterfaceName(consumerWrapper.getInterfaceClass().getName());
         request.setMethodName(method.getName());
+        request.setMethodParameters(getMethodParameters(method));
         request.setMethodArguments(args);
         request.addAttachment(VERSION, consumerWrapper.getProtocolVersion());
         request.addAttachment(GROUP, consumerWrapper.getGroup());

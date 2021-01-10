@@ -20,7 +20,6 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 import org.springframework.util.StringUtils;
 
 import java.io.*;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,7 +52,7 @@ public class DefaultCodec extends AbstractCodec {
         ObjectOutput output = createOutput(outputStream);
         output.writeUTF(request.getInterfaceName());
         output.writeUTF(request.getMethodName());
-        output.writeUTF(request.getParameterTypeList());
+        output.writeUTF(request.getMethodParameters());
 
         if (ArrayUtils.isNotEmpty(request.getMethodArguments())) {
             Serializer serializer = getSerializer(channel);
@@ -223,7 +222,7 @@ public class DefaultCodec extends AbstractCodec {
         rpcRequest.setRequestId(requestId);
         rpcRequest.setInterfaceName(interfaceName);
         rpcRequest.setMethodName(methodName);
-        rpcRequest.setParameterTypeList(parameterTypeList);
+        rpcRequest.setMethodParameters(parameterTypeList);
         rpcRequest.setMethodArguments(decodeMethodArgs(input, parameterTypeList, serializer));
         rpcRequest.setAttachments(decodeRequestAttachments(input));
 

@@ -20,7 +20,6 @@ import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.url.UrlParam;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
-import org.infinity.rpc.utilities.spi.ServiceLoader;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
@@ -44,7 +43,7 @@ public class NettyChannel implements Channel {
 
     @Override
     public Responseable request(Requestable request) {
-        int timeout = nettyClient.getUrl().getMethodParameter(request.getMethodName(), request.getParameterTypeList(), UrlParam.requestTimeout.getName(), UrlParam.requestTimeout.getIntValue());
+        int timeout = nettyClient.getUrl().getMethodParameter(request.getMethodName(), request.getMethodParameters(), UrlParam.requestTimeout.getName(), UrlParam.requestTimeout.getIntValue());
         if (timeout <= 0) {
             throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }

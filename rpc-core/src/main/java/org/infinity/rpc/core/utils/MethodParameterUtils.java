@@ -51,7 +51,7 @@ public class MethodParameterUtils {
      * @param method method
      * @return method parameter class name list string
      */
-    public static String getParamList(Method method) {
+    public static String getMethodParameters(Method method) {
         if (ArrayUtils.isEmpty(method.getParameterTypes())) {
             return VOID;
         }
@@ -68,7 +68,7 @@ public class MethodParameterUtils {
      * @return method name with parameter class name list string
      */
     public static String getMethodSignature(Method method) {
-        return getMethodSignature(method.getName(), getParamList(method));
+        return getMethodSignature(method.getName(), getMethodParameters(method));
     }
 
     /**

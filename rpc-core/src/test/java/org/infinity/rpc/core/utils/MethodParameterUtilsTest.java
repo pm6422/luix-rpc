@@ -33,13 +33,13 @@ public class MethodParameterUtilsTest {
         Method method;
         try {
             method = ClassA.class.getMethod("get");
-            assertEquals(VOID, MethodParameterUtils.getParamList(method));
+            assertEquals(VOID, MethodParameterUtils.getMethodParameters(method));
             method = ClassA.class.getMethod("getInt", int.class);
-            assertEquals("int", MethodParameterUtils.getParamList(method));
+            assertEquals("int", MethodParameterUtils.getMethodParameters(method));
             method = ClassA.class.getMethod("getIntLong", int.class, long.class);
-            assertEquals("int,long", MethodParameterUtils.getParamList(method));
+            assertEquals("int,long", MethodParameterUtils.getMethodParameters(method));
             method = ClassA.class.getMethod("getLongWrapper", Long.class);
-            assertEquals("java.lang.Long", MethodParameterUtils.getParamList(method));
+            assertEquals("java.lang.Long", MethodParameterUtils.getMethodParameters(method));
         } catch (Exception e) {
             fail();
         }

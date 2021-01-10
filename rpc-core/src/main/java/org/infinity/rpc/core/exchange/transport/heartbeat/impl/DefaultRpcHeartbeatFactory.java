@@ -49,7 +49,7 @@ public class DefaultRpcHeartbeatFactory implements HeartbeatFactory {
         request.setRequestId(requestId);
         request.setInterfaceName(RpcConstants.HEARTBEAT_INTERFACE_NAME);
         request.setMethodName(RpcConstants.HEARTBEAT_METHOD_NAME);
-        request.setParameterTypeList(RpcConstants.HEARTBEAT_PARAM);
+        request.setMethodParameters(RpcConstants.HEARTBEAT_PARAM);
 
         return request;
     }
@@ -66,7 +66,7 @@ public class DefaultRpcHeartbeatFactory implements HeartbeatFactory {
 
         return RpcConstants.HEARTBEAT_INTERFACE_NAME.equals(request.getInterfaceName())
                 && RpcConstants.HEARTBEAT_METHOD_NAME.equals(request.getMethodName())
-                && RpcConstants.HEARTBEAT_PARAM.endsWith(request.getParameterTypeList());
+                && RpcConstants.HEARTBEAT_PARAM.endsWith(request.getMethodParameters());
     }
 
     public static Responseable getDefaultHeartbeatResponse(long requestId) {
