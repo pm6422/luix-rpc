@@ -11,7 +11,6 @@ import org.infinity.rpc.core.exchange.transport.Client;
 import org.infinity.rpc.core.exchange.transport.endpoint.EndpointFactory;
 import org.infinity.rpc.core.exchange.transport.exception.TransmissionException;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.spi.ServiceLoader;
 
 
 /**
@@ -66,6 +65,6 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
     @Override
     public void destroy() {
         endpointFactory.safeReleaseResource(client, providerUrl);
-        log.info("DefaultRpcReferer destory client: url={}" + providerUrl);
+        log.info("DefaultRpcReferer destory client: url {}", providerUrl);
     }
 }

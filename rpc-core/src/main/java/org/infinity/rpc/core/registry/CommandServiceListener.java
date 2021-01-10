@@ -30,7 +30,6 @@ import org.infinity.rpc.core.url.UrlParam;
 import org.infinity.rpc.utilities.annotation.EventMarker;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.infinity.rpc.utilities.network.NetworkUtils;
-import org.infinity.rpc.utilities.spi.ServiceLoader;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.*;

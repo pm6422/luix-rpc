@@ -15,6 +15,7 @@ import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
+import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
@@ -208,6 +209,7 @@ public class ProviderWrapper<T> implements DisposableBean {
             registry.registerApplicationProvider(app, providerUrl);
         }
 
+        SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
         // Set active to true after registering the RPC provider to registry
         active = true;
         log.debug("Registered RPC provider [{}] to registry", interfaceName);

@@ -20,8 +20,10 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 import org.springframework.util.StringUtils;
 
 import java.io.*;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @ServiceName("default")
 public class DefaultCodec extends AbstractCodec {
@@ -246,7 +248,7 @@ public class DefaultCodec extends AbstractCodec {
     private Map<String, String> decodeRequestAttachments(ObjectInput input) throws IOException, ClassNotFoundException {
         int size = input.readInt();
         if (size <= 0) {
-            return null;
+            return new ConcurrentHashMap<>(10);
         }
 
         Map<String, String> attachments = new HashMap<String, String>();
