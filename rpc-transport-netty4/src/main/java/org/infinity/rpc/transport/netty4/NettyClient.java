@@ -17,7 +17,7 @@ import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.ExchangeContext;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.exchange.response.RpcResponseFuture;
+import org.infinity.rpc.core.exchange.response.ResponseFuture;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.exchange.transport.AbstractSharedPoolClient;
 import org.infinity.rpc.core.exchange.transport.Channel;
@@ -41,16 +41,16 @@ public class NettyClient extends AbstractSharedPoolClient {
     /**
      * 回收过期任务
      */
-    private static       ScheduledExecutorService     scheduledExecutor    = Executors.newScheduledThreadPool(1);
+    private static       ScheduledExecutorService  scheduledExecutor = Executors.newScheduledThreadPool(1);
     /**
      * 异步的request，需要注册callback future
      * 触发remove的操作有： 1) service的返回结果处理。 2) timeout thread cancel
      */
-    protected            Map<Long, RpcResponseFuture> callbackMap          = new ConcurrentHashMap<>();
+    protected            Map<Long, ResponseFuture> callbackMap       = new ConcurrentHashMap<>();
     /**
      * 连续失败次数
      */
-    private              AtomicLong                   errorCount           = new AtomicLong(0);
+    private              AtomicLong                errorCount        = new AtomicLong(0);
     private              ScheduledFuture<?>           timeMonitorFuture;
     private              Bootstrap                    bootstrap;
     private              int                          maxClientConnection;
@@ -122,7 +122,7 @@ public class NettyClient extends AbstractSharedPoolClient {
      * @return
      */
     private Responseable asyncResponse(Responseable response, boolean async) {
-        if (async || !(response instanceof RpcResponseFuture)) {
+        if (async || !(response instanceof ResponseFuture)) {
             return response;
         }
         return new RpcResponse(response);
@@ -156,7 +156,7 @@ public class NettyClient extends AbstractSharedPoolClient {
                             @Override
                             public Object handle(Channel channel, Object message) {
                                 Responseable response = (Responseable) message;
-                                RpcResponseFuture responseFuture = NettyClient.this.removeCallback(response.getRequestId());
+                                ResponseFuture responseFuture = NettyClient.this.removeCallback(response.getRequestId());
 
                                 if (responseFuture == null) {
                                     log.warn("NettyClient has response from server, but responseFuture not exist, requestId={}", response.getRequestId());
@@ -242,7 +242,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         return bootstrap;
     }
 
-    public RpcResponseFuture removeCallback(long requestId) {
+    public ResponseFuture removeCallback(long requestId) {
         return callbackMap.remove(requestId);
     }
 
@@ -313,7 +313,7 @@ public class NettyClient extends AbstractSharedPoolClient {
      * @param responseFuture
      * @throws RpcServiceException
      */
-    public void registerCallback(long requestId, RpcResponseFuture responseFuture) {
+    public void registerCallback(long requestId, ResponseFuture responseFuture) {
         if (this.callbackMap.size() >= RpcConstants.NETTY_CLIENT_MAX_REQUEST) {
             // reject request, prevent from OutOfMemoryError
             throw new RpcServiceException("NettyClient over of max concurrent request, drop request, url: "

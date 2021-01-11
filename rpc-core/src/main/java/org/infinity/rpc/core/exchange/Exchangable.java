@@ -2,7 +2,7 @@ package org.infinity.rpc.core.exchange;
 
 import java.util.Map;
 
-public interface Exchangable extends Traceable{
+public interface Exchangable extends Traceable {
 
     /**
      * @return Request ID
@@ -20,6 +20,14 @@ public interface Exchangable extends Traceable{
     byte getProtocolVersion();
 
     void setProtocolVersion(byte protocolVersion);
+
+    void setGroup(String group);
+
+    String getGroup();
+
+    void setVersion(String version);
+
+    String getVersion();
 
     /**
      * Attachments

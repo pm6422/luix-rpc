@@ -1,13 +1,18 @@
 package org.infinity.rpc.core.client.annotation;
 
+import org.infinity.rpc.core.constant.ServiceConstants;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import static org.infinity.rpc.core.constant.ServiceConstants.GROUP_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ServiceConstants.VERSION_DEFAULT_VALUE;
+
 /**
  * RPC consumer annotation
- * Please refer {@link org.infinity.rpc.core.constant.ConsumerProviderAnnotationAttributes} for the property definition
+ * Please refer {@link ServiceConstants} for the property definition
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
@@ -24,9 +29,9 @@ public @interface Consumer {
     // we can initiate a generic call to service provider without service provider jar dependency
     boolean generic() default false;
 
-    String group() default "";
+    String group() default GROUP_DEFAULT_VALUE;
 
-    String version() default "";
+    String version() default VERSION_DEFAULT_VALUE;
 
     // Timeout value for service invocation
     int timeout() default 0;

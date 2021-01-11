@@ -13,7 +13,7 @@ import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Future;
 import org.infinity.rpc.core.exchange.response.FutureListener;
 import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.exchange.response.RpcResponseFuture;
+import org.infinity.rpc.core.exchange.response.ResponseFuture;
 import org.infinity.rpc.core.exchange.response.impl.DefaultResponseFuture;
 import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
@@ -47,7 +47,7 @@ public class NettyChannel implements Channel {
         if (timeout <= 0) {
             throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
-        RpcResponseFuture response = new DefaultResponseFuture(request, timeout, this.nettyClient.getUrl());
+        ResponseFuture response = new DefaultResponseFuture(request, timeout, this.nettyClient.getUrl());
         this.nettyClient.registerCallback(request.getRequestId(), response);
         byte[] msg = CodecUtils.encodeObjectToBytes(this, codec, request);
         ChannelFuture writeFuture = this.channel.writeAndFlush(msg);

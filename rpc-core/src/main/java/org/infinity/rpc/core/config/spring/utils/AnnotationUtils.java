@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import static java.lang.String.valueOf;
-import static org.infinity.rpc.core.constant.ConsumerProviderAnnotationAttributes.*;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 import static org.springframework.core.annotation.AnnotationUtils.getDefaultValue;
 import static org.springframework.util.ClassUtils.resolveClassName;

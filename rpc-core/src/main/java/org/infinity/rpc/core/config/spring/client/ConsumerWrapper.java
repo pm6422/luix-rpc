@@ -13,10 +13,10 @@ import org.springframework.util.Assert;
 import java.util.List;
 import java.util.Map;
 
-import static org.infinity.rpc.core.constant.ConsumerAnnotationAttributes.DIRECT_URL;
-import static org.infinity.rpc.core.constant.ConsumerAnnotationAttributes.TIMEOUT;
-import static org.infinity.rpc.core.constant.ConsumerProviderAnnotationAttributes.GROUP;
-import static org.infinity.rpc.core.constant.ConsumerProviderAnnotationAttributes.VERSION;
+import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_URL;
+import static org.infinity.rpc.core.constant.ConsumerConstants.TIMEOUT;
+import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
+import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
 
 /**
  * PRC consumer configuration wrapper
@@ -57,13 +57,13 @@ public class ConsumerWrapper<T> implements DisposableBean {
      */
     private       int                 timeout;
     /**
-     * Protocol version
-     */
-    private       String              protocolVersion;
-    /**
      *
      */
     private       String              group;
+    /**
+     *
+     */
+    private       String              version;
 
     public ConsumerWrapper(String consumerWrapperBeanName, Class<T> interfaceClass) {
         Assert.hasText(consumerWrapperBeanName, "Consumer wrapper bean name must not be empty!");
@@ -80,8 +80,8 @@ public class ConsumerWrapper<T> implements DisposableBean {
         // Set attribute values of @Consumer annotation
         directUrl = (String) consumerAttributesMap.get(DIRECT_URL);
         timeout = (int) consumerAttributesMap.get(TIMEOUT);
-        protocolVersion = (String) consumerAttributesMap.get(VERSION);
         group = (String) consumerAttributesMap.get(GROUP);
+        version = (String) consumerAttributesMap.get(VERSION);
     }
 
     @Override

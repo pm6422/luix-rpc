@@ -40,7 +40,7 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
     protected Responseable doCall(Requestable request) {
         try {
             // 为了能够实现跨group请求，需要使用server端的group。
-            request.addAttachment(Url.PARAM_GROUP, providerUrl.getGroup());
+            request.setGroup(providerUrl.getGroup());
             return client.request(request);
         } catch (TransmissionException exception) {
             throw new RpcServiceException("DefaultRpcReferer call Error: url=" + providerUrl.getUri(), exception);

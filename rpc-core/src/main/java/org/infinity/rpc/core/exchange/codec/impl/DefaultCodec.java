@@ -53,6 +53,8 @@ public class DefaultCodec extends AbstractCodec {
         output.writeUTF(request.getInterfaceName());
         output.writeUTF(request.getMethodName());
         output.writeUTF(request.getMethodParameters());
+        output.writeUTF(request.getGroup());
+        output.writeUTF(request.getVersion());
 
         if (ArrayUtils.isNotEmpty(request.getMethodArguments())) {
             Serializer serializer = getSerializer(channel);
@@ -217,6 +219,8 @@ public class DefaultCodec extends AbstractCodec {
         String interfaceName = input.readUTF();
         String methodName = input.readUTF();
         String parameterTypeList = input.readUTF();
+        String group = input.readUTF();
+        String version = input.readUTF();
 
         RpcRequest rpcRequest = new RpcRequest();
         rpcRequest.setRequestId(requestId);
@@ -224,6 +228,8 @@ public class DefaultCodec extends AbstractCodec {
         rpcRequest.setMethodName(methodName);
         rpcRequest.setMethodParameters(parameterTypeList);
         rpcRequest.setMethodArguments(decodeMethodArgs(input, parameterTypeList, serializer));
+        rpcRequest.setGroup(group);
+        rpcRequest.setVersion(version);
         rpcRequest.setAttachments(decodeRequestAttachments(input));
 
         input.close();

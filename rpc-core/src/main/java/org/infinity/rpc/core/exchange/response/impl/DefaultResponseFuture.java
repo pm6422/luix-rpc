@@ -4,14 +4,13 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
-import org.infinity.rpc.core.exception.RpcInvocationException;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.Traceable;
 import org.infinity.rpc.core.exchange.TraceableContext;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.FutureListener;
+import org.infinity.rpc.core.exchange.response.ResponseFuture;
 import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.exchange.response.RpcResponseFuture;
 import org.infinity.rpc.core.exchange.serialization.DeserializableObject;
 import org.infinity.rpc.core.exchange.transport.constants.FutureState;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
@@ -22,18 +21,20 @@ import java.util.*;
 
 @Slf4j
 @Data
-public class DefaultResponseFuture implements RpcResponseFuture {
+public class DefaultResponseFuture implements ResponseFuture {
 
-    protected final    Object               lock              = new Object();
-    protected volatile FutureState          state             = FutureState.DOING;
-    protected          Object               result            = null;
-    protected          Exception            exception         = null;
-    protected          long                 createTime        = System.currentTimeMillis();
+    protected final    Object               lock             = new Object();
+    protected volatile FutureState          state            = FutureState.DOING;
+    protected          Object               result           = null;
+    protected          Exception            exception        = null;
+    protected          long                 createTime       = System.currentTimeMillis();
     //todo: remove
     private            String               protocol;
-    private            byte                 protocolVersion   = ProtocolVersion.VERSION_1.getVersion();
-    protected          long                 processTime       = 0;
-    protected          int                  processingTimeout = 0;
+    private            byte                 protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
+    private            String               group;
+    private            String               version;
+    protected          int                  timeout          = 0;
+    protected          long                 processTime      = 0;
     protected          Requestable          request;
     protected          List<FutureListener> listeners;
     protected          Url                  serverUrl;
@@ -41,13 +42,13 @@ public class DefaultResponseFuture implements RpcResponseFuture {
     /**
      * default serialization is hession2
      */
-    private            int                  serializeNumber   = 0;
+    private            int                  serializeNumber  = 0;
     private            Map<String, String>  attachments;// rpc协议版本兼容时可以回传一些额外的信息
-    private            TraceableContext     traceableContext  = new TraceableContext();
+    private            TraceableContext     traceableContext = new TraceableContext();
 
-    public DefaultResponseFuture(Requestable requestObj, int processingTimeout, Url serverUrl) {
+    public DefaultResponseFuture(Requestable requestObj, int timeout, Url serverUrl) {
         this.request = requestObj;
-        this.processingTimeout = processingTimeout;
+        this.timeout = timeout;
         this.serverUrl = serverUrl;
     }
 
@@ -74,13 +75,13 @@ public class DefaultResponseFuture implements RpcResponseFuture {
     }
 
     @Override
-    public Object getValue() {
+    public Object getResult() {
         synchronized (lock) {
             if (!isDoing()) {
-                return getValueOrThrowable();
+                return getResultOrThrowable();
             }
 
-            if (processingTimeout <= 0) {
+            if (timeout <= 0) {
                 try {
                     lock.wait();
                 } catch (Exception e) {
@@ -88,9 +89,9 @@ public class DefaultResponseFuture implements RpcResponseFuture {
                             + request.toString() + " cost=" + (System.currentTimeMillis() - createTime), e));
                 }
 
-                return getValueOrThrowable();
+                return getResultOrThrowable();
             } else {
-                long waitTime = processingTimeout - (System.currentTimeMillis() - createTime);
+                long waitTime = timeout - (System.currentTimeMillis() - createTime);
 
                 if (waitTime > 0) {
                     for (; ; ) {
@@ -102,7 +103,7 @@ public class DefaultResponseFuture implements RpcResponseFuture {
                         if (!isDoing()) {
                             break;
                         } else {
-                            waitTime = processingTimeout - (System.currentTimeMillis() - createTime);
+                            waitTime = timeout - (System.currentTimeMillis() - createTime);
                             if (waitTime <= 0) {
                                 break;
                             }
@@ -114,7 +115,7 @@ public class DefaultResponseFuture implements RpcResponseFuture {
                     timeoutSoCancel();
                 }
             }
-            return getValueOrThrowable();
+            return getResultOrThrowable();
         }
     }
 
@@ -250,7 +251,7 @@ public class DefaultResponseFuture implements RpcResponseFuture {
         return this.request.getRequestId();
     }
 
-    private Object getValueOrThrowable() {
+    private Object getResultOrThrowable() {
         if (exception != null) {
             throw (exception instanceof RuntimeException) ? (RuntimeException) exception : new RpcServiceException(
                     exception.getMessage(), exception);
@@ -309,16 +310,6 @@ public class DefaultResponseFuture implements RpcResponseFuture {
     @Override
     public void setElapsedTime(long elapsedTime) {
         ELAPSED_TIME.compareAndSet(0, elapsedTime);
-    }
-
-    @Override
-    public Object getResult() {
-        if (exception != null) {
-            throw (exception instanceof RuntimeException) ?
-                    (RuntimeException) exception :
-                    new RpcInvocationException(exception.getMessage(), exception);
-        }
-        return result;
     }
 
     @Override

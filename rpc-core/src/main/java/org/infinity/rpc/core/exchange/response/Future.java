@@ -51,7 +51,7 @@ public interface Future {
      * @return
      * @throws Exception when timeout, cancel, onFailure
      */
-    Object getValue();
+    Object getResult();
 
     /**
      * if task is done or cancle, return the exception

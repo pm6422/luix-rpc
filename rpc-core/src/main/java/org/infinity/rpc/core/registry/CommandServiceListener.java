@@ -117,7 +117,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
             throw new RuntimeException("Registry must be instantiated before use!");
         }
 
-        String group = clientUrl.getParameter(Url.PARAM_GROUP);
+        String group = clientUrl.getGroup();
         activeProviderUrlsPerGroup.put(group, providerUrls);
 
         List<Url> providerUrlList = new ArrayList<>();
@@ -179,7 +179,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
                 if (!weights.containsKey(gk)) {
                     activeProviderUrlsPerGroup.remove(gk);
                     Url urlTemp = urlCopy.copy();
-                    urlTemp.addParameter(Url.PARAM_GROUP, gk);
+                    urlTemp.setGroup(gk);
                     registry.unsubscribeServiceListener(urlTemp, this);
                 }
             }
@@ -349,7 +349,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
                 finalResult.addAll(activeProviderUrlsPerGroup.get(key));
             } else {
                 Url urlTemp = url.copy();
-                urlTemp.addParameter(Url.PARAM_GROUP, key);
+                urlTemp.setGroup(key);
                 finalResult.addAll(discoverActiveProvidersByGroup(urlTemp));
                 registry.subscribeServiceListener(urlTemp, this);
             }
@@ -364,7 +364,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
      * @return active provider urls
      */
     private List<Url> discoverActiveProvidersByGroup(Url clientUrl) {
-        String group = clientUrl.getParameter(Url.PARAM_GROUP);
+        String group = clientUrl.getGroup();
         List<Url> providerUrls = activeProviderUrlsPerGroup.get(group);
         if (providerUrls == null) {
             providerUrls = registry.discoverActiveProviders(clientUrl);
