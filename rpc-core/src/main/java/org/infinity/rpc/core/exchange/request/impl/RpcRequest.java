@@ -18,6 +18,8 @@ public class RpcRequest implements Requestable, Serializable {
     private              String              clientRequestId;
     private              long                requestId;
     private              String              protocol;
+    private              String              group;
+    private              String              version;
     private              byte                protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
     private              String              interfaceName;
     private              String              methodName;

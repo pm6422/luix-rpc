@@ -27,7 +27,9 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
     //todo: remove
     private              String              protocol;
     private              byte                protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
-    private              int                 processingTimeout;
+    private              String              group;
+    private              String              version;
+    private              int                 timeout;
     private              Object              result;
     private              Exception           exception;
     /**
@@ -45,7 +47,7 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
         this.exception = response.getException();
         this.requestId = response.getRequestId();
         this.setElapsedTime(response.getElapsedTime());
-        this.processingTimeout = response.getProcessingTimeout();
+        this.timeout = response.getTimeout();
         this.protocolVersion = response.getProtocolVersion();
         this.setSerializeNumber(response.getSerializeNumber());
         this.attachments = response.getAttachments();

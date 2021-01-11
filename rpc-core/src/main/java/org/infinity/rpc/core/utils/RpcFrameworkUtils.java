@@ -9,10 +9,27 @@ import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 
-import static org.infinity.rpc.core.constant.ConsumerProviderAnnotationAttributes.GROUP;
-import static org.infinity.rpc.core.constant.ConsumerProviderAnnotationAttributes.VERSION;
+import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
+import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
 
 public class RpcFrameworkUtils {
+
+    public static String getGroupFromRequest(Requestable request) {
+        return StringUtils.defaultString(request.getGroup());
+    }
+
+    public static String getVersionFromRequest(Requestable request) {
+        return StringUtils.defaultString(request.getVersion());
+    }
+
+    public static String getValueFromRequest(Requestable request, String key) {
+        String value = "";
+        if (request.getAttachments() != null && request.getAttachments().containsKey(key)) {
+            value = request.getAttachments().get(key);
+        }
+        return value;
+    }
+
 
     /**
      * 目前根据 group/interface/version 来唯一标示一个服务
@@ -25,22 +42,6 @@ public class RpcFrameworkUtils {
         String version = getVersionFromRequest(request);
         String group = getGroupFromRequest(request);
         return getServiceKey(group, request.getInterfaceName(), version);
-    }
-
-    public static String getGroupFromRequest(Requestable request) {
-        return getValueFromRequest(request, GROUP);
-    }
-
-    public static String getVersionFromRequest(Requestable request) {
-        return getValueFromRequest(request, VERSION);
-    }
-
-    public static String getValueFromRequest(Requestable request, String key) {
-        String value = "";
-        if (request.getAttachments() != null && request.getAttachments().containsKey(key)) {
-            value = request.getAttachments().get(key);
-        }
-        return value;
     }
 
     /**

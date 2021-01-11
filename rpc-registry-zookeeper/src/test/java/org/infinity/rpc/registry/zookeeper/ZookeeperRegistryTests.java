@@ -52,15 +52,16 @@ public class ZookeeperRegistryTests {
         registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, new InfinityProperties().getRegistry().getSessionTimeout().toString());
         registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, new InfinityProperties().getRegistry().getRetryInterval().toString());
 
+        String defaultGroup = "default";
         // client url has the same protocol and provider path to provider, but port is 0
         clientUrl = Url.clientUrl(ProtocolName.infinity.name(), provider);
-        clientUrl.addParameter("group", Url.PARAM_GROUP_PROVIDER);
+        clientUrl.addParameter("group", defaultGroup);
 
         providerUrl1 = Url.of(ProtocolName.infinity.name(), NetworkUtils.INTRANET_IP, 2000, provider);
-        providerUrl1.addParameter("group", Url.PARAM_GROUP_PROVIDER);
+        providerUrl1.addParameter("group", defaultGroup);
 
         providerUrl2 = Url.of(ProtocolName.infinity.name(), "192.168.100.100", 2000, provider);
-        providerUrl2.addParameter("group", Url.PARAM_GROUP_PROVIDER);
+        providerUrl2.addParameter("group", defaultGroup);
 
         zookeeper = new EmbeddedZookeeper();
         zookeeper.start();

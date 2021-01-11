@@ -1,9 +1,10 @@
 package org.infinity.rpc.core.url;
 
-import lombok.EqualsAndHashCode;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.constant.RpcConstants;
+import org.infinity.rpc.core.constant.ServiceConstants;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.utilities.network.NetworkUtils;
@@ -14,10 +15,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.infinity.rpc.core.constant.ServiceConstants.GROUP_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ServiceConstants.VERSION_DEFAULT_VALUE;
+
 /**
  * Url used to represent a provider or client or registry
  */
-@EqualsAndHashCode
+@Data
 public final class Url implements Serializable {
     private static final long    serialVersionUID   = 2970867582138131181L;
     /**
@@ -26,6 +30,7 @@ public final class Url implements Serializable {
     private static final String  URL_PATTERN        = "{0}://{1}:{2}/{3}?{4}";
     private static final String  PROTOCOL_SEPARATOR = "://";
     public static final  String  PATH_SEPARATOR     = "/";
+    private static final int     CLIENT_URL_PORT    = 0;
     /**
      * Url type
      * TODO: add
@@ -35,6 +40,10 @@ public final class Url implements Serializable {
      * RPC protocol
      */
     private              String  protocol;
+    /**
+     * Service provider group
+     */
+    private              String  group;
     /**
      * RPC protocol version
      */
@@ -54,109 +63,103 @@ public final class Url implements Serializable {
 
     // ◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘
     // Constants definitions
-    private static final int     CLIENT_URL_PORT                           = 0;
+    public static final String  PARAM_GROUP_APPLICATION                   = "application";
+    public static final String  PARAM_GROUP_APPLICATION_PROVIDER          = "application-provider";
     /**
      *
      */
-    public static final  String  PARAM_GROUP                               = "group";
-    public static final  String  PARAM_GROUP_PROVIDER                      = "provider";
-    public static final  String  PARAM_GROUP_APPLICATION                   = "application";
-    public static final  String  PARAM_GROUP_APPLICATION_PROVIDER          = "application-provider";
+    public static final String  PARAM_CHECK_HEALTH                        = "checkHealth";
+    public static final String  PARAM_CHECK_HEALTH_DEFAULT_VALUE          = "true";
     /**
      *
      */
-    public static final  String  PARAM_CHECK_HEALTH                        = "checkHealth";
-    public static final  String  PARAM_CHECK_HEALTH_DEFAULT_VALUE          = "true";
+    public static final String  PARAM_CODEC                               = "codec";
+    public static final String  PARAM_CODEC_DEFAULT_VALUE                 = "default";
     /**
      *
      */
-    public static final  String  PARAM_CODEC                               = "codec";
-    public static final  String  PARAM_CODEC_DEFAULT_VALUE                 = "default";
+    public static final String  PARAM_TYPE                                = "type";
+    public static final String  PARAM_TYPE_DEFAULT_VALUE                  = "provider";
     /**
      *
      */
-    public static final  String  PARAM_TYPE                                = "type";
-    public static final  String  PARAM_TYPE_DEFAULT_VALUE                  = "provider";
+    public static final String  PARAM_CLUSTER                             = "cluster";
+    public static final String  PARAM_CLUSTER_DEFAULT_VALUE               = "default";
     /**
      *
      */
-    public static final  String  PARAM_CLUSTER                             = "cluster";
-    public static final  String  PARAM_CLUSTER_DEFAULT_VALUE               = "default";
+    public static final String  PARAM_LOAD_BALANCER                       = "loadBalancer";
+    public static final String  PARAM_LOAD_BALANCER_DEFAULT_VALUE         = "random";
     /**
      *
      */
-    public static final  String  PARAM_LOAD_BALANCER                       = "loadBalancer";
-    public static final  String  PARAM_LOAD_BALANCER_DEFAULT_VALUE         = "random";
+    public static final String  PARAM_HA                                  = "ha";
+    public static final String  PARAM_HA_DEFAULT_VALUE                    = "failover";
     /**
      *
      */
-    public static final  String  PARAM_HA                                  = "ha";
-    public static final  String  PARAM_HA_DEFAULT_VALUE                    = "failover";
+    public static final String  PARAM_SERIALIZER                          = "serializer";
+    public static final String  PARAM_SERIALIZER_DEFAULT_VALUE            = "hessian2";
     /**
      *
      */
-    public static final  String  PARAM_SERIALIZER                          = "serializer";
-    public static final  String  PARAM_SERIALIZER_DEFAULT_VALUE            = "hessian2";
+    public static final String  PARAM_REQUEST_TIMEOUT                     = "requestTimeout";
+    public static final String  PARAM_REQUEST_TIMEOUT_DEFAULT_VALUE       = "200";
     /**
      *
      */
-    public static final  String  PARAM_REQUEST_TIMEOUT                     = "requestTimeout";
-    public static final  String  PARAM_REQUEST_TIMEOUT_DEFAULT_VALUE       = "200";
-    /**
-     *
-     */
-    public static final  String  PARAM_CONNECT_TIMEOUT                     = "connectTimeout";
-    public static final  int     PARAM_CONNECT_TIMEOUT_DEFAULT_VALUE       = 1000;
+    public static final String  PARAM_CONNECT_TIMEOUT                     = "connectTimeout";
+    public static final int     PARAM_CONNECT_TIMEOUT_DEFAULT_VALUE       = 1000;
     /**
      * pool max conn number
      */
-    public static final  String  PARAM_MAX_CONTENT_LENGTH                  = "maxContentLength";
-    public static final  int     PARAM_MAX_CONTENT_LENGTH_DEFAULT_VALUE    = 10 * 1024 * 1024;
+    public static final String  PARAM_MAX_CONTENT_LENGTH                  = "maxContentLength";
+    public static final int     PARAM_MAX_CONTENT_LENGTH_DEFAULT_VALUE    = 10 * 1024 * 1024;
     /**
      * multi consumers share the same channel
      */
-    public static final  String  PARAM_SHARE_CHANNEL                       = "shareChannel";
-    public static final  boolean PARAM_SHARE_CHANNEL_DEFAULT_VALUE         = true;
+    public static final String  PARAM_SHARE_CHANNEL                       = "shareChannel";
+    public static final boolean PARAM_SHARE_CHANNEL_DEFAULT_VALUE         = true;
     /**
      * max server conn (all clients conn)
      */
-    public static final  String  PARAM_MAX_SERVER_CONNECTION               = "maxServerConnection";
-    public static final  int     PARAM_MAX_SERVER_CONNECTION_DEFAULT_VALUE = 100000;
+    public static final String  PARAM_MAX_SERVER_CONNECTION               = "maxServerConnection";
+    public static final int     PARAM_MAX_SERVER_CONNECTION_DEFAULT_VALUE = 100000;
     /**
      *
      */
-    public static final  String  PARAM_WORKER_QUEUE_SIZE                   = "workerQueueSize";
-    public static final  int     PARAM_WORKER_QUEUE_SIZE_DEFAULT_VALUE     = 0;
+    public static final String  PARAM_WORKER_QUEUE_SIZE                   = "workerQueueSize";
+    public static final int     PARAM_WORKER_QUEUE_SIZE_DEFAULT_VALUE     = 0;
     /**
      * service min worker threads
      */
-    public static final  String  PARAM_MIN_WORKER_THREAD                   = "minWorkerThread";
-    public static final  int     PARAM_MIN_WORKER_THREAD_DEFAULT_VALUE     = 20;
+    public static final String  PARAM_MIN_WORKER_THREAD                   = "minWorkerThread";
+    public static final int     PARAM_MIN_WORKER_THREAD_DEFAULT_VALUE     = 20;
     /**
      * service max worker threads
      */
-    public static final  String  PARAM_MAX_WORKER_THREAD                   = "maxWorkerThread";
-    public static final  int     PARAM_MAX_WORKER_THREAD_DEFAULT_VALUE     = 200;
+    public static final String  PARAM_MAX_WORKER_THREAD                   = "maxWorkerThread";
+    public static final int     PARAM_MAX_WORKER_THREAD_DEFAULT_VALUE     = 200;
     /**
      *
      */
-    public static final  String  PARAM_HOST                                = "host";
-    public static final  String  PARAM_HOST_DEFAULT_VALUE                  = "";
+    public static final String  PARAM_HOST                                = "host";
+    public static final String  PARAM_HOST_DEFAULT_VALUE                  = "";
     /**
      *
      */
-    public static final  String  PARAM_HEART_BEAT_FACTORY                  = "heartbeatFactory";
-    public static final  String  PARAM_HEART_BEAT_FACTORY_DEFAULT_VALUE    = "default";
+    public static final String  PARAM_HEART_BEAT_FACTORY                  = "heartbeatFactory";
+    public static final String  PARAM_HEART_BEAT_FACTORY_DEFAULT_VALUE    = "default";
     /**
      *
      */
-    public static final  String  PARAM_ENDPOINT_FACTORY                    = "endpointFactory";
-    public static final  String  PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE      = "netty";
+    public static final String  PARAM_ENDPOINT_FACTORY                    = "endpointFactory";
+    public static final String  PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE      = "netty";
     /**
      *
      */
-    public static final  String  PARAM_TRANS_EXCEPTION_STACK               = "transExceptionStack";
-    public static final  boolean PARAM_TRANS_EXCEPTION_STACK_DEFAULT_VALUE = true;
+    public static final String  PARAM_TRANS_EXCEPTION_STACK               = "transExceptionStack";
+    public static final boolean PARAM_TRANS_EXCEPTION_STACK_DEFAULT_VALUE = true;
 
     public static final String PARAM_ADDRESS               = "address";
     public static final String PARAM_SESSION_TIMEOUT       = "sessionTimeout";
@@ -181,9 +184,12 @@ public final class Url implements Serializable {
     private Url() {
     }
 
-    public static Url of(String protocol, String host, Integer port, String path, Map<String, String> parameters) {
+    public static Url of(String protocol, String group, String version, String host, Integer port, String path,
+                         Map<String, String> parameters) {
         Url url = new Url();
         url.setProtocol(protocol);
+        url.setGroup(group);
+        url.setVersion(version);
         url.setHost(host);
         url.setPort(port);
         url.setPath(path);
@@ -196,56 +202,27 @@ public final class Url implements Serializable {
         return url;
     }
 
-    public static Url of(String protocol, String host, Integer port, String path) {
-        return of(protocol, host, port, path, new HashMap<>());
+    public static Url of(String protocol, String host, Integer port, String path, Map<String, String> parameters) {
+        return of(protocol, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, host, port, path, parameters);
     }
 
-    public static Url of(String protocol, String host, Integer port) {
-        return of(protocol, host, port, "", new HashMap<>());
+    public static Url of(String protocol, String host, Integer port, String path) {
+        return of(protocol, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, host, port, path, new HashMap<>());
     }
 
     public static Url providerUrl(String protocol, Integer port, String path) {
-        return of(protocol, NetworkUtils.INTRANET_IP, port, path, new HashMap<>());
+        return of(protocol, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, NetworkUtils.INTRANET_IP, port, path, new HashMap<>());
     }
 
     public static Url clientUrl(String protocol, String path) {
-        return of(protocol, NetworkUtils.INTRANET_IP, CLIENT_URL_PORT, path, new HashMap<>());
+        return of(protocol, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, NetworkUtils.INTRANET_IP, CLIENT_URL_PORT, path, new HashMap<>());
     }
 
     public static Url registryUrl(String protocol, String host, Integer port) {
-        return of(protocol, host, port, Registrable.class.getName(), new HashMap<>());
+        // todo: check group and version
+        return of(protocol, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, host, port, Registrable.class.getName(), new HashMap<>());
     }
 
-    public String getProtocol() {
-        return protocol;
-    }
-
-    // private access modifier
-    private void setProtocol(String protocol) {
-        this.protocol = protocol;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    // private access modifier
-    private void setHost(String host) {
-        this.host = host;
-    }
-
-    public Integer getPort() {
-        return port;
-    }
-
-    // private access modifier
-    private void setPort(Integer port) {
-        this.port = port;
-    }
 
     /**
      * Composition of host + port
@@ -256,25 +233,14 @@ public final class Url implements Serializable {
         return host + ":" + port;
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public Map<String, String> getParameters() {
-        return parameters;
-    }
-
     private void initialize() {
         parameters = new HashMap<>();
-        parameters.put(PARAM_GROUP, PARAM_GROUP_PROVIDER);
     }
 
     private void checkIntegrity() {
-        Validate.notNull(protocol, "Protocol must NOT be null!");
+        Validate.notEmpty(protocol, "Protocol must NOT be empty!");
+        Validate.notEmpty(group, "Group must NOT be empty!");
+        Validate.notEmpty(version, "Version must NOT be empty!");
         Validate.notEmpty(host, "Host must NOT be empty!");
         Validate.notNull(port, "Port must NOT be null!");
     }
@@ -362,10 +328,6 @@ public final class Url implements Serializable {
     public String getIdentity() {
         return protocol + PROTOCOL_SEPARATOR + host + ":" + port +
                 "/" + getParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_DEFAULT_VALUE);
-    }
-
-    public String getGroup() {
-        return getParameter(Url.PARAM_GROUP);
     }
 
     public String getServerPortStr() {
