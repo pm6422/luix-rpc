@@ -59,6 +59,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         super(url);
         maxClientConnection = url.getIntParameter(UrlParam.maxClientConnection.getName(), UrlParam.maxClientConnection.getIntValue());
         Validate.isTrue(maxClientConnection > 0, "maxClientConnection must be a positive number!");
+
         timeMonitorFuture = scheduledExecutor.scheduleWithFixedDelay(
                 new TimeoutMonitor("timeout-monitor-" + url.getHost() + "-" + url.getPort()),
                 RpcConstants.NETTY_TIMEOUT_TIMER_PERIOD, RpcConstants.NETTY_TIMEOUT_TIMER_PERIOD,
@@ -110,7 +111,6 @@ public class NettyClient extends AbstractSharedPoolClient {
 
         // aysnc or sync result
         response = asyncResponse(response, async);
-
         return response;
     }
 
@@ -225,12 +225,12 @@ public class NettyClient extends AbstractSharedPoolClient {
 
     @Override
     public boolean isClosed() {
-        return false;
+        return state.isClosed();
     }
 
     @Override
     public boolean isActive() {
-        return false;
+        return state.isActive();
     }
 
     @Override
@@ -331,8 +331,7 @@ public class NettyClient extends AbstractSharedPoolClient {
             return;
         }
 
-        log.info("NettyClient heartbeat request: url={}", url.getUri());
-
+        log.info("Checking health of url [{}]", url.getUri());
         try {
             // async request后，如果service is
             // available，那么将会自动把该client设置成可用
@@ -354,19 +353,20 @@ public class NettyClient extends AbstractSharedPoolClient {
 
         @Override
         public void run() {
-            long currentTime = System.currentTimeMillis();
-            for (Map.Entry<Long, RpcResponseFuture> entry : callbackMap.entrySet()) {
-                try {
-                    RpcResponseFuture future = entry.getValue();
-                    if (future.getCreateTime() + future.getProcessingTimeout() < currentTime) {
-                        // timeout: remove from callback list, and then cancel
-                        removeCallback(entry.getKey());
-                        future.cancel();
-                    }
-                } catch (Exception e) {
-                    log.error(name + " clear timeout future Error: uri=" + url.getUri() + " requestId=" + entry.getKey(), e);
-                }
-            }
+            //todo:
+//            long currentTime = System.currentTimeMillis();
+//            for (Map.Entry<Long, RpcResponseFuture> entry : callbackMap.entrySet()) {
+//                try {
+//                    RpcResponseFuture future = entry.getValue();
+//                    if (future.getCreateTime() + future.getProcessingTimeout() < currentTime) {
+//                        // timeout: remove from callback list, and then cancel
+//                        removeCallback(entry.getKey());
+//                        future.cancel();
+//                    }
+//                } catch (Exception e) {
+//                    log.error(name + " clear timeout future Error: uri=" + url.getUri() + " requestId=" + entry.getKey(), e);
+//                }
+//            }
         }
     }
 }

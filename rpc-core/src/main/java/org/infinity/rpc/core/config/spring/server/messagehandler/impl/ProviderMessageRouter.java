@@ -75,7 +75,6 @@ public class ProviderMessageRouter implements MessageHandler {
 
         Requestable request = (Requestable) message;
         String serviceKey = RpcFrameworkUtils.getServiceKey(request);
-
         ProviderWrapper<?> provider = providers.get(serviceKey);
 
         if (provider == null) {

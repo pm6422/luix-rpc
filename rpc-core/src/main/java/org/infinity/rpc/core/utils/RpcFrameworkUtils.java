@@ -24,7 +24,6 @@ public class RpcFrameworkUtils {
     public static String getServiceKey(Requestable request) {
         String version = getVersionFromRequest(request);
         String group = getGroupFromRequest(request);
-
         return getServiceKey(group, request.getInterfaceName(), version);
     }
 
