@@ -122,10 +122,13 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         ClassPathBeanDefinitionRegistryScanner providerScanner = createProviderScanner(registry, beanNameGenerator);
 
         resolvedScanBasePackages.forEach(scanBasePackage -> {
-            // Register provider beans first
-            registerProviderBeans(providerScanner, scanBasePackage);
-            // Then register provider wrapper beans
-            registerProviderWrapperBeans(registry, beanNameGenerator, providerScanner, scanBasePackage);
+            // Register provider wrapper first
+            boolean registered = registerProviderWrapperBeans(registry, beanNameGenerator, providerScanner, scanBasePackage);
+            if (registered) {
+                // Then register provider beans beans
+                registerProviderBeans(providerScanner, scanBasePackage);
+                log.info("Registered RPC provider instances to spring context");
+            }
         });
     }
 
@@ -162,16 +165,18 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
      * @param beanNameGenerator bean name generator
      * @param providerScanner   provider bean definition registry scanner
      * @param scanBasePackage   provider packages to be scanned
+     * @return true: registered provider wrapper, false: no provider wrapper registered
      */
-    private void registerProviderWrapperBeans(BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator,
-                                              ClassPathBeanDefinitionRegistryScanner providerScanner, String scanBasePackage) {
+    private boolean registerProviderWrapperBeans(BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator,
+                                                 ClassPathBeanDefinitionRegistryScanner providerScanner, String scanBasePackage) {
         // Next we need to register ProviderBean which is the wrapper of service provider to spring context
         Set<BeanDefinitionHolder> holders =
                 findProviderBeanDefinitionHolders(providerScanner, scanBasePackage, registry, beanNameGenerator);
         if (CollectionUtils.isEmpty(holders)) {
-            return;
+            return false;
         }
         holders.forEach(holder -> registerProviderWrapperBean(holder, registry, providerScanner));
+        return true;
     }
 
     /**
