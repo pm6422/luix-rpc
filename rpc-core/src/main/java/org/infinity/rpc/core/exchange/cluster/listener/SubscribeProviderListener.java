@@ -9,7 +9,8 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.annotation.EventMarker;
+import org.infinity.rpc.utilities.annotation.EventReceiver;
+import org.infinity.rpc.utilities.annotation.EventSubscriber;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.*;
@@ -63,10 +64,10 @@ public class SubscribeProviderListener<T> implements ClientListener {
      * @param providerUrls provider urls
      */
     @Override
-    @EventMarker
+    @EventReceiver("providersDiscoveryEvent")
     public synchronized void onNotify(Url registryUrl, List<Url> providerUrls) {
         if (CollectionUtils.isEmpty(providerUrls)) {
-            log.info("No active providers found on registry [{}]", registryUrl.getUri());
+            log.warn("No active providers found on registry [{}]", registryUrl.getUri());
             removeInactiveRegistry(registryUrl);
             return;
         }
@@ -81,6 +82,9 @@ public class SubscribeProviderListener<T> implements ClientListener {
             newProviderCallers.add(providerCaller);
         }
 
+        if (CollectionUtils.isEmpty(newProviderCallers)) {
+            log.warn("No active provider caller!");
+        }
         providerCallersPerRegistryUrl.put(registryUrl, newProviderCallers);
         refreshCluster();
     }
@@ -120,6 +124,7 @@ public class SubscribeProviderListener<T> implements ClientListener {
     /**
      * Subscribe this client listener to all the registries
      */
+    @EventSubscriber("providersDiscoveryEvent")
     private void subscribe() {
         for (Url registryUrl : registryUrls) {
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);

@@ -10,6 +10,7 @@ import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.annotation.EventMarker;
+import org.infinity.rpc.utilities.annotation.EventPublisher;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -28,7 +29,7 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * The registry subclass name
      */
-    private final String registryClassName = this.getClass().getSimpleName();
+    private final String                           registryClassName               = this.getClass().getSimpleName();
     /**
      * Registry url
      */
@@ -253,8 +254,8 @@ public abstract class AbstractRegistry implements Registry {
         if (listener == null || CollectionUtils.isEmpty(providerUrls)) {
             return;
         }
-        // Group urls by type parameter of url
-        Map<String, List<Url>> urlsPerType = groupUrls(providerUrls);
+        // Group urls by type parameter value of url
+        Map<String, List<Url>> providerUrlsPerType = groupUrlsByType(providerUrls);
 
         Map<String, List<Url>> cachedProviderUrlsPerType = providerUrlsPerTypePerClientUrl.get(clientUrl);
         if (cachedProviderUrlsPerType == null) {
@@ -263,21 +264,22 @@ public abstract class AbstractRegistry implements Registry {
         }
 
         // Update urls cache
-        cachedProviderUrlsPerType.putAll(urlsPerType);
+        cachedProviderUrlsPerType.putAll(providerUrlsPerType);
 
-        for (List<Url> providerUrlList : urlsPerType.values()) {
-            // Execute listener
+        for (Map.Entry<String, List<Url>> entry : providerUrlsPerType.entrySet()) {
+            @EventPublisher("providersDiscoveryEvent")
+            List<Url> providerUrlList = entry.getValue();
             listener.onNotify(registryUrl, providerUrlList);
         }
     }
 
     /**
-     * Group urls by type parameter of url
+     * Group urls by type parameter value of url
      *
      * @param urls urls
      * @return grouped url per url parameter type
      */
-    private Map<String, List<Url>> groupUrls(List<Url> urls) {
+    private Map<String, List<Url>> groupUrlsByType(List<Url> urls) {
         Map<String, List<Url>> urlsPerType = new HashMap<>();
         for (Url url : urls) {
             String type = url.getParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_DEFAULT_VALUE);

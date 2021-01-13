@@ -32,15 +32,15 @@ public class ConsumerWrapper<T> implements DisposableBean {
     /**
      * The name of consumer wrapper instance
      */
-    private final String              consumerWrapperBeanName;
+    private final String                       consumerWrapperBeanName;
     /**
      * The interface class of the consumer
      */
-    private final Class<T>            interfaceClass;
+    private final Class<T>                     interfaceClass;
     /**
      *
      */
-    private       ProviderCluster     providerCluster;
+    private       ProviderCluster              providerCluster;
     /**
      * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(ConsumerWrapper)}
      */
@@ -56,19 +56,19 @@ public class ConsumerWrapper<T> implements DisposableBean {
     /**
      *
      */
-    private       String              directUrl;
+    private       String                       directUrl;
     /**
      *
      */
-    private       int                 timeout;
+    private       int                          timeout;
     /**
      *
      */
-    private       String              group;
+    private       String                       group;
     /**
      *
      */
-    private       String              version;
+    private       String                       version;
 
     public ConsumerWrapper(String consumerWrapperBeanName, Class<T> interfaceClass) {
         Assert.hasText(consumerWrapperBeanName, "Consumer wrapper bean name must not be empty!");

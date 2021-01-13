@@ -43,14 +43,14 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
         // Add client listener to command service listener, and use command service listener to manage listener
         commandServiceListener.addNotifyListener(listener);
 
-        // Trigger onSubscribe method of commandServiceListener if child change event happens
+        // Trigger onNotify method of commandServiceListener if child change event happens
         subscribeServiceListener(clientUrlCopy, commandServiceListener);
-        // Trigger onSubscribe method of commandServiceListener if data change event happens
+        // Trigger onNotify method of commandServiceListener if data change event happens
         subscribeCommandListener(clientUrlCopy, commandServiceListener);
-
+        // Discover active providers
         List<Url> providerUrls = doDiscover(clientUrlCopy);
         if (CollectionUtils.isNotEmpty(providerUrls)) {
-            // Invoke the listener
+            // Notify discovered providers to client side
             this.notify(providerUrls, clientUrlCopy, listener);
         }
         log.info("Subscribed the listener for the url [{}]", clientUrl);

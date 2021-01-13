@@ -19,7 +19,6 @@ package org.infinity.rpc.core.registry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.exchange.cluster.listener.SubscribeProviderListener;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
@@ -28,7 +27,7 @@ import org.infinity.rpc.core.subscribe.RpcCommandUtils;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.url.UrlParam;
-import org.infinity.rpc.utilities.annotation.EventMarker;
+import org.infinity.rpc.utilities.annotation.EventReceiver;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.infinity.rpc.utilities.network.NetworkUtils;
 
@@ -114,13 +113,9 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
      * @param registryUrl  registry url
      * @param providerUrls provider urls
      */
-    @EventMarker
+    @EventReceiver("providersChangeEvent")
     @Override
     public void onNotify(Url clientUrl, Url registryUrl, List<Url> providerUrls) {
-        if (registry == null) {
-            throw new RuntimeException("Registry must be instantiated before use!");
-        }
-
         String group = clientUrl.getGroup();
         activeProviderUrlsPerGroup.put(group, providerUrls);
 
@@ -145,8 +140,8 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
      * @param clientUrl     client url
      * @param commandString command string
      */
-    @EventMarker
     @Override
+    @EventReceiver("providerDataChangeEvent")
     public void onNotify(Url clientUrl, String commandString) {
         log.info("CommandServiceManager notify command. service:" + clientUrl.toSimpleString() + ", command:" + commandString);
 

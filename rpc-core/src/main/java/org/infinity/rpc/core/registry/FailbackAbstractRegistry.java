@@ -211,6 +211,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         try {
             super.subscribe(clientUrl, listener);
         } catch (Exception e) {
+            log.warn("Exception occurred!", e);
             // Add the failed listener to the local cache if exception occurred in order to retry later
             List<Url> cachedProviderUrls = super.getCachedProviderUrls(clientUrl);
             if (CollectionUtils.isNotEmpty(cachedProviderUrls)) {

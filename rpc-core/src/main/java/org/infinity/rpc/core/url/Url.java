@@ -79,7 +79,7 @@ public final class Url implements Serializable {
      *
      */
     public static final String  PARAM_TYPE                                = "type";
-    public static final String  PARAM_TYPE_DEFAULT_VALUE                  = "provider";
+    public static final String  PARAM_TYPE_DEFAULT_VALUE                  = "service";
     /**
      *
      */
