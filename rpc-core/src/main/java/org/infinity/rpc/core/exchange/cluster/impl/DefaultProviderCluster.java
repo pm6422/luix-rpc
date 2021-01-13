@@ -168,4 +168,9 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
         }
         return RpcResponse.error(request, cause);
     }
+
+    @Override
+    public String toString() {
+        return DefaultProviderCluster.class.getSimpleName().concat(":").concat(getInterfaceClass().getName());
+    }
 }
