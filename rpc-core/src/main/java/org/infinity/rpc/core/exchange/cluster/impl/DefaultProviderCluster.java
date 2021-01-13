@@ -19,7 +19,7 @@ import org.infinity.rpc.core.url.UrlParam;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,6 +28,7 @@ import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_C
 
 /**
  * todo: ClusterSpi
+ *
  * @param <T>: The interface class of the provider
  */
 @Slf4j
@@ -97,31 +98,24 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
         if (CollectionUtils.isEmpty(newProviderCallers)) {
             return;
         }
-
         // set new provider caller to load balancer
         loadBalancer.refresh(newProviderCallers);
 
-        List<ProviderCaller<T>> oldProviderCallers = providerCallers;
-        providerCallers = newProviderCallers;
-
-        List<ProviderCaller<T>> inactiveOnes = new ArrayList<>();
-        for (ProviderCaller<T> oldProviderCaller : oldProviderCallers) {
-            if (newProviderCallers.contains(oldProviderCaller)) {
-                // todo: implements hashcode() of ProviderCaller
-                continue;
-            }
-            inactiveOnes.add(oldProviderCaller);
+        if (CollectionUtils.isEmpty(providerCallers)) {
+            return;
         }
-
+        List<ProviderCaller<T>> oldProviderCallers = providerCallers;
+        // Assign new ones to provider callers
+        providerCallers = newProviderCallers;
+        Collection<ProviderCaller<T>> inactiveOnes = CollectionUtils.subtract(newProviderCallers, oldProviderCallers);
         if (CollectionUtils.isEmpty(inactiveOnes)) {
             return;
         }
-
         // Destroy the inactive provider callers
         destroyInactiveProviderCallers(inactiveOnes);
     }
 
-    private void destroyInactiveProviderCallers(List<ProviderCaller<T>> delayDestroyProviderCallers) {
+    private void destroyInactiveProviderCallers(Collection<ProviderCaller<T>> delayDestroyProviderCallers) {
         // Execute once after a daley time
         ScheduledDestroyThreadPool.scheduleDelayTask(DESTROY_CALLER_THREAD_POOL, DELAY_TIME, TimeUnit.MILLISECONDS, () -> {
             for (ProviderCaller<?> providerCaller : delayDestroyProviderCallers) {
