@@ -40,7 +40,7 @@ public class ConsumerWrapper<T> implements DisposableBean {
     /**
      *
      */
-    private       ProviderCluster              providerCluster;
+    private       ProviderCluster<T>           providerCluster;
     /**
      * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(ConsumerWrapper)}
      */
@@ -91,12 +91,13 @@ public class ConsumerWrapper<T> implements DisposableBean {
         version = (String) consumerAttributesMap.get(VERSION);
     }
 
-    private ProviderCluster createProviderCluster(InfinityProperties infinityProperties) {
+    private ProviderCluster<T> createProviderCluster(InfinityProperties infinityProperties) {
         // todo: support multiple protocols
         // 当配置多个protocol的时候，比如A,B,C，
         // 那么正常情况下只会使用A，如果A被开关降级，那么就会使用B，B也被降级，那么会使用C
         // One cluster is created for one protocol, only one server node under a cluster can receive the request
-        return ProviderCluster.createCluster(infinityProperties.getProtocol().getName().name(),
+        return ProviderCluster.createCluster(interfaceClass,
+                infinityProperties.getProtocol().getName().name(),
                 infinityProperties.getProtocol().getCluster(),
                 infinityProperties.getProtocol().getLoadBalancer(),
                 infinityProperties.getProtocol().getFaultTolerance());

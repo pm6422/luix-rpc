@@ -117,7 +117,7 @@ public class SubscribeProviderListener<T> implements ClientListener {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-        // Loop all the cluster and update callers
+        // Refresh provider callers to AbstractLoadBalancer
         providerCluster.refresh(providerCallers);
     }
 

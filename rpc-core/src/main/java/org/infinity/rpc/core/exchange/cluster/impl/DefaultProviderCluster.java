@@ -36,6 +36,7 @@ import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_C
 public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     private static final int                       DELAY_TIME = 1000;
     private final        AtomicBoolean             available  = new AtomicBoolean(false);
+    private              Class<T>                  interfaceClass;
     private              String                    protocol;
     private              FaultToleranceStrategy<T> faultToleranceStrategy;
     private              LoadBalancer<T>           loadBalancer;
@@ -52,8 +53,13 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     }
 
     @Override
+    public void setInterfaceClass(Class<T> interfaceClass) {
+        this.interfaceClass = interfaceClass;
+    }
+
+    @Override
     public Class<T> getInterfaceClass() {
-        return CollectionUtils.isEmpty(providerCallers) ? null : providerCallers.get(0).getInterfaceClass();
+        return interfaceClass;
     }
 
     @Override
@@ -171,6 +177,6 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
 
     @Override
     public String toString() {
-        return DefaultProviderCluster.class.getSimpleName().concat(":").concat(getInterfaceClass().getName());
+        return DefaultProviderCluster.class.getSimpleName().concat(":").concat(interfaceClass.getName());
     }
 }
