@@ -153,7 +153,6 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     private void registerProviderBeans(ClassPathBeanDefinitionRegistryScanner providerScanner, String scanBasePackage) {
         // The 'scan' method can register @Provider bean instance to spring context
         providerScanner.scan(scanBasePackage);
-        log.info("Registered RPC provider instances to spring context");
     }
 
     /**
