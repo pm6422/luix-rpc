@@ -98,15 +98,17 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
         if (CollectionUtils.isEmpty(newProviderCallers)) {
             return;
         }
-        // set new provider caller to load balancer
+        // Set new provider callers to load balancer
         loadBalancer.refresh(newProviderCallers);
 
-        if (CollectionUtils.isEmpty(providerCallers)) {
-            return;
-        }
         List<ProviderCaller<T>> oldProviderCallers = providerCallers;
         // Assign new ones to provider callers
         providerCallers = newProviderCallers;
+
+        if (CollectionUtils.isEmpty(oldProviderCallers)) {
+            return;
+        }
+
         Collection<ProviderCaller<T>> inactiveOnes = CollectionUtils.subtract(newProviderCallers, oldProviderCallers);
         if (CollectionUtils.isEmpty(inactiveOnes)) {
             return;
