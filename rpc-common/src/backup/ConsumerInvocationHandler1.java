@@ -3,7 +3,6 @@ package org.infinity.rpc.core.client.proxy;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.common.RpcRequest;
 import org.infinity.rpc.common.RpcResponse;
-import org.infinity.rpc.core.client.RpcClient;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.registry.Registry;
 import org.springframework.util.ClassUtils;

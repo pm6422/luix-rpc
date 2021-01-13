@@ -1,5 +1,5 @@
-package org.infinity.rpc.core.config.spring.startup;
-
+package org.infinity.rpc.common;//package org.infinity.rpc.core.config.spring.startup;
+//
 //public class NettyServerApplicationRunner implements ApplicationRunner, Ordered {
 //
 //    @Autowired

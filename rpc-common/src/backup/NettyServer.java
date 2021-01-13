@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.netty;
+package org.infinity.rpc.common;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -8,10 +8,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.common.RpcDecoder;
-import org.infinity.rpc.common.RpcEncoder;
-import org.infinity.rpc.common.RpcRequest;
-import org.infinity.rpc.common.RpcResponse;
 
 /**
  * Netty server
