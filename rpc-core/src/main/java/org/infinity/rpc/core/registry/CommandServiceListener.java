@@ -81,7 +81,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     public CommandServiceListener(Url clientUrl, CommandFailbackAbstractRegistry registry) {
         this.clientUrl = clientUrl;
         this.registry = registry;
-        log.info("Created command service manager for url [{}]", clientUrl.toFullStr());
+        log.info("Created command service listener for url [{}]", clientUrl.toFullStr());
     }
 
     /**

@@ -115,7 +115,7 @@ public class RpcLifecycle {
     private void registerProviders(InfinityProperties infinityProperties, List<Url> registryUrls) {
         Map<String, ProviderWrapper<?>> wrappers = ProviderWrapperHolder.getInstance().getWrappers();
         if (MapUtils.isEmpty(wrappers)) {
-            log.info("No RPC service providers found for registering to registry!");
+            log.warn("No RPC service providers found for registering to registry!");
             return;
         }
         // TODO: consider using the async thread pool to speed up the startup process

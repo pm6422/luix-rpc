@@ -1,10 +1,10 @@
 package org.infinity.rpc.core.url;
 
 import lombok.Data;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.constant.RpcConstants;
-import org.infinity.rpc.core.constant.ServiceConstants;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.registry.Registrable;
 import org.infinity.rpc.utilities.network.NetworkUtils;
@@ -227,7 +227,7 @@ public final class Url implements Serializable {
     /**
      * Composition of host + port
      *
-     * @return
+     * @return address
      */
     public String getAddress() {
         return host + ":" + port;
@@ -249,7 +249,7 @@ public final class Url implements Serializable {
     }
 
     public Url copy() {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         if (this.parameters != null) {
             params.putAll(this.parameters);
         }
@@ -294,8 +294,9 @@ public final class Url implements Serializable {
     }
 
     private Map<String, Number> getNumbers() {
-        if (numbers == null) { // 允许并发重复创建
-            numbers = new ConcurrentHashMap<String, Number>();
+        if (numbers == null) {
+            // 允许并发重复创建
+            numbers = new ConcurrentHashMap<>();
         }
         return numbers;
     }
@@ -323,7 +324,7 @@ public final class Url implements Serializable {
     /**
      * 返回一个service or referer的identity,如果两个url的identity相同，则表示相同的一个service或者referer
      *
-     * @return
+     * @return identity
      */
     public String getIdentity() {
         return protocol + PROTOCOL_SEPARATOR + host + ":" + port +
@@ -360,9 +361,10 @@ public final class Url implements Serializable {
         int port = 0;
         String path = null;
         Map<String, String> parameters = new HashMap<>();
-        int i = url.indexOf("?"); // separator between body and parameters
+        // separator between body and parameters
+        int i = url.indexOf("?");
         if (i >= 0) {
-            String[] parts = url.substring(i + 1).split("\\&");
+            String[] parts = url.substring(i + 1).split("&");
 
             for (String part : parts) {
                 part = part.trim();
@@ -379,13 +381,17 @@ public final class Url implements Serializable {
         }
         i = url.indexOf("://");
         if (i >= 0) {
-            if (i == 0) throw new RpcConfigurationException("url missing protocol: \"" + url + "\"");
+            if (i == 0) {
+                throw new RpcConfigurationException("url missing protocol: \"" + url + "\"");
+            }
             protocol = url.substring(0, i);
             url = url.substring(i + 3);
         } else {
             i = url.indexOf(":/");
             if (i >= 0) {
-                if (i == 0) throw new RpcConfigurationException("url missing protocol: \"" + url + "\"");
+                if (i == 0) {
+                    throw new RpcConfigurationException("url missing protocol: \"" + url + "\"");
+                }
                 protocol = url.substring(0, i);
                 url = url.substring(i + 1);
             }
@@ -402,14 +408,18 @@ public final class Url implements Serializable {
             port = Integer.parseInt(url.substring(i + 1));
             url = url.substring(0, i);
         }
-        if (url.length() > 0) host = url;
+        if (url.length() > 0) {
+            host = url;
+        }
         return of(protocol, host, port, path, parameters);
     }
 
     public String toFullStr() {
         StringBuilder builder = new StringBuilder();
-        builder.append(getUri()).append("?");
-
+        builder.append(getUri());
+        if (MapUtils.isNotEmpty(parameters)) {
+            builder.append("?");
+        }
         Iterator<Map.Entry<String, String>> iterator = parameters.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, String> entry = iterator.next();

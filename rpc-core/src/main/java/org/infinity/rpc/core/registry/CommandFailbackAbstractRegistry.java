@@ -83,7 +83,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
      */
     @Override
     protected List<Url> doDiscover(Url clientUrl) {
-        List<Url> urls;
+        List<Url> providerUrls;
 
         Url urlCopy = clientUrl.copy();
         // Read command json content of specified url
@@ -96,16 +96,20 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
         if (rpcCommand != null) {
             rpcCommand.sort();
             CommandServiceListener commandServiceListener = getCommandServiceListener(urlCopy);
-            urls = commandServiceListener.discoverServiceWithCommand(urlCopy, new HashMap<>(), rpcCommand);
+            providerUrls = commandServiceListener.discoverServiceWithCommand(urlCopy, new HashMap<>(), rpcCommand);
             // 在subscribeCommon时，可能订阅完马上就notify，导致首次notify指令时，可能还有其他service没有完成订阅，
             // 此处先对manager更新指令，避免首次订阅无效的问题。
             commandServiceListener.setRpcCommandCache(commandStr);
             log.info("Discovered the command [{}] for url [{}]", commandStr, clientUrl);
         } else {
-            urls = discoverActiveProviders(urlCopy);
-            log.info("Discovered the provider urls [{}] for url [{}]", urls, clientUrl);
+            providerUrls = discoverActiveProviders(urlCopy);
         }
-        return urls;
+        if (CollectionUtils.isNotEmpty(providerUrls)) {
+            log.info("Discovered the provider urls [{}] for url [{}]", providerUrls, clientUrl);
+        } else {
+            log.warn("No RPC service providers found for client url [{}]!", clientUrl);
+        }
+        return providerUrls;
     }
 
     /**
