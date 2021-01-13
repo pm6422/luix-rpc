@@ -4,7 +4,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.proxy.ConsumerProxy;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.exchange.cluster.listener.ConsumerListener;
+import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
+import org.infinity.rpc.core.exchange.cluster.listener.SubscribeProviderListener;
 import org.infinity.rpc.core.url.Url;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -37,17 +38,21 @@ public class ConsumerWrapper<T> implements DisposableBean {
      */
     private final Class<T>            interfaceClass;
     /**
+     *
+     */
+    private       ProviderCluster     providerCluster;
+    /**
      * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(ConsumerWrapper)}
      */
-    private final T                   proxyInstance;
+    private final T                            proxyInstance;
     /**
      *
      */
-    private       ConsumerListener<T> consumerListener;
+    private       SubscribeProviderListener<T> subscribeProviderListener;
     /**
      *
      */
-    private       Url                 clientUrl;
+    private       Url                          clientUrl;
     /**
      *
      */
@@ -76,12 +81,25 @@ public class ConsumerWrapper<T> implements DisposableBean {
 
     public void init(InfinityProperties infinityProperties, List<Url> registryUrls, Map<String, Object> consumerAttributesMap) {
         clientUrl = Url.clientUrl(infinityProperties.getProtocol().getName().name(), interfaceClass.getName());
-        consumerListener = ConsumerListener.of(interfaceClass, registryUrls, clientUrl);
+        // Initialize provider cluster before consumer initialization
+        providerCluster = createProviderCluster(infinityProperties);
+        subscribeProviderListener = SubscribeProviderListener.of(interfaceClass, providerCluster, registryUrls, clientUrl);
         // Set attribute values of @Consumer annotation
         directUrl = (String) consumerAttributesMap.get(DIRECT_URL);
         timeout = (int) consumerAttributesMap.get(TIMEOUT);
         group = (String) consumerAttributesMap.get(GROUP);
         version = (String) consumerAttributesMap.get(VERSION);
+    }
+
+    private ProviderCluster createProviderCluster(InfinityProperties infinityProperties) {
+        // todo: support multiple protocols
+        // 当配置多个protocol的时候，比如A,B,C，
+        // 那么正常情况下只会使用A，如果A被开关降级，那么就会使用B，B也被降级，那么会使用C
+        // One cluster is created for one protocol, only one server node under a cluster can receive the request
+        return ProviderCluster.createCluster(infinityProperties.getProtocol().getName().name(),
+                infinityProperties.getProtocol().getCluster(),
+                infinityProperties.getProtocol().getLoadBalancer(),
+                infinityProperties.getProtocol().getFaultTolerance());
     }
 
     @Override

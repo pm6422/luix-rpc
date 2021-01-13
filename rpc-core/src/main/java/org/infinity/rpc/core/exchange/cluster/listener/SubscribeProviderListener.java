@@ -3,7 +3,6 @@ package org.infinity.rpc.core.exchange.cluster.listener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
-import org.infinity.rpc.core.exchange.cluster.ProviderClusterHolder;
 import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.Registry;
@@ -17,27 +16,36 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+/**
+ * todo: ClusterSupport
+ * Listener used to subscribe providers change event,
+ * method {@link SubscribeProviderListener#onNotify(Url, List)} will be invoked if providers change event occurs.
+ *
+ * @param <T>: The interface class of the consumer
+ */
 @Slf4j
 @ThreadSafe
-public class ConsumerListener<T> implements ClientListener {
-    private       Protocol                          protocol;
-    private       List<Url>                         registryUrls;
-    private       Url                               clientUrl;
+public class SubscribeProviderListener<T> implements ClientListener {
     /**
      * The interface class of the consumer
      */
     private       Class<T>                          interfaceClass;
+    private       ProviderCluster<T>                providerCluster;
+    private       Protocol                          protocol;
+    private       List<Url>                         registryUrls;
+    private       Url                               clientUrl;
     private final Map<Url, List<ProviderCaller<T>>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
 
     /**
      * Prevent instantiation of it outside the class
      */
-    private ConsumerListener() {
+    private SubscribeProviderListener() {
     }
 
-    public static <T> ConsumerListener<T> of(Class<T> interfaceClass, List<Url> registryUrls, Url clientUrl) {
-        ConsumerListener<T> listener = new ConsumerListener<>();
+    public static <T> SubscribeProviderListener<T> of(Class<T> interfaceClass, ProviderCluster<T> providerCluster, List<Url> registryUrls, Url clientUrl) {
+        SubscribeProviderListener<T> listener = new SubscribeProviderListener<>();
         listener.interfaceClass = interfaceClass;
+        listener.providerCluster = providerCluster;
         listener.registryUrls = registryUrls;
         listener.clientUrl = clientUrl;
         listener.protocol = Protocol.getInstance(clientUrl.getProtocol());
@@ -105,9 +113,7 @@ public class ConsumerListener<T> implements ClientListener {
                 .collect(Collectors.toList());
 
         // Loop all the cluster and update callers
-        @SuppressWarnings({"unchecked"})
-        List<ProviderCluster<T>> providerClusters = ProviderClusterHolder.getInstance().getClusters();
-        providerClusters.forEach(c -> c.refresh(providerCallers));
+        providerCluster.refresh(providerCallers);
     }
 
     /**
@@ -119,5 +125,10 @@ public class ConsumerListener<T> implements ClientListener {
             // Bind this listener to the client
             registry.subscribe(clientUrl, this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return SubscribeProviderListener.class.getSimpleName().concat(":").concat(interfaceClass.getName());
     }
 }

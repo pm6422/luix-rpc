@@ -28,19 +28,19 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * The registry subclass name
      */
-    private   String                           registryClassName               = this.getClass().getSimpleName();
+    private final String registryClassName = this.getClass().getSimpleName();
     /**
      * Registry url
      */
-    protected Url                              registryUrl;
+    protected     Url                              registryUrl;
     /**
      * Registered provider urls cache
      */
-    private   Set<Url>                         registeredProviderUrls          = new ConcurrentHashSet<>();
+    private final Set<Url>                         registeredProviderUrls          = new ConcurrentHashSet<>();
     /**
      * Provider urls cache grouped by 'type' parameter value of {@link Url}
      */
-    private   Map<Url, Map<String, List<Url>>> providerUrlsPerTypePerClientUrl = new ConcurrentHashMap<>();
+    private final Map<Url, Map<String, List<Url>>> providerUrlsPerTypePerClientUrl = new ConcurrentHashMap<>();
 
     @Override
     public String getRegistryClassName() {
@@ -200,6 +200,7 @@ public abstract class AbstractRegistry implements Registry {
      * @return provider urls
      */
     @Override
+    @SuppressWarnings("unchecked")
     public List<Url> discover(Url clientUrl) {
         if (clientUrl == null) {
             log.warn("Url must NOT be null!");
@@ -218,7 +219,7 @@ public abstract class AbstractRegistry implements Registry {
             List<Url> discoveredUrls = doDiscover(clientUrl);
             if (CollectionUtils.isNotEmpty(discoveredUrls)) {
                 // Make a url copy and add to results
-                results = discoveredUrls.stream().map(x -> x.copy()).collect(Collectors.toList());
+                results = discoveredUrls.stream().map(Url::copy).collect(Collectors.toList());
             }
         }
         return results;
@@ -235,11 +236,10 @@ public abstract class AbstractRegistry implements Registry {
         if (MapUtils.isEmpty(urls)) {
             return Collections.emptyList();
         }
-        List<Url> results = urls.values()
+        return urls.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-        return results;
     }
 
     /**
@@ -281,11 +281,7 @@ public abstract class AbstractRegistry implements Registry {
         Map<String, List<Url>> urlsPerType = new HashMap<>();
         for (Url url : urls) {
             String type = url.getParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_DEFAULT_VALUE);
-            List<Url> urlList = urlsPerType.get(type);
-            if (urlList == null) {
-                urlList = new ArrayList<>();
-                urlsPerType.put(type, urlList);
-            }
+            List<Url> urlList = urlsPerType.computeIfAbsent(type, k -> new ArrayList<>());
             urlList.add(url);
         }
         return urlsPerType;

@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @NotThreadSafe
 public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRegistry {
-    private Map<Url, CommandServiceListener> commandServiceListenerPerClientUrl = new ConcurrentHashMap<>();
+    private final Map<Url, CommandServiceListener> commandServiceListenerPerClientUrl = new ConcurrentHashMap<>();
 
     public CommandFailbackAbstractRegistry(Url registryUrl) {
         super(registryUrl);
@@ -35,6 +35,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
      * @param clientUrl client url
      * @param listener  client listener
      */
+    @Override
     protected void doSubscribe(Url clientUrl, final ClientListener listener) {
         Url clientUrlCopy = clientUrl.copy();
         // Create a new command service listener or get it from cache
@@ -61,6 +62,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
      * @param clientUrl client url
      * @param listener  client listener
      */
+    @Override
     protected void doUnsubscribe(Url clientUrl, ClientListener listener) {
         Url urlCopy = clientUrl.copy();
         CommandServiceListener commandServiceListener = commandServiceListenerPerClientUrl.get(urlCopy);
@@ -77,8 +79,9 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
      * Discover the provider or command url
      *
      * @param clientUrl url
-     * @return
+     * @return urls
      */
+    @Override
     protected List<Url> doDiscover(Url clientUrl) {
         List<Url> urls;
 
@@ -114,24 +117,24 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
     private CommandServiceListener getCommandServiceListener(Url clientUrl) {
         CommandServiceListener listener = commandServiceListenerPerClientUrl.get(clientUrl);
         if (listener == null) {
-            // Pass the specified registry instance to CommandServiceManager, e.g, ZookeeperRegistry
+            // Pass the specified registry instance to CommandServiceListener, e.g, ZookeeperRegistry
             listener = new CommandServiceListener(clientUrl, this);
-            CommandServiceListener serviceManager = commandServiceListenerPerClientUrl.putIfAbsent(clientUrl, listener);
-            if (serviceManager != null) {
+            CommandServiceListener commandServiceListener = commandServiceListenerPerClientUrl.putIfAbsent(clientUrl, listener);
+            if (commandServiceListener != null) {
                 // Key exists in map, return old data
-                listener = serviceManager;
+                listener = commandServiceListener;
             }
         }
         return listener;
     }
 
-    public List<Url> commandPreview(Url url, RpcCommand rpcCommand, String previewIP) {
+    public List<Url> commandPreview(Url url, RpcCommand rpcCommand, String previewIp) {
         List<Url> finalResult;
         Url urlCopy = url.copy();
 
         if (rpcCommand != null) {
             CommandServiceListener manager = getCommandServiceListener(urlCopy);
-            finalResult = manager.discoverServiceWithCommand(urlCopy, new HashMap<String, Integer>(), rpcCommand, previewIP);
+            finalResult = manager.discoverServiceWithCommand(urlCopy, new HashMap<>(), rpcCommand, previewIp);
         } else {
             finalResult = discoverActiveProviders(urlCopy);
         }

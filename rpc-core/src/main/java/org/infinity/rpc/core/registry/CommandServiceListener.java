@@ -37,14 +37,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
- * Command service listener for a client
+ * todo: CommandServiceManager
+ * Command and service listener for a client.
+ * One command service listener for one consumer or provider interface class.
+ * Refer to {@link CommandFailbackAbstractRegistry#doSubscribe(Url, ClientListener)}
  */
 @Slf4j
 @NotThreadSafe
 public class CommandServiceListener implements ServiceListener, CommandListener {
 
-    public static final String  MOTAN_COMMAND_SWITCHER = "feature.motanrpc.command.enable";
-    private static      Pattern IP_PATTERN             = Pattern.compile("^!?[0-9.]*\\*?$");
+    public static final  String  MOTAN_COMMAND_SWITCHER = "feature.motanrpc.command.enable";
+    private static final Pattern IP_PATTERN             = Pattern.compile("^!?[0-9.]*\\*?$");
 
     static {
         SwitcherService.getInstance().initSwitcher(MOTAN_COMMAND_SWITCHER, true);
@@ -53,19 +56,19 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     /**
      * Client url
      */
-    private          Url                             clientUrl;
+    private final    Url                             clientUrl;
     /**
      * Registry
      */
-    private          CommandFailbackAbstractRegistry registry;
+    private final    CommandFailbackAbstractRegistry registry;
     /**
      *
      */
-    private          Set<ClientListener>             clientListeners            = new ConcurrentHashSet<>();
+    private final    Set<ClientListener>             clientListeners            = new ConcurrentHashSet<>();
     /**
      * Active provider urls per group map
      */
-    private          Map<String, List<Url>>          activeProviderUrlsPerGroup = new ConcurrentHashMap<>();
+    private final    Map<String, List<Url>>          activeProviderUrlsPerGroup = new ConcurrentHashMap<>();
     /**
      *
      */
@@ -120,13 +123,13 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
         String group = clientUrl.getGroup();
         activeProviderUrlsPerGroup.put(group, providerUrls);
 
-        List<Url> providerUrlList = new ArrayList<>();
+        List<Url> providerUrlList;
         if (rpcCommandCache != null) {
             Map<String, Integer> weights = new HashMap<>();
             providerUrlList = discoverServiceWithCommand(this.clientUrl, weights, rpcCommandCache);
         } else {
             log.info("Discovering the active provider urls based on group param of url when RPC command is null");
-            providerUrlList.addAll(discoverActiveProvidersByGroup(this.clientUrl));
+            providerUrlList = new ArrayList<>(discoverActiveProvidersByGroup(this.clientUrl));
         }
 
         for (ClientListener clientListener : clientListeners) {
@@ -138,8 +141,8 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     /**
      * Command listener event
      *
-     * @param clientUrl
-     * @param commandString
+     * @param clientUrl     client url
+     * @param commandString command string
      */
     @EventMarker
     @Override
@@ -147,17 +150,17 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
         log.info("CommandServiceManager notify command. service:" + clientUrl.toSimpleString() + ", command:" + commandString);
 
         if (!SwitcherService.getInstance().isOn(MOTAN_COMMAND_SWITCHER) || commandString == null) {
-            log.info("command reset empty since swither is close.");
+            log.info("command reset empty since switcher is close.");
             commandString = "";
         }
 
-        List<Url> result = new ArrayList<>();
+        List<Url> result;
         Url urlCopy = clientUrl.copy();
 
         if (!StringUtils.equals(commandString, rpcCommandStrCache)) {
             rpcCommandStrCache = commandString;
             rpcCommandCache = RpcCommandUtils.convertToCommand(rpcCommandStrCache);
-            Map<String, Integer> weights = new HashMap<String, Integer>();
+            Map<String, Integer> weights = new HashMap<>();
 
             if (rpcCommandCache != null && rpcCommandCache.getClientCommandList() != null && !rpcCommandCache.getClientCommandList().isEmpty()) {
                 rpcCommandCache.sort();
@@ -169,7 +172,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
                     commandString = "";
                 }
                 // 没有命令时，只返回这个manager实际group对应的结果
-                result.addAll(discoverActiveProvidersByGroup(this.clientUrl));
+                result = new ArrayList<>(discoverActiveProvidersByGroup(this.clientUrl));
 
             }
 
@@ -200,22 +203,23 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     }
 
     public List<Url> discoverServiceWithCommand(Url providerUrl, Map<String, Integer> weights, RpcCommand rpcCommand) {
-        String localIP = NetworkUtils.INTRANET_IP;
-        return this.discoverServiceWithCommand(providerUrl, weights, rpcCommand, localIP);
+        String localIp = NetworkUtils.INTRANET_IP;
+        return this.discoverServiceWithCommand(providerUrl, weights, rpcCommand, localIp);
     }
 
-    public List<Url> discoverServiceWithCommand(Url providerUrl, Map<String, Integer> weights, RpcCommand rpcCommand, String localIP) {
+    public List<Url> discoverServiceWithCommand(Url providerUrl, Map<String, Integer> weights,
+                                                RpcCommand rpcCommand, String localIp) {
         if (rpcCommand == null || CollectionUtils.isEmpty(rpcCommand.getClientCommandList())) {
             return discoverActiveProvidersByGroup(providerUrl);
         }
 
-        List<Url> mergedResult = new LinkedList<Url>();
+        List<Url> mergedResult = new LinkedList<>();
         String path = providerUrl.getPath();
 
         List<RpcCommand.ClientCommand> clientCommandList = rpcCommand.getClientCommandList();
         boolean hit = false;
         for (RpcCommand.ClientCommand command : clientCommandList) {
-            mergedResult = new LinkedList<Url>();
+            mergedResult = new LinkedList<>();
             // 判断当前url是否符合过滤条件
             boolean match = RpcCommandUtils.match(command.getPattern(), path);
             if (match) {
@@ -263,22 +267,22 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
                         int idx = from.indexOf('*');
                         boolean matchFrom;
                         if (idx != -1) {
-                            matchFrom = localIP.startsWith(from.substring(0, idx));
+                            matchFrom = localIp.startsWith(from.substring(0, idx));
                         } else {
-                            matchFrom = localIP.equals(from);
+                            matchFrom = localIp.equals(from);
                         }
 
                         // 开头有!，取反
                         if (oppositeFrom) {
                             matchFrom = !matchFrom;
                         }
-                        log.info("matchFrom: " + matchFrom + ", localip:" + localIP + ", from:" + from);
+                        log.info("matchFrom: " + matchFrom + ", localIp:" + localIp + ", from:" + from);
                         if (matchFrom) {
                             boolean matchTo;
                             Iterator<Url> iterator = mergedResult.iterator();
                             while (iterator.hasNext()) {
                                 Url url = iterator.next();
-                                if (url.getProtocol().equalsIgnoreCase("rule")) {
+                                if ("rule".equalsIgnoreCase(url.getProtocol())) {
                                     continue;
                                 }
                                 idx = to.indexOf('*');
@@ -303,11 +307,11 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
             }
         }
 
-        List<Url> finalResult = new ArrayList<Url>();
+        List<Url> finalResult;
         if (!hit) {
             finalResult = discoverActiveProvidersByGroup(providerUrl);
         } else {
-            finalResult.addAll(mergedResult);
+            finalResult = new ArrayList<>(mergedResult);
         }
         return finalResult;
     }
@@ -377,7 +381,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     public void setRpcCommandCache(String command) {
         rpcCommandStrCache = command;
         rpcCommandCache = RpcCommandUtils.convertToCommand(rpcCommandStrCache);
-        log.info("CommandServiceManager set commandcache. commandstring:" + rpcCommandStrCache + ", comandcache "
+        log.info("CommandServiceManager set command cache. command string:" + rpcCommandStrCache + ", command cache "
                 + (rpcCommandCache == null ? "is null." : "is not null."));
     }
 

@@ -4,8 +4,6 @@ import org.infinity.rpc.core.exchange.ProviderCallable;
 import org.infinity.rpc.core.exchange.faulttolerance.FaultToleranceStrategy;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.ProviderCaller;
-import org.infinity.rpc.core.protocol.Protocol;
-import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;
@@ -19,12 +17,9 @@ import java.util.List;
  */
 @Spi(scope = SpiScope.PROTOTYPE)
 public interface ProviderCluster<T> extends ProviderCallable<T> {
-
     void setProtocol(String protocol);
 
     String getProtocol();
-
-    void setRegistryInfo(RegistryInfo registryInfo);
 
     void setLoadBalancer(LoadBalancer<T> loadBalancer);
 
@@ -49,7 +44,8 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
      * @param name specified provider cluster name
      * @return provider cluster instance
      */
-    static ProviderCluster getInstance(String name) {
+    @SuppressWarnings("unchecked")
+    static <T> ProviderCluster<T> getInstance(String name) {
         return ServiceLoader.forClass(ProviderCluster.class).load(name);
     }
 
@@ -76,10 +72,6 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
         providerCluster.setLoadBalancer(loadBalancer);
         // Initialize
         providerCluster.init();
-
-        // Add to cluster holder
-        ProviderClusterHolder.getInstance().addCluster(clusterName, providerCluster);
-
         return providerCluster;
     }
 }
