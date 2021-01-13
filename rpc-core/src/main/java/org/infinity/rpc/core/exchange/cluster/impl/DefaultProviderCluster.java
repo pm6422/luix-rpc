@@ -99,42 +99,46 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     }
 
     @Override
-    public synchronized void refresh(List<ProviderCaller<T>> providerCallers) {
-        if (CollectionUtils.isEmpty(providerCallers)) {
+    public synchronized void refresh(List<ProviderCaller<T>> newProviderCallers) {
+        if (CollectionUtils.isEmpty(newProviderCallers)) {
             return;
         }
 
-        loadBalancer.refresh(providerCallers);
+        // set new provider caller to load balancer
+        loadBalancer.refresh(newProviderCallers);
 
-        List<ProviderCaller<T>> oldProviderCallers = this.providerCallers;
-        this.providerCallers = providerCallers;
+        List<ProviderCaller<T>> oldProviderCallers = providerCallers;
+        providerCallers = newProviderCallers;
 
-        if (CollectionUtils.isEmpty(oldProviderCallers)) {
-            return;
-        }
-
-        List<ProviderCaller<T>> delayDestroyProviderCallers = new ArrayList<>();
+        List<ProviderCaller<T>> inactiveOnes = new ArrayList<>();
         for (ProviderCaller<T> oldProviderCaller : oldProviderCallers) {
-            if (providerCallers.contains(oldProviderCaller)) {
+            if (newProviderCallers.contains(oldProviderCaller)) {
+                // todo: implements hashcode() of ProviderCaller
                 continue;
             }
-
-            // Destroy the old caller if old caller is useless
-            delayDestroyProviderCallers.add(oldProviderCaller);
+            inactiveOnes.add(oldProviderCaller);
         }
 
-        if (CollectionUtils.isNotEmpty(delayDestroyProviderCallers)) {
-            ScheduledDestroyThreadPool.scheduleDelayTask(DESTROY_CALLER_THREAD_POOL, DELAY_TIME, TimeUnit.MILLISECONDS, () -> {
-                for (ProviderCaller<?> providerCaller : delayDestroyProviderCallers) {
-                    try {
-                        providerCaller.destroy();
-                        log.info("Destroyed the caller with url: {}", providerCaller.getProviderUrl().getUri());
-                    } catch (Exception e) {
-                        log.error(MessageFormat.format("Failed to destroy the caller with url: {0}", providerCaller.getProviderUrl().getUri()), e);
-                    }
+        if (CollectionUtils.isEmpty(inactiveOnes)) {
+            return;
+        }
+
+        // Destroy the inactive provider callers
+        destroyInactiveProviderCallers(inactiveOnes);
+    }
+
+    private void destroyInactiveProviderCallers(List<ProviderCaller<T>> delayDestroyProviderCallers) {
+        // Execute once after a daley time
+        ScheduledDestroyThreadPool.scheduleDelayTask(DESTROY_CALLER_THREAD_POOL, DELAY_TIME, TimeUnit.MILLISECONDS, () -> {
+            for (ProviderCaller<?> providerCaller : delayDestroyProviderCallers) {
+                try {
+                    providerCaller.destroy();
+                    log.info("Destroyed the caller with url: {}", providerCaller.getProviderUrl().getUri());
+                } catch (Exception e) {
+                    log.error(MessageFormat.format("Failed to destroy the caller with url: {0}", providerCaller.getProviderUrl().getUri()), e);
                 }
-            });
-        }
+            }
+        });
     }
 
     @Override

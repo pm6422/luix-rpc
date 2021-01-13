@@ -27,7 +27,7 @@ public class ConsumerListener<T> implements ClientListener {
      * The interface class of the consumer
      */
     private       Class<T>                          interfaceClass;
-    private final Map<Url, List<ProviderCaller<T>>> callersPerRegistryUrl = new ConcurrentHashMap<>();
+    private final Map<Url, List<ProviderCaller<T>>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
 
     /**
      * Prevent instantiation of it outside the class
@@ -57,40 +57,33 @@ public class ConsumerListener<T> implements ClientListener {
     @EventMarker
     public synchronized void onNotify(Url registryUrl, List<Url> providerUrls) {
         if (CollectionUtils.isEmpty(providerUrls)) {
-            log.info("No available providers found on registry: {} for now!", registryUrl.getUri());
+            log.info("No active providers found on registry [{}]", registryUrl.getUri());
             removeInactiveRegistry(registryUrl);
             return;
         }
 
         List<ProviderCaller<T>> newProviderCallers = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
-            List<ProviderCaller<T>> providerCallers = callersPerRegistryUrl.get(registryUrl);
-            ProviderCaller<T> providerCaller = findCallerByProviderUrl(providerCallers, providerUrl);
+            // Find provider caller associated with the provider url
+            ProviderCaller<T> providerCaller = findCallerByProviderUrl(registryUrl, providerUrl);
             if (providerCaller == null) {
-                Url providerUrlCopy = providerUrl.copy();
-                providerCaller = protocol.createProviderCaller(interfaceClass, providerUrlCopy);
+                providerCaller = protocol.createProviderCaller(interfaceClass, providerUrl.copy());
             }
-            if (providerCaller != null) {
-                newProviderCallers.add(providerCaller);
-            }
+            newProviderCallers.add(providerCaller);
         }
 
-        if (CollectionUtils.isEmpty(newProviderCallers)) {
-            removeInactiveRegistry(registryUrl);
-            return;
-        }
-
-        callersPerRegistryUrl.put(registryUrl, newProviderCallers);
+        providerCallersPerRegistryUrl.put(registryUrl, newProviderCallers);
         refreshCluster();
     }
 
-    private ProviderCaller<T> findCallerByProviderUrl(List<ProviderCaller<T>> providerCallers, Url providerUrl) {
+    private ProviderCaller<T> findCallerByProviderUrl(Url registryUrl, Url providerUrl) {
+        List<ProviderCaller<T>> providerCallers = providerCallersPerRegistryUrl.get(registryUrl);
         return CollectionUtils.isEmpty(providerCallers) ? null :
                 providerCallers
                         .stream()
                         .filter(caller -> Objects.equals(providerUrl, caller.getProviderUrl()))
                         .findFirst()
-                        .orElseGet(null);
+                        .orElse(null);
     }
 
     /**
@@ -99,14 +92,14 @@ public class ConsumerListener<T> implements ClientListener {
      * @param inactiveRegistryUrl inactive registry url
      */
     private synchronized void removeInactiveRegistry(Url inactiveRegistryUrl) {
-        if (callersPerRegistryUrl.size() > 1) {
-            callersPerRegistryUrl.remove(inactiveRegistryUrl);
+        if (providerCallersPerRegistryUrl.size() > 1) {
+            providerCallersPerRegistryUrl.remove(inactiveRegistryUrl);
             refreshCluster();
         }
     }
 
     private synchronized void refreshCluster() {
-        List<ProviderCaller<T>> allProviderCallers = callersPerRegistryUrl.values()
+        List<ProviderCaller<T>> providerCallers = providerCallersPerRegistryUrl.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
@@ -114,7 +107,7 @@ public class ConsumerListener<T> implements ClientListener {
         // Loop all the cluster and update callers
         @SuppressWarnings({"unchecked"})
         List<ProviderCluster<T>> providerClusters = ProviderClusterHolder.getInstance().getClusters();
-        providerClusters.forEach(c -> c.refresh(allProviderCallers));
+        providerClusters.forEach(c -> c.refresh(providerCallers));
     }
 
     /**

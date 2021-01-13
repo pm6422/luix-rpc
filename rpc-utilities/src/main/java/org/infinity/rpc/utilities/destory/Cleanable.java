@@ -1,5 +1,5 @@
 package org.infinity.rpc.utilities.destory;
 
-public interface Cleanable<T> {
+public interface Cleanable {
     void cleanup();
 }

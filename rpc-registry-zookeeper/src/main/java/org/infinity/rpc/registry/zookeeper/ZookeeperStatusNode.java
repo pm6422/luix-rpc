@@ -9,6 +9,7 @@ public enum ZookeeperStatusNode {
 
     ACTIVE("active"),
     INACTIVE("inactive"),
+    // todo: remove
     CLIENT("client");
 
     ZookeeperStatusNode(String value) {
