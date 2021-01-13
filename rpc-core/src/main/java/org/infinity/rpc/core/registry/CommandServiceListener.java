@@ -19,6 +19,7 @@ package org.infinity.rpc.core.registry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.core.exchange.cluster.listener.SubscribeProviderListener;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
@@ -393,4 +394,8 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
         log.warn("路由规则配置不合法");
     }
 
+    @Override
+    public String toString() {
+        return CommandServiceListener.class.getSimpleName().concat(":").concat(clientUrl.getPath());
+    }
 }
