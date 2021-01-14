@@ -31,7 +31,7 @@ public interface ProviderCaller<T> {
      *
      * @return true: available, false: unavailable
      */
-    boolean isAvailable();
+    boolean isActive();
 
     /**
      * Initiate a RPC call

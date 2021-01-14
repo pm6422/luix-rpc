@@ -64,7 +64,7 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
     }
 
     @Override
-    public boolean isAvailable() {
+    public boolean isActive() {
         return client.isActive();
     }
 

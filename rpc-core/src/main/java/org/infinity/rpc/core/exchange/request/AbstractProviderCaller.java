@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 public abstract class AbstractProviderCaller<T> implements ProviderCaller<T> {
-    protected volatile boolean       available       = false;
+    protected volatile boolean       active          = false;
     protected          AtomicBoolean initialized     = new AtomicBoolean(false);
     protected          AtomicInteger processingCount = new AtomicInteger(0);
     protected          Class<T>      interfaceClass;
@@ -45,13 +45,13 @@ public abstract class AbstractProviderCaller<T> implements ProviderCaller<T> {
         return interfaceClass;
     }
 
-    public void setAvailable(boolean available) {
-        this.available = available;
+    public void setAvailable(boolean active) {
+        this.active = active;
     }
 
     @Override
-    public boolean isAvailable() {
-        return available;
+    public boolean isActive() {
+        return active;
     }
 
     @Override
@@ -68,8 +68,8 @@ public abstract class AbstractProviderCaller<T> implements ProviderCaller<T> {
 
     @Override
     public Responseable call(Requestable request) {
-        if (!isAvailable()) {
-            throw new RpcFrameworkException("No available provider caller found for now!");
+        if (!active) {
+            throw new RpcFrameworkException("No active provider caller found for now!");
         }
 
         addProcessingCount();

@@ -31,7 +31,7 @@ public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
         ProviderCaller<T> providerCaller = null;
         if (providerCallers.size() > 1) {
             providerCaller = doSelectNode(request);
-        } else if (providerCallers.size() == 1 && providerCallers.get(0).isAvailable()) {
+        } else if (providerCallers.size() == 1 && providerCallers.get(0).isActive()) {
             providerCaller = providerCallers.get(0);
         }
         if (providerCaller == null) {
@@ -53,7 +53,7 @@ public abstract class AbstractLoadBalancer<T> implements LoadBalancer<T> {
         List<ProviderCaller<T>> selected = new ArrayList<>();
         if (providerCallers.size() > 1) {
             selected = doSelectNodes(request);
-        } else if (providerCallers.size() == 1 && providerCallers.get(0).isAvailable()) {
+        } else if (providerCallers.size() == 1 && providerCallers.get(0).isActive()) {
             selected.add(providerCallers.get(0));
         }
         if (CollectionUtils.isEmpty(selected)) {

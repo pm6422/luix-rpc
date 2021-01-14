@@ -21,7 +21,7 @@ public class RandomLoadBalancer<T> extends AbstractLoadBalancer<T> {
         int index = getIndex(providerCallers);
         for (int i = 0; i < providerCallers.size(); i++) {
             ProviderCaller<T> providerCaller = providerCallers.get((i + index) % providerCallers.size());
-            if (providerCaller.isAvailable()) {
+            if (providerCaller.isActive()) {
                 return providerCaller;
             }
         }
@@ -34,7 +34,7 @@ public class RandomLoadBalancer<T> extends AbstractLoadBalancer<T> {
         int index = getIndex(providerCallers);
         for (int i = 0; i < providerCallers.size(); i++) {
             ProviderCaller<T> providerCaller = providerCallers.get((i + index) % providerCallers.size());
-            if (providerCaller.isAvailable()) {
+            if (providerCaller.isActive()) {
                 selected.add(providerCaller);
             }
         }
