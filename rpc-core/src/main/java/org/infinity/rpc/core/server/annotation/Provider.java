@@ -28,7 +28,7 @@ public @interface Provider {
     String version() default VERSION_DEFAULT_VALUE;
 
     // Timeout value for service invocation
-    int timeout() default 0;
+    int timeout() default REQUEST_TIMEOUT_DEFAULT_VALUE;
 
     // The max retry times of RPC request
     int maxRetries() default MAX_RETRIES_DEFAULT_VALUE;

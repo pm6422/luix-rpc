@@ -10,4 +10,5 @@ public interface ServiceConstants {
     String VERSION                   = "version";
     String VERSION_DEFAULT_VALUE     = "1.0.0";
     int    MAX_RETRIES_DEFAULT_VALUE = 0;
+    int     REQUEST_TIMEOUT_DEFAULT_VALUE       = 500;
 }

@@ -108,7 +108,6 @@ public final class Url implements Serializable {
      *
      */
     public static final String  PARAM_REQUEST_TIMEOUT                     = "requestTimeout";
-    public static final int     PARAM_REQUEST_TIMEOUT_DEFAULT_VALUE       = 500;
     /**
      *
      */
@@ -485,13 +484,22 @@ public final class Url implements Serializable {
         parameters.put(name, value);
     }
 
-    public Integer getMethodParameter(String methodName, String paramDesc, String name, int defaultValue) {
-        String key = methodName + "(" + paramDesc + ")." + name;
+    /**
+     * Get method level parameter value
+     *
+     * @param methodName       method name
+     * @param methodParameters method parameter class name list string. e.g, java.util.List,java.lang.Long
+     * @param name             parameter name
+     * @param defaultValue     parameter default value
+     * @return value
+     */
+    public Integer getMethodParameter(String methodName, String methodParameters, String name, int defaultValue) {
+        String key = methodName + "(" + methodParameters + ")." + name;
         Number n = getNumbers().get(key);
         if (n != null) {
             return n.intValue();
         }
-        String value = getMethodParameter(methodName, paramDesc, name);
+        String value = getMethodParameter(methodName, methodParameters, name);
         if (value == null || value.length() == 0) {
             return defaultValue;
         }
@@ -500,8 +508,8 @@ public final class Url implements Serializable {
         return i;
     }
 
-    public String getMethodParameter(String methodName, String paramDesc, String name) {
-        String value = getParameter(RpcConstants.METHOD_CONFIG_PREFIX + methodName + "(" + paramDesc + ")." + name);
+    public String getMethodParameter(String methodName, String methodParameters, String name) {
+        String value = getParameter(RpcConstants.METHOD_CONFIG_PREFIX + methodName + "(" + methodParameters + ")." + name);
         if (value == null || value.length() == 0) {
             return getParameter(name);
         }

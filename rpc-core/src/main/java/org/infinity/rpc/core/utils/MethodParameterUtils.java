@@ -76,14 +76,14 @@ public class MethodParameterUtils {
      * e.g, invoke(java.util.List,java.lang.Long)
      *
      * @param methodName      method name
-     * @param methodParamList method parameter class name list string
+     * @param methodParameters method parameter class name list string
      * @return method name with parameter class name list string
      */
-    public static String getMethodSignature(String methodName, String methodParamList) {
-        if (StringUtils.isEmpty(methodParamList)) {
+    public static String getMethodSignature(String methodName, String methodParameters) {
+        if (StringUtils.isEmpty(methodParameters)) {
             return methodName + "()";
         } else {
-            return methodName + "(" + methodParamList + ")";
+            return methodName + "(" + methodParameters + ")";
         }
     }
 
@@ -188,12 +188,12 @@ public class MethodParameterUtils {
             return className;
         }
 
-        className = dogGetClassName(clz);
+        className = doGetClassName(clz);
         CLASS_TO_NAME_MAP.putIfAbsent(clz, className);
         return className;
     }
 
-    private static String dogGetClassName(Class<?> clz) {
+    private static String doGetClassName(Class<?> clz) {
         if (!clz.isArray()) {
             // The class is not array
             return clz.getName();

@@ -3,6 +3,7 @@ package org.infinity.rpc.transport.netty4;
 import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.constant.RpcConstants;
+import org.infinity.rpc.core.constant.ServiceConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
@@ -42,9 +43,10 @@ public class NettyChannel implements Channel {
 
     @Override
     public Responseable request(Requestable request) {
+        // Get method level parameter value
         int timeout = nettyClient.getProviderUrl()
                 .getMethodParameter(request.getMethodName(), request.getMethodParameters(),
-                        Url.PARAM_REQUEST_TIMEOUT, Url.PARAM_REQUEST_TIMEOUT_DEFAULT_VALUE);
+                        Url.PARAM_REQUEST_TIMEOUT, ServiceConstants.REQUEST_TIMEOUT_DEFAULT_VALUE);
         ResponseFuture response = new DefaultResponseFuture(request, timeout, this.nettyClient.getProviderUrl());
         this.nettyClient.registerCallback(request.getRequestId(), response);
         byte[] msg = CodecUtils.encodeObjectToBytes(this, codec, request);
