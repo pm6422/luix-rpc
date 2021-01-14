@@ -77,10 +77,10 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
 
             if (server != null) {
                 // can't share service channel
-                if (!RpcFrameworkUtils.checkIfCanShareServiceChannel(server.getUrl(), url)) {
+                if (!RpcFrameworkUtils.checkIfCanShareServiceChannel(server.getProviderUrl(), url)) {
                     throw new RpcFrameworkException(
                             "Service export Error: share channel but some config param is different, protocol or codec or serialize or maxContentLength or maxServerConnection or maxWorkerThread or heartbeatFactory, source="
-                                    + server.getUrl() + " target=" + url, RpcErrorMsgConstant.FRAMEWORK_EXPORT_ERROR);
+                                    + server.getProviderUrl() + " target=" + url, RpcErrorMsgConstant.FRAMEWORK_EXPORT_ERROR);
                 }
 
                 saveEndpoint2Urls(server2UrlsShareChannel, server, protocolKey);
@@ -101,9 +101,9 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
     }
 
     @Override
-    public Client createClient(Url url) {
-        log.info(this.getClass().getSimpleName() + " create client: url={}", url);
-        return createClient(url, heartbeatClientEndpointManager);
+    public Client createClient(Url providerUrl) {
+        log.info(this.getClass().getSimpleName() + " create client: url={}", providerUrl);
+        return createClient(providerUrl, heartbeatClientEndpointManager);
     }
 
     @Override
@@ -172,8 +172,8 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
         return heartbeatFactory;
     }
 
-    private Client createClient(Url url, EndpointManager endpointManager) {
-        Client client = innerCreateClient(url);
+    private Client createClient(Url providerUrl, EndpointManager endpointManager) {
+        Client client = innerCreateClient(providerUrl);
         endpointManager.addEndpoint(client);
         return client;
     }
@@ -197,6 +197,6 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
 
     protected abstract Server innerCreateServer(Url url, MessageHandler messageHandler);
 
-    protected abstract Client innerCreateClient(Url url);
+    protected abstract Client innerCreateClient(Url providerUrl);
 
 }

@@ -181,7 +181,7 @@ public class DefaultCodec extends AbstractCodec {
     }
 
     private Serializer getSerializer(Channel channel) {
-        String serializerName = channel.getUrl().getParameter(Url.PARAM_SERIALIZER, Url.PARAM_SERIALIZER_DEFAULT_VALUE);
+        String serializerName = channel.getProviderUrl().getParameter(Url.PARAM_SERIALIZER, Url.PARAM_SERIALIZER_DEFAULT_VALUE);
         return Serializer.getInstance(serializerName);
     }
 

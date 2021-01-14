@@ -21,7 +21,7 @@ public class NettyChannelFactory implements SharedObjectFactory<NettyChannel> {
 
     public NettyChannelFactory(NettyClient nettyClient) {
         this.nettyClient = nettyClient;
-        this.factoryName = "NettyChannelFactory_" + nettyClient.getUrl().getHost() + "_" + nettyClient.getUrl().getPort();
+        this.factoryName = "NettyChannelFactory_" + nettyClient.getProviderUrl().getHost() + "_" + nettyClient.getProviderUrl().getPort();
     }
 
     @Override
@@ -41,11 +41,11 @@ public class NettyChannelFactory implements SharedObjectFactory<NettyChannel> {
                     } else {
                         nettyChannel.close();
                         nettyChannel.open();
-                        log.info("rebuild channel success: " + nettyChannel.getUrl());
+                        log.info("rebuild channel success: " + nettyChannel.getProviderUrl());
                     }
                 }
             } catch (Exception e) {
-                log.error("rebuild error: " + this.toString() + ", " + nettyChannel.getUrl(), e);
+                log.error("rebuild error: " + this.toString() + ", " + nettyChannel.getProviderUrl(), e);
             } finally {
                 lock.unlock();
             }
@@ -72,9 +72,9 @@ public class NettyChannelFactory implements SharedObjectFactory<NettyChannel> {
                 channel.getLock().lock();
                 channel.close();
                 channel.open();
-                log.info("rebuild channel success: " + channel.getUrl());
+                log.info("rebuild channel success: " + channel.getProviderUrl());
             } catch (Exception e) {
-                log.error("rebuild error: " + this.toString() + ", " + channel.getUrl(), e);
+                log.error("rebuild error: " + this.toString() + ", " + channel.getProviderUrl(), e);
             } finally {
                 channel.getLock().unlock();
             }

@@ -21,7 +21,6 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 import org.infinity.rpc.transport.netty4.server.NettyServer;
 import org.infinity.rpc.utilities.network.NetworkUtils;
-import org.infinity.rpc.utilities.spi.ServiceLoader;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -38,14 +37,14 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
     public NettyChannelHandler(Channel channel, MessageHandler messageHandler) {
         this.channel = channel;
         this.messageHandler = messageHandler;
-        codec = Codec.getInstance(channel.getUrl().getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
+        codec = Codec.getInstance(channel.getProviderUrl().getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
     }
 
     public NettyChannelHandler(Channel channel, MessageHandler messageHandler, ThreadPoolExecutor threadPoolExecutor) {
         this.channel = channel;
         this.messageHandler = messageHandler;
         this.threadPoolExecutor = threadPoolExecutor;
-        codec = Codec.getInstance(channel.getUrl().getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
+        codec = Codec.getInstance(channel.getProviderUrl().getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
     }
 
     private String getRemoteIp(ChannelHandlerContext ctx) {

@@ -175,7 +175,7 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
     }
 
     @Override
-    public Url getUrl() {
+    public Url getProviderUrl() {
         return url;
     }
 

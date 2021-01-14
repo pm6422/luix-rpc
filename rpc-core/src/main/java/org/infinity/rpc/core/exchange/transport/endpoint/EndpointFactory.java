@@ -40,10 +40,10 @@ public interface EndpointFactory {
     /**
      * create remote client
      *
-     * @param url
+     * @param providerUrl
      * @return
      */
-    Client createClient(Url url);
+    Client createClient(Url providerUrl);
 
     /**
      * safe release server

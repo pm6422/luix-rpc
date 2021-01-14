@@ -7,8 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.GROUP_DEFAULT_VALUE;
-import static org.infinity.rpc.core.constant.ServiceConstants.VERSION_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
  * RPC provider annotation
@@ -32,7 +31,7 @@ public @interface Provider {
     int timeout() default 0;
 
     // The max retry times of RPC request
-    int maxRetries() default 0;
+    int maxRetries() default MAX_RETRIES_DEFAULT_VALUE;
 
     // Indicator to monitor health
     boolean checkHealth() default true;

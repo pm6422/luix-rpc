@@ -25,7 +25,6 @@ import org.infinity.rpc.core.exchange.transport.endpoint.EndpointManager;
 import org.infinity.rpc.core.exchange.transport.heartbeat.HeartbeatFactory;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
-import org.infinity.rpc.utilities.spi.ServiceLoader;
 
 import java.util.Collections;
 import java.util.Map;
@@ -57,7 +56,7 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
                     HeartbeatFactory factory = entry.getValue();
                     endpoint.heartbeat(factory.createRequest());
                 } catch (Exception e) {
-                    log.error("HeartbeatEndpointManager send heartbeat Error: url=" + endpoint.getUrl().getUri() + ", " + e.getMessage());
+                    log.error("HeartbeatEndpointManager send heartbeat Error: url=" + endpoint.getProviderUrl().getUri() + ", " + e.getMessage());
                 }
             }
         }, RpcConstants.HEARTBEAT_PERIOD, RpcConstants.HEARTBEAT_PERIOD, TimeUnit.MILLISECONDS);
@@ -81,7 +80,7 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
         }
 
         Client client = (Client) endpoint;
-        Url url = endpoint.getUrl();
+        Url url = endpoint.getProviderUrl();
         String heartbeatFactoryName = url.getParameter(Url.PARAM_HEART_BEAT_FACTORY, Url.PARAM_HEART_BEAT_FACTORY_DEFAULT_VALUE);
         HeartbeatFactory heartbeatFactory = HeartbeatFactory.getInstance(heartbeatFactoryName);
         if (heartbeatFactory == null) {

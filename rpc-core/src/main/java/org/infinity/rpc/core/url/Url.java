@@ -104,7 +104,7 @@ public final class Url implements Serializable {
      *
      */
     public static final String  PARAM_REQUEST_TIMEOUT                     = "requestTimeout";
-    public static final String  PARAM_REQUEST_TIMEOUT_DEFAULT_VALUE       = "200";
+    public static final int     PARAM_REQUEST_TIMEOUT_DEFAULT_VALUE       = 500;
     /**
      *
      */
@@ -120,6 +120,16 @@ public final class Url implements Serializable {
      */
     public static final String  PARAM_SHARE_CHANNEL                       = "shareChannel";
     public static final boolean PARAM_SHARE_CHANNEL_DEFAULT_VALUE         = true;
+    /**
+     * thread pool minimum connection number
+     */
+    public static final String  PARAM_MIN_CLIENT_CONNECTION               = "minClientConnection";
+    public static final int     PARAM_MIN_CLIENT_CONNECTION_DEFAULT_VALUE = 2;
+    /**
+     * thread pool maximum connection number
+     */
+    public static final String  PARAM_MAX_CLIENT_CONNECTION               = "maxClientConnection";
+    public static final int     PARAM_MAX_CLIENT_CONNECTION_DEFAULT_VALUE = 10;
     /**
      * max server conn (all clients conn)
      */
@@ -160,14 +170,28 @@ public final class Url implements Serializable {
      */
     public static final String  PARAM_TRANS_EXCEPTION_STACK               = "transExceptionStack";
     public static final boolean PARAM_TRANS_EXCEPTION_STACK_DEFAULT_VALUE = true;
+    /**
+     *
+     */
+    public static final String  PARAM_ASYNC_INIT_CONNECTION               = "asyncInitConnection";
+    public static final boolean PARAM_ASYNC_INIT_CONNECTION_DEFAULT_VALUE = false;
+    /**
+     *
+     */
+    public static final String  PARAM_THROW_EXCEPTION                     = "throwException";
+    public static final boolean PARAM_THROW_EXCEPTION_DEFAULT_VALUE       = true;
+    /**
+     *
+     */
+    public static final String  PARAM_WEIGHT                              = "weights";
+    public static final String  PARAM_WEIGHT_DEFAULT_VALUE                = "";
 
-    public static final String PARAM_ADDRESS               = "address";
-    public static final String PARAM_SESSION_TIMEOUT       = "sessionTimeout";
-    public static final String PARAM_MAX_RETRIES           = "maxRetries";
-    public static final String PARAM_RETRY_INTERVAL        = "retryInterval";
-    public static final String PARAM_APP                   = "app";
-    public static final String PARAM_ACTIVATED_TIME        = "activatedTime";
-    public static final String PARAM_MAX_CLIENT_CONNECTION = "maxClientConnection";
+    public static final String PARAM_ADDRESS         = "address";
+    public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
+    public static final String PARAM_MAX_RETRIES     = "maxRetries";
+    public static final String PARAM_RETRY_INTERVAL  = "retryInterval";
+    public static final String PARAM_APP             = "app";
+    public static final String PARAM_ACTIVATED_TIME  = "activatedTime";
 
     /**
      * Extended parameters

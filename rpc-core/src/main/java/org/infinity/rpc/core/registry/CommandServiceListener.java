@@ -26,7 +26,6 @@ import org.infinity.rpc.core.subscribe.RpcCommand;
 import org.infinity.rpc.core.subscribe.RpcCommandUtils;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.core.url.UrlParam;
 import org.infinity.rpc.utilities.annotation.EventReceiver;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import org.infinity.rpc.utilities.network.NetworkUtils;
@@ -340,7 +339,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
             for (Map.Entry<String, Integer> entry : weights.entrySet()) {
                 weightsBuilder.append(entry.getKey()).append(':').append(entry.getValue()).append(',');
             }
-            ruleUrl.addParameter(UrlParam.weights.getName(), weightsBuilder.deleteCharAt(weightsBuilder.length() - 1).toString());
+            ruleUrl.addParameter(Url.PARAM_WEIGHT, weightsBuilder.deleteCharAt(weightsBuilder.length() - 1).toString());
             finalResult.add(ruleUrl);
         }
 

@@ -25,7 +25,6 @@ import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.exchange.transport.SharedObjectFactory;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.core.url.UrlParam;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 
 import java.util.Map;
@@ -55,13 +54,13 @@ public class NettyClient extends AbstractSharedPoolClient {
     private              Bootstrap                 bootstrap;
     private              int                       maxClientConnection;
 
-    public NettyClient(Url url) {
-        super(url);
-        maxClientConnection = url.getIntParameter(UrlParam.maxClientConnection.getName(), UrlParam.maxClientConnection.getIntValue());
+    public NettyClient(Url providerUrl) {
+        super(providerUrl);
+        maxClientConnection = providerUrl.getIntParameter(Url.PARAM_MAX_CLIENT_CONNECTION, Url.PARAM_MAX_CLIENT_CONNECTION_DEFAULT_VALUE);
         Validate.isTrue(maxClientConnection > 0, "maxClientConnection must be a positive number!");
 
         timeMonitorFuture = scheduledExecutor.scheduleWithFixedDelay(
-                new TimeoutMonitor("timeout-monitor-" + url.getHost() + "-" + url.getPort()),
+                new TimeoutMonitor("timeout-monitor-" + providerUrl.getHost() + "-" + providerUrl.getPort()),
                 RpcConstants.NETTY_TIMEOUT_TIMER_PERIOD, RpcConstants.NETTY_TIMEOUT_TIMER_PERIOD,
                 TimeUnit.MILLISECONDS);
     }
@@ -74,7 +73,7 @@ public class NettyClient extends AbstractSharedPoolClient {
     @Override
     public Responseable request(Requestable request) {
         if (!isActive()) {
-            throw new RpcServiceException("NettyChannel is unavailable: url=" + url.getUri() + request);
+            throw new RpcServiceException("NettyChannel is unavailable: url=" + providerUrl.getUri() + request);
         }
         boolean isAsync = false;
         Object async = ExchangeContext.getInstance().getAttribute(RpcConstants.ASYNC_SUFFIX);
@@ -93,19 +92,19 @@ public class NettyClient extends AbstractSharedPoolClient {
             RpcFrameworkUtils.logEvent(request, RpcConstants.TRACE_CONNECTION);
 
             if (channel == null) {
-                log.error("NettyClient borrowObject null: url=" + url.getUri() + " " + request);
+                log.error("NettyClient borrowObject null: url=" + providerUrl.getUri() + " " + request);
                 return null;
             }
 
             // async request
             response = channel.request(request);
         } catch (Exception e) {
-            log.error("NettyClient request Error: url=" + url.getUri() + " " + request + ", " + e.getMessage());
+            log.error("NettyClient request Error: url=" + providerUrl.getUri() + " " + request + ", " + e.getMessage());
 
             if (e instanceof RpcAbstractException) {
                 throw (RpcAbstractException) e;
             } else {
-                throw new RpcServiceException("NettyClient request Error: url=" + url.getUri() + " " + request, e);
+                throw new RpcServiceException("NettyClient request Error: url=" + providerUrl.getUri() + " " + request, e);
             }
         }
 
@@ -135,7 +134,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         }
 
         bootstrap = new Bootstrap();
-        int timeout = getUrl().getIntParameter(Url.PARAM_CONNECT_TIMEOUT, Url.PARAM_CONNECT_TIMEOUT_DEFAULT_VALUE);
+        int timeout = getProviderUrl().getIntParameter(Url.PARAM_CONNECT_TIMEOUT, Url.PARAM_CONNECT_TIMEOUT_DEFAULT_VALUE);
         if (timeout <= 0) {
             throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
@@ -143,7 +142,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         bootstrap.option(ChannelOption.TCP_NODELAY, true);
         bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
         // 最大响应包限制
-        final int maxContentLength = url.getIntParameter(Url.PARAM_MAX_CONTENT_LENGTH, Url.PARAM_MAX_CONTENT_LENGTH_DEFAULT_VALUE);
+        final int maxContentLength = providerUrl.getIntParameter(Url.PARAM_MAX_CONTENT_LENGTH, Url.PARAM_MAX_CONTENT_LENGTH_DEFAULT_VALUE);
         bootstrap.group(NIO_EVENT_LOOP_GROUP)
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<SocketChannel>() {
@@ -176,7 +175,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         // 初始化连接池
         initPool();
 
-        log.info("NettyClient finish Open: url={}", url);
+        log.info("NettyClient finish Open: url={}", providerUrl);
 
         // 注册统计回调
 //        StatsUtil.registryStatisticCallback(this);
@@ -200,15 +199,15 @@ public class NettyClient extends AbstractSharedPoolClient {
         try {
             cleanup();
             if (state.isUninitialized()) {
-                log.info("NettyClient close fail: state={}, url={}", state.value, url.getUri());
+                log.info("NettyClient close fail: state={}, url={}", state.value, providerUrl.getUri());
                 return;
             }
 
             // 设置close状态
             state = ChannelState.CLOSED;
-            log.info("NettyClient close Success: url={}", url.getUri());
+            log.info("NettyClient close Success: url={}", providerUrl.getUri());
         } catch (Exception e) {
-            log.error("NettyClient close Error: url=" + url.getUri(), e);
+            log.error("NettyClient close Error: url=" + providerUrl.getUri(), e);
         }
     }
 
@@ -234,8 +233,8 @@ public class NettyClient extends AbstractSharedPoolClient {
     }
 
     @Override
-    public Url getUrl() {
-        return url;
+    public Url getProviderUrl() {
+        return providerUrl;
     }
 
     public Bootstrap getBootstrap() {
@@ -262,8 +261,8 @@ public class NettyClient extends AbstractSharedPoolClient {
                 count = errorCount.longValue();
 
                 if (count >= maxClientConnection && state.isActive()) {
-                    log.error("NettyClient unavailable Error: url=" + url.getIdentity() + " "
-                            + url.getServerPortStr());
+                    log.error("NettyClient unavailable Error: url=" + providerUrl.getIdentity() + " "
+                            + providerUrl.getServerPortStr());
                     state = ChannelState.INACTIVE;
                 }
             }
@@ -295,8 +294,8 @@ public class NettyClient extends AbstractSharedPoolClient {
                 // 过程中有其他并发更新errorCount的，因此这里需要进行一次判断
                 if (count < maxClientConnection) {
                     state = ChannelState.ACTIVE;
-                    log.info("NettyClient recover available: url=" + url.getIdentity() + " "
-                            + url.getServerPortStr());
+                    log.info("NettyClient recover available: url=" + providerUrl.getIdentity() + " "
+                            + providerUrl.getServerPortStr());
                 }
             }
         }
@@ -317,7 +316,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         if (this.callbackMap.size() >= RpcConstants.NETTY_CLIENT_MAX_REQUEST) {
             // reject request, prevent from OutOfMemoryError
             throw new RpcServiceException("NettyClient over of max concurrent request, drop request, url: "
-                    + url.getUri() + " requestId=" + requestId, RpcErrorMsgConstant.SERVICE_REJECT);
+                    + providerUrl.getUri() + " requestId=" + requestId, RpcErrorMsgConstant.SERVICE_REJECT);
         }
 
         this.callbackMap.put(requestId, responseFuture);
@@ -327,17 +326,17 @@ public class NettyClient extends AbstractSharedPoolClient {
     public void heartbeat(Requestable request) {
         // 如果节点还没有初始化或者节点已经被close掉了，那么heartbeat也不需要进行了
         if (state.isUninitialized() || state.isClosed()) {
-            log.warn("NettyClient heartbeat Error: state={} url={}", state.name(), url.getUri());
+            log.warn("NettyClient heartbeat Error: state={} url={}", state.name(), providerUrl.getUri());
             return;
         }
 
-        log.info("Checking health of url [{}]", url.getUri());
+        log.info("Checking health of url [{}]", providerUrl.getUri());
         try {
             // async request后，如果service is
             // available，那么将会自动把该client设置成可用
             request(request, true);
         } catch (Exception e) {
-            log.error("NettyClient heartbeat Error: url={}, {}", url.getUri(), e.getMessage());
+            log.error("NettyClient heartbeat Error: url={}, {}", providerUrl.getUri(), e.getMessage());
         }
     }
 

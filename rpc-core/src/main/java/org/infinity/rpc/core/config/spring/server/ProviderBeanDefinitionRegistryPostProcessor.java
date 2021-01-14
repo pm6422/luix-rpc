@@ -223,7 +223,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         // Check duplicated candidate bean
         if (providerScanner.checkCandidate(providerWrapperBeanName, wrapperBeanDefinition)) {
             registry.registerBeanDefinition(providerWrapperBeanName, wrapperBeanDefinition);
-            log.info("Registered RPC provider wrapper for [{}] to spring context", providerWrapperBeanName);
+            log.info("Registered RPC provider wrapper [{}] to spring context", providerWrapperBeanName);
         }
     }
 

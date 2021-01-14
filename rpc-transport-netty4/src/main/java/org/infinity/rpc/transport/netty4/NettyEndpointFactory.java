@@ -16,7 +16,7 @@ public class NettyEndpointFactory extends AbstractEndpointFactory {
     }
 
     @Override
-    protected Client innerCreateClient(Url url) {
-        return new NettyClient(url);
+    protected Client innerCreateClient(Url providerUrl) {
+        return new NettyClient(providerUrl);
     }
 }

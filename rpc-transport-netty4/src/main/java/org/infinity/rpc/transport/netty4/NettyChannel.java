@@ -18,7 +18,6 @@ import org.infinity.rpc.core.exchange.response.impl.DefaultResponseFuture;
 import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.core.url.UrlParam;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 
 import java.net.InetSocketAddress;
@@ -37,17 +36,17 @@ public class NettyChannel implements Channel {
 
     public NettyChannel(NettyClient nettyClient) {
         this.nettyClient = nettyClient;
-        this.remoteAddress = new InetSocketAddress(nettyClient.getUrl().getHost(), nettyClient.getUrl().getPort());
-        codec = Codec.getInstance(nettyClient.getUrl().getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
+        this.remoteAddress = new InetSocketAddress(nettyClient.getProviderUrl().getHost(), nettyClient.getProviderUrl().getPort());
+        codec = Codec.getInstance(nettyClient.getProviderUrl().getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
     }
 
     @Override
     public Responseable request(Requestable request) {
-        int timeout = nettyClient.getUrl().getMethodParameter(request.getMethodName(), request.getMethodParameters(), UrlParam.requestTimeout.getName(), UrlParam.requestTimeout.getIntValue());
+        int timeout = nettyClient.getProviderUrl().getMethodParameter(request.getMethodName(), request.getMethodParameters(), Url.PARAM_REQUEST_TIMEOUT, Url.PARAM_REQUEST_TIMEOUT_DEFAULT_VALUE);
         if (timeout <= 0) {
             throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
-        ResponseFuture response = new DefaultResponseFuture(request, timeout, this.nettyClient.getUrl());
+        ResponseFuture response = new DefaultResponseFuture(request, timeout, this.nettyClient.getProviderUrl());
         this.nettyClient.registerCallback(request.getRequestId(), response);
         byte[] msg = CodecUtils.encodeObjectToBytes(this, codec, request);
         ChannelFuture writeFuture = this.channel.writeAndFlush(msg);
@@ -80,11 +79,11 @@ public class NettyChannel implements Channel {
 
         if (writeFuture.cause() != null) {
             throw new RpcServiceException("NettyChannel send request to server Error: url="
-                    + nettyClient.getUrl().getUri() + " local=" + localAddress + " "
+                    + nettyClient.getProviderUrl().getUri() + " local=" + localAddress + " "
                     + request, writeFuture.cause());
         } else {
             throw new RpcServiceException("NettyChannel send request to server Timeout: url="
-                    + nettyClient.getUrl().getUri() + " local=" + localAddress + " "
+                    + nettyClient.getProviderUrl().getUri() + " local=" + localAddress + " "
                     + request);
         }
     }
@@ -92,7 +91,7 @@ public class NettyChannel implements Channel {
     @Override
     public synchronized boolean open() {
         if (isActive()) {
-            log.warn("the channel already open, local: " + localAddress + " remote: " + remoteAddress + " url: " + nettyClient.getUrl().getUri());
+            log.warn("the channel already open, local: " + localAddress + " remote: " + remoteAddress + " url: " + nettyClient.getProviderUrl().getUri());
             return true;
         }
 
@@ -100,7 +99,7 @@ public class NettyChannel implements Channel {
         try {
             long start = System.currentTimeMillis();
             channelFuture = nettyClient.getBootstrap().connect(remoteAddress);
-            int timeout = nettyClient.getUrl().getIntParameter(Url.PARAM_CONNECT_TIMEOUT, Url.PARAM_CONNECT_TIMEOUT_DEFAULT_VALUE);
+            int timeout = nettyClient.getProviderUrl().getIntParameter(Url.PARAM_CONNECT_TIMEOUT, Url.PARAM_CONNECT_TIMEOUT_DEFAULT_VALUE);
             if (timeout <= 0) {
                 throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
             }
@@ -123,10 +122,10 @@ public class NettyChannel implements Channel {
 
             if (channelFuture.cause() != null) {
                 channelFuture.cancel(true);
-                throw new RpcServiceException("NettyChannel failed to connect to server, url: " + nettyClient.getUrl().getUri() + ", result: " + result + ", success: " + success + ", connected: " + connected, channelFuture.cause());
+                throw new RpcServiceException("NettyChannel failed to connect to server, url: " + nettyClient.getProviderUrl().getUri() + ", result: " + result + ", success: " + success + ", connected: " + connected, channelFuture.cause());
             } else {
                 channelFuture.cancel(true);
-                throw new RpcServiceException("NettyChannel connect to server timeout url: " + nettyClient.getUrl().getUri() + ", cost: " + (System.currentTimeMillis() - start) + ", result: " + result + ", success: " + success + ", connected: " + connected);
+                throw new RpcServiceException("NettyChannel connect to server timeout url: " + nettyClient.getProviderUrl().getUri() + ", cost: " + (System.currentTimeMillis() - start) + ", result: " + result + ", success: " + success + ", connected: " + connected);
             }
         } catch (RpcServiceException e) {
             throw e;
@@ -134,7 +133,7 @@ public class NettyChannel implements Channel {
             if (channelFuture != null) {
                 channelFuture.channel().close();
             }
-            throw new RpcServiceException("NettyChannel failed to connect to server, url: " + nettyClient.getUrl().getUri(), e);
+            throw new RpcServiceException("NettyChannel failed to connect to server, url: " + nettyClient.getProviderUrl().getUri(), e);
         } finally {
             if (!state.isActive()) {
                 nettyClient.incrErrorCount();
@@ -155,7 +154,7 @@ public class NettyChannel implements Channel {
                 channel.close();
             }
         } catch (Exception e) {
-            log.error("NettyChannel close Error: " + nettyClient.getUrl().getUri() + " local=" + localAddress, e);
+            log.error("NettyChannel close Error: " + nettyClient.getProviderUrl().getUri() + " local=" + localAddress, e);
         }
     }
 
@@ -180,8 +179,8 @@ public class NettyChannel implements Channel {
     }
 
     @Override
-    public Url getUrl() {
-        return nettyClient.getUrl();
+    public Url getProviderUrl() {
+        return nettyClient.getProviderUrl();
     }
 
     public void reconnect() {

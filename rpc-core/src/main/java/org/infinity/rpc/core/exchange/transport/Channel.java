@@ -70,5 +70,5 @@ public interface Channel {
      *
      * @return url provider url
      */
-    Url getUrl();
+    Url getProviderUrl();
 }

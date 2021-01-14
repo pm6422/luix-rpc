@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.core.url.UrlParam;
 import org.infinity.rpc.utilities.lang.MathUtils;
 import org.infinity.rpc.utilities.threadpool.DefaultThreadFactory;
 import org.infinity.rpc.utilities.threadpool.StandardThreadExecutor;
@@ -25,9 +24,9 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
     protected            List<Channel>                channels;
     protected            int                          channelSize;
 
-    public AbstractSharedPoolClient(Url url) {
-        super(url);
-        channelSize = url.getIntParameter(UrlParam.minClientConnection.getName(), UrlParam.minClientConnection.getIntValue());
+    public AbstractSharedPoolClient(Url providerUrl) {
+        super(providerUrl);
+        channelSize = providerUrl.getIntParameter(Url.PARAM_MIN_CLIENT_CONNECTION, Url.PARAM_MIN_CLIENT_CONNECTION_DEFAULT_VALUE);
         Validate.isTrue(channelSize > 0, "minClientConnection must be a positive number!");
     }
 
@@ -35,7 +34,7 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
         factory = createChannelFactory();
         channels = new ArrayList<>(channelSize);
         IntStream.range(0, channelSize).forEach(x -> channels.add(factory.buildObject()));
-        initConnections(url.getBooleanParameter(UrlParam.asyncInitConnection.getName(), UrlParam.asyncInitConnection.getBooleanValue()));
+        initConnections(providerUrl.getBooleanParameter(Url.PARAM_ASYNC_INIT_CONNECTION, Url.PARAM_ASYNC_INIT_CONNECTION_DEFAULT_VALUE));
     }
 
     protected void initConnections(boolean async) {
@@ -51,7 +50,7 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
             try {
                 channel.open();
             } catch (Exception e) {
-                log.error("create connect Error: url=" + url.getUri(), e);
+                log.error("create connect Error: url=" + providerUrl.getUri(), e);
             }
         }
     }
@@ -70,7 +69,7 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
             }
         }
 
-        String errorMsg = this.getClass().getSimpleName() + " getChannel Error: url=" + url.getUri();
+        String errorMsg = this.getClass().getSimpleName() + " getChannel Error: url=" + providerUrl.getUri();
         log.error(errorMsg);
         throw new RpcServiceException(errorMsg);
     }

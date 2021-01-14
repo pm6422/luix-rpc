@@ -15,7 +15,7 @@ import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
-import org.infinity.rpc.core.url.UrlParam;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.text.MessageFormat;
@@ -168,9 +168,9 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
             throw (RuntimeException) cause;
         }
 
-        String parameter = faultToleranceStrategy.getClientUrl()
-                .getParameter(UrlParam.throwException.getName(), UrlParam.throwException.getValue());
-        if (Boolean.parseBoolean(parameter)) {
+        boolean parameter = faultToleranceStrategy.getClientUrl()
+                .getBooleanParameter(Url.PARAM_THROW_EXCEPTION, Url.PARAM_THROW_EXCEPTION_DEFAULT_VALUE);
+        if (parameter) {
             if (cause instanceof RpcAbstractException) {
                 throw (RpcAbstractException) cause;
             } else {

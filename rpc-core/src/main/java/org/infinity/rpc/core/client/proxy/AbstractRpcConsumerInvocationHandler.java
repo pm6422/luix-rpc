@@ -2,7 +2,6 @@ package org.infinity.rpc.core.client.proxy;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.client.ConsumerWrapper;
-import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.ExchangeContext;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
@@ -31,7 +30,8 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
         copyContextToRequest(threadRpcContext, request);
 //        RequestContext.initialize(request);
 
-        Url clientUrl = Url.clientUrl(consumerWrapper.getProviderCluster().getProtocol(), consumerWrapper.getInterfaceClass().getName());
+        Url clientUrl = Url.clientUrl(consumerWrapper.getProviderCluster().getProtocol(),
+                consumerWrapper.getInterfaceClass().getName());
         consumerWrapper.getProviderCluster().getFaultToleranceStrategy().setClientUrl(clientUrl);
 
 //            request.addAttachment(Url.PARAM_APP, infinityProperties.getApplication().getName());
@@ -46,10 +46,9 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
             response = consumerWrapper.getProviderCluster().call(request);
             return response.getResult();
         } catch (Exception ex) {
-            // todo: handle exception
-            log.error("", ex);
+            log.error("Failed to call the request!", ex);
+            return null;
         }
-        throw new RpcServiceException("No cluster!");
     }
 
     /**

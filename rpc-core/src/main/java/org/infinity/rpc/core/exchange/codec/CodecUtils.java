@@ -51,7 +51,7 @@ public class CodecUtils {
             try {
                 data = codec.encode(channel, msg);
             } catch (Exception e) {
-                log.error("NettyEncoder encode error, identity=" + channel.getUrl().getIdentity(), e);
+                log.error("NettyEncoder encode error, identity=" + channel.getProviderUrl().getIdentity(), e);
                 Responseable oriResponse = (Responseable) msg;
                 Responseable response = RpcFrameworkUtils.buildErrorResponse(oriResponse.getRequestId(), oriResponse.getProtocolVersion(), e);
                 data = codec.encode(channel, response);
