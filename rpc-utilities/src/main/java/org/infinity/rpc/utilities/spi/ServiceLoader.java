@@ -230,7 +230,7 @@ public class ServiceLoader<T> {
                 } else {
                     implClass = (Class<T>) Class.forName(implClassName, true, classLoader);
                 }
-                log.debug("Loaded the service [{}] of interface [{}]", implClassName,
+                log.debug("Loaded the service [{}] for interface [{}]", implClassName,
                         serviceInterface.getName().substring(serviceInterface.getName().lastIndexOf(".") + 1));
 
                 // Validate the implementation class

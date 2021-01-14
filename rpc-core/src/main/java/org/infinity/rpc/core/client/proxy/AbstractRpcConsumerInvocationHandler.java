@@ -2,6 +2,7 @@ package org.infinity.rpc.core.client.proxy;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.client.ConsumerWrapper;
+import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.ExchangeContext;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
@@ -46,8 +47,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
             response = consumerWrapper.getProviderCluster().call(request);
             return response.getResult();
         } catch (Exception ex) {
-            log.error("Failed to call the request!", ex);
-            return null;
+            throw new RpcServiceException(ex);
         }
     }
 
