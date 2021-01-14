@@ -107,7 +107,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
         if (CollectionUtils.isNotEmpty(providerUrls)) {
             log.info("Discovered the provider urls [{}] for url [{}]", providerUrls, clientUrl);
         } else {
-            log.warn("No RPC service providers found for client url [{}]!", clientUrl);
+            log.warn("No RPC service providers found on registry for client url [{}]!", clientUrl);
         }
         return providerUrls;
     }

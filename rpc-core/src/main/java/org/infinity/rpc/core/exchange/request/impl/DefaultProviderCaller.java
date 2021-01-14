@@ -14,6 +14,8 @@ import org.infinity.rpc.core.url.Url;
 
 
 /**
+ * One default provider caller for one service interface
+ *
  * @param <T>: The interface class of the provider
  */
 @Slf4j
@@ -23,12 +25,16 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
 
     public DefaultProviderCaller(Class<T> interfaceClass, Url providerUrl) {
         super(interfaceClass, providerUrl);
+        long start = System.currentTimeMillis();
         String endpointFactoryName = providerUrl.getParameter(Url.PARAM_ENDPOINT_FACTORY, Url.PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE);
         endpointFactory = EndpointFactory.getInstance(endpointFactoryName);
         if (endpointFactory == null) {
             throw new RpcFrameworkException("Endpoint factory [" + endpointFactoryName + "] must not be null!");
         }
         client = endpointFactory.createClient(providerUrl);
+        // Initialize
+        init();
+        log.info("Initialized provider caller [{}] in {} ms", this.toString(), System.currentTimeMillis() - start);
     }
 
     @Override
@@ -49,7 +55,7 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
 
     @Override
     protected void reduceProcessingCount(Requestable request, Responseable response) {
-        if (response == null || !(response instanceof Future)) {
+        if (!(response instanceof Future)) {
             processingCount.decrementAndGet();
             return;
         }
@@ -66,5 +72,10 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
     public void destroy() {
         endpointFactory.safeReleaseResource(client, providerUrl);
         log.info("DefaultRpcReferer destory client: url {}", providerUrl);
+    }
+
+    @Override
+    public String toString() {
+        return DefaultProviderCaller.class.getSimpleName().concat(":").concat(interfaceClass.getName());
     }
 }

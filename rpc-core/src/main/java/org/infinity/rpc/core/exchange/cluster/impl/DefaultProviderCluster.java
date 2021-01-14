@@ -99,6 +99,11 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
         available.set(true);
     }
 
+    /**
+     * Update new provider callers of load balancer
+     *
+     * @param newProviderCallers new provider callers
+     */
     @Override
     public synchronized void refresh(List<ProviderCaller<T>> newProviderCallers) {
         if (CollectionUtils.isEmpty(newProviderCallers)) {

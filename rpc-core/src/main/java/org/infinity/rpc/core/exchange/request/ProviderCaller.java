@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.exchange.request;
 
 import org.infinity.rpc.core.exchange.ProviderCallable;
+import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.url.Url;
 
 /**
@@ -10,8 +11,39 @@ import org.infinity.rpc.core.url.Url;
  *
  * @param <T>: The interface class of the provider
  */
-public interface ProviderCaller<T> extends ProviderCallable<T> {
+public interface ProviderCaller<T> {
 
+    /**
+     * Get provider
+     * @return
+     */
     Url getProviderUrl();
+
+    /**
+     * Get provider interface class
+     *
+     * @return interface class
+     */
+    Class<T> getInterfaceClass();
+
+    /**
+     * Check whether it is available
+     *
+     * @return true: available, false: unavailable
+     */
+    boolean isAvailable();
+
+    /**
+     * Initiate a RPC call
+     *
+     * @param request request object
+     * @return response object
+     */
+    Responseable call(Requestable request);
+
+    /**
+     * Do some cleanup task
+     */
+    void destroy();
 
 }

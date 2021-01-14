@@ -25,6 +25,21 @@ public abstract class AbstractProviderCaller<T> implements ProviderCaller<T> {
         this.providerUrl = providerUrl;
     }
 
+    protected void init() {
+        if (!initialized.compareAndSet(false, true)) {
+            log.warn("Provider caller [{}] already has been initialized!", this.toString());
+            return;
+        }
+
+        boolean result = doInit();
+        if (!result) {
+            throw new RpcFrameworkException("Failed to initialize the provider caller [" + this + "]!",
+                    RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+        } else {
+            setAvailable(true);
+        }
+    }
+
     @Override
     public Class<T> getInterfaceClass() {
         return interfaceClass;
@@ -42,22 +57,6 @@ public abstract class AbstractProviderCaller<T> implements ProviderCaller<T> {
     @Override
     public Url getProviderUrl() {
         return providerUrl;
-    }
-
-    @Override
-    public void init() {
-        if (!initialized.compareAndSet(false, true)) {
-            log.warn("Provider caller {} has been already initialized!", this.getClass().getSimpleName());
-            return;
-        }
-
-        boolean result = doInit();
-        if (!result) {
-            throw new RpcFrameworkException("Failed to initialize the provider caller!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
-        } else {
-            log.info("Initialized the provider caller");
-            available = true;
-        }
     }
 
     protected abstract boolean doInit();
