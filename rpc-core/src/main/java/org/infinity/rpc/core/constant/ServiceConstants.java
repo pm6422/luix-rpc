@@ -9,5 +9,5 @@ public interface ServiceConstants {
     String GROUP_DEFAULT_VALUE       = "default";
     String VERSION                   = "version";
     String VERSION_DEFAULT_VALUE     = "1.0.0";
-    int    MAX_RETRIES_DEFAULT_VALUE = 1;
+    int    MAX_RETRIES_DEFAULT_VALUE = 0;
 }

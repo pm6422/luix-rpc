@@ -12,8 +12,8 @@ import org.infinity.rpc.core.exchange.codec.CodecUtils;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Future;
 import org.infinity.rpc.core.exchange.response.FutureListener;
-import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.ResponseFuture;
+import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.DefaultResponseFuture;
 import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
@@ -42,10 +42,9 @@ public class NettyChannel implements Channel {
 
     @Override
     public Responseable request(Requestable request) {
-        int timeout = nettyClient.getProviderUrl().getMethodParameter(request.getMethodName(), request.getMethodParameters(), Url.PARAM_REQUEST_TIMEOUT, Url.PARAM_REQUEST_TIMEOUT_DEFAULT_VALUE);
-        if (timeout <= 0) {
-            throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
-        }
+        int timeout = nettyClient.getProviderUrl()
+                .getMethodParameter(request.getMethodName(), request.getMethodParameters(),
+                        Url.PARAM_REQUEST_TIMEOUT, Url.PARAM_REQUEST_TIMEOUT_DEFAULT_VALUE);
         ResponseFuture response = new DefaultResponseFuture(request, timeout, this.nettyClient.getProviderUrl());
         this.nettyClient.registerCallback(request.getRequestId(), response);
         byte[] msg = CodecUtils.encodeObjectToBytes(this, codec, request);

@@ -103,6 +103,10 @@ public final class Url implements Serializable {
     /**
      *
      */
+    public static final String  PARAM_MAX_RETRIES                         = "maxRetries";
+    /**
+     *
+     */
     public static final String  PARAM_REQUEST_TIMEOUT                     = "requestTimeout";
     public static final int     PARAM_REQUEST_TIMEOUT_DEFAULT_VALUE       = 500;
     /**
@@ -188,7 +192,6 @@ public final class Url implements Serializable {
 
     public static final String PARAM_ADDRESS         = "address";
     public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
-    public static final String PARAM_MAX_RETRIES     = "maxRetries";
     public static final String PARAM_RETRY_INTERVAL  = "retryInterval";
     public static final String PARAM_APP             = "app";
     public static final String PARAM_ACTIVATED_TIME  = "activatedTime";
