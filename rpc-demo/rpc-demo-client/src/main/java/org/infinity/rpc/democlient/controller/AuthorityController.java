@@ -64,7 +64,7 @@ public class AuthorityController {
         log.debug("REST request to update authority: {}", domain);
         authorityService.save(domain);
         return ResponseEntity.ok()
-                .headers(httpHeaderCreator.createSuccessHeader("notification.authority.updated", domain.getName()))
+                .headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getName()))
                 .build();
     }
 
@@ -77,6 +77,6 @@ public class AuthorityController {
         authorityService.findById(name).orElseThrow(() -> new NoDataFoundException(name));
         authorityService.deleteById(name);
         return ResponseEntity.ok()
-                .headers(httpHeaderCreator.createSuccessHeader("notification.authority.deleted", name)).build();
+                .headers(httpHeaderCreator.createSuccessHeader("SM1003", name)).build();
     }
 }
