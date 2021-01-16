@@ -12,7 +12,6 @@ import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * The registry can automatically recover services when encountered the failure.
@@ -38,8 +37,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     private void scheduleRetry(Url registryUrl) {
         long retryInterval = registryUrl.getIntParameter(Url.PARAM_RETRY_INTERVAL);
         // Retry to connect registry at retry interval
-        ScheduledThreadPool.schedulePeriodicalTask(ScheduledThreadPool.RETRY_THREAD_POOL,
-                retryInterval, retryInterval, TimeUnit.MILLISECONDS, this::doRetry);
+        ScheduledThreadPool.schedulePeriodicalTask(ScheduledThreadPool.RETRY_THREAD_POOL, retryInterval, this::doRetry);
     }
 
     /**

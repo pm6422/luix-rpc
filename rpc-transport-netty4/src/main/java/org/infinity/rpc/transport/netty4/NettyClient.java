@@ -30,7 +30,6 @@ import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.infinity.rpc.core.destroy.ScheduledThreadPool.RECYCLE_TIMEOUT_TASK_THREAD_POOL;
@@ -61,7 +60,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         Validate.isTrue(maxClientConnection > 0, "maxClientConnection must be a positive number!");
 
         timeoutFuture = ScheduledThreadPool.schedulePeriodicalTask(RECYCLE_TIMEOUT_TASK_THREAD_POOL,
-                NETTY_TIMEOUT_TIMER_INTERVAL, NETTY_TIMEOUT_TIMER_INTERVAL, TimeUnit.MILLISECONDS, this::recycleTimeoutTask);
+                NETTY_TIMEOUT_TIMER_INTERVAL, this::recycleTimeoutTask);
     }
 
     private void recycleTimeoutTask() {

@@ -37,14 +37,18 @@ public class ScheduledThreadPool {
         });
     }
 
+    public static ScheduledFuture<?> schedulePeriodicalTask(String threadPoolName, long interval, Runnable task) {
+        return schedulePeriodicalTask(threadPoolName, interval, interval, TimeUnit.MILLISECONDS, task);
+    }
+
     public static ScheduledFuture<?> schedulePeriodicalTask(String threadPoolName, long initialDelay,
-                                                                  long interval, TimeUnit timeUnit, Runnable command) {
+                                                            long interval, TimeUnit timeUnit, Runnable task) {
         Validate.isTrue(THREAD_POOL_MAP.containsKey(threadPoolName), "Please specify a valid thread pool name!");
 
         // Schedule a task to run at periodic intervals
         // 以上一个任务开始的时间计时，period时间过去后，检测上一个任务是否执行完毕，
         // 如果上一个任务执行完毕，则当前任务立即执行，如果上一个任务没有执行完毕，则需要等上一个任务执行完毕后立即执行。
-        return THREAD_POOL_MAP.get(threadPoolName).scheduleAtFixedRate(command, initialDelay, interval, timeUnit);
+        return THREAD_POOL_MAP.get(threadPoolName).scheduleAtFixedRate(task, initialDelay, interval, timeUnit);
     }
 
     public static ScheduledExecutorService scheduleDelayTask(String threadPoolName, long delay,

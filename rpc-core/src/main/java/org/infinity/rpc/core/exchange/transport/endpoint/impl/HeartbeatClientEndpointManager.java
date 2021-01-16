@@ -48,8 +48,7 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
 
     @Override
     public void init() {
-        ScheduledThreadPool.schedulePeriodicalTask(CHECK_HEALTH_THREAD_POOL,
-                CHECK_HEALTH_TIMER_INTERVAL, CHECK_HEALTH_TIMER_INTERVAL, TimeUnit.MILLISECONDS, this::checkHealth);
+        ScheduledThreadPool.schedulePeriodicalTask(CHECK_HEALTH_THREAD_POOL, CHECK_HEALTH_TIMER_INTERVAL, this::checkHealth);
     }
 
     private void checkHealth() {
