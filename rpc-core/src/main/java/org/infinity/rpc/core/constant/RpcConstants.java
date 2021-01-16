@@ -82,7 +82,6 @@ public class RpcConstants {
     /**
      * heartbeat constants start
      */
-    public static final int    HEARTBEAT_PERIOD                   = 500;
     public static final String HEARTBEAT_INTERFACE_NAME           = "com.weibo.api.motan.rpc.heartbeat";
     public static final String HEARTBEAT_METHOD_NAME              = "heartbeat";
     public static final String HEARTBEAT_PARAM                    = MethodParameterUtils.VOID;

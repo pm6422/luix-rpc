@@ -81,8 +81,8 @@ public class DefaultRpcHeartbeatFactory implements HeartbeatFactory {
     }
 
 
-    private class HeartMessageHandleWrapper implements MessageHandler {
-        private MessageHandler messageHandler;
+    private static class HeartMessageHandleWrapper implements MessageHandler {
+        private final MessageHandler messageHandler;
 
         public HeartMessageHandleWrapper(MessageHandler messageHandler) {
             this.messageHandler = messageHandler;

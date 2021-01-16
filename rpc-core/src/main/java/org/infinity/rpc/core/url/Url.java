@@ -73,6 +73,10 @@ public final class Url implements Serializable {
     /**
      *
      */
+    public static final String  PARAM_CHECK_HEALTH_FACTORY                = "checkHealthFactory";
+    /**
+     *
+     */
     public static final String  PARAM_CODEC                               = "codec";
     public static final String  PARAM_CODEC_DEFAULT_VALUE                 = "default";
     /**
@@ -158,11 +162,6 @@ public final class Url implements Serializable {
      */
     public static final String  PARAM_HOST                                = "host";
     public static final String  PARAM_HOST_DEFAULT_VALUE                  = "";
-    /**
-     *
-     */
-    public static final String  PARAM_HEART_BEAT_FACTORY                  = "heartbeatFactory";
-    public static final String  PARAM_HEART_BEAT_FACTORY_DEFAULT_VALUE    = "default";
     /**
      *
      */

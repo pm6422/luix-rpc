@@ -32,15 +32,15 @@ public interface HeartbeatFactory {
     /**
      * 创建心跳包
      *
-     * @return
+     * @return request object
      */
     Requestable createRequest();
 
     /**
-     * 包装 handler，支持心跳包的处理
+     * 包装handler，支持心跳包的处理
      *
-     * @param handler
-     * @return
+     * @param handler message handler
+     * @return message handler
      */
     MessageHandler wrapMessageHandler(MessageHandler handler);
 

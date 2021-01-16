@@ -5,9 +5,9 @@ import org.infinity.rpc.core.exchange.transport.endpoint.Endpoint;
 
 public interface Client extends Endpoint {
     /**
-     * async send request.
+     * async send request
      *
-     * @param request
+     * @param request request object
      */
-    void heartbeat(Requestable request);
+    void checkHealth(Requestable request);
 }

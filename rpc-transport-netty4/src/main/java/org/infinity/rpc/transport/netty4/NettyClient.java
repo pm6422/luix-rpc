@@ -40,7 +40,7 @@ public class NettyClient extends AbstractSharedPoolClient {
     /**
      * 回收过期任务
      */
-    private static       ScheduledExecutorService  scheduledExecutor    = Executors.newScheduledThreadPool(1);
+    private static final ScheduledExecutorService  scheduledExecutor    = Executors.newScheduledThreadPool(1);
     /**
      * 异步的request，需要注册callback future
      * 触发remove的操作有： 1) service的返回结果处理。 2) timeout thread cancel
@@ -323,9 +323,9 @@ public class NettyClient extends AbstractSharedPoolClient {
     }
 
     @Override
-    public void heartbeat(Requestable request) {
-        // 如果节点还没有初始化或者节点已经被close掉了，那么heartbeat也不需要进行了
+    public void checkHealth(Requestable request) {
         if (state.isUninitialized() || state.isClosed()) {
+            // 如果节点还没有初始化或者节点已经被close掉了，那么heartbeat也不需要进行了
             log.warn("NettyClient heartbeat Error: state={} url={}", state.name(), providerUrl.getUri());
             return;
         }

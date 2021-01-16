@@ -140,8 +140,11 @@ public class RpcLifecycle {
                 infinityProperties.getProtocol().getPort(),
                 providerWrapper.getInterfaceName());
 
-        // Assign values to parameters
+        // Configure url at global level
         providerUrl.addParameter(Url.PARAM_APP, infinityProperties.getApplication().getName());
+        providerUrl.addParameter(Url.PARAM_CHECK_HEALTH_FACTORY, infinityProperties.getProtocol().getCheckHealthFactory());
+
+        // Configure url at provider level
         providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, String.valueOf(providerWrapper.isCheckHealth()));
         providerUrl.addParameter(Url.PARAM_MAX_RETRIES, String.valueOf(providerWrapper.getMaxRetries()));
         return providerUrl;

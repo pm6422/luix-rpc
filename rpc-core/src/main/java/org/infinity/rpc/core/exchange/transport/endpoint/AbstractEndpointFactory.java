@@ -159,7 +159,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
     }
 
     private HeartbeatFactory getHeartbeatFactory(Url url) {
-        String heartbeatFactoryName = url.getParameter(Url.PARAM_HEART_BEAT_FACTORY, Url.PARAM_HEART_BEAT_FACTORY_DEFAULT_VALUE);
+        String heartbeatFactoryName = url.getParameter(Url.PARAM_CHECK_HEALTH_FACTORY);
         return getHeartbeatFactory(heartbeatFactoryName);
     }
 

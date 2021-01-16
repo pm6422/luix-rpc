@@ -21,18 +21,18 @@ public class ProtocolConfig {
      * and check whether value is valid or not during application startup.
      */
     @NotNull
-    private ProtocolName name           = ProtocolName.infinity;
+    private ProtocolName name                = ProtocolName.infinity;
     /**
      * Protocol version
      */
     @NotNull
     @Positive
-    private Integer      version        = 1;
+    private Integer      version             = 1;
     /**
      * Host name of the RPC server
      */
     @NotEmpty
-    private String       host           = NetworkUtils.INTRANET_IP;
+    private String       host                = NetworkUtils.INTRANET_IP;
     /**
      * Port number of the RPC server
      */
@@ -43,17 +43,22 @@ public class ProtocolConfig {
      * Cluster implementation
      */
     @NotEmpty
-    private String       cluster        = "default";
+    private String       cluster             = "default";
     /**
      * Cluster loadBalancer implementation
      */
     @NotEmpty
-    private String       loadBalancer   = "random";
+    private String       loadBalancer        = "random";
     /**
      * Fault tolerance strategy
      */
     @NotEmpty
-    private String       faultTolerance = "failover";
+    private String       faultTolerance      = "failover";
+    /**
+     * Check health factory
+     */
+    @NotEmpty
+    private String       checkHealthFactory  = "default";
 
     public void init() {
         checkIntegrity();

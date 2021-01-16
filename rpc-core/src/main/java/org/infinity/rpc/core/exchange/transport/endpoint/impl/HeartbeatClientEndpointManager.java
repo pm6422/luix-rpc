@@ -17,7 +17,6 @@
 package org.infinity.rpc.core.exchange.transport.endpoint.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.transport.Client;
@@ -41,13 +40,18 @@ import static org.infinity.rpc.core.destroy.ScheduledThreadPool.CHECK_HEALTH_THR
 @Slf4j
 public class HeartbeatClientEndpointManager implements EndpointManager {
 
-    private final Map<Client, HeartbeatFactory> endpoints = new ConcurrentHashMap<>();
-    private       ScheduledExecutorService      executorService;
+    /**
+     * Check health interval in milliseconds
+     */
+    private static final int                           CHECK_HEALTH_INTERVAL = 500;
+    private final        Map<Client, HeartbeatFactory> endpoints             = new ConcurrentHashMap<>();
+    private              ScheduledExecutorService      executorService;
+
 
     @Override
     public void init() {
         executorService = ScheduledThreadPool.schedulePeriodicalTask(CHECK_HEALTH_THREAD_POOL,
-                RpcConstants.HEARTBEAT_PERIOD, RpcConstants.HEARTBEAT_PERIOD, TimeUnit.MILLISECONDS, () -> {
+                CHECK_HEALTH_INTERVAL, CHECK_HEALTH_INTERVAL, TimeUnit.MILLISECONDS, () -> {
                     for (Map.Entry<Client, HeartbeatFactory> endpoint : endpoints.entrySet()) {
                         Client client = endpoint.getKey();
                         try {
@@ -55,8 +59,8 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
                                 // Skip health check process if current endpoint is active
                                 continue;
                             }
-                            HeartbeatFactory factory = endpoint.getValue();
-                            client.heartbeat(factory.createRequest());
+                            HeartbeatFactory heartbeatFactory = endpoint.getValue();
+                            client.checkHealth(heartbeatFactory.createRequest());
                         } catch (Exception e) {
                             log.error("Failed to check health for provider url [" + client.getProviderUrl().getUri() + "]", e);
                         }
@@ -71,7 +75,7 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
         }
         Client client = (Client) endpoint;
         Url providerUrl = endpoint.getProviderUrl();
-        String heartbeatFactoryName = providerUrl.getParameter(Url.PARAM_HEART_BEAT_FACTORY, Url.PARAM_HEART_BEAT_FACTORY_DEFAULT_VALUE);
+        String heartbeatFactoryName = providerUrl.getParameter(Url.PARAM_CHECK_HEALTH_FACTORY);
         HeartbeatFactory heartbeatFactory = HeartbeatFactory.getInstance(heartbeatFactoryName);
         if (heartbeatFactory == null) {
             throw new RpcFrameworkException("HeartbeatFactory not exist: " + heartbeatFactoryName);
