@@ -18,7 +18,7 @@ package org.infinity.rpc.core.exchange.transport.endpoint.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.constant.RpcConstants;
-import org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool;
+import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.transport.Client;
 import org.infinity.rpc.core.exchange.transport.endpoint.Endpoint;
@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.CHECK_HEALTH_THREAD_POOL;
+import static org.infinity.rpc.core.destroy.ScheduledThreadPool.CHECK_HEALTH_THREAD_POOL;
 
 /**
  *
@@ -46,7 +46,7 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
 
     @Override
     public void init() {
-        executorService = ScheduledDestroyThreadPool.schedulePeriodicalTask(CHECK_HEALTH_THREAD_POOL,
+        executorService = ScheduledThreadPool.schedulePeriodicalTask(CHECK_HEALTH_THREAD_POOL,
                 RpcConstants.HEARTBEAT_PERIOD, RpcConstants.HEARTBEAT_PERIOD, TimeUnit.MILLISECONDS, () -> {
                     for (Map.Entry<Client, HeartbeatFactory> endpoint : endpoints.entrySet()) {
                         Client client = endpoint.getKey();
@@ -65,16 +65,10 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
     }
 
     @Override
-    public void destroy() {
-        executorService.shutdownNow();
-    }
-
-    @Override
     public void addEndpoint(Endpoint endpoint) {
         if (!(endpoint instanceof Client)) {
             throw new RpcFrameworkException("Failed to add endpoint [" + endpoint.getClass() + "]");
         }
-
         Client client = (Client) endpoint;
         Url providerUrl = endpoint.getProviderUrl();
         String heartbeatFactoryName = providerUrl.getParameter(Url.PARAM_HEART_BEAT_FACTORY, Url.PARAM_HEART_BEAT_FACTORY_DEFAULT_VALUE);
@@ -92,5 +86,10 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
 
     public Set<Client> getClients() {
         return Collections.unmodifiableSet(endpoints.keySet());
+    }
+
+    @Override
+    public void destroy() {
+        executorService.shutdownNow();
     }
 }

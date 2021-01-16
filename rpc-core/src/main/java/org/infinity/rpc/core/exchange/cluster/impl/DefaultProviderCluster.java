@@ -3,7 +3,7 @@ package org.infinity.rpc.core.exchange.cluster.impl;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool;
+import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcAbstractException;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool.DESTROY_CALLER_THREAD_POOL;
+import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_CALLER_THREAD_POOL;
 
 /**
  * todo: ClusterSpi
@@ -130,7 +130,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
 
     private void destroyInactiveProviderCallers(Collection<ProviderCaller<T>> delayDestroyProviderCallers) {
         // Execute once after a daley time
-        ScheduledDestroyThreadPool.scheduleDelayTask(DESTROY_CALLER_THREAD_POOL, DELAY_TIME, TimeUnit.MILLISECONDS, () -> {
+        ScheduledThreadPool.scheduleDelayTask(DESTROY_CALLER_THREAD_POOL, DELAY_TIME, TimeUnit.MILLISECONDS, () -> {
             for (ProviderCaller<?> providerCaller : delayDestroyProviderCallers) {
                 try {
                     providerCaller.destroy();

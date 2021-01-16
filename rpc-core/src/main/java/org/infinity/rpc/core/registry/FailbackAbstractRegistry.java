@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
-import org.infinity.rpc.core.destroy.ScheduledDestroyThreadPool;
+import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
@@ -38,7 +38,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     private void scheduleRetry(Url registryUrl) {
         long retryInterval = registryUrl.getIntParameter(Url.PARAM_RETRY_INTERVAL);
         // Retry to connect registry at retry interval
-        ScheduledDestroyThreadPool.schedulePeriodicalTask(ScheduledDestroyThreadPool.RETRY_THREAD_POOL,
+        ScheduledThreadPool.schedulePeriodicalTask(ScheduledThreadPool.RETRY_THREAD_POOL,
                 retryInterval, retryInterval, TimeUnit.MILLISECONDS,
                 this::doRetry);
     }

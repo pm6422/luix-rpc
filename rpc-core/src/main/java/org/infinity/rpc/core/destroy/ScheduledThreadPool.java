@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class ScheduledDestroyThreadPool {
+public class ScheduledThreadPool {
     /**
      * 一般这个类创建的实例会比较少，如果共享的话，某个任务阻塞了，容易影响其他任务执行
      */
