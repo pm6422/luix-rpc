@@ -25,6 +25,7 @@ public abstract class AbstractProtocol implements Protocol {
         if (providerUrl == null) {
             throw new RpcFrameworkException("Provider url must NOT be null!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
+        // todo: create different caller associated with the protocol
         ProviderCaller<T> providerCaller = new DefaultProviderCaller<>(interfaceClass, providerUrl);
         return providerCaller;
     }

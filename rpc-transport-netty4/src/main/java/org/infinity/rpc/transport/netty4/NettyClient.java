@@ -10,6 +10,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.constant.RpcConstants;
+import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.RpcAbstractException;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
@@ -27,29 +28,30 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+
+import static org.infinity.rpc.core.destroy.ScheduledThreadPool.RECYCLE_TIMEOUT_TASK_THREAD_POOL;
 
 /**
  * toto: implements StatisticCallback
  */
 @Slf4j
 public class NettyClient extends AbstractSharedPoolClient {
-    private static final NioEventLoopGroup         NIO_EVENT_LOOP_GROUP = new NioEventLoopGroup();
-    /**
-     * 回收过期任务
-     */
-    private static final ScheduledExecutorService  scheduledExecutor    = Executors.newScheduledThreadPool(1);
+    private static final int                       NETTY_TIMEOUT_TIMER_INTERVAL = 100;
+    private static final NioEventLoopGroup         NIO_EVENT_LOOP_GROUP         = new NioEventLoopGroup();
     /**
      * 异步的request，需要注册callback future
      * 触发remove的操作有： 1) service的返回结果处理。 2) timeout thread cancel
      */
-    protected            Map<Long, ResponseFuture> callbackMap          = new ConcurrentHashMap<>();
+    protected            Map<Long, ResponseFuture> callbackMap                  = new ConcurrentHashMap<>();
     /**
      * 连续失败次数
      */
-    private final        AtomicLong                errorCount           = new AtomicLong(0);
-    private final        ScheduledFuture<?>        timeMonitorFuture;
+    private final        AtomicLong                errorCount                   = new AtomicLong(0);
+    private final        ScheduledFuture<?>        timeoutFuture;
     private              Bootstrap                 bootstrap;
     private final        int                       maxClientConnection;
 
@@ -58,10 +60,23 @@ public class NettyClient extends AbstractSharedPoolClient {
         maxClientConnection = providerUrl.getIntParameter(Url.PARAM_MAX_CLIENT_CONNECTION, Url.PARAM_MAX_CLIENT_CONNECTION_DEFAULT_VALUE);
         Validate.isTrue(maxClientConnection > 0, "maxClientConnection must be a positive number!");
 
-        timeMonitorFuture = scheduledExecutor.scheduleWithFixedDelay(
-                new TimeoutMonitor("timeout-monitor-" + providerUrl.getHost() + "-" + providerUrl.getPort()),
-                RpcConstants.NETTY_TIMEOUT_TIMER_PERIOD, RpcConstants.NETTY_TIMEOUT_TIMER_PERIOD,
-                TimeUnit.MILLISECONDS);
+        timeoutFuture = ScheduledThreadPool.schedulePeriodicalTask(RECYCLE_TIMEOUT_TASK_THREAD_POOL,
+                NETTY_TIMEOUT_TIMER_INTERVAL, NETTY_TIMEOUT_TIMER_INTERVAL,
+                TimeUnit.MILLISECONDS, () -> {
+                    long currentTime = System.currentTimeMillis();
+                    for (Map.Entry<Long, ResponseFuture> entry : callbackMap.entrySet()) {
+                        try {
+                            ResponseFuture future = entry.getValue();
+                            if (future.getCreateTime() + future.getTimeout() < currentTime) {
+                                // timeout: remove from callback list, and then cancel
+                                removeCallback(entry.getKey());
+                                future.cancel();
+                            }
+                        } catch (Exception e) {
+                            log.error("Clear timeout future Error: uri=" + providerUrl.getUri() + " requestId=" + entry.getKey(), e);
+                        }
+                    }
+                });
     }
 
     @Override
@@ -108,7 +123,7 @@ public class NettyClient extends AbstractSharedPoolClient {
             }
         }
 
-        // aysnc or sync result
+        // asynchronous or sync result
         response = asyncResponse(response, async);
         return response;
     }
@@ -117,7 +132,7 @@ public class NettyClient extends AbstractSharedPoolClient {
      * 如果async是false，那么同步获取response的数据
      *
      * @param response response
-     * @param async    async flaf
+     * @param async    async flag
      * @return response
      */
     private Responseable asyncResponse(Responseable response, boolean async) {
@@ -209,7 +224,7 @@ public class NettyClient extends AbstractSharedPoolClient {
 
     public void cleanup() {
         // 取消定期的回收任务
-        timeMonitorFuture.cancel(true);
+        timeoutFuture.cancel(true);
         // 清空callback
         callbackMap.clear();
         // 关闭client持有的channel
@@ -283,7 +298,7 @@ public class NettyClient extends AbstractSharedPoolClient {
                 return;
             }
 
-            // 如果节点是unalive才进行设置，而如果是 close 或者 uninit，那么直接忽略
+            // 如果节点是inactive才进行设置，而如果是close或者uninitialized，那么直接忽略
             if (state.isInactive()) {
                 long count = errorCount.longValue();
 
@@ -299,7 +314,7 @@ public class NettyClient extends AbstractSharedPoolClient {
 
 
     /**
-     * 注册回调的resposne
+     * 注册回调的response
      * <pre>
      * 进行最大的请求并发数的控制，如果超过NETTY_CLIENT_MAX_REQUEST的话，那么throw reject exception
      * </pre>
@@ -338,33 +353,5 @@ public class NettyClient extends AbstractSharedPoolClient {
     @Override
     public String toString() {
         return NettyClient.class.getSimpleName().concat(":").concat(getProviderUrl().getPath());
-    }
-
-    /**
-     * 回收超时任务
-     */
-     class TimeoutMonitor implements Runnable {
-        private final String name;
-
-        public TimeoutMonitor(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public void run() {
-            long currentTime = System.currentTimeMillis();
-            for (Map.Entry<Long, ResponseFuture> entry : callbackMap.entrySet()) {
-                try {
-                    ResponseFuture future = entry.getValue();
-                    if (future.getCreateTime() + future.getTimeout() < currentTime) {
-                        // timeout: remove from callback list, and then cancel
-                        removeCallback(entry.getKey());
-                        future.cancel();
-                    }
-                } catch (Exception e) {
-                    log.error(name + " clear timeout future Error: uri=" + providerUrl.getUri() + " requestId=" + entry.getKey(), e);
-                }
-            }
-        }
     }
 }

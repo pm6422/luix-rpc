@@ -47,7 +47,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
     protected Map<String, Server>      ipPort2ServerShareChannel = new HashMap<>();
     protected Map<Server, Set<String>> server2UrlsShareChannel   = new ConcurrentHashMap<>();
 
-    private EndpointManager heartbeatClientEndpointManager = null;
+    private final EndpointManager heartbeatClientEndpointManager;
 
     public AbstractEndpointFactory() {
         heartbeatClientEndpointManager = new HeartbeatClientEndpointManager();
@@ -113,7 +113,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
 
     @Override
     public void safeReleaseResource(Client client, Url url) {
-        destory(client);
+        destroy(client);
     }
 
     private <T extends Endpoint> void safeReleaseResource(T endpoint, Url url, Map<String, T> ipPort2Endpoint,
@@ -121,7 +121,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
         boolean shareChannel = url.getBooleanParameter(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
 
         if (!shareChannel) {
-            destory(endpoint);
+            destroy(endpoint);
             return;
         }
 
@@ -130,7 +130,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
             String protocolKey = RpcFrameworkUtils.getProtocolKey(url);
 
             if (endpoint != ipPort2Endpoint.get(ipPort)) {
-                destory(endpoint);
+                destroy(endpoint);
                 return;
             }
 
@@ -138,7 +138,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
             urls.remove(protocolKey);
 
             if (urls.isEmpty()) {
-                destory(endpoint);
+                destroy(endpoint);
                 ipPort2Endpoint.remove(ipPort);
                 endpoint2Urls.remove(endpoint);
             }
@@ -149,7 +149,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
         Set<String> sets = map.get(endpoint);
 
         if (sets == null) {
-            sets = new HashSet<String>();
+            sets = new HashSet<>();
             sets.add(namespace);
             map.putIfAbsent(endpoint, sets); // 规避并发问题，因为有release逻辑存在，所以这里的sets预先add了namespace
             sets = map.get(endpoint);
@@ -178,7 +178,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
         return client;
     }
 
-    private <T extends Endpoint> void destory(T endpoint) {
+    private <T extends Endpoint> void destroy(T endpoint) {
         if (endpoint instanceof Client) {
             endpoint.close();
             heartbeatClientEndpointManager.removeEndpoint(endpoint);
