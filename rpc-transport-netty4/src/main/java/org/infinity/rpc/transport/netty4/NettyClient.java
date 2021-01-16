@@ -61,22 +61,23 @@ public class NettyClient extends AbstractSharedPoolClient {
         Validate.isTrue(maxClientConnection > 0, "maxClientConnection must be a positive number!");
 
         timeoutFuture = ScheduledThreadPool.schedulePeriodicalTask(RECYCLE_TIMEOUT_TASK_THREAD_POOL,
-                NETTY_TIMEOUT_TIMER_INTERVAL, NETTY_TIMEOUT_TIMER_INTERVAL,
-                TimeUnit.MILLISECONDS, () -> {
-                    long currentTime = System.currentTimeMillis();
-                    for (Map.Entry<Long, ResponseFuture> entry : callbackMap.entrySet()) {
-                        try {
-                            ResponseFuture future = entry.getValue();
-                            if (future.getCreateTime() + future.getTimeout() < currentTime) {
-                                // timeout: remove from callback list, and then cancel
-                                removeCallback(entry.getKey());
-                                future.cancel();
-                            }
-                        } catch (Exception e) {
-                            log.error("Clear timeout future Error: uri=" + providerUrl.getUri() + " requestId=" + entry.getKey(), e);
-                        }
-                    }
-                });
+                NETTY_TIMEOUT_TIMER_INTERVAL, NETTY_TIMEOUT_TIMER_INTERVAL, TimeUnit.MILLISECONDS, this::recycleTimeoutTask);
+    }
+
+    private void recycleTimeoutTask() {
+        long currentTime = System.currentTimeMillis();
+        for (Map.Entry<Long, ResponseFuture> entry : callbackMap.entrySet()) {
+            try {
+                ResponseFuture future = entry.getValue();
+                if (future.getCreateTime() + future.getTimeout() < currentTime) {
+                    // timeout: remove from callback list, and then cancel
+                    removeCallback(entry.getKey());
+                    future.cancel();
+                }
+            } catch (Exception e) {
+                log.error("Clear timeout future Error: uri=" + providerUrl.getUri() + " requestId=" + entry.getKey(), e);
+            }
+        }
     }
 
     @Override

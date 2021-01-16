@@ -49,21 +49,23 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
     @Override
     public void init() {
         ScheduledThreadPool.schedulePeriodicalTask(CHECK_HEALTH_THREAD_POOL,
-                CHECK_HEALTH_TIMER_INTERVAL, CHECK_HEALTH_TIMER_INTERVAL, TimeUnit.MILLISECONDS, () -> {
-                    for (Map.Entry<Client, HeartbeatFactory> endpoint : endpoints.entrySet()) {
-                        Client client = endpoint.getKey();
-                        try {
-                            if (client.isActive()) {
-                                // Skip health check process if current endpoint is active
-                                continue;
-                            }
-                            HeartbeatFactory heartbeatFactory = endpoint.getValue();
-                            client.checkHealth(heartbeatFactory.createRequest());
-                        } catch (Exception e) {
-                            log.error("Failed to check health for provider url [" + client.getProviderUrl().getUri() + "]", e);
-                        }
-                    }
-                });
+                CHECK_HEALTH_TIMER_INTERVAL, CHECK_HEALTH_TIMER_INTERVAL, TimeUnit.MILLISECONDS, this::checkHealth);
+    }
+
+    private void checkHealth() {
+        for (Map.Entry<Client, HeartbeatFactory> endpoint : endpoints.entrySet()) {
+            Client client = endpoint.getKey();
+            try {
+                if (client.isActive()) {
+                    // Skip health check process if current endpoint is active
+                    continue;
+                }
+                HeartbeatFactory heartbeatFactory = endpoint.getValue();
+                client.checkHealth(heartbeatFactory.createRequest());
+            } catch (Exception e) {
+                log.error("Failed to check health for provider url [" + client.getProviderUrl().getUri() + "]", e);
+            }
+        }
     }
 
     @Override
