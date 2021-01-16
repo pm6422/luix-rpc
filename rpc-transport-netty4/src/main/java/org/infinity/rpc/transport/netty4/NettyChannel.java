@@ -11,8 +11,6 @@ import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.codec.Codec;
 import org.infinity.rpc.core.exchange.codec.CodecUtils;
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.core.exchange.response.Future;
-import org.infinity.rpc.core.exchange.response.FutureListener;
 import org.infinity.rpc.core.exchange.response.ResponseFuture;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.DefaultResponseFuture;
@@ -28,12 +26,12 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 public class NettyChannel implements Channel {
     private volatile ChannelState             state = ChannelState.UNINITIALIZED;
-    private          NettyClient              nettyClient;
+    private final    NettyClient              nettyClient;
     private          io.netty.channel.Channel channel;
-    private          InetSocketAddress        remoteAddress;
+    private final    InetSocketAddress        remoteAddress;
     private          InetSocketAddress        localAddress;
-    private          ReentrantLock            lock  = new ReentrantLock();
-    private          Codec                    codec;
+    private final    ReentrantLock            lock  = new ReentrantLock();
+    private final    Codec                    codec;
 
     public NettyChannel(NettyClient nettyClient) {
         this.nettyClient = nettyClient;
@@ -55,16 +53,14 @@ public class NettyChannel implements Channel {
 
         if (result && writeFuture.isSuccess()) {
             RpcFrameworkUtils.logEvent(request, RpcConstants.TRACE_CSEND, System.currentTimeMillis());
-            response.addListener(new FutureListener() {
-                @Override
-                public void operationComplete(Future future) throws Exception {
-                    if (future.isSuccess() || (future.isDone() && ExceptionUtils.isBizException(future.getException()))) {
-                        // 成功的调用
-                        nettyClient.resetErrorCount();
-                    } else {
-                        // 失败的调用
-                        nettyClient.incrErrorCount();
-                    }
+            response.addListener(future -> {
+                if (future.isSuccess() ||
+                        (future.isDone() && ExceptionUtils.isBizException(future.getException()))) {
+                    // 成功的调用
+                    nettyClient.resetErrorCount();
+                } else {
+                    // 失败的调用
+                    nettyClient.incrErrorCount();
                 }
             });
             return response;
