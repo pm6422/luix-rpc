@@ -20,10 +20,10 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public abstract class FailbackAbstractRegistry extends AbstractRegistry {
 
-    private Set<Url>                                    failedRegisteredUrl              = new ConcurrentHashSet<>();
-    private Set<Url>                                    failedUnregisteredUrl            = new ConcurrentHashSet<>();
-    private Map<Url, ConcurrentHashSet<ClientListener>> failedSubscriptionPerClientUrl   = new ConcurrentHashMap<>();
-    private Map<Url, ConcurrentHashSet<ClientListener>> failedUnsubscriptionPerClientUrl = new ConcurrentHashMap<>();
+    private final Set<Url>                                    failedRegisteredUrl              = new ConcurrentHashSet<>();
+    private final Set<Url>                                    failedUnregisteredUrl            = new ConcurrentHashSet<>();
+    private final Map<Url, ConcurrentHashSet<ClientListener>> failedSubscriptionPerClientUrl   = new ConcurrentHashMap<>();
+    private final Map<Url, ConcurrentHashSet<ClientListener>> failedUnsubscriptionPerClientUrl = new ConcurrentHashMap<>();
 
     public FailbackAbstractRegistry(Url registryUrl) {
         super(registryUrl);
@@ -40,7 +40,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         // Retry to connect registry at retry interval
         ScheduledDestroyThreadPool.schedulePeriodicalTask(ScheduledDestroyThreadPool.RETRY_THREAD_POOL,
                 retryInterval, retryInterval, TimeUnit.MILLISECONDS,
-                () -> doRetry());
+                this::doRetry);
     }
 
     /**
@@ -256,7 +256,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      * @return true: all the urls contain PARAM_CHECK_HEALTH, false: any url does not contain PARAM_CHECK_HEALTH
      */
     private boolean forceCheckHealth(Url... urls) {
-        return !Arrays.asList(urls).stream().anyMatch(url -> !Boolean.parseBoolean(url.getParameter(Url.PARAM_CHECK_HEALTH)));
+        return Arrays.stream(urls).allMatch(url -> Boolean.parseBoolean(url.getParameter(Url.PARAM_CHECK_HEALTH)));
     }
 
     /**
@@ -266,6 +266,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      * @return provider urls
      */
     @Override
+    @SuppressWarnings("unchecked")
     public List<Url> discover(Url clientUrl) {
         if (clientUrl == null) {
             log.warn("Url must NOT be null!");

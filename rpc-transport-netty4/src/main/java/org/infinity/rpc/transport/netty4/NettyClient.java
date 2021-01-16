@@ -340,6 +340,11 @@ public class NettyClient extends AbstractSharedPoolClient {
         }
     }
 
+    @Override
+    public String toString() {
+        return NettyClient.class.getSimpleName().concat(":").concat(getProviderUrl().getPath());
+    }
+
     /**
      * 回收超时任务
      */
