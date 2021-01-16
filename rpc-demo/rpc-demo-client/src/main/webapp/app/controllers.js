@@ -4,6 +4,7 @@
 angular
     .module('smartcloudserviceApp')
     .controller('MainController', MainController)
+    .controller('DashboardController', DashboardController)
     .controller('LeftSidebarController', LeftSidebarController)
     .controller('ErrorPageController', ErrorPageController)
     .controller('NavbarController', NavbarController)
@@ -43,6 +44,50 @@ function MainController($http, $rootScope, $scope, $state, AdminMenuService, Ale
     function selectLink($item, $model, $label, $event) {
         $state.go(main.selectedLink.url);
     }
+}
+
+/**
+ * DashboardController
+ */
+function DashboardController($scope, $state, $element, $timeout, APP_NAME) {
+    var vm = this;
+    /**
+     * Data for Doughnut chart
+     */
+    vm.doughnutData = [
+        {
+            value: 200,
+            color:"#a3e1d4",
+            highlight: "#1ab394",
+            label: "R"
+        },
+        {
+            value: 200,
+            color: "#dedede",
+            highlight: "#1ab394",
+            label: "P"
+        },
+        {
+            value: 200,
+            color: "#A4CEE8",
+            highlight: "#1ab394",
+            label: "C"
+        }
+    ];
+
+    /**
+     * Options for Doughnut chart
+     */
+    vm.doughnutOptions = {
+        segmentShowStroke : true,
+        segmentStrokeColor : "#fff",
+        segmentStrokeWidth : 2,
+        percentageInnerCutout : 45, // This is 0 for Pie charts
+        animationSteps : 100,
+        animationEasing : "easeOutBounce",
+        animateRotate : true,
+        animateScale : false
+    };
 }
 
 /**
