@@ -9,7 +9,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
-import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.RpcAbstractException;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
@@ -49,10 +48,10 @@ public class NettyClient extends AbstractSharedPoolClient {
     /**
      * 连续失败次数
      */
-    private              AtomicLong                errorCount           = new AtomicLong(0);
-    private              ScheduledFuture<?>        timeMonitorFuture;
+    private final        AtomicLong                errorCount           = new AtomicLong(0);
+    private final        ScheduledFuture<?>        timeMonitorFuture;
     private              Bootstrap                 bootstrap;
-    private              int                       maxClientConnection;
+    private final        int                       maxClientConnection;
 
     public NettyClient(Url providerUrl) {
         super(providerUrl);
@@ -77,7 +76,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         }
         boolean isAsync = false;
         Object async = ExchangeContext.getInstance().getAttribute(RpcConstants.ASYNC_SUFFIX);
-        if (async != null && async instanceof Boolean) {
+        if (async instanceof Boolean) {
             isAsync = (Boolean) async;
         }
         return request(request, isAsync);
@@ -116,9 +115,9 @@ public class NettyClient extends AbstractSharedPoolClient {
     /**
      * 如果async是false，那么同步获取response的数据
      *
-     * @param response
-     * @param async
-     * @return
+     * @param response response
+     * @param async    async flaf
+     * @return response
      */
     private Responseable asyncResponse(Responseable response, boolean async) {
         if (async || !(response instanceof ResponseFuture)) {
@@ -151,23 +150,19 @@ public class NettyClient extends AbstractSharedPoolClient {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast("decoder", new NettyDecoder(codec, NettyClient.this, maxContentLength));
                         pipeline.addLast("encoder", new NettyEncoder());
-                        pipeline.addLast("handler", new NettyChannelHandler(NettyClient.this, new MessageHandler() {
-                            @Override
-                            public Object handle(Channel channel, Object message) {
-                                Responseable response = (Responseable) message;
-                                ResponseFuture responseFuture = NettyClient.this.removeCallback(response.getRequestId());
-
-                                if (responseFuture == null) {
-                                    log.warn("NettyClient has response from server, but responseFuture not exist, requestId={}", response.getRequestId());
-                                    return null;
-                                }
-                                if (response.getException() != null) {
-                                    responseFuture.onFailure(response);
-                                } else {
-                                    responseFuture.onSuccess(response);
-                                }
+                        pipeline.addLast("handler", new NettyChannelHandler(NettyClient.this, (channel, message) -> {
+                            Responseable response = (Responseable) message;
+                            ResponseFuture responseFuture = NettyClient.this.removeCallback(response.getRequestId());
+                            if (responseFuture == null) {
+                                log.warn("NettyClient has response from server, but responseFuture not exist, requestId={}", response.getRequestId());
                                 return null;
                             }
+                            if (response.getException() != null) {
+                                responseFuture.onFailure(response);
+                            } else {
+                                responseFuture.onSuccess(response);
+                            }
+                            return null;
                         }));
                     }
                 });
@@ -308,9 +303,8 @@ public class NettyClient extends AbstractSharedPoolClient {
      * 进行最大的请求并发数的控制，如果超过NETTY_CLIENT_MAX_REQUEST的话，那么throw reject exception
      * </pre>
      *
-     * @param requestId
-     * @param responseFuture
-     * @throws RpcServiceException
+     * @param requestId      request ID
+     * @param responseFuture response future
      */
     public void registerCallback(long requestId, ResponseFuture responseFuture) {
         if (this.callbackMap.size() >= RpcConstants.NETTY_CLIENT_MAX_REQUEST) {
@@ -348,8 +342,8 @@ public class NettyClient extends AbstractSharedPoolClient {
     /**
      * 回收超时任务
      */
-    class TimeoutMonitor implements Runnable {
-        private String name;
+    static class TimeoutMonitor implements Runnable {
+        private final String name;
 
         public TimeoutMonitor(String name) {
             this.name = name;
