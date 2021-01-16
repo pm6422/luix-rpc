@@ -18,52 +18,51 @@ package org.infinity.rpc.core.exchange.response;
 
 public interface Future {
     /**
-     * cancle the task
+     * cancel the task
      *
-     * @return
+     * @return true: cancelled successfully, false: or else
      */
     boolean cancel();
 
     /**
      * task cancelled
      *
-     * @return
+     * @return true: already cancelled, false: or else
      */
     boolean isCancelled();
 
     /**
      * task is complete : normal or exception
      *
-     * @return
+     * @return true: done, false: or else
      */
     boolean isDone();
 
     /**
      * isDone() & normal
      *
-     * @return
+     * @return true: success, false: or else
      */
     boolean isSuccess();
 
     /**
      * if task is success, return the result.
      *
-     * @return
-     * @throws Exception when timeout, cancel, onFailure
+     * @return RPC response result
      */
     Object getResult();
 
     /**
-     * if task is done or cancle, return the exception
+     * if task is done or cancel, return the exception
      *
-     * @return
+     * @return exception
      */
     Exception getException();
 
     /**
      * add future listener , when task is success，failure, timeout, cancel, it will be called
      *
-     * @param listener
+     * @param listener listener
      */
     void addListener(FutureListener listener);
 

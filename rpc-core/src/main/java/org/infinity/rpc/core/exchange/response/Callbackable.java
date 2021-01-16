@@ -7,12 +7,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public interface Callbackable<T> {
+public interface Callbackable {
     List<Pair<Runnable, Executor>> TASKS = new CopyOnWriteArrayList<>();
 
     AtomicBoolean FINISHED = new AtomicBoolean();
 
-    T finishCallback(Runnable runnable, Executor executor);
+    void addFinishCallback(Runnable runnable, Executor executor);
 
     void onFinish();
 }

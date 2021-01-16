@@ -15,8 +15,8 @@ public class RpcFrameworkException extends RpcAbstractException {
         super(message, cause);
     }
 
-    public RpcFrameworkException(String message, Throwable cause, RpcErrorMsg motanErrorMsg) {
-        super(message, cause, motanErrorMsg);
+    public RpcFrameworkException(String message, Throwable cause, RpcErrorMsg errorMsg) {
+        super(message, cause, errorMsg);
     }
 
     public RpcFrameworkException(String message, RpcErrorMsg errorMsg) {

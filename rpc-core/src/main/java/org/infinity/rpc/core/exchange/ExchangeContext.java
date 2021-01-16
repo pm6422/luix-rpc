@@ -42,8 +42,8 @@ public class ExchangeContext {
     /**
      * init new rpcContext with request
      *
-     * @param request
-     * @return
+     * @param request RPC request
+     * @return exchange context
      */
     public static ExchangeContext initialize(Requestable request) {
         ExchangeContext context = new ExchangeContext();

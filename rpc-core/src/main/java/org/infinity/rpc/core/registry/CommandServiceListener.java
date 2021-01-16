@@ -45,11 +45,11 @@ import java.util.regex.Pattern;
 @NotThreadSafe
 public class CommandServiceListener implements ServiceListener, CommandListener {
 
-    public static final  String  MOTAN_COMMAND_SWITCHER = "feature.motanrpc.command.enable";
-    private static final Pattern IP_PATTERN             = Pattern.compile("^!?[0-9.]*\\*?$");
+    public static final  String  COMMAND_SWITCHER = "feature.motanrpc.command.enable";
+    private static final Pattern IP_PATTERN       = Pattern.compile("^!?[0-9.]*\\*?$");
 
     static {
-        SwitcherService.getInstance().initSwitcher(MOTAN_COMMAND_SWITCHER, true);
+        SwitcherService.getInstance().initSwitcher(COMMAND_SWITCHER, true);
     }
 
     /**
@@ -144,7 +144,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     public void onNotify(Url clientUrl, String commandString) {
         log.info("CommandServiceManager notify command. service:" + clientUrl.toSimpleString() + ", command:" + commandString);
 
-        if (!SwitcherService.getInstance().isOn(MOTAN_COMMAND_SWITCHER) || commandString == null) {
+        if (!SwitcherService.getInstance().isOn(COMMAND_SWITCHER) || commandString == null) {
             log.info("command reset empty since switcher is close.");
             commandString = "";
         }

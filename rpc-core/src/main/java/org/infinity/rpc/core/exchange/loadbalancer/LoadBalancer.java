@@ -45,7 +45,8 @@ public interface LoadBalancer<T> {
      * @param name specified load balancer name
      * @return load balancer instance
      */
-    static LoadBalancer getInstance(String name) {
+    @SuppressWarnings("unchecked")
+    static <T> LoadBalancer<T> getInstance(String name) {
         return ServiceLoader.forClass(LoadBalancer.class).load(name);
     }
 

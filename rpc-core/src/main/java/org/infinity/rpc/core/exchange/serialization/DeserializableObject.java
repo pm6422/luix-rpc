@@ -4,8 +4,8 @@ package org.infinity.rpc.core.exchange.serialization;
 import java.io.IOException;
 
 public class DeserializableObject {
-    private Serializer serializer;
-    private byte[]     objBytes;
+    private final Serializer serializer;
+    private final byte[]     objBytes;
 
     public DeserializableObject(Serializer serializer, byte[] objBytes) {
         this.serializer = serializer;

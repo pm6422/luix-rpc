@@ -1,8 +1,8 @@
 package org.infinity.rpc.core.exchange.transport;
 
+import org.infinity.rpc.core.exception.TransportException;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.exchange.transport.exception.TransmissionException;
 import org.infinity.rpc.core.url.Url;
 
 import java.net.InetSocketAddress;
@@ -14,9 +14,9 @@ public interface Channel {
      *
      * @param request request object
      * @return response object
-     * @throws TransmissionException if exception occurs
+     * @throws TransportException if exception occurs
      */
-    Responseable request(Requestable request) throws TransmissionException;
+    Responseable request(Requestable request) throws TransportException;
 
     /**
      * Open the channel

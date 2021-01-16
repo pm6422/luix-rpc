@@ -18,6 +18,7 @@ package org.infinity.rpc.core.config.spring.server.messagehandler.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapper;
 import org.infinity.rpc.core.exception.RpcBizException;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
@@ -25,10 +26,8 @@ import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.impl.RpcRequest;
 import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.exchange.serialization.DeserializableObject;
 import org.infinity.rpc.core.exchange.transport.Channel;
-import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 
@@ -51,9 +50,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ProviderMessageRouter implements MessageHandler {
     protected Map<String, ProviderWrapper<?>> providers = new HashMap<>();
 
-    // 所有暴露出去的方法计数
-    // 比如：messageRouter 里面涉及2个Service: ServiceA 有5个public method，ServiceB
-    // 有10个public method，那么就是15
+    /**
+     * 所有暴露出去的方法计数
+     * 比如：messageRouter 里面涉及2个Service: ServiceA 有5个public method，ServiceB
+     * 有10个public method，那么就是15
+     */
     protected AtomicInteger methodCounter = new AtomicInteger(0);
 
     public ProviderMessageRouter() {
@@ -83,8 +84,7 @@ public class ProviderMessageRouter implements MessageHandler {
                     new RpcServiceException(this.getClass().getSimpleName() + " handler Error: provider not exist serviceKey="
                             + serviceKey + " " + request);
 
-            RpcResponse response = RpcFrameworkUtils.buildErrorResponse(request, exception);
-            return response;
+            return RpcFrameworkUtils.buildErrorResponse(request, exception);
         }
         Method method = provider.findMethod(request.getMethodName(), request.getMethodParameters());
         fillParamDesc(request, method);
@@ -127,7 +127,7 @@ public class ProviderMessageRouter implements MessageHandler {
     public synchronized void addProvider(ProviderWrapper<?> provider) {
         String serviceKey = RpcFrameworkUtils.getServiceKey(provider.getUrl());
         if (providers.containsKey(serviceKey)) {
-            throw new RpcFrameworkException("provider alread exist: " + serviceKey);
+            throw new RpcFrameworkException("Provider already exists with the key [" + serviceKey + "]");
         }
 
         providers.put(serviceKey, provider);

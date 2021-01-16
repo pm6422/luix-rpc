@@ -55,32 +55,32 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
     }
 
     @Override
-    public Server createServer(Url url, MessageHandler messageHandler) {
-        messageHandler = getHeartbeatFactory(url).wrapMessageHandler(messageHandler);
+    public Server createServer(Url providerUrl, MessageHandler messageHandler) {
+        messageHandler = getHeartbeatFactory(providerUrl).wrapMessageHandler(messageHandler);
 
         synchronized (ipPort2ServerShareChannel) {
-            String ipPort = url.getServerPortStr();
-            String protocolKey = RpcFrameworkUtils.getProtocolKey(url);
+            String ipPort = providerUrl.getServerPortStr();
+            String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
 
-            boolean shareChannel = url.getBooleanParameter(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
+            boolean shareChannel = providerUrl.getBooleanParameter(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
             if (!shareChannel) {
                 // 独享一个端口
-                log.info(this.getClass().getSimpleName() + " create no_share_channel server: url={}", url);
+                log.info(this.getClass().getSimpleName() + " create no_share_channel server: url={}", providerUrl);
 
                 // 如果端口已经被使用了，使用该server bind会有异常
-                return innerCreateServer(url, messageHandler);
+                return innerCreateServer(providerUrl, messageHandler);
             }
 
-            log.info(this.getClass().getSimpleName() + " create share_channel server: url={}", url);
+            log.info(this.getClass().getSimpleName() + " create share_channel server: url={}", providerUrl);
 
             Server server = ipPort2ServerShareChannel.get(ipPort);
 
             if (server != null) {
                 // can't share service channel
-                if (!RpcFrameworkUtils.checkIfCanShareServiceChannel(server.getProviderUrl(), url)) {
+                if (!RpcFrameworkUtils.checkIfCanShareServiceChannel(server.getProviderUrl(), providerUrl)) {
                     throw new RpcFrameworkException(
                             "Service export Error: share channel but some config param is different, protocol or codec or serialize or maxContentLength or maxServerConnection or maxWorkerThread or heartbeatFactory, source="
-                                    + server.getProviderUrl() + " target=" + url, RpcErrorMsgConstant.FRAMEWORK_EXPORT_ERROR);
+                                    + server.getProviderUrl() + " target=" + providerUrl, RpcErrorMsgConstant.FRAMEWORK_EXPORT_ERROR);
                 }
 
                 saveEndpoint2Urls(server2UrlsShareChannel, server, protocolKey);
@@ -88,10 +88,11 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
                 return server;
             }
 
-            url = url.copy();
-            url.setPath(""); // 共享server端口，由于有多个interfaces存在，所以把path设置为空
+            providerUrl = providerUrl.copy();
+            // 共享server端口，由于有多个interfaces存在，所以把path设置为空
+            providerUrl.setPath("");
 
-            server = innerCreateServer(url, messageHandler);
+            server = innerCreateServer(providerUrl, messageHandler);
 
             ipPort2ServerShareChannel.put(ipPort, server);
             saveEndpoint2Urls(server2UrlsShareChannel, server, protocolKey);
@@ -107,12 +108,12 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
     }
 
     @Override
-    public void safeReleaseResource(Server server, Url url) {
-        safeReleaseResource(server, url, ipPort2ServerShareChannel, server2UrlsShareChannel);
+    public void safeReleaseResource(Server server, Url providerUrl) {
+        safeReleaseResource(server, providerUrl, ipPort2ServerShareChannel, server2UrlsShareChannel);
     }
 
     @Override
-    public void safeReleaseResource(Client client, Url url) {
+    public void safeReleaseResource(Client client, Url providerUrl) {
         destroy(client);
     }
 

@@ -59,6 +59,11 @@ public abstract class AbstractProviderCaller<T> implements ProviderCaller<T> {
         return providerUrl;
     }
 
+    /**
+     * Do initialization
+     *
+     * @return true: initialized, false: or else
+     */
     protected abstract boolean doInit();
 
     @Override

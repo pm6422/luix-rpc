@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
-import org.infinity.rpc.core.exchange.Traceable;
 import org.infinity.rpc.core.exchange.TraceableContext;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.FutureListener;
@@ -28,22 +27,27 @@ public class DefaultResponseFuture implements ResponseFuture {
     protected          Object               result           = null;
     protected          Exception            exception        = null;
     protected          long                 createTime       = System.currentTimeMillis();
-    //todo: remove
+    /**
+     * remove
+     */
     private            String               protocol;
     private            byte                 protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
     private            String               group;
     private            String               version;
-    protected          int                  timeout          = 0;
+    protected          int                  timeout;
     protected          long                 processTime      = 0;
     protected          Requestable          request;
     protected          List<FutureListener> listeners;
     protected          Url                  serverUrl;
-    protected          Class                returnType;
+    protected          Class<?>             returnType;
     /**
      * default serialization is hession2
      */
     private            int                  serializeNumber  = 0;
-    private            Map<String, String>  attachments;// rpc协议版本兼容时可以回传一些额外的信息
+    /**
+     * RPC协议版本兼容时可以回传一些额外的信息
+     */
+    private            Map<String, String>  attachments;
     private            TraceableContext     traceableContext = new TraceableContext();
 
     public DefaultResponseFuture(Requestable requestObj, int timeout, Url serverUrl) {
@@ -57,13 +61,8 @@ public class DefaultResponseFuture implements ResponseFuture {
         this.result = response.getResult();
         this.processTime = response.getElapsedTime();
         this.attachments = response.getAttachments();
-        if (response instanceof Traceable) {
-            traceableContext.setReceiveTime(response.getReceivedTime());
-            response.getTraces().entrySet().forEach(trace -> {
-                traceableContext.addTraceInfo(trace.getKey(), trace.getValue());
-            });
-        }
-
+        traceableContext.setReceiveTime(response.getReceivedTime());
+        response.getTraces().forEach((key, value) -> traceableContext.addTraceInfo(key, value));
         done();
     }
 
@@ -98,6 +97,7 @@ public class DefaultResponseFuture implements ResponseFuture {
                         try {
                             lock.wait(waitTime);
                         } catch (InterruptedException e) {
+                            // Leave blank intentionally
                         }
 
                         if (!isDoing()) {
@@ -314,13 +314,13 @@ public class DefaultResponseFuture implements ResponseFuture {
 
     @Override
     public Map<String, String> getAttachments() {
-        return attachments != null ? attachments : Collections.<String, String>emptyMap();
+        return attachments != null ? attachments : Collections.emptyMap();
     }
 
     @Override
     public void addAttachment(String key, String value) {
         if (this.attachments == null) {
-            this.attachments = new HashMap<>();
+            this.attachments = new HashMap<>(10);
         }
         this.attachments.put(key, value);
     }

@@ -1,6 +1,5 @@
 package org.infinity.rpc.core.exchange.request;
 
-import org.infinity.rpc.core.exchange.ProviderCallable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.url.Url;
 
@@ -14,8 +13,9 @@ import org.infinity.rpc.core.url.Url;
 public interface ProviderCaller<T> {
 
     /**
-     * Get provider
-     * @return
+     * Get provider url
+     *
+     * @return provider url
      */
     Url getProviderUrl();
 

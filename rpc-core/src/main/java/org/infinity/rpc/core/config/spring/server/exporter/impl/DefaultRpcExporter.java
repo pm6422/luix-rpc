@@ -28,7 +28,6 @@ import org.infinity.rpc.core.exchange.transport.endpoint.EndpointFactory;
 import org.infinity.rpc.core.exchange.transport.server.Server;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
-import org.infinity.rpc.utilities.spi.ServiceLoader;
 
 import java.util.Map;
 
@@ -55,7 +54,7 @@ public class DefaultRpcExporter<T> extends AbstractExporter<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void unexport() {
+    public void cancelExport() {
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerWrapper.getUrl());
         String ipPort = providerWrapper.getUrl().getServerPortStr();
 

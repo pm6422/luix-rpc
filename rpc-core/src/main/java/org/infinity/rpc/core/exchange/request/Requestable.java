@@ -40,7 +40,7 @@ public interface Requestable extends Exchangable {
      * set the serialization number.
      * same to the protocol version, this value only used in server end for compatible.
      *
-     * @param number
+     * @param number number
      */
     void setSerializeNum(int number);
 

@@ -6,7 +6,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.exception.RpcInvocationException;
-import org.infinity.rpc.core.exchange.Traceable;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Callbackable;
 import org.infinity.rpc.core.exchange.response.Responseable;
@@ -24,7 +23,9 @@ import java.util.concurrent.Executor;
 public class RpcResponse implements Responseable, Callbackable, Serializable {
     private static final long                serialVersionUID = 882479213033600079L;
     private              long                requestId;
-    //todo: remove
+    /**
+     * remove
+     */
     private              String              protocol;
     private              byte                protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
     private              String              group;
@@ -51,10 +52,8 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
         this.protocolVersion = response.getProtocolVersion();
         this.setSerializeNumber(response.getSerializeNumber());
         this.attachments = response.getAttachments();
-        if (response instanceof Traceable) {
-            this.setReceivedTime(response.getReceivedTime());
-            response.getTraces().entrySet().forEach(entry -> this.addTrace(entry.getKey(), entry.getKey()));
-        }
+        this.setReceivedTime(response.getReceivedTime());
+        response.getTraces().forEach((key, value) -> this.addTrace(key, key));
     }
 
     public RpcResponse protocolVersion(byte protocolVersion) {
@@ -133,11 +132,10 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
     }
 
     @Override
-    public RpcResponse finishCallback(Runnable runnable, Executor executor) {
+    public void addFinishCallback(Runnable runnable, Executor executor) {
         if (!FINISHED.get()) {
             TASKS.add(Pair.of(runnable, executor));
         }
-        return this;
     }
 
     @Override

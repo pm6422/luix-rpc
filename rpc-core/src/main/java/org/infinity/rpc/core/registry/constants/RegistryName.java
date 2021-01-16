@@ -2,12 +2,12 @@ package org.infinity.rpc.core.registry.constants;
 
 import org.infinity.rpc.utilities.lang.EnumValueHoldable;
 
-public enum RegistryName implements EnumValueHoldable {
+public enum RegistryName implements EnumValueHoldable<String> {
     zookeeper("zookeeper"),
     local("local"),
     direct("direct");
 
-    private String value;
+    private final String value;
 
     RegistryName(String value) {
         this.value = value;

@@ -16,10 +16,9 @@
 
 package org.infinity.rpc.core.exchange.transport.endpoint;
 
-import org.infinity.rpc.core.exchange.transport.Client;
 import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
+import org.infinity.rpc.core.exchange.transport.Client;
 import org.infinity.rpc.core.exchange.transport.server.Server;
-import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
@@ -31,35 +30,35 @@ public interface EndpointFactory {
     /**
      * create remote server
      *
-     * @param url
-     * @param messageHandler
-     * @return
+     * @param providerUrl    provider url
+     * @param messageHandler message handler
+     * @return server
      */
-    Server createServer(Url url, MessageHandler messageHandler);
+    Server createServer(Url providerUrl, MessageHandler messageHandler);
 
     /**
      * create remote client
      *
-     * @param providerUrl
-     * @return
+     * @param providerUrl provider url
+     * @return client
      */
     Client createClient(Url providerUrl);
 
     /**
      * safe release server
      *
-     * @param server
-     * @param url
+     * @param server      server
+     * @param providerUrl provider url
      */
-    void safeReleaseResource(Server server, Url url);
+    void safeReleaseResource(Server server, Url providerUrl);
 
     /**
      * safe release client
      *
-     * @param client
-     * @param url
+     * @param client      client
+     * @param providerUrl provider url
      */
-    void safeReleaseResource(Client client, Url url);
+    void safeReleaseResource(Client client, Url providerUrl);
 
     /**
      * Get endpoint factory instance associated with the specified name

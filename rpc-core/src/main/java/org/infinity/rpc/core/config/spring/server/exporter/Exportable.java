@@ -9,7 +9,8 @@ import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrappe
  */
 public interface Exportable<T> {
     /**
-     * @return
+     * Get provider wrapper
+     * @return provider wrapper
      */
     ProviderWrapper<T> getProviderWrapper();
 
@@ -25,12 +26,10 @@ public interface Exportable<T> {
      */
     boolean isAvailable();
 
-    String desc();
-
     /**
-     *
+     * Remove exported provider
      */
-    void unexport();
+    void cancelExport();
 
     /**
      * Do some cleanup task

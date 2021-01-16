@@ -97,13 +97,12 @@ public class DefaultCodec extends AbstractCodec {
      *
      * </pre>
      *
-     * @param body
-     * @param flag
-     * @param requestId
-     * @return
-     * @throws IOException
+     * @param body      message body
+     * @param flag      flag
+     * @param requestId request ID
+     * @return encoded bytes
      */
-    private byte[] encode(byte[] body, byte flag, long requestId) throws IOException {
+    private byte[] encode(byte[] body, byte flag, long requestId) {
         byte[] header = new byte[ProtocolVersion.VERSION_1.getHeaderLength()];
         int offset = 0;
 
@@ -131,7 +130,7 @@ public class DefaultCodec extends AbstractCodec {
     }
 
     @Override
-    public Object decode(Channel channel, String remoteIp, byte[] data) throws IOException {
+    public Object decode(Channel channel, String remoteIp, byte[] data) {
         if (data.length <= ProtocolVersion.VERSION_1.getHeaderLength()) {
             throw new RpcFrameworkException("decode error: format problem", RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
         }
@@ -190,8 +189,7 @@ public class DefaultCodec extends AbstractCodec {
         ObjectOutput output = createOutput(outputStream);
         Serializer serializer = getSerializer(channel);
 
-        byte flag = 0;
-
+        byte flag;
         output.writeLong(value.getElapsedTime());
 
         if (value.getException() != null) {
@@ -250,13 +248,13 @@ public class DefaultCodec extends AbstractCodec {
         return paramObjs;
     }
 
-    private Map<String, String> decodeRequestAttachments(ObjectInput input) throws IOException, ClassNotFoundException {
+    private Map<String, String> decodeRequestAttachments(ObjectInput input) throws IOException {
         int size = input.readInt();
         if (size <= 0) {
             return new ConcurrentHashMap<>(10);
         }
 
-        Map<String, String> attachments = new HashMap<String, String>();
+        Map<String, String> attachments = new HashMap<>(size);
         for (int i = 0; i < size; i++) {
             attachments.put(input.readUTF(), input.readUTF());
         }

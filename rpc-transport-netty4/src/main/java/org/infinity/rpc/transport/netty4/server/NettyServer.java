@@ -9,11 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
+import org.infinity.rpc.core.exception.TransportException;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.transport.callback.StatisticCallback;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
-import org.infinity.rpc.core.exchange.transport.exception.TransmissionException;
 import org.infinity.rpc.core.exchange.transport.server.AbstractServer;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.transport.netty4.NettyChannelHandler;
@@ -51,7 +51,7 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
     }
 
     @Override
-    public Responseable request(Requestable request) throws TransmissionException {
+    public Responseable request(Requestable request) throws TransportException {
         throw new RpcFrameworkException("NettyServer request(Request request) method not support: url: " + url);
     }
 

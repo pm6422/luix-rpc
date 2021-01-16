@@ -40,8 +40,8 @@ public interface FutureListener {
      *
      * </pre>
      *
-     * @param future
-     * @throws Exception
+     * @param future future
+     * @throws Exception if any exception throws
      */
     void operationComplete(Future future) throws Exception;
 

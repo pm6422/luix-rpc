@@ -34,7 +34,7 @@ public class CodecUtils {
         }
     }
 
-    private static byte[] encodeV1(Object msg, byte[] data) throws IOException {
+    private static byte[] encodeV1(Object msg, byte[] data) {
         long requestId = getRequestId(msg);
         byte[] result = new byte[RpcConstants.NETTY_HEADER + data.length];
         ByteUtils.short2bytes(RpcConstants.NETTY_MAGIC_TYPE, result, 0);

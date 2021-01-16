@@ -19,7 +19,7 @@ public abstract class ExceptionUtils {
     /**
      * 覆盖给定exception的stack信息，server端产生业务异常时调用此类屏蔽掉server端的异常栈。
      *
-     * @param e
+     * @param e exception
      */
     public static void setMockStackTrace(Throwable e) {
         if (e != null) {

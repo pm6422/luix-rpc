@@ -24,31 +24,31 @@ public class RpcServiceException extends RpcAbstractException {
         super(RpcErrorMsgConstant.SERVICE_DEFAULT_ERROR);
     }
 
-    public RpcServiceException(RpcErrorMsg RpcErrorMsg) {
-        super(RpcErrorMsg);
+    public RpcServiceException(RpcErrorMsg rpcErrorMsg) {
+        super(rpcErrorMsg);
     }
 
     public RpcServiceException(String message) {
         super(message, RpcErrorMsgConstant.SERVICE_DEFAULT_ERROR);
     }
 
-    public RpcServiceException(String message, RpcErrorMsg RpcErrorMsg) {
-        super(message, RpcErrorMsg);
+    public RpcServiceException(String message, RpcErrorMsg rpcErrorMsg) {
+        super(message, rpcErrorMsg);
     }
 
     public RpcServiceException(String message, Throwable cause) {
         super(message, cause, RpcErrorMsgConstant.SERVICE_DEFAULT_ERROR);
     }
 
-    public RpcServiceException(String message, Throwable cause, RpcErrorMsg RpcErrorMsg) {
-        super(message, cause, RpcErrorMsg);
+    public RpcServiceException(String message, Throwable cause, RpcErrorMsg rpcErrorMsg) {
+        super(message, cause, rpcErrorMsg);
     }
 
     public RpcServiceException(Throwable cause) {
         super(cause, RpcErrorMsgConstant.SERVICE_DEFAULT_ERROR);
     }
 
-    public RpcServiceException(Throwable cause, RpcErrorMsg RpcErrorMsg) {
-        super(cause, RpcErrorMsg);
+    public RpcServiceException(Throwable cause, RpcErrorMsg rpcErrorMsg) {
+        super(cause, rpcErrorMsg);
     }
 }

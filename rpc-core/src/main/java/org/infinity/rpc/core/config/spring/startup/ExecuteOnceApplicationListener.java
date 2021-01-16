@@ -6,23 +6,24 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;
+import org.springframework.lang.NonNull;
 
 import java.util.Objects;
 
 /**
  * The spring application listener which is always triggered once.
  */
-abstract class ExecuteOnceApplicationListener implements ApplicationContextAware, ApplicationListener {
+abstract class ExecuteOnceApplicationListener implements ApplicationContextAware, ApplicationListener<ApplicationEvent> {
 
     private ApplicationContext applicationContext;
 
     @Override
-    public final void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public final void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public final void onApplicationEvent(ApplicationEvent event) {
+    public final void onApplicationEvent(@NonNull ApplicationEvent event) {
         if (isOriginalEventSource(event) && event instanceof ApplicationContextEvent) {
             onApplicationContextEvent((ApplicationContextEvent) event);
         }
@@ -39,7 +40,7 @@ abstract class ExecuteOnceApplicationListener implements ApplicationContextAware
      * Check whether is original {@link ApplicationContext} as the event source
      *
      * @param event {@link ApplicationEvent}
-     * @return
+     * @return true: original application, false: or else
      */
     private boolean isOriginalEventSource(ApplicationEvent event) {
         // Current ApplicationListener is not a Spring Bean, just was added into Spring's ConfigurableApplicationContext

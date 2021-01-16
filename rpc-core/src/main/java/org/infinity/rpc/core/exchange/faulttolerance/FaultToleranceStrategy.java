@@ -17,12 +17,27 @@ import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 @Spi(scope = SpiScope.PROTOTYPE)
 public interface FaultToleranceStrategy<T> {
 
-    // TODO: check use
+    /**
+     * Set client url
+     *
+     * @param clientUrl client url
+     */
     void setClientUrl(Url clientUrl);
 
-    // TODO: check use
+    /**
+     * Get client url
+     *
+     * @return client url
+     */
     Url getClientUrl();
 
+    /**
+     * Call the RPC
+     *
+     * @param loadBalancer load balancer
+     * @param request      RPC request
+     * @return RPC response
+     */
     Responseable call(LoadBalancer<T> loadBalancer, Requestable request);
 
     /**
@@ -31,7 +46,8 @@ public interface FaultToleranceStrategy<T> {
      * @param name specified fault tolerance strategy name
      * @return fault tolerance strategy instance
      */
-    static FaultToleranceStrategy getInstance(String name) {
+    @SuppressWarnings("unchecked")
+    static <T> FaultToleranceStrategy<T> getInstance(String name) {
         return ServiceLoader.forClass(FaultToleranceStrategy.class).load(name);
     }
 }

@@ -23,26 +23,31 @@ public abstract class AbstractExporter<T> implements Exportable<T> {
     @Override
     public synchronized void init() {
         if (init) {
-            log.warn(this.getClass().getSimpleName() + " node already init: " + desc());
+            log.warn(this.getClass().getSimpleName() + " node already init: " + toString());
             return;
         }
 
         boolean result = doInit();
 
         if (!result) {
-            log.error(this.getClass().getSimpleName() + " node init Error: " + desc());
-            throw new RpcFrameworkException(this.getClass().getSimpleName() + " node init Error: " + desc(), RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+            log.error(this.getClass().getSimpleName() + " node init Error: " + toString());
+            throw new RpcFrameworkException(this.getClass().getSimpleName() + " node init Error: " + toString(), RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         } else {
-            log.info(this.getClass().getSimpleName() + " node init Success: " + desc());
+            log.info(this.getClass().getSimpleName() + " node init Success: " + toString());
             init = true;
             available = true;
         }
     }
 
+    /**
+     * Do initialization
+     *
+     * @return true: initialized successfully, false: or else
+     */
     protected abstract boolean doInit();
 
     @Override
-    public String desc() {
-        return "[" + this.getClass().getSimpleName() + "] url=" + providerWrapper.getUrl();
+    public String toString() {
+        return this.getClass().getSimpleName().concat(":").concat(providerWrapper.getUrl().toFullStr());
     }
 }

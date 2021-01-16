@@ -32,12 +32,16 @@ public interface Responseable extends Exchangable {
     Exception getException();
 
     /**
-     * set the serialization number.
+     * set the serialization number
      * same to the protocol version, this value only used in server end for compatible.
      *
-     * @param number
+     * @param number serialization number
      */
     void setSerializeNumber(int number);
 
+    /**
+     * Get serialization number
+     * @return serialization number
+     */
     int getSerializeNumber();
 }

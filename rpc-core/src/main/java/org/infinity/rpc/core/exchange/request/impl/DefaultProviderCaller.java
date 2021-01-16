@@ -3,13 +3,13 @@ package org.infinity.rpc.core.exchange.request.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
+import org.infinity.rpc.core.exception.TransportException;
 import org.infinity.rpc.core.exchange.request.AbstractProviderCaller;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Future;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.transport.Client;
 import org.infinity.rpc.core.exchange.transport.endpoint.EndpointFactory;
-import org.infinity.rpc.core.exchange.transport.exception.TransmissionException;
 import org.infinity.rpc.core.url.Url;
 
 
@@ -48,7 +48,7 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
             // 为了能够实现跨group请求，需要使用server端的group。
             request.setGroup(providerUrl.getGroup());
             return client.request(request);
-        } catch (TransmissionException exception) {
+        } catch (TransportException exception) {
             throw new RpcServiceException("DefaultRpcReferer call Error: url=" + providerUrl.getUri(), exception);
         }
     }
@@ -71,7 +71,7 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
     @Override
     public void destroy() {
         endpointFactory.safeReleaseResource(client, providerUrl);
-        log.info("DefaultRpcReferer destory client: url {}", providerUrl);
+        log.info("DefaultRpcReferer destroy client: url {}", providerUrl);
     }
 
     @Override

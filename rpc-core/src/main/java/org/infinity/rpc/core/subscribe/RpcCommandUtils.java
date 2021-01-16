@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.subscribe.RpcCommand;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -56,7 +55,7 @@ public class RpcCommandUtils {
         }
     }
 
-    private static PatternEvaluator evaluator = new PatternEvaluator();
+    private static final PatternEvaluator evaluator = new PatternEvaluator();
 
     public static boolean match(String expression, String path) {
         if (expression == null || expression.length() == 0) {
@@ -96,8 +95,8 @@ public class RpcCommandUtils {
             String result1 = buffer.toString();
 
             // 嵌套链表结构用于处理圆括号
-            LinkedList<LinkedList<Character>> outer = new LinkedList<LinkedList<Character>>();
-            LinkedList<Character> inner = new LinkedList<Character>();
+            LinkedList<LinkedList<Character>> outer = new LinkedList<>();
+            LinkedList<Character> inner = new LinkedList<>();
             inner.push('#');
             outer.push(inner);
 

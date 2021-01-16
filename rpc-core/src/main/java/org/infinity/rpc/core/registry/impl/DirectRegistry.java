@@ -24,8 +24,8 @@ import static org.infinity.rpc.core.url.Url.PARAM_ADDRESS;
 @Slf4j
 @ThreadSafe
 public class DirectRegistry extends AbstractRegistry implements Cleanable {
-    private List<Url>        directUrls    = new ArrayList<>();
-    private Map<Url, Object> subscribeUrls = new ConcurrentHashMap();
+    private final List<Url>        directUrls    = new ArrayList<>();
+    private final Map<Url, Object> subscribeUrls = new ConcurrentHashMap<>();
 
     public DirectRegistry(Url registryUrl) {
         super(registryUrl);
@@ -91,11 +91,10 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
 
     @Override
     protected List<Url> doDiscover(Url clientUrl) {
-        List results = directUrls
+        return directUrls
                 .stream()
                 .map(directUrl -> Url.of(clientUrl.getProtocol(), directUrl.getHost(), directUrl.getPort(), StringUtils.EMPTY))
                 .collect(Collectors.toList());
-        return results;
     }
 
     @Override

@@ -11,17 +11,28 @@ import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 @Spi(scope = SpiScope.SINGLETON)
 public interface Protocol {
 
+    /**
+     * Create provider caller
+     *
+     * @param interfaceClass provider interface
+     * @param providerUrl    provider url
+     * @param <T> provider instance
+     * @return provider caller
+     */
     <T> ProviderCaller<T> createProviderCaller(Class<T> interfaceClass, Url providerUrl);
 
     /**
      * 暴露服务
      *
-     * @param <T>
-     * @param providerWrapper
-     * @return
+     * @param <T>             provider interface
+     * @param providerWrapper provider wrapper
+     * @return exporter
      */
     <T> Exportable<T> export(ProviderWrapper<T> providerWrapper);
 
+    /**
+     * Destroy
+     */
     void destroy();
 
     /**

@@ -131,7 +131,7 @@ public class ProviderProtectedMessageRouter extends ProviderMessageRouter {
             return true;
         }
 
-        // 不简单判断 requsetCount > (maxThread / 2) ，因为假如有2或者3个method对外提供，
+        // 不简单判断 requestCount > (maxThread / 2) ，因为假如有2或者3个method对外提供，
         // 但是只有一个接口很大调用量，而其他接口很空闲，那么这个时候允许单个method的极限到 maxThread * 3 / 4
         if (requestCounter > (maxThread / 2) && totalCounter > (maxThread * 3 / 4)) {
             return false;
@@ -139,14 +139,14 @@ public class ProviderProtectedMessageRouter extends ProviderMessageRouter {
 
         // 如果总体线程数超过 maxThread * 3 / 4个，并且对外的method比较多，那么意味着这个时候整体压力比较大，
         // 那么这个时候如果单method超过 maxThread * 1 / 4，那么reject
-        return !(methodCounter.get() >= 4 && totalCounter > (maxThread * 3 / 4) && requestCounter > (maxThread * 1 / 4));
+        return !(methodCounter.get() >= 4 && totalCounter > (maxThread * 3 / 4) && requestCounter > (maxThread / 4));
     }
 
 //    @Override
 //    public String statisticCallback() {
 //        int count = rejectCounter.getAndSet(0);
 //        if (count > 0) {
-//            return String.format("type: motan name: reject_request total_count: %s reject_count: %s", totalCounter.get(), count);
+//            return String.format("type: infinity name: reject_request total_count: %s reject_count: %s", totalCounter.get(), count);
 //        } else {
 //            return null;
 //        }

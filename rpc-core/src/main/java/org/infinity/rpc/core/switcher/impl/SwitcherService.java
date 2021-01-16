@@ -26,7 +26,7 @@ public class SwitcherService {
     /**
      * Get the DefaultSwitcherService instance
      *
-     * @return
+     * @return instance
      */
     public static SwitcherService getInstance() {
         return SingletonHolder.INSTANCE;
@@ -77,8 +77,8 @@ public class SwitcherService {
     }
 
     public void registerListener(String name, SwitcherListener listener) {
-        List listeners = Collections.synchronizedList(new ArrayList());
-        List existingListeners = listenerMap.putIfAbsent(name, listeners);
+        List<SwitcherListener> listeners = Collections.synchronizedList(new ArrayList());
+        List<SwitcherListener> existingListeners = listenerMap.putIfAbsent(name, listeners);
         if (existingListeners == null) {
             // Key does not exist in map, return null
             listeners.add(listener);

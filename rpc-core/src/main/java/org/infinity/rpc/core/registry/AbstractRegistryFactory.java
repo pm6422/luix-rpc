@@ -7,7 +7,6 @@ import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 
 import javax.annotation.concurrent.NotThreadSafe;
-import javax.annotation.concurrent.ThreadSafe;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
@@ -19,8 +18,8 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
     /**
      * Object lock
      */
-    private final  Lock                  lock           = new ReentrantLock();
-    private static Map<String, Registry> registryPerUri = new ConcurrentHashMap<>();
+    private final        Lock                  lock           = new ReentrantLock();
+    private static final Map<String, Registry> registryPerUri = new ConcurrentHashMap<>();
 
     /**
      * Get or create a registry

@@ -5,10 +5,9 @@ import java.net.InetSocketAddress;
 
 public class TransportException extends IOException {
 
-    private static final long serialVersionUID = 7057762354907226994L;
-
-    private InetSocketAddress localAddress;
-    private InetSocketAddress remoteAddress;
+    private static final long              serialVersionUID = 7600964987123698104L;
+    private final        InetSocketAddress localAddress;
+    private final        InetSocketAddress remoteAddress;
 
     public TransportException(InetSocketAddress localAddress, InetSocketAddress remoteAddress, String message) {
         super(message);

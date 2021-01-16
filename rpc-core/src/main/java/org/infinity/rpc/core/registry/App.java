@@ -6,18 +6,32 @@ import lombok.ToString;
 @Data
 @ToString
 public class App {
-    // Application ID
+    /**
+     * Application ID
+     */
     private String id;
-    // Application name
+    /**
+     * Application name
+     */
     private String name;
-    // Application description
+    /**
+     * Application description
+     */
     private String description;
-    // Responsible team
+    /**
+     * Responsible team
+     */
     private String team;
-    // Application owner
+    /**
+     * Application owner
+     */
     private String owner;
-    // Environment variable, e.g. dev, test or prod
+    /**
+     * Environment variable, e.g. dev, test or prod
+     */
     private String env;
-    // Latest registered time
+    /**
+     * Latest registered time
+     */
     private String latestRegisteredTime;
 }

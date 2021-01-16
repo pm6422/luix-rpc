@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * PRC provider configuration wrapper
  *
- * @param <T>
+ * @param <T>: provider instance
  */
 @Slf4j
 @Data
@@ -115,8 +115,8 @@ public class ProviderWrapper<T> implements DisposableBean {
     /**
      * todo: move to providerExecutor
      *
-     * @param request
-     * @return
+     * @param request RPC request
+     * @return RPC response
      */
     public Responseable call(Requestable request) {
         RpcFrameworkUtils.logEvent(request, RpcConstants.TRACE_BEFORE_BIZ);
@@ -128,8 +128,8 @@ public class ProviderWrapper<T> implements DisposableBean {
     /**
      * todo: move to providerExecutor
      *
-     * @param request
-     * @return
+     * @param request RPC request
+     * @return RPC response
      */
     public Responseable invoke(Requestable request) {
         RpcResponse response = new RpcResponse();

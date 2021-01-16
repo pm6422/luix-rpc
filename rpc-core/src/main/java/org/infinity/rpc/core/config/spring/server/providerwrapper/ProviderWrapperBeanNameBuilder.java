@@ -9,7 +9,9 @@ import org.springframework.core.env.Environment;
 public final class ProviderWrapperBeanNameBuilder {
     public static final  String      PROVIDER_WRAPPER_BEAN_PREFIX = "ProviderWrapper";
     private static final String      SEPARATOR                    = ":";
-    // Required
+    /**
+     * Required
+     */
     private final        Class<?>    interfaceClass;
     private final        Environment env;
 

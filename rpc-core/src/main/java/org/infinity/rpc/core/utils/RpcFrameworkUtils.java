@@ -239,7 +239,7 @@ public class RpcFrameworkUtils {
     }
 
     public static void logEvent(Requestable request, String event, long time) {
-        if (!(request instanceof Traceable)) {
+        if (request == null) {
             return;
         }
         if (RpcConstants.TRACE_CSEND.equals(event)) {
@@ -262,7 +262,7 @@ public class RpcFrameworkUtils {
     }
 
     public static void logEvent(Responseable response, String event, long time) {
-        if (!(response instanceof Traceable)) {
+        if (response == null) {
             return;
         }
         if (RpcConstants.TRACE_SSEND.equals(event)) {

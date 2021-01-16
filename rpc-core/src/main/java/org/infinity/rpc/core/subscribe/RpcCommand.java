@@ -16,8 +16,6 @@
 
 package org.infinity.rpc.core.subscribe;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class RpcCommand {
@@ -25,32 +23,28 @@ public class RpcCommand {
     private List<ClientCommand> clientCommandList;
 
     public void sort() {
-        Collections.sort(clientCommandList, new Comparator<ClientCommand>() {
-            @Override
-            public int compare(ClientCommand o1, ClientCommand o2) {
-                Integer i1 = o1.getIndex();
-                Integer i2 = o2.getIndex();
-                if (i1 == null) {
-                    return -1;
-                }
-                if (i2 == null) {
-                    return 1;
-                }
-                int r = i1.compareTo(i2);
-                return r;
+        clientCommandList.sort((o1, o2) -> {
+            Integer i1 = o1.getIndex();
+            Integer i2 = o2.getIndex();
+            if (i1 == null) {
+                return -1;
             }
+            if (i2 == null) {
+                return 1;
+            }
+            return i1.compareTo(i2);
         });
     }
 
     public static class ClientCommand {
-        private Integer index;
-        private String version;
-        private String dc;
-        private String pattern;
+        private Integer      index;
+        private String       version;
+        private String       dc;
+        private String       pattern;
         private List<String> mergeGroups;
         // 路由规则，当有多个匹配时，按顺序依次过滤结果
         private List<String> routeRules;
-        private String remark;
+        private String       remark;
 
         public Integer getIndex() {
             return index;

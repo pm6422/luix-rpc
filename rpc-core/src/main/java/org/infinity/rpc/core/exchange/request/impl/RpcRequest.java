@@ -31,7 +31,7 @@ public class RpcRequest implements Requestable, Serializable {
     private              Object[]            methodArguments;
     private              Map<String, String> attachments      = new ConcurrentHashMap<>();
     /**
-     * Default serialization is hession2
+     * Default serialization is Hession2
      */
     private              int                 serializeNum     = 0;
 
