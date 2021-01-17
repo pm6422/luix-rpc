@@ -52,20 +52,20 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
     }
 
     private void checkHealth() {
-//        for (Map.Entry<Client, HeartbeatFactory> endpoint : endpoints.entrySet()) {
-//            Client client = endpoint.getKey();
-//            try {
-//                if (isSkipCheckHealthState(client)) {
-//                    log.debug("Skip checking health for url [{}] with state [{}]",
-//                            client.getProviderUrl().getUri(), client.getState().name());
-//                    continue;
-//                }
-//                HeartbeatFactory heartbeatFactory = endpoint.getValue();
-//                client.checkHealth(heartbeatFactory.createRequest());
-//            } catch (Exception e) {
-//                log.error("Failed to check health for provider url [" + client.getProviderUrl().getUri() + "]", e);
-//            }
-//        }
+        for (Map.Entry<Client, HeartbeatFactory> endpoint : endpoints.entrySet()) {
+            Client client = endpoint.getKey();
+            try {
+                if (isSkipCheckHealthState(client)) {
+                    log.debug("Skip checking health for url [{}] with state [{}]",
+                            client.getProviderUrl().getUri(), client.getState().name());
+                    continue;
+                }
+                HeartbeatFactory heartbeatFactory = endpoint.getValue();
+                client.checkHealth(heartbeatFactory.createRequest());
+            } catch (Exception e) {
+                log.error("Failed to check health for provider url [" + client.getProviderUrl().getUri() + "]", e);
+            }
+        }
     }
 
     private boolean isSkipCheckHealthState(Client client) {
