@@ -19,6 +19,7 @@ package org.infinity.rpc.core.exchange.transport.endpoint.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
+import org.infinity.rpc.core.exchange.request.impl.RpcHealthRequest;
 import org.infinity.rpc.core.exchange.transport.Client;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.exchange.transport.endpoint.Endpoint;
@@ -43,7 +44,7 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
      * Check health interval in milliseconds
      * todo: move to global config
      */
-    private static final int                           CHECK_HEALTH_TIMER_INTERVAL = 5000;
+    private static final int                           CHECK_HEALTH_TIMER_INTERVAL = 500;
     private final        Map<Client, HeartbeatFactory> endpoints                   = new ConcurrentHashMap<>();
 
     @Override
@@ -56,8 +57,8 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
             Client client = endpoint.getKey();
             try {
                 if (isSkipCheckHealthState(client)) {
-                    log.debug("Skip checking health for url [{}] with state [{}]",
-                            client.getProviderUrl().getUri(), client.getState().name());
+//                    log.debug("Skip checking health for url [{}] with state [{}]",
+//                            client.getProviderUrl().getUri(), client.getState().name());
                     continue;
                 }
                 HeartbeatFactory heartbeatFactory = endpoint.getValue();
@@ -70,8 +71,8 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
 
     private boolean isSkipCheckHealthState(Client client) {
         // Skip health check process if current endpoint is uninitialized or closed
-        return ChannelState.UNINITIALIZED.equals(client.getState()) || client.isClosed();
-//        return client.isActive() || ChannelState.UNINITIALIZED.equals(client.getState()) || client.isClosed();
+//        return ChannelState.UNINITIALIZED.equals(client.getState()) || client.isClosed();
+        return client.isActive() || ChannelState.UNINITIALIZED.equals(client.getState()) || client.isClosed();
     }
 
     @Override

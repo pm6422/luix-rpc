@@ -17,11 +17,10 @@
 package org.infinity.rpc.core.exchange.transport.heartbeat.impl;
 
 import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
-import org.infinity.rpc.core.constant.ServiceConstants;
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.core.exchange.request.impl.RpcRequest;
+import org.infinity.rpc.core.exchange.request.impl.RpcHealthRequest;
 import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
+import org.infinity.rpc.core.exchange.response.impl.RpcHealthResponse;
 import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.exchange.transport.heartbeat.HeartbeatFactory;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
@@ -42,30 +41,28 @@ public class DefaultRpcHeartbeatFactory implements HeartbeatFactory {
     public static final String CHECK_HEALTH_RETURN         = "SUCCESS";
 
     @Override
-    public Requestable createRequest() {
-        return getDefaultHeartbeatRequest(IdGenerator.generateTimestampId());
-    }
-
-    @Override
     public MessageHandler wrapMessageHandler(MessageHandler handler) {
         return new HeartMessageHandleWrapper(handler);
     }
 
-    public static Requestable getDefaultHeartbeatRequest(long requestId) {
-        HeartbeatRequest request = new HeartbeatRequest();
-        request.setRequestId(requestId);
-        request.setInterfaceName(CHECK_HEALTH_INTERFACE_NAME);
-        request.setMethodName(CHECK_HEALTH_METHOD_NAME);
-        request.setMethodParameters(CHECK_HEALTH_METHOD_PARAM);
-
-        return request;
+    @Override
+    public Requestable createRequest() {
+        return new RpcHealthRequest(IdGenerator.generateTimestampId(),
+                CHECK_HEALTH_INTERFACE_NAME, CHECK_HEALTH_METHOD_NAME, CHECK_HEALTH_METHOD_PARAM);
     }
 
-    public static boolean isHeartbeatRequest(Object message) {
+    public static Responseable createResponse(long requestId) {
+        RpcHealthResponse response = new RpcHealthResponse();
+        response.setRequestId(requestId);
+        response.setResult(CHECK_HEALTH_RETURN);
+        return response;
+    }
+
+    public static boolean isCheckHealthRequest(Object message) {
         if (!(message instanceof Requestable)) {
             return false;
         }
-        if (message instanceof HeartbeatRequest) {
+        if (message instanceof RpcHealthRequest) {
             return true;
         }
 
@@ -76,17 +73,9 @@ public class DefaultRpcHeartbeatFactory implements HeartbeatFactory {
                 && CHECK_HEALTH_METHOD_PARAM.endsWith(request.getMethodParameters());
     }
 
-    public static Responseable getDefaultHeartbeatResponse(long requestId) {
-        HeartbeatResponse response = new HeartbeatResponse();
-        response.setRequestId(requestId);
-        response.setResult(CHECK_HEALTH_RETURN);
-        return response;
+    public static boolean isCheckHealthResponse(Object message) {
+        return message instanceof RpcHealthResponse;
     }
-
-    public static boolean isHeartbeatResponse(Object message) {
-        return message instanceof HeartbeatResponse;
-    }
-
 
     private static class HeartMessageHandleWrapper implements MessageHandler {
         private final MessageHandler messageHandler;
@@ -97,21 +86,12 @@ public class DefaultRpcHeartbeatFactory implements HeartbeatFactory {
 
         @Override
         public Object handle(Channel channel, Object message) {
-            if (isHeartbeatRequest(message)) {
-                Responseable response = getDefaultHeartbeatResponse(((Requestable) message).getRequestId());
+            if (isCheckHealthRequest(message)) {
+                Responseable response = createResponse(((Requestable) message).getRequestId());
                 response.setProtocolVersion(((Requestable) message).getProtocolVersion());
                 return response;
             }
             return messageHandler.handle(channel, message);
         }
-    }
-
-    static class HeartbeatRequest extends RpcRequest {
-        private static final long serialVersionUID = -9091565508658370712L;
-
-    }
-
-    static class HeartbeatResponse extends RpcResponse {
-        private static final long serialVersionUID = -3894152771593026692L;
     }
 }

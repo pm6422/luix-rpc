@@ -15,29 +15,29 @@ import java.util.concurrent.ConcurrentHashMap;
 @ToString
 public class RpcRequest implements Requestable, Serializable {
     private static final long                serialVersionUID = -6259178379027752471L;
-    private              long                requestId;
-    private              byte                protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
-    private              String              interfaceName;
-    private              String              methodName;
+    protected            long                requestId;
+    protected            byte                protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
+    protected            String              interfaceName;
+    protected            String              methodName;
     /**
      * The method parameter type name list string which is separated by comma.
      * e.g, java.util.List,java.lang.Long
      */
-    private              String              methodParameters;
-    private              Object[]            methodArguments;
-    private              int                 retryNumber;
-    private              long                sendingTime;
-    private              long                receivedTime;
-    private              long                elapsedTime;
-    private              Map<String, String> traces           = new ConcurrentHashMap<>();
+    protected            String              methodParameters;
+    protected            Object[]            methodArguments;
+    protected            int                 retryNumber;
+    protected            long                sendingTime;
+    protected            long                receivedTime;
+    protected            long                elapsedTime;
+    protected            Map<String, String> traces           = new ConcurrentHashMap<>();
     /**
      * RPC request options, all the optional RPC request parameters will be put in it.
      */
-    private              Map<String, String> options          = new ConcurrentHashMap<>();
+    protected            Map<String, String> options          = new ConcurrentHashMap<>();
     /**
      * Default serialization is Hession2
      */
-    private              int                 serializeNum     = 0;
+    protected            int                 serializeNum     = 0;
 
     public RpcRequest(long requestId, String interfaceName, String methodName, String methodParameters) {
         this.requestId = requestId;
