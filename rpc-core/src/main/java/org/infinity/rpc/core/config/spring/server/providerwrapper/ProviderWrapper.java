@@ -186,7 +186,7 @@ public class ProviderWrapper<T> implements DisposableBean {
                 ExceptionUtils.setMockStackTrace(response.getException().getCause());
             }
         }
-        response.setAttachments(request.getAttachments());
+        response.setOptions(request.getOptions());
         return response;
     }
 

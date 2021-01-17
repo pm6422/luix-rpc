@@ -90,7 +90,7 @@ public class ProviderMessageRouter implements MessageHandler {
         fillParamDesc(request, method);
         processLazyDeserialize(request, method);
         Responseable response = call(request, provider);
-        response.setSerializeNumber(request.getSerializeNum());
+        response.setSerializeNum(request.getSerializeNum());
         response.setProtocolVersion(request.getProtocolVersion());
         return response;
     }

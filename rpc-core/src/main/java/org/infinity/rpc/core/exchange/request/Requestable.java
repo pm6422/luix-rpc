@@ -2,20 +2,20 @@ package org.infinity.rpc.core.exchange.request;
 
 import org.infinity.rpc.core.exchange.Exchangable;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public interface Requestable extends Exchangable {
 
-    AtomicInteger RETRIES = new AtomicInteger(0);
-
-    String getClientRequestId();
-
-    void setClientRequestId(String clientRequestId);
-
-    // Provider interface name
+    /**
+     * Get provider interface name
+     *
+     * @return provider interface name
+     */
     String getInterfaceName();
 
-    // Provider method name
+    /**
+     * Get method name
+     *
+     * @return method name
+     */
     String getMethodName();
 
     /**
@@ -26,15 +26,26 @@ public interface Requestable extends Exchangable {
      */
     String getMethodParameters();
 
-    // Provider method arguments
+    /**
+     * Get method arguments
+     *
+     * @return method arguments
+     */
     Object[] getMethodArguments();
 
-    // Set the number of RPC request retry
-    void setNumberOfRetry(int numberOfRetry);
+    /**
+     * Set the number of RPC request retry
+     *
+     * @param numberOfRetry number of retry
+     */
+    void setRetryNumber(int numberOfRetry);
 
-    int getRetries();
-
-    void setProtocol(String protocol);
+    /**
+     * Get the number of RPC request retry
+     *
+     * @return number of retry
+     */
+    int getRetryNumber();
 
     /**
      * set the serialization number.
@@ -44,5 +55,10 @@ public interface Requestable extends Exchangable {
      */
     void setSerializeNum(int number);
 
+    /**
+     * Get serialize number
+     *
+     * @return serialize number
+     */
     int getSerializeNum();
 }

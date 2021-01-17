@@ -33,7 +33,7 @@ public class FailoverStrategy<T> extends AbstractFaultToleranceStrategy<T> {
         for (int i = 0; i <= maxRetries; i++) {
             ProviderCaller<T> providerCaller = availableProviderCallers.get(i % availableProviderCallers.size());
             try {
-                request.setNumberOfRetry(i);
+                request.setRetryNumber(i);
                 return providerCaller.call(request);
             } catch (RuntimeException e) {
                 if (ExceptionUtils.isBizException(e) || i >= maxRetries) {

@@ -3,6 +3,7 @@ package org.infinity.rpc.core.exchange.transport;
 import org.infinity.rpc.core.exception.TransportException;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
+import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.url.Url;
 
 import java.net.InetSocketAddress;
@@ -50,6 +51,13 @@ public interface Channel {
      * @return remote address
      */
     InetSocketAddress getRemoteAddress();
+
+    /**
+     * Get state
+     *
+     * @return state
+     */
+    ChannelState getState();
 
     /**
      * Check whether it is closed or not

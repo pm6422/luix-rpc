@@ -16,7 +16,7 @@ import org.infinity.rpc.core.exchange.transport.callback.StatisticCallback;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.exchange.transport.server.AbstractServer;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.transport.netty4.NettyChannelHandler;
+import org.infinity.rpc.transport.netty4.NettyServerClientHandler;
 import org.infinity.rpc.transport.netty4.NettyDecoder;
 import org.infinity.rpc.transport.netty4.NettyEncoder;
 import org.infinity.rpc.utilities.threadpool.DefaultThreadFactory;
@@ -98,7 +98,7 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
                         pipeline.addLast("channel_manage", channelManage);
                         pipeline.addLast("decoder", new NettyDecoder(codec, NettyServer.this, maxContentLength));
                         pipeline.addLast("encoder", new NettyEncoder());
-                        NettyChannelHandler handler = new NettyChannelHandler(NettyServer.this, messageHandler, standardThreadExecutor);
+                        NettyServerClientHandler handler = new NettyServerClientHandler(NettyServer.this, messageHandler, standardThreadExecutor);
                         pipeline.addLast("handler", handler);
                     }
                 });
@@ -137,6 +137,11 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
         } catch (Exception e) {
             log.error("NettyServer close Error: url=" + url.getUri(), e);
         }
+    }
+
+    @Override
+    public ChannelState getState() {
+        return state;
     }
 
     public void cleanup() {

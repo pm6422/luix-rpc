@@ -16,14 +16,15 @@
 
 package org.infinity.rpc.core.exchange.transport.heartbeat.impl;
 
-import org.infinity.rpc.core.constant.RpcConstants;
+import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
+import org.infinity.rpc.core.constant.ServiceConstants;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.impl.RpcRequest;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.exchange.transport.Channel;
-import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exchange.transport.heartbeat.HeartbeatFactory;
+import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.utilities.id.IdGenerator;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
@@ -32,6 +33,13 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
  */
 @ServiceName("default")
 public class DefaultRpcHeartbeatFactory implements HeartbeatFactory {
+    /**
+     * heartbeat constants start
+     */
+    public static final String CHECK_HEALTH_INTERFACE_NAME = "org.infinity.rpc.health.Checker";
+    public static final String CHECK_HEALTH_METHOD_NAME    = "checkHealth";
+    public static final String CHECK_HEALTH_METHOD_PARAM   = MethodParameterUtils.VOID;
+    public static final String CHECK_HEALTH_RETURN         = "SUCCESS";
 
     @Override
     public Requestable createRequest() {
@@ -45,11 +53,10 @@ public class DefaultRpcHeartbeatFactory implements HeartbeatFactory {
 
     public static Requestable getDefaultHeartbeatRequest(long requestId) {
         HeartbeatRequest request = new HeartbeatRequest();
-
         request.setRequestId(requestId);
-        request.setInterfaceName(RpcConstants.HEARTBEAT_INTERFACE_NAME);
-        request.setMethodName(RpcConstants.HEARTBEAT_METHOD_NAME);
-        request.setMethodParameters(RpcConstants.HEARTBEAT_PARAM);
+        request.setInterfaceName(CHECK_HEALTH_INTERFACE_NAME);
+        request.setMethodName(CHECK_HEALTH_METHOD_NAME);
+        request.setMethodParameters(CHECK_HEALTH_METHOD_PARAM);
 
         return request;
     }
@@ -64,15 +71,15 @@ public class DefaultRpcHeartbeatFactory implements HeartbeatFactory {
 
         Requestable request = (Requestable) message;
 
-        return RpcConstants.HEARTBEAT_INTERFACE_NAME.equals(request.getInterfaceName())
-                && RpcConstants.HEARTBEAT_METHOD_NAME.equals(request.getMethodName())
-                && RpcConstants.HEARTBEAT_PARAM.endsWith(request.getMethodParameters());
+        return CHECK_HEALTH_INTERFACE_NAME.equals(request.getInterfaceName())
+                && CHECK_HEALTH_METHOD_NAME.equals(request.getMethodName())
+                && CHECK_HEALTH_METHOD_PARAM.endsWith(request.getMethodParameters());
     }
 
     public static Responseable getDefaultHeartbeatResponse(long requestId) {
         HeartbeatResponse response = new HeartbeatResponse();
         response.setRequestId(requestId);
-        response.setResult("heartbeat");
+        response.setResult(CHECK_HEALTH_RETURN);
         return response;
     }
 
@@ -101,6 +108,7 @@ public class DefaultRpcHeartbeatFactory implements HeartbeatFactory {
 
     static class HeartbeatRequest extends RpcRequest {
         private static final long serialVersionUID = -9091565508658370712L;
+
     }
 
     static class HeartbeatResponse extends RpcResponse {

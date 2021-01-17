@@ -49,7 +49,7 @@ public class ExchangeContext {
         ExchangeContext context = new ExchangeContext();
         if (request != null) {
             context.setRequest(request);
-            context.setClientRequestId(request.getClientRequestId());
+//            context.setClientRequestId(request.getClientRequestId());
         }
         THREAT_LOCAL_CONTEXT.set(context);
         return context;

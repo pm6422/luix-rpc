@@ -79,12 +79,6 @@ public class RpcConstants {
     public static final byte   FLAG_RESPONSE_ATTACHMENT           = 0x07;
     public static final byte   FLAG_OTHER                         = (byte) 0xFF;
     /**
-     * heartbeat constants start
-     */
-    public static final String HEARTBEAT_INTERFACE_NAME           = "com.weibo.api.motan.rpc.heartbeat";
-    public static final String HEARTBEAT_METHOD_NAME              = "heartbeat";
-    public static final String HEARTBEAT_PARAM                    = MethodParameterUtils.VOID;
-    /**
      * heartbeat constants end
      */
 

@@ -5,6 +5,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
@@ -16,7 +17,6 @@ import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.exchange.transport.Channel;
-import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 import org.infinity.rpc.transport.netty4.server.NettyServer;
@@ -27,20 +27,23 @@ import java.net.SocketAddress;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 
+/**
+ * @todo: NettyChannelHandler
+ */
 @Slf4j
-public class NettyChannelHandler extends ChannelDuplexHandler {
+public class NettyServerClientHandler extends ChannelDuplexHandler {
     private ThreadPoolExecutor threadPoolExecutor;
     private MessageHandler     messageHandler;
     private Channel            channel;
     private Codec              codec;
 
-    public NettyChannelHandler(Channel channel, MessageHandler messageHandler) {
+    public NettyServerClientHandler(Channel channel, MessageHandler messageHandler) {
         this.channel = channel;
         this.messageHandler = messageHandler;
         codec = Codec.getInstance(channel.getProviderUrl().getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
     }
 
-    public NettyChannelHandler(Channel channel, MessageHandler messageHandler, ThreadPoolExecutor threadPoolExecutor) {
+    public NettyServerClientHandler(Channel channel, MessageHandler messageHandler, ThreadPoolExecutor threadPoolExecutor) {
         this.channel = channel;
         this.messageHandler = messageHandler;
         this.threadPoolExecutor = threadPoolExecutor;
@@ -68,7 +71,8 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
                     threadPoolExecutor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            processMessage(ctx, ((NettyMessage) msg));
+                            // Step2: receive and decode request on server side
+                            processRequestOrResponseMsg(ctx, ((NettyMessage) msg));
                         }
                     });
                 } catch (RejectedExecutionException rejectException) {
@@ -78,11 +82,12 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
                         log.warn("process thread pool is full, run in io thread, active={} poolSize={} corePoolSize={} maxPoolSize={} taskCount={} requestId={}",
                                 threadPoolExecutor.getActiveCount(), threadPoolExecutor.getPoolSize(), threadPoolExecutor.getCorePoolSize(),
                                 threadPoolExecutor.getMaximumPoolSize(), threadPoolExecutor.getTaskCount(), ((NettyMessage) msg).getRequestId());
-                        processMessage(ctx, (NettyMessage) msg);
+                        processRequestOrResponseMsg(ctx, (NettyMessage) msg);
                     }
                 }
             } else {
-                processMessage(ctx, (NettyMessage) msg);
+                // Step4: receive and decode response on client side
+                processRequestOrResponseMsg(ctx, (NettyMessage) msg);
             }
         } else {
             log.error("NettyChannelHandler messageReceived type not support: class=" + msg.getClass());
@@ -92,7 +97,7 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
 
     private void rejectMessage(ChannelHandlerContext ctx, NettyMessage msg) {
         if (msg.isRequest()) {
-            sendResponse(ctx, RpcFrameworkUtils.buildErrorResponse((Requestable) msg, new RpcServiceException("process thread pool is full, reject by server: " + ctx.channel().localAddress(), RpcErrorMsgConstant.SERVICE_REJECT)));
+            returnResponse(ctx, RpcFrameworkUtils.buildErrorResponse((Requestable) msg, new RpcServiceException("process thread pool is full, reject by server: " + ctx.channel().localAddress(), RpcErrorMsgConstant.SERVICE_REJECT)));
 
             log.error("process thread pool is full, reject, active={} poolSize={} corePoolSize={} maxPoolSize={} taskCount={} requestId={}",
                     threadPoolExecutor.getActiveCount(), threadPoolExecutor.getPoolSize(), threadPoolExecutor.getCorePoolSize(),
@@ -103,37 +108,41 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
         }
     }
 
-    private void processMessage(ChannelHandlerContext ctx, NettyMessage msg) {
+    private void processRequestOrResponseMsg(ChannelHandlerContext ctx, NettyMessage msg) {
         long startTime = System.currentTimeMillis();
         String remoteIp = getRemoteIp(ctx);
-        Object result;
+        Object decodedObj;
         try {
-            result = codec.decode(channel, remoteIp, msg.getData());
+            decodedObj = codec.decode(channel, remoteIp, msg.getData());
         } catch (Exception e) {
             log.error("NettyDecoder decode fail! requestid" + msg.getRequestId() + ", size:" + msg.getData().length + ", ip:" + remoteIp + ", e:" + e.getMessage());
             Responseable response = RpcFrameworkUtils.buildErrorResponse(msg.getRequestId(), msg.getVersion().getVersion(), e);
             if (msg.isRequest()) {
-                sendResponse(ctx, response);
+                // Step3: directly return response on server side
+                returnResponse(ctx, response);
             } else {
+                // Process response
                 processResponse(response);
             }
             return;
         }
 
-        if (result instanceof Requestable) {
-            RpcFrameworkUtils.logEvent((Requestable) result, RpcConstants.TRACE_SRECEIVE, msg.getStartTime());
-            RpcFrameworkUtils.logEvent((Requestable) result, RpcConstants.TRACE_SEXECUTOR_START, startTime);
-            RpcFrameworkUtils.logEvent((Requestable) result, RpcConstants.TRACE_SDECODE);
-            processRequest(ctx, (Requestable) result);
-        } else if (result instanceof Responseable) {
-            RpcFrameworkUtils.logEvent((Responseable) result, RpcConstants.TRACE_CRECEIVE, msg.getStartTime());
-            RpcFrameworkUtils.logEvent((Responseable) result, RpcConstants.TRACE_CDECODE);
-            processResponse(result);
+        if (decodedObj instanceof Requestable) {
+            // Process request
+            RpcFrameworkUtils.logEvent((Requestable) decodedObj, RpcConstants.TRACE_SRECEIVE, msg.getStartTime());
+            RpcFrameworkUtils.logEvent((Requestable) decodedObj, RpcConstants.TRACE_SEXECUTOR_START, startTime);
+            RpcFrameworkUtils.logEvent((Requestable) decodedObj, RpcConstants.TRACE_SDECODE);
+            processRequest(ctx, (Requestable) decodedObj);
+        } else if (decodedObj instanceof Responseable) {
+            // Process response
+            RpcFrameworkUtils.logEvent((Responseable) decodedObj, RpcConstants.TRACE_CRECEIVE, msg.getStartTime());
+            RpcFrameworkUtils.logEvent((Responseable) decodedObj, RpcConstants.TRACE_CDECODE);
+            processResponse(decodedObj);
         }
     }
 
     private void processRequest(final ChannelHandlerContext ctx, final Requestable request) {
-        request.addAttachment(Url.PARAM_HOST, NetworkUtils.getHostName(ctx.channel().remoteAddress()));
+        request.addOption(Url.PARAM_HOST, NetworkUtils.getHostName(ctx.channel().remoteAddress()));
         final long processStartTime = System.currentTimeMillis();
         try {
             ExchangeContext.initialize(request);
@@ -157,7 +166,8 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
             response.setRequestId(request.getRequestId());
             response.setElapsedTime(System.currentTimeMillis() - processStartTime);
 
-            ChannelFuture channelFuture = sendResponse(ctx, response);
+            // Step3: encode and return response on server side
+            ChannelFuture channelFuture = returnResponse(ctx, response);
             if (channelFuture != null) {
                 channelFuture.addListener(new ChannelFutureListener() {
                     @Override
@@ -172,9 +182,10 @@ public class NettyChannelHandler extends ChannelDuplexHandler {
         }
     }
 
-    private ChannelFuture sendResponse(ChannelHandlerContext ctx, Responseable response) {
+    private ChannelFuture returnResponse(ChannelHandlerContext ctx, Responseable response) {
+        // Encode the response
         byte[] msg = CodecUtils.encodeObjectToBytes(channel, codec, response);
-        response.addAttachment(RpcConstants.CONTENT_LENGTH, String.valueOf(msg.length));
+        response.addOption(RpcConstants.CONTENT_LENGTH, String.valueOf(msg.length));
         if (ctx.channel().isActive()) {
             return ctx.channel().writeAndFlush(msg);
         }

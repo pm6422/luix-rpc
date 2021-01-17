@@ -6,7 +6,7 @@ import org.infinity.rpc.core.url.Url;
 /**
  * The initiator of the RPC request
  * It used to call the RPC provider
- * One caller for a protocol
+ *
  *
  * @param <T>: The interface class of the provider
  */

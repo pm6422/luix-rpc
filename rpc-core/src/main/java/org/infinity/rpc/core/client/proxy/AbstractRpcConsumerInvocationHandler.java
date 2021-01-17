@@ -36,7 +36,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
         consumerWrapper.getProviderCluster().getFaultToleranceStrategy().setClientUrl(clientUrl);
 
 //            request.addAttachment(Url.PARAM_APP, infinityProperties.getApplication().getName());
-        request.setProtocol(consumerWrapper.getProviderCluster().getProtocol());
+//        request.setProtocol(consumerWrapper.getProviderCluster().getProtocol());
 
         Responseable response;
 //            boolean throwException = true;
@@ -59,10 +59,10 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
      */
     private void copyContextToRequest(ExchangeContext threadRpcContext, Requestable request) {
         // Copy attachments from RPC context to request object
-        threadRpcContext.getAttachments().forEach(request::addAttachment);
+        threadRpcContext.getAttachments().forEach(request::addOption);
 
         // Copy client request id from RPC context to request object
-        request.setClientRequestId(threadRpcContext.getClientRequestId());
+//        request.setClientRequestId(threadRpcContext.getClientRequestId());
     }
 
 }

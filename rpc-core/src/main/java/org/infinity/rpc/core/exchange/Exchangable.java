@@ -5,55 +5,53 @@ import java.util.Map;
 public interface Exchangable extends Traceable {
 
     /**
+     * Get request ID
+     *
      * @return Request ID
      */
     long getRequestId();
 
     /**
-     * @return Protocol
-     */
-    String getProtocol();
-
-    /**
+     * Get protocol version
+     *
      * @return protocol version
      */
     byte getProtocolVersion();
 
+    /**
+     * Set protocol version
+     *
+     * @param protocolVersion protocol version
+     */
     void setProtocolVersion(byte protocolVersion);
 
-    void setGroup(String group);
-
-    String getGroup();
-
-    void setVersion(String version);
-
-    String getVersion();
-
     /**
-     * Attachments
+     * Get request options
      *
-     * @return
+     * @return request options
      */
-    Map<String, String> getAttachments();
+    Map<String, String> getOptions();
 
     /**
-     * @param attachments
-     */
-    void setAttachments(Map<String, String> attachments);
-
-    /**
-     * Add attachment
+     * Set request options
      *
-     * @param key
-     * @param value
+     * @param options request options
      */
-    void addAttachment(String key, String value);
+    void setOptions(Map<String, String> options);
 
     /**
-     * Get attachment
+     * Add request option
      *
-     * @param key
-     * @return
+     * @param key   request option key
+     * @param value request option value
      */
-    String getAttachment(String key);
+    void addOption(String key, String value);
+
+    /**
+     * Get request option
+     *
+     * @param key request option key
+     * @return request option
+     */
+    String getOption(String key);
 }

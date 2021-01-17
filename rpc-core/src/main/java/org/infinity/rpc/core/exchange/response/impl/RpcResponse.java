@@ -23,21 +23,24 @@ import java.util.concurrent.Executor;
 public class RpcResponse implements Responseable, Callbackable, Serializable {
     private static final long                serialVersionUID = 882479213033600079L;
     private              long                requestId;
-    /**
-     * remove
-     */
-    private              String              protocol;
     private              byte                protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
     private              String              group;
     private              String              version;
     private              int                 timeout;
     private              Object              result;
     private              Exception           exception;
+    private              long                sendingTime;
+    private              long                receivedTime;
+    private              long                elapsedTime;
+    private              Map<String, String> traces           = new ConcurrentHashMap<>();
+    /**
+     * RPC request options, all the optional RPC request parameters will be put in it.
+     */
+    private              Map<String, String> options          = new ConcurrentHashMap<>();
     /**
      * default serialization is hession2
      */
-    private              int                 serializeNumber  = 0;
-    private              Map<String, String> attachments      = new ConcurrentHashMap<>();
+    private              int                 serializeNum     = 0;
 
     public RpcResponse(Object result) {
         this.result = result;
@@ -50,30 +53,10 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
         this.setElapsedTime(response.getElapsedTime());
         this.timeout = response.getTimeout();
         this.protocolVersion = response.getProtocolVersion();
-        this.setSerializeNumber(response.getSerializeNumber());
-        this.attachments = response.getAttachments();
+        this.setSerializeNum(response.getSerializeNum());
+        this.options = response.getOptions();
         this.setReceivedTime(response.getReceivedTime());
         response.getTraces().forEach((key, value) -> this.addTrace(key, key));
-    }
-
-    public RpcResponse protocolVersion(byte protocolVersion) {
-        this.protocolVersion = protocolVersion;
-        return this;
-    }
-
-    @Override
-    public Map<String, String> getAttachments() {
-        return attachments;
-    }
-
-    @Override
-    public void addAttachment(String key, String value) {
-        attachments.putIfAbsent(key, value);
-    }
-
-    @Override
-    public String getAttachment(String key) {
-        return attachments.get(key);
     }
 
     @Override
@@ -87,48 +70,23 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
     }
 
     @Override
-    public void setSendingTime(long sendingTime) {
-        SENDING_TIME.compareAndSet(0, sendingTime);
+    public void addOption(String key, String value) {
+        options.putIfAbsent(key, value);
     }
 
     @Override
-    public long getSendingTime() {
-        return SENDING_TIME.get();
-    }
-
-    @Override
-    public void setReceivedTime(long receivedTime) {
-        RECEIVED_TIME.compareAndSet(0, receivedTime);
-    }
-
-    @Override
-    public long getReceivedTime() {
-        return RECEIVED_TIME.get();
-    }
-
-    @Override
-    public void setElapsedTime(long elapsedTime) {
-        ELAPSED_TIME.compareAndSet(0, elapsedTime);
-    }
-
-    @Override
-    public long getElapsedTime() {
-        return getReceivedTime() - getSendingTime();
-    }
-
-    @Override
-    public Map<String, String> getTraces() {
-        return TRACES;
+    public String getOption(String key) {
+        return options.get(key);
     }
 
     @Override
     public void addTrace(String key, String value) {
-        TRACES.putIfAbsent(key, value);
+        traces.putIfAbsent(key, value);
     }
 
     @Override
     public String getTrace(String key) {
-        return TRACES.get(key);
+        return traces.get(key);
     }
 
     @Override

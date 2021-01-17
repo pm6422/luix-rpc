@@ -12,9 +12,12 @@ import org.infinity.rpc.core.exchange.transport.Client;
 import org.infinity.rpc.core.exchange.transport.endpoint.EndpointFactory;
 import org.infinity.rpc.core.url.Url;
 
+import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
+
 
 /**
- * One default provider caller for one service interface
+ * One default provider caller for one service interface.
+ * The provider caller is created when the provider is active.
  *
  * @param <T>: The interface class of the provider
  */
@@ -29,7 +32,7 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
         String endpointFactoryName = providerUrl.getParameter(Url.PARAM_ENDPOINT_FACTORY, Url.PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE);
         endpointFactory = EndpointFactory.getInstance(endpointFactoryName);
         if (endpointFactory == null) {
-            throw new RpcFrameworkException("Endpoint factory [" + endpointFactoryName + "] must not be null!");
+            throw new RpcFrameworkException("Endpoint factory [" + endpointFactoryName + "] must NOT be null!");
         }
         client = endpointFactory.createClient(providerUrl);
         // Initialize
@@ -46,7 +49,7 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
     protected Responseable doCall(Requestable request) {
         try {
             // 为了能够实现跨group请求，需要使用server端的group。
-            request.setGroup(providerUrl.getGroup());
+            request.addOption(GROUP, providerUrl.getGroup());
             return client.request(request);
         } catch (TransportException exception) {
             throw new RpcServiceException("DefaultRpcReferer call Error: url=" + providerUrl.getUri(), exception);

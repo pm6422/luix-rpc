@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.transport.Client;
+import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.exchange.transport.endpoint.Endpoint;
 import org.infinity.rpc.core.exchange.transport.endpoint.EndpointManager;
 import org.infinity.rpc.core.exchange.transport.heartbeat.HeartbeatFactory;
@@ -42,7 +43,7 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
      * Check health interval in milliseconds
      * todo: move to global config
      */
-    private static final int                           CHECK_HEALTH_TIMER_INTERVAL = 500;
+    private static final int                           CHECK_HEALTH_TIMER_INTERVAL = 5000;
     private final        Map<Client, HeartbeatFactory> endpoints                   = new ConcurrentHashMap<>();
 
     @Override
@@ -51,19 +52,26 @@ public class HeartbeatClientEndpointManager implements EndpointManager {
     }
 
     private void checkHealth() {
-        for (Map.Entry<Client, HeartbeatFactory> endpoint : endpoints.entrySet()) {
-            Client client = endpoint.getKey();
-            try {
-                if (client.isActive()) {
-                    // Skip health check process if current endpoint is active
-                    continue;
-                }
-                HeartbeatFactory heartbeatFactory = endpoint.getValue();
-                client.checkHealth(heartbeatFactory.createRequest());
-            } catch (Exception e) {
-                log.error("Failed to check health for provider url [" + client.getProviderUrl().getUri() + "]", e);
-            }
-        }
+//        for (Map.Entry<Client, HeartbeatFactory> endpoint : endpoints.entrySet()) {
+//            Client client = endpoint.getKey();
+//            try {
+//                if (isSkipCheckHealthState(client)) {
+//                    log.debug("Skip checking health for url [{}] with state [{}]",
+//                            client.getProviderUrl().getUri(), client.getState().name());
+//                    continue;
+//                }
+//                HeartbeatFactory heartbeatFactory = endpoint.getValue();
+//                client.checkHealth(heartbeatFactory.createRequest());
+//            } catch (Exception e) {
+//                log.error("Failed to check health for provider url [" + client.getProviderUrl().getUri() + "]", e);
+//            }
+//        }
+    }
+
+    private boolean isSkipCheckHealthState(Client client) {
+        // Skip health check process if current endpoint is uninitialized or closed
+        return ChannelState.UNINITIALIZED.equals(client.getState()) || client.isClosed();
+//        return client.isActive() || ChannelState.UNINITIALIZED.equals(client.getState()) || client.isClosed();
     }
 
     @Override

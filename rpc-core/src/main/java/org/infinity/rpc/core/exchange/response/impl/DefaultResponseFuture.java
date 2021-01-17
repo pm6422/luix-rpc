@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.exchange.response.impl;
 
 import lombok.Data;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
@@ -17,9 +18,11 @@ import org.infinity.rpc.core.url.Url;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Data
+@ToString
 public class DefaultResponseFuture implements ResponseFuture {
 
     protected final    Object               lock             = new Object();
@@ -40,15 +43,19 @@ public class DefaultResponseFuture implements ResponseFuture {
     protected          List<FutureListener> listeners;
     protected          Url                  serverUrl;
     protected          Class<?>             returnType;
+    private            long                 sendingTime;
+    private            long                 receivedTime;
+    private            long                 elapsedTime;
+    private            Map<String, String>  traces           = new ConcurrentHashMap<>();
+    /**
+     * RPC request options, all the optional RPC request parameters will be put in it.
+     */
+    private            Map<String, String>  options          = new ConcurrentHashMap<>();
+    private            TraceableContext     traceableContext = new TraceableContext();
     /**
      * default serialization is hession2
      */
-    private            int                  serializeNumber  = 0;
-    /**
-     * RPC协议版本兼容时可以回传一些额外的信息
-     */
-    private            Map<String, String>  attachments;
-    private            TraceableContext     traceableContext = new TraceableContext();
+    private            int                  serializeNum     = 0;
 
     public DefaultResponseFuture(Requestable requestObj, int timeout, Url serverUrl) {
         this.request = requestObj;
@@ -60,7 +67,7 @@ public class DefaultResponseFuture implements ResponseFuture {
     public void onSuccess(Responseable response) {
         this.result = response.getResult();
         this.processTime = response.getElapsedTime();
-        this.attachments = response.getAttachments();
+        this.options = response.getOptions();
         traceableContext.setReceiveTime(response.getReceivedTime());
         response.getTraces().forEach((key, value) -> traceableContext.addTraceInfo(key, value));
         done();
@@ -268,65 +275,25 @@ public class DefaultResponseFuture implements ResponseFuture {
     }
 
     @Override
-    public long getElapsedTime() {
-        return getReceivedTime() - getSendingTime();
-    }
-
-    @Override
-    public Map<String, String> getTraces() {
-        return TRACES;
-    }
-
-    @Override
     public void addTrace(String key, String value) {
-        TRACES.putIfAbsent(key, value);
+        traces.putIfAbsent(key, value);
     }
 
     @Override
     public String getTrace(String key) {
-        return TRACES.get(key);
+        return traces.get(key);
     }
 
     @Override
-    public void setSendingTime(long sendingTime) {
-        SENDING_TIME.compareAndSet(0, sendingTime);
-    }
-
-    @Override
-    public long getSendingTime() {
-        return SENDING_TIME.get();
-    }
-
-    @Override
-    public void setReceivedTime(long receivedTime) {
-        RECEIVED_TIME.compareAndSet(0, receivedTime);
-    }
-
-    @Override
-    public long getReceivedTime() {
-        return RECEIVED_TIME.get();
-    }
-
-    @Override
-    public void setElapsedTime(long elapsedTime) {
-        ELAPSED_TIME.compareAndSet(0, elapsedTime);
-    }
-
-    @Override
-    public Map<String, String> getAttachments() {
-        return attachments != null ? attachments : Collections.emptyMap();
-    }
-
-    @Override
-    public void addAttachment(String key, String value) {
-        if (this.attachments == null) {
-            this.attachments = new HashMap<>(10);
+    public void addOption(String key, String value) {
+        if (this.options == null) {
+            this.options = new HashMap<>(10);
         }
-        this.attachments.put(key, value);
+        this.options.put(key, value);
     }
 
     @Override
-    public String getAttachment(String key) {
-        return attachments.get(key);
+    public String getOption(String key) {
+        return options.get(key);
     }
 }

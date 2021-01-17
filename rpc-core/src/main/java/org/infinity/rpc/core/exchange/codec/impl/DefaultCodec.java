@@ -53,8 +53,6 @@ public class DefaultCodec extends AbstractCodec {
         output.writeUTF(request.getInterfaceName());
         output.writeUTF(request.getMethodName());
         output.writeUTF(request.getMethodParameters());
-        output.writeUTF(request.getGroup());
-        output.writeUTF(request.getVersion());
 
         if (ArrayUtils.isNotEmpty(request.getMethodArguments())) {
             Serializer serializer = getSerializer(channel);
@@ -64,12 +62,12 @@ public class DefaultCodec extends AbstractCodec {
             }
         }
 
-        if (MapUtils.isEmpty(request.getAttachments())) {
+        if (MapUtils.isEmpty(request.getOptions())) {
             // No attachments
             output.writeInt(0);
         } else {
-            output.writeInt(request.getAttachments().size());
-            for (Map.Entry<String, String> entry : request.getAttachments().entrySet()) {
+            output.writeInt(request.getOptions().size());
+            for (Map.Entry<String, String> entry : request.getOptions().entrySet()) {
                 output.writeUTF(entry.getKey());
                 output.writeUTF(entry.getValue());
             }
@@ -214,21 +212,13 @@ public class DefaultCodec extends AbstractCodec {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(body);
         ObjectInput input = createInput(inputStream);
 
-        String interfaceName = input.readUTF();
-        String methodName = input.readUTF();
-        String parameterTypeList = input.readUTF();
-        String group = input.readUTF();
-        String version = input.readUTF();
-
         RpcRequest rpcRequest = new RpcRequest();
         rpcRequest.setRequestId(requestId);
-        rpcRequest.setInterfaceName(interfaceName);
-        rpcRequest.setMethodName(methodName);
-        rpcRequest.setMethodParameters(parameterTypeList);
-        rpcRequest.setMethodArguments(decodeMethodArgs(input, parameterTypeList, serializer));
-        rpcRequest.setGroup(group);
-        rpcRequest.setVersion(version);
-        rpcRequest.setAttachments(decodeRequestAttachments(input));
+        rpcRequest.setInterfaceName(input.readUTF());
+        rpcRequest.setMethodName(input.readUTF());
+        rpcRequest.setMethodParameters(input.readUTF());
+        rpcRequest.setMethodArguments(decodeMethodArgs(input, rpcRequest.getMethodParameters(), serializer));
+        rpcRequest.setOptions(decodeRequestAttachments(input));
 
         input.close();
         return rpcRequest;

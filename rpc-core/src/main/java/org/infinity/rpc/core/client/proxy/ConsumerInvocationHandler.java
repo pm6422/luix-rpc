@@ -10,6 +10,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
+import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
 import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodParameters;
 
 /**
@@ -37,15 +39,15 @@ public class ConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationH
             return ClassUtils.getShortNameAsProperty(ConsumerProxy.class);
         }
 
-        RpcRequest request = new RpcRequest();
-        request.setRequestId(IdGenerator.generateTimestampId());
-        request.setInterfaceName(consumerWrapper.getInterfaceClass().getName());
-        request.setMethodName(method.getName());
-        request.setMethodParameters(getMethodParameters(method));
+        RpcRequest request = new RpcRequest(IdGenerator.generateTimestampId(),
+                consumerWrapper.getInterfaceClass().getName(),
+                method.getName(),
+                getMethodParameters(method));
+
         request.setMethodArguments(args);
-        request.setGroup(consumerWrapper.getGroup());
-        request.setVersion(consumerWrapper.getVersion());
-//        request.addAttachment(VERSION, consumerWrapper.getProtocolVersion());
+
+        request.addOption(GROUP, consumerWrapper.getGroup());
+        request.addOption(VERSION, consumerWrapper.getVersion());
 
         boolean async = isAsyncCall(args);
         return processRequest(request, method.getReturnType(), async);

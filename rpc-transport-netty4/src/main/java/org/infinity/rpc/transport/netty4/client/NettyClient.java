@@ -1,4 +1,4 @@
-package org.infinity.rpc.transport.netty4;
+package org.infinity.rpc.transport.netty4.client;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -26,6 +26,9 @@ import org.infinity.rpc.core.exchange.transport.SharedObjectFactory;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
+import org.infinity.rpc.transport.netty4.NettyDecoder;
+import org.infinity.rpc.transport.netty4.NettyEncoder;
+import org.infinity.rpc.transport.netty4.NettyServerClientHandler;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -166,7 +169,7 @@ public class NettyClient extends AbstractSharedPoolClient {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast("decoder", new NettyDecoder(codec, NettyClient.this, maxContentLength));
                         pipeline.addLast("encoder", new NettyEncoder());
-                        pipeline.addLast("handler", new NettyChannelHandler(NettyClient.this, (channel, message) -> {
+                        pipeline.addLast("handler", new NettyServerClientHandler(NettyClient.this, (channel, message) -> {
                             Responseable response = (Responseable) message;
                             ResponseFuture responseFuture = NettyClient.this.removeCallback(response.getRequestId());
                             if (responseFuture == null) {
@@ -231,6 +234,11 @@ public class NettyClient extends AbstractSharedPoolClient {
         closeAllChannels();
         // 解除统计回调的注册
 //        StatsUtil.unRegistryStatisticCallback(this);
+    }
+
+    @Override
+    public ChannelState getState() {
+        return state;
     }
 
     @Override
@@ -334,19 +342,12 @@ public class NettyClient extends AbstractSharedPoolClient {
 
     @Override
     public void checkHealth(Requestable request) {
-        if (state.isUninitialized() || state.isClosed()) {
-            // 如果节点还没有初始化或者节点已经被close掉了，那么heartbeat也不需要进行了
-            log.warn("NettyClient heartbeat Error: state={} url={}", state.name(), providerUrl.getUri());
-            return;
-        }
-
-        log.info("Checking health of url [{}]", providerUrl.getUri());
         try {
-            // async request后，如果service is
-            // available，那么将会自动把该client设置成可用
+            log.info("Checking health for url [{}]", providerUrl.getUri());
+            // async request后，如果service is active，那么将会自动把该client设置成可用
             request(request, true);
         } catch (Exception e) {
-            log.error("NettyClient heartbeat Error: url={}, {}", providerUrl.getUri(), e.getMessage());
+            log.error("Failed to check health for url [{}] with message {}", providerUrl.getUri(), e.getMessage());
         }
     }
 

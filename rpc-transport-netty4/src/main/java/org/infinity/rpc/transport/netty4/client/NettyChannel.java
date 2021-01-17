@@ -1,4 +1,4 @@
-package org.infinity.rpc.transport.netty4;
+package org.infinity.rpc.transport.netty4.client;
 
 import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +48,7 @@ public class NettyChannel implements Channel {
         ResponseFuture response = new DefaultResponseFuture(request, timeout, this.nettyClient.getProviderUrl());
         this.nettyClient.registerCallback(request.getRequestId(), response);
         byte[] msg = CodecUtils.encodeObjectToBytes(this, codec, request);
+        // Step1: encode and send request on client side
         ChannelFuture writeFuture = this.channel.writeAndFlush(msg);
         boolean result = writeFuture.awaitUninterruptibly(timeout, TimeUnit.MILLISECONDS);
 
@@ -57,9 +58,11 @@ public class NettyChannel implements Channel {
                 if (future.isSuccess() ||
                         (future.isDone() && ExceptionUtils.isBizException(future.getException()))) {
                     // 成功的调用
+                    // Step5: get response on client side
                     nettyClient.resetErrorCount();
                 } else {
                     // 失败的调用
+                    // Step5: get response on client side
                     nettyClient.incrErrorCount();
                 }
             });
@@ -163,6 +166,11 @@ public class NettyChannel implements Channel {
     @Override
     public InetSocketAddress getRemoteAddress() {
         return remoteAddress;
+    }
+
+    @Override
+    public ChannelState getState() {
+        return state;
     }
 
     @Override

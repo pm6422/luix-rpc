@@ -2,7 +2,7 @@ package org.infinity.rpc.core.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.constant.RpcConstants;
-import org.infinity.rpc.core.exchange.Traceable;
+import org.infinity.rpc.core.constant.ServiceConstants;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
@@ -12,17 +12,17 @@ import org.infinity.rpc.core.url.Url;
 public class RpcFrameworkUtils {
 
     public static String getGroupFromRequest(Requestable request) {
-        return StringUtils.defaultString(request.getGroup());
+        return getValueFromRequest(request, ServiceConstants.GROUP, ServiceConstants.GROUP_DEFAULT_VALUE);
     }
 
     public static String getVersionFromRequest(Requestable request) {
-        return StringUtils.defaultString(request.getVersion());
+        return getValueFromRequest(request, ServiceConstants.VERSION, ServiceConstants.VERSION_DEFAULT_VALUE);
     }
 
-    public static String getValueFromRequest(Requestable request, String key) {
-        String value = "";
-        if (request.getAttachments() != null && request.getAttachments().containsKey(key)) {
-            value = request.getAttachments().get(key);
+    public static String getValueFromRequest(Requestable request, String key, String defaultValue) {
+        String value = defaultValue;
+        if (request.getOptions() != null && request.getOptions().containsKey(key)) {
+            value = request.getOption(key);
         }
         return value;
     }
