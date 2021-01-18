@@ -17,7 +17,7 @@ import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.ExchangeContext;
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.core.exchange.response.ResponseFuture;
+import org.infinity.rpc.core.exchange.response.FutureResponse;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.exchange.transport.AbstractSharedPoolClient;
@@ -43,16 +43,16 @@ import static org.infinity.rpc.core.destroy.ScheduledThreadPool.RECYCLE_TIMEOUT_
 @Slf4j
 public class NettyClient extends AbstractSharedPoolClient {
     private static final int                       NETTY_TIMEOUT_TIMER_INTERVAL = 100;
-    private static final NioEventLoopGroup         NIO_EVENT_LOOP_GROUP         = new NioEventLoopGroup();
+    private static final NioEventLoopGroup         NIO_EVENT_LOOP_GROUP = new NioEventLoopGroup();
     /**
      * 异步的request，需要注册callback future
      * 触发remove的操作有： 1) service的返回结果处理。 2) timeout thread cancel
      */
-    protected            Map<Long, ResponseFuture> callbackMap                  = new ConcurrentHashMap<>();
+    protected            Map<Long, FutureResponse> callbackMap          = new ConcurrentHashMap<>();
     /**
      * 连续失败次数
      */
-    private final        AtomicLong                errorCount                   = new AtomicLong(0);
+    private final        AtomicLong                errorCount           = new AtomicLong(0);
     private final        ScheduledFuture<?>        timeoutFuture;
     private              Bootstrap                 bootstrap;
     private final        int                       maxClientConnection;
@@ -68,9 +68,9 @@ public class NettyClient extends AbstractSharedPoolClient {
 
     private void recycleTimeoutTask() {
         long currentTime = System.currentTimeMillis();
-        for (Map.Entry<Long, ResponseFuture> entry : callbackMap.entrySet()) {
+        for (Map.Entry<Long, FutureResponse> entry : callbackMap.entrySet()) {
             try {
-                ResponseFuture future = entry.getValue();
+                FutureResponse future = entry.getValue();
                 if (future.getCreateTime() + future.getTimeout() < currentTime) {
                     // timeout: remove from callback list, and then cancel
                     removeCallback(entry.getKey());
@@ -139,7 +139,7 @@ public class NettyClient extends AbstractSharedPoolClient {
      * @return response
      */
     private Responseable asyncResponse(Responseable response, boolean async) {
-        if (async || !(response instanceof ResponseFuture)) {
+        if (async || !(response instanceof FutureResponse)) {
             return response;
         }
         return new RpcResponse(response);
@@ -171,15 +171,15 @@ public class NettyClient extends AbstractSharedPoolClient {
                         pipeline.addLast("encoder", new NettyEncoder());
                         pipeline.addLast("handler", new NettyServerClientHandler(NettyClient.this, (channel, message) -> {
                             Responseable response = (Responseable) message;
-                            ResponseFuture responseFuture = NettyClient.this.removeCallback(response.getRequestId());
-                            if (responseFuture == null) {
+                            FutureResponse futureResponse = NettyClient.this.removeCallback(response.getRequestId());
+                            if (futureResponse == null) {
                                 log.warn("NettyClient has response from server, but responseFuture not exist, requestId={}", response.getRequestId());
                                 return null;
                             }
                             if (response.getException() != null) {
-                                responseFuture.onFailure(response);
+                                futureResponse.onFailure(response);
                             } else {
-                                responseFuture.onSuccess(response);
+                                futureResponse.onSuccess(response);
                             }
                             return null;
                         }));
@@ -260,7 +260,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         return bootstrap;
     }
 
-    public ResponseFuture removeCallback(long requestId) {
+    public FutureResponse removeCallback(long requestId) {
         return callbackMap.remove(requestId);
     }
 
@@ -328,16 +328,16 @@ public class NettyClient extends AbstractSharedPoolClient {
      * </pre>
      *
      * @param requestId      request ID
-     * @param responseFuture response future
+     * @param futureResponse response future
      */
-    public void registerCallback(long requestId, ResponseFuture responseFuture) {
+    public void registerCallback(long requestId, FutureResponse futureResponse) {
         if (this.callbackMap.size() >= RpcConstants.NETTY_CLIENT_MAX_REQUEST) {
             // reject request, prevent from OutOfMemoryError
             throw new RpcServiceException("NettyClient over of max concurrent request, drop request, url: "
                     + providerUrl.getUri() + " requestId=" + requestId, RpcErrorMsgConstant.SERVICE_REJECT);
         }
 
-        this.callbackMap.put(requestId, responseFuture);
+        this.callbackMap.put(requestId, futureResponse);
     }
 
     @Override

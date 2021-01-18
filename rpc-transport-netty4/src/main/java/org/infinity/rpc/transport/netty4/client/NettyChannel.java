@@ -11,9 +11,9 @@ import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.codec.Codec;
 import org.infinity.rpc.core.exchange.codec.CodecUtils;
 import org.infinity.rpc.core.exchange.request.Requestable;
-import org.infinity.rpc.core.exchange.response.ResponseFuture;
+import org.infinity.rpc.core.exchange.response.FutureResponse;
 import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.exchange.response.impl.DefaultResponseFuture;
+import org.infinity.rpc.core.exchange.response.impl.RpcFutureResponse;
 import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.url.Url;
@@ -45,7 +45,7 @@ public class NettyChannel implements Channel {
         int timeout = nettyClient.getProviderUrl()
                 .getMethodParameter(request.getMethodName(), request.getMethodParameters(),
                         Url.PARAM_REQUEST_TIMEOUT, ServiceConstants.REQUEST_TIMEOUT_DEFAULT_VALUE);
-        ResponseFuture response = new DefaultResponseFuture(request, timeout, this.nettyClient.getProviderUrl());
+        FutureResponse response = new RpcFutureResponse(request, timeout, this.nettyClient.getProviderUrl());
         this.nettyClient.registerCallback(request.getRequestId(), response);
         byte[] msg = CodecUtils.encodeObjectToBytes(this, codec, request);
         // Step1: encode and send request on client side

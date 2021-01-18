@@ -11,7 +11,7 @@ import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.TraceableContext;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.FutureListener;
-import org.infinity.rpc.core.exchange.response.ResponseFuture;
+import org.infinity.rpc.core.exchange.response.FutureResponse;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.serialization.DeserializableObject;
 import org.infinity.rpc.core.exchange.transport.constants.FutureState;
@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Setter
 @NoArgsConstructor
 @ToString
-public class DefaultResponseFuture implements ResponseFuture {
+public class RpcFutureResponse implements FutureResponse {
 
     protected final    Object               lock             = new Object();
     protected volatile FutureState          state            = FutureState.DOING;
@@ -64,7 +64,7 @@ public class DefaultResponseFuture implements ResponseFuture {
      */
     protected          int                  serializeNum     = 0;
 
-    public DefaultResponseFuture(Requestable requestObj, int timeout, Url serverUrl) {
+    public RpcFutureResponse(Requestable requestObj, int timeout, Url serverUrl) {
         this.request = requestObj;
         this.timeout = timeout;
         this.serverUrl = serverUrl;
