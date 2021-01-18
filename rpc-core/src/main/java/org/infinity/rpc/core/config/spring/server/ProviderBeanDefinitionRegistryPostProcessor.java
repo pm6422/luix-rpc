@@ -286,7 +286,6 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProviderWrapper.class);
         addPropertyValue(builder, "interfaceName", providerInterfaceClass.getName(), ProviderWrapper.class, false);
         addPropertyValue(builder, "interfaceClass", providerInterfaceClass, ProviderWrapper.class, false);
-        addPropertyValue(builder, "instanceName", providerInstanceName, ProviderWrapper.class, false);
         addPropertyValue(builder, "maxRetries", providerAnnotation.maxRetries(), ProviderWrapper.class, true);
         addPropertyValue(builder, "checkHealth", providerAnnotation.checkHealth(), ProviderWrapper.class, false);
         // Obtain the instance by instance name then assign it to the property

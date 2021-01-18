@@ -30,7 +30,10 @@ public class ProviderWrapperHolder {
      * The singleton instance holder static inner class
      */
     private static class SingletonHolder {
-        private static final ProviderWrapperHolder INSTANCE = new ProviderWrapperHolder();// static variable will be instantiated on class loading.
+        /**
+         * Static variable will be instantiated on class loading.
+         */
+        private static final ProviderWrapperHolder INSTANCE = new ProviderWrapperHolder();
     }
 
     public synchronized Map<String, ProviderWrapper<?>> getWrappers() {

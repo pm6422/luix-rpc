@@ -23,6 +23,8 @@ import org.springframework.beans.factory.DisposableBean;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,7 +32,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * PRC provider configuration wrapper
+ * PRC provider stub
+ * A stub in distributed computing is a piece of code that converts parameters passed between client and server
+ * during a remote procedure call (RPC).
+ * A server stub is responsible for handle remote method invocation and delegate to associate local method to execute.
  *
  * @param <T>: provider instance
  */
@@ -40,21 +45,20 @@ public class ProviderWrapper<T> implements DisposableBean {
     /**
      * The provider interface fully-qualified name
      */
+    @NotEmpty
     private String              interfaceName;
     /**
      * The interface class of the provider
      */
+    @NotNull
     private Class<T>            interfaceClass;
-    /**
-     * The provider instance simple name, also known as bean name
-     */
-    private String              instanceName;
     /**
      * The provider instance
      */
+    @NotNull
     private T                   instance;
     /**
-     * Methods of the provider class
+     * Method signature to method cache map for the provider class
      */
     private Map<String, Method> methodsCache = new HashMap<>();
     /**
@@ -69,7 +73,7 @@ public class ProviderWrapper<T> implements DisposableBean {
     @Min(value = 0, message = "The [maxRetries] property of @Provider must NOT be a negative number!")
     private int                 maxRetries;
     /**
-     * Indicator to monitor health
+     * Indicator to check health
      */
     private boolean             checkHealth;
     /**
@@ -92,15 +96,16 @@ public class ProviderWrapper<T> implements DisposableBean {
     @PostConstruct
     public void init() {
         ProviderWrapperHolder.getInstance().addWrapper(interfaceName, this);
-        scanMethods(interfaceClass);
+        // Put methods to cache in order to accelerate the speed of executing.
+        discoverMethods(interfaceClass);
     }
 
     /**
-     * Get all methods of provider interface and put them all to cache
+     * Discover all methods of provider interface and put them all to cache
      *
      * @param interfaceClass The interface class of the provider
      */
-    private void scanMethods(Class<T> interfaceClass) {
+    private void discoverMethods(Class<T> interfaceClass) {
         // Get all methods of the class passed in or its super interfaces.
         Arrays.stream(interfaceClass.getMethods()).forEach(method -> {
             String methodSignature = MethodParameterUtils.getMethodSignature(method);
@@ -108,86 +113,15 @@ public class ProviderWrapper<T> implements DisposableBean {
         });
     }
 
-    public Method findMethod(String methodName, String methodParamList) {
-        return methodsCache.get(MethodParameterUtils.getMethodSignature(methodName, methodParamList));
-    }
-
     /**
-     * todo: move to providerExecutor
+     * Find method associated with name and parameter list
      *
-     * @param request RPC request
-     * @return RPC response
+     * @param methodName       method name
+     * @param methodParameters method parameter list. e.g, java.util.List,java.lang.Long
+     * @return method
      */
-    public Responseable call(Requestable request) {
-        RpcFrameworkUtils.logEvent(request, RpcConstants.TRACE_BEFORE_BIZ);
-        Responseable response = invoke(request);
-        RpcFrameworkUtils.logEvent(response, RpcConstants.TRACE_AFTER_BIZ);
-        return response;
-    }
-
-    /**
-     * todo: move to providerExecutor
-     *
-     * @param request RPC request
-     * @return RPC response
-     */
-    public Responseable invoke(Requestable request) {
-        RpcResponse response = new RpcResponse();
-        Method method = findMethod(request.getMethodName(), request.getMethodParameters());
-        if (method == null) {
-            RpcServiceException exception =
-                    new RpcServiceException("Service method not exist: " + request.getInterfaceName() + "." + request.getMethodName()
-                            + "(" + request.getMethodParameters() + ")", RpcErrorMsgConstant.SERVICE_NOT_FOUND);
-            response.setException(exception);
-            return response;
-        }
-
-        boolean defaultThrowExceptionStack = Url.PARAM_TRANS_EXCEPTION_STACK_DEFAULT_VALUE;
-        try {
-            Object result = method.invoke(instance, request.getMethodArguments());
-            response.setResultObject(result);
-        } catch (Exception e) {
-            if (e.getCause() != null) {
-                response.setException(new RpcBizException("provider call process error", e.getCause()));
-            } else {
-                response.setException(new RpcBizException("provider call process error", e));
-            }
-
-            // not print stack in error log when exception declared in method
-            boolean logException = true;
-            for (Class<?> clazz : method.getExceptionTypes()) {
-                if (clazz.isInstance(response.getException().getCause())) {
-                    logException = false;
-                    defaultThrowExceptionStack = false;
-                    break;
-                }
-            }
-            if (logException) {
-                log.error("Exception caught when during method invocation. request:" + request.toString(), e);
-            } else {
-                log.info("Exception caught when during method invocation. request:" + request.toString() + ", exception:" + response.getException().getCause().toString());
-            }
-        } catch (Throwable t) {
-            // 如果服务发生Error，将Error转化为Exception，防止拖垮调用方
-            if (t.getCause() != null) {
-                response.setException(new RpcServiceException("provider has encountered a fatal error!", t.getCause()));
-            } else {
-                response.setException(new RpcServiceException("provider has encountered a fatal error!", t));
-            }
-            //对于Throwable,也记录日志
-            log.error("Exception caught when during method invocation. request:" + request.toString(), t);
-        }
-
-        if (response.getException() != null) {
-            //是否传输业务异常栈
-            boolean transExceptionStack = this.url.getBooleanParameter(Url.PARAM_TRANS_EXCEPTION_STACK, defaultThrowExceptionStack);
-            if (!transExceptionStack) {
-                //不传输业务异常栈
-                ExceptionUtils.setMockStackTrace(response.getException().getCause());
-            }
-        }
-        response.setOptions(request.getOptions());
-        return response;
+    public Method findMethod(String methodName, String methodParameters) {
+        return methodsCache.get(MethodParameterUtils.getMethodSignature(methodName, methodParameters));
     }
 
     /**
@@ -230,6 +164,84 @@ public class ProviderWrapper<T> implements DisposableBean {
             registry.getRegisteredProviderUrls().forEach(registry::unregister);
         }
         log.debug("Unregistered RPC provider [{}] from registry", interfaceName);
+    }
+
+
+    /**
+     * Invoke method locally and return the result
+     *
+     * @param request RPC request
+     * @return RPC response
+     */
+    public Responseable localCall(Requestable request) {
+        RpcFrameworkUtils.logEvent(request, RpcConstants.TRACE_BEFORE_BIZ);
+        Responseable response = doLocalCall(request);
+        RpcFrameworkUtils.logEvent(response, RpcConstants.TRACE_AFTER_BIZ);
+        return response;
+    }
+
+    /**
+     * Do the invocation of method
+     *
+     * @param request RPC request
+     * @return RPC response
+     */
+    private Responseable doLocalCall(Requestable request) {
+        RpcResponse response = new RpcResponse();
+        Method method = findMethod(request.getMethodName(), request.getMethodParameters());
+        if (method == null) {
+            RpcServiceException exception =
+                    new RpcServiceException("Service method not exist: " + request.getInterfaceName() + "." + request.getMethodName()
+                            + "(" + request.getMethodParameters() + ")", RpcErrorMsgConstant.SERVICE_NOT_FOUND);
+            response.setException(exception);
+            return response;
+        }
+        boolean defaultThrowExceptionStack = Url.PARAM_TRANS_EXCEPTION_STACK_DEFAULT_VALUE;
+        try {
+            // Invoke method
+            Object result = method.invoke(instance, request.getMethodArguments());
+            response.setResultObject(result);
+        } catch (Exception e) {
+            if (e.getCause() != null) {
+                response.setException(new RpcBizException("provider call process error", e.getCause()));
+            } else {
+                response.setException(new RpcBizException("provider call process error", e));
+            }
+
+            // not print stack in error log when exception declared in method
+            boolean logException = true;
+            for (Class<?> clazz : method.getExceptionTypes()) {
+                if (clazz.isInstance(response.getException().getCause())) {
+                    logException = false;
+                    defaultThrowExceptionStack = false;
+                    break;
+                }
+            }
+            if (logException) {
+                log.error("Exception caught when during method invocation. request:" + request.toString(), e);
+            } else {
+                log.info("Exception caught when during method invocation. request:" + request.toString() + ", exception:" + response.getException().getCause().toString());
+            }
+        } catch (Throwable t) {
+            // 如果服务发生Error，将Error转化为Exception，防止拖垮调用方
+            if (t.getCause() != null) {
+                response.setException(new RpcServiceException("provider has encountered a fatal error!", t.getCause()));
+            } else {
+                response.setException(new RpcServiceException("provider has encountered a fatal error!", t));
+            }
+            //对于Throwable,也记录日志
+            log.error("Exception caught when during method invocation. request:" + request.toString(), t);
+        }
+        if (response.getException() != null) {
+            //是否传输业务异常栈
+            boolean transExceptionStack = this.url.getBooleanParameter(Url.PARAM_TRANS_EXCEPTION_STACK, defaultThrowExceptionStack);
+            if (!transExceptionStack) {
+                //不传输业务异常栈
+                ExceptionUtils.setMockStackTrace(response.getException().getCause());
+            }
+        }
+        response.setOptions(request.getOptions());
+        return response;
     }
 
     @Override

@@ -97,7 +97,7 @@ public class ProviderMessageRouter implements MessageHandler {
 
     protected Responseable call(Requestable request, ProviderWrapper<?> provider) {
         try {
-            return provider.call(request);
+            return provider.localCall(request);
         } catch (Exception e) {
             return RpcFrameworkUtils.buildErrorResponse(request, new RpcBizException("provider call process error", e));
         }

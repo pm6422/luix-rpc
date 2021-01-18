@@ -118,7 +118,6 @@ public class RpcLifecycle {
             log.info("No RPC service providers found for registering to registry!");
             return;
         }
-        // TODO: consider using the async thread pool to speed up the startup process
         wrappers.forEach((name, providerWrapper) -> {
             Url providerUrl = createProviderUrl(infinityProperties, providerWrapper);
             providerWrapper.setUrl(providerUrl);
