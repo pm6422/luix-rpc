@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.client.proxy;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.config.spring.client.ConsumerWrapper;
+import org.infinity.rpc.core.config.spring.client.stub.ConsumerStub;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.ExchangeContext;
 import org.infinity.rpc.core.exchange.request.Requestable;
@@ -14,8 +14,8 @@ import org.infinity.rpc.core.url.Url;
  */
 @Slf4j
 public abstract class AbstractRpcConsumerInvocationHandler<T> {
-    protected ConsumerWrapper<T> consumerWrapper;
-    protected SwitcherService    switcherService;
+    protected ConsumerStub<T> consumerStub;
+    protected SwitcherService switcherService;
 
     /**
      * @param request    RPC request
@@ -31,12 +31,12 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
         copyContextToRequest(threadRpcContext, request);
 //        RequestContext.initialize(request);
 
-        Url clientUrl = Url.clientUrl(consumerWrapper.getProviderCluster().getProtocol(),
-                consumerWrapper.getInterfaceClass().getName());
-        consumerWrapper.getProviderCluster().getFaultToleranceStrategy().setClientUrl(clientUrl);
+        Url clientUrl = Url.clientUrl(consumerStub.getProviderCluster().getProtocol(),
+                consumerStub.getInterfaceClass().getName());
+        consumerStub.getProviderCluster().getFaultToleranceStrategy().setClientUrl(clientUrl);
 
 //            request.addAttachment(Url.PARAM_APP, infinityProperties.getApplication().getName());
-//        request.setProtocol(consumerWrapper.getProviderCluster().getProtocol());
+//        request.setProtocol(consumerStub.getProviderCluster().getProtocol());
 
         Responseable response;
 //            boolean throwException = true;
@@ -44,7 +44,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
             // Call chain: provider cluster call => cluster fault tolerance strategy =>
             // LB select node => provider caller call
             // Only one server node under one cluster can process the request
-            response = consumerWrapper.getProviderCluster().call(request);
+            response = consumerStub.getProviderCluster().call(request);
             return response.getResult();
         } catch (Exception ex) {
             throw new RpcServiceException(ex);

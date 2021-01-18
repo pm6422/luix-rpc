@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.config.spring.server.exporter;
 
-import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapper;
+import org.infinity.rpc.core.config.spring.server.stub.ProviderStub;
 
 /**
  * todo: merge with ProviderCallable
@@ -9,10 +9,10 @@ import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrappe
  */
 public interface Exportable<T> {
     /**
-     * Get provider wrapper
-     * @return provider wrapper
+     * Get provider stub
+     * @return provider stub
      */
-    ProviderWrapper<T> getProviderWrapper();
+    ProviderStub<T> getProviderStub();
 
     /**
      * Initialize

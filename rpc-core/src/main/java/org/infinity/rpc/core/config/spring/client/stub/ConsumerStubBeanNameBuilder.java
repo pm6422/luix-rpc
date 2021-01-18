@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.infinity.rpc.core.config.spring.client;
+package org.infinity.rpc.core.config.spring.client.stub;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 
 /**
- * RPC consumer wrapper bean name builder
+ * RPC consumer stub bean name builder
  */
-public class ConsumerWrapperBeanNameBuilder {
-    public static final  String      CONSUMER_WRAPPER_BEAN_PREFIX = "ConsumerWrapperBean";
-    private static final String      SEPARATOR                    = ":";
+public class ConsumerStubBeanNameBuilder {
+    public static final  String      CONSUMER_STUB_BEAN_PREFIX = "ConsumerStub";
+    private static final String      SEPARATOR                 = ":";
     /**
-     * Consumer interface class
+     * Consumer interface class(Required)
      */
     private final        Class<?>    interfaceClass;
     private final        Environment env;
@@ -37,15 +37,15 @@ public class ConsumerWrapperBeanNameBuilder {
     /**
      * Prevent instantiation of it outside the class
      */
-    private ConsumerWrapperBeanNameBuilder(Class<?> interfaceClass, Environment env) {
+    private ConsumerStubBeanNameBuilder(Class<?> interfaceClass, Environment env) {
         Assert.notNull(interfaceClass, "Consumer interface class must not be null!");
         Assert.notNull(env, "Environment must not be null!");
         this.interfaceClass = interfaceClass;
         this.env = env;
     }
 
-    public static ConsumerWrapperBeanNameBuilder builder(Class<?> interfaceClass, Environment environment) {
-        return new ConsumerWrapperBeanNameBuilder(interfaceClass, environment);
+    public static ConsumerStubBeanNameBuilder builder(Class<?> interfaceClass, Environment environment) {
+        return new ConsumerStubBeanNameBuilder(interfaceClass, environment);
     }
 
     private static void append(StringBuilder builder, String value) {
@@ -54,18 +54,18 @@ public class ConsumerWrapperBeanNameBuilder {
         }
     }
 
-    public ConsumerWrapperBeanNameBuilder group(String group) {
+    public ConsumerStubBeanNameBuilder group(String group) {
         this.group = group;
         return this;
     }
 
-    public ConsumerWrapperBeanNameBuilder version(String version) {
+    public ConsumerStubBeanNameBuilder version(String version) {
         this.version = version;
         return this;
     }
 
     public String build() {
-        StringBuilder beanNameBuilder = new StringBuilder(CONSUMER_WRAPPER_BEAN_PREFIX);
+        StringBuilder beanNameBuilder = new StringBuilder(CONSUMER_STUB_BEAN_PREFIX);
         // Required
         append(beanNameBuilder, interfaceClass.getName());
         // Optional

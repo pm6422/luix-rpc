@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.app.common.service.AppService;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapperBeanNameBuilder;
+import org.infinity.rpc.core.config.spring.server.stub.ProviderStubBeanNameBuilder;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.RegistryInfo;
@@ -48,10 +48,10 @@ public class TestController {
         registry.register(providerUrl);
     }
 
-    @ApiOperation("测试获取AppService provider wrapper")
-    @GetMapping("/open-api/test/app-service-provider-wrapper")
-    public void testGetAppServiceProviderWrapper() {
-        Object bean = applicationContext.getBean(ProviderWrapperBeanNameBuilder.PROVIDER_WRAPPER_BEAN_PREFIX.concat(":").concat(AppService.class.getName()));
+    @ApiOperation("测试获取AppService provider stub")
+    @GetMapping("/open-api/test/app-service-provider-stub")
+    public void testGetAppServiceProviderStub() {
+        Object bean = applicationContext.getBean(ProviderStubBeanNameBuilder.PROVIDER_STUB_BEAN_PREFIX.concat(":").concat(AppService.class.getName()));
         log.info(bean.toString());
     }
 

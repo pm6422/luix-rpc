@@ -2,23 +2,23 @@ package org.infinity.rpc.core.client.proxy;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.config.spring.client.ConsumerWrapper;
+import org.infinity.rpc.core.config.spring.client.stub.ConsumerStub;
 
 import java.lang.reflect.Proxy;
 
 @Slf4j
 public class ConsumerProxy {
     /**
-     * @param wrapper Consumer wrapper
+     * @param stub Consumer stub
      * @param <T>     The interface class of the consumer
      * @return The consumer proxy instance
      */
     @SuppressWarnings({"unchecked"})
-    public static <T> T getProxy(ConsumerWrapper<T> wrapper) {
+    public static <T> T getProxy(ConsumerStub<T> stub) {
         Object proxy = Proxy.newProxyInstance(
-                wrapper.getInterfaceClass().getClassLoader(),
-                new Class<?>[]{wrapper.getInterfaceClass()},
-                new ConsumerInvocationHandler<>(wrapper));
+                stub.getInterfaceClass().getClassLoader(),
+                new Class<?>[]{stub.getInterfaceClass()},
+                new ConsumerInvocationHandler<>(stub));
         return (T) proxy;
     }
 }

@@ -2,7 +2,7 @@ package org.infinity.rpc.core.protocol;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.server.exporter.Exportable;
-import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapper;
+import org.infinity.rpc.core.config.spring.server.stub.ProviderStub;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.request.ProviderCaller;
@@ -30,25 +30,25 @@ public abstract class AbstractProtocol implements Protocol {
     }
 
     @Override
-    public <T> Exportable<T> export(ProviderWrapper<T> providerWrapper) {
-        if (providerWrapper.getUrl() == null) {
+    public <T> Exportable<T> export(ProviderStub<T> providerStub) {
+        if (providerStub.getUrl() == null) {
             throw new RpcFrameworkException(this.getClass().getSimpleName() + " export Error: url is null", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
 
-        String protocolKey = RpcFrameworkUtils.getProtocolKey(providerWrapper.getUrl());
+        String protocolKey = RpcFrameworkUtils.getProtocolKey(providerStub.getUrl());
         synchronized (exporterMap) {
             @SuppressWarnings("unchecked")
             Exportable<T> exporter = (Exportable<T>) exporterMap.get(protocolKey);
             if (exporter != null) {
-                throw new RpcFrameworkException(this.getClass().getSimpleName() + " export Error: service already exist, url=" + providerWrapper.getUrl(),
+                throw new RpcFrameworkException(this.getClass().getSimpleName() + " export Error: service already exist, url=" + providerStub.getUrl(),
                         RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
             }
 
-            exporter = createExporter(providerWrapper);
+            exporter = createExporter(providerStub);
             exporter.init();
 
             exporterMap.put(protocolKey, exporter);
-            log.info(this.getClass().getSimpleName() + " export Success: url=" + providerWrapper.getUrl());
+            log.info(this.getClass().getSimpleName() + " export Success: url=" + providerStub.getUrl());
             return exporter;
         }
     }
@@ -56,11 +56,11 @@ public abstract class AbstractProtocol implements Protocol {
     /**
      * Create exporter
      *
-     * @param providerWrapper provider wrapper
+     * @param providerStub provider stub
      * @param <T>             service interface class
      * @return exporter
      */
-    protected abstract <T> Exportable<T> createExporter(ProviderWrapper<T> providerWrapper);
+    protected abstract <T> Exportable<T> createExporter(ProviderStub<T> providerStub);
 
     @Override
     public void destroy() {

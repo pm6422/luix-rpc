@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.client.proxy;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.config.spring.client.ConsumerWrapper;
+import org.infinity.rpc.core.config.spring.client.stub.ConsumerStub;
 import org.infinity.rpc.core.exchange.request.impl.RpcRequest;
 import org.infinity.rpc.utilities.id.IdGenerator;
 import org.springframework.util.ClassUtils;
@@ -20,8 +20,8 @@ import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodParamete
 @Slf4j
 public class ConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationHandler<T> implements InvocationHandler {
 
-    public ConsumerInvocationHandler(ConsumerWrapper<T> wrapper) {
-        consumerWrapper = wrapper;
+    public ConsumerInvocationHandler(ConsumerStub<T> stub) {
+        consumerStub = stub;
     }
 
     /**
@@ -40,14 +40,14 @@ public class ConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationH
         }
 
         RpcRequest request = new RpcRequest(IdGenerator.generateTimestampId(),
-                consumerWrapper.getInterfaceClass().getName(),
+                consumerStub.getInterfaceClass().getName(),
                 method.getName(),
                 getMethodParameters(method));
 
         request.setMethodArguments(args);
 
-        request.addOption(GROUP, consumerWrapper.getGroup());
-        request.addOption(VERSION, consumerWrapper.getVersion());
+        request.addOption(GROUP, consumerStub.getGroup());
+        request.addOption(VERSION, consumerStub.getVersion());
 
         boolean async = isAsyncCall(args);
         return processRequest(request, method.getReturnType(), async);
@@ -63,7 +63,7 @@ public class ConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationH
     public boolean isDerivedFromObject(Method method) {
         if (method.getDeclaringClass().equals(Object.class)) {
             try {
-                consumerWrapper.getInterfaceClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
+                consumerStub.getInterfaceClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
                 return false;
             } catch (Exception e) {
                 return true;

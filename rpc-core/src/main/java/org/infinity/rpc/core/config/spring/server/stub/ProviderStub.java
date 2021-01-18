@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.config.spring.server.providerwrapper;
+package org.infinity.rpc.core.config.spring.server.stub;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -35,13 +35,13 @@ import java.util.Map;
  * PRC provider stub
  * A stub in distributed computing is a piece of code that converts parameters passed between client and server
  * during a remote procedure call (RPC).
- * A server stub is responsible for handle remote method invocation and delegate to associate local method to execute.
+ * A provider stub take charge of handling remote method invocation and delegate to associate local method to execute.
  *
  * @param <T>: provider instance
  */
 @Slf4j
 @Data
-public class ProviderWrapper<T> implements DisposableBean {
+public class ProviderStub<T> implements DisposableBean {
     /**
      * The provider interface fully-qualified name
      */
@@ -84,18 +84,14 @@ public class ProviderWrapper<T> implements DisposableBean {
      * Active flag
      */
     private boolean             active       = false;
-    /**
-     * Closed flag
-     */
-    private boolean             closed       = false;
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
-     * Automatically add {@link ProviderWrapper} instance to {@link ProviderWrapperHolder}
+     * Automatically add {@link ProviderStub} instance to {@link ProviderStubHolder}
      */
     @PostConstruct
     public void init() {
-        ProviderWrapperHolder.getInstance().addWrapper(interfaceName, this);
+        ProviderStubHolder.getInstance().addStub(interfaceName, this);
         // Put methods to cache in order to accelerate the speed of executing.
         discoverMethods(interfaceClass);
     }
@@ -247,6 +243,5 @@ public class ProviderWrapper<T> implements DisposableBean {
     @Override
     public void destroy() {
         active = false;
-        closed = true;
     }
 }

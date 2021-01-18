@@ -10,7 +10,7 @@ package org.infinity.rpc.common;//package org.infinity.rpc.core.config.spring.st
 //        // Delayed exposure providers
 //        SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
 //
-//        if (MapUtils.isNotEmpty(ProviderWrapperHolder.getInstance().getWrappers())) {
+//        if (MapUtils.isNotEmpty(ProviderStubHolder.getInstance().getStubs())) {
 //            NettyServer nettyServer = new NettyServer(infinityProperties.getProtocol().getHost(), infinityProperties.getProtocol().getPort());
 //            nettyServer.startNettyServer();
 //        }

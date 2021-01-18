@@ -3,8 +3,8 @@ package org.infinity.rpc.core.config.spring.startup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapper;
-import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapperHolder;
+import org.infinity.rpc.core.config.spring.server.stub.ProviderStub;
+import org.infinity.rpc.core.config.spring.server.stub.ProviderStubHolder;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
@@ -113,16 +113,16 @@ public class RpcLifecycle {
      * @param infinityProperties RPC configuration properties
      */
     private void registerProviders(InfinityProperties infinityProperties, List<Url> registryUrls) {
-        Map<String, ProviderWrapper<?>> wrappers = ProviderWrapperHolder.getInstance().getWrappers();
-        if (MapUtils.isEmpty(wrappers)) {
+        Map<String, ProviderStub<?>> stubs = ProviderStubHolder.getInstance().getStubs();
+        if (MapUtils.isEmpty(stubs)) {
             log.info("No RPC service providers found for registering to registry!");
             return;
         }
-        wrappers.forEach((name, providerWrapper) -> {
-            Url providerUrl = createProviderUrl(infinityProperties, providerWrapper);
-            providerWrapper.setUrl(providerUrl);
+        stubs.forEach((name, stub) -> {
+            Url providerUrl = createProviderUrl(infinityProperties, stub);
+            stub.setUrl(providerUrl);
             // DO the providers registering
-            providerWrapper.register(infinityProperties.getApplication().toApp(), registryUrls, providerUrl);
+            stub.register(infinityProperties.getApplication().toApp(), registryUrls, providerUrl);
         });
     }
 
@@ -130,22 +130,22 @@ public class RpcLifecycle {
      * Create provider url
      *
      * @param infinityProperties configuration properties
-     * @param providerWrapper    provider instance wrapper
+     * @param providerStub    provider stub instance
      * @return provider url
      */
-    private Url createProviderUrl(InfinityProperties infinityProperties, ProviderWrapper<?> providerWrapper) {
+    private Url createProviderUrl(InfinityProperties infinityProperties, ProviderStub<?> providerStub) {
         Url providerUrl = Url.providerUrl(
                 infinityProperties.getProtocol().getName().getValue(),
                 infinityProperties.getProtocol().getPort(),
-                providerWrapper.getInterfaceName());
+                providerStub.getInterfaceName());
 
         // Configure url at global level
         providerUrl.addParameter(Url.PARAM_APP, infinityProperties.getApplication().getName());
         providerUrl.addParameter(Url.PARAM_CHECK_HEALTH_FACTORY, infinityProperties.getProtocol().getCheckHealthFactory());
 
         // Configure url at provider level
-        providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, String.valueOf(providerWrapper.isCheckHealth()));
-        providerUrl.addParameter(Url.PARAM_MAX_RETRIES, String.valueOf(providerWrapper.getMaxRetries()));
+        providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, String.valueOf(providerStub.isCheckHealth()));
+        providerUrl.addParameter(Url.PARAM_MAX_RETRIES, String.valueOf(providerStub.getMaxRetries()));
         return providerUrl;
     }
 
@@ -167,6 +167,6 @@ public class RpcLifecycle {
      * Unregister RPC providers from registry
      */
     private void unregisterProviders(List<Url> registryUrls) {
-        ProviderWrapperHolder.getInstance().getWrappers().forEach((name, providerWrapper) -> providerWrapper.unregister(registryUrls));
+        ProviderStubHolder.getInstance().getStubs().forEach((name, stub) -> stub.unregister(registryUrls));
     }
 }

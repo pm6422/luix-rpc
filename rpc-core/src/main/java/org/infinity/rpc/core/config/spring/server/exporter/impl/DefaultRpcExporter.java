@@ -23,7 +23,7 @@ import org.infinity.rpc.core.config.spring.server.exporter.AbstractExporter;
 import org.infinity.rpc.core.config.spring.server.exporter.Exportable;
 import org.infinity.rpc.core.config.spring.server.messagehandler.impl.ProviderMessageRouter;
 import org.infinity.rpc.core.config.spring.server.messagehandler.impl.ProviderProtectedMessageRouter;
-import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapper;
+import org.infinity.rpc.core.config.spring.server.stub.ProviderStub;
 import org.infinity.rpc.core.exchange.transport.endpoint.EndpointFactory;
 import org.infinity.rpc.core.exchange.transport.server.Server;
 import org.infinity.rpc.core.url.Url;
@@ -39,24 +39,24 @@ public class DefaultRpcExporter<T> extends AbstractExporter<T> {
     protected       Server                             server;
     protected       EndpointFactory                    endpointFactory;
 
-    public DefaultRpcExporter(ProviderWrapper<T> providerWrapper,
+    public DefaultRpcExporter(ProviderStub<T> providerStub,
                               Map<String, ProviderMessageRouter> ipPort2RequestRouter,
                               Map<String, Exportable<?>> exporterMap) {
-        super(providerWrapper);
+        super(providerStub);
         this.exporterMap = exporterMap;
         this.ipPort2RequestRouter = ipPort2RequestRouter;
 
-        ProviderMessageRouter requestRouter = initRequestRouter(providerWrapper.getUrl());
-        String endpointFactoryName = providerWrapper.getUrl().getParameter(Url.PARAM_ENDPOINT_FACTORY, Url.PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE);
+        ProviderMessageRouter requestRouter = initRequestRouter(providerStub.getUrl());
+        String endpointFactoryName = providerStub.getUrl().getParameter(Url.PARAM_ENDPOINT_FACTORY, Url.PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE);
         endpointFactory = EndpointFactory.getInstance(endpointFactoryName);
-        server = endpointFactory.createServer(providerWrapper.getUrl(), requestRouter);
+        server = endpointFactory.createServer(providerStub.getUrl(), requestRouter);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void cancelExport() {
-        String protocolKey = RpcFrameworkUtils.getProtocolKey(providerWrapper.getUrl());
-        String ipPort = providerWrapper.getUrl().getServerPortStr();
+        String protocolKey = RpcFrameworkUtils.getProtocolKey(providerStub.getUrl());
+        String ipPort = providerStub.getUrl().getServerPortStr();
 
         Exportable<T> exporter = (Exportable<T>) exporterMap.remove(protocolKey);
         if (exporter != null) {
@@ -65,10 +65,10 @@ public class DefaultRpcExporter<T> extends AbstractExporter<T> {
 
         ProviderMessageRouter requestRouter = ipPort2RequestRouter.get(ipPort);
         if (requestRouter != null) {
-            requestRouter.removeProvider(providerWrapper);
+            requestRouter.removeProvider(providerStub);
         }
 
-        log.info("DefaultRpcExporter unexport Success: url={}", providerWrapper.getUrl());
+        log.info("DefaultRpcExporter unexport Success: url={}", providerStub.getUrl());
     }
 
     @Override
@@ -83,8 +83,8 @@ public class DefaultRpcExporter<T> extends AbstractExporter<T> {
 
     @Override
     public void destroy() {
-        endpointFactory.safeReleaseResource(server, providerWrapper.getUrl());
-        log.info("DefaultRpcExporter destroy Success: url={}", providerWrapper.getUrl());
+        endpointFactory.safeReleaseResource(server, providerStub.getUrl());
+        log.info("DefaultRpcExporter destroy Success: url={}", providerStub.getUrl());
     }
 
     protected ProviderMessageRouter initRequestRouter(Url url) {
@@ -97,7 +97,7 @@ public class DefaultRpcExporter<T> extends AbstractExporter<T> {
             ipPort2RequestRouter.putIfAbsent(ipPort, router);
             requestRouter = ipPort2RequestRouter.get(ipPort);
         }
-        requestRouter.addProvider(providerWrapper);
+        requestRouter.addProvider(providerStub);
 
         return requestRouter;
     }

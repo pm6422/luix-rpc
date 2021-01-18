@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.protocol;
 
 import org.infinity.rpc.core.config.spring.server.exporter.Exportable;
-import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapper;
+import org.infinity.rpc.core.config.spring.server.stub.ProviderStub;
 import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
@@ -25,10 +25,10 @@ public interface Protocol {
      * 暴露服务
      *
      * @param <T>             provider interface
-     * @param providerWrapper provider wrapper
+     * @param providerStub provider stub
      * @return exporter
      */
-    <T> Exportable<T> export(ProviderWrapper<T> providerWrapper);
+    <T> Exportable<T> export(ProviderStub<T> providerStub);
 
     /**
      * Destroy

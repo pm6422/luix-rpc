@@ -5,7 +5,7 @@
 //import io.netty.channel.ChannelHandlerContext;
 //import io.netty.channel.ChannelInboundHandlerAdapter;
 //import lombok.extern.slf4j.Slf4j;
-//import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapperHolder;
+//import org.infinity.rpc.core.config.spring.server.stub.ProviderStubHolder;
 //
 //import java.lang.reflect.Method;
 //import java.util.UUID;
@@ -33,7 +33,7 @@
 //            Class<?>[] parameterTypes = rpcRequest.getParameterTypes();
 //            Object[] args = rpcRequest.getArgs();
 //            // Get the service instance
-//            Object serviceImpl = ProviderWrapperHolder.getInstance().getWrappers().get(className).getInstance();
+//            Object serviceImpl = ProviderStubHolder.getInstance().getStubs().get(className).getInstance();
 //            if (serviceImpl == null) {
 //                throw new RuntimeException("Service provider class can NOT be found with the name: ".concat(className));
 //            }

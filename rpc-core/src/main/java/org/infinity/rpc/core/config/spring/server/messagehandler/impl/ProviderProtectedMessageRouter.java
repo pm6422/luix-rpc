@@ -18,7 +18,7 @@ package org.infinity.rpc.core.config.spring.server.messagehandler.impl;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapper;
+import org.infinity.rpc.core.config.spring.server.stub.ProviderStub;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.request.Requestable;
@@ -55,12 +55,12 @@ public class ProviderProtectedMessageRouter extends ProviderMessageRouter {
         super();
     }
 
-    public ProviderProtectedMessageRouter(ProviderWrapper<?> provider) {
+    public ProviderProtectedMessageRouter(ProviderStub<?> provider) {
         super(provider);
     }
 
     @Override
-    protected Responseable call(Requestable request, ProviderWrapper<?> provider) {
+    protected Responseable call(Requestable request, ProviderStub<?> provider) {
         // 支持的最大worker thread数
         int maxThread = provider.getUrl().getIntParameter(Url.PARAM_MAX_WORKER_THREAD, Url.PARAM_MAX_WORKER_THREAD_DEFAULT_VALUE);
         String requestKey = RpcFrameworkUtils.getFullMethodString(request);

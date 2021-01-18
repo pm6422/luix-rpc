@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.server.exporter.Exportable;
 import org.infinity.rpc.core.config.spring.server.exporter.impl.DefaultRpcExporter;
 import org.infinity.rpc.core.config.spring.server.messagehandler.impl.ProviderMessageRouter;
-import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapper;
+import org.infinity.rpc.core.config.spring.server.stub.ProviderStub;
 import org.infinity.rpc.core.protocol.AbstractProtocol;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
@@ -21,7 +21,7 @@ public class InfinityProtocol extends AbstractProtocol {
     private final Map<String, ProviderMessageRouter> ipPort2RequestRouter = new ConcurrentHashMap<>();
 
     @Override
-    protected <T> Exportable<T> createExporter(ProviderWrapper<T> provider) {
+    protected <T> Exportable<T> createExporter(ProviderStub<T> provider) {
         return new DefaultRpcExporter<>(provider, this.ipPort2RequestRouter, this.exporterMap);
     }
 }

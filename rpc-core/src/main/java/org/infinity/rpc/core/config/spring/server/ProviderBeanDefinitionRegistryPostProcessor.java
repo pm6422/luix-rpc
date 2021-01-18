@@ -3,8 +3,8 @@ package org.infinity.rpc.core.config.spring.server;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.spring.bean.DefaultBeanNameGenerator;
 import org.infinity.rpc.core.config.spring.bean.registry.ClassPathBeanDefinitionRegistryScanner;
-import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapper;
-import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapperBeanNameBuilder;
+import org.infinity.rpc.core.config.spring.server.stub.ProviderStub;
+import org.infinity.rpc.core.config.spring.server.stub.ProviderStubBeanNameBuilder;
 import org.infinity.rpc.core.config.spring.utils.AnnotationUtils;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.server.annotation.Provider;
@@ -36,7 +36,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Register provider bean and provider wrapper under specified scan base packages to spring context
+ * Register provider bean and provider stub under specified scan base packages to spring context
  * by {@link BeanDefinitionRegistry}
  */
 @Slf4j
@@ -112,7 +112,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     }
 
     /**
-     * Register provider and provider wrapper beans
+     * Register provider and provider stub beans
      *
      * @param registry                 current bean definition registry
      * @param resolvedScanBasePackages provider packages to be scanned
@@ -122,8 +122,8 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         ClassPathBeanDefinitionRegistryScanner providerScanner = createProviderScanner(registry, beanNameGenerator);
 
         resolvedScanBasePackages.forEach(scanBasePackage -> {
-            // Register provider wrapper first
-            boolean registered = registerProviderWrapperBeans(registry, beanNameGenerator, providerScanner, scanBasePackage);
+            // Register provider stub first
+            boolean registered = registerProviderStubBeans(registry, beanNameGenerator, providerScanner, scanBasePackage);
             if (registered) {
                 // Then register provider beans beans
                 registerProviderBeans(providerScanner, scanBasePackage);
@@ -159,23 +159,23 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     }
 
     /**
-     * Register provider wrapper {@link ProviderWrapper} beans
+     * Register provider stub {@link ProviderStub} beans
      *
      * @param registry          current bean definition registry
      * @param beanNameGenerator bean name generator
      * @param providerScanner   provider bean definition registry scanner
      * @param scanBasePackage   provider packages to be scanned
-     * @return true: registered provider wrapper, false: no provider wrapper registered
+     * @return true: registered provider stub, false: no provider stub registered
      */
-    private boolean registerProviderWrapperBeans(BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator,
-                                                 ClassPathBeanDefinitionRegistryScanner providerScanner, String scanBasePackage) {
-        // Next we need to register ProviderBean which is the wrapper of service provider to spring context
+    private boolean registerProviderStubBeans(BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator,
+                                              ClassPathBeanDefinitionRegistryScanner providerScanner, String scanBasePackage) {
+        // Next we need to register ProviderBean which is the stub of service provider to spring context
         Set<BeanDefinitionHolder> holders =
                 findProviderBeanDefinitionHolders(providerScanner, scanBasePackage, registry, beanNameGenerator);
         if (CollectionUtils.isEmpty(holders)) {
             return false;
         }
-        holders.forEach(holder -> registerProviderWrapperBean(holder, registry, providerScanner));
+        holders.forEach(holder -> registerProviderStubBean(holder, registry, providerScanner));
         return true;
     }
 
@@ -203,27 +203,27 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     }
 
     /**
-     * Register {@link ProviderWrapper} beans
+     * Register {@link ProviderStub} beans
      *
      * @param providerBeanDefinitionHolder provider bean definition holders
      * @param registry                     current bean definition registry
      * @param providerScanner              provider bean definition registry scanner
      */
-    private void registerProviderWrapperBean(BeanDefinitionHolder providerBeanDefinitionHolder,
-                                             BeanDefinitionRegistry registry,
-                                             ClassPathBeanDefinitionRegistryScanner providerScanner) {
+    private void registerProviderStubBean(BeanDefinitionHolder providerBeanDefinitionHolder,
+                                          BeanDefinitionRegistry registry,
+                                          ClassPathBeanDefinitionRegistryScanner providerScanner) {
         Class<?> providerInstanceClass = resolveProviderClass(providerBeanDefinitionHolder);
         Provider providerAnnotation = findProviderAnnotation(providerInstanceClass);
         Class<?> providerInterfaceClass = resolveProviderInterface(providerAnnotation, providerInstanceClass);
 
-        String providerWrapperBeanName = buildProviderWrapperBeanName(providerInterfaceClass);
-        AbstractBeanDefinition wrapperBeanDefinition = buildProviderWrapperDefinition(
+        String providerStubBeanName = buildProviderStubBeanName(providerInterfaceClass);
+        AbstractBeanDefinition stubBeanDefinition = buildProviderStubDefinition(
                 providerInterfaceClass, providerAnnotation, providerBeanDefinitionHolder.getBeanName());
 
         // Check duplicated candidate bean
-        if (providerScanner.checkCandidate(providerWrapperBeanName, wrapperBeanDefinition)) {
-            registry.registerBeanDefinition(providerWrapperBeanName, wrapperBeanDefinition);
-            log.info("Registered RPC provider wrapper [{}] to spring context", providerWrapperBeanName);
+        if (providerScanner.checkCandidate(providerStubBeanName, stubBeanDefinition)) {
+            registry.registerBeanDefinition(providerStubBeanName, stubBeanDefinition);
+            log.info("Registered RPC provider stub [{}] to spring context", providerStubBeanName);
         }
     }
 
@@ -263,31 +263,31 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     }
 
     /**
-     * Build provider wrapper bean name
+     * Build provider stub bean name
      *
      * @param interfaceClass provider interface class
-     * @return provider wrapper bean name
+     * @return provider stub bean name
      */
-    private String buildProviderWrapperBeanName(Class<?> interfaceClass) {
-        return ProviderWrapperBeanNameBuilder.builder(interfaceClass, env).build();
+    private String buildProviderStubBeanName(Class<?> interfaceClass) {
+        return ProviderStubBeanNameBuilder.builder(interfaceClass, env).build();
     }
 
     /**
-     * Build {@link ProviderWrapper} definition
+     * Build {@link ProviderStub} definition
      *
      * @param providerInterfaceClass provider interface class
      * @param providerAnnotation     {@link Provider} annotation
      * @param providerInstanceName   provider instance name
-     * @return {@link ProviderWrapper} bean definition
+     * @return {@link ProviderStub} bean definition
      */
-    private AbstractBeanDefinition buildProviderWrapperDefinition(Class<?> providerInterfaceClass,
-                                                                  Provider providerAnnotation,
-                                                                  String providerInstanceName) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProviderWrapper.class);
-        addPropertyValue(builder, "interfaceName", providerInterfaceClass.getName(), ProviderWrapper.class, false);
-        addPropertyValue(builder, "interfaceClass", providerInterfaceClass, ProviderWrapper.class, false);
-        addPropertyValue(builder, "maxRetries", providerAnnotation.maxRetries(), ProviderWrapper.class, true);
-        addPropertyValue(builder, "checkHealth", providerAnnotation.checkHealth(), ProviderWrapper.class, false);
+    private AbstractBeanDefinition buildProviderStubDefinition(Class<?> providerInterfaceClass,
+                                                               Provider providerAnnotation,
+                                                               String providerInstanceName) {
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProviderStub.class);
+        addPropertyValue(builder, "interfaceName", providerInterfaceClass.getName(), ProviderStub.class, false);
+        addPropertyValue(builder, "interfaceClass", providerInterfaceClass, ProviderStub.class, false);
+        addPropertyValue(builder, "maxRetries", providerAnnotation.maxRetries(), ProviderStub.class, true);
+        addPropertyValue(builder, "checkHealth", providerAnnotation.checkHealth(), ProviderStub.class, false);
         // Obtain the instance by instance name then assign it to the property
         addPropertyReference(builder, "instance", providerInstanceName);
 

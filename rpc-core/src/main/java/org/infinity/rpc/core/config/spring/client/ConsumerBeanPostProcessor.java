@@ -2,6 +2,8 @@ package org.infinity.rpc.core.config.spring.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.annotation.Consumer;
+import org.infinity.rpc.core.config.spring.client.stub.ConsumerStub;
+import org.infinity.rpc.core.config.spring.client.stub.ConsumerStubBeanNameBuilder;
 import org.infinity.rpc.core.config.spring.config.InfinityProperties;
 import org.infinity.rpc.core.config.spring.utils.AnnotationUtils;
 import org.infinity.rpc.core.registry.RegistryInfo;
@@ -74,7 +76,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
     }
 
     /**
-     * Inject RPC consumer proxy and register {@link ConsumerWrapper} instance
+     * Inject RPC consumer proxy and register {@link ConsumerStub} instance
      *
      * @param bean     bean instance to be injected
      * @param beanName bean name to be injected
@@ -116,7 +118,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
 
     /**
      * Inject RPC consumer proxy instances to fields which annotated with {@link Consumer} by reflection
-     * and register its {@link ConsumerWrapper} instance to spring context
+     * and register its {@link ConsumerStub} instance to spring context
      *
      * @param bean      bean instance to be injected
      * @param beanClass bean class to be injected
@@ -134,14 +136,14 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
                     // No @Consumer annotated field found
                     continue;
                 }
-                // TODO: Register consumer wrapper bean definition
-                // Register consumer wrapper instance to spring context
-                ConsumerWrapper<?> consumerWrapper = registerConsumerWrapper(attributes, field.getType());
+                // TODO: Register consumer stub bean definition
+                // Register consumer stub instance to spring context
+                ConsumerStub<?> consumerStub = registerConsumerStub(attributes, field.getType());
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
                 // Inject RPC consumer proxy instance
-                field.set(bean, consumerWrapper.getProxyInstance());
+                field.set(bean, consumerStub.getProxyInstance());
             } catch (Throwable t) {
                 throw new BeanInitializationException("Failed to inject RPC consumer proxy to field [" + field.getName()
                         + "] of " + bean.getClass().getName(), t);
@@ -151,7 +153,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
 
     /**
      * Inject RPC consumer proxy instances to setter method parameters which annotated with {@link Consumer} by reflection
-     * and register its {@link ConsumerWrapper} instance to spring context
+     * and register its {@link ConsumerStub} instance to spring context
      *
      * @param bean      bean instance to be injected
      * @param beanClass bean class to be injected
@@ -172,11 +174,11 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
                     // No method with @Consumer annotated parameter found
                     continue;
                 }
-                // TODO: Register consumer wrapper bean definition
-                // Register consumer wrapper instance to spring context
-                ConsumerWrapper<?> consumerWrapper = registerConsumerWrapper(attributes, method.getParameterTypes()[0]);
+                // TODO: Register consumer stub bean definition
+                // Register consumer stub instance to spring context
+                ConsumerStub<?> consumerStub = registerConsumerStub(attributes, method.getParameterTypes()[0]);
                 // Inject RPC consumer proxy instance
-                method.invoke(bean, consumerWrapper.getProxyInstance());
+                method.invoke(bean, consumerStub.getProxyInstance());
             } catch (Throwable t) {
                 throw new BeanInitializationException("Failed to inject RPC consumer proxy to parameter of method ["
                         + method.getName() + "] of " + bean.getClass().getName(), t);
@@ -202,52 +204,51 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
     }
 
     /**
-     * Register consumer wrapper to spring context
+     * Register consumer stub to spring context
      *
      * @param attributes   {@link AnnotationAttributes annotation attributes}
      * @param consumerInterfaceClass Consumer interface class
-     * @return ConsumerWrapper instance
+     * @return ConsumerStub instance
      */
-    private ConsumerWrapper<?> registerConsumerWrapper(AnnotationAttributes attributes, Class<?> consumerInterfaceClass) {
+    private ConsumerStub<?> registerConsumerStub(AnnotationAttributes attributes, Class<?> consumerInterfaceClass) {
         // Resolve the interface class of the consumer proxy instance
         Class<?> resolvedConsumerInterfaceClass = AnnotationUtils.resolveInterfaceClass(attributes, consumerInterfaceClass);
 
-        // Build the consumer wrapper bean name
-        String beanName = buildConsumerWrapperBeanName(resolvedConsumerInterfaceClass);
+        // Build the consumer stub bean name
+        String beanName = buildConsumerStubBeanName(resolvedConsumerInterfaceClass);
 
-        if (registeredConsumerWrapper(beanName)) {
+        if (registeredConsumerStub(beanName)) {
             // Return the instance if it already be registered
-            return applicationContext.getBean(beanName, ConsumerWrapper.class);
+            return applicationContext.getBean(beanName, ConsumerStub.class);
         }
 
-        ConsumerWrapper<?> consumerWrapper = createConsumerWrapper(beanName, resolvedConsumerInterfaceClass, attributes);
-        // Register the consumer wrapper instance with singleton scope
-        beanFactory.registerSingleton(beanName, consumerWrapper);
-        return consumerWrapper;
+        ConsumerStub<?> consumerStub = createConsumerStub(resolvedConsumerInterfaceClass, attributes);
+        // Register the consumer stub instance with singleton scope
+        beanFactory.registerSingleton(beanName, consumerStub);
+        return consumerStub;
     }
 
     /**
-     * Build the consumer wrapper bean name
+     * Build the consumer stub bean name
      *
      * @param defaultInterfaceClass the consumer service interface
      * @return The name of bean that annotated {@link Consumer @Consumer} in spring context
      */
-    private String buildConsumerWrapperBeanName(Class<?> defaultInterfaceClass) {
-        return ConsumerWrapperBeanNameBuilder.builder(defaultInterfaceClass, env).build();
+    private String buildConsumerStubBeanName(Class<?> defaultInterfaceClass) {
+        return ConsumerStubBeanNameBuilder.builder(defaultInterfaceClass, env).build();
     }
 
-    private boolean registeredConsumerWrapper(String consumerWrapperBeanName) {
-        return applicationContext.containsBean(consumerWrapperBeanName);
+    private boolean registeredConsumerStub(String consumerStubBeanName) {
+        return applicationContext.containsBean(consumerStubBeanName);
     }
 
-    private ConsumerWrapper<?> createConsumerWrapper(String consumerWrapperBeanName,
-                                                     Class<?> consumerInterfaceClass,
-                                                     AnnotationAttributes annotationAttributes) {
+    private ConsumerStub<?> createConsumerStub(Class<?> consumerInterfaceClass,
+                                               AnnotationAttributes annotationAttributes) {
         InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
         RegistryInfo registryInfo = applicationContext.getBean(RegistryInfo.class);
-        ConsumerWrapper<?> consumerWrapper = new ConsumerWrapper<>(consumerWrapperBeanName, consumerInterfaceClass);
-        consumerWrapper.init(infinityProperties, registryInfo.getRegistryUrls(), new HashMap<>(annotationAttributes));
-        return consumerWrapper;
+        ConsumerStub<?> consumerStub = new ConsumerStub<>(consumerInterfaceClass);
+        consumerStub.init(infinityProperties, registryInfo.getRegistryUrls(), new HashMap<>(annotationAttributes));
+        return consumerStub;
     }
 
     /**

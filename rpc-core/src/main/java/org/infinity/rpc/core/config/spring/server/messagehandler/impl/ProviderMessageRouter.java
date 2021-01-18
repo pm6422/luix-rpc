@@ -19,7 +19,7 @@ package org.infinity.rpc.core.config.spring.server.messagehandler.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
-import org.infinity.rpc.core.config.spring.server.providerwrapper.ProviderWrapper;
+import org.infinity.rpc.core.config.spring.server.stub.ProviderStub;
 import org.infinity.rpc.core.exception.RpcBizException;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
@@ -48,7 +48,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 public class ProviderMessageRouter implements MessageHandler {
-    protected Map<String, ProviderWrapper<?>> providers = new HashMap<>();
+    protected Map<String, ProviderStub<?>> providers = new HashMap<>();
 
     /**
      * 所有暴露出去的方法计数
@@ -60,7 +60,7 @@ public class ProviderMessageRouter implements MessageHandler {
     public ProviderMessageRouter() {
     }
 
-    public ProviderMessageRouter(ProviderWrapper<?> provider) {
+    public ProviderMessageRouter(ProviderStub<?> provider) {
         addProvider(provider);
     }
 
@@ -76,7 +76,7 @@ public class ProviderMessageRouter implements MessageHandler {
 
         Requestable request = (Requestable) message;
         String serviceKey = RpcFrameworkUtils.getServiceKey(request);
-        ProviderWrapper<?> provider = providers.get(serviceKey);
+        ProviderStub<?> provider = providers.get(serviceKey);
 
         if (provider == null) {
             log.error(this.getClass().getSimpleName() + " handler Error: provider not exist serviceKey=" + serviceKey + " " + request);
@@ -95,7 +95,7 @@ public class ProviderMessageRouter implements MessageHandler {
         return response;
     }
 
-    protected Responseable call(Requestable request, ProviderWrapper<?> provider) {
+    protected Responseable call(Requestable request, ProviderStub<?> provider) {
         try {
             return provider.localCall(request);
         } catch (Exception e) {
@@ -124,7 +124,7 @@ public class ProviderMessageRouter implements MessageHandler {
         }
     }
 
-    public synchronized void addProvider(ProviderWrapper<?> provider) {
+    public synchronized void addProvider(ProviderStub<?> provider) {
         String serviceKey = RpcFrameworkUtils.getServiceKey(provider.getUrl());
         if (providers.containsKey(serviceKey)) {
             throw new RpcFrameworkException("Provider already exists with the key [" + serviceKey + "]");
@@ -143,7 +143,7 @@ public class ProviderMessageRouter implements MessageHandler {
         log.info("RequestRouter addProvider: url=" + provider.getUrl() + " all_public_method_count=" + methodCounter.get());
     }
 
-    public synchronized void removeProvider(ProviderWrapper<?> provider) {
+    public synchronized void removeProvider(ProviderStub<?> provider) {
         String serviceKey = RpcFrameworkUtils.getServiceKey(provider.getUrl());
 
         providers.remove(serviceKey);

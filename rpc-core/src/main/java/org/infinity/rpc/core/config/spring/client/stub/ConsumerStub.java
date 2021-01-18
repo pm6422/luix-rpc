@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.config.spring.client;
+package org.infinity.rpc.core.config.spring.client.stub;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -20,19 +20,17 @@ import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
 import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
 
 /**
- * PRC consumer configuration wrapper
+ * PRC consumer stub
  * And the class implements the {@link FactoryBean} interface means that
  * the class is used as a factory for an object to expose, not directly as a bean instance that will be exposed itself.
+ * A stub in distributed computing is a piece of code that converts parameters passed between client and server
+ * during a remote procedure call (RPC).
  *
  * @param <T>: The interface class of the consumer
  */
 @Slf4j
 @Getter
-public class ConsumerWrapper<T> implements DisposableBean {
-    /**
-     * The name of consumer wrapper instance
-     */
-    private final String                       consumerWrapperBeanName;
+public class ConsumerStub<T> implements DisposableBean {
     /**
      * The interface class of the consumer
      */
@@ -42,7 +40,7 @@ public class ConsumerWrapper<T> implements DisposableBean {
      */
     private       ProviderCluster<T>           providerCluster;
     /**
-     * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(ConsumerWrapper)}
+     * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(ConsumerStub)}
      */
     private final T                            proxyInstance;
     /**
@@ -70,11 +68,9 @@ public class ConsumerWrapper<T> implements DisposableBean {
      */
     private       String                       version;
 
-    public ConsumerWrapper(String consumerWrapperBeanName, Class<T> interfaceClass) {
-        Assert.hasText(consumerWrapperBeanName, "Consumer wrapper bean name must not be empty!");
+    public ConsumerStub(Class<T> interfaceClass) {
         Assert.notNull(interfaceClass, "Consumer interface class must not be null!");
 
-        this.consumerWrapperBeanName = consumerWrapperBeanName;
         this.interfaceClass = interfaceClass;
         this.proxyInstance = ConsumerProxy.getProxy(this);
     }
