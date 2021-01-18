@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * - Application
- * - TransportProtocol
+ * - Transport protocol
  * - Registry
  */
 @ConfigurationProperties(prefix = "infinity")
