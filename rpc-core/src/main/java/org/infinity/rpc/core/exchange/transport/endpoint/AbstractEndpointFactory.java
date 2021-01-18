@@ -6,8 +6,8 @@ import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.transport.Client;
-import org.infinity.rpc.core.exchange.transport.endpoint.impl.HeartbeatClientEndpointManager;
-import org.infinity.rpc.core.exchange.transport.heartbeat.HeartbeatFactory;
+import org.infinity.rpc.core.exchange.transport.endpoint.impl.CheckHealthClientEndpointManager;
+import org.infinity.rpc.core.exchange.transport.checkhealth.CheckHealthFactory;
 import org.infinity.rpc.core.exchange.transport.server.Server;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
@@ -50,13 +50,13 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
     private final EndpointManager heartbeatClientEndpointManager;
 
     public AbstractEndpointFactory() {
-        heartbeatClientEndpointManager = new HeartbeatClientEndpointManager();
+        heartbeatClientEndpointManager = new CheckHealthClientEndpointManager();
         heartbeatClientEndpointManager.init();
     }
 
     @Override
     public Server createServer(Url providerUrl, MessageHandler messageHandler) {
-        messageHandler = getHeartbeatFactory(providerUrl).wrapMessageHandler(messageHandler);
+        messageHandler = CheckHealthFactory.getInstance(providerUrl).wrapMessageHandler(messageHandler);
 
         synchronized (ipPort2ServerShareChannel) {
             String ipPort = providerUrl.getServerPortStr();
@@ -157,20 +157,6 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
         }
 
         sets.add(namespace);
-    }
-
-    private HeartbeatFactory getHeartbeatFactory(Url url) {
-        String heartbeatFactoryName = url.getParameter(Url.PARAM_CHECK_HEALTH_FACTORY);
-        return getHeartbeatFactory(heartbeatFactoryName);
-    }
-
-    private HeartbeatFactory getHeartbeatFactory(String heartbeatFactoryName) {
-        HeartbeatFactory heartbeatFactory = HeartbeatFactory.getInstance(heartbeatFactoryName);
-        if (heartbeatFactory == null) {
-            throw new RpcFrameworkException("HeartbeatFactory not exist: " + heartbeatFactoryName);
-        }
-
-        return heartbeatFactory;
     }
 
     private Client createClient(Url providerUrl, EndpointManager endpointManager) {

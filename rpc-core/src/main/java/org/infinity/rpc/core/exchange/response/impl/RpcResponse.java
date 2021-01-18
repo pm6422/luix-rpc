@@ -22,27 +22,32 @@ import java.util.concurrent.Executor;
 @Slf4j
 public class RpcResponse implements Responseable, Callbackable, Serializable {
     private static final long                serialVersionUID = 882479213033600079L;
-    private              long                requestId;
-    private              byte                protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
-    private              String              group;
-    private              String              version;
-    private              int                 timeout;
-    private              Object              result;
-    private              Exception           exception;
-    private              long                sendingTime;
-    private              long                receivedTime;
-    private              long                elapsedTime;
-    private              Map<String, String> traces           = new ConcurrentHashMap<>();
+    protected            long                requestId;
+    protected            byte                protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
+    protected            String              group;
+    protected            String              version;
+    protected            int                 timeout;
+    protected            Object              result;
+    protected            Exception           exception;
+    protected            long                sendingTime;
+    protected            long                receivedTime;
+    protected            long                elapsedTime;
+    protected            Map<String, String> traces           = new ConcurrentHashMap<>();
     /**
      * RPC request options, all the optional RPC request parameters will be put in it.
      */
-    private              Map<String, String> options          = new ConcurrentHashMap<>();
+    protected            Map<String, String> options          = new ConcurrentHashMap<>();
     /**
      * default serialization is hession2
      */
-    private              int                 serializeNum     = 0;
+    protected            int                 serializeNum     = 0;
 
     public RpcResponse(Object result) {
+        this.result = result;
+    }
+
+    public RpcResponse(long requestId, Object result) {
+        this.requestId = requestId;
         this.result = result;
     }
 
