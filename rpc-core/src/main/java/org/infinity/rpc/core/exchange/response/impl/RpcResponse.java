@@ -1,8 +1,8 @@
 package org.infinity.rpc.core.exchange.response.impl;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.exception.RpcInvocationException;
@@ -16,10 +16,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
-@Data
-@NoArgsConstructor
-@ToString
 @Slf4j
+@Getter
+@Setter
+@NoArgsConstructor
 public class RpcResponse implements Responseable, Callbackable, Serializable {
     private static final long                serialVersionUID = 882479213033600079L;
     protected            long                requestId;
@@ -27,7 +27,7 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
     protected            String              group;
     protected            String              version;
     protected            int                 timeout;
-    protected            Object              result;
+    protected            Object              resultObject;
     protected            Exception           exception;
     protected            long                sendingTime;
     protected            long                receivedTime;
@@ -43,16 +43,16 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
     protected            int                 serializeNum     = 0;
 
     public RpcResponse(Object result) {
-        this.result = result;
+        this.resultObject = result;
     }
 
     public RpcResponse(long requestId, Object result) {
         this.requestId = requestId;
-        this.result = result;
+        this.resultObject = result;
     }
 
     public RpcResponse(Responseable response) {
-        this.result = response.getResult();
+        this.resultObject = response.getResult();
         this.exception = response.getException();
         this.requestId = response.getRequestId();
         this.setElapsedTime(response.getElapsedTime());
@@ -71,7 +71,7 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
                     (RuntimeException) exception :
                     new RpcInvocationException(exception.getMessage(), exception);
         }
-        return result;
+        return resultObject;
     }
 
     @Override

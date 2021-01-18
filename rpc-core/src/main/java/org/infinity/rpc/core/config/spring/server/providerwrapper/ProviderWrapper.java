@@ -145,7 +145,7 @@ public class ProviderWrapper<T> implements DisposableBean {
         boolean defaultThrowExceptionStack = Url.PARAM_TRANS_EXCEPTION_STACK_DEFAULT_VALUE;
         try {
             Object result = method.invoke(instance, request.getMethodArguments());
-            response.setResult(result);
+            response.setResultObject(result);
         } catch (Exception e) {
             if (e.getCause() != null) {
                 response.setException(new RpcBizException("provider call process error", e.getCause()));

@@ -1,8 +1,10 @@
 package org.infinity.rpc.core.exchange.request.impl;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 
@@ -10,7 +12,9 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Data
+@Slf4j
+@Getter
+@Setter
 @NoArgsConstructor
 @ToString
 public class RpcRequest implements Requestable, Serializable {

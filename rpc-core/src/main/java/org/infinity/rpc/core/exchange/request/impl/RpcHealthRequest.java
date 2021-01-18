@@ -1,12 +1,12 @@
 package org.infinity.rpc.core.exchange.request.impl;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
-@Data
+@Slf4j
+@Getter
+@Setter
 @NoArgsConstructor
-@ToString
 public class RpcHealthRequest extends RpcRequest{
     private static final long serialVersionUID = 6503025793982931094L;
 

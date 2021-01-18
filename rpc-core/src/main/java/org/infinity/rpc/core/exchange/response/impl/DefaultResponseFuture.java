@@ -1,6 +1,8 @@
 package org.infinity.rpc.core.exchange.response.impl;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
@@ -17,45 +19,50 @@ import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 import org.infinity.rpc.core.url.Url;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @ToString
 public class DefaultResponseFuture implements ResponseFuture {
 
     protected final    Object               lock             = new Object();
     protected volatile FutureState          state            = FutureState.DOING;
-    protected          Object               result           = null;
-    protected          Exception            exception        = null;
+    protected          Object               resultObject;
+    protected          Exception            exception;
     protected          long                 createTime       = System.currentTimeMillis();
     /**
      * remove
      */
-    private            String               protocol;
-    private            byte                 protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
-    private            String               group;
-    private            String               version;
+    protected          String               protocol;
+    protected          byte                 protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
+    protected          String               group;
+    protected          String               version;
     protected          int                  timeout;
     protected          long                 processTime      = 0;
     protected          Requestable          request;
     protected          List<FutureListener> listeners;
     protected          Url                  serverUrl;
     protected          Class<?>             returnType;
-    private            long                 sendingTime;
-    private            long                 receivedTime;
-    private            long                 elapsedTime;
-    private            Map<String, String>  traces           = new ConcurrentHashMap<>();
+    protected          long                 sendingTime;
+    protected          long                 receivedTime;
+    protected          long                 elapsedTime;
+    protected          Map<String, String>  traces           = new ConcurrentHashMap<>();
     /**
      * RPC request options, all the optional RPC request parameters will be put in it.
      */
-    private            Map<String, String>  options          = new ConcurrentHashMap<>();
-    private            TraceableContext     traceableContext = new TraceableContext();
+    protected          Map<String, String>  options          = new ConcurrentHashMap<>();
+    protected          TraceableContext     traceableContext = new TraceableContext();
     /**
      * default serialization is hession2
      */
-    private            int                  serializeNum     = 0;
+    protected          int                  serializeNum     = 0;
 
     public DefaultResponseFuture(Requestable requestObj, int timeout, Url serverUrl) {
         this.request = requestObj;
@@ -65,7 +72,7 @@ public class DefaultResponseFuture implements ResponseFuture {
 
     @Override
     public void onSuccess(Responseable response) {
-        this.result = response.getResult();
+        this.resultObject = response.getResult();
         this.processTime = response.getElapsedTime();
         this.options = response.getOptions();
         traceableContext.setReceiveTime(response.getReceivedTime());
@@ -78,52 +85,6 @@ public class DefaultResponseFuture implements ResponseFuture {
         this.exception = response.getException();
         this.processTime = response.getElapsedTime();
         done();
-    }
-
-    @Override
-    public Object getResult() {
-        synchronized (lock) {
-            if (!isDoing()) {
-                return getResultOrThrowable();
-            }
-
-            if (timeout <= 0) {
-                try {
-                    lock.wait();
-                } catch (Exception e) {
-                    cancel(new RpcServiceException(this.getClass().getName() + " getValue InterruptedException : "
-                            + request.toString() + " cost=" + (System.currentTimeMillis() - createTime), e));
-                }
-
-                return getResultOrThrowable();
-            } else {
-                long waitTime = timeout - (System.currentTimeMillis() - createTime);
-
-                if (waitTime > 0) {
-                    for (; ; ) {
-                        try {
-                            lock.wait(waitTime);
-                        } catch (InterruptedException e) {
-                            // Leave blank intentionally
-                        }
-
-                        if (!isDoing()) {
-                            break;
-                        } else {
-                            waitTime = timeout - (System.currentTimeMillis() - createTime);
-                            if (waitTime <= 0) {
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (isDoing()) {
-                    timeoutSoCancel();
-                }
-            }
-            return getResultOrThrowable();
-        }
     }
 
     @Override
@@ -192,10 +153,6 @@ public class DefaultResponseFuture implements ResponseFuture {
         this.returnType = clazz;
     }
 
-    public Object getRequestObj() {
-        return request;
-    }
-
     public FutureState getState() {
         return state;
     }
@@ -258,20 +215,64 @@ public class DefaultResponseFuture implements ResponseFuture {
         return this.request.getRequestId();
     }
 
+    @Override
+    public Object getResult() {
+        synchronized (lock) {
+            if (!isDoing()) {
+                return getResultOrThrowable();
+            }
+
+            if (timeout <= 0) {
+                try {
+                    lock.wait();
+                } catch (Exception e) {
+                    cancel(new RpcServiceException(this.getClass().getName() + " getValue InterruptedException : "
+                            + request.toString() + " cost=" + (System.currentTimeMillis() - createTime), e));
+                }
+                return getResultOrThrowable();
+            } else {
+                long waitTime = timeout - (System.currentTimeMillis() - createTime);
+                if (waitTime > 0) {
+                    for (; ; ) {
+                        try {
+                            lock.wait(waitTime);
+                        } catch (InterruptedException e) {
+                            // Leave blank intentionally
+                        }
+
+                        if (!isDoing()) {
+                            break;
+                        } else {
+                            waitTime = timeout - (System.currentTimeMillis() - createTime);
+                            if (waitTime <= 0) {
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (isDoing()) {
+                    timeoutSoCancel();
+                }
+            }
+            return getResultOrThrowable();
+        }
+    }
+
     private Object getResultOrThrowable() {
         if (exception != null) {
             throw (exception instanceof RuntimeException) ? (RuntimeException) exception : new RpcServiceException(
                     exception.getMessage(), exception);
         }
-        if (result != null && returnType != null && result instanceof DeserializableObject) {
+        if (resultObject != null && returnType != null && resultObject instanceof DeserializableObject) {
             try {
-                result = ((DeserializableObject) result).deserialize(returnType);
+                resultObject = ((DeserializableObject) resultObject).deserialize(returnType);
             } catch (IOException e) {
                 log.error("deserialize response value fail! return type:" + returnType, e);
                 throw new RpcFrameworkException("deserialize return value fail! deserialize type:" + returnType, e);
             }
         }
-        return result;
+        return resultObject;
     }
 
     @Override
@@ -296,4 +297,6 @@ public class DefaultResponseFuture implements ResponseFuture {
     public String getOption(String key) {
         return options.get(key);
     }
+
+
 }

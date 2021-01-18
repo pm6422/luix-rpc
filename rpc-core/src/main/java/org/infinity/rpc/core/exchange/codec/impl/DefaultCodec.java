@@ -268,7 +268,7 @@ public class DefaultCodec extends AbstractCodec {
         Class<?> clz = MethodParameterUtils.forName(className);
         Object result = deserialize((byte[]) input.readObject(), clz, serialization);
         if (dataType == RpcConstants.FLAG_RESPONSE) {
-            response.setResult(result);
+            response.setResultObject(result);
         } else if (dataType == RpcConstants.FLAG_RESPONSE_EXCEPTION) {
             response.setException((Exception) result);
         } else {
