@@ -31,6 +31,9 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
+import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
+
 
 /**
  * The class implements {@link BeanPostProcessor} means that all spring beans will be processed by
@@ -215,7 +218,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
         Class<?> resolvedConsumerInterfaceClass = AnnotationUtils.resolveInterfaceClass(attributes, consumerInterfaceClass);
 
         // Build the consumer stub bean name
-        String beanName = buildConsumerStubBeanName(resolvedConsumerInterfaceClass);
+        String beanName = buildConsumerStubBeanName(resolvedConsumerInterfaceClass, attributes);
 
         if (registeredConsumerStub(beanName)) {
             // Return the instance if it already be registered
@@ -234,8 +237,12 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
      * @param defaultInterfaceClass the consumer service interface
      * @return The name of bean that annotated {@link Consumer @Consumer} in spring context
      */
-    private String buildConsumerStubBeanName(Class<?> defaultInterfaceClass) {
-        return ConsumerStubBeanNameBuilder.builder(defaultInterfaceClass, env).build();
+    private String buildConsumerStubBeanName(Class<?> defaultInterfaceClass, AnnotationAttributes attributes) {
+        return ConsumerStubBeanNameBuilder
+                .builder(defaultInterfaceClass, env)
+                .group(attributes.getString(GROUP))
+                .version(attributes.getString(VERSION))
+                .build();
     }
 
     private boolean registeredConsumerStub(String consumerStubBeanName) {

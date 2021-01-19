@@ -53,7 +53,7 @@ info: # These configuration can be exported to Environment, accessing URL /info 
         name: @project.name@
         version: @project.version@
     project:
-        package: org.infinity.rpc.demoserver.appserver
+        package: org.infinity.rpc.demoserver
 spring:
     application:
         name: ${info.artifact.name}
@@ -87,6 +87,9 @@ spring:
     data:
         mongodb:
             auto-index-creation: false
+    jackson:
+        mapper:
+            propagate-transient-marker: true # disable serialize transient fields
 infinity:
     application:
         id: ${info.artifact.id}

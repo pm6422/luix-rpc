@@ -16,42 +16,23 @@
  */
 package org.infinity.rpc.core.config.spring.client.stub;
 
-import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.core.config.spring.bean.ProviderConsumerStubBeanNameBuilder;
 import org.springframework.core.env.Environment;
-import org.springframework.util.Assert;
 
 /**
  * RPC consumer stub bean name builder
  */
-public class ConsumerStubBeanNameBuilder {
-    public static final  String      CONSUMER_STUB_BEAN_PREFIX = "ConsumerStub";
-    private static final String      SEPARATOR                 = ":";
-    /**
-     * Consumer interface class(Required)
-     */
-    private final        Class<?>    interfaceClass;
-    private final        Environment env;
-    private              String      version;
-    private              String      group;
+public class ConsumerStubBeanNameBuilder extends ProviderConsumerStubBeanNameBuilder {
 
     /**
      * Prevent instantiation of it outside the class
      */
     private ConsumerStubBeanNameBuilder(Class<?> interfaceClass, Environment env) {
-        Assert.notNull(interfaceClass, "Consumer interface class must not be null!");
-        Assert.notNull(env, "Environment must not be null!");
-        this.interfaceClass = interfaceClass;
-        this.env = env;
+        super(interfaceClass, env);
     }
 
     public static ConsumerStubBeanNameBuilder builder(Class<?> interfaceClass, Environment environment) {
         return new ConsumerStubBeanNameBuilder(interfaceClass, environment);
-    }
-
-    private static void append(StringBuilder builder, String value) {
-        if (StringUtils.isNotEmpty(value)) {
-            builder.append(SEPARATOR).append(value);
-        }
     }
 
     public ConsumerStubBeanNameBuilder group(String group) {
@@ -65,15 +46,6 @@ public class ConsumerStubBeanNameBuilder {
     }
 
     public String build() {
-        StringBuilder beanNameBuilder = new StringBuilder(CONSUMER_STUB_BEAN_PREFIX);
-        // Required
-        append(beanNameBuilder, interfaceClass.getName());
-        // Optional
-        append(beanNameBuilder, version);
-        append(beanNameBuilder, group);
-        // Build and remove last ":"
-        String rawBeanName = beanNameBuilder.toString();
-        // Resolve placeholders
-        return env.resolvePlaceholders(rawBeanName);
+        return super.build(CONSUMER_STUB_BEAN_PREFIX);
     }
 }

@@ -34,42 +34,43 @@ public class ConsumerStub<T> implements DisposableBean {
     /**
      * The interface class of the consumer
      */
-    private final Class<T>                     interfaceClass;
-    /**
-     *
-     */
-    private       ProviderCluster<T>           providerCluster;
+    private final           Class<T>                     interfaceClass;
     /**
      * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(ConsumerStub)}
+     * Disable serialize
      */
-    private final T                            proxyInstance;
+    private transient final T                            proxyInstance;
     /**
      *
      */
-    private       SubscribeProviderListener<T> subscribeProviderListener;
+    private                 ProviderCluster<T>           providerCluster;
+    /**
+     * Disable serialize
+     */
+    private transient       SubscribeProviderListener<T> subscribeProviderListener;
     /**
      *
      */
-    private       Url                          clientUrl;
+    private                 Url                          clientUrl;
     /**
      *
      */
-    private       String                       directUrl;
+    private                 String                       directUrl;
     /**
      *
      */
-    private       int                          timeout;
+    private                 int                          timeout;
     /**
      *
      */
-    private       String                       group;
+    private                 String                       group;
     /**
      *
      */
-    private       String                       version;
+    private                 String                       version;
 
     public ConsumerStub(Class<T> interfaceClass) {
-        Assert.notNull(interfaceClass, "Consumer interface class must not be null!");
+        Assert.notNull(interfaceClass, "Consumer interface class must NOT be null!");
 
         this.interfaceClass = interfaceClass;
         this.proxyInstance = ConsumerProxy.getProxy(this);
