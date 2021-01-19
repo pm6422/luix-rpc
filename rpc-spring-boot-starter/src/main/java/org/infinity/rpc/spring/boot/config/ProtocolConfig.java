@@ -41,26 +41,6 @@ public class ProtocolConfig {
     @NotNull
     @Positive
     private Integer port;
-    /**
-     * Cluster implementation
-     */
-    @NotEmpty
-    private String  cluster            = CLUSTER_DEFAULT_VALUE;
-    /**
-     * Cluster loadBalancer implementation
-     */
-    @NotEmpty
-    private String  loadBalancer       = LOAD_BALANCER_DEFAULT_VALUE;
-    /**
-     * Fault tolerance strategy
-     */
-    @NotEmpty
-    private String  faultTolerance     = FAULT_TOLERANCE_DEFAULT_VALUE;
-    /**
-     * Check health factory
-     */
-    @NotEmpty
-    private String  checkHealthFactory = CHECK_HEALTH_FACTORY_DEFAULT_VALUE;
 
     public void init() {
         checkIntegrity();

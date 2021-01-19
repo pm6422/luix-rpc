@@ -274,13 +274,13 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
             consumerAttributesMap.put(PROTOCOL, infinityProperties.getProtocol().getName());
         }
         if (StringUtils.isEmpty(annotationAttributes.getString(CLUSTER))) {
-            consumerAttributesMap.put(CLUSTER, infinityProperties.getProtocol().getCluster());
-        }
-        if (StringUtils.isEmpty(annotationAttributes.getString(LOAD_BALANCER))) {
-            consumerAttributesMap.put(LOAD_BALANCER, infinityProperties.getProtocol().getLoadBalancer());
+            consumerAttributesMap.put(CLUSTER, infinityProperties.getConsumer().getCluster());
         }
         if (StringUtils.isEmpty(annotationAttributes.getString(FAULT_TOLERANCE))) {
-            consumerAttributesMap.put(FAULT_TOLERANCE, infinityProperties.getProtocol().getFaultTolerance());
+            consumerAttributesMap.put(FAULT_TOLERANCE, infinityProperties.getConsumer().getFaultTolerance());
+        }
+        if (StringUtils.isEmpty(annotationAttributes.getString(LOAD_BALANCER))) {
+            consumerAttributesMap.put(LOAD_BALANCER, infinityProperties.getConsumer().getLoadBalancer());
         }
         return consumerAttributesMap;
     }

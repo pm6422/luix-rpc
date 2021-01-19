@@ -290,17 +290,18 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     private AbstractBeanDefinition buildProviderStubDefinition(Class<?> providerInterfaceClass,
                                                                Provider providerAnnotation,
                                                                String providerInstanceName) {
+
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProviderStub.class);
-        addPropertyValue(builder, "interfaceName", providerInterfaceClass.getName(), ProviderStub.class, false);
-        addPropertyValue(builder, "interfaceClass", providerInterfaceClass, ProviderStub.class, false);
-        addPropertyValue(builder, "registry", providerAnnotation.registry(), ProviderStub.class, false);
-        addPropertyValue(builder, "protocol", providerAnnotation.protocol(), ProviderStub.class, false);
-        addPropertyValue(builder, "group", providerAnnotation.group(), ProviderStub.class, false);
-        addPropertyValue(builder, "version", providerAnnotation.version(), ProviderStub.class, false);
-        addPropertyValue(builder, "checkHealth", providerAnnotation.checkHealth(), ProviderStub.class, false);
-        addPropertyValue(builder, "checkHealthFactory", providerAnnotation.checkHealthFactory(), ProviderStub.class, false);
-        addPropertyValue(builder, "timeout", providerAnnotation.timeout(), ProviderStub.class, true);
-        addPropertyValue(builder, "maxRetries", providerAnnotation.maxRetries(), ProviderStub.class, true);
+        addPropertyValue(builder, "interfaceName", providerInterfaceClass.getName(), false);
+        addPropertyValue(builder, "interfaceClass", providerInterfaceClass, false);
+        addPropertyValue(builder, "registry", providerAnnotation.registry(), false);
+        addPropertyValue(builder, "protocol", providerAnnotation.protocol(), false);
+        addPropertyValue(builder, "group", providerAnnotation.group(), false);
+        addPropertyValue(builder, "version", providerAnnotation.version(), false);
+        addPropertyValue(builder, "checkHealth", providerAnnotation.checkHealth().getValue(), false);
+        addPropertyValue(builder, "checkHealthFactory", providerAnnotation.checkHealthFactory(), false);
+        addPropertyValue(builder, "requestTimeout", providerAnnotation.requestTimeout(), true);
+        addPropertyValue(builder, "maxRetries", providerAnnotation.maxRetries(), true);
 
         // Obtain the instance by instance name then assign it to the property
         addPropertyReference(builder, "instance", providerInstanceName);
@@ -308,10 +309,9 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         return builder.getBeanDefinition();
     }
 
-    private void addPropertyValue(BeanDefinitionBuilder builder, String propertyName,
-                                  Object propertyValue, Class<?> beanType, boolean validate) {
+    private void addPropertyValue(BeanDefinitionBuilder builder, String propertyName, Object propertyValue, boolean validate) {
         if (validate) {
-            validatePropertyValue(beanType, propertyName, propertyValue);
+            validatePropertyValue(builder.getBeanDefinition().getBeanClass(), propertyName, propertyValue);
         }
         builder.addPropertyValue(propertyName, propertyValue);
     }

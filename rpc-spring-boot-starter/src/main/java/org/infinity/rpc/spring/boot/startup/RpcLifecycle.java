@@ -2,17 +2,21 @@ package org.infinity.rpc.spring.boot.startup;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStubHolder;
-import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.apache.commons.lang3.BooleanUtils.toBooleanDefaultIfNull;
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
 /**
  * Used to start and stop the RPC server
@@ -134,18 +138,30 @@ public class RpcLifecycle {
      * @return provider url
      */
     private Url createProviderUrl(InfinityProperties infinityProperties, ProviderStub<?> providerStub) {
-        Url providerUrl = Url.providerUrl(
-                providerStub.getProtocol(),
-                infinityProperties.getProtocol().getPort(),
-                providerStub.getInterfaceName());
+        String protocol = defaultIfEmpty(providerStub.getProtocol(), infinityProperties.getProtocol().getName());
+        int port = infinityProperties.getProtocol().getPort();
+        String group = defaultIfEmpty(providerStub.getGroup(), infinityProperties.getProvider().getGroup());
+        String version = defaultIfEmpty(providerStub.getVersion(), infinityProperties.getProvider().getVersion());
+        Url providerUrl = Url.providerUrl(protocol, port, providerStub.getInterfaceName(), group, version);
 
-        // Configure url at global level
         providerUrl.addParameter(Url.PARAM_APP, infinityProperties.getApplication().getName());
-        providerUrl.addParameter(Url.PARAM_CHECK_HEALTH_FACTORY, infinityProperties.getProtocol().getCheckHealthFactory());
 
-        // Configure url at provider level
-        providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, String.valueOf(providerStub.isCheckHealth()));
-        providerUrl.addParameter(Url.PARAM_MAX_RETRIES, String.valueOf(providerStub.getMaxRetries()));
+        boolean checkHealth = toBooleanDefaultIfNull(providerStub.getCheckHealth(),
+                infinityProperties.getProvider().isCheckHealth());
+        providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, String.valueOf(checkHealth));
+
+        String checkHealthFactory = defaultIfEmpty(providerStub.getCheckHealthFactory(),
+                infinityProperties.getProvider().getCheckHealthFactory());
+        providerUrl.addParameter(Url.PARAM_CHECK_HEALTH_FACTORY, checkHealthFactory);
+
+        int requestTimeout = Integer.MAX_VALUE != providerStub.getRequestTimeout() ? providerStub.getRequestTimeout()
+                : infinityProperties.getProvider().getRequestTimeout();
+        providerUrl.addParameter(Url.PARAM_REQUEST_TIMEOUT, String.valueOf(requestTimeout));
+
+        int maxRetries = Integer.MAX_VALUE != providerStub.getMaxRetries() ? providerStub.getMaxRetries()
+                : infinityProperties.getProvider().getMaxRetries();
+        providerUrl.addParameter(Url.PARAM_MAX_RETRIES, String.valueOf(maxRetries));
+
         return providerUrl;
     }
 

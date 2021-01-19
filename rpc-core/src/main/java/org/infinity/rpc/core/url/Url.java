@@ -32,22 +32,9 @@ public final class Url implements Serializable {
     public static final  String  PATH_SEPARATOR     = "/";
     private static final int     CLIENT_URL_PORT    = 0;
     /**
-     * Url type
-     * TODO: add
-     */
-    private              UrlType urlType;
-    /**
      * RPC protocol
      */
     private              String  protocol;
-    /**
-     * Service provider group
-     */
-    private              String  group;
-    /**
-     * RPC protocol version
-     */
-    private              String  version;
     /**
      * RPC server or client host name
      */
@@ -60,6 +47,14 @@ public final class Url implements Serializable {
      * RPC interface fully-qualified name
      */
     private              String  path;
+    /**
+     * Service provider group
+     */
+    private              String  group;
+    /**
+     * RPC protocol version
+     */
+    private              String  version;
 
     // ◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘
     // Constants definitions
@@ -209,7 +204,7 @@ public final class Url implements Serializable {
     private Url() {
     }
 
-    public static Url of(String protocol, String group, String version, String host, Integer port, String path,
+    public static Url of(String protocol, String host, Integer port, String path, String group, String version,
                          Map<String, String> parameters) {
         Url url = new Url();
         url.setProtocol(protocol);
@@ -228,24 +223,24 @@ public final class Url implements Serializable {
     }
 
     public static Url of(String protocol, String host, Integer port, String path, Map<String, String> parameters) {
-        return of(protocol, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, host, port, path, parameters);
+        return of(protocol, host, port, path, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, parameters);
     }
 
     public static Url of(String protocol, String host, Integer port, String path) {
-        return of(protocol, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, host, port, path, new HashMap<>());
+        return of(protocol, host, port, path, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, new HashMap<>());
     }
 
-    public static Url providerUrl(String protocol, Integer port, String path) {
-        return of(protocol, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, NetworkUtils.INTRANET_IP, port, path, new HashMap<>());
+    public static Url providerUrl(String protocol, Integer port, String path, String group, String version) {
+        return of(protocol, NetworkUtils.INTRANET_IP, port, path, group, version, new HashMap<>());
     }
 
     public static Url clientUrl(String protocol, String path) {
-        return of(protocol, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, NetworkUtils.INTRANET_IP, CLIENT_URL_PORT, path, new HashMap<>());
+        return of(protocol, NetworkUtils.INTRANET_IP, CLIENT_URL_PORT, path, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, new HashMap<>());
     }
 
     public static Url registryUrl(String protocol, String host, Integer port) {
         // todo: check group and version
-        return of(protocol, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, host, port, Registrable.class.getName(), new HashMap<>());
+        return of(protocol, host, port, Registrable.class.getName(), GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, new HashMap<>());
     }
 
 
@@ -264,10 +259,10 @@ public final class Url implements Serializable {
 
     private void checkIntegrity() {
         Validate.notEmpty(protocol, "Protocol must NOT be empty!");
-        Validate.notEmpty(group, "Group must NOT be empty!");
-        Validate.notEmpty(version, "Version must NOT be empty!");
         Validate.notEmpty(host, "Host must NOT be empty!");
         Validate.notNull(port, "Port must NOT be null!");
+        Validate.notEmpty(group, "Group must NOT be empty!");
+        Validate.notEmpty(version, "Version must NOT be empty!");
     }
 
     private void checkValidity() {

@@ -17,17 +17,27 @@ import javax.validation.constraints.NotNull;
 @Validated
 public class InfinityProperties {
     @NotNull
-    private ApplicationConfig application;
+    private ApplicationConfig application = new ApplicationConfig();
     /**
      * TODO: support multiple protocols
      */
     @NotNull
-    private ProtocolConfig    protocol = new ProtocolConfig();
+    private ProtocolConfig    protocol    = new ProtocolConfig();
     /**
      * TODO: support multiple registries
      */
     @NotNull
-    private RegistryConfig    registry;
+    private RegistryConfig    registry    = new RegistryConfig();
+    /**
+     *
+     */
+    @NotNull
+    private ProviderConfig    provider    = new ProviderConfig();
+    /**
+     *
+     */
+    @NotNull
+    private ConsumerConfig    consumer    = new ConsumerConfig();
 
     @PostConstruct
     private void init() {

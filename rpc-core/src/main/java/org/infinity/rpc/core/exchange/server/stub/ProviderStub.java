@@ -54,27 +54,24 @@ public class ProviderStub<T> {
     /**
      * Registry
      */
-    @NotEmpty
     private String              registry;
     /**
      * Protocol
      */
-    @NotEmpty
     private String              protocol;
     /**
      * Group
      */
-    @NotEmpty
     private String              group;
     /**
      * Version
      */
-    @NotEmpty
     private String              version;
     /**
      * Indicator to check health
+     * Note: It must be specified with Boolean wrapper class
      */
-    private boolean             checkHealth;
+    private Boolean             checkHealth;
     /**
      *
      */
@@ -83,7 +80,7 @@ public class ProviderStub<T> {
      * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
      */
     @Min(value = 0, message = "The [timeout] property of @Provider must NOT be a negative number!")
-    private int                 timeout;
+    private int                 requestTimeout;
     /**
      * The max retry times of RPC request
      * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
