@@ -26,7 +26,7 @@ public class AdminMenuController {
 
     private AdminMenuService adminMenuService;
 
-    @Consumer(timeout = 10000)
+    @Consumer(requestTimeout = 10000)
     public void setAdminMenuService(AdminMenuService adminMenuService) {
         this.adminMenuService = adminMenuService;
     }

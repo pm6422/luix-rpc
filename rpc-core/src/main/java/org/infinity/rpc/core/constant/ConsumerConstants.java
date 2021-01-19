@@ -11,5 +11,5 @@ public interface ConsumerConstants extends ServiceConstants {
     String FAULT_TOLERANCE               = "faultTolerance";
     String FAULT_TOLERANCE_DEFAULT_VALUE = "failover";
     String DIRECT_URL                    = "directUrl";
-    String TIMEOUT                       = "timeout";
+    String REQUEST_TIMEOUT               = "requestTimeout";
 }

@@ -8,7 +8,7 @@ import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
 import org.infinity.rpc.core.exchange.cluster.listener.SubscribeProviderListener;
 import org.infinity.rpc.core.url.Url;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 
@@ -27,26 +27,35 @@ public class ConsumerStub<T> {
     /**
      * The interface class of the consumer
      */
+    @NotNull
     private final           Class<T>                     interfaceClass;
     /**
      * Registry
      */
-    @NotEmpty
     private                 String                       registry;
     /**
      * Protocol
      */
-    @NotEmpty
     private                 String                       protocol;
+    /**
+     *
+     */
+    private                 String                       cluster;
+    /**
+     *
+     */
+    private                 String                       faultTolerance;
+    /**
+     *
+     */
+    private                 String                       loadBalancer;
     /**
      * Group
      */
-    @NotEmpty
     private                 String                       group;
     /**
      * Version
      */
-    @NotEmpty
     private                 String                       version;
     /**
      * Indicator to check health
@@ -59,7 +68,11 @@ public class ConsumerStub<T> {
     /**
      *
      */
-    private                 int                          timeout;
+    private                 int                          requestTimeout;
+    /**
+     *
+     */
+    private                 String                       directUrl;
     /**
      * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(ConsumerStub)}
      * Disable serialize
@@ -77,10 +90,7 @@ public class ConsumerStub<T> {
      *
      */
     private                 Url                          clientUrl;
-    /**
-     *
-     */
-    private                 String                       directUrl;
+
 
     public ConsumerStub(Class<T> interfaceClass) {
         Validate.notNull(interfaceClass, "Consumer interface class must NOT be null!");
@@ -93,11 +103,14 @@ public class ConsumerStub<T> {
         // Set attribute values of @Consumer annotation
         registry = (String) consumerAttributesMap.get(REGISTRY);
         protocol = (String) consumerAttributesMap.get(PROTOCOL);
+        cluster = (String) consumerAttributesMap.get(CLUSTER);
+        faultTolerance = (String) consumerAttributesMap.get(FAULT_TOLERANCE);
+        loadBalancer = (String) consumerAttributesMap.get(LOAD_BALANCER);
         group = (String) consumerAttributesMap.get(GROUP);
         version = (String) consumerAttributesMap.get(VERSION);
         checkHealth = (boolean) consumerAttributesMap.get(CHECK_HEALTH);
         checkHealthFactory = (String) consumerAttributesMap.get(CHECK_HEALTH_FACTORY);
-        timeout = (int) consumerAttributesMap.get(TIMEOUT);
+        requestTimeout = (int) consumerAttributesMap.get(REQUEST_TIMEOUT);
         directUrl = (String) consumerAttributesMap.get(DIRECT_URL);
 
         clientUrl = Url.clientUrl((String) consumerAttributesMap.get(PROTOCOL), interfaceClass.getName());
