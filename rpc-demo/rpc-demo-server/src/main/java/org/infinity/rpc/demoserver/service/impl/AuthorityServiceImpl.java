@@ -1,8 +1,8 @@
 package org.infinity.rpc.demoserver.service.impl;
 
-import org.infinity.app.common.domain.Authority;
-import org.infinity.app.common.service.AuthorityService;
 import org.infinity.rpc.core.server.annotation.Provider;
+import org.infinity.rpc.democommon.domain.Authority;
+import org.infinity.rpc.democommon.service.AuthorityService;
 import org.infinity.rpc.demoserver.repository.AuthorityRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

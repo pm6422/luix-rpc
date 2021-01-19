@@ -2,11 +2,11 @@ package org.infinity.rpc.democlient.controller;
 
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.app.common.domain.App;
-import org.infinity.app.common.service.AppService;
 import org.infinity.rpc.democlient.component.HttpHeaderCreator;
 import org.infinity.rpc.democlient.exception.NoDataFoundException;
 import org.infinity.rpc.core.client.annotation.Consumer;
+import org.infinity.rpc.democommon.domain.App;
+import org.infinity.rpc.democommon.service.AppService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;

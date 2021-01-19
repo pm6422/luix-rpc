@@ -3,7 +3,7 @@ package org.infinity.rpc.demoserver.controller;
 import com.google.common.collect.ImmutableMap;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.app.common.domain.Authority;
+import org.infinity.rpc.democommon.domain.Authority;
 import org.infinity.rpc.demoserver.component.HttpHeaderCreator;
 import org.infinity.rpc.demoserver.exception.DuplicationException;
 import org.infinity.rpc.demoserver.exception.NoDataFoundException;

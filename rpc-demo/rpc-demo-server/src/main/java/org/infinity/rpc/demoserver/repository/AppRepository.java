@@ -1,6 +1,6 @@
 package org.infinity.rpc.demoserver.repository;
 
-import org.infinity.app.common.domain.App;
+import org.infinity.rpc.democommon.domain.App;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

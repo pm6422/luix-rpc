@@ -1,9 +1,9 @@
 package org.infinity.rpc.demoserver.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.app.common.domain.App;
-import org.infinity.app.common.service.AppService;
 import org.infinity.rpc.core.server.annotation.Provider;
+import org.infinity.rpc.democommon.domain.App;
+import org.infinity.rpc.democommon.service.AppService;
 import org.infinity.rpc.demoserver.exception.NoDataFoundException;
 import org.infinity.rpc.demoserver.repository.AppRepository;
 import org.springframework.data.domain.Page;

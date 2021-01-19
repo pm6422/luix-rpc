@@ -73,7 +73,7 @@
         </dependency>
         <dependency>
             <groupId>org.infinity</groupId>
-            <artifactId>app-common</artifactId>
+            <artifactId>rpc-demo-common</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

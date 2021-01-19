@@ -2,20 +2,18 @@ package org.infinity.rpc.democlient.controller;
 
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.app.common.domain.Authority;
-import org.infinity.app.common.service.AuthorityService;
+import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.democlient.component.HttpHeaderCreator;
 import org.infinity.rpc.democlient.exception.NoDataFoundException;
-import org.infinity.rpc.core.client.annotation.Consumer;
+import org.infinity.rpc.democommon.domain.Authority;
+import org.infinity.rpc.democommon.service.AuthorityService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_OK;

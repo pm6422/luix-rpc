@@ -1,9 +1,9 @@
 package org.infinity.rpc.demoserver.service.impl;
 
-import org.infinity.app.common.domain.AdminMenu;
-import org.infinity.app.common.dto.AdminMenuTreeDTO;
-import org.infinity.app.common.service.AdminMenuService;
 import org.infinity.rpc.core.server.annotation.Provider;
+import org.infinity.rpc.democommon.domain.AdminMenu;
+import org.infinity.rpc.democommon.dto.AdminMenuTreeDTO;
+import org.infinity.rpc.democommon.service.AdminMenuService;
 import org.infinity.rpc.demoserver.repository.AdminMenuRepository;
 import org.thymeleaf.util.StringUtils;
 

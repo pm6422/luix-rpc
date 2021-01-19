@@ -2,9 +2,9 @@ package org.infinity.rpc.demoserver.setup;
 
 import com.github.mongobee.changeset.ChangeLog;
 import com.github.mongobee.changeset.ChangeSet;
-import org.infinity.app.common.domain.AdminMenu;
-import org.infinity.app.common.domain.App;
-import org.infinity.app.common.domain.Authority;
+import org.infinity.rpc.democommon.domain.AdminMenu;
+import org.infinity.rpc.democommon.domain.App;
+import org.infinity.rpc.democommon.domain.Authority;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
