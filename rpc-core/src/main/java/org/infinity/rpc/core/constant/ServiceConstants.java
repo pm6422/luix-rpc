@@ -1,14 +1,23 @@
 package org.infinity.rpc.core.constant;
 
 public interface ServiceConstants {
-    String INTERFACE_CLASS               = "interfaceClass";
-    String INTERFACE_NAME                = "interfaceName";
-    String GENERIC                       = "generic";
-    String PROTOCOL                      = "protocol";
-    String GROUP                         = "group";
-    String GROUP_DEFAULT_VALUE           = "default";
-    String VERSION                       = "version";
-    String VERSION_DEFAULT_VALUE         = "1.0.0";
-    int    MAX_RETRIES_DEFAULT_VALUE     = 0;
-    int    REQUEST_TIMEOUT_DEFAULT_VALUE = 500;
+    String INTERFACE_CLASS = "interfaceClass";
+    String INTERFACE_NAME  = "interfaceName";
+    String GENERIC         = "generic";
+
+    String  REGISTRY                           = "registry";
+    String  REGISTRY_DEFAULT_VALUE             = "zookeeper";
+    String  REGISTRY_VALUE_DIRECT              = "direct";
+    String  PROTOCOL                           = "protocol";
+    String  PROTOCOL_DEFAULT_VALUE             = "infinity";
+    String  GROUP                              = "group";
+    String  GROUP_DEFAULT_VALUE                = "default";
+    String  VERSION                            = "version";
+    String  VERSION_DEFAULT_VALUE              = "1.0.0";
+    String  CHECK_HEALTH                       = "checkHealth";
+    boolean CHECK_HEALTH_DEFAULT_VALUE         = true;
+    String  CHECK_HEALTH_FACTORY               = "checkHealthFactory";
+    String  CHECK_HEALTH_FACTORY_DEFAULT_VALUE = "default";
+    int     MAX_RETRIES_DEFAULT_VALUE          = 0;
+    int     REQUEST_TIMEOUT_DEFAULT_VALUE      = 500;
 }

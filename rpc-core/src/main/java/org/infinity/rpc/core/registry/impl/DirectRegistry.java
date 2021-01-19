@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.registry.AbstractRegistry;
 import org.infinity.rpc.core.registry.App;
-import org.infinity.rpc.core.registry.constants.RegistryName;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.url.Url;
@@ -19,6 +18,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY_VALUE_DIRECT;
 import static org.infinity.rpc.core.url.Url.PARAM_ADDRESS;
 
 @Slf4j
@@ -36,7 +36,7 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
         List<Pair<String, Integer>> hostPortList = AddressUtils.parseAddress(address);
         hostPortList.forEach(hostPortPair -> {
             // Use empty string as path
-            directUrls.add(Url.of(RegistryName.direct.name(), hostPortPair.getLeft(), hostPortPair.getRight(), StringUtils.EMPTY));
+            directUrls.add(Url.of(REGISTRY_VALUE_DIRECT, hostPortPair.getLeft(), hostPortPair.getRight(), StringUtils.EMPTY));
         });
     }
 

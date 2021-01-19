@@ -16,12 +16,10 @@
 
 package org.infinity.rpc.core.exchange.transport.checkhealth.impl;
 
-import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
-import org.infinity.rpc.core.config.spring.server.messagehandler.impl.DefaultCheckHealthMessageHandleWrapper;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.request.impl.RpcHealthRequest;
-import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.exchange.response.impl.RpcHealthResponse;
+import org.infinity.rpc.core.exchange.server.messagehandler.MessageHandler;
+import org.infinity.rpc.core.exchange.server.messagehandler.impl.DefaultCheckHealthMessageHandleWrapper;
 import org.infinity.rpc.core.exchange.transport.checkhealth.CheckHealthFactory;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.utilities.id.IdGenerator;

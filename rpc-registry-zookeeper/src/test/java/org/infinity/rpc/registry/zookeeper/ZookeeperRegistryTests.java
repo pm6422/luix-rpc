@@ -5,8 +5,6 @@ import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.infinity.rpc.core.protocol.constants.ProtocolName;
-import org.infinity.rpc.core.registry.constants.RegistryName;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
@@ -25,7 +23,7 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.GROUP_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.junit.Assert.*;
 
 @Slf4j
@@ -48,19 +46,19 @@ public class ZookeeperRegistryTests {
         int zkPort = Integer.parseInt(properties.getProperty("clientPort"));
         in.close();
 
-        registryUrl = Url.registryUrl(RegistryName.zookeeper.name(), REGISTRY_HOST, zkPort);
+        registryUrl = Url.registryUrl(REGISTRY_DEFAULT_VALUE, REGISTRY_HOST, zkPort);
         registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, "" + Math.toIntExact(TimeUnit.SECONDS.toMillis(1)));
         registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, "" + Math.toIntExact(TimeUnit.MINUTES.toMillis(1)));
         registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, "" + Math.toIntExact(TimeUnit.SECONDS.toMillis(30)));
 
         // client url has the same protocol and provider path to provider, but port is 0
-        clientUrl = Url.clientUrl(ProtocolName.infinity.name(), provider);
+        clientUrl = Url.clientUrl(PROTOCOL_DEFAULT_VALUE, provider);
         clientUrl.addParameter("group", GROUP_DEFAULT_VALUE);
 
-        providerUrl1 = Url.of(ProtocolName.infinity.name(), NetworkUtils.INTRANET_IP, 2000, provider);
+        providerUrl1 = Url.of(PROTOCOL_DEFAULT_VALUE, NetworkUtils.INTRANET_IP, 2000, provider);
         providerUrl1.addParameter("group", GROUP_DEFAULT_VALUE);
 
-        providerUrl2 = Url.of(ProtocolName.infinity.name(), "192.168.100.100", 2000, provider);
+        providerUrl2 = Url.of(PROTOCOL_DEFAULT_VALUE, "192.168.100.100", 2000, provider);
         providerUrl2.addParameter("group", GROUP_DEFAULT_VALUE);
 
         zookeeper = new EmbeddedZookeeper();

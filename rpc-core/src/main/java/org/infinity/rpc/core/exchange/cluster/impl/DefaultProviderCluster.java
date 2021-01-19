@@ -22,7 +22,6 @@ import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_CALLER_THREAD_POOL;
 
@@ -35,7 +34,7 @@ import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_CALLER_T
 @ServiceName("default")
 public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     private static final int                       DELAY_TIME = 1000;
-    private final        AtomicBoolean             available  = new AtomicBoolean(false);
+    private              boolean                   active     = false;
     private              Class<T>                  interfaceClass;
     private              String                    protocol;
     private              FaultToleranceStrategy<T> faultToleranceStrategy;
@@ -63,8 +62,8 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     }
 
     @Override
-    public boolean isAvailable() {
-        return available.get();
+    public boolean isActive() {
+        return active;
     }
 
     @Override
@@ -96,7 +95,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     public void init() {
         // todo: remove this statement
         refresh(providerCallers);
-        available.set(true);
+        active = true;
     }
 
     /**
@@ -144,7 +143,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
 
     @Override
     public void destroy() {
-        available.set(false);
+        active = false;
         for (ProviderCaller<T> providerCaller : this.providerCallers) {
             providerCaller.destroy();
         }
@@ -152,7 +151,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
 
     @Override
     public Responseable call(Requestable request) {
-        if (available.get()) {
+        if (active) {
             try {
                 return faultToleranceStrategy.call(loadBalancer, request);
             } catch (Exception e) {
@@ -182,6 +181,9 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
 
     @Override
     public String toString() {
+        if (interfaceClass == null) {
+            return DefaultProviderCluster.class.getSimpleName();
+        }
         return DefaultProviderCluster.class.getSimpleName().concat(":").concat(interfaceClass.getName());
     }
 }

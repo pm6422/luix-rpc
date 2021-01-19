@@ -83,6 +83,11 @@
         </dependency>
         <dependency>
             <groupId>org.infinity</groupId>
+            <artifactId>rpc-spring-boot-starter</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinity</groupId>
             <artifactId>rpc-transport-netty4</artifactId>
             <version>1.0.0</version>
         </dependency>

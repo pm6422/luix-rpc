@@ -7,8 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.GROUP_DEFAULT_VALUE;
-import static org.infinity.rpc.core.constant.ServiceConstants.VERSION_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 
 /**
  * RPC consumer annotation
@@ -29,9 +28,24 @@ public @interface Consumer {
     // we can initiate a generic call to service provider without service provider jar dependency
     boolean generic() default false;
 
+    String registry() default REGISTRY_DEFAULT_VALUE;
+
+    String protocol() default PROTOCOL_DEFAULT_VALUE;
+
+    String cluster() default CLUSTER_DEFAULT_VALUE;
+
+    String loadBalancer() default LOAD_BALANCER_DEFAULT_VALUE;
+
+    String faultTolerance() default FAULT_TOLERANCE_DEFAULT_VALUE;
+
     String group() default GROUP_DEFAULT_VALUE;
 
     String version() default VERSION_DEFAULT_VALUE;
+
+    // Indicator to monitor health
+    boolean checkHealth() default CHECK_HEALTH_DEFAULT_VALUE;
+
+    String checkHealthFactory() default CHECK_HEALTH_FACTORY_DEFAULT_VALUE;
 
     // Timeout value for service invocation
     int timeout() default 0;

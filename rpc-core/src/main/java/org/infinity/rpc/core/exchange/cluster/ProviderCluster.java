@@ -65,12 +65,11 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
     static <T> ProviderCluster<T> createCluster(Class<T> interfaceClass, String protocol, String clusterName, String loadBalancerName, String faultToleranceName) {
         // It support one cluster for one protocol for now, but do not support one cluster for one provider
         ProviderCluster<T> providerCluster = ProviderCluster.getInstance(clusterName);
-        LoadBalancer<T> loadBalancer = LoadBalancer.getInstance(loadBalancerName);
-        FaultToleranceStrategy<T> faultTolerance = FaultToleranceStrategy.getInstance(faultToleranceName);
-
         providerCluster.setInterfaceClass(interfaceClass);
         providerCluster.setProtocol(protocol);
+        FaultToleranceStrategy<T> faultTolerance = FaultToleranceStrategy.getInstance(faultToleranceName);
         providerCluster.setFaultToleranceStrategy(faultTolerance);
+        LoadBalancer<T> loadBalancer = LoadBalancer.getInstance(loadBalancerName);
         providerCluster.setLoadBalancer(loadBalancer);
         // Initialize
         providerCluster.init();

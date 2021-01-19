@@ -1,10 +1,10 @@
 package org.infinity.rpc.core.protocol.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.config.spring.server.exporter.Exportable;
-import org.infinity.rpc.core.config.spring.server.exporter.impl.DefaultRpcExporter;
-import org.infinity.rpc.core.config.spring.server.messagehandler.impl.ProviderMessageRouter;
-import org.infinity.rpc.core.config.spring.server.stub.ProviderStub;
+import org.infinity.rpc.core.exchange.server.exporter.Exportable;
+import org.infinity.rpc.core.exchange.server.exporter.impl.DefaultRpcExporter;
+import org.infinity.rpc.core.exchange.server.messagehandler.impl.ProviderMessageRouter;
+import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
 import org.infinity.rpc.core.protocol.AbstractProtocol;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 

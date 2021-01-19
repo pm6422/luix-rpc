@@ -1,7 +1,7 @@
 package org.infinity.rpc.transport.netty4;
 
+import org.infinity.rpc.core.exchange.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exchange.transport.Client;
-import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exchange.transport.endpoint.AbstractEndpointFactory;
 import org.infinity.rpc.core.exchange.transport.server.Server;
 import org.infinity.rpc.core.url.Url;

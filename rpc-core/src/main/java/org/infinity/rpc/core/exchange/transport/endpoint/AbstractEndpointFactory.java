@@ -2,9 +2,9 @@ package org.infinity.rpc.core.exchange.transport.endpoint;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.config.spring.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
+import org.infinity.rpc.core.exchange.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exchange.transport.Client;
 import org.infinity.rpc.core.exchange.transport.endpoint.impl.CheckHealthClientEndpointManager;
 import org.infinity.rpc.core.exchange.transport.checkhealth.CheckHealthFactory;

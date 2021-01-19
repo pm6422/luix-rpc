@@ -8,6 +8,7 @@
     <modules>
         <module>rpc-utilities</module>
         <module>rpc-core</module>
+        <module>rpc-spring-boot-starter</module>
         <module>rpc-transport-netty4</module>
         <module>rpc-registry-zookeeper</module>
         <module>rpc-web-center</module>

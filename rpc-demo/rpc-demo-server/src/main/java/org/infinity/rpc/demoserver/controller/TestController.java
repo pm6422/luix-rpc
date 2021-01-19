@@ -3,16 +3,20 @@ package org.infinity.rpc.demoserver.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.config.spring.config.InfinityProperties;
-import org.infinity.rpc.core.config.spring.bean.ProviderConsumerStubBeanNameBuilder;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democommon.service.AppService;
+import org.infinity.rpc.spring.boot.config.InfinityProperties;
+import org.infinity.rpc.spring.boot.server.stub.ProviderStubBeanNameBuilder;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.infinity.rpc.core.constant.ServiceConstants.GROUP_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ServiceConstants.VERSION_DEFAULT_VALUE;
 
 @RestController
 @Api(tags = "测试")
@@ -21,22 +25,25 @@ public class TestController {
     private final RegistryInfo       registryInfo;
     private final InfinityProperties infinityProperties;
     private final ApplicationContext applicationContext;
+    private final Environment        env;
 
     public TestController(RegistryInfo registryInfo,
                           InfinityProperties infinityProperties,
-                          ApplicationContext applicationContext) {
+                          ApplicationContext applicationContext,
+                          Environment env) {
         this.registryInfo = registryInfo;
         this.infinityProperties = infinityProperties;
         this.applicationContext = applicationContext;
+        this.env = env;
     }
 
 
     @ApiOperation("测试注册provider")
     @GetMapping("/open-api/test/register-provider")
     public void registerProvider() {
-        Registry registry = RegistryFactory.getInstance(infinityProperties.getRegistry().getName().getValue()).getRegistry(registryInfo.getRegistryUrls().get(0));
+        Registry registry = RegistryFactory.getInstance(infinityProperties.getRegistry().getName()).getRegistry(registryInfo.getRegistryUrls().get(0));
         Url providerUrl = Url.of(
-                infinityProperties.getProtocol().getName().getValue(),
+                infinityProperties.getProtocol().getName(),
                 "192.168.0.1",
                 infinityProperties.getProtocol().getPort(),
                 AppService.class.getName());
@@ -50,9 +57,13 @@ public class TestController {
 
     @ApiOperation("测试获取AppService provider stub")
     @GetMapping("/open-api/test/app-service-provider-stub")
-    public void testGetAppServiceProviderStub() {
-        Object bean = applicationContext.getBean(ProviderConsumerStubBeanNameBuilder.PROVIDER_STUB_BEAN_PREFIX.concat(":").concat(AppService.class.getName()));
-        log.info(bean.toString());
+    public Object testGetAppServiceProviderStub() {
+        String name = ProviderStubBeanNameBuilder
+                .builder(AppService.class, env)
+                .group(GROUP_DEFAULT_VALUE)
+                .version(VERSION_DEFAULT_VALUE)
+                .build();
+        return applicationContext.getBean(name);
     }
 
     @ApiOperation("测试获取AppService provider")

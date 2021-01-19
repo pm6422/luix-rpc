@@ -1,6 +1,6 @@
 package org.infinity.rpc.webcenter;
 
-import org.infinity.rpc.core.config.spring.annotation.EnableRpc;
+import org.infinity.rpc.spring.boot.annotation.EnableRpc;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

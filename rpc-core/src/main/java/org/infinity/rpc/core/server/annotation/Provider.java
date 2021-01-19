@@ -16,16 +16,25 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Provider {
-    // Interface class of provider
-    Class<?> interfaceClass() default void.class;
-
     // The interface class name of provider
     // For the generic call must provide interfaceName attribute
     String interfaceName() default "";
 
+    // Interface class of provider
+    Class<?> interfaceClass() default void.class;
+
+    String registry() default REGISTRY_DEFAULT_VALUE;
+
+    String protocol() default PROTOCOL_DEFAULT_VALUE;
+
     String group() default GROUP_DEFAULT_VALUE;
 
     String version() default VERSION_DEFAULT_VALUE;
+
+    // Indicator to monitor health
+    boolean checkHealth() default CHECK_HEALTH_DEFAULT_VALUE;
+
+    String checkHealthFactory() default CHECK_HEALTH_FACTORY_DEFAULT_VALUE;
 
     // Timeout value for service invocation
     int timeout() default REQUEST_TIMEOUT_DEFAULT_VALUE;
@@ -33,6 +42,4 @@ public @interface Provider {
     // The max retry times of RPC request
     int maxRetries() default MAX_RETRIES_DEFAULT_VALUE;
 
-    // Indicator to monitor health
-    boolean checkHealth() default true;
 }
