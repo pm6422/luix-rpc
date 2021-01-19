@@ -22,7 +22,7 @@ public class ProtocolConfig {
      * SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type,
      * and check whether value is valid or not during application startup.
      */
-    @NotNull
+    @NotEmpty
     private String  name               = PROTOCOL_DEFAULT_VALUE;
     /**
      * Protocol version

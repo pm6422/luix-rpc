@@ -92,7 +92,7 @@ public class ConsumerStub<T> {
     public void init(List<Url> registryUrls, Map<String, Object> consumerAttributesMap) {
         // Set attribute values of @Consumer annotation
         registry = (String) consumerAttributesMap.get(REGISTRY);
-        protocol  = (String) consumerAttributesMap.get(PROTOCOL);
+        protocol = (String) consumerAttributesMap.get(PROTOCOL);
         group = (String) consumerAttributesMap.get(GROUP);
         version = (String) consumerAttributesMap.get(VERSION);
         checkHealth = (boolean) consumerAttributesMap.get(CHECK_HEALTH);
@@ -112,10 +112,10 @@ public class ConsumerStub<T> {
         // 那么正常情况下只会使用A，如果A被开关降级，那么就会使用B，B也被降级，那么会使用C
         // One cluster is created for one protocol, only one server node under a cluster can receive the request
         return ProviderCluster.createCluster(interfaceClass,
-                (String) consumerAttributesMap.get(PROTOCOL),
                 (String) consumerAttributesMap.get(CLUSTER),
-                (String) consumerAttributesMap.get(LOAD_BALANCER),
-                (String) consumerAttributesMap.get(FAULT_TOLERANCE));
+                (String) consumerAttributesMap.get(PROTOCOL),
+                (String) consumerAttributesMap.get(FAULT_TOLERANCE),
+                (String) consumerAttributesMap.get(LOAD_BALANCER));
     }
 
 //    @Override

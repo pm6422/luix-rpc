@@ -22,7 +22,7 @@ public class RegistryConfig {
     /**
      * Name of register center
      */
-    @NotNull
+    @NotEmpty
     private              String  name                = REGISTRY_DEFAULT_VALUE;
     /**
      * Registry center host name

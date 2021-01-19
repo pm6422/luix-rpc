@@ -62,7 +62,8 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
      * @param <T>                provider interface class
      * @return provider cluster
      */
-    static <T> ProviderCluster<T> createCluster(Class<T> interfaceClass, String protocol, String clusterName, String loadBalancerName, String faultToleranceName) {
+    static <T> ProviderCluster<T> createCluster(Class<T> interfaceClass, String clusterName,
+                                                String protocol, String faultToleranceName, String loadBalancerName) {
         // It support one cluster for one protocol for now, but do not support one cluster for one provider
         ProviderCluster<T> providerCluster = ProviderCluster.getInstance(clusterName);
         providerCluster.setInterfaceClass(interfaceClass);
