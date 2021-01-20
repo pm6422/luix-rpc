@@ -2,7 +2,6 @@ package org.infinity.rpc.spring.boot.startup;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStubHolder;
 import org.infinity.rpc.core.registry.Registry;
@@ -131,7 +130,7 @@ public class RpcLifecycle {
     }
 
     /**
-     * Create provider url
+     * Create provider url and merge high priority properties to provider stub
      *
      * @param infinityProperties configuration properties
      * @param providerStub       provider stub instance
@@ -149,18 +148,22 @@ public class RpcLifecycle {
         boolean checkHealth = toBooleanDefaultIfNull(providerStub.getCheckHealth(),
                 infinityProperties.getProvider().isCheckHealth());
         providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, String.valueOf(checkHealth));
+        providerStub.setCheckHealth(checkHealth);
 
         String checkHealthFactory = defaultIfEmpty(providerStub.getCheckHealthFactory(),
                 infinityProperties.getProvider().getCheckHealthFactory());
         providerUrl.addParameter(Url.PARAM_CHECK_HEALTH_FACTORY, checkHealthFactory);
+        providerStub.setCheckHealthFactory(checkHealthFactory);
 
         int requestTimeout = Integer.MAX_VALUE != providerStub.getRequestTimeout() ? providerStub.getRequestTimeout()
                 : infinityProperties.getProvider().getRequestTimeout();
         providerUrl.addParameter(Url.PARAM_REQUEST_TIMEOUT, String.valueOf(requestTimeout));
+        providerStub.setRequestTimeout(requestTimeout);
 
         int maxRetries = Integer.MAX_VALUE != providerStub.getMaxRetries() ? providerStub.getMaxRetries()
                 : infinityProperties.getProvider().getMaxRetries();
         providerUrl.addParameter(Url.PARAM_MAX_RETRIES, String.valueOf(maxRetries));
+        providerStub.setMaxRetries(maxRetries);
 
         return providerUrl;
     }

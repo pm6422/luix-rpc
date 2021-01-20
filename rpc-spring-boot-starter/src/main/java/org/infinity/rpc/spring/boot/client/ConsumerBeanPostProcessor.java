@@ -255,7 +255,7 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
                                                AnnotationAttributes annotationAttributes) {
         InfinityProperties infinityProperties = applicationContext.getBean(InfinityProperties.class);
         RegistryInfo registryInfo = applicationContext.getBean(RegistryInfo.class);
-        HashMap<String, Object> consumerAttributesMap = getHighPriorityAttributesMap(annotationAttributes, infinityProperties);
+        HashMap<String, Object> consumerAttributesMap = mergeAttributesMap(annotationAttributes, infinityProperties);
         ConsumerStub<?> consumerStub = new ConsumerStub<>(consumerInterfaceClass);
         consumerStub.init(registryInfo.getRegistryUrls(), consumerAttributesMap);
         return consumerStub;
@@ -268,8 +268,8 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
      * @param infinityProperties   configuration properties
      * @return resolved attributes
      */
-    private HashMap<String, Object> getHighPriorityAttributesMap(AnnotationAttributes annotationAttributes,
-                                                                 InfinityProperties infinityProperties) {
+    private HashMap<String, Object> mergeAttributesMap(AnnotationAttributes annotationAttributes,
+                                                       InfinityProperties infinityProperties) {
         // Copy @Consumer annotation attributes to the map first
         HashMap<String, Object> consumerAttributesMap = new HashMap<>(annotationAttributes);
 
