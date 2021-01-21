@@ -2,6 +2,8 @@ package org.infinity.rpc.spring.boot.startup;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.infinity.rpc.core.exchange.client.stub.ConsumerStub;
+import org.infinity.rpc.core.exchange.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStubHolder;
 import org.infinity.rpc.core.registry.Registry;
@@ -9,6 +11,7 @@ import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -77,9 +80,11 @@ public class RpcLifecycle {
         registerShutdownHook();
         registerApplication(infinityProperties, registryUrls);
         registerProviders(infinityProperties, registryUrls);
+        initConsumers(infinityProperties, registryUrls);
         // referProviders();
         log.info("Started the RPC server");
     }
+
 
     /**
      * Initialize the RPC server
@@ -166,6 +171,50 @@ public class RpcLifecycle {
         providerStub.setMaxRetries(maxRetries);
 
         return providerUrl;
+    }
+
+    private void initConsumers(InfinityProperties infinityProperties, List<Url> registryUrls) {
+        Map<String, ConsumerStub<?>> stubs = ConsumerStubHolder.getInstance().getStubs();
+        if (MapUtils.isEmpty(stubs)) {
+            return;
+        }
+        stubs.forEach((name, stub) -> {
+            mergeAttributes(stub, infinityProperties);
+            stub.init(registryUrls);
+        });
+    }
+
+    private void mergeAttributes(ConsumerStub<?> stub, InfinityProperties infinityProperties) {
+        if (StringUtils.isEmpty(stub.getRegistry())) {
+            stub.setRegistry(infinityProperties.getRegistry().getName());
+        }
+        if (StringUtils.isEmpty(stub.getProtocol())) {
+            stub.setProtocol(infinityProperties.getProtocol().getName());
+        }
+        if (StringUtils.isEmpty(stub.getCluster())) {
+            stub.setCluster(infinityProperties.getConsumer().getCluster());
+        }
+        if (StringUtils.isEmpty(stub.getFaultTolerance())) {
+            stub.setFaultTolerance(infinityProperties.getConsumer().getFaultTolerance());
+        }
+        if (StringUtils.isEmpty(stub.getLoadBalancer())) {
+            stub.setLoadBalancer(infinityProperties.getConsumer().getLoadBalancer());
+        }
+        if (StringUtils.isEmpty(stub.getGroup())) {
+            stub.setGroup(infinityProperties.getConsumer().getGroup());
+        }
+        if (StringUtils.isEmpty(stub.getVersion())) {
+            stub.setVersion(infinityProperties.getConsumer().getVersion());
+        }
+        if (stub.getCheckHealth() == null) {
+            stub.setCheckHealth(infinityProperties.getConsumer().isCheckHealth());
+        }
+        if (StringUtils.isEmpty(stub.getCheckHealthFactory())) {
+            stub.setCheckHealthFactory(infinityProperties.getConsumer().getCheckHealthFactory());
+        }
+        if(Integer.MAX_VALUE == stub.getRequestTimeout()) {
+            stub.setRequestTimeout(infinityProperties.getConsumer().getRequestTimeout());
+        }
     }
 
     /**

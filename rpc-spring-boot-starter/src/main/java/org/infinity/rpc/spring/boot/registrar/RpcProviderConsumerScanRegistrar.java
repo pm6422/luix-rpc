@@ -102,7 +102,7 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
      */
     private void registerConsumerBeanPostProcessor(BeanDefinitionRegistry registry, Set<String> scanBasePackages) {
 //        registerBeanDefinition(scanBasePackages, registry, ConsumerBeanPostProcessor.class);
-        registerBeanDefinition(registry, ConsumerAnnotationBeanPostProcessor.class, scanBasePackages);
+        registerBeanDefinition(registry, ConsumerAnnotationBeanPostProcessor.class, null);
     }
 
     /**
