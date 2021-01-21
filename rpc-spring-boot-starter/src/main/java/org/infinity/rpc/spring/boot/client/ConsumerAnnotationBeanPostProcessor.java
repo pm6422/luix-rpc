@@ -20,6 +20,7 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.GROUP;
 import static org.infinity.rpc.core.constant.ConsumerConstants.VERSION;
 import static org.infinity.rpc.spring.boot.utils.AnnotationUtils.getResolvedAttributes;
 
+@Deprecated
 public class ConsumerAnnotationBeanPostProcessor extends AbstractAnnotationBeanPostProcessor implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
@@ -96,7 +97,6 @@ public class ConsumerAnnotationBeanPostProcessor extends AbstractAnnotationBeanP
     }
 
     private ConsumerStub<?> buildConsumerStub(Class<?> interfaceClass, AnnotationAttributes annotationAttributes) {
-        ConsumerStub<?> consumerStub = new ConsumerStub<>(interfaceClass, annotationAttributes);
-        return consumerStub;
+        return new ConsumerStub<>(interfaceClass, annotationAttributes);
     }
 }

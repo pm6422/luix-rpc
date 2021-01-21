@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.spring.boot.RpcAutoConfiguration;
 import org.infinity.rpc.spring.boot.annotation.EnableRpc;
 import org.infinity.rpc.spring.boot.bean.registry.AnnotatedBeanDefinitionRegistry;
-import org.infinity.rpc.spring.boot.client.ConsumerAnnotationBeanPostProcessor;
+import org.infinity.rpc.spring.boot.client.ConsumerBeanPostProcessor;
 import org.infinity.rpc.spring.boot.server.ProviderBeanDefinitionRegistryPostProcessor;
 import org.infinity.rpc.spring.boot.startup.RpcLifecycleApplicationListener;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -101,8 +101,8 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
      * @param scanBasePackages packages to be scanned
      */
     private void registerConsumerBeanPostProcessor(BeanDefinitionRegistry registry, Set<String> scanBasePackages) {
-//        registerBeanDefinition(scanBasePackages, registry, ConsumerBeanPostProcessor.class);
-        registerBeanDefinition(registry, ConsumerAnnotationBeanPostProcessor.class, null);
+        registerBeanDefinition(registry, ConsumerBeanPostProcessor.class, scanBasePackages);
+//        registerBeanDefinition(registry, ConsumerAnnotationBeanPostProcessor.class, null);
     }
 
     /**
