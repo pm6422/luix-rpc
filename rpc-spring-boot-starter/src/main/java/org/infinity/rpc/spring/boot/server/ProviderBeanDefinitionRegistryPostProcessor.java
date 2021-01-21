@@ -20,12 +20,12 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Nonnull;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
@@ -54,17 +54,17 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     }
 
     @Override
-    public void setEnvironment(@Nonnull Environment environment) {
+    public void setEnvironment(@NonNull Environment environment) {
         this.env = environment;
     }
 
     @Override
-    public void setResourceLoader(@Nonnull ResourceLoader resourceLoader) {
+    public void setResourceLoader(@NonNull ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
     @Override
-    public void setBeanClassLoader(@Nonnull ClassLoader classLoader) {
+    public void setBeanClassLoader(@NonNull ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
@@ -78,18 +78,17 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
      * @throws org.springframework.beans.BeansException in case of errors
      */
     @Override
-    public void postProcessBeanDefinitionRegistry(@Nonnull BeanDefinitionRegistry registry) throws BeansException {
-        registerProviderBeans(registry, scanBasePackages);
+    public void postProcessBeanDefinitionRegistry(@NonNull BeanDefinitionRegistry registry) throws BeansException {
+        registerProviderBeans(registry);
     }
 
     /**
      * Register provider beans
      *
-     * @param registry         current bean definition registry
-     * @param scanBasePackages provider packages to be scanned
+     * @param registry current bean definition registry
      */
-    private void registerProviderBeans(BeanDefinitionRegistry registry, Set<String> scanBasePackages) {
-        Set<String> resolvedScanBasePackages = resolvePackagePlaceholders(scanBasePackages);
+    private void registerProviderBeans(BeanDefinitionRegistry registry) {
+        Set<String> resolvedScanBasePackages = resolvePackagePlaceholders();
         if (CollectionUtils.isEmpty(resolvedScanBasePackages)) {
             log.warn("No package to be scanned for registering providers!");
             return;
@@ -100,10 +99,9 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     /**
      * Resolve the placeholder in package name
      *
-     * @param scanBasePackages packages to be scanned
      * @return replaced packages
      */
-    private Set<String> resolvePackagePlaceholders(Set<String> scanBasePackages) {
+    private Set<String> resolvePackagePlaceholders() {
         return scanBasePackages
                 .stream()
                 .filter(StringUtils::hasText)
@@ -133,11 +131,16 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     }
 
     /**
-     * Create provider registry scanner
+     * Create provider registry scanner which can found the below service
      *
      * @param registry          current bean definition registry
      * @param beanNameGenerator bean name generator
      * @return bean definition registry scanner
+     * @Provider(maxRetries = 1)
+     * public class AppServiceImpl {
+     * ...
+     * ...
+     * }
      */
     private ClassPathBeanDefinitionRegistryScanner createProviderScanner(BeanDefinitionRegistry registry,
                                                                          BeanNameGenerator beanNameGenerator) {
@@ -344,7 +347,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     }
 
     @Override
-    public void postProcessBeanFactory(@Nonnull ConfigurableListableBeanFactory arg) throws BeansException {
+    public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory arg) throws BeansException {
         // Leave blank intentionally
     }
 }
