@@ -59,7 +59,7 @@ public class TestController {
     @GetMapping("/open-api/test/app-service-provider-stub")
     public Object testGetAppServiceProviderStub() {
         String name = ProviderStubBeanNameBuilder
-                .builder(AppService.class, env)
+                .builder(AppService.class.getName(), env)
                 .group(GROUP_DEFAULT_VALUE)
                 .version(VERSION_DEFAULT_VALUE)
                 .build();

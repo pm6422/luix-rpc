@@ -27,12 +27,12 @@ public class ProviderStubBeanNameBuilder extends ProviderConsumerStubBeanNameBui
     /**
      * Prevent instantiation of it outside the class
      */
-    private ProviderStubBeanNameBuilder(Class<?> interfaceClass, Environment env) {
-        super(interfaceClass, env);
+    private ProviderStubBeanNameBuilder(String interfaceClassName, Environment env) {
+        super(interfaceClassName, env);
     }
 
-    public static ProviderStubBeanNameBuilder builder(Class<?> interfaceClass, Environment environment) {
-        return new ProviderStubBeanNameBuilder(interfaceClass, environment);
+    public static ProviderStubBeanNameBuilder builder(String interfaceClassName, Environment environment) {
+        return new ProviderStubBeanNameBuilder(interfaceClassName, environment);
     }
 
     public ProviderStubBeanNameBuilder group(String group) {

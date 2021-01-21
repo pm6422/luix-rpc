@@ -6,8 +6,11 @@ import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.client.proxy.ConsumerProxy;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
 import org.infinity.rpc.core.exchange.cluster.listener.SubscribeProviderListener;
+import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
+import org.infinity.rpc.core.exchange.server.stub.ProviderStubHolder;
 import org.infinity.rpc.core.url.Url;
 
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
@@ -28,51 +31,52 @@ public class ConsumerStub<T> {
      * The interface class of the consumer
      */
     @NotNull
-    private final           Class<T>                     interfaceClass;
+    private final Class<T> interfaceClass;
     /**
      * Registry
      */
-    private                 String                       registry;
+    private       String   registry;
     /**
      * Protocol
      */
-    private                 String                       protocol;
+    private       String   protocol;
     /**
      *
      */
-    private                 String                       cluster;
+    private       String   cluster;
     /**
      *
      */
-    private                 String                       faultTolerance;
+    private       String   faultTolerance;
     /**
      *
      */
-    private                 String                       loadBalancer;
+    private       String   loadBalancer;
     /**
      * Group
      */
-    private                 String                       group;
+    private       String   group;
     /**
      * Version
      */
-    private                 String                       version;
+    private       String   version;
     /**
      * Indicator to check health
      */
-    private                 boolean                      checkHealth;
+    private       boolean  checkHealth;
     /**
      *
      */
-    private                 String                       checkHealthFactory;
+    private       String   checkHealthFactory;
     /**
      *
      */
-    private                 int                          requestTimeout;
+    private       int      requestTimeout;
     /**
      *
      */
-    private                 String                       directUrl;
+    private       String   directUrl;
+
     /**
      * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(ConsumerStub)}
      * Disable serialize
@@ -81,26 +85,30 @@ public class ConsumerStub<T> {
     /**
      *
      */
-    private                 ProviderCluster<T>           providerCluster;
+    private final           Url                          clientUrl;
+    /**
+     *
+     */
+    private final           ProviderCluster<T>           providerCluster;
     /**
      * Disable serialize
      */
     private transient       SubscribeProviderListener<T> subscribeProviderListener;
-    /**
-     *
-     */
-    private                 Url                          clientUrl;
 
 
-    public ConsumerStub(Class<T> interfaceClass) {
+    public ConsumerStub(Class<T> interfaceClass, Map<String, Object> annotationAttributesMap) {
         Validate.notNull(interfaceClass, "Consumer interface class must NOT be null!");
 
         this.interfaceClass = interfaceClass;
+        // Set attribute values of @Consumer annotation
+        setBasicField(annotationAttributesMap);
         this.proxyInstance = ConsumerProxy.getProxy(this);
+        this.clientUrl = Url.clientUrl((String) annotationAttributesMap.get(PROTOCOL), interfaceClass.getName());
+        // Initialize provider cluster before consumer initialization
+        this.providerCluster = createProviderCluster(annotationAttributesMap);
     }
 
-    public void init(List<Url> registryUrls, Map<String, Object> consumerAttributesMap) {
-        // Set attribute values of @Consumer annotation
+    private void setBasicField(Map<String, Object> consumerAttributesMap) {
         registry = (String) consumerAttributesMap.get(REGISTRY);
         protocol = (String) consumerAttributesMap.get(PROTOCOL);
         cluster = (String) consumerAttributesMap.get(CLUSTER);
@@ -112,10 +120,9 @@ public class ConsumerStub<T> {
         checkHealthFactory = (String) consumerAttributesMap.get(CHECK_HEALTH_FACTORY);
         requestTimeout = (int) consumerAttributesMap.get(REQUEST_TIMEOUT);
         directUrl = (String) consumerAttributesMap.get(DIRECT_URL);
+    }
 
-        clientUrl = Url.clientUrl((String) consumerAttributesMap.get(PROTOCOL), interfaceClass.getName());
-        // Initialize provider cluster before consumer initialization
-        providerCluster = createProviderCluster(consumerAttributesMap);
+    public void createSubscribeProviderListener(List<Url> registryUrls) {
         subscribeProviderListener = SubscribeProviderListener.of(interfaceClass, providerCluster, registryUrls, clientUrl);
     }
 
@@ -129,6 +136,15 @@ public class ConsumerStub<T> {
                 (String) consumerAttributesMap.get(PROTOCOL),
                 (String) consumerAttributesMap.get(FAULT_TOLERANCE),
                 (String) consumerAttributesMap.get(LOAD_BALANCER));
+    }
+
+    /**
+     * The method is invoked by Java EE container automatically after registered bean definition
+     * Automatically add {@link ProviderStub} instance to {@link ProviderStubHolder}
+     */
+    @PostConstruct
+    public void init() {
+        ConsumerStubHolder.getInstance().addStub(interfaceClass.getName(), this);
     }
 
 //    @Override

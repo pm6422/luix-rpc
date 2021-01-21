@@ -273,7 +273,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
      */
     private String buildProviderStubBeanName(Class<?> interfaceClass, String group, String version) {
         return ProviderStubBeanNameBuilder
-                .builder(interfaceClass, env)
+                .builder(interfaceClass.getName(), env)
                 .group(group)
                 .version(version)
                 .build();

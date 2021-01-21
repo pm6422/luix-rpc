@@ -30,7 +30,7 @@ public class TestController {
     @GetMapping("/open-api/test/app-service-consumer-stub")
     public Object testGetAppServiceConsumerStub() {
         String name = ConsumerStubBeanNameBuilder
-                .builder(AppService.class, env)
+                .builder(AppService.class.getName(), env)
                 .group(GROUP_DEFAULT_VALUE)
                 .version(VERSION_DEFAULT_VALUE)
                 .build();

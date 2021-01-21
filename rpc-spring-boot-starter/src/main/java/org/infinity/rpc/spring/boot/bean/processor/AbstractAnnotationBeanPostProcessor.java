@@ -5,15 +5,22 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.InjectionMetadata;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
+import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -33,17 +40,17 @@ import static org.infinity.rpc.spring.boot.utils.AnnotationUtils.getAnnotationAt
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
 
-@Deprecated
 @Slf4j
 @ThreadSafe
 public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
-        implements MergedBeanDefinitionPostProcessor, EnvironmentAware {
+        implements MergedBeanDefinitionPostProcessor, BeanFactoryAware, EnvironmentAware, DisposableBean {
 
-    private static final int                                                          CACHE_SIZE                            = 32;
-    private              Class<? extends Annotation>                                  targetAnnotation;
-    private              Environment                                                  environment;
-    private              ConcurrentMap<String, AnnotatedFieldMethodInjectionMetadata> annotatedInjectionMetadataPerBeanName = new ConcurrentHashMap<>(CACHE_SIZE);
-    private              ConcurrentMap<String, Object>                                injectedObjectsCache                  = new ConcurrentHashMap<>(CACHE_SIZE);
+    private static final int                                                          CACHE_SIZE                            = 30;
+    private final        Class<? extends Annotation>                                  targetAnnotation;
+    protected            ConfigurableListableBeanFactory                              beanFactory;
+    protected            Environment                                                  env;
+    private final        ConcurrentMap<String, AnnotatedFieldMethodInjectionMetadata> annotatedInjectionMetadataPerBeanName = new ConcurrentHashMap<>(CACHE_SIZE);
+    private final        ConcurrentMap<String, Object>                                injectedObjectsCache                  = new ConcurrentHashMap<>(CACHE_SIZE);
 
     /**
      * @param targetAnnotation the multiple types of {@link Annotation annotations}
@@ -57,13 +64,25 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
     }
 
     @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
+    public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
+        Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory,
+                "AnnotationInjectedBeanPostProcessor requires a ConfigurableListableBeanFactory");
+        this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
+    }
+
+    protected ConfigurableListableBeanFactory getBeanFactory() {
+        return beanFactory;
+    }
+
+    @Override
+    public void setEnvironment(@NonNull Environment env) {
+        this.env = env;
     }
 
     protected Environment getEnvironment() {
-        return environment;
+        return env;
     }
+
 
     /**
      * Post-process the given merged bean definition for the specified bean
@@ -73,15 +92,13 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
      * @param beanName       the name of the bean
      */
     @Override
-    public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
-        if (beanType != null) {
-            InjectionMetadata metadata = findAnnotatedFieldMethodInjectionMetadata(beanName, beanType, null);
-            metadata.checkConfigMembers(beanDefinition);
-        }
+    public void postProcessMergedBeanDefinition(@NonNull RootBeanDefinition beanDefinition, @NonNull Class<?> beanType, @NonNull String beanName) {
+        InjectionMetadata metadata = findAnnotatedFieldMethodInjectionMetadata(beanName, beanType, null);
+        metadata.checkConfigMembers(beanDefinition);
     }
 
     @Override
-    public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeanCreationException {
+    public PropertyValues postProcessProperties(@NonNull PropertyValues pvs, @NonNull Object bean, @NonNull String beanName) throws BeanCreationException {
         InjectionMetadata metadata = findAnnotatedFieldMethodInjectionMetadata(beanName, bean.getClass(), pvs);
         try {
             metadata.inject(bean, beanName, pvs);
@@ -99,7 +116,7 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
      * @param beanName the name of the bean
      * @param beanType the type of the managed bean instance
      * @param pvs      information and value for the bean properties
-     * @return
+     * @return injection metadata
      */
     private InjectionMetadata findAnnotatedFieldMethodInjectionMetadata(String beanName, Class<?> beanType, PropertyValues pvs) {
         // Fall back to class name as cache key, for backwards compatibility with custom callers.
@@ -153,7 +170,7 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
         ReflectionUtils.doWithFields(beanClass, field -> {
             // Get the target annotation, like @Consumer annotation attributes value of field,
             // and it will be null if no annotation presents on the field
-            AnnotationAttributes annotationAttributes = getAnnotationAttributes(field, targetAnnotation, getEnvironment(), true, true);
+            AnnotationAttributes annotationAttributes = getAnnotationAttributes(field, targetAnnotation, getEnvironment(), false, true);
             if (annotationAttributes != null) {
                 if (Modifier.isStatic(field.getModifiers())) {
                     log.warn("Annotation [{}] must NOT present on the static field [{}]", targetAnnotation.getName(), field.getName());
@@ -184,7 +201,7 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
             }
             // Get the target annotation, like @Consumer annotation attributes value of field,
             // and it will be null if no @Consumer annotation presents on the field
-            AnnotationAttributes annotationAttributes = getAnnotationAttributes(bridgedMethod, targetAnnotation, getEnvironment(), true, true);
+            AnnotationAttributes annotationAttributes = getAnnotationAttributes(bridgedMethod, targetAnnotation, getEnvironment(), false, true);
             if (annotationAttributes != null && method.equals(ClassUtils.getMostSpecificMethod(method, beanClass))) {
                 if (Modifier.isStatic(method.getModifiers())) {
                     log.warn("Annotation [@{}] must NOT present on the static method [{}]", targetAnnotation.getName(), method.getName());
@@ -229,7 +246,6 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
      * necessary :
      * <ul>
      * <li>{@link #getBeanFactory() BeanFactory}</li>
-     * <li>{@link #getClassLoader() ClassLoader}</li>
      * <li>{@link #getEnvironment() Environment}</li>
      * </ul>
      *
@@ -249,7 +265,6 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
      * necessary :
      * <ul>
      * <li>{@link #getBeanFactory() BeanFactory}</li>
-     * <li>{@link #getClassLoader() ClassLoader}</li>
      * <li>{@link #getEnvironment() Environment}</li>
      * </ul>
      *
@@ -263,6 +278,19 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
      */
     protected abstract Object doGetInjectedBean(AnnotationAttributes attributes, Object bean, String beanName, Class<?> injectedType,
                                                 InjectionMetadata.InjectedElement injectedElement) throws Exception;
+
+    @Override
+    public void destroy() throws Exception {
+        for (Object object : injectedObjectsCache.values()) {
+            log.info("Destroying " + object);
+            if (object instanceof DisposableBean) {
+                ((DisposableBean) object).destroy();
+            }
+        }
+        annotatedInjectionMetadataPerBeanName.clear();
+        injectedObjectsCache.clear();
+        log.info("Destroying " + getClass());
+    }
 
     /**
      * {@link Annotation Annotated} {@link InjectionMetadata} implementation
@@ -300,10 +328,12 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
         }
 
         @Override
-        protected void inject(Object bean, String beanName, PropertyValues pvs) throws Throwable {
+        protected void inject(@NonNull Object bean, String beanName, PropertyValues pvs) throws Throwable {
             Class<?> injectedType = field.getType();
             Object injectedObject = getInjectedObject(attributes, bean, beanName, injectedType, this);
-            ReflectionUtils.makeAccessible(field);
+            if (!field.isAccessible()) {
+                ReflectionUtils.makeAccessible(field);
+            }
             field.set(bean, injectedObject);
         }
     }
@@ -322,13 +352,17 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
         }
 
         @Override
-        protected void inject(Object bean, String beanName, PropertyValues pvs) throws Throwable {
+        protected void inject(@NonNull Object bean, String beanName, PropertyValues pvs) throws Throwable {
+            if (pd == null) {
+                log.warn("Property descriptor must NOT be null!");
+                return;
+            }
             Class<?> injectedType = pd.getPropertyType();
             Object injectedObject = getInjectedObject(attributes, bean, beanName, injectedType, this);
-            ReflectionUtils.makeAccessible(method);
+            if (!method.isAccessible()) {
+                ReflectionUtils.makeAccessible(method);
+            }
             method.invoke(bean, injectedObject);
         }
     }
-
-
 }

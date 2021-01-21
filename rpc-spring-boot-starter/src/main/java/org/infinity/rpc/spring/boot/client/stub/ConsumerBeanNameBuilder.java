@@ -16,36 +16,37 @@
  */
 package org.infinity.rpc.spring.boot.client.stub;
 
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.spring.boot.bean.ProviderConsumerStubBeanNameBuilder;
 import org.springframework.core.env.Environment;
 
 /**
  * RPC consumer stub bean name builder
  */
-public class ConsumerStubBeanNameBuilder extends ProviderConsumerStubBeanNameBuilder {
+public class ConsumerBeanNameBuilder extends ProviderConsumerStubBeanNameBuilder {
 
     /**
      * Prevent instantiation of it outside the class
      */
-    private ConsumerStubBeanNameBuilder(String interfaceClassName, Environment env) {
+    private ConsumerBeanNameBuilder(String interfaceClassName, Environment env) {
         super(interfaceClassName, env);
     }
 
-    public static ConsumerStubBeanNameBuilder builder(String interfaceClassName, Environment environment) {
-        return new ConsumerStubBeanNameBuilder(interfaceClassName, environment);
+    public static ConsumerBeanNameBuilder builder(String interfaceClassName, Environment environment) {
+        return new ConsumerBeanNameBuilder(interfaceClassName, environment);
     }
 
-    public ConsumerStubBeanNameBuilder group(String group) {
+    public ConsumerBeanNameBuilder group(String group) {
         this.group = group;
         return this;
     }
 
-    public ConsumerStubBeanNameBuilder version(String version) {
+    public ConsumerBeanNameBuilder version(String version) {
         this.version = version;
         return this;
     }
 
     public String build() {
-        return super.build(CONSUMER_STUB_BEAN_PREFIX);
+        return super.build(StringUtils.EMPTY);
     }
 }

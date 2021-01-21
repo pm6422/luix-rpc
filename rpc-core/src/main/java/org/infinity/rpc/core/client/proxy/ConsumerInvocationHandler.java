@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
 import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
 import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodParameters;

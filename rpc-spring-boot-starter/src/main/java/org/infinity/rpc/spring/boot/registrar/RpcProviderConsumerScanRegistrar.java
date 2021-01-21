@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.spring.boot.RpcAutoConfiguration;
 import org.infinity.rpc.spring.boot.annotation.EnableRpc;
 import org.infinity.rpc.spring.boot.bean.registry.AnnotatedBeanDefinitionRegistry;
-import org.infinity.rpc.spring.boot.client.ConsumerBeanPostProcessor;
+import org.infinity.rpc.spring.boot.client.ConsumerAnnotationBeanPostProcessor;
 import org.infinity.rpc.spring.boot.server.ProviderBeanDefinitionRegistryPostProcessor;
 import org.infinity.rpc.spring.boot.startup.RpcLifecycleApplicationListener;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -91,7 +91,7 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
      * @param registry         current bean definition registry
      */
     private void registerProviderBeanDefinitionRegistryPostProcessor(Set<String> scanBasePackages, BeanDefinitionRegistry registry) {
-        registerBeanDefinition(scanBasePackages, registry, ProviderBeanDefinitionRegistryPostProcessor.class);
+        registerBeanDefinition(registry, ProviderBeanDefinitionRegistryPostProcessor.class, scanBasePackages);
     }
 
     /**
@@ -101,17 +101,20 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
      * @param registry         current bean definition registry
      */
     private void registerConsumerBeanPostProcessor(Set<String> scanBasePackages, BeanDefinitionRegistry registry) {
-        registerBeanDefinition(scanBasePackages, registry, ConsumerBeanPostProcessor.class);
+//        registerBeanDefinition(scanBasePackages, registry, ConsumerBeanPostProcessor.class);
+        registerBeanDefinition(registry, ConsumerAnnotationBeanPostProcessor.class, null);
     }
 
     /**
      * @param scanBasePackages packages to be scanned
      * @param registry         current bean definition registry
-     * @param clazz            class to be registered
+     * @param beanType         class to be registered
      */
-    private void registerBeanDefinition(Set<String> scanBasePackages, BeanDefinitionRegistry registry, Class<?> clazz) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(clazz);
-        builder.addConstructorArgValue(scanBasePackages);
+    private void registerBeanDefinition(BeanDefinitionRegistry registry, Class<?> beanType, Set<String> scanBasePackages) {
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(beanType);
+        if (scanBasePackages != null) {
+            builder.addConstructorArgValue(scanBasePackages);
+        }
         builder.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
         AbstractBeanDefinition beanDefinition = builder.getBeanDefinition();
         BeanDefinitionReaderUtils.registerWithGeneratedName(beanDefinition, registry);
