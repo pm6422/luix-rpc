@@ -299,7 +299,9 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
         private final Collection<AnnotatedFieldElement>  annotatedFieldElements;
         private final Collection<AnnotatedMethodElement> annotatedMethodElements;
 
-        public AnnotatedFieldMethodInjectionMetadata(Class<?> targetClass, Collection<AnnotatedFieldElement> annotatedFieldElements, Collection<AnnotatedMethodElement> annotatedMethodElements) {
+        public AnnotatedFieldMethodInjectionMetadata(Class<?> targetClass,
+                                                     Collection<AnnotatedFieldElement> annotatedFieldElements,
+                                                     Collection<AnnotatedMethodElement> annotatedMethodElements) {
             super(targetClass, CollectionUtils.union(annotatedFieldElements, annotatedMethodElements));
             this.annotatedFieldElements = annotatedFieldElements;
             this.annotatedMethodElements = annotatedMethodElements;

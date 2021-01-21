@@ -81,7 +81,6 @@ public class RpcLifecycle {
         registerApplication(infinityProperties, registryUrls);
         registerProviders(infinityProperties, registryUrls);
         initConsumers(infinityProperties, registryUrls);
-        // referProviders();
         log.info("Started the RPC server");
     }
 
@@ -179,12 +178,12 @@ public class RpcLifecycle {
             return;
         }
         stubs.forEach((name, stub) -> {
-            mergeAttributes(stub, infinityProperties);
+            mergeConsumerAttributes(stub, infinityProperties);
             stub.init(registryUrls);
         });
     }
 
-    private void mergeAttributes(ConsumerStub<?> stub, InfinityProperties infinityProperties) {
+    private void mergeConsumerAttributes(ConsumerStub<?> stub, InfinityProperties infinityProperties) {
         if (StringUtils.isEmpty(stub.getRegistry())) {
             stub.setRegistry(infinityProperties.getRegistry().getName());
         }
