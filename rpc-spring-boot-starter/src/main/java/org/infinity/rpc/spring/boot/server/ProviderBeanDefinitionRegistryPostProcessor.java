@@ -79,11 +79,12 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
      */
     @Override
     public void postProcessBeanDefinitionRegistry(@NonNull BeanDefinitionRegistry registry) throws BeansException {
+        // Register provider and provider stub beans
         registerProviderBeans(registry);
     }
 
     /**
-     * Register provider beans
+     * Register provider and provider stub beans
      *
      * @param registry current bean definition registry
      */
@@ -93,7 +94,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
             log.warn("No package to be scanned for registering providers!");
             return;
         }
-        registerProviders(registry, resolvedScanBasePackages);
+        doRegisterProviderBeans(registry, resolvedScanBasePackages);
     }
 
     /**
@@ -115,7 +116,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
      * @param registry                 current bean definition registry
      * @param resolvedScanBasePackages provider packages to be scanned
      */
-    private void registerProviders(BeanDefinitionRegistry registry, Set<String> resolvedScanBasePackages) {
+    private void doRegisterProviderBeans(BeanDefinitionRegistry registry, Set<String> resolvedScanBasePackages) {
         BeanNameGenerator beanNameGenerator = DefaultBeanNameGenerator.create();
         ClassPathBeanDefinitionRegistryScanner providerScanner = createProviderScanner(registry, beanNameGenerator);
 
@@ -136,11 +137,14 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
      * @param registry          current bean definition registry
      * @param beanNameGenerator bean name generator
      * @return bean definition registry scanner
+     *
+     * <code>
      * @Provider(maxRetries = 1)
      * public class AppServiceImpl {
      * ...
      * ...
      * }
+     * </code>
      */
     private ClassPathBeanDefinitionRegistryScanner createProviderScanner(BeanDefinitionRegistry registry,
                                                                          BeanNameGenerator beanNameGenerator) {
