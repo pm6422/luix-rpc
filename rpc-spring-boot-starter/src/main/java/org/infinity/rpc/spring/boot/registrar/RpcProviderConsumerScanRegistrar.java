@@ -39,8 +39,8 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
         Set<String> scanBasePackages = getScanBasePackages(importingClassMetadata);
         registerRpcAutoConfiguration(registry);
         registerRpcLifecycleApplicationListener(registry);
-        registerProviderBeanDefinitionRegistryPostProcessor(scanBasePackages, registry);
-        registerConsumerBeanPostProcessor(scanBasePackages, registry);
+        registerProviderBeanDefinitionRegistryPostProcessor(registry, scanBasePackages);
+        registerConsumerBeanPostProcessor(registry, scanBasePackages);
 //        registerConsumerAnnotationBeanPostProcessor(registry);
     }
 
@@ -87,22 +87,22 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
     /**
      * Register bean definition of service providers with @Provider annotation
      *
-     * @param scanBasePackages packages to be scanned
      * @param registry         current bean definition registry
+     * @param scanBasePackages packages to be scanned
      */
-    private void registerProviderBeanDefinitionRegistryPostProcessor(Set<String> scanBasePackages, BeanDefinitionRegistry registry) {
+    private void registerProviderBeanDefinitionRegistryPostProcessor(BeanDefinitionRegistry registry, Set<String> scanBasePackages) {
         registerBeanDefinition(registry, ProviderBeanDefinitionRegistryPostProcessor.class, scanBasePackages);
     }
 
     /**
      * Register bean definition of service consumers with @Consumer annotation
      *
-     * @param scanBasePackages packages to be scanned
      * @param registry         current bean definition registry
+     * @param scanBasePackages packages to be scanned
      */
-    private void registerConsumerBeanPostProcessor(Set<String> scanBasePackages, BeanDefinitionRegistry registry) {
+    private void registerConsumerBeanPostProcessor(BeanDefinitionRegistry registry, Set<String> scanBasePackages) {
 //        registerBeanDefinition(scanBasePackages, registry, ConsumerBeanPostProcessor.class);
-        registerBeanDefinition(registry, ConsumerAnnotationBeanPostProcessor.class, null);
+        registerBeanDefinition(registry, ConsumerAnnotationBeanPostProcessor.class, scanBasePackages);
     }
 
     /**
