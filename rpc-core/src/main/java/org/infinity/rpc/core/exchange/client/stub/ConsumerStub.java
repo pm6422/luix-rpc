@@ -9,6 +9,7 @@ import org.infinity.rpc.core.exchange.cluster.listener.SubscribeProviderListener
 import org.infinity.rpc.core.url.Url;
 
 import javax.annotation.PostConstruct;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -16,7 +17,9 @@ import java.util.List;
 /**
  * PRC consumer stub
  * A stub in distributed computing is a piece of code that converts parameters passed between client and server
- * during a remote procedure call (RPC).
+ * during a remote procedure call(RPC).
+ * A consumer stub take charge of creating a proxy instance of the consumer interface class, any method invocation
+ * will be delegated to the proxy instance.
  *
  * @param <T>: The interface class of the consumer
  */
@@ -64,6 +67,7 @@ public class ConsumerStub<T> {
     private String   version;
     /**
      * Indicator to check health
+     * Note: It must be specified with Boolean wrapper class
      */
     private Boolean  checkHealth;
     /**
@@ -71,9 +75,16 @@ public class ConsumerStub<T> {
      */
     private String   checkHealthFactory;
     /**
-     *
+     * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
      */
+    @Min(value = 0, message = "The [timeout] property of @Consumer must NOT be a negative number!")
     private int      requestTimeout;
+    /**
+     * The max retry times of RPC request
+     * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
+     */
+    @Min(value = 0, message = "The [maxRetries] property of @Consumer must NOT be a negative number!")
+    private int      maxRetries;
     /**
      *
      */

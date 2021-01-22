@@ -1,8 +1,8 @@
 package org.infinity.rpc.core.constant;
 
 public interface ServiceConstants {
-    String INTERFACE_CLASS = "interfaceClass";
     String INTERFACE_NAME  = "interfaceName";
+    String INTERFACE_CLASS = "interfaceClass";
     String GENERIC         = "generic";
 
     String  REGISTRY                           = "registry";
@@ -18,6 +18,8 @@ public interface ServiceConstants {
     boolean CHECK_HEALTH_DEFAULT_VALUE         = true;
     String  CHECK_HEALTH_FACTORY               = "checkHealthFactory";
     String  CHECK_HEALTH_FACTORY_DEFAULT_VALUE = "default";
+    String  MAX_RETRIES                        = "maxRetries";
     int     MAX_RETRIES_DEFAULT_VALUE          = 0;
+    String  REQUEST_TIMEOUT                    = "requestTimeout";
     int     REQUEST_TIMEOUT_DEFAULT_VALUE      = 500;
 }

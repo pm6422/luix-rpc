@@ -1,6 +1,8 @@
 package org.infinity.rpc.core.exchange.server.stub;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.constant.RpcConstants;
@@ -33,13 +35,14 @@ import java.util.Map;
 /**
  * PRC provider stub
  * A stub in distributed computing is a piece of code that converts parameters passed between client and server
- * during a remote procedure call (RPC).
+ * during a remote procedure call(RPC).
  * A provider stub take charge of handling remote method invocation and delegate to associate local method to execute.
  *
- * @param <T>: provider instance
+ * @param <T>: The interface class of the provider
  */
 @Slf4j
-@Data
+@Setter
+@Getter
 public class ProviderStub<T> {
     /**
      * The provider interface fully-qualified name

@@ -35,6 +35,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
+
 /**
  * Register provider bean and provider stub under specified scan base packages to spring context
  * by {@link BeanDefinitionRegistry}
@@ -299,16 +301,16 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
                                                                String providerInstanceName) {
 
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProviderStub.class);
-        addPropertyValue(builder, "interfaceName", providerInterfaceClass.getName(), true);
-        addPropertyValue(builder, "interfaceClass", providerInterfaceClass, true);
-        addPropertyValue(builder, "registry", providerAnnotation.registry(), false);
-        addPropertyValue(builder, "protocol", providerAnnotation.protocol(), false);
-        addPropertyValue(builder, "group", providerAnnotation.group(), false);
-        addPropertyValue(builder, "version", providerAnnotation.version(), false);
-        addPropertyValue(builder, "checkHealth", providerAnnotation.checkHealth().getValue(), false);
-        addPropertyValue(builder, "checkHealthFactory", providerAnnotation.checkHealthFactory(), false);
-        addPropertyValue(builder, "requestTimeout", providerAnnotation.requestTimeout(), true);
-        addPropertyValue(builder, "maxRetries", providerAnnotation.maxRetries(), true);
+        addPropertyValue(builder, INTERFACE_NAME, providerInterfaceClass.getName(), true);
+        addPropertyValue(builder, INTERFACE_CLASS, providerInterfaceClass, true);
+        addPropertyValue(builder, REGISTRY, providerAnnotation.registry(), false);
+        addPropertyValue(builder, PROTOCOL, providerAnnotation.protocol(), false);
+        addPropertyValue(builder, GROUP, providerAnnotation.group(), false);
+        addPropertyValue(builder, VERSION, providerAnnotation.version(), false);
+        addPropertyValue(builder, CHECK_HEALTH, providerAnnotation.checkHealth().getValue(), false);
+        addPropertyValue(builder, CHECK_HEALTH_FACTORY, providerAnnotation.checkHealthFactory(), false);
+        addPropertyValue(builder, REQUEST_TIMEOUT, providerAnnotation.requestTimeout(), true);
+        addPropertyValue(builder, MAX_RETRIES, providerAnnotation.maxRetries(), true);
 
         // Obtain the instance by instance name then assign it to the property
         addPropertyReference(builder, "instance", providerInstanceName);

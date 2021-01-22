@@ -3,7 +3,6 @@ package org.infinity.rpc.spring.boot.client;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.client.annotation.Consumer;
-import org.infinity.rpc.core.constant.BooleanEnum;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.exchange.client.stub.ConsumerStub;
 import org.infinity.rpc.spring.boot.client.stub.ConsumerStubBeanNameBuilder;
@@ -39,8 +38,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
-import static org.infinity.rpc.core.constant.ServiceConstants.PROTOCOL;
-import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY;
 
 
 /**
@@ -135,15 +132,14 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, BeanFactory
                 continue;
             }
             try {
-                // Get @Consumer annotation attribute values of field, and it will be null if no annotation presents on the field
-                AnnotationAttributes attributes = getConsumerAnnotationAttributes(field);
-                if (attributes == null) {
+                Consumer consumerAnnotation = field.getAnnotation(Consumer.class);
+                if (consumerAnnotation == null) {
                     // No @Consumer annotated field found
                     continue;
                 }
-                // TODO: Register consumer stub bean definition
+                AnnotationAttributes attributes = getConsumerAnnotationAttributes(field);
                 // Register consumer stub instance to spring context
-                ConsumerStub<?> consumerStub = registerConsumerStub(attributes, field.getType());
+                ConsumerStub<?> consumerStub = registerConsumerStub(consumerAnnotation, attributes, field.getType());
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
@@ -173,14 +169,15 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, BeanFactory
                 // The Java compiler generates the bridge method, in order to be compatible with the byte code
                 // under previous JDK version of JDK 1.5, for the generic erasure occasion
                 Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
-                // Get @Consumer annotation attribute values of method, and it will be null if no annotation presents on the field
-                AnnotationAttributes attributes = getConsumerAnnotationAttributes(bridgedMethod);
-                if (attributes == null) {
-                    // No method with @Consumer annotated parameter found
+                Consumer consumerAnnotation = bridgedMethod.getAnnotation(Consumer.class);
+                if (consumerAnnotation == null) {
+                    // No @Consumer annotated method found
                     continue;
                 }
+
+                AnnotationAttributes attributes = getConsumerAnnotationAttributes(bridgedMethod);
                 // Register consumer stub instance to spring context
-                ConsumerStub<?> consumerStub = registerConsumerStub(attributes, method.getParameterTypes()[0]);
+                ConsumerStub<?> consumerStub = registerConsumerStub(consumerAnnotation, attributes, method.getParameterTypes()[0]);
                 // Inject RPC consumer proxy instance
                 method.invoke(bean, consumerStub.getProxyInstance());
             } catch (Throwable t) {
@@ -210,23 +207,26 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, BeanFactory
     /**
      * Register consumer stub to spring context
      *
+     * @param consumerAnnotation     {@link Consumer} annotation
      * @param attributes             {@link AnnotationAttributes annotation attributes}
      * @param consumerInterfaceClass Consumer interface class
      * @return ConsumerStub instance
      */
-    private ConsumerStub<?> registerConsumerStub(AnnotationAttributes attributes, Class<?> consumerInterfaceClass) {
+    private ConsumerStub<?> registerConsumerStub(Consumer consumerAnnotation,
+                                                 AnnotationAttributes attributes,
+                                                 Class<?> consumerInterfaceClass) {
         // Resolve the interface class of the consumer proxy instance
         Class<?> resolvedConsumerInterfaceClass = AnnotationUtils.resolveInterfaceClass(attributes, consumerInterfaceClass);
 
         // Build the consumer stub bean name
-        String beanName = buildConsumerStubBeanName(resolvedConsumerInterfaceClass, attributes);
+        String beanName = buildConsumerStubBeanName(resolvedConsumerInterfaceClass, consumerAnnotation);
 
         if (existsConsumerStub(beanName)) {
             // Return the instance if it already be registered
             return beanFactory.getBean(beanName, ConsumerStub.class);
         }
 
-        AbstractBeanDefinition stubBeanDefinition = buildConsumerStubDefinition(consumerInterfaceClass, attributes);
+        AbstractBeanDefinition stubBeanDefinition = buildConsumerStubDefinition(consumerInterfaceClass, consumerAnnotation);
         beanFactory.registerBeanDefinition(beanName, stubBeanDefinition);
         return beanFactory.getBean(beanName, ConsumerStub.class);
     }
@@ -235,13 +235,14 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, BeanFactory
      * Build the consumer stub bean name
      *
      * @param defaultInterfaceClass the consumer service interface
+     * @param consumerAnnotation    {@link Consumer} annotation
      * @return The name of bean that annotated {@link Consumer @Consumer} in spring context
      */
-    private String buildConsumerStubBeanName(Class<?> defaultInterfaceClass, AnnotationAttributes attributes) {
+    private String buildConsumerStubBeanName(Class<?> defaultInterfaceClass, Consumer consumerAnnotation) {
         return ConsumerStubBeanNameBuilder
                 .builder(defaultInterfaceClass.getName(), env)
-                .group(attributes.getString(GROUP))
-                .version(attributes.getString(VERSION))
+                .group(consumerAnnotation.group())
+                .version(consumerAnnotation.version())
                 .build();
     }
 
@@ -253,29 +254,27 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, BeanFactory
      * Build {@link ConsumerStub} definition
      *
      * @param consumerInterfaceClass consumer interface class
-     * @param attributes             {@link AnnotationAttributes annotation attributes}
+     * @param consumerAnnotation     {@link Consumer} annotation
      * @return {@link ConsumerStub} bean definition
      */
     private AbstractBeanDefinition buildConsumerStubDefinition(Class<?> consumerInterfaceClass,
-                                                               AnnotationAttributes attributes) {
-
+                                                               Consumer consumerAnnotation) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ConsumerStub.class);
-        addPropertyValue(builder, "interfaceName", consumerInterfaceClass.getName(), true);
-        addPropertyValue(builder, "interfaceClass", consumerInterfaceClass, true);
-        addPropertyValue(builder, "registry", attributes.getString(REGISTRY), false);
-        addPropertyValue(builder, "protocol", attributes.getString(PROTOCOL), false);
-        addPropertyValue(builder, "cluster", attributes.getString(CLUSTER), false);
-        addPropertyValue(builder, "faultTolerance", attributes.getString(FAULT_TOLERANCE), false);
-        addPropertyValue(builder, "loadBalancer", attributes.getString(LOAD_BALANCER), false);
-        addPropertyValue(builder, "group", attributes.getString(GROUP), false);
-        addPropertyValue(builder, "version", attributes.getString(VERSION), false);
+        addPropertyValue(builder, INTERFACE_NAME, consumerInterfaceClass.getName(), true);
+        addPropertyValue(builder, INTERFACE_CLASS, consumerInterfaceClass, true);
+        addPropertyValue(builder, REGISTRY, consumerAnnotation.registry(), false);
+        addPropertyValue(builder, PROTOCOL, consumerAnnotation.protocol(), false);
+        addPropertyValue(builder, CLUSTER, consumerAnnotation.cluster(), false);
+        addPropertyValue(builder, FAULT_TOLERANCE, consumerAnnotation.faultTolerance(), false);
+        addPropertyValue(builder, LOAD_BALANCER, consumerAnnotation.loadBalancer(), false);
+        addPropertyValue(builder, GROUP, consumerAnnotation.group(), false);
+        addPropertyValue(builder, VERSION, consumerAnnotation.version(), false);
+        addPropertyValue(builder, CHECK_HEALTH, consumerAnnotation.checkHealth().getValue(), false);
+        addPropertyValue(builder, CHECK_HEALTH_FACTORY, consumerAnnotation.checkHealthFactory(), false);
+        addPropertyValue(builder, REQUEST_TIMEOUT, consumerAnnotation.requestTimeout(), false);
+        addPropertyValue(builder, MAX_RETRIES, consumerAnnotation.maxRetries(), true);
 
-        BooleanEnum checkHealthEnum = attributes.getEnum(CHECK_HEALTH);
-        addPropertyValue(builder, "checkHealth", checkHealthEnum.getValue(), false);
-
-        addPropertyValue(builder, "checkHealthFactory", attributes.getString(CHECK_HEALTH_FACTORY), false);
-        addPropertyValue(builder, "requestTimeout", attributes.getNumber(REQUEST_TIMEOUT).intValue(), false);
-        addPropertyValue(builder, "directUrl", attributes.getString(DIRECT_URL), false);
+        addPropertyValue(builder, "directUrl", consumerAnnotation.directUrl(), false);
         return builder.getBeanDefinition();
     }
 
