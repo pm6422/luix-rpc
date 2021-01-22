@@ -211,14 +211,10 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
 
         // Build the consumer stub bean name
         String beanName = buildConsumerStubBeanName(resolvedConsumerInterfaceClass, consumerAnnotation);
-
-        if (existsConsumerStub(beanName)) {
-            // Return the instance if it already be registered
-            return beanFactory.getBean(beanName, ConsumerStub.class);
+        if (!existsConsumerStub(beanName)) {
+            AbstractBeanDefinition stubBeanDefinition = buildConsumerStubDefinition(consumerInterfaceClass, consumerAnnotation);
+            beanFactory.registerBeanDefinition(beanName, stubBeanDefinition);
         }
-
-        AbstractBeanDefinition stubBeanDefinition = buildConsumerStubDefinition(consumerInterfaceClass, consumerAnnotation);
-        beanFactory.registerBeanDefinition(beanName, stubBeanDefinition);
         // getBean() will trigger bean initialization
         return beanFactory.getBean(beanName, ConsumerStub.class);
     }
