@@ -39,6 +39,8 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 
 
 /**
+ * Scan all spring bean to discover the fields and method annotated with {@link Consumer} annotation
+ * and injected with the proxyInstance.
  * The class implements {@link BeanPostProcessor} means that all spring beans will be processed by
  * {@link ConsumerBeanPostProcessor#postProcessBeforeInitialization(Object, String)} after initialized bean
  */
