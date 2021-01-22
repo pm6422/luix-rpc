@@ -12,9 +12,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.BeanInitializationException;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -45,7 +43,7 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.*;
  * {@link ConsumerBeanPostProcessor#postProcessBeforeInitialization(Object, String)} after initialized bean
  */
 @Slf4j
-public class ConsumerBeanPostProcessor implements BeanPostProcessor, BeanFactoryPostProcessor, EnvironmentAware, BeanFactoryAware {
+public class ConsumerBeanPostProcessor implements BeanPostProcessor, EnvironmentAware, BeanFactoryAware {
     private static final ValidatorFactory           VALIDATOR_FACTORY = Validation.buildDefaultValidatorFactory();
     private final        String[]                   scanBasePackages;
     private              Environment                env;
@@ -69,15 +67,6 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, BeanFactory
         Assert.isInstanceOf(DefaultListableBeanFactory.class, beanFactory,
                 "It requires an instance of ".concat(DefaultListableBeanFactory.class.getSimpleName()));
         this.beanFactory = (DefaultListableBeanFactory) beanFactory;
-    }
-
-    /**
-     * @param beanFactory bean factory
-     * @throws BeansException if any {@link BeansException} thrown
-     */
-    @Override
-    public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        // Leave blank intentionally for now
     }
 
     /**
