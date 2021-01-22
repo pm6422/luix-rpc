@@ -1,7 +1,10 @@
 package org.infinity.rpc.spring.boot.client;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.client.annotation.Consumer;
+import org.infinity.rpc.core.constant.BooleanEnum;
+import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.exchange.client.stub.ConsumerStub;
 import org.infinity.rpc.spring.boot.client.stub.ConsumerStubBeanNameBuilder;
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
@@ -13,8 +16,9 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -22,14 +26,21 @@ import org.springframework.core.env.Environment;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static org.infinity.rpc.core.constant.ConsumerConstants.GROUP;
-import static org.infinity.rpc.core.constant.ConsumerConstants.VERSION;
+import static org.infinity.rpc.core.constant.ConsumerConstants.*;
+import static org.infinity.rpc.core.constant.ServiceConstants.PROTOCOL;
+import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY;
 
 
 /**
@@ -37,21 +48,15 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.VERSION;
  * {@link ConsumerBeanPostProcessor#postProcessBeforeInitialization(Object, String)} after initialized bean
  */
 @Slf4j
-public class ConsumerBeanPostProcessor implements ApplicationContextAware,
-        BeanPostProcessor, BeanFactoryPostProcessor, EnvironmentAware, BeanFactoryAware {
-    private final String[]                        scanBasePackages;
-    private       ApplicationContext              applicationContext;
-    private       Environment                     env;
-    private       ConfigurableListableBeanFactory beanFactory;
+public class ConsumerBeanPostProcessor implements BeanPostProcessor, BeanFactoryPostProcessor, EnvironmentAware, BeanFactoryAware {
+    private static final ValidatorFactory           VALIDATOR_FACTORY = Validation.buildDefaultValidatorFactory();
+    private final        String[]                   scanBasePackages;
+    private              Environment                env;
+    private              DefaultListableBeanFactory beanFactory;
 
     public ConsumerBeanPostProcessor(String[] scanBasePackages) {
         Assert.notEmpty(scanBasePackages, "Consumer scan packages must NOT be empty!");
         this.scanBasePackages = scanBasePackages;
-    }
-
-    @Override
-    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -61,9 +66,9 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
 
     @Override
     public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
-        Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory,
-                "It requires an instance of ".concat(ConfigurableListableBeanFactory.class.getSimpleName()));
-        this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
+        Assert.isInstanceOf(DefaultListableBeanFactory.class, beanFactory,
+                "It requires an instance of ".concat(DefaultListableBeanFactory.class.getSimpleName()));
+        this.beanFactory = (DefaultListableBeanFactory) beanFactory;
     }
 
     /**
@@ -174,7 +179,6 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
                     // No method with @Consumer annotated parameter found
                     continue;
                 }
-                // TODO: Register consumer stub bean definition
                 // Register consumer stub instance to spring context
                 ConsumerStub<?> consumerStub = registerConsumerStub(attributes, method.getParameterTypes()[0]);
                 // Inject RPC consumer proxy instance
@@ -219,13 +223,12 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
 
         if (existsConsumerStub(beanName)) {
             // Return the instance if it already be registered
-            return applicationContext.getBean(beanName, ConsumerStub.class);
+            return beanFactory.getBean(beanName, ConsumerStub.class);
         }
 
-        ConsumerStub<?> consumerStub = createConsumerStub(resolvedConsumerInterfaceClass, attributes);
-        // Register the consumer stub instance with singleton scope
-        beanFactory.registerSingleton(beanName, consumerStub);
-        return consumerStub;
+        AbstractBeanDefinition stubBeanDefinition = buildConsumerStubDefinition(consumerInterfaceClass, attributes);
+        beanFactory.registerBeanDefinition(beanName, stubBeanDefinition);
+        return beanFactory.getBean(beanName, ConsumerStub.class);
     }
 
     /**
@@ -243,11 +246,60 @@ public class ConsumerBeanPostProcessor implements ApplicationContextAware,
     }
 
     private boolean existsConsumerStub(String consumerStubBeanName) {
-        return applicationContext.containsBean(consumerStubBeanName);
+        return beanFactory.containsBean(consumerStubBeanName);
     }
 
-    private ConsumerStub<?> createConsumerStub(Class<?> interfaceClass, AnnotationAttributes annotationAttributes) {
-        return new ConsumerStub<>(interfaceClass, annotationAttributes);
+    /**
+     * Build {@link ConsumerStub} definition
+     *
+     * @param consumerInterfaceClass consumer interface class
+     * @param attributes             {@link AnnotationAttributes annotation attributes}
+     * @return {@link ConsumerStub} bean definition
+     */
+    private AbstractBeanDefinition buildConsumerStubDefinition(Class<?> consumerInterfaceClass,
+                                                               AnnotationAttributes attributes) {
+
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ConsumerStub.class);
+        addPropertyValue(builder, "interfaceName", consumerInterfaceClass.getName(), true);
+        addPropertyValue(builder, "interfaceClass", consumerInterfaceClass, true);
+        addPropertyValue(builder, "registry", attributes.getString(REGISTRY), false);
+        addPropertyValue(builder, "protocol", attributes.getString(PROTOCOL), false);
+        addPropertyValue(builder, "cluster", attributes.getString(CLUSTER), false);
+        addPropertyValue(builder, "faultTolerance", attributes.getString(FAULT_TOLERANCE), false);
+        addPropertyValue(builder, "loadBalancer", attributes.getString(LOAD_BALANCER), false);
+        addPropertyValue(builder, "group", attributes.getString(GROUP), false);
+        addPropertyValue(builder, "version", attributes.getString(VERSION), false);
+
+        BooleanEnum checkHealthEnum = attributes.getEnum(CHECK_HEALTH);
+        addPropertyValue(builder, "checkHealth", checkHealthEnum.getValue(), false);
+
+        addPropertyValue(builder, "checkHealthFactory", attributes.getString(CHECK_HEALTH_FACTORY), false);
+        addPropertyValue(builder, "requestTimeout", attributes.getNumber(REQUEST_TIMEOUT).intValue(), false);
+        addPropertyValue(builder, "directUrl", attributes.getString(DIRECT_URL), false);
+        return builder.getBeanDefinition();
+    }
+
+    private void addPropertyValue(BeanDefinitionBuilder builder, String propertyName, Object propertyValue, boolean validate) {
+        if (validate) {
+            validatePropertyValue(builder.getBeanDefinition().getBeanClass(), propertyName, propertyValue);
+        }
+        builder.addPropertyValue(propertyName, propertyValue);
+    }
+
+    private void validatePropertyValue(Class<?> beanType, String propertyName, Object propertyValue) {
+        try {
+            List<String> messages = doValidate(beanType, propertyName, propertyValue);
+            Assert.isTrue(CollectionUtils.isEmpty(messages), String.join(",", messages));
+        } catch (Exception e) {
+            // Re-throw the exception
+            throw new RpcConfigurationException(e.getMessage());
+        }
+    }
+
+    private static <T> List<String> doValidate(Class<T> beanType, String propertyName, Object propertyValue) {
+        Set<ConstraintViolation<T>> constraintViolations = VALIDATOR_FACTORY.getValidator()
+                .validateValue(beanType, propertyName, propertyValue);
+        return constraintViolations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
     }
 
     /**

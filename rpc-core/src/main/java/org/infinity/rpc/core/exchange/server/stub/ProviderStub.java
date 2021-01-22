@@ -259,9 +259,4 @@ public class ProviderStub<T> {
         response.setOptions(request.getOptions());
         return response;
     }
-
-//    @Override
-//    public void destroy() {
-//        active = false;
-//    }
 }

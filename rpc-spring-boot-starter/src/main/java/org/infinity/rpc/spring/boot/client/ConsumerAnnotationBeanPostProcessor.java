@@ -97,6 +97,7 @@ public class ConsumerAnnotationBeanPostProcessor extends AbstractAnnotationBeanP
     }
 
     private ConsumerStub<?> buildConsumerStub(Class<?> interfaceClass, AnnotationAttributes annotationAttributes) {
-        return new ConsumerStub<>(interfaceClass, annotationAttributes);
+        return null;
+//        return new ConsumerStub<>(interfaceClass, annotationAttributes);
     }
 }

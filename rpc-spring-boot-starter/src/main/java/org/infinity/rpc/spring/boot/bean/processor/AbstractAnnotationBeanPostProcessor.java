@@ -14,6 +14,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.InjectionMetadata;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.EnvironmentAware;
@@ -47,7 +48,7 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
 
     private static final int                                                          CACHE_SIZE                            = 30;
     private final        Class<? extends Annotation>                                  targetAnnotation;
-    protected            ConfigurableListableBeanFactory                              beanFactory;
+    protected            DefaultListableBeanFactory                                   beanFactory;
     protected            Environment                                                  env;
     private final        ConcurrentMap<String, AnnotatedFieldMethodInjectionMetadata> annotatedInjectionMetadataPerBeanName = new ConcurrentHashMap<>(CACHE_SIZE);
     private final        ConcurrentMap<String, Object>                                injectedObjectsCache                  = new ConcurrentHashMap<>(CACHE_SIZE);
@@ -65,9 +66,9 @@ public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationA
 
     @Override
     public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
-        Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory,
-                "AnnotationInjectedBeanPostProcessor requires a ConfigurableListableBeanFactory");
-        this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
+        Assert.isInstanceOf(DefaultListableBeanFactory.class, beanFactory,
+                "AnnotationInjectedBeanPostProcessor requires a DefaultListableBeanFactory");
+        this.beanFactory = (DefaultListableBeanFactory) beanFactory;
     }
 
     protected ConfigurableListableBeanFactory getBeanFactory() {
