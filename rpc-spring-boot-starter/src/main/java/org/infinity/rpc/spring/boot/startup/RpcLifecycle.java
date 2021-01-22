@@ -6,13 +6,18 @@ import org.infinity.rpc.core.exchange.client.stub.ConsumerStub;
 import org.infinity.rpc.core.exchange.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStubHolder;
+import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -109,7 +114,15 @@ public class RpcLifecycle {
             // Register provider URL to all the registries
             RegistryFactory registryFactory = RegistryFactory.getInstance(registryUrl.getProtocol());
             Registry registry = registryFactory.getRegistry(registryUrl);
-            registry.registerApplication(infinityProperties.getApplication().toApp());
+            App app = infinityProperties.getApplication().toApp();
+            try {
+                String version = StreamUtils.copyToString(new ClassPathResource("version.txt").getInputStream(),
+                        Charset.defaultCharset());
+                app.setInfinityRpcVersion(version);
+            } catch (IOException e) {
+                log.warn("Failed to read Infinity RPC version file!");
+            }
+            registry.registerApplication(app);
         }
         log.debug("Registered RPC server application [{}] to registry", infinityProperties.getApplication().getName());
     }
@@ -211,7 +224,7 @@ public class RpcLifecycle {
         if (StringUtils.isEmpty(stub.getCheckHealthFactory())) {
             stub.setCheckHealthFactory(infinityProperties.getConsumer().getCheckHealthFactory());
         }
-        if(Integer.MAX_VALUE == stub.getRequestTimeout()) {
+        if (Integer.MAX_VALUE == stub.getRequestTimeout()) {
             stub.setRequestTimeout(infinityProperties.getConsumer().getRequestTimeout());
         }
     }

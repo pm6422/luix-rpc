@@ -31,6 +31,10 @@ public class App {
      */
     private String env;
     /**
+     * Infinity RPC jar version
+     */
+    private String infinityRpcVersion;
+    /**
      * Latest registered time
      */
     private String latestRegisteredTime;
