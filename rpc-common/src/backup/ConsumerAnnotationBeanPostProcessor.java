@@ -1,4 +1,4 @@
-package org.infinity.rpc.spring.boot.client;
+package org.infinity.rpc.spring.boot.bean.processor;
 
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.exchange.client.stub.ConsumerStub;

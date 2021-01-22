@@ -43,6 +43,7 @@ import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMe
 
 @Slf4j
 @ThreadSafe
+@Deprecated
 public abstract class AbstractAnnotationBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
         implements MergedBeanDefinitionPostProcessor, BeanFactoryAware, EnvironmentAware, DisposableBean {
 
