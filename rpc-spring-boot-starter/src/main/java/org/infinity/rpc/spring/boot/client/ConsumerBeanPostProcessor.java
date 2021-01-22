@@ -219,6 +219,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
 
         AbstractBeanDefinition stubBeanDefinition = buildConsumerStubDefinition(consumerInterfaceClass, consumerAnnotation);
         beanFactory.registerBeanDefinition(beanName, stubBeanDefinition);
+        // getBean() will trigger bean initialization
         return beanFactory.getBean(beanName, ConsumerStub.class);
     }
 
