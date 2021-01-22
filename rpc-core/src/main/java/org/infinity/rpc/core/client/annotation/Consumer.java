@@ -11,6 +11,8 @@ import java.lang.annotation.Target;
 /**
  * RPC consumer annotation
  * Please refer {@link ServiceConstants} for the property definition
+ * <p>
+ * This class can annotate non-static field, non-static public method with prefix 'set' name and one parameter
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})

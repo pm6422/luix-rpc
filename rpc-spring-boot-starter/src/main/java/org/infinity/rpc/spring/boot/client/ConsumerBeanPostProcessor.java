@@ -49,6 +49,9 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, BeanFactory
     private static final ValidatorFactory           VALIDATOR_FACTORY = Validation.buildDefaultValidatorFactory();
     private final        String[]                   scanBasePackages;
     private              Environment                env;
+    /**
+     * {@link DefaultListableBeanFactory} can register bean definition
+     */
     private              DefaultListableBeanFactory beanFactory;
 
     public ConsumerBeanPostProcessor(String[] scanBasePackages) {
@@ -98,7 +101,6 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, BeanFactory
 
         // Inject consumer proxy instances to method parameters
         injectConsumerToMethodParam(bean, clazz);
-
         return bean;
     }
 
@@ -247,7 +249,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, BeanFactory
     }
 
     private boolean existsConsumerStub(String consumerStubBeanName) {
-        return beanFactory.containsBean(consumerStubBeanName);
+        return beanFactory.containsBeanDefinition(consumerStubBeanName);
     }
 
     /**
