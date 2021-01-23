@@ -3,6 +3,7 @@ package org.infinity.rpc.spring.boot.startup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.exchange.client.stub.ConsumerStub;
 import org.infinity.rpc.core.exchange.client.stub.ConsumerStubHolder;
@@ -100,10 +101,7 @@ public class RpcLifecycle {
     private void registerApplication(InfinityProperties infinityProperties) {
         // Register provider URL to all the registries
         Registry registry = infinityProperties.getRegistry().getRegistryImpl();
-        ApplicationExtConfig application = new ApplicationExtConfig(infinityProperties.getApplication());
-        application.setInfinityRpcVersion(readJarVersion());
-        // Override the old data every time
-        application.setLatestRegisteredTime(DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+        ApplicationExtConfig application = getApplicationExtConfig(infinityProperties.getApplication());
         registry.registerApplication(application);
         log.debug("Registered RPC server application [{}] to registry", infinityProperties.getApplication().getName());
     }
@@ -122,10 +120,18 @@ public class RpcLifecycle {
         stubs.forEach((name, stub) -> {
             Url providerUrl = createProviderUrl(infinityProperties, stub);
             stub.setUrl(providerUrl);
+            Registry registry = infinityProperties.getRegistry().getRegistryImpl();
             // DO the providers registering
-            stub.publishToRegistries(infinityProperties.getApplication().getName(), providerUrl,
-                    infinityProperties.getRegistry().getRegistryUrl());
+            stub.registerToRegistries(providerUrl, infinityProperties.getApplication().getName(), registry);
         });
+    }
+
+    private ApplicationExtConfig getApplicationExtConfig(ApplicationConfig applicationConfig) {
+        ApplicationExtConfig application = new ApplicationExtConfig(applicationConfig);
+        application.setInfinityRpcVersion(readJarVersion());
+        // Override the old data every time
+        application.setLatestRegisteredTime(DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+        return application;
     }
 
     /**

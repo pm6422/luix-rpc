@@ -141,19 +141,18 @@ public class ProviderStub<T> {
     }
 
     /**
-     * Publish the RPC providers to registries
+     * Register the RPC providers to registries
      *
-     * @param appName application name
-     * @param providerUrl  provider url
-     * @param registryUrls registry urls
+     * @param providerUrl provider url
+     * @param appName     application name
+     * @param registries  registries
      */
-    public void publishToRegistries(String appName, Url providerUrl, Url... registryUrls) {
+    public void registerToRegistries(Url providerUrl, String appName, Registry... registries) {
         // Export RPC provider service
         Protocol.getInstance(providerUrl.getProtocol()).export(this);
 
-        for (Url registryUrl : registryUrls) {
+        for (Registry registry : registries) {
             // Register provider URL to all the registries
-            Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             registry.register(providerUrl);
             registry.registerApplicationProvider(appName, providerUrl);
         }
