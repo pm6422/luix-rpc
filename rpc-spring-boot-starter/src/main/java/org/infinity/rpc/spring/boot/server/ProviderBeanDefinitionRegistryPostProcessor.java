@@ -136,11 +136,11 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
      * @return bean definition registry scanner
      *
      * <code>
-     * @Provider(maxRetries = 1)
+     * '@Provider(maxRetries=1)
      * public class AppServiceImpl {
      * ...
      * ...
-     * }
+     * }'
      * </code>
      */
     private ClassPathBeanDefinitionRegistryScanner createProviderScanner(BeanDefinitionRegistry registry,
