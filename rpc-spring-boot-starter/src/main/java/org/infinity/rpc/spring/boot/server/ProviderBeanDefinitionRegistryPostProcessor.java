@@ -291,25 +291,25 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     /**
      * Build {@link ProviderStub} definition
      *
-     * @param providerInterfaceClass provider interface class
-     * @param providerAnnotation     {@link Provider} annotation
-     * @param providerInstanceName   provider instance name
+     * @param interfaceClass       provider interface class
+     * @param annotation           {@link Provider} annotation
+     * @param providerInstanceName provider instance name
      * @return {@link ProviderStub} bean definition
      */
-    private AbstractBeanDefinition buildProviderStubDefinition(Class<?> providerInterfaceClass,
-                                                               Provider providerAnnotation,
+    private AbstractBeanDefinition buildProviderStubDefinition(Class<?> interfaceClass,
+                                                               Provider annotation,
                                                                String providerInstanceName) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProviderStub.class);
-        addPropertyValue(builder, INTERFACE_NAME, providerInterfaceClass.getName(), true);
-        addPropertyValue(builder, INTERFACE_CLASS, providerInterfaceClass, true);
-        addPropertyValue(builder, REGISTRY, providerAnnotation.registry(), false);
-        addPropertyValue(builder, PROTOCOL, providerAnnotation.protocol(), false);
-        addPropertyValue(builder, GROUP, providerAnnotation.group(), false);
-        addPropertyValue(builder, VERSION, providerAnnotation.version(), false);
-        addPropertyValue(builder, CHECK_HEALTH, providerAnnotation.checkHealth().getValue(), false);
-        addPropertyValue(builder, CHECK_HEALTH_FACTORY, providerAnnotation.checkHealthFactory(), false);
-        addPropertyValue(builder, REQUEST_TIMEOUT, providerAnnotation.requestTimeout(), true);
-        addPropertyValue(builder, MAX_RETRIES, providerAnnotation.maxRetries(), true);
+        addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName(), true);
+        addPropertyValue(builder, INTERFACE_CLASS, interfaceClass, true);
+        addPropertyValue(builder, REGISTRY, annotation.registry(), false);
+        addPropertyValue(builder, PROTOCOL, annotation.protocol(), false);
+        addPropertyValue(builder, GROUP, annotation.group(), false);
+        addPropertyValue(builder, VERSION, annotation.version(), false);
+        addPropertyValue(builder, CHECK_HEALTH, annotation.checkHealth().getValue(), false);
+        addPropertyValue(builder, CHECK_HEALTH_FACTORY, annotation.checkHealthFactory(), false);
+        addPropertyValue(builder, REQUEST_TIMEOUT, annotation.requestTimeout(), true);
+        addPropertyValue(builder, MAX_RETRIES, annotation.maxRetries(), true);
 
         // Obtain the instance by instance name then assign it to the property
         addPropertyReference(builder, "instance", providerInstanceName);

@@ -244,28 +244,28 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
     /**
      * Build {@link ConsumerStub} definition
      *
-     * @param consumerInterfaceClass consumer interface class
-     * @param consumerAnnotation     {@link Consumer} annotation
+     * @param interfaceClass consumer interface class
+     * @param annotation     {@link Consumer} annotation
      * @return {@link ConsumerStub} bean definition
      */
-    private AbstractBeanDefinition buildConsumerStubDefinition(Class<?> consumerInterfaceClass,
-                                                               Consumer consumerAnnotation) {
+    private AbstractBeanDefinition buildConsumerStubDefinition(Class<?> interfaceClass,
+                                                               Consumer annotation) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ConsumerStub.class);
-        addPropertyValue(builder, INTERFACE_NAME, consumerInterfaceClass.getName(), true);
-        addPropertyValue(builder, INTERFACE_CLASS, consumerInterfaceClass, true);
-        addPropertyValue(builder, REGISTRY, consumerAnnotation.registry(), false);
-        addPropertyValue(builder, PROTOCOL, consumerAnnotation.protocol(), false);
-        addPropertyValue(builder, CLUSTER, consumerAnnotation.cluster(), false);
-        addPropertyValue(builder, FAULT_TOLERANCE, consumerAnnotation.faultTolerance(), false);
-        addPropertyValue(builder, LOAD_BALANCER, consumerAnnotation.loadBalancer(), false);
-        addPropertyValue(builder, GROUP, consumerAnnotation.group(), false);
-        addPropertyValue(builder, VERSION, consumerAnnotation.version(), false);
-        addPropertyValue(builder, CHECK_HEALTH, consumerAnnotation.checkHealth().getValue(), false);
-        addPropertyValue(builder, CHECK_HEALTH_FACTORY, consumerAnnotation.checkHealthFactory(), false);
-        addPropertyValue(builder, REQUEST_TIMEOUT, consumerAnnotation.requestTimeout(), true);
-        addPropertyValue(builder, MAX_RETRIES, consumerAnnotation.maxRetries(), true);
+        addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName(), true);
+        addPropertyValue(builder, INTERFACE_CLASS, interfaceClass, true);
+        addPropertyValue(builder, REGISTRY, annotation.registry(), false);
+        addPropertyValue(builder, PROTOCOL, annotation.protocol(), false);
+        addPropertyValue(builder, CLUSTER, annotation.cluster(), false);
+        addPropertyValue(builder, FAULT_TOLERANCE, annotation.faultTolerance(), false);
+        addPropertyValue(builder, LOAD_BALANCER, annotation.loadBalancer(), false);
+        addPropertyValue(builder, GROUP, annotation.group(), false);
+        addPropertyValue(builder, VERSION, annotation.version(), false);
+        addPropertyValue(builder, CHECK_HEALTH, annotation.checkHealth().getValue(), false);
+        addPropertyValue(builder, CHECK_HEALTH_FACTORY, annotation.checkHealthFactory(), false);
+        addPropertyValue(builder, REQUEST_TIMEOUT, annotation.requestTimeout(), true);
+        addPropertyValue(builder, MAX_RETRIES, annotation.maxRetries(), true);
 
-        addPropertyValue(builder, "directUrl", consumerAnnotation.directUrl(), false);
+        addPropertyValue(builder, "directUrl", annotation.directUrl(), false);
         return builder.getBeanDefinition();
     }
 
