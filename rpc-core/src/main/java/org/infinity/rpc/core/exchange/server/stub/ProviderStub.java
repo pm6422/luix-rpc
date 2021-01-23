@@ -169,7 +169,6 @@ public class ProviderStub<T> {
      * Unregister the RPC provider from registry
      */
     public void unregister(Url... registryUrls) {
-        // TODO: the method is never be invoked
         for (Url registryUrl : registryUrls) {
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             if (registry == null || CollectionUtils.isEmpty(registry.getRegisteredProviderUrls())) {
