@@ -1,5 +1,6 @@
 package org.infinity.rpc.core.registry;
 
+import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.url.Url;
 
 import java.util.Set;
@@ -46,15 +47,15 @@ public interface Registrable {
     /**
      * Register application info to registry
      *
-     * @param app application info
+     * @param application application info
      */
-    void registerApplication(App app);
+    void registerApplication(ApplicationExtConfig application);
 
     /**
      * Register application provider info to registry
      *
-     * @param app         application info
+     * @param appName application name
      * @param providerUrl provider url
      */
-    void registerApplicationProvider(App app, Url providerUrl);
+    void registerApplicationProvider(String appName, Url providerUrl);
 }

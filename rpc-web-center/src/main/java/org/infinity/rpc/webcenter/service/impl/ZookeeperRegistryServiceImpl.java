@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.rpc.core.registry.App;
+import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.webcenter.service.RegistryService;
@@ -44,22 +44,22 @@ public class ZookeeperRegistryServiceImpl implements RegistryService {
     }
 
     @Override
-    public List<App> getAllApplications() {
-        List<App> apps = new ArrayList<>();
-        List<String> appIds = ZookeeperUtils.getAllApplications(zkClient);
-        if (CollectionUtils.isEmpty(appIds)) {
+    public List<ApplicationExtConfig> getAllApplications() {
+        List<ApplicationExtConfig> apps = new ArrayList<>();
+        List<String> appNames = ZookeeperUtils.getAllApplications(zkClient);
+        if (CollectionUtils.isEmpty(appNames)) {
             return apps;
         }
         try {
-            for (String appId : appIds) {
-                String applicationInfoPath = ZookeeperUtils.getApplicationInfoPath(appId);
+            for (String appName : appNames) {
+                String applicationInfoPath = ZookeeperUtils.getApplicationInfoPath(appName);
                 String info = zkClient.readData(applicationInfoPath, true);
-                App app = new App();
+                ApplicationExtConfig app = new ApplicationExtConfig();
                 if (info != null) {
                     ObjectMapper objectMapper = new ObjectMapper();
-                    app = objectMapper.readValue(info, App.class);
+                    app = objectMapper.readValue(info, ApplicationExtConfig.class);
                 } else {
-                    app.setId(appId);
+                    app.setName(appName);
                 }
                 apps.add(app);
             }

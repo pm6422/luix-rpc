@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
-import org.infinity.rpc.core.registry.App;
+import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
@@ -41,8 +41,8 @@ public class ServiceDiscoveryController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
     @GetMapping("api/service-discovery/apps")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<List<App>> findApps() {
-        List<App> applications = registryService.getAllApplications();
+    public ResponseEntity<List<ApplicationExtConfig>> findApps() {
+        List<ApplicationExtConfig> applications = registryService.getAllApplications();
         return ResponseEntity.ok(applications);
     }
 

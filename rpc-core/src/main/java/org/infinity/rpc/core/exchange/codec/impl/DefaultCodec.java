@@ -2,6 +2,7 @@ package org.infinity.rpc.core.exchange.codec.impl;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
@@ -17,7 +18,6 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.utilities.lang.ByteUtils;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
-import org.springframework.util.StringUtils;
 
 import java.io.*;
 import java.util.HashMap;

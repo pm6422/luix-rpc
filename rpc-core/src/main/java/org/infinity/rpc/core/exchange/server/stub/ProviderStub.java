@@ -13,7 +13,6 @@ import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.protocol.Protocol;
-import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
@@ -144,11 +143,11 @@ public class ProviderStub<T> {
     /**
      * Publish the RPC providers to registries
      *
-     * @param app          application info
+     * @param appName application name
      * @param providerUrl  provider url
      * @param registryUrls registry urls
      */
-    public void publishToRegistries(App app, Url providerUrl, Url... registryUrls) {
+    public void publishToRegistries(String appName, Url providerUrl, Url... registryUrls) {
         // Export RPC provider service
         Protocol.getInstance(providerUrl.getProtocol()).export(this);
 
@@ -156,7 +155,7 @@ public class ProviderStub<T> {
             // Register provider URL to all the registries
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             registry.register(providerUrl);
-            registry.registerApplicationProvider(app, providerUrl);
+            registry.registerApplicationProvider(appName, providerUrl);
         }
 
         SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);

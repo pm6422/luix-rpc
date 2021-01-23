@@ -4,13 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exchange.client.stub.ConsumerStub;
 import org.infinity.rpc.core.exchange.request.impl.RpcRequest;
 import org.infinity.rpc.utilities.id.IdGenerator;
-import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
 import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
 import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodParameters;
@@ -37,7 +35,7 @@ public class ConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationH
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (isDerivedFromObject(method)) {
             // IDE may call the Object.toString() method if you set some break pointers.
-            return ClassUtils.getShortNameAsProperty(ConsumerProxy.class);
+            return ConsumerProxy.class.getSimpleName();
         }
 
         RpcRequest request = new RpcRequest(IdGenerator.generateTimestampId(),

@@ -1,7 +1,6 @@
 package org.infinity.rpc.core.config;
 
 import lombok.Data;
-import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 

@@ -2,9 +2,6 @@ package org.infinity.rpc.core.registry;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.url.Url;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.event.ApplicationContextEvent;
-import org.springframework.context.support.AbstractApplicationContext;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Map;
@@ -25,10 +22,10 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
      * Get or create a registry
      * <p>
      * Do NOT throw exception while startup the application. If throw a exception will cause
-     * {@link AbstractApplicationContext#refresh()} catch the exception, then call the cancelRefresh(ex) to set active to false;
-     * So {@link org.springframework.boot.context.event.EventPublishingRunListener#failed(ConfigurableApplicationContext, Throwable)}
+     * AbstractApplicationContext#refresh() catch the exception, then call the cancelRefresh(ex) to set active to false;
+     * So org.springframework.boot.context.event.EventPublishingRunListener#failed(ConfigurableApplicationContext, Throwable)
      * will found the active is false, then context.publishEvent(event) will not be executed.
-     * So {@link org.infinity.rpc.spring.boot.startup.RpcLifecycleApplicationListener#onApplicationContextEvent(ApplicationContextEvent)}
+     * So org.infinity.rpc.spring.boot.startup.RpcLifecycleApplicationListener#onApplicationContextEvent(ApplicationContextEvent)
      * will not be invoked while ContextClosedEvent occurred.
      *
      * @param registryUrl registry url

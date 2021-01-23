@@ -2,26 +2,25 @@ package org.infinity.rpc.spring.boot.startup;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.exchange.client.stub.ConsumerStub;
 import org.infinity.rpc.core.exchange.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStubHolder;
-import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.apache.commons.lang3.BooleanUtils.toBooleanDefaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
+import static org.infinity.rpc.spring.boot.utils.JarUtils.readJarVersion;
 
 /**
  * Used to start and stop the RPC server
@@ -79,19 +78,11 @@ public class RpcLifecycle {
             return;
         }
         log.info("Starting the RPC server");
-        initConfig(infinityProperties);
         registerShutdownHook();
         registerApplication(infinityProperties);
         registerProviders(infinityProperties);
         initConsumers(infinityProperties);
         log.info("Started the RPC server");
-    }
-
-
-    /**
-     * Initialize the RPC server
-     */
-    private void initConfig(InfinityProperties infinityProperties) {
     }
 
     /**
@@ -109,15 +100,11 @@ public class RpcLifecycle {
     private void registerApplication(InfinityProperties infinityProperties) {
         // Register provider URL to all the registries
         Registry registry = infinityProperties.getRegistry().getRegistryImpl();
-        App app = infinityProperties.getApplication().toApp();
-        try {
-            String version = StreamUtils.copyToString(new ClassPathResource("version.txt").getInputStream(),
-                    Charset.defaultCharset());
-            app.setInfinityRpcVersion(version);
-        } catch (IOException e) {
-            log.warn("Failed to read Infinity RPC version file!");
-        }
-        registry.registerApplication(app);
+        ApplicationExtConfig application = new ApplicationExtConfig(infinityProperties.getApplication());
+        application.setInfinityRpcVersion(readJarVersion());
+        // Override the old data every time
+        application.setLatestRegisteredTime(DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+        registry.registerApplication(application);
         log.debug("Registered RPC server application [{}] to registry", infinityProperties.getApplication().getName());
     }
 
@@ -136,7 +123,7 @@ public class RpcLifecycle {
             Url providerUrl = createProviderUrl(infinityProperties, stub);
             stub.setUrl(providerUrl);
             // DO the providers registering
-            stub.publishToRegistries(infinityProperties.getApplication().toApp(), providerUrl,
+            stub.publishToRegistries(infinityProperties.getApplication().getName(), providerUrl,
                     infinityProperties.getRegistry().getRegistryUrl());
         });
     }

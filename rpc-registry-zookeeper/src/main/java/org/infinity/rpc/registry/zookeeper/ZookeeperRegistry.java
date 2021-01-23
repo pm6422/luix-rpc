@@ -12,9 +12,8 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.zookeeper.Watcher;
-import org.infinity.rpc.core.registry.App;
+import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.registry.CommandFailbackAbstractRegistry;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
@@ -27,7 +26,10 @@ import org.infinity.rpc.utilities.destory.Cleanable;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -175,57 +177,56 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     /**
      * Register application info to registry
      *
-     * @param app application info
+     * @param application application info
      */
     @Override
-    public void registerApplication(App app) {
+    public void registerApplication(ApplicationExtConfig application) {
         // Create data under 'application' node
-        createApplicationNode(app);
+        createApplicationNode(application);
     }
 
     /**
      * Create zookeeper persistent directory and ephemeral root node
      *
-     * @param app application info
+     * @param application application info
      */
-    private void createApplicationNode(App app) {
-        String appNodePath = ZookeeperUtils.getApplicationPath(app.getId());
+    private void createApplicationNode(ApplicationExtConfig application) {
+        String appNodePath = ZookeeperUtils.getApplicationPath(application.getName());
         if (!zkClient.exists(appNodePath)) {
             // Create a persistent directory
             zkClient.createPersistent(appNodePath, true);
         }
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            // Override the old data every time
-            app.setLatestRegisteredTime(DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
-            String jsonStr = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(app);
-            zkClient.delete(ZookeeperUtils.getApplicationInfoPath(app.getId()));
-            zkClient.createEphemeral(ZookeeperUtils.getApplicationInfoPath(app.getId()), jsonStr);
+            String jsonStr = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(application);
+            zkClient.delete(ZookeeperUtils.getApplicationInfoPath(application.getName()));
+            zkClient.createEphemeral(ZookeeperUtils.getApplicationInfoPath(application.getName()), jsonStr);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(MessageFormat.format("Failed to register application [{0}] to zookeeper [{1}] with the error: {2}", app.getName(), getRegistryUrl(), e.getMessage()), e);
+            throw new RuntimeException(MessageFormat.format("Failed to register application [{0}] to zookeeper [{1}] with the error: {2}",
+                    application.getName(), getRegistryUrl(), e.getMessage()), e);
         }
     }
 
     /**
      * Register application provider info to registry
      *
-     * @param app         application info
+     * @param appName     application name
      * @param providerUrl provider url
      */
     @Override
-    public void registerApplicationProvider(App app, Url providerUrl) {
+    public void registerApplicationProvider(String appName, Url providerUrl) {
         // Create data under 'application-providers/app-name' node
-        createApplicationProviderNode(app, providerUrl);
+        createApplicationProviderNode(appName, providerUrl);
     }
 
     /**
      * Create zookeeper persistent directory and ephemeral root node
      *
-     * @param app         application info
+     * @param appName     application name
      * @param providerUrl url
      */
-    private void createApplicationProviderNode(App app, Url providerUrl) {
-        String appNodePath = ZookeeperUtils.getApplicationProviderPath(app.getName());
+    private void createApplicationProviderNode(String appName, Url providerUrl) {
+        String appNodePath = ZookeeperUtils.getApplicationProviderPath(appName);
         if (!zkClient.exists(appNodePath)) {
             // Create a persistent directory
             zkClient.createPersistent(appNodePath, true);
@@ -486,9 +487,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
             if (zkChildListener == null) {
                 // child files change listener under specified directory
-                zkChildListener = (dirName, currentChilds) -> {
+                zkChildListener = (dirName, currentChildren) -> {
                     @EventPublisher("providersChangeEvent")
-                    List<String> fileNames = ListUtils.emptyIfNull(currentChilds);
+                    List<String> fileNames = ListUtils.emptyIfNull(currentChildren);
                     serviceListener.onNotify(clientUrl, getRegistryUrl(), readProviderUrls(dirName, fileNames));
                     log.info("Provider files [{}] changed under path [{}]", String.join(",", fileNames), dirName);
                 };

@@ -17,7 +17,7 @@
 package org.infinity.rpc.core.utils;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;

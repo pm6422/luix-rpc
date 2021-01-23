@@ -3,8 +3,8 @@ package org.infinity.rpc.core.registry.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.registry.AbstractRegistry;
-import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.url.Url;
@@ -104,12 +104,12 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
     }
 
     @Override
-    public void registerApplication(App app) {
+    public void registerApplication(ApplicationExtConfig app) {
         // Do nothing
     }
 
     @Override
-    public void registerApplicationProvider(App app, Url providerUrl) {
+    public void registerApplicationProvider(String appName, Url providerUrl) {
         // Do nothing
     }
 

@@ -1,6 +1,6 @@
 package org.infinity.rpc.webcenter.service;
 
-import org.infinity.rpc.core.registry.App;
+import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
 
 import java.util.List;
@@ -16,5 +16,5 @@ public interface RegistryService {
 
     Map<String, Map<String, List<AddressInfo>>> getAllNodes(String group);
 
-    List<App> getAllApplications();
+    List<ApplicationExtConfig> getAllApplications();
 }

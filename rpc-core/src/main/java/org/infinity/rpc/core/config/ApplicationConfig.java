@@ -1,41 +1,32 @@
 package org.infinity.rpc.core.config;
 
 import lombok.Data;
-import org.infinity.rpc.core.registry.App;
-import org.infinity.rpc.utilities.id.IdGenerator;
-import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Data
 public class ApplicationConfig {
     /**
-     * Application ID
-     * It can guarantee the unique value under a cluster
-     */
-    @NotEmpty
-    private String id = "ID-" + IdGenerator.generateShortId();
-    /**
      * Application name
-     * It was set by user, so the name maybe duplicated
+     * Keep unique
      */
     @NotEmpty
     private String name;
     /**
      * Application description
      */
+    @Size(max = 20)
     private String description;
     /**
      * Team name
      */
+    @NotEmpty
     private String team;
-    /**
-     * Owner name
-     */
-    private String owner;
     /**
      * Owner mail
      */
+    @NotEmpty
     private String ownerMail;
     /**
      * Environment variable, e.g. dev, test or prod
@@ -51,11 +42,5 @@ public class ApplicationConfig {
     }
 
     private void checkValidity() {
-    }
-
-    public App toApp() {
-        App app = new App();
-        BeanUtils.copyProperties(this, app);
-        return app;
     }
 }
