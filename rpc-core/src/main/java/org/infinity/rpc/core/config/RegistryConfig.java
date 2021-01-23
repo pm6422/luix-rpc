@@ -1,11 +1,10 @@
-package org.infinity.rpc.spring.boot.config;
+package org.infinity.rpc.core.config;
 
 import lombok.Data;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
-import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -18,7 +17,6 @@ import java.util.regex.Pattern;
 import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY_DEFAULT_VALUE;
 
 @Data
-@Validated
 public class RegistryConfig {
     private static final Pattern COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
     /**

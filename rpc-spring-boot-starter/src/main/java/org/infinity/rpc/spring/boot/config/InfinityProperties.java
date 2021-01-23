@@ -1,6 +1,7 @@
 package org.infinity.rpc.spring.boot.config;
 
 import lombok.Data;
+import org.infinity.rpc.core.config.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -11,6 +12,8 @@ import javax.validation.constraints.NotNull;
  * - Application
  * - Transport protocol
  * - Registry
+ * - Global provider config
+ * - Global consumer config
  */
 @ConfigurationProperties(prefix = "infinity")
 @Data

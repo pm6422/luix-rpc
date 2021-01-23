@@ -1,4 +1,4 @@
-package org.infinity.rpc.spring.boot.config;
+package org.infinity.rpc.core.config;
 
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
@@ -7,7 +7,6 @@ import javax.validation.constraints.NotEmpty;
 
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
-@Validated
 @Data
 public class ServiceConfig {
     /**

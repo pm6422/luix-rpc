@@ -1,21 +1,18 @@
-package org.infinity.rpc.spring.boot.config;
+package org.infinity.rpc.core.config;
 
 import lombok.Data;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.utilities.network.NetworkUtils;
-import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.Optional;
 
-import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.PROTOCOL_DEFAULT_VALUE;
 
 @Data
-@Validated
 public class ProtocolConfig {
     /**
      * Name of protocol
@@ -23,18 +20,18 @@ public class ProtocolConfig {
      * and check whether value is valid or not during application startup.
      */
     @NotEmpty
-    private String  name               = PROTOCOL_DEFAULT_VALUE;
+    private String  name    = PROTOCOL_DEFAULT_VALUE;
     /**
      * Protocol version
      */
     @NotNull
     @Positive
-    private Integer version            = 1;
+    private Integer version = 1;
     /**
      * Host name of the RPC server
      */
     @NotEmpty
-    private String  host               = NetworkUtils.INTRANET_IP;
+    private String  host    = NetworkUtils.INTRANET_IP;
     /**
      * Port number of the RPC server
      */
