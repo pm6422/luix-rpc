@@ -103,7 +103,7 @@ infinity:
         name: ${info.artifact.name}
         description: RPC Web Center
         team: Infinity Team
-        owner: louis
+        ownerMail: pm6422@126.com
         env: ${spring.profiles.active}
     registry:
         connectTimeout: 1000
