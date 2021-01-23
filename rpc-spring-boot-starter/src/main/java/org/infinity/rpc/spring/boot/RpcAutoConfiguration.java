@@ -61,9 +61,4 @@ public class RpcAutoConfiguration {
         }
         return registries;
     }
-
-//    @Bean
-//    public ApplicationRunner nettyServerApplicationRunner() {
-//        return new NettyServerApplicationRunner();
-//    }
 }
