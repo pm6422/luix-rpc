@@ -1,7 +1,6 @@
 package org.infinity.rpc.spring.boot.server;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.infinity.rpc.spring.boot.bean.DefaultBeanNameGenerator;
@@ -21,21 +20,18 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.*;
+import static org.infinity.rpc.core.constant.ServiceConstants.INTERFACE_CLASS;
+import static org.infinity.rpc.core.constant.ServiceConstants.INTERFACE_NAME;
+import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.*;
 
 /**
  * Register provider bean and provider stub under specified scan base packages to spring context
@@ -45,11 +41,10 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentAware, ResourceLoaderAware,
         BeanClassLoaderAware, BeanDefinitionRegistryPostProcessor {
 
-    private static final ValidatorFactory VALIDATOR_FACTORY = Validation.buildDefaultValidatorFactory();
-    private final        Set<String>      scanBasePackages;
-    private              Environment      env;
-    private              ResourceLoader   resourceLoader;
-    private              ClassLoader      classLoader;
+    private final Set<String>    scanBasePackages;
+    private       Environment    env;
+    private       ResourceLoader resourceLoader;
+    private       ClassLoader    classLoader;
 
     public ProviderBeanDefinitionRegistryPostProcessor(Set<String> scanBasePackages) {
         this.scanBasePackages = scanBasePackages;
@@ -300,55 +295,12 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
                                                                Provider annotation,
                                                                String providerInstanceName) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProviderStub.class);
-        addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName(), true);
-        addPropertyValue(builder, INTERFACE_CLASS, interfaceClass, true);
-        addPropertyValue(builder, REGISTRY, annotation.registry(), false);
-        addPropertyValue(builder, PROTOCOL, annotation.protocol(), false);
-        addPropertyValue(builder, GROUP, annotation.group(), false);
-        addPropertyValue(builder, VERSION, annotation.version(), false);
-        addPropertyValue(builder, CHECK_HEALTH, annotation.checkHealth().getValue(), false);
-        addPropertyValue(builder, CHECK_HEALTH_FACTORY, annotation.checkHealthFactory(), false);
-        addPropertyValue(builder, REQUEST_TIMEOUT, annotation.requestTimeout(), true);
-        addPropertyValue(builder, MAX_RETRIES, annotation.maxRetries(), true);
-
+        copyPropertiesToBeanDefinitionBuilder(annotation, builder, INTERFACE_NAME);
+        addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName());
+        addPropertyValue(builder, INTERFACE_CLASS, interfaceClass);
         // Obtain the instance by instance name then assign it to the property
-        addPropertyReference(builder, "instance", providerInstanceName);
-
+        addPropertyReference(builder, "instance", providerInstanceName, env);
         return builder.getBeanDefinition();
-    }
-
-    private void addPropertyValue(BeanDefinitionBuilder builder, String propertyName, Object propertyValue, boolean validate) {
-        if (validate) {
-            validatePropertyValue(builder.getBeanDefinition().getBeanClass(), propertyName, propertyValue);
-        }
-        builder.addPropertyValue(propertyName, propertyValue);
-    }
-
-    private void validatePropertyValue(Class<?> beanType, String propertyName, Object propertyValue) {
-        try {
-            List<String> messages = doValidate(beanType, propertyName, propertyValue);
-            Assert.isTrue(CollectionUtils.isEmpty(messages), String.join(",", messages));
-        } catch (Exception e) {
-            // Re-throw the exception
-            throw new RpcConfigurationException(e.getMessage());
-        }
-    }
-
-    private static <T> List<String> doValidate(Class<T> beanType, String propertyName, Object propertyValue) {
-        Set<ConstraintViolation<T>> constraintViolations = VALIDATOR_FACTORY.getValidator()
-                .validateValue(beanType, propertyName, propertyValue);
-        return constraintViolations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
-    }
-
-    /**
-     * Obtain the instance by instance name then assign it to the property
-     *
-     * @param builder      bean definition builder
-     * @param propertyName property name
-     * @param instanceName provider instance name
-     */
-    private void addPropertyReference(BeanDefinitionBuilder builder, String propertyName, String instanceName) {
-        builder.addPropertyReference(propertyName, env.resolvePlaceholders(instanceName));
     }
 
     @Override

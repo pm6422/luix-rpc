@@ -30,13 +30,17 @@ public class ConsumerStub<T> {
     /**
      * The provider interface fully-qualified name
      */
-    @NotEmpty
+    @NotEmpty(message = "The [interfaceName] property of @Consumer must NOT be empty!")
     private String   interfaceName;
     /**
      * The interface class of the consumer
      */
-    @NotNull
+    @NotNull(message = "The [interfaceClass] property of @Consumer must NOT be null!")
     private Class<T> interfaceClass;
+    /**
+     *
+     */
+    private boolean  generic;
     /**
      * Registry
      */

@@ -1,9 +1,7 @@
 package org.infinity.rpc.spring.boot.client;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.client.annotation.Consumer;
-import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.exchange.client.stub.ConsumerStub;
 import org.infinity.rpc.spring.boot.client.stub.ConsumerStubBeanNameBuilder;
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
@@ -23,7 +21,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
 import java.lang.reflect.AnnotatedElement;
@@ -31,11 +28,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import static org.infinity.rpc.core.constant.ConsumerConstants.*;
+import static org.infinity.rpc.core.constant.ConsumerConstants.INTERFACE_NAME;
+import static org.infinity.rpc.core.constant.ServiceConstants.INTERFACE_CLASS;
+import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.addPropertyValue;
+import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.copyPropertiesToBeanDefinitionBuilder;
 
 
 /**
@@ -251,45 +248,11 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
     private AbstractBeanDefinition buildConsumerStubDefinition(Class<?> interfaceClass,
                                                                Consumer annotation) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ConsumerStub.class);
-        addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName(), true);
-        addPropertyValue(builder, INTERFACE_CLASS, interfaceClass, true);
-        addPropertyValue(builder, REGISTRY, annotation.registry(), false);
-        addPropertyValue(builder, PROTOCOL, annotation.protocol(), false);
-        addPropertyValue(builder, CLUSTER, annotation.cluster(), false);
-        addPropertyValue(builder, FAULT_TOLERANCE, annotation.faultTolerance(), false);
-        addPropertyValue(builder, LOAD_BALANCER, annotation.loadBalancer(), false);
-        addPropertyValue(builder, GROUP, annotation.group(), false);
-        addPropertyValue(builder, VERSION, annotation.version(), false);
-        addPropertyValue(builder, CHECK_HEALTH, annotation.checkHealth().getValue(), false);
-        addPropertyValue(builder, CHECK_HEALTH_FACTORY, annotation.checkHealthFactory(), false);
-        addPropertyValue(builder, REQUEST_TIMEOUT, annotation.requestTimeout(), true);
-        addPropertyValue(builder, MAX_RETRIES, annotation.maxRetries(), true);
-
-        addPropertyValue(builder, "directUrl", annotation.directUrl(), false);
+        copyPropertiesToBeanDefinitionBuilder(annotation, builder, INTERFACE_NAME);
+        addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName());
+        addPropertyValue(builder, INTERFACE_CLASS, interfaceClass);
+        addPropertyValue(builder, "directUrl", annotation.directUrl());
         return builder.getBeanDefinition();
-    }
-
-    private void addPropertyValue(BeanDefinitionBuilder builder, String propertyName, Object propertyValue, boolean validate) {
-        if (validate) {
-            validatePropertyValue(builder.getBeanDefinition().getBeanClass(), propertyName, propertyValue);
-        }
-        builder.addPropertyValue(propertyName, propertyValue);
-    }
-
-    private void validatePropertyValue(Class<?> beanType, String propertyName, Object propertyValue) {
-        try {
-            List<String> messages = doValidate(beanType, propertyName, propertyValue);
-            Assert.isTrue(CollectionUtils.isEmpty(messages), String.join(",", messages));
-        } catch (Exception e) {
-            // Re-throw the exception
-            throw new RpcConfigurationException(e.getMessage());
-        }
-    }
-
-    private static <T> List<String> doValidate(Class<T> beanType, String propertyName, Object propertyValue) {
-        Set<ConstraintViolation<T>> constraintViolations = VALIDATOR_FACTORY.getValidator()
-                .validateValue(beanType, propertyName, propertyValue);
-        return constraintViolations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
     }
 
     /**
