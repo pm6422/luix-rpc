@@ -94,7 +94,7 @@ infinity:
     application:
         id: ${info.artifact.id}
         name: ${info.artifact.name}
-        description: RPC Server Demo
+        description: RPC Demo Server
         team: Infinity Team
         owner: louis
         env: ${spring.profiles.active}
