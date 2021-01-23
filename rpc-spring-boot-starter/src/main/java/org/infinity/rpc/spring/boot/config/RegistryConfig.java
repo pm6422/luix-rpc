@@ -2,7 +2,9 @@ package org.infinity.rpc.spring.boot.config;
 
 import lombok.Data;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
+import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
+import org.infinity.rpc.core.url.Url;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
@@ -55,10 +57,15 @@ public class RegistryConfig {
      */
     @PositiveOrZero
     private              Integer requestTimeout;
+    /**
+     * Registry url
+     */
+    private              Url     registryUrl;
 
     public void init() {
         checkIntegrity();
         checkValidity();
+        registryUrl = createRegistryUrl();
     }
 
     private void checkIntegrity() {
@@ -69,4 +76,21 @@ public class RegistryConfig {
                 .orElseThrow(() -> new RpcConfigurationException("Failed to load the correct registry factory, " +
                         "please check whether the dependency [rpc-registry-" + name + "] is in your class path!"));
     }
+
+    private Url createRegistryUrl() {
+        Url registryUrl = Url.registryUrl(name, host, port);
+
+        // Assign values to parameters
+        registryUrl.addParameter(Url.PARAM_CHECK_HEALTH, Url.PARAM_CHECK_HEALTH_DEFAULT_VALUE);
+        registryUrl.addParameter(Url.PARAM_ADDRESS, registryUrl.getAddress());
+        registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, connectTimeout.toString());
+        registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, sessionTimeout.toString());
+        registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, retryInterval.toString());
+        return registryUrl;
+    }
+
+    public Registry getRegistryImpl() {
+        return RegistryFactory.getInstance(name).getRegistry(registryUrl);
+    }
+
 }

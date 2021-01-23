@@ -28,7 +28,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
      * {@link AbstractApplicationContext#refresh()} catch the exception, then call the cancelRefresh(ex) to set active to false;
      * So {@link org.springframework.boot.context.event.EventPublishingRunListener#failed(ConfigurableApplicationContext, Throwable)}
      * will found the active is false, then context.publishEvent(event) will not be executed.
-     * So {@link org.infinity.rpc.core.config.spring.startup.RpcLifecycleApplicationListener#onApplicationContextEvent(ApplicationContextEvent)}
+     * So {@link org.infinity.rpc.spring.boot.startup.RpcLifecycleApplicationListener#onApplicationContextEvent(ApplicationContextEvent)}
      * will not be invoked while ContextClosedEvent occurred.
      *
      * @param registryUrl registry url

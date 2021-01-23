@@ -238,6 +238,14 @@ public final class Url implements Serializable {
         return of(protocol, NetworkUtils.INTRANET_IP, CLIENT_URL_PORT, path, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, new HashMap<>());
     }
 
+    /**
+     * Create a register url
+     *
+     * @param protocol registry name
+     * @param host     registry host
+     * @param port     registry port
+     * @return registry url
+     */
     public static Url registryUrl(String protocol, String host, Integer port) {
         // todo: check group and version
         return of(protocol, host, port, Registrable.class.getName(), GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, new HashMap<>());

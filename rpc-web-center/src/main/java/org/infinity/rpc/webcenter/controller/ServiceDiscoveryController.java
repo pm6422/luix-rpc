@@ -8,10 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.Registry;
-import org.infinity.rpc.core.registry.RegistryFactory;
-import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
+import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.entity.Provider;
 import org.infinity.rpc.webcenter.service.RegistryService;
@@ -30,12 +29,12 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 @Api(tags = "服务发现")
 @Slf4j
 public class ServiceDiscoveryController {
-    private final RegistryService registryService;
-    private final RegistryInfo    registryInfo;
+    private final RegistryService    registryService;
+    private final InfinityProperties infinityProperties;
 
-    public ServiceDiscoveryController(RegistryService registryService, RegistryInfo registryInfo) {
+    public ServiceDiscoveryController(RegistryService registryService, InfinityProperties infinityProperties) {
         this.registryService = registryService;
-        this.registryInfo = registryInfo;
+        this.infinityProperties = infinityProperties;
     }
 
     @ApiOperation("获取所有应用")
@@ -79,23 +78,18 @@ public class ServiceDiscoveryController {
 
     @PostMapping("/api/service-discovery/deactivate")
     public ResponseEntity<Void> deactivate(@RequestBody String url) {
-        Registry registry = getRegistry();
+        // TODO: Support multiple registry centers
+        Registry registry = infinityProperties.getRegistry().getRegistryImpl();
         registry.deactivate(Url.valueOf(url));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/api/service-discovery/activate")
     public ResponseEntity<Void> activate(@RequestBody String url) {
-        Registry registry = getRegistry();
+        // TODO: Support multiple registry centers
+        Registry registry = infinityProperties.getRegistry().getRegistryImpl();
         registry.activate(Url.valueOf(url));
         return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
-    private Registry getRegistry() {
-        // TODO: Support multiple registry centers
-        Url registryUrl = registryInfo.getRegistryUrls().get(0);
-        RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(registryUrl.getProtocol());
-        return registryFactoryImpl.getRegistry(registryUrl);
     }
 
     /**

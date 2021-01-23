@@ -4,12 +4,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.registry.Registry;
-import org.infinity.rpc.core.registry.RegistryFactory;
-import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democommon.service.AppService;
-import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.spring.boot.bean.name.ProviderStubBeanNameBuilder;
+import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,16 +20,13 @@ import static org.infinity.rpc.core.constant.ServiceConstants.VERSION_DEFAULT_VA
 @Api(tags = "测试")
 @Slf4j
 public class TestController {
-    private final RegistryInfo       registryInfo;
     private final InfinityProperties infinityProperties;
     private final ApplicationContext applicationContext;
     private final Environment        env;
 
-    public TestController(RegistryInfo registryInfo,
-                          InfinityProperties infinityProperties,
+    public TestController(InfinityProperties infinityProperties,
                           ApplicationContext applicationContext,
                           Environment env) {
-        this.registryInfo = registryInfo;
         this.infinityProperties = infinityProperties;
         this.applicationContext = applicationContext;
         this.env = env;
@@ -41,7 +36,7 @@ public class TestController {
     @ApiOperation("测试注册provider")
     @GetMapping("/open-api/test/register-provider")
     public void registerProvider() {
-        Registry registry = RegistryFactory.getInstance(infinityProperties.getRegistry().getName()).getRegistry(registryInfo.getRegistryUrls().get(0));
+        Registry registry = infinityProperties.getRegistry().getRegistryImpl();
         Url providerUrl = Url.of(
                 infinityProperties.getProtocol().getName(),
                 "192.168.0.1",

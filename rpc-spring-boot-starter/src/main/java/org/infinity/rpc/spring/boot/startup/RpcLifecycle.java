@@ -8,7 +8,6 @@ import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStubHolder;
 import org.infinity.rpc.core.registry.App;
 import org.infinity.rpc.core.registry.Registry;
-import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
@@ -18,7 +17,6 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -75,7 +73,7 @@ public class RpcLifecycle {
      *
      * @param infinityProperties RPC configuration properties
      */
-    public void start(InfinityProperties infinityProperties, List<Url> registryUrls) {
+    public void start(InfinityProperties infinityProperties) {
         if (!started.compareAndSet(false, true)) {
             // already started
             return;
@@ -83,9 +81,9 @@ public class RpcLifecycle {
         log.info("Starting the RPC server");
         initConfig(infinityProperties);
         registerShutdownHook();
-        registerApplication(infinityProperties, registryUrls);
-        registerProviders(infinityProperties, registryUrls);
-        initConsumers(infinityProperties, registryUrls);
+        registerApplication(infinityProperties);
+        registerProviders(infinityProperties);
+        initConsumers(infinityProperties);
         log.info("Started the RPC server");
     }
 
@@ -107,23 +105,19 @@ public class RpcLifecycle {
      * Register application information to registry
      *
      * @param infinityProperties configuration properties
-     * @param registryUrls       registry urls
      */
-    private void registerApplication(InfinityProperties infinityProperties, List<Url> registryUrls) {
-        for (Url registryUrl : registryUrls) {
-            // Register provider URL to all the registries
-            RegistryFactory registryFactory = RegistryFactory.getInstance(registryUrl.getProtocol());
-            Registry registry = registryFactory.getRegistry(registryUrl);
-            App app = infinityProperties.getApplication().toApp();
-            try {
-                String version = StreamUtils.copyToString(new ClassPathResource("version.txt").getInputStream(),
-                        Charset.defaultCharset());
-                app.setInfinityRpcVersion(version);
-            } catch (IOException e) {
-                log.warn("Failed to read Infinity RPC version file!");
-            }
-            registry.registerApplication(app);
+    private void registerApplication(InfinityProperties infinityProperties) {
+        // Register provider URL to all the registries
+        Registry registry = infinityProperties.getRegistry().getRegistryImpl();
+        App app = infinityProperties.getApplication().toApp();
+        try {
+            String version = StreamUtils.copyToString(new ClassPathResource("version.txt").getInputStream(),
+                    Charset.defaultCharset());
+            app.setInfinityRpcVersion(version);
+        } catch (IOException e) {
+            log.warn("Failed to read Infinity RPC version file!");
         }
+        registry.registerApplication(app);
         log.debug("Registered RPC server application [{}] to registry", infinityProperties.getApplication().getName());
     }
 
@@ -132,7 +126,7 @@ public class RpcLifecycle {
      *
      * @param infinityProperties RPC configuration properties
      */
-    private void registerProviders(InfinityProperties infinityProperties, List<Url> registryUrls) {
+    private void registerProviders(InfinityProperties infinityProperties) {
         Map<String, ProviderStub<?>> stubs = ProviderStubHolder.getInstance().getStubs();
         if (MapUtils.isEmpty(stubs)) {
             log.info("No RPC service providers found for registering to registry!");
@@ -142,7 +136,8 @@ public class RpcLifecycle {
             Url providerUrl = createProviderUrl(infinityProperties, stub);
             stub.setUrl(providerUrl);
             // DO the providers registering
-            stub.register(infinityProperties.getApplication().toApp(), registryUrls, providerUrl);
+            stub.publishToRegistries(infinityProperties.getApplication().toApp(), providerUrl,
+                    infinityProperties.getRegistry().getRegistryUrl());
         });
     }
 
@@ -185,14 +180,14 @@ public class RpcLifecycle {
         return providerUrl;
     }
 
-    private void initConsumers(InfinityProperties infinityProperties, List<Url> registryUrls) {
+    private void initConsumers(InfinityProperties infinityProperties) {
         Map<String, ConsumerStub<?>> stubs = ConsumerStubHolder.getInstance().getStubs();
         if (MapUtils.isEmpty(stubs)) {
             return;
         }
         stubs.forEach((name, stub) -> {
             mergeConsumerAttributes(stub, infinityProperties);
-            stub.init(registryUrls);
+            stub.subscribeFromRegistries(infinityProperties.getRegistry().getRegistryUrl());
         });
     }
 
@@ -232,21 +227,21 @@ public class RpcLifecycle {
     /**
      * Stop the RPC server
      *
-     * @param rpcProperties RPC configuration properties
+     * @param infinityProperties RPC configuration properties
      */
-    public void destroy(InfinityProperties rpcProperties, List<Url> registryUrls) {
+    public void destroy(InfinityProperties infinityProperties) {
         if (!started.compareAndSet(true, false) || !stopped.compareAndSet(false, true)) {
             // not yet started or already stopped
             return;
         }
 //        unregisterApplication(registryUrls);
-        unregisterProviders(registryUrls);
+        unregisterProviders(infinityProperties.getRegistry().getRegistryUrl());
     }
 
     /**
      * Unregister RPC providers from registry
      */
-    private void unregisterProviders(List<Url> registryUrls) {
+    private void unregisterProviders(Url... registryUrls) {
         ProviderStubHolder.getInstance().getStubs().forEach((name, stub) -> stub.unregister(registryUrls));
     }
 }

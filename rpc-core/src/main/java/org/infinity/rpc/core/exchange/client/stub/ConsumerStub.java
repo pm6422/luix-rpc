@@ -12,7 +12,6 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * PRC consumer stub
@@ -122,11 +121,16 @@ public class ConsumerStub<T> {
         ConsumerStubHolder.getInstance().addStub(interfaceClass.getName(), this);
     }
 
-    public void init(List<Url> registryUrls) {
+    /**
+     * Subscribe the RPC providers from registries
+     *
+     * @param registryUrls registry urls
+     */
+    public void subscribeFromRegistries(Url... registryUrls) {
         this.clientUrl = Url.clientUrl(protocol, interfaceClass.getName());
         // Initialize provider cluster before consumer initialization
         this.providerCluster = createProviderCluster();
-        subscribeProviderListener = SubscribeProviderListener.of(interfaceClass, providerCluster, registryUrls, clientUrl);
+        subscribeProviderListener = SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, registryUrls);
     }
 
     private ProviderCluster<T> createProviderCluster() {

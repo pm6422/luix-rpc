@@ -1,6 +1,5 @@
 package org.infinity.rpc.core.exchange.server.stub;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,6 @@ import javax.validation.constraints.NotNull;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -144,20 +142,19 @@ public class ProviderStub<T> {
     }
 
     /**
-     * Register the RPC provider to registry
+     * Publish the RPC providers to registries
      *
      * @param app          application info
-     * @param registryUrls registry urls
      * @param providerUrl  provider url
+     * @param registryUrls registry urls
      */
-    public void register(App app, List<Url> registryUrls, Url providerUrl) {
+    public void publishToRegistries(App app, Url providerUrl, Url... registryUrls) {
         // Export RPC provider service
         Protocol.getInstance(providerUrl.getProtocol()).export(this);
 
         for (Url registryUrl : registryUrls) {
             // Register provider URL to all the registries
-            RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(registryUrl.getProtocol());
-            Registry registry = registryFactoryImpl.getRegistry(registryUrl);
+            Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             registry.register(providerUrl);
             registry.registerApplicationProvider(app, providerUrl);
         }
@@ -171,11 +168,10 @@ public class ProviderStub<T> {
     /**
      * Unregister the RPC provider from registry
      */
-    public void unregister(List<Url> registryUrls) {
+    public void unregister(Url... registryUrls) {
         // TODO: the method is never be invoked
         for (Url registryUrl : registryUrls) {
-            RegistryFactory registryFactoryImpl = RegistryFactory.getInstance(registryUrl.getProtocol());
-            Registry registry = registryFactoryImpl.getRegistry(registryUrl);
+            Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             if (registry == null || CollectionUtils.isEmpty(registry.getRegisteredProviderUrls())) {
                 log.warn("No registry found!");
                 return;

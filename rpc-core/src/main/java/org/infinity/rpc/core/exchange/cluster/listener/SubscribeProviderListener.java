@@ -33,7 +33,7 @@ public class SubscribeProviderListener<T> implements ClientListener {
     private       Class<T>                          interfaceClass;
     private       ProviderCluster<T>                providerCluster;
     private       Protocol                          protocol;
-    private       List<Url>                         registryUrls;
+    private       Url[]                             registryUrls;
     private       Url                               clientUrl;
     private final Map<Url, List<ProviderCaller<T>>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
 
@@ -43,7 +43,10 @@ public class SubscribeProviderListener<T> implements ClientListener {
     private SubscribeProviderListener() {
     }
 
-    public static <T> SubscribeProviderListener<T> of(Class<T> interfaceClass, ProviderCluster<T> providerCluster, List<Url> registryUrls, Url clientUrl) {
+    public static <T> SubscribeProviderListener<T> of(Class<T> interfaceClass,
+                                                      ProviderCluster<T> providerCluster,
+                                                      Url clientUrl,
+                                                      Url... registryUrls) {
         SubscribeProviderListener<T> listener = new SubscribeProviderListener<>();
         listener.interfaceClass = interfaceClass;
         listener.providerCluster = providerCluster;
