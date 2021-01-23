@@ -10,14 +10,19 @@ import org.springframework.lang.NonNull;
 import static org.springframework.context.annotation.AnnotationConfigUtils.registerAnnotationConfigProcessors;
 
 public class ClassPathBeanDefinitionRegistryScanner extends ClassPathBeanDefinitionScanner {
-    public ClassPathBeanDefinitionRegistryScanner(BeanDefinitionRegistry registry, boolean useDefaultFilters, Environment environment, ResourceLoader resourceLoader) {
+    public ClassPathBeanDefinitionRegistryScanner(BeanDefinitionRegistry registry,
+                                                  boolean useDefaultFilters,
+                                                  Environment environment,
+                                                  ResourceLoader resourceLoader) {
         super(registry, useDefaultFilters);
         setEnvironment(environment);
         setResourceLoader(resourceLoader);
         registerAnnotationConfigProcessors(registry);
     }
 
-    public ClassPathBeanDefinitionRegistryScanner(BeanDefinitionRegistry registry, Environment environment, ResourceLoader resourceLoader) {
+    public ClassPathBeanDefinitionRegistryScanner(BeanDefinitionRegistry registry,
+                                                  Environment environment,
+                                                  ResourceLoader resourceLoader) {
         this(registry, false, environment, resourceLoader);
     }
 

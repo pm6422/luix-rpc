@@ -1,11 +1,11 @@
-package org.infinity.rpc.spring.boot.server;
+package org.infinity.rpc.spring.boot.bean;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
 import org.infinity.rpc.core.server.annotation.Provider;
-import org.infinity.rpc.spring.boot.bean.DefaultBeanNameGenerator;
+import org.infinity.rpc.spring.boot.bean.name.DefaultBeanNameGenerator;
 import org.infinity.rpc.spring.boot.bean.registry.ClassPathBeanDefinitionRegistryScanner;
-import org.infinity.rpc.spring.boot.server.stub.ProviderStubBeanNameBuilder;
+import org.infinity.rpc.spring.boot.bean.name.ProviderStubBeanNameBuilder;
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;

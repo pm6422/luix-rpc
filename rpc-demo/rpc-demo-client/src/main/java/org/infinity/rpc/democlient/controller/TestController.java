@@ -4,7 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.democommon.service.AppService;
-import org.infinity.rpc.spring.boot.client.stub.ConsumerStubBeanNameBuilder;
+import org.infinity.rpc.spring.boot.bean.name.ConsumerStubBeanNameBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;

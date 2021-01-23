@@ -1,9 +1,9 @@
-package org.infinity.rpc.spring.boot.client;
+package org.infinity.rpc.spring.boot.bean;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.exchange.client.stub.ConsumerStub;
-import org.infinity.rpc.spring.boot.client.stub.ConsumerStubBeanNameBuilder;
+import org.infinity.rpc.spring.boot.bean.name.ConsumerStubBeanNameBuilder;
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
@@ -21,8 +21,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -43,13 +41,12 @@ import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.c
  */
 @Slf4j
 public class ConsumerBeanPostProcessor implements BeanPostProcessor, EnvironmentAware, BeanFactoryAware {
-    private static final ValidatorFactory           VALIDATOR_FACTORY = Validation.buildDefaultValidatorFactory();
-    private final        String[]                   scanBasePackages;
-    private              Environment                env;
+    private final String[]                   scanBasePackages;
+    private       Environment                env;
     /**
      * {@link DefaultListableBeanFactory} can register bean definition
      */
-    private              DefaultListableBeanFactory beanFactory;
+    private       DefaultListableBeanFactory beanFactory;
 
     public ConsumerBeanPostProcessor(String[] scanBasePackages) {
         Assert.notEmpty(scanBasePackages, "Consumer scan packages must NOT be empty!");

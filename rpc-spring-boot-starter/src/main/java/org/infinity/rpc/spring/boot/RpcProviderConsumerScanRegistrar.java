@@ -1,11 +1,9 @@
-package org.infinity.rpc.spring.boot.registrar;
+package org.infinity.rpc.spring.boot;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.spring.boot.RpcAutoConfiguration;
-import org.infinity.rpc.spring.boot.EnableRpc;
+import org.infinity.rpc.spring.boot.bean.ConsumerBeanPostProcessor;
+import org.infinity.rpc.spring.boot.bean.ProviderBeanDefinitionRegistryPostProcessor;
 import org.infinity.rpc.spring.boot.bean.registry.AnnotatedBeanDefinitionRegistry;
-import org.infinity.rpc.spring.boot.client.ConsumerBeanPostProcessor;
-import org.infinity.rpc.spring.boot.server.ProviderBeanDefinitionRegistryPostProcessor;
 import org.infinity.rpc.spring.boot.startup.RpcLifecycleApplicationListener;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -15,10 +13,10 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 @Slf4j
@@ -34,8 +32,8 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
      * @param registry               current bean definition registry
      */
     @Override
-    public void registerBeanDefinitions(@Nonnull AnnotationMetadata importingClassMetadata,
-                                        @Nonnull BeanDefinitionRegistry registry) {
+    public void registerBeanDefinitions(@NonNull AnnotationMetadata importingClassMetadata,
+                                        @NonNull BeanDefinitionRegistry registry) {
         Set<String> scanBasePackages = getScanBasePackages(importingClassMetadata);
         registerRpcAutoConfiguration(registry);
         registerRpcLifecycleApplicationListener(registry);
@@ -90,7 +88,8 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
      * @param registry         current bean definition registry
      * @param scanBasePackages packages to be scanned
      */
-    private void registerProviderBeanDefinitionRegistryPostProcessor(BeanDefinitionRegistry registry, Set<String> scanBasePackages) {
+    private void registerProviderBeanDefinitionRegistryPostProcessor(BeanDefinitionRegistry registry,
+                                                                     Set<String> scanBasePackages) {
         registerBeanDefinition(registry, ProviderBeanDefinitionRegistryPostProcessor.class, scanBasePackages);
     }
 
@@ -109,7 +108,8 @@ public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionReg
      * @param registry         current bean definition registry
      * @param beanType         class to be registered
      */
-    private void registerBeanDefinition(BeanDefinitionRegistry registry, Class<?> beanType, Set<String> scanBasePackages) {
+    private void registerBeanDefinition(BeanDefinitionRegistry registry, Class<?> beanType,
+                                        Set<String> scanBasePackages) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(beanType);
         if (scanBasePackages != null) {
             builder.addConstructorArgValue(scanBasePackages);

@@ -9,7 +9,7 @@ import org.infinity.rpc.core.registry.RegistryInfo;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democommon.service.AppService;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
-import org.infinity.rpc.spring.boot.server.stub.ProviderStubBeanNameBuilder;
+import org.infinity.rpc.spring.boot.bean.name.ProviderStubBeanNameBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;

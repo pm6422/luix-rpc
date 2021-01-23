@@ -1,4 +1,4 @@
-package org.infinity.rpc.spring.boot.bean;
+package org.infinity.rpc.spring.boot.bean.name;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;

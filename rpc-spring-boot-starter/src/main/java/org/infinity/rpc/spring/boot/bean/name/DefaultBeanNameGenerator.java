@@ -1,4 +1,4 @@
-package org.infinity.rpc.spring.boot.bean;
+package org.infinity.rpc.spring.boot.bean.name;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.support.BeanNameGenerator;

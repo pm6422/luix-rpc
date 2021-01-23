@@ -45,7 +45,9 @@ public abstract class AnnotatedBeanDefinitionRegistry {
      * @param beanName               the name of bean
      * @return if registered at first time, return <code>true</code>, or <code>false</code>
      */
-    public static boolean registerInfrastructureBean(BeanDefinitionRegistry beanDefinitionRegistry, String beanName, Class<?> beanType) {
+    public static boolean registerInfrastructureBean(BeanDefinitionRegistry beanDefinitionRegistry,
+                                                     String beanName,
+                                                     Class<?> beanType) {
         if (beanDefinitionRegistry.containsBeanDefinition(beanName)) {
             return false;
         }
@@ -75,7 +77,8 @@ public abstract class AnnotatedBeanDefinitionRegistry {
                 Class<?> targetClass = ClassUtils.resolveClassName(className, clazz.getClassLoader());
                 registered = ObjectUtils.nullSafeEquals(targetClass, clazz);
                 if (registered) {
-                    log.info("The class [{}] with the bean name [{}] has been registered on registry [{}]!", className, beanDefinitionName, registry);
+                    log.info("The class [{}] with the bean name [{}] has been registered on registry [{}]!",
+                            className, beanDefinitionName, registry);
                     break;
                 }
             }
