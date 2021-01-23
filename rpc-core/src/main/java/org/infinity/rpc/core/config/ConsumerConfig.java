@@ -23,4 +23,7 @@ public class ConsumerConfig extends ServiceConfig {
      */
     @NotEmpty
     private String loadBalancer   = LOAD_BALANCER_DEFAULT_VALUE;
+
+    public void init() {
+    }
 }

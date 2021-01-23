@@ -47,5 +47,7 @@ public class InfinityProperties {
         application.init();
         protocol.init();
         registry.init();
+        provider.init();
+        consumer.init();
     }
 }

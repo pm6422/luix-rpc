@@ -36,4 +36,5 @@ public class ServiceConfig {
      *
      */
     private int     maxRetries         = MAX_RETRIES_DEFAULT_VALUE;
+
 }
