@@ -216,6 +216,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
         if (!existsConsumerStub(beanName)) {
             AbstractBeanDefinition stubBeanDefinition = buildConsumerStubDefinition(consumerInterfaceClass, consumerAnnotation);
             beanFactory.registerBeanDefinition(beanName, stubBeanDefinition);
+            log.info("Registered RPC consumer stub [{}] to spring context", beanName);
         }
         // getBean() will trigger bean initialization
         return beanFactory.getBean(beanName, ConsumerStub.class);
