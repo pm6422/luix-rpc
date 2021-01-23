@@ -299,7 +299,6 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     private AbstractBeanDefinition buildProviderStubDefinition(Class<?> providerInterfaceClass,
                                                                Provider providerAnnotation,
                                                                String providerInstanceName) {
-
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProviderStub.class);
         addPropertyValue(builder, INTERFACE_NAME, providerInterfaceClass.getName(), true);
         addPropertyValue(builder, INTERFACE_CLASS, providerInterfaceClass, true);

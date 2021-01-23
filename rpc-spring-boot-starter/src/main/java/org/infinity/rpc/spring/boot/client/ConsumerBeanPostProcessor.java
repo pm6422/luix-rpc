@@ -262,7 +262,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
         addPropertyValue(builder, VERSION, consumerAnnotation.version(), false);
         addPropertyValue(builder, CHECK_HEALTH, consumerAnnotation.checkHealth().getValue(), false);
         addPropertyValue(builder, CHECK_HEALTH_FACTORY, consumerAnnotation.checkHealthFactory(), false);
-        addPropertyValue(builder, REQUEST_TIMEOUT, consumerAnnotation.requestTimeout(), false);
+        addPropertyValue(builder, REQUEST_TIMEOUT, consumerAnnotation.requestTimeout(), true);
         addPropertyValue(builder, MAX_RETRIES, consumerAnnotation.maxRetries(), true);
 
         addPropertyValue(builder, "directUrl", consumerAnnotation.directUrl(), false);
