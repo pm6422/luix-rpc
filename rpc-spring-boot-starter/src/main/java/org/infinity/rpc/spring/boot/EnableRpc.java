@@ -1,4 +1,4 @@
-package org.infinity.rpc.spring.boot.annotation;
+package org.infinity.rpc.spring.boot;
 
 import org.infinity.rpc.spring.boot.registrar.RpcProviderConsumerScanRegistrar;
 import org.springframework.context.annotation.Import;

@@ -1,6 +1,6 @@
 package org.infinity.rpc.demoserver;
 
-import org.infinity.rpc.spring.boot.annotation.EnableRpc;
+import org.infinity.rpc.spring.boot.EnableRpc;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;

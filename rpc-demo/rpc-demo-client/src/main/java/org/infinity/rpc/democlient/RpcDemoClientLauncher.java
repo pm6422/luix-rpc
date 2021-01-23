@@ -3,7 +3,7 @@ package org.infinity.rpc.democlient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.infinity.rpc.democlient.config.ApplicationConstants;
-import org.infinity.rpc.spring.boot.annotation.EnableRpc;
+import org.infinity.rpc.spring.boot.EnableRpc;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
