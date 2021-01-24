@@ -94,12 +94,11 @@ public class RpcLifecycle {
     }
 
     /**
-     * Register application information to registry
+     * Register application information to registries
      *
      * @param infinityProperties configuration properties
      */
     private void registerApplication(InfinityProperties infinityProperties) {
-        // Register provider URL to all the registries
         Registry registry = infinityProperties.getRegistry().getRegistryImpl();
         ApplicationExtConfig application = getApplicationExtConfig(infinityProperties.getApplication());
         registry.registerApplication(application);
@@ -107,22 +106,22 @@ public class RpcLifecycle {
     }
 
     /**
-     * Register RPC providers to registry
+     * Register RPC providers to registries
      *
      * @param infinityProperties RPC configuration properties
      */
     private void registerProviders(InfinityProperties infinityProperties) {
-        Map<String, ProviderStub<?>> stubs = ProviderStubHolder.getInstance().getStubs();
-        if (MapUtils.isEmpty(stubs)) {
+        Map<String, ProviderStub<?>> providerStubs = ProviderStubHolder.getInstance().getStubs();
+        if (MapUtils.isEmpty(providerStubs)) {
             log.info("No RPC service providers found for registering to registry!");
             return;
         }
-        stubs.forEach((name, stub) -> {
-            Url providerUrl = createProviderUrl(infinityProperties, stub);
-            stub.setUrl(providerUrl);
+        providerStubs.forEach((name, providerStub) -> {
+            Url providerUrl = createProviderUrl(infinityProperties, providerStub);
+            providerStub.setUrl(providerUrl);
             Registry registry = infinityProperties.getRegistry().getRegistryImpl();
             // DO the providers registering
-            stub.registerToRegistries(providerUrl, infinityProperties.getApplication().getName(), registry);
+            providerStub.registerToRegistries(providerUrl, infinityProperties.getApplication().getName(), registry);
         });
     }
 

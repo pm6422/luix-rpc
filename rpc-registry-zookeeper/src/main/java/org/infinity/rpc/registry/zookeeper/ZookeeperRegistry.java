@@ -176,21 +176,13 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
 
     /**
      * Register application info to registry
+     * Create zookeeper persistent directory and ephemeral root node
      *
      * @param application application info
      */
     @Override
     public void registerApplication(ApplicationExtConfig application) {
         // Create data under 'application' node
-        createApplicationNode(application);
-    }
-
-    /**
-     * Create zookeeper persistent directory and ephemeral root node
-     *
-     * @param application application info
-     */
-    private void createApplicationNode(ApplicationExtConfig application) {
         String appNodePath = ZookeeperUtils.getApplicationPath(application.getName());
         if (!zkClient.exists(appNodePath)) {
             // Create a persistent directory
@@ -209,6 +201,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
 
     /**
      * Register application provider info to registry
+     * Create zookeeper persistent directory and ephemeral root node
      *
      * @param appName     application name
      * @param providerUrl provider url
@@ -216,16 +209,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Override
     public void registerApplicationProvider(String appName, Url providerUrl) {
         // Create data under 'application-providers/app-name' node
-        createApplicationProviderNode(appName, providerUrl);
-    }
-
-    /**
-     * Create zookeeper persistent directory and ephemeral root node
-     *
-     * @param appName     application name
-     * @param providerUrl url
-     */
-    private void createApplicationProviderNode(String appName, Url providerUrl) {
         String appNodePath = ZookeeperUtils.getApplicationProviderPath(appName);
         if (!zkClient.exists(appNodePath)) {
             // Create a persistent directory
