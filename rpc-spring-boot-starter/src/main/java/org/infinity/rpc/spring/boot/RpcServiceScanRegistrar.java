@@ -20,9 +20,9 @@ import org.springframework.util.ClassUtils;
 import java.util.*;
 
 @Slf4j
-public class RpcProviderConsumerScanRegistrar implements ImportBeanDefinitionRegistrar {
+public class RpcServiceScanRegistrar implements ImportBeanDefinitionRegistrar {
 
-    public RpcProviderConsumerScanRegistrar() {
+    public RpcServiceScanRegistrar() {
     }
 
     /**

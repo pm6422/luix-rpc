@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Import(RpcProviderConsumerScanRegistrar.class)
+@Import(RpcServiceScanRegistrar.class)
 public @interface EnableRpc {
 
     String[] scanBasePackages() default {};
