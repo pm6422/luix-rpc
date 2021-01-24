@@ -29,11 +29,11 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 @Api(tags = "服务发现")
 @Slf4j
 public class ServiceDiscoveryController {
-    private final RegistryService    registryService;
-    private final InfinityProperties infinityProperties;
+    private final List<RegistryService> registryServices;
+    private final InfinityProperties    infinityProperties;
 
-    public ServiceDiscoveryController(RegistryService registryService, InfinityProperties infinityProperties) {
-        this.registryService = registryService;
+    public ServiceDiscoveryController(List<RegistryService> registryServices, InfinityProperties infinityProperties) {
+        this.registryServices = registryServices;
         this.infinityProperties = infinityProperties;
     }
 
@@ -42,7 +42,7 @@ public class ServiceDiscoveryController {
     @GetMapping("api/service-discovery/apps")
     @Secured({Authority.ADMIN})
     public ResponseEntity<List<ApplicationExtConfig>> findApps() {
-        List<ApplicationExtConfig> applications = registryService.getAllApplications();
+        List<ApplicationExtConfig> applications = registryServices.get(0).getAllApplications();
         return ResponseEntity.ok(applications);
     }
 
@@ -52,7 +52,7 @@ public class ServiceDiscoveryController {
     @Secured({Authority.ADMIN})
     public ResponseEntity<List<Provider>> findProviders() {
         List<Provider> providers = new ArrayList<>();
-        Map<String, Map<String, List<AddressInfo>>> nodeMap = registryService.getAllNodes("provider");
+        Map<String, Map<String, List<AddressInfo>>> nodeMap = registryServices.get(0).getAllNodes("provider");
         if (MapUtils.isNotEmpty(nodeMap)) {
             for (Map.Entry<String, Map<String, List<AddressInfo>>> entry : nodeMap.entrySet()) {
                 List<AddressInfo> activeProviders = entry.getValue().get("active");
@@ -72,14 +72,13 @@ public class ServiceDiscoveryController {
     @GetMapping("api/service-discovery/{providerName}/{statusNode}/nodes")
     public ResponseEntity<List<AddressInfo>> getProviderNode(@PathVariable(value = "providerName") String providerName,
                                                              @PathVariable(value = "statusNode") String statusNode) {
-        List<AddressInfo> nodes = registryService.getNodes("provider", providerName, statusNode);
+        List<AddressInfo> nodes = registryServices.get(0).getNodes("provider", providerName, statusNode);
         return ResponseEntity.ok().body(nodes);
     }
 
     @PostMapping("/api/service-discovery/deactivate")
     public ResponseEntity<Void> deactivate(@RequestBody String url) {
-        // TODO: Support multiple registry centers
-        Registry registry = infinityProperties.getRegistry().getRegistryImpl();
+        Registry registry = infinityProperties.getRegistryConfigs().get(0).getRegistryImpl();
         registry.deactivate(Url.valueOf(url));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -87,7 +86,7 @@ public class ServiceDiscoveryController {
     @PostMapping("/api/service-discovery/activate")
     public ResponseEntity<Void> activate(@RequestBody String url) {
         // TODO: Support multiple registry centers
-        Registry registry = infinityProperties.getRegistry().getRegistryImpl();
+        Registry registry = infinityProperties.getRegistryConfigs().get(0).getRegistryImpl();
         registry.activate(Url.valueOf(url));
         return ResponseEntity.status(HttpStatus.OK).build();
     }

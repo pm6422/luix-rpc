@@ -12,6 +12,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Configuration
 @ConditionalOnProperty(prefix = "infinity.registry", value = "name", havingValue = "zookeeper")
 @Slf4j
@@ -24,14 +27,17 @@ public class ZookeeperRegistryConfiguration {
     }
 
     @Bean
-    public RegistryService registryService() {
+    public List<RegistryService> registryServices() {
         try {
-            // TODO: Support multiple registry centers
-            Url registryUrl = infinityProperties.getRegistry().getRegistryUrl();
-            int connectTimeout = registryUrl.getIntParameter(Url.PARAM_CONNECT_TIMEOUT);
-            int sessionTimeout = registryUrl.getIntParameter(Url.PARAM_CONNECT_TIMEOUT);
-            ZkClient zkClient = createZkClient(registryUrl.getParameter(Url.PARAM_ADDRESS), sessionTimeout, connectTimeout);
-            return new ZookeeperRegistryServiceImpl(zkClient);
+            List<RegistryService> registryServices = new ArrayList<>(infinityProperties.getRegistryConfigs().size());
+            infinityProperties.getRegistryConfigs().forEach(registryConfig -> {
+                Url registryUrl = registryConfig.getRegistryUrl();
+                int connectTimeout = registryUrl.getIntParameter(Url.PARAM_CONNECT_TIMEOUT);
+                int sessionTimeout = registryUrl.getIntParameter(Url.PARAM_CONNECT_TIMEOUT);
+                ZkClient zkClient = createZkClient(registryUrl.getParameter(Url.PARAM_ADDRESS), sessionTimeout, connectTimeout);
+                registryServices.add(new ZookeeperRegistryServiceImpl(zkClient));
+            });
+            return registryServices;
         } catch (ZkException e) {
             throw new RpcFrameworkException("Failed to connect zookeeper server with error", e);
         }

@@ -3,7 +3,6 @@ package org.infinity.rpc.demoserver.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democommon.service.AppService;
 import org.infinity.rpc.spring.boot.bean.name.ProviderStubBeanNameBuilder;
@@ -36,18 +35,19 @@ public class TestController {
     @ApiOperation("测试注册provider")
     @GetMapping("/open-api/test/register-provider")
     public void registerProvider() {
-        Registry registry = infinityProperties.getRegistry().getRegistryImpl();
         Url providerUrl = Url.of(
-                infinityProperties.getProtocol().getName(),
+                infinityProperties.getAvailableProtocol().getName(),
                 "192.168.0.1",
-                infinityProperties.getProtocol().getPort(),
+                infinityProperties.getAvailableProtocol().getPort(),
                 AppService.class.getName());
 
         // Assign values to parameters
         providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, Url.PARAM_CHECK_HEALTH_DEFAULT_VALUE);
         providerUrl.addParameter(Url.PARAM_APP, infinityProperties.getApplication().getName());
 
-        registry.register(providerUrl);
+        infinityProperties.getRegistryConfigs().forEach(registryConfig -> {
+            registryConfig.getRegistryImpl().register(providerUrl);
+        });
     }
 
     @ApiOperation("测试获取AppService provider stub")

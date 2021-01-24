@@ -99,6 +99,7 @@ infinity:
         ownerMail: pm6422@126.com
         env: ${spring.profiles.active}
     registry:
+        name: zookeeper
         connectTimeout: 1000
         sessionTimeout: 60000
 server:

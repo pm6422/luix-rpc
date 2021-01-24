@@ -105,9 +105,11 @@ infinity:
         team: Infinity Team
         ownerMail: pm6422@126.com
         env: ${spring.profiles.active}
-    registry:
-        connectTimeout: 1000
-        sessionTimeout: 60000
+    registries:
+        0:
+            name: zookeeper
+            connectTimeout: 1000
+            sessionTimeout: 60000
 server:
     # It can be overridden by `--server.port` value passed in the commandline or `-Dserver.port` set in `JAVA_OPTS`
     port: @app.server.port@

@@ -6,10 +6,10 @@
 # https://docs.spring.io/spring-boot/docs/2.2.5.RELEASE/reference/html/appendix-application-properties.html
 # ===================================================================
 infinity:
-    registry:
-        name: zookeeper
-        host: localhost
-        port: 2181
+    registries:
+        0:
+            host: localhost
+            port: 2181
     protocol:
         port: @app.rpc.port@
 # ===================================================================

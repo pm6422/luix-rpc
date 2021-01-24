@@ -95,21 +95,24 @@ public class RpcLifecycle {
      * @param infinityProperties RPC configuration properties
      */
     private void publish(InfinityProperties infinityProperties) {
-        Registry registry = infinityProperties.getRegistry().getRegistryImpl();
-        ApplicationExtConfig application = getApplicationExtConfig(infinityProperties.getApplication());
-        registry.registerApplication(application);
-        log.debug("Registered RPC server application [{}] to registry", infinityProperties.getApplication().getName());
+        infinityProperties.getRegistryConfigs().forEach(registryConfig -> {
+            Registry registry = registryConfig.getRegistryImpl();
+            ApplicationExtConfig application = getApplicationExtConfig(infinityProperties.getApplication());
+            registry.registerApplication(application);
+            log.debug("Registered RPC server application [{}] to registry [{}]",
+                    infinityProperties.getApplication().getName(), registryConfig.getName());
 
-        Map<String, ProviderStub<?>> providerStubs = ProviderStubHolder.getInstance().getStubs();
-        if (MapUtils.isEmpty(providerStubs)) {
-            log.info("No RPC service providers found to register to registry!");
-            return;
-        }
-        providerStubs.forEach((name, providerStub) -> {
-            Url providerUrl = providerStub.exportUrl(infinityProperties.getApplication(), infinityProperties.getProtocol(),
-                    infinityProperties.getRegistry(), infinityProperties.getProvider());
-            // DO the providers registering
-            providerStub.register(providerUrl, infinityProperties.getApplication().getName(), registry);
+            Map<String, ProviderStub<?>> providerStubs = ProviderStubHolder.getInstance().getStubs();
+            if (MapUtils.isEmpty(providerStubs)) {
+                log.info("No RPC service providers found to register to registry [{}]!", registryConfig.getName());
+                return;
+            }
+            providerStubs.forEach((name, providerStub) -> {
+                Url providerUrl = providerStub.exportUrl(infinityProperties.getApplication(),
+                        infinityProperties.getAvailableProtocol(), registryConfig, infinityProperties.getProvider());
+                // DO the providers registering
+                providerStub.register(providerUrl, infinityProperties.getApplication().getName(), registry);
+            });
         });
     }
 
@@ -132,11 +135,11 @@ public class RpcLifecycle {
             log.info("No RPC service consumers found from registry!");
             return;
         }
-        consumerStubs.forEach((name, consumerStub) -> {
-            consumerStub.mergeAttributes(infinityProperties.getProtocol(),
-                    infinityProperties.getRegistry(), infinityProperties.getConsumer());
-            consumerStub.subscribeFromRegistries(infinityProperties.getRegistry().getRegistryUrl());
-        });
+        infinityProperties.getRegistryConfigs().forEach(registryConfig -> consumerStubs.forEach((name, consumerStub) -> {
+            consumerStub.mergeAttributes(infinityProperties.getAvailableProtocol(),
+                    registryConfig, infinityProperties.getConsumer());
+            consumerStub.subscribeFromRegistries(registryConfig.getRegistryUrl());
+        }));
     }
 
     /**
@@ -149,8 +152,11 @@ public class RpcLifecycle {
             // not yet started or already stopped
             return;
         }
-//        unregisterApplication(registryUrls);
-        unregisterProviders(infinityProperties.getRegistry().getRegistryUrl());
+
+        infinityProperties.getRegistryConfigs().forEach(registryConfig -> {
+            //unregisterApplication(registryUrls);
+            unregisterProviders(registryConfig.getRegistryUrl());
+        });
     }
 
     /**

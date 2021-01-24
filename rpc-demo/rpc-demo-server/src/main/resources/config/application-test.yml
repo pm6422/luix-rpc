@@ -7,7 +7,6 @@
 # ===================================================================
 infinity:
     registry:
-        name: zookeeper
         host: localhost
         port: 2181
     protocol:
