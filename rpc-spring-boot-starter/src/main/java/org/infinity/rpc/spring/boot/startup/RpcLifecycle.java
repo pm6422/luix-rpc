@@ -113,7 +113,7 @@ public class RpcLifecycle {
     private void registerProviders(InfinityProperties infinityProperties) {
         Map<String, ProviderStub<?>> providerStubs = ProviderStubHolder.getInstance().getStubs();
         if (MapUtils.isEmpty(providerStubs)) {
-            log.info("No RPC service providers found for registering to registry!");
+            log.info("No RPC service providers found to register to registry!");
             return;
         }
         providerStubs.forEach((name, providerStub) -> {
@@ -173,13 +173,14 @@ public class RpcLifecycle {
     }
 
     private void initConsumers(InfinityProperties infinityProperties) {
-        Map<String, ConsumerStub<?>> stubs = ConsumerStubHolder.getInstance().getStubs();
-        if (MapUtils.isEmpty(stubs)) {
+        Map<String, ConsumerStub<?>> consumerStubs = ConsumerStubHolder.getInstance().getStubs();
+        if (MapUtils.isEmpty(consumerStubs)) {
+            log.info("No RPC service consumers found from registry!");
             return;
         }
-        stubs.forEach((name, stub) -> {
-            mergeConsumerAttributes(stub, infinityProperties);
-            stub.subscribeFromRegistries(infinityProperties.getRegistry().getRegistryUrl());
+        consumerStubs.forEach((name, consumerStub) -> {
+            mergeConsumerAttributes(consumerStub, infinityProperties);
+            consumerStub.subscribeFromRegistries(infinityProperties.getRegistry().getRegistryUrl());
         });
     }
 
