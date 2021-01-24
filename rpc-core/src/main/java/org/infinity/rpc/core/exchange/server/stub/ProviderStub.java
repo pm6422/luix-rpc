@@ -147,7 +147,7 @@ public class ProviderStub<T> {
      * @param appName     application name
      * @param registries  registries
      */
-    public void registerToRegistries(Url providerUrl, String appName, Registry... registries) {
+    public void register(Url providerUrl, String appName, Registry... registries) {
         // Export RPC provider service
         Protocol.getInstance(providerUrl.getProtocol()).export(this);
 

@@ -121,7 +121,7 @@ public class RpcLifecycle {
             providerStub.setUrl(providerUrl);
             Registry registry = infinityProperties.getRegistry().getRegistryImpl();
             // DO the providers registering
-            providerStub.registerToRegistries(providerUrl, infinityProperties.getApplication().getName(), registry);
+            providerStub.register(providerUrl, infinityProperties.getApplication().getName(), registry);
         });
     }
 
