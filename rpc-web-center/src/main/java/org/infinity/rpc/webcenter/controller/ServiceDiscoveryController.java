@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.config.ApplicationExtConfig;
-import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
@@ -78,16 +77,17 @@ public class ServiceDiscoveryController {
 
     @PostMapping("/api/service-discovery/deactivate")
     public ResponseEntity<Void> deactivate(@RequestBody String url) {
-        Registry registry = infinityProperties.getRegistryConfigs().get(0).getRegistryImpl();
-        registry.deactivate(Url.valueOf(url));
+        infinityProperties.getRegistryConfigs().forEach(registryConfig -> {
+            registryConfig.getRegistryImpl().deactivate(Url.valueOf(url));
+        });
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/api/service-discovery/activate")
     public ResponseEntity<Void> activate(@RequestBody String url) {
-        // TODO: Support multiple registry centers
-        Registry registry = infinityProperties.getRegistryConfigs().get(0).getRegistryImpl();
-        registry.activate(Url.valueOf(url));
+        infinityProperties.getRegistryConfigs().forEach(registryConfig -> {
+            registryConfig.getRegistryImpl().activate(Url.valueOf(url));
+        });
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
