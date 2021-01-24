@@ -135,6 +135,46 @@ public class ProviderStub<T> {
     }
 
     /**
+     * Find method associated with name and parameter list
+     *
+     * @param methodName       method name
+     * @param methodParameters method parameter list. e.g, java.util.List,java.lang.Long
+     * @return method
+     */
+    public Method findMethod(String methodName, String methodParameters) {
+        return methodsCache.get(MethodParameterUtils.getMethodSignature(methodName, methodParameters));
+    }
+
+    /**
+     * Register the RPC providers to registries
+     *
+     * @param applicationConfig application configuration
+     * @param protocolConfig    protocol configuration
+     * @param registryConfig    registry configuration
+     * @param providerConfig    provider configuration
+     * @param registries        registries
+     */
+    public void register(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
+                         RegistryConfig registryConfig, ProviderConfig providerConfig, Registry... registries) {
+        // Export provider url
+        Url providerUrl = exportUrl(applicationConfig, protocolConfig, registryConfig, providerConfig);
+
+        // Export RPC provider service
+        Protocol.getInstance(providerUrl.getProtocol()).export(this);
+
+        for (Registry registry : registries) {
+            // Register provider URL to all the registries
+            registry.register(providerUrl);
+            registry.registerApplicationProvider(applicationConfig.getName(), providerUrl);
+            log.debug("Registered RPC provider [{}] to registry [{}]", interfaceName, registry.getRegistryUrl().getProtocol());
+        }
+
+        SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
+        // Set active to true after registering the RPC provider to registry
+        active = true;
+    }
+
+    /**
      * Merge high priority properties to provider stub and export provider url
      *
      * @param applicationConfig application configuration
@@ -143,8 +183,8 @@ public class ProviderStub<T> {
      * @param providerConfig    provider configuration
      * @return provider url
      */
-    public Url exportUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
-                         RegistryConfig registryConfig, ProviderConfig providerConfig) {
+    private Url exportUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
+                          RegistryConfig registryConfig, ProviderConfig providerConfig) {
         if (StringUtils.isEmpty(protocol)) {
             protocol = protocolConfig.getName();
         }
@@ -182,40 +222,6 @@ public class ProviderStub<T> {
     }
 
     /**
-     * Find method associated with name and parameter list
-     *
-     * @param methodName       method name
-     * @param methodParameters method parameter list. e.g, java.util.List,java.lang.Long
-     * @return method
-     */
-    public Method findMethod(String methodName, String methodParameters) {
-        return methodsCache.get(MethodParameterUtils.getMethodSignature(methodName, methodParameters));
-    }
-
-    /**
-     * Register the RPC providers to registries
-     *
-     * @param providerUrl provider url
-     * @param appName     application name
-     * @param registries  registries
-     */
-    public void register(Url providerUrl, String appName, Registry... registries) {
-        // Export RPC provider service
-        Protocol.getInstance(providerUrl.getProtocol()).export(this);
-
-        for (Registry registry : registries) {
-            // Register provider URL to all the registries
-            registry.register(providerUrl);
-            registry.registerApplicationProvider(appName, providerUrl);
-            log.debug("Registered RPC provider [{}] to registry [{}]", interfaceName, registry.getRegistryUrl().getProtocol());
-        }
-
-        SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
-        // Set active to true after registering the RPC provider to registry
-        active = true;
-    }
-
-    /**
      * Unregister the RPC provider from registry
      */
     public void unregister(Url... registryUrls) {
@@ -229,7 +235,6 @@ public class ProviderStub<T> {
         }
         log.debug("Unregistered RPC provider [{}] from registry", interfaceName);
     }
-
 
     /**
      * Invoke method locally and return the result

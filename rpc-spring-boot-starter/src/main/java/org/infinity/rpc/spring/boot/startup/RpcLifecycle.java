@@ -108,10 +108,9 @@ public class RpcLifecycle {
                 return;
             }
             providerStubs.forEach((name, providerStub) -> {
-                Url providerUrl = providerStub.exportUrl(infinityProperties.getApplication(),
-                        infinityProperties.getAvailableProtocol(), registryConfig, infinityProperties.getProvider());
                 // DO the providers registering
-                providerStub.register(providerUrl, infinityProperties.getApplication().getName(), registry);
+                providerStub.register(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(),
+                        registryConfig, infinityProperties.getProvider(), registry);
             });
         });
     }
