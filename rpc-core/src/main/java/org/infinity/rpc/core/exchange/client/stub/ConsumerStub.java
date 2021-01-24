@@ -3,7 +3,11 @@ package org.infinity.rpc.core.exchange.client.stub;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.proxy.ConsumerProxy;
+import org.infinity.rpc.core.config.ConsumerConfig;
+import org.infinity.rpc.core.config.ProtocolConfig;
+import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
 import org.infinity.rpc.core.exchange.cluster.listener.SubscribeProviderListener;
 import org.infinity.rpc.core.url.Url;
@@ -41,13 +45,13 @@ public class ConsumerStub<T> {
      */
     private boolean  generic;
     /**
-     * Registry
-     */
-    private String   registry;
-    /**
      * Protocol
      */
     private String   protocol;
+    /**
+     * Registry
+     */
+    private String   registry;
     /**
      *
      */
@@ -119,6 +123,48 @@ public class ConsumerStub<T> {
     public void init() {
         this.proxyInstance = ConsumerProxy.getProxy(this);
         ConsumerStubHolder.getInstance().addStub(interfaceClass.getName(), this);
+    }
+
+    /**
+     * Merge attributes with high priority properties to consumer stub
+     *
+     * @param protocolConfig protocol configuration
+     * @param registryConfig registry configuration
+     * @param consumerConfig consumer configuration
+     */
+    public void mergeAttributes(ProtocolConfig protocolConfig,
+                                RegistryConfig registryConfig,
+                                ConsumerConfig consumerConfig) {
+        if (StringUtils.isEmpty(protocol)) {
+            protocol = protocolConfig.getName();
+        }
+        if (StringUtils.isEmpty(registry)) {
+            registry = registryConfig.getName();
+        }
+        if (StringUtils.isEmpty(cluster)) {
+            cluster = consumerConfig.getCluster();
+        }
+        if (StringUtils.isEmpty(faultTolerance)) {
+            faultTolerance = consumerConfig.getFaultTolerance();
+        }
+        if (StringUtils.isEmpty(loadBalancer)) {
+            loadBalancer = consumerConfig.getLoadBalancer();
+        }
+        if (StringUtils.isEmpty(group)) {
+            group = consumerConfig.getGroup();
+        }
+        if (StringUtils.isEmpty(version)) {
+            version = consumerConfig.getVersion();
+        }
+        if (checkHealth == null) {
+            consumerConfig.isCheckHealth();
+        }
+        if (StringUtils.isEmpty(checkHealthFactory)) {
+            checkHealthFactory = consumerConfig.getCheckHealthFactory();
+        }
+        if (Integer.MAX_VALUE == requestTimeout) {
+            requestTimeout = consumerConfig.getRequestTimeout();
+        }
     }
 
     /**

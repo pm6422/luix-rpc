@@ -22,9 +22,9 @@ public @interface Provider {
     // Interface class of provider
     Class<?> interfaceClass() default void.class;
 
-    String registry() default "";
-
     String protocol() default "";
+
+    String registry() default "";
 
     String group() default "";
 

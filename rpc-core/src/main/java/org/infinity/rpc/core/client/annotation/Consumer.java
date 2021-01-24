@@ -29,9 +29,9 @@ public @interface Consumer {
     // we can initiate a generic call to service provider without service provider jar dependency
     boolean generic() default false;
 
-    String registry() default "";
-
     String protocol() default "";
+
+    String registry() default "";
 
     String cluster() default "";
 

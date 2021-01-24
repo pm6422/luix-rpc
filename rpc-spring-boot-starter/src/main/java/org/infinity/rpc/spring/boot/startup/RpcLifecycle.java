@@ -13,14 +13,11 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
-import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.apache.commons.lang3.BooleanUtils.toBooleanDefaultIfNull;
-import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.rpc.spring.boot.utils.JarUtils.readJarVersion;
 
 /**
@@ -80,9 +77,8 @@ public class RpcLifecycle {
         }
         log.info("Starting the RPC server");
         registerShutdownHook();
-        registerApplication(infinityProperties);
-        registerProviders(infinityProperties);
-        initConsumers(infinityProperties);
+        publish(infinityProperties);
+        subscribe(infinityProperties);
         log.info("Started the RPC server");
     }
 
@@ -94,32 +90,24 @@ public class RpcLifecycle {
     }
 
     /**
-     * Register application information to registries
+     * Publish RPC providers to registries
      *
-     * @param infinityProperties configuration properties
+     * @param infinityProperties RPC configuration properties
      */
-    private void registerApplication(InfinityProperties infinityProperties) {
+    private void publish(InfinityProperties infinityProperties) {
         Registry registry = infinityProperties.getRegistry().getRegistryImpl();
         ApplicationExtConfig application = getApplicationExtConfig(infinityProperties.getApplication());
         registry.registerApplication(application);
         log.debug("Registered RPC server application [{}] to registry", infinityProperties.getApplication().getName());
-    }
 
-    /**
-     * Register RPC providers to registries
-     *
-     * @param infinityProperties RPC configuration properties
-     */
-    private void registerProviders(InfinityProperties infinityProperties) {
         Map<String, ProviderStub<?>> providerStubs = ProviderStubHolder.getInstance().getStubs();
         if (MapUtils.isEmpty(providerStubs)) {
             log.info("No RPC service providers found to register to registry!");
             return;
         }
         providerStubs.forEach((name, providerStub) -> {
-            Url providerUrl = createProviderUrl(infinityProperties, providerStub);
-            providerStub.setUrl(providerUrl);
-            Registry registry = infinityProperties.getRegistry().getRegistryImpl();
+            Url providerUrl = providerStub.exportUrl(infinityProperties.getApplication(), infinityProperties.getProtocol(),
+                    infinityProperties.getRegistry(), infinityProperties.getProvider());
             // DO the providers registering
             providerStub.register(providerUrl, infinityProperties.getApplication().getName(), registry);
         });
@@ -134,87 +122,21 @@ public class RpcLifecycle {
     }
 
     /**
-     * Create provider url and merge high priority properties to provider stub
+     * Subscribe provider from registries
      *
-     * @param infinityProperties configuration properties
-     * @param providerStub       provider stub instance
-     * @return provider url
+     * @param infinityProperties RPC configuration properties
      */
-    private Url createProviderUrl(InfinityProperties infinityProperties, ProviderStub<?> providerStub) {
-        String protocol = defaultIfEmpty(providerStub.getProtocol(), infinityProperties.getProtocol().getName());
-        int port = infinityProperties.getProtocol().getPort();
-        String group = defaultIfEmpty(providerStub.getGroup(), infinityProperties.getProvider().getGroup());
-        String version = defaultIfEmpty(providerStub.getVersion(), infinityProperties.getProvider().getVersion());
-        Url providerUrl = Url.providerUrl(protocol, port, providerStub.getInterfaceName(), group, version);
-
-        providerUrl.addParameter(Url.PARAM_APP, infinityProperties.getApplication().getName());
-
-        boolean checkHealth = toBooleanDefaultIfNull(providerStub.getCheckHealth(),
-                infinityProperties.getProvider().isCheckHealth());
-        providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, String.valueOf(checkHealth));
-        providerStub.setCheckHealth(checkHealth);
-
-        String checkHealthFactory = defaultIfEmpty(providerStub.getCheckHealthFactory(),
-                infinityProperties.getProvider().getCheckHealthFactory());
-        providerUrl.addParameter(Url.PARAM_CHECK_HEALTH_FACTORY, checkHealthFactory);
-        providerStub.setCheckHealthFactory(checkHealthFactory);
-
-        int requestTimeout = Integer.MAX_VALUE != providerStub.getRequestTimeout() ? providerStub.getRequestTimeout()
-                : infinityProperties.getProvider().getRequestTimeout();
-        providerUrl.addParameter(Url.PARAM_REQUEST_TIMEOUT, String.valueOf(requestTimeout));
-        providerStub.setRequestTimeout(requestTimeout);
-
-        int maxRetries = Integer.MAX_VALUE != providerStub.getMaxRetries() ? providerStub.getMaxRetries()
-                : infinityProperties.getProvider().getMaxRetries();
-        providerUrl.addParameter(Url.PARAM_MAX_RETRIES, String.valueOf(maxRetries));
-        providerStub.setMaxRetries(maxRetries);
-
-        return providerUrl;
-    }
-
-    private void initConsumers(InfinityProperties infinityProperties) {
+    private void subscribe(InfinityProperties infinityProperties) {
         Map<String, ConsumerStub<?>> consumerStubs = ConsumerStubHolder.getInstance().getStubs();
         if (MapUtils.isEmpty(consumerStubs)) {
             log.info("No RPC service consumers found from registry!");
             return;
         }
         consumerStubs.forEach((name, consumerStub) -> {
-            mergeConsumerAttributes(consumerStub, infinityProperties);
+            consumerStub.mergeAttributes(infinityProperties.getProtocol(),
+                    infinityProperties.getRegistry(), infinityProperties.getConsumer());
             consumerStub.subscribeFromRegistries(infinityProperties.getRegistry().getRegistryUrl());
         });
-    }
-
-    private void mergeConsumerAttributes(ConsumerStub<?> stub, InfinityProperties infinityProperties) {
-        if (StringUtils.isEmpty(stub.getRegistry())) {
-            stub.setRegistry(infinityProperties.getRegistry().getName());
-        }
-        if (StringUtils.isEmpty(stub.getProtocol())) {
-            stub.setProtocol(infinityProperties.getProtocol().getName());
-        }
-        if (StringUtils.isEmpty(stub.getCluster())) {
-            stub.setCluster(infinityProperties.getConsumer().getCluster());
-        }
-        if (StringUtils.isEmpty(stub.getFaultTolerance())) {
-            stub.setFaultTolerance(infinityProperties.getConsumer().getFaultTolerance());
-        }
-        if (StringUtils.isEmpty(stub.getLoadBalancer())) {
-            stub.setLoadBalancer(infinityProperties.getConsumer().getLoadBalancer());
-        }
-        if (StringUtils.isEmpty(stub.getGroup())) {
-            stub.setGroup(infinityProperties.getConsumer().getGroup());
-        }
-        if (StringUtils.isEmpty(stub.getVersion())) {
-            stub.setVersion(infinityProperties.getConsumer().getVersion());
-        }
-        if (stub.getCheckHealth() == null) {
-            stub.setCheckHealth(infinityProperties.getConsumer().isCheckHealth());
-        }
-        if (StringUtils.isEmpty(stub.getCheckHealthFactory())) {
-            stub.setCheckHealthFactory(infinityProperties.getConsumer().getCheckHealthFactory());
-        }
-        if (Integer.MAX_VALUE == stub.getRequestTimeout()) {
-            stub.setRequestTimeout(infinityProperties.getConsumer().getRequestTimeout());
-        }
     }
 
     /**

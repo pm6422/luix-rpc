@@ -4,6 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.core.config.ApplicationConfig;
+import org.infinity.rpc.core.config.ProtocolConfig;
+import org.infinity.rpc.core.config.ProviderConfig;
+import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcBizException;
@@ -52,13 +57,13 @@ public class ProviderStub<T> {
     @NotNull(message = "The [interfaceClass] property of @Consumer must NOT be null!")
     private Class<T>            interfaceClass;
     /**
-     * Registry
-     */
-    private String              registry;
-    /**
      * Protocol
      */
     private String              protocol;
+    /**
+     * Registry
+     */
+    private String              registry;
     /**
      * Group
      */
@@ -127,6 +132,53 @@ public class ProviderStub<T> {
             String methodSignature = MethodParameterUtils.getMethodSignature(method);
             methodsCache.putIfAbsent(methodSignature, method);
         });
+    }
+
+    /**
+     * Merge high priority properties to provider stub and export provider url
+     *
+     * @param applicationConfig application configuration
+     * @param protocolConfig    protocol configuration
+     * @param registryConfig    registry configuration
+     * @param providerConfig    provider configuration
+     * @return provider url
+     */
+    public Url exportUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
+                         RegistryConfig registryConfig, ProviderConfig providerConfig) {
+        if (StringUtils.isEmpty(protocol)) {
+            protocol = protocolConfig.getName();
+        }
+        if (StringUtils.isEmpty(group)) {
+            group = providerConfig.getGroup();
+        }
+        if (StringUtils.isEmpty(version)) {
+            version = providerConfig.getVersion();
+        }
+
+        url = Url.providerUrl(protocol, protocolConfig.getPort(), interfaceName, group, version);
+        url.addParameter(Url.PARAM_APP, applicationConfig.getName());
+
+        if (checkHealth == null) {
+            checkHealth = providerConfig.isCheckHealth();
+        }
+        url.addParameter(Url.PARAM_CHECK_HEALTH, String.valueOf(checkHealth));
+
+        if (StringUtils.isEmpty(checkHealthFactory)) {
+            checkHealthFactory = providerConfig.getCheckHealthFactory();
+        }
+        url.addParameter(Url.PARAM_CHECK_HEALTH_FACTORY, checkHealthFactory);
+
+        if (Integer.MAX_VALUE == requestTimeout) {
+            requestTimeout = providerConfig.getRequestTimeout();
+        }
+        url.addParameter(Url.PARAM_REQUEST_TIMEOUT, String.valueOf(requestTimeout));
+
+        if (Integer.MAX_VALUE == maxRetries) {
+            maxRetries = providerConfig.getMaxRetries();
+        }
+        url.addParameter(Url.PARAM_MAX_RETRIES, String.valueOf(maxRetries));
+
+        return url;
     }
 
     /**

@@ -35,14 +35,14 @@ public class ShutdownHook extends Thread {
     }
 
     public static synchronized void add(Cleanable cleanable, int priority) {
-        INSTANCE.RESOURCES.add(new CleanableObject(cleanable, priority));
+        RESOURCES.add(new CleanableObject(cleanable, priority));
         log.info("Added the cleanup method of class [{}] to {}", cleanable.getClass().getSimpleName(), ShutdownHook.class.getSimpleName());
     }
 
     /**
      * Only global resources are allowed to add to it.
      *
-     * @param cleanable
+     * @param cleanable cleanable
      */
     public static void add(Cleanable cleanable) {
         add(cleanable, DEFAULT_PRIORITY);
@@ -94,24 +94,18 @@ public class ShutdownHook extends Thread {
 
     @AllArgsConstructor
     private static class CleanableObject implements Comparable<CleanableObject> {
-        private Cleanable cleanable;
-        private int       priority;
+        private final Cleanable cleanable;
+        private final int       priority;
 
         /**
          * Lower values have higher priority
          *
          * @param o object
-         * @return
+         * @return result
          */
         @Override
         public int compareTo(CleanableObject o) {
-            if (this.priority > o.priority) {
-                return -1;
-            } else if (this.priority == o.priority) {
-                return 0;
-            } else {
-                return 1;
-            }
+            return Integer.compare(o.priority, this.priority);
         }
     }
 }
