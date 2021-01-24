@@ -95,9 +95,9 @@ public class ProviderMessageRouter implements MessageHandler {
         return response;
     }
 
-    protected Responseable call(Requestable request, ProviderStub<?> provider) {
+    protected Responseable call(Requestable request, ProviderStub<?> providerStub) {
         try {
-            return provider.localCall(request);
+            return providerStub.localCall(request);
         } catch (Exception e) {
             return RpcFrameworkUtils.buildErrorResponse(request, new RpcBizException("provider call process error", e));
         }
@@ -124,34 +124,34 @@ public class ProviderMessageRouter implements MessageHandler {
         }
     }
 
-    public synchronized void addProvider(ProviderStub<?> provider) {
-        String serviceKey = RpcFrameworkUtils.getServiceKey(provider.getUrl());
+    public synchronized void addProvider(ProviderStub<?> providerStub) {
+        String serviceKey = RpcFrameworkUtils.getServiceKey(providerStub.getUrl());
         if (providers.containsKey(serviceKey)) {
             throw new RpcFrameworkException("Provider already exists with the key [" + serviceKey + "]");
         }
 
-        providers.put(serviceKey, provider);
+        providers.put(serviceKey, providerStub);
 
         // 获取该service暴露的方法数：
-        List<Method> methods = MethodParameterUtils.getPublicMethod(provider.getInterfaceClass());
+        List<Method> methods = MethodParameterUtils.getPublicMethod(providerStub.getInterfaceClass());
         //todo
 //        CompressRpcCodec.putMethodSign(provider, methods);// 对所有接口方法生成方法签名。适配方法签名压缩调用方式。
 
         int publicMethodCount = methods.size();
         methodCounter.addAndGet(publicMethodCount);
 
-        log.info("RequestRouter addProvider: url=" + provider.getUrl() + " all_public_method_count=" + methodCounter.get());
+        log.info("RequestRouter addProvider: url=" + providerStub.getUrl() + " all_public_method_count=" + methodCounter.get());
     }
 
-    public synchronized void removeProvider(ProviderStub<?> provider) {
-        String serviceKey = RpcFrameworkUtils.getServiceKey(provider.getUrl());
+    public synchronized void removeProvider(ProviderStub<?> providerStub) {
+        String serviceKey = RpcFrameworkUtils.getServiceKey(providerStub.getUrl());
 
         providers.remove(serviceKey);
-        List<Method> methods = MethodParameterUtils.getPublicMethod(provider.getInterfaceClass());
+        List<Method> methods = MethodParameterUtils.getPublicMethod(providerStub.getInterfaceClass());
         int publicMethodCount = methods.size();
         methodCounter.getAndSet(methodCounter.get() - publicMethodCount);
 
-        log.info("RequestRouter removeProvider: url=" + provider.getUrl() + " all_public_method_count=" + methodCounter.get());
+        log.info("RequestRouter removeProvider: url=" + providerStub.getUrl() + " all_public_method_count=" + methodCounter.get());
     }
 
     public int getPublicMethodCount() {
