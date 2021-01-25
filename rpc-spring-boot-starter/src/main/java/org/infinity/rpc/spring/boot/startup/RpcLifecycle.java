@@ -10,6 +10,7 @@ import org.infinity.rpc.core.exchange.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStubHolder;
 import org.infinity.rpc.core.registry.Registry;
+import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
@@ -97,10 +98,10 @@ public class RpcLifecycle {
     private void publish(InfinityProperties infinityProperties) {
         infinityProperties.getRegistryConfigs().forEach(registryConfig -> {
             Registry registry = registryConfig.getRegistryImpl();
-            ApplicationExtConfig application = getApplicationExtConfig(infinityProperties.getApplication());
-            registry.registerApplication(application);
-            log.debug("Registered RPC server application [{}] to registry [{}]",
-                    infinityProperties.getApplication().getName(), registryConfig.getName());
+//            ApplicationExtConfig application = getApplicationExtConfig(infinityProperties.getApplication());
+//            registry.registerApplication(application);
+//            log.debug("Registered RPC server application [{}] to registry [{}]",
+//                    infinityProperties.getApplication().getName(), registryConfig.getName());
 
             Map<String, ProviderStub<?>> providerStubs = ProviderStubHolder.getInstance().getStubs();
             if (MapUtils.isEmpty(providerStubs)) {
@@ -108,10 +109,11 @@ public class RpcLifecycle {
                 return;
             }
             providerStubs.forEach((name, providerStub) -> {
-                // DO the providers registering
+                // Register providers
                 providerStub.register(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(),
                         registryConfig, infinityProperties.getProvider(), registry);
             });
+            SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
         });
     }
 

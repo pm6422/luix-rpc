@@ -165,11 +165,10 @@ public class ProviderStub<T> {
         for (Registry registry : registries) {
             // Register provider URL to all the registries
             registry.register(providerUrl);
-            registry.registerApplicationProvider(applicationConfig.getName(), providerUrl);
+//            registry.registerApplicationProvider(applicationConfig.getName(), providerUrl);
             log.debug("Registered RPC provider [{}] to registry [{}]", interfaceName, registry.getRegistryUrl().getProtocol());
         }
 
-        SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
         // Set active to true after registering the RPC provider to registry
         active = true;
     }
