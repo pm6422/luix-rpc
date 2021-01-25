@@ -232,8 +232,8 @@ public class ProviderStub<T> {
                 return;
             }
             registry.getRegisteredProviderUrls().forEach(registry::unregister);
+            log.debug("Unregistered RPC provider [{}] from registry [{}]", interfaceName, registryUrl.getProtocol());
         }
-        log.debug("Unregistered RPC provider [{}] from registry", interfaceName);
     }
 
     /**
