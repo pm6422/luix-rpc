@@ -10,6 +10,7 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.demoserver.dto.ProviderDTO;
 import org.infinity.rpc.demoserver.dto.RegistryDTO;
 import org.infinity.rpc.demoserver.service.RegistryService;
+import org.infinity.rpc.registry.zookeeper.ZookeeperStatusNode;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,8 +72,8 @@ public class ServiceDiscoveryController {
         List<ProviderDTO> providers = new ArrayList<>();
         if (MapUtils.isNotEmpty(nodeMap)) {
             for (Map.Entry<String, Map<String, List<AddressInfo>>> entry : nodeMap.entrySet()) {
-                List<AddressInfo> activeProviders = entry.getValue().get("active");
-                List<AddressInfo> inactiveProviders = entry.getValue().get("inactive");
+                List<AddressInfo> activeProviders = entry.getValue().get(ZookeeperStatusNode.ACTIVE.getValue());
+                List<AddressInfo> inactiveProviders = entry.getValue().get(ZookeeperStatusNode.INACTIVE.getValue());
                 providers.add(ProviderDTO.of(entry.getKey(), activeProviders, inactiveProviders));
             }
         }
