@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.zookeeper.Watcher;
 import org.infinity.rpc.core.config.ApplicationExtConfig;
+import org.infinity.rpc.core.registry.AddressInfo;
 import org.infinity.rpc.core.registry.CommandFailbackAbstractRegistry;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
@@ -183,7 +184,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Override
     public void registerApplication(ApplicationExtConfig application) {
         // Create data under 'application' node
-        String appNodePath = ZookeeperUtils.getApplicationPath(application.getName());
+        String appNodePath = ZookeeperUtils.getAppPath(application.getName());
         if (!zkClient.exists(appNodePath)) {
             // Create a persistent directory
             zkClient.createPersistent(appNodePath, true);
@@ -191,8 +192,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String jsonStr = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(application);
-            zkClient.delete(ZookeeperUtils.getApplicationInfoPath(application.getName()));
-            zkClient.createEphemeral(ZookeeperUtils.getApplicationInfoPath(application.getName()), jsonStr);
+            zkClient.delete(ZookeeperUtils.getAppInfoFilePath(application.getName()));
+            zkClient.createEphemeral(ZookeeperUtils.getAppInfoFilePath(application.getName()), jsonStr);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(MessageFormat.format("Failed to register application [{0}] to zookeeper [{1}] with the error: {2}",
                     application.getName(), getRegistryUrl(), e.getMessage()), e);
@@ -209,7 +210,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Override
     public void registerApplicationProvider(String appName, Url providerUrl) {
         // Create data under 'application-providers/app-name' node
-        String appNodePath = ZookeeperUtils.getApplicationProviderPath(appName);
+        String appNodePath = ZookeeperUtils.getAppProviderPath(appName);
         if (!zkClient.exists(appNodePath)) {
             // Create a persistent directory
             zkClient.createPersistent(appNodePath, true);
@@ -221,6 +222,21 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         // Append multiple provider url to file contents
         zkClient.delete(filePath);
         zkClient.createEphemeral(filePath, providerUrl.toFullStr());
+    }
+
+    @Override
+    public List<String> getAllProviderGroups() {
+        return ZookeeperUtils.getAllProviderGroups(zkClient);
+    }
+
+    @Override
+    public List<ApplicationExtConfig> getAllApps() {
+        return ZookeeperUtils.getAllAppInfo(zkClient);
+    }
+
+    @Override
+    public Map<String, Map<String, List<AddressInfo>>> readAllProviders(String group) {
+        return ZookeeperUtils.getAllNodes(zkClient, group);
     }
 
     /**
@@ -238,7 +254,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             // Create data under 'inactive' node
             createNode(providerUrl, ZookeeperStatusNode.INACTIVE);
         } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to register [{0}] to zookeeper [{1}] with the error: {2}", providerUrl, getRegistryUrl(), e.getMessage()), e);
+            String errorMsg = MessageFormat.format("Failed to register [{0}] to zookeeper [{1}] with the error: {2}",
+                    providerUrl, getRegistryUrl(), e.getMessage());
+            throw new RuntimeException(errorMsg, e);
         } finally {
             providerLock.unlock();
         }
@@ -374,7 +392,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     protected List<Url> discoverActiveProviders(Url clientUrl) {
         try {
             String parentPath = ZookeeperUtils.getStatusNodePath(clientUrl, ZookeeperStatusNode.ACTIVE);
-            List<String> addrFiles = ZookeeperUtils.getChildren(zkClient, parentPath);
+            List<String> addrFiles = ZookeeperUtils.getChildNodeNames(zkClient, parentPath);
             return readProviderUrls(parentPath, addrFiles);
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to discover provider [{0}] from registry [{1}] with the error: {2}", clientUrl, getRegistryUrl(), e.getMessage()), e);
@@ -417,13 +435,13 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     public List<String> discoverActiveProviderAddress(String providerPath) {
         List<String> addrFiles = new ArrayList<>();
         try {
-            List<String> groups = ZookeeperUtils.getGroups(zkClient);
+            List<String> groups = ZookeeperUtils.getAllProviderGroups(zkClient);
             if (CollectionUtils.isEmpty(groups)) {
                 return addrFiles;
             }
             for (String group : groups) {
                 String parentPath = ZookeeperUtils.getStatusNodePath(group, providerPath, ZookeeperStatusNode.ACTIVE);
-                addrFiles.addAll(CollectionUtils.emptyIfNull(ZookeeperUtils.getChildren(zkClient, parentPath)));
+                addrFiles.addAll(CollectionUtils.emptyIfNull(ZookeeperUtils.getChildNodeNames(zkClient, parentPath)));
             }
             return addrFiles;
         } catch (Throwable e) {

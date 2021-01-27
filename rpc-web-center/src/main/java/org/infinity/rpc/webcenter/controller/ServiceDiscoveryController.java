@@ -7,11 +7,11 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.config.ApplicationExtConfig;
+import org.infinity.rpc.core.registry.AddressInfo;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.domain.Authority;
-import org.infinity.rpc.webcenter.entity.Provider;
+import org.infinity.rpc.webcenter.entity.ProviderInfo;
 import org.infinity.rpc.webcenter.service.RegistryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,14 +49,14 @@ public class ServiceDiscoveryController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
     @GetMapping("api/service-discovery/providers")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<List<Provider>> findProviders() {
-        List<Provider> providers = new ArrayList<>();
+    public ResponseEntity<List<ProviderInfo>> findProviders() {
+        List<ProviderInfo> providers = new ArrayList<>();
         Map<String, Map<String, List<AddressInfo>>> nodeMap = registryServices.get(0).getAllNodes("provider");
         if (MapUtils.isNotEmpty(nodeMap)) {
             for (Map.Entry<String, Map<String, List<AddressInfo>>> entry : nodeMap.entrySet()) {
                 List<AddressInfo> activeProviders = entry.getValue().get("active");
                 List<AddressInfo> inactiveProviders = entry.getValue().get("inactive");
-                providers.add(Provider.of(entry.getKey(), activeProviders, inactiveProviders));
+                providers.add(ProviderInfo.of(entry.getKey(), activeProviders, inactiveProviders));
             }
         }
         return ResponseEntity.ok().body(providers);

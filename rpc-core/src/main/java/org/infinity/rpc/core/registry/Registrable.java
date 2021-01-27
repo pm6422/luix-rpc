@@ -3,6 +3,8 @@ package org.infinity.rpc.core.registry;
 import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.url.Url;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -58,4 +60,16 @@ public interface Registrable {
      * @param providerUrl provider url
      */
     void registerApplicationProvider(String appName, Url providerUrl);
+    /**
+     *
+     */
+    List<String> getAllProviderGroups();
+    /**
+     *
+     */
+    List<ApplicationExtConfig> getAllApps();
+    /**
+     *
+     */
+    Map<String, Map<String, List<AddressInfo>>> readAllProviders(String group);
 }

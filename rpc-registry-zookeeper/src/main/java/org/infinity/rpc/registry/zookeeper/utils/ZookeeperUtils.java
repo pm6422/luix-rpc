@@ -1,6 +1,12 @@
 package org.infinity.rpc.registry.zookeeper.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
+import org.apache.commons.collections4.CollectionUtils;
+import org.infinity.rpc.core.config.ApplicationExtConfig;
+import org.infinity.rpc.core.registry.AddressInfo;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.ZookeeperStatusNode;
 
@@ -11,10 +17,88 @@ import java.util.Map;
 
 import static org.infinity.rpc.core.url.Url.PATH_SEPARATOR;
 
+@Slf4j
 public class ZookeeperUtils {
 
-    public static final String ZOOKEEPER_REGISTRY_NAMESPACE = "/infinity";
-    public static final String ZOOKEEPER_REGISTRY_COMMAND   = "/command";
+    public static final String REGISTRY_NAMESPACE = "/infinity";
+    public static final String REGISTRY_COMMAND   = "/command";
+    public static final String APP_DIR            = "/app";
+    public static final String APP_FILE_NAME      = "info";
+    public static final String APP_PATH           = REGISTRY_NAMESPACE + APP_DIR;
+    public static final String APP_PROVIDER_DIR   = "/app-provider";
+    public static final String PROVIDER_DIR       = "/provider";
+    public static final String PROVIDER_PATH      = REGISTRY_NAMESPACE + PROVIDER_DIR;
+
+    /**
+     * Get all app names
+     *
+     * @param zkClient zk client
+     * @return app names
+     */
+    public static List<String> getAllAppNames(ZkClient zkClient) {
+        return getChildNodeNames(zkClient, APP_PATH);
+    }
+
+    /**
+     * Get app info file path
+     *
+     * @param appName application name
+     * @return app info file path
+     */
+    public static String getAppInfoFilePath(String appName) {
+        return getAppPath(appName) + PATH_SEPARATOR + APP_FILE_NAME;
+    }
+
+    /**
+     * Get the full path of specified application node
+     *
+     * @param appName application name
+     * @return specified application node full path
+     */
+    public static String getAppPath(String appName) {
+        return APP_PATH + PATH_SEPARATOR + appName;
+    }
+
+    /**
+     * Read all app info from file
+     *
+     * @param zkClient zk client
+     * @return app info
+     */
+    public static List<ApplicationExtConfig> getAllAppInfo(ZkClient zkClient) {
+        List<ApplicationExtConfig> apps = new ArrayList<>();
+        List<String> appNames = getAllAppNames(zkClient);
+        if (CollectionUtils.isEmpty(appNames)) {
+            return apps;
+        }
+        try {
+            for (String appName : appNames) {
+                String appInfoPath = getAppInfoFilePath(appName);
+                String info = zkClient.readData(appInfoPath, true);
+                ApplicationExtConfig app = new ApplicationExtConfig();
+                if (info != null) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    app = objectMapper.readValue(info, ApplicationExtConfig.class);
+                } else {
+                    app.setName(appName);
+                }
+                apps.add(app);
+            }
+        } catch (JsonProcessingException e) {
+            log.error("Failed to read application info from zookeeper!", e);
+        }
+        return apps;
+    }
+
+    /**
+     * Get all the provider groups
+     *
+     * @param zkClient zk client
+     * @return provider groups
+     */
+    public static List<String> getAllProviderGroups(ZkClient zkClient) {
+        return getChildNodeNames(zkClient, PROVIDER_PATH);
+    }
 
     /**
      * Get the provider address full path of specified node
@@ -91,7 +175,7 @@ public class ZookeeperUtils {
      * @return command full path
      */
     public static String getCommandPath(Url url) {
-        return getGroupPath(url) + ZOOKEEPER_REGISTRY_COMMAND;
+        return getGroupPath(url) + REGISTRY_COMMAND;
     }
 
     /**
@@ -111,16 +195,16 @@ public class ZookeeperUtils {
      * @return group node full path
      */
     public static String getGroupPath(String group) {
-        return ZOOKEEPER_REGISTRY_NAMESPACE + PATH_SEPARATOR + group;
+        return PROVIDER_PATH + PATH_SEPARATOR + group;
     }
 
     /**
-     * Get all child nodes under the path
+     * Get all child directory or file names under the parent path
      *
      * @param path zookeeper directory path
-     * @return child nodes
+     * @return child node names
      */
-    public static List<String> getChildren(ZkClient zkClient, String path) {
+    public static List<String> getChildNodeNames(ZkClient zkClient, String path) {
         List<String> children = new ArrayList<>();
         if (zkClient.exists(path)) {
             children = zkClient.getChildren(path);
@@ -128,14 +212,8 @@ public class ZookeeperUtils {
         return children;
     }
 
-    public static List<String> getGroups(ZkClient zkClient) {
-        return getChildren(zkClient, ZOOKEEPER_REGISTRY_NAMESPACE);
-    }
-
-    @Deprecated
     public static List<String> getProvidersByGroup(ZkClient zkClient, String group) {
-        List<String> providers = getChildren(zkClient, getGroupPath(group));
-        return providers;
+        return getChildNodeNames(zkClient, getGroupPath(group));
     }
 
     public static List<AddressInfo> getNodes(ZkClient zkClient, String group, String providerPath, String statusNode) {
@@ -144,7 +222,7 @@ public class ZookeeperUtils {
 
     public static List<AddressInfo> getNodes(ZkClient zkClient, String group, String providerPath, ZookeeperStatusNode statusNode) {
         List<AddressInfo> result = new ArrayList<>();
-        List<String> nodes = getChildren(zkClient, getStatusNodePath(group, providerPath, statusNode));
+        List<String> nodes = getChildNodeNames(zkClient, getStatusNodePath(group, providerPath, statusNode));
         for (String nodeName : nodes) {
             AddressInfo addressInfo = new AddressInfo();
             String info = zkClient.readData(getAddressPath(group, providerPath, statusNode, nodeName), true);
@@ -156,10 +234,10 @@ public class ZookeeperUtils {
     }
 
     public static Map<String, Map<String, List<AddressInfo>>> getAllNodes(ZkClient zkClient, String group) {
-        Map<String, Map<String, List<AddressInfo>>> results = new HashMap<>();
         List<String> services = getProvidersByGroup(zkClient, group);
+        Map<String, Map<String, List<AddressInfo>>> results = new HashMap<>(services.size());
         for (String serviceName : services) {
-            Map<String, List<AddressInfo>> service = new HashMap();
+            Map<String, List<AddressInfo>> service = new HashMap<>();
             List<AddressInfo> availableServer = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.ACTIVE);
             service.put(ZookeeperStatusNode.ACTIVE.getValue(), availableServer);
             List<AddressInfo> unavailableServer = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.INACTIVE);
@@ -172,19 +250,6 @@ public class ZookeeperUtils {
         return results;
     }
 
-    /**
-     * Get the full path of specified application node
-     *
-     * @param appName application name
-     * @return specified application node full path
-     */
-    public static String getApplicationPath(String appName) {
-        return getGroupPath(Url.PARAM_GROUP_APPLICATION) + PATH_SEPARATOR + appName;
-    }
-
-    public static String getApplicationInfoPath(String appName) {
-        return getApplicationPath(appName) + PATH_SEPARATOR + "info";
-    }
 
     /**
      * Get the full path of specified application provider
@@ -192,15 +257,7 @@ public class ZookeeperUtils {
      * @param appName application name
      * @return specified application provider node full path
      */
-    public static String getApplicationProviderPath(String appName) {
-        return getGroupPath(Url.PARAM_GROUP_APPLICATION_PROVIDER) + PATH_SEPARATOR + appName;
-    }
-
-    public static String getApplicationPath() {
-        return getGroupPath(Url.PARAM_GROUP_APPLICATION);
-    }
-
-    public static List<String> getAllApplications(ZkClient zkClient) {
-        return getChildren(zkClient, getGroupPath(Url.PARAM_GROUP_APPLICATION));
+    public static String getAppProviderPath(String appName) {
+        return REGISTRY_NAMESPACE + APP_PROVIDER_DIR + PATH_SEPARATOR + appName;
     }
 }

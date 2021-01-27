@@ -10,6 +10,13 @@ import java.util.List;
  */
 public interface Registry extends Registrable, Subscribable {
     /**
+     * Get registry type
+     *
+     * @return registry type
+     */
+    String getType();
+
+    /**
      * Get registry subclass name
      *
      * @return registry subclass name

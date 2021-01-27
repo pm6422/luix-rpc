@@ -68,12 +68,12 @@ public class ZookeeperRegistryTests {
         registry = new ZookeeperRegistry(registryUrl, zkClient);
 
         // Delete old data
-        zkClient.deleteRecursive(ZookeeperUtils.ZOOKEEPER_REGISTRY_NAMESPACE);
+        zkClient.deleteRecursive(ZookeeperUtils.REGISTRY_NAMESPACE);
     }
 
     @After
     public void tearDown() {
-        zkClient.deleteRecursive(ZookeeperUtils.ZOOKEEPER_REGISTRY_NAMESPACE);
+        zkClient.deleteRecursive(ZookeeperUtils.REGISTRY_NAMESPACE);
     }
 
     @Test

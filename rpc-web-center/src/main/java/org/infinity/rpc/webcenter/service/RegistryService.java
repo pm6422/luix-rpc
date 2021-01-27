@@ -1,7 +1,7 @@
 package org.infinity.rpc.webcenter.service;
 
 import org.infinity.rpc.core.config.ApplicationExtConfig;
-import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
+import org.infinity.rpc.core.registry.AddressInfo;
 
 import java.util.List;
 import java.util.Map;

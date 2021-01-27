@@ -69,6 +69,11 @@ public abstract class AbstractRegistry implements Registry {
         registerSwitcherListener();
     }
 
+    @Override
+    public String getType() {
+        return registryUrl.getProtocol();
+    }
+
     /**
      * Register a heartbeat switcher to perceive provider state change
      */

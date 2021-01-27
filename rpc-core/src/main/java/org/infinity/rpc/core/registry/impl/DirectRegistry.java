@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.registry.AbstractRegistry;
+import org.infinity.rpc.core.registry.AddressInfo;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.url.Url;
@@ -111,6 +112,22 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
     @Override
     public void registerApplicationProvider(String appName, Url providerUrl) {
         // Do nothing
+    }
+
+    @Override
+    public List<String> getAllProviderGroups() {
+        return null;
+    }
+
+    @Override
+    public List<ApplicationExtConfig> getAllApps() {
+        return null;
+    }
+
+    @Override
+    public Map<String, Map<String, List<AddressInfo>>> readAllProviders(String group) {
+        // Do nothing
+        return null;
     }
 
     @Override

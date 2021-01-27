@@ -2,21 +2,21 @@ package org.infinity.rpc.webcenter.entity;
 
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
+import org.infinity.rpc.core.registry.AddressInfo;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.registry.zookeeper.utils.AddressInfo;
 
 import java.util.List;
 
 @Data
-public class Provider {
+public class ProviderInfo {
     private String            name;
     private String            app;
     private String            activatedTime;
     private List<AddressInfo> activeProviders;
     private List<AddressInfo> inactiveProviders;
 
-    public static Provider of(String name, List<AddressInfo> activeProviders, List<AddressInfo> inactiveProviders) {
-        Provider provider = new Provider();
+    public static ProviderInfo of(String name, List<AddressInfo> activeProviders, List<AddressInfo> inactiveProviders) {
+        ProviderInfo provider = new ProviderInfo();
         provider.setName(name);
         provider.setActiveProviders(activeProviders);
         provider.setInactiveProviders(inactiveProviders);

@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
-import org.infinity.rpc.core.registry.Registrable;
+import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.utilities.network.NetworkUtils;
 
 import java.io.Serializable;
@@ -15,8 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.GROUP_DEFAULT_VALUE;
-import static org.infinity.rpc.core.constant.ServiceConstants.VERSION_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
  * Url used to represent a provider or client or registry
@@ -79,6 +78,7 @@ public final class Url implements Serializable {
      */
     public static final String  PARAM_TYPE                                = "type";
     public static final String  PARAM_TYPE_DEFAULT_VALUE                  = "service";
+    public static final String  PARAM_TYPE_REGISTRY                       = "registry";
     /**
      *
      */
@@ -231,7 +231,9 @@ public final class Url implements Serializable {
     }
 
     public static Url providerUrl(String protocol, Integer port, String path, String group, String version) {
-        return of(protocol, NetworkUtils.INTRANET_IP, port, path, group, version, new HashMap<>());
+        Url url = of(protocol, NetworkUtils.INTRANET_IP, port, path, group, version, new HashMap<>());
+        url.addParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_DEFAULT_VALUE);
+        return url;
     }
 
     public static Url clientUrl(String protocol, String path) {
@@ -247,8 +249,9 @@ public final class Url implements Serializable {
      * @return registry url
      */
     public static Url registryUrl(String protocol, String host, Integer port) {
-        // todo: check group and version
-        return of(protocol, host, port, Registrable.class.getName(), GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, new HashMap<>());
+        Url url = of(protocol, host, port, Registry.class.getName(), GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, new HashMap<>());
+        url.addParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_REGISTRY);
+        return url;
     }
 
 
@@ -350,13 +353,19 @@ public final class Url implements Serializable {
     }
 
     /**
-     * 返回一个service or referer的identity,如果两个url的identity相同，则表示相同的一个service或者referer
+     * 返回identity string,如果两个url的identity相同，则表示相同的一个service或者consumer
      *
      * @return identity
      */
     public String getIdentity() {
-        return protocol + PROTOCOL_SEPARATOR + host + ":" + port +
-                "/" + getParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_DEFAULT_VALUE);
+        if (PARAM_TYPE_REGISTRY.equals(getParameter(PARAM_TYPE))) {
+            return protocol + PROTOCOL_SEPARATOR + host + ":" + port;
+        }
+        return protocol + PROTOCOL_SEPARATOR + host + ":" + port
+                + "/" + getParameter(GROUP, GROUP_DEFAULT_VALUE)
+                + "/" + getPath()
+                + "/" + getParameter(VERSION, VERSION_DEFAULT_VALUE)
+                + "/" + getParameter(PARAM_TYPE, PARAM_TYPE_DEFAULT_VALUE);
     }
 
     public String getServerPortStr() {

@@ -1,4 +1,4 @@
-package org.infinity.rpc.registry.zookeeper.utils;
+package org.infinity.rpc.core.registry;
 
 import lombok.Data;
 
