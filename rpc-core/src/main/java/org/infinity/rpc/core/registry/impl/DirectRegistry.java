@@ -63,7 +63,14 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
 
     @Override
     protected List<Url> discoverActiveProviders(Url clientUrl) {
-        return null;
+        List result = new ArrayList(directUrls.size());
+        for (Url directUrl : directUrls) {
+            Url tmp = clientUrl.copy();
+            tmp.setHost(directUrl.getHost());
+            tmp.setPort(directUrl.getPort());
+            result.add(tmp);
+        }
+        return result;
     }
 
     @Override
@@ -100,8 +107,7 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
 
     @Override
     public List<String> discoverActiveProviderAddress(String providerPath) {
-        // TODO
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -116,18 +122,17 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
 
     @Override
     public List<String> getAllProviderGroups() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public List<ApplicationExtConfig> getAllApps() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Map<String, Map<String, List<AddressInfo>>> getAllProviders(String group) {
-        // Do nothing
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
