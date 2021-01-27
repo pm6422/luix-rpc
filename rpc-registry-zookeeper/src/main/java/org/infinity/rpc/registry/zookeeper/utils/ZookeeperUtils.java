@@ -80,6 +80,7 @@ public class ZookeeperUtils {
                     ObjectMapper objectMapper = new ObjectMapper();
                     app = objectMapper.readValue(info, ApplicationExtConfig.class);
                 } else {
+                    // application is inactive
                     app.setName(appName);
                 }
                 apps.add(app);
@@ -168,7 +169,8 @@ public class ZookeeperUtils {
         List<String> providerAddressNames = getChildNodeNames(zkClient, getProviderStatusNodePath(group, providerPath, statusNode));
         for (String providerAddressName : providerAddressNames) {
             AddressInfo addressInfo = new AddressInfo();
-            String info = zkClient.readData(getProviderAddressFilePath(group, providerPath, statusNode, providerAddressName), true);
+            String providerAddressFilePath = getProviderAddressFilePath(group, providerPath, statusNode, providerAddressName);
+            String info = zkClient.readData(providerAddressFilePath, true);
             addressInfo.setAddress(providerAddressName);
             addressInfo.setContents(info);
             result.add(addressInfo);

@@ -132,7 +132,8 @@ public class RpcLifecycle {
         ApplicationExtConfig application = new ApplicationExtConfig(applicationConfig);
         application.setInfinityRpcVersion(readJarVersion());
         // Override the old data every time
-        application.setLatestRegisteredTime(DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+        application.setStartTime(DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+        application.setActive(true);
         return application;
     }
 

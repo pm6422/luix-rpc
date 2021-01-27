@@ -18,9 +18,13 @@ public class ApplicationExtConfig extends ApplicationConfig {
     /**
      * Infinity RPC jar version
      */
-    private String infinityRpcVersion;
+    private String  infinityRpcVersion;
     /**
-     * Latest registered time
+     * Application start time
      */
-    private String latestRegisteredTime;
+    private String  startTime;
+    /**
+     *
+     */
+    private boolean active = false;
 }

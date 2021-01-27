@@ -16,19 +16,19 @@ public class ProviderDTO {
     private List<AddressInfo> inactiveProviders;
 
     public static ProviderDTO of(String name, List<AddressInfo> activeProviders, List<AddressInfo> inactiveProviders) {
-        ProviderDTO provider = new ProviderDTO();
-        provider.setName(name);
-        provider.setActiveProviders(activeProviders);
-        provider.setInactiveProviders(inactiveProviders);
+        ProviderDTO dto = new ProviderDTO();
+        dto.setName(name);
+        dto.setActiveProviders(activeProviders);
+        dto.setInactiveProviders(inactiveProviders);
         // Set app
         if (CollectionUtils.isNotEmpty(activeProviders)) {
             Url url = Url.valueOf(activeProviders.get(0).getContents());
-            provider.setApp(url.getParameter(Url.PARAM_APP));
+            dto.setApp(url.getParameter(Url.PARAM_APP));
         }
         if (CollectionUtils.isNotEmpty(inactiveProviders)) {
             Url url = Url.valueOf(inactiveProviders.get(0).getContents());
-            provider.setApp(url.getParameter(Url.PARAM_APP));
+            dto.setApp(url.getParameter(Url.PARAM_APP));
         }
-        return provider;
+        return dto;
     }
 }
