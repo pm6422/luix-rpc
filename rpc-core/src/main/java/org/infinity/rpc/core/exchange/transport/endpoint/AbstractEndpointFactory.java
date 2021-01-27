@@ -79,7 +79,8 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
                 // can't share service channel
                 if (!RpcFrameworkUtils.checkIfCanShareServiceChannel(server.getProviderUrl(), providerUrl)) {
                     throw new RpcFrameworkException(
-                            "Service export Error: share channel but some config param is different, protocol or codec or serialize or maxContentLength or maxServerConnection or maxWorkerThread or heartbeatFactory, source="
+                            "Service export Error: share channel but some config param is different, " +
+                                    "protocol or codec or serialize or maxContentLength or maxServerConnection or maxWorkerThread or heartbeatFactory, source="
                                     + server.getProviderUrl() + " target=" + providerUrl, RpcErrorMsgConstant.FRAMEWORK_EXPORT_ERROR);
                 }
 
