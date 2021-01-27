@@ -82,9 +82,9 @@ public class ZookeeperRegistryTests {
         List<String> activateAddrFiles;
         List<String> deactivateAddrFiles;
 
-        String inactivePath = ZookeeperUtils.getStatusNodePath(providerUrl1, ZookeeperStatusNode.INACTIVE);
+        String inactivePath = ZookeeperUtils.getProviderStatusNodePath(providerUrl1, ZookeeperStatusNode.INACTIVE);
         log.debug("inactivePath: {}", inactivePath);
-        String activePath = ZookeeperUtils.getStatusNodePath(providerUrl1, ZookeeperStatusNode.ACTIVE);
+        String activePath = ZookeeperUtils.getProviderStatusNodePath(providerUrl1, ZookeeperStatusNode.ACTIVE);
         log.debug("activePath: {}", activePath);
 
         registry.doRegister(providerUrl1);
@@ -237,9 +237,9 @@ public class ZookeeperRegistryTests {
         List<String> activateAddrFiles;
         List<String> deactivateAddrFiles;
 
-        String inactivePath = ZookeeperUtils.getStatusNodePath(providerUrl1, ZookeeperStatusNode.INACTIVE);
+        String inactivePath = ZookeeperUtils.getProviderStatusNodePath(providerUrl1, ZookeeperStatusNode.INACTIVE);
         log.debug("inactivePath: {}", inactivePath);
-        String activePath = ZookeeperUtils.getStatusNodePath(providerUrl1, ZookeeperStatusNode.ACTIVE);
+        String activePath = ZookeeperUtils.getProviderStatusNodePath(providerUrl1, ZookeeperStatusNode.ACTIVE);
         log.debug("activePath: {}", activePath);
 
         registry.register(providerUrl1);

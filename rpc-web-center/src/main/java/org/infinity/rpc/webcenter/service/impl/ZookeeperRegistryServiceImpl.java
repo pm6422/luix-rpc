@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.registry.AddressInfo;
+import org.infinity.rpc.registry.zookeeper.ZookeeperStatusNode;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.webcenter.service.RegistryService;
 
@@ -34,7 +35,7 @@ public class ZookeeperRegistryServiceImpl implements RegistryService {
     @Deprecated
     @Override
     public List<AddressInfo> getNodes(String group, String provider, String statusNode) {
-        return ZookeeperUtils.getNodes(zkClient, group, provider, statusNode);
+        return ZookeeperUtils.getProviderAddresses(zkClient, group, provider, ZookeeperStatusNode.fromValue(statusNode));
     }
 
     @Deprecated
