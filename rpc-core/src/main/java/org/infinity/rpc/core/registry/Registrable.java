@@ -71,5 +71,5 @@ public interface Registrable {
     /**
      *
      */
-    Map<String, Map<String, List<AddressInfo>>> readAllProviders(String group);
+    Map<String, Map<String, List<AddressInfo>>> getAllProviders(String group);
 }

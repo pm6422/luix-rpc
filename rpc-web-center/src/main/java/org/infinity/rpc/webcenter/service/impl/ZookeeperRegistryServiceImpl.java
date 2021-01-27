@@ -40,7 +40,7 @@ public class ZookeeperRegistryServiceImpl implements RegistryService {
     @Deprecated
     @Override
     public Map<String, Map<String, List<AddressInfo>>> getAllNodes(String group) {
-        return ZookeeperUtils.getAllNodes(zkClient, group);
+        return ZookeeperUtils.getAllProviders(zkClient, group);
     }
 
     @Deprecated

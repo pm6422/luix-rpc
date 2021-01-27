@@ -235,8 +235,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     @Override
-    public Map<String, Map<String, List<AddressInfo>>> readAllProviders(String group) {
-        return ZookeeperUtils.getAllNodes(zkClient, group);
+    public Map<String, Map<String, List<AddressInfo>>> getAllProviders(String group) {
+        return ZookeeperUtils.getAllProviders(zkClient, group);
     }
 
     /**

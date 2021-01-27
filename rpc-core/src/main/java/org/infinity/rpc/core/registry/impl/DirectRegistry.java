@@ -125,7 +125,7 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
     }
 
     @Override
-    public Map<String, Map<String, List<AddressInfo>>> readAllProviders(String group) {
+    public Map<String, Map<String, List<AddressInfo>>> getAllProviders(String group) {
         // Do nothing
         return null;
     }

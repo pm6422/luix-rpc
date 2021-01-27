@@ -100,6 +100,57 @@ public class ZookeeperUtils {
         return getChildNodeNames(zkClient, PROVIDER_PATH);
     }
 
+    public static Map<String, Map<String, List<AddressInfo>>> getAllProviders(ZkClient zkClient, String group) {
+        List<String> providerNames = getProvidersByGroup(zkClient, group);
+        Map<String, Map<String, List<AddressInfo>>> results = new HashMap<>(providerNames.size());
+        for (String providerName : providerNames) {
+            Map<String, List<AddressInfo>> providersPerStatus = new HashMap<>();
+            List<AddressInfo> activeProviders = getNodes(zkClient, group, providerName, ZookeeperStatusNode.ACTIVE);
+            providersPerStatus.put(ZookeeperStatusNode.ACTIVE.getValue(), activeProviders);
+            List<AddressInfo> inactiveProviders = getNodes(zkClient, group, providerName, ZookeeperStatusNode.INACTIVE);
+            providersPerStatus.put(ZookeeperStatusNode.INACTIVE.getValue(), inactiveProviders);
+            List<AddressInfo> clientProviders = getNodes(zkClient, group, providerName, ZookeeperStatusNode.CLIENT);
+            providersPerStatus.put(ZookeeperStatusNode.CLIENT.getValue(), clientProviders);
+
+            results.put(providerName, providersPerStatus);
+        }
+        return results;
+    }
+
+    /**
+     * Get providers by group
+     *
+     * @param zkClient zk client
+     * @param group    group
+     * @return provider names
+     */
+    public static List<String> getProvidersByGroup(ZkClient zkClient, String group) {
+        return getChildNodeNames(zkClient, getGroupPath(group));
+    }
+
+    /**
+     * Get the full path of provider group node
+     *
+     * @param group group
+     * @return group node full path
+     */
+    public static String getGroupPath(String group) {
+        return PROVIDER_PATH + PATH_SEPARATOR + group;
+    }
+
+    public static List<AddressInfo> getNodes(ZkClient zkClient, String group, String providerPath, ZookeeperStatusNode statusNode) {
+        List<AddressInfo> result = new ArrayList<>();
+        List<String> nodes = getChildNodeNames(zkClient, getStatusNodePath(group, providerPath, statusNode));
+        for (String nodeName : nodes) {
+            AddressInfo addressInfo = new AddressInfo();
+            String info = zkClient.readData(getAddressPath(group, providerPath, statusNode, nodeName), true);
+            addressInfo.setAddress(nodeName);
+            addressInfo.setContents(info);
+            result.add(addressInfo);
+        }
+        return result;
+    }
+
     /**
      * Get the provider address full path of specified node
      *
@@ -188,15 +239,6 @@ public class ZookeeperUtils {
         return getGroupPath(url.getGroup());
     }
 
-    /**
-     * Get the full path of group node
-     *
-     * @param group group
-     * @return group node full path
-     */
-    public static String getGroupPath(String group) {
-        return PROVIDER_PATH + PATH_SEPARATOR + group;
-    }
 
     /**
      * Get all child directory or file names under the parent path
@@ -212,44 +254,9 @@ public class ZookeeperUtils {
         return children;
     }
 
-    public static List<String> getProvidersByGroup(ZkClient zkClient, String group) {
-        return getChildNodeNames(zkClient, getGroupPath(group));
-    }
-
     public static List<AddressInfo> getNodes(ZkClient zkClient, String group, String providerPath, String statusNode) {
         return getNodes(zkClient, group, providerPath, ZookeeperStatusNode.fromValue(statusNode));
     }
-
-    public static List<AddressInfo> getNodes(ZkClient zkClient, String group, String providerPath, ZookeeperStatusNode statusNode) {
-        List<AddressInfo> result = new ArrayList<>();
-        List<String> nodes = getChildNodeNames(zkClient, getStatusNodePath(group, providerPath, statusNode));
-        for (String nodeName : nodes) {
-            AddressInfo addressInfo = new AddressInfo();
-            String info = zkClient.readData(getAddressPath(group, providerPath, statusNode, nodeName), true);
-            addressInfo.setAddress(nodeName);
-            addressInfo.setContents(info);
-            result.add(addressInfo);
-        }
-        return result;
-    }
-
-    public static Map<String, Map<String, List<AddressInfo>>> getAllNodes(ZkClient zkClient, String group) {
-        List<String> services = getProvidersByGroup(zkClient, group);
-        Map<String, Map<String, List<AddressInfo>>> results = new HashMap<>(services.size());
-        for (String serviceName : services) {
-            Map<String, List<AddressInfo>> service = new HashMap<>();
-            List<AddressInfo> availableServer = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.ACTIVE);
-            service.put(ZookeeperStatusNode.ACTIVE.getValue(), availableServer);
-            List<AddressInfo> unavailableServer = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.INACTIVE);
-            service.put(ZookeeperStatusNode.INACTIVE.getValue(), unavailableServer);
-            List<AddressInfo> clientNode = getNodes(zkClient, group, serviceName, ZookeeperStatusNode.CLIENT);
-            service.put(ZookeeperStatusNode.CLIENT.getValue(), clientNode);
-
-            results.put(serviceName, service);
-        }
-        return results;
-    }
-
 
     /**
      * Get the full path of specified application provider
