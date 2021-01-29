@@ -17,6 +17,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_URL;
+import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY_VALUE_DIRECT;
+
 /**
  * PRC consumer stub
  * A stub in distributed computing is a piece of code that converts parameters passed between client and server
@@ -122,7 +125,7 @@ public class ConsumerStub<T> {
     @PostConstruct
     public void init() {
         this.proxyInstance = ConsumerProxy.getProxy(this);
-        ConsumerStubHolder.getInstance().addStub(interfaceClass.getName(), this);
+        ConsumerStubHolder.getInstance().addStub(this);
     }
 
     /**
@@ -157,7 +160,7 @@ public class ConsumerStub<T> {
             version = consumerConfig.getVersion();
         }
         if (checkHealth == null) {
-            consumerConfig.isCheckHealth();
+            checkHealth = consumerConfig.isCheckHealth();
         }
         if (StringUtils.isEmpty(checkHealthFactory)) {
             checkHealthFactory = consumerConfig.getCheckHealthFactory();
@@ -170,13 +173,34 @@ public class ConsumerStub<T> {
     /**
      * Subscribe the RPC providers from registries
      *
-     * @param registryUrls registry urls
+     * @param globalRegistryUrls registry urls
      */
-    public void subscribeFromRegistries(Url... registryUrls) {
+    public void subscribeFromRegistries(Url... globalRegistryUrls) {
         this.clientUrl = Url.clientUrl(protocol, interfaceClass.getName());
         // Initialize provider cluster before consumer initialization
         this.providerCluster = createProviderCluster();
-        subscribeProviderListener = SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, registryUrls);
+
+        if (StringUtils.isEmpty(directUrl)) {
+            subscribeProviderListener = SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, globalRegistryUrls);
+            return;
+        }
+
+        // Use direct registry
+        Url[] directRegistries = createDirectRegistries(globalRegistryUrls);
+        subscribeProviderListener = SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, directRegistries);
+    }
+
+    private Url[] createDirectRegistries(Url[] globalRegistryUrls) {
+        Url directUrlCopy = Url.valueOf(directUrl);
+        directUrlCopy.setPath(interfaceClass.getName());
+        Url[] urls = new Url[globalRegistryUrls.length];
+        for (int i = 0; i < globalRegistryUrls.length; i++) {
+            Url url = globalRegistryUrls[i].copy();
+            url.setProtocol(REGISTRY_VALUE_DIRECT);
+            url.addParameter(DIRECT_URL, directUrlCopy.toFullStr());
+            urls[i] = url;
+        }
+        return urls;
     }
 
     private ProviderCluster<T> createProviderCluster() {

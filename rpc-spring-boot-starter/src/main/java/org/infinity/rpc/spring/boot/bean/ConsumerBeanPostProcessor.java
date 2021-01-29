@@ -188,7 +188,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
     }
 
     private AnnotationAttributes getConsumerAnnotationAttributes(AnnotatedElement element) {
-        return AnnotationUtils.getAnnotationAttributes(element, Consumer.class, env, false, true);
+        return AnnotationUtils.getAnnotationAttributes(element, Consumer.class, env, true, true);
     }
 
     /**
@@ -206,7 +206,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
         Class<?> resolvedConsumerInterfaceClass = AnnotationUtils.resolveInterfaceClass(attributes, consumerInterfaceClass);
 
         // Build the consumer stub bean name
-        String beanName = buildConsumerStubBeanName(resolvedConsumerInterfaceClass, consumerAnnotation);
+        String beanName = buildConsumerStubBeanName(resolvedConsumerInterfaceClass, attributes);
         if (!existsConsumerStub(beanName)) {
             AbstractBeanDefinition stubBeanDefinition = buildConsumerStubDefinition(consumerInterfaceClass, consumerAnnotation);
             beanFactory.registerBeanDefinition(beanName, stubBeanDefinition);
@@ -220,14 +220,13 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
      * Build the consumer stub bean name
      *
      * @param defaultInterfaceClass the consumer service interface
-     * @param consumerAnnotation    {@link Consumer} annotation
+     * @param attributes            {@link AnnotationAttributes annotation attributes}
      * @return The name of bean that annotated {@link Consumer @Consumer} in spring context
      */
-    private String buildConsumerStubBeanName(Class<?> defaultInterfaceClass, Consumer consumerAnnotation) {
+    private String buildConsumerStubBeanName(Class<?> defaultInterfaceClass, AnnotationAttributes attributes) {
         return ConsumerStubBeanNameBuilder
                 .builder(defaultInterfaceClass.getName(), env)
-                .group(consumerAnnotation.group())
-                .version(consumerAnnotation.version())
+                .attributes(attributes)
                 .build();
     }
 
