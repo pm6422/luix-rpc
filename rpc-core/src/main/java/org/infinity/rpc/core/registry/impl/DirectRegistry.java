@@ -25,20 +25,22 @@ import static org.infinity.rpc.core.url.Url.PARAM_ADDRESS;
 @Slf4j
 @ThreadSafe
 public class DirectRegistry extends AbstractRegistry implements Cleanable {
-    private final List<Url>        directUrls    = new ArrayList<>();
+    private final List<Url>        directUrls;
     private final Map<Url, Object> subscribeUrls = new ConcurrentHashMap<>();
 
     public DirectRegistry(Url registryUrl) {
         super(registryUrl);
-        parseDirectUrls(registryUrl.getParameter(PARAM_ADDRESS));
+        directUrls = parseDirectUrls(registryUrl.getParameter(PARAM_ADDRESS));
     }
 
-    private void parseDirectUrls(String address) {
+    private List<Url> parseDirectUrls(String address) {
+        List<Url> urls = new ArrayList<>();
         List<Pair<String, Integer>> hostPortList = AddressUtils.parseAddress(address);
         hostPortList.forEach(hostPortPair -> {
             // Use empty string as path
-            directUrls.add(Url.of(REGISTRY_VALUE_DIRECT, hostPortPair.getLeft(), hostPortPair.getRight(), StringUtils.EMPTY));
+            urls.add(Url.of(REGISTRY_VALUE_DIRECT, hostPortPair.getLeft(), hostPortPair.getRight(), StringUtils.EMPTY));
         });
+        return urls;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
 
     @Override
     protected List<Url> discoverActiveProviders(Url clientUrl) {
-        List result = new ArrayList(directUrls.size());
+        List<Url> result = new ArrayList<>(directUrls.size());
         for (Url directUrl : directUrls) {
             Url tmp = clientUrl.copy();
             tmp.setHost(directUrl.getHost());
