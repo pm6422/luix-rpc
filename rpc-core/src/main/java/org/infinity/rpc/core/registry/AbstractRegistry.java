@@ -287,7 +287,7 @@ public abstract class AbstractRegistry implements Registry {
     private Map<String, List<Url>> groupUrlsByType(List<Url> urls) {
         Map<String, List<Url>> urlsPerType = new HashMap<>();
         for (Url url : urls) {
-            String type = url.getParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_DEFAULT_VALUE);
+            String type = url.getParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
             List<Url> urlList = urlsPerType.computeIfAbsent(type, k -> new ArrayList<>());
             urlList.add(url);
         }

@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
+import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_URLS;
 import static org.infinity.rpc.core.constant.ConsumerConstants.INTERFACE_NAME;
 import static org.infinity.rpc.core.constant.ServiceConstants.INTERFACE_CLASS;
 import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.addPropertyValue;
@@ -247,7 +248,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
         copyPropertiesToBeanDefinitionBuilder(annotation, builder, INTERFACE_NAME);
         addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName());
         addPropertyValue(builder, INTERFACE_CLASS, interfaceClass);
-        addPropertyValue(builder, "directUrl", annotation.directUrl());
+        addPropertyValue(builder, DIRECT_URLS, annotation.directUrls());
         return builder.getBeanDefinition();
     }
 

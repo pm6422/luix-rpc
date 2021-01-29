@@ -99,7 +99,7 @@ public class RpcLifecycle {
      * @param infinityProperties RPC configuration properties
      */
     private void publish(InfinityProperties infinityProperties) {
-        infinityProperties.getRegistryConfigs().forEach(registryConfig -> {
+        infinityProperties.getRegistryList().forEach(registryConfig -> {
             Registry registry = registryConfig.getRegistryImpl();
             // Publish application first
             publishApplication(infinityProperties, registryConfig, registry);
@@ -150,10 +150,9 @@ public class RpcLifecycle {
             log.info("No RPC service consumers found from registry!");
             return;
         }
-        infinityProperties.getRegistryConfigs().forEach(registryConfig -> consumerStubs.forEach((consumerStub) -> {
-            consumerStub.mergeAttributes(infinityProperties.getAvailableProtocol(),
-                    registryConfig, infinityProperties.getConsumer());
-            consumerStub.subscribeFromRegistries(registryConfig.getRegistryUrl());
+        infinityProperties.getRegistryList().forEach(registryConfig -> consumerStubs.forEach((consumerStub) -> {
+            consumerStub.subscribeFromRegistries(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(),
+                    registryConfig, infinityProperties.getConsumer(), registryConfig.getRegistryUrl());
         }));
     }
 
@@ -168,7 +167,7 @@ public class RpcLifecycle {
             return;
         }
 
-        infinityProperties.getRegistryConfigs().forEach(registryConfig -> {
+        infinityProperties.getRegistryList().forEach(registryConfig -> {
             //unregisterApplication(registryUrls);
             unregisterProviders(registryConfig.getRegistryUrl());
         });

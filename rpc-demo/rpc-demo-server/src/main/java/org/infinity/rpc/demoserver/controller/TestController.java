@@ -45,7 +45,7 @@ public class TestController {
         providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, Url.PARAM_CHECK_HEALTH_DEFAULT_VALUE);
         providerUrl.addParameter(Url.PARAM_APP, infinityProperties.getApplication().getName());
 
-        infinityProperties.getRegistryConfigs().forEach(registryConfig -> {
+        infinityProperties.getRegistryList().forEach(registryConfig -> {
             registryConfig.getRegistryImpl().register(providerUrl);
         });
     }

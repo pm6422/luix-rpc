@@ -1,5 +1,10 @@
 package org.infinity.rpc.core.constant;
 
+/**
+ * All the attributes name of
+ * {@link org.infinity.rpc.core.client.annotation.Consumer}
+ * {@link org.infinity.rpc.core.server.annotation.Provider}
+ */
 public interface ServiceConstants {
     String INTERFACE_NAME  = "interfaceName";
     String INTERFACE_CLASS = "interfaceClass";

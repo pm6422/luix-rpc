@@ -156,7 +156,7 @@ public class ProviderStub<T> {
     public void register(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
                          RegistryConfig registryConfig, ProviderConfig providerConfig, Registry... registries) {
         // Export provider url
-        Url providerUrl = exportUrl(applicationConfig, protocolConfig, registryConfig, providerConfig);
+        Url providerUrl = createProviderUrl(applicationConfig, protocolConfig, registryConfig, providerConfig);
 
         // Export RPC provider service
         Protocol.getInstance(providerUrl.getProtocol()).export(this);
@@ -173,7 +173,7 @@ public class ProviderStub<T> {
     }
 
     /**
-     * Merge high priority properties to provider stub and export provider url
+     * Merge high priority properties to provider stub and generate provider url
      *
      * @param applicationConfig application configuration
      * @param protocolConfig    protocol configuration
@@ -181,10 +181,13 @@ public class ProviderStub<T> {
      * @param providerConfig    provider configuration
      * @return provider url
      */
-    private Url exportUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
-                          RegistryConfig registryConfig, ProviderConfig providerConfig) {
+    private Url createProviderUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
+                                  RegistryConfig registryConfig, ProviderConfig providerConfig) {
         if (StringUtils.isEmpty(protocol)) {
             protocol = protocolConfig.getName();
+        }
+        if (StringUtils.isEmpty(registry)) {
+            registry = registryConfig.getName();
         }
         if (StringUtils.isEmpty(group)) {
             group = providerConfig.getGroup();

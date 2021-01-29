@@ -84,7 +84,7 @@ public class ServiceDiscoveryController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功执行")})
     @PostMapping("/api/service-discovery/provider/enable")
     public ResponseEntity<Void> activate(@RequestBody String providerUrl) {
-        infinityProperties.getRegistryConfigs().forEach(config -> config.getRegistryImpl().activate(Url.valueOf(providerUrl)));
+        infinityProperties.getRegistryList().forEach(config -> config.getRegistryImpl().activate(Url.valueOf(providerUrl)));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -92,7 +92,7 @@ public class ServiceDiscoveryController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功执行")})
     @PostMapping("/api/service-discovery/provider/disable")
     public ResponseEntity<Void> deactivate(@RequestBody String providerUrl) {
-        infinityProperties.getRegistryConfigs().forEach(config -> config.getRegistryImpl().deactivate(Url.valueOf(providerUrl)));
+        infinityProperties.getRegistryList().forEach(config -> config.getRegistryImpl().deactivate(Url.valueOf(providerUrl)));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

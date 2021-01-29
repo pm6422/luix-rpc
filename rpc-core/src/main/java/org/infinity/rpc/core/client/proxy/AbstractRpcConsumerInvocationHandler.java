@@ -32,7 +32,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
 //        RequestContext.initialize(request);
 
         Url clientUrl = Url.clientUrl(consumerStub.getProviderCluster().getProtocol(),
-                consumerStub.getInterfaceClass().getName());
+                consumerStub.getInterfaceName());
         consumerStub.getProviderCluster().getFaultToleranceStrategy().setClientUrl(clientUrl);
 
 //            request.addAttachment(Url.PARAM_APP, infinityProperties.getApplication().getName());

@@ -39,7 +39,7 @@ public class ConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationH
         }
 
         RpcRequest request = new RpcRequest(IdGenerator.generateTimestampId(),
-                consumerStub.getInterfaceClass().getName(),
+                consumerStub.getInterfaceName(),
                 method.getName(),
                 getMethodParameters(method));
 

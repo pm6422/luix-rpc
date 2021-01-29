@@ -25,7 +25,7 @@ public class RegistryServiceImpl implements RegistryService, InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        infinityProperties.getRegistryConfigs().forEach(registryConfig -> {
+        infinityProperties.getRegistryList().forEach(registryConfig -> {
             REGISTRY_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig.getRegistryImpl());
             REGISTRIES.add(new RegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
         });

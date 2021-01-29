@@ -2,6 +2,8 @@ package org.infinity.rpc.core.exchange.cluster.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
 import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.protocol.Protocol;
@@ -9,6 +11,7 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.core.url.UrlUtils;
 import org.infinity.rpc.utilities.annotation.EventReceiver;
 import org.infinity.rpc.utilities.annotation.EventSubscriber;
 
@@ -16,6 +19,8 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_URLS;
 
 /**
  * todo: ClusterSupport
@@ -130,10 +135,32 @@ public class SubscribeProviderListener<T> implements ClientListener {
     @EventSubscriber("providersDiscoveryEvent")
     private void subscribe() {
         for (Url registryUrl : registryUrls) {
+            String directUrlStr = registryUrl.getParameter(DIRECT_URLS);
+            // 如果有directUrl，直接使用这些directUrls进行初始化，不用到注册中心discover
+            if (StringUtils.isNotEmpty(directUrlStr)) {
+                List<Url> directUrls = parseDirectUrls(directUrlStr);
+                if (CollectionUtils.isNotEmpty(directUrls)) {
+                    // Directly notify the provider urls
+                    onNotify(registryUrl, directUrls);
+                    log.info("Use direct urls, refUrl={}, directUrls={}", registryUrl, directUrls);
+                    continue;
+                }
+            }
+
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             // Bind this listener to the client
             registry.subscribe(clientUrl, this);
         }
+    }
+
+    private List<Url> parseDirectUrls(String directUrlStr) {
+        String[] directUrlArray = RpcConstants.COMMA_SPLIT_PATTERN.split(directUrlStr);
+        List<Url> directUrls = new ArrayList<>();
+        for (String directUrl : directUrlArray) {
+            Url url = Url.valueOf(UrlUtils.urlDecode(directUrl));
+            directUrls.add(url);
+        }
+        return directUrls;
     }
 
     @Override

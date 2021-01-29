@@ -56,13 +56,13 @@ public class InfinityProperties {
     @PostConstruct
     private void init() {
         application.init();
-        getProtocolConfigs().forEach(ProtocolConfig::init);
-        getRegistryConfigs().forEach(RegistryConfig::init);
+        getProtocolList().forEach(ProtocolConfig::init);
+        getRegistryList().forEach(RegistryConfig::init);
         provider.init();
         consumer.init();
     }
 
-    public Collection<ProtocolConfig> getProtocolConfigs() {
+    public Collection<ProtocolConfig> getProtocolList() {
         if (MapUtils.isEmpty(protocols)) {
             return Collections.singletonList(protocol);
         }
@@ -76,7 +76,7 @@ public class InfinityProperties {
         return protocols.size() > 0 ? protocols.get(0) : protocol;
     }
 
-    public Collection<RegistryConfig> getRegistryConfigs() {
+    public Collection<RegistryConfig> getRegistryList() {
         if (MapUtils.isEmpty(registries)) {
             return Collections.singletonList(registry);
         }

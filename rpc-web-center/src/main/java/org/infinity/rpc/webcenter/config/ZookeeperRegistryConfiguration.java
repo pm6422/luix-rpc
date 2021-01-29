@@ -29,8 +29,8 @@ public class ZookeeperRegistryConfiguration {
     @Bean
     public List<RegistryService> registryServices() {
         try {
-            List<RegistryService> registryServices = new ArrayList<>(infinityProperties.getRegistryConfigs().size());
-            infinityProperties.getRegistryConfigs().forEach(registryConfig -> {
+            List<RegistryService> registryServices = new ArrayList<>(infinityProperties.getRegistryList().size());
+            infinityProperties.getRegistryList().forEach(registryConfig -> {
                 Url registryUrl = registryConfig.getRegistryUrl();
                 int connectTimeout = registryUrl.getIntParameter(Url.PARAM_CONNECT_TIMEOUT);
                 int sessionTimeout = registryUrl.getIntParameter(Url.PARAM_CONNECT_TIMEOUT);

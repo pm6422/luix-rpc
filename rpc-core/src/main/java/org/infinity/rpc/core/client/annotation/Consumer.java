@@ -54,6 +54,11 @@ public @interface Consumer {
     // The max retry times of RPC request
     int maxRetries() default Integer.MAX_VALUE;
 
-    // Provider url used to connect provider directly without third party registry
-    String directUrl() default "";
+    /**
+     * Provider urls used to connect provider directly without third party registry.
+     * Multiple urls are separated by comma.
+     *
+     * @return direct urls
+     */
+    String directUrls() default "";
 }

@@ -77,7 +77,7 @@ public class ServiceDiscoveryController {
 
     @PostMapping("/api/service-discovery/deactivate")
     public ResponseEntity<Void> deactivate(@RequestBody String url) {
-        infinityProperties.getRegistryConfigs().forEach(registryConfig -> {
+        infinityProperties.getRegistryList().forEach(registryConfig -> {
             registryConfig.getRegistryImpl().deactivate(Url.valueOf(url));
         });
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -85,7 +85,7 @@ public class ServiceDiscoveryController {
 
     @PostMapping("/api/service-discovery/activate")
     public ResponseEntity<Void> activate(@RequestBody String url) {
-        infinityProperties.getRegistryConfigs().forEach(registryConfig -> {
+        infinityProperties.getRegistryList().forEach(registryConfig -> {
             registryConfig.getRegistryImpl().activate(Url.valueOf(url));
         });
         return ResponseEntity.status(HttpStatus.OK).build();

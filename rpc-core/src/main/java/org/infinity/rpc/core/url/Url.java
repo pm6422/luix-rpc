@@ -77,7 +77,8 @@ public final class Url implements Serializable {
      *
      */
     public static final String  PARAM_TYPE                                = "type";
-    public static final String  PARAM_TYPE_DEFAULT_VALUE                  = "service";
+    public static final String  PARAM_TYPE_PROVIDER                       = "provider";
+    public static final String  PARAM_TYPE_CONSUMER                       = "consumer";
     public static final String  PARAM_TYPE_REGISTRY                       = "registry";
     /**
      *
@@ -231,8 +232,27 @@ public final class Url implements Serializable {
     }
 
     public static Url providerUrl(String protocol, Integer port, String path, String group, String version) {
+        // todo: check internet or intranet ip
         Url url = of(protocol, NetworkUtils.INTRANET_IP, port, path, group, version, new HashMap<>());
-        url.addParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_DEFAULT_VALUE);
+        url.addParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
+        return url;
+    }
+
+    /**
+     * The consumer url used to export to registry only for consumers discovery management,
+     * but it have nothing to do with the service calling.
+     *
+     * @param protocol
+     * @param port
+     * @param path
+     * @param group
+     * @param version
+     * @return
+     */
+    public static Url consumerUrl(String protocol, Integer port, String path, String group, String version) {
+        // todo: check internet or intranet ip
+        Url url = of(protocol, NetworkUtils.INTRANET_IP, port, path, group, version, new HashMap<>());
+        url.addParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_CONSUMER);
         return url;
     }
 
@@ -365,7 +385,7 @@ public final class Url implements Serializable {
                 + "/" + getParameter(GROUP, GROUP_DEFAULT_VALUE)
                 + "/" + getPath()
                 + "/" + getParameter(VERSION, VERSION_DEFAULT_VALUE)
-                + "/" + getParameter(PARAM_TYPE, PARAM_TYPE_DEFAULT_VALUE);
+                + "/" + getParameter(PARAM_TYPE, PARAM_TYPE_PROVIDER);
     }
 
     public String getServerPortStr() {
