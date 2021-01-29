@@ -68,6 +68,7 @@ public final class Url implements Serializable {
      *
      */
     public static final String  PARAM_CHECK_HEALTH_FACTORY                = "checkHealthFactory";
+    public static final String  PARAM_CHECK_HEALTH_FACTORY_DEFAULT_VALUE  = "default";
     /**
      *
      */
@@ -188,6 +189,7 @@ public final class Url implements Serializable {
     public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
     public static final String PARAM_RETRY_INTERVAL  = "retryInterval";
     public static final String PARAM_APP             = "app";
+    public static final String PARAM_APP_UNKNOWN     = "unknown";
     public static final String PARAM_ACTIVATED_TIME  = "activatedTime";
 
     /**
@@ -231,9 +233,8 @@ public final class Url implements Serializable {
         return of(protocol, host, port, path, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, new HashMap<>());
     }
 
-    public static Url providerUrl(String protocol, Integer port, String path, String group, String version) {
-        // todo: check internet or intranet ip
-        Url url = of(protocol, NetworkUtils.INTRANET_IP, port, path, group, version, new HashMap<>());
+    public static Url providerUrl(String protocol, String host, Integer port, String path, String group, String version) {
+        Url url = of(protocol, host, port, path, group, version, new HashMap<>());
         url.addParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
         return url;
     }

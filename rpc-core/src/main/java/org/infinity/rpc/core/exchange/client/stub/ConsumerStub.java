@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.client.proxy.ConsumerProxy;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ConsumerConfig;
@@ -13,14 +14,14 @@ import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
 import org.infinity.rpc.core.exchange.cluster.listener.SubscribeProviderListener;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.core.url.UrlUtils;
+import org.infinity.rpc.utilities.network.AddressUtils;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_URLS;
 import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY_VALUE_DIRECT;
@@ -139,6 +140,34 @@ public class ConsumerStub<T> {
     }
 
     /**
+     * Subscribe the RPC providers from registries
+     *
+     * @param applicationConfig  application configuration
+     * @param protocolConfig     protocol configuration
+     * @param registryConfig     registry configuration
+     * @param consumerConfig     consumer configuration
+     * @param globalRegistryUrls registry urls
+     */
+    public void subscribeFromRegistries(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
+                                        RegistryConfig registryConfig, ConsumerConfig consumerConfig, Url... globalRegistryUrls) {
+        // Create consumer url
+        this.url = this.createConsumerUrl(applicationConfig, protocolConfig, registryConfig, consumerConfig);
+
+        this.clientUrl = Url.clientUrl(protocol, interfaceClass.getName());
+        // Initialize provider cluster before consumer initialization
+        this.providerCluster = createProviderCluster();
+
+        if (StringUtils.isEmpty(directUrls)) {
+            subscribeProviderListener = SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, globalRegistryUrls);
+            return;
+        }
+
+        // Use direct registry
+        Url[] directRegistries = createDirectRegistries(globalRegistryUrls);
+        subscribeProviderListener = SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, directRegistries);
+    }
+
+    /**
      * Merge high priority properties to consumer stub and generate consumer url
      *
      * @param applicationConfig application configuration
@@ -197,58 +226,28 @@ public class ConsumerStub<T> {
         return url;
     }
 
-    /**
-     * Subscribe the RPC providers from registries
-     *
-     * @param applicationConfig  application configuration
-     * @param protocolConfig     protocol configuration
-     * @param registryConfig     registry configuration
-     * @param consumerConfig     consumer configuration
-     * @param globalRegistryUrls registry urls
-     */
-    public void subscribeFromRegistries(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
-                                        RegistryConfig registryConfig, ConsumerConfig consumerConfig, Url... globalRegistryUrls) {
-        this.url = this.createConsumerUrl(applicationConfig, protocolConfig, registryConfig, consumerConfig);
-
-        this.clientUrl = Url.clientUrl(protocol, interfaceClass.getName());
-        // Initialize provider cluster before consumer initialization
-        this.providerCluster = createProviderCluster();
-
-        if (StringUtils.isEmpty(directUrls)) {
-            subscribeProviderListener = SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, globalRegistryUrls);
-            return;
-        }
-
-        // Use direct registry
-        Url[] directRegistries = createDirectRegistries(globalRegistryUrls);
-        subscribeProviderListener = SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, directRegistries);
-    }
-
     private Url[] createDirectRegistries(Url[] globalRegistryUrls) {
-        String[] directUrlArray = RpcConstants.COMMA_SPLIT_PATTERN.split(directUrls);
+        List<Pair<String, Integer>> directUrlHostPortList = AddressUtils.parseAddress(directUrls);
         StringBuilder directProviderUrls = new StringBuilder(128);
 
-        Iterator<String> iterator = Arrays.stream(directUrlArray).iterator();
+        Iterator<Pair<String, Integer>> iterator = directUrlHostPortList.iterator();
         while (iterator.hasNext()) {
-            String directUrl = iterator.next();
-            if (directUrl.contains(":")) {
-                String[] hostPort = directUrl.split(":");
-                Url url = this.url.copy();
-                // Consumer url will be changed to provider url after changed the host and port
-                url.setHost(hostPort[0].trim());
-                url.setPort(Integer.parseInt(hostPort[1].trim()));
-                url.addParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
-                directProviderUrls.append(UrlUtils.urlEncode(url.toFullStr()));
-                if (iterator.hasNext()) {
-                    directProviderUrls.append(RpcConstants.COMMA_SEPARATOR);
-                }
+            Pair<String, Integer> providerHostPortPair = iterator.next();
+            Url providerUrl = Url.providerUrl(url.getProtocol(), providerHostPortPair.getLeft(),
+                    providerHostPortPair.getRight(), url.getPath(), url.getGroup(), url.getVersion());
+            // We can NOT get the provider url via direct url mode
+            providerUrl.addParameter(Url.PARAM_APP, Url.PARAM_APP_UNKNOWN);
+            providerUrl.addParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
+            directProviderUrls.append(providerUrl.toFullStr());
+            if (iterator.hasNext()) {
+                directProviderUrls.append(RpcConstants.COMMA_SEPARATOR);
             }
         }
 
         Url[] urls = new Url[globalRegistryUrls.length];
         for (int i = 0; i < globalRegistryUrls.length; i++) {
             Url url = globalRegistryUrls[i].copy();
-            // Chnage protocol to direct
+            // Change protocol to direct
             url.setProtocol(REGISTRY_VALUE_DIRECT);
             url.addParameter(DIRECT_URLS, directProviderUrls.toString());
             urls[i] = url;

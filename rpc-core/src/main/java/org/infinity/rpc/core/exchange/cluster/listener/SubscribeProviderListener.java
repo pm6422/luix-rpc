@@ -11,7 +11,6 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.core.url.UrlUtils;
 import org.infinity.rpc.utilities.annotation.EventReceiver;
 import org.infinity.rpc.utilities.annotation.EventSubscriber;
 
@@ -157,7 +156,7 @@ public class SubscribeProviderListener<T> implements ClientListener {
         String[] directUrlArray = RpcConstants.COMMA_SPLIT_PATTERN.split(directUrlStr);
         List<Url> directUrls = new ArrayList<>();
         for (String directUrl : directUrlArray) {
-            Url url = Url.valueOf(UrlUtils.urlDecode(directUrl));
+            Url url = Url.valueOf(directUrl);
             directUrls.add(url);
         }
         return directUrls;

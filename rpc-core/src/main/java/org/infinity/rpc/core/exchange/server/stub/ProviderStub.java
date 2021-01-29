@@ -23,6 +23,7 @@ import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
+import org.infinity.rpc.utilities.network.NetworkUtils;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.Min;
@@ -196,7 +197,8 @@ public class ProviderStub<T> {
             version = providerConfig.getVersion();
         }
 
-        url = Url.providerUrl(protocol, protocolConfig.getPort(), interfaceName, group, version);
+        // todo: check internet or intranet ip
+        url = Url.providerUrl(protocol, NetworkUtils.INTRANET_IP, protocolConfig.getPort(), interfaceName, group, version);
         url.addParameter(Url.PARAM_APP, applicationConfig.getName());
 
         if (checkHealth == null) {

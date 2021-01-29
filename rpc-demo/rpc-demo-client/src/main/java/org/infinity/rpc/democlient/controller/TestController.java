@@ -10,6 +10,8 @@ import org.infinity.rpc.spring.boot.bean.name.ConsumerStubBeanNameBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,7 +44,8 @@ public class TestController {
     @ApiOperation("测试直连")
     @GetMapping("/open-api/test/direct-url")
     public List<App> testDirectUrl() {
-        Page<App> all = appService.findAll(null);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<App> all = appService.findAll(pageable);
         return all.getContent();
     }
 }

@@ -20,10 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.transport.Client;
+import org.infinity.rpc.core.exchange.transport.checkhealth.CheckHealthFactory;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.exchange.transport.endpoint.Endpoint;
 import org.infinity.rpc.core.exchange.transport.endpoint.EndpointManager;
-import org.infinity.rpc.core.exchange.transport.checkhealth.CheckHealthFactory;
 import org.infinity.rpc.core.url.Url;
 
 import java.util.Collections;
@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY_DEFAULT_VALUE;
 import static org.infinity.rpc.core.destroy.ScheduledThreadPool.CHECK_HEALTH_THREAD_POOL;
 
 /**
@@ -81,7 +82,7 @@ public class CheckHealthClientEndpointManager implements EndpointManager {
         }
         Client client = (Client) endpoint;
         Url providerUrl = endpoint.getProviderUrl();
-        String heartbeatFactoryName = providerUrl.getParameter(Url.PARAM_CHECK_HEALTH_FACTORY);
+        String heartbeatFactoryName = providerUrl.getParameter(Url.PARAM_CHECK_HEALTH_FACTORY, CHECK_HEALTH_FACTORY_DEFAULT_VALUE);
         CheckHealthFactory checkHealthFactory = CheckHealthFactory.getInstance(heartbeatFactoryName);
         endpoints.put(client, checkHealthFactory);
     }

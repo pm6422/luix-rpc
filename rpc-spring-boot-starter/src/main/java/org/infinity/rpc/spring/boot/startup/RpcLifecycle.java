@@ -150,10 +150,10 @@ public class RpcLifecycle {
             log.info("No RPC service consumers found from registry!");
             return;
         }
-        infinityProperties.getRegistryList().forEach(registryConfig -> consumerStubs.forEach((consumerStub) -> {
-            consumerStub.subscribeFromRegistries(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(),
-                    registryConfig, infinityProperties.getConsumer(), registryConfig.getRegistryUrl());
-        }));
+        infinityProperties.getRegistryList().forEach(registryConfig -> consumerStubs.forEach((consumerStub) ->
+                consumerStub.subscribeFromRegistries(infinityProperties.getApplication(),
+                        infinityProperties.getAvailableProtocol(), registryConfig,
+                        infinityProperties.getConsumer(), registryConfig.getRegistryUrl())));
     }
 
     /**
