@@ -6,11 +6,9 @@ import org.springframework.util.Assert;
 
 /**
  * Provider {@link org.infinity.rpc.core.server.annotation.Provider @Provider} stub bean Builder
- * Consumer {@link org.infinity.rpc.core.client.annotation.Consumer @Consumer} stub bean Builder
  */
 public abstract class ProviderConsumerStubBeanNameBuilder {
     public static final    String      PROVIDER_STUB_BEAN_PREFIX = "ProviderStub";
-    public static final    String      CONSUMER_STUB_BEAN_PREFIX = "ConsumerStub";
     protected static final String      SEPARATOR                 = ":";
     /**
      * Provider interface class(Required)
