@@ -26,8 +26,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * RPC consumer stub bean name builder
- * Consumer {@link org.infinity.rpc.core.client.annotation.Consumer @Consumer} stub bean Builder
+ * RPC consumer {@link org.infinity.rpc.core.client.annotation.Consumer} stub bean name builder
+ * Consumer stub bean name is different from provider stub name,
+ * RPC consumer can have various implementations depending on different annotation attributes of @Consumer
  */
 public class ConsumerStubBeanNameBuilder {
 

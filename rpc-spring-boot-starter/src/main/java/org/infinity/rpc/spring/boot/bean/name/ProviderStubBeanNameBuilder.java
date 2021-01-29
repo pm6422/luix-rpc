@@ -19,7 +19,8 @@ package org.infinity.rpc.spring.boot.bean.name;
 import org.springframework.core.env.Environment;
 
 /**
- * RPC provider stub bean name builder
+ * RPC provider {@link org.infinity.rpc.core.server.annotation.Provider} stub bean name builder
+ * RPC provider interface only can have multiple implementations with different group or version.
  */
 public class ProviderStubBeanNameBuilder extends ProviderConsumerStubBeanNameBuilder {
 
