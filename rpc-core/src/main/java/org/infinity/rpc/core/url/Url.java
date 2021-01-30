@@ -10,7 +10,6 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.utilities.network.NetworkUtils;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -259,7 +258,7 @@ public final class Url implements Serializable {
     }
 
     public Url copy() {
-        Map<String, String> options = new HashMap<>(16);
+        Map<String, String> options = new ConcurrentHashMap<>(16);
         if (this.options != null) {
             options.putAll(this.options);
         }
@@ -376,7 +375,7 @@ public final class Url implements Serializable {
         String host = null;
         int port = 0;
         String path = null;
-        Map<String, String> options = new HashMap<>(16);
+        Map<String, String> options = new ConcurrentHashMap<>(16);
         // separator between body and options
         int i = url.indexOf("?");
         if (i >= 0) {
