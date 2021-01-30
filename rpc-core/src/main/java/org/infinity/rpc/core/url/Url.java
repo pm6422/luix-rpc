@@ -168,7 +168,7 @@ public final class Url implements Serializable {
      * @param protocol protocol
      * @param host     host
      * @param port     port
-     * @param path     path
+     * @param path     interface full name
      * @param options  options
      * @return create a url
      */
@@ -186,40 +186,38 @@ public final class Url implements Serializable {
     }
 
     public static Url of(String protocol, String host, Integer port, String path) {
-        return of(protocol, host, port, path, new ConcurrentHashMap<>());
+        return of(protocol, host, port, path, new ConcurrentHashMap<>(16));
     }
 
     public static Url providerUrl(String protocol, String host, Integer port, String path, String group, String version) {
-        Map<String, String> options = new ConcurrentHashMap<>();
+        Map<String, String> options = new ConcurrentHashMap<>(16);
         options.put(GROUP, group);
         options.put(VERSION, version);
         options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
-        Url url = of(protocol, host, port, path, options);
-        return url;
+        return of(protocol, host, port, path, options);
     }
 
     /**
      * The consumer url used to export to registry only for consumers discovery management,
      * but it have nothing to do with the service calling.
      *
-     * @param protocol
-     * @param port
-     * @param path
-     * @param group
-     * @param version
-     * @return
+     * @param protocol protocol
+     * @param port     port
+     * @param path     interface full name
+     * @param group    group
+     * @param version  version
+     * @return consumer url
      */
     public static Url consumerUrl(String protocol, String host, Integer port, String path, String group, String version) {
-        Map<String, String> options = new ConcurrentHashMap<>();
+        Map<String, String> options = new ConcurrentHashMap<>(16);
         options.put(GROUP, group);
         options.put(VERSION, version);
         options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_CONSUMER);
-        Url url = of(protocol, host, port, path, options);
-        return url;
+        return of(protocol, host, port, path, options);
     }
 
     public static Url clientUrl(String protocol, String path) {
-        Map<String, String> options = new ConcurrentHashMap<>();
+        Map<String, String> options = new ConcurrentHashMap<>(16);
         options.put(GROUP, GROUP_DEFAULT_VALUE);
         options.put(VERSION, VERSION_DEFAULT_VALUE);
         return of(protocol, NetworkUtils.INTRANET_IP, CLIENT_URL_PORT, path, options);
@@ -234,12 +232,11 @@ public final class Url implements Serializable {
      * @return registry url
      */
     public static Url registryUrl(String protocol, String host, Integer port) {
-        Map<String, String> options = new ConcurrentHashMap<>();
+        Map<String, String> options = new ConcurrentHashMap<>(16);
         options.put(GROUP, GROUP_DEFAULT_VALUE);
         options.put(VERSION, VERSION_DEFAULT_VALUE);
         options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_REGISTRY);
-        Url url = of(protocol, host, port, Registry.class.getName(), options);
-        return url;
+        return of(protocol, host, port, Registry.class.getName(), options);
     }
 
 
@@ -262,13 +259,13 @@ public final class Url implements Serializable {
     }
 
     public Url copy() {
-        Map<String, String> options = new HashMap<>();
+        Map<String, String> options = new HashMap<>(16);
         if (this.options != null) {
             options.putAll(this.options);
         }
         return of(protocol, host, port, path, options);
     }
-    
+
     public void addOption(String name, String value) {
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(value)) {
             return;
@@ -379,7 +376,7 @@ public final class Url implements Serializable {
         String host = null;
         int port = 0;
         String path = null;
-        Map<String, String> options = new HashMap<>();
+        Map<String, String> options = new HashMap<>(16);
         // separator between body and options
         int i = url.indexOf("?");
         if (i >= 0) {
@@ -462,6 +459,7 @@ public final class Url implements Serializable {
 
     @Override
     public String toString() {
+        // Use simple string in order to output log more simpler
         return toSimpleString();
     }
 
