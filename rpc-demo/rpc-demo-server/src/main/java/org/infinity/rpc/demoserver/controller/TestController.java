@@ -12,8 +12,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.GROUP_DEFAULT_VALUE;
-import static org.infinity.rpc.core.constant.ServiceConstants.VERSION_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 @RestController
 @Api(tags = "测试")
@@ -42,7 +41,7 @@ public class TestController {
                 AppService.class.getName());
 
         // Assign values to parameters
-        providerUrl.addParameter(Url.PARAM_CHECK_HEALTH, Url.PARAM_CHECK_HEALTH_DEFAULT_VALUE);
+        providerUrl.addParameter(CHECK_HEALTH, String.valueOf(CHECK_HEALTH_DEFAULT_VALUE));
         providerUrl.addParameter(Url.PARAM_APP, infinityProperties.getApplication().getName());
 
         infinityProperties.getRegistryList().forEach(registryConfig -> {

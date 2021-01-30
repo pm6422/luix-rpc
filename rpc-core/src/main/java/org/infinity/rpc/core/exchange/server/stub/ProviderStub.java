@@ -34,6 +34,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH;
+import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY;
+
 /**
  * PRC provider stub
  * A stub in distributed computing is a piece of code that converts parameters passed between client and server
@@ -204,12 +207,12 @@ public class ProviderStub<T> {
         if (checkHealth == null) {
             checkHealth = providerConfig.isCheckHealth();
         }
-        url.addParameter(Url.PARAM_CHECK_HEALTH, String.valueOf(checkHealth));
+        url.addParameter(CHECK_HEALTH, String.valueOf(checkHealth));
 
         if (StringUtils.isEmpty(checkHealthFactory)) {
             checkHealthFactory = providerConfig.getCheckHealthFactory();
         }
-        url.addParameter(Url.PARAM_CHECK_HEALTH_FACTORY, checkHealthFactory);
+        url.addParameter(CHECK_HEALTH_FACTORY, checkHealthFactory);
 
         if (Integer.MAX_VALUE == requestTimeout) {
             requestTimeout = providerConfig.getRequestTimeout();

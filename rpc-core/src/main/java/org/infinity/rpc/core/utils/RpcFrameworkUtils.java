@@ -9,6 +9,8 @@ import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 
+import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY;
+
 public class RpcFrameworkUtils {
 
     public static String getGroupFromRequest(Requestable request) {
@@ -134,7 +136,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        return StringUtils.equals(source.getParameter(Url.PARAM_CHECK_HEALTH_FACTORY), target.getParameter(Url.PARAM_CHECK_HEALTH_FACTORY));
+        return StringUtils.equals(source.getParameter(CHECK_HEALTH_FACTORY), target.getParameter(CHECK_HEALTH_FACTORY));
     }
 
     /**
@@ -175,7 +177,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        return StringUtils.equals(source.getParameter(Url.PARAM_CHECK_HEALTH_FACTORY), target.getParameter(Url.PARAM_CHECK_HEALTH_FACTORY));
+        return StringUtils.equals(source.getParameter(CHECK_HEALTH_FACTORY), target.getParameter(CHECK_HEALTH_FACTORY));
 
     }
 

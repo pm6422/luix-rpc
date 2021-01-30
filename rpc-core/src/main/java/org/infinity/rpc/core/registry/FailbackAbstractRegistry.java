@@ -13,6 +13,8 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH;
+
 /**
  * The registry can automatically recover services when encountered the failure.
  */
@@ -253,7 +255,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      * @return true: all the urls contain PARAM_CHECK_HEALTH, false: any url does not contain PARAM_CHECK_HEALTH
      */
     private boolean forceCheckHealth(Url... urls) {
-        return Arrays.stream(urls).allMatch(url -> url.getBooleanParameter(Url.PARAM_CHECK_HEALTH));
+        return Arrays.stream(urls).allMatch(url -> url.getBooleanParameter(CHECK_HEALTH));
     }
 
     /**

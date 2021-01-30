@@ -62,16 +62,6 @@ public final class Url implements Serializable {
     /**
      *
      */
-    public static final String  PARAM_CHECK_HEALTH                        = "checkHealth";
-    public static final String  PARAM_CHECK_HEALTH_DEFAULT_VALUE          = "true";
-    /**
-     *
-     */
-    public static final String  PARAM_CHECK_HEALTH_FACTORY                = "checkHealthFactory";
-    public static final String  PARAM_CHECK_HEALTH_FACTORY_DEFAULT_VALUE  = "default";
-    /**
-     *
-     */
     public static final String  PARAM_CODEC                               = "codec";
     public static final String  PARAM_CODEC_DEFAULT_VALUE                 = "default";
     /**

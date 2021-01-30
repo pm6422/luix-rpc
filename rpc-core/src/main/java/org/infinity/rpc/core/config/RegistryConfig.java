@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 @Data
 public class RegistryConfig {
@@ -79,7 +79,7 @@ public class RegistryConfig {
         Url registryUrl = Url.registryUrl(name, host, port);
 
         // Assign values to parameters
-        registryUrl.addParameter(Url.PARAM_CHECK_HEALTH, Url.PARAM_CHECK_HEALTH_DEFAULT_VALUE);
+        registryUrl.addParameter(CHECK_HEALTH, String.valueOf(CHECK_HEALTH_DEFAULT_VALUE));
         registryUrl.addParameter(Url.PARAM_ADDRESS, registryUrl.getAddress());
         registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, connectTimeout.toString());
         registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, sessionTimeout.toString());

@@ -27,6 +27,8 @@ import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 
 import java.util.Optional;
 
+import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY;
+
 @Spi(scope = SpiScope.SINGLETON)
 public interface CheckHealthFactory {
 
@@ -63,7 +65,7 @@ public interface CheckHealthFactory {
      * @return check health factory instance
      */
     static CheckHealthFactory getInstance(Url providerUrl) {
-        final String name = providerUrl.getParameter(Url.PARAM_CHECK_HEALTH_FACTORY);
+        final String name = providerUrl.getParameter(CHECK_HEALTH_FACTORY);
         return Optional.ofNullable(ServiceLoader.forClass(CheckHealthFactory.class).load(name))
                 .orElseThrow(() -> new RpcFrameworkException("No check health factory [" + name + "] found!"));
     }

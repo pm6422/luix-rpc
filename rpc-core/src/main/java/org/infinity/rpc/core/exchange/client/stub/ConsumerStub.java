@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_URLS;
-import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY_VALUE_DIRECT;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
  * PRC consumer stub
@@ -206,12 +206,12 @@ public class ConsumerStub<T> {
         if (checkHealth == null) {
             checkHealth = consumerConfig.isCheckHealth();
         }
-        url.addParameter(Url.PARAM_CHECK_HEALTH, String.valueOf(checkHealth));
+        url.addParameter(CHECK_HEALTH, String.valueOf(checkHealth));
 
         if (StringUtils.isEmpty(checkHealthFactory)) {
             checkHealthFactory = consumerConfig.getCheckHealthFactory();
         }
-        url.addParameter(Url.PARAM_CHECK_HEALTH_FACTORY, checkHealthFactory);
+        url.addParameter(CHECK_HEALTH_FACTORY, checkHealthFactory);
 
         if (Integer.MAX_VALUE == requestTimeout) {
             requestTimeout = consumerConfig.getRequestTimeout();
