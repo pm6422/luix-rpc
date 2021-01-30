@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.constant;
 
 /**
- * All the attributes name of {@link org.infinity.rpc.core.client.annotation.Consumer}
+ * All the attribute names of {@link org.infinity.rpc.core.client.annotation.Consumer}
  */
 public interface ConsumerConstants extends ServiceConstants {
     String CLUSTER                       = "cluster";
@@ -11,5 +11,4 @@ public interface ConsumerConstants extends ServiceConstants {
     String LOAD_BALANCER                 = "loadBalancer";
     String LOAD_BALANCER_DEFAULT_VALUE   = "random";
     String DIRECT_URLS                   = "directUrls";
-    String REQUEST_TIMEOUT               = "requestTimeout";
 }

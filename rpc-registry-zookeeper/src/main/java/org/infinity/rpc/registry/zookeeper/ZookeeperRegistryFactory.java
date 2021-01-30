@@ -7,6 +7,8 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
+import static org.infinity.rpc.core.config.RegistryConfig.*;
+
 @ServiceName("zookeeper")
 @Slf4j
 public class ZookeeperRegistryFactory extends AbstractRegistryFactory {
@@ -18,9 +20,9 @@ public class ZookeeperRegistryFactory extends AbstractRegistryFactory {
      */
     @Override
     public Registry createRegistry(Url registryUrl) {
-        int connectTimeout = registryUrl.getIntParameter(Url.PARAM_CONNECT_TIMEOUT);
-        int sessionTimeout = registryUrl.getIntParameter(Url.PARAM_CONNECT_TIMEOUT);
-        ZkClient zkClient = createZkClient(registryUrl.getParameter(Url.PARAM_ADDRESS), sessionTimeout, connectTimeout);
+        int connectTimeout = registryUrl.getIntParameter(CONNECT_TIMEOUT);
+        int sessionTimeout = registryUrl.getIntParameter(SESSION_TIMEOUT);
+        ZkClient zkClient = createZkClient(registryUrl.getParameter(ADDRESS), sessionTimeout, connectTimeout);
         return new ZookeeperRegistry(registryUrl, zkClient);
     }
 

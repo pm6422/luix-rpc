@@ -23,6 +23,11 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static org.infinity.rpc.core.config.RegistryConfig.CONNECT_TIMEOUT;
+import static org.infinity.rpc.core.config.RegistryConfig.CONNECT_TIMEOUT_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT;
+import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT_DEFAULT_VALUE;
+
 @Slf4j
 public class NettyChannel implements Channel {
     private volatile ChannelState             state = ChannelState.UNINITIALIZED;
@@ -44,7 +49,7 @@ public class NettyChannel implements Channel {
         // Get method level parameter value
         int timeout = nettyClient.getProviderUrl()
                 .getMethodParameter(request.getMethodName(), request.getMethodParameters(),
-                        Url.PARAM_REQUEST_TIMEOUT, ServiceConstants.REQUEST_TIMEOUT_DEFAULT_VALUE);
+                        REQUEST_TIMEOUT, REQUEST_TIMEOUT_DEFAULT_VALUE);
         FutureResponse response = new RpcFutureResponse(request, timeout, this.nettyClient.getProviderUrl());
         this.nettyClient.registerCallback(request.getRequestId(), response);
         byte[] msg = CodecUtils.encodeObjectToBytes(this, codec, request);
@@ -99,7 +104,7 @@ public class NettyChannel implements Channel {
         try {
             long start = System.currentTimeMillis();
             channelFuture = nettyClient.getBootstrap().connect(remoteAddress);
-            int timeout = nettyClient.getProviderUrl().getIntParameter(Url.PARAM_CONNECT_TIMEOUT, Url.PARAM_CONNECT_TIMEOUT_DEFAULT_VALUE);
+            int timeout = nettyClient.getProviderUrl().getIntParameter(CONNECT_TIMEOUT, CONNECT_TIMEOUT_DEFAULT_VALUE);
             if (timeout <= 0) {
                 throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
             }

@@ -19,8 +19,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static org.infinity.rpc.core.config.RegistryConfig.ADDRESS;
 import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY_VALUE_DIRECT;
-import static org.infinity.rpc.core.url.Url.PARAM_ADDRESS;
 
 @Slf4j
 @ThreadSafe
@@ -30,7 +30,7 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
 
     public DirectRegistry(Url registryUrl) {
         super(registryUrl);
-        directUrls = parseDirectUrls(registryUrl.getParameter(PARAM_ADDRESS));
+        directUrls = parseDirectUrls(registryUrl.getParameter(ADDRESS));
     }
 
     private List<Url> parseDirectUrls(String address) {

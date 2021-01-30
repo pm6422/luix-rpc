@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.constant;
 
 /**
- * All the attributes name of
+ * All the attribute names of
  * {@link org.infinity.rpc.core.client.annotation.Consumer}
  * {@link org.infinity.rpc.core.server.annotation.Provider}
  */

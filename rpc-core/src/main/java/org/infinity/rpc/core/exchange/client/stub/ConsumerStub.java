@@ -216,12 +216,12 @@ public class ConsumerStub<T> {
         if (Integer.MAX_VALUE == requestTimeout) {
             requestTimeout = consumerConfig.getRequestTimeout();
         }
-        url.addParameter(Url.PARAM_REQUEST_TIMEOUT, String.valueOf(requestTimeout));
+        url.addParameter(REQUEST_TIMEOUT, String.valueOf(requestTimeout));
 
         if (Integer.MAX_VALUE == maxRetries) {
             maxRetries = consumerConfig.getMaxRetries();
         }
-        url.addParameter(Url.PARAM_MAX_RETRIES, String.valueOf(maxRetries));
+        url.addParameter(MAX_RETRIES, String.valueOf(maxRetries));
 
         return url;
     }

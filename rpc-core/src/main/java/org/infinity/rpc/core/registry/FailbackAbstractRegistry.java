@@ -13,6 +13,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.infinity.rpc.core.config.RegistryConfig.RETRY_INTERVAL;
 import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH;
 
 /**
@@ -37,7 +38,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      * @param registryUrl registry url
      */
     private void scheduleRetry(Url registryUrl) {
-        long retryInterval = registryUrl.getIntParameter(Url.PARAM_RETRY_INTERVAL);
+        long retryInterval = registryUrl.getIntParameter(RETRY_INTERVAL);
         // Retry to connect registry at retry interval
         ScheduledThreadPool.schedulePeriodicalTask(ScheduledThreadPool.RETRY_THREAD_POOL, retryInterval, this::doRetry);
     }

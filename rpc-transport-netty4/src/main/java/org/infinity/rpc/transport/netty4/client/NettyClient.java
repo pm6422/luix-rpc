@@ -35,6 +35,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static org.infinity.rpc.core.config.RegistryConfig.CONNECT_TIMEOUT;
+import static org.infinity.rpc.core.config.RegistryConfig.CONNECT_TIMEOUT_DEFAULT_VALUE;
 import static org.infinity.rpc.core.destroy.ScheduledThreadPool.RECYCLE_TIMEOUT_TASK_THREAD_POOL;
 
 /**
@@ -152,7 +154,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         }
 
         bootstrap = new Bootstrap();
-        int timeout = getProviderUrl().getIntParameter(Url.PARAM_CONNECT_TIMEOUT, Url.PARAM_CONNECT_TIMEOUT_DEFAULT_VALUE);
+        int timeout = getProviderUrl().getIntParameter(CONNECT_TIMEOUT, CONNECT_TIMEOUT_DEFAULT_VALUE);
         if (timeout <= 0) {
             throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }

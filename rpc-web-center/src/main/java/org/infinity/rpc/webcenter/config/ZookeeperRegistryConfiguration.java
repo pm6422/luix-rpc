@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Configuration;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.infinity.rpc.core.config.RegistryConfig.*;
+
 @Configuration
 @ConditionalOnProperty(prefix = "infinity.registry", value = "name", havingValue = "zookeeper")
 @Slf4j
@@ -32,9 +34,9 @@ public class ZookeeperRegistryConfiguration {
             List<RegistryService> registryServices = new ArrayList<>(infinityProperties.getRegistryList().size());
             infinityProperties.getRegistryList().forEach(registryConfig -> {
                 Url registryUrl = registryConfig.getRegistryUrl();
-                int connectTimeout = registryUrl.getIntParameter(Url.PARAM_CONNECT_TIMEOUT);
-                int sessionTimeout = registryUrl.getIntParameter(Url.PARAM_CONNECT_TIMEOUT);
-                ZkClient zkClient = createZkClient(registryUrl.getParameter(Url.PARAM_ADDRESS), sessionTimeout, connectTimeout);
+                int connectTimeout = registryUrl.getIntParameter(CONNECT_TIMEOUT);
+                int sessionTimeout = registryUrl.getIntParameter(SESSION_TIMEOUT);
+                ZkClient zkClient = createZkClient(registryUrl.getParameter(ADDRESS), sessionTimeout, connectTimeout);
                 registryServices.add(new ZookeeperRegistryServiceImpl(zkClient));
             });
             return registryServices;

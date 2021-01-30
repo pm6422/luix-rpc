@@ -18,6 +18,13 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 @Data
 public class RegistryConfig {
+    public static final String CONNECT_TIMEOUT               = "connectTimeout";
+    public static final int    CONNECT_TIMEOUT_DEFAULT_VALUE = 1000;
+    public static final String SESSION_TIMEOUT               = "sessionTimeout";
+    public static final int    SESSION_TIMEOUT_DEFAULT_VALUE = 1000;
+    public static final String RETRY_INTERVAL                = "retryInterval";
+    public static final String ADDRESS                       = "address";
+
     private static final Pattern COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
     /**
      * Name of register center
@@ -80,10 +87,10 @@ public class RegistryConfig {
 
         // Assign values to parameters
         registryUrl.addParameter(CHECK_HEALTH, String.valueOf(CHECK_HEALTH_DEFAULT_VALUE));
-        registryUrl.addParameter(Url.PARAM_ADDRESS, registryUrl.getAddress());
-        registryUrl.addParameter(Url.PARAM_CONNECT_TIMEOUT, connectTimeout.toString());
-        registryUrl.addParameter(Url.PARAM_SESSION_TIMEOUT, sessionTimeout.toString());
-        registryUrl.addParameter(Url.PARAM_RETRY_INTERVAL, retryInterval.toString());
+        registryUrl.addParameter(ADDRESS, registryUrl.getAddress());
+        registryUrl.addParameter(CONNECT_TIMEOUT, connectTimeout.toString());
+        registryUrl.addParameter(SESSION_TIMEOUT, sessionTimeout.toString());
+        registryUrl.addParameter(RETRY_INTERVAL, retryInterval.toString());
         return registryUrl;
     }
 

@@ -34,8 +34,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH;
-import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
  * PRC provider stub
@@ -217,12 +216,12 @@ public class ProviderStub<T> {
         if (Integer.MAX_VALUE == requestTimeout) {
             requestTimeout = providerConfig.getRequestTimeout();
         }
-        url.addParameter(Url.PARAM_REQUEST_TIMEOUT, String.valueOf(requestTimeout));
+        url.addParameter(REQUEST_TIMEOUT, String.valueOf(requestTimeout));
 
         if (Integer.MAX_VALUE == maxRetries) {
             maxRetries = providerConfig.getMaxRetries();
         }
-        url.addParameter(Url.PARAM_MAX_RETRIES, String.valueOf(maxRetries));
+        url.addParameter(MAX_RETRIES, String.valueOf(maxRetries));
 
         return url;
     }

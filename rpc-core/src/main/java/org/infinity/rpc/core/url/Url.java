@@ -57,8 +57,6 @@ public final class Url implements Serializable {
 
     // ◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘
     // Constants definitions
-    public static final String  PARAM_GROUP_APPLICATION                   = "application";
-    public static final String  PARAM_GROUP_APPLICATION_PROVIDER          = "application-provider";
     /**
      *
      */
@@ -79,31 +77,8 @@ public final class Url implements Serializable {
     /**
      *
      */
-    public static final String  PARAM_LOAD_BALANCER                       = "loadBalancer";
-    public static final String  PARAM_LOAD_BALANCER_DEFAULT_VALUE         = "random";
-    /**
-     *
-     */
-    public static final String  PARAM_HA                                  = "ha";
-    public static final String  PARAM_HA_DEFAULT_VALUE                    = "failover";
-    /**
-     *
-     */
     public static final String  PARAM_SERIALIZER                          = "serializer";
     public static final String  PARAM_SERIALIZER_DEFAULT_VALUE            = "hessian2";
-    /**
-     *
-     */
-    public static final String  PARAM_MAX_RETRIES                         = "maxRetries";
-    /**
-     *
-     */
-    public static final String  PARAM_REQUEST_TIMEOUT                     = "requestTimeout";
-    /**
-     *
-     */
-    public static final String  PARAM_CONNECT_TIMEOUT                     = "connectTimeout";
-    public static final int     PARAM_CONNECT_TIMEOUT_DEFAULT_VALUE       = 1000;
     /**
      * pool max conn number
      */
@@ -175,9 +150,6 @@ public final class Url implements Serializable {
     public static final String  PARAM_WEIGHT                              = "weights";
     public static final String  PARAM_WEIGHT_DEFAULT_VALUE                = "";
 
-    public static final String PARAM_ADDRESS         = "address";
-    public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
-    public static final String PARAM_RETRY_INTERVAL  = "retryInterval";
     public static final String PARAM_APP             = "app";
     public static final String PARAM_APP_UNKNOWN     = "unknown";
     public static final String PARAM_ACTIVATED_TIME  = "activatedTime";
