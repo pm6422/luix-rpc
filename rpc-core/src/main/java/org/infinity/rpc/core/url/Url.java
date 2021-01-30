@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.infinity.rpc.core.constant.RpcConstants.PATH_SEPARATOR;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
@@ -27,7 +28,6 @@ public final class Url implements Serializable {
      */
     private static final String              URL_PATTERN        = "{0}://{1}:{2}/{3}?{4}";
     private static final String              PROTOCOL_SEPARATOR = "://";
-    public static final  String              PATH_SEPARATOR     = "/";
     private static final int                 CLIENT_URL_PORT    = 0;
     /**
      * RPC protocol
@@ -167,7 +167,7 @@ public final class Url implements Serializable {
      * @param protocol protocol
      * @param host     host
      * @param port     port
-     * @param path     interface full name
+     * @param path     RPC interface fully-qualified name
      * @param options  options
      * @return create a url
      */
@@ -202,7 +202,7 @@ public final class Url implements Serializable {
      *
      * @param protocol protocol
      * @param port     port
-     * @param path     interface full name
+     * @param path     RPC interface fully-qualified name
      * @param group    group
      * @param version  version
      * @return consumer url

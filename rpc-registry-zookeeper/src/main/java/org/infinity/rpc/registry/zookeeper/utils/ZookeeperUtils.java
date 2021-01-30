@@ -15,7 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.infinity.rpc.core.url.Url.PATH_SEPARATOR;
+import static org.infinity.rpc.core.constant.RpcConstants.PATH_SEPARATOR;
+
 
 @Slf4j
 public class ZookeeperUtils {

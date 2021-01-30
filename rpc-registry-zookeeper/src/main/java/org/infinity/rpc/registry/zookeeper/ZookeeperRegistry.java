@@ -35,6 +35,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static org.infinity.rpc.core.constant.RpcConstants.PATH_SEPARATOR;
+
 /**
  * Zookeeper registry implementation used to subscribe, unsubscribe, register or unregister data.
  * Zookeeper has three vital listeners:
@@ -216,7 +218,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             zkClient.createPersistent(appNodePath, true);
         }
 
-        String filePath = appNodePath + Url.PATH_SEPARATOR + providerUrl.getPath();
+        String filePath = appNodePath + PATH_SEPARATOR + providerUrl.getPath();
         // Create a temporary file which content is the full string of the url
         // And temporary files will be deleted automatically after closed zk session
         // Append multiple provider url to file contents
@@ -412,7 +414,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             return urls;
         }
         for (String fileName : fileNames) {
-            String fullPath = dirName.concat(Url.PATH_SEPARATOR).concat(fileName);
+            String fullPath = dirName.concat(PATH_SEPARATOR).concat(fileName);
             String fileData = null;
             try {
                 fileData = zkClient.readData(fullPath, true);
