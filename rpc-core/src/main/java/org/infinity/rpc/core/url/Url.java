@@ -458,7 +458,7 @@ public final class Url implements Serializable {
 
     @Override
     public String toString() {
-        // Use simple string in order to output log more simpler
+        // Use simple string in order to output log simply
         return toSimpleString();
     }
 
