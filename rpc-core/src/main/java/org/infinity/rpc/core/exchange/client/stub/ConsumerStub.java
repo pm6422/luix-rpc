@@ -15,6 +15,7 @@ import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
 import org.infinity.rpc.core.exchange.cluster.listener.SubscribeProviderListener;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.network.AddressUtils;
+import org.infinity.rpc.utilities.network.NetworkUtils;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.Min;
@@ -200,7 +201,8 @@ public class ConsumerStub<T> {
             loadBalancer = consumerConfig.getLoadBalancer();
         }
 
-        url = Url.consumerUrl(protocol, protocolConfig.getPort(), interfaceName, group, version);
+        // todo: check internet or intranet ip
+        url = Url.consumerUrl(protocol, NetworkUtils.INTRANET_IP, protocolConfig.getPort(), interfaceName, group, version);
         url.addOption(Url.PARAM_APP, applicationConfig.getName());
 
         if (checkHealth == null) {

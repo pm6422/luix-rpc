@@ -35,6 +35,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
+import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
+
 /**
  * todo: CommandServiceManager
  * Command and service listener for a client.
@@ -177,7 +179,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
                 if (!weights.containsKey(gk)) {
                     activeProviderUrlsPerGroup.remove(gk);
                     Url urlTemp = urlCopy.copy();
-                    urlTemp.setGroup(gk);
+                    urlTemp.addOption(GROUP, gk);
                     registry.unsubscribeServiceListener(urlTemp, this);
                 }
             }
@@ -348,7 +350,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
                 finalResult.addAll(activeProviderUrlsPerGroup.get(key));
             } else {
                 Url urlTemp = url.copy();
-                urlTemp.setGroup(key);
+                urlTemp.addOption(GROUP, key);
                 finalResult.addAll(discoverActiveProvidersByGroup(urlTemp));
                 registry.subscribeServiceListener(urlTemp, this);
             }

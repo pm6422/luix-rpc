@@ -22,48 +22,39 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
  */
 @Data
 public final class Url implements Serializable {
-    private static final long    serialVersionUID   = 2970867582138131181L;
+    private static final long                serialVersionUID   = 2970867582138131181L;
     /**
      * URL Pattern: {protocol}://{host}:{port}/{path}?{options}
      */
-    private static final String  URL_PATTERN        = "{0}://{1}:{2}/{3}?{4}";
-    private static final String  PROTOCOL_SEPARATOR = "://";
-    public static final  String  PATH_SEPARATOR     = "/";
-    private static final int     CLIENT_URL_PORT    = 0;
+    private static final String              URL_PATTERN        = "{0}://{1}:{2}/{3}?{4}";
+    private static final String              PROTOCOL_SEPARATOR = "://";
+    public static final  String              PATH_SEPARATOR     = "/";
+    private static final int                 CLIENT_URL_PORT    = 0;
     /**
      * RPC protocol
      */
-    private              String  protocol;
+    private              String              protocol;
     /**
      * RPC server or client host name
      */
-    private              String  host;
+    private              String              host;
     /**
      * RPC server or client port
      */
-    private              Integer port;
+    private              Integer             port;
     /**
      * RPC interface fully-qualified name
      */
-    private              String  path;
-    /**
-     * Service provider group
-     */
-    private              String  group;
-    /**
-     * RPC protocol version
-     */
-    private              String  version;
-
+    private              String              path;
     /**
      * Extended options
      */
-    private           Map<String, String> options    = new ConcurrentHashMap<>();
+    private              Map<String, String> options            = new ConcurrentHashMap<>();
     /**
      * Extended options which are number types
      * transient fields will be ignored to generate equals() and hashcode() by lombok
      */
-    private transient Map<String, Number> numOptions = new ConcurrentHashMap<>();
+    private transient    Map<String, Number> numOptions         = new ConcurrentHashMap<>();
 
     // ◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘
     // Constants definitions
@@ -171,35 +162,39 @@ public final class Url implements Serializable {
     private Url() {
     }
 
-    public static Url of(String protocol, String host, Integer port, String path, String group, String version,
-                         Map<String, String> options) {
+    /**
+     * URL Pattern: {protocol}://{host}:{port}/{path}?{options}
+     *
+     * @param protocol protocol
+     * @param host     host
+     * @param port     port
+     * @param path     path
+     * @param options  options
+     * @return create a url
+     */
+    public static Url of(String protocol, String host, Integer port, String path, Map<String, String> options) {
         Url url = new Url();
         url.setProtocol(protocol);
-        url.setGroup(group);
-        url.setVersion(version);
         url.setHost(host);
         url.setPort(port);
         url.setPath(path);
 
-        // initialize fields with init values
-        url.initialize();
         url.addOptions(options);
         url.checkIntegrity();
         url.checkValidity();
         return url;
     }
 
-    public static Url of(String protocol, String host, Integer port, String path, Map<String, String> options) {
-        return of(protocol, host, port, path, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, options);
-    }
-
     public static Url of(String protocol, String host, Integer port, String path) {
-        return of(protocol, host, port, path, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, new HashMap<>());
+        return of(protocol, host, port, path, new ConcurrentHashMap<>());
     }
 
     public static Url providerUrl(String protocol, String host, Integer port, String path, String group, String version) {
-        Url url = of(protocol, host, port, path, group, version, new HashMap<>());
-        url.addOption(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
+        Map<String, String> options = new ConcurrentHashMap<>();
+        options.put(GROUP, group);
+        options.put(VERSION, version);
+        options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
+        Url url = of(protocol, host, port, path, options);
         return url;
     }
 
@@ -214,15 +209,20 @@ public final class Url implements Serializable {
      * @param version
      * @return
      */
-    public static Url consumerUrl(String protocol, Integer port, String path, String group, String version) {
-        // todo: check internet or intranet ip
-        Url url = of(protocol, NetworkUtils.INTRANET_IP, port, path, group, version, new HashMap<>());
-        url.addOption(Url.PARAM_TYPE, Url.PARAM_TYPE_CONSUMER);
+    public static Url consumerUrl(String protocol, String host, Integer port, String path, String group, String version) {
+        Map<String, String> options = new ConcurrentHashMap<>();
+        options.put(GROUP, group);
+        options.put(VERSION, version);
+        options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_CONSUMER);
+        Url url = of(protocol, host, port, path, options);
         return url;
     }
 
     public static Url clientUrl(String protocol, String path) {
-        return of(protocol, NetworkUtils.INTRANET_IP, CLIENT_URL_PORT, path, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, new HashMap<>());
+        Map<String, String> options = new ConcurrentHashMap<>();
+        options.put(GROUP, GROUP_DEFAULT_VALUE);
+        options.put(VERSION, VERSION_DEFAULT_VALUE);
+        return of(protocol, NetworkUtils.INTRANET_IP, CLIENT_URL_PORT, path, options);
     }
 
     /**
@@ -234,8 +234,11 @@ public final class Url implements Serializable {
      * @return registry url
      */
     public static Url registryUrl(String protocol, String host, Integer port) {
-        Url url = of(protocol, host, port, Registry.class.getName(), GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, new HashMap<>());
-        url.addOption(Url.PARAM_TYPE, Url.PARAM_TYPE_REGISTRY);
+        Map<String, String> options = new ConcurrentHashMap<>();
+        options.put(GROUP, GROUP_DEFAULT_VALUE);
+        options.put(VERSION, VERSION_DEFAULT_VALUE);
+        options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_REGISTRY);
+        Url url = of(protocol, host, port, Registry.class.getName(), options);
         return url;
     }
 
@@ -249,16 +252,10 @@ public final class Url implements Serializable {
         return host + ":" + port;
     }
 
-    private void initialize() {
-        options = new HashMap<>();
-    }
-
     private void checkIntegrity() {
         Validate.notEmpty(protocol, "Protocol must NOT be empty!");
         Validate.notEmpty(host, "Host must NOT be empty!");
         Validate.notNull(port, "Port must NOT be null!");
-        Validate.notEmpty(group, "Group must NOT be empty!");
-        Validate.notEmpty(version, "Version must NOT be empty!");
     }
 
     private void checkValidity() {
@@ -339,9 +336,9 @@ public final class Url implements Serializable {
             return protocol + PROTOCOL_SEPARATOR + host + ":" + port;
         }
         return protocol + PROTOCOL_SEPARATOR + host + ":" + port
-                + "/" + getOption(GROUP, GROUP_DEFAULT_VALUE)
+                + "/" + getGroup()
                 + "/" + getPath()
-                + "/" + getOption(VERSION, VERSION_DEFAULT_VALUE)
+                + "/" + getVersion()
                 + "/" + getOption(PARAM_TYPE, PARAM_TYPE_PROVIDER);
     }
 
@@ -458,6 +455,14 @@ public final class Url implements Serializable {
      */
     public String toSimpleString() {
         return getUri() + "?group=" + getGroup();
+    }
+
+    public String getGroup() {
+        return getOption(GROUP, GROUP_DEFAULT_VALUE);
+    }
+
+    public String getVersion() {
+        return getOption(VERSION, VERSION_DEFAULT_VALUE);
     }
 
     @Override
