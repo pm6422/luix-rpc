@@ -134,16 +134,14 @@ public class SubscribeProviderListener<T> implements ClientListener {
     @EventSubscriber("providersDiscoveryEvent")
     private void subscribe() {
         for (Url registryUrl : registryUrls) {
-            String directUrlStr = registryUrl.getOption(DIRECT_URLS);
-            // 如果有directUrl，直接使用这些directUrls进行初始化，不用到注册中心discover
-            if (StringUtils.isNotEmpty(directUrlStr)) {
-                List<Url> directUrls = parseDirectUrls(directUrlStr);
-                if (CollectionUtils.isNotEmpty(directUrls)) {
-                    // Directly notify the provider urls
-                    onNotify(registryUrl, directUrls);
-                    log.info("Use direct urls, refUrl={}, directUrls={}", registryUrl, directUrls);
-                    continue;
-                }
+            String directUrls = registryUrl.getOption(DIRECT_URLS);
+            if (StringUtils.isNotEmpty(directUrls)) {
+                // 如果有directUrls，直接使用这些directUrls进行初始化，不用到注册中心discover
+                List<Url> directUrlList = parseDirectUrls(directUrls);
+                // Directly notify the provider urls
+                this.onNotify(registryUrl, directUrlList);
+                log.info("Notified registries [{}] with direct provider urls {}", registryUrl, directUrlList);
+                continue;
             }
 
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
@@ -153,13 +151,9 @@ public class SubscribeProviderListener<T> implements ClientListener {
     }
 
     private List<Url> parseDirectUrls(String directUrlStr) {
-        String[] directUrlArray = RpcConstants.COMMA_SPLIT_PATTERN.split(directUrlStr);
-        List<Url> directUrls = new ArrayList<>();
-        for (String directUrl : directUrlArray) {
-            Url url = Url.valueOf(directUrl);
-            directUrls.add(url);
-        }
-        return directUrls;
+        return Arrays.stream(RpcConstants.COMMA_SPLIT_PATTERN.split(directUrlStr))
+                .map(Url::valueOf)
+                .collect(Collectors.toList());
     }
 
     @Override
