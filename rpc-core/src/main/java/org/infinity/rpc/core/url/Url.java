@@ -268,6 +268,14 @@ public final class Url implements Serializable {
         }
         return of(protocol, host, port, path, options);
     }
+    
+    public void addOption(String name, String value) {
+        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(value)) {
+            return;
+        }
+        options.put(name, value);
+    }
+
 
     public String getOption(String name, String defaultValue) {
         String value = getOption(name);
@@ -444,19 +452,6 @@ public final class Url implements Serializable {
         return builder.toString();
     }
 
-    public String getUri() {
-        return protocol + PROTOCOL_SEPARATOR + host + ":" + port + PATH_SEPARATOR + path;
-    }
-
-    /**
-     * Including protocol, host, port, group
-     *
-     * @return combination string
-     */
-    public String toSimpleString() {
-        return getUri() + "?group=" + getGroup();
-    }
-
     public String getGroup() {
         return getOption(GROUP, GROUP_DEFAULT_VALUE);
     }
@@ -470,11 +465,17 @@ public final class Url implements Serializable {
         return toSimpleString();
     }
 
-    public void addOption(String name, String value) {
-        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(value)) {
-            return;
-        }
-        options.put(name, value);
+    /**
+     * Including protocol, host, port, group
+     *
+     * @return combination string
+     */
+    public String toSimpleString() {
+        return getUri() + "?group=" + getGroup() + "&version" + getVersion();
+    }
+
+    public String getUri() {
+        return protocol + PROTOCOL_SEPARATOR + host + ":" + port + PATH_SEPARATOR + path;
     }
 
     /**
