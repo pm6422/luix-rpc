@@ -16,7 +16,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.config.RegistryConfig.ADDRESS;
@@ -25,8 +24,7 @@ import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY_VALUE_DIR
 @Slf4j
 @ThreadSafe
 public class DirectRegistry extends AbstractRegistry implements Cleanable {
-    private final List<Url>        directUrls;
-    private final Map<Url, Object> subscribeUrls = new ConcurrentHashMap<>();
+    private final List<Url> directUrls;
 
     public DirectRegistry(Url registryUrl) {
         super(registryUrl);
@@ -77,14 +75,12 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
 
     @Override
     protected synchronized void doSubscribe(Url clientUrl, ClientListener listener) {
-        subscribeUrls.putIfAbsent(clientUrl, 1);
         // Notify
         listener.onNotify(registryUrl, doDiscover(clientUrl));
     }
 
     @Override
     protected synchronized void doUnsubscribe(Url clientUrl, ClientListener listener) {
-        subscribeUrls.remove(clientUrl);
         // Notify
         listener.onNotify(registryUrl, doDiscover(clientUrl));
     }
