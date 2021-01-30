@@ -227,9 +227,22 @@ public class ConsumerStub<T> {
     }
 
     private Url[] createDirectRegistries(Url[] globalRegistryUrls) {
-        List<Pair<String, Integer>> directUrlHostPortList = AddressUtils.parseAddress(directUrls);
-        StringBuilder directProviderUrls = new StringBuilder(128);
+        String directProviderUrls = createDirectProviderUrls();
 
+        Url[] urls = new Url[globalRegistryUrls.length];
+        for (int i = 0; i < globalRegistryUrls.length; i++) {
+            Url url = globalRegistryUrls[i].copy();
+            // Change protocol to direct
+            url.setProtocol(REGISTRY_VALUE_DIRECT);
+            url.addOption(DIRECT_URLS, directProviderUrls);
+            urls[i] = url;
+        }
+        return urls;
+    }
+
+    private String createDirectProviderUrls() {
+        StringBuilder directProviderUrls = new StringBuilder(128);
+        List<Pair<String, Integer>> directUrlHostPortList = AddressUtils.parseAddress(directUrls);
         Iterator<Pair<String, Integer>> iterator = directUrlHostPortList.iterator();
         while (iterator.hasNext()) {
             Pair<String, Integer> providerHostPortPair = iterator.next();
@@ -243,16 +256,7 @@ public class ConsumerStub<T> {
                 directProviderUrls.append(RpcConstants.COMMA_SEPARATOR);
             }
         }
-
-        Url[] urls = new Url[globalRegistryUrls.length];
-        for (int i = 0; i < globalRegistryUrls.length; i++) {
-            Url url = globalRegistryUrls[i].copy();
-            // Change protocol to direct
-            url.setProtocol(REGISTRY_VALUE_DIRECT);
-            url.addOption(DIRECT_URLS, directProviderUrls.toString());
-            urls[i] = url;
-        }
-        return urls;
+        return directProviderUrls.toString();
     }
 
     private ProviderCluster<T> createProviderCluster() {
