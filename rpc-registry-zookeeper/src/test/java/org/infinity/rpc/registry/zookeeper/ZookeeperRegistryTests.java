@@ -48,19 +48,19 @@ public class ZookeeperRegistryTests {
         in.close();
 
         registryUrl = Url.registryUrl(REGISTRY_DEFAULT_VALUE, REGISTRY_HOST, zkPort);
-        registryUrl.addParameter(CONNECT_TIMEOUT, "" + Math.toIntExact(TimeUnit.SECONDS.toMillis(1)));
-        registryUrl.addParameter(SESSION_TIMEOUT, "" + Math.toIntExact(TimeUnit.MINUTES.toMillis(1)));
-        registryUrl.addParameter(RETRY_INTERVAL, "" + Math.toIntExact(TimeUnit.SECONDS.toMillis(30)));
+        registryUrl.addOption(CONNECT_TIMEOUT, "" + Math.toIntExact(TimeUnit.SECONDS.toMillis(1)));
+        registryUrl.addOption(SESSION_TIMEOUT, "" + Math.toIntExact(TimeUnit.MINUTES.toMillis(1)));
+        registryUrl.addOption(RETRY_INTERVAL, "" + Math.toIntExact(TimeUnit.SECONDS.toMillis(30)));
 
         // client url has the same protocol and provider path to provider, but port is 0
         clientUrl = Url.clientUrl(PROTOCOL_DEFAULT_VALUE, provider);
-        clientUrl.addParameter("group", GROUP_DEFAULT_VALUE);
+        clientUrl.addOption("group", GROUP_DEFAULT_VALUE);
 
         providerUrl1 = Url.of(PROTOCOL_DEFAULT_VALUE, NetworkUtils.INTRANET_IP, 2000, provider);
-        providerUrl1.addParameter("group", GROUP_DEFAULT_VALUE);
+        providerUrl1.addOption("group", GROUP_DEFAULT_VALUE);
 
         providerUrl2 = Url.of(PROTOCOL_DEFAULT_VALUE, "192.168.100.100", 2000, provider);
-        providerUrl2.addParameter("group", GROUP_DEFAULT_VALUE);
+        providerUrl2.addOption("group", GROUP_DEFAULT_VALUE);
 
         zookeeper = new EmbeddedZookeeper();
         zookeeper.start();
@@ -269,7 +269,7 @@ public class ZookeeperRegistryTests {
         assertTrue(set1.contains(providerUrl1));
 
         // then modify the element
-        providerUrl1.addParameter(Url.PARAM_ACTIVATED_TIME, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+        providerUrl1.addOption(Url.PARAM_ACTIVATED_TIME, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
 
         // the set does not contain the element any more
         assertFalse(set1.contains(providerUrl1));

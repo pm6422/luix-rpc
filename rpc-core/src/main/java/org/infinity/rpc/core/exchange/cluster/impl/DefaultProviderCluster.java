@@ -168,7 +168,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
         }
 
         boolean parameter = faultToleranceStrategy.getClientUrl()
-                .getBooleanParameter(Url.PARAM_THROW_EXCEPTION, Url.PARAM_THROW_EXCEPTION_DEFAULT_VALUE);
+                .getBooleanOption(Url.PARAM_THROW_EXCEPTION, Url.PARAM_THROW_EXCEPTION_DEFAULT_VALUE);
         if (parameter) {
             if (cause instanceof RpcAbstractException) {
                 throw (RpcAbstractException) cause;

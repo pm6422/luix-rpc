@@ -23,11 +23,11 @@ public class ProviderDTO {
         // Set app
         if (CollectionUtils.isNotEmpty(activeProviders)) {
             Url url = Url.valueOf(activeProviders.get(0).getContents());
-            dto.setApp(url.getParameter(Url.PARAM_APP));
+            dto.setApp(url.getOption(Url.PARAM_APP));
         }
         if (CollectionUtils.isNotEmpty(inactiveProviders)) {
             Url url = Url.valueOf(inactiveProviders.get(0).getContents());
-            dto.setApp(url.getParameter(Url.PARAM_APP));
+            dto.setApp(url.getOption(Url.PARAM_APP));
         }
         return dto;
     }

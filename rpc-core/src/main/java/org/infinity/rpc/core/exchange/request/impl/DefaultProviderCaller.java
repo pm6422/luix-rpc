@@ -29,7 +29,7 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
     public DefaultProviderCaller(Class<T> interfaceClass, Url providerUrl) {
         super(interfaceClass, providerUrl);
         long start = System.currentTimeMillis();
-        String endpointFactoryName = providerUrl.getParameter(Url.PARAM_ENDPOINT_FACTORY, Url.PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE);
+        String endpointFactoryName = providerUrl.getOption(Url.PARAM_ENDPOINT_FACTORY, Url.PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE);
         endpointFactory = EndpointFactory.getInstance(endpointFactoryName);
         if (endpointFactory == null) {
             throw new RpcFrameworkException("Endpoint factory [" + endpointFactoryName + "] must NOT be null!");

@@ -24,7 +24,7 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 public final class Url implements Serializable {
     private static final long    serialVersionUID   = 2970867582138131181L;
     /**
-     * URL Pattern: {protocol}://{host}:{port}/{path}?{parameters}
+     * URL Pattern: {protocol}://{host}:{port}/{path}?{options}
      */
     private static final String  URL_PATTERN        = "{0}://{1}:{2}/{3}?{4}";
     private static final String  PROTOCOL_SEPARATOR = "://";
@@ -54,6 +54,16 @@ public final class Url implements Serializable {
      * RPC protocol version
      */
     private              String  version;
+
+    /**
+     * Extended options
+     */
+    private           Map<String, String> options    = new ConcurrentHashMap<>();
+    /**
+     * Extended options which are number types
+     * transient fields will be ignored to generate equals() and hashcode() by lombok
+     */
+    private transient Map<String, Number> numOptions = new ConcurrentHashMap<>();
 
     // ◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘
     // Constants definitions
@@ -150,18 +160,9 @@ public final class Url implements Serializable {
     public static final String  PARAM_WEIGHT                              = "weights";
     public static final String  PARAM_WEIGHT_DEFAULT_VALUE                = "";
 
-    public static final String PARAM_APP             = "app";
-    public static final String PARAM_APP_UNKNOWN     = "unknown";
-    public static final String PARAM_ACTIVATED_TIME  = "activatedTime";
-
-    /**
-     * Extended parameters
-     */
-    private           Map<String, String> parameters;
-    /**
-     * non-transient fields can be used to generate equals() and hashcode() by lombok
-     */
-    private transient Map<String, Number> numbers;
+    public static final String PARAM_APP            = "app";
+    public static final String PARAM_APP_UNKNOWN    = "unknown";
+    public static final String PARAM_ACTIVATED_TIME = "activatedTime";
 
     /**
      * Prevent instantiation of it outside the class
@@ -170,7 +171,7 @@ public final class Url implements Serializable {
     }
 
     public static Url of(String protocol, String host, Integer port, String path, String group, String version,
-                         Map<String, String> parameters) {
+                         Map<String, String> options) {
         Url url = new Url();
         url.setProtocol(protocol);
         url.setGroup(group);
@@ -181,14 +182,14 @@ public final class Url implements Serializable {
 
         // initialize fields with init values
         url.initialize();
-        url.addParameters(parameters);
+        url.addOptions(options);
         url.checkIntegrity();
         url.checkValidity();
         return url;
     }
 
-    public static Url of(String protocol, String host, Integer port, String path, Map<String, String> parameters) {
-        return of(protocol, host, port, path, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, parameters);
+    public static Url of(String protocol, String host, Integer port, String path, Map<String, String> options) {
+        return of(protocol, host, port, path, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, options);
     }
 
     public static Url of(String protocol, String host, Integer port, String path) {
@@ -197,7 +198,7 @@ public final class Url implements Serializable {
 
     public static Url providerUrl(String protocol, String host, Integer port, String path, String group, String version) {
         Url url = of(protocol, host, port, path, group, version, new HashMap<>());
-        url.addParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
+        url.addOption(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
         return url;
     }
 
@@ -215,7 +216,7 @@ public final class Url implements Serializable {
     public static Url consumerUrl(String protocol, Integer port, String path, String group, String version) {
         // todo: check internet or intranet ip
         Url url = of(protocol, NetworkUtils.INTRANET_IP, port, path, group, version, new HashMap<>());
-        url.addParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_CONSUMER);
+        url.addOption(Url.PARAM_TYPE, Url.PARAM_TYPE_CONSUMER);
         return url;
     }
 
@@ -233,7 +234,7 @@ public final class Url implements Serializable {
      */
     public static Url registryUrl(String protocol, String host, Integer port) {
         Url url = of(protocol, host, port, Registry.class.getName(), GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE, new HashMap<>());
-        url.addParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_REGISTRY);
+        url.addOption(Url.PARAM_TYPE, Url.PARAM_TYPE_REGISTRY);
         return url;
     }
 
@@ -248,7 +249,7 @@ public final class Url implements Serializable {
     }
 
     private void initialize() {
-        parameters = new HashMap<>();
+        options = new HashMap<>();
     }
 
     private void checkIntegrity() {
@@ -263,76 +264,68 @@ public final class Url implements Serializable {
     }
 
     public Url copy() {
-        Map<String, String> params = new HashMap<>();
-        if (this.parameters != null) {
-            params.putAll(this.parameters);
+        Map<String, String> options = new HashMap<>();
+        if (this.options != null) {
+            options.putAll(this.options);
         }
-        return of(protocol, host, port, path, params);
+        return of(protocol, host, port, path, options);
     }
 
-    public String getParameter(String name, String defaultValue) {
-        String value = getParameter(name);
+    public String getOption(String name, String defaultValue) {
+        String value = getOption(name);
         if (value == null) {
             return defaultValue;
         }
         return value;
     }
 
-    public String getParameter(String name) {
-        return parameters.get(name);
+    public String getOption(String name) {
+        return options.get(name);
     }
 
-    public Integer getIntParameter(String name, int defaultValue) {
-        Number n = getNumbers().get(name);
+    private void addOptions(Map<String, String> options) {
+        this.options.putAll(options);
+    }
+
+    public Integer getIntOption(String name, int defaultValue) {
+        Number n = getNumOptions().get(name);
         if (n != null) {
             return n.intValue();
         }
-        String value = parameters.get(name);
+        String value = options.get(name);
         if (value == null || value.length() == 0) {
             return defaultValue;
         }
         int i = Integer.parseInt(value);
-        getNumbers().put(name, i);
+        getNumOptions().put(name, i);
         return i;
     }
 
-    public Integer getIntParameter(String name) {
-        Number n = getNumbers().get(name);
+    public Integer getIntOption(String name) {
+        Number n = getNumOptions().get(name);
         if (n != null) {
             return n.intValue();
         }
-        String value = parameters.get(name);
+        String value = options.get(name);
         int i = Integer.parseInt(value);
-        getNumbers().put(name, i);
+        getNumOptions().put(name, i);
         return i;
     }
 
-    private Map<String, Number> getNumbers() {
-        if (numbers == null) {
-            // 允许并发重复创建
-            numbers = new ConcurrentHashMap<>();
-        }
-        return numbers;
-    }
-
-    public Boolean getBooleanParameter(String name, boolean defaultValue) {
-        Boolean value = getBooleanParameter(name);
+    public Boolean getBooleanOption(String name, boolean defaultValue) {
+        Boolean value = getBooleanOption(name);
         if (value == null) {
             return defaultValue;
         }
         return value;
     }
 
-    public Boolean getBooleanParameter(String name) {
-        String value = parameters.get(name);
+    public Boolean getBooleanOption(String name) {
+        String value = options.get(name);
         if (value == null) {
             return null;
         }
         return Boolean.parseBoolean(value);
-    }
-
-    private void addParameters(Map<String, String> parameters) {
-        this.parameters.putAll(parameters);
     }
 
     /**
@@ -341,14 +334,14 @@ public final class Url implements Serializable {
      * @return identity
      */
     public String getIdentity() {
-        if (PARAM_TYPE_REGISTRY.equals(getParameter(PARAM_TYPE))) {
+        if (PARAM_TYPE_REGISTRY.equals(getOption(PARAM_TYPE))) {
             return protocol + PROTOCOL_SEPARATOR + host + ":" + port;
         }
         return protocol + PROTOCOL_SEPARATOR + host + ":" + port
-                + "/" + getParameter(GROUP, GROUP_DEFAULT_VALUE)
+                + "/" + getOption(GROUP, GROUP_DEFAULT_VALUE)
                 + "/" + getPath()
-                + "/" + getParameter(VERSION, VERSION_DEFAULT_VALUE)
-                + "/" + getParameter(PARAM_TYPE, PARAM_TYPE_PROVIDER);
+                + "/" + getOption(VERSION, VERSION_DEFAULT_VALUE)
+                + "/" + getOption(PARAM_TYPE, PARAM_TYPE_PROVIDER);
     }
 
     public String getServerPortStr() {
@@ -380,8 +373,8 @@ public final class Url implements Serializable {
         String host = null;
         int port = 0;
         String path = null;
-        Map<String, String> parameters = new HashMap<>();
-        // separator between body and parameters
+        Map<String, String> options = new HashMap<>();
+        // separator between body and options
         int i = url.indexOf("?");
         if (i >= 0) {
             String[] parts = url.substring(i + 1).split("&");
@@ -391,9 +384,9 @@ public final class Url implements Serializable {
                 if (part.length() > 0) {
                     int j = part.indexOf('=');
                     if (j >= 0) {
-                        parameters.put(part.substring(0, j), part.substring(j + 1));
+                        options.put(part.substring(0, j), part.substring(j + 1));
                     } else {
-                        parameters.put(part, part);
+                        options.put(part, part);
                     }
                 }
             }
@@ -431,16 +424,16 @@ public final class Url implements Serializable {
         if (url.length() > 0) {
             host = url;
         }
-        return of(protocol, host, port, path, parameters);
+        return of(protocol, host, port, path, options);
     }
 
     public String toFullStr() {
         StringBuilder builder = new StringBuilder();
         builder.append(getUri());
-        if (MapUtils.isNotEmpty(parameters)) {
+        if (MapUtils.isNotEmpty(options)) {
             builder.append("?");
         }
-        Iterator<Map.Entry<String, String>> iterator = parameters.entrySet().iterator();
+        Iterator<Map.Entry<String, String>> iterator = options.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, String> entry = iterator.next();
             String name = entry.getKey();
@@ -471,11 +464,11 @@ public final class Url implements Serializable {
         return toSimpleString();
     }
 
-    public void addParameter(String name, String value) {
+    public void addOption(String name, String value) {
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(value)) {
             return;
         }
-        parameters.put(name, value);
+        options.put(name, value);
     }
 
     /**
@@ -489,7 +482,7 @@ public final class Url implements Serializable {
      */
     public Integer getMethodParameter(String methodName, String methodParameters, String name, int defaultValue) {
         String key = methodName + "(" + methodParameters + ")." + name;
-        Number n = getNumbers().get(key);
+        Number n = getNumOptions().get(key);
         if (n != null) {
             return n.intValue();
         }
@@ -498,14 +491,14 @@ public final class Url implements Serializable {
             return defaultValue;
         }
         int i = Integer.parseInt(value);
-        getNumbers().put(key, i);
+        getNumOptions().put(key, i);
         return i;
     }
 
     public String getMethodParameter(String methodName, String methodParameters, String name) {
-        String value = getParameter(RpcConstants.METHOD_CONFIG_PREFIX + methodName + "(" + methodParameters + ")." + name);
+        String value = getOption(RpcConstants.METHOD_CONFIG_PREFIX + methodName + "(" + methodParameters + ")." + name);
         if (value == null || value.length() == 0) {
-            return getParameter(name);
+            return getOption(name);
         }
         return value;
     }

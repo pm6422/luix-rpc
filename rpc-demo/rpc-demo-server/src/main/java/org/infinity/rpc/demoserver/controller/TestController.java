@@ -41,8 +41,8 @@ public class TestController {
                 AppService.class.getName());
 
         // Assign values to parameters
-        providerUrl.addParameter(CHECK_HEALTH, String.valueOf(CHECK_HEALTH_DEFAULT_VALUE));
-        providerUrl.addParameter(Url.PARAM_APP, infinityProperties.getApplication().getName());
+        providerUrl.addOption(CHECK_HEALTH, String.valueOf(CHECK_HEALTH_DEFAULT_VALUE));
+        providerUrl.addOption(Url.PARAM_APP, infinityProperties.getApplication().getName());
 
         infinityProperties.getRegistryList().forEach(registryConfig -> {
             registryConfig.getRegistryImpl().register(providerUrl);

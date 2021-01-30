@@ -201,27 +201,27 @@ public class ConsumerStub<T> {
         }
 
         url = Url.consumerUrl(protocol, protocolConfig.getPort(), interfaceName, group, version);
-        url.addParameter(Url.PARAM_APP, applicationConfig.getName());
+        url.addOption(Url.PARAM_APP, applicationConfig.getName());
 
         if (checkHealth == null) {
             checkHealth = consumerConfig.isCheckHealth();
         }
-        url.addParameter(CHECK_HEALTH, String.valueOf(checkHealth));
+        url.addOption(CHECK_HEALTH, String.valueOf(checkHealth));
 
         if (StringUtils.isEmpty(checkHealthFactory)) {
             checkHealthFactory = consumerConfig.getCheckHealthFactory();
         }
-        url.addParameter(CHECK_HEALTH_FACTORY, checkHealthFactory);
+        url.addOption(CHECK_HEALTH_FACTORY, checkHealthFactory);
 
         if (Integer.MAX_VALUE == requestTimeout) {
             requestTimeout = consumerConfig.getRequestTimeout();
         }
-        url.addParameter(REQUEST_TIMEOUT, String.valueOf(requestTimeout));
+        url.addOption(REQUEST_TIMEOUT, String.valueOf(requestTimeout));
 
         if (Integer.MAX_VALUE == maxRetries) {
             maxRetries = consumerConfig.getMaxRetries();
         }
-        url.addParameter(MAX_RETRIES, String.valueOf(maxRetries));
+        url.addOption(MAX_RETRIES, String.valueOf(maxRetries));
 
         return url;
     }
@@ -236,8 +236,8 @@ public class ConsumerStub<T> {
             Url providerUrl = Url.providerUrl(url.getProtocol(), providerHostPortPair.getLeft(),
                     providerHostPortPair.getRight(), url.getPath(), url.getGroup(), url.getVersion());
             // We can NOT get the provider url via direct url mode
-            providerUrl.addParameter(Url.PARAM_APP, Url.PARAM_APP_UNKNOWN);
-            providerUrl.addParameter(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
+            providerUrl.addOption(Url.PARAM_APP, Url.PARAM_APP_UNKNOWN);
+            providerUrl.addOption(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
             directProviderUrls.append(providerUrl.toFullStr());
             if (iterator.hasNext()) {
                 directProviderUrls.append(RpcConstants.COMMA_SEPARATOR);
@@ -249,7 +249,7 @@ public class ConsumerStub<T> {
             Url url = globalRegistryUrls[i].copy();
             // Change protocol to direct
             url.setProtocol(REGISTRY_VALUE_DIRECT);
-            url.addParameter(DIRECT_URLS, directProviderUrls.toString());
+            url.addOption(DIRECT_URLS, directProviderUrls.toString());
             urls[i] = url;
         }
         return urls;

@@ -8,7 +8,6 @@ import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.text.MessageFormat;
@@ -30,7 +29,7 @@ public class FailoverStrategy<T> extends AbstractFaultToleranceStrategy<T> {
     public Responseable call(LoadBalancer<T> loadBalancer, Requestable request) {
         // Select multiple nodes
         List<ProviderCaller<T>> availableProviderCallers = loadBalancer.selectProviderNodes(request);
-        int maxRetries = availableProviderCallers.get(0).getProviderUrl().getIntParameter(MAX_RETRIES, MAX_RETRIES_DEFAULT_VALUE);
+        int maxRetries = availableProviderCallers.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_DEFAULT_VALUE);
 
         // Retry the RPC request operation till the max retry times
         for (int i = 0; i <= maxRetries; i++) {

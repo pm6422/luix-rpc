@@ -3,7 +3,6 @@ package org.infinity.rpc.transport.netty4.client;
 import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.constant.RpcConstants;
-import org.infinity.rpc.core.constant.ServiceConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
@@ -41,7 +40,7 @@ public class NettyChannel implements Channel {
     public NettyChannel(NettyClient nettyClient) {
         this.nettyClient = nettyClient;
         this.remoteAddress = new InetSocketAddress(nettyClient.getProviderUrl().getHost(), nettyClient.getProviderUrl().getPort());
-        codec = Codec.getInstance(nettyClient.getProviderUrl().getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
+        codec = Codec.getInstance(nettyClient.getProviderUrl().getOption(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
     }
 
     @Override
@@ -104,7 +103,7 @@ public class NettyChannel implements Channel {
         try {
             long start = System.currentTimeMillis();
             channelFuture = nettyClient.getBootstrap().connect(remoteAddress);
-            int timeout = nettyClient.getProviderUrl().getIntParameter(CONNECT_TIMEOUT, CONNECT_TIMEOUT_DEFAULT_VALUE);
+            int timeout = nettyClient.getProviderUrl().getIntOption(CONNECT_TIMEOUT, CONNECT_TIMEOUT_DEFAULT_VALUE);
             if (timeout <= 0) {
                 throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
             }

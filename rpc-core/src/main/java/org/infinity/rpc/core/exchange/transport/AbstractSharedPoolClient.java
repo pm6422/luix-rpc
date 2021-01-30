@@ -26,7 +26,7 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
 
     public AbstractSharedPoolClient(Url providerUrl) {
         super(providerUrl);
-        channelSize = providerUrl.getIntParameter(Url.PARAM_MIN_CLIENT_CONNECTION, Url.PARAM_MIN_CLIENT_CONNECTION_DEFAULT_VALUE);
+        channelSize = providerUrl.getIntOption(Url.PARAM_MIN_CLIENT_CONNECTION, Url.PARAM_MIN_CLIENT_CONNECTION_DEFAULT_VALUE);
         Validate.isTrue(channelSize > 0, "minClientConnection must be a positive number!");
     }
 
@@ -34,7 +34,7 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
         factory = createChannelFactory();
         channels = new ArrayList<>(channelSize);
         IntStream.range(0, channelSize).forEach(x -> channels.add(factory.buildObject()));
-        initConnections(providerUrl.getBooleanParameter(Url.PARAM_ASYNC_INIT_CONNECTION, Url.PARAM_ASYNC_INIT_CONNECTION_DEFAULT_VALUE));
+        initConnections(providerUrl.getBooleanOption(Url.PARAM_ASYNC_INIT_CONNECTION, Url.PARAM_ASYNC_INIT_CONNECTION_DEFAULT_VALUE));
     }
 
     protected void initConnections(boolean async) {

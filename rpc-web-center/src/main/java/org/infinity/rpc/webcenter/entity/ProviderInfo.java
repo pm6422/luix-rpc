@@ -23,11 +23,11 @@ public class ProviderInfo {
         // Set app
         if (CollectionUtils.isNotEmpty(activeProviders)) {
             Url url = Url.valueOf(activeProviders.get(0).getContents());
-            provider.setApp(url.getParameter(Url.PARAM_APP));
+            provider.setApp(url.getOption(Url.PARAM_APP));
         }
         if (CollectionUtils.isNotEmpty(inactiveProviders)) {
             Url url = Url.valueOf(inactiveProviders.get(0).getContents());
-            provider.setApp(url.getParameter(Url.PARAM_APP));
+            provider.setApp(url.getOption(Url.PARAM_APP));
         }
         return provider;
     }

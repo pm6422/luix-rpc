@@ -201,27 +201,27 @@ public class ProviderStub<T> {
 
         // todo: check internet or intranet ip
         url = Url.providerUrl(protocol, NetworkUtils.INTRANET_IP, protocolConfig.getPort(), interfaceName, group, version);
-        url.addParameter(Url.PARAM_APP, applicationConfig.getName());
+        url.addOption(Url.PARAM_APP, applicationConfig.getName());
 
         if (checkHealth == null) {
             checkHealth = providerConfig.isCheckHealth();
         }
-        url.addParameter(CHECK_HEALTH, String.valueOf(checkHealth));
+        url.addOption(CHECK_HEALTH, String.valueOf(checkHealth));
 
         if (StringUtils.isEmpty(checkHealthFactory)) {
             checkHealthFactory = providerConfig.getCheckHealthFactory();
         }
-        url.addParameter(CHECK_HEALTH_FACTORY, checkHealthFactory);
+        url.addOption(CHECK_HEALTH_FACTORY, checkHealthFactory);
 
         if (Integer.MAX_VALUE == requestTimeout) {
             requestTimeout = providerConfig.getRequestTimeout();
         }
-        url.addParameter(REQUEST_TIMEOUT, String.valueOf(requestTimeout));
+        url.addOption(REQUEST_TIMEOUT, String.valueOf(requestTimeout));
 
         if (Integer.MAX_VALUE == maxRetries) {
             maxRetries = providerConfig.getMaxRetries();
         }
-        url.addParameter(MAX_RETRIES, String.valueOf(maxRetries));
+        url.addOption(MAX_RETRIES, String.valueOf(maxRetries));
 
         return url;
     }
@@ -308,7 +308,7 @@ public class ProviderStub<T> {
         }
         if (response.getException() != null) {
             //是否传输业务异常栈
-            boolean transExceptionStack = this.url.getBooleanParameter(Url.PARAM_TRANS_EXCEPTION_STACK, defaultThrowExceptionStack);
+            boolean transExceptionStack = this.url.getBooleanOption(Url.PARAM_TRANS_EXCEPTION_STACK, defaultThrowExceptionStack);
             if (!transExceptionStack) {
                 //不传输业务异常栈
                 ExceptionUtils.setMockStackTrace(response.getException().getCause());

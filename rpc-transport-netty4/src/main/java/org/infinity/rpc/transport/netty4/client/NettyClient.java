@@ -61,7 +61,7 @@ public class NettyClient extends AbstractSharedPoolClient {
 
     public NettyClient(Url providerUrl) {
         super(providerUrl);
-        maxClientConnection = providerUrl.getIntParameter(Url.PARAM_MAX_CLIENT_CONNECTION, Url.PARAM_MAX_CLIENT_CONNECTION_DEFAULT_VALUE);
+        maxClientConnection = providerUrl.getIntOption(Url.PARAM_MAX_CLIENT_CONNECTION, Url.PARAM_MAX_CLIENT_CONNECTION_DEFAULT_VALUE);
         Validate.isTrue(maxClientConnection > 0, "maxClientConnection must be a positive number!");
 
         timeoutFuture = ScheduledThreadPool.schedulePeriodicalTask(RECYCLE_TIMEOUT_TASK_THREAD_POOL,
@@ -154,7 +154,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         }
 
         bootstrap = new Bootstrap();
-        int timeout = getProviderUrl().getIntParameter(CONNECT_TIMEOUT, CONNECT_TIMEOUT_DEFAULT_VALUE);
+        int timeout = getProviderUrl().getIntOption(CONNECT_TIMEOUT, CONNECT_TIMEOUT_DEFAULT_VALUE);
         if (timeout <= 0) {
             throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
@@ -162,7 +162,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         bootstrap.option(ChannelOption.TCP_NODELAY, true);
         bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
         // 最大响应包限制
-        final int maxContentLength = providerUrl.getIntParameter(Url.PARAM_MAX_CONTENT_LENGTH, Url.PARAM_MAX_CONTENT_LENGTH_DEFAULT_VALUE);
+        final int maxContentLength = providerUrl.getIntOption(Url.PARAM_MAX_CONTENT_LENGTH, Url.PARAM_MAX_CONTENT_LENGTH_DEFAULT_VALUE);
         bootstrap.group(NIO_EVENT_LOOP_GROUP)
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<SocketChannel>() {

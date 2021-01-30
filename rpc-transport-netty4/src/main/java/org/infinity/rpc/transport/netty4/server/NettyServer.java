@@ -67,19 +67,19 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
         }
 
         log.info("NettyServer ServerChannel start Open: url=" + url);
-        boolean shareChannel = url.getBooleanParameter(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
-        final int maxContentLength = url.getIntParameter(Url.PARAM_MAX_CONTENT_LENGTH, Url.PARAM_MAX_CONTENT_LENGTH_DEFAULT_VALUE);
-        int maxServerConnection = url.getIntParameter(Url.PARAM_MAX_SERVER_CONNECTION, Url.PARAM_MAX_SERVER_CONNECTION_DEFAULT_VALUE);
-        int workerQueueSize = url.getIntParameter(Url.PARAM_WORKER_QUEUE_SIZE, Url.PARAM_WORKER_QUEUE_SIZE_DEFAULT_VALUE);
+        boolean shareChannel = url.getBooleanOption(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
+        final int maxContentLength = url.getIntOption(Url.PARAM_MAX_CONTENT_LENGTH, Url.PARAM_MAX_CONTENT_LENGTH_DEFAULT_VALUE);
+        int maxServerConnection = url.getIntOption(Url.PARAM_MAX_SERVER_CONNECTION, Url.PARAM_MAX_SERVER_CONNECTION_DEFAULT_VALUE);
+        int workerQueueSize = url.getIntOption(Url.PARAM_WORKER_QUEUE_SIZE, Url.PARAM_WORKER_QUEUE_SIZE_DEFAULT_VALUE);
 
         int minWorkerThread, maxWorkerThread;
 
         if (shareChannel) {
-            minWorkerThread = url.getIntParameter(Url.PARAM_MIN_WORKER_THREAD, RpcConstants.NETTY_SHARECHANNEL_MIN_WORKDER);
-            maxWorkerThread = url.getIntParameter(Url.PARAM_MAX_WORKER_THREAD, RpcConstants.NETTY_SHARECHANNEL_MAX_WORKDER);
+            minWorkerThread = url.getIntOption(Url.PARAM_MIN_WORKER_THREAD, RpcConstants.NETTY_SHARECHANNEL_MIN_WORKDER);
+            maxWorkerThread = url.getIntOption(Url.PARAM_MAX_WORKER_THREAD, RpcConstants.NETTY_SHARECHANNEL_MAX_WORKDER);
         } else {
-            minWorkerThread = url.getIntParameter(Url.PARAM_MIN_WORKER_THREAD, RpcConstants.NETTY_NOT_SHARECHANNEL_MIN_WORKDER);
-            maxWorkerThread = url.getIntParameter(Url.PARAM_MAX_WORKER_THREAD, RpcConstants.NETTY_NOT_SHARECHANNEL_MAX_WORKDER);
+            minWorkerThread = url.getIntOption(Url.PARAM_MIN_WORKER_THREAD, RpcConstants.NETTY_NOT_SHARECHANNEL_MIN_WORKDER);
+            maxWorkerThread = url.getIntOption(Url.PARAM_MAX_WORKER_THREAD, RpcConstants.NETTY_NOT_SHARECHANNEL_MAX_WORKDER);
         }
 
         standardThreadExecutor = (standardThreadExecutor != null && !standardThreadExecutor.isShutdown()) ? standardThreadExecutor

@@ -21,7 +21,7 @@ public abstract class AbstractClient implements Client {
 
     public AbstractClient(Url providerUrl) {
         this.providerUrl = providerUrl;
-        String codecName = providerUrl.getParameter(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE);
+        String codecName = providerUrl.getOption(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE);
         this.codec = Codec.getInstance(codecName);
         if (codec == null) {
             throw new RpcFrameworkException("Codec [" + codecName + "] must not be null!");

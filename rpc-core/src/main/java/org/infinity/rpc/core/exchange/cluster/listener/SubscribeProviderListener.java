@@ -134,7 +134,7 @@ public class SubscribeProviderListener<T> implements ClientListener {
     @EventSubscriber("providersDiscoveryEvent")
     private void subscribe() {
         for (Url registryUrl : registryUrls) {
-            String directUrlStr = registryUrl.getParameter(DIRECT_URLS);
+            String directUrlStr = registryUrl.getOption(DIRECT_URLS);
             // 如果有directUrl，直接使用这些directUrls进行初始化，不用到注册中心discover
             if (StringUtils.isNotEmpty(directUrlStr)) {
                 List<Url> directUrls = parseDirectUrls(directUrlStr);

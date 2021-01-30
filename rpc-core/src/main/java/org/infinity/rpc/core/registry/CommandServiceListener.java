@@ -339,7 +339,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
             for (Map.Entry<String, Integer> entry : weights.entrySet()) {
                 weightsBuilder.append(entry.getKey()).append(':').append(entry.getValue()).append(',');
             }
-            ruleUrl.addParameter(Url.PARAM_WEIGHT, weightsBuilder.deleteCharAt(weightsBuilder.length() - 1).toString());
+            ruleUrl.addOption(Url.PARAM_WEIGHT, weightsBuilder.deleteCharAt(weightsBuilder.length() - 1).toString());
             finalResult.add(ruleUrl);
         }
 

@@ -62,7 +62,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
             String ipPort = providerUrl.getServerPortStr();
             String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
 
-            boolean shareChannel = providerUrl.getBooleanParameter(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
+            boolean shareChannel = providerUrl.getBooleanOption(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
             if (!shareChannel) {
                 // 独享一个端口
                 log.info(this.getClass().getSimpleName() + " create no_share_channel server: url={}", providerUrl);
@@ -120,7 +120,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
 
     private <T extends Endpoint> void safeReleaseResource(T endpoint, Url url, Map<String, T> ipPort2Endpoint,
                                                           Map<T, Set<String>> endpoint2Urls) {
-        boolean shareChannel = url.getBooleanParameter(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
+        boolean shareChannel = url.getBooleanOption(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
 
         if (!shareChannel) {
             destroy(endpoint);

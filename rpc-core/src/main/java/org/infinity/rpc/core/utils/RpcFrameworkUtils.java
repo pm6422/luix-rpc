@@ -112,31 +112,31 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getParameter(Url.PARAM_CODEC), target.getParameter(Url.PARAM_CODEC))) {
+        if (!StringUtils.equals(source.getOption(Url.PARAM_CODEC), target.getOption(Url.PARAM_CODEC))) {
             return false;
         }
 
-        if (!StringUtils.equals(source.getParameter(Url.PARAM_SERIALIZER), target.getParameter(Url.PARAM_SERIALIZER))) {
+        if (!StringUtils.equals(source.getOption(Url.PARAM_SERIALIZER), target.getOption(Url.PARAM_SERIALIZER))) {
             return false;
         }
 
-        if (!StringUtils.equals(source.getParameter(Url.PARAM_MAX_CONTENT_LENGTH), target.getParameter(Url.PARAM_MAX_CONTENT_LENGTH))) {
+        if (!StringUtils.equals(source.getOption(Url.PARAM_MAX_CONTENT_LENGTH), target.getOption(Url.PARAM_MAX_CONTENT_LENGTH))) {
             return false;
         }
 
-        if (!StringUtils.equals(source.getParameter(Url.PARAM_MAX_SERVER_CONNECTION), target.getParameter(Url.PARAM_MAX_SERVER_CONNECTION))) {
+        if (!StringUtils.equals(source.getOption(Url.PARAM_MAX_SERVER_CONNECTION), target.getOption(Url.PARAM_MAX_SERVER_CONNECTION))) {
             return false;
         }
 
-        if (!StringUtils.equals(source.getParameter(Url.PARAM_MAX_WORKER_THREAD), target.getParameter(Url.PARAM_MAX_WORKER_THREAD))) {
+        if (!StringUtils.equals(source.getOption(Url.PARAM_MAX_WORKER_THREAD), target.getOption(Url.PARAM_MAX_WORKER_THREAD))) {
             return false;
         }
 
-        if (!StringUtils.equals(source.getParameter(Url.PARAM_WORKER_QUEUE_SIZE), target.getParameter(Url.PARAM_WORKER_QUEUE_SIZE))) {
+        if (!StringUtils.equals(source.getOption(Url.PARAM_WORKER_QUEUE_SIZE), target.getOption(Url.PARAM_WORKER_QUEUE_SIZE))) {
             return false;
         }
 
-        return StringUtils.equals(source.getParameter(CHECK_HEALTH_FACTORY), target.getParameter(CHECK_HEALTH_FACTORY));
+        return StringUtils.equals(source.getOption(CHECK_HEALTH_FACTORY), target.getOption(CHECK_HEALTH_FACTORY));
     }
 
     /**
@@ -160,24 +160,24 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getParameter(Url.PARAM_CODEC), target.getParameter(Url.PARAM_CODEC))) {
+        if (!StringUtils.equals(source.getOption(Url.PARAM_CODEC), target.getOption(Url.PARAM_CODEC))) {
             return false;
         }
 
-        if (!StringUtils.equals(source.getParameter(Url.PARAM_SERIALIZER),
-                target.getParameter(Url.PARAM_SERIALIZER))) {
+        if (!StringUtils.equals(source.getOption(Url.PARAM_SERIALIZER),
+                target.getOption(Url.PARAM_SERIALIZER))) {
             return false;
         }
 
-        if (!StringUtils.equals(source.getParameter(Url.PARAM_MAX_CONTENT_LENGTH), target.getParameter(Url.PARAM_MAX_CONTENT_LENGTH))) {
+        if (!StringUtils.equals(source.getOption(Url.PARAM_MAX_CONTENT_LENGTH), target.getOption(Url.PARAM_MAX_CONTENT_LENGTH))) {
             return false;
         }
 
-        if (!StringUtils.equals(source.getParameter(Url.PARAM_MAX_CLIENT_CONNECTION), target.getParameter(Url.PARAM_MAX_CLIENT_CONNECTION))) {
+        if (!StringUtils.equals(source.getOption(Url.PARAM_MAX_CLIENT_CONNECTION), target.getOption(Url.PARAM_MAX_CLIENT_CONNECTION))) {
             return false;
         }
 
-        return StringUtils.equals(source.getParameter(CHECK_HEALTH_FACTORY), target.getParameter(CHECK_HEALTH_FACTORY));
+        return StringUtils.equals(source.getOption(CHECK_HEALTH_FACTORY), target.getOption(CHECK_HEALTH_FACTORY));
 
     }
 

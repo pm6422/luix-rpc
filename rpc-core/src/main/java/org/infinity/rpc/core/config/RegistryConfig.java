@@ -86,11 +86,11 @@ public class RegistryConfig {
         Url registryUrl = Url.registryUrl(name, host, port);
 
         // Assign values to parameters
-        registryUrl.addParameter(CHECK_HEALTH, String.valueOf(CHECK_HEALTH_DEFAULT_VALUE));
-        registryUrl.addParameter(ADDRESS, registryUrl.getAddress());
-        registryUrl.addParameter(CONNECT_TIMEOUT, connectTimeout.toString());
-        registryUrl.addParameter(SESSION_TIMEOUT, sessionTimeout.toString());
-        registryUrl.addParameter(RETRY_INTERVAL, retryInterval.toString());
+        registryUrl.addOption(CHECK_HEALTH, String.valueOf(CHECK_HEALTH_DEFAULT_VALUE));
+        registryUrl.addOption(ADDRESS, registryUrl.getAddress());
+        registryUrl.addOption(CONNECT_TIMEOUT, connectTimeout.toString());
+        registryUrl.addOption(SESSION_TIMEOUT, sessionTimeout.toString());
+        registryUrl.addOption(RETRY_INTERVAL, retryInterval.toString());
         return registryUrl;
     }
 

@@ -29,7 +29,7 @@ public class DefaultRpcExporter<T> extends AbstractExporter<T> {
         this.ipPort2RequestRouter = ipPort2RequestRouter;
 
         ProviderMessageRouter requestRouter = initRequestRouter(providerStub.getUrl());
-        String endpointFactoryName = providerStub.getUrl().getParameter(Url.PARAM_ENDPOINT_FACTORY, Url.PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE);
+        String endpointFactoryName = providerStub.getUrl().getOption(Url.PARAM_ENDPOINT_FACTORY, Url.PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE);
         endpointFactory = EndpointFactory.getInstance(endpointFactoryName);
         server = endpointFactory.createServer(providerStub.getUrl(), requestRouter);
     }

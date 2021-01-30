@@ -38,7 +38,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      * @param registryUrl registry url
      */
     private void scheduleRetry(Url registryUrl) {
-        long retryInterval = registryUrl.getIntParameter(RETRY_INTERVAL);
+        long retryInterval = registryUrl.getIntOption(RETRY_INTERVAL);
         // Retry to connect registry at retry interval
         ScheduledThreadPool.schedulePeriodicalTask(ScheduledThreadPool.RETRY_THREAD_POOL, retryInterval, this::doRetry);
     }
@@ -256,7 +256,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      * @return true: all the urls contain PARAM_CHECK_HEALTH, false: any url does not contain PARAM_CHECK_HEALTH
      */
     private boolean forceCheckHealth(Url... urls) {
-        return Arrays.stream(urls).allMatch(url -> url.getBooleanParameter(CHECK_HEALTH));
+        return Arrays.stream(urls).allMatch(url -> url.getBooleanOption(CHECK_HEALTH));
     }
 
     /**

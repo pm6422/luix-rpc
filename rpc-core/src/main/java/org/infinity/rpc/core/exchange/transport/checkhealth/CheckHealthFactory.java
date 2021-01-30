@@ -65,7 +65,7 @@ public interface CheckHealthFactory {
      * @return check health factory instance
      */
     static CheckHealthFactory getInstance(Url providerUrl) {
-        final String name = providerUrl.getParameter(CHECK_HEALTH_FACTORY);
+        final String name = providerUrl.getOption(CHECK_HEALTH_FACTORY);
         return Optional.ofNullable(ServiceLoader.forClass(CheckHealthFactory.class).load(name))
                 .orElseThrow(() -> new RpcFrameworkException("No check health factory [" + name + "] found!"));
     }

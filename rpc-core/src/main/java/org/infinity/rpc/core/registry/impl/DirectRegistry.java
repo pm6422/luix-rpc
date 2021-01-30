@@ -30,7 +30,7 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
 
     public DirectRegistry(Url registryUrl) {
         super(registryUrl);
-        directUrls = parseDirectUrls(registryUrl.getParameter(ADDRESS));
+        directUrls = parseDirectUrls(registryUrl.getOption(ADDRESS));
     }
 
     private List<Url> parseDirectUrls(String address) {

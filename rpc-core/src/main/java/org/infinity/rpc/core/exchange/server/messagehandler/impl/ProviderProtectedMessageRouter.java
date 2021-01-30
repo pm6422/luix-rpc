@@ -62,7 +62,7 @@ public class ProviderProtectedMessageRouter extends ProviderMessageRouter {
     @Override
     protected Responseable call(Requestable request, ProviderStub<?> providerStub) {
         // 支持的最大worker thread数
-        int maxThread = providerStub.getUrl().getIntParameter(Url.PARAM_MAX_WORKER_THREAD, Url.PARAM_MAX_WORKER_THREAD_DEFAULT_VALUE);
+        int maxThread = providerStub.getUrl().getIntOption(Url.PARAM_MAX_WORKER_THREAD, Url.PARAM_MAX_WORKER_THREAD_DEFAULT_VALUE);
         String requestKey = RpcFrameworkUtils.getFullMethodString(request);
 
         try {
