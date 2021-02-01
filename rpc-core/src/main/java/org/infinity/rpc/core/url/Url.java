@@ -468,7 +468,7 @@ public final class Url implements Serializable {
      * @return combination string
      */
     public String toSimpleString() {
-        return getUri() + "?group=" + getGroup() + "&version" + getVersion();
+        return getUri() + "?group=" + getGroup() + "&version=" + getVersion();
     }
 
     public String getUri() {
