@@ -1,6 +1,8 @@
 package org.infinity.rpc.core.registry;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.url.Url;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -21,12 +23,6 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
     /**
      * Get or create a registry
      * <p>
-     * Do NOT throw exception while startup the application. If throw a exception will cause
-     * AbstractApplicationContext#refresh() catch the exception, then call the cancelRefresh(ex) to set active to false;
-     * So org.springframework.boot.context.event.EventPublishingRunListener#failed(ConfigurableApplicationContext, Throwable)
-     * will found the active is false, then context.publishEvent(event) will not be executed.
-     * So org.infinity.rpc.spring.boot.startup.RpcLifecycleApplicationListener#onApplicationContextEvent(ApplicationContextEvent)
-     * will not be invoked while ContextClosedEvent occurred.
      *
      * @param registryUrl registry url
      * @return registry
@@ -42,14 +38,17 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
             }
             long start = System.currentTimeMillis();
             registry = createRegistry(registryUrl);
+            if (registry == null) {
+                throw new RpcFrameworkException("Failed to create registry for url [" + registryUrl + "]",
+                        RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+            }
             long elapsed = System.currentTimeMillis() - start;
             log.debug("Created registry [{}] in {} ms", registry.getClass().getSimpleName(), elapsed);
             registryPerUri.put(registryUri, registry);
             return registry;
         } catch (Exception e) {
-            // Do NOT throw exception while startup the application.
-            log.error("Failed to create registry for url [" + registryUrl + "]", e);
-            return null;
+            throw new RpcFrameworkException("Failed to create registry for url [" + registryUrl + "]", e,
+                    RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         } finally {
             lock.unlock();
         }
