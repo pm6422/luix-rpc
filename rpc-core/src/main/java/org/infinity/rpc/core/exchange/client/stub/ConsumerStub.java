@@ -51,10 +51,6 @@ public class ConsumerStub<T> {
     @NotNull(message = "The [interfaceClass] property of @Consumer must NOT be null!")
     private Class<T> interfaceClass;
     /**
-     *
-     */
-    private boolean  generic;
-    /**
      * Protocol
      */
     private String   protocol;
@@ -63,7 +59,7 @@ public class ConsumerStub<T> {
      */
     private String   registry;
     /**
-     *
+     * Provider caller cluster
      */
     private String   cluster;
     /**
@@ -106,6 +102,10 @@ public class ConsumerStub<T> {
      *
      */
     private String   directUrls;
+    /**
+     *
+     */
+    private boolean  generic;
     /**
      * The consumer url used to export to registry only for consumers discovery management,
      * but it have nothing to do with the service calling.
@@ -154,7 +154,7 @@ public class ConsumerStub<T> {
         // Create consumer url
         this.url = this.createConsumerUrl(applicationConfig, protocolConfig, registryConfig, consumerConfig);
 
-        this.clientUrl = Url.clientUrl(protocol, interfaceClass.getName());
+        this.clientUrl = Url.clientUrl(protocol, interfaceName);
         // Initialize provider cluster before consumer initialization
         this.providerCluster = createProviderCluster();
 

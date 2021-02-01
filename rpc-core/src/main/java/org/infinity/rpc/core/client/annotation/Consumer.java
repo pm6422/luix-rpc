@@ -17,48 +17,96 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Consumer {
-    // The interface class of consumer class
+    /**
+     * The interface class of RPC consumer class
+     *
+     * @return interface class
+     */
     Class<?> interfaceClass() default void.class;
 
-    // The interface class name of consumer class
-    // For the generic consumer instance must provide interfaceName attribute
+    /**
+     * The interface class fully-qualified name of RPC consumer class
+     * For the generic consumer instance must specify interfaceName attribute
+     *
+     * @return fully-qualified class name
+     */
     String interfaceName() default "";
 
-    // The generic call indicator,
-    // if we only have the provider interface name, method name and arguments,
-    // we can initiate a generic call to service provider without service provider jar dependency
-    boolean generic() default false;
-
+    /**
+     * Available values: [infinity, zookeeper, local, direct, injvm]
+     * @return protocol
+     */
     String protocol() default "";
 
+    /**
+     * Available values: [zookeeper]
+     * @return registry
+     */
     String registry() default "";
 
+    /**
+     * @return provider calling cluster
+     */
     String cluster() default "";
 
+    /**
+     * @return fault tolerance
+     */
     String faultTolerance() default "";
 
+    /**
+     * @return load balancer
+     */
     String loadBalancer() default "";
 
+    /**
+     * @return group
+     */
     String group() default "";
 
+    /**
+     * @return version
+     */
     String version() default "";
 
-    // Indicator to monitor health
+    /**
+     * Indicator to check health
+     *
+     * @return check health indicator
+     */
     BooleanEnum checkHealth() default BooleanEnum.NULL;
 
+    /**
+     * Enabled when checkHealth is true
+     *
+     * @return check health factory
+     */
     String checkHealthFactory() default "";
 
-    // Timeout value for service invocation
+    /**
+     * @return Timeout value for service invocation
+     */
     int requestTimeout() default Integer.MAX_VALUE;
 
-    // The max retry times of RPC request
+    /**
+     * @return The max retry times of RPC request
+     */
     int maxRetries() default Integer.MAX_VALUE;
 
     /**
-     * Provider urls used to connect provider directly without third party registry.
+     * Provider urls used to connect RPC provider directly without third party registry.
      * Multiple urls are separated by comma.
      *
      * @return direct urls
      */
     String directUrls() default "";
+
+    /**
+     * The generic call indicator
+     * if we only have the provider interface name, method name and arguments,
+     * we can initiate a generic call to service provider without service provider jar dependency
+     *
+     * @return generic call
+     */
+    boolean generic() default false;
 }

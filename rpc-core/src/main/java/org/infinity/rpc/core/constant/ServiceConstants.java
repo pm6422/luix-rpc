@@ -15,6 +15,7 @@ public interface ServiceConstants {
     String  REGISTRY_VALUE_DIRECT              = "direct";
     String  PROTOCOL                           = "protocol";
     String  PROTOCOL_DEFAULT_VALUE             = "infinity";
+    String  PROTOCOL_DIRECT                    = REGISTRY_VALUE_DIRECT;
     String  GROUP                              = "group";
     String  GROUP_DEFAULT_VALUE                = "default";
     String  VERSION                            = "version";
