@@ -11,7 +11,6 @@ import org.infinity.rpc.core.exchange.client.stub.ConsumerStub;
 import org.infinity.rpc.core.exchange.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
 import org.infinity.rpc.core.exchange.server.stub.ProviderStubHolder;
-import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
@@ -100,22 +99,21 @@ public class RpcLifecycle {
      */
     private void publish(InfinityProperties infinityProperties) {
         infinityProperties.getRegistryList().forEach(registryConfig -> {
-            Registry registry = registryConfig.getRegistryImpl();
             // Publish application first
-            publishApplication(infinityProperties, registryConfig, registry);
+            publishApplication(infinityProperties, registryConfig);
             // Publish providers next
-            publishProviders(infinityProperties, registryConfig, registry);
+            publishProviders(infinityProperties, registryConfig);
         });
     }
 
-    private void publishApplication(InfinityProperties infinityProperties, RegistryConfig registryConfig, Registry registry) {
+    private void publishApplication(InfinityProperties infinityProperties, RegistryConfig registryConfig) {
         ApplicationExtConfig application = getApplicationExtConfig(infinityProperties.getApplication());
-        registry.registerApplication(application);
+        registryConfig.getRegistryImpl().registerApplication(application);
         log.debug("Registered RPC server application [{}] to registry [{}]",
                 infinityProperties.getApplication().getName(), registryConfig.getName());
     }
 
-    private void publishProviders(InfinityProperties infinityProperties, RegistryConfig registryConfig, Registry registry) {
+    private void publishProviders(InfinityProperties infinityProperties, RegistryConfig registryConfig) {
         Map<String, ProviderStub<?>> providerStubs = ProviderStubHolder.getInstance().getStubs();
         if (MapUtils.isEmpty(providerStubs)) {
             log.info("No RPC service providers found to register to registry [{}]!", registryConfig.getName());
@@ -124,7 +122,7 @@ public class RpcLifecycle {
         providerStubs.forEach((name, providerStub) -> {
             // Register providers
             providerStub.register(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(),
-                    registryConfig, infinityProperties.getProvider(), registry);
+                    registryConfig, infinityProperties.getProvider());
         });
 
         SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);

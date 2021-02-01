@@ -154,22 +154,20 @@ public class ProviderStub<T> {
      * @param protocolConfig    protocol configuration
      * @param registryConfig    registry configuration
      * @param providerConfig    provider configuration
-     * @param registries        registries
      */
     public void register(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
-                         RegistryConfig registryConfig, ProviderConfig providerConfig, Registry... registries) {
+                         RegistryConfig registryConfig, ProviderConfig providerConfig) {
         // Export provider url
         Url providerUrl = createProviderUrl(applicationConfig, protocolConfig, registryConfig, providerConfig);
 
         // Export RPC provider service
         Protocol.getInstance(providerUrl.getProtocol()).export(this);
 
-        for (Registry registry : registries) {
-            // Register provider URL to all the registries
-            registry.register(providerUrl);
+        // Register provider URL to all the registries
+        registryConfig.getRegistryImpl().register(providerUrl);
 //            registry.registerApplicationProvider(applicationConfig.getName(), providerUrl);
-            log.debug("Registered RPC provider [{}] to registry [{}]", interfaceName, registry.getRegistryUrl().getProtocol());
-        }
+        log.debug("Registered RPC provider [{}] to registry [{}]", interfaceName,
+                registryConfig.getRegistryImpl().getRegistryUrl().getProtocol());
 
         // Set active to true after registering the RPC provider to registry
         active = true;
