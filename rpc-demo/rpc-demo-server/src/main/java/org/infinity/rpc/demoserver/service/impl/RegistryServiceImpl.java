@@ -1,5 +1,7 @@
 package org.infinity.rpc.demoserver.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.demoserver.dto.RegistryDTO;
 import org.infinity.rpc.demoserver.service.RegistryService;
@@ -13,6 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@Slf4j
 public class RegistryServiceImpl implements RegistryService, InitializingBean {
     private static final Map<String, Registry> REGISTRY_MAP = new ConcurrentHashMap<>();
     private static final List<RegistryDTO>     REGISTRIES   = new ArrayList<>();
@@ -25,6 +28,10 @@ public class RegistryServiceImpl implements RegistryService, InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
+        if (CollectionUtils.isEmpty(infinityProperties.getRegistryList())) {
+            log.warn("No registries found!");
+            return;
+        }
         infinityProperties.getRegistryList().forEach(registryConfig -> {
             REGISTRY_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig.getRegistryImpl());
             REGISTRIES.add(new RegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
