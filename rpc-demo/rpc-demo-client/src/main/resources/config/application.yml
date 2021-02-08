@@ -92,18 +92,6 @@ spring:
     jackson:
         mapper:
             propagate-transient-marker: true # disable serialize transient fields
-infinity:
-    application:
-        id: ${info.artifact.id}
-        name: ${info.artifact.name}
-        description: RPC Demo Client
-        team: Infinity Team
-        ownerMail: pm6422@126.com
-        env: ${spring.profiles.active}
-    registry:
-        name: zookeeper
-        connectTimeout: 1000
-        sessionTimeout: 60000
 server:
     # It can be overridden by `--server.port` value passed in the commandline or `-Dserver.port` set in `JAVA_OPTS`
     port: @app.server.port@
@@ -120,6 +108,18 @@ logging:
     level:
         root: DEBUG
         ${info.project.package}: DEBUG
+infinity:
+    application:
+        id: ${info.artifact.id}
+        name: ${info.artifact.name}
+        description: RPC Demo Client
+        team: Infinity Team
+        ownerMail: pm6422@126.com
+        env: ${spring.profiles.active}
+    registry:
+        name: zookeeper
+        connectTimeout: 1000
+        sessionTimeout: 60000
 # ===================================================================
 # Application specific properties
 # ===================================================================
