@@ -134,26 +134,10 @@ public class SubscribeProviderListener<T> implements ClientListener {
     @EventSubscriber("providersDiscoveryEvent")
     private void subscribe() {
         for (Url registryUrl : registryUrls) {
-            String directUrls = registryUrl.getOption(DIRECT_URLS);
-            if (StringUtils.isNotEmpty(directUrls)) {
-                // 如果有directUrls，直接使用这些directUrls进行初始化，不用到注册中心discover
-                List<Url> directUrlList = parseDirectUrls(directUrls);
-                // Directly notify the provider urls
-                this.onNotify(registryUrl, directUrlList);
-                log.info("Notified registries [{}] with direct provider urls {}", registryUrl, directUrlList);
-                continue;
-            }
-
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             // Bind this listener to the client
             registry.subscribe(clientUrl, this);
         }
-    }
-
-    private List<Url> parseDirectUrls(String directUrlStr) {
-        return Arrays.stream(RpcConstants.COMMA_SPLIT_PATTERN.split(directUrlStr))
-                .map(Url::valueOf)
-                .collect(Collectors.toList());
     }
 
     @Override

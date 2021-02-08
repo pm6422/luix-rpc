@@ -78,8 +78,8 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
     /**
      * Discover the provider or command url
      *
-     * @param clientUrl url
-     * @return urls
+     * @param clientUrl client url
+     * @return provider urls
      */
     @Override
     protected List<Url> doDiscover(Url clientUrl) {

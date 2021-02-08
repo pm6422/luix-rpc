@@ -75,6 +75,7 @@ public final class Url implements Serializable {
     public static final String  PARAM_TYPE_PROVIDER                       = "provider";
     public static final String  PARAM_TYPE_CONSUMER                       = "consumer";
     public static final String  PARAM_TYPE_REGISTRY                       = "registry";
+    public static final String  PARAM_TYPE_CLIENT                         = "client";
     /**
      *
      */
@@ -220,10 +221,20 @@ public final class Url implements Serializable {
         return of(protocol, host, port, path, options);
     }
 
-    public static Url clientUrl(String protocol, String path) {
+    /**
+     * If we can NOT know the host and port, we can use clientUrl instead of provider url
+     *
+     * @param protocol
+     * @param path
+     * @param group
+     * @param version
+     * @return
+     */
+    public static Url clientUrl(String protocol, String path, String group, String version) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
-        options.put(GROUP, GROUP_DEFAULT_VALUE);
-        options.put(VERSION, VERSION_DEFAULT_VALUE);
+        options.put(GROUP, group);
+        options.put(VERSION, version);
+        options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_CLIENT);
         return of(protocol, NetworkUtils.INTRANET_IP, CLIENT_URL_PORT, path, options);
     }
 

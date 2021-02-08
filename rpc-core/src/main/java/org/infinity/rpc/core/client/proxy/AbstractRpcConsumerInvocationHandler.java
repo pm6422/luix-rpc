@@ -8,6 +8,7 @@ import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.utilities.network.NetworkUtils;
 
 /**
  * @param <T>: The interface class of the consumer
@@ -32,7 +33,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
 //        RequestContext.initialize(request);
 
         Url clientUrl = Url.clientUrl(consumerStub.getProviderCluster().getProtocol(),
-                consumerStub.getInterfaceName());
+                consumerStub.getInterfaceName(), consumerStub.getGroup(), consumerStub.getVersion());
         consumerStub.getProviderCluster().getFaultToleranceStrategy().setClientUrl(clientUrl);
 
 //            request.addAttachment(Url.PARAM_APP, infinityProperties.getApplication().getName());

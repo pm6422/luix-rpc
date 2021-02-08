@@ -16,18 +16,18 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
+import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_URLS;
 import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY_VALUE_DIRECT;
 
 @Slf4j
 @ThreadSafe
 public class DirectRegistry extends AbstractRegistry implements Cleanable {
-    private final List<Url> directUrls;
+    private final List<Url> directProviderUrls;
 
     public DirectRegistry(Url registryUrl) {
         super(registryUrl);
-        directUrls = parseDirectUrls(registryUrl.getAddress());
+        directProviderUrls = parseDirectUrls(registryUrl.getOption(DIRECT_URLS));
     }
 
     private List<Url> parseDirectUrls(String address) {
@@ -61,27 +61,17 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
     }
 
     @Override
-    protected List<Url> discoverActiveProviders(Url clientUrl) {
-        List<Url> result = new ArrayList<>(directUrls.size());
-        for (Url directUrl : directUrls) {
-            Url tmp = clientUrl.copy();
-            tmp.setHost(directUrl.getHost());
-            tmp.setPort(directUrl.getPort());
-            result.add(tmp);
-        }
-        return result;
-    }
-
-    @Override
     protected synchronized void doSubscribe(Url clientUrl, ClientListener listener) {
+        List<Url> providerUrls = doDiscover(clientUrl);
         // Notify
-        listener.onNotify(registryUrl, doDiscover(clientUrl));
+        listener.onNotify(registryUrl, providerUrls);
     }
 
     @Override
     protected synchronized void doUnsubscribe(Url clientUrl, ClientListener listener) {
+        List<Url> providerUrls = doDiscover(clientUrl);
         // Notify
-        listener.onNotify(registryUrl, doDiscover(clientUrl));
+        listener.onNotify(registryUrl, providerUrls);
     }
 
     @Override
@@ -94,12 +84,28 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
         // Do nothing
     }
 
+    /**
+     * Discover the provider urls
+     *
+     * @param clientUrl client url
+     * @return provider urls
+     */
     @Override
     protected List<Url> doDiscover(Url clientUrl) {
-        return directUrls
-                .stream()
-                .map(directUrl -> Url.of(clientUrl.getProtocol(), directUrl.getHost(), directUrl.getPort(), StringUtils.EMPTY))
-                .collect(Collectors.toList());
+        List<Url> providerUrls = new ArrayList<>(directProviderUrls.size());
+        for (Url directProviderUrl : directProviderUrls) {
+            Url clientUrlCopy = clientUrl.copy();
+            // Transform client url to provider url
+            clientUrlCopy.setHost(directProviderUrl.getHost());
+            clientUrlCopy.setPort(directProviderUrl.getPort());
+            providerUrls.add(clientUrlCopy);
+        }
+        return providerUrls;
+    }
+
+    @Override
+    protected List<Url> discoverActiveProviders(Url clientUrl) {
+        return doDiscover(clientUrl);
     }
 
     @Override
