@@ -24,7 +24,12 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 public final class Url implements Serializable {
     private static final long                serialVersionUID   = 2970867582138131181L;
     /**
-     * URL Pattern: {protocol}://{host}:{port}/{path}?{options}
+     * URL Pattern
+     * <scheme>://<host>:<port>/<path>?<optionKey>=<optionValue>
+     * e.g.
+     * infinity://172.25.11.79:26010/org.infinity.rpc.service.AppService?group=default&version=1.0.0
+     *
+     * <scheme>=infinity|direct
      */
     private static final String              URL_PATTERN        = "{0}://{1}:{2}/{3}?{4}";
     private static final String              PROTOCOL_SEPARATOR = "://";
