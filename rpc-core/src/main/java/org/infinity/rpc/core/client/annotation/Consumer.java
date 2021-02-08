@@ -42,7 +42,7 @@ public @interface Consumer {
      * Available values: [zookeeper]
      * @return registry
      */
-    String registry() default "";
+//    String registry() default "";
 
     /**
      * @return provider calling cluster

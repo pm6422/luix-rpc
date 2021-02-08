@@ -3,15 +3,15 @@ package org.infinity.rpc.spring.boot.config;
 import lombok.Data;
 import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.config.*;
+import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+
+import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY_VALUE_DIRECT;
 
 /**
  * - Application
@@ -60,6 +60,7 @@ public class InfinityProperties {
         getRegistryList().forEach(RegistryConfig::init);
         provider.init();
         consumer.init();
+        checkValidity();
     }
 
     public Collection<ProtocolConfig> getProtocolList() {
@@ -80,6 +81,18 @@ public class InfinityProperties {
         if (MapUtils.isEmpty(registries)) {
             return Collections.singletonList(registry);
         }
+        if (registries.size() > 1) {
+            Optional<RegistryConfig> registryConfig = registries.values()
+                    .stream()
+                    .filter(registry -> registry.getName().equals(REGISTRY_VALUE_DIRECT))
+                    .findAny();
+            if (registryConfig.isPresent()) {
+                throw new RpcConfigurationException("Do NOT use direct registry when using multiple registries!");
+            }
+        }
         return registries.values();
+    }
+
+    private void checkValidity() {
     }
 }

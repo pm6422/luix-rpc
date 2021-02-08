@@ -36,7 +36,7 @@ public class ZookeeperRegistryConfiguration {
                 Url registryUrl = registryConfig.getRegistryUrl();
                 int connectTimeout = registryUrl.getIntOption(CONNECT_TIMEOUT);
                 int sessionTimeout = registryUrl.getIntOption(SESSION_TIMEOUT);
-                ZkClient zkClient = createZkClient(registryUrl.getOption(ADDRESS), sessionTimeout, connectTimeout);
+                ZkClient zkClient = createZkClient(registryUrl.getAddress(), sessionTimeout, connectTimeout);
                 registryServices.add(new ZookeeperRegistryServiceImpl(zkClient));
             });
             return registryServices;

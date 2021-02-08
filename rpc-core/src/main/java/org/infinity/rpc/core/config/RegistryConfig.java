@@ -1,19 +1,20 @@
 package org.infinity.rpc.core.config;
 
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_URLS;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 @Data
@@ -34,14 +35,17 @@ public class RegistryConfig {
     /**
      * Registry center host name
      */
-    @NotEmpty
-    private              String  host                = "localhost";
+    private              String  host;
     /**
      * Registry center port number
      */
-    @NotNull
     @Positive
     private              Integer port;
+    /**
+     * Provider urls used to connect RPC provider directly without third party registry.
+     * Multiple urls are separated by comma. e.g. 127.0.0.1:26010,192.168.120.111:26010
+     */
+    private              String  directUrls;
     /**
      * 注册中心连接超时时间(毫秒)
      */
@@ -80,14 +84,39 @@ public class RegistryConfig {
         Optional.ofNullable(RegistryFactory.getInstance(name))
                 .orElseThrow(() -> new RpcConfigurationException("Failed to load the correct registry factory, " +
                         "please check whether the dependency [rpc-registry-" + name + "] is in your class path!"));
+
+        if (name.equals(REGISTRY_DEFAULT_VALUE)) {
+            if (StringUtils.isEmpty(host)) {
+                throw new RpcConfigurationException("Please specify value of 'infinity.registry.host' when 'infinity.registry=zookeeper'!");
+            }
+            if (port == null) {
+                throw new RpcConfigurationException("Please specify value of 'infinity.registry.port' when 'infinity.registry=zookeeper'!");
+            }
+        } else if (name.equals(REGISTRY_VALUE_DIRECT)) {
+            if (StringUtils.isEmpty(directUrls)) {
+                throw new RpcConfigurationException("Please specify value of 'infinity.registry.directUrls' when 'infinity.registry=direct'!");
+            }
+            if (StringUtils.isNotEmpty(host)) {
+                throw new RpcConfigurationException("Do NOT specify value of 'infinity.registry.host' when 'infinity.registry=direct'!");
+            }
+            if (port != null) {
+                throw new RpcConfigurationException("Do NOT specify value of 'infinity.registry.port' when 'infinity.registry=direct'!");
+            }
+        }
     }
 
     private Url createRegistryUrl() {
-        Url registryUrl = Url.registryUrl(name, host, port);
+        Url registryUrl;
+        if (name.equals(REGISTRY_VALUE_DIRECT)) {
+            // if it is direct
+            registryUrl = Url.registryUrl(name, "127.0.0.1", 0);
+            registryUrl.addOption(DIRECT_URLS, directUrls);
+        } else {
+            registryUrl = Url.registryUrl(name, host, port);
+        }
 
         // Assign values to parameters
         registryUrl.addOption(CHECK_HEALTH, String.valueOf(CHECK_HEALTH_DEFAULT_VALUE));
-        registryUrl.addOption(ADDRESS, registryUrl.getAddress());
         registryUrl.addOption(CONNECT_TIMEOUT, connectTimeout.toString());
         registryUrl.addOption(SESSION_TIMEOUT, sessionTimeout.toString());
         registryUrl.addOption(RETRY_INTERVAL, retryInterval.toString());
@@ -97,5 +126,4 @@ public class RegistryConfig {
     public Registry getRegistryImpl() {
         return RegistryFactory.getInstance(name).getRegistry(registryUrl);
     }
-
 }

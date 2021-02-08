@@ -20,7 +20,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
+import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY_VALUE_DIRECT;
 import static org.infinity.rpc.spring.boot.utils.JarUtils.readJarVersion;
 
 /**
@@ -99,10 +101,14 @@ public class RpcLifecycle {
      */
     private void publish(InfinityProperties infinityProperties) {
         infinityProperties.getRegistryList().forEach(registryConfig -> {
-            // Publish application first
-            publishApplication(infinityProperties, registryConfig);
-            // Publish providers next
-            publishProviders(infinityProperties, registryConfig);
+            if (!registryConfig.getName().equals(REGISTRY_VALUE_DIRECT)) {
+                // Non-direct registry
+
+                // Publish application first
+                publishApplication(infinityProperties, registryConfig);
+                // Publish providers next
+                publishProviders(infinityProperties, registryConfig);
+            }
         });
     }
 
@@ -145,13 +151,18 @@ public class RpcLifecycle {
     private void subscribe(InfinityProperties infinityProperties) {
         List<ConsumerStub<?>> consumerStubs = ConsumerStubHolder.getInstance().getStubs();
         if (CollectionUtils.isEmpty(consumerStubs)) {
-            log.info("No RPC service consumers found from registry!");
+            log.info("No RPC consumers found on registry!");
             return;
         }
-        infinityProperties.getRegistryList().forEach(registryConfig -> consumerStubs.forEach((consumerStub) ->
+
+        List<Url> registryUrls = infinityProperties.getRegistryList()
+                .stream()
+                .map(registryConfig -> registryConfig.getRegistryUrl())
+                .collect(Collectors.toList());
+
+        consumerStubs.forEach(consumerStub ->
                 consumerStub.subscribeFromRegistries(infinityProperties.getApplication(),
-                        infinityProperties.getAvailableProtocol(), registryConfig,
-                        infinityProperties.getConsumer(), registryConfig.getRegistryUrl())));
+                        infinityProperties.getAvailableProtocol(), registryUrls, infinityProperties.getConsumer()));
     }
 
     /**

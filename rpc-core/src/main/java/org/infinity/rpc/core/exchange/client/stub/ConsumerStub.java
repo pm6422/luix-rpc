@@ -9,7 +9,6 @@ import org.infinity.rpc.core.client.proxy.ConsumerProxy;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ConsumerConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
-import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
 import org.infinity.rpc.core.exchange.cluster.listener.SubscribeProviderListener;
@@ -21,6 +20,7 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -55,9 +55,10 @@ public class ConsumerStub<T> {
      */
     private String   protocol;
     /**
+     * 多注册中心，所以不能使用单个
      * Registry
      */
-    private String   registry;
+//    private String   registry;
     /**
      * Provider caller cluster
      */
@@ -99,7 +100,7 @@ public class ConsumerStub<T> {
     @Min(value = 0, message = "The [maxRetries] property of @Consumer must NOT be a negative number!")
     private int      maxRetries;
     /**
-     *
+     * Direct provider urls
      */
     private String   directUrls;
     /**
@@ -116,19 +117,15 @@ public class ConsumerStub<T> {
      * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(ConsumerStub)}
      * Disable serialize
      */
-    private transient T                            proxyInstance;
+    private transient T                  proxyInstance;
     /**
      *
      */
-    private           Url                          clientUrl;
+    private           Url                clientUrl;
     /**
      *
      */
-    private           ProviderCluster<T>           providerCluster;
-    /**
-     * Disable serialize
-     */
-    private transient SubscribeProviderListener<T> subscribeProviderListener;
+    private           ProviderCluster<T> providerCluster;
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
@@ -145,27 +142,27 @@ public class ConsumerStub<T> {
      *
      * @param applicationConfig  application configuration
      * @param protocolConfig     protocol configuration
-     * @param registryConfig     registry configuration
+     * @param globalRegistryUrls global registry urls
      * @param consumerConfig     consumer configuration
-     * @param globalRegistryUrls registry urls
      */
     public void subscribeFromRegistries(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
-                                        RegistryConfig registryConfig, ConsumerConfig consumerConfig, Url... globalRegistryUrls) {
+                                        List<Url> globalRegistryUrls, ConsumerConfig consumerConfig) {
         // Create consumer url
-        this.url = this.createConsumerUrl(applicationConfig, protocolConfig, registryConfig, consumerConfig);
+        this.url = this.createConsumerUrl(applicationConfig, protocolConfig, consumerConfig);
 
         this.clientUrl = Url.clientUrl(protocol, interfaceName);
         // Initialize provider cluster before consumer initialization
         this.providerCluster = createProviderCluster();
 
-        if (StringUtils.isEmpty(directUrls)) {
-            subscribeProviderListener = SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, globalRegistryUrls);
+        if (StringUtils.isEmpty(directUrls) && !globalRegistryUrls.get(0).getProtocol().equals(REGISTRY_VALUE_DIRECT)) {
+            // Non-direct registry
+            SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, globalRegistryUrls);
             return;
         }
 
-        // Use direct registry
-        Url[] directRegistries = createDirectRegistries(globalRegistryUrls);
-        subscribeProviderListener = SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, directRegistries);
+        // Direct registry
+        List<Url> directRegistries = createDirectRegistries(globalRegistryUrls);
+        SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, directRegistries);
     }
 
     /**
@@ -173,18 +170,16 @@ public class ConsumerStub<T> {
      *
      * @param applicationConfig application configuration
      * @param protocolConfig    protocol configuration
-     * @param registryConfig    registry configuration
      * @param consumerConfig    consumer configuration
      * @return provider url
      */
-    private Url createConsumerUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
-                                  RegistryConfig registryConfig, ConsumerConfig consumerConfig) {
+    private Url createConsumerUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, ConsumerConfig consumerConfig) {
         if (StringUtils.isEmpty(protocol)) {
             protocol = protocolConfig.getName();
         }
-        if (StringUtils.isEmpty(registry)) {
-            registry = registryConfig.getName();
-        }
+//        if (StringUtils.isEmpty(registry)) {
+//            registry = registryConfig.getName();
+//        }
         if (StringUtils.isEmpty(group)) {
             group = consumerConfig.getGroup();
         }
@@ -228,22 +223,23 @@ public class ConsumerStub<T> {
         return url;
     }
 
-    private Url[] createDirectRegistries(Url[] globalRegistryUrls) {
-        String directProviderUrls = createDirectProviderUrls();
-
-        Url[] urls = new Url[globalRegistryUrls.length];
-        for (int i = 0; i < globalRegistryUrls.length; i++) {
-            Url url = globalRegistryUrls[i].copy();
+    private List<Url> createDirectRegistries(List<Url> globalRegistryUrls) {
+        List<Url> urls = new ArrayList<>(globalRegistryUrls.size());
+        for (Url globalRegistryUrl : globalRegistryUrls) {
+            Url url = globalRegistryUrl.copy();
             // Change protocol to direct
             url.setProtocol(REGISTRY_VALUE_DIRECT);
+
+            String directProviderUrls = createDirectProviderUrls(globalRegistryUrl);
             url.addOption(DIRECT_URLS, directProviderUrls);
-            urls[i] = url;
+            urls.add(url);
         }
         return urls;
     }
 
-    private String createDirectProviderUrls() {
+    private String createDirectProviderUrls(Url globalRegistryUrl) {
         StringBuilder directProviderUrls = new StringBuilder(128);
+        String directUrls = StringUtils.isNotEmpty(this.directUrls) ? this.directUrls : globalRegistryUrl.getOption(DIRECT_URLS);
         List<Pair<String, Integer>> directUrlHostPortList = AddressUtils.parseAddress(directUrls);
         Iterator<Pair<String, Integer>> iterator = directUrlHostPortList.iterator();
         while (iterator.hasNext()) {
