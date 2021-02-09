@@ -33,7 +33,7 @@ public class TestController {
     }
 
     @ApiOperation("测试获取AppService consumer stub")
-    @GetMapping("/open-api/test/app-service-consumer-stub")
+    @GetMapping("/api/test/app-service-consumer-stub")
     public Object testGetAppServiceConsumerStub() {
         String name = ConsumerStubBeanNameBuilder
                 .builder(AppService.class.getName(), env)
@@ -42,7 +42,7 @@ public class TestController {
     }
 
     @ApiOperation("测试直连")
-    @GetMapping("/open-api/test/direct-url")
+    @GetMapping("/api/test/direct-url")
     public List<App> testDirectUrl() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<App> all = appService.findAll(pageable);
