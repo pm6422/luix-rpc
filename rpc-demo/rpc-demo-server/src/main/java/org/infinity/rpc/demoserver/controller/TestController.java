@@ -32,7 +32,7 @@ public class TestController {
 
 
     @ApiOperation("测试注册provider")
-    @GetMapping("/open-api/test/register-provider")
+    @GetMapping("/api/test/register-provider")
     public void registerProvider() {
         Url providerUrl = Url.of(
                 infinityProperties.getAvailableProtocol().getName(),
@@ -50,7 +50,7 @@ public class TestController {
     }
 
     @ApiOperation("测试获取AppService provider stub")
-    @GetMapping("/open-api/test/app-service-provider-stub")
+    @GetMapping("/api/test/app-service-provider-stub")
     public Object testGetAppServiceProviderStub() {
         String name = ProviderStubBeanNameBuilder
                 .builder(AppService.class.getName(), env)
@@ -61,7 +61,7 @@ public class TestController {
     }
 
     @ApiOperation("测试获取AppService provider")
-    @GetMapping("/open-api/test/app-service-provider")
+    @GetMapping("/api/test/app-service-provider")
     public void testGetAppServiceProvider() {
         Object bean = applicationContext.getBean(AppService.class);
         log.info(bean.toString());
