@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_URLS;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
@@ -99,9 +98,10 @@ public class ConsumerStub<T> {
     @Min(value = 0, message = "The [maxRetries] property of @Consumer must NOT be a negative number!")
     private int      maxRetries;
     /**
-     * Direct provider urls
+     * Addresses of RPC provider used to connect RPC provider directly without third party registry.
+     * Multiple addresses are separated by comma.
      */
-    private String   directUrls;
+    private String   directAddresses;
     /**
      *
      */
@@ -153,7 +153,7 @@ public class ConsumerStub<T> {
         // Initialize provider cluster before consumer initialization
         this.providerCluster = createProviderCluster();
 
-        if (StringUtils.isEmpty(directUrls)) {
+        if (StringUtils.isEmpty(directAddresses)) {
             // Non-direct registry
             SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, globalRegistryUrls);
             return;
@@ -222,49 +222,40 @@ public class ConsumerStub<T> {
     }
 
     private void notifyDirectProviderUrls(List<Url> globalRegistryUrls) {
-        List<Url> directRegistryUrls = new ArrayList<>(globalRegistryUrls.size());
-        List<List<Url>> directProviderUrlsList = new ArrayList<>(globalRegistryUrls.size());
-
-        for (Url globalRegistryUrl : globalRegistryUrls) {
-            Url registryUrl = globalRegistryUrl.copy();
+        List<Url> directRegistryUrls = globalRegistryUrls.stream().map(globalRegistryUrl -> {
+            Url directRegistryUrl = globalRegistryUrl.copy();
             // Change protocol to direct
-            registryUrl.setProtocol(REGISTRY_VALUE_DIRECT);
-
-            List<Url> directProviderUrls = createDirectProviderUrls();
-            directProviderUrlsList.add(directProviderUrls);
-            String directProviderUrlsString = directProviderUrls.stream().map(Url::toFullStr).collect(Collectors.joining(","));
-            registryUrl.addOption(DIRECT_URLS, directProviderUrlsString);
-            directRegistryUrls.add(registryUrl);
-        }
+            directRegistryUrl.setProtocol(REGISTRY_VALUE_DIRECT);
+            return directRegistryUrl;
+        }).collect(Collectors.toList());
 
         // Notify
-        doNotify(directRegistryUrls, directProviderUrlsList);
+        doNotify(directRegistryUrls);
+    }
+
+    private void doNotify(List<Url> directRegistryUrls) {
+        SubscribeProviderListener<T> listener = SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, directRegistryUrls);
+
+        for (Url directRegistryUrl : directRegistryUrls) {
+            List<Url> directProviderUrls = createDirectProviderUrls();
+            // 如果有directUrls，直接使用这些directUrls进行初始化，不用到注册中心discover
+            // Directly notify the provider urls
+            listener.onNotify(directRegistryUrl, directProviderUrls);
+            log.info("Notified registries [{}] with direct provider urls {}", directRegistryUrl, directProviderUrls);
+        }
     }
 
     private List<Url> createDirectProviderUrls() {
         // Get the provider host and port
-        List<Pair<String, Integer>> directUrlHostPortList = AddressUtils.parseAddress(directUrls);
+        List<Pair<String, Integer>> directUrlHostPortList = AddressUtils.parseAddress(directAddresses);
         List<Url> directProviderUrls = new ArrayList<>(directUrlHostPortList.size());
         for (Pair<String, Integer> providerHostPortPair : directUrlHostPortList) {
             // consumer url其他参数已经丢失 todo： test
-            Url providerUrl = Url.providerUrl(REGISTRY_VALUE_DIRECT, providerHostPortPair.getLeft(),
+            Url providerUrl = Url.providerUrl(PROTOCOL_DEFAULT_VALUE, providerHostPortPair.getLeft(),
                     providerHostPortPair.getRight(), interfaceName, group, version);
-            // We can NOT get the provider url via direct url mode
-            providerUrl.addOption(Url.PARAM_APP, Url.PARAM_APP_UNKNOWN);
-            providerUrl.addOption(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
             directProviderUrls.add(providerUrl);
         }
         return directProviderUrls;
-    }
-
-    private void doNotify(List<Url> directRegistryUrls, List<List<Url>> directProviderUrlsList) {
-        SubscribeProviderListener<T> listener = SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, directRegistryUrls);
-        for (int i = 0; i < directRegistryUrls.size(); i++) {
-            // 如果有directUrls，直接使用这些directUrls进行初始化，不用到注册中心discover
-            // Directly notify the provider urls
-            listener.onNotify(directRegistryUrls.get(i), directProviderUrlsList.get(i));
-            log.info("Notified registries [{}] with direct provider urls {}", directRegistryUrls.get(i), directProviderUrlsList.get(i));
-        }
     }
 
     private ProviderCluster<T> createProviderCluster() {

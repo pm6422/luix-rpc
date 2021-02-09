@@ -158,7 +158,6 @@ public final class Url implements Serializable {
     public static final String  PARAM_WEIGHT_DEFAULT_VALUE                = "";
 
     public static final String PARAM_APP            = "app";
-    public static final String PARAM_APP_UNKNOWN    = "unknown";
     public static final String PARAM_ACTIVATED_TIME = "activatedTime";
 
     /**

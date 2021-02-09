@@ -117,7 +117,8 @@ infinity:
         ownerMail: pm6422@126.com
         env: ${spring.profiles.active}
     registry:
-        name: zookeeper
+        name: direct
+        directAddresses: 127.0.0.1:26010
         connectTimeout: 1000
         sessionTimeout: 60000
 # ===================================================================

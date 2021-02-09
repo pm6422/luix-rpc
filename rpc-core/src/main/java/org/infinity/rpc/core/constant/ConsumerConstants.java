@@ -10,5 +10,5 @@ public interface ConsumerConstants extends ServiceConstants {
     String FAULT_TOLERANCE_DEFAULT_VALUE = "failover";
     String LOAD_BALANCER                 = "loadBalancer";
     String LOAD_BALANCER_DEFAULT_VALUE   = "random";
-    String DIRECT_URLS                   = "directUrls";
+    String DIRECT_ADDRESSES              = "directAddresses";
 }

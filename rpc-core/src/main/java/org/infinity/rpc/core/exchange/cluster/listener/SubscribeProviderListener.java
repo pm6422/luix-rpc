@@ -2,8 +2,6 @@ package org.infinity.rpc.core.exchange.cluster.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
 import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.protocol.Protocol;
@@ -18,8 +16,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
-import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_URLS;
 
 /**
  * todo: ClusterSupport

@@ -200,6 +200,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
+     * todo: check usage
      * Get all the provider urls based on the client url
      *
      * @param clientUrl client url

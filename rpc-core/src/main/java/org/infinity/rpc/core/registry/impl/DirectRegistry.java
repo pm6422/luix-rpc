@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_URLS;
-import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY_VALUE_DIRECT;
+import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_ADDRESSES;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 @Slf4j
 @ThreadSafe
@@ -27,7 +27,7 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
 
     public DirectRegistry(Url registryUrl) {
         super(registryUrl);
-        directProviderUrls = parseDirectUrls(registryUrl.getOption(DIRECT_URLS));
+        directProviderUrls = parseDirectUrls(registryUrl.getOption(DIRECT_ADDRESSES));
     }
 
     private List<Url> parseDirectUrls(String address) {
@@ -35,7 +35,8 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
         List<Pair<String, Integer>> hostPortList = AddressUtils.parseAddress(address);
         hostPortList.forEach(hostPortPair -> {
             // Use empty string as path
-            urls.add(Url.of(REGISTRY_VALUE_DIRECT, hostPortPair.getLeft(), hostPortPair.getRight(), StringUtils.EMPTY));
+            urls.add(Url.providerUrl(REGISTRY_VALUE_DIRECT, hostPortPair.getLeft(), hostPortPair.getRight(),
+                    StringUtils.EMPTY, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE));
         });
         return urls;
     }
@@ -95,9 +96,10 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
         List<Url> providerUrls = new ArrayList<>(directProviderUrls.size());
         for (Url directProviderUrl : directProviderUrls) {
             Url clientUrlCopy = clientUrl.copy();
-            // Transform client url to provider url
+            // Convert client url to provider url
             clientUrlCopy.setHost(directProviderUrl.getHost());
             clientUrlCopy.setPort(directProviderUrl.getPort());
+            clientUrlCopy.addOption(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
             providerUrls.add(clientUrlCopy);
         }
         return providerUrls;

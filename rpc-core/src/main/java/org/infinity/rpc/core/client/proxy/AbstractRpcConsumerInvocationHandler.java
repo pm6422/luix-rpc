@@ -32,6 +32,7 @@ public abstract class AbstractRpcConsumerInvocationHandler<T> {
         copyContextToRequest(threadRpcContext, request);
 //        RequestContext.initialize(request);
 
+        // We do NOT know the host and port of provider right now, so we use client URL
         Url clientUrl = Url.clientUrl(consumerStub.getProviderCluster().getProtocol(),
                 consumerStub.getInterfaceName(), consumerStub.getGroup(), consumerStub.getVersion());
         consumerStub.getProviderCluster().getFaultToleranceStrategy().setClientUrl(clientUrl);

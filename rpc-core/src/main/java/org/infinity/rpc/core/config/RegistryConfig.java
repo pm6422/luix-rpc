@@ -1,11 +1,11 @@
 package org.infinity.rpc.core.config;
 
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.core.utils.RpcConfigValidator;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_URLS;
+import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_ADDRESSES;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 @Data
@@ -35,17 +35,17 @@ public class RegistryConfig {
     /**
      * Registry center host name
      */
-    private              String  host;
+    private              String  host                ;
     /**
      * Registry center port number
      */
-    @Positive
-    private              Integer port;
+    @PositiveOrZero
+    private              Integer port                ;
     /**
-     * Provider urls used to connect RPC provider directly without third party registry.
-     * Multiple urls are separated by comma. e.g. 127.0.0.1:26010,192.168.120.111:26010
+     * Addresses of RPC provider used to connect RPC provider directly without third party registry.
+     * Multiple addresses are separated by comma.
      */
-    private              String  directUrls;
+    private              String  directAddresses;
     /**
      * 注册中心连接超时时间(毫秒)
      */
@@ -86,22 +86,12 @@ public class RegistryConfig {
                         "please check whether the dependency [rpc-registry-" + name + "] is in your class path!"));
 
         if (name.equals(REGISTRY_DEFAULT_VALUE)) {
-            if (StringUtils.isEmpty(host)) {
-                throw new RpcConfigurationException("Please specify value of 'infinity.registry.host' when 'infinity.registry=zookeeper'!");
-            }
-            if (port == null) {
-                throw new RpcConfigurationException("Please specify value of 'infinity.registry.port' when 'infinity.registry=zookeeper'!");
-            }
+            RpcConfigValidator.notEmpty(host, "Please specify value of 'infinity.registry.host' when 'infinity.registry=zookeeper'!");
+            RpcConfigValidator.notNull(port, "Please specify value of 'infinity.registry.port' when 'infinity.registry=zookeeper'!");
         } else if (name.equals(REGISTRY_VALUE_DIRECT)) {
-            if (StringUtils.isEmpty(directUrls)) {
-                throw new RpcConfigurationException("Please specify value of 'infinity.registry.directUrls' when 'infinity.registry=direct'!");
-            }
-            if (StringUtils.isNotEmpty(host)) {
-                throw new RpcConfigurationException("Do NOT specify value of 'infinity.registry.host' when 'infinity.registry=direct'!");
-            }
-            if (port != null) {
-                throw new RpcConfigurationException("Do NOT specify value of 'infinity.registry.port' when 'infinity.registry=direct'!");
-            }
+            RpcConfigValidator.notEmpty(directAddresses, "Please specify value of 'infinity.registry.directUrls' when 'infinity.registry=direct'!");
+            RpcConfigValidator.mustEmpty(host, "Do NOT specify value of 'infinity.registry.host' when 'infinity.registry=direct'!");
+            RpcConfigValidator.mustNull(port, "Do NOT specify value of 'infinity.registry.port' when 'infinity.registry=direct'!");
         }
     }
 
@@ -110,7 +100,7 @@ public class RegistryConfig {
         if (name.equals(REGISTRY_VALUE_DIRECT)) {
             // if it is direct
             registryUrl = Url.registryUrl(name, "127.0.0.1", 0);
-            registryUrl.addOption(DIRECT_URLS, directUrls);
+            registryUrl.addOption(DIRECT_ADDRESSES, directAddresses);
         } else {
             registryUrl = Url.registryUrl(name, host, port);
         }
