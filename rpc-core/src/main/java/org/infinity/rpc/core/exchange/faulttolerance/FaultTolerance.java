@@ -15,7 +15,7 @@ import org.infinity.rpc.utilities.spi.annotation.SpiScope;
  * @param <T>: The interface class of the provider
  */
 @Spi(scope = SpiScope.PROTOTYPE)
-public interface FaultToleranceStrategy<T> {
+public interface FaultTolerance<T> {
 
     /**
      * Set client url
@@ -47,7 +47,7 @@ public interface FaultToleranceStrategy<T> {
      * @return fault tolerance strategy instance
      */
     @SuppressWarnings("unchecked")
-    static <T> FaultToleranceStrategy<T> getInstance(String name) {
-        return ServiceLoader.forClass(FaultToleranceStrategy.class).load(name);
+    static <T> FaultTolerance<T> getInstance(String name) {
+        return ServiceLoader.forClass(FaultTolerance.class).load(name);
     }
 }

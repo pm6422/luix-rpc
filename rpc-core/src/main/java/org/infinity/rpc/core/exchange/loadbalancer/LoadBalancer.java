@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.exchange.loadbalancer;
 
-import org.infinity.rpc.core.exchange.faulttolerance.FaultToleranceStrategy;
+import org.infinity.rpc.core.exchange.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
@@ -10,7 +10,7 @@ import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 import java.util.List;
 
 /**
- * {@link FaultToleranceStrategy} select providers via load balance algorithm.
+ * {@link FaultTolerance} select providers via load balance algorithm.
  *
  * @param <T>: The interface class of the provider
  */

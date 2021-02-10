@@ -9,7 +9,7 @@ import org.infinity.rpc.core.exception.RpcAbstractException;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
-import org.infinity.rpc.core.exchange.faulttolerance.FaultToleranceStrategy;
+import org.infinity.rpc.core.exchange.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.core.exchange.request.Requestable;
@@ -36,9 +36,9 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     private static final int                       DELAY_TIME = 1000;
     private              boolean                   active     = false;
     private              Class<T>                  interfaceClass;
-    private              String                    protocol;
-    private              FaultToleranceStrategy<T> faultToleranceStrategy;
-    private              LoadBalancer<T>           loadBalancer;
+    private String            protocol;
+    private FaultTolerance<T> faultTolerance;
+    private LoadBalancer<T>   loadBalancer;
     private              List<ProviderCaller<T>>   providerCallers;
 
     @Override
@@ -77,13 +77,13 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     }
 
     @Override
-    public void setFaultToleranceStrategy(@NonNull FaultToleranceStrategy<T> faultToleranceStrategy) {
-        this.faultToleranceStrategy = faultToleranceStrategy;
+    public void setFaultTolerance(@NonNull FaultTolerance<T> faultTolerance) {
+        this.faultTolerance = faultTolerance;
     }
 
     @Override
-    public FaultToleranceStrategy<T> getFaultToleranceStrategy() {
-        return faultToleranceStrategy;
+    public FaultTolerance<T> getFaultTolerance() {
+        return faultTolerance;
     }
 
     @Override
@@ -153,7 +153,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     public Responseable call(Requestable request) {
         if (active) {
             try {
-                return faultToleranceStrategy.call(loadBalancer, request);
+                return faultTolerance.call(loadBalancer, request);
             } catch (Exception e) {
                 return handleError(request, e);
             }
@@ -167,7 +167,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
             throw (RuntimeException) cause;
         }
 
-        boolean parameter = faultToleranceStrategy.getClientUrl()
+        boolean parameter = faultTolerance.getClientUrl()
                 .getBooleanOption(Url.PARAM_THROW_EXCEPTION, Url.PARAM_THROW_EXCEPTION_DEFAULT_VALUE);
         if (parameter) {
             if (cause instanceof RpcAbstractException) {

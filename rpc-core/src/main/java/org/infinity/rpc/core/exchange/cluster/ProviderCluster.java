@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.exchange.cluster;
 
 import org.infinity.rpc.core.exchange.ProviderCallable;
-import org.infinity.rpc.core.exchange.faulttolerance.FaultToleranceStrategy;
+import org.infinity.rpc.core.exchange.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.exchange.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.exchange.request.ProviderCaller;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
@@ -27,9 +27,9 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
 
     LoadBalancer<T> getLoadBalancer();
 
-    void setFaultToleranceStrategy(FaultToleranceStrategy<T> faultToleranceStrategy);
+    void setFaultTolerance(FaultTolerance<T> faultTolerance);
 
-    FaultToleranceStrategy<T> getFaultToleranceStrategy();
+    FaultTolerance<T> getFaultTolerance();
 
     List<ProviderCaller<T>> getProviderCallers();
 
@@ -68,8 +68,8 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
         ProviderCluster<T> providerCluster = ProviderCluster.getInstance(clusterName);
         providerCluster.setInterfaceClass(interfaceClass);
         providerCluster.setProtocol(protocol);
-        FaultToleranceStrategy<T> faultTolerance = FaultToleranceStrategy.getInstance(faultToleranceName);
-        providerCluster.setFaultToleranceStrategy(faultTolerance);
+        FaultTolerance<T> faultTolerance = FaultTolerance.getInstance(faultToleranceName);
+        providerCluster.setFaultTolerance(faultTolerance);
         LoadBalancer<T> loadBalancer = LoadBalancer.getInstance(loadBalancerName);
         providerCluster.setLoadBalancer(loadBalancer);
         // Initialize
