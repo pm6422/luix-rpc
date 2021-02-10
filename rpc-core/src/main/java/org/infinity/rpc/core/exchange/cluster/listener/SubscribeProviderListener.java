@@ -126,7 +126,7 @@ public class SubscribeProviderListener<T> implements ClientListener {
      * So when providers change event occurs, it can invoke onNotify() method.
      */
     @EventSubscriber("providersDiscoveryEvent")
-    public void subscribe() {
+    public void subscribeProviderDiscovery() {
         for (Url registryUrl : registryUrls) {
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             // Bind this listener to the client

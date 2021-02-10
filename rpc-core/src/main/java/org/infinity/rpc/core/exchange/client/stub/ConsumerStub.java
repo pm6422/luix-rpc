@@ -157,7 +157,7 @@ public class ConsumerStub<T> {
         if (StringUtils.isEmpty(directAddresses)) {
             // Non-direct registry
             SubscribeProviderListener<T> listener = SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, globalRegistryUrls);
-            listener.subscribe();
+            listener.subscribeProviderDiscovery();
             return;
         }
 
