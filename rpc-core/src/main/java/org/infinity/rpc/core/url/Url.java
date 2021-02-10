@@ -7,7 +7,6 @@ import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.registry.Registry;
-import org.infinity.rpc.utilities.network.NetworkUtils;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -206,6 +205,7 @@ public final class Url implements Serializable {
      * but it have nothing to do with the service calling.
      *
      * @param protocol protocol
+     * @param host     host
      * @param port     port
      * @param path     RPC interface fully-qualified name
      * @param group    group
@@ -223,18 +223,19 @@ public final class Url implements Serializable {
     /**
      * If we can NOT know the host and port, we can use clientUrl instead of provider url
      *
-     * @param protocol
-     * @param path
-     * @param group
-     * @param version
+     * @param protocol protocol
+     * @param host     host
+     * @param path     RPC interface fully-qualified name
+     * @param group    group
+     * @param version  version
      * @return
      */
-    public static Url clientUrl(String protocol, String path, String group, String version) {
+    public static Url clientUrl(String protocol, String host, String path, String group, String version) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
         options.put(GROUP, group);
         options.put(VERSION, version);
         options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_CLIENT);
-        return of(protocol, NetworkUtils.INTRANET_IP, CLIENT_URL_PORT, path, options);
+        return of(protocol, host, CLIENT_URL_PORT, path, options);
     }
 
     /**

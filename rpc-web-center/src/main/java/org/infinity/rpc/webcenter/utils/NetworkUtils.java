@@ -8,9 +8,14 @@ import java.util.Enumeration;
 import java.util.Objects;
 
 public abstract class NetworkUtils {
-
-    public static final String INTRANET_IP = getIntranetIp(); // 内网IP
-    public static final String INTERNET_IP = getInternetIp(); // 外网IP
+    /**
+     * 内网IP
+     */
+    public static final String INTRANET_IP = getIntranetIp();
+    /**
+     * 外网IP
+     */
+    public static final String INTERNET_IP = getInternetIp();
 
     /**
      * 获得内网IP

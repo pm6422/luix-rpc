@@ -53,7 +53,7 @@ public class ZookeeperRegistryTests {
         registryUrl.addOption(RETRY_INTERVAL, "" + Math.toIntExact(TimeUnit.SECONDS.toMillis(30)));
 
         // client url has the same protocol and provider path to provider, but port is 0
-        clientUrl = Url.clientUrl(PROTOCOL_DEFAULT_VALUE, provider, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE);
+        clientUrl = Url.clientUrl(PROTOCOL_DEFAULT_VALUE, NetworkUtils.INTRANET_IP, provider, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE);
         clientUrl.addOption("group", GROUP_DEFAULT_VALUE);
 
         providerUrl1 = Url.providerUrl(PROTOCOL_DEFAULT_VALUE, NetworkUtils.INTRANET_IP, 2000, provider, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE);

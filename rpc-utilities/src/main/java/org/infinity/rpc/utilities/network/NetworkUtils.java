@@ -3,13 +3,15 @@ package org.infinity.rpc.utilities.network;
 import java.net.*;
 import java.util.Enumeration;
 
-public class NetworkUtils {
-
-    public static final String INTRANET_IP = getIntranetIp(); // 内网IP
-    public static final String INTERNET_IP = getInternetIp(); // 外网IP
-
-    private NetworkUtils() {
-    }
+public abstract class NetworkUtils {
+    /**
+     * 内网IP
+     */
+    public static final String INTRANET_IP = getIntranetIp();
+    /**
+     * 外网IP
+     */
+    public static final String INTERNET_IP = getInternetIp();
 
     /**
      * 获得内网IP
@@ -60,7 +62,7 @@ public class NetworkUtils {
 
         if (socketAddress instanceof InetSocketAddress) {
             InetAddress addr = ((InetSocketAddress) socketAddress).getAddress();
-            if(addr != null){
+            if (addr != null) {
                 return addr.getHostAddress();
             }
         }
