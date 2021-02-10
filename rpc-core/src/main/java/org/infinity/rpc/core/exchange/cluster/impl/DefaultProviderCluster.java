@@ -33,13 +33,14 @@ import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_CALLER_T
 @Slf4j
 @ServiceName("default")
 public class DefaultProviderCluster<T> implements ProviderCluster<T> {
-    private static final int                       DELAY_TIME = 1000;
-    private              boolean                   active     = false;
-    private              Class<T>                  interfaceClass;
-    private String            protocol;
-    private FaultTolerance<T> faultTolerance;
-    private LoadBalancer<T>   loadBalancer;
-    private              List<ProviderCaller<T>>   providerCallers;
+    private static final int                     DELAY_TIME = 1000;
+    private              boolean                 active     = false;
+    private              Class<T>                interfaceClass;
+    private              String                  protocol;
+    private              FaultTolerance<T>       faultTolerance;
+    private              LoadBalancer<T>         loadBalancer;
+    //todo: move to loadbalancer
+    private              List<ProviderCaller<T>> providerCallers;
 
     @Override
     public void setProtocol(String protocol) {
@@ -111,6 +112,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
         // Set new provider callers to load balancer
         loadBalancer.refresh(newProviderCallers);
 
+        // todo: move to loadBalancer.refresh
         List<ProviderCaller<T>> oldProviderCallers = providerCallers;
         // Assign new ones to provider callers
         providerCallers = newProviderCallers;
