@@ -52,65 +52,66 @@ public class ProviderStub<T> {
      * The provider interface fully-qualified name
      */
     @NotEmpty(message = "The [interfaceName] property of @Consumer must NOT be empty!")
-    private String              interfaceName;
+    private           String              interfaceName;
     /**
      * The interface class of the provider
      */
     @NotNull(message = "The [interfaceClass] property of @Consumer must NOT be null!")
-    private Class<T>            interfaceClass;
+    private           Class<T>            interfaceClass;
     /**
      * Protocol
      */
-    private String              protocol;
+    private           String              protocol;
     /**
      * Registry
      */
-    private String              registry;
+    private           String              registry;
     /**
      * Group
      */
-    private String              group;
+    private           String              group;
     /**
      * Version
      */
-    private String              version;
+    private           String              version;
     /**
      * Indicator to check health
      * Note: It must be specified with Boolean wrapper class
      */
-    private Boolean             checkHealth;
+    private           Boolean             checkHealth;
     /**
      *
      */
-    private String              checkHealthFactory;
+    private           String              checkHealthFactory;
     /**
      * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
      */
     @Min(value = 0, message = "The [timeout] property of @Provider must NOT be a negative number!")
-    private int                 requestTimeout;
+    private           int                 requestTimeout;
     /**
      * The max retry times of RPC request
      * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
      */
     @Min(value = 0, message = "The [maxRetries] property of @Provider must NOT be a negative number!")
-    private int                 maxRetries;
+    private           int                 maxRetries;
     /**
      * The provider instance
+     * Disable serialize
      */
     @NotNull
-    private T                   instance;
+    private transient T                   instance;
     /**
      * Method signature to method cache map for the provider class
      */
-    private Map<String, Method> methodsCache = new HashMap<>();
+    private transient Map<String, Method> methodsCache = new HashMap<>();
     /**
      * The provider url
      */
-    private Url                 url;
+    private           Url                 url;
     /**
      * Active flag
      */
-    private boolean             active       = false;
+    private           boolean             active       = false;
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
