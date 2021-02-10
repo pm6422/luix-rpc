@@ -525,6 +525,8 @@ function BeansController($state, $http, $uibModal, APP_NAME) {
                         params: {
                             'name': name
                         }
+                    }).then(function (response) {
+                        return response.data;
                     });
                 }
             }
