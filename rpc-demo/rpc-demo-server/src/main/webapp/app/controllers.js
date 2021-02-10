@@ -14,6 +14,7 @@ angular
     .controller('HealthDialogController', HealthDialogController)
     .controller('ConfigurationController', ConfigurationController)
     .controller('BeansController', BeansController)
+    .controller('BeanDialogController', BeanDialogController)
     .controller('MappingsController', MappingsController)
     .controller('HttpTraceController', HttpTraceController)
     .controller('HttpSessionController', HttpSessionController)
@@ -491,12 +492,13 @@ function ConfigurationController($state, ConfigurationService) {
     });
 }
 
-function BeansController($state, $http, APP_NAME) {
+function BeansController($state, $http, $uibModal, APP_NAME) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.items = null;
     vm.refresh = refresh;
+    vm.showBean = showBean;
     vm.refresh();
 
     function refresh() {
@@ -506,6 +508,39 @@ function BeansController($state, $http, APP_NAME) {
                 vm.items.push({bean: key, type: val.type, scope: val.scope, dependencies: val.dependencies});
             });
         });
+    }
+
+    function showBean(name) {
+        $uibModal.open({
+            templateUrl: 'app/views/developer/beans/bean.dialog.html',
+            controller: 'BeanDialogController',
+            controllerAs: 'vm',
+            size: 'lg',
+            resolve: {
+                name: function () {
+                    return name;
+                },
+                beanDetails: function () {
+                    return $http.get('api/system/bean', {
+                        params: {
+                            'name': name
+                        }
+                    });
+                }
+            }
+        });
+    }
+}
+
+function BeanDialogController($uibModalInstance, name, beanDetails) {
+    var vm = this;
+
+    vm.cancel = cancel;
+    vm.name = name;
+    vm.beanDetails = beanDetails;
+
+    function cancel() {
+        $uibModalInstance.dismiss('cancel');
     }
 }
 
