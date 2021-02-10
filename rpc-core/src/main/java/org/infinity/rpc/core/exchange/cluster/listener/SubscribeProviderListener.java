@@ -54,9 +54,6 @@ public class SubscribeProviderListener<T> implements ClientListener {
         listener.clientUrl = clientUrl;
         listener.protocol = Protocol.getInstance(clientUrl.getProtocol());
 
-        // IMPORTANT: Subscribe this client listener to all the registries
-        // So when providers change event occurs, it can invoke onNotify() method.
-        listener.subscribe();
         return listener;
     }
 
@@ -125,10 +122,11 @@ public class SubscribeProviderListener<T> implements ClientListener {
     }
 
     /**
-     * Subscribe this client listener to all the registries
+     * IMPORTANT: Subscribe this client listener to all the registries
+     * So when providers change event occurs, it can invoke onNotify() method.
      */
     @EventSubscriber("providersDiscoveryEvent")
-    private void subscribe() {
+    public void subscribe() {
         for (Url registryUrl : registryUrls) {
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             // Bind this listener to the client
