@@ -33,9 +33,4 @@ public interface ProviderCallable<T> {
      * @return response object
      */
     Responseable call(Requestable request);
-
-    /**
-     * Do some cleanup task
-     */
-    void destroy();
 }

@@ -17,6 +17,13 @@ import java.util.List;
 @Spi(scope = SpiScope.PROTOTYPE)
 public interface LoadBalancer<T> {
     /**
+     * Get provider callers
+     *
+     * @return provider callers
+     */
+    List<ProviderCaller<T>> getProviderCallers();
+
+    /**
      * Refresh provider callers when online or offline
      *
      * @param providerCallers new discovered provider callers
@@ -49,6 +56,11 @@ public interface LoadBalancer<T> {
     static <T> LoadBalancer<T> getInstance(String name) {
         return ServiceLoader.forClass(LoadBalancer.class).load(name);
     }
+
+    /**
+     * Destroy
+     */
+    void destroy();
 
 //
 //    void setWeightString(String weightString);

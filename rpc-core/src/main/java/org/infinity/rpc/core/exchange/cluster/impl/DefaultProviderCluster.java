@@ -3,7 +3,6 @@ package org.infinity.rpc.core.exchange.cluster.impl;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcAbstractException;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
@@ -18,12 +17,7 @@ import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
-import java.text.MessageFormat;
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_CALLER_THREAD_POOL;
 
 /**
  * todo: ClusterSpi
@@ -33,14 +27,11 @@ import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_CALLER_T
 @Slf4j
 @ServiceName("default")
 public class DefaultProviderCluster<T> implements ProviderCluster<T> {
-    private static final int                     DELAY_TIME = 1000;
-    private              boolean                 active     = false;
-    private              Class<T>                interfaceClass;
-    private              String                  protocol;
-    private              FaultTolerance<T>       faultTolerance;
-    private              LoadBalancer<T>         loadBalancer;
-    //todo: move to loadbalancer
-    private              List<ProviderCaller<T>> providerCallers;
+    private boolean           active = false;
+    private Class<T>          interfaceClass;
+    private String            protocol;
+    private FaultTolerance<T> faultTolerance;
+    private LoadBalancer<T>   loadBalancer;
 
     @Override
     public void setProtocol(String protocol) {
@@ -88,14 +79,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     }
 
     @Override
-    public List<ProviderCaller<T>> getProviderCallers() {
-        return providerCallers;
-    }
-
-    @Override
     public void init() {
-        // todo: remove this statement
-        refresh(providerCallers);
         active = true;
     }
 
@@ -111,45 +95,8 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
         }
         // Set new provider callers to load balancer
         loadBalancer.refresh(newProviderCallers);
-
-        // todo: move to loadBalancer.refresh
-        List<ProviderCaller<T>> oldProviderCallers = providerCallers;
-        // Assign new ones to provider callers
-        providerCallers = newProviderCallers;
-
-        if (CollectionUtils.isEmpty(oldProviderCallers)) {
-            return;
-        }
-
-        Collection<ProviderCaller<T>> inactiveOnes = CollectionUtils.subtract(newProviderCallers, oldProviderCallers);
-        if (CollectionUtils.isEmpty(inactiveOnes)) {
-            return;
-        }
-        // Destroy the inactive provider callers
-        destroyInactiveProviderCallers(inactiveOnes);
     }
 
-    private void destroyInactiveProviderCallers(Collection<ProviderCaller<T>> delayDestroyProviderCallers) {
-        // Execute once after a daley time
-        ScheduledThreadPool.scheduleDelayTask(DESTROY_CALLER_THREAD_POOL, DELAY_TIME, TimeUnit.MILLISECONDS, () -> {
-            for (ProviderCaller<?> providerCaller : delayDestroyProviderCallers) {
-                try {
-                    providerCaller.destroy();
-                    log.info("Destroyed the caller with url: {}", providerCaller.getProviderUrl().getUri());
-                } catch (Exception e) {
-                    log.error(MessageFormat.format("Failed to destroy the caller with url: {0}", providerCaller.getProviderUrl().getUri()), e);
-                }
-            }
-        });
-    }
-
-    @Override
-    public void destroy() {
-        active = false;
-        for (ProviderCaller<T> providerCaller : this.providerCallers) {
-            providerCaller.destroy();
-        }
-    }
 
     @Override
     public Responseable call(Requestable request) {

@@ -31,8 +31,6 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
 
     FaultTolerance<T> getFaultTolerance();
 
-    List<ProviderCaller<T>> getProviderCallers();
-
     /**
      * Refresh provider callers when providers is online or offline
      *
