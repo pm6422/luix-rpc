@@ -12,6 +12,7 @@ import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
 import org.infinity.rpc.core.exchange.cluster.listener.SubscribeProviderListener;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.core.utils.IpUtils;
 import org.infinity.rpc.utilities.network.AddressUtils;
 import org.infinity.rpc.utilities.network.NetworkUtils;
 
@@ -251,7 +252,7 @@ public class ConsumerStub<T> {
         List<Url> directProviderUrls = new ArrayList<>(directUrlHostPortList.size());
         for (Pair<String, Integer> providerHostPortPair : directUrlHostPortList) {
             // consumer url其他参数已经丢失 todo： test
-            Url providerUrl = Url.providerUrl(PROTOCOL_DEFAULT_VALUE, providerHostPortPair.getLeft(),
+            Url providerUrl = Url.providerUrl(PROTOCOL_DEFAULT_VALUE, IpUtils.convertToIntranetHost(providerHostPortPair.getLeft()),
                     providerHostPortPair.getRight(), interfaceName, group, version);
             directProviderUrls.add(providerUrl);
         }
