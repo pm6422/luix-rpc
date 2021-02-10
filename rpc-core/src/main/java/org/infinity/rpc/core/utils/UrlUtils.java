@@ -1,7 +1,8 @@
-package org.infinity.rpc.core.url;
+package org.infinity.rpc.core.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.constant.RpcConstants;
+import org.infinity.rpc.core.url.Url;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

@@ -53,6 +53,7 @@ public class InfinityProperties {
     @NotNull
     private ConsumerConfig              consumer    = new ConsumerConfig();
 
+
     @PostConstruct
     private void init() {
         application.init();
