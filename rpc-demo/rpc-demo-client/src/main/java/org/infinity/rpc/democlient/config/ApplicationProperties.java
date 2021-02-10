@@ -30,7 +30,6 @@ public class ApplicationProperties {
     private final UserAuditEvent       userAuditEvent       = new UserAuditEvent();
     private final Jenkins              jenkins              = new Jenkins();
     private final FileFtp              fileFtp              = new FileFtp();
-    private final Url                  url                  = new Url();
     private final Cache                cache                = new Cache();
 
     @Data
@@ -132,10 +131,6 @@ public class ApplicationProperties {
         private String password;
         private String uploadDir;
         private String httpUrl;
-    }
-
-    @Data
-    public static class Url {
     }
 
     @Data
