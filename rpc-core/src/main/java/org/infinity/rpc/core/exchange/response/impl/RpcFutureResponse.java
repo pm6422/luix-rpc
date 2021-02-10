@@ -89,7 +89,7 @@ public class RpcFutureResponse implements FutureResponse {
 
     @Override
     public boolean cancel() {
-        Exception e = new RpcServiceException(this.getClass().getName() + " task cancel: serverPort=" + serverUrl.getServerPortStr() + " "
+        Exception e = new RpcServiceException(this.getClass().getName() + " task cancel: serverPort=" + serverUrl.getAddress() + " "
                 + request.toString() + " cost=" + (System.currentTimeMillis() - createTime));
         return cancel(e);
     }
@@ -166,7 +166,7 @@ public class RpcFutureResponse implements FutureResponse {
             }
 
             state = FutureState.CANCELLED;
-            exception = new RpcServiceException(this.getClass().getName() + " request timeout: serverPort=" + serverUrl.getServerPortStr()
+            exception = new RpcServiceException(this.getClass().getName() + " request timeout: serverPort=" + serverUrl.getAddress()
                     + " " + request + " cost=" + (System.currentTimeMillis() - createTime),
                     RpcErrorMsgConstant.SERVICE_TIMEOUT);
 

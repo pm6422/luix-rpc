@@ -38,7 +38,7 @@ public class DefaultRpcExporter<T> extends AbstractExporter<T> {
     @Override
     public void cancelExport() {
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerStub.getUrl());
-        String ipPort = providerStub.getUrl().getServerPortStr();
+        String ipPort = providerStub.getUrl().getAddress();
 
         Exportable<T> exporter = (Exportable<T>) exporterMap.remove(protocolKey);
         if (exporter != null) {
@@ -70,7 +70,7 @@ public class DefaultRpcExporter<T> extends AbstractExporter<T> {
     }
 
     protected ProviderMessageRouter initRequestRouter(Url url) {
-        String ipPort = url.getServerPortStr();
+        String ipPort = url.getAddress();
         ProviderMessageRouter requestRouter = ipPort2RequestRouter.get(ipPort);
 
         if (requestRouter == null) {

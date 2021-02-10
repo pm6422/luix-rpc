@@ -59,7 +59,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
         messageHandler = CheckHealthFactory.getInstance(providerUrl).wrapMessageHandler(messageHandler);
 
         synchronized (ipPort2ServerShareChannel) {
-            String ipPort = providerUrl.getServerPortStr();
+            String ipPort = providerUrl.getAddress();
             String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
 
             boolean shareChannel = providerUrl.getBooleanOption(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
@@ -128,7 +128,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
         }
 
         synchronized (ipPort2Endpoint) {
-            String ipPort = url.getServerPortStr();
+            String ipPort = url.getAddress();
             String protocolKey = RpcFrameworkUtils.getProtocolKey(url);
 
             if (endpoint != ipPort2Endpoint.get(ipPort)) {

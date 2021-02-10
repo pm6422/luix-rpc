@@ -283,7 +283,7 @@ public class NettyClient extends AbstractSharedPoolClient {
 
                 if (count >= maxClientConnection && state.isActive()) {
                     log.error("NettyClient unavailable Error: url=" + providerUrl.getIdentity() + " "
-                            + providerUrl.getServerPortStr());
+                            + providerUrl.getAddress());
                     state = ChannelState.INACTIVE;
                 }
             }
@@ -316,7 +316,7 @@ public class NettyClient extends AbstractSharedPoolClient {
                 if (count < maxClientConnection) {
                     state = ChannelState.ACTIVE;
                     log.info("NettyClient recover available: url=" + providerUrl.getIdentity() + " "
-                            + providerUrl.getServerPortStr());
+                            + providerUrl.getAddress());
                 }
             }
         }

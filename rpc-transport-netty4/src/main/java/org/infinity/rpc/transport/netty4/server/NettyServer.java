@@ -83,7 +83,7 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
         }
 
         standardThreadExecutor = (standardThreadExecutor != null && !standardThreadExecutor.isShutdown()) ? standardThreadExecutor
-                : new StandardThreadExecutor(minWorkerThread, maxWorkerThread, workerQueueSize, new DefaultThreadFactory("NettyServer-" + url.getServerPortStr(), true));
+                : new StandardThreadExecutor(minWorkerThread, maxWorkerThread, workerQueueSize, new DefaultThreadFactory("NettyServer-" + url.getAddress(), true));
         standardThreadExecutor.prestartAllCoreThreads();
 
         channelManage = new NettyServerChannelManage(maxServerConnection);

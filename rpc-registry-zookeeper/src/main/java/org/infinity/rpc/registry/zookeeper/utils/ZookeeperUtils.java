@@ -187,7 +187,7 @@ public class ZookeeperUtils {
      * @return address full path
      */
     public static String getProviderAddressFilePath(Url url, ZookeeperStatusNode node) {
-        return getProviderStatusNodePath(url, node) + PATH_SEPARATOR + url.getServerPortStr();
+        return getProviderStatusNodePath(url, node) + PATH_SEPARATOR + url.getAddress();
     }
 
     /**

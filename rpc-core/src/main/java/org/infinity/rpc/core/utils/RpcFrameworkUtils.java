@@ -60,7 +60,7 @@ public class RpcFrameworkUtils {
      * @return
      */
     public static String getProtocolKey(Url url) {
-        return url.getProtocol() + RpcConstants.PROTOCOL_SEPARATOR + url.getServerPortStr() + RpcConstants.PATH_SEPARATOR
+        return url.getProtocol() + RpcConstants.PROTOCOL_SEPARATOR + url.getAddress() + RpcConstants.PATH_SEPARATOR
                 + url.getGroup() + RpcConstants.PATH_SEPARATOR + url.getPath() + RpcConstants.PATH_SEPARATOR + url.getVersion();
     }
 

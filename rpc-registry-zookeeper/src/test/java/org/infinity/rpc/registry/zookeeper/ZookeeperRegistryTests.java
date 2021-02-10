@@ -76,7 +76,7 @@ public class ZookeeperRegistryTests {
 
     @Test
     public void testRegisterAndActivate() {
-        String node = providerUrl1.getServerPortStr();
+        String node = providerUrl1.getAddress();
         List<String> activateAddrFiles;
         List<String> deactivateAddrFiles;
 
@@ -231,7 +231,7 @@ public class ZookeeperRegistryTests {
 
     @Test
     public void testReregister() throws InterruptedException {
-        String node = providerUrl1.getServerPortStr();
+        String node = providerUrl1.getAddress();
         List<String> activateAddrFiles;
         List<String> deactivateAddrFiles;
 
