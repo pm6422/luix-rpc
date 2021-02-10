@@ -37,6 +37,10 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
      * @param providerCallers provider call
      */
     void refresh(List<ProviderCaller<T>> providerCallers);
+    /**
+     * Destroy
+     */
+    void destroy();
 
     /**
      * Get provider cluster instance associated with the specified name

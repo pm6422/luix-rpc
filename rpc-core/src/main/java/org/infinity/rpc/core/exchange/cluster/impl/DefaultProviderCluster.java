@@ -15,6 +15,7 @@ import org.infinity.rpc.core.exchange.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.utilities.destory.ShutdownHook;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.util.List;
@@ -81,6 +82,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     @Override
     public void init() {
         active = true;
+        ShutdownHook.add(() -> destroy());
     }
 
     /**
@@ -95,6 +97,12 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
         }
         // Set new provider callers to load balancer
         loadBalancer.refresh(newProviderCallers);
+    }
+
+    @Override
+    public void destroy() {
+        active = false;
+        loadBalancer.destroy();
     }
 
 
