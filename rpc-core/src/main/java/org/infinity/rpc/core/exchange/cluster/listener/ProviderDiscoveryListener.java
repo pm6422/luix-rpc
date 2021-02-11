@@ -20,13 +20,13 @@ import java.util.stream.Collectors;
 /**
  * todo: ClusterSupport
  * Listener used to subscribe providers change event,
- * method {@link SubscribeProviderListener#onNotify(Url, List)} will be invoked if providers change event occurs.
+ * method {@link ProviderDiscoveryListener#onNotify(Url, List)} will be invoked if providers change event occurs.
  *
  * @param <T>: The interface class of the consumer
  */
 @Slf4j
 @ThreadSafe
-public class SubscribeProviderListener<T> implements ClientListener {
+public class ProviderDiscoveryListener<T> implements ClientListener {
     /**
      * The interface class of the consumer
      */
@@ -40,14 +40,14 @@ public class SubscribeProviderListener<T> implements ClientListener {
     /**
      * Prevent instantiation of it outside the class
      */
-    private SubscribeProviderListener() {
+    private ProviderDiscoveryListener() {
     }
 
-    public static <T> SubscribeProviderListener<T> of(Class<T> interfaceClass,
+    public static <T> ProviderDiscoveryListener<T> of(Class<T> interfaceClass,
                                                       ProviderCluster<T> providerCluster,
                                                       Url clientUrl,
                                                       List<Url> registryUrls) {
-        SubscribeProviderListener<T> listener = new SubscribeProviderListener<>();
+        ProviderDiscoveryListener<T> listener = new ProviderDiscoveryListener<>();
         listener.interfaceClass = interfaceClass;
         listener.providerCluster = providerCluster;
         listener.registryUrls = registryUrls;
@@ -55,6 +55,19 @@ public class SubscribeProviderListener<T> implements ClientListener {
         listener.protocol = Protocol.getInstance(clientUrl.getProtocol());
 
         return listener;
+    }
+
+    /**
+     * IMPORTANT: Subscribe this client listener to all the registries
+     * So when providers change event occurs, it can invoke onNotify() method.
+     */
+    @EventSubscriber("providersDiscoveryEvent")
+    public void subscribe() {
+        for (Url registryUrl : registryUrls) {
+            Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
+            // Bind this listener to the client
+            registry.subscribe(clientUrl, this);
+        }
     }
 
     /**
@@ -121,21 +134,8 @@ public class SubscribeProviderListener<T> implements ClientListener {
         providerCluster.refresh(providerCallers);
     }
 
-    /**
-     * IMPORTANT: Subscribe this client listener to all the registries
-     * So when providers change event occurs, it can invoke onNotify() method.
-     */
-    @EventSubscriber("providersDiscoveryEvent")
-    public void subscribeProviderDiscovery() {
-        for (Url registryUrl : registryUrls) {
-            Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
-            // Bind this listener to the client
-            registry.subscribe(clientUrl, this);
-        }
-    }
-
     @Override
     public String toString() {
-        return SubscribeProviderListener.class.getSimpleName().concat(":").concat(interfaceClass.getName());
+        return ProviderDiscoveryListener.class.getSimpleName().concat(":").concat(interfaceClass.getName());
     }
 }

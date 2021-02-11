@@ -10,7 +10,7 @@ import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ConsumerConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.exchange.cluster.ProviderCluster;
-import org.infinity.rpc.core.exchange.cluster.listener.SubscribeProviderListener;
+import org.infinity.rpc.core.exchange.cluster.listener.ProviderDiscoveryListener;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.IpUtils;
 import org.infinity.rpc.utilities.network.AddressUtils;
@@ -156,8 +156,8 @@ public class ConsumerStub<T> {
 
         if (StringUtils.isEmpty(directAddresses)) {
             // Non-direct registry
-            SubscribeProviderListener<T> listener = SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, globalRegistryUrls);
-            listener.subscribeProviderDiscovery();
+            ProviderDiscoveryListener<T> listener = ProviderDiscoveryListener.of(interfaceClass, providerCluster, clientUrl, globalRegistryUrls);
+            listener.subscribe();
             return;
         }
 
@@ -236,7 +236,7 @@ public class ConsumerStub<T> {
     }
 
     private void doNotify(List<Url> directRegistryUrls) {
-        SubscribeProviderListener<T> listener = SubscribeProviderListener.of(interfaceClass, providerCluster, clientUrl, directRegistryUrls);
+        ProviderDiscoveryListener<T> listener = ProviderDiscoveryListener.of(interfaceClass, providerCluster, clientUrl, directRegistryUrls);
 
         for (Url directRegistryUrl : directRegistryUrls) {
             List<Url> directProviderUrls = createDirectProviderUrls();
