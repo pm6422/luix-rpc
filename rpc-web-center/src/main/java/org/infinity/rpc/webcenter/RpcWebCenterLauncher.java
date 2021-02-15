@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @EnableRpc
-public class WebCenterLauncher {
+public class RpcWebCenterLauncher {
     /**
      * Entrance method which used to run the application. Spring profiles can be configured with a program arguments
      * --spring.profiles.active=your-active-profile
@@ -14,6 +14,6 @@ public class WebCenterLauncher {
      * @param args program arguments
      */
     public static void main(String[] args) {
-        SpringApplication.run(WebCenterLauncher.class, args);
+        SpringApplication.run(RpcWebCenterLauncher.class, args);
     }
 }
