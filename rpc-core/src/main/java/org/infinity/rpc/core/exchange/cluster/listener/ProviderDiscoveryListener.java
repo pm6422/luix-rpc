@@ -32,9 +32,9 @@ public class ProviderDiscoveryListener<T> implements ClientListener {
      */
     private       Class<T>                          interfaceClass;
     private       ProviderCluster<T>                providerCluster;
-    private       Protocol                          protocol;
-    private       List<Url>                         registryUrls;
     private       Url                               clientUrl;
+    private       List<Url>                         registryUrls;
+    private       Protocol                          protocol;
     private final Map<Url, List<ProviderCaller<T>>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
 
     /**
@@ -50,10 +50,9 @@ public class ProviderDiscoveryListener<T> implements ClientListener {
         ProviderDiscoveryListener<T> listener = new ProviderDiscoveryListener<>();
         listener.interfaceClass = interfaceClass;
         listener.providerCluster = providerCluster;
-        listener.registryUrls = registryUrls;
         listener.clientUrl = clientUrl;
+        listener.registryUrls = registryUrls;
         listener.protocol = Protocol.getInstance(clientUrl.getProtocol());
-
         return listener;
     }
 
