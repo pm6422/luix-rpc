@@ -10,7 +10,7 @@ import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ConsumerConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.client.cluster.ProviderCluster;
-import org.infinity.rpc.core.client.ProviderDiscoveryListener;
+import org.infinity.rpc.core.client.listener.ProviderDiscoveryListener;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.IpUtils;
 import org.infinity.rpc.utilities.network.AddressUtils;

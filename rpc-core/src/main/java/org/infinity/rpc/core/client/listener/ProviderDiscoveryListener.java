@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.client;
+package org.infinity.rpc.core.client.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * todo: ClusterSupport
+ * todo: see ClusterSupport
  * Listener used to subscribe providers change event,
  * method {@link ProviderDiscoveryListener#onNotify(Url, List)} will be invoked if providers change event occurs.
  *
