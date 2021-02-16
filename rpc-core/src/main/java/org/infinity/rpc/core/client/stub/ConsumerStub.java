@@ -111,6 +111,7 @@ public class ConsumerStub<T> {
     /**
      * The consumer url used to export to registry only for consumers discovery management,
      * but it have nothing to do with the service calling.
+     * todo: 暂时无用
      */
     private Url      url;
 

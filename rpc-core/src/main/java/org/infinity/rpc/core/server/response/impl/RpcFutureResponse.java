@@ -298,5 +298,8 @@ public class RpcFutureResponse implements FutureResponse {
         return options.get(key);
     }
 
-
+    @Override
+    public int getIntOption(String key) {
+        return Integer.parseInt(options.get(key));
+    }
 }

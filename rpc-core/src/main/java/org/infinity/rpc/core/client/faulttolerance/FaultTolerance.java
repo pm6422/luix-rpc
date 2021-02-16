@@ -34,11 +34,11 @@ public interface FaultTolerance<T> {
     /**
      * Call the RPC
      *
-     * @param loadBalancer load balancer
      * @param request      RPC request
+     * @param loadBalancer load balancer
      * @return RPC response
      */
-    Responseable call(LoadBalancer<T> loadBalancer, Requestable request);
+    Responseable call(Requestable request, LoadBalancer<T> loadBalancer);
 
     /**
      * Get fault tolerance strategy instance associated with the specified name

@@ -12,8 +12,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
-import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodParameters;
 
 /**
@@ -50,6 +49,10 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
 
         request.addOption(GROUP, consumerStub.getGroup());
         request.addOption(VERSION, consumerStub.getVersion());
+        request.addOption(CHECK_HEALTH, String.valueOf(consumerStub.getCheckHealth()));
+        request.addOption(CHECK_HEALTH_FACTORY, consumerStub.getCheckHealthFactory());
+        request.addOption(REQUEST_TIMEOUT, String.valueOf(consumerStub.getRequestTimeout()));
+        request.addOption(MAX_RETRIES, String.valueOf(consumerStub.getMaxRetries()));
 
         boolean async = isAsyncCall(args);
         return processRequest(request, method.getReturnType(), async);

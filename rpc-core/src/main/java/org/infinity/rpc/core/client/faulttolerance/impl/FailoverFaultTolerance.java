@@ -1,12 +1,12 @@
 package org.infinity.rpc.core.client.faulttolerance.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exception.ExceptionUtils;
-import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.client.faulttolerance.AbstractFaultTolerance;
 import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.client.request.ProviderCaller;
 import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.exception.ExceptionUtils;
+import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
@@ -26,10 +26,13 @@ import static org.infinity.rpc.core.constant.ServiceConstants.MAX_RETRIES_DEFAUL
 @ServiceName("failover")
 public class FailoverFaultTolerance<T> extends AbstractFaultTolerance<T> {
     @Override
-    public Responseable call(LoadBalancer<T> loadBalancer, Requestable request) {
+    public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
         // Select multiple nodes
         List<ProviderCaller<T>> availableProviderCallers = loadBalancer.selectProviderNodes(request);
         int maxRetries = availableProviderCallers.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_DEFAULT_VALUE);
+        if (maxRetries == 0) {
+            maxRetries = request.getIntOption(MAX_RETRIES);
+        }
 
         // Retry the RPC request operation till the max retry times
         for (int i = 0; i <= maxRetries; i++) {
@@ -44,11 +47,9 @@ public class FailoverFaultTolerance<T> extends AbstractFaultTolerance<T> {
                     throw e;
                 }
                 // If one of the provider nodes fails, try to use another backup available one
-                // todo: refactor the message
-                log.warn(MessageFormat.format("Failed to call the provider: {0}", providerCaller.getProviderUrl()), e);
+                log.warn(MessageFormat.format("Failed to call {0}", providerCaller.getProviderUrl()), e);
             }
         }
-        // todo: refactor the message
-        throw new RpcFrameworkException("Failed to call all the providers!");
+        throw new RpcFrameworkException("Failed to perform " + maxRetries + " retries to call " + availableProviderCallers.get(0).getProviderUrl() + "!");
     }
 }

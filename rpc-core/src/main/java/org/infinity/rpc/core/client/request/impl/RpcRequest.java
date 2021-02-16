@@ -61,6 +61,11 @@ public class RpcRequest implements Requestable, Serializable {
     }
 
     @Override
+    public int getIntOption(String key) {
+        return Integer.parseInt(options.get(key));
+    }
+
+    @Override
     public void addTrace(String key, String value) {
         traces.putIfAbsent(key, value);
     }

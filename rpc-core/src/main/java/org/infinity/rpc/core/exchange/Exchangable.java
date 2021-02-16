@@ -33,25 +33,33 @@ public interface Exchangable extends Traceable {
     Map<String, String> getOptions();
 
     /**
-     * Set request options
+     * Set options
      *
-     * @param options request options
+     * @param options options
      */
     void setOptions(Map<String, String> options);
 
     /**
-     * Add request option
+     * Add option
      *
-     * @param key   request option key
-     * @param value request option value
+     * @param key   option key
+     * @param value option value
      */
     void addOption(String key, String value);
 
     /**
-     * Get request option
+     * Get option value
      *
-     * @param key request option key
-     * @return request option
+     * @param key option key
+     * @return option value
      */
     String getOption(String key);
+
+    /**
+     * Get option value in integer form
+     *
+     * @param key option key
+     * @return option value
+     */
+    int getIntOption(String key);
 }

@@ -3,15 +3,15 @@ package org.infinity.rpc.core.client.cluster.impl;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.rpc.core.exception.ExceptionUtils;
-import org.infinity.rpc.core.exception.RpcAbstractException;
-import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
-import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.client.cluster.ProviderCluster;
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.client.request.ProviderCaller;
 import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.exception.ExceptionUtils;
+import org.infinity.rpc.core.exception.RpcAbstractException;
+import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.url.Url;
@@ -110,7 +110,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     public Responseable call(Requestable request) {
         if (active) {
             try {
-                return faultTolerance.call(loadBalancer, request);
+                return faultTolerance.call(request, loadBalancer);
             } catch (Exception e) {
                 return handleError(request, e);
             }

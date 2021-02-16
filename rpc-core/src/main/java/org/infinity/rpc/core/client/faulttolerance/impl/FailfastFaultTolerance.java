@@ -21,7 +21,7 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 @ServiceName("failfast")
 public class FailfastFaultTolerance<T> extends AbstractFaultTolerance<T> {
     @Override
-    public Responseable call(LoadBalancer<T> loadBalancer, Requestable request) {
+    public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
         ProviderCaller<T> availableProviderCaller = loadBalancer.selectProviderNode(request);
         // Do NOT retry when exception occurred
         return availableProviderCaller.call(request);
