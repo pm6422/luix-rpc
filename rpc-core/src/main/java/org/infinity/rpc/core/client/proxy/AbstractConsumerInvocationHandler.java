@@ -14,7 +14,7 @@ import org.infinity.rpc.utilities.network.NetworkUtils;
  * @param <T>: The interface class of the consumer
  */
 @Slf4j
-public abstract class AbstractRpcConsumerInvocationHandler<T> {
+public abstract class AbstractConsumerInvocationHandler<T> {
     protected ConsumerStub<T> consumerStub;
     protected SwitcherService switcherService;
 

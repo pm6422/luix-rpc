@@ -17,7 +17,7 @@ import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodParamete
  * @param <T>: The interface class of the consumer
  */
 @Slf4j
-public class ConsumerInvocationHandler<T> extends AbstractRpcConsumerInvocationHandler<T> implements InvocationHandler {
+public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHandler<T> implements InvocationHandler {
 
     public ConsumerInvocationHandler(ConsumerStub<T> stub) {
         consumerStub = stub;
