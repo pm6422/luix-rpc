@@ -24,7 +24,7 @@ import static org.infinity.rpc.core.constant.ServiceConstants.MAX_RETRIES_DEFAUL
  */
 @Slf4j
 @ServiceName("failover")
-public class Failover<T> extends AbstractFaultTolerance<T> {
+public class FailoverFaultTolerance<T> extends AbstractFaultTolerance<T> {
     @Override
     public Responseable call(LoadBalancer<T> loadBalancer, Requestable request) {
         // Select multiple nodes
