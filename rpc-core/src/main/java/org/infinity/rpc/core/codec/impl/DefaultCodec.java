@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.codec.impl;
+package org.infinity.rpc.core.codec.impl;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -8,10 +8,10 @@ import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.Exchangable;
-import org.infinity.rpc.core.exchange.codec.AbstractCodec;
+import org.infinity.rpc.core.codec.AbstractCodec;
 import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
-import org.infinity.rpc.core.exchange.serialization.Serializer;
+import org.infinity.rpc.core.serialization.Serializer;
 import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 import org.infinity.rpc.core.url.Url;

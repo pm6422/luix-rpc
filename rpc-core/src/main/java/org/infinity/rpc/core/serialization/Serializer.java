@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.serialization;
+package org.infinity.rpc.core.serialization;
 
 import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Spi;

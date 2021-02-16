@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.exchange.transport.server;
 
 import org.infinity.rpc.core.exception.RpcFrameworkException;
-import org.infinity.rpc.core.exchange.codec.Codec;
+import org.infinity.rpc.core.codec.Codec;
 import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.url.Url;

@@ -1,11 +1,11 @@
-package org.infinity.rpc.core.exchange.codec;
+package org.infinity.rpc.core.codec;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.Exchangable;
-import org.infinity.rpc.core.exchange.codec.impl.DefaultCodec;
+import org.infinity.rpc.core.codec.impl.DefaultCodec;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.exchange.transport.Channel;

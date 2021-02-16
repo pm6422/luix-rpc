@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.serialization;
+package org.infinity.rpc.core.serialization;
 
 
 import java.io.IOException;

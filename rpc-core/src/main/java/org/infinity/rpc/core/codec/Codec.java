@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.codec;
+package org.infinity.rpc.core.codec;
 
 import org.infinity.rpc.core.exchange.Exchangable;
 import org.infinity.rpc.core.exchange.transport.Channel;
