@@ -161,7 +161,7 @@ public class RpcLifecycle {
                 .collect(Collectors.toList());
 
         consumerStubs.forEach(consumerStub ->
-                consumerStub.subscribeFromRegistries(infinityProperties.getApplication(),
+                consumerStub.subscribeProviders(infinityProperties.getApplication(),
                         infinityProperties.getAvailableProtocol(), registryUrls, infinityProperties.getConsumer()));
     }
 

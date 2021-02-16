@@ -145,8 +145,8 @@ public class ConsumerStub<T> {
      * @param globalRegistryUrls global registry urls
      * @param consumerConfig     consumer configuration
      */
-    public void subscribeFromRegistries(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
-                                        List<Url> globalRegistryUrls, ConsumerConfig consumerConfig) {
+    public void subscribeProviders(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
+                                   List<Url> globalRegistryUrls, ConsumerConfig consumerConfig) {
         // Create consumer url
         this.url = this.createConsumerUrl(applicationConfig, protocolConfig, consumerConfig);
 
