@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.exchange;
 
 import lombok.Data;
-import org.infinity.rpc.core.exchange.request.Requestable;
+import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 
 import javax.annotation.concurrent.ThreadSafe;

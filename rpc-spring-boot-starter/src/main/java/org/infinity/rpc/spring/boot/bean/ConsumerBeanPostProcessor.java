@@ -2,7 +2,7 @@ package org.infinity.rpc.spring.boot.bean;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.annotation.Consumer;
-import org.infinity.rpc.core.exchange.client.stub.ConsumerStub;
+import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.spring.boot.bean.name.ConsumerStubBeanNameBuilder;
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
 import org.springframework.aop.support.AopUtils;

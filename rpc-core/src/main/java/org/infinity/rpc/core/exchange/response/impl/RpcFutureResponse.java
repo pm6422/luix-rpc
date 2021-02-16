@@ -9,7 +9,7 @@ import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.TraceableContext;
-import org.infinity.rpc.core.exchange.request.Requestable;
+import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exchange.response.FutureListener;
 import org.infinity.rpc.core.exchange.response.FutureResponse;
 import org.infinity.rpc.core.exchange.response.Responseable;

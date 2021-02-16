@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.exchange.transport;
 
-import org.infinity.rpc.core.exchange.request.Requestable;
+import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exchange.transport.endpoint.Endpoint;
 
 public interface Client extends Endpoint {

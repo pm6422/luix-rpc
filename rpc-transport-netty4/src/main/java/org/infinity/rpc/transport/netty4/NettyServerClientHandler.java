@@ -12,7 +12,7 @@ import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.ExchangeContext;
 import org.infinity.rpc.core.exchange.codec.Codec;
 import org.infinity.rpc.core.exchange.codec.CodecUtils;
-import org.infinity.rpc.core.exchange.request.Requestable;
+import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.exchange.server.messagehandler.MessageHandler;

@@ -3,7 +3,7 @@ package org.infinity.rpc.core.utils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.constant.ServiceConstants;
-import org.infinity.rpc.core.exchange.request.Requestable;
+import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;

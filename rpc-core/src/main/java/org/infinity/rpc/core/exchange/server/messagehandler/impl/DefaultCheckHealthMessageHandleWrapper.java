@@ -1,12 +1,12 @@
 package org.infinity.rpc.core.exchange.server.messagehandler.impl;
 
-import org.infinity.rpc.core.exchange.request.Requestable;
+import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exchange.response.Responseable;
 import org.infinity.rpc.core.exchange.response.impl.RpcCheckHealthResponse;
 import org.infinity.rpc.core.exchange.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exchange.transport.Channel;
 
-import static org.infinity.rpc.core.exchange.request.impl.RpcCheckHealthRequest.isCheckHealthRequest;
+import static org.infinity.rpc.core.client.request.impl.RpcCheckHealthRequest.isCheckHealthRequest;
 
 public class DefaultCheckHealthMessageHandleWrapper implements MessageHandler {
     private final MessageHandler messageHandler;
