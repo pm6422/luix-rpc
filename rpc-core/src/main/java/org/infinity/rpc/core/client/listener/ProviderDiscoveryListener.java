@@ -21,8 +21,7 @@ import java.util.List;
 @Slf4j
 @ThreadSafe
 public class ProviderDiscoveryListener<T> extends ProviderNotifyListener<T> {
-    private Url       clientUrl;
-    private List<Url> registryUrls;
+    private Url clientUrl;
 
     /**
      * Prevent instantiation of it outside the class
@@ -31,15 +30,20 @@ public class ProviderDiscoveryListener<T> extends ProviderNotifyListener<T> {
         super();
     }
 
-    public static <T> ProviderDiscoveryListener<T> of(Class<T> interfaceClass,
-                                                      ProviderCluster<T> providerCluster,
-                                                      Url clientUrl,
-                                                      List<Url> registryUrls) {
+    /**
+     * Pass provider cluster to listener, listener will update provider cluster after provider urls changed
+     *
+     * @param providerCluster provider cluster
+     * @param interfaceClass  The interface class of the consumer
+     * @param clientUrl       client url
+     * @param <T>             The interface class of the consumer
+     * @return listener
+     */
+    public static <T> ProviderDiscoveryListener<T> of(ProviderCluster<T> providerCluster, Class<T> interfaceClass, Url clientUrl) {
         ProviderDiscoveryListener<T> listener = new ProviderDiscoveryListener<>();
-        listener.interfaceClass = interfaceClass;
         listener.providerCluster = providerCluster;
+        listener.interfaceClass = interfaceClass;
         listener.clientUrl = clientUrl;
-        listener.registryUrls = registryUrls;
         listener.protocol = Protocol.getInstance(clientUrl.getProtocol());
         return listener;
     }
@@ -47,9 +51,11 @@ public class ProviderDiscoveryListener<T> extends ProviderNotifyListener<T> {
     /**
      * IMPORTANT: Subscribe this client listener to all the registries
      * So when providers change event occurs, it can invoke onNotify() method.
+     *
+     * @param registryUrls registry urls
      */
     @EventSubscriber("providersDiscoveryEvent")
-    public void subscribe() {
+    public void subscribe(List<Url> registryUrls) {
         for (Url registryUrl : registryUrls) {
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             // Bind this listener to the client

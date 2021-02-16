@@ -24,21 +24,30 @@ import java.util.stream.Collectors;
 @Slf4j
 @ThreadSafe
 public class ProviderNotifyListener<T> implements ClientListener {
+    protected     ProviderCluster<T>                providerCluster;
     /**
      * The interface class of the consumer
      */
     protected     Class<T>                          interfaceClass;
-    protected     ProviderCluster<T>                providerCluster;
     protected     Protocol                          protocol;
     private final Map<Url, List<ProviderCaller<T>>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
 
     protected ProviderNotifyListener() {
     }
 
-    public static <T> ProviderNotifyListener<T> of(Class<T> interfaceClass, ProviderCluster<T> providerCluster, String protocol) {
+    /**
+     * Pass provider cluster to listener, listener will update provider cluster after provider urls changed
+     *
+     * @param providerCluster provider cluster
+     * @param interfaceClass  The interface class of the consumer
+     * @param protocol        protocol
+     * @param <T>             The interface class of the consumer
+     * @return listener
+     */
+    public static <T> ProviderNotifyListener<T> of(ProviderCluster<T> providerCluster, Class<T> interfaceClass, String protocol) {
         ProviderNotifyListener<T> listener = new ProviderNotifyListener<>();
-        listener.interfaceClass = interfaceClass;
         listener.providerCluster = providerCluster;
+        listener.interfaceClass = interfaceClass;
         listener.protocol = Protocol.getInstance(protocol);
         return listener;
     }
