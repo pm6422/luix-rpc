@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.infinity.rpc.core.client.listener.ProviderNotifyListener;
 import org.infinity.rpc.core.client.proxy.ConsumerProxy;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ConsumerConfig;
@@ -224,22 +225,13 @@ public class ConsumerStub<T> {
     }
 
     private void notifyDirectProviderUrls(List<Url> globalRegistryUrls) {
-        List<Url> directRegistryUrls = globalRegistryUrls.stream().map(globalRegistryUrl -> {
+        ProviderNotifyListener<T> listener = ProviderNotifyListener.of(interfaceClass, providerCluster, protocol);
+
+        for (Url globalRegistryUrl : globalRegistryUrls) {
+            List<Url> directProviderUrls = createDirectProviderUrls();
             Url directRegistryUrl = globalRegistryUrl.copy();
             // Change protocol to direct
             directRegistryUrl.setProtocol(REGISTRY_VALUE_DIRECT);
-            return directRegistryUrl;
-        }).collect(Collectors.toList());
-
-        // Notify
-        doNotify(directRegistryUrls);
-    }
-
-    private void doNotify(List<Url> directRegistryUrls) {
-        ProviderDiscoveryListener<T> listener = ProviderDiscoveryListener.of(interfaceClass, providerCluster, clientUrl, directRegistryUrls);
-
-        for (Url directRegistryUrl : directRegistryUrls) {
-            List<Url> directProviderUrls = createDirectProviderUrls();
             // 如果有directUrls，直接使用这些directUrls进行初始化，不用到注册中心discover
             // Directly notify the provider urls
             listener.onNotify(directRegistryUrl, directProviderUrls);
