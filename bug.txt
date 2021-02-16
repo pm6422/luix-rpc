@@ -1,0 +1,1 @@
+1. 当使用rpc-transport-netty4、retries=0、采用直连方式并且首先启动client端应用，然后启动server端应用时，第一次调用会失败，第二次调用才会成功。2021/02/16
