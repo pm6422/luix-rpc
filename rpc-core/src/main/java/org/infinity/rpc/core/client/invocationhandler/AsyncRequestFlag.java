@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.client.proxy;
+package org.infinity.rpc.core.client.invocationhandler;
 
 public enum AsyncRequestFlag {
     ASYNC("async"),

@@ -1,6 +1,9 @@
-package org.infinity.rpc.core.client.proxy;
+package org.infinity.rpc.core.client.invocationhandler.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.client.invocationhandler.AbstractConsumerInvocationHandler;
+import org.infinity.rpc.core.client.invocationhandler.AsyncRequestFlag;
+import org.infinity.rpc.core.client.proxy.ConsumerProxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.utilities.id.IdGenerator;

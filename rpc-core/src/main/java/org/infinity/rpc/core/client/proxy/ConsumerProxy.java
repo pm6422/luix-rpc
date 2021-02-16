@@ -2,6 +2,7 @@ package org.infinity.rpc.core.client.proxy;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.client.invocationhandler.impl.ConsumerInvocationHandler;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 
 import java.lang.reflect.Proxy;

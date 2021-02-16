@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.client.proxy;
+package org.infinity.rpc.core.client.invocationhandler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcServiceException;
