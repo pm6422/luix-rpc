@@ -14,16 +14,16 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.exchange.server.messagehandler.impl;
+package org.infinity.rpc.core.server.messagehandler.impl;
 
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
-import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
+import org.infinity.rpc.core.server.response.Responseable;
+import org.infinity.rpc.core.server.response.impl.RpcResponse;
+import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 

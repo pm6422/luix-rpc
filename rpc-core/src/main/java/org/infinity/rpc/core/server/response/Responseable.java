@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.response;
+package org.infinity.rpc.core.server.response;
 
 import org.infinity.rpc.core.exchange.Exchangable;
 

@@ -1,7 +1,7 @@
 package org.infinity.rpc.spring.boot.bean;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
+import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.infinity.rpc.spring.boot.bean.name.DefaultBeanNameGenerator;
 import org.infinity.rpc.spring.boot.bean.registry.ClassPathBeanDefinitionRegistryScanner;

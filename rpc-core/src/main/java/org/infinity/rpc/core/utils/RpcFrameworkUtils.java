@@ -4,8 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.constant.ServiceConstants;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
+import org.infinity.rpc.core.server.response.Responseable;
+import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 

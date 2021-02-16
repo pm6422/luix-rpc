@@ -5,7 +5,7 @@ import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.ExchangeContext;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.exchange.response.Responseable;
+import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.network.NetworkUtils;

@@ -1,9 +1,8 @@
-package org.infinity.rpc.core.exchange.response.impl;
+package org.infinity.rpc.core.server.response.impl;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.infinity.rpc.core.exchange.response.Responseable;
 
 @Getter
 @Setter

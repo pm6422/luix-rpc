@@ -1,9 +1,9 @@
-package org.infinity.rpc.core.exchange.server.messagehandler.impl;
+package org.infinity.rpc.core.server.messagehandler.impl;
 
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.exchange.response.Responseable;
-import org.infinity.rpc.core.exchange.response.impl.RpcCheckHealthResponse;
-import org.infinity.rpc.core.exchange.server.messagehandler.MessageHandler;
+import org.infinity.rpc.core.server.response.Responseable;
+import org.infinity.rpc.core.server.response.impl.RpcCheckHealthResponse;
+import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exchange.transport.Channel;
 
 import static org.infinity.rpc.core.client.request.impl.RpcCheckHealthRequest.isCheckHealthRequest;

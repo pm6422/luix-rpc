@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.response;
+package org.infinity.rpc.core.server.response;
 
 public interface FutureResponse extends Responseable, Future {
     void onSuccess(Responseable response);

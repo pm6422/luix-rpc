@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.client.request;
 
-import org.infinity.rpc.core.exchange.response.Responseable;
+import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.url.Url;
 
 /**

@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.server.stub;
+package org.infinity.rpc.core.server.stub;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Map;

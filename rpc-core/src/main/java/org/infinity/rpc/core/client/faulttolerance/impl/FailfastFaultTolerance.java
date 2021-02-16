@@ -5,7 +5,7 @@ import org.infinity.rpc.core.client.faulttolerance.AbstractFaultTolerance;
 import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.client.request.ProviderCaller;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.exchange.response.Responseable;
+import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 /**

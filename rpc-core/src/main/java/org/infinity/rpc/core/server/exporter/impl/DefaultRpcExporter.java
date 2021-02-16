@@ -1,11 +1,11 @@
-package org.infinity.rpc.core.exchange.server.exporter.impl;
+package org.infinity.rpc.core.server.exporter.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exchange.server.exporter.AbstractExporter;
-import org.infinity.rpc.core.exchange.server.exporter.Exportable;
-import org.infinity.rpc.core.exchange.server.messagehandler.impl.ProviderMessageRouter;
-import org.infinity.rpc.core.exchange.server.messagehandler.impl.ProviderProtectedMessageRouter;
-import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
+import org.infinity.rpc.core.server.exporter.AbstractExporter;
+import org.infinity.rpc.core.server.exporter.Exportable;
+import org.infinity.rpc.core.server.messagehandler.impl.ProviderMessageRouter;
+import org.infinity.rpc.core.server.messagehandler.impl.ProviderProtectedMessageRouter;
+import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.exchange.transport.endpoint.EndpointFactory;
 import org.infinity.rpc.core.exchange.transport.server.Server;
 import org.infinity.rpc.core.url.Url;

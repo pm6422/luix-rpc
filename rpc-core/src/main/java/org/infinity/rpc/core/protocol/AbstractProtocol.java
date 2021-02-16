@@ -5,8 +5,8 @@ import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.client.request.ProviderCaller;
 import org.infinity.rpc.core.client.request.impl.DefaultProviderCaller;
-import org.infinity.rpc.core.exchange.server.exporter.Exportable;
-import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
+import org.infinity.rpc.core.server.exporter.Exportable;
+import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 

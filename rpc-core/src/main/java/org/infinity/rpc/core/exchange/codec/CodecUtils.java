@@ -7,7 +7,7 @@ import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.Exchangable;
 import org.infinity.rpc.core.exchange.codec.impl.DefaultCodec;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.exchange.response.Responseable;
+import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 import org.infinity.rpc.utilities.lang.ByteUtils;

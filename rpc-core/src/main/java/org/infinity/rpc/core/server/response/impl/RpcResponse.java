@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.response.impl;
+package org.infinity.rpc.core.server.response.impl;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,8 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.exception.RpcInvocationException;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.exchange.response.Callbackable;
-import org.infinity.rpc.core.exchange.response.Responseable;
+import org.infinity.rpc.core.server.response.Callbackable;
+import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 
 import java.io.Serializable;

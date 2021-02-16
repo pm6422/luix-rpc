@@ -1,6 +1,6 @@
-package org.infinity.rpc.core.exchange.server.exporter;
+package org.infinity.rpc.core.server.exporter;
 
-import org.infinity.rpc.core.exchange.server.stub.ProviderStub;
+import org.infinity.rpc.core.server.stub.ProviderStub;
 
 /**
  * todo: merge with ProviderCallable

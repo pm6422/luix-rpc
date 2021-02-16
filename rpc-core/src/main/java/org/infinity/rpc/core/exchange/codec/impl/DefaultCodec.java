@@ -10,7 +10,7 @@ import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.Exchangable;
 import org.infinity.rpc.core.exchange.codec.AbstractCodec;
 import org.infinity.rpc.core.client.request.impl.RpcRequest;
-import org.infinity.rpc.core.exchange.response.impl.RpcResponse;
+import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.exchange.serialization.Serializer;
 import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;

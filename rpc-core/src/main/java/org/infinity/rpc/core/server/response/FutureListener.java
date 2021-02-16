@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.exchange.response;
+package org.infinity.rpc.core.server.response;
 
 public interface FutureListener {
 

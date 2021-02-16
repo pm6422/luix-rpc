@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.client.cluster;
 
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.exchange.response.Responseable;
+import org.infinity.rpc.core.server.response.Responseable;
 
 /**
  * todo: merge to ProviderCluster

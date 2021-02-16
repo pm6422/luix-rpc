@@ -18,8 +18,8 @@ package org.infinity.rpc.core.exchange.transport.checkhealth.impl;
 
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.client.request.impl.RpcCheckHealthRequest;
-import org.infinity.rpc.core.exchange.server.messagehandler.MessageHandler;
-import org.infinity.rpc.core.exchange.server.messagehandler.impl.DefaultCheckHealthMessageHandleWrapper;
+import org.infinity.rpc.core.server.messagehandler.MessageHandler;
+import org.infinity.rpc.core.server.messagehandler.impl.DefaultCheckHealthMessageHandleWrapper;
 import org.infinity.rpc.core.exchange.transport.checkhealth.CheckHealthFactory;
 import org.infinity.rpc.utilities.id.IdGenerator;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;

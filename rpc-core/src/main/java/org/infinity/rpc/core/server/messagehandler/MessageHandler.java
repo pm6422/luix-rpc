@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.server.messagehandler;
+package org.infinity.rpc.core.server.messagehandler;
 
 import org.infinity.rpc.core.exchange.transport.Channel;
 
