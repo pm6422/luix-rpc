@@ -24,7 +24,8 @@ public class TestController {
 
     private final ApplicationContext applicationContext;
     private final Environment        env;
-    @Consumer(directAddresses = "127.0.0.1:26010", maxRetries = 0)
+//    @Consumer(directAddresses = "127.0.0.1:26010", maxRetries = 0)
+    @Consumer
     private       AppService         appService;
 
     public TestController(ApplicationContext applicationContext, Environment env) {
