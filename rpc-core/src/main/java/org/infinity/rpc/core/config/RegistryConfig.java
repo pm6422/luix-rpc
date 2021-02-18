@@ -8,14 +8,16 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcConfigValidator;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_ADDRESSES;
-import static org.infinity.rpc.core.constant.ServiceConstants.*;
+import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VALUE_DIRECT;
+import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH;
+import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_DEFAULT_VALUE;
 
 @Data
 public class RegistryConfig {
@@ -35,12 +37,12 @@ public class RegistryConfig {
     /**
      * Registry center host name
      */
-    private              String  host                ;
+    private              String  host;
     /**
      * Registry center port number
      */
     @PositiveOrZero
-    private              Integer port                ;
+    private              Integer port;
     /**
      * Addresses of RPC provider used to connect RPC provider directly without third party registry.
      * Multiple addresses are separated by comma.

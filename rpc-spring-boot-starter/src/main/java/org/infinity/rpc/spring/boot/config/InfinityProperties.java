@@ -11,7 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY_VALUE_DIRECT;
+import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VALUE_DIRECT;
 
 /**
  * - Application

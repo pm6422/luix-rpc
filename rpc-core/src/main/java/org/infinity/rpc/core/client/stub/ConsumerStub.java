@@ -5,13 +5,13 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.infinity.rpc.core.client.cluster.ProviderCluster;
+import org.infinity.rpc.core.client.listener.ProviderDiscoveryListener;
 import org.infinity.rpc.core.client.listener.ProviderNotifyListener;
 import org.infinity.rpc.core.client.proxy.ConsumerProxy;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ConsumerConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
-import org.infinity.rpc.core.client.cluster.ProviderCluster;
-import org.infinity.rpc.core.client.listener.ProviderDiscoveryListener;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.IpUtils;
 import org.infinity.rpc.utilities.network.AddressUtils;
@@ -23,8 +23,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VALUE_DIRECT;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**

@@ -10,11 +10,6 @@ public interface ServiceConstants {
     String INTERFACE_CLASS = "interfaceClass";
     String GENERIC         = "generic";
 
-    String  REGISTRY                           = "registry";
-    String  REGISTRY_DEFAULT_VALUE             = "zookeeper";
-    String  REGISTRY_VALUE_DIRECT              = "direct";
-    String  PROTOCOL                           = "protocol";
-    String  PROTOCOL_DEFAULT_VALUE             = "infinity";
     String  GROUP                              = "group";
     String  GROUP_DEFAULT_VALUE                = "default";
     String  VERSION                            = "version";

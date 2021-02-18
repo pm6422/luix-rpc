@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.REGISTRY_VALUE_DIRECT;
+import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VALUE_DIRECT;
 import static org.infinity.rpc.spring.boot.utils.JarUtils.readJarVersion;
 
 /**
