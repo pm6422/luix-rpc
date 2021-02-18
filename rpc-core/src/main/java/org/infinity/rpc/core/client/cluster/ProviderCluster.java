@@ -42,10 +42,10 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
     void destroy();
 
     /**
-     * Get provider cluster instance associated with the specified name
+     * Get instance associated with the specified name
      *
-     * @param name specified provider cluster name
-     * @return provider cluster instance
+     * @param name specified name
+     * @return instance
      */
     @SuppressWarnings("unchecked")
     static <T> ProviderCluster<T> getInstance(String name) {
