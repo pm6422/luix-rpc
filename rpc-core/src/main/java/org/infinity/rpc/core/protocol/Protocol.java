@@ -36,10 +36,10 @@ public interface Protocol {
     void destroy();
 
     /**
-     * Get protocol instance associated with the specified name
+     * Get instance associated with the specified name
      *
-     * @param name specified protocol name
-     * @return protocol instance
+     * @param name specified name
+     * @return instance
      */
     static Protocol getInstance(String name) {
         return ServiceLoader.forClass(Protocol.class).load(name);

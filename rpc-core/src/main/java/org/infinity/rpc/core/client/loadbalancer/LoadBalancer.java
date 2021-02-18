@@ -47,10 +47,10 @@ public interface LoadBalancer<T> {
     List<ProviderCaller<T>> selectProviderNodes(Requestable request);
 
     /**
-     * Get load balancer instance associated with the specified name
+     * Get instance associated with the specified name
      *
-     * @param name specified load balancer name
-     * @return load balancer instance
+     * @param name specified name
+     * @return instance
      */
     @SuppressWarnings("unchecked")
     static <T> LoadBalancer<T> getInstance(String name) {

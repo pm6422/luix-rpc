@@ -61,10 +61,10 @@ public interface EndpointFactory {
     void safeReleaseResource(Client client, Url providerUrl);
 
     /**
-     * Get endpoint factory instance associated with the specified name
+     * Get instance associated with the specified name
      *
-     * @param name specified endpoint factory name
-     * @return endpoint factory instance
+     * @param name specified name
+     * @return instance
      */
     static EndpointFactory getInstance(String name) {
         return ServiceLoader.forClass(EndpointFactory.class).load(name);

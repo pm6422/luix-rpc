@@ -48,10 +48,10 @@ public interface CheckHealthFactory {
     MessageHandler wrapMessageHandler(MessageHandler handler);
 
     /**
-     * Get check health factory instance associated with the specified name
+     * Get instance associated with the specified name
      *
-     * @param name specified check health factory name
-     * @return check health factory instance
+     * @param name specified name
+     * @return instance
      */
     static CheckHealthFactory getInstance(String name) {
         return Optional.ofNullable(ServiceLoader.forClass(CheckHealthFactory.class).load(name))
@@ -59,10 +59,10 @@ public interface CheckHealthFactory {
     }
 
     /**
-     * Get check health factory instance associated with the specified name
+     * Get instance associated with the specified name
      *
      * @param providerUrl provider url
-     * @return check health factory instance
+     * @return instance
      */
     static CheckHealthFactory getInstance(Url providerUrl) {
         final String name = providerUrl.getOption(CHECK_HEALTH_FACTORY);

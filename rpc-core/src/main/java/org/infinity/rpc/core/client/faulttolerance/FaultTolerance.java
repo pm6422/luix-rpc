@@ -41,10 +41,10 @@ public interface FaultTolerance<T> {
     Responseable call(Requestable request, LoadBalancer<T> loadBalancer);
 
     /**
-     * Get fault tolerance strategy instance associated with the specified name
+     * Get instance associated with the specified name
      *
-     * @param name specified fault tolerance strategy name
-     * @return fault tolerance strategy instance
+     * @param name specified name
+     * @return instance
      */
     @SuppressWarnings("unchecked")
     static <T> FaultTolerance<T> getInstance(String name) {

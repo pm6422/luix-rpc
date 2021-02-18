@@ -29,10 +29,10 @@ public interface RegistryFactory {
     Registry createRegistry(Url registryUrl);
 
     /**
-     * Get registry factory instance associated with the specified name
+     * Get instance associated with the specified name
      *
-     * @param name specified registry factory name
-     * @return registry factory instance
+     * @param name specified name
+     * @return instance
      */
     static RegistryFactory getInstance(String name) {
         return ServiceLoader.forClass(RegistryFactory.class).load(name);

@@ -33,10 +33,10 @@ public interface Codec {
     Object decode(Channel channel, String remoteIp, byte[] data) throws IOException;
 
     /**
-     * Get codec instance associated with the specified name
+     * Get instance associated with the specified name
      *
-     * @param name specified codec name
-     * @return codec instance
+     * @param name specified name
+     * @return instance
      */
     static Codec getInstance(String name) {
         return ServiceLoader.forClass(Codec.class).load(name);

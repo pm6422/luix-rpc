@@ -41,10 +41,10 @@ public interface Serializer {
     int getSerializationTypeNum();
 
     /**
-     * Get serializer instance associated with the specified name
+     * Get instance associated with the specified name
      *
-     * @param name specified serializer name
-     * @return serializer instance
+     * @param name specified name
+     * @return instance
      */
     static Serializer getInstance(String name) {
         return ServiceLoader.forClass(Serializer.class).load(name);
