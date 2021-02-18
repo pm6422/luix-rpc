@@ -29,19 +29,19 @@ public class InfinityProperties {
     /**
      *
      */
-    private ProtocolConfig              protocol    = new ProtocolConfig();
-    /**
-     *
-     */
-    private Map<String, ProtocolConfig> protocols   = new LinkedHashMap<>(5);
-    /**
-     *
-     */
     private RegistryConfig              registry    = new RegistryConfig();
     /**
-     *
+     * Supports multiple registries
      */
     private Map<String, RegistryConfig> registries  = new LinkedHashMap<>(5);
+    /**
+     *
+     */
+    private ProtocolConfig              protocol    = new ProtocolConfig();
+    /**
+     * Supports multiple protocols
+     */
+    private Map<String, ProtocolConfig> protocols   = new LinkedHashMap<>(5);
     /**
      *
      */
