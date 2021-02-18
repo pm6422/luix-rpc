@@ -29,11 +29,15 @@ public class ProtocolConfig {
     private Integer version = 1;
     /**
      * Host name of the RPC server
+     * Generally, we do NOT need configure the value, it will be set automatically.
+     * As we know, it is the netty server host
+     * todo: check intranet ip or other available host
      */
     @NotEmpty
     private String  host    = NetworkUtils.INTRANET_IP;
     /**
      * Port number of the RPC server
+     * As we know, it is the netty server port
      */
     @NotNull
     @Positive

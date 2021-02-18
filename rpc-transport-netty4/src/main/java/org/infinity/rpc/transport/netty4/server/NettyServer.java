@@ -110,6 +110,7 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
         state = ChannelState.ACTIVE;
 //        StatsUtils.registryStatisticCallback(this);
         log.info("NettyServer ServerChannel finish Open: url=" + url);
+        log.info("Started netty server with port [{}]", url.getPort());
         return state.isActive();
     }
 

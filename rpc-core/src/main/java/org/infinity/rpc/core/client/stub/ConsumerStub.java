@@ -199,8 +199,7 @@ public class ConsumerStub<T> {
             loadBalancer = consumerConfig.getLoadBalancer();
         }
 
-        // todo: check internet or intranet ip
-        url = Url.consumerUrl(protocol, NetworkUtils.INTRANET_IP, protocolConfig.getPort(), interfaceName, group, version);
+        url = Url.consumerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, group, version);
         url.addOption(Url.PARAM_APP, applicationConfig.getName());
 
         if (checkHealth == null) {

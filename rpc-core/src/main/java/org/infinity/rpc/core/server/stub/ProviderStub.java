@@ -198,8 +198,7 @@ public class ProviderStub<T> {
             version = providerConfig.getVersion();
         }
 
-        // todo: check internet or intranet ip
-        url = Url.providerUrl(protocol, NetworkUtils.INTRANET_IP, protocolConfig.getPort(), interfaceName, group, version);
+        url = Url.providerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, group, version);
         url.addOption(Url.PARAM_APP, applicationConfig.getName());
 
         if (checkHealth == null) {

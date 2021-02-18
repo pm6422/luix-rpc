@@ -470,6 +470,9 @@ public final class Url implements Serializable {
     }
 
     public String getUri() {
+        if (StringUtils.isEmpty(path)) {
+            return protocol + PROTOCOL_SEPARATOR + host + ":" + port;
+        }
         return protocol + PROTOCOL_SEPARATOR + host + ":" + port + PATH_SEPARATOR + path;
     }
 
