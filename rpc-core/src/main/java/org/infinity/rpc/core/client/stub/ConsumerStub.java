@@ -153,7 +153,7 @@ public class ConsumerStub<T> {
         // Create consumer url
         this.url = this.createConsumerUrl(applicationConfig, protocolConfig, consumerConfig);
 
-        this.clientUrl = Url.clientUrl(protocol, NetworkUtils.INTRANET_IP, interfaceName, group, version);
+        this.clientUrl = Url.clientUrl(protocol, AddressUtils.LOCALHOST, interfaceName, group, version);
         // Initialize provider cluster before consumer initialization
         this.providerCluster = createProviderCluster();
 

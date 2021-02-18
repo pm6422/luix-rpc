@@ -6,7 +6,7 @@ import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.network.LocalAddressFactory;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.utils.RpcConfigValidator;
-import org.infinity.rpc.utilities.network.NetworkUtils;
+import org.infinity.rpc.utilities.network.AddressUtils;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -66,7 +66,7 @@ public class ProtocolConfig {
                         "please check whether the correct dependency is in your class path!"));
 
         if (StringUtils.isNotEmpty(host)) {
-            RpcConfigValidator.isTrue(NetworkUtils.isValidAddress(host), "Please specify a valid host!");
+            RpcConfigValidator.isTrue(AddressUtils.isValidAddress(host), "Please specify a valid host!");
         }
     }
 

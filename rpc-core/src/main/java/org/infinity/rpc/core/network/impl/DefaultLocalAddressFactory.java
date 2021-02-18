@@ -2,7 +2,7 @@ package org.infinity.rpc.core.network.impl;
 
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.network.LocalAddressFactory;
-import org.infinity.rpc.utilities.network.NetworkUtils;
+import org.infinity.rpc.utilities.network.AddressUtils;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.util.Optional;
@@ -16,6 +16,6 @@ public class DefaultLocalAddressFactory implements LocalAddressFactory {
      */
     @Override
     public String getLocalAddress() {
-        return Optional.ofNullable(NetworkUtils.getLocalAddress()).orElseThrow(() -> new RpcConfigurationException("Failed to get valid local IP address!"));
+        return Optional.ofNullable(AddressUtils.getLocalAddress()).orElseThrow(() -> new RpcConfigurationException("Failed to get valid local IP address!"));
     }
 }

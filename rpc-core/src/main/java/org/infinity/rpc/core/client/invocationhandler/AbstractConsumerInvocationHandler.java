@@ -8,6 +8,7 @@ import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.utilities.network.AddressUtils;
 import org.infinity.rpc.utilities.network.NetworkUtils;
 
 /**
@@ -34,7 +35,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
 
         // We do NOT know the host and port of provider right now, so we use client URL
         Url clientUrl = Url.clientUrl(consumerStub.getProviderCluster().getProtocol(),
-                NetworkUtils.INTRANET_IP, consumerStub.getInterfaceName(), consumerStub.getGroup(), consumerStub.getVersion());
+                AddressUtils.LOCALHOST, consumerStub.getInterfaceName(), consumerStub.getGroup(), consumerStub.getVersion());
         consumerStub.getProviderCluster().getFaultTolerance().setClientUrl(clientUrl);
 
 //            request.addAttachment(Url.PARAM_APP, infinityProperties.getApplication().getName());
