@@ -29,6 +29,7 @@ public class FailoverFaultTolerance<T> extends AbstractFaultTolerance<T> {
     public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
         // Select multiple nodes
         List<ProviderCaller<T>> availableProviderCallers = loadBalancer.selectProviderNodes(request);
+        // todo: provider configuration over consumer configuration
         int maxRetries = availableProviderCallers.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_DEFAULT_VALUE);
         if (maxRetries == 0) {
             maxRetries = request.getIntOption(MAX_RETRIES);

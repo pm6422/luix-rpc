@@ -45,6 +45,7 @@ public class NettyChannel implements Channel {
 
     @Override
     public Responseable request(Requestable request) {
+        // todo: provider configuration over consumer configuration
         // Get method level parameter value
         int timeout = nettyClient.getProviderUrl()
                 .getMethodParameter(request.getMethodName(), request.getMethodParameters(),
