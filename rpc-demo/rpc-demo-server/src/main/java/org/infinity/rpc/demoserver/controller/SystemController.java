@@ -2,7 +2,7 @@ package org.infinity.rpc.demoserver.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
-import org.infinity.rpc.utilities.network.NetworkUtils;
+import org.infinity.rpc.demoserver.utils.NetworkUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

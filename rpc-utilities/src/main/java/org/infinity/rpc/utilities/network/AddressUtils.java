@@ -5,7 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -152,5 +154,19 @@ public abstract class AddressUtils {
             throw new IllegalArgumentException("Illegal port range!");
         }
         return Pair.of(host, port);
+    }
+
+    public static String getHostName(SocketAddress socketAddress) {
+        if (socketAddress == null) {
+            return null;
+        }
+
+        if (socketAddress instanceof InetSocketAddress) {
+            InetAddress addr = ((InetSocketAddress) socketAddress).getAddress();
+            if (addr != null) {
+                return addr.getHostAddress();
+            }
+        }
+        return null;
     }
 }

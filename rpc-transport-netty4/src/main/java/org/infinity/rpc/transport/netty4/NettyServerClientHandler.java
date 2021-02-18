@@ -5,22 +5,22 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.codec.Codec;
+import org.infinity.rpc.core.codec.CodecUtils;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.ExchangeContext;
-import org.infinity.rpc.core.codec.Codec;
-import org.infinity.rpc.core.codec.CodecUtils;
-import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.exchange.transport.Channel;
+import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
-import org.infinity.rpc.core.server.messagehandler.MessageHandler;
-import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 import org.infinity.rpc.transport.netty4.server.NettyServer;
-import org.infinity.rpc.utilities.network.NetworkUtils;
+import org.infinity.rpc.utilities.network.AddressUtils;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -142,7 +142,7 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
     }
 
     private void processRequest(final ChannelHandlerContext ctx, final Requestable request) {
-        request.addOption(Url.PARAM_HOST, NetworkUtils.getHostName(ctx.channel().remoteAddress()));
+        request.addOption(Url.PARAM_HOST, AddressUtils.getHostName(ctx.channel().remoteAddress()));
         final long processStartTime = System.currentTimeMillis();
         try {
             ExchangeContext.initialize(request);

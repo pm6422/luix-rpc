@@ -23,7 +23,6 @@ import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
-import org.infinity.rpc.utilities.network.NetworkUtils;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.Min;
@@ -34,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.LOCAL_ADDRESS_FACTORY;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
@@ -200,6 +200,7 @@ public class ProviderStub<T> {
 
         url = Url.providerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, group, version);
         url.addOption(Url.PARAM_APP, applicationConfig.getName());
+        url.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
 
         if (checkHealth == null) {
             checkHealth = providerConfig.isCheckHealth();

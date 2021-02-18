@@ -3,6 +3,7 @@ package org.infinity.rpc.core.client.cluster;
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.client.request.ProviderCaller;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;
@@ -36,6 +37,7 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
      * @param providerCallers provider call
      */
     void refresh(List<ProviderCaller<T>> providerCallers);
+
     /**
      * Destroy
      */
@@ -60,16 +62,18 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
      * @param clusterName        provider cluster name
      * @param loadBalancerName   load balancer name
      * @param faultToleranceName fault tolerance name
+     * @param clientUrl          client url
      * @param <T>                provider interface class
      * @return provider cluster
      */
     static <T> ProviderCluster<T> createCluster(Class<T> interfaceClass, String clusterName,
-                                                String protocol, String faultToleranceName, String loadBalancerName) {
+                                                String protocol, String faultToleranceName, String loadBalancerName, Url clientUrl) {
         // It support one cluster for one protocol for now, but do not support one cluster for one provider
         ProviderCluster<T> providerCluster = ProviderCluster.getInstance(clusterName);
         providerCluster.setInterfaceClass(interfaceClass);
         providerCluster.setProtocol(protocol);
         FaultTolerance<T> faultTolerance = FaultTolerance.getInstance(faultToleranceName);
+        faultTolerance.setClientUrl(clientUrl);
         providerCluster.setFaultTolerance(faultTolerance);
         LoadBalancer<T> loadBalancer = LoadBalancer.getInstance(loadBalancerName);
         providerCluster.setLoadBalancer(loadBalancer);

@@ -3,7 +3,7 @@ package org.infinity.rpc.demoserver.component;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.infinity.rpc.utilities.network.NetworkUtils;
+import org.infinity.rpc.demoserver.utils.NetworkUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;

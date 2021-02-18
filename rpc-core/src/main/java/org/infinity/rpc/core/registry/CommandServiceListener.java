@@ -19,6 +19,7 @@ package org.infinity.rpc.core.registry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.core.network.LocalAddressFactory;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
@@ -28,13 +29,13 @@ import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.annotation.EventReceiver;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
-import org.infinity.rpc.utilities.network.NetworkUtils;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.LOCAL_ADDRESS_FACTORY;
 import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
 
 /**
@@ -200,7 +201,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     }
 
     public List<Url> discoverServiceWithCommand(Url providerUrl, Map<String, Integer> weights, RpcCommand rpcCommand) {
-        String localIp = NetworkUtils.INTRANET_IP;
+        String localIp = LocalAddressFactory.getInstance(providerUrl.getOption(LOCAL_ADDRESS_FACTORY)).getLocalAddress();
         return this.discoverServiceWithCommand(providerUrl, weights, rpcCommand, localIp);
     }
 

@@ -13,7 +13,7 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.service.TestDummyService;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.utilities.annotation.EventMarker;
-import org.infinity.rpc.utilities.network.NetworkUtils;
+import org.infinity.rpc.utilities.network.AddressUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -56,10 +56,10 @@ public class ZookeeperRegistryTests {
         registryUrl.addOption(RETRY_INTERVAL, "" + Math.toIntExact(TimeUnit.SECONDS.toMillis(30)));
 
         // client url has the same protocol and provider path to provider, but port is 0
-        clientUrl = Url.clientUrl(PROTOCOL_DEFAULT_VALUE, NetworkUtils.INTRANET_IP, provider, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE);
+        clientUrl = Url.clientUrl(PROTOCOL_DEFAULT_VALUE, AddressUtils.LOCALHOST, provider, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE);
         clientUrl.addOption("group", GROUP_DEFAULT_VALUE);
 
-        providerUrl1 = Url.providerUrl(PROTOCOL_DEFAULT_VALUE, NetworkUtils.INTRANET_IP, 2000, provider, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE);
+        providerUrl1 = Url.providerUrl(PROTOCOL_DEFAULT_VALUE, AddressUtils.LOCALHOST, 2000, provider, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE);
         providerUrl2 = Url.providerUrl(PROTOCOL_DEFAULT_VALUE, "192.168.100.100", 2000, provider, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE);
 
         zookeeper = new EmbeddedZookeeper();

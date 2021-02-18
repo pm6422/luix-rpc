@@ -8,7 +8,6 @@ import org.infinity.rpc.core.registry.AddressInfo;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.core.utils.IpUtils;
 import org.infinity.rpc.utilities.destory.Cleanable;
 import org.infinity.rpc.utilities.network.AddressUtils;
 
@@ -85,7 +84,7 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
         for (Pair<String, Integer> directProviderUrl : providerHostAndPortList) {
             Url clientUrlCopy = clientUrl.copy();
             // Convert client url to provider url
-            clientUrlCopy.setHost(IpUtils.convertToIntranetHost(directProviderUrl.getLeft()));
+            clientUrlCopy.setHost(directProviderUrl.getLeft());
             clientUrlCopy.setPort(directProviderUrl.getRight());
             clientUrlCopy.addOption(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
             providerUrls.add(clientUrlCopy);

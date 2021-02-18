@@ -7,9 +7,6 @@ import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
-import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.network.AddressUtils;
-import org.infinity.rpc.utilities.network.NetworkUtils;
 
 /**
  * @param <T>: The interface class of the consumer
@@ -32,11 +29,6 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         // Copy values from context to request object
         copyContextToRequest(threadRpcContext, request);
 //        RequestContext.initialize(request);
-
-        // We do NOT know the host and port of provider right now, so we use client URL
-        Url clientUrl = Url.clientUrl(consumerStub.getProviderCluster().getProtocol(),
-                AddressUtils.LOCALHOST, consumerStub.getInterfaceName(), consumerStub.getGroup(), consumerStub.getVersion());
-        consumerStub.getProviderCluster().getFaultTolerance().setClientUrl(clientUrl);
 
 //            request.addAttachment(Url.PARAM_APP, infinityProperties.getApplication().getName());
 //        request.setProtocol(consumerStub.getProviderCluster().getProtocol());

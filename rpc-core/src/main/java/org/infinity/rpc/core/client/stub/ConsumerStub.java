@@ -13,9 +13,7 @@ import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ConsumerConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.core.utils.IpUtils;
 import org.infinity.rpc.utilities.network.AddressUtils;
-import org.infinity.rpc.utilities.network.NetworkUtils;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.Min;
@@ -24,6 +22,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.LOCAL_ADDRESS_FACTORY;
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_DEFAULT_VALUE;
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VALUE_DIRECT;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
@@ -153,7 +152,8 @@ public class ConsumerStub<T> {
         // Create consumer url
         this.url = this.createConsumerUrl(applicationConfig, protocolConfig, consumerConfig);
 
-        this.clientUrl = Url.clientUrl(protocol, AddressUtils.LOCALHOST, interfaceName, group, version);
+        // We do NOT know the host and port of provider right now, so we use client URL
+        this.clientUrl = Url.clientUrl(protocol, protocolConfig.getHost(), interfaceName, group, version);
         // Initialize provider cluster before consumer initialization
         this.providerCluster = createProviderCluster();
 
@@ -202,6 +202,7 @@ public class ConsumerStub<T> {
 
         url = Url.consumerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, group, version);
         url.addOption(Url.PARAM_APP, applicationConfig.getName());
+        url.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
 
         if (checkHealth == null) {
             checkHealth = consumerConfig.isCheckHealth();
@@ -247,8 +248,8 @@ public class ConsumerStub<T> {
         List<Pair<String, Integer>> directUrlHostPortList = AddressUtils.parseAddress(directAddresses);
         List<Url> directProviderUrls = new ArrayList<>(directUrlHostPortList.size());
         for (Pair<String, Integer> providerHostPortPair : directUrlHostPortList) {
-            // consumer url其他参数已经丢失 todo： test
-            Url providerUrl = Url.providerUrl(PROTOCOL_DEFAULT_VALUE, IpUtils.convertToIntranetHost(providerHostPortPair.getLeft()),
+            // todo: consumer url其他参数已经丢失
+            Url providerUrl = Url.providerUrl(PROTOCOL_DEFAULT_VALUE, providerHostPortPair.getLeft(),
                     providerHostPortPair.getRight(), interfaceName, group, version);
             directProviderUrls.add(providerUrl);
         }
@@ -257,6 +258,6 @@ public class ConsumerStub<T> {
 
     private ProviderCluster<T> createProviderCluster() {
         // One cluster is created for one protocol, only one server node under a cluster can receive the request
-        return ProviderCluster.createCluster(interfaceClass, cluster, protocol, faultTolerance, loadBalancer);
+        return ProviderCluster.createCluster(interfaceClass, cluster, protocol, faultTolerance, loadBalancer, clientUrl);
     }
 }
