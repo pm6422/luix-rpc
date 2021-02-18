@@ -55,31 +55,31 @@ public abstract class AddressUtils {
      */
     public static String getLocalAddress() {
         if (localAddressCache != null) {
+            // Get from cache
             return localAddressCache.getHostAddress();
         }
         InetAddress localAddress = null;
+        // Get IP prefix from environment variable
         String ipPrefix = System.getenv(INFINITY_IP_PREFIX);
-        if (StringUtils.isNotBlank(ipPrefix)) {
-            // 环境变量中如果指定了使用的ip前缀，则使用与该前缀匹配的网卡ip作为本机ip
+        if (StringUtils.isNotEmpty(ipPrefix)) {
+            // Get the IP whose network interface matches the IP prefix
             localAddress = getLocalAddressByNetworkInterface(ipPrefix);
-            log.info("get local address by ip prefix: " + ipPrefix + ", address:" + localAddress);
+            log.info("Get local address [{}] by ip prefix [{}]", localAddress, ipPrefix);
         }
         if (!isValidAddress(localAddress)) {
             localAddress = getLocalAddressByHostname();
-            log.info("get local address by hostname, address:" + localAddress);
+            log.info("Get local address [{}] by hostname", localAddress);
         }
         if (!isValidAddress(localAddress)) {
             localAddress = getLocalAddressByNetworkInterface(null);
-            log.info("get local address from network interface. address:" + localAddress);
+            log.info("Get local address [{}] by looping network interfaces", localAddress);
         }
-        if (isValidAddress(localAddress)) {
-            localAddressCache = localAddress;
+        if (!isValidAddress(localAddress)) {
+            log.warn("Failed to get local address!");
+            return null;
         }
-        if (localAddress != null) {
-            return localAddress.getHostAddress();
-        }
-
-        return null;
+        localAddressCache = localAddress;
+        return localAddressCache.getHostAddress();
     }
 
     private static InetAddress getLocalAddressByNetworkInterface(String prefix) {
