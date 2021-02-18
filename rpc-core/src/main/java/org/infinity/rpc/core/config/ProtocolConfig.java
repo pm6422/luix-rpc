@@ -30,14 +30,15 @@ public class ProtocolConfig {
     /**
      * Host name of the RPC server
      * Generally, we do NOT need configure the value, it will be set automatically.
-     * As we know, it is the netty server host
+     * If there are exported providers, netty server will use it as starting host.
+     * But if there are no exported providers, no netty server will be started.
      * todo: check intranet ip or other available host
      */
     @NotEmpty
     private String  host    = NetworkUtils.INTRANET_IP;
     /**
      * Port number of the RPC server
-     * As we know, it is the netty server port
+     * If there are exported providers, netty server will use it as starting port.
      */
     @NotNull
     @Positive
