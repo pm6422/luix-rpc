@@ -13,6 +13,7 @@ infinity:
     registry:
         host: localhost
         port: 2181
+#        directAddresses: 127.0.0.1:26010
     protocol:
         port: @app.rpc.port@
 # ===================================================================
