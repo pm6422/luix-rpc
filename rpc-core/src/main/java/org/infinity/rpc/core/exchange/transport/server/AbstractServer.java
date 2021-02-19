@@ -1,13 +1,16 @@
 package org.infinity.rpc.core.exchange.transport.server;
 
-import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.codec.Codec;
+import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.transport.Channel;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.url.Url;
 
 import java.net.InetSocketAddress;
 import java.util.Collection;
+
+import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC;
+import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC_DEFAULT_VALUE;
 
 public abstract class AbstractServer implements Server {
     protected InetSocketAddress localAddress;
@@ -22,9 +25,9 @@ public abstract class AbstractServer implements Server {
     public AbstractServer() {
     }
 
-    public AbstractServer(Url url) {
-        this.url = url;
-        this.codec = Codec.getInstance(url.getOption(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
+    public AbstractServer(Url providerUrl) {
+        this.url = providerUrl;
+        this.codec = Codec.getInstance(providerUrl.getOption(CODEC, CODEC_DEFAULT_VALUE));
     }
 
     @Override

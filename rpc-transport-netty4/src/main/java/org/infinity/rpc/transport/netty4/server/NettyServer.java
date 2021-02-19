@@ -40,8 +40,8 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
         return rejectCounter;
     }
 
-    public NettyServer(Url url, MessageHandler messageHandler) {
-        super(url);
+    public NettyServer(Url providerUrl, MessageHandler messageHandler) {
+        super(providerUrl);
         this.messageHandler = messageHandler;
     }
 

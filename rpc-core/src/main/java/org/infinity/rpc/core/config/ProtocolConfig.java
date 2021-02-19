@@ -2,6 +2,7 @@ package org.infinity.rpc.core.config;
 
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.core.codec.Codec;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.network.LocalAddressFactory;
 import org.infinity.rpc.core.protocol.Protocol;
@@ -13,8 +14,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.Optional;
 
-import static org.infinity.rpc.core.constant.ProtocolConstants.LOCAL_ADDRESS_FACTORY_DEFAULT_VALUE;
-import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 
 @Data
 public class ProtocolConfig {
@@ -24,12 +24,10 @@ public class ProtocolConfig {
     @NotEmpty
     private String  name                = PROTOCOL_DEFAULT_VALUE;
     /**
-     * Protocol version
-     * todo: check usage
+     * Protocol codec used to encode request and decode response
      */
-    @NotNull
-    @Positive
-    private Integer version             = 1;
+    @NotEmpty
+    private String  codec               = CODEC_DEFAULT_VALUE;
     /**
      * Host name of the RPC server
      * Generally, we do NOT need configure the value, it will be set automatically.
@@ -61,7 +59,10 @@ public class ProtocolConfig {
 
     private void checkValidity() {
         Optional.ofNullable(Protocol.getInstance(name))
-                .orElseThrow(() -> new RpcConfigurationException("Failed to load the specified protocol!"));
+                .orElseThrow(() -> new RpcConfigurationException(String.format("Failed to load the specified protocol [%s]!", name)));
+
+        Optional.ofNullable(Codec.getInstance(codec))
+                .orElseThrow(() -> new RpcConfigurationException(String.format("Failed to load the specified codec [%s]!", codec)));
 
         if (StringUtils.isNotEmpty(host)) {
             RpcConfigValidator.isTrue(AddressUtils.isValidAddress(host), "Please specify a valid host!");

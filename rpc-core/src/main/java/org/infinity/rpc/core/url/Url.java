@@ -65,11 +65,6 @@ public final class Url implements Serializable {
     /**
      *
      */
-    public static final String  PARAM_CODEC                               = "codec";
-    public static final String  PARAM_CODEC_DEFAULT_VALUE                 = "default";
-    /**
-     *
-     */
     public static final String  PARAM_TYPE                                = "type";
     public static final String  PARAM_TYPE_PROVIDER                       = "provider";
     public static final String  PARAM_TYPE_CONSUMER                       = "consumer";

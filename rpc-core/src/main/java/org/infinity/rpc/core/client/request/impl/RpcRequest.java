@@ -20,6 +20,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RpcRequest implements Requestable, Serializable {
     private static final long                serialVersionUID = -6259178379027752471L;
     protected            long                requestId;
+    /**
+     * todo: check usage
+     */
     protected            byte                protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
     protected            String              interfaceName;
     protected            String              methodName;

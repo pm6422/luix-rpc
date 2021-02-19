@@ -9,6 +9,7 @@ import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC;
 import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY;
 
 public class RpcFrameworkUtils {
@@ -112,7 +113,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(Url.PARAM_CODEC), target.getOption(Url.PARAM_CODEC))) {
+        if (!StringUtils.equals(source.getOption(CODEC), target.getOption(CODEC))) {
             return false;
         }
 
@@ -160,7 +161,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(Url.PARAM_CODEC), target.getOption(Url.PARAM_CODEC))) {
+        if (!StringUtils.equals(source.getOption(CODEC), target.getOption(CODEC))) {
             return false;
         }
 

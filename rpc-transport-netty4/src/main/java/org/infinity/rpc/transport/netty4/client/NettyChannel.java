@@ -2,19 +2,19 @@ package org.infinity.rpc.transport.netty4.client;
 
 import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.codec.Codec;
+import org.infinity.rpc.core.codec.CodecUtils;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
-import org.infinity.rpc.core.codec.Codec;
-import org.infinity.rpc.core.codec.CodecUtils;
-import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.exchange.transport.Channel;
+import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.server.response.FutureResponse;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcFutureResponse;
-import org.infinity.rpc.core.exchange.transport.Channel;
-import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 
@@ -24,6 +24,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static org.infinity.rpc.core.config.RegistryConfig.CONNECT_TIMEOUT;
 import static org.infinity.rpc.core.config.RegistryConfig.CONNECT_TIMEOUT_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC;
+import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC_DEFAULT_VALUE;
 import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT;
 import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT_DEFAULT_VALUE;
 
@@ -40,7 +42,7 @@ public class NettyChannel implements Channel {
     public NettyChannel(NettyClient nettyClient) {
         this.nettyClient = nettyClient;
         this.remoteAddress = new InetSocketAddress(nettyClient.getProviderUrl().getHost(), nettyClient.getProviderUrl().getPort());
-        codec = Codec.getInstance(nettyClient.getProviderUrl().getOption(Url.PARAM_CODEC, Url.PARAM_CODEC_DEFAULT_VALUE));
+        codec = Codec.getInstance(nettyClient.getProviderUrl().getOption(CODEC, CODEC_DEFAULT_VALUE));
     }
 
     @Override

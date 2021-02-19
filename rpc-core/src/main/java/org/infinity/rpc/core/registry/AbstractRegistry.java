@@ -18,6 +18,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC;
 import static org.infinity.rpc.core.switcher.impl.SwitcherService.REGISTRY_HEARTBEAT_SWITCHER;
 
 /**
@@ -165,7 +166,7 @@ public abstract class AbstractRegistry implements Registry {
     private Url removeUnnecessaryParams(Url url) {
         // codec parameter can not be registered to registry,
         // because client side may could not request successfully if client side does not have the codec.
-        url.getOptions().remove(Url.PARAM_CODEC);
+        url.getOptions().remove(CODEC);
         return url;
     }
 

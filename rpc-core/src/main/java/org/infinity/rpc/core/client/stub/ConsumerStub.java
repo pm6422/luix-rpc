@@ -22,8 +22,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.infinity.rpc.core.constant.ProtocolConstants.LOCAL_ADDRESS_FACTORY;
-import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VALUE_DIRECT;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
@@ -166,7 +165,7 @@ public class ConsumerStub<T> {
         }
 
         // Direct registry
-        notifyDirectProviderUrls(globalRegistryUrls);
+        notifyDirectProviderUrls(protocolConfig, globalRegistryUrls);
     }
 
     /**
@@ -202,6 +201,7 @@ public class ConsumerStub<T> {
 
         url = Url.consumerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, group, version);
         url.addOption(Url.PARAM_APP, applicationConfig.getName());
+        url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
 
         if (checkHealth == null) {
@@ -227,12 +227,12 @@ public class ConsumerStub<T> {
         return url;
     }
 
-    private void notifyDirectProviderUrls(List<Url> globalRegistryUrls) {
+    private void notifyDirectProviderUrls(ProtocolConfig protocolConfig, List<Url> globalRegistryUrls) {
         // Pass provider cluster to listener, listener will update provider cluster after provider urls changed
         ProviderNotifyListener<T> listener = ProviderNotifyListener.of(providerCluster, interfaceClass, protocol);
 
         for (Url globalRegistryUrl : globalRegistryUrls) {
-            List<Url> directProviderUrls = createDirectProviderUrls();
+            List<Url> directProviderUrls = createDirectProviderUrls(protocolConfig);
             Url directRegistryUrl = globalRegistryUrl.copy();
             // Change protocol to direct
             directRegistryUrl.setProtocol(REGISTRY_VALUE_DIRECT);
@@ -243,7 +243,7 @@ public class ConsumerStub<T> {
         }
     }
 
-    private List<Url> createDirectProviderUrls() {
+    private List<Url> createDirectProviderUrls(ProtocolConfig protocolConfig) {
         // Get the provider host and port
         List<Pair<String, Integer>> directUrlHostPortList = AddressUtils.parseAddress(directAddresses);
         List<Url> directProviderUrls = new ArrayList<>(directUrlHostPortList.size());
@@ -251,6 +251,7 @@ public class ConsumerStub<T> {
             // Note: There are no extra options added to the direct provider url
             Url providerUrl = Url.providerUrl(PROTOCOL_DEFAULT_VALUE, providerHostPortPair.getLeft(),
                     providerHostPortPair.getRight(), interfaceName, group, version);
+            providerUrl.addOption(CODEC, protocolConfig.getCodec());
             directProviderUrls.add(providerUrl);
         }
         return directProviderUrls;
