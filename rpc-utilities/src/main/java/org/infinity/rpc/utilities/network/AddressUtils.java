@@ -9,6 +9,7 @@ import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -20,6 +21,8 @@ public abstract class AddressUtils {
     public static final  String      INFINITY_IP_PREFIX = "INFINITY_IP_PREFIX";
     private static final Pattern     ADDRESS_PATTERN    = Pattern.compile("^\\d{1,3}(\\.\\d{1,3}){3}:\\d{1,5}$");
     private static final Pattern     IP_PATTERN         = Pattern.compile("\\d{1,3}(\\.\\d{1,3}){3,5}$");
+    private static final String      COMMA_SEPARATOR    = ",";
+    private static final int         MAX_PORT           = 65535;
     private static       InetAddress localAddressCache  = null;
 
     /**
@@ -49,7 +52,9 @@ public abstract class AddressUtils {
 
     /**
      * Get the valid IP address based on priorities.
-     * Configuration priority: environment variables > hostname对应的ip -> 轮询网卡
+     * Configuration priority:
+     * environment variables > IP whose network interface matches the IP prefix
+     * > IP associated with the hostname > Loop all the network interfaces
      *
      * @return local ip address
      */
@@ -85,33 +90,26 @@ public abstract class AddressUtils {
     private static InetAddress getLocalAddressByNetworkInterface(String prefix) {
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            if (interfaces != null) {
-                while (interfaces.hasMoreElements()) {
-                    try {
-                        NetworkInterface network = interfaces.nextElement();
-                        Enumeration<InetAddress> addresses = network.getInetAddresses();
-                        while (addresses.hasMoreElements()) {
-                            try {
-                                InetAddress address = addresses.nextElement();
-                                if (isValidAddress(address)) {
-                                    if (StringUtils.isBlank(prefix)) {
-                                        return address;
-                                    }
-                                    if (address.getHostAddress().startsWith(prefix)) {
-                                        return address;
-                                    }
-                                }
-                            } catch (Throwable e) {
-                                log.warn("Failed to retrieving ip address, " + e.getMessage(), e);
-                            }
+            if (interfaces == null) {
+                return null;
+            }
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = interfaces.nextElement();
+                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress address = addresses.nextElement();
+                    if (isValidAddress(address)) {
+                        if (StringUtils.isBlank(prefix)) {
+                            return address;
                         }
-                    } catch (Throwable e) {
-                        log.warn("Failed to retrieving ip address, " + e.getMessage(), e);
+                        if (address.getHostAddress().startsWith(prefix)) {
+                            return address;
+                        }
                     }
                 }
             }
         } catch (Throwable e) {
-            log.warn("Failed to retrieving ip address, " + e.getMessage(), e);
+            log.warn("Failed to get local ip address", e);
         }
         return null;
     }
@@ -123,23 +121,15 @@ public abstract class AddressUtils {
                 return localAddress;
             }
         } catch (Throwable e) {
-            log.warn("Failed to retrieving local address by hostname:" + e);
+            log.warn("Failed to get local address by hostname", e);
         }
         return null;
     }
 
     public static List<Pair<String, Integer>> parseAddress(String address) {
         List<Pair<String, Integer>> results = new ArrayList<>();
-
-        if (address.contains(",")) {
-            try {
-                String[] addresses = address.split(",");
-                for (String addr : addresses) {
-                    results.add(parseHostPort(addr));
-                }
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Illegal format address!");
-            }
+        if (address.contains(COMMA_SEPARATOR)) {
+            Arrays.stream(address.split(COMMA_SEPARATOR)).forEach(addr -> results.add(parseHostPort(addr)));
         } else {
             results.add(parseHostPort(address));
         }
@@ -150,7 +140,7 @@ public abstract class AddressUtils {
         String[] hostAndPort = addr.split(":");
         String host = hostAndPort[0].trim();
         int port = Integer.parseInt(hostAndPort[1].trim());
-        if (port < 0 || port > 65535) {
+        if (port < 0 || port > MAX_PORT) {
             throw new IllegalArgumentException("Illegal port range!");
         }
         return Pair.of(host, port);
@@ -160,7 +150,6 @@ public abstract class AddressUtils {
         if (socketAddress == null) {
             return null;
         }
-
         if (socketAddress instanceof InetSocketAddress) {
             InetAddress addr = ((InetSocketAddress) socketAddress).getAddress();
             if (addr != null) {
