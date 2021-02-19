@@ -248,7 +248,7 @@ public class ConsumerStub<T> {
         List<Pair<String, Integer>> directUrlHostPortList = AddressUtils.parseAddress(directAddresses);
         List<Url> directProviderUrls = new ArrayList<>(directUrlHostPortList.size());
         for (Pair<String, Integer> providerHostPortPair : directUrlHostPortList) {
-            // todo: consumer url其他参数已经丢失
+            // Note: There are no extra options added to the direct provider url
             Url providerUrl = Url.providerUrl(PROTOCOL_DEFAULT_VALUE, providerHostPortPair.getLeft(),
                     providerHostPortPair.getRight(), interfaceName, group, version);
             directProviderUrls.add(providerUrl);
