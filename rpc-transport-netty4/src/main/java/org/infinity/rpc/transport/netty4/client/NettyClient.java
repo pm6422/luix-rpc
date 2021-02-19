@@ -35,8 +35,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.infinity.rpc.core.config.RegistryConfig.CONNECT_TIMEOUT;
-import static org.infinity.rpc.core.config.RegistryConfig.CONNECT_TIMEOUT_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT;
+import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT_DEFAULT_VALUE;
 import static org.infinity.rpc.core.destroy.ScheduledThreadPool.RECYCLE_TIMEOUT_TASK_THREAD_POOL;
 
 /**

@@ -13,7 +13,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.rpc.core.config.RegistryConfig.RETRY_INTERVAL;
+import static org.infinity.rpc.core.constant.RegistryConstants.RETRY_INTERVAL;
 import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH;
 
 /**

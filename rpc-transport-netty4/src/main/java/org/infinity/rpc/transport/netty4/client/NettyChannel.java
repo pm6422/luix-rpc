@@ -22,10 +22,10 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static org.infinity.rpc.core.config.RegistryConfig.CONNECT_TIMEOUT;
-import static org.infinity.rpc.core.config.RegistryConfig.CONNECT_TIMEOUT_DEFAULT_VALUE;
 import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC;
 import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT;
+import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT_DEFAULT_VALUE;
 import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT;
 import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT_DEFAULT_VALUE;
 

@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.infinity.rpc.core.config.RegistryConfig.*;
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_DEFAULT_VALUE;
-import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.RegistryConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.GROUP_DEFAULT_VALUE;
 import static org.infinity.rpc.core.constant.ServiceConstants.VERSION_DEFAULT_VALUE;
 import static org.junit.Assert.*;

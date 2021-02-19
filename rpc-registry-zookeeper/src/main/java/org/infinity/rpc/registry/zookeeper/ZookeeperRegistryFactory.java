@@ -7,7 +7,8 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
-import static org.infinity.rpc.core.config.RegistryConfig.*;
+import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT;
+import static org.infinity.rpc.core.constant.RegistryConstants.SESSION_TIMEOUT;
 
 @ServiceName("zookeeper")
 @Slf4j

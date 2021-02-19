@@ -10,24 +10,15 @@ import org.infinity.rpc.core.utils.RpcConfigValidator;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_ADDRESSES;
-import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_DEFAULT_VALUE;
-import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VALUE_DIRECT;
+import static org.infinity.rpc.core.constant.RegistryConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH;
 import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_DEFAULT_VALUE;
 
 @Data
 public class RegistryConfig {
-    public static final String CONNECT_TIMEOUT               = "connectTimeout";
-    public static final int    CONNECT_TIMEOUT_DEFAULT_VALUE = 1000;
-    public static final String SESSION_TIMEOUT               = "sessionTimeout";
-    public static final int    SESSION_TIMEOUT_DEFAULT_VALUE = 1000;
-    public static final String RETRY_INTERVAL                = "retryInterval";
-    public static final String ADDRESS                       = "address";
-
     private static final Pattern COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
     /**
      * Name of register center
@@ -52,17 +43,17 @@ public class RegistryConfig {
      * 注册中心连接超时时间(毫秒)
      */
     @PositiveOrZero
-    private              Integer connectTimeout      = Math.toIntExact(TimeUnit.SECONDS.toMillis(1));
+    private              Integer connectTimeout      = CONNECT_TIMEOUT_DEFAULT_VALUE;
     /**
      * 注册中心会话超时时间(毫秒)
      */
     @PositiveOrZero
-    private              Integer sessionTimeout      = Math.toIntExact(TimeUnit.MINUTES.toMillis(1));
+    private              Integer sessionTimeout      = SESSION_TIMEOUT_DEFAULT_VALUE;
     /**
      * 注册中心连接失败后重试的时间间隔(毫秒)
      */
     @PositiveOrZero
-    private              Integer retryInterval       = Math.toIntExact(TimeUnit.SECONDS.toMillis(30));
+    private              Integer retryInterval       = RETRY_INTERVAL_DEFAULT_VALUE;
     /**
      * 注册中心请求超时时间(毫秒)
      */

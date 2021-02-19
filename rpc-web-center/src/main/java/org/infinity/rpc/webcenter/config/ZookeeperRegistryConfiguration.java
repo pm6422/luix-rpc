@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.infinity.rpc.core.config.RegistryConfig.*;
+import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT;
+import static org.infinity.rpc.core.constant.RegistryConstants.SESSION_TIMEOUT;
 
 @Configuration
 @ConditionalOnProperty(prefix = "infinity.registry", value = "name", havingValue = "zookeeper")
