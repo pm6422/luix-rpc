@@ -163,9 +163,9 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             super.register(providerUrl);
         } catch (Exception e) {
             // In some extreme cases, it can cause register failure
-            if (forceCheckHealth(getRegistryUrl(), providerUrl)) {
+            if (forceCheckHealth(registryUrl, providerUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to register provider [{0}] to registry [{1}] by using [{2}]",
-                        providerUrl, getRegistryUrl(), getRegistryClassName()), e);
+                        providerUrl, registryUrl, getRegistryClassName()), e);
             }
             failedRegisteredUrl.add(providerUrl);
         }
@@ -186,9 +186,9 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             super.unregister(providerUrl);
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
-            if (forceCheckHealth(getRegistryUrl(), providerUrl)) {
+            if (forceCheckHealth(registryUrl, providerUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to unregister provider [{0}] from registry [{1}] by using [{2}]",
-                        providerUrl, getRegistryUrl(), getRegistryClassName()), e);
+                        providerUrl, registryUrl, getRegistryClassName()), e);
             }
             failedUnregisteredUrl.add(providerUrl);
         }
@@ -217,10 +217,10 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             List<Url> cachedProviderUrls = super.getCachedProviderUrls(clientUrl);
             if (CollectionUtils.isNotEmpty(cachedProviderUrls)) {
                 // Notify if the cached provider urls not empty
-                listener.onNotify(getRegistryUrl(), cachedProviderUrls);
-            } else if (forceCheckHealth(getRegistryUrl(), clientUrl)) {
+                listener.onNotify(registryUrl, cachedProviderUrls);
+            } else if (forceCheckHealth(registryUrl, clientUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to subscribe the listener [{0}] to the client [{1}] on registry [{2}] by using [{3}]",
-                        listener, clientUrl, getRegistryUrl(), getRegistryClassName()), e);
+                        listener, clientUrl, registryUrl, getRegistryClassName()), e);
             }
             addToFailedMap(failedSubscriptionPerClientUrl, clientUrl, listener);
         }
@@ -242,9 +242,9 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         try {
             super.unsubscribe(clientUrl, listener);
         } catch (Exception e) {
-            if (forceCheckHealth(getRegistryUrl(), clientUrl)) {
+            if (forceCheckHealth(registryUrl, clientUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to unsubscribe the listener [{0}] from the client [{1}] on registry [{2}] by using [{3}]",
-                        listener, clientUrl, getRegistryUrl(), getRegistryClassName()), e);
+                        listener, clientUrl, registryUrl, getRegistryClassName()), e);
             }
             addToFailedMap(failedUnsubscriptionPerClientUrl, clientUrl, listener);
         }
@@ -276,7 +276,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         try {
             return super.discover(clientUrl);
         } catch (Exception e) {
-            log.warn(MessageFormat.format("Failed to discover provider urls with client url {0} on registry [{1}]!", clientUrl, getRegistryUrl()), e);
+            log.warn(MessageFormat.format("Failed to discover provider urls with client url {0} on registry [{1}]!", clientUrl, registryUrl), e);
             return Collections.EMPTY_LIST;
         }
     }
