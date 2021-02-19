@@ -20,13 +20,12 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_DEFAULT_
 public class ProtocolConfig {
     /**
      * Name of protocol
-     * SpringBoot properties binding mechanism can automatically convert the string value in config file to enum type,
-     * and check whether value is valid or not during application startup.
      */
     @NotEmpty
     private String  name                = PROTOCOL_DEFAULT_VALUE;
     /**
      * Protocol version
+     * todo: check usage
      */
     @NotNull
     @Positive
@@ -62,8 +61,7 @@ public class ProtocolConfig {
 
     private void checkValidity() {
         Optional.ofNullable(Protocol.getInstance(name))
-                .orElseThrow(() -> new RpcConfigurationException("Failed to load the proper protocol instance, " +
-                        "please check whether the correct dependency is in your class path!"));
+                .orElseThrow(() -> new RpcConfigurationException("Failed to load the specified protocol!"));
 
         if (StringUtils.isNotEmpty(host)) {
             RpcConfigValidator.isTrue(AddressUtils.isValidAddress(host), "Please specify a valid host!");

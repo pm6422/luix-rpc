@@ -84,7 +84,7 @@ public class RegistryConfig {
 
     private void checkValidity() {
         Optional.ofNullable(RegistryFactory.getInstance(name))
-                .orElseThrow(() -> new RpcConfigurationException("Failed to load the correct registry factory, " +
+                .orElseThrow(() -> new RpcConfigurationException("Failed to load the specified registry factory, " +
                         "please check whether the dependency [rpc-registry-" + name + "] is in your class path!"));
 
         if (name.equals(REGISTRY_DEFAULT_VALUE)) {
