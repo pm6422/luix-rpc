@@ -8,11 +8,11 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketAddress;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Slf4j
 public abstract class AddressUtils {
@@ -127,13 +127,7 @@ public abstract class AddressUtils {
     }
 
     public static List<Pair<String, Integer>> parseAddress(String address) {
-        List<Pair<String, Integer>> results = new ArrayList<>();
-        if (address.contains(COMMA_SEPARATOR)) {
-            Arrays.stream(address.split(COMMA_SEPARATOR)).forEach(addr -> results.add(parseHostPort(addr)));
-        } else {
-            results.add(parseHostPort(address));
-        }
-        return results;
+        return Arrays.stream(address.split(COMMA_SEPARATOR)).map(addr -> parseHostPort(addr)).collect(Collectors.toList());
     }
 
     private static Pair<String, Integer> parseHostPort(String addr) {
