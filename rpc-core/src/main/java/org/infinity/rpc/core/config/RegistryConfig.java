@@ -16,6 +16,7 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_ADDRESSES;
 import static org.infinity.rpc.core.constant.RegistryConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH;
 import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_DEFAULT_VALUE;
+import static org.infinity.rpc.utilities.network.AddressUtils.LOCALHOST;
 
 @Data
 public class RegistryConfig {
@@ -40,25 +41,21 @@ public class RegistryConfig {
      */
     private              String  directAddresses;
     /**
-     * 注册中心连接超时时间(毫秒)
-     */
-    @PositiveOrZero
-    private              Integer connectTimeout      = CONNECT_TIMEOUT_DEFAULT_VALUE;
-    /**
-     * 注册中心会话超时时间(毫秒)
+     * Timeout in milliseconds for connection session between registry client and server
      */
     @PositiveOrZero
     private              Integer sessionTimeout      = SESSION_TIMEOUT_DEFAULT_VALUE;
     /**
-     * 注册中心连接失败后重试的时间间隔(毫秒)
+     * Timeout in milliseconds when registry client building a connection to registry server
+     */
+    @PositiveOrZero
+    private              Integer connectTimeout      = CONNECT_TIMEOUT_DEFAULT_VALUE;
+    /**
+     * Registration and subscription retry interval in milliseconds
+     * after the connection failure between provider, consumer and registry.
      */
     @PositiveOrZero
     private              Integer retryInterval       = RETRY_INTERVAL_DEFAULT_VALUE;
-    /**
-     * 注册中心请求超时时间(毫秒)
-     */
-    @PositiveOrZero
-    private              Integer requestTimeout;
     /**
      * Registry url
      */
@@ -71,38 +68,37 @@ public class RegistryConfig {
     }
 
     private void checkIntegrity() {
+        if (name.equals(REGISTRY_DEFAULT_VALUE)) {
+            RpcConfigValidator.notEmpty(host, "Please specify value of 'infinity.registry.host' when 'infinity.registry=zookeeper'!");
+            RpcConfigValidator.notNull(port, "Please specify value of 'infinity.registry.port' when 'infinity.registry=zookeeper'!");
+        } else if (name.equals(REGISTRY_VALUE_DIRECT)) {
+            RpcConfigValidator.notEmpty(directAddresses, "Please specify value of 'infinity.registry.directAddresses' when 'infinity.registry=direct'!");
+            RpcConfigValidator.mustEmpty(host, "Do NOT specify value of 'infinity.registry.host' when 'infinity.registry=direct'!");
+            RpcConfigValidator.mustNull(port, "Do NOT specify value of 'infinity.registry.port' when 'infinity.registry=direct'!");
+        }
     }
 
     private void checkValidity() {
         Optional.ofNullable(RegistryFactory.getInstance(name))
                 .orElseThrow(() -> new RpcConfigurationException("Failed to load the specified registry factory, " +
                         "please check whether the dependency [rpc-registry-" + name + "] is in your class path!"));
-
-        if (name.equals(REGISTRY_DEFAULT_VALUE)) {
-            RpcConfigValidator.notEmpty(host, "Please specify value of 'infinity.registry.host' when 'infinity.registry=zookeeper'!");
-            RpcConfigValidator.notNull(port, "Please specify value of 'infinity.registry.port' when 'infinity.registry=zookeeper'!");
-        } else if (name.equals(REGISTRY_VALUE_DIRECT)) {
-            RpcConfigValidator.notEmpty(directAddresses, "Please specify value of 'infinity.registry.directUrls' when 'infinity.registry=direct'!");
-            RpcConfigValidator.mustEmpty(host, "Do NOT specify value of 'infinity.registry.host' when 'infinity.registry=direct'!");
-            RpcConfigValidator.mustNull(port, "Do NOT specify value of 'infinity.registry.port' when 'infinity.registry=direct'!");
-        }
     }
 
     private Url createRegistryUrl() {
         Url registryUrl;
         if (name.equals(REGISTRY_VALUE_DIRECT)) {
-            // if it is direct
-            registryUrl = Url.registryUrl(name, "127.0.0.1", 0);
+            // Build direct registry url
+            registryUrl = Url.registryUrl(name, LOCALHOST, 0);
             registryUrl.addOption(DIRECT_ADDRESSES, directAddresses);
         } else {
             registryUrl = Url.registryUrl(name, host, port);
         }
 
-        // Assign values to parameters
-        registryUrl.addOption(CHECK_HEALTH, String.valueOf(CHECK_HEALTH_DEFAULT_VALUE));
-        registryUrl.addOption(CONNECT_TIMEOUT, connectTimeout.toString());
         registryUrl.addOption(SESSION_TIMEOUT, sessionTimeout.toString());
+        registryUrl.addOption(CONNECT_TIMEOUT, connectTimeout.toString());
         registryUrl.addOption(RETRY_INTERVAL, retryInterval.toString());
+        // todo: check usage
+        registryUrl.addOption(CHECK_HEALTH, String.valueOf(CHECK_HEALTH_DEFAULT_VALUE));
         return registryUrl;
     }
 

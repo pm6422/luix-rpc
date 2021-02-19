@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.infinity.rpc.core.constant.RegistryConstants.RETRY_INTERVAL;
+import static org.infinity.rpc.core.constant.RegistryConstants.RETRY_INTERVAL_DEFAULT_VALUE;
 import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH;
 
 /**
@@ -38,7 +39,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      * @param registryUrl registry url
      */
     private void scheduleRetry(Url registryUrl) {
-        long retryInterval = registryUrl.getIntOption(RETRY_INTERVAL);
+        long retryInterval = registryUrl.getIntOption(RETRY_INTERVAL, RETRY_INTERVAL_DEFAULT_VALUE);
         // Retry to connect registry at retry interval
         ScheduledThreadPool.schedulePeriodicalTask(ScheduledThreadPool.RETRY_THREAD_POOL, retryInterval, this::doRetry);
     }
@@ -161,7 +162,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         try {
             super.register(providerUrl);
         } catch (Exception e) {
-            // In extreme cases, it can cause register failure
+            // In some extreme cases, it can cause register failure
             if (forceCheckHealth(getRegistryUrl(), providerUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to register provider [{0}] to registry [{1}] by using [{2}]",
                         providerUrl, getRegistryUrl(), getRegistryClassName()), e);

@@ -51,9 +51,6 @@ public class ZookeeperRegistryTests {
         in.close();
 
         registryUrl = Url.registryUrl(REGISTRY_DEFAULT_VALUE, REGISTRY_HOST, zkPort);
-        registryUrl.addOption(CONNECT_TIMEOUT, "" + Math.toIntExact(TimeUnit.SECONDS.toMillis(1)));
-        registryUrl.addOption(SESSION_TIMEOUT, "" + Math.toIntExact(TimeUnit.MINUTES.toMillis(1)));
-        registryUrl.addOption(RETRY_INTERVAL, "" + Math.toIntExact(TimeUnit.SECONDS.toMillis(30)));
 
         // client url has the same protocol and provider path to provider, but port is 0
         clientUrl = Url.clientUrl(PROTOCOL_DEFAULT_VALUE, AddressUtils.LOCALHOST, provider, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE);
