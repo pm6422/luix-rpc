@@ -49,7 +49,6 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
 
         request.addOption(GROUP, consumerStub.getGroup());
         request.addOption(VERSION, consumerStub.getVersion());
-        request.addOption(CHECK_HEALTH, String.valueOf(consumerStub.getCheckHealth()));
         request.addOption(CHECK_HEALTH_FACTORY, consumerStub.getCheckHealthFactory());
         request.addOption(REQUEST_TIMEOUT, String.valueOf(consumerStub.getRequestTimeout()));
         request.addOption(MAX_RETRIES, String.valueOf(consumerStub.getMaxRetries()));

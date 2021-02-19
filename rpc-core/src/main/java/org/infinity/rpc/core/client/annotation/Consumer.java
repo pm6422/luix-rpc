@@ -70,13 +70,6 @@ public @interface Consumer {
     String version() default "";
 
     /**
-     * Indicator to check health
-     *
-     * @return check health indicator
-     */
-    BooleanEnum checkHealth() default BooleanEnum.NULL;
-
-    /**
      * Enabled when checkHealth is true
      *
      * @return check health factory

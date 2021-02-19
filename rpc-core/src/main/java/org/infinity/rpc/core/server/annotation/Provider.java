@@ -30,9 +30,6 @@ public @interface Provider {
 
     String version() default "";
 
-    // Indicator to check health
-    BooleanEnum checkHealth() default BooleanEnum.NULL;
-
     String checkHealthFactory() default "";
 
     // Timeout value for service invocation

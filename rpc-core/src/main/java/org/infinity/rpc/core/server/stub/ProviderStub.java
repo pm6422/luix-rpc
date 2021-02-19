@@ -76,11 +76,6 @@ public class ProviderStub<T> {
      */
     private           String              version;
     /**
-     * Indicator to check health
-     * Note: It must be specified with Boolean wrapper class
-     */
-    private           Boolean             checkHealth;
-    /**
      *
      */
     private           String              checkHealthFactory;
@@ -203,11 +198,6 @@ public class ProviderStub<T> {
         url.addOption(Url.PARAM_APP, applicationConfig.getName());
         url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
-
-        if (checkHealth == null) {
-            checkHealth = providerConfig.isCheckHealth();
-        }
-        url.addOption(CHECK_HEALTH, String.valueOf(checkHealth));
 
         if (StringUtils.isEmpty(checkHealthFactory)) {
             checkHealthFactory = providerConfig.getCheckHealthFactory();

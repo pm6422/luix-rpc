@@ -41,23 +41,11 @@ public class TestController {
                 AppService.class.getName());
 
         // Assign values to parameters
-        providerUrl.addOption(CHECK_HEALTH, String.valueOf(CHECK_HEALTH_DEFAULT_VALUE));
         providerUrl.addOption(Url.PARAM_APP, infinityProperties.getApplication().getName());
 
         infinityProperties.getRegistryList().forEach(registryConfig -> {
             registryConfig.getRegistryImpl().register(providerUrl);
         });
-    }
-
-    @ApiOperation("测试获取AppService provider stub")
-    @GetMapping("/api/test/app-service-provider-stub")
-    public Object testGetAppServiceProviderStub() {
-        String name = ProviderStubBeanNameBuilder
-                .builder(AppService.class.getName(), env)
-                .group(GROUP_DEFAULT_VALUE)
-                .version(VERSION_DEFAULT_VALUE)
-                .build();
-        return applicationContext.getBean(name);
     }
 
     @ApiOperation("测试获取AppService provider")

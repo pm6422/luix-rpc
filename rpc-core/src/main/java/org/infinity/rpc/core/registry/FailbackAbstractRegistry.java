@@ -13,9 +13,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.rpc.core.constant.RegistryConstants.RETRY_INTERVAL;
-import static org.infinity.rpc.core.constant.RegistryConstants.RETRY_INTERVAL_DEFAULT_VALUE;
-import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH;
+import static org.infinity.rpc.core.constant.RegistryConstants.*;
 
 /**
  * The registry can automatically recover services when encountered the failure.
@@ -163,7 +161,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             super.register(providerUrl);
         } catch (Exception e) {
             // In some extreme cases, it can cause register failure
-            if (forceCheckHealth(registryUrl, providerUrl)) {
+            if (needThrowException(registryUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to register provider [{0}] to registry [{1}] by using [{2}]",
                         providerUrl, registryUrl, getRegistryClassName()), e);
             }
@@ -186,7 +184,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             super.unregister(providerUrl);
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
-            if (forceCheckHealth(registryUrl, providerUrl)) {
+            if (needThrowException(registryUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to unregister provider [{0}] from registry [{1}] by using [{2}]",
                         providerUrl, registryUrl, getRegistryClassName()), e);
             }
@@ -218,7 +216,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             if (CollectionUtils.isNotEmpty(cachedProviderUrls)) {
                 // Notify if the cached provider urls not empty
                 listener.onNotify(registryUrl, cachedProviderUrls);
-            } else if (forceCheckHealth(registryUrl, clientUrl)) {
+            } else if (needThrowException(registryUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to subscribe the listener [{0}] to the client [{1}] on registry [{2}] by using [{3}]",
                         listener, clientUrl, registryUrl, getRegistryClassName()), e);
             }
@@ -242,7 +240,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         try {
             super.unsubscribe(clientUrl, listener);
         } catch (Exception e) {
-            if (forceCheckHealth(registryUrl, clientUrl)) {
+            if (needThrowException(registryUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to unsubscribe the listener [{0}] from the client [{1}] on registry [{2}] by using [{3}]",
                         listener, clientUrl, registryUrl, getRegistryClassName()), e);
             }
@@ -251,13 +249,13 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     }
 
     /**
-     * Check whether all the urls contain the PARAM_CHECK_HEALTH of {@link Url}
+     * Get THROW_EXCEPTION option value of {@link Url}
      *
-     * @param urls urls
-     * @return true: all the urls contain PARAM_CHECK_HEALTH, false: any url does not contain PARAM_CHECK_HEALTH
+     * @param registryUrl registry url
+     * @return THROW_EXCEPTION option value
      */
-    private boolean forceCheckHealth(Url... urls) {
-        return Arrays.stream(urls).allMatch(url -> url.getBooleanOption(CHECK_HEALTH));
+    private boolean needThrowException(Url registryUrl) {
+        return registryUrl.getBooleanOption(THROW_EXCEPTION);
     }
 
     /**

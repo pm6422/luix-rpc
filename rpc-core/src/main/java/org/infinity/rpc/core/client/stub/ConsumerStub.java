@@ -79,11 +79,6 @@ public class ConsumerStub<T> {
      */
     private String   version;
     /**
-     * Indicator to check health
-     * Note: It must be specified with Boolean wrapper class
-     */
-    private Boolean  checkHealth;
-    /**
      *
      */
     private String   checkHealthFactory;
@@ -149,12 +144,12 @@ public class ConsumerStub<T> {
     public void subscribeProviders(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
                                    List<Url> globalRegistryUrls, ConsumerConfig consumerConfig) {
         // Create consumer url
-        this.url = this.createConsumerUrl(applicationConfig, protocolConfig, consumerConfig);
+        url = this.createConsumerUrl(applicationConfig, protocolConfig, consumerConfig);
 
         // We do NOT know the host and port of provider right now, so we use client URL
-        this.clientUrl = Url.clientUrl(protocol, protocolConfig.getHost(), interfaceName, group, version);
+        clientUrl = Url.clientUrl(protocol, protocolConfig.getHost(), interfaceName, group, version);
         // Initialize provider cluster before consumer initialization
-        this.providerCluster = createProviderCluster();
+        providerCluster = createProviderCluster();
 
         if (StringUtils.isEmpty(directAddresses)) {
             // Non-direct registry
@@ -203,11 +198,6 @@ public class ConsumerStub<T> {
         url.addOption(Url.PARAM_APP, applicationConfig.getName());
         url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
-
-        if (checkHealth == null) {
-            checkHealth = consumerConfig.isCheckHealth();
-        }
-        url.addOption(CHECK_HEALTH, String.valueOf(checkHealth));
 
         if (StringUtils.isEmpty(checkHealthFactory)) {
             checkHealthFactory = consumerConfig.getCheckHealthFactory();

@@ -14,8 +14,6 @@ public interface ServiceConstants {
     String  GROUP_DEFAULT_VALUE                = "default";
     String  VERSION                            = "version";
     String  VERSION_DEFAULT_VALUE              = "1.0.0";
-    String  CHECK_HEALTH                       = "checkHealth";
-    boolean CHECK_HEALTH_DEFAULT_VALUE         = true;
     String  CHECK_HEALTH_FACTORY               = "checkHealthFactory";
     String  CHECK_HEALTH_FACTORY_DEFAULT_VALUE = "default";
     String  MAX_RETRIES                        = "maxRetries";

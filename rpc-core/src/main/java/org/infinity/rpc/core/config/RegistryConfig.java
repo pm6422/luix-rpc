@@ -14,8 +14,6 @@ import java.util.regex.Pattern;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_ADDRESSES;
 import static org.infinity.rpc.core.constant.RegistryConstants.*;
-import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH;
-import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_DEFAULT_VALUE;
 import static org.infinity.rpc.utilities.network.AddressUtils.LOCALHOST;
 
 @Data
@@ -57,6 +55,10 @@ public class RegistryConfig {
     @PositiveOrZero
     private              Integer retryInterval       = RETRY_INTERVAL_DEFAULT_VALUE;
     /**
+     * Indicator used to decide whether need to throw exception after registering or unregistering failure
+     */
+    private              boolean throwException      = THROW_EXCEPTION_DEFAULT_VALUE;
+    /**
      * Registry url
      */
     private              Url     registryUrl;
@@ -97,8 +99,7 @@ public class RegistryConfig {
         registryUrl.addOption(SESSION_TIMEOUT, sessionTimeout.toString());
         registryUrl.addOption(CONNECT_TIMEOUT, connectTimeout.toString());
         registryUrl.addOption(RETRY_INTERVAL, retryInterval.toString());
-        // todo: check usage
-        registryUrl.addOption(CHECK_HEALTH, String.valueOf(CHECK_HEALTH_DEFAULT_VALUE));
+        registryUrl.addOption(THROW_EXCEPTION, String.valueOf(throwException));
         return registryUrl;
     }
 

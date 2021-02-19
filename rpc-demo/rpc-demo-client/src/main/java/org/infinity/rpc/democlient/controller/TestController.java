@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.democommon.domain.App;
 import org.infinity.rpc.democommon.service.AppService;
-import org.infinity.rpc.spring.boot.bean.name.ConsumerStubBeanNameBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -30,15 +29,6 @@ public class TestController {
     public TestController(ApplicationContext applicationContext, Environment env) {
         this.applicationContext = applicationContext;
         this.env = env;
-    }
-
-    @ApiOperation("测试获取AppService consumer stub")
-    @GetMapping("/api/test/app-service-consumer-stub")
-    public Object testGetAppServiceConsumerStub() {
-        String name = ConsumerStubBeanNameBuilder
-                .builder(AppService.class.getName(), env)
-                .build();
-        return applicationContext.getBean(name);
     }
 
     @ApiOperation("测试直连")
