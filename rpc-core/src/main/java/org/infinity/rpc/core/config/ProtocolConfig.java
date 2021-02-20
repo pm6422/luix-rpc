@@ -83,6 +83,10 @@ public class ProtocolConfig {
      */
     @Positive
     private int     workQueueSize       = WORK_QUEUE_SIZE_DEFAULT_VALUE;
+    /**
+     * Indicator used to decide whether multiple servers share the same channel
+     */
+    private boolean shareChannel        = SHARE_CHANNEL_DEFAULT_VALUE;
 
     public void init() {
         checkIntegrity();

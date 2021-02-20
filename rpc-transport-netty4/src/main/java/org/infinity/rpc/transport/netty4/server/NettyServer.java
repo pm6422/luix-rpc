@@ -69,10 +69,10 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
         }
 
         log.info("NettyServer ServerChannel start Open: url=" + providerUrl);
-        boolean shareChannel = providerUrl.getBooleanOption(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
         int maxContentLength = providerUrl.getIntOption(MAX_CONTENT_LENGTH, MAX_CONTENT_LENGTH_DEFAULT_VALUE);
         int maxServerConn = providerUrl.getIntOption(MAX_SERVER_CONN, MAX_SERVER_CONN_DEFAULT_VALUE);
         int workerQueueSize = providerUrl.getIntOption(WORK_QUEUE_SIZE, WORK_QUEUE_SIZE_DEFAULT_VALUE);
+        boolean shareChannel = providerUrl.getBooleanOption(SHARE_CHANNEL, SHARE_CHANNEL_DEFAULT_VALUE);
 
         int minWorkerThread, maxWorkerThread;
 

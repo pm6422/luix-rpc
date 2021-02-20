@@ -71,11 +71,6 @@ public final class Url implements Serializable {
     public static final String  PARAM_TYPE_REGISTRY                       = "registry";
     public static final String  PARAM_TYPE_CLIENT                         = "client";
     /**
-     * multi consumers share the same channel
-     */
-    public static final String  PARAM_SHARE_CHANNEL                       = "shareChannel";
-    public static final boolean PARAM_SHARE_CHANNEL_DEFAULT_VALUE         = true;
-    /**
      * service min worker threads
      */
     public static final String  PARAM_MIN_WORKER_THREAD                   = "minWorkerThread";

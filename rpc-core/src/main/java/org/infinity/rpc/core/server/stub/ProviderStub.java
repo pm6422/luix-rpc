@@ -203,6 +203,7 @@ public class ProviderStub<T> {
         url.addOption(MAX_SERVER_CONN, String.valueOf(protocolConfig.getMaxServerConn()));
         url.addOption(MAX_CONTENT_LENGTH, String.valueOf(protocolConfig.getMaxContentLength()));
         url.addOption(WORK_QUEUE_SIZE, String.valueOf(protocolConfig.getWorkQueueSize()));
+        url.addOption(SHARE_CHANNEL, String.valueOf(protocolConfig.isShareChannel()));
 
         if (StringUtils.isEmpty(checkHealthFactory)) {
             checkHealthFactory = providerConfig.getCheckHealthFactory();
