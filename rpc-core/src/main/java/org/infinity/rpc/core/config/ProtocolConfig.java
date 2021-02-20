@@ -29,6 +29,11 @@ public class ProtocolConfig {
     @NotEmpty
     private String  codec               = CODEC_DEFAULT_VALUE;
     /**
+     * Serializer used to encode request or deserializer used to decode response
+     */
+    @NotEmpty
+    private String  serializer          = SERIALIZER_DEFAULT_VALUE;
+    /**
      * Host name of the RPC server
      * Generally, we do NOT need configure the value, it will be set automatically.
      * If there are exported providers, netty server will use it as starting host.

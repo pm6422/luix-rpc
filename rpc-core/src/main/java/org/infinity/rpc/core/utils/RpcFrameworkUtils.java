@@ -1,15 +1,15 @@
 package org.infinity.rpc.core.utils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.constant.ServiceConstants;
-import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 
-import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC;
+import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY;
 
 public class RpcFrameworkUtils {
@@ -117,7 +117,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(Url.PARAM_SERIALIZER), target.getOption(Url.PARAM_SERIALIZER))) {
+        if (!StringUtils.equals(source.getOption(SERIALIZER), target.getOption(SERIALIZER_DEFAULT_VALUE))) {
             return false;
         }
 
@@ -165,8 +165,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(Url.PARAM_SERIALIZER),
-                target.getOption(Url.PARAM_SERIALIZER))) {
+        if (!StringUtils.equals(source.getOption(SERIALIZER), target.getOption(SERIALIZER))) {
             return false;
         }
 

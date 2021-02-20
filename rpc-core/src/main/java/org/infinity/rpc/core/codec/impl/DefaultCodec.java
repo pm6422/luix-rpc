@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER;
+import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_DEFAULT_VALUE;
+
 @ServiceName("default")
 public class DefaultCodec extends AbstractCodec {
     public static final  short MAGIC = (short) 0xF0F0;
@@ -178,7 +181,7 @@ public class DefaultCodec extends AbstractCodec {
     }
 
     private Serializer getSerializer(Channel channel) {
-        String serializerName = channel.getProviderUrl().getOption(Url.PARAM_SERIALIZER, Url.PARAM_SERIALIZER_DEFAULT_VALUE);
+        String serializerName = channel.getProviderUrl().getOption(SERIALIZER, SERIALIZER_DEFAULT_VALUE);
         return Serializer.getInstance(serializerName);
     }
 

@@ -71,16 +71,6 @@ public final class Url implements Serializable {
     public static final String  PARAM_TYPE_REGISTRY                       = "registry";
     public static final String  PARAM_TYPE_CLIENT                         = "client";
     /**
-     *
-     */
-    public static final String  PARAM_CLUSTER                             = "cluster";
-    public static final String  PARAM_CLUSTER_DEFAULT_VALUE               = "default";
-    /**
-     *
-     */
-    public static final String  PARAM_SERIALIZER                          = "serializer";
-    public static final String  PARAM_SERIALIZER_DEFAULT_VALUE            = "hessian2";
-    /**
      * pool max conn number
      */
     public static final String  PARAM_MAX_CONTENT_LENGTH                  = "maxContentLength";
