@@ -71,11 +71,6 @@ public final class Url implements Serializable {
     public static final String  PARAM_TYPE_REGISTRY                       = "registry";
     public static final String  PARAM_TYPE_CLIENT                         = "client";
     /**
-     * pool max conn number
-     */
-    public static final String  PARAM_MAX_CONTENT_LENGTH                  = "maxContentLength";
-    public static final int     PARAM_MAX_CONTENT_LENGTH_DEFAULT_VALUE    = 10 * 1024 * 1024;
-    /**
      * multi consumers share the same channel
      */
     public static final String  PARAM_SHARE_CHANNEL                       = "shareChannel";

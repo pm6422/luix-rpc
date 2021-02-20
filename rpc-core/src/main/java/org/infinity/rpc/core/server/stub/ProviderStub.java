@@ -198,7 +198,9 @@ public class ProviderStub<T> {
         url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
         url.addOption(MIN_CLIENT_CONN, String.valueOf(protocolConfig.getMinClientConn()));
-        url.addOption(MAX_CLIENT_CONN, String.valueOf(protocolConfig.getMaxClientFailedConn()));
+        url.addOption(MAX_CLIENT_FAILED_CONN, String.valueOf(protocolConfig.getMaxClientFailedConn()));
+        url.addOption(MAX_SERVER_CONN, String.valueOf(protocolConfig.getMaxServerConn()));
+        url.addOption(MAX_CONTENT_LENGTH, String.valueOf(protocolConfig.getMaxContentLength()));
 
         if (StringUtils.isEmpty(checkHealthFactory)) {
             checkHealthFactory = providerConfig.getCheckHealthFactory();

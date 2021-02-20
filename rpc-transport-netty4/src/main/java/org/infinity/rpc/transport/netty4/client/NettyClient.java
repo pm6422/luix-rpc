@@ -34,8 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.infinity.rpc.core.constant.ProtocolConstants.MAX_CLIENT_FAILED_CONN;
-import static org.infinity.rpc.core.constant.ProtocolConstants.MAX_CLIENT_FAILED_CONN_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT;
 import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT_DEFAULT_VALUE;
 import static org.infinity.rpc.core.destroy.ScheduledThreadPool.RECYCLE_TIMEOUT_TASK_THREAD_POOL;
@@ -161,7 +160,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         bootstrap.option(ChannelOption.TCP_NODELAY, true);
         bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
         // 最大响应包限制
-        final int maxContentLength = providerUrl.getIntOption(Url.PARAM_MAX_CONTENT_LENGTH, Url.PARAM_MAX_CONTENT_LENGTH_DEFAULT_VALUE);
+        final int maxContentLength = providerUrl.getIntOption(MAX_CONTENT_LENGTH, MAX_CONTENT_LENGTH_DEFAULT_VALUE);
         bootstrap.group(NIO_EVENT_LOOP_GROUP)
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<SocketChannel>() {

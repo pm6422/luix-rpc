@@ -121,7 +121,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(Url.PARAM_MAX_CONTENT_LENGTH), target.getOption(Url.PARAM_MAX_CONTENT_LENGTH))) {
+        if (!StringUtils.equals(source.getOption(MAX_CONTENT_LENGTH), target.getOption(MAX_CONTENT_LENGTH))) {
             return false;
         }
 
@@ -169,13 +169,13 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(Url.PARAM_MAX_CONTENT_LENGTH), target.getOption(Url.PARAM_MAX_CONTENT_LENGTH))) {
+        if (!StringUtils.equals(source.getOption(MAX_CONTENT_LENGTH), target.getOption(MAX_CONTENT_LENGTH))) {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(MAX_CLIENT_CONN), target.getOption(MAX_CLIENT_CONN))) {
-            return false;
-        }
+//        if (!StringUtils.equals(source.getOption(MAX_CLIENT_CONN), target.getOption(MAX_CLIENT_CONN))) {
+//            return false;
+//        }
 
         return StringUtils.equals(source.getOption(CHECK_HEALTH_FACTORY), target.getOption(CHECK_HEALTH_FACTORY));
 

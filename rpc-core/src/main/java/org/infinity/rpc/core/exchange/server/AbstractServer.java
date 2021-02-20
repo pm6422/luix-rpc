@@ -16,7 +16,7 @@ public abstract class AbstractServer implements Server {
     protected InetSocketAddress localAddress;
     protected InetSocketAddress remoteAddress;
 
-    protected Url   url;
+    protected Url   providerUrl;
     protected Codec codec;
 
     protected volatile ChannelState state = ChannelState.UNINITIALIZED;
@@ -26,7 +26,7 @@ public abstract class AbstractServer implements Server {
     }
 
     public AbstractServer(Url providerUrl) {
-        this.url = providerUrl;
+        this.providerUrl = providerUrl;
         this.codec = Codec.getInstance(providerUrl.getOption(CODEC, CODEC_DEFAULT_VALUE));
     }
 
@@ -48,22 +48,21 @@ public abstract class AbstractServer implements Server {
         this.remoteAddress = remoteAddress;
     }
 
-    @Override
-    public Collection<Channel> getChannels() {
-        throw new RpcFrameworkException(this.getClass().getName() + " getChannels() method unsupport " + url);
-    }
-
-    @Override
-    public Channel getChannel(InetSocketAddress remoteAddress) {
-        throw new RpcFrameworkException(this.getClass().getName() + " getChannel(InetSocketAddress) method unsupport " + url);
-    }
-
-    public void setUrl(Url url) {
-        this.url = url;
+    public void setProviderUrl(Url providerUrl) {
+        this.providerUrl = providerUrl;
     }
 
     public void setCodec(Codec codec) {
         this.codec = codec;
     }
 
+    @Override
+    public Collection<Channel> getChannels() {
+        throw new RpcFrameworkException(this.getClass().getName() + " getChannels() method unsupport " + providerUrl);
+    }
+
+    @Override
+    public Channel getChannel(InetSocketAddress remoteAddress) {
+        throw new RpcFrameworkException(this.getClass().getName() + " getChannel(InetSocketAddress) method unsupport " + providerUrl);
+    }
 }

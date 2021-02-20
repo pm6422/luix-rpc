@@ -59,10 +59,20 @@ public class ProtocolConfig {
     @Positive
     private int     minClientConn       = MIN_CLIENT_CONN_DEFAULT_VALUE;
     /**
-     * Maximum client connecting failure count
+     * Allowed maximum client connecting failure count
      */
     @Positive
     private int     maxClientFailedConn = MAX_CLIENT_FAILED_CONN_DEFAULT_VALUE;
+    /**
+     * Maximum server channel count used to handle RPC request
+     */
+    @Positive
+    private int     maxServerConn       = MAX_SERVER_CONN_DEFAULT_VALUE;
+    /**
+     * Allowed maximum response size in bytes
+     */
+    @Positive
+    private int     maxContentLength    = MAX_CONTENT_LENGTH_DEFAULT_VALUE;
 
     public void init() {
         checkIntegrity();

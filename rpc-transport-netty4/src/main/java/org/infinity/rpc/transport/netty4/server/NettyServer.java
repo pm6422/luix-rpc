@@ -6,15 +6,15 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.TransportException;
-import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.server.response.Responseable;
-import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exchange.callback.StatisticCallback;
 import org.infinity.rpc.core.exchange.constants.ChannelState;
 import org.infinity.rpc.core.exchange.server.AbstractServer;
+import org.infinity.rpc.core.server.messagehandler.MessageHandler;
+import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.transport.netty4.NettyDecoder;
 import org.infinity.rpc.transport.netty4.NettyEncoder;
@@ -25,8 +25,7 @@ import org.infinity.rpc.utilities.threadpool.StandardThreadExecutor;
 import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.infinity.rpc.core.constant.ProtocolConstants.MAX_SERVER_CONN;
-import static org.infinity.rpc.core.constant.ProtocolConstants.MAX_SERVER_CONN_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 
 @Slf4j
 public class NettyServer extends AbstractServer implements StatisticCallback {
@@ -55,13 +54,13 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
 
     @Override
     public Responseable request(Requestable request) throws TransportException {
-        throw new RpcFrameworkException("NettyServer request(Request request) method not support: url: " + url);
+        throw new RpcFrameworkException("NettyServer request(Request request) method not support: url: " + providerUrl);
     }
 
     @Override
     public boolean open() {
         if (isActive()) {
-            log.warn("Netty server channel already be opened for url [{}]", url);
+            log.warn("Netty server channel already be opened for url [{}]", providerUrl);
             return state.isActive();
         }
         if (bossGroup == null) {
@@ -69,27 +68,27 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
             workerGroup = new NioEventLoopGroup();
         }
 
-        log.info("NettyServer ServerChannel start Open: url=" + url);
-        boolean shareChannel = url.getBooleanOption(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
-        final int maxContentLength = url.getIntOption(Url.PARAM_MAX_CONTENT_LENGTH, Url.PARAM_MAX_CONTENT_LENGTH_DEFAULT_VALUE);
-        int maxServerConnection = url.getIntOption(MAX_SERVER_CONN, MAX_SERVER_CONN_DEFAULT_VALUE);
-        int workerQueueSize = url.getIntOption(Url.PARAM_WORKER_QUEUE_SIZE, Url.PARAM_WORKER_QUEUE_SIZE_DEFAULT_VALUE);
+        log.info("NettyServer ServerChannel start Open: url=" + providerUrl);
+        boolean shareChannel = providerUrl.getBooleanOption(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
+        int maxContentLength = providerUrl.getIntOption(MAX_CONTENT_LENGTH, MAX_CONTENT_LENGTH_DEFAULT_VALUE);
+        int maxServerConn = providerUrl.getIntOption(MAX_SERVER_CONN, MAX_SERVER_CONN_DEFAULT_VALUE);
+        int workerQueueSize = providerUrl.getIntOption(Url.PARAM_WORKER_QUEUE_SIZE, Url.PARAM_WORKER_QUEUE_SIZE_DEFAULT_VALUE);
 
         int minWorkerThread, maxWorkerThread;
 
         if (shareChannel) {
-            minWorkerThread = url.getIntOption(Url.PARAM_MIN_WORKER_THREAD, RpcConstants.NETTY_SHARECHANNEL_MIN_WORKDER);
-            maxWorkerThread = url.getIntOption(Url.PARAM_MAX_WORKER_THREAD, RpcConstants.NETTY_SHARECHANNEL_MAX_WORKDER);
+            minWorkerThread = providerUrl.getIntOption(Url.PARAM_MIN_WORKER_THREAD, RpcConstants.NETTY_SHARECHANNEL_MIN_WORKDER);
+            maxWorkerThread = providerUrl.getIntOption(Url.PARAM_MAX_WORKER_THREAD, RpcConstants.NETTY_SHARECHANNEL_MAX_WORKDER);
         } else {
-            minWorkerThread = url.getIntOption(Url.PARAM_MIN_WORKER_THREAD, RpcConstants.NETTY_NOT_SHARECHANNEL_MIN_WORKDER);
-            maxWorkerThread = url.getIntOption(Url.PARAM_MAX_WORKER_THREAD, RpcConstants.NETTY_NOT_SHARECHANNEL_MAX_WORKDER);
+            minWorkerThread = providerUrl.getIntOption(Url.PARAM_MIN_WORKER_THREAD, RpcConstants.NETTY_NOT_SHARECHANNEL_MIN_WORKDER);
+            maxWorkerThread = providerUrl.getIntOption(Url.PARAM_MAX_WORKER_THREAD, RpcConstants.NETTY_NOT_SHARECHANNEL_MAX_WORKDER);
         }
 
         standardThreadExecutor = (standardThreadExecutor != null && !standardThreadExecutor.isShutdown()) ? standardThreadExecutor
-                : new StandardThreadExecutor(minWorkerThread, maxWorkerThread, workerQueueSize, new DefaultThreadFactory("NettyServer-" + url.getAddress(), true));
+                : new StandardThreadExecutor(minWorkerThread, maxWorkerThread, workerQueueSize, new DefaultThreadFactory("NettyServer-" + providerUrl.getAddress(), true));
         standardThreadExecutor.prestartAllCoreThreads();
 
-        channelManage = new NettyServerChannelManage(maxServerConnection);
+        channelManage = new NettyServerChannelManage(maxServerConn);
 
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bossGroup, workerGroup)
@@ -107,13 +106,13 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
                 });
         serverBootstrap.childOption(ChannelOption.TCP_NODELAY, true);
         serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
-        ChannelFuture channelFuture = serverBootstrap.bind(new InetSocketAddress(url.getPort()));
+        ChannelFuture channelFuture = serverBootstrap.bind(new InetSocketAddress(providerUrl.getPort()));
         channelFuture.syncUninterruptibly();
         serverChannel = channelFuture.channel();
         state = ChannelState.ACTIVE;
 //        StatsUtils.registryStatisticCallback(this);
-        log.info("NettyServer ServerChannel finish Open: url=" + url);
-        log.info("Started netty server with port [{}]", url.getPort());
+        log.info("NettyServer ServerChannel finish Open: url=" + providerUrl);
+        log.info("Started netty server with port [{}]", providerUrl.getPort());
         return state.isActive();
     }
 
@@ -131,15 +130,15 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
         try {
             cleanup();
             if (state.isUninitialized()) {
-                log.info("NettyServer close fail: state={}, url={}", state.value, url.getUri());
+                log.info("NettyServer close fail: state={}, url={}", state.value, providerUrl.getUri());
                 return;
             }
 
             // 设置close状态
             state = ChannelState.CLOSED;
-            log.info("NettyServer close Success: url={}", url.getUri());
+            log.info("NettyServer close Success: url={}", providerUrl.getUri());
         } catch (Exception e) {
-            log.error("NettyServer close Error: url=" + url.getUri(), e);
+            log.error("NettyServer close Error: url=" + providerUrl.getUri(), e);
         }
     }
 
@@ -185,13 +184,13 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
 
     @Override
     public Url getProviderUrl() {
-        return url;
+        return providerUrl;
     }
 
     @Override
     public String statisticCallback() {
         return String.format("identity: %s connectionCount: %s taskCount: %s queueCount: %s maxThreadCount: %s maxTaskCount: %s executorRejectCount: %s",
-                url.getIdentity(), channelManage.getChannels().size(), standardThreadExecutor.getSubmittedTasksCount(),
+                providerUrl.getIdentity(), channelManage.getChannels().size(), standardThreadExecutor.getSubmittedTasksCount(),
                 standardThreadExecutor.getQueue().size(), standardThreadExecutor.getMaximumPoolSize(),
                 standardThreadExecutor.getMaxSubmittedTasksCount(), rejectCounter.getAndSet(0));
     }
