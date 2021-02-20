@@ -133,7 +133,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(Url.PARAM_WORKER_QUEUE_SIZE), target.getOption(Url.PARAM_WORKER_QUEUE_SIZE))) {
+        if (!StringUtils.equals(source.getOption(WORK_QUEUE_SIZE), target.getOption(WORK_QUEUE_SIZE))) {
             return false;
         }
 

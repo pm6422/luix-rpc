@@ -197,10 +197,12 @@ public class ProviderStub<T> {
         url.addOption(Url.PARAM_APP, applicationConfig.getName());
         url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
+        url.addOption(ENDPOINT_FACTORY, protocolConfig.getEndpointFactory());
         url.addOption(MIN_CLIENT_CONN, String.valueOf(protocolConfig.getMinClientConn()));
         url.addOption(MAX_CLIENT_FAILED_CONN, String.valueOf(protocolConfig.getMaxClientFailedConn()));
         url.addOption(MAX_SERVER_CONN, String.valueOf(protocolConfig.getMaxServerConn()));
         url.addOption(MAX_CONTENT_LENGTH, String.valueOf(protocolConfig.getMaxContentLength()));
+        url.addOption(WORK_QUEUE_SIZE, String.valueOf(protocolConfig.getWorkQueueSize()));
 
         if (StringUtils.isEmpty(checkHealthFactory)) {
             checkHealthFactory = providerConfig.getCheckHealthFactory();

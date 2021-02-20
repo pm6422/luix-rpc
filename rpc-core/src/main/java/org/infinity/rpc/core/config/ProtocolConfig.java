@@ -54,6 +54,11 @@ public class ProtocolConfig {
     @NotEmpty
     private String  localAddressFactory = LOCAL_ADDRESS_FACTORY_DEFAULT_VALUE;
     /**
+     * Factory used to create client and server
+     */
+    @NotEmpty
+    private String  endpointFactory     = ENDPOINT_FACTORY_DEFAULT_VALUE;
+    /**
      * Minimum client channel count used to handle RPC request
      */
     @Positive
@@ -73,6 +78,11 @@ public class ProtocolConfig {
      */
     @Positive
     private int     maxContentLength    = MAX_CONTENT_LENGTH_DEFAULT_VALUE;
+    /**
+     * Thread pool work queue size on server side
+     */
+    @Positive
+    private int     workQueueSize       = WORK_QUEUE_SIZE_DEFAULT_VALUE;
 
     public void init() {
         checkIntegrity();

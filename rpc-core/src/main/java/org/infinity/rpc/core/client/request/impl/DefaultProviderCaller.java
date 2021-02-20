@@ -12,6 +12,8 @@ import org.infinity.rpc.core.exchange.client.Client;
 import org.infinity.rpc.core.exchange.endpoint.EndpointFactory;
 import org.infinity.rpc.core.url.Url;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY;
+import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY_DEFAULT_VALUE;
 import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
 
 
@@ -30,7 +32,7 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
     public DefaultProviderCaller(Class<T> interfaceClass, Url providerUrl) {
         super(interfaceClass, providerUrl);
         long start = System.currentTimeMillis();
-        String endpointFactoryName = providerUrl.getOption(Url.PARAM_ENDPOINT_FACTORY, Url.PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE);
+        String endpointFactoryName = providerUrl.getOption(ENDPOINT_FACTORY, ENDPOINT_FACTORY_DEFAULT_VALUE);
         endpointFactory = EndpointFactory.getInstance(endpointFactoryName);
         if (endpointFactory == null) {
             throw new RpcFrameworkException("Endpoint factory [" + endpointFactoryName + "] must NOT be null!");

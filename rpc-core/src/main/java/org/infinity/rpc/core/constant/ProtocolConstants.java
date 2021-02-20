@@ -10,6 +10,8 @@ public interface ProtocolConstants {
     String SERIALIZER_DEFAULT_VALUE             = "hessian2";
     String LOCAL_ADDRESS_FACTORY                = "localAddressFactory";
     String LOCAL_ADDRESS_FACTORY_DEFAULT_VALUE  = "default";
+    String ENDPOINT_FACTORY                     = "endpointFactory";
+    String ENDPOINT_FACTORY_DEFAULT_VALUE       = "netty";
     String MIN_CLIENT_CONN                      = "minClientConn";
     int    MIN_CLIENT_CONN_DEFAULT_VALUE        = 2;
     String MAX_CLIENT_FAILED_CONN               = "maxClientFailedConn";
@@ -18,4 +20,6 @@ public interface ProtocolConstants {
     int    MAX_SERVER_CONN_DEFAULT_VALUE        = 100000;
     String MAX_CONTENT_LENGTH                   = "maxContentLength";
     int    MAX_CONTENT_LENGTH_DEFAULT_VALUE     = 10 * 1024 * 1024; // 10M
+    String WORK_QUEUE_SIZE                      = "workQueueSize";
+    int    WORK_QUEUE_SIZE_DEFAULT_VALUE        = 0;
 }

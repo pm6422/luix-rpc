@@ -76,11 +76,6 @@ public final class Url implements Serializable {
     public static final String  PARAM_SHARE_CHANNEL                       = "shareChannel";
     public static final boolean PARAM_SHARE_CHANNEL_DEFAULT_VALUE         = true;
     /**
-     *
-     */
-    public static final String  PARAM_WORKER_QUEUE_SIZE                   = "workerQueueSize";
-    public static final int     PARAM_WORKER_QUEUE_SIZE_DEFAULT_VALUE     = 0;
-    /**
      * service min worker threads
      */
     public static final String  PARAM_MIN_WORKER_THREAD                   = "minWorkerThread";
@@ -95,11 +90,6 @@ public final class Url implements Serializable {
      */
     public static final String  PARAM_HOST                                = "host";
     public static final String  PARAM_HOST_DEFAULT_VALUE                  = "";
-    /**
-     *
-     */
-    public static final String  PARAM_ENDPOINT_FACTORY                    = "endpointFactory";
-    public static final String  PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE      = "netty";
     /**
      *
      */

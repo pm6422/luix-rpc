@@ -13,6 +13,9 @@ import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 
 import java.util.Map;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY;
+import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY_DEFAULT_VALUE;
+
 @Slf4j
 public class DefaultRpcExporter<T> extends AbstractExporter<T> {
 
@@ -29,7 +32,7 @@ public class DefaultRpcExporter<T> extends AbstractExporter<T> {
         this.ipPort2RequestRouter = ipPort2RequestRouter;
 
         ProviderMessageRouter requestRouter = initRequestRouter(providerStub.getUrl());
-        String endpointFactoryName = providerStub.getUrl().getOption(Url.PARAM_ENDPOINT_FACTORY, Url.PARAM_ENDPOINT_FACTORY_DEFAULT_VALUE);
+        String endpointFactoryName = providerStub.getUrl().getOption(ENDPOINT_FACTORY, ENDPOINT_FACTORY_DEFAULT_VALUE);
         endpointFactory = EndpointFactory.getInstance(endpointFactoryName);
         server = endpointFactory.createServer(providerStub.getUrl(), requestRouter);
     }
