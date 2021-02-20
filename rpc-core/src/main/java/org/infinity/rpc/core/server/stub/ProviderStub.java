@@ -202,6 +202,8 @@ public class ProviderStub<T> {
         url.addOption(MAX_CLIENT_FAILED_CONN, String.valueOf(protocolConfig.getMaxClientFailedConn()));
         url.addOption(MAX_SERVER_CONN, String.valueOf(protocolConfig.getMaxServerConn()));
         url.addOption(MAX_CONTENT_LENGTH, String.valueOf(protocolConfig.getMaxContentLength()));
+        url.addOption(MIN_THREAD, String.valueOf(protocolConfig.getMinThread()));
+        url.addOption(MAX_THREAD, String.valueOf(protocolConfig.getMaxThread()));
         url.addOption(WORK_QUEUE_SIZE, String.valueOf(protocolConfig.getWorkQueueSize()));
         url.addOption(SHARE_CHANNEL, String.valueOf(protocolConfig.isShareChannel()));
 

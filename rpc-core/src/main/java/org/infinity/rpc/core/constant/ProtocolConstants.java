@@ -20,6 +20,12 @@ public interface ProtocolConstants {
     int     MAX_SERVER_CONN_DEFAULT_VALUE        = 100000;
     String  MAX_CONTENT_LENGTH                   = "maxContentLength";
     int     MAX_CONTENT_LENGTH_DEFAULT_VALUE     = 10 * 1024 * 1024; // 10M
+    String  MIN_THREAD                           = "minThread";
+    int     MIN_THREAD_DEFAULT_VALUE             = 20;
+    int     MIN_THREAD_SHARED_CHANNEL            = 40;
+    String  MAX_THREAD                           = "maxThread";
+    int     MAX_THREAD_DEFAULT_VALUE             = 200;
+    int     MAX_THREAD_SHARED_CHANNEL            = 800;
     String  WORK_QUEUE_SIZE                      = "workQueueSize";
     int     WORK_QUEUE_SIZE_DEFAULT_VALUE        = 0;
     String  SHARE_CHANNEL                        = "shareChannel";

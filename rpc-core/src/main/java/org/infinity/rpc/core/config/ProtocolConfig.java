@@ -79,6 +79,16 @@ public class ProtocolConfig {
     @Positive
     private int     maxContentLength    = MAX_CONTENT_LENGTH_DEFAULT_VALUE;
     /**
+     * Minimum thread pool size on server side
+     */
+    @Positive
+    private int     minThread           = MIN_THREAD_DEFAULT_VALUE;
+    /**
+     * Maximum thread pool size on server side
+     */
+    @Positive
+    private int     maxThread           = MAX_THREAD_DEFAULT_VALUE;
+    /**
      * Thread pool work queue size on server side
      */
     @Positive

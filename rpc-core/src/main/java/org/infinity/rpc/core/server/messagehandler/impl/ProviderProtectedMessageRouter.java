@@ -18,18 +18,20 @@ package org.infinity.rpc.core.server.messagehandler.impl;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcServiceException;
-import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.server.stub.ProviderStub;
-import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.infinity.rpc.core.constant.ProtocolConstants.MAX_THREAD;
+import static org.infinity.rpc.core.constant.ProtocolConstants.MAX_THREAD_DEFAULT_VALUE;
 
 /**
  * TODO 可配置化策略
@@ -62,7 +64,7 @@ public class ProviderProtectedMessageRouter extends ProviderMessageRouter {
     @Override
     protected Responseable call(Requestable request, ProviderStub<?> providerStub) {
         // 支持的最大worker thread数
-        int maxThread = providerStub.getUrl().getIntOption(Url.PARAM_MAX_WORKER_THREAD, Url.PARAM_MAX_WORKER_THREAD_DEFAULT_VALUE);
+        int maxThread = providerStub.getUrl().getIntOption(MAX_THREAD, MAX_THREAD_DEFAULT_VALUE);
         String requestKey = RpcFrameworkUtils.getFullMethodString(request);
 
         try {

@@ -63,14 +63,6 @@ public class RpcConstants {
     public static final int    NETTY_THREAD_KEEPALIVE_TIME        = 60 * 1000;
     // netty client max concurrent request TODO 2W is suitable?
     public static final int    NETTY_CLIENT_MAX_REQUEST           = 20000;
-    // share channel max worker thread
-    public static final int    NETTY_SHARECHANNEL_MAX_WORKDER     = 800;
-    // share channel min worker thread
-    public static final int    NETTY_SHARECHANNEL_MIN_WORKDER     = 40;
-    // don't share channel max worker thread
-    public static final int    NETTY_NOT_SHARECHANNEL_MAX_WORKDER = 200;
-    // don't share channel min worker thread
-    public static final int    NETTY_NOT_SHARECHANNEL_MIN_WORKDER = 20;
     public static final byte   NETTY_REQUEST_TYPE                 = 1;
     public static final byte   FLAG_REQUEST                       = 0x00;
     public static final byte   FLAG_RESPONSE                      = 0x01;

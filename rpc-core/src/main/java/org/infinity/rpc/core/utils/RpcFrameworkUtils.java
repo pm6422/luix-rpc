@@ -129,7 +129,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(Url.PARAM_MAX_WORKER_THREAD), target.getOption(Url.PARAM_MAX_WORKER_THREAD))) {
+        if (!StringUtils.equals(source.getOption(MAX_THREAD), target.getOption(MAX_THREAD))) {
             return false;
         }
 

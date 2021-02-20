@@ -71,16 +71,6 @@ public final class Url implements Serializable {
     public static final String  PARAM_TYPE_REGISTRY                       = "registry";
     public static final String  PARAM_TYPE_CLIENT                         = "client";
     /**
-     * service min worker threads
-     */
-    public static final String  PARAM_MIN_WORKER_THREAD                   = "minWorkerThread";
-    public static final int     PARAM_MIN_WORKER_THREAD_DEFAULT_VALUE     = 20;
-    /**
-     * service max worker threads
-     */
-    public static final String  PARAM_MAX_WORKER_THREAD                   = "maxWorkerThread";
-    public static final int     PARAM_MAX_WORKER_THREAD_DEFAULT_VALUE     = 200;
-    /**
      * todo: check usage
      */
     public static final String  PARAM_HOST                                = "host";

@@ -7,7 +7,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.TransportException;
 import org.infinity.rpc.core.exchange.callback.StatisticCallback;
@@ -77,11 +76,11 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
         int minWorkerThread, maxWorkerThread;
 
         if (shareChannel) {
-            minWorkerThread = providerUrl.getIntOption(Url.PARAM_MIN_WORKER_THREAD, RpcConstants.NETTY_SHARECHANNEL_MIN_WORKDER);
-            maxWorkerThread = providerUrl.getIntOption(Url.PARAM_MAX_WORKER_THREAD, RpcConstants.NETTY_SHARECHANNEL_MAX_WORKDER);
+            minWorkerThread = providerUrl.getIntOption(MIN_THREAD, MIN_THREAD_SHARED_CHANNEL);
+            maxWorkerThread = providerUrl.getIntOption(MAX_THREAD, MAX_THREAD_SHARED_CHANNEL);
         } else {
-            minWorkerThread = providerUrl.getIntOption(Url.PARAM_MIN_WORKER_THREAD, RpcConstants.NETTY_NOT_SHARECHANNEL_MIN_WORKDER);
-            maxWorkerThread = providerUrl.getIntOption(Url.PARAM_MAX_WORKER_THREAD, RpcConstants.NETTY_NOT_SHARECHANNEL_MAX_WORKDER);
+            minWorkerThread = providerUrl.getIntOption(MIN_THREAD, MIN_THREAD_DEFAULT_VALUE);
+            maxWorkerThread = providerUrl.getIntOption(MAX_THREAD, MAX_THREAD_DEFAULT_VALUE);
         }
 
         standardThreadExecutor = (standardThreadExecutor != null && !standardThreadExecutor.isShutdown()) ? standardThreadExecutor
