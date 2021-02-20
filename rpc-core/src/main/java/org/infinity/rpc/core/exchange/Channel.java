@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.transport;
+package org.infinity.rpc.core.exchange;
 
 import org.infinity.rpc.core.exception.TransportException;
 import org.infinity.rpc.core.client.request.Requestable;

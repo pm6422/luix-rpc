@@ -13,7 +13,7 @@ import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.ExchangeContext;
-import org.infinity.rpc.core.exchange.transport.Channel;
+import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
@@ -145,6 +145,7 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
     }
 
     private void processRequest(final ChannelHandlerContext ctx, final Requestable request) {
+        // todo: check usage
         request.addOption(Url.PARAM_HOST, AddressUtils.getHostName(ctx.channel().remoteAddress()));
         final long processStartTime = System.currentTimeMillis();
         try {

@@ -27,7 +27,7 @@ import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.serialization.DeserializableObject;
 import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.server.stub.ProviderStub;
-import org.infinity.rpc.core.exchange.transport.Channel;
+import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 

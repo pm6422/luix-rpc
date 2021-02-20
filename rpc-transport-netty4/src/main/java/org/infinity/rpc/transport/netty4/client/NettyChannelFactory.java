@@ -2,9 +2,7 @@ package org.infinity.rpc.transport.netty4.client;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exchange.transport.SharedObjectFactory;
-import org.infinity.rpc.transport.netty4.client.NettyChannel;
-import org.infinity.rpc.transport.netty4.client.NettyClient;
+import org.infinity.rpc.core.exchange.transport.client.SharedObjectFactory;
 import org.infinity.rpc.utilities.threadpool.DefaultThreadFactory;
 import org.infinity.rpc.utilities.threadpool.StandardThreadExecutor;
 

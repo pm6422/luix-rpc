@@ -4,7 +4,7 @@ import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcCheckHealthResponse;
 import org.infinity.rpc.core.server.messagehandler.MessageHandler;
-import org.infinity.rpc.core.exchange.transport.Channel;
+import org.infinity.rpc.core.exchange.Channel;
 
 import static org.infinity.rpc.core.client.request.impl.RpcCheckHealthRequest.isCheckHealthRequest;
 

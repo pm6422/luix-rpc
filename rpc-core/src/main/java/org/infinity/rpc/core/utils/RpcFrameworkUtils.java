@@ -125,7 +125,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(Url.PARAM_MAX_SERVER_CONNECTION), target.getOption(Url.PARAM_MAX_SERVER_CONNECTION))) {
+        if (!StringUtils.equals(source.getOption(MAX_SERVER_CONNECTION), target.getOption(MAX_SERVER_CONNECTION))) {
             return false;
         }
 
@@ -173,7 +173,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(Url.PARAM_MAX_CLIENT_CONNECTION), target.getOption(Url.PARAM_MAX_CLIENT_CONNECTION))) {
+        if (!StringUtils.equals(source.getOption(MAX_CLIENT_CONNECTION), target.getOption(MAX_CLIENT_CONNECTION))) {
             return false;
         }
 

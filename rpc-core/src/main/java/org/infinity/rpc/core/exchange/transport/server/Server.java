@@ -16,7 +16,7 @@
 
 package org.infinity.rpc.core.exchange.transport.server;
 
-import org.infinity.rpc.core.exchange.transport.Channel;
+import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.exchange.transport.endpoint.Endpoint;
 
 import java.net.InetSocketAddress;

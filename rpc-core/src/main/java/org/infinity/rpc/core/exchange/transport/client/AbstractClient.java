@@ -1,8 +1,9 @@
-package org.infinity.rpc.core.exchange.transport;
+package org.infinity.rpc.core.exchange.transport.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.codec.Codec;
+import org.infinity.rpc.core.exchange.transport.client.Client;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.url.Url;
 

@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.server.messagehandler;
 
-import org.infinity.rpc.core.exchange.transport.Channel;
+import org.infinity.rpc.core.exchange.Channel;
 
 public interface MessageHandler {
 

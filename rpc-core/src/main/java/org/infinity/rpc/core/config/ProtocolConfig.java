@@ -25,6 +25,7 @@ public class ProtocolConfig {
     private String  name                = PROTOCOL_DEFAULT_VALUE;
     /**
      * Protocol codec used to encode request and decode response
+     * todo: codec和serializer的区别
      */
     @NotEmpty
     private String  codec               = CODEC_DEFAULT_VALUE;
@@ -52,6 +53,12 @@ public class ProtocolConfig {
      */
     @NotEmpty
     private String  localAddressFactory = LOCAL_ADDRESS_FACTORY_DEFAULT_VALUE;
+    /**
+     * thread pool minimum connection number
+     * client最小连接数
+     */
+    @Positive
+    private int     minClientConnection = MIN_CLIENT_CONNECTION_DEFAULT_VALUE;
 
     public void init() {
         checkIntegrity();

@@ -1,8 +1,9 @@
-package org.infinity.rpc.core.exchange.transport;
+package org.infinity.rpc.core.exchange.transport.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.exception.RpcServiceException;
+import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.lang.MathUtils;
 import org.infinity.rpc.utilities.threadpool.DefaultThreadFactory;
@@ -13,6 +14,9 @@ import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
+
+import static org.infinity.rpc.core.constant.ProtocolConstants.MIN_CLIENT_CONNECTION;
+import static org.infinity.rpc.core.constant.ProtocolConstants.MIN_CLIENT_CONNECTION_DEFAULT_VALUE;
 
 @Slf4j
 public abstract class AbstractSharedPoolClient extends AbstractClient {
@@ -26,7 +30,7 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
 
     public AbstractSharedPoolClient(Url providerUrl) {
         super(providerUrl);
-        channelSize = providerUrl.getIntOption(Url.PARAM_MIN_CLIENT_CONNECTION, Url.PARAM_MIN_CLIENT_CONNECTION_DEFAULT_VALUE);
+        channelSize = providerUrl.getIntOption(MIN_CLIENT_CONNECTION, MIN_CLIENT_CONNECTION_DEFAULT_VALUE);
         Validate.isTrue(channelSize > 0, "minClientConnection must be a positive number!");
     }
 

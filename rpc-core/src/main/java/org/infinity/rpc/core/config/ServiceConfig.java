@@ -24,7 +24,7 @@ public class ServiceConfig {
     @NotEmpty
     private String checkHealthFactory = CHECK_HEALTH_FACTORY_DEFAULT_VALUE;
     /**
-     *
+     * Timeout in milliseconds for handling request between client and server sides
      */
     private int    requestTimeout     = REQUEST_TIMEOUT_DEFAULT_VALUE;
     /**

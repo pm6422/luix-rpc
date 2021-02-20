@@ -81,21 +81,6 @@ public final class Url implements Serializable {
     public static final String  PARAM_SHARE_CHANNEL                       = "shareChannel";
     public static final boolean PARAM_SHARE_CHANNEL_DEFAULT_VALUE         = true;
     /**
-     * thread pool minimum connection number
-     */
-    public static final String  PARAM_MIN_CLIENT_CONNECTION               = "minClientConnection";
-    public static final int     PARAM_MIN_CLIENT_CONNECTION_DEFAULT_VALUE = 2;
-    /**
-     * thread pool maximum connection number
-     */
-    public static final String  PARAM_MAX_CLIENT_CONNECTION               = "maxClientConnection";
-    public static final int     PARAM_MAX_CLIENT_CONNECTION_DEFAULT_VALUE = 10;
-    /**
-     * max server conn (all clients conn)
-     */
-    public static final String  PARAM_MAX_SERVER_CONNECTION               = "maxServerConnection";
-    public static final int     PARAM_MAX_SERVER_CONNECTION_DEFAULT_VALUE = 100000;
-    /**
      *
      */
     public static final String  PARAM_WORKER_QUEUE_SIZE                   = "workerQueueSize";
@@ -111,7 +96,7 @@ public final class Url implements Serializable {
     public static final String  PARAM_MAX_WORKER_THREAD                   = "maxWorkerThread";
     public static final int     PARAM_MAX_WORKER_THREAD_DEFAULT_VALUE     = 200;
     /**
-     *
+     * todo: check usage
      */
     public static final String  PARAM_HOST                                = "host";
     public static final String  PARAM_HOST_DEFAULT_VALUE                  = "";

@@ -10,7 +10,7 @@ import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
-import org.infinity.rpc.core.exchange.transport.Channel;
+import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
 import org.infinity.rpc.core.server.response.FutureResponse;
 import org.infinity.rpc.core.server.response.Responseable;

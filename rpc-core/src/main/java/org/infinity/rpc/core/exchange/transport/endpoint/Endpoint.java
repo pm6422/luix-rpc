@@ -17,7 +17,7 @@
 package org.infinity.rpc.core.exchange.transport.endpoint;
 
 
-import org.infinity.rpc.core.exchange.transport.Channel;
+import org.infinity.rpc.core.exchange.Channel;
 
 public interface Endpoint extends Channel {
 

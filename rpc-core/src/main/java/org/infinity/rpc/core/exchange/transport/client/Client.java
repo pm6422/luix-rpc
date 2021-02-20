@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.transport;
+package org.infinity.rpc.core.exchange.transport.client;
 
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exchange.transport.endpoint.Endpoint;
