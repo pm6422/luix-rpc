@@ -34,4 +34,6 @@ public interface ProtocolConstants {
     boolean ASYNC_INIT_CONN_DEFAULT_VALUE        = false;
     String  THROW_EXCEPTION                      = "throwException";
     boolean THROW_EXCEPTION_DEFAULT_VALUE        = true;
+    String  TRANS_EXCEPTION_STACK                = "transExceptionStack";
+    boolean TRANS_EXCEPTION_STACK_DEFAULT_VALUE  = true;
 }

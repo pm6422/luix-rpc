@@ -105,6 +105,10 @@ public class ProtocolConfig {
      * Indicator used to decide whether throw exception after request failure
      */
     private boolean throwException      = THROW_EXCEPTION_DEFAULT_VALUE;
+    /**
+     * Indicator used to decide whether transport response exception to client
+     */
+    private boolean transExceptionStack = TRANS_EXCEPTION_STACK_DEFAULT_VALUE;
 
     public void init() {
         checkIntegrity();

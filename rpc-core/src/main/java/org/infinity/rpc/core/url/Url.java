@@ -65,29 +65,20 @@ public final class Url implements Serializable {
     /**
      *
      */
-    public static final String  PARAM_TYPE                                = "type";
-    public static final String  PARAM_TYPE_PROVIDER                       = "provider";
-    public static final String  PARAM_TYPE_CONSUMER                       = "consumer";
-    public static final String  PARAM_TYPE_REGISTRY                       = "registry";
-    public static final String  PARAM_TYPE_CLIENT                         = "client";
+    public static final String PARAM_TYPE                 = "type";
+    public static final String PARAM_TYPE_PROVIDER        = "provider";
+    public static final String PARAM_TYPE_CONSUMER        = "consumer";
+    public static final String PARAM_TYPE_REGISTRY        = "registry";
+    public static final String PARAM_TYPE_CLIENT          = "client";
     /**
      * todo: check usage
      */
-    public static final String  PARAM_HOST                                = "host";
-    public static final String  PARAM_HOST_DEFAULT_VALUE                  = "";
-    /**
-     *
-     */
-    public static final String  PARAM_TRANS_EXCEPTION_STACK               = "transExceptionStack";
-    public static final boolean PARAM_TRANS_EXCEPTION_STACK_DEFAULT_VALUE = true;
-    /**
-     *
-     */
-    public static final String  PARAM_WEIGHT                              = "weights";
-    public static final String  PARAM_WEIGHT_DEFAULT_VALUE                = "";
-
-    public static final String PARAM_APP            = "app";
-    public static final String PARAM_ACTIVATED_TIME = "activatedTime";
+    public static final String PARAM_HOST                 = "host";
+    public static final String PARAM_HOST_DEFAULT_VALUE   = "";
+    public static final String PARAM_WEIGHT               = "weights";
+    public static final String PARAM_WEIGHT_DEFAULT_VALUE = "";
+    public static final String PARAM_APP                  = "app";
+    public static final String PARAM_ACTIVATED_TIME       = "activatedTime";
 
     /**
      * Prevent instantiation of it outside the class

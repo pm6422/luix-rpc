@@ -270,7 +270,7 @@ public class ProviderStub<T> {
             response.setException(exception);
             return response;
         }
-        boolean defaultThrowExceptionStack = Url.PARAM_TRANS_EXCEPTION_STACK_DEFAULT_VALUE;
+        boolean defaultThrowExceptionStack = TRANS_EXCEPTION_STACK_DEFAULT_VALUE;
         try {
             // Invoke method
             Object result = method.invoke(instance, request.getMethodArguments());
@@ -308,9 +308,8 @@ public class ProviderStub<T> {
         }
         if (response.getException() != null) {
             //是否传输业务异常栈
-            boolean transExceptionStack = this.url.getBooleanOption(Url.PARAM_TRANS_EXCEPTION_STACK, defaultThrowExceptionStack);
-            if (!transExceptionStack) {
-                //不传输业务异常栈
+            if (!this.url.getBooleanOption(TRANS_EXCEPTION_STACK, defaultThrowExceptionStack)) {
+                // 不传输业务异常栈
                 ExceptionUtils.setMockStackTrace(response.getException().getCause());
             }
         }
