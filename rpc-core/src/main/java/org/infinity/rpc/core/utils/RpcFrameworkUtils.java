@@ -125,7 +125,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(MAX_SERVER_CONNECTION), target.getOption(MAX_SERVER_CONNECTION))) {
+        if (!StringUtils.equals(source.getOption(MAX_SERVER_CONN), target.getOption(MAX_SERVER_CONN))) {
             return false;
         }
 
@@ -173,7 +173,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(MAX_CLIENT_CONNECTION), target.getOption(MAX_CLIENT_CONNECTION))) {
+        if (!StringUtils.equals(source.getOption(MAX_CLIENT_CONN), target.getOption(MAX_CLIENT_CONN))) {
             return false;
         }
 

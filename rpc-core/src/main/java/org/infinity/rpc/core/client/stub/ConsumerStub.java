@@ -241,7 +241,10 @@ public class ConsumerStub<T> {
             // Note: There are no extra options added to the direct provider url
             Url providerUrl = Url.providerUrl(PROTOCOL_DEFAULT_VALUE, providerHostPortPair.getLeft(),
                     providerHostPortPair.getRight(), interfaceName, group, version);
+            // Please refer to ProviderStub for direct provider url options
             providerUrl.addOption(CODEC, protocolConfig.getCodec());
+            providerUrl.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
+            providerUrl.addOption(MIN_CLIENT_CONN, String.valueOf(protocolConfig.getMinClientConn()));
             directProviderUrls.add(providerUrl);
         }
         return directProviderUrls;

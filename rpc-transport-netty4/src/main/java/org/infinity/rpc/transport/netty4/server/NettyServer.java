@@ -25,8 +25,8 @@ import org.infinity.rpc.utilities.threadpool.StandardThreadExecutor;
 import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.infinity.rpc.core.constant.ProtocolConstants.MAX_SERVER_CONNECTION;
-import static org.infinity.rpc.core.constant.ProtocolConstants.MAX_SERVER_CONNECTION_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ProtocolConstants.MAX_SERVER_CONN;
+import static org.infinity.rpc.core.constant.ProtocolConstants.MAX_SERVER_CONN_DEFAULT_VALUE;
 
 @Slf4j
 public class NettyServer extends AbstractServer implements StatisticCallback {
@@ -72,7 +72,7 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
         log.info("NettyServer ServerChannel start Open: url=" + url);
         boolean shareChannel = url.getBooleanOption(Url.PARAM_SHARE_CHANNEL, Url.PARAM_SHARE_CHANNEL_DEFAULT_VALUE);
         final int maxContentLength = url.getIntOption(Url.PARAM_MAX_CONTENT_LENGTH, Url.PARAM_MAX_CONTENT_LENGTH_DEFAULT_VALUE);
-        int maxServerConnection = url.getIntOption(MAX_SERVER_CONNECTION, MAX_SERVER_CONNECTION_DEFAULT_VALUE);
+        int maxServerConnection = url.getIntOption(MAX_SERVER_CONN, MAX_SERVER_CONN_DEFAULT_VALUE);
         int workerQueueSize = url.getIntOption(Url.PARAM_WORKER_QUEUE_SIZE, Url.PARAM_WORKER_QUEUE_SIZE_DEFAULT_VALUE);
 
         int minWorkerThread, maxWorkerThread;

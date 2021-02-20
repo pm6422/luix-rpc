@@ -15,9 +15,9 @@ import org.infinity.rpc.core.exception.RpcAbstractException;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
+import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.exchange.ExchangeContext;
 import org.infinity.rpc.core.exchange.client.AbstractSharedPoolClient;
-import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.exchange.client.SharedObjectFactory;
 import org.infinity.rpc.core.exchange.constants.ChannelState;
 import org.infinity.rpc.core.server.response.FutureResponse;
@@ -34,8 +34,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.infinity.rpc.core.constant.ProtocolConstants.MAX_CLIENT_CONNECTION;
-import static org.infinity.rpc.core.constant.ProtocolConstants.MAX_CLIENT_CONNECTION_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ProtocolConstants.MAX_CLIENT_FAILED_CONN;
+import static org.infinity.rpc.core.constant.ProtocolConstants.MAX_CLIENT_FAILED_CONN_DEFAULT_VALUE;
 import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT;
 import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT_DEFAULT_VALUE;
 import static org.infinity.rpc.core.destroy.ScheduledThreadPool.RECYCLE_TIMEOUT_TASK_THREAD_POOL;
@@ -58,11 +58,11 @@ public class NettyClient extends AbstractSharedPoolClient {
     private final        AtomicLong                errorCount                   = new AtomicLong(0);
     private final        ScheduledFuture<?>        timeoutFuture;
     private              Bootstrap                 bootstrap;
-    private final        int                       maxClientConnection;
+    private final        int                       maxClientFailedConn;
 
     public NettyClient(Url providerUrl) {
         super(providerUrl);
-        maxClientConnection = providerUrl.getIntOption(MAX_CLIENT_CONNECTION, MAX_CLIENT_CONNECTION_DEFAULT_VALUE);
+        maxClientFailedConn = providerUrl.getIntOption(MAX_CLIENT_FAILED_CONN, MAX_CLIENT_FAILED_CONN_DEFAULT_VALUE);
         timeoutFuture = ScheduledThreadPool.schedulePeriodicalTask(RECYCLE_TIMEOUT_TASK_THREAD_POOL,
                 NETTY_TIMEOUT_TIMER_INTERVAL, this::recycleTimeoutTask);
     }
@@ -275,12 +275,12 @@ public class NettyClient extends AbstractSharedPoolClient {
     void incrErrorCount() {
         long count = errorCount.incrementAndGet();
 
-        // 如果节点是可用状态，同时当前连续失败的次数超过连接数，那么把该节点标示为不可用
-        if (count >= maxClientConnection && state.isActive()) {
+        // 如果节点是可用状态，同时当前连续失败的次数超过允许的最大失败连接数，那么把该节点标示为不可用
+        if (count >= maxClientFailedConn && state.isActive()) {
             synchronized (this) {
                 count = errorCount.longValue();
 
-                if (count >= maxClientConnection && state.isActive()) {
+                if (count >= maxClientFailedConn && state.isActive()) {
                     log.error("NettyClient unavailable Error: url=" + providerUrl.getIdentity() + " "
                             + providerUrl.getAddress());
                     state = ChannelState.INACTIVE;
@@ -312,7 +312,7 @@ public class NettyClient extends AbstractSharedPoolClient {
                 long count = errorCount.longValue();
 
                 // 过程中有其他并发更新errorCount的，因此这里需要进行一次判断
-                if (count < maxClientConnection) {
+                if (count < maxClientFailedConn) {
                     state = ChannelState.ACTIVE;
                     log.info("NettyClient recover available: url=" + providerUrl.getIdentity() + " "
                             + providerUrl.getAddress());

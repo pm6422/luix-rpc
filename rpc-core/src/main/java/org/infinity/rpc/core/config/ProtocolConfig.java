@@ -54,11 +54,15 @@ public class ProtocolConfig {
     @NotEmpty
     private String  localAddressFactory = LOCAL_ADDRESS_FACTORY_DEFAULT_VALUE;
     /**
-     * thread pool minimum connection number
-     * client最小连接数
+     * Minimum client channel count used to handle RPC request
      */
     @Positive
-    private int     minClientConnection = MIN_CLIENT_CONNECTION_DEFAULT_VALUE;
+    private int     minClientConn       = MIN_CLIENT_CONN_DEFAULT_VALUE;
+    /**
+     * Maximum client connecting failure count
+     */
+    @Positive
+    private int     maxClientFailedConn = MAX_CLIENT_FAILED_CONN_DEFAULT_VALUE;
 
     public void init() {
         checkIntegrity();

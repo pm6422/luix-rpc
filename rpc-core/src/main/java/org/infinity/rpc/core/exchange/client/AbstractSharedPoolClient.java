@@ -1,7 +1,6 @@
 package org.infinity.rpc.core.exchange.client;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.url.Url;
@@ -15,8 +14,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
-import static org.infinity.rpc.core.constant.ProtocolConstants.MIN_CLIENT_CONNECTION;
-import static org.infinity.rpc.core.constant.ProtocolConstants.MIN_CLIENT_CONNECTION_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ProtocolConstants.MIN_CLIENT_CONN;
+import static org.infinity.rpc.core.constant.ProtocolConstants.MIN_CLIENT_CONN_DEFAULT_VALUE;
 
 @Slf4j
 public abstract class AbstractSharedPoolClient extends AbstractClient {
@@ -24,14 +23,16 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
     private static final ThreadPoolExecutor           THREAD_POOL = new StandardThreadExecutor(1, 300,
             20000, new DefaultThreadFactory(AbstractSharedPoolClient.class.getSimpleName(), true));
     private final        AtomicInteger                idx         = new AtomicInteger();
-    protected            SharedObjectFactory<Channel> factory;
-    protected            List<Channel>                channels;
-    protected            int                          channelSize;
+    /**
+     * Object factory used to build channel
+     */
+    private              SharedObjectFactory<Channel> factory;
+    private final        int                          channelSize;
+    private              List<Channel>                channels;
 
     public AbstractSharedPoolClient(Url providerUrl) {
         super(providerUrl);
-        channelSize = providerUrl.getIntOption(MIN_CLIENT_CONNECTION, MIN_CLIENT_CONNECTION_DEFAULT_VALUE);
-        Validate.isTrue(channelSize > 0, "minClientConnection must be a positive number!");
+        channelSize = providerUrl.getIntOption(MIN_CLIENT_CONN, MIN_CLIENT_CONN_DEFAULT_VALUE);
     }
 
     protected void initPool() {
