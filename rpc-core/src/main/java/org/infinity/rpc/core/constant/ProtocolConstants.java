@@ -28,6 +28,8 @@ public interface ProtocolConstants {
     int     MAX_THREAD_SHARED_CHANNEL            = 800;
     String  WORK_QUEUE_SIZE                      = "workQueueSize";
     int     WORK_QUEUE_SIZE_DEFAULT_VALUE        = 0;
-    String  SHARE_CHANNEL                        = "shareChannel";
-    boolean SHARE_CHANNEL_DEFAULT_VALUE          = true;
+    String  SHARED_CHANNEL                       = "sharedChannel";
+    boolean SHARED_CHANNEL_DEFAULT_VALUE         = true;
+    String  ASYNC_INIT_CONN                      = "asyncInitConn";
+    boolean ASYNC_INIT_CONN_DEFAULT_VALUE        = false;
 }

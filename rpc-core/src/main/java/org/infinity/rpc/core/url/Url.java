@@ -83,11 +83,6 @@ public final class Url implements Serializable {
     /**
      *
      */
-    public static final String  PARAM_ASYNC_INIT_CONNECTION               = "asyncInitConnection";
-    public static final boolean PARAM_ASYNC_INIT_CONNECTION_DEFAULT_VALUE = false;
-    /**
-     *
-     */
     public static final String  PARAM_THROW_EXCEPTION                     = "throwException";
     public static final boolean PARAM_THROW_EXCEPTION_DEFAULT_VALUE       = true;
     /**

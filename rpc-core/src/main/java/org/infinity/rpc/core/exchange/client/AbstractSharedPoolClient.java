@@ -14,8 +14,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
-import static org.infinity.rpc.core.constant.ProtocolConstants.MIN_CLIENT_CONN;
-import static org.infinity.rpc.core.constant.ProtocolConstants.MIN_CLIENT_CONN_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 
 @Slf4j
 public abstract class AbstractSharedPoolClient extends AbstractClient {
@@ -39,7 +38,7 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
         factory = createChannelFactory();
         channels = new ArrayList<>(channelSize);
         IntStream.range(0, channelSize).forEach(x -> channels.add(factory.buildObject()));
-        initConnections(providerUrl.getBooleanOption(Url.PARAM_ASYNC_INIT_CONNECTION, Url.PARAM_ASYNC_INIT_CONNECTION_DEFAULT_VALUE));
+        initConnections(providerUrl.getBooleanOption(ASYNC_INIT_CONN, ASYNC_INIT_CONN_DEFAULT_VALUE));
     }
 
     protected void initConnections(boolean async) {

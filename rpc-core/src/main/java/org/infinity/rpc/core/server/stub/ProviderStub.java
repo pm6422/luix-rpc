@@ -205,7 +205,8 @@ public class ProviderStub<T> {
         url.addOption(MIN_THREAD, String.valueOf(protocolConfig.getMinThread()));
         url.addOption(MAX_THREAD, String.valueOf(protocolConfig.getMaxThread()));
         url.addOption(WORK_QUEUE_SIZE, String.valueOf(protocolConfig.getWorkQueueSize()));
-        url.addOption(SHARE_CHANNEL, String.valueOf(protocolConfig.isShareChannel()));
+        url.addOption(SHARED_CHANNEL, String.valueOf(protocolConfig.isSharedChannel()));
+        url.addOption(ASYNC_INIT_CONN, String.valueOf(protocolConfig.isAsyncInitConn()));
 
         if (StringUtils.isEmpty(checkHealthFactory)) {
             checkHealthFactory = providerConfig.getCheckHealthFactory();

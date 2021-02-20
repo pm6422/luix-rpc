@@ -96,7 +96,11 @@ public class ProtocolConfig {
     /**
      * Indicator used to decide whether multiple servers share the same channel
      */
-    private boolean shareChannel        = SHARE_CHANNEL_DEFAULT_VALUE;
+    private boolean sharedChannel       = SHARED_CHANNEL_DEFAULT_VALUE;
+    /**
+     * Indicator used to decide whether initialize client connection asynchronously
+     */
+    private boolean asyncInitConn       = ASYNC_INIT_CONN_DEFAULT_VALUE;
 
     public void init() {
         checkIntegrity();
