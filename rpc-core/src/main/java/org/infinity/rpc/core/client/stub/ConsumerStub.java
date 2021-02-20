@@ -148,6 +148,8 @@ public class ConsumerStub<T> {
 
         // We do NOT know the host and port of provider right now, so we use client URL
         clientUrl = Url.clientUrl(protocol, protocolConfig.getHost(), interfaceName, group, version);
+        clientUrl.addOption(THROW_EXCEPTION, String.valueOf(protocolConfig.isThrowException()));
+
         // Initialize provider cluster before consumer initialization
         providerCluster = createProviderCluster();
 

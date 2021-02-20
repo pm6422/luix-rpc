@@ -332,12 +332,12 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
         }
     }
 
-    private List<Url> mergeResult(Url url, Map<String, Integer> weights) {
+    private List<Url> mergeResult(Url providerUrl, Map<String, Integer> weights) {
         List<Url> finalResult = new ArrayList<>();
 
         if (weights.size() > 1) {
             // 将所有group及权重拼接成一个rule的URL，并作为第一个元素添加到最终结果中
-            Url ruleUrl = Url.of("rule", url.getHost(), url.getPort(), url.getPath());
+            Url ruleUrl = Url.of("rule", providerUrl.getHost(), providerUrl.getPort(), providerUrl.getPath());
             StringBuilder weightsBuilder = new StringBuilder(64);
             for (Map.Entry<String, Integer> entry : weights.entrySet()) {
                 weightsBuilder.append(entry.getKey()).append(':').append(entry.getValue()).append(',');
@@ -350,7 +350,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
             if (activeProviderUrlsPerGroup.containsKey(key)) {
                 finalResult.addAll(activeProviderUrlsPerGroup.get(key));
             } else {
-                Url urlTemp = url.copy();
+                Url urlTemp = providerUrl.copy();
                 urlTemp.addOption(GROUP, key);
                 finalResult.addAll(discoverActiveProvidersByGroup(urlTemp));
                 registry.subscribeServiceListener(urlTemp, this);

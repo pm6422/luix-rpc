@@ -20,6 +20,9 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.util.List;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION;
+import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION_DEFAULT_VALUE;
+
 /**
  * todo: ClusterSpi
  *
@@ -124,8 +127,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
             throw (RuntimeException) cause;
         }
 
-        boolean parameter = faultTolerance.getClientUrl()
-                .getBooleanOption(Url.PARAM_THROW_EXCEPTION, Url.PARAM_THROW_EXCEPTION_DEFAULT_VALUE);
+        boolean parameter = faultTolerance.getClientUrl().getBooleanOption(THROW_EXCEPTION, THROW_EXCEPTION_DEFAULT_VALUE);
         if (parameter) {
             if (cause instanceof RpcAbstractException) {
                 throw (RpcAbstractException) cause;

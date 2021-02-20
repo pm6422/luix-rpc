@@ -83,11 +83,6 @@ public final class Url implements Serializable {
     /**
      *
      */
-    public static final String  PARAM_THROW_EXCEPTION                     = "throwException";
-    public static final boolean PARAM_THROW_EXCEPTION_DEFAULT_VALUE       = true;
-    /**
-     *
-     */
     public static final String  PARAM_WEIGHT                              = "weights";
     public static final String  PARAM_WEIGHT_DEFAULT_VALUE                = "";
 

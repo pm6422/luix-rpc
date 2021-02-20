@@ -32,4 +32,6 @@ public interface ProtocolConstants {
     boolean SHARED_CHANNEL_DEFAULT_VALUE         = true;
     String  ASYNC_INIT_CONN                      = "asyncInitConn";
     boolean ASYNC_INIT_CONN_DEFAULT_VALUE        = false;
+    String  THROW_EXCEPTION                      = "throwException";
+    boolean THROW_EXCEPTION_DEFAULT_VALUE        = true;
 }
