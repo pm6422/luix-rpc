@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.transport.client;
+package org.infinity.rpc.core.exchange.client;
 
 public interface SharedObjectFactory<T> {
 

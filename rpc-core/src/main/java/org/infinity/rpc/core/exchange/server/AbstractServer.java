@@ -1,9 +1,9 @@
-package org.infinity.rpc.core.exchange.transport.server;
+package org.infinity.rpc.core.exchange.server;
 
 import org.infinity.rpc.core.codec.Codec;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.Channel;
-import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
+import org.infinity.rpc.core.exchange.constants.ChannelState;
 import org.infinity.rpc.core.url.Url;
 
 import java.net.InetSocketAddress;

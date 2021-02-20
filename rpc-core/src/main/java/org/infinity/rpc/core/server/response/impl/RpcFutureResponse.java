@@ -14,7 +14,7 @@ import org.infinity.rpc.core.server.response.FutureListener;
 import org.infinity.rpc.core.server.response.FutureResponse;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.serialization.DeserializableObject;
-import org.infinity.rpc.core.exchange.transport.constants.FutureState;
+import org.infinity.rpc.core.exchange.constants.FutureState;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 import org.infinity.rpc.core.url.Url;
 

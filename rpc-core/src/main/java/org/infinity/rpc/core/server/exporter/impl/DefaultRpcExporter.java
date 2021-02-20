@@ -6,8 +6,8 @@ import org.infinity.rpc.core.server.exporter.Exportable;
 import org.infinity.rpc.core.server.messagehandler.impl.ProviderMessageRouter;
 import org.infinity.rpc.core.server.messagehandler.impl.ProviderProtectedMessageRouter;
 import org.infinity.rpc.core.server.stub.ProviderStub;
-import org.infinity.rpc.core.exchange.transport.endpoint.EndpointFactory;
-import org.infinity.rpc.core.exchange.transport.server.Server;
+import org.infinity.rpc.core.exchange.endpoint.EndpointFactory;
+import org.infinity.rpc.core.exchange.server.Server;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 

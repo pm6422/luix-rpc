@@ -8,8 +8,8 @@ import org.infinity.rpc.core.client.request.AbstractProviderCaller;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Future;
 import org.infinity.rpc.core.server.response.Responseable;
-import org.infinity.rpc.core.exchange.transport.client.Client;
-import org.infinity.rpc.core.exchange.transport.endpoint.EndpointFactory;
+import org.infinity.rpc.core.exchange.client.Client;
+import org.infinity.rpc.core.exchange.endpoint.EndpointFactory;
 import org.infinity.rpc.core.url.Url;
 
 import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;

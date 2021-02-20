@@ -14,37 +14,35 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.exchange.transport.constants;
+package org.infinity.rpc.core.exchange.server;
 
-public enum FutureState {
+import org.infinity.rpc.core.exchange.Channel;
+import org.infinity.rpc.core.exchange.endpoint.Endpoint;
+
+import java.net.InetSocketAddress;
+import java.util.Collection;
+
+public interface Server extends Endpoint {
+
     /**
-     * the task is doing
-     **/
-    DOING(0),
+     * is server bound
+     *
+     * @return
+     */
+    boolean isBound();
+
     /**
-     * the task is done
-     **/
-    DONE(1),
+     * get channels.
+     *
+     * @return channels
+     */
+    Collection<Channel> getChannels();
+
     /**
-     * ths task is cancelled
-     **/
-    CANCELLED(2);
-
-    public final int value;
-
-    FutureState(int value) {
-        this.value = value;
-    }
-
-    public boolean isCancelledState() {
-        return this == CANCELLED;
-    }
-
-    public boolean isDoneState() {
-        return this == DONE;
-    }
-
-    public boolean isDoingState() {
-        return this == DOING;
-    }
+     * get channel.
+     *
+     * @param remoteAddress
+     * @return channel
+     */
+    Channel getChannel(InetSocketAddress remoteAddress);
 }

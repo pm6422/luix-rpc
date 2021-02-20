@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.exchange.transport.endpoint;
+package org.infinity.rpc.core.exchange.endpoint;
 
 
 import org.infinity.rpc.core.exchange.Channel;

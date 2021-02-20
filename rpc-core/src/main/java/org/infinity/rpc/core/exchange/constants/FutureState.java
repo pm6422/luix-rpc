@@ -14,53 +14,37 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.exchange.transport.constants;
+package org.infinity.rpc.core.exchange.constants;
 
-public enum ChannelState {
+public enum FutureState {
     /**
-     * Uninitialized state
-     */
-    UNINITIALIZED(0),
+     * the task is doing
+     **/
+    DOING(0),
     /**
-     * Initialized state
-     */
-    INITIALIZED(1),
+     * the task is done
+     **/
+    DONE(1),
     /**
-     * Active state
-     */
-    ACTIVE(2),
-    /**
-     * Inactive state
-     */
-    INACTIVE(3),
-    /**
-     * Closed state
-     */
-    CLOSED(4);
+     * ths task is cancelled
+     **/
+    CANCELLED(2);
 
     public final int value;
 
-    ChannelState(int value) {
+    FutureState(int value) {
         this.value = value;
     }
 
-    public boolean isUninitialized() {
-        return this == UNINITIALIZED;
+    public boolean isCancelledState() {
+        return this == CANCELLED;
     }
 
-    public boolean isInitialized() {
-        return this == INITIALIZED;
+    public boolean isDoneState() {
+        return this == DONE;
     }
 
-    public boolean isActive() {
-        return this == ACTIVE;
-    }
-
-    public boolean isInactive() {
-        return this == INACTIVE;
-    }
-
-    public boolean isClosed() {
-        return this == CLOSED;
+    public boolean isDoingState() {
+        return this == DOING;
     }
 }

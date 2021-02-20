@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.transport.callback;
+package org.infinity.rpc.core.exchange.callback;
 
 /**
  * 统计扩展接口，需要统计的资源自行实现后 registry到StatsUtil便可以

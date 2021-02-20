@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.exchange.transport.checkhealth;
+package org.infinity.rpc.core.exchange.checkhealth;
 
 
 import org.infinity.rpc.core.exception.RpcFrameworkException;

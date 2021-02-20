@@ -14,16 +14,16 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.exchange.transport.endpoint.impl;
+package org.infinity.rpc.core.exchange.endpoint.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
-import org.infinity.rpc.core.exchange.transport.client.Client;
-import org.infinity.rpc.core.exchange.transport.checkhealth.CheckHealthFactory;
-import org.infinity.rpc.core.exchange.transport.constants.ChannelState;
-import org.infinity.rpc.core.exchange.transport.endpoint.Endpoint;
-import org.infinity.rpc.core.exchange.transport.endpoint.EndpointManager;
+import org.infinity.rpc.core.exchange.client.Client;
+import org.infinity.rpc.core.exchange.checkhealth.CheckHealthFactory;
+import org.infinity.rpc.core.exchange.constants.ChannelState;
+import org.infinity.rpc.core.exchange.endpoint.Endpoint;
+import org.infinity.rpc.core.exchange.endpoint.EndpointManager;
 import org.infinity.rpc.core.url.Url;
 
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.transport.client;
+package org.infinity.rpc.core.exchange.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;

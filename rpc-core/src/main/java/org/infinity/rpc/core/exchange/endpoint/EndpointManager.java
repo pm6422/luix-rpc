@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exchange.transport.endpoint;
+package org.infinity.rpc.core.exchange.endpoint;
 
 public interface EndpointManager {
 
