@@ -28,7 +28,7 @@ public class ServiceConfig {
      */
     private int    requestTimeout     = REQUEST_TIMEOUT_DEFAULT_VALUE;
     /**
-     *
+     * Max retry count after calling failure
      */
     private int    maxRetries         = MAX_RETRIES_DEFAULT_VALUE;
 

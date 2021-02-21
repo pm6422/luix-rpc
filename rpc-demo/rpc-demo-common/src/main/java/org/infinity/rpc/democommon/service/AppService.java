@@ -1,11 +1,11 @@
 package org.infinity.rpc.democommon.service;
 
 import org.infinity.rpc.democommon.domain.App;
+import org.infinity.rpc.utilities.annotation.Asynchronized;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
-import java.util.Set;
 
 public interface AppService {
 
@@ -13,6 +13,7 @@ public interface AppService {
 
     Optional<App> findById(String id);
 
+    @Asynchronized
     App insert(App domain);
 
     void update(App domain);

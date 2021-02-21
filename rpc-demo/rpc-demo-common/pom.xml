@@ -27,5 +27,10 @@
             <version>1.5.13</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.infinity</groupId>
+            <artifactId>rpc-utilities</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 </project>

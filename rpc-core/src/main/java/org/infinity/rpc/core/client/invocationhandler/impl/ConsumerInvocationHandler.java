@@ -2,15 +2,14 @@ package org.infinity.rpc.core.client.invocationhandler.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.invocationhandler.AbstractConsumerInvocationHandler;
-import org.infinity.rpc.core.client.invocationhandler.AsyncRequestFlag;
 import org.infinity.rpc.core.client.proxy.ConsumerProxy;
-import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.request.impl.RpcRequest;
+import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.rpc.utilities.annotation.Asynchronized;
 import org.infinity.rpc.utilities.id.IdGenerator;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodParameters;
@@ -40,21 +39,23 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
             return ConsumerProxy.class.getSimpleName();
         }
 
+        // Create a new RpcRequest for each request
         RpcRequest request = new RpcRequest(IdGenerator.generateTimestampId(),
                 consumerStub.getInterfaceName(),
                 method.getName(),
                 getMethodParameters(method));
 
+        // Set method arguments
         request.setMethodArguments(args);
 
+        // Set some options
         request.addOption(GROUP, consumerStub.getGroup());
         request.addOption(VERSION, consumerStub.getVersion());
         request.addOption(CHECK_HEALTH_FACTORY, consumerStub.getCheckHealthFactory());
         request.addOption(REQUEST_TIMEOUT, String.valueOf(consumerStub.getRequestTimeout()));
         request.addOption(MAX_RETRIES, String.valueOf(consumerStub.getMaxRetries()));
 
-        boolean async = isAsyncCall(args);
-        return processRequest(request, method.getReturnType(), async);
+        return processRequest(request, method.getReturnType(), isAsyncMethod(method));
     }
 
     /**
@@ -77,13 +78,12 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
     }
 
     /**
-     * It is a asynchronous request if any argument of the method is type of AsyncRequestFlag.ASYNC
+     * It is a asynchronous method calling if the method is annotated with {@link Asynchronized}
      *
-     * @param args method arguments
+     * @param method method
      * @return true: async call, false: sync call
      */
-    private boolean isAsyncCall(Object[] args) {
-        return args != null && Arrays.stream(args)
-                .anyMatch(arg -> (arg instanceof AsyncRequestFlag) && (AsyncRequestFlag.ASYNC.equals(arg)));
+    private boolean isAsyncMethod(Method method) {
+        return method.isAnnotationPresent(Asynchronized.class);
     }
 }

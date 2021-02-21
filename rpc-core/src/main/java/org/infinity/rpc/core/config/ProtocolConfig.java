@@ -12,6 +12,7 @@ import org.infinity.rpc.utilities.network.AddressUtils;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Optional;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
@@ -91,7 +92,7 @@ public class ProtocolConfig {
     /**
      * Thread pool work queue size on server side
      */
-    @Positive
+    @PositiveOrZero
     private int     workQueueSize       = WORK_QUEUE_SIZE_DEFAULT_VALUE;
     /**
      * Indicator used to decide whether multiple servers share the same channel
