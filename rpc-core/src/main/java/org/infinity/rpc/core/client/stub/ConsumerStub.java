@@ -125,11 +125,11 @@ public class ConsumerStub<T> {
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
-     * Automatically add {@link ConsumerStub} instance to {@link ConsumerStubHolder}
      */
     @PostConstruct
     public void init() {
         this.proxyInstance = ConsumerProxy.getProxy(this);
+        // Automatically add {@link ConsumerStub} instance to {@link ConsumerStubHolder}
         ConsumerStubHolder.getInstance().addStub(this);
     }
 

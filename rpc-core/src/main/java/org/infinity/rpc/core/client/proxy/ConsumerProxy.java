@@ -11,7 +11,7 @@ import java.lang.reflect.Proxy;
 public class ConsumerProxy {
     /**
      * @param stub Consumer stub
-     * @param <T>     The interface class of the consumer
+     * @param <T>  The interface class of the consumer
      * @return The consumer proxy instance
      */
     @SuppressWarnings({"unchecked"})

@@ -110,10 +110,10 @@ public class ProviderStub<T> {
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
-     * Automatically add {@link ProviderStub} instance to {@link ProviderStubHolder}
      */
     @PostConstruct
     public void init() {
+        // Automatically add {@link ProviderStub} instance to {@link ProviderStubHolder}
         ProviderStubHolder.getInstance().addStub(interfaceName, this);
         // Put methods to cache in order to accelerate the speed of executing.
         discoverMethods(interfaceClass);
