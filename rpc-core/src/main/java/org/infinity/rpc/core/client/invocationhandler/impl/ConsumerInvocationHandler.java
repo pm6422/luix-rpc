@@ -5,7 +5,7 @@ import org.infinity.rpc.core.client.invocationhandler.AbstractConsumerInvocation
 import org.infinity.rpc.core.client.proxy.ConsumerProxy;
 import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.utilities.annotation.Asynchronized;
+import org.infinity.rpc.utilities.annotation.AsyncMethod;
 import org.infinity.rpc.utilities.id.IdGenerator;
 
 import java.lang.reflect.InvocationHandler;
@@ -78,12 +78,12 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
     }
 
     /**
-     * It is a asynchronous method calling if the method is annotated with {@link Asynchronized}
+     * It is a asynchronous method calling if the method is annotated with {@link AsyncMethod}
      *
      * @param method method
      * @return true: async call, false: sync call
      */
     private boolean isAsyncMethod(Method method) {
-        return method.isAnnotationPresent(Asynchronized.class);
+        return method.isAnnotationPresent(AsyncMethod.class);
     }
 }

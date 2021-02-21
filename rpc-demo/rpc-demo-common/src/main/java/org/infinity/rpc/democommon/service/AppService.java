@@ -1,7 +1,7 @@
 package org.infinity.rpc.democommon.service;
 
 import org.infinity.rpc.democommon.domain.App;
-import org.infinity.rpc.utilities.annotation.Asynchronized;
+import org.infinity.rpc.utilities.annotation.AsyncMethod;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,7 +13,7 @@ public interface AppService {
 
     Optional<App> findById(String id);
 
-    @Asynchronized
+    @AsyncMethod
     App insert(App domain);
 
     void update(App domain);
