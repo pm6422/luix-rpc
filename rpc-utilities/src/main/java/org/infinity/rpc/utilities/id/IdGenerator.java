@@ -40,12 +40,4 @@ public class IdGenerator {
         return SHORT_ID_GENERATOR.nextId();
     }
 
-    /**
-     * Generate a 19 bits ID
-     *
-     * @return 19 bits length，e.g：R317297928250941551
-     */
-    public static String generateRequestId() {
-        return "R" + generateSnowFlakeId();
-    }
 }

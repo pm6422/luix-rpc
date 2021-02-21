@@ -55,12 +55,12 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
         this.resultObject = response.getResult();
         this.exception = response.getException();
         this.requestId = response.getRequestId();
-        this.setElapsedTime(response.getElapsedTime());
+        this.elapsedTime = response.getElapsedTime();
         this.timeout = response.getTimeout();
         this.protocolVersion = response.getProtocolVersion();
-        this.setSerializeNum(response.getSerializeNum());
+        this.serializeNum = response.getSerializeNum();
         this.options = response.getOptions();
-        this.setReceivedTime(response.getReceivedTime());
+        this.receivedTime = response.getReceivedTime();
         response.getTraces().forEach((key, value) -> this.addTrace(key, key));
     }
 

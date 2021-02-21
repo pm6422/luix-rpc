@@ -12,13 +12,13 @@ import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
-import org.infinity.rpc.core.exchange.RpcContext;
 import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
+import org.infinity.rpc.core.utils.RpcRequestIdHolder;
 import org.infinity.rpc.transport.netty4.server.NettyServer;
 import org.infinity.rpc.utilities.network.AddressUtils;
 
@@ -145,11 +145,12 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
     }
 
     private void processRequest(final ChannelHandlerContext ctx, final Requestable request) {
-        // todo: check usage
+        // Used by access log output
         request.addOption(Url.PARAM_HOST, AddressUtils.getHostName(ctx.channel().remoteAddress()));
         final long processStartTime = System.currentTimeMillis();
         try {
-            RpcContext.init(request);
+            // Store request id on server side
+            RpcRequestIdHolder.setRequestId(request.getRequestId());
             Object result;
             try {
                 result = messageHandler.handle(channel, request);
@@ -182,7 +183,7 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
                 });
             }
         } finally {
-            RpcContext.destroy();
+            RpcRequestIdHolder.destroy();
         }
     }
 

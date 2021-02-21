@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.exception;
 
 import org.infinity.rpc.core.exchange.RpcContext;
+import org.infinity.rpc.core.utils.RpcRequestIdHolder;
 
 public abstract class RpcAbstractException extends RuntimeException {
     private static final long serialVersionUID = -8742311167276890503L;
@@ -51,9 +52,8 @@ public abstract class RpcAbstractException extends RuntimeException {
     @Override
     public String getMessage() {
         String message = getOriginMessage();
-
         return "errorMsg: " + message + ", status: " + rpcErrorMsg.getStatus() + ", errorCode: " + rpcErrorMsg.getErrorCode()
-                + ", requestId: " + RpcContext.getInstance().getRequestId();
+                + ", requestId: " + RpcRequestIdHolder.getRequestId();
     }
 
     public String getOriginMessage() {

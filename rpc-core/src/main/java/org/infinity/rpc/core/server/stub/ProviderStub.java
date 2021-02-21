@@ -313,6 +313,7 @@ public class ProviderStub<T> {
                 ExceptionUtils.setMockStackTrace(response.getException().getCause());
             }
         }
+        // Copy options
         response.setOptions(request.getOptions());
         return response;
     }

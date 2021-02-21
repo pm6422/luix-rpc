@@ -134,8 +134,10 @@ public class NettyClient extends AbstractSharedPoolClient {
      */
     private Responseable asyncResponse(Responseable response, boolean async) {
         if (async || !(response instanceof FutureResponse)) {
+            // Asynchronous call
             return response;
         }
+        // Synchronous call
         return new RpcResponse(response);
     }
 

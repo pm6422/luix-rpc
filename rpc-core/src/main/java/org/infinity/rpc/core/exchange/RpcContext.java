@@ -9,9 +9,13 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 感觉鸡肋，没啥用，只有在日志trace输出才有些用，而且response都没有存储值
+ */
 @ThreadSafe
 @Setter
 @Getter
+@Deprecated
 public class RpcContext {
     /**
      * Create a new {@link RpcContext} for each thread
@@ -53,12 +57,6 @@ public class RpcContext {
         THREAT_LOCAL_CONTEXT.set(context);
         return context;
     }
-
-//    public static RpcContext init() {
-//        RpcContext context = new RpcContext();
-//        THREAT_LOCAL_CONTEXT.set(context);
-//        return context;
-//    }
 
     public void addOption(String key, String value) {
         options.put(key, value);
