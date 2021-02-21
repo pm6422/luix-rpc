@@ -1,14 +1,14 @@
 package org.infinity.rpc.democlient.utils;
 
-public abstract class RequesterIdHolder {
+public abstract class RequestIdHolder {
     private static final ThreadLocal<String> HOLDER = ThreadLocal.withInitial(() -> "");
 
-    public static String getRequesterId() {
+    public static String getRequestId() {
         return HOLDER.get();
     }
 
-    public static void setRequesterId(String requesterId) {
-        HOLDER.set(requesterId);
+    public static void setRequestId(String requestId) {
+        HOLDER.set(requestId);
     }
 
     public static void destroy() {

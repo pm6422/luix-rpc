@@ -144,6 +144,11 @@ application:
         license: 1.0
         license-url: http://www.apache.org/licenses/LICENSE-2.0.html
         host:
+    aop-logging:
+        enabled: true
+        method-whitelist-mode: false
+        method-whitelist:
+            - AppController.findById
     elapsed-time-logging:
         enabled: true
         slow-execution-threshold: 300 # unit: ms
