@@ -22,6 +22,8 @@ public class RpcCheckHealthRequest extends RpcRequest {
         this.interfaceName = CHECK_HEALTH_INTERFACE_NAME;
         this.methodName = CHECK_HEALTH_METHOD_NAME;
         this.methodParameters = CHECK_HEALTH_METHOD_PARAM;
+        // Asynchronous call
+        this.async = true;
     }
 
     public static boolean isCheckHealthRequest(Object message) {

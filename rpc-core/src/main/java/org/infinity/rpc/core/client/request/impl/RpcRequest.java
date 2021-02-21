@@ -32,6 +32,7 @@ public class RpcRequest implements Requestable, Serializable {
      */
     protected            String              methodParameters;
     protected            Object[]            methodArguments;
+    protected            boolean             async            = false;
     protected            int                 retryNumber;
     protected            long                sendingTime;
     protected            long                receivedTime;
@@ -46,11 +47,12 @@ public class RpcRequest implements Requestable, Serializable {
      */
     protected            int                 serializeNum     = 0;
 
-    public RpcRequest(long requestId, String interfaceName, String methodName, String methodParameters) {
+    public RpcRequest(long requestId, String interfaceName, String methodName, String methodParameters, boolean async) {
         this.requestId = requestId;
         this.interfaceName = interfaceName;
         this.methodName = methodName;
         this.methodParameters = methodParameters;
+        this.async = async;
     }
 
     @Override

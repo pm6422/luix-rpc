@@ -61,4 +61,11 @@ public interface Requestable extends Exchangable {
      * @return serialize number
      */
     int getSerializeNum();
+
+    /**
+     * Decide whether it is a asynchronous calling
+     *
+     * @return true: asynchronous, false: synchronous
+     */
+    boolean isAsync();
 }

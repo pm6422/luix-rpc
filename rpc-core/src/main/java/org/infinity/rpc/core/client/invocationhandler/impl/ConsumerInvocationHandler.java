@@ -5,7 +5,7 @@ import org.infinity.rpc.core.client.invocationhandler.AbstractConsumerInvocation
 import org.infinity.rpc.core.client.proxy.ConsumerProxy;
 import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.utilities.annotation.AsyncMethod;
+import org.infinity.rpc.core.server.response.FutureResponse;
 import org.infinity.rpc.utilities.id.IdGenerator;
 
 import java.lang.reflect.InvocationHandler;
@@ -43,7 +43,8 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
         RpcRequest request = new RpcRequest(IdGenerator.generateTimestampId(),
                 consumerStub.getInterfaceName(),
                 method.getName(),
-                getMethodParameters(method));
+                getMethodParameters(method),
+                isAsyncMethod(method));
 
         // Set method arguments
         request.setMethodArguments(args);
@@ -55,7 +56,7 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
         request.addOption(REQUEST_TIMEOUT, String.valueOf(consumerStub.getRequestTimeout()));
         request.addOption(MAX_RETRIES, String.valueOf(consumerStub.getMaxRetries()));
 
-        return processRequest(request, method.getReturnType(), isAsyncMethod(method));
+        return processRequest(request, method.getReturnType());
     }
 
     /**
@@ -78,12 +79,12 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
     }
 
     /**
-     * It is a asynchronous method calling if the method is annotated with {@link AsyncMethod}
+     * It is a asynchronous method calling if the return type of method is type of {@link FutureResponse}
      *
      * @param method method
      * @return true: async call, false: sync call
      */
     private boolean isAsyncMethod(Method method) {
-        return method.isAnnotationPresent(AsyncMethod.class);
+        return method.getReturnType().equals(FutureResponse.class);
     }
 }

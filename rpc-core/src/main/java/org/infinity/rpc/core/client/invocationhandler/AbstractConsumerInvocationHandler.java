@@ -8,8 +8,6 @@ import org.infinity.rpc.core.exchange.RpcContext;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
 
-import static org.infinity.rpc.core.exchange.RpcContext.ATTRIBUTE_ASYNC;
-
 /**
  * @param <T>: The interface class of the consumer
  */
@@ -21,13 +19,12 @@ public abstract class AbstractConsumerInvocationHandler<T> {
     /**
      * @param request    RPC request
      * @param returnType return type of method
-     * @param async      async method call indicator
      * @return result of method
      */
-    protected Object processRequest(Requestable request, Class<?> returnType, boolean async) {
+    protected Object processRequest(Requestable request, Class<?> returnType) {
         // Create a new {@link RpcContext} for each thread
         RpcContext context = RpcContext.getInstance();
-        copy(context, request, async);
+        copy(context, request);
 
         Responseable response;
 //            boolean throwException = true;
@@ -48,9 +45,8 @@ public abstract class AbstractConsumerInvocationHandler<T> {
      * @param context RPC context
      * @param request RPC request
      */
-    private void copy(RpcContext context, Requestable request, boolean async) {
+    private void copy(RpcContext context, Requestable request) {
         context.setRequestId(request.getRequestId());
-        context.addAttribute(ATTRIBUTE_ASYNC, async);
 
         // Copy options from RPC context to RPC request
         context.getOptions().forEach(request::addOption);

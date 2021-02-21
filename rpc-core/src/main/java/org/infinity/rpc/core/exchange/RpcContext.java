@@ -13,7 +13,6 @@ import java.util.Map;
 @Setter
 @Getter
 public class RpcContext {
-    public static final  String                  ATTRIBUTE_ASYNC      = "async";
     /**
      * Create a new {@link RpcContext} for each thread
      */

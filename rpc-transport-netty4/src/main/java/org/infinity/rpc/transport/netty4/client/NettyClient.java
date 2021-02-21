@@ -16,7 +16,6 @@ import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.Channel;
-import org.infinity.rpc.core.exchange.RpcContext;
 import org.infinity.rpc.core.exchange.client.AbstractSharedPoolClient;
 import org.infinity.rpc.core.exchange.client.SharedObjectFactory;
 import org.infinity.rpc.core.exchange.constants.ChannelState;
@@ -38,7 +37,6 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT;
 import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT_DEFAULT_VALUE;
 import static org.infinity.rpc.core.destroy.ScheduledThreadPool.RECYCLE_TIMEOUT_TASK_THREAD_POOL;
-import static org.infinity.rpc.core.exchange.RpcContext.ATTRIBUTE_ASYNC;
 
 /**
  * toto: implements StatisticCallback
@@ -94,15 +92,10 @@ public class NettyClient extends AbstractSharedPoolClient {
         if (!isActive()) {
             throw new RpcServiceException("NettyChannel is unavailable: url=" + providerUrl.getUri() + request);
         }
-        boolean isAsync = false;
-        Object async = RpcContext.getInstance().getAttribute(ATTRIBUTE_ASYNC);
-        if (async instanceof Boolean) {
-            isAsync = (Boolean) async;
-        }
-        return request(request, isAsync);
+        return doRequest(request);
     }
 
-    private Responseable request(Requestable request, boolean async) {
+    private Responseable doRequest(Requestable request) {
         Channel channel;
         Responseable response;
         try {
@@ -128,7 +121,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         }
 
         // asynchronous or sync result
-        response = asyncResponse(response, async);
+        response = asyncResponse(response, request.isAsync());
         return response;
     }
 
@@ -346,7 +339,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         try {
             log.info("Checking health for url [{}]", providerUrl.getUri());
             // async request后，如果service is active，那么将会自动把该client设置成可用
-            request(request, true);
+            doRequest(request);
         } catch (Exception e) {
             log.error("Failed to check health for url [{}] with message {}", providerUrl.getUri(), e.getMessage());
         }
