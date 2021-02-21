@@ -16,7 +16,7 @@ import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.Channel;
-import org.infinity.rpc.core.exchange.ExchangeContext;
+import org.infinity.rpc.core.exchange.RpcContext;
 import org.infinity.rpc.core.exchange.client.AbstractSharedPoolClient;
 import org.infinity.rpc.core.exchange.client.SharedObjectFactory;
 import org.infinity.rpc.core.exchange.constants.ChannelState;
@@ -38,6 +38,7 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT;
 import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT_DEFAULT_VALUE;
 import static org.infinity.rpc.core.destroy.ScheduledThreadPool.RECYCLE_TIMEOUT_TASK_THREAD_POOL;
+import static org.infinity.rpc.core.exchange.RpcContext.ATTRIBUTE_ASYNC;
 
 /**
  * toto: implements StatisticCallback
@@ -94,7 +95,7 @@ public class NettyClient extends AbstractSharedPoolClient {
             throw new RpcServiceException("NettyChannel is unavailable: url=" + providerUrl.getUri() + request);
         }
         boolean isAsync = false;
-        Object async = ExchangeContext.getInstance().getAttribute(RpcConstants.ASYNC_SUFFIX);
+        Object async = RpcContext.getInstance().getAttribute(ATTRIBUTE_ASYNC);
         if (async instanceof Boolean) {
             isAsync = (Boolean) async;
         }

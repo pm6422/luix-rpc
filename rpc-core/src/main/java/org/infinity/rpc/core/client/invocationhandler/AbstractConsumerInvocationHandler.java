@@ -1,12 +1,14 @@
 package org.infinity.rpc.core.client.invocationhandler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exception.RpcServiceException;
-import org.infinity.rpc.core.exchange.ExchangeContext;
-import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.rpc.core.exception.RpcServiceException;
+import org.infinity.rpc.core.exchange.RpcContext;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
+
+import static org.infinity.rpc.core.exchange.RpcContext.ATTRIBUTE_ASYNC;
 
 /**
  * @param <T>: The interface class of the consumer
@@ -19,19 +21,13 @@ public abstract class AbstractConsumerInvocationHandler<T> {
     /**
      * @param request    RPC request
      * @param returnType return type of method
-     * @param async      async call flag
-     * @return return result of method
+     * @param async      async method call indicator
+     * @return result of method
      */
     protected Object processRequest(Requestable request, Class<?> returnType, boolean async) {
-        ExchangeContext threadRpcContext = ExchangeContext.getInstance();
-        threadRpcContext.setAsyncCall(async);
-
-        // Copy values from context to request object
-        copyContextToRequest(threadRpcContext, request);
-//        RequestContext.initialize(request);
-
-//            request.addAttachment(Url.PARAM_APP, infinityProperties.getApplication().getName());
-//        request.setProtocol(consumerStub.getProviderCluster().getProtocol());
+        // Create a new {@link RpcContext} for each thread
+        RpcContext context = RpcContext.getInstance();
+        copy(context, request, async);
 
         Responseable response;
 //            boolean throwException = true;
@@ -47,17 +43,16 @@ public abstract class AbstractConsumerInvocationHandler<T> {
     }
 
     /**
-     * Copy values from context to request object
+     * Copy values between RPC context and RPC request object
      *
-     * @param threadRpcContext RPC context object
-     * @param request          request object
+     * @param context RPC context
+     * @param request RPC request
      */
-    private void copyContextToRequest(ExchangeContext threadRpcContext, Requestable request) {
-        // Copy attachments from RPC context to request object
-        threadRpcContext.getAttachments().forEach(request::addOption);
+    private void copy(RpcContext context, Requestable request, boolean async) {
+        context.setRequestId(request.getRequestId());
+        context.addAttribute(ATTRIBUTE_ASYNC, async);
 
-        // Copy client request id from RPC context to request object
-//        request.setClientRequestId(threadRpcContext.getClientRequestId());
+        // Copy options from RPC context to RPC request
+        context.getOptions().forEach(request::addOption);
     }
-
 }

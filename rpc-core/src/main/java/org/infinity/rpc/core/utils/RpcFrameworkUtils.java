@@ -215,12 +215,6 @@ public class RpcFrameworkUtils {
 //        local.setRegProtocol("local");
 //        return local;
 //    }
-    public static String removeAsyncSuffix(String path) {
-        if (path != null && path.endsWith(RpcConstants.ASYNC_SUFFIX)) {
-            return path.substring(0, path.length() - RpcConstants.ASYNC_SUFFIX.length());
-        }
-        return path;
-    }
 
     public static RpcResponse buildErrorResponse(Requestable request, Exception e) {
         return buildErrorResponse(request.getRequestId(), request.getProtocolVersion(), e);
