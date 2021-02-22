@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.ParameterBuilder;
-import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
@@ -15,11 +13,9 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static org.infinity.rpc.webcenter.config.ApplicationConstants.GLOBAL_HEADER_REQUESTER_ID;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 /**
@@ -72,10 +68,10 @@ public class SwaggerConfiguration {
                 .directModelSubstitute(java.time.LocalDateTime.class, Date.class)
                 .select()
                 .paths(regex(path))
-                .build()
+                .build();
 //                .securitySchemes(securitySchemes())
 //                .securityContexts(securityContexts())
-                .globalOperationParameters(createGlobalParameters());
+//                .globalOperationParameters(createGlobalParameters());
         log.debug("Built Swagger API docket with group [{}]", groupName);
         return docket;
     }
@@ -98,27 +94,26 @@ public class SwaggerConfiguration {
      *
      * @return global operation parameters
      */
-    private List<Parameter> createGlobalParameters() {
-        ParameterBuilder requesterParamBuilder = new ParameterBuilder();
-        requesterParamBuilder.name(GLOBAL_HEADER_REQUESTER_ID)
-                .description("请求ID(全局参数)")
-                .modelRef(new ModelRef("string"))
-                .parameterType("header")
-                .required(false)
-                .build();
-
-//        ParameterBuilder tokenParameterBuilder = new ParameterBuilder();
-//        tokenParameterBuilder.name("Authorization")
-//                .defaultValue("Bearer ")
-//                .description("访问令牌")
+//    private List<Parameter> createGlobalParameters() {
+//        ParameterBuilder requesterParamBuilder = new ParameterBuilder();
+//        requesterParamBuilder.name(REQUEST_ID)
+//                .description("请求ID(全局参数)")
 //                .modelRef(new ModelRef("string"))
 //                .parameterType("header")
 //                .required(false)
 //                .build();
-
-        return Collections.singletonList(requesterParamBuilder.build());
-    }
-
+//
+////        ParameterBuilder tokenParameterBuilder = new ParameterBuilder();
+////        tokenParameterBuilder.name("Authorization")
+////                .defaultValue("Bearer ")
+////                .description("访问令牌")
+////                .modelRef(new ModelRef("string"))
+////                .parameterType("header")
+////                .required(false)
+////                .build();
+//
+//        return Collections.singletonList(requesterParamBuilder.build());
+//    }
     private List<ApiKey> securitySchemes() {
         List<ApiKey> apiKeyList = new ArrayList<>();
         apiKeyList.add(new ApiKey(SECURITY_TOKEN_NAME, SECURITY_TOKEN_NAME, "header"));
