@@ -5,20 +5,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.TraceableContext;
-import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.exchange.constants.FutureState;
+import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
+import org.infinity.rpc.core.serialization.DeserializableObject;
 import org.infinity.rpc.core.server.response.FutureListener;
 import org.infinity.rpc.core.server.response.FutureResponse;
 import org.infinity.rpc.core.server.response.Responseable;
-import org.infinity.rpc.core.serialization.DeserializableObject;
-import org.infinity.rpc.core.exchange.constants.FutureState;
-import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 import org.infinity.rpc.core.url.Url;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,39 +31,35 @@ import java.util.concurrent.ConcurrentHashMap;
 @Setter
 @NoArgsConstructor
 @ToString
-public class RpcFutureResponse implements FutureResponse {
-
-    protected final    Object               lock             = new Object();
-    protected volatile FutureState          state            = FutureState.DOING;
-    protected          Object               resultObject;
-    protected          Exception            exception;
-    protected          long                 createTime       = System.currentTimeMillis();
-    /**
-     * remove
-     */
-    protected          String               protocol;
-    protected          byte                 protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
-    protected          String               group;
-    protected          String               version;
-    protected          int                  timeout;
-    protected          long                 processTime      = 0;
-    protected          Requestable          request;
-    protected          List<FutureListener> listeners;
-    protected          Url                  serverUrl;
-    protected          Class<?>             returnType;
-    protected          long                 sendingTime;
-    protected          long                 receivedTime;
-    protected          long                 elapsedTime;
-    protected          Map<String, String>  traces           = new ConcurrentHashMap<>();
+public class RpcFutureResponse implements FutureResponse, Serializable {
+    private static final long                 serialVersionUID = -8089955194208179445L;
+    protected final      Object               lock             = new Object();
+    protected volatile   FutureState          state            = FutureState.DOING;
+    protected            Object               resultObject;
+    protected            Exception            exception;
+    protected            long                 createdTime      = System.currentTimeMillis();
+    protected            byte                 protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
+    protected            String               group;
+    protected            String               version;
+    protected            int                  timeout;
+    protected            long                 processTime      = 0;
+    protected            Requestable          request;
+    protected            List<FutureListener> listeners;
+    protected            Url                  serverUrl;
+    protected            Class<?>             returnType;
+    protected            long                 sendingTime;
+    protected            long                 receivedTime;
+    protected            long                 elapsedTime;
+    protected            Map<String, String>  traces           = new ConcurrentHashMap<>();
     /**
      * RPC request options, all the optional RPC request parameters will be put in it.
      */
-    protected          Map<String, String>  options          = new ConcurrentHashMap<>();
-    protected          TraceableContext     traceableContext = new TraceableContext();
+    protected            Map<String, String>  options          = new ConcurrentHashMap<>();
+    protected            TraceableContext     traceableContext = new TraceableContext();
     /**
      * default serialization is hession2
      */
-    protected          int                  serializeNum     = 0;
+    protected            int                  serializeNum     = 0;
 
     public RpcFutureResponse(Requestable requestObj, int timeout, Url serverUrl) {
         this.request = requestObj;
@@ -90,7 +87,7 @@ public class RpcFutureResponse implements FutureResponse {
     @Override
     public boolean cancel() {
         Exception e = new RpcServiceException(this.getClass().getName() + " task cancel: serverPort=" + serverUrl.getAddress() + " "
-                + request.toString() + " cost=" + (System.currentTimeMillis() - createTime));
+                + request.toString() + " cost=" + (System.currentTimeMillis() - createdTime));
         return cancel(e);
     }
 
@@ -158,7 +155,7 @@ public class RpcFutureResponse implements FutureResponse {
     }
 
     private void timeoutSoCancel() {
-        this.processTime = System.currentTimeMillis() - createTime;
+        this.processTime = System.currentTimeMillis() - createdTime;
 
         synchronized (lock) {
             if (!isDoing()) {
@@ -167,7 +164,7 @@ public class RpcFutureResponse implements FutureResponse {
 
             state = FutureState.CANCELLED;
             exception = new RpcServiceException(this.getClass().getName() + " request timeout: serverPort=" + serverUrl.getAddress()
-                    + " " + request + " cost=" + (System.currentTimeMillis() - createTime),
+                    + " " + request + " cost=" + (System.currentTimeMillis() - createdTime),
                     RpcErrorMsgConstant.SERVICE_TIMEOUT);
 
             lock.notifyAll();
@@ -227,11 +224,11 @@ public class RpcFutureResponse implements FutureResponse {
                     lock.wait();
                 } catch (Exception e) {
                     cancel(new RpcServiceException(this.getClass().getName() + " getValue InterruptedException : "
-                            + request.toString() + " cost=" + (System.currentTimeMillis() - createTime), e));
+                            + request.toString() + " cost=" + (System.currentTimeMillis() - createdTime), e));
                 }
                 return getResultOrThrowable();
             } else {
-                long waitTime = timeout - (System.currentTimeMillis() - createTime);
+                long waitTime = timeout - (System.currentTimeMillis() - createdTime);
                 if (waitTime > 0) {
                     for (; ; ) {
                         try {
@@ -243,7 +240,7 @@ public class RpcFutureResponse implements FutureResponse {
                         if (!isDoing()) {
                             break;
                         } else {
-                            waitTime = timeout - (System.currentTimeMillis() - createTime);
+                            waitTime = timeout - (System.currentTimeMillis() - createdTime);
                             if (waitTime <= 0) {
                                 break;
                             }

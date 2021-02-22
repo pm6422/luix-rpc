@@ -70,7 +70,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         for (Map.Entry<Long, FutureResponse> entry : callbackMap.entrySet()) {
             try {
                 FutureResponse future = entry.getValue();
-                if (future.getCreateTime() + future.getTimeout() < currentTime) {
+                if (future.getCreatedTime() + future.getTimeout() < currentTime) {
                     // timeout: remove from callback list, and then cancel
                     removeCallback(entry.getKey());
                     future.cancel();
@@ -108,7 +108,7 @@ public class NettyClient extends AbstractSharedPoolClient {
                 return null;
             }
 
-            // async request
+            // All requests are handled asynchronously, and return type always be RpcFutureResponse
             response = channel.request(request);
         } catch (Exception e) {
             log.error("NettyClient request Error: url=" + providerUrl.getUri() + " " + request + ", " + e.getMessage());
@@ -120,25 +120,25 @@ public class NettyClient extends AbstractSharedPoolClient {
             }
         }
 
-        // asynchronous or sync result
+        // Return RpcFutureResponse directly or convert RpcFutureResponse to RpcResponse
         response = asyncResponse(response, request.isAsync());
         return response;
     }
 
     /**
-     * 如果async是false，那么同步获取response的数据
+     *
      *
      * @param response response
      * @param async    async flag
      * @return response
      */
     private Responseable asyncResponse(Responseable response, boolean async) {
-        if (async || !(response instanceof FutureResponse)) {
-            // Asynchronous call
+        if (async) {
+            // If it is asynchronous call, return RpcFutureResponse directly.
             return response;
         }
-        // Synchronous call
-        return new RpcResponse(response);
+        // If it is synchronous call, firstly it takes time to convert RpcFutureResponse to RpcResponse, and then return it.
+        return RpcResponse.of(response);
     }
 
     @Override

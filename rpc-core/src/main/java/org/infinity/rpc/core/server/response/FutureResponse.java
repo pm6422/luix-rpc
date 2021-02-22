@@ -5,7 +5,7 @@ public interface FutureResponse extends Responseable, Future {
 
     void onFailure(Responseable response);
 
-    long getCreateTime();
+    long getCreatedTime();
 
     void setReturnType(Class<?> clazz);
 }

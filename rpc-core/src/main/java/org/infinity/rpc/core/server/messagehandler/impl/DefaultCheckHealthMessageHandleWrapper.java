@@ -26,7 +26,7 @@ public class DefaultCheckHealthMessageHandleWrapper implements MessageHandler {
 
     private Responseable handleCheckHealthRequest(Object message) {
         Requestable request = (Requestable) message;
-        Responseable response = new RpcCheckHealthResponse(request.getRequestId());
+        Responseable response = RpcCheckHealthResponse.of(request.getRequestId());
         response.setProtocolVersion(request.getProtocolVersion());
         return response;
     }

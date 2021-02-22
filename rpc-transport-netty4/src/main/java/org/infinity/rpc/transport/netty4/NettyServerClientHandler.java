@@ -166,7 +166,7 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
                 response = (RpcResponse) result;
                 response.setProtocolVersion(request.getProtocolVersion());
             } else {
-                response = new RpcResponse(result);
+                response = RpcResponse.of(result);
             }
             response.setRequestId(request.getRequestId());
             response.setElapsedTime(System.currentTimeMillis() - processStartTime);

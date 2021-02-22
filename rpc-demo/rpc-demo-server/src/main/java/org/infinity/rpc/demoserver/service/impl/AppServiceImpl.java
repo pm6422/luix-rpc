@@ -2,6 +2,9 @@ package org.infinity.rpc.demoserver.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.server.annotation.Provider;
+import org.infinity.rpc.core.server.response.FutureResponse;
+import org.infinity.rpc.core.server.response.impl.RpcFutureResponse;
+import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.democommon.domain.App;
 import org.infinity.rpc.democommon.service.AppService;
 import org.infinity.rpc.demoserver.exception.NoDataFoundException;
@@ -32,10 +35,12 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public App insert(App domain) {
+    public FutureResponse insert(App domain) {
         appRepository.save(domain);
         log.debug("Created Information for app: {}", domain);
-        return domain;
+        FutureResponse response = new RpcFutureResponse();
+        response.onSuccess(RpcResponse.of(domain));
+        return response;
     }
 
     @Override

@@ -5,11 +5,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.infinity.rpc.core.exception.RpcInvocationException;
 import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.exception.RpcInvocationException;
+import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 import org.infinity.rpc.core.server.response.Callbackable;
 import org.infinity.rpc.core.server.response.Responseable;
-import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -42,26 +42,44 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
      */
     protected            int                 serializeNum     = 0;
 
-    public RpcResponse(Object result) {
-        this.resultObject = result;
+    public static RpcResponse of(Responseable resp) {
+        RpcResponse response = new RpcResponse();
+        response.setRequestId(resp.getRequestId());
+        response.setResultObject(resp.getResult());
+        response.setException(resp.getException());
+        response.setReceivedTime(resp.getReceivedTime());
+        response.setElapsedTime(resp.getElapsedTime());
+        response.setTimeout(resp.getTimeout());
+        response.setProtocolVersion(resp.getProtocolVersion());
+        response.setSerializeNum(resp.getSerializeNum());
+        response.setOptions(resp.getOptions());
+        resp.getTraces().forEach((key, value) -> response.addTrace(key, key));
+        return response;
     }
 
-    public RpcResponse(long requestId, Object result) {
-        this.requestId = requestId;
-        this.resultObject = result;
+    public static RpcResponse of(Object result) {
+        RpcResponse response = new RpcResponse();
+        response.setResultObject(result);
+        return response;
     }
 
-    public RpcResponse(Responseable response) {
-        this.resultObject = response.getResult();
-        this.exception = response.getException();
-        this.requestId = response.getRequestId();
-        this.elapsedTime = response.getElapsedTime();
-        this.timeout = response.getTimeout();
-        this.protocolVersion = response.getProtocolVersion();
-        this.serializeNum = response.getSerializeNum();
-        this.options = response.getOptions();
-        this.receivedTime = response.getReceivedTime();
-        response.getTraces().forEach((key, value) -> this.addTrace(key, key));
+    public RpcResponse of(long requestId, Object result) {
+        RpcResponse response = new RpcResponse();
+        response.setRequestId(requestId);
+        response.setResultObject(result);
+        return response;
+    }
+
+    public static RpcResponse error(Requestable request, Exception e) {
+        return error(request.getRequestId(), request.getProtocolVersion(), e);
+    }
+
+    private static RpcResponse error(long requestId, byte protocolVersion, Exception e) {
+        RpcResponse rpcResponse = new RpcResponse();
+        rpcResponse.setRequestId(requestId);
+        rpcResponse.setProtocolVersion(protocolVersion);
+        rpcResponse.setException(e);
+        return rpcResponse;
     }
 
     @Override
@@ -124,17 +142,5 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
                 }
             }
         }
-    }
-
-    public static RpcResponse error(Requestable request, Exception e) {
-        return error(request.getRequestId(), request.getProtocolVersion(), e);
-    }
-
-    private static RpcResponse error(long requestId, byte protocolVersion, Exception e) {
-        RpcResponse rpcResponse = new RpcResponse();
-        rpcResponse.setRequestId(requestId);
-        rpcResponse.setProtocolVersion(protocolVersion);
-        rpcResponse.setException(e);
-        return rpcResponse;
     }
 }

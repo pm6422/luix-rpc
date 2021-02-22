@@ -1,14 +1,16 @@
 package org.infinity.rpc.core.exchange;
 
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class TraceableContext {
-    protected AtomicLong          receiveTime  = new AtomicLong();
-    protected AtomicLong          sendTime     = new AtomicLong();
-    protected Map<String, String> traceInfoMap = new ConcurrentHashMap<>();
+public class TraceableContext implements Serializable {
+    private static final long                serialVersionUID = 5065115597463921555L;
+    protected            AtomicLong          receiveTime      = new AtomicLong();
+    protected            AtomicLong          sendTime         = new AtomicLong();
+    protected            Map<String, String> traceInfoMap     = new ConcurrentHashMap<>();
 
     public long getReceiveTime() {
         return receiveTime.get();

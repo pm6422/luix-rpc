@@ -11,8 +11,11 @@ public class RpcCheckHealthResponse extends RpcResponse {
     private static final long   serialVersionUID      = -3779389154729791142L;
     public static final  String CHECK_HEALTH_RESPONSE = "SUCCESS";
 
-    public RpcCheckHealthResponse(long requestId) {
-        super(requestId, CHECK_HEALTH_RESPONSE);
+    public static RpcCheckHealthResponse of(long requestId) {
+        RpcCheckHealthResponse response = new RpcCheckHealthResponse();
+        response.setRequestId(requestId);
+        response.setResultObject(CHECK_HEALTH_RESPONSE);
+        return response;
     }
 
 }

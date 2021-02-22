@@ -52,6 +52,7 @@ public class NettyChannel implements Channel {
         int timeout = nettyClient.getProviderUrl()
                 .getMethodParameter(request.getMethodName(), request.getMethodParameters(),
                         REQUEST_TIMEOUT, REQUEST_TIMEOUT_DEFAULT_VALUE);
+        // All requests are handled asynchronously
         FutureResponse response = new RpcFutureResponse(request, timeout, this.nettyClient.getProviderUrl());
         this.nettyClient.registerCallback(request.getRequestId(), response);
         byte[] msg = CodecUtils.encodeObjectToBytes(this, codec, request);
