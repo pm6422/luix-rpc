@@ -23,10 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER;
-import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 
-@SpiName("default")
+@SpiName(CODEC_VAL_DEFAULT)
 public class DefaultCodec extends AbstractCodec {
     public static final  short MAGIC = (short) 0xF0F0;
     private static final byte  MASK  = 0x07;
@@ -180,7 +179,7 @@ public class DefaultCodec extends AbstractCodec {
     }
 
     private Serializer getSerializer(Channel channel) {
-        String serializerName = channel.getProviderUrl().getOption(SERIALIZER, SERIALIZER_DEFAULT_VALUE);
+        String serializerName = channel.getProviderUrl().getOption(SERIALIZER, SERIALIZER_VAL_HESSIAN2);
         return Serializer.getInstance(serializerName);
     }
 

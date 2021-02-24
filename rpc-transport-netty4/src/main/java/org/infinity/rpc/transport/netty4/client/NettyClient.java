@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT;
-import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT_VAL_DEFAULT;
 import static org.infinity.rpc.core.destroy.ScheduledThreadPool.RECYCLE_TIMEOUT_TASK_THREAD_POOL;
 
 /**
@@ -60,7 +60,7 @@ public class NettyClient extends AbstractSharedPoolClient {
 
     public NettyClient(Url providerUrl) {
         super(providerUrl);
-        maxClientFailedConn = providerUrl.getIntOption(MAX_CLIENT_FAILED_CONN, MAX_CLIENT_FAILED_CONN_DEFAULT_VALUE);
+        maxClientFailedConn = providerUrl.getIntOption(MAX_CLIENT_FAILED_CONN, MAX_CLIENT_FAILED_CONN_VAL_DEFAULT);
         timeoutFuture = ScheduledThreadPool.schedulePeriodicalTask(RECYCLE_TIMEOUT_TASK_THREAD_POOL,
                 NETTY_TIMEOUT_TIMER_INTERVAL, this::recycleTimeoutTask);
     }
@@ -148,7 +148,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         }
 
         bootstrap = new Bootstrap();
-        int timeout = getProviderUrl().getIntOption(CONNECT_TIMEOUT, CONNECT_TIMEOUT_DEFAULT_VALUE);
+        int timeout = getProviderUrl().getIntOption(CONNECT_TIMEOUT, CONNECT_TIMEOUT_VAL_DEFAULT);
         if (timeout <= 0) {
             throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
@@ -156,7 +156,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         bootstrap.option(ChannelOption.TCP_NODELAY, true);
         bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
         // 最大响应包限制
-        final int maxContentLength = providerUrl.getIntOption(MAX_CONTENT_LENGTH, MAX_CONTENT_LENGTH_DEFAULT_VALUE);
+        final int maxContentLength = providerUrl.getIntOption(MAX_CONTENT_LENGTH, MAX_CONTENT_LENGTH_VAL_DEFAULT);
         bootstrap.group(NIO_EVENT_LOOP_GROUP)
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<SocketChannel>() {

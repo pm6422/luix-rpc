@@ -7,10 +7,9 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
-import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT;
-import static org.infinity.rpc.core.constant.RegistryConstants.SESSION_TIMEOUT;
+import static org.infinity.rpc.core.constant.RegistryConstants.*;
 
-@SpiName("zookeeper")
+@SpiName(REGISTRY_VAL_ZOOKEEPER)
 @Slf4j
 public class ZookeeperRegistryFactory extends AbstractRegistryFactory {
     /**

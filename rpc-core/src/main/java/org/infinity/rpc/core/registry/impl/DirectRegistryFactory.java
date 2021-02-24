@@ -6,7 +6,9 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
-@SpiName("direct")
+import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_DIRECT;
+
+@SpiName(REGISTRY_VAL_DIRECT)
 @Slf4j
 public class DirectRegistryFactory extends AbstractRegistryFactory {
     @Override

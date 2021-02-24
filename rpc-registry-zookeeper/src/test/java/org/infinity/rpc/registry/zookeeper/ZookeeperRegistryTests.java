@@ -21,13 +21,11 @@ import org.junit.Test;
 
 import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
-import static org.infinity.rpc.core.config.RegistryConfig.*;
-import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_VAL_INFINITY;
 import static org.infinity.rpc.core.constant.RegistryConstants.*;
-import static org.infinity.rpc.core.constant.ServiceConstants.GROUP_DEFAULT_VALUE;
-import static org.infinity.rpc.core.constant.ServiceConstants.VERSION_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ServiceConstants.GROUP_VAL_DEFAULT;
+import static org.infinity.rpc.core.constant.ServiceConstants.VERSION_VAL_DEFAULT;
 import static org.junit.Assert.*;
 
 @Slf4j
@@ -50,14 +48,14 @@ public class ZookeeperRegistryTests {
         int zkPort = Integer.parseInt(properties.getProperty("clientPort"));
         in.close();
 
-        registryUrl = Url.registryUrl(REGISTRY_DEFAULT_VALUE, REGISTRY_HOST, zkPort);
+        registryUrl = Url.registryUrl(REGISTRY_VAL_ZOOKEEPER, REGISTRY_HOST, zkPort);
 
         // client url has the same protocol and provider path to provider, but port is 0
-        clientUrl = Url.clientUrl(PROTOCOL_DEFAULT_VALUE, AddressUtils.LOCALHOST, provider, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE);
-        clientUrl.addOption("group", GROUP_DEFAULT_VALUE);
+        clientUrl = Url.clientUrl(PROTOCOL_VAL_INFINITY, AddressUtils.LOCALHOST, provider, GROUP_VAL_DEFAULT, VERSION_VAL_DEFAULT);
+        clientUrl.addOption("group", GROUP_VAL_DEFAULT);
 
-        providerUrl1 = Url.providerUrl(PROTOCOL_DEFAULT_VALUE, AddressUtils.LOCALHOST, 2000, provider, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE);
-        providerUrl2 = Url.providerUrl(PROTOCOL_DEFAULT_VALUE, "192.168.100.100", 2000, provider, GROUP_DEFAULT_VALUE, VERSION_DEFAULT_VALUE);
+        providerUrl1 = Url.providerUrl(PROTOCOL_VAL_INFINITY, AddressUtils.LOCALHOST, 2000, provider, GROUP_VAL_DEFAULT, VERSION_VAL_DEFAULT);
+        providerUrl2 = Url.providerUrl(PROTOCOL_VAL_INFINITY, "192.168.100.100", 2000, provider, GROUP_VAL_DEFAULT, VERSION_VAL_DEFAULT);
 
         zookeeper = new EmbeddedZookeeper();
         zookeeper.start();

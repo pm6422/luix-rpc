@@ -10,7 +10,7 @@ import java.net.InetSocketAddress;
 import java.util.Collection;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC;
-import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC_VAL_DEFAULT;
 
 public abstract class AbstractServer implements Server {
     protected InetSocketAddress localAddress;
@@ -27,7 +27,7 @@ public abstract class AbstractServer implements Server {
 
     public AbstractServer(Url providerUrl) {
         this.providerUrl = providerUrl;
-        this.codec = Codec.getInstance(providerUrl.getOption(CODEC, CODEC_DEFAULT_VALUE));
+        this.codec = Codec.getInstance(providerUrl.getOption(CODEC, CODEC_VAL_DEFAULT));
     }
 
     @Override

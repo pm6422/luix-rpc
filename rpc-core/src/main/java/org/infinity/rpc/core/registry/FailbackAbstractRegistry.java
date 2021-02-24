@@ -37,7 +37,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      * @param registryUrl registry url
      */
     private void scheduleRetry(Url registryUrl) {
-        long retryInterval = registryUrl.getIntOption(RETRY_INTERVAL, RETRY_INTERVAL_DEFAULT_VALUE);
+        long retryInterval = registryUrl.getIntOption(RETRY_INTERVAL, RETRY_INTERVAL_VAL_DEFAULT);
         // Retry to connect registry at retry interval
         ScheduledThreadPool.schedulePeriodicalTask(ScheduledThreadPool.RETRY_THREAD_POOL, retryInterval, this::doRetry);
     }

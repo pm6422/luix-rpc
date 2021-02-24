@@ -23,11 +23,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC;
-import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC_VAL_DEFAULT;
 import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT;
-import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT_VAL_DEFAULT;
 import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT;
-import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT_VAL_DEFAULT;
 
 @Slf4j
 public class NettyChannel implements Channel {
@@ -42,7 +42,7 @@ public class NettyChannel implements Channel {
     public NettyChannel(NettyClient nettyClient) {
         this.nettyClient = nettyClient;
         this.remoteAddress = new InetSocketAddress(nettyClient.getProviderUrl().getHost(), nettyClient.getProviderUrl().getPort());
-        codec = Codec.getInstance(nettyClient.getProviderUrl().getOption(CODEC, CODEC_DEFAULT_VALUE));
+        codec = Codec.getInstance(nettyClient.getProviderUrl().getOption(CODEC, CODEC_VAL_DEFAULT));
     }
 
     @Override
@@ -51,7 +51,7 @@ public class NettyChannel implements Channel {
         // Get method level parameter value
         int timeout = nettyClient.getProviderUrl()
                 .getMethodParameter(request.getMethodName(), request.getMethodParameters(),
-                        REQUEST_TIMEOUT, REQUEST_TIMEOUT_DEFAULT_VALUE);
+                        REQUEST_TIMEOUT, REQUEST_TIMEOUT_VAL_DEFAULT);
         // All requests are handled asynchronously
         FutureResponse response = new RpcFutureResponse(request, timeout, this.nettyClient.getProviderUrl());
         this.nettyClient.registerCallback(request.getRequestId(), response);
@@ -107,7 +107,7 @@ public class NettyChannel implements Channel {
         try {
             long start = System.currentTimeMillis();
             channelFuture = nettyClient.getBootstrap().connect(remoteAddress);
-            int timeout = nettyClient.getProviderUrl().getIntOption(CONNECT_TIMEOUT, CONNECT_TIMEOUT_DEFAULT_VALUE);
+            int timeout = nettyClient.getProviderUrl().getIntOption(CONNECT_TIMEOUT, CONNECT_TIMEOUT_VAL_DEFAULT);
             if (timeout <= 0) {
                 throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
             }

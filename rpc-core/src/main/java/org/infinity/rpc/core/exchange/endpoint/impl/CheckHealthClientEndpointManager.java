@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY;
-import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY_VAL_DEFAULT;
 import static org.infinity.rpc.core.destroy.ScheduledThreadPool.CHECK_HEALTH_THREAD_POOL;
 
 /**
@@ -83,7 +83,7 @@ public class CheckHealthClientEndpointManager implements EndpointManager {
         }
         Client client = (Client) endpoint;
         Url providerUrl = endpoint.getProviderUrl();
-        String heartbeatFactoryName = providerUrl.getOption(CHECK_HEALTH_FACTORY, CHECK_HEALTH_FACTORY_DEFAULT_VALUE);
+        String heartbeatFactoryName = providerUrl.getOption(CHECK_HEALTH_FACTORY, CHECK_HEALTH_FACTORY_VAL_DEFAULT);
         CheckHealthFactory checkHealthFactory = CheckHealthFactory.getInstance(heartbeatFactoryName);
         endpoints.put(client, checkHealthFactory);
     }

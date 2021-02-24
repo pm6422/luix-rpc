@@ -1,17 +1,19 @@
 package org.infinity.rpc.core.protocol.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.protocol.AbstractProtocol;
 import org.infinity.rpc.core.server.exporter.Exportable;
 import org.infinity.rpc.core.server.exporter.impl.DefaultRpcExporter;
 import org.infinity.rpc.core.server.messagehandler.impl.ProviderMessageRouter;
 import org.infinity.rpc.core.server.stub.ProviderStub;
-import org.infinity.rpc.core.protocol.AbstractProtocol;
 import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@SpiName("infinity")
+import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_VAL_INFINITY;
+
+@SpiName(PROTOCOL_VAL_INFINITY)
 @Slf4j
 public class InfinityProtocol extends AbstractProtocol {
 

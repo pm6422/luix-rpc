@@ -23,7 +23,7 @@ public class RegistryConfig {
      * Name of register center
      */
     @NotEmpty
-    private              String  name                = REGISTRY_DEFAULT_VALUE;
+    private              String  name                = REGISTRY_VAL_ZOOKEEPER;
     /**
      * Registry center host name
      */
@@ -42,22 +42,22 @@ public class RegistryConfig {
      * Timeout in milliseconds for connection session between registry client and server
      */
     @PositiveOrZero
-    private              Integer sessionTimeout      = SESSION_TIMEOUT_DEFAULT_VALUE;
+    private              Integer sessionTimeout      = SESSION_TIMEOUT_VAL_DEFAULT;
     /**
      * Timeout in milliseconds when registry client building a connection to registry server
      */
     @PositiveOrZero
-    private              Integer connectTimeout      = CONNECT_TIMEOUT_DEFAULT_VALUE;
+    private              Integer connectTimeout      = CONNECT_TIMEOUT_VAL_DEFAULT;
     /**
      * Registration and subscription retry interval in milliseconds
      * after the connection failure between provider, consumer and registry.
      */
     @PositiveOrZero
-    private              Integer retryInterval       = RETRY_INTERVAL_DEFAULT_VALUE;
+    private              Integer retryInterval       = RETRY_INTERVAL_VAL_DEFAULT;
     /**
      * Indicator used to decide whether need to throw exception after registering or unregistering failure
      */
-    private              boolean throwException      = THROW_EXCEPTION_DEFAULT_VALUE;
+    private              boolean throwException      = THROW_EXCEPTION_VAL_DEFAULT;
     /**
      * Registry url
      */
@@ -70,10 +70,10 @@ public class RegistryConfig {
     }
 
     private void checkIntegrity() {
-        if (name.equals(REGISTRY_DEFAULT_VALUE)) {
+        if (name.equals(REGISTRY_VAL_ZOOKEEPER)) {
             RpcConfigValidator.notEmpty(host, "Please specify value of 'infinity.registry.host' when 'infinity.registry=zookeeper'!");
             RpcConfigValidator.notNull(port, "Please specify value of 'infinity.registry.port' when 'infinity.registry=zookeeper'!");
-        } else if (name.equals(REGISTRY_VALUE_DIRECT)) {
+        } else if (name.equals(REGISTRY_VAL_DIRECT)) {
             RpcConfigValidator.notEmpty(directAddresses, "Please specify value of 'infinity.registry.directAddresses' when 'infinity.registry=direct'!");
             RpcConfigValidator.mustEmpty(host, "Do NOT specify value of 'infinity.registry.host' when 'infinity.registry=direct'!");
             RpcConfigValidator.mustNull(port, "Do NOT specify value of 'infinity.registry.port' when 'infinity.registry=direct'!");
@@ -88,7 +88,7 @@ public class RegistryConfig {
 
     private Url createRegistryUrl() {
         Url registryUrl;
-        if (name.equals(REGISTRY_VALUE_DIRECT)) {
+        if (name.equals(REGISTRY_VAL_DIRECT)) {
             // Build direct registry url
             registryUrl = Url.registryUrl(name, LOCALHOST, 0);
             registryUrl.addOption(DIRECT_ADDRESSES, directAddresses);

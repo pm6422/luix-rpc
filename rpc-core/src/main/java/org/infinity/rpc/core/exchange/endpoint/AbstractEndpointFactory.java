@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.SHARED_CHANNEL;
-import static org.infinity.rpc.core.constant.ProtocolConstants.SHARED_CHANNEL_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ProtocolConstants.SHARED_CHANNEL_VAL_DEFAULT;
 
 /**
  * abstract endpoint factory
@@ -65,7 +65,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
             String ipPort = providerUrl.getAddress();
             String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
 
-            boolean shareChannel = providerUrl.getBooleanOption(SHARED_CHANNEL, SHARED_CHANNEL_DEFAULT_VALUE);
+            boolean shareChannel = providerUrl.getBooleanOption(SHARED_CHANNEL, SHARED_CHANNEL_VAL_DEFAULT);
             if (!shareChannel) {
                 // 独享一个端口
                 log.info(this.getClass().getSimpleName() + " create no_share_channel server: url={}", providerUrl);
@@ -123,7 +123,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
 
     private <T extends Endpoint> void safeReleaseResource(T endpoint, Url url, Map<String, T> ipPort2Endpoint,
                                                           Map<T, Set<String>> endpoint2Urls) {
-        boolean shareChannel = url.getBooleanOption(SHARED_CHANNEL, SHARED_CHANNEL_DEFAULT_VALUE);
+        boolean shareChannel = url.getBooleanOption(SHARED_CHANNEL, SHARED_CHANNEL_VAL_DEFAULT);
 
         if (!shareChannel) {
             destroy(endpoint);

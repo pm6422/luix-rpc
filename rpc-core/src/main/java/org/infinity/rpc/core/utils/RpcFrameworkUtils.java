@@ -15,11 +15,11 @@ import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTO
 public class RpcFrameworkUtils {
 
     public static String getGroupFromRequest(Requestable request) {
-        return getValueFromRequest(request, ServiceConstants.GROUP, ServiceConstants.GROUP_DEFAULT_VALUE);
+        return getValueFromRequest(request, ServiceConstants.GROUP, ServiceConstants.GROUP_VAL_DEFAULT);
     }
 
     public static String getVersionFromRequest(Requestable request) {
-        return getValueFromRequest(request, ServiceConstants.VERSION, ServiceConstants.VERSION_DEFAULT_VALUE);
+        return getValueFromRequest(request, ServiceConstants.VERSION, ServiceConstants.VERSION_VAL_DEFAULT);
     }
 
     public static String getValueFromRequest(Requestable request, String key, String defaultValue) {
@@ -117,7 +117,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(SERIALIZER), target.getOption(SERIALIZER_DEFAULT_VALUE))) {
+        if (!StringUtils.equals(source.getOption(SERIALIZER), target.getOption(SERIALIZER_VAL_HESSIAN2))) {
             return false;
         }
 

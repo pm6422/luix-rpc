@@ -8,6 +8,8 @@ import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
+import static org.infinity.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_FAILFAST;
+
 /**
  * Fail-fast fault tolerance strategy
  * 自动降级也即"Fail Fast(快速失败)"是通过主动或者被动探测的方式，发现服务异常后自动降级，
@@ -18,7 +20,7 @@ import org.infinity.rpc.utilities.spi.annotation.SpiName;
  * @param <T>: The interface class of the provider
  */
 @Slf4j
-@SpiName("failfast")
+@SpiName(FAULT_TOLERANCE_VAL_FAILFAST)
 public class FailfastFaultTolerance<T> extends AbstractFaultTolerance<T> {
     @Override
     public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {

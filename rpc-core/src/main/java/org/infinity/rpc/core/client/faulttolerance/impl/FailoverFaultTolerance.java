@@ -13,8 +13,9 @@ import org.infinity.rpc.utilities.spi.annotation.SpiName;
 import java.text.MessageFormat;
 import java.util.List;
 
+import static org.infinity.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_FAILOVER;
 import static org.infinity.rpc.core.constant.ServiceConstants.MAX_RETRIES;
-import static org.infinity.rpc.core.constant.ServiceConstants.MAX_RETRIES_DEFAULT_VALUE;
+import static org.infinity.rpc.core.constant.ServiceConstants.MAX_RETRIES_VAL_DEFAULT;
 
 /**
  * Failover fault tolerance strategy
@@ -23,14 +24,14 @@ import static org.infinity.rpc.core.constant.ServiceConstants.MAX_RETRIES_DEFAUL
  * @param <T>: The interface class of the provider
  */
 @Slf4j
-@SpiName("failover")
+@SpiName(FAULT_TOLERANCE_VAL_FAILOVER)
 public class FailoverFaultTolerance<T> extends AbstractFaultTolerance<T> {
     @Override
     public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
         // Select multiple nodes
         List<ProviderCaller<T>> availableProviderCallers = loadBalancer.selectProviderNodes(request);
         // todo: provider configuration over consumer configuration
-        int maxRetries = availableProviderCallers.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_DEFAULT_VALUE);
+        int maxRetries = availableProviderCallers.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
         if (maxRetries == 0) {
             maxRetries = request.getIntOption(MAX_RETRIES);
         }

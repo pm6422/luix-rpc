@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static org.infinity.rpc.core.constant.ConsumerConstants.LOAD_BALANCER_VAL_RANDOM;
+
 /**
  *
  * @param <T>: The interface class of the provider
  */
-@SpiName("random")
+@SpiName(LOAD_BALANCER_VAL_RANDOM)
 public class RandomLoadBalancer<T> extends AbstractLoadBalancer<T> {
 
     @Override

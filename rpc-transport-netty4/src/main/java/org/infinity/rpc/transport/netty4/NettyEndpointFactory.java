@@ -9,7 +9,9 @@ import org.infinity.rpc.transport.netty4.client.NettyClient;
 import org.infinity.rpc.transport.netty4.server.NettyServer;
 import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
-@SpiName("netty")
+import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY_VAL_NETTY;
+
+@SpiName(ENDPOINT_FACTORY_VAL_NETTY)
 public class NettyEndpointFactory extends AbstractEndpointFactory {
     @Override
     protected Server innerCreateServer(Url providerUrl, MessageHandler messageHandler) {

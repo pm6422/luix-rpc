@@ -31,14 +31,14 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
 
     public AbstractSharedPoolClient(Url providerUrl) {
         super(providerUrl);
-        channelSize = providerUrl.getIntOption(MIN_CLIENT_CONN, MIN_CLIENT_CONN_DEFAULT_VALUE);
+        channelSize = providerUrl.getIntOption(MIN_CLIENT_CONN, MIN_CLIENT_CONN_VAL_DEFAULT);
     }
 
     protected void initPool() {
         factory = createChannelFactory();
         channels = new ArrayList<>(channelSize);
         IntStream.range(0, channelSize).forEach(x -> channels.add(factory.buildObject()));
-        initConnections(providerUrl.getBooleanOption(ASYNC_INIT_CONN, ASYNC_INIT_CONN_DEFAULT_VALUE));
+        initConnections(providerUrl.getBooleanOption(ASYNC_INIT_CONN, ASYNC_INIT_CONN_VAL_DEFAULT));
     }
 
     protected void initConnections(boolean async) {

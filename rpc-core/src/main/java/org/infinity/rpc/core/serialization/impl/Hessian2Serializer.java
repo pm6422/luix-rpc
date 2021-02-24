@@ -9,11 +9,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_VAL_HESSIAN2;
+
 /**
  * hession2 requirements:
  * The objects which are been serialized or deserialized must implements {@link java.io.Serializable}
  */
-@SpiName("hessian2")
+@SpiName(SERIALIZER_VAL_HESSIAN2)
 public class Hessian2Serializer implements Serializer {
     @Override
     public byte[] serialize(Object data) throws IOException {

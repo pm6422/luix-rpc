@@ -68,10 +68,10 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
         }
 
         log.info("NettyServer ServerChannel start Open: url=" + providerUrl);
-        int maxContentLength = providerUrl.getIntOption(MAX_CONTENT_LENGTH, MAX_CONTENT_LENGTH_DEFAULT_VALUE);
-        int maxServerConn = providerUrl.getIntOption(MAX_SERVER_CONN, MAX_SERVER_CONN_DEFAULT_VALUE);
-        int workerQueueSize = providerUrl.getIntOption(WORK_QUEUE_SIZE, WORK_QUEUE_SIZE_DEFAULT_VALUE);
-        boolean shareChannel = providerUrl.getBooleanOption(SHARED_CHANNEL, SHARED_CHANNEL_DEFAULT_VALUE);
+        int maxContentLength = providerUrl.getIntOption(MAX_CONTENT_LENGTH, MAX_CONTENT_LENGTH_VAL_DEFAULT);
+        int maxServerConn = providerUrl.getIntOption(MAX_SERVER_CONN, MAX_SERVER_CONN_VAL_DEFAULT);
+        int workerQueueSize = providerUrl.getIntOption(WORK_QUEUE_SIZE, WORK_QUEUE_SIZE_VAL_DEFAULT);
+        boolean shareChannel = providerUrl.getBooleanOption(SHARED_CHANNEL, SHARED_CHANNEL_VAL_DEFAULT);
 
         int minWorkerThread, maxWorkerThread;
 
@@ -79,8 +79,8 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
             minWorkerThread = providerUrl.getIntOption(MIN_THREAD, MIN_THREAD_SHARED_CHANNEL);
             maxWorkerThread = providerUrl.getIntOption(MAX_THREAD, MAX_THREAD_SHARED_CHANNEL);
         } else {
-            minWorkerThread = providerUrl.getIntOption(MIN_THREAD, MIN_THREAD_DEFAULT_VALUE);
-            maxWorkerThread = providerUrl.getIntOption(MAX_THREAD, MAX_THREAD_DEFAULT_VALUE);
+            minWorkerThread = providerUrl.getIntOption(MIN_THREAD, MIN_THREAD_VAL_DEFAULT);
+            maxWorkerThread = providerUrl.getIntOption(MAX_THREAD, MAX_THREAD_VAL_DEFAULT);
         }
 
         standardThreadExecutor = (standardThreadExecutor != null && !standardThreadExecutor.isShutdown()) ? standardThreadExecutor

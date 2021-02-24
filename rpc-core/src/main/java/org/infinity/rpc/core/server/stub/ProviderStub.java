@@ -270,7 +270,7 @@ public class ProviderStub<T> {
             response.setException(exception);
             return response;
         }
-        boolean defaultThrowExceptionStack = TRANS_EXCEPTION_STACK_DEFAULT_VALUE;
+        boolean defaultThrowExceptionStack = TRANS_EXCEPTION_STACK_VAL_DEFAULT;
         try {
             // Invoke method
             Object result = method.invoke(instance, request.getMethodArguments());

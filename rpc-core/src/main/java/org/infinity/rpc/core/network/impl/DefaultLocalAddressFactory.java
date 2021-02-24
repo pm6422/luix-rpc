@@ -7,7 +7,9 @@ import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
 import java.util.Optional;
 
-@SpiName("default")
+import static org.infinity.rpc.core.constant.ProtocolConstants.LOCAL_ADDRESS_FACTORY_VAL_DEFAULT;
+
+@SpiName(LOCAL_ADDRESS_FACTORY_VAL_DEFAULT)
 public class DefaultLocalAddressFactory implements LocalAddressFactory {
     /**
      * Get valid local IP address

@@ -169,8 +169,8 @@ public final class Url implements Serializable {
      */
     public static Url registryUrl(String protocol, String host, Integer port) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
-        options.put(GROUP, GROUP_DEFAULT_VALUE);
-        options.put(VERSION, VERSION_DEFAULT_VALUE);
+        options.put(GROUP, GROUP_VAL_DEFAULT);
+        options.put(VERSION, VERSION_VAL_DEFAULT);
         options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_REGISTRY);
         return of(protocol, host, port, Registry.class.getName(), options);
     }
@@ -368,11 +368,11 @@ public final class Url implements Serializable {
     }
 
     public String getGroup() {
-        return getOption(GROUP, GROUP_DEFAULT_VALUE);
+        return getOption(GROUP, GROUP_VAL_DEFAULT);
     }
 
     public String getVersion() {
-        return getOption(VERSION, VERSION_DEFAULT_VALUE);
+        return getOption(VERSION, VERSION_VAL_DEFAULT);
     }
 
     @Override

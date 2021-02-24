@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VALUE_DIRECT;
+import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_DIRECT;
 import static org.infinity.rpc.spring.boot.utils.JarUtils.readJarVersion;
 
 /**
@@ -101,7 +101,7 @@ public class RpcLifecycle {
      */
     private void publish(InfinityProperties infinityProperties) {
         infinityProperties.getRegistryList().forEach(registryConfig -> {
-            if (!registryConfig.getName().equals(REGISTRY_VALUE_DIRECT)) {
+            if (!registryConfig.getName().equals(REGISTRY_VAL_DIRECT)) {
                 // Non-direct registry
 
                 // Publish application first
