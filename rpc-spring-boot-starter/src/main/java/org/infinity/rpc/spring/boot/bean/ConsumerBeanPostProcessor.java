@@ -284,9 +284,9 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
             addPropertyValue(builder, VERSION, annotation.version());
         }
         if (StringUtils.isEmpty(annotation.consumerProxyFactory())) {
-            addPropertyValue(builder, CONSUMER_PROXY_FACTORY, infinityProperties.getConsumer().getConsumerProxyFactory());
+            addPropertyValue(builder, PROXY_FACTORY, infinityProperties.getConsumer().getProxyFactory());
         } else {
-            addPropertyValue(builder, CONSUMER_PROXY_FACTORY, annotation.consumerProxyFactory());
+            addPropertyValue(builder, PROXY_FACTORY, annotation.consumerProxyFactory());
         }
         if (StringUtils.isEmpty(annotation.checkHealthFactory())) {
             addPropertyValue(builder, CHECK_HEALTH_FACTORY, infinityProperties.getConsumer().getCheckHealthFactory());

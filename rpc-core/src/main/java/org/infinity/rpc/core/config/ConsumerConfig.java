@@ -12,22 +12,22 @@ public class ConsumerConfig extends ServiceConfig {
      * Cluster implementation
      */
     @NotEmpty
-    private String cluster              = CLUSTER_DEFAULT_VALUE;
+    private String cluster        = CLUSTER_DEFAULT_VALUE;
     /**
      * Fault tolerance strategy
      */
     @NotEmpty
-    private String faultTolerance       = FAULT_TOLERANCE_DEFAULT_VALUE;
+    private String faultTolerance = FAULT_TOLERANCE_DEFAULT_VALUE;
     /**
      * Cluster loadBalancer implementation
      */
     @NotEmpty
-    private String loadBalancer         = LOAD_BALANCER_DEFAULT_VALUE;
+    private String loadBalancer   = LOAD_BALANCER_DEFAULT_VALUE;
     /**
      * Consumer proxy factory
      */
     @NotEmpty
-    private String consumerProxyFactory = CONSUMER_PROXY_FACTORY_DEFAULT_VALUE;
+    private String proxyFactory   = PROXY_FACTORY_VAL_JDK;
 
     public void init() {
     }

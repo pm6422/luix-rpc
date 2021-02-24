@@ -8,8 +8,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.client.cluster.ProviderCluster;
 import org.infinity.rpc.core.client.listener.ProviderDiscoveryListener;
 import org.infinity.rpc.core.client.listener.ProviderNotifyListener;
-import org.infinity.rpc.core.client.proxy.ConsumerProxyFactory;
-import org.infinity.rpc.core.client.proxy.impl.DefaultConsumerProxy;
+import org.infinity.rpc.core.client.proxy.ProxyFactory;
+import org.infinity.rpc.core.client.proxy.impl.JdkProxyFactory;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ConsumerConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
@@ -83,7 +83,7 @@ public class ConsumerStub<T> {
     /**
      * Consumer proxy factory used to create {@link #proxyInstance} which is the implementation of consumer interface class
      */
-    private String   consumerProxyFactory;
+    private String   proxyFactory;
     /**
      *
      */
@@ -117,7 +117,7 @@ public class ConsumerStub<T> {
     private Url      url;
 
     /**
-     * The consumer proxy instance, refer the return type of {@link DefaultConsumerProxy#getProxy(ConsumerStub)}
+     * The consumer proxy instance, refer the return type of {@link JdkProxyFactory#getProxy(ConsumerStub)}
      * Disable serialize
      */
     private transient T                  proxyInstance;
@@ -135,7 +135,7 @@ public class ConsumerStub<T> {
      */
     @PostConstruct
     public void init() {
-        this.proxyInstance = ConsumerProxyFactory.getInstance(consumerProxyFactory).getProxy(this);
+        this.proxyInstance = ProxyFactory.getInstance(proxyFactory).getProxy(this);
         // Automatically add {@link ConsumerStub} instance to {@link ConsumerStubHolder}
         ConsumerStubHolder.getInstance().addStub(this);
     }

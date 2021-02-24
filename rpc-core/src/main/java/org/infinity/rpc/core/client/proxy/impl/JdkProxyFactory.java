@@ -2,14 +2,16 @@ package org.infinity.rpc.core.client.proxy.impl;
 
 
 import org.infinity.rpc.core.client.invocationhandler.impl.ConsumerInvocationHandler;
-import org.infinity.rpc.core.client.proxy.ConsumerProxyFactory;
+import org.infinity.rpc.core.client.proxy.ProxyFactory;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.utilities.spi.annotation.ServiceName;
 
 import java.lang.reflect.Proxy;
 
-@ServiceName("default")
-public class DefaultConsumerProxy implements ConsumerProxyFactory {
+import static org.infinity.rpc.core.constant.ConsumerConstants.PROXY_FACTORY_VAL_JDK;
+
+@ServiceName(PROXY_FACTORY_VAL_JDK)
+public class JdkProxyFactory implements ProxyFactory {
     /**
      * Get implementation proxy of consumer interface class
      *
