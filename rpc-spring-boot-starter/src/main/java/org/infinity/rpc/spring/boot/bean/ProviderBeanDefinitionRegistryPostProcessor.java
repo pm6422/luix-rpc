@@ -1,14 +1,18 @@
 package org.infinity.rpc.spring.boot.bean;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.infinity.rpc.spring.boot.bean.name.DefaultBeanNameGenerator;
 import org.infinity.rpc.spring.boot.bean.registry.ClassPathBeanDefinitionRegistryScanner;
 import org.infinity.rpc.spring.boot.bean.name.ProviderStubBeanNameBuilder;
+import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -20,17 +24,18 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.INTERFACE_CLASS;
-import static org.infinity.rpc.core.constant.ServiceConstants.INTERFACE_NAME;
+import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
+import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
 import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.*;
 
 /**
@@ -38,12 +43,16 @@ import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.*
  * by {@link BeanDefinitionRegistry}
  */
 @Slf4j
-public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentAware, ResourceLoaderAware,
+public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentAware, ResourceLoaderAware, BeanFactoryAware,
         BeanClassLoaderAware, BeanDefinitionRegistryPostProcessor {
 
     private final Set<String>    scanBasePackages;
     private       Environment    env;
     private       ResourceLoader resourceLoader;
+    /**
+     * {@link DefaultListableBeanFactory} can register bean definition
+     */
+    private       DefaultListableBeanFactory beanFactory;
     private       ClassLoader    classLoader;
 
     public ProviderBeanDefinitionRegistryPostProcessor(Set<String> scanBasePackages) {
@@ -58,6 +67,13 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     @Override
     public void setResourceLoader(@NonNull ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
+    }
+
+    @Override
+    public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
+        Assert.isInstanceOf(DefaultListableBeanFactory.class, beanFactory,
+                "It requires an instance of ".concat(DefaultListableBeanFactory.class.getSimpleName()));
+        this.beanFactory = (DefaultListableBeanFactory) beanFactory;
     }
 
     @Override
@@ -102,7 +118,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     private Set<String> resolvePackagePlaceholders() {
         return scanBasePackages
                 .stream()
-                .filter(StringUtils::hasText)
+                .filter(StringUtils::isNotEmpty)
                 .map(x -> env.resolvePlaceholders(x.trim()))
                 .collect(Collectors.toSet());
     }
@@ -304,7 +320,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     }
 
     @Override
-    public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory arg) throws BeansException {
+    public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanFactory) throws BeansException {
         // Leave blank intentionally
     }
 }

@@ -4,10 +4,10 @@ import lombok.Data;
 import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.config.*;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
@@ -23,7 +23,7 @@ import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VALUE_DI
 @ConfigurationProperties(prefix = "infinity")
 @Data
 @Validated
-public class InfinityProperties {
+public class InfinityProperties implements InitializingBean {
     @NotNull
     private ApplicationConfig           application = new ApplicationConfig();
     /**
@@ -53,9 +53,8 @@ public class InfinityProperties {
     @NotNull
     private ConsumerConfig              consumer    = new ConsumerConfig();
 
-
-    @PostConstruct
-    private void init() {
+    @Override
+    public void afterPropertiesSet() {
         application.init();
         getProtocolList().forEach(ProtocolConfig::init);
         getRegistryList().forEach(RegistryConfig::init);

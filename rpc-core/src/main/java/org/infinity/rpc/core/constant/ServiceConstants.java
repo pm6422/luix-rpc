@@ -10,14 +10,16 @@ public interface ServiceConstants {
     String INTERFACE_CLASS = "interfaceClass";
     String GENERIC         = "generic";
 
-    String  GROUP                              = "group";
-    String  GROUP_DEFAULT_VALUE                = "default";
-    String  VERSION                            = "version";
-    String  VERSION_DEFAULT_VALUE              = "1.0.0";
-    String  CHECK_HEALTH_FACTORY               = "checkHealthFactory";
-    String  CHECK_HEALTH_FACTORY_DEFAULT_VALUE = "default";
-    String  MAX_RETRIES                        = "maxRetries";
-    int     MAX_RETRIES_DEFAULT_VALUE          = 0;
-    String  REQUEST_TIMEOUT                    = "requestTimeout";
-    int     REQUEST_TIMEOUT_DEFAULT_VALUE      = 500;
+    String GROUP                                = "group";
+    String GROUP_DEFAULT_VALUE                  = "default";
+    String VERSION                              = "version";
+    String VERSION_DEFAULT_VALUE                = "1.0.0";
+    String CONSUMER_PROXY_FACTORY               = "consumerProxyFactory";
+    String CONSUMER_PROXY_FACTORY_DEFAULT_VALUE = "default";
+    String CHECK_HEALTH_FACTORY                 = "checkHealthFactory";
+    String CHECK_HEALTH_FACTORY_DEFAULT_VALUE   = "default";
+    String MAX_RETRIES                          = "maxRetries";
+    int    MAX_RETRIES_DEFAULT_VALUE            = 0;
+    String REQUEST_TIMEOUT                      = "requestTimeout";
+    int    REQUEST_TIMEOUT_DEFAULT_VALUE        = 500;
 }

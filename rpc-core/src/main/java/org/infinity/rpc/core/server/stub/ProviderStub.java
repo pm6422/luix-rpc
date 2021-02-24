@@ -49,23 +49,23 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 @Getter
 public class ProviderStub<T> {
     /**
-     * The provider interface fully-qualified name
-     */
-    @NotEmpty(message = "The [interfaceName] property of @Consumer must NOT be empty!")
-    private           String              interfaceName;
-    /**
      * The interface class of the provider
      */
     @NotNull(message = "The [interfaceClass] property of @Consumer must NOT be null!")
     private           Class<T>            interfaceClass;
     /**
+     * The provider interface fully-qualified name
+     */
+    @NotEmpty(message = "The [interfaceName] property of @Consumer must NOT be empty!")
+    private           String              interfaceName;
+    /**
      * Protocol
      */
     private           String              protocol;
-    /**
-     * Registry
-     */
-    private           String              registry;
+//    /**
+//     * Registry
+//     */
+//    private           String              registry;
     /**
      * Group
      */
@@ -183,9 +183,9 @@ public class ProviderStub<T> {
         if (StringUtils.isEmpty(protocol)) {
             protocol = protocolConfig.getName();
         }
-        if (StringUtils.isEmpty(registry)) {
-            registry = registryConfig.getName();
-        }
+//        if (StringUtils.isEmpty(registry)) {
+//            registry = registryConfig.getName();
+//        }
         if (StringUtils.isEmpty(group)) {
             group = providerConfig.getGroup();
         }

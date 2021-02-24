@@ -1,9 +1,11 @@
 package org.infinity.rpc.spring.boot.bean;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.spring.boot.bean.name.ConsumerStubBeanNameBuilder;
+import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
@@ -27,11 +29,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
-import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_ADDRESSES;
-import static org.infinity.rpc.core.constant.ConsumerConstants.INTERFACE_NAME;
+import static org.infinity.rpc.core.constant.ConsumerConstants.*;
+import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
 import static org.infinity.rpc.core.constant.ServiceConstants.INTERFACE_CLASS;
 import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.addPropertyValue;
-import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.copyPropertiesToBeanDefinitionBuilder;
 
 
 /**
@@ -244,11 +245,68 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
      */
     private AbstractBeanDefinition buildConsumerStubDefinition(Class<?> interfaceClass,
                                                                Consumer annotation) {
+        // Create and load infinityProperties bean
+        InfinityProperties infinityProperties = beanFactory.getBean(InfinityProperties.class);
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ConsumerStub.class);
-        copyPropertiesToBeanDefinitionBuilder(annotation, builder, INTERFACE_NAME);
-        addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName());
+
+        // Copy properties from @Consumer to ConsumerStub
         addPropertyValue(builder, INTERFACE_CLASS, interfaceClass);
+        addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName());
+
+        if (StringUtils.isEmpty(annotation.protocol())) {
+            addPropertyValue(builder, PROTOCOL, infinityProperties.getProtocol().getName());
+        } else {
+            addPropertyValue(builder, PROTOCOL, annotation.protocol());
+        }
+        if (StringUtils.isEmpty(annotation.cluster())) {
+            addPropertyValue(builder, CLUSTER, infinityProperties.getConsumer().getCluster());
+        } else {
+            addPropertyValue(builder, CLUSTER, annotation.cluster());
+        }
+        if (StringUtils.isEmpty(annotation.faultTolerance())) {
+            addPropertyValue(builder, FAULT_TOLERANCE, infinityProperties.getConsumer().getFaultTolerance());
+        } else {
+            addPropertyValue(builder, FAULT_TOLERANCE, annotation.faultTolerance());
+        }
+        if (StringUtils.isEmpty(annotation.loadBalancer())) {
+            addPropertyValue(builder, LOAD_BALANCER, infinityProperties.getConsumer().getLoadBalancer());
+        } else {
+            addPropertyValue(builder, LOAD_BALANCER, annotation.loadBalancer());
+        }
+        if (StringUtils.isEmpty(annotation.group())) {
+            addPropertyValue(builder, GROUP, infinityProperties.getConsumer().getGroup());
+        } else {
+            addPropertyValue(builder, GROUP, annotation.group());
+        }
+        if (StringUtils.isEmpty(annotation.version())) {
+            addPropertyValue(builder, VERSION, infinityProperties.getConsumer().getVersion());
+        } else {
+            addPropertyValue(builder, VERSION, annotation.version());
+        }
+        if (StringUtils.isEmpty(annotation.consumerProxyFactory())) {
+            addPropertyValue(builder, CONSUMER_PROXY_FACTORY, infinityProperties.getConsumer().getConsumerProxyFactory());
+        } else {
+            addPropertyValue(builder, CONSUMER_PROXY_FACTORY, annotation.consumerProxyFactory());
+        }
+        if (StringUtils.isEmpty(annotation.checkHealthFactory())) {
+            addPropertyValue(builder, CHECK_HEALTH_FACTORY, infinityProperties.getConsumer().getCheckHealthFactory());
+        } else {
+            addPropertyValue(builder, CHECK_HEALTH_FACTORY, annotation.checkHealthFactory());
+        }
+        if (Integer.MAX_VALUE == annotation.requestTimeout()) {
+            addPropertyValue(builder, REQUEST_TIMEOUT, infinityProperties.getConsumer().getRequestTimeout());
+        } else {
+            addPropertyValue(builder, REQUEST_TIMEOUT, annotation.requestTimeout());
+        }
+        if (Integer.MAX_VALUE == annotation.maxRetries()) {
+            addPropertyValue(builder, MAX_RETRIES, infinityProperties.getConsumer().getMaxRetries());
+        } else {
+            addPropertyValue(builder, MAX_RETRIES, annotation.maxRetries());
+        }
+
         addPropertyValue(builder, DIRECT_ADDRESSES, annotation.directAddresses());
+        addPropertyValue(builder, GENERIC, annotation.generic());
+
         return builder.getBeanDefinition();
     }
 

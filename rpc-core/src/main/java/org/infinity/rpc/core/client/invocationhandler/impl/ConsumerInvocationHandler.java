@@ -2,7 +2,7 @@ package org.infinity.rpc.core.client.invocationhandler.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.invocationhandler.AbstractConsumerInvocationHandler;
-import org.infinity.rpc.core.client.proxy.ConsumerProxy;
+import org.infinity.rpc.core.client.proxy.impl.DefaultConsumerProxy;
 import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.server.response.FutureResponse;
@@ -36,7 +36,7 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (isDerivedFromObject(method)) {
             // IDE may call the Object.toString() method if you set some break pointers.
-            return ConsumerProxy.class.getSimpleName();
+            return DefaultConsumerProxy.class.getSimpleName();
         }
 
         // Create a new RpcRequest for each request

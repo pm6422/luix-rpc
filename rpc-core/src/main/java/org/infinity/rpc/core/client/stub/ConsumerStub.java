@@ -8,7 +8,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.client.cluster.ProviderCluster;
 import org.infinity.rpc.core.client.listener.ProviderDiscoveryListener;
 import org.infinity.rpc.core.client.listener.ProviderNotifyListener;
-import org.infinity.rpc.core.client.proxy.ConsumerProxy;
+import org.infinity.rpc.core.client.proxy.ConsumerProxyFactory;
+import org.infinity.rpc.core.client.proxy.impl.DefaultConsumerProxy;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ConsumerConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
@@ -16,6 +17,7 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.network.AddressUtils;
 
 import javax.annotation.PostConstruct;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -40,15 +42,15 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 @Getter
 public class ConsumerStub<T> {
     /**
-     * The provider interface fully-qualified name
-     */
-    @NotEmpty(message = "The [interfaceName] property of @Consumer must NOT be empty!")
-    private String   interfaceName;
-    /**
      * The interface class of the consumer
      */
     @NotNull(message = "The [interfaceClass] property of @Consumer must NOT be null!")
     private Class<T> interfaceClass;
+    /**
+     * The provider interface fully-qualified name
+     */
+    @NotEmpty(message = "The [interfaceName] property of @Consumer must NOT be empty!")
+    private String   interfaceName;
     /**
      * Protocol
      */
@@ -79,6 +81,10 @@ public class ConsumerStub<T> {
      */
     private String   version;
     /**
+     * Consumer proxy factory used to create {@link #proxyInstance} which is the implementation of consumer interface class
+     */
+    private String   consumerProxyFactory;
+    /**
      *
      */
     private String   checkHealthFactory;
@@ -92,6 +98,7 @@ public class ConsumerStub<T> {
      * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
      */
     @Min(value = 0, message = "The [maxRetries] property of @Consumer must NOT be a negative number!")
+    @Max(value = 10, message = "The [maxRetries] property of @Consumer must NOT be less than 10!")
     private int      maxRetries;
     /**
      * Addresses of RPC provider used to connect RPC provider directly without third party registry.
@@ -110,7 +117,7 @@ public class ConsumerStub<T> {
     private Url      url;
 
     /**
-     * The consumer proxy instance, refer the return type of {@link ConsumerProxy#getProxy(ConsumerStub)}
+     * The consumer proxy instance, refer the return type of {@link DefaultConsumerProxy#getProxy(ConsumerStub)}
      * Disable serialize
      */
     private transient T                  proxyInstance;
@@ -128,7 +135,7 @@ public class ConsumerStub<T> {
      */
     @PostConstruct
     public void init() {
-        this.proxyInstance = ConsumerProxy.getProxy(this);
+        this.proxyInstance = ConsumerProxyFactory.getInstance(consumerProxyFactory).getProxy(this);
         // Automatically add {@link ConsumerStub} instance to {@link ConsumerStubHolder}
         ConsumerStubHolder.getInstance().addStub(this);
     }
@@ -174,48 +181,15 @@ public class ConsumerStub<T> {
      * @return provider url
      */
     private Url createConsumerUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, ConsumerConfig consumerConfig) {
-        if (StringUtils.isEmpty(protocol)) {
-            protocol = protocolConfig.getName();
-        }
-//        if (StringUtils.isEmpty(registry)) {
-//            registry = registryConfig.getName();
-//        }
-        if (StringUtils.isEmpty(group)) {
-            group = consumerConfig.getGroup();
-        }
-        if (StringUtils.isEmpty(version)) {
-            version = consumerConfig.getVersion();
-        }
-        if (StringUtils.isEmpty(cluster)) {
-            cluster = consumerConfig.getCluster();
-        }
-        if (StringUtils.isEmpty(faultTolerance)) {
-            faultTolerance = consumerConfig.getFaultTolerance();
-        }
-        if (StringUtils.isEmpty(loadBalancer)) {
-            loadBalancer = consumerConfig.getLoadBalancer();
-        }
-
         url = Url.consumerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, group, version);
+
         url.addOption(Url.PARAM_APP, applicationConfig.getName());
         url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
 
-        if (StringUtils.isEmpty(checkHealthFactory)) {
-            checkHealthFactory = consumerConfig.getCheckHealthFactory();
-        }
         url.addOption(CHECK_HEALTH_FACTORY, checkHealthFactory);
-
-        if (Integer.MAX_VALUE == requestTimeout) {
-            requestTimeout = consumerConfig.getRequestTimeout();
-        }
         url.addOption(REQUEST_TIMEOUT, String.valueOf(requestTimeout));
-
-        if (Integer.MAX_VALUE == maxRetries) {
-            maxRetries = consumerConfig.getMaxRetries();
-        }
         url.addOption(MAX_RETRIES, String.valueOf(maxRetries));
-
         return url;
     }
 

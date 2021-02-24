@@ -1,6 +1,5 @@
 package org.infinity.rpc.core.client.annotation;
 
-import org.infinity.rpc.core.constant.BooleanEnum;
 import org.infinity.rpc.core.constant.ServiceConstants;
 
 import java.lang.annotation.ElementType;
@@ -18,9 +17,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Consumer {
     /**
-     * The interface class of RPC consumer class
-     *
-     * @return interface class
+     * @return interface class of RPC consumer class
      */
     Class<?> interfaceClass() default void.class;
 
@@ -34,6 +31,7 @@ public @interface Consumer {
 
     /**
      * Available values: [infinity, zookeeper, local, direct, injvm]
+     *
      * @return protocol
      */
     String protocol() default "";
@@ -70,8 +68,11 @@ public @interface Consumer {
     String version() default "";
 
     /**
-     * Enabled when checkHealth is true
-     *
+     * @return consumer proxy factory used to create proxyInstance which is the implementation of consumer interface class
+     */
+    String consumerProxyFactory() default "";
+
+    /**
      * @return check health factory
      */
     String checkHealthFactory() default "";
