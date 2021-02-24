@@ -24,7 +24,11 @@ public @interface Provider {
 
     String protocol() default "";
 
-    String registry() default "";
+    /**
+     * Available values: [zookeeper]
+     * @return registry
+     */
+//    String registry() default "";
 
     String group() default "";
 
