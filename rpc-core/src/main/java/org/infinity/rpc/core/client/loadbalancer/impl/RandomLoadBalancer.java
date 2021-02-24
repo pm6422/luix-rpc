@@ -3,7 +3,7 @@ package org.infinity.rpc.core.client.loadbalancer.impl;
 import org.infinity.rpc.core.client.loadbalancer.AbstractLoadBalancer;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.client.request.ProviderCaller;
-import org.infinity.rpc.utilities.spi.annotation.ServiceName;
+import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * @param <T>: The interface class of the provider
  */
-@ServiceName("random")
+@SpiName("random")
 public class RandomLoadBalancer<T> extends AbstractLoadBalancer<T> {
 
     @Override

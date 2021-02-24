@@ -3,7 +3,7 @@ package org.infinity.rpc.core.serialization.impl;
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
 import org.infinity.rpc.core.serialization.Serializer;
-import org.infinity.rpc.utilities.spi.annotation.ServiceName;
+import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,7 +13,7 @@ import java.io.IOException;
  * hession2 requirements:
  * The objects which are been serialized or deserialized must implements {@link java.io.Serializable}
  */
-@ServiceName("hessian2")
+@SpiName("hessian2")
 public class Hessian2Serializer implements Serializer {
     @Override
     public byte[] serialize(Object data) throws IOException {

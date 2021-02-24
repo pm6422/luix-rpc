@@ -22,12 +22,12 @@ import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.server.messagehandler.impl.DefaultCheckHealthMessageHandleWrapper;
 import org.infinity.rpc.core.exchange.checkhealth.CheckHealthFactory;
 import org.infinity.rpc.utilities.id.IdGenerator;
-import org.infinity.rpc.utilities.spi.annotation.ServiceName;
+import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
 /**
  *
  */
-@ServiceName("default")
+@SpiName("default")
 public class DefaultCheckHealthFactory implements CheckHealthFactory {
     @Override
     public MessageHandler wrapMessageHandler(MessageHandler handler) {

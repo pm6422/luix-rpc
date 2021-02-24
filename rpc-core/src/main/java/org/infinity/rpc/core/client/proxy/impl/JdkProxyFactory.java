@@ -4,13 +4,13 @@ package org.infinity.rpc.core.client.proxy.impl;
 import org.infinity.rpc.core.client.invocationhandler.impl.ConsumerInvocationHandler;
 import org.infinity.rpc.core.client.proxy.ProxyFactory;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.utilities.spi.annotation.ServiceName;
+import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
 import java.lang.reflect.Proxy;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.PROXY_FACTORY_VAL_JDK;
 
-@ServiceName(PROXY_FACTORY_VAL_JDK)
+@SpiName(PROXY_FACTORY_VAL_JDK)
 public class JdkProxyFactory implements ProxyFactory {
     /**
      * Get implementation proxy of consumer interface class

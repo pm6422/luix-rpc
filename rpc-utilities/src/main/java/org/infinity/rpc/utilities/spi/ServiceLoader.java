@@ -5,7 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.infinity.rpc.utilities.spi.annotation.ServiceName;
+import org.infinity.rpc.utilities.spi.annotation.SpiName;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 
@@ -268,14 +268,14 @@ public class ServiceLoader<T> {
     }
 
     /**
-     * Get SPI service name from {@link ServiceName}
+     * Get SPI service name from {@link SpiName}
      *
      * @param implClass service implementation class
      * @return SPI service name
      */
     private String getSpiServiceName(Class<?> implClass) {
-        ServiceName serviceName = implClass.getAnnotation(ServiceName.class);
-        return serviceName != null && StringUtils.isNotEmpty(serviceName.value()) ? serviceName.value() : implClass.getSimpleName();
+        SpiName spiName = implClass.getAnnotation(SpiName.class);
+        return spiName != null && StringUtils.isNotEmpty(spiName.value()) ? spiName.value() : implClass.getSimpleName();
     }
 
     /**

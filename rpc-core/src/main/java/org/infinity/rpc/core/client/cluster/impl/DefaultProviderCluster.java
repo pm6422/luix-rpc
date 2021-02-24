@@ -14,9 +14,8 @@ import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
-import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
-import org.infinity.rpc.utilities.spi.annotation.ServiceName;
+import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
 import java.util.List;
 
@@ -29,7 +28,7 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION_D
  * @param <T>: The interface class of the provider
  */
 @Slf4j
-@ServiceName("default")
+@SpiName("default")
 public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     private boolean           active = false;
     private Class<T>          interfaceClass;

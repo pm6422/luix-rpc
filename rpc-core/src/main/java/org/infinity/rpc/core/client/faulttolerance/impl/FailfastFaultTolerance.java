@@ -6,7 +6,7 @@ import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.client.request.ProviderCaller;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Responseable;
-import org.infinity.rpc.utilities.spi.annotation.ServiceName;
+import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
 /**
  * Fail-fast fault tolerance strategy
@@ -18,7 +18,7 @@ import org.infinity.rpc.utilities.spi.annotation.ServiceName;
  * @param <T>: The interface class of the provider
  */
 @Slf4j
-@ServiceName("failfast")
+@SpiName("failfast")
 public class FailfastFaultTolerance<T> extends AbstractFaultTolerance<T> {
     @Override
     public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {

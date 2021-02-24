@@ -6,12 +6,12 @@ import org.infinity.rpc.core.server.exporter.impl.DefaultRpcExporter;
 import org.infinity.rpc.core.server.messagehandler.impl.ProviderMessageRouter;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.protocol.AbstractProtocol;
-import org.infinity.rpc.utilities.spi.annotation.ServiceName;
+import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@ServiceName("infinity")
+@SpiName("infinity")
 @Slf4j
 public class InfinityProtocol extends AbstractProtocol {
 

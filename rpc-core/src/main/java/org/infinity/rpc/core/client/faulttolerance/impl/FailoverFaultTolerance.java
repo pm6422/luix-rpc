@@ -8,7 +8,7 @@ import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.server.response.Responseable;
-import org.infinity.rpc.utilities.spi.annotation.ServiceName;
+import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -23,7 +23,7 @@ import static org.infinity.rpc.core.constant.ServiceConstants.MAX_RETRIES_DEFAUL
  * @param <T>: The interface class of the provider
  */
 @Slf4j
-@ServiceName("failover")
+@SpiName("failover")
 public class FailoverFaultTolerance<T> extends AbstractFaultTolerance<T> {
     @Override
     public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {

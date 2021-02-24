@@ -16,7 +16,7 @@ import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.utilities.lang.ByteUtils;
-import org.infinity.rpc.utilities.spi.annotation.ServiceName;
+import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
 import java.io.*;
 import java.util.HashMap;
@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER;
 import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_DEFAULT_VALUE;
 
-@ServiceName("default")
+@SpiName("default")
 public class DefaultCodec extends AbstractCodec {
     public static final  short MAGIC = (short) 0xF0F0;
     private static final byte  MASK  = 0x07;
