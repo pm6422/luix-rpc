@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Data
-public class ApplicationConfig {
+public class ApplicationConfig implements Configurable {
     public static final String  PREFIX    = "application";
     /**
      * Application name
@@ -46,9 +46,11 @@ public class ApplicationConfig {
         DebugModeHolder.setDebugMode(debugMode);
     }
 
-    private void checkIntegrity() {
+    @Override
+    public void checkIntegrity() {
     }
 
-    private void checkValidity() {
+    @Override
+    public void checkValidity() {
     }
 }
