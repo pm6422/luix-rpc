@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 @Data
-public class ServiceConfig {
+public abstract class ServiceConfig implements Configurable {
     /**
      * Group
      */
