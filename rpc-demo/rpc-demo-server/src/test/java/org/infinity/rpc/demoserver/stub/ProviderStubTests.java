@@ -1,4 +1,4 @@
-package org.infinity.rpc.demoserver.service;
+package org.infinity.rpc.demoserver.stub;
 
 import org.I0Itec.zkclient.ZkClient;
 import org.infinity.rpc.core.config.ApplicationConfig;
@@ -7,6 +7,8 @@ import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.constant.ProtocolConstants;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
+import org.infinity.rpc.demoserver.EmbeddedZookeeper;
+import org.infinity.rpc.demoserver.service.TestService;
 import org.infinity.rpc.demoserver.service.impl.TestServiceImpl;
 import org.infinity.rpc.registry.zookeeper.ZookeeperStatusNode;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;

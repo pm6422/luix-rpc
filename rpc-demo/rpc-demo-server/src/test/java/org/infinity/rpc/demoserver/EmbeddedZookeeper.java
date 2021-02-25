@@ -1,4 +1,4 @@
-package org.infinity.rpc.demoserver.service;
+package org.infinity.rpc.demoserver;
 
 import org.apache.zookeeper.server.ServerConfig;
 import org.apache.zookeeper.server.ZooKeeperServerMain;
