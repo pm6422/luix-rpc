@@ -32,4 +32,14 @@ public class ConsumerConfig extends ServiceConfig {
 
     public void init() {
     }
+
+    @Override
+    public void checkIntegrity() {
+
+    }
+
+    @Override
+    public void checkValidity() {
+
+    }
 }
