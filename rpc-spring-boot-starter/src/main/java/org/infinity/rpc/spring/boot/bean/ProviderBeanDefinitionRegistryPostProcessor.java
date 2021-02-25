@@ -2,17 +2,17 @@ package org.infinity.rpc.spring.boot.bean;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.server.stub.ProviderStub;
+import org.infinity.rpc.core.config.ProtocolConfig;
+import org.infinity.rpc.core.config.ProviderConfig;
 import org.infinity.rpc.core.server.annotation.Provider;
+import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.spring.boot.bean.name.DefaultBeanNameGenerator;
-import org.infinity.rpc.spring.boot.bean.registry.ClassPathBeanDefinitionRegistryScanner;
 import org.infinity.rpc.spring.boot.bean.name.ProviderStubBeanNameBuilder;
+import org.infinity.rpc.spring.boot.bean.registry.ClassPathBeanDefinitionRegistryScanner;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -20,6 +20,7 @@ import org.springframework.beans.factory.support.*;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
@@ -35,25 +36,22 @@ import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
-import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
-import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.*;
+import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.addPropertyReference;
+import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.addPropertyValue;
+import static org.infinity.rpc.spring.boot.utils.PropertySourcesUtils.readProperties;
 
 /**
  * Register provider bean and provider stub under specified scan base packages to spring context
  * by {@link BeanDefinitionRegistry}
  */
 @Slf4j
-public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentAware, ResourceLoaderAware, BeanFactoryAware,
+public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentAware, ResourceLoaderAware,
         BeanClassLoaderAware, BeanDefinitionRegistryPostProcessor {
 
-    private final Set<String>    scanBasePackages;
-    private       Environment    env;
-    private       ResourceLoader resourceLoader;
-    /**
-     * {@link DefaultListableBeanFactory} can register bean definition
-     */
-    private       DefaultListableBeanFactory beanFactory;
-    private       ClassLoader    classLoader;
+    private final Set<String>             scanBasePackages;
+    private       ConfigurableEnvironment env;
+    private       ResourceLoader          resourceLoader;
+    private       ClassLoader             classLoader;
 
     public ProviderBeanDefinitionRegistryPostProcessor(Set<String> scanBasePackages) {
         this.scanBasePackages = scanBasePackages;
@@ -61,19 +59,13 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
 
     @Override
     public void setEnvironment(@NonNull Environment environment) {
-        this.env = environment;
+        Assert.isInstanceOf(ConfigurableEnvironment.class, environment);
+        this.env = (ConfigurableEnvironment) environment;
     }
 
     @Override
     public void setResourceLoader(@NonNull ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
-    }
-
-    @Override
-    public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
-        Assert.isInstanceOf(DefaultListableBeanFactory.class, beanFactory,
-                "It requires an instance of ".concat(DefaultListableBeanFactory.class.getSimpleName()));
-        this.beanFactory = (DefaultListableBeanFactory) beanFactory;
     }
 
     @Override
@@ -311,12 +303,63 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
                                                                Provider annotation,
                                                                String providerInstanceName) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProviderStub.class);
-        copyPropertiesToBeanDefinitionBuilder(annotation, builder, INTERFACE_NAME);
-        addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName());
+        ProtocolConfig protocolConfig = readProtocolConfig();
+        ProviderConfig providerConfig = readProviderConfig();
+
+        // Copy properties from @Provider to ProviderStub
         addPropertyValue(builder, INTERFACE_CLASS, interfaceClass);
+        addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName());
+
+        if (StringUtils.isEmpty(annotation.protocol())) {
+            addPropertyValue(builder, PROTOCOL, protocolConfig.getName());
+        } else {
+            addPropertyValue(builder, PROTOCOL, annotation.protocol());
+        }
+        if (StringUtils.isEmpty(annotation.group())) {
+            addPropertyValue(builder, GROUP, providerConfig.getGroup());
+        } else {
+            addPropertyValue(builder, GROUP, annotation.group());
+        }
+        if (StringUtils.isEmpty(annotation.version())) {
+            addPropertyValue(builder, VERSION, providerConfig.getVersion());
+        } else {
+            addPropertyValue(builder, VERSION, annotation.version());
+        }
+        if (StringUtils.isEmpty(annotation.checkHealthFactory())) {
+            addPropertyValue(builder, CHECK_HEALTH_FACTORY, providerConfig.getCheckHealthFactory());
+        } else {
+            addPropertyValue(builder, CHECK_HEALTH_FACTORY, annotation.checkHealthFactory());
+        }
+        if (Integer.MAX_VALUE == annotation.requestTimeout()) {
+            addPropertyValue(builder, REQUEST_TIMEOUT, providerConfig.getRequestTimeout());
+        } else {
+            addPropertyValue(builder, REQUEST_TIMEOUT, annotation.requestTimeout());
+        }
+        if (Integer.MAX_VALUE == annotation.maxRetries()) {
+            addPropertyValue(builder, MAX_RETRIES, providerConfig.getMaxRetries());
+        } else {
+            addPropertyValue(builder, MAX_RETRIES, annotation.maxRetries());
+        }
+
         // Obtain the instance by instance name then assign it to the property
         addPropertyReference(builder, "instance", providerInstanceName, env);
         return builder.getBeanDefinition();
+    }
+
+    private ProtocolConfig readProtocolConfig() {
+        ProtocolConfig protocolConfig = new ProtocolConfig();
+        readProperties(env.getPropertySources(), env,
+                InfinityProperties.PREFIX.concat(".").concat(ProtocolConfig.PREFIX),
+                ProtocolConfig.class, protocolConfig);
+        return protocolConfig;
+    }
+
+    private ProviderConfig readProviderConfig() {
+        ProviderConfig providerConfig = new ProviderConfig();
+        readProperties(env.getPropertySources(), env,
+                InfinityProperties.PREFIX.concat(".").concat(ProviderConfig.PREFIX),
+                ProviderConfig.class, providerConfig);
+        return providerConfig;
     }
 
     @Override

@@ -180,19 +180,6 @@ public class ProviderStub<T> {
      */
     private Url createProviderUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
                                   RegistryConfig registryConfig, ProviderConfig providerConfig) {
-        if (StringUtils.isEmpty(protocol)) {
-            protocol = protocolConfig.getName();
-        }
-//        if (StringUtils.isEmpty(registry)) {
-//            registry = registryConfig.getName();
-//        }
-        if (StringUtils.isEmpty(group)) {
-            group = providerConfig.getGroup();
-        }
-        if (StringUtils.isEmpty(version)) {
-            version = providerConfig.getVersion();
-        }
-
         url = Url.providerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, group, version);
         url.addOption(Url.PARAM_APP, applicationConfig.getName());
         url.addOption(CODEC, protocolConfig.getCodec());
@@ -207,20 +194,8 @@ public class ProviderStub<T> {
         url.addOption(WORK_QUEUE_SIZE, String.valueOf(protocolConfig.getWorkQueueSize()));
         url.addOption(SHARED_CHANNEL, String.valueOf(protocolConfig.isSharedChannel()));
         url.addOption(ASYNC_INIT_CONN, String.valueOf(protocolConfig.isAsyncInitConn()));
-
-        if (StringUtils.isEmpty(checkHealthFactory)) {
-            checkHealthFactory = providerConfig.getCheckHealthFactory();
-        }
         url.addOption(CHECK_HEALTH_FACTORY, checkHealthFactory);
-
-        if (Integer.MAX_VALUE == requestTimeout) {
-            requestTimeout = providerConfig.getRequestTimeout();
-        }
         url.addOption(REQUEST_TIMEOUT, String.valueOf(requestTimeout));
-
-        if (Integer.MAX_VALUE == maxRetries) {
-            maxRetries = providerConfig.getMaxRetries();
-        }
         url.addOption(MAX_RETRIES, String.valueOf(maxRetries));
 
         return url;
