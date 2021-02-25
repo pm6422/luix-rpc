@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 public class ProviderStubTests {
 
     private static String            REGISTRY_HOST = "127.0.0.1";
+    private static int               PROVIDER_PORT = 2000;
     private static int               zkPort;
     private static ZkClient          zkClient;
     private static EmbeddedZookeeper zookeeper;
@@ -70,7 +71,7 @@ public class ProviderStubTests {
         applicationConfig.init();
 
         ProtocolConfig protocolConfig = new ProtocolConfig();
-        protocolConfig.setPort(2000);
+        protocolConfig.setPort(PROVIDER_PORT);
         protocolConfig.init();
 
         RegistryConfig registryConfig = new RegistryConfig();
