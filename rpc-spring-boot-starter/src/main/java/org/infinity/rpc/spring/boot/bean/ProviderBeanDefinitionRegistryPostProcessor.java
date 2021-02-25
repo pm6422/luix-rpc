@@ -9,7 +9,6 @@ import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.spring.boot.bean.name.DefaultBeanNameGenerator;
 import org.infinity.rpc.spring.boot.bean.name.ProviderStubBeanNameBuilder;
 import org.infinity.rpc.spring.boot.bean.registry.ClassPathBeanDefinitionRegistryScanner;
-import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -40,7 +39,6 @@ import static org.infinity.rpc.spring.boot.config.InfinityProperties.readProtoco
 import static org.infinity.rpc.spring.boot.config.InfinityProperties.readProviderConfig;
 import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.addPropertyReference;
 import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.addPropertyValue;
-import static org.infinity.rpc.spring.boot.utils.PropertySourcesUtils.readProperties;
 
 /**
  * Register provider bean and provider stub under specified scan base packages to spring context
