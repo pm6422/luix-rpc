@@ -1,6 +1,7 @@
-package org.infinity.rpc.core.provider.service.impl;
+package org.infinity.rpc.demoserver.service.impl;
 
-import org.infinity.rpc.core.provider.service.TestService;
+
+import org.infinity.rpc.demoserver.service.TestService;
 
 public class TestServiceImpl implements TestService {
     @Override

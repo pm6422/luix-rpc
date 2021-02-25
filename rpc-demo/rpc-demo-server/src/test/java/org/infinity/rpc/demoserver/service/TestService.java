@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.provider.service;
+package org.infinity.rpc.demoserver.service;
 
 public interface TestService {
     String hello(String name);
