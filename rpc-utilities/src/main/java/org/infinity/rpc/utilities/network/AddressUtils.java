@@ -28,11 +28,21 @@ public abstract class AddressUtils {
     /**
      * Check whether it is the valid IP address
      *
-     * @param address IP address
+     * @param address IP address, e.g 192.168.1.1:8080
      * @return true: valid, false: invalid
      */
     public static boolean isValidAddress(String address) {
         return ADDRESS_PATTERN.matcher(address).matches();
+    }
+
+    /**
+     * Check whether it is the valid IP
+     *
+     * @param ip ip
+     * @return true: valid, false: invalid
+     */
+    public static boolean isValidIp(String ip) {
+        return IP_PATTERN.matcher(ip).matches();
     }
 
     /**

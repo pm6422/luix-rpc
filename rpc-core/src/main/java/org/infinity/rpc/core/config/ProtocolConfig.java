@@ -131,7 +131,7 @@ public class ProtocolConfig implements Configurable {
                 .orElseThrow(() -> new RpcConfigurationException(String.format("Failed to load the specified codec [%s]!", codec)));
 
         if (StringUtils.isNotEmpty(host)) {
-            RpcConfigValidator.isTrue(AddressUtils.isValidAddress(host), "Please specify a valid host!");
+            RpcConfigValidator.isTrue(AddressUtils.isValidIp(host), "Please specify a valid host!");
         }
     }
 
