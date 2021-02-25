@@ -8,35 +8,36 @@ import javax.validation.constraints.Size;
 
 @Data
 public class ApplicationConfig {
+    public static final String  PREFIX    = "application";
     /**
      * Application name
      * Keep unique
      */
     @NotEmpty
-    private String  name;
+    private             String  name;
     /**
      * Application description
      */
     @Size(max = 20)
-    private String  description;
+    private             String  description;
     /**
      * Team name
      */
     @NotEmpty
-    private String  team;
+    private             String  team;
     /**
      * Owner mail
      */
     @NotEmpty
-    private String  ownerMail;
+    private             String  ownerMail;
     /**
      * Environment variable, e.g. dev, test or prod
      */
-    private String  env;
+    private             String  env;
     /**
      * Debug mode
      */
-    private boolean debugMode = false;
+    private             boolean debugMode = false;
 
     public void init() {
         checkIntegrity();

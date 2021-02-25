@@ -18,6 +18,7 @@ import static org.infinity.rpc.utilities.network.AddressUtils.LOCALHOST;
 
 @Data
 public class RegistryConfig {
+    public static final  String  PREFIX              = "registry";
     private static final Pattern COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
     /**
      * Name of register center
