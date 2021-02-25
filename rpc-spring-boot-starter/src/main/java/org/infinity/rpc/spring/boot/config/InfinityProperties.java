@@ -6,6 +6,7 @@ import org.infinity.rpc.core.config.*;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ import java.util.*;
 
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_DIRECT;
 import static org.infinity.rpc.spring.boot.config.InfinityProperties.PREFIX;
+import static org.infinity.rpc.spring.boot.utils.PropertySourcesUtils.readProperties;
 
 /**
  * - Application
@@ -96,5 +98,17 @@ public class InfinityProperties implements InitializingBean {
     }
 
     private void checkValidity() {
+    }
+
+    public static ProtocolConfig readProtocolConfig(ConfigurableEnvironment env) {
+        ProtocolConfig protocolConfig = new ProtocolConfig();
+        readProperties(env.getPropertySources(), env, PREFIX.concat(".").concat(ProtocolConfig.PREFIX), ProtocolConfig.class, protocolConfig);
+        return protocolConfig;
+    }
+
+    public static ProviderConfig readProviderConfig(ConfigurableEnvironment env) {
+        ProviderConfig providerConfig = new ProviderConfig();
+        readProperties(env.getPropertySources(), env, PREFIX.concat(".").concat(ProviderConfig.PREFIX), ProviderConfig.class, providerConfig);
+        return providerConfig;
     }
 }

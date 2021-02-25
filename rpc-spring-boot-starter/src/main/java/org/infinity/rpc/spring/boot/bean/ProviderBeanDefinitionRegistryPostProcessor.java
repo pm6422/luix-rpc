@@ -36,6 +36,8 @@ import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
+import static org.infinity.rpc.spring.boot.config.InfinityProperties.readProtocolConfig;
+import static org.infinity.rpc.spring.boot.config.InfinityProperties.readProviderConfig;
 import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.addPropertyReference;
 import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.addPropertyValue;
 import static org.infinity.rpc.spring.boot.utils.PropertySourcesUtils.readProperties;
@@ -303,8 +305,8 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
                                                                Provider annotation,
                                                                String providerInstanceName) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProviderStub.class);
-        ProtocolConfig protocolConfig = readProtocolConfig();
-        ProviderConfig providerConfig = readProviderConfig();
+        ProtocolConfig protocolConfig = readProtocolConfig(env);
+        ProviderConfig providerConfig = readProviderConfig(env);
 
         // Copy properties from @Provider to ProviderStub
         addPropertyValue(builder, INTERFACE_CLASS, interfaceClass);
@@ -344,22 +346,6 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         // Obtain the instance by instance name then assign it to the property
         addPropertyReference(builder, "instance", providerInstanceName, env);
         return builder.getBeanDefinition();
-    }
-
-    private ProtocolConfig readProtocolConfig() {
-        ProtocolConfig protocolConfig = new ProtocolConfig();
-        readProperties(env.getPropertySources(), env,
-                InfinityProperties.PREFIX.concat(".").concat(ProtocolConfig.PREFIX),
-                ProtocolConfig.class, protocolConfig);
-        return protocolConfig;
-    }
-
-    private ProviderConfig readProviderConfig() {
-        ProviderConfig providerConfig = new ProviderConfig();
-        readProperties(env.getPropertySources(), env,
-                InfinityProperties.PREFIX.concat(".").concat(ProviderConfig.PREFIX),
-                ProviderConfig.class, providerConfig);
-        return providerConfig;
     }
 
     @Override
