@@ -17,7 +17,7 @@ import static org.infinity.rpc.core.constant.RegistryConstants.*;
 import static org.infinity.rpc.utilities.network.AddressUtils.LOCALHOST;
 
 @Data
-public class RegistryConfig {
+public class RegistryConfig implements Configurable {
     public static final  String  PREFIX              = "registry";
     private static final Pattern COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
     /**
@@ -70,7 +70,8 @@ public class RegistryConfig {
         registryUrl = createRegistryUrl();
     }
 
-    private void checkIntegrity() {
+    @Override
+    public void checkIntegrity() {
         if (name.equals(REGISTRY_VAL_ZOOKEEPER)) {
             RpcConfigValidator.notEmpty(host, "Please specify value of 'infinity.registry.host' when 'infinity.registry=zookeeper'!");
             RpcConfigValidator.notNull(port, "Please specify value of 'infinity.registry.port' when 'infinity.registry=zookeeper'!");
@@ -81,7 +82,8 @@ public class RegistryConfig {
         }
     }
 
-    private void checkValidity() {
+    @Override
+    public void checkValidity() {
         Optional.ofNullable(RegistryFactory.getInstance(name))
                 .orElseThrow(() -> new RpcConfigurationException("Failed to load the specified registry factory, " +
                         "please check whether the dependency [rpc-registry-" + name + "] is in your class path!"));
