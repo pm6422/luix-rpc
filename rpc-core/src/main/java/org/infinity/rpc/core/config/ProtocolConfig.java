@@ -18,7 +18,7 @@ import java.util.Optional;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 
 @Data
-public class ProtocolConfig {
+public class ProtocolConfig implements Configurable {
     public static final String  PREFIX              = "protocol";
     /**
      * Name of protocol
@@ -118,10 +118,12 @@ public class ProtocolConfig {
         initHost();
     }
 
-    private void checkIntegrity() {
+    @Override
+    public void checkIntegrity() {
     }
 
-    private void checkValidity() {
+    @Override
+    public void checkValidity() {
         Optional.ofNullable(Protocol.getInstance(name))
                 .orElseThrow(() -> new RpcConfigurationException(String.format("Failed to load the specified protocol [%s]!", name)));
 

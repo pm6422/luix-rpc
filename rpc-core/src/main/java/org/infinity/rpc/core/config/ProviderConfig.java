@@ -8,4 +8,14 @@ public class ProviderConfig extends ServiceConfig {
 
     public void init() {
     }
+
+    @Override
+    public void checkIntegrity() {
+
+    }
+
+    @Override
+    public void checkValidity() {
+
+    }
 }
