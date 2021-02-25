@@ -127,8 +127,7 @@ public class RpcLifecycle {
         }
         providerStubs.forEach((name, providerStub) -> {
             // Register providers
-            providerStub.register(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(),
-                    registryConfig, infinityProperties.getProvider());
+            providerStub.register(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(), registryConfig);
         });
 
         SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
@@ -161,8 +160,7 @@ public class RpcLifecycle {
                 .collect(Collectors.toList());
 
         consumerStubs.forEach(consumerStub ->
-                consumerStub.subscribeProviders(infinityProperties.getApplication(),
-                        infinityProperties.getAvailableProtocol(), registryUrls, infinityProperties.getConsumer()));
+                consumerStub.subscribeProviders(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(), registryUrls));
     }
 
     /**

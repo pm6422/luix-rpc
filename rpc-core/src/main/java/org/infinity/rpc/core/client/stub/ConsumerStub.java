@@ -11,7 +11,6 @@ import org.infinity.rpc.core.client.listener.ProviderNotifyListener;
 import org.infinity.rpc.core.client.proxy.ProxyFactory;
 import org.infinity.rpc.core.client.proxy.impl.JdkProxyFactory;
 import org.infinity.rpc.core.config.ApplicationConfig;
-import org.infinity.rpc.core.config.ConsumerConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.network.AddressUtils;
@@ -146,12 +145,11 @@ public class ConsumerStub<T> {
      * @param applicationConfig  application configuration
      * @param protocolConfig     protocol configuration
      * @param globalRegistryUrls global registry urls
-     * @param consumerConfig     consumer configuration
      */
     public void subscribeProviders(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
-                                   List<Url> globalRegistryUrls, ConsumerConfig consumerConfig) {
+                                   List<Url> globalRegistryUrls) {
         // Create consumer url
-        url = this.createConsumerUrl(applicationConfig, protocolConfig, consumerConfig);
+        url = this.createConsumerUrl(applicationConfig, protocolConfig);
 
         // We do NOT know the host and port of provider right now, so we use client URL
         clientUrl = Url.clientUrl(protocol, protocolConfig.getHost(), interfaceName, group, version);
@@ -177,10 +175,9 @@ public class ConsumerStub<T> {
      *
      * @param applicationConfig application configuration
      * @param protocolConfig    protocol configuration
-     * @param consumerConfig    consumer configuration
      * @return provider url
      */
-    private Url createConsumerUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, ConsumerConfig consumerConfig) {
+    private Url createConsumerUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
         url = Url.consumerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, group, version);
 
         url.addOption(Url.PARAM_APP, applicationConfig.getName());

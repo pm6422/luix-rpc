@@ -145,12 +145,10 @@ public class ProviderStub<T> {
      * @param applicationConfig application configuration
      * @param protocolConfig    protocol configuration
      * @param registryConfig    registry configuration
-     * @param providerConfig    provider configuration
      */
-    public void register(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
-                         RegistryConfig registryConfig, ProviderConfig providerConfig) {
+    public void register(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, RegistryConfig registryConfig) {
         // Export provider url
-        Url providerUrl = createProviderUrl(applicationConfig, protocolConfig, registryConfig, providerConfig);
+        Url providerUrl = createProviderUrl(applicationConfig, protocolConfig, registryConfig);
 
         // Export RPC provider service
         Protocol.getInstance(providerUrl.getProtocol()).export(this);
@@ -168,11 +166,9 @@ public class ProviderStub<T> {
      * @param applicationConfig application configuration
      * @param protocolConfig    protocol configuration
      * @param registryConfig    registry configuration
-     * @param providerConfig    provider configuration
      * @return provider url
      */
-    private Url createProviderUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
-                                  RegistryConfig registryConfig, ProviderConfig providerConfig) {
+    private Url createProviderUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, RegistryConfig registryConfig) {
         url = Url.providerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, group, version);
         url.addOption(Url.PARAM_APP, applicationConfig.getName());
         url.addOption(CODEC, protocolConfig.getCodec());
