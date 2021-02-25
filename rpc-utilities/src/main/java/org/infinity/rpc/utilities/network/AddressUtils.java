@@ -137,7 +137,7 @@ public abstract class AddressUtils {
     }
 
     public static List<Pair<String, Integer>> parseAddress(String address) {
-        return Arrays.stream(address.split(COMMA_SEPARATOR)).map(addr -> parseHostPort(addr)).collect(Collectors.toList());
+        return Arrays.stream(address.split(COMMA_SEPARATOR)).map(AddressUtils::parseHostPort).collect(Collectors.toList());
     }
 
     private static Pair<String, Integer> parseHostPort(String addr) {

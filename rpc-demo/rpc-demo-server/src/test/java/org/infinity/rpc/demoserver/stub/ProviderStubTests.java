@@ -20,15 +20,15 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
+import static org.infinity.rpc.utilities.network.AddressUtils.LOCALHOST;
 import static org.junit.Assert.assertTrue;
 
 public class ProviderStubTests {
 
-    private static String            REGISTRY_HOST = "127.0.0.1";
-    private static int               PROVIDER_PORT = 2000;
-    private static int               zkPort;
-    private static ZkClient          zkClient;
-    private static EmbeddedZookeeper zookeeper;
+    private static final String   REGISTRY_HOST = LOCALHOST;
+    private static final int      PROVIDER_PORT = 2000;
+    private static       int      zkPort;
+    private static       ZkClient zkClient;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -38,7 +38,7 @@ public class ProviderStubTests {
         zkPort = Integer.parseInt(properties.getProperty("clientPort"));
         in.close();
 
-        zookeeper = new EmbeddedZookeeper();
+        EmbeddedZookeeper zookeeper = new EmbeddedZookeeper();
         zookeeper.start();
         Thread.sleep(1000);
 
@@ -55,7 +55,7 @@ public class ProviderStubTests {
 
     @Test
     public void testRegisterProvider() {
-        ProviderStub providerStub = new ProviderStub();
+        ProviderStub<TestService> providerStub = new ProviderStub<>();
         providerStub.setInterfaceClass(TestService.class);
         providerStub.setInterfaceName(TestService.class.getName());
         providerStub.setInstance(new TestServiceImpl());
