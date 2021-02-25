@@ -51,7 +51,7 @@ public class ProviderStubTests {
     }
 
     @Test
-    public void testRegisterProvider() throws InterruptedException {
+    public void testRegisterProvider() {
         ProviderStub providerStub = new ProviderStub();
         providerStub.setInterfaceClass(TestService.class);
         providerStub.setInterfaceName(TestService.class.getName());
