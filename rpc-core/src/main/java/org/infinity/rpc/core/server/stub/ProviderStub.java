@@ -103,10 +103,6 @@ public class ProviderStub<T> {
      * The provider url
      */
     private           Url                 url;
-    /**
-     * Active flag
-     */
-    private           boolean             active       = false;
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
@@ -164,9 +160,6 @@ public class ProviderStub<T> {
 //            registry.registerApplicationProvider(applicationConfig.getName(), providerUrl);
         log.debug("Registered RPC provider [{}] to registry [{}]", interfaceName,
                 registryConfig.getRegistryImpl().getRegistryUrl().getProtocol());
-
-        // Set active to true after registering the RPC provider to registry
-        active = true;
     }
 
     /**
