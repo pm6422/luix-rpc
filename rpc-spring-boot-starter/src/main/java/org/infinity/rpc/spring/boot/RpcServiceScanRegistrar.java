@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.spring.boot.bean.ConsumerBeanPostProcessor;
 import org.infinity.rpc.spring.boot.bean.ProviderBeanDefinitionRegistryPostProcessor;
 import org.infinity.rpc.spring.boot.bean.registry.AnnotatedBeanDefinitionRegistry;
-import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.spring.boot.startup.RpcLifecycleApplicationListener;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;

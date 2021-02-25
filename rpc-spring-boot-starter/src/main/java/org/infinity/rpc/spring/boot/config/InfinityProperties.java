@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.util.*;
 
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_DIRECT;
+import static org.infinity.rpc.spring.boot.config.InfinityProperties.PREFIX;
 
 /**
  * - Application
@@ -20,38 +21,39 @@ import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_DIRE
  * - Global provider config
  * - Global consumer config
  */
-@ConfigurationProperties(prefix = "infinity")
+@ConfigurationProperties(prefix = PREFIX)
 @Data
 @Validated
 public class InfinityProperties implements InitializingBean {
+    public static final String                      PREFIX      = "infinity";
     @NotNull
-    private ApplicationConfig           application = new ApplicationConfig();
+    private             ApplicationConfig           application = new ApplicationConfig();
     /**
      *
      */
-    private RegistryConfig              registry    = new RegistryConfig();
+    private             RegistryConfig              registry    = new RegistryConfig();
     /**
      * Supports multiple registries
      */
-    private Map<String, RegistryConfig> registries  = new LinkedHashMap<>(5);
+    private             Map<String, RegistryConfig> registries  = new LinkedHashMap<>(5);
     /**
      *
      */
-    private ProtocolConfig              protocol    = new ProtocolConfig();
+    private             ProtocolConfig              protocol    = new ProtocolConfig();
     /**
      * Supports multiple protocols
      */
-    private Map<String, ProtocolConfig> protocols   = new LinkedHashMap<>(5);
+    private             Map<String, ProtocolConfig> protocols   = new LinkedHashMap<>(5);
     /**
      *
      */
     @NotNull
-    private ProviderConfig              provider    = new ProviderConfig();
+    private             ProviderConfig              provider    = new ProviderConfig();
     /**
      *
      */
     @NotNull
-    private ConsumerConfig              consumer    = new ConsumerConfig();
+    private             ConsumerConfig              consumer    = new ConsumerConfig();
 
     @Override
     public void afterPropertiesSet() {
