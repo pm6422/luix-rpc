@@ -27,9 +27,9 @@ import static org.junit.Assert.assertEquals;
 public class ProviderStubTests {
 
     private static final String   REGISTRY_HOST = LOCALHOST;
-    private static       int      zkPort        = getZkPort();
     private static final int      PROVIDER_PORT = 2001;
-    private static final int      CLINET_PORT   = 2002;
+    private static final int      CLIENT_PORT   = 2002;
+    private static       int      zkPort        = getZkPort();
     private static       ZkClient zkClient;
 
     @BeforeClass
@@ -45,7 +45,7 @@ public class ProviderStubTests {
     }
 
     @Test
-    public void testCall() {
+    public void testCallByRegistry() {
         registerProvider();
         TestService proxyInstance = subscribeProvider();
         String result = proxyInstance.hello("louis");
@@ -109,7 +109,7 @@ public class ProviderStubTests {
         applicationConfig.init();
 
         ProtocolConfig protocolConfig = new ProtocolConfig();
-        protocolConfig.setPort(CLINET_PORT);
+        protocolConfig.setPort(CLIENT_PORT);
         protocolConfig.init();
 
         RegistryConfig registryConfig = new RegistryConfig();
