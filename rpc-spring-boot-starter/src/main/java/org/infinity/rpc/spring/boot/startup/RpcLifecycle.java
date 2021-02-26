@@ -4,11 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.config.RegistryConfig;
-import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.server.stub.ProviderStubHolder;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_DIRECT;
 import static org.infinity.rpc.spring.boot.utils.JarUtils.readJarVersion;
@@ -153,14 +152,10 @@ public class RpcLifecycle {
             log.info("No RPC consumers found on registry!");
             return;
         }
-
-        List<Url> registryUrls = infinityProperties.getRegistryList()
-                .stream()
-                .map(registryConfig -> registryConfig.getRegistryUrl())
-                .collect(Collectors.toList());
-
         consumerStubs.forEach(consumerStub ->
-                consumerStub.subscribeProviders(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(), registryUrls));
+                consumerStub.subscribeProviders(infinityProperties.getApplication(),
+                        infinityProperties.getAvailableProtocol(),
+                        infinityProperties.getRegistryList()));
     }
 
     /**

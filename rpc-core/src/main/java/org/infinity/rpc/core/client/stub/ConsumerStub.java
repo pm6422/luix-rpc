@@ -12,6 +12,7 @@ import org.infinity.rpc.core.client.proxy.ProxyFactory;
 import org.infinity.rpc.core.client.proxy.impl.JdkProxyFactory;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
+import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.network.AddressUtils;
 
@@ -21,7 +22,10 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_DIRECT;
@@ -140,14 +144,30 @@ public class ConsumerStub<T> {
     }
 
     /**
-     * Subscribe the RPC providers from registries
+     * Subscribe the RPC providers from registry
      *
-     * @param applicationConfig  application configuration
-     * @param protocolConfig     protocol configuration
-     * @param globalRegistryUrls global registry urls
+     * @param applicationConfig application configuration
+     * @param protocolConfig    protocol configuration
+     * @param registry          registry
+     */
+    public void subscribeProviders(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, RegistryConfig registry) {
+        subscribeProviders(applicationConfig, protocolConfig, Collections.singleton(registry));
+    }
+
+    /**
+     * Subscribe the RPC providers from multiple registries
+     *
+     * @param applicationConfig application configuration
+     * @param protocolConfig    protocol configuration
+     * @param registries        registries
      */
     public void subscribeProviders(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
-                                   List<Url> globalRegistryUrls) {
+                                   Collection<RegistryConfig> registries) {
+        List<Url> globalRegistryUrls = registries
+                .stream()
+                .map(registryConfig -> registryConfig.getRegistryUrl())
+                .collect(Collectors.toList());
+
         // Create consumer url
         url = this.createConsumerUrl(applicationConfig, protocolConfig);
 
