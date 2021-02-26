@@ -1,4 +1,4 @@
-package org.infinity.rpc.demoserver.stub;
+package org.infinity.rpc.demoserver.service;
 
 import org.I0Itec.zkclient.ZkClient;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
@@ -24,7 +24,7 @@ import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTO
 import static org.infinity.rpc.utilities.network.AddressUtils.LOCALHOST;
 import static org.junit.Assert.assertEquals;
 
-public class ProviderStubTests {
+public class ServiceCallTests {
 
     private static final String   REGISTRY_HOST = LOCALHOST;
     private static final int      PROVIDER_PORT = 2001;
