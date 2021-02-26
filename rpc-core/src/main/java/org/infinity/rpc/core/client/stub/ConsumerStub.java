@@ -163,7 +163,7 @@ public class ConsumerStub<T> {
      */
     public void subscribeProviders(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
                                    Collection<RegistryConfig> registries) {
-        List<Url> globalRegistryUrls = registries
+        List<Url> registryUrls = registries
                 .stream()
                 .map(registryConfig -> registryConfig.getRegistryUrl())
                 .collect(Collectors.toList());
@@ -182,12 +182,12 @@ public class ConsumerStub<T> {
             // Non-direct registry
             // Pass provider cluster to listener, listener will update provider cluster after provider urls changed
             ProviderDiscoveryListener<T> listener = ProviderDiscoveryListener.of(providerCluster, interfaceClass, clientUrl);
-            listener.subscribe(globalRegistryUrls);
+            listener.subscribe(registryUrls);
             return;
         }
 
         // Direct registry
-        notifyDirectProviderUrls(protocolConfig, globalRegistryUrls);
+        notifyDirectProviderUrls(protocolConfig, registryUrls);
     }
 
     /**

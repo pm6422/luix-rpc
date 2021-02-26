@@ -2,6 +2,7 @@ package org.infinity.rpc.demoserver.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
+import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.config.RegistryConfig;
@@ -21,6 +22,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
+import static org.infinity.rpc.core.constant.ConsumerConstants.*;
+import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY_VAL_DEFAULT;
 import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT;
 import static org.infinity.rpc.utilities.network.AddressUtils.LOCALHOST;
 import static org.junit.Assert.assertEquals;
@@ -47,7 +50,7 @@ public class RefreshUrlTests {
     }
 
     @Test
-    public void testRefreshRegisteredProviderUrl() throws InterruptedException {
+    public void testRefreshProvider() {
         ProviderStub<TestService> providerStub = new ProviderStub<>();
         // Register once
         registerProvider(providerStub, 100);
@@ -59,7 +62,7 @@ public class RefreshUrlTests {
         Url url1 = Url.valueOf(zkClient.readData(filePath));
         assertEquals("100", url1.getOption(REQUEST_TIMEOUT));
 
-        // Register again
+        // Register twice
         registerProvider(providerStub, 200);
 
         Url url2 = Url.valueOf(zkClient.readData(filePath));
@@ -98,6 +101,47 @@ public class RefreshUrlTests {
 
         // Activate provider
         SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
+    }
+
+    @Test
+    public void testRefreshConsumer() {
+        ConsumerStub<TestService> consumerStub = new ConsumerStub<>();
+        subscribeProvider(consumerStub);
+        subscribeProvider(consumerStub);
+    }
+
+    private void subscribeProvider(ConsumerStub<TestService> consumerStub) {
+        consumerStub.setInterfaceClass(TestService.class);
+        consumerStub.setInterfaceName(TestService.class.getName());
+        consumerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
+        consumerStub.setCluster(CLUSTER_VAL_DEFAULT);
+        consumerStub.setFaultTolerance(FAULT_TOLERANCE_VAL_FAILOVER);
+        consumerStub.setLoadBalancer(LOAD_BALANCER_VAL_RANDOM);
+        consumerStub.setGroup("test");
+        consumerStub.setVersion("1.0.0");
+        consumerStub.setProxyFactory(PROXY_FACTORY_VAL_JDK);
+        consumerStub.setCheckHealthFactory(CHECK_HEALTH_FACTORY_VAL_DEFAULT);
+        consumerStub.init();
+
+        ApplicationConfig applicationConfig = new ApplicationConfig();
+        applicationConfig.setName("client");
+        applicationConfig.setDescription("Description");
+        applicationConfig.setTeam("Team");
+        applicationConfig.setOwnerMail("test@126.com");
+        applicationConfig.setEnv("test");
+        applicationConfig.init();
+
+        ProtocolConfig protocolConfig = new ProtocolConfig();
+        protocolConfig.setPort(CLIENT_PORT);
+        protocolConfig.init();
+
+        RegistryConfig registryConfig = new RegistryConfig();
+        registryConfig.setName("zookeeper");
+        registryConfig.setHost("localhost");
+        registryConfig.setPort(zkPort);
+        registryConfig.init();
+
+        consumerStub.subscribeProviders(applicationConfig, protocolConfig, registryConfig);
     }
 
     private static int getZkPort() {
