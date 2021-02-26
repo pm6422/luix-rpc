@@ -44,7 +44,7 @@ public class RefreshUrlTests extends ZkBaseTest {
     }
 
     @Test
-    public void testRefreshProvider() throws InterruptedException {
+    public void testRefreshProvider() {
         ProviderStub<TestService> providerStub = new ProviderStub<>();
         // Register once
         registerProvider(providerStub, 100);
