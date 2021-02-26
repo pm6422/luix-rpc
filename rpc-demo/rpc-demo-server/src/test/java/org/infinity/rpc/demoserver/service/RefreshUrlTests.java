@@ -66,7 +66,7 @@ public class RefreshUrlTests {
         assertEquals("200", url2.getOption(REQUEST_TIMEOUT));
     }
 
-    private ProviderStub<TestService> registerProvider(ProviderStub<TestService> providerStub, int requestTimeout) {
+    private void registerProvider(ProviderStub<TestService> providerStub, int requestTimeout) {
         providerStub.setInterfaceClass(TestService.class);
         providerStub.setInterfaceName(TestService.class.getName());
         providerStub.setInstance(new TestServiceImpl());
@@ -98,8 +98,6 @@ public class RefreshUrlTests {
 
         // Activate provider
         SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
-
-        return providerStub;
     }
 
     private static int getZkPort() {
