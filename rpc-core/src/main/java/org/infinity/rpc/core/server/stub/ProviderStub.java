@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
@@ -101,6 +102,10 @@ public class ProviderStub<T> {
      * The provider url
      */
     private           Url                 url;
+    /**
+     * Indicator used to identify whether the provider already been registered
+     */
+    private final     AtomicBoolean       exported     = new AtomicBoolean(false);
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
@@ -148,8 +153,10 @@ public class ProviderStub<T> {
         // Export provider url
         Url providerUrl = createProviderUrl(applicationConfig, protocolConfig, registryConfig);
 
-        // Export RPC provider service
-        Protocol.getInstance(providerUrl.getProtocol()).export(this);
+        if (exported.compareAndSet(false, true)) {
+            // Export RPC provider service
+            Protocol.getInstance(providerUrl.getProtocol()).export(this);
+        }
 
         // Register provider URL to all the registries
         registryConfig.getRegistryImpl().register(providerUrl);
