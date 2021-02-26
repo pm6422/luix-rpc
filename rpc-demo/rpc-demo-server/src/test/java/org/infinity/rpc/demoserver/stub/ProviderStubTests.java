@@ -1,7 +1,6 @@
 package org.infinity.rpc.demoserver.stub;
 
 import org.I0Itec.zkclient.ZkClient;
-import org.infinity.rpc.core.client.proxy.ProxyFactory;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
@@ -20,15 +19,17 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static org.infinity.rpc.core.constant.ConsumerConstants.PROXY_FACTORY_VAL_JDK;
+import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY_VAL_DEFAULT;
 import static org.infinity.rpc.utilities.network.AddressUtils.LOCALHOST;
+import static org.junit.Assert.assertEquals;
 
 public class ProviderStubTests {
 
     private static final String   REGISTRY_HOST = LOCALHOST;
     private static       int      zkPort        = getZkPort();
-    private static final int      PROVIDER_PORT = 2000;
+    private static final int      PROVIDER_PORT = 2001;
+    private static final int      CLINET_PORT   = 2002;
     private static       ZkClient zkClient;
 
     @BeforeClass
@@ -44,9 +45,11 @@ public class ProviderStubTests {
     }
 
     @Test
-    public void testCall() {
+    public void testCall() throws InterruptedException {
         registerProvider();
-//        subscribeProvider();
+        TestService proxyInstance = subscribeProvider();
+        String result = proxyInstance.hello("louis");
+        assertEquals("hello louis", result);
     }
 
     private void registerProvider() {
@@ -60,7 +63,7 @@ public class ProviderStubTests {
         providerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
-        applicationConfig.setName("Test");
+        applicationConfig.setName("server");
         applicationConfig.setDescription("Description");
         applicationConfig.setTeam("Team");
         applicationConfig.setOwnerMail("test@126.com");
@@ -83,18 +86,41 @@ public class ProviderStubTests {
         SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
     }
 
-    private void subscribeProvider() {
+    private TestService subscribeProvider() {
         ConsumerStub<TestService> consumerStub = new ConsumerStub<>();
         consumerStub.setInterfaceClass(TestService.class);
         consumerStub.setInterfaceName(TestService.class.getName());
         consumerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
+        consumerStub.setCluster(CLUSTER_VAL_DEFAULT);
+        consumerStub.setFaultTolerance(FAULT_TOLERANCE_VAL_FAILOVER);
+        consumerStub.setLoadBalancer(LOAD_BALANCER_VAL_RANDOM);
         consumerStub.setGroup("test");
         consumerStub.setVersion("1.0.0");
-        consumerStub.setProxyInstance(ProxyFactory.getInstance(PROXY_FACTORY_VAL_JDK).getProxy(consumerStub));
+        consumerStub.setProxyFactory(PROXY_FACTORY_VAL_JDK);
         consumerStub.setCheckHealthFactory(CHECK_HEALTH_FACTORY_VAL_DEFAULT);
         consumerStub.init();
-    }
 
+        ApplicationConfig applicationConfig = new ApplicationConfig();
+        applicationConfig.setName("client");
+        applicationConfig.setDescription("Description");
+        applicationConfig.setTeam("Team");
+        applicationConfig.setOwnerMail("test@126.com");
+        applicationConfig.setEnv("test");
+        applicationConfig.init();
+
+        ProtocolConfig protocolConfig = new ProtocolConfig();
+        protocolConfig.setPort(CLINET_PORT);
+        protocolConfig.init();
+
+        RegistryConfig registryConfig = new RegistryConfig();
+        registryConfig.setName("zookeeper");
+        registryConfig.setHost("localhost");
+        registryConfig.setPort(zkPort);
+        registryConfig.init();
+
+        consumerStub.subscribeProviders(applicationConfig, protocolConfig, registryConfig);
+        return consumerStub.getProxyInstance();
+    }
 
     private static int getZkPort() {
         InputStream in = EmbeddedZookeeper.class.getResourceAsStream("/zoo.cfg");
