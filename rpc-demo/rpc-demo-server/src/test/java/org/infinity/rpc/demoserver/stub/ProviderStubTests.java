@@ -45,7 +45,7 @@ public class ProviderStubTests {
     }
 
     @Test
-    public void testCall() throws InterruptedException {
+    public void testCall() {
         registerProvider();
         TestService proxyInstance = subscribeProvider();
         String result = proxyInstance.hello("louis");
