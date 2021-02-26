@@ -1,6 +1,5 @@
-package org.infinity.rpc.demoserver.service;
+package org.infinity.rpc.demoserver.testcases;
 
-import org.I0Itec.zkclient.ZkClient;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
@@ -8,34 +7,26 @@ import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.constant.ProtocolConstants;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
-import org.infinity.rpc.demoserver.EmbeddedZookeeper;
 import org.infinity.rpc.demoserver.service.TestService;
 import org.infinity.rpc.demoserver.service.impl.TestServiceImpl;
-import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
+import org.infinity.rpc.demoserver.testcases.base.ZkBaseTest;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.InputStream;
-import java.util.Properties;
-
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY_VAL_DEFAULT;
-import static org.infinity.rpc.utilities.network.AddressUtils.LOCALHOST;
 import static org.junit.Assert.assertEquals;
 
-public class ServiceCallTests {
+public class ServiceCallTests extends ZkBaseTest {
 
-    private static final String   REGISTRY_HOST = LOCALHOST;
-    private static final int      PROVIDER_PORT = 2001;
-    private static final int      CLIENT_PORT   = 2002;
-    private static       int      zkPort        = getZkPort();
-    private static       ZkClient zkClient;
+    private static final int PROVIDER_PORT = 2001;
+    private static final int CLIENT_PORT   = 2002;
 
     @BeforeClass
     public static void setUp() throws Exception {
         startZookeeper();
-        zkClient = new ZkClient(REGISTRY_HOST + ":" + zkPort, 5000);
+        initZkClient();
         cleanup();
     }
 
@@ -120,27 +111,5 @@ public class ServiceCallTests {
 
         consumerStub.subscribeProviders(applicationConfig, protocolConfig, registryConfig);
         return consumerStub.getProxyInstance();
-    }
-
-    private static int getZkPort() {
-        InputStream in = EmbeddedZookeeper.class.getResourceAsStream("/zoo.cfg");
-        Properties properties = new Properties();
-        try {
-            properties.load(in);
-            in.close();
-        } catch (Exception ex) {
-            throw new RuntimeException("Failed to read zoo.cfg!");
-        }
-        return Integer.parseInt(properties.getProperty("clientPort"));
-    }
-
-    private static void startZookeeper() throws Exception {
-        EmbeddedZookeeper zookeeper = new EmbeddedZookeeper();
-        zookeeper.start();
-        Thread.sleep(500);
-    }
-
-    private static void cleanup() {
-        zkClient.deleteRecursive(ZookeeperUtils.REGISTRY_NAMESPACE);
     }
 }
