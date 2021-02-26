@@ -1,6 +1,7 @@
 package org.infinity.rpc.demoserver.stub;
 
 import org.I0Itec.zkclient.ZkClient;
+import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.config.RegistryConfig;
@@ -16,6 +17,7 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
@@ -26,31 +28,20 @@ import static org.junit.Assert.assertTrue;
 public class ProviderStubTests {
 
     private static final String   REGISTRY_HOST = LOCALHOST;
+    private static       int      zkPort        = getZkPort();
     private static final int      PROVIDER_PORT = 2000;
-    private static       int      zkPort;
     private static       ZkClient zkClient;
 
     @BeforeClass
     public static void setUp() throws Exception {
-        Properties properties = new Properties();
-        InputStream in = EmbeddedZookeeper.class.getResourceAsStream("/zoo.cfg");
-        properties.load(in);
-        zkPort = Integer.parseInt(properties.getProperty("clientPort"));
-        in.close();
-
-        EmbeddedZookeeper zookeeper = new EmbeddedZookeeper();
-        zookeeper.start();
-        Thread.sleep(1000);
-
+        startZookeeper();
         zkClient = new ZkClient(REGISTRY_HOST + ":" + zkPort, 5000);
-
-        // Delete old data
-        zkClient.deleteRecursive(ZookeeperUtils.REGISTRY_NAMESPACE);
+        cleanup();
     }
 
     @After
     public void tearDown() {
-        zkClient.deleteRecursive(ZookeeperUtils.REGISTRY_NAMESPACE);
+        cleanup();
     }
 
     @Test
@@ -90,5 +81,27 @@ public class ProviderStubTests {
         List<String> activateAddrFiles = zkClient.getChildren(activePath);
         String node = providerStub.getUrl().getAddress();
         assertTrue(activateAddrFiles.contains(node));
+    }
+
+    private static int getZkPort() {
+        InputStream in = EmbeddedZookeeper.class.getResourceAsStream("/zoo.cfg");
+        Properties properties = new Properties();
+        try {
+            properties.load(in);
+            in.close();
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to read zoo.cfg!");
+        }
+        return Integer.parseInt(properties.getProperty("clientPort"));
+    }
+
+    private static void startZookeeper() throws Exception {
+        EmbeddedZookeeper zookeeper = new EmbeddedZookeeper();
+        zookeeper.start();
+        Thread.sleep(500);
+    }
+
+    private static void cleanup() {
+        zkClient.deleteRecursive(ZookeeperUtils.REGISTRY_NAMESPACE);
     }
 }
