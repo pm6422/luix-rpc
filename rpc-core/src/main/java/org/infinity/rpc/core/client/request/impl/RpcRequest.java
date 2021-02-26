@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
 
@@ -57,6 +58,9 @@ public class RpcRequest implements Requestable, Serializable {
 
     @Override
     public void addOption(String key, String value) {
+        if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
+            return;
+        }
         options.putIfAbsent(key, value);
     }
 

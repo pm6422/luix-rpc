@@ -4,11 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
-import org.infinity.rpc.core.config.ProviderConfig;
 import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
@@ -82,13 +80,13 @@ public class ProviderStub<T> {
      * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
      */
     @Min(value = 0, message = "The [timeout] property of @Provider must NOT be a negative number!")
-    private           int                 requestTimeout;
+    private           Integer             requestTimeout;
     /**
      * The max retry times of RPC request
      * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
      */
     @Min(value = 0, message = "The [maxRetries] property of @Provider must NOT be a negative number!")
-    private           int                 maxRetries;
+    private           Integer             maxRetries;
     /**
      * The provider instance
      * Disable serialize
@@ -184,8 +182,8 @@ public class ProviderStub<T> {
         url.addOption(SHARED_CHANNEL, String.valueOf(protocolConfig.isSharedChannel()));
         url.addOption(ASYNC_INIT_CONN, String.valueOf(protocolConfig.isAsyncInitConn()));
         url.addOption(CHECK_HEALTH_FACTORY, checkHealthFactory);
-        url.addOption(REQUEST_TIMEOUT, String.valueOf(requestTimeout));
-        url.addOption(MAX_RETRIES, String.valueOf(maxRetries));
+        url.addOption(REQUEST_TIMEOUT, requestTimeout != null ? requestTimeout.toString() : null);
+        url.addOption(MAX_RETRIES, maxRetries != null ? maxRetries.toString() : null);
 
         return url;
     }

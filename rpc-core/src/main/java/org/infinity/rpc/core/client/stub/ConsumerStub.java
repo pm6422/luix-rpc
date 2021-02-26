@@ -95,14 +95,14 @@ public class ConsumerStub<T> {
      * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
      */
     @Min(value = 0, message = "The [timeout] property of @Consumer must NOT be a negative number!")
-    private int      requestTimeout;
+    private Integer  requestTimeout;
     /**
      * The max retry times of RPC request
      * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
      */
     @Min(value = 0, message = "The [maxRetries] property of @Consumer must NOT be a negative number!")
     @Max(value = 10, message = "The [maxRetries] property of @Consumer must NOT be less than 10!")
-    private int      maxRetries;
+    private Integer  maxRetries;
     /**
      * Addresses of RPC provider used to connect RPC provider directly without third party registry.
      * Multiple addresses are separated by comma.
@@ -195,7 +195,7 @@ public class ConsumerStub<T> {
      *
      * @param applicationConfig application configuration
      * @param protocolConfig    protocol configuration
-     * @return provider url
+     * @return consumer url
      */
     private Url createConsumerUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
         url = Url.consumerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, group, version);
@@ -205,8 +205,8 @@ public class ConsumerStub<T> {
         url.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
 
         url.addOption(CHECK_HEALTH_FACTORY, checkHealthFactory);
-        url.addOption(REQUEST_TIMEOUT, String.valueOf(requestTimeout));
-        url.addOption(MAX_RETRIES, String.valueOf(maxRetries));
+        url.addOption(REQUEST_TIMEOUT, requestTimeout != null ? requestTimeout.toString() : null);
+        url.addOption(MAX_RETRIES, maxRetries != null ? maxRetries.toString() : null);
         return url;
     }
 
