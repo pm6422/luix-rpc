@@ -58,7 +58,6 @@ public class RefreshUrlTests extends ZkBaseTest {
 
         // Register twice
         registerProvider(providerStub, 200);
-        Thread.sleep(5000L);
 
         Url url2 = Url.valueOf(zkClient.readData(filePath));
         assertEquals("200", url2.getOption(REQUEST_TIMEOUT));
@@ -95,7 +94,9 @@ public class RefreshUrlTests extends ZkBaseTest {
         providerStub.register(applicationConfig, protocolConfig, registryConfig);
 
         // Activate provider
-        SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
+        if (!SwitcherService.getInstance().isOn(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER)) {
+            SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
+        }
     }
 
     @Test
