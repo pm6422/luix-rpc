@@ -1,7 +1,8 @@
 package org.infinity.rpc.demoserver.stub;
 
 import org.I0Itec.zkclient.ZkClient;
-import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
+import org.infinity.rpc.core.client.proxy.ProxyFactory;
+import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.config.RegistryConfig;
@@ -11,19 +12,17 @@ import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.demoserver.EmbeddedZookeeper;
 import org.infinity.rpc.demoserver.service.TestService;
 import org.infinity.rpc.demoserver.service.impl.TestServiceImpl;
-import org.infinity.rpc.registry.zookeeper.ZookeeperStatusNode;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Properties;
 
+import static org.infinity.rpc.core.constant.ConsumerConstants.PROXY_FACTORY_VAL_JDK;
+import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY_VAL_DEFAULT;
 import static org.infinity.rpc.utilities.network.AddressUtils.LOCALHOST;
-import static org.junit.Assert.assertTrue;
 
 public class ProviderStubTests {
 
@@ -45,7 +44,12 @@ public class ProviderStubTests {
     }
 
     @Test
-    public void testRegisterProvider() {
+    public void testCall() {
+        registerProvider();
+//        subscribeProvider();
+    }
+
+    private void registerProvider() {
         ProviderStub<TestService> providerStub = new ProviderStub<>();
         providerStub.setInterfaceClass(TestService.class);
         providerStub.setInterfaceName(TestService.class.getName());
@@ -77,11 +81,20 @@ public class ProviderStubTests {
 
         // Activate provider
         SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
-        String activePath = ZookeeperUtils.getProviderStatusNodePath(providerStub.getUrl(), ZookeeperStatusNode.ACTIVE);
-        List<String> activateAddrFiles = zkClient.getChildren(activePath);
-        String node = providerStub.getUrl().getAddress();
-        assertTrue(activateAddrFiles.contains(node));
     }
+
+    private void subscribeProvider() {
+        ConsumerStub<TestService> consumerStub = new ConsumerStub<>();
+        consumerStub.setInterfaceClass(TestService.class);
+        consumerStub.setInterfaceName(TestService.class.getName());
+        consumerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
+        consumerStub.setGroup("test");
+        consumerStub.setVersion("1.0.0");
+        consumerStub.setProxyInstance(ProxyFactory.getInstance(PROXY_FACTORY_VAL_JDK).getProxy(consumerStub));
+        consumerStub.setCheckHealthFactory(CHECK_HEALTH_FACTORY_VAL_DEFAULT);
+        consumerStub.init();
+    }
+
 
     private static int getZkPort() {
         InputStream in = EmbeddedZookeeper.class.getResourceAsStream("/zoo.cfg");

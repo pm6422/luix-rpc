@@ -70,7 +70,7 @@ public @interface Consumer {
     /**
      * @return consumer proxy factory used to create proxyInstance which is the implementation of consumer interface class
      */
-    String consumerProxyFactory() default "";
+    String proxyFactory() default "";
 
     /**
      * @return check health factory
