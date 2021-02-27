@@ -11,7 +11,6 @@ public interface GenericCallHandler {
      * @param args             method arguments
      * @param options          call options
      * @return return object
-     * @throws Throwable exception
      */
-    Object genericCall(String methodName, String[] methodParamTypes, Object[] args, Map<String, String> options) throws Throwable;
+    Object genericCall(String methodName, String[] methodParamTypes, Object[] args, Map<String, String> options);
 }
