@@ -16,7 +16,6 @@ import java.lang.reflect.Method;
 @Slf4j
 public abstract class AbstractConsumerInvocationHandler<T> {
     protected ConsumerStub<T> consumerStub;
-    protected SwitcherService switcherService;
 
     /**
      * @param request    RPC request
