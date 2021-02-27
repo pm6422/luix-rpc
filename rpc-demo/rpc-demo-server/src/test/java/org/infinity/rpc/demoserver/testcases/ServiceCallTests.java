@@ -1,5 +1,6 @@
 package org.infinity.rpc.demoserver.testcases;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
@@ -20,8 +21,9 @@ import static org.junit.Assert.assertEquals;
 
 public class ServiceCallTests extends ZkBaseTest {
 
-    private static final int PROVIDER_PORT = 2001;
-    private static final int CLIENT_PORT   = 2002;
+    private static final int    PROVIDER_PORT = 2001;
+    private static final int    CLIENT_PORT   = 2002;
+    private static final String GROUP         = String.valueOf(RandomUtils.nextInt(1, 100));
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -49,7 +51,7 @@ public class ServiceCallTests extends ZkBaseTest {
         providerStub.setInterfaceName(TestService.class.getName());
         providerStub.setInstance(new TestServiceImpl());
         providerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
-        providerStub.setGroup("test");
+        providerStub.setGroup(GROUP);
         providerStub.setVersion("1.0.0");
         providerStub.init();
 
@@ -85,7 +87,7 @@ public class ServiceCallTests extends ZkBaseTest {
         consumerStub.setCluster(CLUSTER_VAL_DEFAULT);
         consumerStub.setFaultTolerance(FAULT_TOLERANCE_VAL_FAILOVER);
         consumerStub.setLoadBalancer(LOAD_BALANCER_VAL_RANDOM);
-        consumerStub.setGroup("test");
+        consumerStub.setGroup(GROUP);
         consumerStub.setVersion("1.0.0");
         consumerStub.setProxyFactory(PROXY_FACTORY_VAL_JDK);
         consumerStub.setCheckHealthFactory(CHECK_HEALTH_FACTORY_VAL_DEFAULT);
