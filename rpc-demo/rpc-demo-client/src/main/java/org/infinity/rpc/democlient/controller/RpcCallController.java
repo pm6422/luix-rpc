@@ -47,7 +47,6 @@ public class RpcCallController {
 
         consumerStub.setGroup(dto.getOptions().get(GROUP));
         consumerStub.setVersion(dto.getOptions().get(VERSION));
-//        consumerStub.init();
 
         consumerStub.subscribeProviders(infinityProperties.getApplication(),
                 infinityProperties.getAvailableProtocol(),
