@@ -20,8 +20,8 @@ import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodParamete
 @Slf4j
 public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHandler<T> implements InvocationHandler {
 
-    public ConsumerInvocationHandler(ConsumerStub<T> stub) {
-        consumerStub = stub;
+    public ConsumerInvocationHandler(ConsumerStub<T> consumerStub) {
+        super.consumerStub = consumerStub;
     }
 
     /**
