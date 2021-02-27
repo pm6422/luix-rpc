@@ -1,7 +1,9 @@
 package org.infinity.rpc.core.client.invocationhandler.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.infinity.rpc.core.client.invocationhandler.AbstractConsumerInvocationHandler;
+import org.infinity.rpc.core.client.invocationhandler.GenericCallHandler;
 import org.infinity.rpc.core.client.proxy.impl.JdkProxyFactory;
 import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
@@ -10,15 +12,16 @@ import org.infinity.rpc.utilities.id.IdGenerator;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
-import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodParameters;
+import static org.infinity.rpc.core.utils.MethodParameterUtils.*;
 
 /**
  * @param <T>: The interface class of the consumer
  */
 @Slf4j
-public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHandler<T> implements InvocationHandler {
+public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHandler<T> implements InvocationHandler, GenericCallHandler {
 
     public ConsumerInvocationHandler(ConsumerStub<T> consumerStub) {
         super.consumerStub = consumerStub;
@@ -71,5 +74,22 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
      */
     private boolean isAsyncMethod(Method method) {
         return method.getReturnType().equals(FutureResponse.class);
+    }
+
+    @Override
+    public Object genericCall(String methodName, String[] methodParamTypes, Object[] args, Map<String, String> options) {
+        // Create a new RpcRequest for each request
+        RpcRequest request = new RpcRequest(IdGenerator.generateTimestampId(),
+                consumerStub.getInterfaceName(),
+                methodName,
+                ArrayUtils.isEmpty(methodParamTypes) ? VOID : String.join(PARAM_TYPE_STR_DELIMITER, methodParamTypes),
+                false);
+
+        // Set method arguments
+        request.setMethodArguments(args);
+
+        // Set some options
+        request.setOptions(options);
+        return processRequest(request, Object.class);
     }
 }

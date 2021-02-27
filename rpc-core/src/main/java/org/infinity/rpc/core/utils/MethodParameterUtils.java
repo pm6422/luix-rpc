@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * A utility used to handle method parameters
  */
 public class MethodParameterUtils {
-    private static final String                PARAM_TYPE_STR_DELIMITER        = ",";
+    public static final String                PARAM_TYPE_STR_DELIMITER        = ",";
     public static final  String                VOID                            = "void";
     private static final String                ARRAY_TYPE_SUFFIX               = "[]";
     private static final Class<?>[]            EMPTY_CLASS_ARRAY               = new Class<?>[0];

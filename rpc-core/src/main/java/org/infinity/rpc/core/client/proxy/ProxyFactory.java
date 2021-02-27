@@ -1,5 +1,6 @@
 package org.infinity.rpc.core.client.proxy;
 
+import org.infinity.rpc.core.client.invocationhandler.GenericCallHandler;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
@@ -15,6 +16,14 @@ public interface ProxyFactory {
      * @return The consumer proxy instance
      */
     <T> T getProxy(ConsumerStub<T> stub);
+
+    /**
+     * Create generic call handler
+     *
+     * @param stub Consumer stub
+     * @return generic call handler
+     */
+    GenericCallHandler createGenericCallHandler(ConsumerStub<?> stub);
 
     /**
      * Get instance associated with the specified name
