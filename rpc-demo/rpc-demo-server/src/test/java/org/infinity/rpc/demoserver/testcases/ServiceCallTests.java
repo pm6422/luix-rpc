@@ -23,7 +23,7 @@ public class ServiceCallTests extends ZkBaseTest {
 
     private static final int    PROVIDER_PORT = 2001;
     private static final int    CLIENT_PORT   = 2002;
-    private static final String GROUP         = String.valueOf(RandomUtils.nextInt(1, 100));
+    private static final String GROUP         = ServiceCallTests.class.getSimpleName();
 
     @BeforeClass
     public static void setUp() throws Exception {
