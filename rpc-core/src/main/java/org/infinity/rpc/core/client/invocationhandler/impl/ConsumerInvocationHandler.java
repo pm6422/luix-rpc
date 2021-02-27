@@ -56,12 +56,8 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
         request.addOption(GROUP, consumerStub.getGroup());
         request.addOption(VERSION, consumerStub.getVersion());
         request.addOption(CHECK_HEALTH_FACTORY, consumerStub.getCheckHealthFactory());
-        request.addOption(REQUEST_TIMEOUT, consumerStub.getRequestTimeout() != null
-                ? consumerStub.getRequestTimeout().toString()
-                : String.valueOf(REQUEST_TIMEOUT_VAL_DEFAULT));
-        request.addOption(MAX_RETRIES, consumerStub.getMaxRetries() != null
-                ? consumerStub.getMaxRetries().toString()
-                : String.valueOf(MAX_RETRIES_VAL_DEFAULT));
+        request.addOption(REQUEST_TIMEOUT, consumerStub.getRequestTimeout(), REQUEST_TIMEOUT_VAL_DEFAULT);
+        request.addOption(MAX_RETRIES, consumerStub.getMaxRetries(), MAX_RETRIES_VAL_DEFAULT);
 
         return processRequest(request, method.getReturnType());
     }
