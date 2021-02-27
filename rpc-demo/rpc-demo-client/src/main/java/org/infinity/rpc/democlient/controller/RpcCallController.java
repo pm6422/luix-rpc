@@ -1,11 +1,11 @@
-package org.infinity.rpc.demoserver.controller;
+package org.infinity.rpc.democlient.controller;
 
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.invocationhandler.GenericCallHandler;
 import org.infinity.rpc.core.client.proxy.ProxyFactory;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.demoserver.dto.GenericCallDTO;
+import org.infinity.rpc.democlient.dto.GenericCallDTO;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,7 +47,7 @@ public class RpcCallController {
 
         consumerStub.setGroup(dto.getOptions().get(GROUP));
         consumerStub.setVersion(dto.getOptions().get(VERSION));
-        consumerStub.init();
+//        consumerStub.init();
 
         consumerStub.subscribeProviders(infinityProperties.getApplication(),
                 infinityProperties.getAvailableProtocol(),

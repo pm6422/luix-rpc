@@ -1,4 +1,4 @@
-package org.infinity.rpc.demoserver.dto;
+package org.infinity.rpc.democlient.dto;
 
 import lombok.Data;
 
