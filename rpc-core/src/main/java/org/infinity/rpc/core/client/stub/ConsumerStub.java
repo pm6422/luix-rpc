@@ -181,7 +181,7 @@ public class ConsumerStub<T> {
         if (StringUtils.isEmpty(directAddresses)) {
             // Non-direct registry
             // Pass provider cluster to listener, listener will update provider cluster after provider urls changed
-            ProviderDiscoveryListener<T> listener = ProviderDiscoveryListener.of(providerCluster, interfaceClass, clientUrl);
+            ProviderDiscoveryListener<T> listener = ProviderDiscoveryListener.of(providerCluster, interfaceName, clientUrl);
             listener.subscribe(registryUrls);
             return;
         }
@@ -212,7 +212,7 @@ public class ConsumerStub<T> {
 
     private void notifyDirectProviderUrls(ProtocolConfig protocolConfig, List<Url> globalRegistryUrls) {
         // Pass provider cluster to listener, listener will update provider cluster after provider urls changed
-        ProviderNotifyListener<T> listener = ProviderNotifyListener.of(providerCluster, interfaceClass, protocol);
+        ProviderNotifyListener<T> listener = ProviderNotifyListener.of(providerCluster, interfaceName, protocol);
 
         for (Url globalRegistryUrl : globalRegistryUrls) {
             List<Url> directProviderUrls = createDirectProviderUrls(protocolConfig);
@@ -245,6 +245,6 @@ public class ConsumerStub<T> {
 
     private ProviderCluster<T> createProviderCluster() {
         // One cluster is created for one protocol, only one server node under a cluster can receive the request
-        return ProviderCluster.createCluster(interfaceClass, cluster, protocol, faultTolerance, loadBalancer, clientUrl);
+        return ProviderCluster.createCluster(interfaceName, cluster, protocol, faultTolerance, loadBalancer, clientUrl);
     }
 }

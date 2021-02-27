@@ -17,11 +17,11 @@ public abstract class AbstractProviderCaller<T> implements ProviderCaller<T> {
     protected volatile boolean       active          = false;
     protected          AtomicBoolean initialized     = new AtomicBoolean(false);
     protected          AtomicInteger processingCount = new AtomicInteger(0);
-    protected          Class<T>      interfaceClass;
+    protected          String        interfaceName;
     protected          Url           providerUrl;
 
-    public AbstractProviderCaller(Class<T> interfaceClass, Url providerUrl) {
-        this.interfaceClass = interfaceClass;
+    public AbstractProviderCaller(String interfaceName, Url providerUrl) {
+        this.interfaceName = interfaceName;
         this.providerUrl = providerUrl;
     }
 
@@ -38,11 +38,6 @@ public abstract class AbstractProviderCaller<T> implements ProviderCaller<T> {
         } else {
             setAvailable(true);
         }
-    }
-
-    @Override
-    public Class<T> getInterfaceClass() {
-        return interfaceClass;
     }
 
     public void setAvailable(boolean active) {

@@ -1,10 +1,11 @@
 package org.infinity.rpc.core.protocol;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
-import org.infinity.rpc.core.exception.RpcFrameworkException;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.request.ProviderCaller;
 import org.infinity.rpc.core.client.request.impl.DefaultProviderCaller;
+import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.server.exporter.Exportable;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
@@ -18,15 +19,15 @@ public abstract class AbstractProtocol implements Protocol {
     protected final Map<String, Exportable<?>> exporterMap = new ConcurrentHashMap<>();
 
     @Override
-    public <T> ProviderCaller<T> createProviderCaller(Class<T> interfaceClass, Url providerUrl) {
-        if (interfaceClass == null) {
+    public <T> ProviderCaller<T> createProviderCaller(String interfaceName, Url providerUrl) {
+        if (StringUtils.isEmpty(interfaceName)) {
             throw new RpcFrameworkException("Provider interface must NOT be null!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
         if (providerUrl == null) {
             throw new RpcFrameworkException("Provider url must NOT be null!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
         // todo: create different caller associated with the protocol
-        return new DefaultProviderCaller<>(interfaceClass, providerUrl);
+        return new DefaultProviderCaller<>(interfaceName, providerUrl);
     }
 
     @Override
@@ -57,7 +58,7 @@ public abstract class AbstractProtocol implements Protocol {
      * Create exporter
      *
      * @param providerStub provider stub
-     * @param <T>             service interface class
+     * @param <T>          service interface class
      * @return exporter
      */
     protected abstract <T> Exportable<T> createExporter(ProviderStub<T> providerStub);

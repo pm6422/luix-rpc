@@ -26,9 +26,9 @@ import java.util.stream.Collectors;
 public class ProviderNotifyListener<T> implements ClientListener {
     protected     ProviderCluster<T>                providerCluster;
     /**
-     * The interface class of the consumer
+     * The interface class name of the consumer
      */
-    protected     Class<T>                          interfaceClass;
+    protected     String                            interfaceName;
     protected     Protocol                          protocol;
     private final Map<Url, List<ProviderCaller<T>>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
 
@@ -39,15 +39,15 @@ public class ProviderNotifyListener<T> implements ClientListener {
      * Pass provider cluster to listener, listener will update provider cluster after provider urls changed
      *
      * @param providerCluster provider cluster
-     * @param interfaceClass  The interface class of the consumer
+     * @param interfaceName   The interface class name of the consumer
      * @param protocol        protocol
      * @param <T>             The interface class of the consumer
      * @return listener
      */
-    public static <T> ProviderNotifyListener<T> of(ProviderCluster<T> providerCluster, Class<T> interfaceClass, String protocol) {
+    public static <T> ProviderNotifyListener<T> of(ProviderCluster<T> providerCluster, String interfaceName, String protocol) {
         ProviderNotifyListener<T> listener = new ProviderNotifyListener<>();
         listener.providerCluster = providerCluster;
-        listener.interfaceClass = interfaceClass;
+        listener.interfaceName = interfaceName;
         listener.protocol = Protocol.getInstance(protocol);
         return listener;
     }
@@ -72,7 +72,7 @@ public class ProviderNotifyListener<T> implements ClientListener {
             // Find provider caller associated with the provider url
             ProviderCaller<T> providerCaller = findCallerByProviderUrl(registryUrl, providerUrl);
             if (providerCaller == null) {
-                providerCaller = protocol.createProviderCaller(interfaceClass, providerUrl.copy());
+                providerCaller = protocol.createProviderCaller(interfaceName, providerUrl.copy());
             }
             newProviderCallers.add(providerCaller);
         }
@@ -118,6 +118,6 @@ public class ProviderNotifyListener<T> implements ClientListener {
 
     @Override
     public String toString() {
-        return ProviderNotifyListener.class.getSimpleName().concat(":").concat(interfaceClass.getName());
+        return ProviderNotifyListener.class.getSimpleName().concat(":").concat(interfaceName);
     }
 }

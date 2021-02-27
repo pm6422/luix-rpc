@@ -20,13 +20,6 @@ public interface ProviderCaller<T> {
     Url getProviderUrl();
 
     /**
-     * Get provider interface class
-     *
-     * @return interface class
-     */
-    Class<T> getInterfaceClass();
-
-    /**
      * Check whether it is available
      *
      * @return true: available, false: unavailable

@@ -34,15 +34,15 @@ public class ProviderDiscoveryListener<T> extends ProviderNotifyListener<T> {
      * Pass provider cluster to listener, listener will update provider cluster after provider urls changed
      *
      * @param providerCluster provider cluster
-     * @param interfaceClass  The interface class of the consumer
+     * @param interfaceName   The interface class name of the consumer
      * @param clientUrl       client url
      * @param <T>             The interface class of the consumer
      * @return listener
      */
-    public static <T> ProviderDiscoveryListener<T> of(ProviderCluster<T> providerCluster, Class<T> interfaceClass, Url clientUrl) {
+    public static <T> ProviderDiscoveryListener<T> of(ProviderCluster<T> providerCluster, String interfaceName, Url clientUrl) {
         ProviderDiscoveryListener<T> listener = new ProviderDiscoveryListener<>();
         listener.providerCluster = providerCluster;
-        listener.interfaceClass = interfaceClass;
+        listener.interfaceName = interfaceName;
         listener.clientUrl = clientUrl;
         listener.protocol = Protocol.getInstance(clientUrl.getProtocol());
         return listener;
@@ -65,6 +65,6 @@ public class ProviderDiscoveryListener<T> extends ProviderNotifyListener<T> {
 
     @Override
     public String toString() {
-        return ProviderDiscoveryListener.class.getSimpleName().concat(":").concat(interfaceClass.getName());
+        return ProviderDiscoveryListener.class.getSimpleName().concat(":").concat(interfaceName);
     }
 }

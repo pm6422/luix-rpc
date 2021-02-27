@@ -3,6 +3,7 @@ package org.infinity.rpc.core.client.cluster.impl;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.cluster.ProviderCluster;
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
@@ -32,7 +33,7 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION_V
 @SpiName(CLUSTER_VAL_DEFAULT)
 public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     private boolean           active = false;
-    private Class<T>          interfaceClass;
+    private String            interfaceName;
     private String            protocol;
     private FaultTolerance<T> faultTolerance;
     private LoadBalancer<T>   loadBalancer;
@@ -48,13 +49,8 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     }
 
     @Override
-    public void setInterfaceClass(Class<T> interfaceClass) {
-        this.interfaceClass = interfaceClass;
-    }
-
-    @Override
-    public Class<T> getInterfaceClass() {
-        return interfaceClass;
+    public void setInterfaceName(String interfaceName) {
+        this.interfaceName = interfaceName;
     }
 
     @Override
@@ -140,9 +136,9 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
 
     @Override
     public String toString() {
-        if (interfaceClass == null) {
+        if (StringUtils.isEmpty(interfaceName)) {
             return DefaultProviderCluster.class.getSimpleName();
         }
-        return DefaultProviderCluster.class.getSimpleName().concat(":").concat(interfaceClass.getName());
+        return DefaultProviderCluster.class.getSimpleName().concat(":").concat(interfaceName);
     }
 }

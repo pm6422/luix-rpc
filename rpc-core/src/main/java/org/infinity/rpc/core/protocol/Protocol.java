@@ -14,17 +14,17 @@ public interface Protocol {
     /**
      * Create provider caller
      *
-     * @param interfaceClass provider interface
-     * @param providerUrl    provider url
-     * @param <T> provider instance
+     * @param interfaceName provider interface name
+     * @param providerUrl   provider url
+     * @param <T>           provider instance
      * @return provider caller
      */
-    <T> ProviderCaller<T> createProviderCaller(Class<T> interfaceClass, Url providerUrl);
+    <T> ProviderCaller<T> createProviderCaller(String interfaceName, Url providerUrl);
 
     /**
      * 暴露服务
      *
-     * @param <T>             provider interface
+     * @param <T>          provider interface
      * @param providerStub provider stub
      * @return exporter
      */
