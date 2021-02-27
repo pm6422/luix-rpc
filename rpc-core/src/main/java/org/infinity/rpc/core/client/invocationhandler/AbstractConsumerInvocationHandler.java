@@ -8,6 +8,8 @@ import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.utils.RpcRequestIdHolder;
 
+import java.lang.reflect.Method;
+
 /**
  * @param <T>: The interface class of the consumer
  */
@@ -37,5 +39,24 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         } finally {
             RpcRequestIdHolder.destroy();
         }
+    }
+
+    /**
+     * Check whether the method is derived from {@link Object} class.
+     * e.g, toString, equals, hashCode, finalize
+     *
+     * @param method method
+     * @return true: method derived from Object class, false: otherwise
+     */
+    protected boolean isDerivedFromObject(Method method) {
+        if (method.getDeclaringClass().equals(Object.class)) {
+            try {
+                consumerStub.getInterfaceClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
+                return false;
+            } catch (Exception e) {
+                return true;
+            }
+        }
+        return false;
     }
 }

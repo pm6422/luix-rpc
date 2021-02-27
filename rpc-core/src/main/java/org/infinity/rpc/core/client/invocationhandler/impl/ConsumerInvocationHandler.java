@@ -64,25 +64,6 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
     }
 
     /**
-     * Check whether the method is derived from {@link Object} class.
-     * e.g, toString, equals, hashCode, finalize
-     *
-     * @param method method
-     * @return true: method derived from Object class, false: otherwise
-     */
-    public boolean isDerivedFromObject(Method method) {
-        if (method.getDeclaringClass().equals(Object.class)) {
-            try {
-                consumerStub.getInterfaceClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
-                return false;
-            } catch (Exception e) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * It is a asynchronous method calling if the return type of method is type of {@link FutureResponse}
      *
      * @param method method
