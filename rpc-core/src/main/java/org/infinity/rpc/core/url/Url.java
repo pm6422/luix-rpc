@@ -229,13 +229,13 @@ public final class Url implements Serializable {
         this.options.putAll(options);
     }
 
-    public Integer getIntOption(String name, int defaultValue) {
+    public int getIntOption(String name, int defaultValue) {
         Number n = getNumOptions().get(name);
         if (n != null) {
             return n.intValue();
         }
         String value = options.get(name);
-        if (value == null || value.length() == 0) {
+        if (StringUtils.isEmpty(value)) {
             return defaultValue;
         }
         int i = Integer.parseInt(value);
@@ -243,7 +243,7 @@ public final class Url implements Serializable {
         return i;
     }
 
-    public Integer getIntOption(String name) {
+    public int getIntOption(String name) {
         Number n = getNumOptions().get(name);
         if (n != null) {
             return n.intValue();

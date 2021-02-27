@@ -64,14 +64,43 @@ public class RpcRequest implements Requestable, Serializable {
         options.putIfAbsent(key, value);
     }
 
+    public void addOption(String key, Integer value, int defaultValue) {
+        if (StringUtils.isEmpty(key)) {
+            return;
+        }
+        if (value != null) {
+            options.putIfAbsent(key, value.toString());
+        } else {
+            options.putIfAbsent(key, String.valueOf(defaultValue));
+        }
+    }
+
     @Override
     public String getOption(String key) {
         return options.get(key);
     }
 
     @Override
+    public String getOption(String key, String defaultValue) {
+        String value = getOption(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value;
+    }
+
+    @Override
     public int getIntOption(String key) {
         return Integer.parseInt(options.get(key));
+    }
+
+    @Override
+    public int getIntOption(String key, int defaultValue) {
+        String value = getOption(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        return Integer.parseInt(value);
     }
 
     @Override

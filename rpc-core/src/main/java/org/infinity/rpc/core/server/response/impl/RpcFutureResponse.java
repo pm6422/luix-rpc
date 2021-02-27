@@ -296,7 +296,25 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
     }
 
     @Override
+    public String getOption(String key, String defaultValue) {
+        String value = getOption(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value;
+    }
+
+    @Override
     public int getIntOption(String key) {
         return Integer.parseInt(options.get(key));
+    }
+
+    @Override
+    public int getIntOption(String key, int defaultValue) {
+        String value = getOption(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        return Integer.parseInt(value);
     }
 }

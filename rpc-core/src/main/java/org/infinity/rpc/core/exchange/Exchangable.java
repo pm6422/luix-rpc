@@ -56,10 +56,28 @@ public interface Exchangable extends Traceable {
     String getOption(String key);
 
     /**
+     * Get option value
+     *
+     * @param key          option key
+     * @param defaultValue option default value
+     * @return option value
+     */
+    String getOption(String key, String defaultValue);
+
+    /**
      * Get option value in integer form
      *
      * @param key option key
      * @return option value
      */
     int getIntOption(String key);
+
+    /**
+     * Get option value in integer form
+     *
+     * @param key          option key
+     * @param defaultValue option default value
+     * @return option value
+     */
+    int getIntOption(String key, int defaultValue);
 }

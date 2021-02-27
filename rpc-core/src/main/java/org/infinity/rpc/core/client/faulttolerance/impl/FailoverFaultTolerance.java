@@ -33,7 +33,7 @@ public class FailoverFaultTolerance<T> extends AbstractFaultTolerance<T> {
         // todo: provider configuration over consumer configuration
         int maxRetries = availableProviderCallers.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
         if (maxRetries == 0) {
-            maxRetries = request.getIntOption(MAX_RETRIES);
+            maxRetries = request.getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
         }
 
         // Retry the RPC request operation till the max retry times
