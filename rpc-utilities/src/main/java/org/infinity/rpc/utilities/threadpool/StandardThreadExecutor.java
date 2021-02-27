@@ -1,5 +1,6 @@
 package org.infinity.rpc.utilities.threadpool;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -133,7 +134,7 @@ class ExecutorQueue extends LinkedTransferQueue<Runnable> {
     }
 
     @Override
-    public boolean offer(Runnable o) {
+    public boolean offer(@Nonnull Runnable o) {
         int poolSize = threadPoolExecutor.getPoolSize();
 
         // we are maxed out on threads, simply queue the object
