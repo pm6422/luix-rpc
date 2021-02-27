@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Responseable;
+import org.infinity.rpc.utilities.concurrent.ThreadSafe;
 
-import javax.annotation.concurrent.ThreadSafe;
 import java.util.HashMap;
 import java.util.Map;
 

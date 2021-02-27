@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.client.stub;
 
-import javax.annotation.concurrent.ThreadSafe;
+import org.infinity.rpc.utilities.concurrent.ThreadSafe;
+
 import java.util.ArrayList;
 import java.util.List;
 

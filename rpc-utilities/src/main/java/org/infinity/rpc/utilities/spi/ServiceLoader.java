@@ -5,11 +5,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.infinity.rpc.utilities.concurrent.ThreadSafe;
 import org.infinity.rpc.utilities.spi.annotation.SpiName;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 
-import javax.annotation.concurrent.ThreadSafe;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;

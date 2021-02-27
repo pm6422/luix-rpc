@@ -7,8 +7,8 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.annotation.EventSubscriber;
+import org.infinity.rpc.utilities.concurrent.ThreadSafe;
 
-import javax.annotation.concurrent.ThreadSafe;
 import java.util.List;
 
 /**

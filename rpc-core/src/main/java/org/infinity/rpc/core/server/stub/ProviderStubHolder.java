@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.server.stub;
 
-import javax.annotation.concurrent.ThreadSafe;
+import org.infinity.rpc.utilities.concurrent.ThreadSafe;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

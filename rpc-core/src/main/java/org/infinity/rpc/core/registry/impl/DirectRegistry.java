@@ -8,10 +8,10 @@ import org.infinity.rpc.core.registry.AddressInfo;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.utilities.concurrent.ThreadSafe;
 import org.infinity.rpc.utilities.destory.Cleanable;
 import org.infinity.rpc.utilities.network.AddressUtils;
 
-import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

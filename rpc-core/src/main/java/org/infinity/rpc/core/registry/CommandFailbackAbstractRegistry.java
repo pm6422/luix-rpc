@@ -8,8 +8,8 @@ import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.subscribe.RpcCommand;
 import org.infinity.rpc.core.subscribe.RpcCommandUtils;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.utilities.concurrent.NotThreadSafe;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

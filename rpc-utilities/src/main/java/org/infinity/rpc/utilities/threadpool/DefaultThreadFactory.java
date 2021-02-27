@@ -17,7 +17,9 @@
 package org.infinity.rpc.utilities.threadpool;
 
 
-import javax.annotation.Nonnull;
+
+import lombok.NonNull;
+
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -46,7 +48,7 @@ public class DefaultThreadFactory implements ThreadFactory {
     }
 
     @Override
-    public Thread newThread(@Nonnull Runnable r) {
+    public Thread newThread(Runnable r) {
         Thread thread = new Thread(threadGroup, r, threadPoolName + currentThreadNumber.getAndIncrement(), 0);
         thread.setDaemon(isDaemon);
         thread.setPriority(priority);

@@ -29,8 +29,8 @@ import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.annotation.EventReceiver;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
+import org.infinity.rpc.utilities.concurrent.NotThreadSafe;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;

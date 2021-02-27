@@ -12,8 +12,8 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.annotation.EventMarker;
 import org.infinity.rpc.utilities.annotation.EventPublisher;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
+import org.infinity.rpc.utilities.concurrent.NotThreadSafe;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;

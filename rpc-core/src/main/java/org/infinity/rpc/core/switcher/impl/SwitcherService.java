@@ -3,8 +3,8 @@ package org.infinity.rpc.core.switcher.impl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.switcher.Switcher;
 import org.infinity.rpc.core.switcher.SwitcherListener;
+import org.infinity.rpc.utilities.concurrent.NotThreadSafe;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

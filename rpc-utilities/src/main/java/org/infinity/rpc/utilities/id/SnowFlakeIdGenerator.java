@@ -1,6 +1,7 @@
 package org.infinity.rpc.utilities.id;
 
-import javax.annotation.concurrent.ThreadSafe;
+import org.infinity.rpc.utilities.concurrent.ThreadSafe;
+
 import java.net.InetAddress;
 import java.sql.Timestamp;
 import java.util.concurrent.ScheduledExecutorService;

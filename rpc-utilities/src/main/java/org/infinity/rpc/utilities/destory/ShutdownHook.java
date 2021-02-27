@@ -2,8 +2,8 @@ package org.infinity.rpc.utilities.destory;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.utilities.concurrent.ThreadSafe;
 
-import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

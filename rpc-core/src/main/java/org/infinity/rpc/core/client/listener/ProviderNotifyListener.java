@@ -8,8 +8,8 @@ import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.annotation.EventReceiver;
+import org.infinity.rpc.utilities.concurrent.ThreadSafe;
 
-import javax.annotation.concurrent.ThreadSafe;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
