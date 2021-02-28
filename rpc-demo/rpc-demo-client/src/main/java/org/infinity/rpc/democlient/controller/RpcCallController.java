@@ -73,6 +73,8 @@ public class RpcCallController {
 
         consumerStub.setGroup(group);
         consumerStub.setVersion(version);
+        // must NOT call init
+        // consumerStub.init();
 
         consumerStub.subscribeProviders(infinityProperties.getApplication(),
                 infinityProperties.getAvailableProtocol(),
