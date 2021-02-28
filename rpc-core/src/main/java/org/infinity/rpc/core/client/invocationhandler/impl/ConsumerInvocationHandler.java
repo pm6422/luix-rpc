@@ -73,7 +73,7 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
     }
 
     @Override
-    public Object genericCall(String methodName, String[] methodParamTypes, Object[] args, Map<String, String> options) {
+    public Object call(String methodName, String[] methodParamTypes, Object[] args, Map<String, String> options) {
         // Create a new RpcRequest for each request
         RpcRequest request = new RpcRequest(IdGenerator.generateTimestampId(),
                 consumerStub.getInterfaceName(),

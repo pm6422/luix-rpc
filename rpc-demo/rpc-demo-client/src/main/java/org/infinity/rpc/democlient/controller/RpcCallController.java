@@ -46,7 +46,7 @@ public class RpcCallController {
         ConsumerStub<?> consumerStub = getConsumerStub(dto);
         ProxyFactory proxyFactory = ProxyFactory.getInstance(infinityProperties.getConsumer().getProxyFactory());
         GenericCallHandler genericCallHandler = proxyFactory.createGenericCallHandler(consumerStub);
-        Object result = genericCallHandler.genericCall(dto.getMethodName(), dto.getMethodParamTypes(), dto.getArgs(), dto.getOptions());
+        Object result = genericCallHandler.call(dto.getMethodName(), dto.getMethodParamTypes(), dto.getArgs(), dto.getOptions());
         return ResponseEntity.ok().body(result);
     }
 

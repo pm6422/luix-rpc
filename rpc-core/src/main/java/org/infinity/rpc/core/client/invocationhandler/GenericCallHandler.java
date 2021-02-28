@@ -12,5 +12,5 @@ public interface GenericCallHandler {
      * @param options          call options
      * @return return object
      */
-    Object genericCall(String methodName, String[] methodParamTypes, Object[] args, Map<String, String> options);
+    Object call(String methodName, String[] methodParamTypes, Object[] args, Map<String, String> options);
 }
