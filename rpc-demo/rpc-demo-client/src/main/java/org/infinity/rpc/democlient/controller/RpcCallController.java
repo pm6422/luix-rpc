@@ -39,6 +39,35 @@ public class RpcCallController {
         this.infinityProperties = infinityProperties;
     }
 
+    /**
+     * {
+     * 	"interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
+     * 	"methodName": "findAll",
+     * 	"methodParamTypes": [],
+     * 	"args": [],
+     * 	"options": {
+     * 		"group": "default",
+     * 		"version": "1.0.0"
+     *        }
+     * }
+     *
+     * {
+     * 	"interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
+     * 	"methodName": "save",
+     * 	"methodParamTypes": ["org.infinity.rpc.democommon.domain.Authority"],
+     * 	"args": [{
+     * 		"name": "ROLE_TEST",
+     * 		"enabled": true
+     *    }],
+     * 	"options": {
+     * 		"group": "default",
+     * 		"version": "1.0.0"
+     *    }
+     * }
+     *
+     * @param dto
+     * @return
+     */
     @ApiOperation("泛化调用")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功调用")})
     @PostMapping("/api/rpc/generic-call")
