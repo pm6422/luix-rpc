@@ -3,17 +3,17 @@ package org.infinity.rpc.core.codec.impl;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.core.client.request.impl.RpcRequest;
+import org.infinity.rpc.core.codec.AbstractCodec;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
-import org.infinity.rpc.core.exchange.Exchangable;
-import org.infinity.rpc.core.codec.AbstractCodec;
-import org.infinity.rpc.core.client.request.impl.RpcRequest;
-import org.infinity.rpc.core.server.response.impl.RpcResponse;
-import org.infinity.rpc.core.serialization.Serializer;
 import org.infinity.rpc.core.exchange.Channel;
+import org.infinity.rpc.core.exchange.Exchangable;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
+import org.infinity.rpc.core.serialization.Serializer;
+import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.utilities.lang.ByteUtils;
 import org.infinity.rpc.utilities.spi.annotation.SpiName;
@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
+import static org.infinity.rpc.core.constant.ServiceConstants.MAX_PAYLOAD;
+import static org.infinity.rpc.core.constant.ServiceConstants.MAX_PAYLOAD_VAL_DEFAULT;
 
 @SpiName(CODEC_VAL_DEFAULT)
 public class DefaultCodec extends AbstractCodec {
@@ -78,6 +80,9 @@ public class DefaultCodec extends AbstractCodec {
         byte[] body = outputStream.toByteArray();
         byte flag = RpcConstants.FLAG_REQUEST;
         output.close();
+
+        // Check max request payload size
+        checkMessagePayloadSize(body.length, request.getIntOption(MAX_PAYLOAD, MAX_PAYLOAD_VAL_DEFAULT));
         return encode(body, flag, request.getRequestId());
     }
 
@@ -206,6 +211,9 @@ public class DefaultCodec extends AbstractCodec {
         output.flush();
         byte[] body = outputStream.toByteArray();
         output.close();
+
+        // Check max response payload size
+        checkMessagePayloadSize(body.length, channel.getProviderUrl().getIntOption(MAX_PAYLOAD, MAX_PAYLOAD_VAL_DEFAULT));
         return encode(body, flag, value.getRequestId());
     }
 

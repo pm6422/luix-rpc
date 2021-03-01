@@ -92,17 +92,22 @@ public class ConsumerStub<T> {
      */
     private String   checkHealthFactory;
     /**
-     * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
+     *
      */
-    @Min(value = 0, message = "The [timeout] property of @Consumer must NOT be a negative number!")
+    @Min(value = 0, message = "The [timeout] property of @Consumer must NOT be a positive number!")
     private Integer  requestTimeout;
     /**
      * The max retry times of RPC request
-     * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
+     *
      */
-    @Min(value = 0, message = "The [maxRetries] property of @Consumer must NOT be a negative number!")
+    @Min(value = 0, message = "The [maxRetries] property of @Consumer must NOT be a positive number!")
     @Max(value = 10, message = "The [maxRetries] property of @Consumer must NOT be less than 10!")
     private Integer  maxRetries;
+    /**
+     * The max request message payload size in bytes
+     */
+    @Min(value = 0, message = "The [maxPayload] property of @Consumer must NOT be a positive number!")
+    private Integer  maxPayload;
     /**
      * Addresses of RPC provider used to connect RPC provider directly without third party registry.
      * Multiple addresses are separated by comma.

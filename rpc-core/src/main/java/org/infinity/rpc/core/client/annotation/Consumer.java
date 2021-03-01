@@ -103,4 +103,11 @@ public @interface Consumer {
      * @return generic call
      */
     boolean generic() default false;
+
+    /**
+     * The max request message payload size in bytes
+     *
+     * @return max payload size
+     */
+    int maxPayload() default Integer.MAX_VALUE;
 }

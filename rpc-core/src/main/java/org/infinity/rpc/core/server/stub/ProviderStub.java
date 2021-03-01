@@ -78,16 +78,20 @@ public class ProviderStub<T> {
      */
     private           String              checkHealthFactory;
     /**
-     * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
+     *
      */
     @Min(value = 0, message = "The [timeout] property of @Provider must NOT be a negative number!")
     private           Integer             requestTimeout;
     /**
      * The max retry times of RPC request
-     * The field name must be identical to the field of {@link org.infinity.rpc.core.server.annotation.Provider}
      */
     @Min(value = 0, message = "The [maxRetries] property of @Provider must NOT be a negative number!")
     private           Integer             maxRetries;
+    /**
+     * The max response message payload size in bytes
+     */
+    @Min(value = 0, message = "The [maxPayload] property of @Provider must NOT be a positive number!")
+    private           Integer             maxPayload;
     /**
      * The provider instance
      * Disable serialize
@@ -191,6 +195,7 @@ public class ProviderStub<T> {
         url.addOption(CHECK_HEALTH_FACTORY, checkHealthFactory);
         url.addOption(REQUEST_TIMEOUT, requestTimeout != null ? requestTimeout.toString() : null);
         url.addOption(MAX_RETRIES, maxRetries != null ? maxRetries.toString() : null);
+        url.addOption(MAX_PAYLOAD, maxPayload != null ? maxPayload.toString() : null);
 
         return url;
     }

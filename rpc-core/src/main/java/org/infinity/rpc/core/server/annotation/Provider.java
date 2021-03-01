@@ -1,6 +1,5 @@
 package org.infinity.rpc.core.server.annotation;
 
-import org.infinity.rpc.core.constant.BooleanEnum;
 import org.infinity.rpc.core.constant.ServiceConstants;
 
 import java.lang.annotation.ElementType;
@@ -26,6 +25,7 @@ public @interface Provider {
 
     /**
      * Available values: [zookeeper]
+     *
      * @return registry
      */
 //    String registry() default "";
@@ -41,4 +41,13 @@ public @interface Provider {
 
     // The max retry times of RPC request
     int maxRetries() default Integer.MAX_VALUE;
+
+    // Max response message payload size in bytes
+
+    /**
+     * Max response message payload size in bytes
+     *
+     * @return max payload size
+     */
+    int maxPayload() default Integer.MAX_VALUE;
 }

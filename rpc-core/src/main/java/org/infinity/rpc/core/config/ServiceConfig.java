@@ -31,5 +31,8 @@ public abstract class ServiceConfig implements Configurable {
      * Max retry count after calling failure
      */
     private int    maxRetries         = MAX_RETRIES_VAL_DEFAULT;
-
+    /**
+     * Max message payload size in bytes
+     */
+    private int    maxPayload         = MAX_PAYLOAD_VAL_DEFAULT;
 }

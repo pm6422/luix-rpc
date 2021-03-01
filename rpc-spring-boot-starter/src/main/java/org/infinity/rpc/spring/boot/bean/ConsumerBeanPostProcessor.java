@@ -303,6 +303,11 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
         } else {
             addPropertyValue(builder, MAX_RETRIES, annotation.maxRetries());
         }
+        if (Integer.MAX_VALUE == annotation.maxPayload()) {
+            addPropertyValue(builder, MAX_PAYLOAD, infinityProperties.getConsumer().getMaxPayload());
+        } else {
+            addPropertyValue(builder, MAX_PAYLOAD, annotation.maxPayload());
+        }
 
         addPropertyValue(builder, DIRECT_ADDRESSES, annotation.directAddresses());
         addPropertyValue(builder, GENERIC, annotation.generic());

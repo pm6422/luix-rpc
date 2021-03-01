@@ -3,6 +3,7 @@ package org.infinity.rpc.core.codec;
 
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
+import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.serialization.Serializer;
 
 import java.io.*;
@@ -12,6 +13,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractCodec implements Codec {
 
     protected static Map<Integer, String> serializations = new ConcurrentHashMap<>();
+
+    protected void checkMessagePayloadSize(int actualPayloadSize, int maxPayloadSize) {
+        if (actualPayloadSize > maxPayloadSize) {
+            throw new RpcServiceException("The request data must NOT exceed the max message payload [" + maxPayloadSize + "]");
+        }
+    }
 
     /**
      * Serialize the input object to byte array first,

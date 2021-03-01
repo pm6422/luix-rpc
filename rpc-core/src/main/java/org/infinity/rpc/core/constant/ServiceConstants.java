@@ -20,4 +20,9 @@ public interface ServiceConstants {
     int    MAX_RETRIES_VAL_DEFAULT          = 0;
     String REQUEST_TIMEOUT                  = "requestTimeout";
     int    REQUEST_TIMEOUT_VAL_DEFAULT      = 500;
+    String MAX_PAYLOAD                      = "maxPayload";
+    /**
+     * 8M bytes
+     */
+    int    MAX_PAYLOAD_VAL_DEFAULT          = 8 * 1024 * 1024;
 }
