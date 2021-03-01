@@ -4,6 +4,7 @@ public interface ProtocolConstants {
 
     String  PROTOCOL                           = "protocol";
     String  PROTOCOL_VAL_INFINITY              = "infinity";
+    String  PROTOCOL_VAL_JVM                   = "jvm";
     String  CODEC                              = "codec";
     String  CODEC_VAL_DEFAULT                  = "default";
     String  SERIALIZER                         = "serializer";

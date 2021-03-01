@@ -9,26 +9,24 @@ import org.infinity.rpc.utilities.spi.annotation.Spi;
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 
 @Spi(scope = SpiScope.SINGLETON)
-public interface Protocol {
+public interface Protocol<T> {
 
     /**
      * Create provider caller
      *
      * @param interfaceName provider interface name
      * @param providerUrl   provider url
-     * @param <T>           provider instance
      * @return provider caller
      */
-    <T> ProviderCaller<T> createProviderCaller(String interfaceName, Url providerUrl);
+    ProviderCaller<T> createProviderCaller(String interfaceName, Url providerUrl);
 
     /**
      * 暴露服务
      *
-     * @param <T>          provider interface
      * @param providerStub provider stub
      * @return exporter
      */
-    <T> Exportable<T> export(ProviderStub<T> providerStub);
+    Exportable<T> export(ProviderStub<T> providerStub);
 
     /**
      * Destroy
@@ -41,6 +39,7 @@ public interface Protocol {
      * @param name specified name
      * @return instance
      */
+    @SuppressWarnings("rawtypes")
     static Protocol getInstance(String name) {
         return ServiceLoader.forClass(Protocol.class).load(name);
     }

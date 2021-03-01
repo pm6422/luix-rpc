@@ -16,11 +16,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public abstract class AbstractProtocol implements Protocol {
-    protected final Map<String, Exportable<?>> exporterMap = new ConcurrentHashMap<>();
+public abstract class AbstractProtocol<T> implements Protocol<T> {
+    protected final Map<String, Exportable<T>> exporterMap = new ConcurrentHashMap<>();
 
     @Override
-    public <T> ProviderCaller<T> createProviderCaller(String interfaceName, Url providerUrl) {
+    public ProviderCaller<T> createProviderCaller(String interfaceName, Url providerUrl) {
         if (StringUtils.isEmpty(interfaceName)) {
             throw new RpcFrameworkException("Provider interface must NOT be null!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
@@ -32,15 +32,14 @@ public abstract class AbstractProtocol implements Protocol {
     }
 
     @Override
-    public <T> Exportable<T> export(ProviderStub<T> providerStub) {
+    public Exportable<T> export(ProviderStub<T> providerStub) {
         if (providerStub.getUrl() == null) {
             throw new RpcFrameworkException(this.getClass().getSimpleName() + " export Error: url is null", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
 
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerStub.getUrl());
         synchronized (exporterMap) {
-            @SuppressWarnings("unchecked")
-            Exportable<T> exporter = (Exportable<T>) exporterMap.get(protocolKey);
+            Exportable<T> exporter = exporterMap.get(protocolKey);
             if (exporter != null) {
                 throw new RpcFrameworkException(this.getClass().getSimpleName() + " export Error: service already exist, url=" + providerStub.getUrl(),
                         RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
@@ -49,6 +48,7 @@ public abstract class AbstractProtocol implements Protocol {
             exporter = createExporter(providerStub);
             exporter.init();
 
+            // todo: check useless statement
             exporterMap.put(protocolKey, exporter);
             log.info(this.getClass().getSimpleName() + " export Success: url=" + providerStub.getUrl());
             return exporter;
@@ -59,16 +59,15 @@ public abstract class AbstractProtocol implements Protocol {
      * Create exporter
      *
      * @param providerStub provider stub
-     * @param <T>          service interface class
      * @return exporter
      */
-    protected abstract <T> Exportable<T> createExporter(ProviderStub<T> providerStub);
+    protected abstract Exportable<T> createExporter(ProviderStub<T> providerStub);
 
     @Override
     public void destroy() {
-        Iterator<Map.Entry<String, Exportable<?>>> iterator = exporterMap.entrySet().iterator();
+        Iterator<Map.Entry<String, Exportable<T>>> iterator = exporterMap.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<String, Exportable<?>> next = iterator.next();
+            Map.Entry<String, Exportable<T>> next = iterator.next();
             if (next.getValue() != null) {
                 try {
                     next.getValue().destroy();
@@ -79,5 +78,9 @@ public abstract class AbstractProtocol implements Protocol {
             }
             iterator.remove();
         }
+    }
+
+    public Map<String, Exportable<T>> getExporterMap() {
+        return exporterMap;
     }
 }

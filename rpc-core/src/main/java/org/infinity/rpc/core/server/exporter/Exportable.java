@@ -24,12 +24,12 @@ public interface Exportable<T> {
      *
      * @return true: available, false: unavailable
      */
-    boolean isAvailable();
+    boolean isActive();
 
     /**
-     * Remove exported provider
+     * Undo exported provider
      */
-    void cancelExport();
+    void undoExport();
 
     /**
      * Do some cleanup task

@@ -15,7 +15,7 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_VAL_INFI
 
 @SpiName(PROTOCOL_VAL_INFINITY)
 @Slf4j
-public class InfinityProtocol extends AbstractProtocol {
+public class InfinityProtocol<T> extends AbstractProtocol<T> {
 
     /**
      * 多个service可能在相同端口进行服务暴露，因此来自同个端口的请求需要进行路由以找到相应的服务，同时不在该端口暴露的服务不应该被找到
@@ -23,7 +23,7 @@ public class InfinityProtocol extends AbstractProtocol {
     private final Map<String, ProviderMessageRouter> ipPort2RequestRouter = new ConcurrentHashMap<>();
 
     @Override
-    protected <T> Exportable<T> createExporter(ProviderStub<T> provider) {
-        return new DefaultRpcExporter<>(provider, this.ipPort2RequestRouter, this.exporterMap);
+    protected Exportable<T> createExporter(ProviderStub<T> providerStub) {
+        return new DefaultRpcExporter<>(providerStub, this.ipPort2RequestRouter, this.exporterMap);
     }
 }

@@ -8,8 +8,8 @@ import org.infinity.rpc.core.server.stub.ProviderStub;
 @Slf4j
 public abstract class AbstractExporter<T> implements Exportable<T> {
     protected          ProviderStub<T> providerStub;
-    protected volatile boolean         init      = false;
-    protected volatile boolean         available = false;
+    protected volatile boolean         initialized = false;
+    protected volatile boolean         active      = false;
 
     public AbstractExporter(ProviderStub<T> providerStub) {
         this.providerStub = providerStub;
@@ -22,7 +22,7 @@ public abstract class AbstractExporter<T> implements Exportable<T> {
 
     @Override
     public synchronized void init() {
-        if (init) {
+        if (initialized) {
             log.warn(this.getClass().getSimpleName() + " node already init: " + toString());
             return;
         }
@@ -34,8 +34,8 @@ public abstract class AbstractExporter<T> implements Exportable<T> {
             throw new RpcFrameworkException(this.getClass().getSimpleName() + " node init Error: " + toString(), RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         } else {
             log.info(this.getClass().getSimpleName() + " node init Success: " + toString());
-            init = true;
-            available = true;
+            initialized = true;
+            active = true;
         }
     }
 
