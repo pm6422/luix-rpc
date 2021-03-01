@@ -32,7 +32,7 @@ public abstract class ServiceConfig implements Configurable {
      */
     private int    maxRetries         = MAX_RETRIES_VAL_DEFAULT;
     /**
-     * Max message payload size in bytes
+     * Max request/response message data payload size in bytes
      */
     private int    maxPayload         = MAX_PAYLOAD_VAL_DEFAULT;
 }

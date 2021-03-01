@@ -98,7 +98,6 @@ public class ConsumerStub<T> {
     private Integer  requestTimeout;
     /**
      * The max retry times of RPC request
-     *
      */
     @Min(value = 0, message = "The [maxRetries] property of @Consumer must NOT be a positive number!")
     @Max(value = 10, message = "The [maxRetries] property of @Consumer must NOT be less than 10!")
@@ -212,6 +211,7 @@ public class ConsumerStub<T> {
         url.addOption(CHECK_HEALTH_FACTORY, checkHealthFactory);
         url.addOption(REQUEST_TIMEOUT, requestTimeout != null ? requestTimeout.toString() : null);
         url.addOption(MAX_RETRIES, maxRetries != null ? maxRetries.toString() : null);
+        url.addOption(MAX_PAYLOAD, maxPayload != null ? maxPayload.toString() : null);
         return url;
     }
 

@@ -41,13 +41,4 @@ public @interface Provider {
 
     // The max retry times of RPC request
     int maxRetries() default Integer.MAX_VALUE;
-
-    // Max response message payload size in bytes
-
-    /**
-     * Max response message payload size in bytes
-     *
-     * @return max payload size
-     */
-    int maxPayload() default Integer.MAX_VALUE;
 }

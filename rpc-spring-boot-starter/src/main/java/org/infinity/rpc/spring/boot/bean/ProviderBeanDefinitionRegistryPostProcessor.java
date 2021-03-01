@@ -340,11 +340,8 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         } else {
             addPropertyValue(builder, MAX_RETRIES, annotation.maxRetries());
         }
-        if (Integer.MAX_VALUE == annotation.maxPayload()) {
-            addPropertyValue(builder, MAX_PAYLOAD, providerConfig.getMaxPayload());
-        } else {
-            addPropertyValue(builder, MAX_PAYLOAD, annotation.maxPayload());
-        }
+
+        addPropertyValue(builder, MAX_PAYLOAD, providerConfig.getMaxPayload());
 
         // Obtain the instance by instance name then assign it to the property
         addPropertyReference(builder, "instance", providerInstanceName, env);
