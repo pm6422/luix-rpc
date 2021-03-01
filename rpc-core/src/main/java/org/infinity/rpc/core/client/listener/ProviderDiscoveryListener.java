@@ -37,7 +37,7 @@ public class ProviderDiscoveryListener<T> extends ProviderNotifyListener<T> {
      * @param interfaceName   The interface class name of the consumer
      * @param clientUrl       client url
      * @param <T>             The interface class of the consumer
-     * @return listener
+     * @return listener listener
      */
     public static <T> ProviderDiscoveryListener<T> of(ProviderCluster<T> providerCluster, String interfaceName, Url clientUrl) {
         ProviderDiscoveryListener<T> listener = new ProviderDiscoveryListener<>();

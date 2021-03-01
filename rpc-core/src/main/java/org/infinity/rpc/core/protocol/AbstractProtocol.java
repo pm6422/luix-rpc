@@ -11,6 +11,7 @@ import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -65,6 +66,18 @@ public abstract class AbstractProtocol implements Protocol {
 
     @Override
     public void destroy() {
-
+        Iterator<Map.Entry<String, Exportable<?>>> iterator = exporterMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Exportable<?>> next = iterator.next();
+            if (next.getValue() != null) {
+                try {
+                    next.getValue().destroy();
+                    log.info("Destroyed [" + next.getValue() + "]");
+                } catch (Throwable t) {
+                    log.error("Failed to destroy [" + next.getValue() + "]", t);
+                }
+            }
+            iterator.remove();
+        }
     }
 }

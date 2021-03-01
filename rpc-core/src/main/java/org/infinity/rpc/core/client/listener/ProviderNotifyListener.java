@@ -42,7 +42,7 @@ public class ProviderNotifyListener<T> implements ClientListener {
      * @param interfaceName   The interface class name of the consumer
      * @param protocol        protocol
      * @param <T>             The interface class of the consumer
-     * @return listener
+     * @return listener listener
      */
     public static <T> ProviderNotifyListener<T> of(ProviderCluster<T> providerCluster, String interfaceName, String protocol) {
         ProviderNotifyListener<T> listener = new ProviderNotifyListener<>();
