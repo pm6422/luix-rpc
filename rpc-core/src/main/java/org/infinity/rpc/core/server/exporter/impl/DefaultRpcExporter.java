@@ -61,7 +61,7 @@ public class DefaultRpcExporter<T> extends AbstractExporter<T> {
         if (requestRouter != null) {
             requestRouter.removeProvider(providerStub);
         }
-        log.info("DefaultRpcExporter unexport Success: url={}", providerStub.getUrl());
+        log.info("Undone exported url [{}]", providerStub.getUrl());
     }
 
     @Override
