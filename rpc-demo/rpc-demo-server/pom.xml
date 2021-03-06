@@ -56,13 +56,13 @@
         <dependency>
             <groupId>com.github.cloudyrock.mongock</groupId>
             <artifactId>mongock-spring-v5</artifactId>
+            <version>4.1.17</version>
             <exclusions>
                 <exclusion>
                     <artifactId>reflections</artifactId>
                     <groupId>org.reflections</groupId>
                 </exclusion>
             </exclusions>
-            <version>4.1.17</version>
         </dependency>
         <dependency>
             <groupId>com.github.cloudyrock.mongock</groupId>
@@ -105,6 +105,11 @@
                     <groupId>com.google.guava</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.1.7.Final</version>
         </dependency>
         <dependency>
             <groupId>org.infinity</groupId>
@@ -160,11 +165,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>6.1.7.Final</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
