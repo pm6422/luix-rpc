@@ -7,7 +7,7 @@
 # ===================================================================
 # Standard Spring Boot properties.
 # Full reference is available at:
-# https://docs.spring.io/spring-boot/docs/2.2.5.RELEASE/reference/html/common-application-properties.html
+# https://docs.spring.io/spring-boot/docs/2.3.0.RELEASE/reference/html/common-application-properties.html
 # ===================================================================
 infinity:
     registry:
