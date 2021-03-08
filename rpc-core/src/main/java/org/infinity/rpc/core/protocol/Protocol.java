@@ -20,13 +20,13 @@ public interface Protocol<T> {
     Exportable<T> createExporter(ProviderStub<T> providerStub);
 
     /**
-     * Create provider caller
+     * Create provider importer
      *
      * @param interfaceName provider interface name
      * @param providerUrl   provider url
-     * @return provider caller
+     * @return provider importer
      */
-    Importable<T> createProviderCaller(String interfaceName, Url providerUrl);
+    Importable<T> createImporter(String interfaceName, Url providerUrl);
 
     /**
      * Destroy
