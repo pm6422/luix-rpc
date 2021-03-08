@@ -27,9 +27,9 @@ public interface Exportable<T> {
     boolean isActive();
 
     /**
-     * Undo exported provider
+     * Cancel exported provider
      */
-    void undoExport();
+    void cancelExport();
 
     /**
      * Do some cleanup task

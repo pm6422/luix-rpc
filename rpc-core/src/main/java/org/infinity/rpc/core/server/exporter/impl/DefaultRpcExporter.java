@@ -48,7 +48,7 @@ public class DefaultRpcExporter<T> extends AbstractExporter<T> {
     }
 
     @Override
-    public void undoExport() {
+    public void cancelExport() {
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerStub.getUrl());
         String ipPort = providerStub.getUrl().getAddress();
 

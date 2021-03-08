@@ -29,7 +29,7 @@ public class JvmRpcExporter<T> extends AbstractExporter<T> {
     }
 
     @Override
-    public void undoExport() {
+    public void cancelExport() {
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerStub.getUrl());
         Exportable<T> exporter = exporterMap.remove(protocolKey);
         if (exporter != null) {
