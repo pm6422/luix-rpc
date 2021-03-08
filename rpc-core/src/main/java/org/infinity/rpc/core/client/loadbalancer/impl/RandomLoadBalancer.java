@@ -2,7 +2,7 @@ package org.infinity.rpc.core.client.loadbalancer.impl;
 
 import org.infinity.rpc.core.client.loadbalancer.AbstractLoadBalancer;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.client.request.ProviderCaller;
+import org.infinity.rpc.core.client.request.Importable;
 import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
 import java.util.ArrayList;
@@ -19,31 +19,31 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.LOAD_BALANCER_VAL
 public class RandomLoadBalancer<T> extends AbstractLoadBalancer<T> {
 
     @Override
-    protected ProviderCaller<T> doSelectNode(Requestable request) {
-        int index = getIndex(providerCallers);
-        for (int i = 0; i < providerCallers.size(); i++) {
-            ProviderCaller<T> providerCaller = providerCallers.get((i + index) % providerCallers.size());
-            if (providerCaller.isActive()) {
-                return providerCaller;
+    protected Importable<T> doSelectNode(Requestable request) {
+        int index = getIndex(importers);
+        for (int i = 0; i < importers.size(); i++) {
+            Importable<T> importer = importers.get((i + index) % importers.size());
+            if (importer.isActive()) {
+                return importer;
             }
         }
         return null;
     }
 
     @Override
-    protected List<ProviderCaller<T>> doSelectNodes(Requestable request) {
-        List<ProviderCaller<T>> selected = new ArrayList<>();
-        int index = getIndex(providerCallers);
-        for (int i = 0; i < providerCallers.size(); i++) {
-            ProviderCaller<T> providerCaller = providerCallers.get((i + index) % providerCallers.size());
-            if (providerCaller.isActive()) {
-                selected.add(providerCaller);
+    protected List<Importable<T>> doSelectNodes(Requestable request) {
+        List<Importable<T>> selected = new ArrayList<>();
+        int index = getIndex(importers);
+        for (int i = 0; i < importers.size(); i++) {
+            Importable<T> importer = importers.get((i + index) % importers.size());
+            if (importer.isActive()) {
+                selected.add(importer);
             }
         }
         return selected;
     }
 
-    private int getIndex(List<ProviderCaller<T>> providerCallers) {
-        return (int) (ThreadLocalRandom.current().nextDouble() * providerCallers.size());
+    private int getIndex(List<Importable<T>> importers) {
+        return (int) (ThreadLocalRandom.current().nextDouble() * importers.size());
     }
 }

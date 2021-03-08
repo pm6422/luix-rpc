@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.client.loadbalancer;
 
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
-import org.infinity.rpc.core.client.request.ProviderCaller;
+import org.infinity.rpc.core.client.request.Importable;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
@@ -21,14 +21,14 @@ public interface LoadBalancer<T> {
      *
      * @return provider callers
      */
-    List<ProviderCaller<T>> getProviderCallers();
+    List<Importable<T>> getProviderCallers();
 
     /**
      * Refresh provider callers when online or offline
      *
-     * @param providerCallers new discovered provider callers
+     * @param importers new discovered provider callers
      */
-    void refresh(List<ProviderCaller<T>> providerCallers);
+    void refresh(List<Importable<T>> importers);
 
     /**
      * Select provider node via load balance algorithm
@@ -36,7 +36,7 @@ public interface LoadBalancer<T> {
      * @param request RPC request instance
      * @return selected provider caller
      */
-    ProviderCaller<T> selectProviderNode(Requestable request);
+    Importable<T> selectProviderNode(Requestable request);
 
     /**
      * Select multiple provider nodes via load balance algorithm
@@ -44,7 +44,7 @@ public interface LoadBalancer<T> {
      * @param request RPC request instance
      * @return selected provider callers
      */
-    List<ProviderCaller<T>> selectProviderNodes(Requestable request);
+    List<Importable<T>> selectProviderNodes(Requestable request);
 
     /**
      * Get instance associated with the specified name

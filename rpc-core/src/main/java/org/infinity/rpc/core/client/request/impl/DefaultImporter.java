@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.client.request.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.client.request.AbstractProviderCaller;
+import org.infinity.rpc.core.client.request.AbstractImporter;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
@@ -25,11 +25,11 @@ import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
  * @param <T>: The interface class of the provider
  */
 @Slf4j
-public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
+public class DefaultImporter<T> extends AbstractImporter<T> {
     protected EndpointFactory endpointFactory;
     protected Client          client;
 
-    public DefaultProviderCaller(String interfaceName, Url providerUrl) {
+    public DefaultImporter(String interfaceName, Url providerUrl) {
         super(interfaceName, providerUrl);
         long start = System.currentTimeMillis();
         String endpointFactoryName = providerUrl.getOption(ENDPOINT_FACTORY, ENDPOINT_FACTORY_VAL_NETTY);
@@ -60,7 +60,7 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
     }
 
     @Override
-    protected void reduceProcessingCount(Requestable request, Responseable response) {
+    protected void decreaseProcessingCount(Requestable request, Responseable response) {
         if (!(response instanceof Future)) {
             processingCount.decrementAndGet();
             return;
@@ -82,6 +82,6 @@ public class DefaultProviderCaller<T> extends AbstractProviderCaller<T> {
 
     @Override
     public String toString() {
-        return DefaultProviderCaller.class.getSimpleName().concat(":").concat(interfaceName);
+        return DefaultImporter.class.getSimpleName().concat(":").concat(interfaceName);
     }
 }

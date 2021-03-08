@@ -13,14 +13,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @param <T>: The interface class of the provider
  */
 @Slf4j
-public abstract class AbstractProviderCaller<T> implements ProviderCaller<T> {
+public abstract class AbstractImporter<T> implements Importable<T> {
     protected volatile boolean       active          = false;
     protected          AtomicBoolean initialized     = new AtomicBoolean(false);
     protected          AtomicInteger processingCount = new AtomicInteger(0);
     protected          String        interfaceName;
     protected          Url           providerUrl;
 
-    public AbstractProviderCaller(String interfaceName, Url providerUrl) {
+    public AbstractImporter(String interfaceName, Url providerUrl) {
         this.interfaceName = interfaceName;
         this.providerUrl = providerUrl;
     }
@@ -36,11 +36,11 @@ public abstract class AbstractProviderCaller<T> implements ProviderCaller<T> {
             throw new RpcFrameworkException("Failed to initialize the provider caller [" + this + "]!",
                     RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         } else {
-            setAvailable(true);
+            setActive(true);
         }
     }
 
-    public void setAvailable(boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 
@@ -62,31 +62,31 @@ public abstract class AbstractProviderCaller<T> implements ProviderCaller<T> {
     protected abstract boolean doInit();
 
     @Override
-    public void destroy() {
-
-    }
-
-    @Override
     public Responseable call(Requestable request) {
         if (!active) {
             throw new RpcFrameworkException("No active provider caller found for now!");
         }
 
-        addProcessingCount();
+        increaseProcessingCount();
         Responseable response = null;
         try {
             response = doCall(request);
             return response;
         } finally {
-            reduceProcessingCount(request, response);
+            decreaseProcessingCount(request, response);
         }
+    }
+
+    @Override
+    public void destroy() {
+
     }
 
     protected abstract Responseable doCall(Requestable request);
 
-    protected void addProcessingCount() {
+    protected void increaseProcessingCount() {
         processingCount.incrementAndGet();
     }
 
-    protected abstract void reduceProcessingCount(Requestable request, Responseable response);
+    protected abstract void decreaseProcessingCount(Requestable request, Responseable response);
 }

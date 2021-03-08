@@ -3,7 +3,7 @@ package org.infinity.rpc.core.client.listener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.client.cluster.ProviderCluster;
-import org.infinity.rpc.core.client.request.ProviderCaller;
+import org.infinity.rpc.core.client.request.Importable;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;
@@ -29,8 +29,8 @@ public class ProviderNotifyListener<T> implements ClientListener {
      * The interface class name of the consumer
      */
     protected     String                            interfaceName;
-    protected     Protocol                          protocol;
-    private final Map<Url, List<ProviderCaller<T>>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
+    protected     Protocol                      protocol;
+    private final Map<Url, List<Importable<T>>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
 
     protected ProviderNotifyListener() {
     }
@@ -67,27 +67,27 @@ public class ProviderNotifyListener<T> implements ClientListener {
             return;
         }
 
-        List<ProviderCaller<T>> newProviderCallers = new ArrayList<>();
+        List<Importable<T>> newImporters = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
             // Find provider caller associated with the provider url
-            ProviderCaller<T> providerCaller = findCallerByProviderUrl(registryUrl, providerUrl);
-            if (providerCaller == null) {
-                providerCaller = protocol.createProviderCaller(interfaceName, providerUrl.copy());
+            Importable<T> importer = findCallerByProviderUrl(registryUrl, providerUrl);
+            if (importer == null) {
+                importer = protocol.createProviderCaller(interfaceName, providerUrl.copy());
             }
-            newProviderCallers.add(providerCaller);
+            newImporters.add(importer);
         }
 
-        if (CollectionUtils.isEmpty(newProviderCallers)) {
+        if (CollectionUtils.isEmpty(newImporters)) {
             log.warn("No active provider caller!");
         }
-        providerCallersPerRegistryUrl.put(registryUrl, newProviderCallers);
+        providerCallersPerRegistryUrl.put(registryUrl, newImporters);
         refreshCluster();
     }
 
-    private ProviderCaller<T> findCallerByProviderUrl(Url registryUrl, Url providerUrl) {
-        List<ProviderCaller<T>> providerCallers = providerCallersPerRegistryUrl.get(registryUrl);
-        return CollectionUtils.isEmpty(providerCallers) ? null :
-                providerCallers
+    private Importable<T> findCallerByProviderUrl(Url registryUrl, Url providerUrl) {
+        List<Importable<T>> importers = providerCallersPerRegistryUrl.get(registryUrl);
+        return CollectionUtils.isEmpty(importers) ? null :
+                importers
                         .stream()
                         .filter(caller -> Objects.equals(providerUrl, caller.getProviderUrl()))
                         .findFirst()
@@ -107,13 +107,13 @@ public class ProviderNotifyListener<T> implements ClientListener {
     }
 
     private synchronized void refreshCluster() {
-        List<ProviderCaller<T>> providerCallers = providerCallersPerRegistryUrl.values()
+        List<Importable<T>> importers = providerCallersPerRegistryUrl.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
         // Refresh provider callers to AbstractLoadBalancer
-        providerCluster.refresh(providerCallers);
+        providerCluster.refresh(importers);
     }
 
     @Override

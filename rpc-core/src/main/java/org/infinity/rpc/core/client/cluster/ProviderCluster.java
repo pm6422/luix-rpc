@@ -2,7 +2,7 @@ package org.infinity.rpc.core.client.cluster;
 
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
-import org.infinity.rpc.core.client.request.ProviderCaller;
+import org.infinity.rpc.core.client.request.Importable;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
@@ -34,9 +34,9 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
     /**
      * Refresh provider callers when providers is online or offline
      *
-     * @param providerCallers provider call
+     * @param importers provider call
      */
-    void refresh(List<ProviderCaller<T>> providerCallers);
+    void refresh(List<Importable<T>> importers);
 
     /**
      * Destroy

@@ -3,7 +3,7 @@ package org.infinity.rpc.core.client.faulttolerance.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.faulttolerance.AbstractFaultTolerance;
 import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
-import org.infinity.rpc.core.client.request.ProviderCaller;
+import org.infinity.rpc.core.client.request.Importable;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.utilities.spi.annotation.SpiName;
@@ -24,8 +24,8 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_V
 public class FailfastFaultTolerance<T> extends AbstractFaultTolerance<T> {
     @Override
     public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
-        ProviderCaller<T> availableProviderCaller = loadBalancer.selectProviderNode(request);
+        Importable<T> availableImporter = loadBalancer.selectProviderNode(request);
         // Do NOT retry when exception occurred
-        return availableProviderCaller.call(request);
+        return availableImporter.call(request);
     }
 }
