@@ -159,7 +159,7 @@ public class ProviderStub<T> {
 
         if (exported.compareAndSet(false, true)) {
             // Export RPC provider service
-            Protocol.getInstance(providerUrl.getProtocol()).export(this);
+            Protocol.getInstance(providerUrl.getProtocol()).createExporter(this);
         }
 
         // Register provider URL to all the registries

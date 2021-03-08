@@ -23,7 +23,7 @@ public class InfinityProtocol<T> extends AbstractProtocol<T> {
     private final Map<String, ProviderMessageRouter> ipPort2RequestRouter = new ConcurrentHashMap<>();
 
     @Override
-    protected Exportable<T> createExporter(ProviderStub<T> providerStub) {
+    protected Exportable<T> doCreateExporter(ProviderStub<T> providerStub) {
         return new DefaultRpcExporter<>(providerStub, this.ipPort2RequestRouter, this.exporterMap);
     }
 }

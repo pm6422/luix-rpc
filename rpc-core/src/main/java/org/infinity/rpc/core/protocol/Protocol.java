@@ -12,6 +12,14 @@ import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 public interface Protocol<T> {
 
     /**
+     * Create provider exporter
+     *
+     * @param providerStub provider stub
+     * @return exporter
+     */
+    Exportable<T> createExporter(ProviderStub<T> providerStub);
+
+    /**
      * Create provider caller
      *
      * @param interfaceName provider interface name
@@ -20,13 +28,6 @@ public interface Protocol<T> {
      */
     ProviderCaller<T> createProviderCaller(String interfaceName, Url providerUrl);
 
-    /**
-     * 暴露服务
-     *
-     * @param providerStub provider stub
-     * @return exporter
-     */
-    Exportable<T> export(ProviderStub<T> providerStub);
 
     /**
      * Destroy

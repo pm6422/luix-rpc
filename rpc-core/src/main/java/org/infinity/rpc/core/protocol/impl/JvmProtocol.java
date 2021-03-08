@@ -13,7 +13,7 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_VAL_JVM;
 @Slf4j
 public class JvmProtocol<T> extends AbstractProtocol<T> {
     @Override
-    protected Exportable<T> createExporter(ProviderStub<T> providerStub) {
+    protected Exportable<T> doCreateExporter(ProviderStub<T> providerStub) {
         return new JvmRpcExporter<>(providerStub, this.exporterMap);
     }
 }

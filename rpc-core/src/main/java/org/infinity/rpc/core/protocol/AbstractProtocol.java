@@ -20,19 +20,7 @@ public abstract class AbstractProtocol<T> implements Protocol<T> {
     protected final Map<String, Exportable<T>> exporterMap = new ConcurrentHashMap<>();
 
     @Override
-    public ProviderCaller<T> createProviderCaller(String interfaceName, Url providerUrl) {
-        if (StringUtils.isEmpty(interfaceName)) {
-            throw new RpcFrameworkException("Provider interface must NOT be null!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
-        }
-        if (providerUrl == null) {
-            throw new RpcFrameworkException("Provider url must NOT be null!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
-        }
-        // todo: create different caller associated with the protocol
-        return new DefaultProviderCaller<>(interfaceName, providerUrl);
-    }
-
-    @Override
-    public Exportable<T> export(ProviderStub<T> providerStub) {
+    public Exportable<T> createExporter(ProviderStub<T> providerStub) {
         if (providerStub.getUrl() == null) {
             throw new RpcFrameworkException(this.getClass().getSimpleName() + " export Error: url is null", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
@@ -45,7 +33,7 @@ public abstract class AbstractProtocol<T> implements Protocol<T> {
                         RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
             }
 
-            exporter = createExporter(providerStub);
+            exporter = doCreateExporter(providerStub);
             exporter.init();
 
             // todo: check useless statement
@@ -55,13 +43,25 @@ public abstract class AbstractProtocol<T> implements Protocol<T> {
         }
     }
 
+    @Override
+    public ProviderCaller<T> createProviderCaller(String interfaceName, Url providerUrl) {
+        if (StringUtils.isEmpty(interfaceName)) {
+            throw new RpcFrameworkException("Provider interface must NOT be null!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+        }
+        if (providerUrl == null) {
+            throw new RpcFrameworkException("Provider url must NOT be null!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+        }
+        // todo: create different caller associated with the protocol
+        return new DefaultProviderCaller<>(interfaceName, providerUrl);
+    }
+
     /**
-     * Create exporter
+     * Do create exporter
      *
      * @param providerStub provider stub
      * @return exporter
      */
-    protected abstract Exportable<T> createExporter(ProviderStub<T> providerStub);
+    protected abstract Exportable<T> doCreateExporter(ProviderStub<T> providerStub);
 
     @Override
     public void destroy() {
