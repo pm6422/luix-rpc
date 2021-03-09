@@ -16,24 +16,24 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public abstract class AbstractProtocol<T> implements Protocol<T> {
-    protected final Map<String, Exportable<T>> exporterMap = new ConcurrentHashMap<>();
+public abstract class AbstractProtocol implements Protocol {
+    protected final Map<String, Exportable<?>> exporterMap = new ConcurrentHashMap<>();
 
     @Override
-    public Exportable<T> export(ProviderStub<T> providerStub) {
+    public <T> Exportable<T> export(ProviderStub<T> providerStub) {
         if (providerStub.getUrl() == null) {
             throw new RpcFrameworkException(this.getClass().getSimpleName() + " export Error: url is null", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
 
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerStub.getUrl());
         synchronized (exporterMap) {
-            Exportable<T> exporter = exporterMap.get(protocolKey);
+            Exportable<T> exporter = (Exportable<T>) exporterMap.get(protocolKey);
             if (exporter != null) {
                 throw new RpcFrameworkException(this.getClass().getSimpleName() + " export Error: service already exist, url=" + providerStub.getUrl(),
                         RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
             }
 
-            exporter = doCreateExporter(providerStub);
+            exporter = doExport(providerStub);
             exporter.init();
 
             // todo: check useless statement
@@ -61,13 +61,13 @@ public abstract class AbstractProtocol<T> implements Protocol<T> {
      * @param providerStub provider stub
      * @return exporter
      */
-    protected abstract Exportable<T> doCreateExporter(ProviderStub<T> providerStub);
+    protected abstract <T> Exportable<T> doExport(ProviderStub<T> providerStub);
 
     @Override
     public void destroy() {
-        Iterator<Map.Entry<String, Exportable<T>>> iterator = exporterMap.entrySet().iterator();
+        Iterator<Map.Entry<String, Exportable<?>>> iterator = exporterMap.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<String, Exportable<T>> next = iterator.next();
+            Map.Entry<String, Exportable<?>> next = iterator.next();
             if (next.getValue() != null) {
                 try {
                     next.getValue().destroy();
@@ -80,7 +80,7 @@ public abstract class AbstractProtocol<T> implements Protocol<T> {
         }
     }
 
-    public Map<String, Exportable<T>> getExporterMap() {
+    public Map<String, Exportable<?>> getExporterMap() {
         return exporterMap;
     }
 }

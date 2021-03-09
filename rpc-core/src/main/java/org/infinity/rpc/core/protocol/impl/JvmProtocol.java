@@ -11,9 +11,9 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_VAL_JVM;
 
 @SpiName(PROTOCOL_VAL_JVM)
 @Slf4j
-public class JvmProtocol<T> extends AbstractProtocol<T> {
+public class JvmProtocol extends AbstractProtocol {
     @Override
-    protected Exportable<T> doCreateExporter(ProviderStub<T> providerStub) {
+    protected <T> Exportable<T> doExport(ProviderStub<T> providerStub) {
         return new JvmRpcExporter<>(providerStub, this.exporterMap);
     }
 }

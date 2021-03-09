@@ -11,9 +11,9 @@ import java.util.Map;
 @Slf4j
 public class JvmRpcExporter<T> extends AbstractExporter<T> {
 
-    protected final Map<String, Exportable<T>> exporterMap;
+    protected final Map<String, Exportable<?>> exporterMap;
 
-    public JvmRpcExporter(ProviderStub<T> providerStub, Map<String, Exportable<T>> exporterMap) {
+    public JvmRpcExporter(ProviderStub<T> providerStub, Map<String, Exportable<?>> exporterMap) {
         super(providerStub);
         this.exporterMap = exporterMap;
     }
@@ -31,7 +31,7 @@ public class JvmRpcExporter<T> extends AbstractExporter<T> {
     @Override
     public void cancelExport() {
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerStub.getUrl());
-        Exportable<T> exporter = exporterMap.remove(protocolKey);
+        Exportable<?> exporter = exporterMap.remove(protocolKey);
         if (exporter != null) {
             exporter.destroy();
         }

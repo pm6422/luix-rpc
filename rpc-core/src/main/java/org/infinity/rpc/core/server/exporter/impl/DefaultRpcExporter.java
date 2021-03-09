@@ -20,13 +20,13 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY_
 public class DefaultRpcExporter<T> extends AbstractExporter<T> {
 
     protected final Map<String, ProviderMessageRouter> ipPort2RequestRouter;
-    protected final Map<String, Exportable<T>>         exporterMap;
+    protected final Map<String, Exportable<?>>         exporterMap;
     protected       Server                             server;
     protected       EndpointFactory                    endpointFactory;
 
     public DefaultRpcExporter(ProviderStub<T> providerStub,
                               Map<String, ProviderMessageRouter> ipPort2RequestRouter,
-                              Map<String, Exportable<T>> exporterMap) {
+                              Map<String, Exportable<?>> exporterMap) {
         super(providerStub);
         this.exporterMap = exporterMap;
         this.ipPort2RequestRouter = ipPort2RequestRouter;
@@ -52,7 +52,7 @@ public class DefaultRpcExporter<T> extends AbstractExporter<T> {
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerStub.getUrl());
         String ipPort = providerStub.getUrl().getAddress();
 
-        Exportable<T> exporter = exporterMap.remove(protocolKey);
+        Exportable<?> exporter = exporterMap.remove(protocolKey);
         if (exporter != null) {
             exporter.destroy();
         }

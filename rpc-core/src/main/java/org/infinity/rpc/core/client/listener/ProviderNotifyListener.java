@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @ThreadSafe
 public class ProviderNotifyListener implements ClientListener {
-    protected InvokerCluster invokerCluster;
+    protected     InvokerCluster            invokerCluster;
     /**
      * The interface class name of the consumer
      */
-    protected String         interfaceName;
-    protected     Protocol<?>               protocol;
+    protected     String                    interfaceName;
+    protected     Protocol                  protocol;
     private final Map<Url, List<Invokable>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
 
     protected ProviderNotifyListener() {
@@ -37,8 +37,8 @@ public class ProviderNotifyListener implements ClientListener {
      * Pass provider invoker cluster to listener, listener will update provider invoker cluster after provider urls changed
      *
      * @param invokerCluster provider invoker cluster
-     * @param interfaceName   The interface class name of the consumer
-     * @param protocol        protocol
+     * @param interfaceName  The interface class name of the consumer
+     * @param protocol       protocol
      * @return listener listener
      */
     public static ProviderNotifyListener of(InvokerCluster invokerCluster, String interfaceName, String protocol) {
