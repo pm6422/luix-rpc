@@ -20,7 +20,7 @@ public abstract class AbstractProtocol<T> implements Protocol<T> {
     protected final Map<String, Exportable<T>> exporterMap = new ConcurrentHashMap<>();
 
     @Override
-    public Exportable<T> createExporter(ProviderStub<T> providerStub) {
+    public Exportable<T> export(ProviderStub<T> providerStub) {
         if (providerStub.getUrl() == null) {
             throw new RpcFrameworkException(this.getClass().getSimpleName() + " export Error: url is null", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
@@ -44,7 +44,7 @@ public abstract class AbstractProtocol<T> implements Protocol<T> {
     }
 
     @Override
-    public Importable createImporter(String interfaceName, Url providerUrl) {
+    public Importable refer(String interfaceName, Url providerUrl) {
         if (StringUtils.isEmpty(interfaceName)) {
             throw new RpcFrameworkException("Provider interface must NOT be null!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }

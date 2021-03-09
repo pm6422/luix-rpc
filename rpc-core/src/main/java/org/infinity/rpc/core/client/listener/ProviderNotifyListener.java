@@ -69,7 +69,7 @@ public class ProviderNotifyListener implements ClientListener {
             // Find provider caller associated with the provider url
             Importable importer = findCallerByProviderUrl(registryUrl, providerUrl);
             if (importer == null) {
-                importer = protocol.createImporter(interfaceName, providerUrl.copy());
+                importer = protocol.refer(interfaceName, providerUrl.copy());
             }
             newImporters.add(importer);
         }

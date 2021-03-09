@@ -17,7 +17,7 @@ public interface Protocol<T> {
      * @param providerStub provider stub
      * @return exporter
      */
-    Exportable<T> createExporter(ProviderStub<T> providerStub);
+    Exportable<T> export(ProviderStub<T> providerStub);
 
     /**
      * Create provider importer
@@ -26,7 +26,7 @@ public interface Protocol<T> {
      * @param providerUrl   provider url
      * @return provider importer
      */
-    Importable createImporter(String interfaceName, Url providerUrl);
+    Importable refer(String interfaceName, Url providerUrl);
 
     /**
      * Destroy
