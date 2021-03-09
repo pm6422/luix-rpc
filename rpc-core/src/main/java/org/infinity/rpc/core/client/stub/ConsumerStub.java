@@ -126,11 +126,11 @@ public class ConsumerStub<T> {
     /**
      *
      */
-    private Url             clientUrl;
+    private           Url             clientUrl;
     /**
      *
      */
-    private ProviderCluster providerCluster;
+    private           ProviderCluster providerCluster;
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
@@ -245,6 +245,6 @@ public class ConsumerStub<T> {
 
     private ProviderCluster createProviderCluster() {
         // One cluster is created for one protocol, only one server node under a cluster can receive the request
-        return ProviderCluster.createCluster(interfaceName, cluster, protocol, faultTolerance, loadBalancer, clientUrl);
+        return ProviderCluster.createCluster(cluster, interfaceName, faultTolerance, loadBalancer, clientUrl);
     }
 }

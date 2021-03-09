@@ -83,17 +83,18 @@ public interface ProviderCluster {
     /**
      * Create a provider cluster
      *
-     * @param interfaceName      interface name
-     * @param protocol           protocol name
      * @param clusterName        provider cluster name
-     * @param loadBalancerName   load balancer name
+     * @param interfaceName      interface name
      * @param faultToleranceName fault tolerance name
+     * @param loadBalancerName   load balancer name
      * @param clientUrl          client url
      * @return provider cluster
      */
-    static ProviderCluster createCluster(String interfaceName, String clusterName,
-                                         String protocol, String faultToleranceName,
-                                         String loadBalancerName, Url clientUrl) {
+    static ProviderCluster createCluster(String clusterName,
+                                         String interfaceName,
+                                         String faultToleranceName,
+                                         String loadBalancerName,
+                                         Url clientUrl) {
         // It support one cluster for one protocol for now, but do not support one cluster for one provider
         ProviderCluster providerCluster = ProviderCluster.getInstance(clusterName);
         providerCluster.setInterfaceName(interfaceName);
