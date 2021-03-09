@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.client.loadbalancer.impl;
 
 import org.infinity.rpc.core.client.loadbalancer.AbstractLoadBalancer;
-import org.infinity.rpc.core.client.request.Importable;
+import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
@@ -18,10 +18,10 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.LOAD_BALANCER_VAL
 public class RandomLoadBalancer extends AbstractLoadBalancer {
 
     @Override
-    protected Importable doSelectNode(Requestable request) {
+    protected Invokable doSelectNode(Requestable request) {
         int index = getIndex(importers);
         for (int i = 0; i < importers.size(); i++) {
-            Importable importer = importers.get((i + index) % importers.size());
+            Invokable importer = importers.get((i + index) % importers.size());
             if (importer.isActive()) {
                 return importer;
             }
@@ -30,11 +30,11 @@ public class RandomLoadBalancer extends AbstractLoadBalancer {
     }
 
     @Override
-    protected List<Importable> doSelectNodes(Requestable request) {
-        List<Importable> selected = new ArrayList<>();
+    protected List<Invokable> doSelectNodes(Requestable request) {
+        List<Invokable> selected = new ArrayList<>();
         int index = getIndex(importers);
         for (int i = 0; i < importers.size(); i++) {
-            Importable importer = importers.get((i + index) % importers.size());
+            Invokable importer = importers.get((i + index) % importers.size());
             if (importer.isActive()) {
                 selected.add(importer);
             }
@@ -42,7 +42,7 @@ public class RandomLoadBalancer extends AbstractLoadBalancer {
         return selected;
     }
 
-    private int getIndex(List<Importable> importers) {
+    private int getIndex(List<Invokable> importers) {
         return (int) (ThreadLocalRandom.current().nextDouble() * importers.size());
     }
 }

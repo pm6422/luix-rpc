@@ -7,7 +7,7 @@ import org.infinity.rpc.core.url.Url;
  * The initiator of the RPC request
  * It used to call the RPC provider
  */
-public interface Importable {
+public interface Invokable {
 
     /**
      * Get provider url

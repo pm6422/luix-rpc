@@ -2,8 +2,8 @@ package org.infinity.rpc.core.protocol;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.client.request.Importable;
-import org.infinity.rpc.core.client.request.impl.DefaultImporter;
+import org.infinity.rpc.core.client.request.Invokable;
+import org.infinity.rpc.core.client.request.impl.DefaultInvoker;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.server.exporter.Exportable;
@@ -44,7 +44,7 @@ public abstract class AbstractProtocol<T> implements Protocol<T> {
     }
 
     @Override
-    public Importable refer(String interfaceName, Url providerUrl) {
+    public Invokable refer(String interfaceName, Url providerUrl) {
         if (StringUtils.isEmpty(interfaceName)) {
             throw new RpcFrameworkException("Provider interface must NOT be null!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
@@ -52,7 +52,7 @@ public abstract class AbstractProtocol<T> implements Protocol<T> {
             throw new RpcFrameworkException("Provider url must NOT be null!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
         // todo: create different caller associated with the protocol
-        return new DefaultImporter(interfaceName, providerUrl);
+        return new DefaultInvoker(interfaceName, providerUrl);
     }
 
     /**

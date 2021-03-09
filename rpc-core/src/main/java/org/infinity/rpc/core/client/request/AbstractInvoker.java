@@ -13,14 +13,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  */
 @Slf4j
-public abstract class AbstractImporter implements Importable {
+public abstract class AbstractInvoker implements Invokable {
     protected volatile boolean       active          = false;
     protected          AtomicBoolean initialized     = new AtomicBoolean(false);
     protected          AtomicInteger processingCount = new AtomicInteger(0);
     protected          String        interfaceName;
     protected          Url           providerUrl;
 
-    public AbstractImporter(String interfaceName, Url providerUrl) {
+    public AbstractInvoker(String interfaceName, Url providerUrl) {
         this.interfaceName = interfaceName;
         this.providerUrl = providerUrl;
     }

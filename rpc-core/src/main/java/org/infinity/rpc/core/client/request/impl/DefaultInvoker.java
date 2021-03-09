@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.client.request.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.client.request.AbstractImporter;
+import org.infinity.rpc.core.client.request.AbstractInvoker;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
@@ -23,11 +23,11 @@ import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
  * The provider caller is created when the provider is active.
  */
 @Slf4j
-public class DefaultImporter extends AbstractImporter {
+public class DefaultInvoker extends AbstractInvoker {
     protected EndpointFactory endpointFactory;
     protected Client          client;
 
-    public DefaultImporter(String interfaceName, Url providerUrl) {
+    public DefaultInvoker(String interfaceName, Url providerUrl) {
         super(interfaceName, providerUrl);
         long start = System.currentTimeMillis();
         String endpointFactoryName = providerUrl.getOption(ENDPOINT_FACTORY, ENDPOINT_FACTORY_VAL_NETTY);
@@ -80,6 +80,6 @@ public class DefaultImporter extends AbstractImporter {
 
     @Override
     public String toString() {
-        return DefaultImporter.class.getSimpleName().concat(":").concat(interfaceName);
+        return DefaultInvoker.class.getSimpleName().concat(":").concat(interfaceName);
     }
 }

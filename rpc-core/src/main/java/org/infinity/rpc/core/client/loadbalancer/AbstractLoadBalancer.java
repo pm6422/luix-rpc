@@ -2,7 +2,7 @@ package org.infinity.rpc.core.client.loadbalancer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.rpc.core.client.request.Importable;
+import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.RpcInvocationException;
@@ -20,12 +20,12 @@ import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_CALLER_T
  */
 @Slf4j
 public abstract class AbstractLoadBalancer implements LoadBalancer {
-    private static final int              DELAY_TIME = 1000;
-    protected            List<Importable> importers;
+    private static final int             DELAY_TIME = 1000;
+    protected            List<Invokable> importers;
 
     @Override
-    public void refresh(List<Importable> newImporters) {
-        List<Importable> oldImporters = importers;
+    public void refresh(List<Invokable> newImporters) {
+        List<Invokable> oldImporters = importers;
         // Assign new ones to provider callers
         importers = newImporters;
 
@@ -33,7 +33,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
             return;
         }
 
-        Collection<Importable> inactiveOnes = CollectionUtils.subtract(newImporters, oldImporters);
+        Collection<Invokable> inactiveOnes = CollectionUtils.subtract(newImporters, oldImporters);
         if (CollectionUtils.isEmpty(inactiveOnes)) {
             return;
         }
@@ -42,15 +42,15 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
     }
 
     @Override
-    public Importable selectProviderNode(Requestable request) {
+    public Invokable selectProviderNode(Requestable request) {
         if (CollectionUtils.isEmpty(this.importers)) {
             throw new RpcInvocationException("No available provider caller for RPC call for now! " +
                     "Please check whether there are available providers now!");
         }
 
         // Make a copy for thread safe purpose
-        List<Importable> importers = new ArrayList<>(this.importers);
-        Importable importer = null;
+        List<Invokable> importers = new ArrayList<>(this.importers);
+        Invokable importer = null;
         if (importers.size() > 1) {
             importer = doSelectNode(request);
         } else if (importers.size() == 1 && importers.get(0).isActive()) {
@@ -65,14 +65,14 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
     }
 
     @Override
-    public List<Importable> selectProviderNodes(Requestable request) {
+    public List<Invokable> selectProviderNodes(Requestable request) {
         if (CollectionUtils.isEmpty(this.importers)) {
             throw new RpcInvocationException("No active provider caller for now, " +
                     "please check whether the server is ok!");
         }
         // Make a copy for thread safe purpose
-        List<Importable> importers = new ArrayList<>(this.importers);
-        List<Importable> selected = new ArrayList<>();
+        List<Invokable> importers = new ArrayList<>(this.importers);
+        List<Invokable> selected = new ArrayList<>();
         if (importers.size() > 1) {
             selected = doSelectNodes(request);
         } else if (importers.size() == 1 && importers.get(0).isActive()) {
@@ -87,14 +87,14 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
     }
 
     @Override
-    public List<Importable> getProviderCallers() {
+    public List<Invokable> getProviderCallers() {
         return importers;
     }
 
-    private void destroyInactiveProviderCallers(Collection<Importable> delayDestroyImporters) {
+    private void destroyInactiveProviderCallers(Collection<Invokable> delayDestroyImporters) {
         // Execute once after a daley time
         ScheduledThreadPool.scheduleDelayTask(DESTROY_CALLER_THREAD_POOL, DELAY_TIME, TimeUnit.MILLISECONDS, () -> {
-            for (Importable importer : delayDestroyImporters) {
+            for (Invokable importer : delayDestroyImporters) {
                 try {
                     importer.destroy();
                     log.info("Destroyed the caller with url: {}", importer.getProviderUrl().getUri());
@@ -107,7 +107,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
 
     @Override
     public void destroy() {
-        importers.forEach(Importable::destroy);
+        importers.forEach(Invokable::destroy);
     }
 
     /**
@@ -116,7 +116,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
      * @param request request instance
      * @return selected provider caller
      */
-    protected abstract Importable doSelectNode(Requestable request);
+    protected abstract Invokable doSelectNode(Requestable request);
 
     /**
      * Select multiple provider nodes
@@ -124,5 +124,5 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
      * @param request request instance
      * @return selected provider callers
      */
-    protected abstract List<Importable> doSelectNodes(Requestable request);
+    protected abstract List<Invokable> doSelectNodes(Requestable request);
 }

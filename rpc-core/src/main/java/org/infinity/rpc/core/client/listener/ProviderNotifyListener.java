@@ -3,7 +3,7 @@ package org.infinity.rpc.core.client.listener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.client.cluster.ProviderCluster;
-import org.infinity.rpc.core.client.request.Importable;
+import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;
@@ -27,8 +27,8 @@ public class ProviderNotifyListener implements ClientListener {
      * The interface class name of the consumer
      */
     protected String          interfaceName;
-    protected     Protocol<?>                protocol;
-    private final Map<Url, List<Importable>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
+    protected     Protocol<?>               protocol;
+    private final Map<Url, List<Invokable>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
 
     protected ProviderNotifyListener() {
     }
@@ -64,10 +64,10 @@ public class ProviderNotifyListener implements ClientListener {
             return;
         }
 
-        List<Importable> newImporters = new ArrayList<>();
+        List<Invokable> newImporters = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
             // Find provider caller associated with the provider url
-            Importable importer = findCallerByProviderUrl(registryUrl, providerUrl);
+            Invokable importer = findCallerByProviderUrl(registryUrl, providerUrl);
             if (importer == null) {
                 importer = protocol.refer(interfaceName, providerUrl.copy());
             }
@@ -81,8 +81,8 @@ public class ProviderNotifyListener implements ClientListener {
         refreshCluster();
     }
 
-    private Importable findCallerByProviderUrl(Url registryUrl, Url providerUrl) {
-        List<Importable> importers = providerCallersPerRegistryUrl.get(registryUrl);
+    private Invokable findCallerByProviderUrl(Url registryUrl, Url providerUrl) {
+        List<Invokable> importers = providerCallersPerRegistryUrl.get(registryUrl);
         return CollectionUtils.isEmpty(importers) ? null :
                 importers
                         .stream()
@@ -104,7 +104,7 @@ public class ProviderNotifyListener implements ClientListener {
     }
 
     private synchronized void refreshCluster() {
-        List<Importable> importers = providerCallersPerRegistryUrl.values()
+        List<Invokable> importers = providerCallersPerRegistryUrl.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());

@@ -2,7 +2,7 @@ package org.infinity.rpc.core.client.cluster;
 
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
-import org.infinity.rpc.core.client.request.Importable;
+import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.url.Url;
@@ -63,7 +63,7 @@ public interface ProviderCluster {
      *
      * @param importers provider call
      */
-    void refresh(List<Importable> importers);
+    void refresh(List<Invokable> importers);
 
     /**
      * Destroy

@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.cluster.ProviderCluster;
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
-import org.infinity.rpc.core.client.request.Importable;
+import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcAbstractException;
@@ -53,7 +53,7 @@ public class DefaultProviderCluster implements ProviderCluster {
      * @param newImporters new provider callers
      */
     @Override
-    public synchronized void refresh(List<Importable> newImporters) {
+    public synchronized void refresh(List<Invokable> newImporters) {
         if (CollectionUtils.isEmpty(newImporters)) {
             return;
         }

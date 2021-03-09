@@ -3,7 +3,7 @@ package org.infinity.rpc.core.client.faulttolerance.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.faulttolerance.AbstractFaultTolerance;
 import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
-import org.infinity.rpc.core.client.request.Importable;
+import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
@@ -27,7 +27,7 @@ public class FailoverFaultTolerance extends AbstractFaultTolerance {
     @Override
     public Responseable call(Requestable request, LoadBalancer loadBalancer) {
         // Select multiple nodes
-        List<Importable> availableImporters = loadBalancer.selectProviderNodes(request);
+        List<Invokable> availableImporters = loadBalancer.selectProviderNodes(request);
         // todo: provider configuration over consumer configuration
         int maxRetries = availableImporters.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
         if (maxRetries == 0) {
@@ -36,7 +36,7 @@ public class FailoverFaultTolerance extends AbstractFaultTolerance {
 
         // Retry the RPC request operation till the max retry times
         for (int i = 0; i <= maxRetries; i++) {
-            Importable importer = availableImporters.get(i % availableImporters.size());
+            Invokable importer = availableImporters.get(i % availableImporters.size());
             try {
                 request.setRetryNumber(i);
                 return importer.call(request);
