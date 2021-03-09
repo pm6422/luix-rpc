@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @ThreadSafe
 public class ProviderNotifyListener implements ClientListener {
-    protected     ProviderCluster            providerCluster;
+    protected ProviderCluster providerCluster;
     /**
      * The interface class name of the consumer
      */
-    protected     String                     interfaceName;
+    protected String          interfaceName;
     protected     Protocol<?>                protocol;
     private final Map<Url, List<Importable>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
 

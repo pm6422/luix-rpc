@@ -3,6 +3,8 @@ package org.infinity.rpc.core.client.cluster;
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.client.request.Importable;
+import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
@@ -11,24 +13,50 @@ import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 import java.util.List;
 
 /**
- * One cluster for one protocol, only one server node under a cluster can receive the request
- *
+ * One cluster for one protocol, only one node of a cluster can handle the request
  */
 @Spi(scope = SpiScope.PROTOTYPE)
-public interface ProviderCluster extends ProviderCallable {
-    void setProtocol(String protocol);
+public interface ProviderCluster {
+    /**
+     * Initialize
+     */
+    void init();
 
-    String getProtocol();
+    /**
+     * Initiate a RPC call
+     *
+     * @param request request object
+     * @return response object
+     */
+    Responseable call(Requestable request);
 
+    /**
+     * Check whether it is available
+     *
+     * @return true: available, false: unavailable
+     */
+    boolean isActive();
+
+    /**
+     * Set provider interface name
+     *
+     * @param interfaceName interface name
+     */
     void setInterfaceName(String interfaceName);
 
-    void setLoadBalancer(LoadBalancer loadBalancer);
-
-    LoadBalancer getLoadBalancer();
-
+    /**
+     * Set fault tolerance
+     *
+     * @param faultTolerance fault tolerance
+     */
     void setFaultTolerance(FaultTolerance faultTolerance);
 
-    FaultTolerance getFaultTolerance();
+    /**
+     * Set load balancer
+     *
+     * @param loadBalancer client load balancer
+     */
+    void setLoadBalancer(LoadBalancer loadBalancer);
 
     /**
      * Refresh provider callers when providers is online or offline
@@ -69,7 +97,6 @@ public interface ProviderCluster extends ProviderCallable {
         // It support one cluster for one protocol for now, but do not support one cluster for one provider
         ProviderCluster providerCluster = ProviderCluster.getInstance(clusterName);
         providerCluster.setInterfaceName(interfaceName);
-        providerCluster.setProtocol(protocol);
         FaultTolerance faultTolerance = FaultTolerance.getInstance(faultToleranceName);
         faultTolerance.setClientUrl(clientUrl);
         providerCluster.setFaultTolerance(faultTolerance);

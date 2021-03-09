@@ -20,7 +20,6 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -127,11 +126,11 @@ public class ConsumerStub<T> {
     /**
      *
      */
-    private           Url             clientUrl;
+    private Url             clientUrl;
     /**
      *
      */
-    private           ProviderCluster providerCluster;
+    private ProviderCluster providerCluster;
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition

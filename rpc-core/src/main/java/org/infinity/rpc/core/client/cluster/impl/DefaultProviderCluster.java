@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.client.cluster.impl;
 
-import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,51 +29,16 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION_V
  */
 @Slf4j
 @SpiName(CLUSTER_VAL_DEFAULT)
+@Setter
 public class DefaultProviderCluster implements ProviderCluster {
     private boolean        active = false;
     private String         interfaceName;
-    private String         protocol;
     private FaultTolerance faultTolerance;
     private LoadBalancer   loadBalancer;
 
     @Override
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
-    }
-
-    @Override
-    public String getProtocol() {
-        return protocol;
-    }
-
-    @Override
-    public void setInterfaceName(String interfaceName) {
-        this.interfaceName = interfaceName;
-    }
-
-    @Override
     public boolean isActive() {
         return active;
-    }
-
-    @Override
-    public void setLoadBalancer(@NonNull LoadBalancer loadBalancer) {
-        this.loadBalancer = loadBalancer;
-    }
-
-    @Override
-    public LoadBalancer getLoadBalancer() {
-        return loadBalancer;
-    }
-
-    @Override
-    public void setFaultTolerance(@NonNull FaultTolerance faultTolerance) {
-        this.faultTolerance = faultTolerance;
-    }
-
-    @Override
-    public FaultTolerance getFaultTolerance() {
-        return faultTolerance;
     }
 
     @Override
