@@ -2,12 +2,11 @@ package org.infinity.rpc.democlient.controller;
 
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.invocationhandler.GenericCallHandler;
 import org.infinity.rpc.core.client.proxy.ProxyFactory;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.democlient.dto.GenericCallDTO;
-import org.infinity.rpc.spring.boot.bean.name.ProviderStubBeanNameBuilder;
+import org.infinity.rpc.spring.boot.bean.name.ConsumerStubBeanNameBuilder;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
-import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
  * REST controller for RPC calling.
@@ -41,32 +40,32 @@ public class RpcCallController {
 
     /**
      * {
-     * 	"interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
-     * 	"methodName": "findAll",
-     * 	"methodParamTypes": [],
-     * 	"args": [],
-     * 	"options": {
-     * 		"group": "default",
-     * 		"version": "1.0.0"
-     *        }
+     * "interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
+     * "methodName": "findAll",
+     * "methodParamTypes": [],
+     * "args": [],
+     * "options": {
+     * "group": "default",
+     * "version": "1.0.0"
      * }
-     *
+     * }
+     * <p>
      * {
-     * 	"interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
-     * 	"methodName": "save",
-     * 	"methodParamTypes": ["org.infinity.rpc.democommon.domain.Authority"],
-     * 	"args": [{
-     * 		"name": "ROLE_TEST",
-     * 		"enabled": true
-     *    }],
-     * 	"options": {
-     * 		"group": "default",
-     * 		"version": "1.0.0"
-     *    }
+     * "interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
+     * "methodName": "save",
+     * "methodParamTypes": ["org.infinity.rpc.democommon.domain.Authority"],
+     * "args": [{
+     * "name": "ROLE_TEST",
+     * "enabled": true
+     * }],
+     * "options": {
+     * "group": "default",
+     * "version": "1.0.0"
+     * }
      * }
      *
-     * @param dto
-     * @return
+     * @param dto dto
+     * @return result
      */
     @ApiOperation("泛化调用")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功调用")})
@@ -80,12 +79,13 @@ public class RpcCallController {
     }
 
     private ConsumerStub<?> getConsumerStub(GenericCallDTO dto) {
-        String group = StringUtils.defaultIfEmpty(dto.getOptions().get(GROUP), GROUP_VAL_DEFAULT);
-        String version = StringUtils.defaultIfEmpty(dto.getOptions().get(VERSION), VERSION_VAL_DEFAULT);
-        String key = ProviderStubBeanNameBuilder
+        Map<String, Object> optionMap = new HashMap<>(dto.getOptions());
+        for (Map.Entry<String, String> entry : dto.getOptions().entrySet()) {
+            optionMap.put(entry.getKey(), entry.getValue());
+        }
+        String key = ConsumerStubBeanNameBuilder
                 .builder(dto.getInterfaceName(), env)
-                .group(group)
-                .version(version)
+                .attributes(optionMap)
                 .build();
 
         if (CONSUMER_STUB_CACHE.containsKey(key)) {
@@ -100,8 +100,6 @@ public class RpcCallController {
         consumerStub.setProxyFactory(infinityProperties.getConsumer().getProxyFactory());
         consumerStub.setCheckHealthFactory(infinityProperties.getConsumer().getCheckHealthFactory());
 
-        consumerStub.setGroup(group);
-        consumerStub.setVersion(version);
         // must NOT call init
         // consumerStub.init();
 
