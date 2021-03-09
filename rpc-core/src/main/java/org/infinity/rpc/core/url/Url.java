@@ -115,8 +115,12 @@ public final class Url implements Serializable {
 
     public static Url providerUrl(String protocol, String host, Integer port, String path, String group, String version) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
-        options.put(GROUP, group);
-        options.put(VERSION, version);
+        if (StringUtils.isNotEmpty(group)) {
+            options.put(GROUP, group);
+        }
+        if (StringUtils.isNotEmpty(version)) {
+            options.put(VERSION, version);
+        }
         options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
         return of(protocol, host, port, path, options);
     }
@@ -135,8 +139,12 @@ public final class Url implements Serializable {
      */
     public static Url consumerUrl(String protocol, String host, Integer port, String path, String group, String version) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
-        options.put(GROUP, group);
-        options.put(VERSION, version);
+        if (StringUtils.isNotEmpty(group)) {
+            options.put(GROUP, group);
+        }
+        if (StringUtils.isNotEmpty(version)) {
+            options.put(VERSION, version);
+        }
         options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_CONSUMER);
         return of(protocol, host, port, path, options);
     }
@@ -153,8 +161,12 @@ public final class Url implements Serializable {
      */
     public static Url clientUrl(String protocol, String host, String path, String group, String version) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
-        options.put(GROUP, group);
-        options.put(VERSION, version);
+        if (StringUtils.isNotEmpty(group)) {
+            options.put(GROUP, group);
+        }
+        if (StringUtils.isNotEmpty(version)) {
+            options.put(VERSION, version);
+        }
         options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_CLIENT);
         return of(protocol, host, CLIENT_URL_PORT, path, options);
     }
