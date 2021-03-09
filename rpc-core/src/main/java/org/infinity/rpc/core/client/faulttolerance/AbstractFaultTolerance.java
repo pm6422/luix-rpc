@@ -3,9 +3,9 @@ package org.infinity.rpc.core.client.faulttolerance;
 import org.infinity.rpc.core.url.Url;
 
 /**
- * @param <T>: The interface class of the provider
+ *
  */
-public abstract class AbstractFaultTolerance<T> implements FaultTolerance<T> {
+public abstract class AbstractFaultTolerance implements FaultTolerance {
 
     protected Url clientUrl;
 

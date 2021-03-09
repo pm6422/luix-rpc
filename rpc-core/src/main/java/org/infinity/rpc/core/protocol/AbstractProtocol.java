@@ -44,7 +44,7 @@ public abstract class AbstractProtocol<T> implements Protocol<T> {
     }
 
     @Override
-    public Importable<T> createImporter(String interfaceName, Url providerUrl) {
+    public Importable createImporter(String interfaceName, Url providerUrl) {
         if (StringUtils.isEmpty(interfaceName)) {
             throw new RpcFrameworkException("Provider interface must NOT be null!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
@@ -52,7 +52,7 @@ public abstract class AbstractProtocol<T> implements Protocol<T> {
             throw new RpcFrameworkException("Provider url must NOT be null!", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
         // todo: create different caller associated with the protocol
-        return new DefaultImporter<>(interfaceName, providerUrl);
+        return new DefaultImporter(interfaceName, providerUrl);
     }
 
     /**

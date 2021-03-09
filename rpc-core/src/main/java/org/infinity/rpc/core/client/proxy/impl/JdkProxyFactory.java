@@ -24,7 +24,7 @@ public class JdkProxyFactory implements ProxyFactory {
     @Override
     public <T> T getProxy(ConsumerStub<T> stub) {
         Object proxy = Proxy.newProxyInstance(
-                stub.getInterfaceClass().getClassLoader(),
+                Thread.currentThread().getContextClassLoader(),
                 new Class<?>[]{stub.getInterfaceClass()},
                 new ConsumerInvocationHandler<>(stub));
         return (T) proxy;

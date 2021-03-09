@@ -18,19 +18,17 @@ import java.util.stream.Collectors;
  * todo: see ClusterSupport
  * Listener used to subscribe providers change event,
  * method {@link ProviderNotifyListener#onNotify(Url, List)} will be invoked if providers change event occurs.
- *
- * @param <T>: The interface class of the consumer
  */
 @Slf4j
 @ThreadSafe
-public class ProviderNotifyListener<T> implements ClientListener {
-    protected     ProviderCluster<T>                providerCluster;
+public class ProviderNotifyListener implements ClientListener {
+    protected     ProviderCluster            providerCluster;
     /**
      * The interface class name of the consumer
      */
-    protected     String                            interfaceName;
-    protected     Protocol                      protocol;
-    private final Map<Url, List<Importable<T>>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
+    protected     String                     interfaceName;
+    protected     Protocol<?>                protocol;
+    private final Map<Url, List<Importable>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
 
     protected ProviderNotifyListener() {
     }
@@ -41,11 +39,10 @@ public class ProviderNotifyListener<T> implements ClientListener {
      * @param providerCluster provider cluster
      * @param interfaceName   The interface class name of the consumer
      * @param protocol        protocol
-     * @param <T>             The interface class of the consumer
      * @return listener listener
      */
-    public static <T> ProviderNotifyListener<T> of(ProviderCluster<T> providerCluster, String interfaceName, String protocol) {
-        ProviderNotifyListener<T> listener = new ProviderNotifyListener<>();
+    public static ProviderNotifyListener of(ProviderCluster providerCluster, String interfaceName, String protocol) {
+        ProviderNotifyListener listener = new ProviderNotifyListener();
         listener.providerCluster = providerCluster;
         listener.interfaceName = interfaceName;
         listener.protocol = Protocol.getInstance(protocol);
@@ -67,10 +64,10 @@ public class ProviderNotifyListener<T> implements ClientListener {
             return;
         }
 
-        List<Importable<T>> newImporters = new ArrayList<>();
+        List<Importable> newImporters = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
             // Find provider caller associated with the provider url
-            Importable<T> importer = findCallerByProviderUrl(registryUrl, providerUrl);
+            Importable importer = findCallerByProviderUrl(registryUrl, providerUrl);
             if (importer == null) {
                 importer = protocol.createImporter(interfaceName, providerUrl.copy());
             }
@@ -84,8 +81,8 @@ public class ProviderNotifyListener<T> implements ClientListener {
         refreshCluster();
     }
 
-    private Importable<T> findCallerByProviderUrl(Url registryUrl, Url providerUrl) {
-        List<Importable<T>> importers = providerCallersPerRegistryUrl.get(registryUrl);
+    private Importable findCallerByProviderUrl(Url registryUrl, Url providerUrl) {
+        List<Importable> importers = providerCallersPerRegistryUrl.get(registryUrl);
         return CollectionUtils.isEmpty(importers) ? null :
                 importers
                         .stream()
@@ -107,7 +104,7 @@ public class ProviderNotifyListener<T> implements ClientListener {
     }
 
     private synchronized void refreshCluster() {
-        List<Importable<T>> importers = providerCallersPerRegistryUrl.values()
+        List<Importable> importers = providerCallersPerRegistryUrl.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());

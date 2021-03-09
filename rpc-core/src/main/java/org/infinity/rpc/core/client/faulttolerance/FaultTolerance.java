@@ -11,11 +11,9 @@ import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 /**
  * Fault tolerance refers to the ability of a system to continue operating without interruption
  * when one or more of its components fail.
- *
- * @param <T>: The interface class of the provider
  */
 @Spi(scope = SpiScope.PROTOTYPE)
-public interface FaultTolerance<T> {
+public interface FaultTolerance {
 
     /**
      * Set client url
@@ -38,7 +36,7 @@ public interface FaultTolerance<T> {
      * @param loadBalancer load balancer
      * @return RPC response
      */
-    Responseable call(Requestable request, LoadBalancer<T> loadBalancer);
+    Responseable call(Requestable request, LoadBalancer loadBalancer);
 
     /**
      * Get instance associated with the specified name
@@ -47,7 +45,7 @@ public interface FaultTolerance<T> {
      * @return instance
      */
     @SuppressWarnings("unchecked")
-    static <T> FaultTolerance<T> getInstance(String name) {
+    static FaultTolerance getInstance(String name) {
         return ServiceLoader.forClass(FaultTolerance.class).load(name);
     }
 }

@@ -17,14 +17,13 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_V
  * 自动降级的优点是反映灵敏，当服务出现问题后秒级即可感知，可确保快速将异常服务降级，
  * 缺点则是实现机制较复杂，同时容易有误伤的情况。
  *
- * @param <T>: The interface class of the provider
  */
 @Slf4j
 @SpiName(FAULT_TOLERANCE_VAL_FAILFAST)
-public class FailfastFaultTolerance<T> extends AbstractFaultTolerance<T> {
+public class FailfastFaultTolerance extends AbstractFaultTolerance {
     @Override
-    public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
-        Importable<T> availableImporter = loadBalancer.selectProviderNode(request);
+    public Responseable call(Requestable request, LoadBalancer loadBalancer) {
+        Importable availableImporter = loadBalancer.selectProviderNode(request);
         // Do NOT retry when exception occurred
         return availableImporter.call(request);
     }

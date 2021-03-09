@@ -11,24 +11,22 @@ import java.util.List;
 
 /**
  * {@link FaultTolerance} select providers via load balance algorithm.
- *
- * @param <T>: The interface class of the provider
  */
 @Spi(scope = SpiScope.PROTOTYPE)
-public interface LoadBalancer<T> {
+public interface LoadBalancer {
     /**
      * Get provider callers
      *
      * @return provider callers
      */
-    List<Importable<T>> getProviderCallers();
+    List<Importable> getProviderCallers();
 
     /**
      * Refresh provider callers when online or offline
      *
      * @param importers new discovered provider callers
      */
-    void refresh(List<Importable<T>> importers);
+    void refresh(List<Importable> importers);
 
     /**
      * Select provider node via load balance algorithm
@@ -36,7 +34,7 @@ public interface LoadBalancer<T> {
      * @param request RPC request instance
      * @return selected provider caller
      */
-    Importable<T> selectProviderNode(Requestable request);
+    Importable selectProviderNode(Requestable request);
 
     /**
      * Select multiple provider nodes via load balance algorithm
@@ -44,7 +42,7 @@ public interface LoadBalancer<T> {
      * @param request RPC request instance
      * @return selected provider callers
      */
-    List<Importable<T>> selectProviderNodes(Requestable request);
+    List<Importable> selectProviderNodes(Requestable request);
 
     /**
      * Get instance associated with the specified name
@@ -53,7 +51,7 @@ public interface LoadBalancer<T> {
      * @return instance
      */
     @SuppressWarnings("unchecked")
-    static <T> LoadBalancer<T> getInstance(String name) {
+    static LoadBalancer getInstance(String name) {
         return ServiceLoader.forClass(LoadBalancer.class).load(name);
     }
 

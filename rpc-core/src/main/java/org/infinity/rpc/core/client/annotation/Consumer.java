@@ -94,13 +94,4 @@ public @interface Consumer {
      * @return direct urls, e.g. 127.0.0.1:26010,192.168.120.111:26010
      */
     String directAddresses() default "";
-
-    /**
-     * The generic call indicator
-     * if we only have the provider interface name, method name and arguments,
-     * we can initiate a generic call to service provider without service provider jar dependency
-     *
-     * @return generic call
-     */
-    boolean generic() default false;
 }

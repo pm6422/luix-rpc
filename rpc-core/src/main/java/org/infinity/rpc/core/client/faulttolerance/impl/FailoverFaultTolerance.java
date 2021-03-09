@@ -20,16 +20,14 @@ import static org.infinity.rpc.core.constant.ServiceConstants.MAX_RETRIES_VAL_DE
 /**
  * Failover fault tolerance strategy
  * Failover is a backup mode of operation, when the primary system exception that functions to the secondary system.
- *
- * @param <T>: The interface class of the provider
  */
 @Slf4j
 @SpiName(FAULT_TOLERANCE_VAL_FAILOVER)
-public class FailoverFaultTolerance<T> extends AbstractFaultTolerance<T> {
+public class FailoverFaultTolerance extends AbstractFaultTolerance {
     @Override
-    public Responseable call(Requestable request, LoadBalancer<T> loadBalancer) {
+    public Responseable call(Requestable request, LoadBalancer loadBalancer) {
         // Select multiple nodes
-        List<Importable<T>> availableImporters = loadBalancer.selectProviderNodes(request);
+        List<Importable> availableImporters = loadBalancer.selectProviderNodes(request);
         // todo: provider configuration over consumer configuration
         int maxRetries = availableImporters.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
         if (maxRetries == 0) {
@@ -38,7 +36,7 @@ public class FailoverFaultTolerance<T> extends AbstractFaultTolerance<T> {
 
         // Retry the RPC request operation till the max retry times
         for (int i = 0; i <= maxRetries; i++) {
-            Importable<T> importer = availableImporters.get(i % availableImporters.size());
+            Importable importer = availableImporters.get(i % availableImporters.size());
             try {
                 request.setRetryNumber(i);
                 return importer.call(request);

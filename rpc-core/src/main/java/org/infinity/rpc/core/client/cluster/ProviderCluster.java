@@ -13,30 +13,29 @@ import java.util.List;
 /**
  * One cluster for one protocol, only one server node under a cluster can receive the request
  *
- * @param <T>: The interface class of the provider
  */
 @Spi(scope = SpiScope.PROTOTYPE)
-public interface ProviderCluster<T> extends ProviderCallable<T> {
+public interface ProviderCluster extends ProviderCallable {
     void setProtocol(String protocol);
 
     String getProtocol();
 
     void setInterfaceName(String interfaceName);
 
-    void setLoadBalancer(LoadBalancer<T> loadBalancer);
+    void setLoadBalancer(LoadBalancer loadBalancer);
 
-    LoadBalancer<T> getLoadBalancer();
+    LoadBalancer getLoadBalancer();
 
-    void setFaultTolerance(FaultTolerance<T> faultTolerance);
+    void setFaultTolerance(FaultTolerance faultTolerance);
 
-    FaultTolerance<T> getFaultTolerance();
+    FaultTolerance getFaultTolerance();
 
     /**
      * Refresh provider callers when providers is online or offline
      *
      * @param importers provider call
      */
-    void refresh(List<Importable<T>> importers);
+    void refresh(List<Importable> importers);
 
     /**
      * Destroy
@@ -49,8 +48,7 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
      * @param name specified name
      * @return instance
      */
-    @SuppressWarnings("unchecked")
-    static <T> ProviderCluster<T> getInstance(String name) {
+    static ProviderCluster getInstance(String name) {
         return ServiceLoader.forClass(ProviderCluster.class).load(name);
     }
 
@@ -63,19 +61,19 @@ public interface ProviderCluster<T> extends ProviderCallable<T> {
      * @param loadBalancerName   load balancer name
      * @param faultToleranceName fault tolerance name
      * @param clientUrl          client url
-     * @param <T>                provider interface class
      * @return provider cluster
      */
-    static <T> ProviderCluster<T> createCluster(String interfaceName, String clusterName,
-                                                String protocol, String faultToleranceName, String loadBalancerName, Url clientUrl) {
+    static ProviderCluster createCluster(String interfaceName, String clusterName,
+                                         String protocol, String faultToleranceName,
+                                         String loadBalancerName, Url clientUrl) {
         // It support one cluster for one protocol for now, but do not support one cluster for one provider
-        ProviderCluster<T> providerCluster = ProviderCluster.getInstance(clusterName);
+        ProviderCluster providerCluster = ProviderCluster.getInstance(clusterName);
         providerCluster.setInterfaceName(interfaceName);
         providerCluster.setProtocol(protocol);
-        FaultTolerance<T> faultTolerance = FaultTolerance.getInstance(faultToleranceName);
+        FaultTolerance faultTolerance = FaultTolerance.getInstance(faultToleranceName);
         faultTolerance.setClientUrl(clientUrl);
         providerCluster.setFaultTolerance(faultTolerance);
-        LoadBalancer<T> loadBalancer = LoadBalancer.getInstance(loadBalancerName);
+        LoadBalancer loadBalancer = LoadBalancer.getInstance(loadBalancerName);
         providerCluster.setLoadBalancer(loadBalancer);
         // Initialize
         providerCluster.init();

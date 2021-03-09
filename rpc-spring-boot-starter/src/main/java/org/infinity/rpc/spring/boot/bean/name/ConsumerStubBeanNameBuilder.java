@@ -18,7 +18,6 @@ package org.infinity.rpc.spring.boot.bean.name;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 
@@ -32,20 +31,20 @@ import java.util.Map;
  */
 public class ConsumerStubBeanNameBuilder {
 
-    public static final    String               CONSUMER_STUB_BEAN_PREFIX = "ConsumerStub";
-    protected static final String               SEPARATOR                 = ":";
+    public static final    String              CONSUMER_STUB_BEAN_PREFIX = "ConsumerStub";
+    protected static final String              SEPARATOR                 = ":";
     /**
      * Provider interface class(Required)
      */
-    protected final        String               interfaceClassName;
+    protected final        String              interfaceClassName;
     /**
      * Environment(Required)
      */
-    protected final        Environment          env;
+    protected final        Environment         env;
     /**
      *
      */
-    protected              AnnotationAttributes attributes;
+    protected              Map<String, Object> attributes;
 
 
     /**
@@ -62,7 +61,7 @@ public class ConsumerStubBeanNameBuilder {
         return new ConsumerStubBeanNameBuilder(interfaceClassName, environment);
     }
 
-    public ConsumerStubBeanNameBuilder attributes(AnnotationAttributes attributes) {
+    public ConsumerStubBeanNameBuilder attributes(Map<String, Object> attributes) {
         this.attributes = attributes;
         return this;
     }

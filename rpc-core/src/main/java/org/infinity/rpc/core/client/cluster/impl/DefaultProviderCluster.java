@@ -26,17 +26,15 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION_V
 
 /**
  * todo: ClusterSpi
- *
- * @param <T>: The interface class of the provider
  */
 @Slf4j
 @SpiName(CLUSTER_VAL_DEFAULT)
-public class DefaultProviderCluster<T> implements ProviderCluster<T> {
-    private boolean           active = false;
-    private String            interfaceName;
-    private String            protocol;
-    private FaultTolerance<T> faultTolerance;
-    private LoadBalancer<T>   loadBalancer;
+public class DefaultProviderCluster implements ProviderCluster {
+    private boolean        active = false;
+    private String         interfaceName;
+    private String         protocol;
+    private FaultTolerance faultTolerance;
+    private LoadBalancer   loadBalancer;
 
     @Override
     public void setProtocol(String protocol) {
@@ -59,22 +57,22 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
     }
 
     @Override
-    public void setLoadBalancer(@NonNull LoadBalancer<T> loadBalancer) {
+    public void setLoadBalancer(@NonNull LoadBalancer loadBalancer) {
         this.loadBalancer = loadBalancer;
     }
 
     @Override
-    public LoadBalancer<T> getLoadBalancer() {
+    public LoadBalancer getLoadBalancer() {
         return loadBalancer;
     }
 
     @Override
-    public void setFaultTolerance(@NonNull FaultTolerance<T> faultTolerance) {
+    public void setFaultTolerance(@NonNull FaultTolerance faultTolerance) {
         this.faultTolerance = faultTolerance;
     }
 
     @Override
-    public FaultTolerance<T> getFaultTolerance() {
+    public FaultTolerance getFaultTolerance() {
         return faultTolerance;
     }
 
@@ -90,7 +88,7 @@ public class DefaultProviderCluster<T> implements ProviderCluster<T> {
      * @param newImporters new provider callers
      */
     @Override
-    public synchronized void refresh(List<Importable<T>> newImporters) {
+    public synchronized void refresh(List<Importable> newImporters) {
         if (CollectionUtils.isEmpty(newImporters)) {
             return;
         }

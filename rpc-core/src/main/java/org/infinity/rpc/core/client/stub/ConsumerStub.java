@@ -46,8 +46,8 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 public class ConsumerStub<T> {
     /**
      * The interface class of the consumer
+     * It can be null if it is a generic call.
      */
-    @NotNull(message = "The [interfaceClass] property of @Consumer must NOT be null!")
     private Class<T> interfaceClass;
     /**
      * The provider interface fully-qualified name
@@ -113,10 +113,6 @@ public class ConsumerStub<T> {
      */
     private String   directAddresses;
     /**
-     *
-     */
-    private boolean  generic;
-    /**
      * The consumer url used to export to registry only for consumers discovery management,
      * but it have nothing to do with the service calling.
      * todo: 暂时无用
@@ -127,15 +123,15 @@ public class ConsumerStub<T> {
      * The consumer proxy instance, refer the return type of {@link JdkProxyFactory#getProxy(ConsumerStub)}
      * Disable serialize
      */
-    private transient T                  proxyInstance;
+    private transient T               proxyInstance;
     /**
      *
      */
-    private           Url                clientUrl;
+    private           Url             clientUrl;
     /**
      *
      */
-    private           ProviderCluster<T> providerCluster;
+    private           ProviderCluster providerCluster;
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
@@ -169,7 +165,7 @@ public class ConsumerStub<T> {
                                    Collection<RegistryConfig> registries) {
         List<Url> registryUrls = registries
                 .stream()
-                .map(registryConfig -> registryConfig.getRegistryUrl())
+                .map(RegistryConfig::getRegistryUrl)
                 .collect(Collectors.toList());
 
         // Create consumer url
@@ -185,7 +181,7 @@ public class ConsumerStub<T> {
         if (StringUtils.isEmpty(directAddresses)) {
             // Non-direct registry
             // Pass provider cluster to listener, listener will update provider cluster after provider urls changed
-            ProviderDiscoveryListener<T> listener = ProviderDiscoveryListener.of(providerCluster, interfaceName, clientUrl);
+            ProviderDiscoveryListener listener = ProviderDiscoveryListener.of(providerCluster, interfaceName, clientUrl);
             listener.subscribe(registryUrls);
             return;
         }
@@ -217,7 +213,7 @@ public class ConsumerStub<T> {
 
     private void notifyDirectProviderUrls(ProtocolConfig protocolConfig, List<Url> globalRegistryUrls) {
         // Pass provider cluster to listener, listener will update provider cluster after provider urls changed
-        ProviderNotifyListener<T> listener = ProviderNotifyListener.of(providerCluster, interfaceName, protocol);
+        ProviderNotifyListener listener = ProviderNotifyListener.of(providerCluster, interfaceName, protocol);
 
         for (Url globalRegistryUrl : globalRegistryUrls) {
             List<Url> directProviderUrls = createDirectProviderUrls(protocolConfig);
@@ -248,7 +244,7 @@ public class ConsumerStub<T> {
         return directProviderUrls;
     }
 
-    private ProviderCluster<T> createProviderCluster() {
+    private ProviderCluster createProviderCluster() {
         // One cluster is created for one protocol, only one server node under a cluster can receive the request
         return ProviderCluster.createCluster(interfaceName, cluster, protocol, faultTolerance, loadBalancer, clientUrl);
     }

@@ -26,7 +26,7 @@ public interface Protocol<T> {
      * @param providerUrl   provider url
      * @return provider importer
      */
-    Importable<T> createImporter(String interfaceName, Url providerUrl);
+    Importable createImporter(String interfaceName, Url providerUrl);
 
     /**
      * Destroy

@@ -5,9 +5,8 @@ import org.infinity.rpc.core.server.response.Responseable;
 
 /**
  * todo: merge to ProviderCluster
- * @param <T>: The interface class of the provider
  */
-public interface ProviderCallable<T> {
+public interface ProviderCallable {
     /**
      * Initialize
      */

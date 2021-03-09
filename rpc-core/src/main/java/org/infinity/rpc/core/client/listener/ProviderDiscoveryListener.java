@@ -16,11 +16,10 @@ import java.util.List;
  * Listener used to subscribe providers change event,
  * method {@link ProviderDiscoveryListener#onNotify(Url, List)} will be invoked if providers change event occurs.
  *
- * @param <T>: The interface class of the consumer
  */
 @Slf4j
 @ThreadSafe
-public class ProviderDiscoveryListener<T> extends ProviderNotifyListener<T> {
+public class ProviderDiscoveryListener extends ProviderNotifyListener {
     private Url clientUrl;
 
     /**
@@ -36,11 +35,10 @@ public class ProviderDiscoveryListener<T> extends ProviderNotifyListener<T> {
      * @param providerCluster provider cluster
      * @param interfaceName   The interface class name of the consumer
      * @param clientUrl       client url
-     * @param <T>             The interface class of the consumer
      * @return listener listener
      */
-    public static <T> ProviderDiscoveryListener<T> of(ProviderCluster<T> providerCluster, String interfaceName, Url clientUrl) {
-        ProviderDiscoveryListener<T> listener = new ProviderDiscoveryListener<>();
+    public static  ProviderDiscoveryListener of(ProviderCluster providerCluster, String interfaceName, Url clientUrl) {
+        ProviderDiscoveryListener listener = new ProviderDiscoveryListener();
         listener.providerCluster = providerCluster;
         listener.interfaceName = interfaceName;
         listener.clientUrl = clientUrl;

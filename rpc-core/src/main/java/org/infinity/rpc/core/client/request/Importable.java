@@ -6,10 +6,8 @@ import org.infinity.rpc.core.url.Url;
 /**
  * The initiator of the RPC request
  * It used to call the RPC provider
- *
- * @param <T>: The interface class of the provider
  */
-public interface Importable<T> {
+public interface Importable {
 
     /**
      * Get provider url

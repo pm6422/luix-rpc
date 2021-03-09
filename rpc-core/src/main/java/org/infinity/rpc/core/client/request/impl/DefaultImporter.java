@@ -21,11 +21,9 @@ import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
  * todo: DefaultRpcReferer
  * One default provider caller for one service interface.
  * The provider caller is created when the provider is active.
- *
- * @param <T>: The interface class of the provider
  */
 @Slf4j
-public class DefaultImporter<T> extends AbstractImporter<T> {
+public class DefaultImporter extends AbstractImporter {
     protected EndpointFactory endpointFactory;
     protected Client          client;
 

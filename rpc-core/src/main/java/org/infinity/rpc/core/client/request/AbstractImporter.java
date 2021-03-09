@@ -10,10 +10,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @param <T>: The interface class of the provider
+ *
  */
 @Slf4j
-public abstract class AbstractImporter<T> implements Importable<T> {
+public abstract class AbstractImporter implements Importable {
     protected volatile boolean       active          = false;
     protected          AtomicBoolean initialized     = new AtomicBoolean(false);
     protected          AtomicInteger processingCount = new AtomicInteger(0);
@@ -54,13 +54,6 @@ public abstract class AbstractImporter<T> implements Importable<T> {
         return providerUrl;
     }
 
-    /**
-     * Do initialization
-     *
-     * @return true: initialized, false: or else
-     */
-    protected abstract boolean doInit();
-
     @Override
     public Responseable call(Requestable request) {
         if (!active) {
@@ -81,6 +74,13 @@ public abstract class AbstractImporter<T> implements Importable<T> {
     public void destroy() {
 
     }
+
+    /**
+     * Do initialization
+     *
+     * @return true: initialized, false: or else
+     */
+    protected abstract boolean doInit();
 
     protected abstract Responseable doCall(Requestable request);
 
