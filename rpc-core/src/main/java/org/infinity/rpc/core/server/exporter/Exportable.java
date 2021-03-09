@@ -3,13 +3,12 @@ package org.infinity.rpc.core.server.exporter;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 
 /**
- * todo: merge with ProviderCallable
- *
  * @param <T>
  */
 public interface Exportable<T> {
     /**
      * Get provider stub
+     *
      * @return provider stub
      */
     ProviderStub<T> getProviderStub();
