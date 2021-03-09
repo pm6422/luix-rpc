@@ -67,7 +67,6 @@ public class DefaultInvokerCluster implements InvokerCluster {
         loadBalancer.destroy();
     }
 
-
     @Override
     public Responseable call(Requestable request) {
         if (active) {
