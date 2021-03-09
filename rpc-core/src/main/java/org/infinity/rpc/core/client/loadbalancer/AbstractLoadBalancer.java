@@ -21,19 +21,19 @@ import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_CALLER_T
 @Slf4j
 public abstract class AbstractLoadBalancer implements LoadBalancer {
     private static final int             DELAY_TIME = 1000;
-    protected            List<Invokable> importers;
+    protected            List<Invokable> invokers;
 
     @Override
-    public void refresh(List<Invokable> newImporters) {
-        List<Invokable> oldImporters = importers;
+    public void refresh(List<Invokable> invokers) {
+        List<Invokable> oldInvokers = this.invokers;
         // Assign new ones to provider callers
-        importers = newImporters;
+        this.invokers = invokers;
 
-        if (CollectionUtils.isEmpty(oldImporters)) {
+        if (CollectionUtils.isEmpty(oldInvokers)) {
             return;
         }
 
-        Collection<Invokable> inactiveOnes = CollectionUtils.subtract(newImporters, oldImporters);
+        Collection<Invokable> inactiveOnes = CollectionUtils.subtract(invokers, oldInvokers);
         if (CollectionUtils.isEmpty(inactiveOnes)) {
             return;
         }
@@ -43,40 +43,40 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
 
     @Override
     public Invokable selectProviderNode(Requestable request) {
-        if (CollectionUtils.isEmpty(this.importers)) {
+        if (CollectionUtils.isEmpty(this.invokers)) {
             throw new RpcInvocationException("No available provider caller for RPC call for now! " +
                     "Please check whether there are available providers now!");
         }
 
         // Make a copy for thread safe purpose
-        List<Invokable> importers = new ArrayList<>(this.importers);
-        Invokable importer = null;
-        if (importers.size() > 1) {
-            importer = doSelectNode(request);
-        } else if (importers.size() == 1 && importers.get(0).isActive()) {
-            importer = importers.get(0);
+        List<Invokable> invokers = new ArrayList<>(this.invokers);
+        Invokable invoker = null;
+        if (invokers.size() > 1) {
+            invoker = doSelectNode(request);
+        } else if (invokers.size() == 1 && invokers.get(0).isActive()) {
+            invoker = invokers.get(0);
         }
-        if (importer == null) {
+        if (invoker == null) {
             // Provider may be lost when executing doSelect
             throw new RpcInvocationException("No active provider caller for now, " +
                     "please check whether the server is ok!");
         }
-        return importer;
+        return invoker;
     }
 
     @Override
     public List<Invokable> selectProviderNodes(Requestable request) {
-        if (CollectionUtils.isEmpty(this.importers)) {
+        if (CollectionUtils.isEmpty(this.invokers)) {
             throw new RpcInvocationException("No active provider caller for now, " +
                     "please check whether the server is ok!");
         }
         // Make a copy for thread safe purpose
-        List<Invokable> importers = new ArrayList<>(this.importers);
+        List<Invokable> invokers = new ArrayList<>(this.invokers);
         List<Invokable> selected = new ArrayList<>();
-        if (importers.size() > 1) {
+        if (invokers.size() > 1) {
             selected = doSelectNodes(request);
-        } else if (importers.size() == 1 && importers.get(0).isActive()) {
-            selected.add(importers.get(0));
+        } else if (invokers.size() == 1 && invokers.get(0).isActive()) {
+            selected.add(invokers.get(0));
         }
         if (CollectionUtils.isEmpty(selected)) {
             // Provider may be lost when executing doSelect
@@ -88,18 +88,18 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
 
     @Override
     public List<Invokable> getProviderCallers() {
-        return importers;
+        return invokers;
     }
 
-    private void destroyInactiveProviderCallers(Collection<Invokable> delayDestroyImporters) {
+    private void destroyInactiveProviderCallers(Collection<Invokable> delayDestroyInvokers) {
         // Execute once after a daley time
         ScheduledThreadPool.scheduleDelayTask(DESTROY_CALLER_THREAD_POOL, DELAY_TIME, TimeUnit.MILLISECONDS, () -> {
-            for (Invokable importer : delayDestroyImporters) {
+            for (Invokable invoker : delayDestroyInvokers) {
                 try {
-                    importer.destroy();
-                    log.info("Destroyed the caller with url: {}", importer.getProviderUrl().getUri());
+                    invoker.destroy();
+                    log.info("Destroyed the caller with url: {}", invoker.getProviderUrl().getUri());
                 } catch (Exception e) {
-                    log.error(MessageFormat.format("Failed to destroy the caller with url: {0}", importer.getProviderUrl().getUri()), e);
+                    log.error(MessageFormat.format("Failed to destroy the caller with url: {0}", invoker.getProviderUrl().getUri()), e);
                 }
             }
         });
@@ -107,7 +107,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
 
     @Override
     public void destroy() {
-        importers.forEach(Invokable::destroy);
+        invokers.forEach(Invokable::destroy);
     }
 
     /**

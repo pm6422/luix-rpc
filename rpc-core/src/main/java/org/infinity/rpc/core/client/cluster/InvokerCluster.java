@@ -61,9 +61,9 @@ public interface InvokerCluster {
     /**
      * Refresh provider callers when providers is online or offline
      *
-     * @param importers provider call
+     * @param invokers provider call
      */
-    void refresh(List<Invokable> importers);
+    void refresh(List<Invokable> invokers);
 
     /**
      * Destroy

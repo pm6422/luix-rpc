@@ -122,15 +122,15 @@ public class ConsumerStub<T> {
      * The consumer proxy instance, refer the return type of {@link JdkProxyFactory#getProxy(ConsumerStub)}
      * Disable serialize
      */
-    private transient T               proxyInstance;
+    private transient T              proxyInstance;
     /**
      *
      */
-    private Url            clientUrl;
+    private           Url            clientUrl;
     /**
      *
      */
-    private InvokerCluster invokerCluster;
+    private           InvokerCluster invokerCluster;
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition

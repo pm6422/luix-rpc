@@ -64,27 +64,27 @@ public class ProviderNotifyListener implements ClientListener {
             return;
         }
 
-        List<Invokable> newImporters = new ArrayList<>();
+        List<Invokable> newInvokers = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
             // Find provider caller associated with the provider url
-            Invokable importer = findCallerByProviderUrl(registryUrl, providerUrl);
-            if (importer == null) {
-                importer = protocol.refer(interfaceName, providerUrl.copy());
+            Invokable invoker = findCallerByProviderUrl(registryUrl, providerUrl);
+            if (invoker == null) {
+                invoker = protocol.refer(interfaceName, providerUrl.copy());
             }
-            newImporters.add(importer);
+            newInvokers.add(invoker);
         }
 
-        if (CollectionUtils.isEmpty(newImporters)) {
+        if (CollectionUtils.isEmpty(newInvokers)) {
             log.warn("No active provider caller!");
         }
-        providerCallersPerRegistryUrl.put(registryUrl, newImporters);
+        providerCallersPerRegistryUrl.put(registryUrl, newInvokers);
         refreshCluster();
     }
 
     private Invokable findCallerByProviderUrl(Url registryUrl, Url providerUrl) {
-        List<Invokable> importers = providerCallersPerRegistryUrl.get(registryUrl);
-        return CollectionUtils.isEmpty(importers) ? null :
-                importers
+        List<Invokable> invokers = providerCallersPerRegistryUrl.get(registryUrl);
+        return CollectionUtils.isEmpty(invokers) ? null :
+                invokers
                         .stream()
                         .filter(caller -> Objects.equals(providerUrl, caller.getProviderUrl()))
                         .findFirst()
@@ -104,13 +104,13 @@ public class ProviderNotifyListener implements ClientListener {
     }
 
     private synchronized void refreshCluster() {
-        List<Invokable> importers = providerCallersPerRegistryUrl.values()
+        List<Invokable> invokers = providerCallersPerRegistryUrl.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
         // Refresh provider callers to AbstractLoadBalancer
-        invokerCluster.refresh(importers);
+        invokerCluster.refresh(invokers);
     }
 
     @Override

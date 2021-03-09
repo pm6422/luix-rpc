@@ -27,19 +27,19 @@ public class FailoverFaultTolerance extends AbstractFaultTolerance {
     @Override
     public Responseable call(Requestable request, LoadBalancer loadBalancer) {
         // Select multiple nodes
-        List<Invokable> availableImporters = loadBalancer.selectProviderNodes(request);
+        List<Invokable> availableInvokers = loadBalancer.selectProviderNodes(request);
         // todo: provider configuration over consumer configuration
-        int maxRetries = availableImporters.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
+        int maxRetries = availableInvokers.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
         if (maxRetries == 0) {
             maxRetries = request.getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
         }
 
         // Retry the RPC request operation till the max retry times
         for (int i = 0; i <= maxRetries; i++) {
-            Invokable importer = availableImporters.get(i % availableImporters.size());
+            Invokable invoker = availableInvokers.get(i % availableInvokers.size());
             try {
                 request.setRetryNumber(i);
-                return importer.call(request);
+                return invoker.call(request);
             } catch (RuntimeException e) {
                 if (ExceptionUtils.isBizException(e) || i >= maxRetries) {
                     // Throw the exception if it's a business one
@@ -47,9 +47,9 @@ public class FailoverFaultTolerance extends AbstractFaultTolerance {
                     throw e;
                 }
                 // If one of the provider nodes fails, try to use another backup available one
-                log.warn(MessageFormat.format("Failed to call {0}", importer.getProviderUrl()), e);
+                log.warn(MessageFormat.format("Failed to call {0}", invoker.getProviderUrl()), e);
             }
         }
-        throw new RpcFrameworkException("Failed to perform " + maxRetries + " retries to call " + availableImporters.get(0).getProviderUrl() + "!");
+        throw new RpcFrameworkException("Failed to perform " + maxRetries + " retries to call " + availableInvokers.get(0).getProviderUrl() + "!");
     }
 }

@@ -19,11 +19,11 @@ public class RandomLoadBalancer extends AbstractLoadBalancer {
 
     @Override
     protected Invokable doSelectNode(Requestable request) {
-        int index = getIndex(importers);
-        for (int i = 0; i < importers.size(); i++) {
-            Invokable importer = importers.get((i + index) % importers.size());
-            if (importer.isActive()) {
-                return importer;
+        int index = getIndex(invokers);
+        for (int i = 0; i < invokers.size(); i++) {
+            Invokable invoker = invokers.get((i + index) % invokers.size());
+            if (invoker.isActive()) {
+                return invoker;
             }
         }
         return null;
@@ -32,17 +32,17 @@ public class RandomLoadBalancer extends AbstractLoadBalancer {
     @Override
     protected List<Invokable> doSelectNodes(Requestable request) {
         List<Invokable> selected = new ArrayList<>();
-        int index = getIndex(importers);
-        for (int i = 0; i < importers.size(); i++) {
-            Invokable importer = importers.get((i + index) % importers.size());
-            if (importer.isActive()) {
-                selected.add(importer);
+        int index = getIndex(invokers);
+        for (int i = 0; i < invokers.size(); i++) {
+            Invokable invoker = invokers.get((i + index) % invokers.size());
+            if (invoker.isActive()) {
+                selected.add(invoker);
             }
         }
         return selected;
     }
 
-    private int getIndex(List<Invokable> importers) {
-        return (int) (ThreadLocalRandom.current().nextDouble() * importers.size());
+    private int getIndex(List<Invokable> invokers) {
+        return (int) (ThreadLocalRandom.current().nextDouble() * invokers.size());
     }
 }

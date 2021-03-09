@@ -50,15 +50,15 @@ public class DefaultInvokerCluster implements InvokerCluster {
     /**
      * Update new provider callers of load balancer
      *
-     * @param newImporters new provider callers
+     * @param invokers new provider callers
      */
     @Override
-    public synchronized void refresh(List<Invokable> newImporters) {
-        if (CollectionUtils.isEmpty(newImporters)) {
+    public synchronized void refresh(List<Invokable> invokers) {
+        if (CollectionUtils.isEmpty(invokers)) {
             return;
         }
         // Set new provider callers to load balancer
-        loadBalancer.refresh(newImporters);
+        loadBalancer.refresh(invokers);
     }
 
     @Override

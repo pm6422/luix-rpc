@@ -24,9 +24,9 @@ public interface LoadBalancer {
     /**
      * Refresh provider callers when online or offline
      *
-     * @param importers new discovered provider callers
+     * @param invokers new discovered provider callers
      */
-    void refresh(List<Invokable> importers);
+    void refresh(List<Invokable> invokers);
 
     /**
      * Select provider node via load balance algorithm
