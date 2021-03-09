@@ -2,7 +2,7 @@ package org.infinity.rpc.core.client.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.rpc.core.client.cluster.ProviderCluster;
+import org.infinity.rpc.core.client.cluster.InvokerCluster;
 import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.listener.ClientListener;
@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @ThreadSafe
 public class ProviderNotifyListener implements ClientListener {
-    protected ProviderCluster providerCluster;
+    protected InvokerCluster invokerCluster;
     /**
      * The interface class name of the consumer
      */
-    protected String          interfaceName;
+    protected String         interfaceName;
     protected     Protocol<?>               protocol;
     private final Map<Url, List<Invokable>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
 
@@ -34,16 +34,16 @@ public class ProviderNotifyListener implements ClientListener {
     }
 
     /**
-     * Pass provider cluster to listener, listener will update provider cluster after provider urls changed
+     * Pass provider invoker cluster to listener, listener will update provider invoker cluster after provider urls changed
      *
-     * @param providerCluster provider cluster
+     * @param invokerCluster provider invoker cluster
      * @param interfaceName   The interface class name of the consumer
      * @param protocol        protocol
      * @return listener listener
      */
-    public static ProviderNotifyListener of(ProviderCluster providerCluster, String interfaceName, String protocol) {
+    public static ProviderNotifyListener of(InvokerCluster invokerCluster, String interfaceName, String protocol) {
         ProviderNotifyListener listener = new ProviderNotifyListener();
-        listener.providerCluster = providerCluster;
+        listener.invokerCluster = invokerCluster;
         listener.interfaceName = interfaceName;
         listener.protocol = Protocol.getInstance(protocol);
         return listener;
@@ -110,7 +110,7 @@ public class ProviderNotifyListener implements ClientListener {
                 .collect(Collectors.toList());
 
         // Refresh provider callers to AbstractLoadBalancer
-        providerCluster.refresh(importers);
+        invokerCluster.refresh(importers);
     }
 
     @Override

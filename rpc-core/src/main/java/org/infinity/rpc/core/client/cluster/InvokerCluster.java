@@ -16,7 +16,7 @@ import java.util.List;
  * One cluster for one protocol, only one node of a cluster can handle the request
  */
 @Spi(scope = SpiScope.PROTOTYPE)
-public interface ProviderCluster {
+public interface InvokerCluster {
     /**
      * Initialize
      */
@@ -76,35 +76,35 @@ public interface ProviderCluster {
      * @param name specified name
      * @return instance
      */
-    static ProviderCluster getInstance(String name) {
-        return ServiceLoader.forClass(ProviderCluster.class).load(name);
+    static InvokerCluster getInstance(String name) {
+        return ServiceLoader.forClass(InvokerCluster.class).load(name);
     }
 
     /**
-     * Create a provider cluster
+     * Create a provider invoker cluster
      *
-     * @param clusterName        provider cluster name
+     * @param clusterName        provider invoker cluster name
      * @param interfaceName      interface name
      * @param faultToleranceName fault tolerance name
      * @param loadBalancerName   load balancer name
      * @param clientUrl          client url
-     * @return provider cluster
+     * @return provider invoker cluster
      */
-    static ProviderCluster createCluster(String clusterName,
-                                         String interfaceName,
-                                         String faultToleranceName,
-                                         String loadBalancerName,
-                                         Url clientUrl) {
+    static InvokerCluster createCluster(String clusterName,
+                                        String interfaceName,
+                                        String faultToleranceName,
+                                        String loadBalancerName,
+                                        Url clientUrl) {
         // It support one cluster for one protocol for now, but do not support one cluster for one provider
-        ProviderCluster providerCluster = ProviderCluster.getInstance(clusterName);
-        providerCluster.setInterfaceName(interfaceName);
+        InvokerCluster invokerCluster = InvokerCluster.getInstance(clusterName);
+        invokerCluster.setInterfaceName(interfaceName);
         FaultTolerance faultTolerance = FaultTolerance.getInstance(faultToleranceName);
         faultTolerance.setClientUrl(clientUrl);
-        providerCluster.setFaultTolerance(faultTolerance);
+        invokerCluster.setFaultTolerance(faultTolerance);
         LoadBalancer loadBalancer = LoadBalancer.getInstance(loadBalancerName);
-        providerCluster.setLoadBalancer(loadBalancer);
+        invokerCluster.setLoadBalancer(loadBalancer);
         // Initialize
-        providerCluster.init();
-        return providerCluster;
+        invokerCluster.init();
+        return invokerCluster;
     }
 }

@@ -5,7 +5,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.infinity.rpc.core.client.cluster.ProviderCluster;
+import org.infinity.rpc.core.client.cluster.InvokerCluster;
 import org.infinity.rpc.core.client.listener.ProviderDiscoveryListener;
 import org.infinity.rpc.core.client.listener.ProviderNotifyListener;
 import org.infinity.rpc.core.client.proxy.ProxyFactory;
@@ -126,11 +126,11 @@ public class ConsumerStub<T> {
     /**
      *
      */
-    private           Url             clientUrl;
+    private Url            clientUrl;
     /**
      *
      */
-    private           ProviderCluster providerCluster;
+    private InvokerCluster invokerCluster;
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
@@ -174,13 +174,13 @@ public class ConsumerStub<T> {
         clientUrl = Url.clientUrl(protocol, protocolConfig.getHost(), interfaceName, group, version);
         clientUrl.addOption(THROW_EXCEPTION, String.valueOf(protocolConfig.isThrowException()));
 
-        // Initialize provider cluster before consumer initialization
-        providerCluster = createProviderCluster();
+        // Initialize provider invoker cluster before consumer initialization
+        invokerCluster = createInvokerCluster();
 
         if (StringUtils.isEmpty(directAddresses)) {
             // Non-direct registry
-            // Pass provider cluster to listener, listener will update provider cluster after provider urls changed
-            ProviderDiscoveryListener listener = ProviderDiscoveryListener.of(providerCluster, interfaceName, clientUrl);
+            // Pass provider invoker cluster to listener, listener will update provider invoker cluster after provider urls changed
+            ProviderDiscoveryListener listener = ProviderDiscoveryListener.of(invokerCluster, interfaceName, clientUrl);
             listener.subscribe(registryUrls);
             return;
         }
@@ -211,8 +211,8 @@ public class ConsumerStub<T> {
     }
 
     private void notifyDirectProviderUrls(ProtocolConfig protocolConfig, List<Url> globalRegistryUrls) {
-        // Pass provider cluster to listener, listener will update provider cluster after provider urls changed
-        ProviderNotifyListener listener = ProviderNotifyListener.of(providerCluster, interfaceName, protocol);
+        // Pass provider invoker cluster to listener, listener will update provider invoker cluster after provider urls changed
+        ProviderNotifyListener listener = ProviderNotifyListener.of(invokerCluster, interfaceName, protocol);
 
         for (Url globalRegistryUrl : globalRegistryUrls) {
             List<Url> directProviderUrls = createDirectProviderUrls(protocolConfig);
@@ -243,8 +243,8 @@ public class ConsumerStub<T> {
         return directProviderUrls;
     }
 
-    private ProviderCluster createProviderCluster() {
+    private InvokerCluster createInvokerCluster() {
         // One cluster is created for one protocol, only one server node under a cluster can receive the request
-        return ProviderCluster.createCluster(cluster, interfaceName, faultTolerance, loadBalancer, clientUrl);
+        return InvokerCluster.createCluster(cluster, interfaceName, faultTolerance, loadBalancer, clientUrl);
     }
 }

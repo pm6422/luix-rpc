@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.client.listener;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.client.cluster.ProviderCluster;
+import org.infinity.rpc.core.client.cluster.InvokerCluster;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
@@ -30,16 +30,16 @@ public class ProviderDiscoveryListener extends ProviderNotifyListener {
     }
 
     /**
-     * Pass provider cluster to listener, listener will update provider cluster after provider urls changed
+     * Pass provider invoker cluster to listener, listener will update provider invoker cluster after provider urls changed
      *
-     * @param providerCluster provider cluster
+     * @param invokerCluster provider invoker cluster
      * @param interfaceName   The interface class name of the consumer
      * @param clientUrl       client url
      * @return listener listener
      */
-    public static  ProviderDiscoveryListener of(ProviderCluster providerCluster, String interfaceName, Url clientUrl) {
+    public static  ProviderDiscoveryListener of(InvokerCluster invokerCluster, String interfaceName, Url clientUrl) {
         ProviderDiscoveryListener listener = new ProviderDiscoveryListener();
-        listener.providerCluster = providerCluster;
+        listener.invokerCluster = invokerCluster;
         listener.interfaceName = interfaceName;
         listener.clientUrl = clientUrl;
         listener.protocol = Protocol.getInstance(clientUrl.getProtocol());

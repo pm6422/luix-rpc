@@ -4,7 +4,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.client.cluster.ProviderCluster;
+import org.infinity.rpc.core.client.cluster.InvokerCluster;
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.client.request.Invokable;
@@ -30,7 +30,7 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION_V
 @Slf4j
 @SpiName(CLUSTER_VAL_DEFAULT)
 @Setter
-public class DefaultProviderCluster implements ProviderCluster {
+public class DefaultInvokerCluster implements InvokerCluster {
     private boolean        active = false;
     private String         interfaceName;
     private FaultTolerance faultTolerance;
@@ -100,8 +100,8 @@ public class DefaultProviderCluster implements ProviderCluster {
     @Override
     public String toString() {
         if (StringUtils.isEmpty(interfaceName)) {
-            return DefaultProviderCluster.class.getSimpleName();
+            return DefaultInvokerCluster.class.getSimpleName();
         }
-        return DefaultProviderCluster.class.getSimpleName().concat(":").concat(interfaceName);
+        return DefaultInvokerCluster.class.getSimpleName().concat(":").concat(interfaceName);
     }
 }

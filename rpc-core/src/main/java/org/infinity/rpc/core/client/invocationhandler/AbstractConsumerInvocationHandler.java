@@ -5,7 +5,6 @@ import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.server.response.Responseable;
-import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.utils.RpcRequestIdHolder;
 
 import java.lang.reflect.Method;
@@ -28,10 +27,10 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         try {
             // Store request id on client side
             RpcRequestIdHolder.setRequestId(request.getRequestId());
-            // Call chain: provider cluster call => cluster fault tolerance strategy =>
+            // Call chain: provider invoker cluster call => cluster fault tolerance strategy =>
             // LB select node => provider caller call
             // Only one server node under one cluster can process the request
-            response = consumerStub.getProviderCluster().call(request);
+            response = consumerStub.getInvokerCluster().call(request);
             return response.getResult();
         } catch (Exception ex) {
             throw new RpcServiceException(ex);
