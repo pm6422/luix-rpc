@@ -4,8 +4,7 @@ import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.url.Url;
 
 /**
- * The initiator of the RPC request
- * It used to call the RPC provider
+ * RPC invoker used to call provider
  */
 public interface Invokable {
 
@@ -17,14 +16,14 @@ public interface Invokable {
     Url getProviderUrl();
 
     /**
-     * Check whether it is available
+     * Check whether the invoker is active
      *
-     * @return true: available, false: unavailable
+     * @return true: active, false: inactive
      */
     boolean isActive();
 
     /**
-     * Initiate a RPC call
+     * Invoke provider
      *
      * @param request request object
      * @return response object
@@ -35,5 +34,4 @@ public interface Invokable {
      * Do some cleanup task
      */
     void destroy();
-
 }

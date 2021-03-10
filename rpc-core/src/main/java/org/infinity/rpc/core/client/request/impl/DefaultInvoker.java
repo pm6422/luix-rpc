@@ -58,7 +58,7 @@ public class DefaultInvoker extends AbstractInvoker {
     }
 
     @Override
-    protected void decreaseProcessingCount(Requestable request, Responseable response) {
+    protected void afterInvoke(Requestable request, Responseable response) {
         if (!(response instanceof Future)) {
             processingCount.decrementAndGet();
             return;

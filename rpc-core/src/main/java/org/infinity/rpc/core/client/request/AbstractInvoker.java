@@ -27,13 +27,12 @@ public abstract class AbstractInvoker implements Invokable {
 
     protected void init() {
         if (!initialized.compareAndSet(false, true)) {
-            log.warn("Provider caller [{}] already has been initialized!", this.toString());
+            log.warn("Provider invoker [{}] has already been initialized!", this.toString());
             return;
         }
-
         boolean result = doInit();
         if (!result) {
-            throw new RpcFrameworkException("Failed to initialize the provider caller [" + this + "]!",
+            throw new RpcFrameworkException("Failed to initialize the provider invoker [" + this + "]!",
                     RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         } else {
             setActive(true);
@@ -60,13 +59,13 @@ public abstract class AbstractInvoker implements Invokable {
             throw new RpcFrameworkException("No active provider caller found for now!");
         }
 
-        increaseProcessingCount();
+        beforeInvoke();
         Responseable response = null;
         try {
             response = doInvoke(request);
             return response;
         } finally {
-            decreaseProcessingCount(request, response);
+            afterInvoke(request, response);
         }
     }
 
@@ -84,9 +83,9 @@ public abstract class AbstractInvoker implements Invokable {
 
     protected abstract Responseable doInvoke(Requestable request);
 
-    protected void increaseProcessingCount() {
+    protected void beforeInvoke() {
         processingCount.incrementAndGet();
     }
 
-    protected abstract void decreaseProcessingCount(Requestable request, Responseable response);
+    protected abstract void afterInvoke(Requestable request, Responseable response);
 }
