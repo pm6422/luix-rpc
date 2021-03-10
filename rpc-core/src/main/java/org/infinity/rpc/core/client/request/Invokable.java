@@ -29,7 +29,7 @@ public interface Invokable {
      * @param request request object
      * @return response object
      */
-    Responseable call(Requestable request);
+    Responseable invoke(Requestable request);
 
     /**
      * Do some cleanup task

@@ -47,7 +47,7 @@ public class DefaultInvoker extends AbstractInvoker {
     }
 
     @Override
-    protected Responseable doCall(Requestable request) {
+    protected Responseable doInvoke(Requestable request) {
         try {
             // 为了能够实现跨group请求，需要使用server端的group。
             request.addOption(GROUP, providerUrl.getGroup());

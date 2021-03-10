@@ -28,7 +28,7 @@ public interface InvokerCluster {
      * @param request request object
      * @return response object
      */
-    Responseable call(Requestable request);
+    Responseable invoke(Requestable request);
 
     /**
      * Check whether it is available

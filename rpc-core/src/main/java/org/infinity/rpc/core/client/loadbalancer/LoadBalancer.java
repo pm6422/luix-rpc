@@ -17,9 +17,9 @@ public interface LoadBalancer {
     /**
      * Get provider callers
      *
-     * @return provider callers
+     * @return provider invokers
      */
-    List<Invokable> getProviderCallers();
+    List<Invokable> getInvokers();
 
     /**
      * Refresh provider callers when online or offline

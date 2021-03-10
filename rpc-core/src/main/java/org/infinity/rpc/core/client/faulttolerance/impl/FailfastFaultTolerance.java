@@ -22,9 +22,9 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_V
 @SpiName(FAULT_TOLERANCE_VAL_FAILFAST)
 public class FailfastFaultTolerance extends AbstractFaultTolerance {
     @Override
-    public Responseable call(Requestable request, LoadBalancer loadBalancer) {
+    public Responseable invoke(Requestable request, LoadBalancer loadBalancer) {
         Invokable availableInvoker = loadBalancer.selectProviderNode(request);
         // Do NOT retry when exception occurred
-        return availableInvoker.call(request);
+        return availableInvoker.invoke(request);
     }
 }

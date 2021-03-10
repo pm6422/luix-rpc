@@ -36,7 +36,7 @@ public interface FaultTolerance {
      * @param loadBalancer load balancer
      * @return RPC response
      */
-    Responseable call(Requestable request, LoadBalancer loadBalancer);
+    Responseable invoke(Requestable request, LoadBalancer loadBalancer);
 
     /**
      * Get instance associated with the specified name

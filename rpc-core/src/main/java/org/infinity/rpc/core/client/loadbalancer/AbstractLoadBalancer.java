@@ -87,7 +87,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
     }
 
     @Override
-    public List<Invokable> getProviderCallers() {
+    public List<Invokable> getInvokers() {
         return invokers;
     }
 

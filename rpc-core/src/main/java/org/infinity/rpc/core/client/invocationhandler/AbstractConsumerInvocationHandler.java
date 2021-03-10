@@ -30,7 +30,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
             // Call chain: provider invoker cluster call => cluster fault tolerance strategy =>
             // LB select node => provider caller call
             // Only one server node under one cluster can process the request
-            response = consumerStub.getInvokerCluster().call(request);
+            response = consumerStub.getInvokerCluster().invoke(request);
             return response.getResult();
         } catch (Exception ex) {
             throw new RpcServiceException(ex);

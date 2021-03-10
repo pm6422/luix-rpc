@@ -68,10 +68,10 @@ public class DefaultInvokerCluster implements InvokerCluster {
     }
 
     @Override
-    public Responseable call(Requestable request) {
+    public Responseable invoke(Requestable request) {
         if (active) {
             try {
-                return faultTolerance.call(request, loadBalancer);
+                return faultTolerance.invoke(request, loadBalancer);
             } catch (Exception e) {
                 return handleError(request, e);
             }

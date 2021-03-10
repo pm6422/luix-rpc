@@ -55,7 +55,7 @@ public abstract class AbstractInvoker implements Invokable {
     }
 
     @Override
-    public Responseable call(Requestable request) {
+    public Responseable invoke(Requestable request) {
         if (!active) {
             throw new RpcFrameworkException("No active provider caller found for now!");
         }
@@ -63,7 +63,7 @@ public abstract class AbstractInvoker implements Invokable {
         increaseProcessingCount();
         Responseable response = null;
         try {
-            response = doCall(request);
+            response = doInvoke(request);
             return response;
         } finally {
             decreaseProcessingCount(request, response);
@@ -82,7 +82,7 @@ public abstract class AbstractInvoker implements Invokable {
      */
     protected abstract boolean doInit();
 
-    protected abstract Responseable doCall(Requestable request);
+    protected abstract Responseable doInvoke(Requestable request);
 
     protected void increaseProcessingCount() {
         processingCount.incrementAndGet();

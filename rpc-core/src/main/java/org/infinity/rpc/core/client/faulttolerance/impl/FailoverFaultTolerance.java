@@ -25,7 +25,7 @@ import static org.infinity.rpc.core.constant.ServiceConstants.MAX_RETRIES_VAL_DE
 @SpiName(FAULT_TOLERANCE_VAL_FAILOVER)
 public class FailoverFaultTolerance extends AbstractFaultTolerance {
     @Override
-    public Responseable call(Requestable request, LoadBalancer loadBalancer) {
+    public Responseable invoke(Requestable request, LoadBalancer loadBalancer) {
         // Select multiple nodes
         List<Invokable> availableInvokers = loadBalancer.selectProviderNodes(request);
         // todo: provider configuration over consumer configuration
@@ -39,7 +39,7 @@ public class FailoverFaultTolerance extends AbstractFaultTolerance {
             Invokable invoker = availableInvokers.get(i % availableInvokers.size());
             try {
                 request.setRetryNumber(i);
-                return invoker.call(request);
+                return invoker.invoke(request);
             } catch (RuntimeException e) {
                 if (ExceptionUtils.isBizException(e) || i >= maxRetries) {
                     // Throw the exception if it's a business one
