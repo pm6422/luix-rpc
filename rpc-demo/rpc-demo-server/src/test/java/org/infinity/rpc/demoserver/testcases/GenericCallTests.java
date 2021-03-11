@@ -1,6 +1,6 @@
 package org.infinity.rpc.demoserver.testcases;
 
-import org.infinity.rpc.core.client.invocationhandler.GenericCallHandler;
+import org.infinity.rpc.core.client.invocationhandler.GenericInvocationHandler;
 import org.infinity.rpc.core.client.proxy.ProxyFactory;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.config.ApplicationConfig;
@@ -49,15 +49,15 @@ public class GenericCallTests extends ZkBaseTest {
 
         ConsumerStub<?> consumerStub = createConsumerStub(TestService.class.getName());
         ProxyFactory proxyFactory = ProxyFactory.getInstance(PROXY_FACTORY_VAL_JDK);
-        GenericCallHandler genericCallHandler = proxyFactory.createGenericCallHandler(consumerStub);
+        GenericInvocationHandler genericInvocationHandler = proxyFactory.createGenericCallHandler(consumerStub);
         Map<String, Object> appMap = new HashMap<>();
         appMap.put("name", "testApp");
         appMap.put("enabled", true);
         // Save app first
-        genericCallHandler.call("save", new String[]{"org.infinity.rpc.demoserver.service.App"},
+        genericInvocationHandler.genericInvoke("save", new String[]{"org.infinity.rpc.demoserver.service.App"},
                 new Object[]{appMap}, new HashMap<>());
         // Then find
-        List<App> results = (List<App>) genericCallHandler.call("findAll", null, null, new HashMap<>());
+        List<App> results = (List<App>) genericInvocationHandler.genericInvoke("findAll", null, null, new HashMap<>());
         assertEquals(1, results.size());
     }
 

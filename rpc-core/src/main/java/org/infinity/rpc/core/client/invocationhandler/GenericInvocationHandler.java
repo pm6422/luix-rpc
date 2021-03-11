@@ -2,15 +2,15 @@ package org.infinity.rpc.core.client.invocationhandler;
 
 import java.util.Map;
 
-public interface GenericCallHandler {
+public interface GenericInvocationHandler {
     /**
-     * Generic call
+     * Generic invoke without dependencies of service provider API
      *
      * @param methodName       method name
      * @param methodParamTypes method parameter types string
      * @param args             method arguments
-     * @param options          call options
+     * @param options          request options
      * @return return object
      */
-    Object call(String methodName, String[] methodParamTypes, Object[] args, Map<String, String> options);
+    Object genericInvoke(String methodName, String[] methodParamTypes, Object[] args, Map<String, String> options);
 }

@@ -2,7 +2,7 @@ package org.infinity.rpc.democlient.controller;
 
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.client.invocationhandler.GenericCallHandler;
+import org.infinity.rpc.core.client.invocationhandler.GenericInvocationHandler;
 import org.infinity.rpc.core.client.proxy.ProxyFactory;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.democlient.dto.GenericCallDTO;
@@ -73,8 +73,8 @@ public class RpcCallController {
     public ResponseEntity<Object> genericCall(@ApiParam(value = "调用参数", required = true) @Valid @RequestBody GenericCallDTO dto) {
         ConsumerStub<?> consumerStub = getConsumerStub(dto);
         ProxyFactory proxyFactory = ProxyFactory.getInstance(infinityProperties.getConsumer().getProxyFactory());
-        GenericCallHandler genericCallHandler = proxyFactory.createGenericCallHandler(consumerStub);
-        Object result = genericCallHandler.call(dto.getMethodName(), dto.getMethodParamTypes(), dto.getArgs(), dto.getOptions());
+        GenericInvocationHandler genericInvocationHandler = proxyFactory.createGenericCallHandler(consumerStub);
+        Object result = genericInvocationHandler.genericInvoke(dto.getMethodName(), dto.getMethodParamTypes(), dto.getArgs(), dto.getOptions());
         return ResponseEntity.ok().body(result);
     }
 
