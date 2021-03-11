@@ -4,15 +4,9 @@ package org.infinity.rpc.utilities.id;
 import org.infinity.rpc.utilities.concurrent.ThreadSafe;
 
 @ThreadSafe
-public class IdGenerator {
+public abstract class IdGenerator {
     private static final ShortIdGenerator     SHORT_ID_GENERATOR      = new ShortIdGenerator();
-    /**
-     * 毫秒内固定起始值开始
-     */
     private static final SnowFlakeIdGenerator SNOW_FLAKE_ID_GENERATOR = new SnowFlakeIdGenerator(1L, false, false);
-
-    private IdGenerator() {
-    }
 
     /**
      * Generate a thread-safe digit format ID
