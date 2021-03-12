@@ -28,7 +28,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
             // Store request id on client side
             RpcRequestIdHolder.setRequestId(request.getRequestId());
             // Call chain: provider invoker cluster call => cluster fault tolerance strategy =>
-            // LB select node => provider caller call
+            // LB select node => provider invoker call
             // Only one server node under one cluster can process the request
             response = consumerStub.getInvokerCluster().invoke(request);
             return response.getResult();

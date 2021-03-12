@@ -44,7 +44,7 @@ public class DefaultInvokerCluster implements InvokerCluster {
     @Override
     public void init() {
         active = true;
-        ShutdownHook.add(() -> destroy());
+        ShutdownHook.add(this::destroy);
     }
 
     /**
@@ -71,7 +71,7 @@ public class DefaultInvokerCluster implements InvokerCluster {
     public Responseable invoke(Requestable request) {
         if (active) {
             try {
-                return faultTolerance.invoke(request, loadBalancer);
+                return faultTolerance.invoke(loadBalancer, request);
             } catch (Exception e) {
                 return handleError(request, e);
             }

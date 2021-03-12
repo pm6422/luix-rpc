@@ -25,7 +25,7 @@ import static org.infinity.rpc.core.constant.ServiceConstants.MAX_RETRIES_VAL_DE
 @SpiName(FAULT_TOLERANCE_VAL_FAILOVER)
 public class FailoverFaultTolerance extends AbstractFaultTolerance {
     @Override
-    public Responseable invoke(Requestable request, LoadBalancer loadBalancer) {
+    public Responseable invoke(LoadBalancer loadBalancer, Requestable request) {
         // Select multiple nodes
         List<Invokable> availableInvokers = loadBalancer.selectProviderNodes(request);
         // todo: provider configuration over consumer configuration

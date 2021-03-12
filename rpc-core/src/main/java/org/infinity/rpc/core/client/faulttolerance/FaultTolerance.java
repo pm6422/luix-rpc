@@ -30,13 +30,13 @@ public interface FaultTolerance {
     Url getClientUrl();
 
     /**
-     * Call the RPC
+     * Invoke the RPC provider
      *
-     * @param request      RPC request
      * @param loadBalancer load balancer
+     * @param request      RPC request
      * @return RPC response
      */
-    Responseable invoke(Requestable request, LoadBalancer loadBalancer);
+    Responseable invoke(LoadBalancer loadBalancer, Requestable request);
 
     /**
      * Get instance associated with the specified name
@@ -44,7 +44,6 @@ public interface FaultTolerance {
      * @param name specified name
      * @return instance
      */
-    @SuppressWarnings("unchecked")
     static FaultTolerance getInstance(String name) {
         return ServiceLoader.forClass(FaultTolerance.class).load(name);
     }
