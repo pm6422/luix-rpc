@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.invocationhandler.GenericInvocationHandler;
 import org.infinity.rpc.core.client.proxy.ProxyFactory;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.democlient.dto.GenericCallDTO;
+import org.infinity.rpc.democlient.dto.GenericInvokeDTO;
 import org.infinity.rpc.spring.boot.bean.name.ConsumerStubBeanNameBuilder;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.core.env.Environment;
@@ -27,13 +27,13 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 @RestController
 @Api(tags = "RPC调用")
 @Slf4j
-public class RpcCallController {
+public class RpcInvocationController {
 
     private final        Environment                  env;
     private final        InfinityProperties           infinityProperties;
     private static final Map<String, ConsumerStub<?>> CONSUMER_STUB_CACHE = new ConcurrentHashMap<>();
 
-    public RpcCallController(Environment env, InfinityProperties infinityProperties) {
+    public RpcInvocationController(Environment env, InfinityProperties infinityProperties) {
         this.env = env;
         this.infinityProperties = infinityProperties;
     }
@@ -69,16 +69,16 @@ public class RpcCallController {
      */
     @ApiOperation("泛化调用")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功调用")})
-    @PostMapping("/api/rpc/generic-call")
-    public ResponseEntity<Object> genericCall(@ApiParam(value = "调用参数", required = true) @Valid @RequestBody GenericCallDTO dto) {
+    @PostMapping("/api/rpc/generic-invocation")
+    public ResponseEntity<Object> genericInvoke(@ApiParam(value = "调用参数", required = true) @Valid @RequestBody GenericInvokeDTO dto) {
         ConsumerStub<?> consumerStub = getConsumerStub(dto);
         ProxyFactory proxyFactory = ProxyFactory.getInstance(infinityProperties.getConsumer().getProxyFactory());
-        GenericInvocationHandler genericInvocationHandler = proxyFactory.createGenericCallHandler(consumerStub);
+        GenericInvocationHandler genericInvocationHandler = proxyFactory.createGenericInvokeHandler(consumerStub);
         Object result = genericInvocationHandler.genericInvoke(dto.getMethodName(), dto.getMethodParamTypes(), dto.getArgs(), dto.getOptions());
         return ResponseEntity.ok().body(result);
     }
 
-    private ConsumerStub<?> getConsumerStub(GenericCallDTO dto) {
+    private ConsumerStub<?> getConsumerStub(GenericInvokeDTO dto) {
         Map<String, Object> optionMap = new HashMap<>(dto.getOptions());
         for (Map.Entry<String, String> entry : dto.getOptions().entrySet()) {
             optionMap.put(entry.getKey(), entry.getValue());

@@ -49,7 +49,7 @@ public class GenericCallTests extends ZkBaseTest {
 
         ConsumerStub<?> consumerStub = createConsumerStub(TestService.class.getName());
         ProxyFactory proxyFactory = ProxyFactory.getInstance(PROXY_FACTORY_VAL_JDK);
-        GenericInvocationHandler genericInvocationHandler = proxyFactory.createGenericCallHandler(consumerStub);
+        GenericInvocationHandler genericInvocationHandler = proxyFactory.createGenericInvokeHandler(consumerStub);
         Map<String, Object> appMap = new HashMap<>();
         appMap.put("name", "testApp");
         appMap.put("enabled", true);

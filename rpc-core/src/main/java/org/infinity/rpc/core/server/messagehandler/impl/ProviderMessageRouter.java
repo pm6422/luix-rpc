@@ -89,15 +89,15 @@ public class ProviderMessageRouter implements MessageHandler {
         Method method = provider.findMethod(request.getMethodName(), request.getMethodParameters());
         fillParamDesc(request, method);
         processLazyDeserialize(request, method);
-        Responseable response = call(request, provider);
+        Responseable response = invoke(request, provider);
         response.setSerializeNum(request.getSerializeNum());
         response.setProtocolVersion(request.getProtocolVersion());
         return response;
     }
 
-    protected Responseable call(Requestable request, ProviderStub<?> providerStub) {
+    protected Responseable invoke(Requestable request, ProviderStub<?> providerStub) {
         try {
-            return providerStub.localCall(request);
+            return providerStub.localInvoke(request);
         } catch (Exception e) {
             return RpcFrameworkUtils.buildErrorResponse(request, new RpcBizException("provider call process error", e));
         }

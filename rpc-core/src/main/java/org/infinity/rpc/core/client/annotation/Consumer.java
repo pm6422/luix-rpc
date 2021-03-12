@@ -43,7 +43,7 @@ public @interface Consumer {
 //    String registry() default "";
 
     /**
-     * @return provider calling cluster
+     * @return provider invoke cluster
      */
     String cluster() default "";
 

@@ -221,9 +221,9 @@ public class ProviderStub<T> {
      * @param request RPC request
      * @return RPC response
      */
-    public Responseable localCall(Requestable request) {
+    public Responseable localInvoke(Requestable request) {
         RpcFrameworkUtils.logEvent(request, RpcConstants.TRACE_BEFORE_BIZ);
-        Responseable response = doLocalCall(request);
+        Responseable response = doLocalInvoke(request);
         RpcFrameworkUtils.logEvent(response, RpcConstants.TRACE_AFTER_BIZ);
         return response;
     }
@@ -234,7 +234,7 @@ public class ProviderStub<T> {
      * @param request RPC request
      * @return RPC response
      */
-    private Responseable doLocalCall(Requestable request) {
+    private Responseable doLocalInvoke(Requestable request) {
         RpcResponse response = new RpcResponse();
         Method method = findMethod(request.getMethodName(), request.getMethodParameters());
         if (method == null) {

@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_CALLER_THREAD_POOL;
+import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_INVOKER_THREAD_POOL;
 
 /**
  *
@@ -38,7 +38,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
             return;
         }
         // Destroy the inactive provider callers
-        destroyInactiveProviderCallers(inactiveOnes);
+        destroyInactiveInvokers(inactiveOnes);
     }
 
     @Override
@@ -91,9 +91,9 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
         return invokers;
     }
 
-    private void destroyInactiveProviderCallers(Collection<Invokable> delayDestroyInvokers) {
+    private void destroyInactiveInvokers(Collection<Invokable> delayDestroyInvokers) {
         // Execute once after a daley time
-        ScheduledThreadPool.scheduleDelayTask(DESTROY_CALLER_THREAD_POOL, DELAY_TIME, TimeUnit.MILLISECONDS, () -> {
+        ScheduledThreadPool.scheduleDelayTask(DESTROY_INVOKER_THREAD_POOL, DELAY_TIME, TimeUnit.MILLISECONDS, () -> {
             for (Invokable invoker : delayDestroyInvokers) {
                 try {
                     invoker.destroy();

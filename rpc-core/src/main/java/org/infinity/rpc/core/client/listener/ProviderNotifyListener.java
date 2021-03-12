@@ -28,7 +28,7 @@ public class ProviderNotifyListener implements ClientListener {
      */
     protected     String                    interfaceName;
     protected     Protocol                  protocol;
-    private final Map<Url, List<Invokable>> providerCallersPerRegistryUrl = new ConcurrentHashMap<>();
+    private final Map<Url, List<Invokable>> invokersPerRegistryUrl = new ConcurrentHashMap<>();
 
     protected ProviderNotifyListener() {
     }
@@ -67,7 +67,7 @@ public class ProviderNotifyListener implements ClientListener {
         List<Invokable> newInvokers = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
             // Find provider caller associated with the provider url
-            Invokable invoker = findCallerByProviderUrl(registryUrl, providerUrl);
+            Invokable invoker = findInvokerByProviderUrl(registryUrl, providerUrl);
             if (invoker == null) {
                 invoker = protocol.refer(interfaceName, providerUrl.copy());
             }
@@ -77,15 +77,14 @@ public class ProviderNotifyListener implements ClientListener {
         if (CollectionUtils.isEmpty(newInvokers)) {
             log.warn("No active provider caller!");
         }
-        providerCallersPerRegistryUrl.put(registryUrl, newInvokers);
+        invokersPerRegistryUrl.put(registryUrl, newInvokers);
         refreshCluster();
     }
 
-    private Invokable findCallerByProviderUrl(Url registryUrl, Url providerUrl) {
-        List<Invokable> invokers = providerCallersPerRegistryUrl.get(registryUrl);
+    private Invokable findInvokerByProviderUrl(Url registryUrl, Url providerUrl) {
+        List<Invokable> invokers = invokersPerRegistryUrl.get(registryUrl);
         return CollectionUtils.isEmpty(invokers) ? null :
-                invokers
-                        .stream()
+                invokers.stream()
                         .filter(caller -> Objects.equals(providerUrl, caller.getProviderUrl()))
                         .findFirst()
                         .orElse(null);
@@ -97,14 +96,14 @@ public class ProviderNotifyListener implements ClientListener {
      * @param inactiveRegistryUrl inactive registry url
      */
     private synchronized void removeInactiveRegistry(Url inactiveRegistryUrl) {
-        if (providerCallersPerRegistryUrl.size() > 1) {
-            providerCallersPerRegistryUrl.remove(inactiveRegistryUrl);
+        if (invokersPerRegistryUrl.size() > 1) {
+            invokersPerRegistryUrl.remove(inactiveRegistryUrl);
             refreshCluster();
         }
     }
 
     private synchronized void refreshCluster() {
-        List<Invokable> invokers = providerCallersPerRegistryUrl.values()
+        List<Invokable> invokers = invokersPerRegistryUrl.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());

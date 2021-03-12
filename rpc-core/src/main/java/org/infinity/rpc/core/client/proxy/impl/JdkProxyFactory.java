@@ -31,7 +31,7 @@ public class JdkProxyFactory implements ProxyFactory {
     }
 
     @Override
-    public GenericInvocationHandler createGenericCallHandler(ConsumerStub<?> stub) {
+    public GenericInvocationHandler createGenericInvokeHandler(ConsumerStub<?> stub) {
         return new ConsumerInvocationHandler<>(stub);
     }
 }
