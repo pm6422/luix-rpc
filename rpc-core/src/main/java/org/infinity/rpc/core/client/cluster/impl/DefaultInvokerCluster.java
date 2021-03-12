@@ -1,13 +1,11 @@
 package org.infinity.rpc.core.client.cluster.impl;
 
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.cluster.InvokerCluster;
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
-import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
-import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcAbstractException;
@@ -17,8 +15,6 @@ import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
 import org.infinity.rpc.utilities.spi.annotation.SpiName;
-
-import java.util.List;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.CLUSTER_VAL_DEFAULT;
 import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION;
@@ -30,16 +26,11 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION_V
 @Slf4j
 @SpiName(CLUSTER_VAL_DEFAULT)
 @Setter
+@Getter
 public class DefaultInvokerCluster implements InvokerCluster {
     private boolean        active = false;
     private String         interfaceName;
     private FaultTolerance faultTolerance;
-    private LoadBalancer   loadBalancer;
-
-    @Override
-    public boolean isActive() {
-        return active;
-    }
 
     @Override
     public void init() {
@@ -47,31 +38,17 @@ public class DefaultInvokerCluster implements InvokerCluster {
         ShutdownHook.add(this::destroy);
     }
 
-    /**
-     * Update new provider callers of load balancer
-     *
-     * @param invokers new provider callers
-     */
-    @Override
-    public synchronized void refresh(List<Invokable> invokers) {
-        if (CollectionUtils.isEmpty(invokers)) {
-            return;
-        }
-        // Set new provider callers to load balancer
-        loadBalancer.refresh(invokers);
-    }
-
     @Override
     public void destroy() {
         active = false;
-        loadBalancer.destroy();
+        faultTolerance.destroy();
     }
 
     @Override
     public Responseable invoke(Requestable request) {
         if (active) {
             try {
-                return faultTolerance.invoke(loadBalancer, request);
+                return faultTolerance.invoke(request);
             } catch (Exception e) {
                 return handleError(request, e);
             }

@@ -109,7 +109,7 @@ public class ProviderNotifyListener implements ClientListener {
                 .collect(Collectors.toList());
 
         // Refresh provider callers to AbstractLoadBalancer
-        invokerCluster.refresh(invokers);
+        invokerCluster.getFaultTolerance().getLoadBalancer().refresh(invokers);
     }
 
     @Override

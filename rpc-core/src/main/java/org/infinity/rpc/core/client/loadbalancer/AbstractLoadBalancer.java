@@ -23,8 +23,16 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
     private static final int             DELAY_TIME = 1000;
     protected            List<Invokable> invokers;
 
+    /**
+     * Update new provider invokers
+     *
+     * @param invokers new provider invokers
+     */
     @Override
-    public void refresh(List<Invokable> invokers) {
+    public synchronized void refresh(List<Invokable> invokers) {
+        if (CollectionUtils.isEmpty(invokers)) {
+            return;
+        }
         List<Invokable> oldInvokers = this.invokers;
         // Assign new ones to provider callers
         this.invokers = invokers;

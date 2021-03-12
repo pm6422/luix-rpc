@@ -22,9 +22,9 @@ public interface LoadBalancer {
     List<Invokable> getInvokers();
 
     /**
-     * Refresh provider callers when online or offline
+     * Refresh provider invokers after providers become active or inactive
      *
-     * @param invokers new discovered provider callers
+     * @param invokers new discovered provider invokers
      */
     void refresh(List<Invokable> invokers);
 

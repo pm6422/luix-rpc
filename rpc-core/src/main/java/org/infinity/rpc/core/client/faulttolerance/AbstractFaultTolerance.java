@@ -1,21 +1,25 @@
 package org.infinity.rpc.core.client.faulttolerance;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.url.Url;
 
 /**
  *
  */
+@Setter
+@Getter
 public abstract class AbstractFaultTolerance implements FaultTolerance {
+    protected Url          clientUrl;
+    protected LoadBalancer loadBalancer;
 
-    protected Url clientUrl;
-
-    @Override
-    public void setClientUrl(Url clientUrl) {
-        this.clientUrl = clientUrl;
+    public AbstractFaultTolerance() {
+        super();
     }
 
     @Override
-    public Url getClientUrl() {
-        return clientUrl;
+    public void destroy() {
+        loadBalancer.destroy();
     }
 }

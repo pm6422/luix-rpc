@@ -30,13 +30,31 @@ public interface FaultTolerance {
     Url getClientUrl();
 
     /**
-     * Invoke the RPC provider
+     * Set load balancer
      *
      * @param loadBalancer load balancer
-     * @param request      RPC request
+     */
+    void setLoadBalancer(LoadBalancer loadBalancer);
+
+    /**
+     * Get load balancer
+     *
+     * @return load balancer
+     */
+    LoadBalancer getLoadBalancer();
+
+    /**
+     * Invoke the RPC provider
+     *
+     * @param request RPC request
      * @return RPC response
      */
-    Responseable invoke(LoadBalancer loadBalancer, Requestable request);
+    Responseable invoke(Requestable request);
+
+    /**
+     * Destroy
+     */
+    void destroy();
 
     /**
      * Get instance associated with the specified name

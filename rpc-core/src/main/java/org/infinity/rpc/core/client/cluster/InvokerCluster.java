@@ -2,15 +2,12 @@ package org.infinity.rpc.core.client.cluster;
 
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
-import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.spi.ServiceLoader;
 import org.infinity.rpc.utilities.spi.annotation.Spi;
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;
-
-import java.util.List;
 
 /**
  * One cluster for one protocol, only one node of a cluster can handle the request
@@ -52,18 +49,11 @@ public interface InvokerCluster {
     void setFaultTolerance(FaultTolerance faultTolerance);
 
     /**
-     * Set load balancer
+     * Get fault tolerance
      *
-     * @param loadBalancer client load balancer
+     * @return faultTolerance fault tolerance
      */
-    void setLoadBalancer(LoadBalancer loadBalancer);
-
-    /**
-     * Refresh provider callers when providers is online or offline
-     *
-     * @param invokers provider call
-     */
-    void refresh(List<Invokable> invokers);
+    FaultTolerance getFaultTolerance();
 
     /**
      * Destroy
@@ -100,9 +90,8 @@ public interface InvokerCluster {
         invokerCluster.setInterfaceName(interfaceName);
         FaultTolerance faultTolerance = FaultTolerance.getInstance(faultToleranceName);
         faultTolerance.setClientUrl(clientUrl);
+        faultTolerance.setLoadBalancer(LoadBalancer.getInstance(loadBalancerName));
         invokerCluster.setFaultTolerance(faultTolerance);
-        LoadBalancer loadBalancer = LoadBalancer.getInstance(loadBalancerName);
-        invokerCluster.setLoadBalancer(loadBalancer);
         // Initialize
         invokerCluster.init();
         return invokerCluster;
