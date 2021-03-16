@@ -24,12 +24,12 @@ public abstract class AbstractCodec implements Codec {
      * Serialize the input object to byte array first,
      * then write the byte array to output
      *
+     * @param serializer  specified serializer
      * @param output      object output
      * @param inputObject input object
-     * @param serializer  specified serializer
      * @throws IOException if any exception thrown
      */
-    protected void serialize(ObjectOutput output, Object inputObject, Serializer serializer) throws IOException {
+    protected void serialize(Serializer serializer, ObjectOutput output, Object inputObject) throws IOException {
         if (inputObject == null) {
             output.writeObject(null);
             return;

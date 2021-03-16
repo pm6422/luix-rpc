@@ -58,17 +58,17 @@ public class DefaultCodec extends AbstractCodec {
         output.writeUTF(request.getMethodParameters());
 
         if (ArrayUtils.isNotEmpty(request.getMethodArguments())) {
-            Serializer serializer = getSerializer(channel);
             for (Object arg : request.getMethodArguments()) {
                 // Serialize method arguments
-                serialize(output, arg, serializer);
+                serialize(getSerializer(channel), output, arg);
             }
         }
 
         if (MapUtils.isEmpty(request.getOptions())) {
-            // No attachments
+            // No options
             output.writeInt(0);
         } else {
+            // Write options
             output.writeInt(request.getOptions().size());
             for (Map.Entry<String, String> entry : request.getOptions().entrySet()) {
                 output.writeUTF(entry.getKey());
@@ -78,12 +78,11 @@ public class DefaultCodec extends AbstractCodec {
 
         output.flush();
         byte[] body = outputStream.toByteArray();
-        byte flag = RpcConstants.FLAG_REQUEST;
         output.close();
 
         // Check max request payload size
         checkMessagePayloadSize(body.length, request.getIntOption(MAX_PAYLOAD, MAX_PAYLOAD_VAL_DEFAULT));
-        return encode(body, flag, request.getRequestId());
+        return encode(body, RpcConstants.FLAG_REQUEST, request.getRequestId());
     }
 
     /**
@@ -198,13 +197,13 @@ public class DefaultCodec extends AbstractCodec {
 
         if (value.getException() != null) {
             output.writeUTF(value.getException().getClass().getName());
-            serialize(output, value.getException(), serializer);
+            serialize(serializer, output, value.getException());
             flag = RpcConstants.FLAG_RESPONSE_EXCEPTION;
         } else if (value.getResult() == null) {
             flag = RpcConstants.FLAG_RESPONSE_VOID;
         } else {
             output.writeUTF(value.getResult().getClass().getName());
-            serialize(output, value.getResult(), serializer);
+            serialize(serializer, output, value.getResult());
             flag = RpcConstants.FLAG_RESPONSE;
         }
 
