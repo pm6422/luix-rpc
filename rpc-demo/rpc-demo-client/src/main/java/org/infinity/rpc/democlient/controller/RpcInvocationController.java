@@ -2,11 +2,11 @@ package org.infinity.rpc.democlient.controller;
 
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.client.invocationhandler.GenericInvocationHandler;
+import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.ProxyFactory;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
-import org.infinity.rpc.democlient.dto.GenericInvokeDTO;
+import org.infinity.rpc.democlient.dto.UniversalInvokeDTO;
 import org.infinity.rpc.spring.boot.bean.name.ConsumerStubBeanNameBuilder;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.core.env.Environment;
@@ -38,46 +38,46 @@ public class RpcInvocationController {
     }
 
     /**
-      {
-      "interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
-      "methodName": "findAll",
-      "methodParamTypes": [],
-      "args": [],
-      "options": {
-      "group": "default",
-      "version": "1.0.0"
-      }
-      }
-      <p>
-      {
-      "interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
-      "methodName": "save",
-      "methodParamTypes": ["org.infinity.rpc.democommon.domain.Authority"],
-      "args": [{
-      "name": "ROLE_TEST",
-      "enabled": true
-      }],
-      "options": {
-      "group": "default",
-      "version": "1.0.0"
-      }
-      }
+     * {
+     * "interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
+     * "methodName": "findAll",
+     * "methodParamTypes": [],
+     * "args": [],
+     * "options": {
+     * "group": "default",
+     * "version": "1.0.0"
+     * }
+     * }
+     * <p>
+     * {
+     * "interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
+     * "methodName": "save",
+     * "methodParamTypes": ["org.infinity.rpc.democommon.domain.Authority"],
+     * "args": [{
+     * "name": "ROLE_TEST",
+     * "enabled": true
+     * }],
+     * "options": {
+     * "group": "default",
+     * "version": "1.0.0"
+     * }
+     * }
      *
      * @param dto dto
      * @return result
      */
-    @ApiOperation("泛化调用")
+    @ApiOperation("通用调用")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功调用")})
-    @PostMapping("/api/rpc/generic-invocation")
-    public ResponseEntity<Object> genericInvoke(@ApiParam(value = "调用参数", required = true) @Valid @RequestBody GenericInvokeDTO dto) {
+    @PostMapping("/api/rpc/universal-invocation")
+    public ResponseEntity<Object> genericInvoke(@ApiParam(value = "调用参数", required = true) @Valid @RequestBody UniversalInvokeDTO dto) {
         ConsumerStub<?> consumerStub = getConsumerStub(dto);
         ProxyFactory proxyFactory = ProxyFactory.getInstance(infinityProperties.getConsumer().getProxyFactory());
-        GenericInvocationHandler genericInvocationHandler = proxyFactory.createGenericInvokeHandler(consumerStub);
-        Object result = genericInvocationHandler.genericInvoke(dto.getMethodName(), dto.getMethodParamTypes(), dto.getArgs(), dto.getOptions());
+        UniversalInvocationHandler universalInvocationHandler = proxyFactory.createGenericInvokeHandler(consumerStub);
+        Object result = universalInvocationHandler.invoke(dto.getMethodName(), dto.getMethodParamTypes(), dto.getArgs(), dto.getOptions());
         return ResponseEntity.ok().body(result);
     }
 
-    private ConsumerStub<?> getConsumerStub(GenericInvokeDTO dto) {
+    private ConsumerStub<?> getConsumerStub(UniversalInvokeDTO dto) {
         Map<String, Object> optionMap = new HashMap<>(dto.getOptions());
         for (Map.Entry<String, String> entry : dto.getOptions().entrySet()) {
             optionMap.put(entry.getKey(), entry.getValue());

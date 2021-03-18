@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.client.proxy.impl;
 
 
-import org.infinity.rpc.core.client.invocationhandler.GenericInvocationHandler;
+import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.invocationhandler.impl.ConsumerInvocationHandler;
 import org.infinity.rpc.core.client.proxy.ProxyFactory;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
@@ -31,7 +31,7 @@ public class JdkProxyFactory implements ProxyFactory {
     }
 
     @Override
-    public GenericInvocationHandler createGenericInvokeHandler(ConsumerStub<?> stub) {
+    public UniversalInvocationHandler createGenericInvokeHandler(ConsumerStub<?> stub) {
         return new ConsumerInvocationHandler<>(stub);
     }
 }

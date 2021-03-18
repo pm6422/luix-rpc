@@ -6,9 +6,9 @@ import lombok.Data;
 
 import java.util.Map;
 
-@ApiModel("泛化调用入参")
+@ApiModel("通用调用入参")
 @Data
-public class GenericInvokeDTO {
+public class UniversalInvokeDTO {
     @ApiModelProperty(value = "接口全路径名称", required = true, example = "org.infinity.rpc.democommon.service.AuthorityService")
     private String interfaceName;
 

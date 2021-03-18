@@ -1,6 +1,6 @@
 package org.infinity.rpc.demoserver.testcases;
 
-import org.infinity.rpc.core.client.invocationhandler.GenericInvocationHandler;
+import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.ProxyFactory;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.config.ApplicationConfig;
@@ -25,11 +25,11 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY_VAL_DEFAULT;
 import static org.junit.Assert.assertEquals;
 
-public class GenericCallTests extends ZkBaseTest {
+public class UniversalInvocationTests extends ZkBaseTest {
 
     private static final int    PROVIDER_PORT = 2001;
     private static final int    CLIENT_PORT   = 2002;
-    private static final String GROUP         = GenericCallTests.class.getSimpleName();
+    private static final String GROUP         = UniversalInvocationTests.class.getSimpleName();
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -49,15 +49,15 @@ public class GenericCallTests extends ZkBaseTest {
 
         ConsumerStub<?> consumerStub = createConsumerStub(TestService.class.getName());
         ProxyFactory proxyFactory = ProxyFactory.getInstance(PROXY_FACTORY_VAL_JDK);
-        GenericInvocationHandler genericInvocationHandler = proxyFactory.createGenericInvokeHandler(consumerStub);
+        UniversalInvocationHandler universalInvocationHandler = proxyFactory.createGenericInvokeHandler(consumerStub);
         Map<String, Object> appMap = new HashMap<>();
         appMap.put("name", "testApp");
         appMap.put("enabled", true);
         // Save app first
-        genericInvocationHandler.genericInvoke("save", new String[]{"org.infinity.rpc.demoserver.service.App"},
+        universalInvocationHandler.invoke("save", new String[]{"org.infinity.rpc.demoserver.service.App"},
                 new Object[]{appMap}, new HashMap<>());
         // Then find
-        List<App> results = (List<App>) genericInvocationHandler.genericInvoke("findAll", null, null, new HashMap<>());
+        List<App> results = (List<App>) universalInvocationHandler.invoke("findAll", null, null, new HashMap<>());
         assertEquals(1, results.size());
     }
 

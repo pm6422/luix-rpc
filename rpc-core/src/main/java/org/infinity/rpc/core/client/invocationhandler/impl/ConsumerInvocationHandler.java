@@ -3,7 +3,7 @@ package org.infinity.rpc.core.client.invocationhandler.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.infinity.rpc.core.client.invocationhandler.AbstractConsumerInvocationHandler;
-import org.infinity.rpc.core.client.invocationhandler.GenericInvocationHandler;
+import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.impl.JdkProxyFactory;
 import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
@@ -21,7 +21,7 @@ import static org.infinity.rpc.core.utils.MethodParameterUtils.*;
  * @param <T>: The interface class of the consumer
  */
 @Slf4j
-public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHandler<T> implements InvocationHandler, GenericInvocationHandler {
+public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHandler<T> implements InvocationHandler, UniversalInvocationHandler {
 
     public ConsumerInvocationHandler(ConsumerStub<T> consumerStub) {
         super.consumerStub = consumerStub;
@@ -74,7 +74,7 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
     }
 
     @Override
-    public Object genericInvoke(String methodName, String[] methodParamTypes, Object[] args, Map<String, String> options) {
+    public Object invoke(String methodName, String[] methodParamTypes, Object[] args, Map<String, String> options) {
         // Create a new RpcRequest for each request
         RpcRequest request = new RpcRequest(IdGenerator.generateTimestampId(),
                 consumerStub.getInterfaceName(),
