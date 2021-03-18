@@ -78,7 +78,7 @@ public class InfinityProperties implements InitializingBean {
         // todo: support multiple protocols
         // 当配置多个protocol的时候，比如A,B,C，
         // 那么正常情况下只会使用A，如果A被开关降级，那么就会使用B，B也被降级，那么会使用C
-        return protocols.size() > 0 ? protocols.get(0) : protocol;
+        return protocols.size() > 0 ? new ArrayList<>(protocols.values()).get(0) : protocol;
     }
 
     public Collection<RegistryConfig> getRegistryList() {
