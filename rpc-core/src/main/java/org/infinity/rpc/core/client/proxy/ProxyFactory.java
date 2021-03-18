@@ -18,12 +18,12 @@ public interface ProxyFactory {
     <T> T getProxy(ConsumerStub<T> stub);
 
     /**
-     * Create generic invoke handler
+     * Create universal RPC invocation handler
      *
      * @param stub Consumer stub
-     * @return generic call handler
+     * @return universal invocation handler
      */
-    UniversalInvocationHandler createGenericInvokeHandler(ConsumerStub<?> stub);
+    UniversalInvocationHandler createUniversalInvocationHandler(ConsumerStub<?> stub);
 
     /**
      * Get instance associated with the specified name

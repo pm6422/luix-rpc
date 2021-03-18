@@ -30,8 +30,14 @@ public class JdkProxyFactory implements ProxyFactory {
         return (T) proxy;
     }
 
+    /**
+     * Create universal RPC invocation handler
+     *
+     * @param stub Consumer stub
+     * @return Universal RPC invocation handler
+     */
     @Override
-    public UniversalInvocationHandler createGenericInvokeHandler(ConsumerStub<?> stub) {
+    public UniversalInvocationHandler createUniversalInvocationHandler(ConsumerStub<?> stub) {
         return new ConsumerInvocationHandler<>(stub);
     }
 }

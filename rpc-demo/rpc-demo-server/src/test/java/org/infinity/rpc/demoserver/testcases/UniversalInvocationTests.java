@@ -49,7 +49,7 @@ public class UniversalInvocationTests extends ZkBaseTest {
 
         ConsumerStub<?> consumerStub = createConsumerStub(TestService.class.getName());
         ProxyFactory proxyFactory = ProxyFactory.getInstance(PROXY_FACTORY_VAL_JDK);
-        UniversalInvocationHandler universalInvocationHandler = proxyFactory.createGenericInvokeHandler(consumerStub);
+        UniversalInvocationHandler universalInvocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Map<String, Object> appMap = new HashMap<>();
         appMap.put("name", "testApp");
         appMap.put("enabled", true);
