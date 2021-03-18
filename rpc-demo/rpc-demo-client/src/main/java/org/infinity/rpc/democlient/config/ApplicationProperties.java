@@ -20,27 +20,11 @@ import java.util.List;
 @Validated
 @Getter
 public class ApplicationProperties {
-    private final Directory            directory            = new Directory();
-    private final Http                 http                 = new Http();
-    private final Swagger              swagger              = new Swagger();
-    private final AopLogging           aopLogging           = new AopLogging();
-    private final ElapsedTimeLogging   elapsedTimeLogging   = new ElapsedTimeLogging();
-    private final Zookeeper            zookeeper            = new Zookeeper();
-    private final Redis                redis                = new Redis();
-    private final Scheduler            scheduler            = new Scheduler();
-    private final Ribbon               ribbon               = new Ribbon();
-    private final HttpClientConnection httpClientConnection = new HttpClientConnection();
-    private final UserAuditEvent       userAuditEvent       = new UserAuditEvent();
-    private final Jenkins              jenkins              = new Jenkins();
-    private final FileFtp              fileFtp              = new FileFtp();
-    private final Cache                cache                = new Cache();
-
-    @Data
-    public static class Directory {
-        private String config    = "classpath:config";
-        private String templates = "classpath:templates";
-        private String data      = "classpath:data";
-    }
+    private final Http               http               = new Http();
+    private final Swagger            swagger            = new Swagger();
+    private final AopLogging         aopLogging         = new AopLogging();
+    private final ElapsedTimeLogging elapsedTimeLogging = new ElapsedTimeLogging();
+    private final Ribbon             ribbon             = new Ribbon();
 
     @Data
     public static class Http {
@@ -93,58 +77,7 @@ public class ApplicationProperties {
     }
 
     @Data
-    public static class Dubbo {
-        private String adminUrl;
-        private String monitorUrl;
-    }
-
-    @Data
-    public static class Zookeeper {
-        private String adminUrl;
-    }
-
-    @Data
-    public static class Redis {
-        private String adminUrl;
-    }
-
-    @Data
-    public static class Scheduler {
-        private String adminUrl;
-    }
-
-    @Data
     public static class Ribbon {
         private String[] displayOnActiveProfiles;
-    }
-
-    @Data
-    public static class HttpClientConnection {
-        private int globalRetryCount;
-        private int globalReadTimeoutInSeconds;
-    }
-
-    @Data
-    public static class UserAuditEvent {
-        private boolean enabled = false;
-    }
-
-    @Data
-    public static class Jenkins {
-        private String adminUrl;
-    }
-
-    @Data
-    public static class FileFtp {
-        private String url;
-        private String userName;
-        private String password;
-        private String uploadDir;
-        private String httpUrl;
-    }
-
-    @Data
-    public static class Cache {
-        private String cachePrefix;
     }
 }
