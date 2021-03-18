@@ -1,7 +1,6 @@
 package org.infinity.rpc.spring.boot.startup;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
@@ -17,7 +16,6 @@ import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -147,12 +145,12 @@ public class RpcLifecycle {
      * @param infinityProperties RPC configuration properties
      */
     private void subscribe(InfinityProperties infinityProperties) {
-        List<ConsumerStub<?>> consumerStubs = ConsumerStubHolder.getInstance().getStubs();
-        if (CollectionUtils.isEmpty(consumerStubs)) {
+        Map<String, ConsumerStub<?>> consumerStubs = ConsumerStubHolder.getInstance().getStubs();
+        if (MapUtils.isEmpty(consumerStubs)) {
             log.info("No RPC consumers found on registry!");
             return;
         }
-        consumerStubs.forEach(consumerStub ->
+        consumerStubs.forEach((name, consumerStub) ->
                 consumerStub.subscribeProviders(infinityProperties.getApplication(),
                         infinityProperties.getAvailableProtocol(),
                         infinityProperties.getRegistryList()));

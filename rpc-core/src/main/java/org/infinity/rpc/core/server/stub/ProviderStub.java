@@ -121,10 +121,10 @@ public class ProviderStub<T> {
      */
     @PostConstruct
     public void init() {
-        // Automatically add {@link ProviderStub} instance to {@link ProviderStubHolder}
-        ProviderStubHolder.getInstance().addStub(beanName, this);
         // Put methods to cache in order to accelerate the speed of executing.
         discoverMethods(interfaceClass);
+        // Automatically add {@link ProviderStub} instance to {@link ProviderStubHolder}
+        ProviderStubHolder.getInstance().addStub(beanName, this);
     }
 
     /**

@@ -210,7 +210,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
         // Build the consumer stub bean name
         String consumerStubBeanName = buildConsumerStubBeanName(resolvedConsumerInterfaceClass, attributes);
         if (!existsConsumerStub(consumerStubBeanName)) {
-            AbstractBeanDefinition stubBeanDefinition = buildConsumerStubDefinition(consumerInterfaceClass, consumerAnnotation);
+            AbstractBeanDefinition stubBeanDefinition = buildConsumerStubDefinition(consumerStubBeanName, consumerInterfaceClass, consumerAnnotation);
             beanFactory.registerBeanDefinition(consumerStubBeanName, stubBeanDefinition);
             log.info("Registered RPC consumer stub [{}] to spring context", consumerStubBeanName);
         }
@@ -239,17 +239,19 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
     /**
      * Build {@link ConsumerStub} definition
      *
+     * @param beanName consumer stub bean name
      * @param interfaceClass consumer interface class
      * @param annotation     {@link Consumer} annotation
      * @return {@link ConsumerStub} bean definition
      */
-    private AbstractBeanDefinition buildConsumerStubDefinition(Class<?> interfaceClass,
+    private AbstractBeanDefinition buildConsumerStubDefinition(String beanName,
+                                                               Class<?> interfaceClass,
                                                                Consumer annotation) {
         // Create and load infinityProperties bean
         InfinityProperties infinityProperties = beanFactory.getBean(InfinityProperties.class);
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ConsumerStub.class);
 
-        // Copy properties from @Consumer to ConsumerStub
+        addPropertyValue(builder, BEAN_NAME, beanName);
         addPropertyValue(builder, INTERFACE_CLASS, interfaceClass);
         addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName());
 

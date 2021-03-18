@@ -2,15 +2,15 @@ package org.infinity.rpc.core.client.stub;
 
 import org.infinity.rpc.utilities.concurrent.ThreadSafe;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @ThreadSafe
 public class ConsumerStubHolder {
     /**
      * RPC provider stub map
      */
-    private final List<ConsumerStub<?>> stubCache = new ArrayList<>();
+    private final Map<String, ConsumerStub<?>> stubCache = new ConcurrentHashMap<>();
 
     /**
      * Prevent instantiation of it outside the class
@@ -27,12 +27,12 @@ public class ConsumerStubHolder {
         return SingletonHolder.INSTANCE;
     }
 
-    public synchronized List<ConsumerStub<?>> getStubs() {
+    public synchronized Map<String, ConsumerStub<?>> getStubs() {
         return stubCache;
     }
 
-    public synchronized void addStub(ConsumerStub<?> consumerStub) {
-        stubCache.add(consumerStub);
+    public synchronized void addStub(String name, ConsumerStub<?> consumerStub) {
+        stubCache.putIfAbsent(name, consumerStub);
     }
 
     /**

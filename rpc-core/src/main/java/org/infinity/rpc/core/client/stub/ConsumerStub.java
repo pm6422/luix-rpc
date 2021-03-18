@@ -20,6 +20,7 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,6 +44,11 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 @Setter
 @Getter
 public class ConsumerStub<T> {
+    /**
+     * Provider stub bean name
+     */
+    @NotNull(message = "The [beanName] property must NOT be null!")
+    private String   beanName;
     /**
      * The interface class of the consumer
      * It can be null if it is a generic call.
@@ -139,7 +145,7 @@ public class ConsumerStub<T> {
     public void init() {
         this.proxyInstance = ProxyFactory.getInstance(proxyFactory).getProxy(this);
         // Automatically add {@link ConsumerStub} instance to {@link ConsumerStubHolder}
-        ConsumerStubHolder.getInstance().addStub(this);
+        ConsumerStubHolder.getInstance().addStub(beanName, this);
     }
 
     /**
