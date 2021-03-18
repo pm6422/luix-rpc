@@ -208,14 +208,14 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
         Class<?> resolvedConsumerInterfaceClass = AnnotationUtils.resolveInterfaceClass(attributes, consumerInterfaceClass);
 
         // Build the consumer stub bean name
-        String beanName = buildConsumerStubBeanName(resolvedConsumerInterfaceClass, attributes);
-        if (!existsConsumerStub(beanName)) {
+        String consumerStubBeanName = buildConsumerStubBeanName(resolvedConsumerInterfaceClass, attributes);
+        if (!existsConsumerStub(consumerStubBeanName)) {
             AbstractBeanDefinition stubBeanDefinition = buildConsumerStubDefinition(consumerInterfaceClass, consumerAnnotation);
-            beanFactory.registerBeanDefinition(beanName, stubBeanDefinition);
-            log.info("Registered RPC consumer stub [{}] to spring context", beanName);
+            beanFactory.registerBeanDefinition(consumerStubBeanName, stubBeanDefinition);
+            log.info("Registered RPC consumer stub [{}] to spring context", consumerStubBeanName);
         }
         // getBean() will trigger bean initialization
-        return beanFactory.getBean(beanName, ConsumerStub.class);
+        return beanFactory.getBean(consumerStubBeanName, ConsumerStub.class);
     }
 
     /**

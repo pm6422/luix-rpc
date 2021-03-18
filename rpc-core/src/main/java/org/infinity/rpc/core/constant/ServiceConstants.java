@@ -6,6 +6,7 @@ package org.infinity.rpc.core.constant;
  * {@link org.infinity.rpc.core.server.annotation.Provider}
  */
 public interface ServiceConstants {
+    String BEAN_NAME       = "beanName";
     String INTERFACE_NAME  = "interfaceName";
     String INTERFACE_CLASS = "interfaceClass";
     String GENERIC         = "generic";

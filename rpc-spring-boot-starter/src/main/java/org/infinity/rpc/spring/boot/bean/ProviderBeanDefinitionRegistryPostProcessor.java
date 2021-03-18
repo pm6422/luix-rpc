@@ -12,6 +12,8 @@ import org.infinity.rpc.spring.boot.bean.registry.ClassPathBeanDefinitionRegistr
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -45,13 +47,17 @@ import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.a
  * by {@link BeanDefinitionRegistry}
  */
 @Slf4j
-public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentAware, ResourceLoaderAware,
+public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentAware, BeanFactoryAware, ResourceLoaderAware,
         BeanClassLoaderAware, BeanDefinitionRegistryPostProcessor {
 
-    private final Set<String>             scanBasePackages;
-    private       ConfigurableEnvironment env;
-    private       ResourceLoader          resourceLoader;
-    private       ClassLoader             classLoader;
+    private final Set<String>                scanBasePackages;
+    private       ConfigurableEnvironment    env;
+    private       ResourceLoader             resourceLoader;
+    private       ClassLoader                classLoader;
+    /**
+     * {@link DefaultListableBeanFactory} can register bean definition
+     */
+    private       DefaultListableBeanFactory beanFactory;
 
     public ProviderBeanDefinitionRegistryPostProcessor(Set<String> scanBasePackages) {
         this.scanBasePackages = scanBasePackages;
@@ -61,6 +67,13 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     public void setEnvironment(@NonNull Environment environment) {
         Assert.isInstanceOf(ConfigurableEnvironment.class, environment);
         this.env = (ConfigurableEnvironment) environment;
+    }
+
+    @Override
+    public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
+        Assert.isInstanceOf(DefaultListableBeanFactory.class, beanFactory,
+                "It requires an instance of ".concat(DefaultListableBeanFactory.class.getSimpleName()));
+        this.beanFactory = (DefaultListableBeanFactory) beanFactory;
     }
 
     @Override
@@ -230,7 +243,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
 
         String providerStubBeanName = buildProviderStubBeanName(providerInterfaceClass,
                 providerAnnotation.group(), providerAnnotation.version());
-        AbstractBeanDefinition stubBeanDefinition = buildProviderStubDefinition(
+        AbstractBeanDefinition stubBeanDefinition = buildProviderStubDefinition(providerStubBeanName,
                 providerInterfaceClass, providerAnnotation, providerBeanDefinitionHolder.getBeanName());
 
         // Check duplicated candidate bean
@@ -294,19 +307,21 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     /**
      * Build {@link ProviderStub} definition
      *
+     * @param beanName             provider stub bean name
      * @param interfaceClass       provider interface class
      * @param annotation           {@link Provider} annotation
      * @param providerInstanceName provider instance name
      * @return {@link ProviderStub} bean definition
      */
-    private AbstractBeanDefinition buildProviderStubDefinition(Class<?> interfaceClass,
+    private AbstractBeanDefinition buildProviderStubDefinition(String beanName,
+                                                               Class<?> interfaceClass,
                                                                Provider annotation,
                                                                String providerInstanceName) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProviderStub.class);
         ProtocolConfig protocolConfig = readProtocolConfig(env);
         ProviderConfig providerConfig = readProviderConfig(env);
 
-        // Copy properties from @Provider to ProviderStub
+        addPropertyValue(builder, BEAN_NAME, beanName);
         addPropertyValue(builder, INTERFACE_CLASS, interfaceClass);
         addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName());
 

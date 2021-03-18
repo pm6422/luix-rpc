@@ -48,14 +48,19 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 @Getter
 public class ProviderStub<T> {
     /**
+     * Provider stub bean name
+     */
+    @NotNull(message = "The [beanName] property must NOT be null!")
+    private           String              beanName;
+    /**
      * The interface class of the provider
      */
-    @NotNull(message = "The [interfaceClass] property of @Consumer must NOT be null!")
+    @NotNull(message = "The [interfaceClass] property of @Provider must NOT be null!")
     private           Class<T>            interfaceClass;
     /**
      * The provider interface fully-qualified name
      */
-    @NotEmpty(message = "The [interfaceName] property of @Consumer must NOT be empty!")
+    @NotEmpty(message = "The [interfaceName] property of @Provider must NOT be empty!")
     private           String              interfaceName;
     /**
      * Protocol
@@ -117,7 +122,7 @@ public class ProviderStub<T> {
     @PostConstruct
     public void init() {
         // Automatically add {@link ProviderStub} instance to {@link ProviderStubHolder}
-        ProviderStubHolder.getInstance().addStub(interfaceName, this);
+        ProviderStubHolder.getInstance().addStub(beanName, this);
         // Put methods to cache in order to accelerate the speed of executing.
         discoverMethods(interfaceClass);
     }
