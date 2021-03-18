@@ -56,7 +56,7 @@ public abstract class AbstractInvoker implements Invokable {
     @Override
     public Responseable invoke(Requestable request) {
         if (!active) {
-            throw new RpcFrameworkException("No active provider caller found for now!");
+            throw new RpcFrameworkException("No active provider invoker found for now!");
         }
 
         beforeInvoke();

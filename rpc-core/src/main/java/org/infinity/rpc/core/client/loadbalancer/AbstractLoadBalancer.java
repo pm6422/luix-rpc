@@ -34,7 +34,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
             return;
         }
         List<Invokable> oldInvokers = this.invokers;
-        // Assign new ones to provider callers
+        // Assign new ones to provider invokers
         this.invokers = invokers;
 
         if (CollectionUtils.isEmpty(oldInvokers)) {
@@ -45,14 +45,14 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
         if (CollectionUtils.isEmpty(inactiveOnes)) {
             return;
         }
-        // Destroy the inactive provider callers
+        // Destroy the inactive provider invokers
         destroyInactiveInvokers(inactiveOnes);
     }
 
     @Override
     public Invokable selectProviderNode(Requestable request) {
         if (CollectionUtils.isEmpty(this.invokers)) {
-            throw new RpcInvocationException("No available provider caller for RPC call for now! " +
+            throw new RpcInvocationException("No available provider invoker for RPC call for now! " +
                     "Please check whether there are available providers now!");
         }
 
@@ -66,7 +66,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
         }
         if (invoker == null) {
             // Provider may be lost when executing doSelect
-            throw new RpcInvocationException("No active provider caller for now, " +
+            throw new RpcInvocationException("No active provider invoker for now, " +
                     "please check whether the server is ok!");
         }
         return invoker;
@@ -75,7 +75,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
     @Override
     public List<Invokable> selectProviderNodes(Requestable request) {
         if (CollectionUtils.isEmpty(this.invokers)) {
-            throw new RpcInvocationException("No active provider caller for now, " +
+            throw new RpcInvocationException("No active provider invoker for now, " +
                     "please check whether the server is ok!");
         }
         // Make a copy for thread safe purpose
@@ -88,7 +88,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
         }
         if (CollectionUtils.isEmpty(selected)) {
             // Provider may be lost when executing doSelect
-            throw new RpcInvocationException("No active provider caller for now, " +
+            throw new RpcInvocationException("No active provider invoker for now, " +
                     "please check whether the server is ok!");
         }
         return selected;
@@ -122,7 +122,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
      * Select one provider node
      *
      * @param request request instance
-     * @return selected provider caller
+     * @return selected provider invoker
      */
     protected abstract Invokable doSelectNode(Requestable request);
 
@@ -130,7 +130,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
      * Select multiple provider nodes
      *
      * @param request request instance
-     * @return selected provider callers
+     * @return selected provider invokers
      */
     protected abstract List<Invokable> doSelectNodes(Requestable request);
 }

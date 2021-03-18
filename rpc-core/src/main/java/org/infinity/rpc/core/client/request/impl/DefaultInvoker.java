@@ -19,8 +19,8 @@ import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
 
 /**
  * todo: DefaultRpcReferer
- * One default provider caller for one service interface.
- * The provider caller is created when the provider is active.
+ * One default provider invoker for one service interface.
+ * The provider invoker is created when the provider is active.
  */
 @Slf4j
 public class DefaultInvoker extends AbstractInvoker {
@@ -38,7 +38,7 @@ public class DefaultInvoker extends AbstractInvoker {
         client = endpointFactory.createClient(providerUrl);
         // Initialize
         init();
-        log.info("Initialized provider caller [{}] in {} ms", this.toString(), System.currentTimeMillis() - start);
+        log.info("Initialized provider invoker [{}] in {} ms", this.toString(), System.currentTimeMillis() - start);
     }
 
     @Override

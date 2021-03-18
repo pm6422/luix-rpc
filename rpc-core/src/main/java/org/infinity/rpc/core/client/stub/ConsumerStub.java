@@ -63,7 +63,7 @@ public class ConsumerStub<T> {
 //     */
 //    private String   registry;
     /**
-     * Provider caller cluster
+     * Provider invoker cluster
      */
     private String   cluster;
     /**

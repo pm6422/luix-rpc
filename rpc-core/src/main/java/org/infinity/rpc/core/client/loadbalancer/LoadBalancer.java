@@ -15,7 +15,7 @@ import java.util.List;
 @Spi(scope = SpiScope.PROTOTYPE)
 public interface LoadBalancer {
     /**
-     * Get provider callers
+     * Get provider invokers
      *
      * @return provider invokers
      */
@@ -32,7 +32,7 @@ public interface LoadBalancer {
      * Select provider node via load balance algorithm
      *
      * @param request RPC request instance
-     * @return selected provider caller
+     * @return selected provider invoker
      */
     Invokable selectProviderNode(Requestable request);
 
@@ -40,7 +40,7 @@ public interface LoadBalancer {
      * Select multiple provider nodes via load balance algorithm
      *
      * @param request RPC request instance
-     * @return selected provider callers
+     * @return selected provider invokers
      */
     List<Invokable> selectProviderNodes(Requestable request);
 

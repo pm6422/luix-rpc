@@ -66,7 +66,7 @@ public class ProviderNotifyListener implements ClientListener {
 
         List<Invokable> newInvokers = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
-            // Find provider caller associated with the provider url
+            // Find provider invoker associated with the provider url
             Invokable invoker = findInvokerByProviderUrl(registryUrl, providerUrl);
             if (invoker == null) {
                 invoker = protocol.refer(interfaceName, providerUrl.copy());
@@ -75,7 +75,7 @@ public class ProviderNotifyListener implements ClientListener {
         }
 
         if (CollectionUtils.isEmpty(newInvokers)) {
-            log.warn("No active provider caller!");
+            log.warn("No active provider invoker!");
         }
         invokersPerRegistryUrl.put(registryUrl, newInvokers);
         refreshCluster();
@@ -108,7 +108,7 @@ public class ProviderNotifyListener implements ClientListener {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-        // Refresh provider callers to AbstractLoadBalancer
+        // Refresh provider invokers to AbstractLoadBalancer
         invokerCluster.getFaultTolerance().getLoadBalancer().refresh(invokers);
     }
 
