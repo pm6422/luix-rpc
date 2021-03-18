@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.invocationhandler.GenericInvocationHandler;
 import org.infinity.rpc.core.client.proxy.ProxyFactory;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.democlient.dto.GenericInvokeDTO;
 import org.infinity.rpc.spring.boot.bean.name.ConsumerStubBeanNameBuilder;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
@@ -29,9 +29,8 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 @Slf4j
 public class RpcInvocationController {
 
-    private final        Environment                  env;
-    private final        InfinityProperties           infinityProperties;
-    private static final Map<String, ConsumerStub<?>> CONSUMER_STUB_CACHE = new ConcurrentHashMap<>();
+    private final Environment        env;
+    private final InfinityProperties infinityProperties;
 
     public RpcInvocationController(Environment env, InfinityProperties infinityProperties) {
         this.env = env;
@@ -39,30 +38,30 @@ public class RpcInvocationController {
     }
 
     /**
-     * {
-     * "interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
-     * "methodName": "findAll",
-     * "methodParamTypes": [],
-     * "args": [],
-     * "options": {
-     * "group": "default",
-     * "version": "1.0.0"
-     * }
-     * }
-     * <p>
-     * {
-     * "interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
-     * "methodName": "save",
-     * "methodParamTypes": ["org.infinity.rpc.democommon.domain.Authority"],
-     * "args": [{
-     * "name": "ROLE_TEST",
-     * "enabled": true
-     * }],
-     * "options": {
-     * "group": "default",
-     * "version": "1.0.0"
-     * }
-     * }
+      {
+      "interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
+      "methodName": "findAll",
+      "methodParamTypes": [],
+      "args": [],
+      "options": {
+      "group": "default",
+      "version": "1.0.0"
+      }
+      }
+      <p>
+      {
+      "interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
+      "methodName": "save",
+      "methodParamTypes": ["org.infinity.rpc.democommon.domain.Authority"],
+      "args": [{
+      "name": "ROLE_TEST",
+      "enabled": true
+      }],
+      "options": {
+      "group": "default",
+      "version": "1.0.0"
+      }
+      }
      *
      * @param dto dto
      * @return result
@@ -83,13 +82,13 @@ public class RpcInvocationController {
         for (Map.Entry<String, String> entry : dto.getOptions().entrySet()) {
             optionMap.put(entry.getKey(), entry.getValue());
         }
-        String key = ConsumerStubBeanNameBuilder
+        String beanName = ConsumerStubBeanNameBuilder
                 .builder(dto.getInterfaceName(), env)
                 .attributes(optionMap)
                 .build();
 
-        if (CONSUMER_STUB_CACHE.containsKey(key)) {
-            return CONSUMER_STUB_CACHE.get(key);
+        if (ConsumerStubHolder.getInstance().getStubs().containsKey(beanName)) {
+            return ConsumerStubHolder.getInstance().getStubs().get(beanName);
         }
         ConsumerStub<?> consumerStub = new ConsumerStub<>();
         consumerStub.setInterfaceName(dto.getInterfaceName());
@@ -99,15 +98,13 @@ public class RpcInvocationController {
         consumerStub.setLoadBalancer(infinityProperties.getConsumer().getLoadBalancer());
         consumerStub.setProxyFactory(infinityProperties.getConsumer().getProxyFactory());
         consumerStub.setCheckHealthFactory(infinityProperties.getConsumer().getCheckHealthFactory());
-
-        // must NOT call init
-        // consumerStub.init();
+        // Must NOT call init()
 
         consumerStub.subscribeProviders(infinityProperties.getApplication(),
                 infinityProperties.getAvailableProtocol(),
                 infinityProperties.getRegistry());
 
-        CONSUMER_STUB_CACHE.put(key, consumerStub);
+        ConsumerStubHolder.getInstance().addStub(beanName, consumerStub);
         return consumerStub;
     }
 }
