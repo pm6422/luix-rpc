@@ -1,7 +1,6 @@
 package org.infinity.rpc.demoserver.testcases;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomUtils;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
@@ -22,7 +21,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
-import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY_VAL_DEFAULT;
+import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
 import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT;
 import static org.junit.Assert.assertEquals;
 
@@ -118,7 +117,7 @@ public class RefreshUrlTests extends ZkBaseTest {
         consumerStub.setGroup(GROUP);
         consumerStub.setVersion("1.0.0");
         consumerStub.setProxyFactory(PROXY_FACTORY_VAL_JDK);
-        consumerStub.setCheckHealthFactory(CHECK_HEALTH_FACTORY_VAL_DEFAULT);
+        consumerStub.setCheckHealthFactory(HEALTH_CHECKER_VAL_DEFAULT);
         consumerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();

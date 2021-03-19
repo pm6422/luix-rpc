@@ -10,7 +10,7 @@ import org.infinity.rpc.core.switcher.impl.SwitcherService;
 import org.infinity.rpc.core.url.Url;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
-import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY;
+import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER;
 
 public class RpcFrameworkUtils {
 
@@ -137,7 +137,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        return StringUtils.equals(source.getOption(CHECK_HEALTH_FACTORY), target.getOption(CHECK_HEALTH_FACTORY));
+        return StringUtils.equals(source.getOption(HEALTH_CHECKER), target.getOption(HEALTH_CHECKER));
     }
 
     /**
@@ -177,7 +177,7 @@ public class RpcFrameworkUtils {
 //            return false;
 //        }
 
-        return StringUtils.equals(source.getOption(CHECK_HEALTH_FACTORY), target.getOption(CHECK_HEALTH_FACTORY));
+        return StringUtils.equals(source.getOption(HEALTH_CHECKER), target.getOption(HEALTH_CHECKER));
 
     }
 

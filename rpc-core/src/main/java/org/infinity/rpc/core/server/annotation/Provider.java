@@ -21,6 +21,11 @@ public @interface Provider {
     // Interface class of provider
     Class<?> interfaceClass() default void.class;
 
+    /**
+     * Available values: [infinity, zookeeper, local, direct, injvm]
+     *
+     * @return protocol
+     */
     String protocol() default "";
 
     /**
@@ -32,9 +37,15 @@ public @interface Provider {
 
     String group() default "";
 
+    /**
+     * @return version
+     */
     String version() default "";
 
-    String checkHealthFactory() default "";
+    /**
+     * @return health checker
+     */
+    String healthChecker() default "";
 
     // Timeout value for service invocation
     int requestTimeout() default Integer.MAX_VALUE;

@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.client.Client;
-import org.infinity.rpc.core.exchange.checkhealth.CheckHealthFactory;
+import org.infinity.rpc.core.exchange.checkhealth.HealthChecker;
 import org.infinity.rpc.core.exchange.constants.ChannelState;
 import org.infinity.rpc.core.exchange.endpoint.Endpoint;
 import org.infinity.rpc.core.exchange.endpoint.EndpointManager;
@@ -31,8 +31,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY;
-import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY_VAL_DEFAULT;
+import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER;
+import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
 import static org.infinity.rpc.core.destroy.ScheduledThreadPool.CHECK_HEALTH_THREAD_POOL;
 
 /**
@@ -45,8 +45,8 @@ public class CheckHealthClientEndpointManager implements EndpointManager {
      * Check health interval in milliseconds
      * todo: move to global config
      */
-    private static final int                             CHECK_HEALTH_TIMER_INTERVAL = 500;
-    private final        Map<Client, CheckHealthFactory> endpoints                   = new ConcurrentHashMap<>();
+    private static final int                        CHECK_HEALTH_TIMER_INTERVAL = 500;
+    private final        Map<Client, HealthChecker> endpoints                   = new ConcurrentHashMap<>();
 
     @Override
     public void init() {
@@ -54,7 +54,7 @@ public class CheckHealthClientEndpointManager implements EndpointManager {
     }
 
     private void checkHealth() {
-        for (Map.Entry<Client, CheckHealthFactory> endpoint : endpoints.entrySet()) {
+        for (Map.Entry<Client, HealthChecker> endpoint : endpoints.entrySet()) {
             Client client = endpoint.getKey();
             try {
                 if (isSkipCheckHealthState(client)) {
@@ -62,8 +62,8 @@ public class CheckHealthClientEndpointManager implements EndpointManager {
 //                            client.getProviderUrl().getUri(), client.getState().name());
                     continue;
                 }
-                CheckHealthFactory checkHealthFactory = endpoint.getValue();
-                client.checkHealth(checkHealthFactory.createRequest());
+                HealthChecker healthChecker = endpoint.getValue();
+                client.checkHealth(healthChecker.createRequest());
             } catch (Exception e) {
                 log.error("Failed to check health for provider url [" + client.getProviderUrl().getUri() + "]", e);
             }
@@ -83,9 +83,9 @@ public class CheckHealthClientEndpointManager implements EndpointManager {
         }
         Client client = (Client) endpoint;
         Url providerUrl = endpoint.getProviderUrl();
-        String heartbeatFactoryName = providerUrl.getOption(CHECK_HEALTH_FACTORY, CHECK_HEALTH_FACTORY_VAL_DEFAULT);
-        CheckHealthFactory checkHealthFactory = CheckHealthFactory.getInstance(heartbeatFactoryName);
-        endpoints.put(client, checkHealthFactory);
+        String heartbeatFactoryName = providerUrl.getOption(HEALTH_CHECKER, HEALTH_CHECKER_VAL_DEFAULT);
+        HealthChecker healthChecker = HealthChecker.getInstance(heartbeatFactoryName);
+        endpoints.put(client, healthChecker);
     }
 
     @Override

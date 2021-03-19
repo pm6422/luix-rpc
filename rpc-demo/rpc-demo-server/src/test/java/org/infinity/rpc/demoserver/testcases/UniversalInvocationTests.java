@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
-import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY_VAL_DEFAULT;
+import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
 import static org.junit.Assert.assertEquals;
 
 public class UniversalInvocationTests extends ZkBaseTest {
@@ -105,7 +105,7 @@ public class UniversalInvocationTests extends ZkBaseTest {
         consumerStub.setGroup(GROUP);
         consumerStub.setVersion("1.0.0");
         consumerStub.setProxyFactory(PROXY_FACTORY_VAL_JDK);
-        consumerStub.setCheckHealthFactory(CHECK_HEALTH_FACTORY_VAL_DEFAULT);
+        consumerStub.setCheckHealthFactory(HEALTH_CHECKER_VAL_DEFAULT);
         // must NOT call init
 //        consumerStub.init();
 

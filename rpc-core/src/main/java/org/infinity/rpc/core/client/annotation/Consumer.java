@@ -73,9 +73,9 @@ public @interface Consumer {
     String proxyFactory() default "";
 
     /**
-     * @return check health factory
+     * @return health checker
      */
-    String checkHealthFactory() default "";
+    String healthChecker() default "";
 
     /**
      * @return Timeout value for service invocation

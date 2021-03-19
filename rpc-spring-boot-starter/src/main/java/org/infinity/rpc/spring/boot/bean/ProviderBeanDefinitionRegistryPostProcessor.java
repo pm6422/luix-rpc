@@ -340,10 +340,10 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         } else {
             addPropertyValue(builder, VERSION, annotation.version());
         }
-        if (StringUtils.isEmpty(annotation.checkHealthFactory())) {
-            addPropertyValue(builder, CHECK_HEALTH_FACTORY, providerConfig.getCheckHealthFactory());
+        if (StringUtils.isEmpty(annotation.healthChecker())) {
+            addPropertyValue(builder, HEALTH_CHECKER, providerConfig.getHealthChecker());
         } else {
-            addPropertyValue(builder, CHECK_HEALTH_FACTORY, annotation.checkHealthFactory());
+            addPropertyValue(builder, HEALTH_CHECKER, annotation.healthChecker());
         }
         if (Integer.MAX_VALUE == annotation.requestTimeout()) {
             addPropertyValue(builder, REQUEST_TIMEOUT, providerConfig.getRequestTimeout());

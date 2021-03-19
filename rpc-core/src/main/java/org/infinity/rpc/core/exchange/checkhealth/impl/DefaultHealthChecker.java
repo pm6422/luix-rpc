@@ -18,19 +18,19 @@ package org.infinity.rpc.core.exchange.checkhealth.impl;
 
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.client.request.impl.RpcCheckHealthRequest;
-import org.infinity.rpc.core.exchange.checkhealth.CheckHealthFactory;
+import org.infinity.rpc.core.exchange.checkhealth.HealthChecker;
 import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.server.messagehandler.impl.DefaultCheckHealthMessageHandleWrapper;
 import org.infinity.rpc.utilities.id.IdGenerator;
 import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.CHECK_HEALTH_FACTORY_VAL_DEFAULT;
+import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
 
 /**
  *
  */
-@SpiName(CHECK_HEALTH_FACTORY_VAL_DEFAULT)
-public class DefaultCheckHealthFactory implements CheckHealthFactory {
+@SpiName(HEALTH_CHECKER_VAL_DEFAULT)
+public class DefaultHealthChecker implements HealthChecker {
     @Override
     public MessageHandler wrapMessageHandler(MessageHandler handler) {
         return new DefaultCheckHealthMessageHandleWrapper(handler);

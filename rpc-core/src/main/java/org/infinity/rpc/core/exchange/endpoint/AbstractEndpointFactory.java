@@ -7,7 +7,7 @@ import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.exchange.client.Client;
 import org.infinity.rpc.core.exchange.endpoint.impl.CheckHealthClientEndpointManager;
-import org.infinity.rpc.core.exchange.checkhealth.CheckHealthFactory;
+import org.infinity.rpc.core.exchange.checkhealth.HealthChecker;
 import org.infinity.rpc.core.exchange.server.Server;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
@@ -59,7 +59,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
 
     @Override
     public Server createServer(Url providerUrl, MessageHandler messageHandler) {
-        messageHandler = CheckHealthFactory.getInstance(providerUrl).wrapMessageHandler(messageHandler);
+        messageHandler = HealthChecker.getInstance(providerUrl).wrapMessageHandler(messageHandler);
 
         synchronized (ipPort2ServerShareChannel) {
             String ipPort = providerUrl.getAddress();
