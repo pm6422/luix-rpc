@@ -12,12 +12,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class CachingHttpHeadersFilter implements Filter {
 
-    // We consider the last modified date is the start up time of the server
-    private final static long     LAST_MODIFIED      = System.currentTimeMillis();
-
-    private long                  CACHE_TIME_TO_LIVE = TimeUnit.DAYS.toMillis(1461L);
-
-    private final ApplicationProperties applicationProperties;
+    /**
+     * We consider the last modified date is the start up time of the server
+     */
+    private final static long                  LAST_MODIFIED = System.currentTimeMillis();
+    private final        ApplicationProperties applicationProperties;
+    private              long                  expiredAfter;
 
     public CachingHttpHeadersFilter(ApplicationProperties applicationProperties) {
         this.applicationProperties = applicationProperties;
@@ -25,7 +25,7 @@ public class CachingHttpHeadersFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
-        CACHE_TIME_TO_LIVE = TimeUnit.DAYS.toMillis(applicationProperties.getHttp().getCache().getTimeToLiveInDays());
+        expiredAfter = TimeUnit.DAYS.toMillis(applicationProperties.getHttp().getCache().getExpiredAfter());
     }
 
     @Override
@@ -37,10 +37,10 @@ public class CachingHttpHeadersFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        httpResponse.setHeader("Cache-Control", "max-age=" + CACHE_TIME_TO_LIVE + ", public");
+        httpResponse.setHeader("Cache-Control", "max-age=" + expiredAfter + ", public");
         httpResponse.setHeader("Pragma", "cache");
         // Setting Expires header, for proxy caching
-        httpResponse.setDateHeader("Expires", CACHE_TIME_TO_LIVE + System.currentTimeMillis());
+        httpResponse.setDateHeader("Expires", expiredAfter + System.currentTimeMillis());
         // Setting the Last-Modified header, for browser caching
         httpResponse.setDateHeader("Last-Modified", LAST_MODIFIED);
 
