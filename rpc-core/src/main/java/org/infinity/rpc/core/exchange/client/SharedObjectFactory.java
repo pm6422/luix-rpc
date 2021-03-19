@@ -14,7 +14,7 @@ public interface SharedObjectFactory<T> {
      *
      * @param obj   object
      * @param async async flag
-     * @return true: built, false: not built
+     * @return {@code true} if it was built and {@code false} otherwise
      */
     boolean rebuildObject(T obj, boolean async);
 

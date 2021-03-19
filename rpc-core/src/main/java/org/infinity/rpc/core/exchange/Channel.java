@@ -1,9 +1,9 @@
 package org.infinity.rpc.core.exchange;
 
-import org.infinity.rpc.core.exception.TransportException;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.server.response.Responseable;
+import org.infinity.rpc.core.exception.TransportException;
 import org.infinity.rpc.core.exchange.constants.ChannelState;
+import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.url.Url;
 
 import java.net.InetSocketAddress;
@@ -22,7 +22,7 @@ public interface Channel {
     /**
      * Open the channel
      *
-     * @return true: channel opened, false: not yet opened
+     * @return {@code true} if it was opened and {@code false} otherwise
      */
     boolean open();
 
@@ -62,14 +62,14 @@ public interface Channel {
     /**
      * Check whether it is closed or not
      *
-     * @return true: closed, false: not closed
+     * @return {@code true} if it was closed and {@code false} otherwise
      */
     boolean isClosed();
 
     /**
      * Check node availability status
      *
-     * @return true: available, false: unavailable
+     * @return {@code true} if it was active and {@code false} otherwise
      */
     boolean isActive();
 

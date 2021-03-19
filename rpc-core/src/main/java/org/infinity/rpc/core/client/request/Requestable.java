@@ -65,7 +65,7 @@ public interface Requestable extends Exchangable {
     /**
      * Decide whether it is a asynchronous calling
      *
-     * @return true: asynchronous, false: synchronous
+     * @return {@code true} if it was asynchronous and {@code false} otherwise
      */
     boolean isAsync();
 }

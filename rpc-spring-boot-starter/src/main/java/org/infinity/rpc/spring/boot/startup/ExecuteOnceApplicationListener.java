@@ -40,7 +40,7 @@ abstract class ExecuteOnceApplicationListener implements ApplicationContextAware
      * Check whether is original {@link ApplicationContext} as the event source
      *
      * @param event {@link ApplicationEvent}
-     * @return true: original application, false: or else
+     * @return {@code true} if it was original and {@code false} otherwise
      */
     private boolean isOriginalEventSource(ApplicationEvent event) {
         // Current ApplicationListener is not a Spring Bean, just was added into Spring's ConfigurableApplicationContext

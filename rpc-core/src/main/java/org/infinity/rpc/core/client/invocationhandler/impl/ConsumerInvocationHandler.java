@@ -68,7 +68,7 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
      * It is a asynchronous method calling if the return type of method is type of {@link FutureResponse}
      *
      * @param method method
-     * @return true: async call, false: sync call
+     * @return {@code true} if it was async call and {@code false} otherwise
      */
     private boolean isAsyncMethod(Method method) {
         return method.getReturnType().equals(FutureResponse.class);

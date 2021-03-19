@@ -259,8 +259,6 @@ public abstract class AnnotationUtils {
      * @return the {@link Class class} of provider interface
      */
     public static Class<?> resolveInterfaceClass(AnnotationAttributes attributes, Class<?> instanceOrInterfaceClass) {
-        Assert.isTrue(assertGeneric(attributes), "The " + INTERFACE_NAME + " attribute of @Consumer must not be empty for a generic consumer!");
-
         // Get interface class from interfaceClass attribute
         Class<?> interfaceClass = getAttributeValue(attributes, INTERFACE_CLASS);
         if (void.class.equals(interfaceClass)) {
@@ -288,20 +286,6 @@ public abstract class AnnotationUtils {
         Assert.notNull(interfaceClass, "Mis-configured the provider or consumer service!");
         Assert.isTrue(interfaceClass.isInterface(), "The annotated type must be an interface!");
         return interfaceClass;
-    }
-
-    /**
-     * @param attributes {@link AnnotationAttributes} instance, e.g {@link Consumer @Consumer}
-     * @return true: generic call, false: or else
-     */
-    private static boolean assertGeneric(AnnotationAttributes attributes) {
-        Boolean generic = getAttributeValue(attributes, GENERIC);
-        if (Boolean.TRUE.equals(generic)) {
-            // Generic call must have the interfaceName attribute
-            String interfaceName = getAttributeValue(attributes, INTERFACE_NAME);
-            return StringUtils.isNotEmpty(interfaceName);
-        }
-        return true;
     }
 
     /**

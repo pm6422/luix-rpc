@@ -31,7 +31,7 @@ public class ClassPathBeanDefinitionRegistryScanner extends ClassPathBeanDefinit
      *
      * @param beanName       bean name
      * @param beanDefinition bean definition
-     * @return true: candidate, false: not candidate
+     * @return {@code true} if it was candidate and {@code false} otherwise
      */
     @Override
     public boolean checkCandidate(@NonNull String beanName, @NonNull BeanDefinition beanDefinition) {

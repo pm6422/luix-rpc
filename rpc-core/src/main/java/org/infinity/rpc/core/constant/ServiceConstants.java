@@ -9,7 +9,6 @@ public interface ServiceConstants {
     String BEAN_NAME       = "beanName";
     String INTERFACE_NAME  = "interfaceName";
     String INTERFACE_CLASS = "interfaceClass";
-    String GENERIC         = "generic";
 
     String GROUP                       = "group";
     String GROUP_VAL_DEFAULT           = "default";

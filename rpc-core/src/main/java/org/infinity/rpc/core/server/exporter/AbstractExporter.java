@@ -42,7 +42,7 @@ public abstract class AbstractExporter<T> implements Exportable<T> {
     /**
      * Do initialization
      *
-     * @return true: initialized successfully, false: or else
+     * @return {@code true} if it was initialized and {@code false} otherwise
      */
     protected abstract boolean doInit();
 

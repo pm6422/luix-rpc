@@ -29,7 +29,7 @@ public abstract class AddressUtils {
      * Check whether it is the valid IP address
      *
      * @param address IP address, e.g 192.168.1.1:8080
-     * @return true: valid, false: invalid
+     * @return {@code true} if it was valid and {@code false} otherwise
      */
     public static boolean isValidAddress(String address) {
         return ADDRESS_PATTERN.matcher(address).matches();
@@ -39,7 +39,7 @@ public abstract class AddressUtils {
      * Check whether it is the valid IP
      *
      * @param ip ip
-     * @return true: valid, false: invalid
+     * @return {@code true} if it was active and {@code false} otherwise
      */
     public static boolean isValidIp(String ip) {
         return IP_PATTERN.matcher(ip).matches();
@@ -49,7 +49,7 @@ public abstract class AddressUtils {
      * Check whether it is the valid IP address
      *
      * @param address IP address
-     * @return true: valid, false: invalid
+     * @return {@code true} if it was valid and {@code false} otherwise
      */
     public static boolean isValidAddress(InetAddress address) {
         if (address == null || address.isLoopbackAddress()) {

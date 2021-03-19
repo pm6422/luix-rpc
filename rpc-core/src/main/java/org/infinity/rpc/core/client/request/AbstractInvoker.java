@@ -77,7 +77,7 @@ public abstract class AbstractInvoker implements Invokable {
     /**
      * Do initialization
      *
-     * @return true: initialized, false: or else
+     * @return {@code true} if it was initialized and {@code false} otherwise
      */
     protected abstract boolean doInit();
 

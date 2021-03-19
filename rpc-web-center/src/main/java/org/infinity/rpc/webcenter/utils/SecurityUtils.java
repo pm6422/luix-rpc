@@ -65,7 +65,7 @@ public abstract class SecurityUtils {
     /**
      * Check if a user is authenticated.
      *
-     * @return true if the user is authenticated, false otherwise
+     * @return {@code true} if it was authenticated and {@code false} otherwise
      */
     public static boolean isAuthenticated() {
         Collection<? extends GrantedAuthority> authorities = SecurityUtils.getCurrentUserRoles();
@@ -87,7 +87,7 @@ public abstract class SecurityUtils {
      * </p>
      *
      * @param role the authority to check
-     * @return true if the current user has the authority, false otherwise
+     * @return {@code true} if it the current user has the authority and {@code false} otherwise
      */
     public static boolean isCurrentUserInRole(String role) {
         Collection<? extends GrantedAuthority> authorities = SecurityUtils.getCurrentUserRoles();

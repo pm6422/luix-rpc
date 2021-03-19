@@ -30,7 +30,7 @@ public interface InvokerCluster {
     /**
      * Check whether it is available
      *
-     * @return true: available, false: unavailable
+     * @return {@code true} if it was active and {@code false} otherwise
      */
     boolean isActive();
 

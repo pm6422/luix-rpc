@@ -44,7 +44,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
      * e.g, toString, equals, hashCode, finalize
      *
      * @param method method
-     * @return true: method derived from Object class, false: otherwise
+     * @return {@code true} if it was derived from Object class and {@code false} otherwise
      */
     protected boolean isDerivedFromObject(Method method) {
         if (method.getDeclaringClass().equals(Object.class)) {

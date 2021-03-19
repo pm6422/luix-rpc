@@ -20,28 +20,28 @@ public interface Future {
     /**
      * cancel the task
      *
-     * @return true: cancelled successfully, false: or else
+     * @return {@code true} if it was cancelled and {@code false} otherwise
      */
     boolean cancel();
 
     /**
      * task cancelled
      *
-     * @return true: already cancelled, false: or else
+     * @return {@code true} if it was cancelled and {@code false} otherwise
      */
     boolean isCancelled();
 
     /**
      * task is complete : normal or exception
      *
-     * @return true: done, false: or else
+     * @return {@code true} if it was done and {@code false} otherwise
      */
     boolean isDone();
 
     /**
      * isDone() & normal
      *
-     * @return true: success, false: or else
+     * @return {@code true} if it was successful and {@code false} otherwise
      */
     boolean isSuccess();
 

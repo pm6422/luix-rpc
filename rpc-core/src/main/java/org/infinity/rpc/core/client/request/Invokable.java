@@ -18,7 +18,7 @@ public interface Invokable {
     /**
      * Check whether the invoker is active
      *
-     * @return true: active, false: inactive
+     * @return {@code true} if it was active and {@code false} otherwise
      */
     boolean isActive();
 

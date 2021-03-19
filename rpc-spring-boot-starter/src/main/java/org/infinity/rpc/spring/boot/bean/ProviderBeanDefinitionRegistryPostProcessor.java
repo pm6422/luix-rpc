@@ -190,7 +190,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
      * @param beanNameGenerator bean name generator
      * @param providerScanner   provider bean definition registry scanner
      * @param scanBasePackage   provider packages to be scanned
-     * @return true: registered provider stub, false: no provider stub registered
+     * @return {@code true} if it was registered and {@code false} otherwise
      */
     private boolean registerProviderStubBeans(BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator,
                                               ClassPathBeanDefinitionRegistryScanner providerScanner, String scanBasePackage) {

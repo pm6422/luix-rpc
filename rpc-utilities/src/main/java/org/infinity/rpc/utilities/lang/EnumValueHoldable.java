@@ -18,7 +18,7 @@ public interface EnumValueHoldable<T> {
      * @param enumValue enum value
      * @param <E>       enum type
      * @param <T>       enum value type
-     * @return true: valid, false: invalid
+     * @return {@code true} if it was valid and {@code false} otherwise
      */
     static <E extends Enum<E> & EnumValueHoldable<T>, T> boolean isValidValue(Class<E> enumClazz, T enumValue) {
         return getEnumByValue(enumClazz, enumValue) != null;
