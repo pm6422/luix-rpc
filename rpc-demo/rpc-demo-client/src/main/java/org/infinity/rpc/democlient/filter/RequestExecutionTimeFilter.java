@@ -1,7 +1,6 @@
 package org.infinity.rpc.democlient.filter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -10,11 +9,10 @@ import java.io.IOException;
 /**
  * This filter is used to calculate the execution time
  */
+@Deprecated
+@Slf4j
 public class RequestExecutionTimeFilter implements Filter {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequestExecutionTimeFilter.class);
-
-    private ThreadLocal<Long> threadLocalStartTime = new ThreadLocal<Long>();
+    private final ThreadLocal<Long> threadLocalStartTime = new ThreadLocal<>();
 
     @Override
     public void init(FilterConfig filterConfig) {
@@ -31,15 +29,15 @@ public class RequestExecutionTimeFilter implements Filter {
             throws IOException, ServletException {
         String method = ((HttpServletRequest) request).getMethod();
         threadLocalStartTime.set(System.currentTimeMillis());
-        LOGGER.info("Processing {} request [{}] ==>==>==>==>==>==>==>==>==>==>==>==>==>==>==>==>", method,
+        log.info("Processing {} request [{}] ==>==>==>==>==>==>==>==>==>==>==>==>==>==>==>==>", method,
                 ((HttpServletRequest) request).getRequestURI());
         chain.doFilter(request, response);
         if (threadLocalStartTime.get() != null) {
             long executionTime = System.currentTimeMillis() - threadLocalStartTime.get();
             threadLocalStartTime.remove();
-            LOGGER.info("Processed {} request [{}] <==<==<==<==<==<==<==<==<==<==<==<==<==<==<==", method,
+            log.info("Processed {} request [{}] <==<==<==<==<==<==<==<==<==<==<==<==<==<==<==", method,
                     ((HttpServletRequest) request).getRequestURI());
-            LOGGER.info("Processed request in {} ms", executionTime);
+            log.info("Processed request in {} ms", executionTime);
         }
     }
 }
