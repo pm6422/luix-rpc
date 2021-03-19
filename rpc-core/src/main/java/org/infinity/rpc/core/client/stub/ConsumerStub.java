@@ -95,7 +95,7 @@ public class ConsumerStub<T> {
     /**
      *
      */
-    private String   checkHealthFactory;
+    private String   healthChecker;
     /**
      *
      */
@@ -209,7 +209,7 @@ public class ConsumerStub<T> {
         url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
 
-        url.addOption(HEALTH_CHECKER, checkHealthFactory);
+        url.addOption(HEALTH_CHECKER, healthChecker);
         url.addOption(REQUEST_TIMEOUT, requestTimeout != null ? requestTimeout.toString() : null);
         url.addOption(MAX_RETRIES, maxRetries != null ? maxRetries.toString() : null);
         url.addOption(MAX_PAYLOAD, maxPayload != null ? maxPayload.toString() : null);

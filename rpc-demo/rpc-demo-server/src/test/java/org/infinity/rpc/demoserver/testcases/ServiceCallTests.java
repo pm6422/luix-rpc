@@ -89,7 +89,7 @@ public class ServiceCallTests extends ZkBaseTest {
         consumerStub.setGroup(GROUP);
         consumerStub.setVersion("1.0.0");
         consumerStub.setProxyFactory(PROXY_FACTORY_VAL_JDK);
-        consumerStub.setCheckHealthFactory(HEALTH_CHECKER_VAL_DEFAULT);
+        consumerStub.setHealthChecker(HEALTH_CHECKER_VAL_DEFAULT);
         consumerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();

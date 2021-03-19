@@ -81,7 +81,7 @@ public class ProviderStub<T> {
     /**
      *
      */
-    private           String              checkHealthFactory;
+    private           String              healthChecker;
     /**
      *
      */
@@ -197,7 +197,7 @@ public class ProviderStub<T> {
         url.addOption(WORK_QUEUE_SIZE, String.valueOf(protocolConfig.getWorkQueueSize()));
         url.addOption(SHARED_CHANNEL, String.valueOf(protocolConfig.isSharedChannel()));
         url.addOption(ASYNC_INIT_CONN, String.valueOf(protocolConfig.isAsyncInitConn()));
-        url.addOption(HEALTH_CHECKER, checkHealthFactory);
+        url.addOption(HEALTH_CHECKER, healthChecker);
         url.addOption(REQUEST_TIMEOUT, requestTimeout != null ? requestTimeout.toString() : null);
         url.addOption(MAX_RETRIES, maxRetries != null ? maxRetries.toString() : null);
         url.addOption(MAX_PAYLOAD, maxPayload != null ? maxPayload.toString() : null);

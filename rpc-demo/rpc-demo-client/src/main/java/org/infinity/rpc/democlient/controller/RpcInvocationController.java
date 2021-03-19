@@ -97,7 +97,7 @@ public class RpcInvocationController {
         consumerStub.setFaultTolerance(infinityProperties.getConsumer().getFaultTolerance());
         consumerStub.setLoadBalancer(infinityProperties.getConsumer().getLoadBalancer());
         consumerStub.setProxyFactory(infinityProperties.getConsumer().getProxyFactory());
-        consumerStub.setCheckHealthFactory(infinityProperties.getConsumer().getHealthChecker());
+        consumerStub.setHealthChecker(infinityProperties.getConsumer().getHealthChecker());
         // Must NOT call init()
 
         consumerStub.subscribeProviders(infinityProperties.getApplication(),
