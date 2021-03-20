@@ -113,6 +113,10 @@ public class ConsumerStub<T> {
     @Min(value = 0, message = "The [maxPayload] property of @Consumer must NOT be a positive number!")
     private Integer  maxPayload;
     /**
+     * Indicates whether rate limit enabled or not
+     */
+    private boolean  enableRateLimit;
+    /**
      * Addresses of RPC provider used to connect RPC provider directly without third party registry.
      * Multiple addresses are separated by comma.
      */

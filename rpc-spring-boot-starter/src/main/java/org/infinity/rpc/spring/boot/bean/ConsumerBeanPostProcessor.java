@@ -239,7 +239,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
     /**
      * Build {@link ConsumerStub} definition
      *
-     * @param beanName consumer stub bean name
+     * @param beanName       consumer stub bean name
      * @param interfaceClass consumer interface class
      * @param annotation     {@link Consumer} annotation
      * @return {@link ConsumerStub} bean definition
@@ -306,8 +306,8 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
             addPropertyValue(builder, MAX_RETRIES, annotation.maxRetries());
         }
 
+        addPropertyValue(builder, ENABLE_RATE_LIMIT, infinityProperties.getConsumer().isEnableRateLimit());
         addPropertyValue(builder, MAX_PAYLOAD, infinityProperties.getConsumer().getMaxPayload());
-
         addPropertyValue(builder, DIRECT_ADDRESSES, annotation.directAddresses());
 
         return builder.getBeanDefinition();

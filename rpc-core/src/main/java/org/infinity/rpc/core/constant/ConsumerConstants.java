@@ -12,6 +12,9 @@ public interface ConsumerConstants extends ServiceConstants {
     String LOAD_BALANCER                = "loadBalancer";
     String LOAD_BALANCER_VAL_RANDOM     = "random";
     String DIRECT_ADDRESSES             = "directAddresses";
+    String ENABLE_RATE_LIMIT            = "enableRateLimit";
+    String RATE_LIMITER_GUAVA           = "guava";
     String PROXY_FACTORY                = "proxyFactory";
     String PROXY_FACTORY_VAL_JDK        = "jdk";
+
 }

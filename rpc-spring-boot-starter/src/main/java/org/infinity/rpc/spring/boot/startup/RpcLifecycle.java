@@ -28,11 +28,11 @@ import static org.infinity.rpc.spring.boot.utils.JarUtils.readJarVersion;
 @Slf4j
 public class RpcLifecycle {
     /**
-     * The start flag used to identify whether the RPC server already started.
+     * Indicates whether the RPC server already started or not
      */
     private final AtomicBoolean started = new AtomicBoolean(false);
     /**
-     * The stop flag used to identify whether the RPC server already stopped.
+     * Indicates whether the RPC server already stopped or not
      */
     private final AtomicBoolean stopped = new AtomicBoolean(false);
 

@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.client.invocationhandler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.client.ratelimit.RateLimiter;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.exception.RpcServiceException;
@@ -8,6 +9,8 @@ import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.utils.RpcRequestIdHolder;
 
 import java.lang.reflect.Method;
+
+import static org.infinity.rpc.core.constant.ConsumerConstants.RATE_LIMITER_GUAVA;
 
 /**
  * @param <T>: The interface class of the consumer
@@ -22,6 +25,10 @@ public abstract class AbstractConsumerInvocationHandler<T> {
      * @return result of method
      */
     protected Object processRequest(Requestable request, Class<?> returnType) {
+        if (consumerStub.isEnableRateLimit() && !RateLimiter.getInstance(RATE_LIMITER_GUAVA).tryAcquire()) {
+            log.warn("Rate limiting!");
+            return null;
+        }
         Responseable response;
 //            boolean throwException = true;
         try {
