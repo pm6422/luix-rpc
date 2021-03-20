@@ -25,7 +25,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
      * @return result of method
      */
     protected Object processRequest(Requestable request, Class<?> returnType) {
-        if (consumerStub.isEnableRateLimit() && !RateLimiter.getInstance(RATE_LIMITER_GUAVA).tryAcquire()) {
+        if (limitRate()) {
             log.warn("Rate limiting!");
             return null;
         }
@@ -63,5 +63,9 @@ public abstract class AbstractConsumerInvocationHandler<T> {
             }
         }
         return false;
+    }
+
+    private boolean limitRate() {
+        return consumerStub.isEnableRateLimit() && !RateLimiter.getInstance(RATE_LIMITER_GUAVA).tryAcquire();
     }
 }
