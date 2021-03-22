@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC;
-import static org.infinity.rpc.core.switcher.impl.SwitcherService.REGISTRY_HEARTBEAT_SWITCHER;
+import static org.infinity.rpc.core.switcher.impl.SwitcherService.SERVICE_ACTIVATOR;
 
 /**
  * Abstract registry
@@ -80,10 +80,10 @@ public abstract class AbstractRegistry implements Registry {
      */
     @EventMarker
     private void registerSwitcherListener() {
-        SwitcherService.getInstance().initSwitcher(REGISTRY_HEARTBEAT_SWITCHER, false);
+        SwitcherService.getInstance().initSwitcher(SERVICE_ACTIVATOR, false);
 
         // Register anonymous inner class of AbstractRegistry as a listener
-        SwitcherService.getInstance().registerListener(REGISTRY_HEARTBEAT_SWITCHER, (name, switchOn) -> {
+        SwitcherService.getInstance().registerListener(SERVICE_ACTIVATOR, (name, switchOn) -> {
             if (StringUtils.isNotEmpty(name) && switchOn != null) {
                 if (switchOn) {
                     // switch on
@@ -109,7 +109,7 @@ public abstract class AbstractRegistry implements Registry {
         // Added it to the cache after registered
         registeredProviderUrls.add(providerUrl);
         // Move the url to active node of registry if heartbeat switcher already open
-        if (SwitcherService.getInstance().isOn(REGISTRY_HEARTBEAT_SWITCHER)) {
+        if (SwitcherService.getInstance().isOn(SERVICE_ACTIVATOR)) {
             activate(providerUrl);
         }
     }

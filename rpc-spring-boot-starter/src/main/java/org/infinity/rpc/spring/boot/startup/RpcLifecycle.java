@@ -127,7 +127,7 @@ public class RpcLifecycle {
             providerStub.register(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(), registryConfig);
         });
 
-        SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
+        SwitcherService.getInstance().setValue(SwitcherService.SERVICE_ACTIVATOR, true);
     }
 
     private ApplicationExtConfig getApplicationExtConfig(ApplicationConfig applicationConfig) {

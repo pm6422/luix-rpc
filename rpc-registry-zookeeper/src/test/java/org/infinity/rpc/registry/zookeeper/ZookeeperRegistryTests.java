@@ -239,7 +239,7 @@ public class ZookeeperRegistryTests {
         log.debug("activePath: {}", activePath);
 
         registry.register(providerUrl1);
-        SwitcherService.getInstance().setValue(SwitcherService.REGISTRY_HEARTBEAT_SWITCHER, true);
+        SwitcherService.getInstance().setValue(SwitcherService.SERVICE_ACTIVATOR, true);
         activateAddrFiles = zkClient.getChildren(activePath);
         deactivateAddrFiles = zkClient.getChildren(inactivePath);
 
