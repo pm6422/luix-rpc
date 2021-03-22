@@ -16,7 +16,7 @@ public interface RateLimiter {
      *
      * @param permitsPerSecond permits per second
      */
-    void init(long permitsPerSecond);
+    void create(long permitsPerSecond);
 
     /**
      * Updates RateLimiter's state and stores config

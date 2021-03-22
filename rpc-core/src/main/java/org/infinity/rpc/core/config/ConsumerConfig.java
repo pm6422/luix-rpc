@@ -56,6 +56,6 @@ public class ConsumerConfig extends ServiceConfig {
     }
 
     private void initRateLimiter() {
-        RateLimiter.getInstance(RATE_LIMITER_GUAVA).init(permitsPerSecond);
+        RateLimiter.getInstance(RATE_LIMITER_GUAVA).create(permitsPerSecond);
     }
 }
