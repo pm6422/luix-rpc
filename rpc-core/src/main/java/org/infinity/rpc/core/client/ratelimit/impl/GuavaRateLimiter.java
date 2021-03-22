@@ -1,5 +1,6 @@
 package org.infinity.rpc.core.client.ratelimit.impl;
 
+import com.google.common.annotations.Beta;
 import org.infinity.rpc.core.client.ratelimit.RateLimiter;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.utilities.spi.annotation.SpiName;
@@ -7,6 +8,7 @@ import org.infinity.rpc.utilities.spi.annotation.SpiName;
 import static org.infinity.rpc.core.constant.ConsumerConstants.RATE_LIMITER_GUAVA;
 
 @SpiName(RATE_LIMITER_GUAVA)
+@Beta
 public class GuavaRateLimiter implements RateLimiter {
 
     private com.google.common.util.concurrent.RateLimiter rateLimiter;
