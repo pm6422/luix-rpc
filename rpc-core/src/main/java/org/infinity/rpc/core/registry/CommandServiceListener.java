@@ -25,7 +25,7 @@ import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.subscribe.RpcCommand;
 import org.infinity.rpc.core.subscribe.RpcCommandUtils;
-import org.infinity.rpc.core.switcher.impl.SwitcherService;
+import org.infinity.rpc.core.switcher.impl.SwitcherHolder;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.annotation.EventReceiver;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
@@ -52,7 +52,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     private static final Pattern IP_PATTERN       = Pattern.compile("^!?[0-9.]*\\*?$");
 
     static {
-        SwitcherService.getInstance().initSwitcher(COMMAND_SWITCHER, true);
+        SwitcherHolder.getInstance().initSwitcher(COMMAND_SWITCHER, true);
     }
 
     /**
@@ -147,7 +147,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     public void onNotify(Url clientUrl, String commandString) {
         log.info("CommandServiceManager notify command. service:" + clientUrl.toSimpleString() + ", command:" + commandString);
 
-        if (!SwitcherService.getInstance().isOn(COMMAND_SWITCHER) || commandString == null) {
+        if (!SwitcherHolder.getInstance().isOn(COMMAND_SWITCHER) || commandString == null) {
             log.info("command reset empty since switcher is close.");
             commandString = "";
         }

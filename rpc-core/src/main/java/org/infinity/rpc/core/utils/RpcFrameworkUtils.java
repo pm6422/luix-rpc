@@ -6,7 +6,7 @@ import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.constant.ServiceConstants;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
-import org.infinity.rpc.core.switcher.impl.SwitcherService;
+import org.infinity.rpc.core.switcher.impl.SwitcherHolder;
 import org.infinity.rpc.core.url.Url;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
@@ -229,7 +229,7 @@ public class RpcFrameworkUtils {
     }
 
     public static void logEvent(Requestable request, String event) {
-        if (SwitcherService.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
+        if (SwitcherHolder.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
             logEvent(request, event, System.currentTimeMillis());
         }
     }
@@ -246,13 +246,13 @@ public class RpcFrameworkUtils {
             request.setReceivedTime(time);
             return;
         }
-        if (SwitcherService.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
+        if (SwitcherHolder.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
             request.addTrace(event, String.valueOf(time));
         }
     }
 
     public static void logEvent(Responseable response, String event) {
-        if (SwitcherService.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
+        if (SwitcherHolder.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
             logEvent(response, event, System.currentTimeMillis());
         }
     }
@@ -269,7 +269,7 @@ public class RpcFrameworkUtils {
             response.setReceivedTime(time);
             return;
         }
-        if (SwitcherService.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
+        if (SwitcherHolder.getInstance().isOn(RpcConstants.MOTAN_TRACE_INFO_SWITCHER, false)) {
             response.addTrace(event, String.valueOf(time));
         }
     }

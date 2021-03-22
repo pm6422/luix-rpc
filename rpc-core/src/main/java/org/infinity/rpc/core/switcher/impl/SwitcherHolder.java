@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @NotThreadSafe
-public class SwitcherService {
+public class SwitcherHolder {
     public static final String                              SERVICE_ACTIVATOR = "serviceActivator";
     private final       Map<String, Switcher>               switcherMap       = new ConcurrentHashMap<>();
     private final       Map<String, List<SwitcherListener>> listenerMap       = new ConcurrentHashMap<>();
@@ -20,15 +20,15 @@ public class SwitcherService {
     /**
      * Prevent instantiation of it outside the class
      */
-    private SwitcherService() {
+    private SwitcherHolder() {
     }
 
     /**
-     * Get the DefaultSwitcherService instance
+     * Get the instance
      *
      * @return instance
      */
-    public static SwitcherService getInstance() {
+    public static SwitcherHolder getInstance() {
         return SingletonHolder.INSTANCE;
     }
 
@@ -77,7 +77,7 @@ public class SwitcherService {
     }
 
     public void registerListener(String name, SwitcherListener listener) {
-        List<SwitcherListener> listeners = Collections.synchronizedList(new ArrayList());
+        List<SwitcherListener> listeners = Collections.synchronizedList(new ArrayList<>());
         List<SwitcherListener> existingListeners = listenerMap.putIfAbsent(name, listeners);
         if (existingListeners == null) {
             // Key does not exist in map, return null
@@ -107,6 +107,7 @@ public class SwitcherService {
      * The singleton instance holder static inner class
      */
     private static class SingletonHolder {
-        private static final SwitcherService INSTANCE = new SwitcherService();// static variable will be instantiated on class loading.
+        // Static variable will be instantiated on class loading
+        private static final SwitcherHolder INSTANCE = new SwitcherHolder();
     }
 }

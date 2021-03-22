@@ -8,7 +8,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
-import org.infinity.rpc.core.switcher.impl.SwitcherService;
+import org.infinity.rpc.core.switcher.impl.SwitcherHolder;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.service.TestDummyService;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
@@ -239,7 +239,7 @@ public class ZookeeperRegistryTests {
         log.debug("activePath: {}", activePath);
 
         registry.register(providerUrl1);
-        SwitcherService.getInstance().setValue(SwitcherService.SERVICE_ACTIVATOR, true);
+        SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVATOR, true);
         activateAddrFiles = zkClient.getChildren(activePath);
         deactivateAddrFiles = zkClient.getChildren(inactivePath);
 

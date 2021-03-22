@@ -3,7 +3,7 @@ package org.infinity.rpc.core.switcher;
 import lombok.Data;
 
 /**
- * Switch tool
+ * Switch
  */
 @Data
 public class Switcher {

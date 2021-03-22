@@ -10,7 +10,7 @@ import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.server.stub.ProviderStubHolder;
-import org.infinity.rpc.core.switcher.impl.SwitcherService;
+import org.infinity.rpc.core.switcher.impl.SwitcherHolder;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
@@ -127,7 +127,8 @@ public class RpcLifecycle {
             providerStub.register(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(), registryConfig);
         });
 
-        SwitcherService.getInstance().setValue(SwitcherService.SERVICE_ACTIVATOR, true);
+        // Activate RPC service providers
+        SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVATOR, true);
     }
 
     private ApplicationExtConfig getApplicationExtConfig(ApplicationConfig applicationConfig) {

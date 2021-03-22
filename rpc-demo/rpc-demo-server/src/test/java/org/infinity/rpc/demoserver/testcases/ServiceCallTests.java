@@ -6,7 +6,7 @@ import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.constant.ProtocolConstants;
 import org.infinity.rpc.core.server.stub.ProviderStub;
-import org.infinity.rpc.core.switcher.impl.SwitcherService;
+import org.infinity.rpc.core.switcher.impl.SwitcherHolder;
 import org.infinity.rpc.demoserver.service.TestService;
 import org.infinity.rpc.demoserver.service.impl.TestServiceImpl;
 import org.infinity.rpc.demoserver.testcases.base.ZkBaseTest;
@@ -75,7 +75,7 @@ public class ServiceCallTests extends ZkBaseTest {
         providerStub.register(applicationConfig, protocolConfig, registryConfig);
 
         // Activate provider
-        SwitcherService.getInstance().setValue(SwitcherService.SERVICE_ACTIVATOR, true);
+        SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVATOR, true);
     }
 
     private TestService subscribeProvider() {

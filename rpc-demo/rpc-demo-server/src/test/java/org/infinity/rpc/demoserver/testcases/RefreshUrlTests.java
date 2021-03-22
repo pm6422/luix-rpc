@@ -7,7 +7,7 @@ import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.constant.ProtocolConstants;
 import org.infinity.rpc.core.server.stub.ProviderStub;
-import org.infinity.rpc.core.switcher.impl.SwitcherService;
+import org.infinity.rpc.core.switcher.impl.SwitcherHolder;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.demoserver.service.TestService;
 import org.infinity.rpc.demoserver.service.impl.TestServiceImpl;
@@ -95,8 +95,8 @@ public class RefreshUrlTests extends ZkBaseTest {
         providerStub.register(applicationConfig, protocolConfig, registryConfig);
 
         // Activate provider
-        if (!SwitcherService.getInstance().isOn(SwitcherService.SERVICE_ACTIVATOR)) {
-            SwitcherService.getInstance().setValue(SwitcherService.SERVICE_ACTIVATOR, true);
+        if (!SwitcherHolder.getInstance().isOn(SwitcherHolder.SERVICE_ACTIVATOR)) {
+            SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVATOR, true);
         }
     }
 
