@@ -1,7 +1,7 @@
 package org.infinity.rpc.demoserver.testcases;
 
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
-import org.infinity.rpc.core.client.proxy.ProxyFactory;
+import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
@@ -48,7 +48,7 @@ public class UniversalInvocationTests extends ZkBaseTest {
         registerProvider();
 
         ConsumerStub<?> consumerStub = createConsumerStub(TestService.class.getName());
-        ProxyFactory proxyFactory = ProxyFactory.getInstance(PROXY_FACTORY_VAL_JDK);
+        Proxy proxyFactory = Proxy.getInstance(PROXY_VAL_JDK);
         UniversalInvocationHandler universalInvocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Map<String, Object> appMap = new HashMap<>();
         appMap.put("name", "testApp");
@@ -104,7 +104,7 @@ public class UniversalInvocationTests extends ZkBaseTest {
         consumerStub.setLoadBalancer(LOAD_BALANCER_VAL_RANDOM);
         consumerStub.setGroup(GROUP);
         consumerStub.setVersion("1.0.0");
-        consumerStub.setProxyFactory(PROXY_FACTORY_VAL_JDK);
+        consumerStub.setProxy(PROXY_VAL_JDK);
         consumerStub.setHealthChecker(HEALTH_CHECKER_VAL_DEFAULT);
         // must NOT call init
 //        consumerStub.init();

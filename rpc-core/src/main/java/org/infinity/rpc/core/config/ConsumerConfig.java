@@ -29,7 +29,7 @@ public class ConsumerConfig extends ServiceConfig {
      * Consumer proxy factory
      */
     @NotEmpty
-    private             String  proxyFactory     = PROXY_FACTORY_VAL_JDK;
+    private             String  proxyFactory     = PROXY_VAL_JDK;
     /**
      * Indicates whether rate limit enabled or not
      */

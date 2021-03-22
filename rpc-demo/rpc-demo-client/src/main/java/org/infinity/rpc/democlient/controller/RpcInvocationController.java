@@ -3,7 +3,7 @@ package org.infinity.rpc.democlient.controller;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
-import org.infinity.rpc.core.client.proxy.ProxyFactory;
+import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.democlient.dto.UniversalInvokeDTO;
@@ -71,7 +71,7 @@ public class RpcInvocationController {
     @PostMapping("/api/rpc/universal-invocation")
     public ResponseEntity<Object> universalInvoke(@ApiParam(value = "调用参数", required = true) @Valid @RequestBody UniversalInvokeDTO dto) {
         ConsumerStub<?> consumerStub = getConsumerStub(dto);
-        ProxyFactory proxyFactory = ProxyFactory.getInstance(infinityProperties.getConsumer().getProxyFactory());
+        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler universalInvocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Object result = universalInvocationHandler.invoke(dto.getMethodName(), dto.getMethodParamTypes(), dto.getArgs(), dto.getOptions());
         return ResponseEntity.ok().body(result);
@@ -96,7 +96,7 @@ public class RpcInvocationController {
         consumerStub.setCluster(infinityProperties.getConsumer().getCluster());
         consumerStub.setFaultTolerance(infinityProperties.getConsumer().getFaultTolerance());
         consumerStub.setLoadBalancer(infinityProperties.getConsumer().getLoadBalancer());
-        consumerStub.setProxyFactory(infinityProperties.getConsumer().getProxyFactory());
+        consumerStub.setProxy(infinityProperties.getConsumer().getProxyFactory());
         consumerStub.setHealthChecker(infinityProperties.getConsumer().getHealthChecker());
         // Must NOT call init()
 

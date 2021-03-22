@@ -88,7 +88,7 @@ public class ServiceCallTests extends ZkBaseTest {
         consumerStub.setLoadBalancer(LOAD_BALANCER_VAL_RANDOM);
         consumerStub.setGroup(GROUP);
         consumerStub.setVersion("1.0.0");
-        consumerStub.setProxyFactory(PROXY_FACTORY_VAL_JDK);
+        consumerStub.setProxy(PROXY_VAL_JDK);
         consumerStub.setHealthChecker(HEALTH_CHECKER_VAL_DEFAULT);
         consumerStub.init();
 

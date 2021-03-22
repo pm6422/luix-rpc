@@ -15,7 +15,7 @@ public interface ConsumerConstants extends ServiceConstants {
     String DIRECT_ADDRESSES             = "directAddresses";
     String ENABLE_RATE_LIMIT            = "enableRateLimit";
     String RATE_LIMITER_GUAVA           = "guava";
-    String PROXY_FACTORY                = "proxyFactory";
-    String PROXY_FACTORY_VAL_JDK        = "jdk";
-
+    String PROXY                        = "proxy";
+    String PROXY_VAL_JDK                = "jdk";
+    String PROXY_VAL_JAVASSIST          = "javassist";
 }

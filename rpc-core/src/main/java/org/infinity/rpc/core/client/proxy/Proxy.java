@@ -7,7 +7,7 @@ import org.infinity.rpc.utilities.spi.annotation.Spi;
 import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 
 @Spi(scope = SpiScope.PROTOTYPE)
-public interface ProxyFactory {
+public interface Proxy {
     /**
      * Get implementation proxy of consumer interface class
      *
@@ -31,7 +31,7 @@ public interface ProxyFactory {
      * @param name specified name
      * @return instance
      */
-    static ProxyFactory getInstance(String name) {
-        return ServiceLoader.forClass(ProxyFactory.class).load(name);
+    static Proxy getInstance(String name) {
+        return ServiceLoader.forClass(Proxy.class).load(name);
     }
 }

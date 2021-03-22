@@ -3,16 +3,14 @@ package org.infinity.rpc.core.client.proxy.impl;
 
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.invocationhandler.impl.ConsumerInvocationHandler;
-import org.infinity.rpc.core.client.proxy.ProxyFactory;
+import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
-import java.lang.reflect.Proxy;
+import static org.infinity.rpc.core.constant.ConsumerConstants.PROXY_VAL_JDK;
 
-import static org.infinity.rpc.core.constant.ConsumerConstants.PROXY_FACTORY_VAL_JDK;
-
-@SpiName(PROXY_FACTORY_VAL_JDK)
-public class JdkProxyFactory implements ProxyFactory {
+@SpiName(PROXY_VAL_JDK)
+public class JdkProxy implements Proxy {
     /**
      * Get implementation proxy of consumer interface class
      *
@@ -23,7 +21,7 @@ public class JdkProxyFactory implements ProxyFactory {
     @SuppressWarnings({"unchecked"})
     @Override
     public <T> T getProxy(ConsumerStub<T> stub) {
-        Object proxy = Proxy.newProxyInstance(
+        Object proxy = java.lang.reflect.Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
                 new Class<?>[]{stub.getInterfaceClass()},
                 new ConsumerInvocationHandler<>(stub));
