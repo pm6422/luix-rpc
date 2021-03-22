@@ -98,7 +98,7 @@ public class SwitcherHolder {
     public void unregisterListeners(String name) {
         List<SwitcherListener> listeners = listenerMap.get(name);
         if (CollectionUtils.isNotEmpty(listeners)) {
-            // clean all the listeners
+            // Clear all the listeners
             listeners.clear();
         }
     }
