@@ -6,6 +6,7 @@ package org.infinity.rpc.core.constant;
 public interface ConsumerConstants extends ServiceConstants {
     String CLUSTER                      = "cluster";
     String CLUSTER_VAL_DEFAULT          = "default";
+    String CLUSTER_VAL_BROADCAST        = "broadcast";
     String FAULT_TOLERANCE              = "faultTolerance";
     String FAULT_TOLERANCE_VAL_FAILOVER = "failover";
     String FAULT_TOLERANCE_VAL_FAILFAST = "failfast";
