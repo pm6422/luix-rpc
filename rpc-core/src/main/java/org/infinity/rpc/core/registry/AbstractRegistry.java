@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC;
-import static org.infinity.rpc.core.switcher.impl.SwitcherHolder.SERVICE_ACTIVATOR;
+import static org.infinity.rpc.core.switcher.impl.SwitcherHolder.SERVICE_ACTIVE;
 
 /**
  * Abstract registry
@@ -80,10 +80,10 @@ public abstract class AbstractRegistry implements Registry {
      */
     @EventMarker
     private void registerSwitcherListener() {
-        SwitcherHolder.getInstance().initSwitcher(SERVICE_ACTIVATOR, false);
+        SwitcherHolder.getInstance().initSwitcher(SERVICE_ACTIVE, false);
 
         // Register anonymous inner class of AbstractRegistry as a listener
-        SwitcherHolder.getInstance().registerListener(SERVICE_ACTIVATOR, (name, switchOn) -> {
+        SwitcherHolder.getInstance().registerListener(SERVICE_ACTIVE, (name, switchOn) -> {
             if (StringUtils.isNotEmpty(name) && switchOn != null) {
                 if (switchOn) {
                     // switch on
@@ -108,10 +108,6 @@ public abstract class AbstractRegistry implements Registry {
         log.info("Registered the url [{}] to registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
         // Added it to the cache after registered
         registeredProviderUrls.add(providerUrl);
-        // Move the url to active node of registry if heartbeat switcher already open
-        if (SwitcherHolder.getInstance().isOn(SERVICE_ACTIVATOR)) {
-            activate(providerUrl);
-        }
     }
 
     /**
@@ -139,6 +135,7 @@ public abstract class AbstractRegistry implements Registry {
             doActivate(removeUnnecessaryParams(providerUrl.copy()));
             log.info("Activated the url [{}] on registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
         } else {
+            // Move all the provider urls to 'active' node
             doActivate(null);
         }
     }

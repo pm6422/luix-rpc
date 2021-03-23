@@ -95,8 +95,8 @@ public class RefreshUrlTests extends ZkBaseTest {
         providerStub.register(applicationConfig, protocolConfig, registryConfig);
 
         // Activate provider
-        if (!SwitcherHolder.getInstance().isOn(SwitcherHolder.SERVICE_ACTIVATOR)) {
-            SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVATOR, true);
+        if (!SwitcherHolder.getInstance().isOn(SwitcherHolder.SERVICE_ACTIVE)) {
+            SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVE, true);
         }
     }
 

@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
+import static org.infinity.rpc.core.constant.ProviderConstants.EXPOSED;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
@@ -111,6 +112,10 @@ public class ProviderStub<T> {
      * The provider url
      */
     private           Url                 url;
+    /**
+     * Indicates whether the provider needs to be exposed
+     */
+    private           boolean             exposed;
     /**
      * Indicator used to identify whether the provider already been registered
      */
@@ -201,6 +206,7 @@ public class ProviderStub<T> {
         url.addOption(REQUEST_TIMEOUT, requestTimeout != null ? requestTimeout.toString() : null);
         url.addOption(MAX_RETRIES, maxRetries != null ? maxRetries.toString() : null);
         url.addOption(MAX_PAYLOAD, maxPayload != null ? maxPayload.toString() : null);
+        url.addOption(EXPOSED, String.valueOf(exposed));
 
         return url;
     }

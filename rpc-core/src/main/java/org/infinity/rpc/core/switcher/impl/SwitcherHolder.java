@@ -13,9 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @NotThreadSafe
 public class SwitcherHolder {
-    public static final String                              SERVICE_ACTIVATOR = "serviceActivator";
-    private final       Map<String, Switcher>               switcherMap       = new ConcurrentHashMap<>();
-    private final       Map<String, List<SwitcherListener>> listenerMap       = new ConcurrentHashMap<>();
+    public static final String                              SERVICE_ACTIVE = "serviceActive";
+    private final       Map<String, Switcher>               switcherMap    = new ConcurrentHashMap<>();
+    private final       Map<String, List<SwitcherListener>> listenerMap    = new ConcurrentHashMap<>();
 
     /**
      * Prevent instantiation of it outside the class

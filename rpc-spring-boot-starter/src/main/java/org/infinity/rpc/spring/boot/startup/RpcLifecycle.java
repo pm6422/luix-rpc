@@ -127,8 +127,10 @@ public class RpcLifecycle {
             providerStub.register(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(), registryConfig);
         });
 
-        // Activate RPC service providers
-        SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVATOR, true);
+        if (infinityProperties.getProvider().isAutoExpose()) {
+            // Activate RPC service providers
+            SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVE, true);
+        }
     }
 
     private ApplicationExtConfig getApplicationExtConfig(ApplicationConfig applicationConfig) {

@@ -92,7 +92,7 @@ public class UniversalInvocationTests extends ZkBaseTest {
         providerStub.register(applicationConfig, protocolConfig, registryConfig);
 
         // Activate provider
-        SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVATOR, true);
+        SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVE, true);
     }
 
     private ConsumerStub<?> createConsumerStub(String interfaceName) {
