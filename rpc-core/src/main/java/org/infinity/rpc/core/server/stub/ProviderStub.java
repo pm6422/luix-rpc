@@ -23,6 +23,7 @@ import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 
 import javax.annotation.PostConstruct;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -92,6 +93,7 @@ public class ProviderStub<T> {
      * The max retry times of RPC request
      */
     @Min(value = 0, message = "The [maxRetries] property of @Provider must NOT be a negative number!")
+    @Max(value = 10, message = "The [maxRetries] property of @Provider must NOT be bigger than 10!")
     private           Integer             maxRetries;
     /**
      * The max response message payload size in bytes

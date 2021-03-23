@@ -105,7 +105,7 @@ public class ConsumerStub<T> {
      * The max retry times of RPC request
      */
     @Min(value = 0, message = "The [maxRetries] property of @Consumer must NOT be a positive number!")
-    @Max(value = 10, message = "The [maxRetries] property of @Consumer must NOT be less than 10!")
+    @Max(value = 10, message = "The [maxRetries] property of @Consumer must NOT be bigger than 10!")
     private Integer  maxRetries;
     /**
      * The max request message payload size in bytes
