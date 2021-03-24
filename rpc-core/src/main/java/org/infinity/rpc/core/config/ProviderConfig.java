@@ -6,11 +6,11 @@ import lombok.Data;
 public class ProviderConfig extends ServiceConfig {
     public static final String  PREFIX     = "provider";
     /**
-     * Indicates whether the provider needs to be exposed
+     * Indicates whether all the providers needs to be exposed
      */
     private             boolean exposed    = true;
     /**
-     * Indicates whether the provider needs to be exposed automatically
+     * Indicates whether all the providers were exposed automatically
      */
     private             boolean autoExpose = true;
 
