@@ -101,6 +101,10 @@ public class ProviderStub<T> {
     @Min(value = 0, message = "The [maxPayload] property of @Provider must NOT be a positive number!")
     private           Integer             maxPayload;
     /**
+     * Indicates whether the provider needs to be exposed
+     */
+    private           boolean             exposed;
+    /**
      * The provider instance
      * Disable serialize
      */
@@ -114,10 +118,6 @@ public class ProviderStub<T> {
      * The provider url
      */
     private           Url                 url;
-    /**
-     * Indicates whether the provider needs to be exposed
-     */
-    private           boolean             exposed;
     /**
      * Indicator used to identify whether the provider already been registered
      */
