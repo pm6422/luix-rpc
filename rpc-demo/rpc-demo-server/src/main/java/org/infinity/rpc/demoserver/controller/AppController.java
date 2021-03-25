@@ -7,6 +7,7 @@ import org.infinity.rpc.democommon.service.AppService;
 import org.infinity.rpc.demoserver.component.HttpHeaderCreator;
 import org.infinity.rpc.demoserver.exception.NoDataFoundException;
 import org.infinity.rpc.demoserver.repository.AppRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ public class AppController {
     private final HttpHeaderCreator httpHeaderCreator;
 
     public AppController(AppRepository appRepository,
-                         AppService appService,
+                         @Qualifier("appService1Impl") AppService appService,
                          HttpHeaderCreator httpHeaderCreator) {
         this.appRepository = appRepository;
         this.appService = appService;
@@ -82,7 +83,9 @@ public class AppController {
     @DeleteMapping("/api/app/apps/{name}")
     public ResponseEntity<Void> delete(@ApiParam(value = "应用名称", required = true) @PathVariable String name) {
         log.debug("REST request to delete app: {}", name);
-        appRepository.findById(name).orElseThrow(() -> new NoDataFoundException(name));
+        if (!appRepository.existsById(name)) {
+            throw new NoDataFoundException(name);
+        }
         appRepository.deleteById(name);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", name)).build();
     }

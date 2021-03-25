@@ -144,7 +144,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
             // Register provider stub first
             boolean registered = registerProviderStubBeans(registry, beanNameGenerator, providerScanner, scanBasePackage);
             if (registered) {
-                // Then register provider beans beans
+                // Then register provider beans
                 registerProviderBeans(providerScanner, scanBasePackage);
                 log.info("Registered RPC provider instances to spring context");
             }

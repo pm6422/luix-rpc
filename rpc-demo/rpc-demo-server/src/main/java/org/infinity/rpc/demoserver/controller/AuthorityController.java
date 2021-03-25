@@ -89,7 +89,9 @@ public class AuthorityController {
     @DeleteMapping("/api/authority/authorities/{name}")
     public ResponseEntity<Void> delete(@ApiParam(value = "权限名称", required = true) @PathVariable String name) {
         log.debug("REST request to delete authority: {}", name);
-        authorityRepository.findById(name).orElseThrow(() -> new NoDataFoundException(name));
+        if (!authorityRepository.existsById(name)) {
+            throw new NoDataFoundException(name);
+        }
         authorityRepository.deleteById(name);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", name)).build();
     }

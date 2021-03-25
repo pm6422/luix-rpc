@@ -14,13 +14,13 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
-@Provider(maxRetries = 1)
+@Provider(group = "v1", maxRetries = 1)
 @Slf4j
-public class AppServiceImpl implements AppService {
+public class AppService1Impl implements AppService {
 
     private final AppRepository appRepository;
 
-    public AppServiceImpl(AppRepository appRepository) {
+    public AppService1Impl(AppRepository appRepository) {
         this.appRepository = appRepository;
     }
 
