@@ -58,6 +58,8 @@ public @interface Consumer {
     String loadBalancer() default "";
 
     /**
+     * Used to distinguish between different implementations of service provider interface
+     *
      * @return group
      */
     String group() default "";

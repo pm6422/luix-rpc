@@ -36,6 +36,11 @@ public @interface Provider {
      */
 //    String registry() default "";
 
+    /**
+     * Used to distinguish between different implementations of service provider interface
+     *
+     * @return group
+     */
     String group() default "";
 
     /**

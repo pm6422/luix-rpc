@@ -68,12 +68,8 @@ public class ProviderStub<T> {
      * Protocol
      */
     private           String              protocol;
-//    /**
-//     * Registry
-//     */
-//    private           String              registry;
     /**
-     * Group
+     * Used to distinguish between different implementations of service provider interface
      */
     private           String              group;
     /**

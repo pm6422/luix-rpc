@@ -81,7 +81,7 @@ public class ConsumerStub<T> {
      */
     private String   loadBalancer;
     /**
-     * Group
+     * Used to distinguish between different implementations of service provider interface
      */
     private String   group;
     /**
