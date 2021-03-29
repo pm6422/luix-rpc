@@ -93,32 +93,32 @@ public class ZookeeperUtils {
     }
 
     /**
-     * Get all the provider groups
+     * Get all the provider forms
      *
      * @param zkClient zk client
-     * @return provider groups
+     * @return provider forms
      */
-    public static List<String> getAllProviderGroups(ZkClient zkClient) {
+    public static List<String> getAllProviderFroms(ZkClient zkClient) {
         return getChildNodeNames(zkClient, PROVIDER_PATH);
     }
 
     /**
-     * Get providers by group
+     * Get providers by form
      *
      * @param zkClient zk client
-     * @param group    group
-     * @return provider with status group
+     * @param form     form
+     * @return provider with status form
      */
-    public static Map<String, Map<String, List<AddressInfo>>> getAllProviders(ZkClient zkClient, String group) {
-        List<String> providerPaths = getProvidersByGroup(zkClient, group);
+    public static Map<String, Map<String, List<AddressInfo>>> getAllProviders(ZkClient zkClient, String form) {
+        List<String> providerPaths = getProvidersByForm(zkClient, form);
         Map<String, Map<String, List<AddressInfo>>> results = new HashMap<>(providerPaths.size());
         for (String providerPath : providerPaths) {
             Map<String, List<AddressInfo>> providersPerStatus = new HashMap<>();
-            List<AddressInfo> activeProviders = getProviderAddresses(zkClient, group, providerPath, ZookeeperStatusNode.ACTIVE);
+            List<AddressInfo> activeProviders = getProviderAddresses(zkClient, form, providerPath, ZookeeperStatusNode.ACTIVE);
             providersPerStatus.put(ZookeeperStatusNode.ACTIVE.getValue(), activeProviders);
-            List<AddressInfo> inactiveProviders = getProviderAddresses(zkClient, group, providerPath, ZookeeperStatusNode.INACTIVE);
+            List<AddressInfo> inactiveProviders = getProviderAddresses(zkClient, form, providerPath, ZookeeperStatusNode.INACTIVE);
             providersPerStatus.put(ZookeeperStatusNode.INACTIVE.getValue(), inactiveProviders);
-            List<AddressInfo> clientProviders = getProviderAddresses(zkClient, group, providerPath, ZookeeperStatusNode.CLIENT);
+            List<AddressInfo> clientProviders = getProviderAddresses(zkClient, form, providerPath, ZookeeperStatusNode.CLIENT);
             providersPerStatus.put(ZookeeperStatusNode.CLIENT.getValue(), clientProviders);
 
             results.put(providerPath, providersPerStatus);
@@ -127,50 +127,50 @@ public class ZookeeperUtils {
     }
 
     /**
-     * Get providers by group
+     * Get providers by form
      *
      * @param zkClient zk client
-     * @param group    group
+     * @param form     provider form
      * @return provider names
      */
-    public static List<String> getProvidersByGroup(ZkClient zkClient, String group) {
-        return getChildNodeNames(zkClient, getGroupPath(group));
+    public static List<String> getProvidersByForm(ZkClient zkClient, String form) {
+        return getChildNodeNames(zkClient, getFormPath(form));
     }
 
     /**
-     * Get the group node full path
+     * Get the form node full path
      *
      * @param url url
-     * @return group node full path
+     * @return form node full path
      */
-    public static String getGroupPath(Url url) {
-        return getGroupPath(url.getForm());
+    public static String getFormPath(Url url) {
+        return getFormPath(url.getForm());
     }
 
     /**
-     * Get the full path of provider group node
+     * Get the full path of provider form node
      *
-     * @param group group
-     * @return group node full path
+     * @param form form
+     * @return form node full path
      */
-    public static String getGroupPath(String group) {
-        return PROVIDER_PATH + PATH_SEPARATOR + group;
+    public static String getFormPath(String form) {
+        return PROVIDER_PATH + PATH_SEPARATOR + form;
     }
 
     /**
      * @param zkClient     zk client
-     * @param group        provider group
+     * @param form         provider form
      * @param providerPath provider path
      * @param statusNode   status
      * @return provider addresses
      */
-    public static List<AddressInfo> getProviderAddresses(ZkClient zkClient, String group, String providerPath,
+    public static List<AddressInfo> getProviderAddresses(ZkClient zkClient, String form, String providerPath,
                                                          ZookeeperStatusNode statusNode) {
         List<AddressInfo> result = new ArrayList<>();
-        List<String> providerAddressNames = getChildNodeNames(zkClient, getProviderStatusNodePath(group, providerPath, statusNode));
+        List<String> providerAddressNames = getChildNodeNames(zkClient, getProviderStatusNodePath(form, providerPath, statusNode));
         for (String providerAddressName : providerAddressNames) {
             AddressInfo addressInfo = new AddressInfo();
-            String providerAddressFilePath = getProviderAddressFilePath(group, providerPath, statusNode, providerAddressName);
+            String providerAddressFilePath = getProviderAddressFilePath(form, providerPath, statusNode, providerAddressName);
             String info = zkClient.readData(providerAddressFilePath, true);
             addressInfo.setAddress(providerAddressName);
             addressInfo.setContents(info);
@@ -191,20 +191,20 @@ public class ZookeeperUtils {
     }
 
     /**
-     * Get the provider address node full path under specified group and status node
+     * Get the provider address node full path under specified form and status node
      *
-     * @param group        zookeeper group node
+     * @param form         zookeeper form node
      * @param providerPath provider class fully-qualified name
      * @param node         status node
      * @param address      provider address
      * @return provider status node full path
      */
-    public static String getProviderAddressFilePath(String group, String providerPath, ZookeeperStatusNode node, String address) {
-        return getProviderStatusNodePath(group, providerPath, node) + PATH_SEPARATOR + address;
+    public static String getProviderAddressFilePath(String form, String providerPath, ZookeeperStatusNode node, String address) {
+        return getProviderStatusNodePath(form, providerPath, node) + PATH_SEPARATOR + address;
     }
 
     /**
-     * Get the provider status node full path under specified group and status node
+     * Get the provider status node full path under specified form and status node
      *
      * @param url  url
      * @param node zookeeper active status node
@@ -215,19 +215,19 @@ public class ZookeeperUtils {
     }
 
     /**
-     * Get the provider status node full path under specified group and status node
+     * Get the provider status node full path under specified form and status node
      *
-     * @param group        zookeeper group node
+     * @param form         zookeeper form node
      * @param providerPath provider class fully-qualified name
      * @param node         status node
      * @return provider status node full path
      */
-    public static String getProviderStatusNodePath(String group, String providerPath, ZookeeperStatusNode node) {
-        return getProviderPath(group, providerPath) + PATH_SEPARATOR + node.getValue();
+    public static String getProviderStatusNodePath(String form, String providerPath, ZookeeperStatusNode node) {
+        return getProviderPath(form, providerPath) + PATH_SEPARATOR + node.getValue();
     }
 
     /**
-     * Get the provider full path under specified group node
+     * Get the provider full path under specified form node
      *
      * @param url url
      * @return provider full path
@@ -237,14 +237,14 @@ public class ZookeeperUtils {
     }
 
     /**
-     * Get the provider full path under specified group node
+     * Get the provider full path under specified form node
      *
-     * @param group        group
+     * @param form         form
      * @param providerPath provider class fully-qualified name
      * @return provider full path
      */
-    public static String getProviderPath(String group, String providerPath) {
-        return getGroupPath(group) + PATH_SEPARATOR + providerPath;
+    public static String getProviderPath(String form, String providerPath) {
+        return getFormPath(form) + PATH_SEPARATOR + providerPath;
     }
 
     /**
@@ -254,7 +254,7 @@ public class ZookeeperUtils {
      * @return command full path
      */
     public static String getCommandPath(Url url) {
-        return getGroupPath(url) + REGISTRY_COMMAND;
+        return getFormPath(url) + REGISTRY_COMMAND;
     }
 
     /**

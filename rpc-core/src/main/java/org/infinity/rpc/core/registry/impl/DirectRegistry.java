@@ -113,7 +113,7 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
     }
 
     @Override
-    public List<String> getAllProviderGroups() {
+    public List<String> getAllProviderForms() {
         throw new UnsupportedOperationException();
     }
 

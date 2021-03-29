@@ -63,7 +63,7 @@ public interface Registrable {
     /**
      *
      */
-    List<String> getAllProviderGroups();
+    List<String> getAllProviderForms();
     /**
      *
      */

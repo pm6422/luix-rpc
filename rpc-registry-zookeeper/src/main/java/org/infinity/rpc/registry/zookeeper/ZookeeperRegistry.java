@@ -228,8 +228,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     @Override
-    public List<String> getAllProviderGroups() {
-        return ZookeeperUtils.getAllProviderGroups(zkClient);
+    public List<String> getAllProviderForms() {
+        return ZookeeperUtils.getAllProviderFroms(zkClient);
     }
 
     @Override
@@ -443,7 +443,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     public List<String> discoverActiveProviderAddress(String providerPath) {
         List<String> addrFiles = new ArrayList<>();
         try {
-            List<String> groups = ZookeeperUtils.getAllProviderGroups(zkClient);
+            List<String> groups = ZookeeperUtils.getAllProviderFroms(zkClient);
             if (CollectionUtils.isEmpty(groups)) {
                 return addrFiles;
             }

@@ -23,13 +23,13 @@ public class ZookeeperRegistryServiceImpl implements RegistryService {
     @Deprecated
     @Override
     public List<String> getGroups() {
-        return ZookeeperUtils.getAllProviderGroups(zkClient);
+        return ZookeeperUtils.getAllProviderFroms(zkClient);
     }
 
     @Deprecated
     @Override
     public List<String> getProvidersByGroup(String group) {
-        return ZookeeperUtils.getProvidersByGroup(zkClient, group);
+        return ZookeeperUtils.getProvidersByForm(zkClient, group);
     }
 
     @Deprecated

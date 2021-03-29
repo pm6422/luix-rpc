@@ -57,7 +57,7 @@ public class ServiceDiscoveryController {
     public ResponseEntity<List<String>> findProviderGroups(@ApiParam(value = "URL", required = true)
                                                            @RequestParam(value = "url") String url) {
         Registry registry = registryService.findRegistry(url);
-        return ResponseEntity.ok(registry.getAllProviderGroups());
+        return ResponseEntity.ok(registry.getAllProviderForms());
     }
 
     @ApiOperation("获取所有服务提供者")
