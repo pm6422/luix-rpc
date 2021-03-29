@@ -21,7 +21,7 @@ public abstract class ProviderConsumerStubBeanNameBuilder {
     /**
      * Group(Optional)
      */
-    protected              String      group;
+    protected              String      form;
     /**
      * Version(Optional)
      */
@@ -42,7 +42,7 @@ public abstract class ProviderConsumerStubBeanNameBuilder {
         // Required
         append(beanNameBuilder, interfaceClassName);
         // Optional
-        append(beanNameBuilder, group);
+        append(beanNameBuilder, form);
         append(beanNameBuilder, version);
         String rawBeanName = beanNameBuilder.toString();
         // Resolve placeholders

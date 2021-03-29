@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.LOCAL_ADDRESS_FACTORY;
-import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
+import static org.infinity.rpc.core.constant.ServiceConstants.FORM;
 
 /**
  * todo: CommandServiceManager
@@ -118,7 +118,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     @EventReceiver("providersChangeEvent")
     @Override
     public void onNotify(Url clientUrl, Url registryUrl, List<Url> providerUrls) {
-        String group = clientUrl.getGroup();
+        String group = clientUrl.getForm();
         activeProviderUrlsPerGroup.put(group, providerUrls);
 
         List<Url> providerUrlList;
@@ -180,7 +180,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
                 if (!weights.containsKey(gk)) {
                     activeProviderUrlsPerGroup.remove(gk);
                     Url urlTemp = urlCopy.copy();
-                    urlTemp.addOption(GROUP, gk);
+                    urlTemp.addOption(FORM, gk);
                     registry.unsubscribeServiceListener(urlTemp, this);
                 }
             }
@@ -351,7 +351,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
                 finalResult.addAll(activeProviderUrlsPerGroup.get(key));
             } else {
                 Url urlTemp = providerUrl.copy();
-                urlTemp.addOption(GROUP, key);
+                urlTemp.addOption(FORM, key);
                 finalResult.addAll(discoverActiveProvidersByGroup(urlTemp));
                 registry.subscribeServiceListener(urlTemp, this);
             }
@@ -366,7 +366,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
      * @return active provider urls
      */
     private List<Url> discoverActiveProvidersByGroup(Url clientUrl) {
-        String group = clientUrl.getGroup();
+        String group = clientUrl.getForm();
         List<Url> providerUrls = activeProviderUrlsPerGroup.get(group);
         if (providerUrls == null) {
             providerUrls = registry.discoverActiveProviders(clientUrl);

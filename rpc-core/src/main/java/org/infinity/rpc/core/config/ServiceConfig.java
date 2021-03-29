@@ -9,10 +9,10 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 @Data
 public abstract class ServiceConfig implements Configurable {
     /**
-     * Group
+     * Used to distinguish between different implementations of RPC service interface
      */
     @NotEmpty
-    private String group          = GROUP_VAL_DEFAULT;
+    private String form           = FORM_VAL_DEFAULT;
     /**
      * Version
      */

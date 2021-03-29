@@ -50,7 +50,7 @@ public class ServiceCallTests extends ZkBaseTest {
         providerStub.setInterfaceName(TestService.class.getName());
         providerStub.setInstance(new TestServiceImpl());
         providerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
-        providerStub.setGroup(GROUP);
+        providerStub.setForm(GROUP);
         providerStub.setVersion("1.0.0");
         providerStub.init();
 
@@ -86,7 +86,7 @@ public class ServiceCallTests extends ZkBaseTest {
         consumerStub.setCluster(CLUSTER_VAL_DEFAULT);
         consumerStub.setFaultTolerance(FAULT_TOLERANCE_VAL_FAILOVER);
         consumerStub.setLoadBalancer(LOAD_BALANCER_VAL_RANDOM);
-        consumerStub.setGroup(GROUP);
+        consumerStub.setForm(GROUP);
         consumerStub.setVersion("1.0.0");
         consumerStub.setProxy(PROXY_VAL_JDK);
         consumerStub.setHealthChecker(HEALTH_CHECKER_VAL_DEFAULT);

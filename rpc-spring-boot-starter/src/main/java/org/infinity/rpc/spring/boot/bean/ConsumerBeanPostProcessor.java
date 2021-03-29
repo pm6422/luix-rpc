@@ -276,9 +276,9 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
             addPropertyValue(builder, LOAD_BALANCER, annotation.loadBalancer());
         }
         if (StringUtils.isEmpty(annotation.group())) {
-            addPropertyValue(builder, GROUP, infinityProperties.getConsumer().getGroup());
+            addPropertyValue(builder, FORM, infinityProperties.getConsumer().getForm());
         } else {
-            addPropertyValue(builder, GROUP, annotation.group());
+            addPropertyValue(builder, FORM, annotation.group());
         }
         if (StringUtils.isEmpty(annotation.version())) {
             addPropertyValue(builder, VERSION, infinityProperties.getConsumer().getVersion());

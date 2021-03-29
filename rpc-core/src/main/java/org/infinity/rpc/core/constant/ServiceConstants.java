@@ -10,8 +10,8 @@ public interface ServiceConstants {
     String INTERFACE_NAME  = "interfaceName";
     String INTERFACE_CLASS = "interfaceClass";
 
-    String GROUP                       = "group";
-    String GROUP_VAL_DEFAULT           = "default";
+    String FORM                        = "form";
+    String FORM_VAL_DEFAULT            = "default";
     String VERSION                     = "version";
     String VERSION_VAL_DEFAULT         = "1.0.0";
     String HEALTH_CHECKER              = "healthChecker";

@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
-@Provider(group = "f1", maxRetries = 1)
+@Provider(form = "f1", maxRetries = 1)
 @Slf4j
 public class AppService1Impl implements AppService {
 

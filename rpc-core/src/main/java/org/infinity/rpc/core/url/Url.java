@@ -116,7 +116,7 @@ public final class Url implements Serializable {
     public static Url providerUrl(String protocol, String host, Integer port, String path, String group, String version) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
         if (StringUtils.isNotEmpty(group)) {
-            options.put(GROUP, group);
+            options.put(FORM, group);
         }
         if (StringUtils.isNotEmpty(version)) {
             options.put(VERSION, version);
@@ -140,7 +140,7 @@ public final class Url implements Serializable {
     public static Url consumerUrl(String protocol, String host, Integer port, String path, String group, String version) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
         if (StringUtils.isNotEmpty(group)) {
-            options.put(GROUP, group);
+            options.put(FORM, group);
         }
         if (StringUtils.isNotEmpty(version)) {
             options.put(VERSION, version);
@@ -162,7 +162,7 @@ public final class Url implements Serializable {
     public static Url clientUrl(String protocol, String host, String path, String group, String version) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
         if (StringUtils.isNotEmpty(group)) {
-            options.put(GROUP, group);
+            options.put(FORM, group);
         }
         if (StringUtils.isNotEmpty(version)) {
             options.put(VERSION, version);
@@ -181,7 +181,7 @@ public final class Url implements Serializable {
      */
     public static Url registryUrl(String protocol, String host, Integer port) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
-        options.put(GROUP, GROUP_VAL_DEFAULT);
+        options.put(FORM, FORM_VAL_DEFAULT);
         options.put(VERSION, VERSION_VAL_DEFAULT);
         options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_REGISTRY);
         return of(protocol, host, port, Registry.class.getName(), options);
@@ -292,7 +292,7 @@ public final class Url implements Serializable {
             return protocol + PROTOCOL_SEPARATOR + host + ":" + port;
         }
         return protocol + PROTOCOL_SEPARATOR + host + ":" + port
-                + "/" + getGroup()
+                + "/" + getForm()
                 + "/" + getPath()
                 + "/" + getVersion()
                 + "/" + getOption(PARAM_TYPE, PARAM_TYPE_PROVIDER);
@@ -379,8 +379,8 @@ public final class Url implements Serializable {
         return builder.toString();
     }
 
-    public String getGroup() {
-        return getOption(GROUP, GROUP_VAL_DEFAULT);
+    public String getForm() {
+        return getOption(FORM, FORM_VAL_DEFAULT);
     }
 
     public String getVersion() {
@@ -399,7 +399,7 @@ public final class Url implements Serializable {
      * @return combination string
      */
     public String toSimpleString() {
-        return getUri() + "?group=" + getGroup() + "&version=" + getVersion();
+        return getUri() + "?group=" + getForm() + "&version=" + getVersion();
     }
 
     public String getUri() {

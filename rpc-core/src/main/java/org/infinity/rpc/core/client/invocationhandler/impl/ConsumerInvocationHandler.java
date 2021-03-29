@@ -54,7 +54,7 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
         request.setMethodArguments(args);
 
         // Set some options
-        request.addOption(GROUP, consumerStub.getGroup());
+        request.addOption(FORM, consumerStub.getForm());
         request.addOption(VERSION, consumerStub.getVersion());
         request.addOption(HEALTH_CHECKER, consumerStub.getHealthChecker());
         request.addOption(REQUEST_TIMEOUT, consumerStub.getRequestTimeout(), REQUEST_TIMEOUT_VAL_DEFAULT);

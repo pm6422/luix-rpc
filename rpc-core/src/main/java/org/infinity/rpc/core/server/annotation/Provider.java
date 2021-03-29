@@ -41,7 +41,7 @@ public @interface Provider {
      *
      * @return group
      */
-    String group() default "";
+    String form() default "";
 
     /**
      * @return version

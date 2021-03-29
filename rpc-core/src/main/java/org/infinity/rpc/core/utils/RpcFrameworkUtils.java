@@ -14,8 +14,8 @@ import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER;
 
 public class RpcFrameworkUtils {
 
-    public static String getGroupFromRequest(Requestable request) {
-        return getValueFromRequest(request, ServiceConstants.GROUP, ServiceConstants.GROUP_VAL_DEFAULT);
+    public static String getFormFromRequest(Requestable request) {
+        return getValueFromRequest(request, ServiceConstants.FORM, ServiceConstants.FORM_VAL_DEFAULT);
     }
 
     public static String getVersionFromRequest(Requestable request) {
@@ -30,7 +30,6 @@ public class RpcFrameworkUtils {
         return value;
     }
 
-
     /**
      * 目前根据 group/interface/version 来唯一标示一个服务
      *
@@ -40,7 +39,7 @@ public class RpcFrameworkUtils {
 
     public static String getServiceKey(Requestable request) {
         String version = getVersionFromRequest(request);
-        String group = getGroupFromRequest(request);
+        String group = getFormFromRequest(request);
         return getServiceKey(group, request.getInterfaceName(), version);
     }
 
@@ -51,7 +50,7 @@ public class RpcFrameworkUtils {
      * @return
      */
     public static String getServiceKey(Url url) {
-        return getServiceKey(url.getGroup(), url.getPath(), url.getVersion());
+        return getServiceKey(url.getForm(), url.getPath(), url.getVersion());
     }
 
     /**
@@ -62,7 +61,7 @@ public class RpcFrameworkUtils {
      */
     public static String getProtocolKey(Url url) {
         return url.getProtocol() + RpcConstants.PROTOCOL_SEPARATOR + url.getAddress() + RpcConstants.PATH_SEPARATOR
-                + url.getGroup() + RpcConstants.PATH_SEPARATOR + url.getPath() + RpcConstants.PATH_SEPARATOR + url.getVersion();
+                + url.getForm() + RpcConstants.PATH_SEPARATOR + url.getPath() + RpcConstants.PATH_SEPARATOR + url.getVersion();
     }
 
     /**
@@ -86,7 +85,7 @@ public class RpcFrameworkUtils {
     }
 
     public static String getGroupMethodString(Requestable request) {
-        return getGroupFromRequest(request) + "_" + getFullMethodString(request);
+        return getFormFromRequest(request) + "_" + getFullMethodString(request);
     }
 
 

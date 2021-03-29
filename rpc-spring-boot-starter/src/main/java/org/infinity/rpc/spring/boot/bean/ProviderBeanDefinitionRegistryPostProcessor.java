@@ -244,7 +244,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         Class<?> providerInterfaceClass = resolveProviderInterface(providerAnnotation, providerInstanceClass);
 
         String providerStubBeanName = buildProviderStubBeanName(providerInterfaceClass,
-                providerAnnotation.group(), providerAnnotation.version());
+                providerAnnotation.form(), providerAnnotation.version());
         AbstractBeanDefinition stubBeanDefinition = buildProviderStubDefinition(providerStubBeanName,
                 providerInterfaceClass, providerAnnotation, providerBeanDefinitionHolder.getBeanName());
 
@@ -294,14 +294,14 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
      * Build provider stub bean name
      *
      * @param interfaceClass provider interface class
-     * @param group          group
+     * @param form           form
      * @param version        version
      * @return provider stub bean name
      */
-    private String buildProviderStubBeanName(Class<?> interfaceClass, String group, String version) {
+    private String buildProviderStubBeanName(Class<?> interfaceClass, String form, String version) {
         return ProviderStubBeanNameBuilder
                 .builder(interfaceClass.getName(), env)
-                .group(group)
+                .form(form)
                 .version(version)
                 .build();
     }
@@ -332,10 +332,10 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         } else {
             addPropertyValue(builder, PROTOCOL, annotation.protocol());
         }
-        if (StringUtils.isEmpty(annotation.group())) {
-            addPropertyValue(builder, GROUP, providerConfig.getGroup());
+        if (StringUtils.isEmpty(annotation.form())) {
+            addPropertyValue(builder, FORM, providerConfig.getForm());
         } else {
-            addPropertyValue(builder, GROUP, annotation.group());
+            addPropertyValue(builder, FORM, annotation.form());
         }
         if (StringUtils.isEmpty(annotation.version())) {
             addPropertyValue(builder, VERSION, providerConfig.getVersion());

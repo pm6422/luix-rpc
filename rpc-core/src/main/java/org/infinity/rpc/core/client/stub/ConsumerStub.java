@@ -83,7 +83,7 @@ public class ConsumerStub<T> {
     /**
      * Used to distinguish between different implementations of service provider interface
      */
-    private String   group;
+    private String   form;
     /**
      * Version
      */
@@ -181,7 +181,7 @@ public class ConsumerStub<T> {
         url = this.createConsumerUrl(applicationConfig, protocolConfig);
 
         // We do NOT know the host and port of provider right now, so we use client URL
-        clientUrl = Url.clientUrl(protocol, protocolConfig.getHost(), interfaceName, group, version);
+        clientUrl = Url.clientUrl(protocol, protocolConfig.getHost(), interfaceName, form, version);
         clientUrl.addOption(THROW_EXCEPTION, String.valueOf(protocolConfig.isThrowException()));
 
         // Initialize provider invoker cluster before consumer initialization
@@ -207,7 +207,7 @@ public class ConsumerStub<T> {
      * @return consumer url
      */
     private Url createConsumerUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
-        url = Url.consumerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, group, version);
+        url = Url.consumerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
 
         url.addOption(Url.PARAM_APP, applicationConfig.getName());
         url.addOption(CODEC, protocolConfig.getCodec());
@@ -243,7 +243,7 @@ public class ConsumerStub<T> {
         for (Pair<String, Integer> providerHostPortPair : directUrlHostPortList) {
             // Note: There are no extra options added to the direct provider url
             Url providerUrl = Url.providerUrl(PROTOCOL_VAL_INFINITY, providerHostPortPair.getLeft(),
-                    providerHostPortPair.getRight(), interfaceName, group, version);
+                    providerHostPortPair.getRight(), interfaceName, form, version);
             // Please refer to ProviderStub for direct provider url options
             providerUrl.addOption(CODEC, protocolConfig.getCodec());
             providerUrl.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());

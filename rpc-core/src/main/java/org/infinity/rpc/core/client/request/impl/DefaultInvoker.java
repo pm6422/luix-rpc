@@ -14,7 +14,7 @@ import org.infinity.rpc.core.url.Url;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY;
 import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY_VAL_NETTY;
-import static org.infinity.rpc.core.constant.ServiceConstants.GROUP;
+import static org.infinity.rpc.core.constant.ServiceConstants.FORM;
 
 
 /**
@@ -50,7 +50,7 @@ public class DefaultInvoker extends AbstractInvoker {
     protected Responseable doInvoke(Requestable request) {
         try {
             // 为了能够实现跨group请求，需要使用server端的group。
-            request.addOption(GROUP, providerUrl.getGroup());
+            request.addOption(FORM, providerUrl.getForm());
             return client.request(request);
         } catch (TransportException exception) {
             throw new RpcServiceException("DefaultRpcReferer call Error: url=" + providerUrl.getUri(), exception);

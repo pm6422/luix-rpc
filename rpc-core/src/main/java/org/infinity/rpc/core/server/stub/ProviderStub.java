@@ -71,7 +71,7 @@ public class ProviderStub<T> {
     /**
      * Used to distinguish between different implementations of service provider interface
      */
-    private           String              group;
+    private           String              form;
     /**
      * Version
      */
@@ -186,7 +186,7 @@ public class ProviderStub<T> {
      * @return provider url
      */
     private Url createProviderUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, RegistryConfig registryConfig) {
-        url = Url.providerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, group, version);
+        url = Url.providerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
         url.addOption(Url.PARAM_APP, applicationConfig.getName());
         url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());

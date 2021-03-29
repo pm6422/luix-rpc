@@ -144,7 +144,7 @@ public class ZookeeperUtils {
      * @return group node full path
      */
     public static String getGroupPath(Url url) {
-        return getGroupPath(url.getGroup());
+        return getGroupPath(url.getForm());
     }
 
     /**
@@ -211,7 +211,7 @@ public class ZookeeperUtils {
      * @return provider status node full path
      */
     public static String getProviderStatusNodePath(Url url, ZookeeperStatusNode node) {
-        return getProviderStatusNodePath(url.getGroup(), url.getPath(), node);
+        return getProviderStatusNodePath(url.getForm(), url.getPath(), node);
     }
 
     /**
@@ -233,7 +233,7 @@ public class ZookeeperUtils {
      * @return provider full path
      */
     public static String getProviderPath(Url url) {
-        return getProviderPath(url.getGroup(), url.getPath());
+        return getProviderPath(url.getForm(), url.getPath());
     }
 
     /**

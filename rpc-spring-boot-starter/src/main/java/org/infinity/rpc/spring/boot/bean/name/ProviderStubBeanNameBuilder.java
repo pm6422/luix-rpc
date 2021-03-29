@@ -20,7 +20,7 @@ import org.springframework.core.env.Environment;
 
 /**
  * RPC provider {@link org.infinity.rpc.core.server.annotation.Provider} stub bean name builder
- * RPC provider interface only can have multiple implementations with different group or version.
+ * RPC provider interface only can have multiple implementations with different form or version.
  */
 public class ProviderStubBeanNameBuilder extends ProviderConsumerStubBeanNameBuilder {
 
@@ -35,8 +35,8 @@ public class ProviderStubBeanNameBuilder extends ProviderConsumerStubBeanNameBui
         return new ProviderStubBeanNameBuilder(interfaceClassName, environment);
     }
 
-    public ProviderStubBeanNameBuilder group(String group) {
-        this.group = group;
+    public ProviderStubBeanNameBuilder form(String form) {
+        this.form = form;
         return this;
     }
 
