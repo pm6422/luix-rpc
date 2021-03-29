@@ -2,9 +2,9 @@ package org.infinity.rpc.democlient.controller;
 
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.democlient.component.HttpHeaderCreator;
 import org.infinity.rpc.democlient.exception.NoDataFoundException;
-import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.democommon.domain.App;
 import org.infinity.rpc.democommon.service.AppService;
 import org.springframework.data.domain.Page;
@@ -27,7 +27,7 @@ import static org.infinity.rpc.democlient.utils.HttpHeaderUtils.generatePageHead
 @Slf4j
 public class AppController {
 
-    @Consumer(requestTimeout = 10000)
+    @Consumer(group = "f1", requestTimeout = 10000)
     private AppService appService;
 
     private final HttpHeaderCreator httpHeaderCreator;

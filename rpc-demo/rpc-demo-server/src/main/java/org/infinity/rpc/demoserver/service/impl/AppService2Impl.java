@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
-@Provider(group = "v2", maxRetries = 1)
+@Provider(group = "f2", maxRetries = 1)
 @Slf4j
 public class AppService2Impl implements AppService {
 
@@ -37,7 +37,7 @@ public class AppService2Impl implements AppService {
     @Override
     public FutureResponse insert(App domain) {
         appRepository.save(domain);
-        log.debug("Created Information for app: {}", domain);
+        log.debug("Created information for app: {}", domain);
         FutureResponse response = new RpcFutureResponse();
         response.onSuccess(RpcResponse.of(domain));
         return response;
