@@ -47,4 +47,9 @@ public class RegistryServiceImpl implements RegistryService, InitializingBean {
     public Registry findRegistry(String urlIdentity) {
         return REGISTRY_MAP.get(urlIdentity);
     }
+
+    @Override
+    public Object getAllApps() {
+        return null;
+    }
 }

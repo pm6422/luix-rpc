@@ -101,19 +101,10 @@ public class RpcLifecycle {
             if (!registryConfig.getName().equals(REGISTRY_VAL_DIRECT)) {
                 // Non-direct registry
 
-                // Publish application first
-                publishApplication(infinityProperties, registryConfig);
                 // Publish providers next
                 publishProviders(infinityProperties, registryConfig);
             }
         });
-    }
-
-    private void publishApplication(InfinityProperties infinityProperties, RegistryConfig registryConfig) {
-        ApplicationExtConfig application = getApplicationExtConfig(infinityProperties.getApplication());
-        registryConfig.getRegistryImpl().registerApplication(application);
-        log.debug("Registered RPC server application [{}] to registry [{}]",
-                infinityProperties.getApplication().getName(), registryConfig.getName());
     }
 
     private void publishProviders(InfinityProperties infinityProperties, RegistryConfig registryConfig) {

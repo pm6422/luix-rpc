@@ -1,7 +1,5 @@
 package org.infinity.rpc.registry.zookeeper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.IZkDataListener;
@@ -13,7 +11,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.zookeeper.Watcher;
-import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.registry.AddressInfo;
 import org.infinity.rpc.core.registry.CommandFailbackAbstractRegistry;
 import org.infinity.rpc.core.registry.listener.CommandListener;
@@ -37,6 +34,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static org.infinity.rpc.core.constant.ProviderConstants.EXPOSED;
 import static org.infinity.rpc.core.constant.RpcConstants.PATH_SEPARATOR;
+import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.PROVIDER_PATH;
 
 /**
  * Zookeeper registry implementation used to subscribe, unsubscribe, register or unregister data.
@@ -178,63 +176,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         }
     }
 
-    /**
-     * Register application info to registry
-     * Create zookeeper persistent directory and ephemeral root node
-     *
-     * @param application application info
-     */
-    @Override
-    public void registerApplication(ApplicationExtConfig application) {
-        // Create data under 'application' node
-        String appNodePath = ZookeeperUtils.getAppPath(application.getName());
-        if (!zkClient.exists(appNodePath)) {
-            // Create a persistent directory
-            zkClient.createPersistent(appNodePath, true);
-        }
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            String jsonStr = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(application);
-            zkClient.delete(ZookeeperUtils.getAppInfoFilePath(application.getName()));
-            zkClient.createEphemeral(ZookeeperUtils.getAppInfoFilePath(application.getName()), jsonStr);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(MessageFormat.format("Failed to register application [{0}] to zookeeper [{1}] with the error: {2}",
-                    application.getName(), getRegistryUrl(), e.getMessage()), e);
-        }
-    }
-
-    /**
-     * Register application provider info to registry
-     * Create zookeeper persistent directory and ephemeral root node
-     *
-     * @param appName     application name
-     * @param providerUrl provider url
-     */
-    @Override
-    public void registerApplicationProvider(String appName, Url providerUrl) {
-        // Create data under 'application-providers/app-name' node
-        String appNodePath = ZookeeperUtils.getAppProviderPath(appName);
-        if (!zkClient.exists(appNodePath)) {
-            // Create a persistent directory
-            zkClient.createPersistent(appNodePath, true);
-        }
-
-        String filePath = appNodePath + PATH_SEPARATOR + providerUrl.getPath();
-        // Create a temporary file which content is the full string of the url
-        // And temporary files will be deleted automatically after closed zk session
-        // Append multiple provider url to file contents
-        zkClient.delete(filePath);
-        zkClient.createEphemeral(filePath, providerUrl.toFullStr());
-    }
-
     @Override
     public List<String> getAllProviderForms() {
-        return ZookeeperUtils.getAllProviderFroms(zkClient);
-    }
-
-    @Override
-    public List<ApplicationExtConfig> getAllApps() {
-        return ZookeeperUtils.getAllAppInfo(zkClient);
+        return ZookeeperUtils.getChildrenNames(zkClient, PROVIDER_PATH);
     }
 
     @Override
@@ -400,7 +344,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     protected List<Url> discoverActiveProviders(Url clientUrl) {
         try {
             String parentPath = ZookeeperUtils.getProviderStatusNodePath(clientUrl, ZookeeperStatusNode.ACTIVE);
-            List<String> addrFiles = ZookeeperUtils.getChildNodeNames(zkClient, parentPath);
+            List<String> addrFiles = ZookeeperUtils.getChildrenNames(zkClient, parentPath);
             return readProviderUrls(parentPath, addrFiles);
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to discover provider [{0}] from registry [{1}] with the error: {2}", clientUrl, getRegistryUrl(), e.getMessage()), e);
@@ -443,13 +387,13 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     public List<String> discoverActiveProviderAddress(String providerPath) {
         List<String> addrFiles = new ArrayList<>();
         try {
-            List<String> groups = ZookeeperUtils.getAllProviderFroms(zkClient);
+            List<String> groups = ZookeeperUtils.getChildrenNames(zkClient, PROVIDER_PATH);
             if (CollectionUtils.isEmpty(groups)) {
                 return addrFiles;
             }
             for (String group : groups) {
                 String parentPath = ZookeeperUtils.getProviderStatusNodePath(group, providerPath, ZookeeperStatusNode.ACTIVE);
-                addrFiles.addAll(CollectionUtils.emptyIfNull(ZookeeperUtils.getChildNodeNames(zkClient, parentPath)));
+                addrFiles.addAll(CollectionUtils.emptyIfNull(ZookeeperUtils.getChildrenNames(zkClient, parentPath)));
             }
             return addrFiles;
         } catch (Throwable e) {

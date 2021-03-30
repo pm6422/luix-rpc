@@ -47,8 +47,8 @@ public class ServiceDiscoveryController {
     @GetMapping("api/service-discovery/apps")
     public ResponseEntity<List<ApplicationExtConfig>> findApps(@ApiParam(value = "URL", required = true)
                                                                @RequestParam(value = "url") String url) {
-        Registry registry = registryService.findRegistry(url);
-        return ResponseEntity.ok(registry.getAllApps());
+//        return ResponseEntity.ok(registryService.getAllApps());
+        return null;
     }
 
     @ApiOperation("获取所有服务提供者分组")

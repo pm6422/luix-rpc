@@ -8,8 +8,11 @@ import org.infinity.rpc.registry.zookeeper.ZookeeperStatusNode;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.webcenter.service.RegistryService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.PROVIDER_PATH;
 
 @Slf4j
 public class ZookeeperRegistryServiceImpl implements RegistryService {
@@ -23,7 +26,7 @@ public class ZookeeperRegistryServiceImpl implements RegistryService {
     @Deprecated
     @Override
     public List<String> getGroups() {
-        return ZookeeperUtils.getAllProviderFroms(zkClient);
+        return ZookeeperUtils.getChildrenNames(zkClient, PROVIDER_PATH);
     }
 
     @Deprecated
@@ -47,6 +50,7 @@ public class ZookeeperRegistryServiceImpl implements RegistryService {
     @Deprecated
     @Override
     public List<ApplicationExtConfig> getAllApplications() {
-        return ZookeeperUtils.getAllAppInfo(zkClient);
+        // todo
+        return Collections.emptyList();
     }
 }

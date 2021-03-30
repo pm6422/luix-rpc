@@ -2,7 +2,6 @@ package org.infinity.rpc.core.registry.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.registry.AbstractRegistry;
 import org.infinity.rpc.core.registry.AddressInfo;
 import org.infinity.rpc.core.registry.listener.ClientListener;
@@ -103,22 +102,7 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
     }
 
     @Override
-    public void registerApplication(ApplicationExtConfig app) {
-        // Do nothing
-    }
-
-    @Override
-    public void registerApplicationProvider(String appName, Url providerUrl) {
-        // Do nothing
-    }
-
-    @Override
     public List<String> getAllProviderForms() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<ApplicationExtConfig> getAllApps() {
         throw new UnsupportedOperationException();
     }
 
