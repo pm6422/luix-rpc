@@ -14,12 +14,8 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.Collections;
-
-import static org.infinity.rpc.core.client.stub.ConsumerStub.buildConsumerStubBeanName;
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
-import static org.infinity.rpc.core.server.stub.ProviderStub.buildProviderStubBeanName;
 import static org.junit.Assert.assertEquals;
 
 public class ServiceCallTests extends ZkBaseTest {
@@ -94,8 +90,6 @@ public class ServiceCallTests extends ZkBaseTest {
         consumerStub.setVersion("1.0.0");
         consumerStub.setProxy(PROXY_VAL_JDK);
         consumerStub.setHealthChecker(HEALTH_CHECKER_VAL_DEFAULT);
-        String beanName = buildConsumerStubBeanName(consumerStub.getInterfaceClass(), Collections.emptyMap());
-        consumerStub.setBeanName(beanName);
         consumerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
