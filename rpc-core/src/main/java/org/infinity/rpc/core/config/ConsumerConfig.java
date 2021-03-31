@@ -33,7 +33,7 @@ public class ConsumerConfig extends ServiceConfig {
     /**
      * Indicates whether rate limit enabled or not
      */
-    private             boolean enableRateLimit  = false;
+    private             boolean limitRate;
     /**
      * Permits per second of rate limit
      */

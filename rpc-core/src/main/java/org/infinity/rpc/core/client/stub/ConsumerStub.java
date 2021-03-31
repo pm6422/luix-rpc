@@ -110,16 +110,16 @@ public class ConsumerStub<T> {
      * The max request message payload size in bytes
      */
     @Min(value = 0, message = "The [maxPayload] property of @Consumer must NOT be a positive number!")
-    private Integer  maxPayload;
+    private Integer maxPayload;
     /**
      * Indicates whether rate limit enabled or not
      */
-    private boolean  enableRateLimit;
+    private boolean limitRate;
     /**
      * Addresses of RPC provider used to connect RPC provider directly without third party registry.
      * Multiple addresses are separated by comma.
      */
-    private String   directAddresses;
+    private String  directAddresses;
     /**
      * The consumer url used to export to registry only for consumers discovery management,
      * but it have nothing to do with the service calling.

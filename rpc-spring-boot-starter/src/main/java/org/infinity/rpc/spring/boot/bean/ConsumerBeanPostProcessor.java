@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.core.utils.name.ConsumerStubBeanNameBuilder;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
 import org.springframework.aop.support.AopUtils;
@@ -293,7 +292,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
             addPropertyValue(builder, MAX_RETRIES, annotation.maxRetries());
         }
 
-        addPropertyValue(builder, ENABLE_RATE_LIMIT, infinityProperties.getConsumer().isEnableRateLimit());
+        addPropertyValue(builder, LIMIT_RATE, infinityProperties.getConsumer().isLimitRate());
         addPropertyValue(builder, MAX_PAYLOAD, infinityProperties.getConsumer().getMaxPayload());
         addPropertyValue(builder, DIRECT_ADDRESSES, annotation.directAddresses());
 

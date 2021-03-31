@@ -66,6 +66,6 @@ public abstract class AbstractConsumerInvocationHandler<T> {
     }
 
     private boolean limitRate() {
-        return consumerStub.isEnableRateLimit() && !RateLimiter.getInstance(RATE_LIMITER_GUAVA).tryAcquire();
+        return consumerStub.isLimitRate() && !RateLimiter.getInstance(RATE_LIMITER_GUAVA).tryAcquire();
     }
 }
