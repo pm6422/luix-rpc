@@ -4,11 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.config.ProviderConfig;
-import org.infinity.rpc.core.constant.BooleanEnum;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.spring.boot.bean.name.DefaultBeanNameGenerator;
-import org.infinity.rpc.core.utils.name.ProviderStubBeanNameBuilder;
 import org.infinity.rpc.spring.boot.bean.registry.ClassPathBeanDefinitionRegistryScanner;
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
 import org.springframework.beans.BeansException;
@@ -37,7 +35,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
-import static org.infinity.rpc.core.constant.ProviderConstants.EXPOSED;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.infinity.rpc.core.server.stub.ProviderStub.buildProviderStubBeanName;
 import static org.infinity.rpc.spring.boot.config.InfinityProperties.readProtocolConfig;
@@ -341,11 +338,6 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
             addPropertyValue(builder, MAX_RETRIES, providerConfig.getMaxRetries());
         } else {
             addPropertyValue(builder, MAX_RETRIES, annotation.maxRetries());
-        }
-        if (BooleanEnum.NULL == annotation.exposed()) {
-            addPropertyValue(builder, EXPOSED, providerConfig.isExposed());
-        } else {
-            addPropertyValue(builder, EXPOSED, annotation.exposed().getValue());
         }
 
         addPropertyValue(builder, MAX_PAYLOAD, providerConfig.getMaxPayload());

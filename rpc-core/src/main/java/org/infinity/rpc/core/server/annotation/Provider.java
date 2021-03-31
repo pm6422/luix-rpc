@@ -58,11 +58,4 @@ public @interface Provider {
 
     // The max retry times of RPC request
     int maxRetries() default Integer.MAX_VALUE;
-
-    /**
-     * Indicates whether the provider needs to be exposed to registry
-     *
-     * @return {@code true} if provider exposed and {@code false} otherwise
-     */
-    BooleanEnum exposed() default BooleanEnum.TRUE;
 }

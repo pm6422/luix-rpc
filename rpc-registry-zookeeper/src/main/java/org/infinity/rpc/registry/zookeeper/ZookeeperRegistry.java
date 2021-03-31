@@ -32,7 +32,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static org.apache.commons.io.IOUtils.DIR_SEPARATOR_UNIX;
-import static org.infinity.rpc.core.constant.ProviderConstants.EXPOSED;
 import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.PROVIDER_PATH;
 import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.getProviderAddressFilePath;
 
@@ -219,11 +218,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 activeProviderUrls.addAll(super.getRegisteredProviderUrls());
 
                 for (Url u : super.getRegisteredProviderUrls()) {
-                    if (!u.getBooleanOption(EXPOSED)) {
-                        // Do NOT move non-exposed provider url to 'active' folder
-                        log.info("Do NOT activate provider url [{}]", u.toSimpleString());
-                        continue;
-                    }
                     Url copy = u.copy();
                     // Add registered time parameter
 //                    copy.addParameter(Url.PARAM_ACTIVATED_TIME, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
