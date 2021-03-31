@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.client.cluster.InvokerCluster;
 import org.infinity.rpc.core.client.listener.ProviderDiscoveryListener;
 import org.infinity.rpc.core.client.listener.ProviderNotifyListener;
@@ -14,6 +15,7 @@ import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.core.utils.name.ConsumerStubBeanNameBuilder;
 import org.infinity.rpc.utilities.network.AddressUtils;
 
 import javax.annotation.PostConstruct;
@@ -21,10 +23,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
@@ -256,5 +255,19 @@ public class ConsumerStub<T> {
     private InvokerCluster createInvokerCluster() {
         // One cluster is created for one protocol, only one server node under a cluster can receive the request
         return InvokerCluster.createCluster(cluster, interfaceName, faultTolerance, loadBalancer, clientUrl);
+    }
+
+    /**
+     * Build the consumer stub bean name
+     *
+     * @param defaultInterfaceClass the consumer service interface
+     * @param attributes            {@link Consumer annotation attributes}
+     * @return The name of bean that annotated {@link Consumer @Consumer} in spring context
+     */
+    public static String buildConsumerStubBeanName(Class<?> defaultInterfaceClass, Map<String, Object> attributes) {
+        return ConsumerStubBeanNameBuilder
+                .builder(defaultInterfaceClass.getName())
+                .attributes(attributes)
+                .build();
     }
 }

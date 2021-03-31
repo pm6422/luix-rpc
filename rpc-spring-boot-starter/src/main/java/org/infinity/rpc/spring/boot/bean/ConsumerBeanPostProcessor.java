@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.spring.boot.bean.name.ConsumerStubBeanNameBuilder;
+import org.infinity.rpc.core.utils.name.ConsumerStubBeanNameBuilder;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
 import org.springframework.aop.support.AopUtils;
@@ -29,6 +29,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
+import static org.infinity.rpc.core.client.stub.ConsumerStub.buildConsumerStubBeanName;
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
 import static org.infinity.rpc.core.constant.ServiceConstants.INTERFACE_CLASS;
@@ -218,20 +219,6 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
         return beanFactory.getBean(consumerStubBeanName, ConsumerStub.class);
     }
 
-    /**
-     * Build the consumer stub bean name
-     *
-     * @param defaultInterfaceClass the consumer service interface
-     * @param attributes            {@link AnnotationAttributes annotation attributes}
-     * @return The name of bean that annotated {@link Consumer @Consumer} in spring context
-     */
-    private String buildConsumerStubBeanName(Class<?> defaultInterfaceClass, AnnotationAttributes attributes) {
-        return ConsumerStubBeanNameBuilder
-                .builder(defaultInterfaceClass.getName(), env)
-                .attributes(attributes)
-                .build();
-    }
-
     private boolean existsConsumerStub(String consumerStubBeanName) {
         return beanFactory.containsBeanDefinition(consumerStubBeanName);
     }
@@ -275,10 +262,10 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
         } else {
             addPropertyValue(builder, LOAD_BALANCER, annotation.loadBalancer());
         }
-        if (StringUtils.isEmpty(annotation.group())) {
+        if (StringUtils.isEmpty(annotation.form())) {
             addPropertyValue(builder, FORM, infinityProperties.getConsumer().getForm());
         } else {
-            addPropertyValue(builder, FORM, annotation.group());
+            addPropertyValue(builder, FORM, annotation.form());
         }
         if (StringUtils.isEmpty(annotation.version())) {
             addPropertyValue(builder, VERSION, infinityProperties.getConsumer().getVersion());

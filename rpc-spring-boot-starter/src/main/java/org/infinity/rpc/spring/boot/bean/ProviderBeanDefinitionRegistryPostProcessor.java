@@ -8,7 +8,7 @@ import org.infinity.rpc.core.constant.BooleanEnum;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.spring.boot.bean.name.DefaultBeanNameGenerator;
-import org.infinity.rpc.spring.boot.bean.name.ProviderStubBeanNameBuilder;
+import org.infinity.rpc.core.utils.name.ProviderStubBeanNameBuilder;
 import org.infinity.rpc.spring.boot.bean.registry.ClassPathBeanDefinitionRegistryScanner;
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
 import org.springframework.beans.BeansException;
@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
 import static org.infinity.rpc.core.constant.ProviderConstants.EXPOSED;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
+import static org.infinity.rpc.core.server.stub.ProviderStub.buildProviderStubBeanName;
 import static org.infinity.rpc.spring.boot.config.InfinityProperties.readProtocolConfig;
 import static org.infinity.rpc.spring.boot.config.InfinityProperties.readProviderConfig;
 import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.addPropertyReference;
@@ -288,22 +289,6 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         AnnotationAttributes annotationAttributes = AnnotationUtils
                 .getAnnotationAttributes(providerInstanceClass, Provider.class, env, false, true);
         return AnnotationUtils.resolveInterfaceClass(annotationAttributes, providerInstanceClass);
-    }
-
-    /**
-     * Build provider stub bean name
-     *
-     * @param interfaceClass provider interface class
-     * @param form           form
-     * @param version        version
-     * @return provider stub bean name
-     */
-    private String buildProviderStubBeanName(Class<?> interfaceClass, String form, String version) {
-        return ProviderStubBeanNameBuilder
-                .builder(interfaceClass.getName(), env)
-                .form(form)
-                .version(version)
-                .build();
     }
 
     /**

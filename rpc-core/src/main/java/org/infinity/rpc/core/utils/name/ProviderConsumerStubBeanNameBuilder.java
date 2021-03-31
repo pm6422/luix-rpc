@@ -1,40 +1,33 @@
-package org.infinity.rpc.spring.boot.bean.name;
+package org.infinity.rpc.core.utils.name;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.env.Environment;
-import org.springframework.util.Assert;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Provider {@link org.infinity.rpc.core.server.annotation.Provider @Provider} stub bean Builder
  */
 public abstract class ProviderConsumerStubBeanNameBuilder {
-    public static final    String      PROVIDER_STUB_BEAN_PREFIX = "ProviderStub";
-    protected static final String      SEPARATOR                 = ":";
+    public static final    String PROVIDER_STUB_BEAN_PREFIX = "ProviderStub";
+    protected static final String SEPARATOR                 = ":";
     /**
      * Provider interface class(Required)
      */
-    protected final        String      interfaceClassName;
-    /**
-     * Environment(Required)
-     */
-    protected final        Environment env;
+    protected final        String interfaceClassName;
     /**
      * Group(Optional)
      */
-    protected              String      form;
+    protected              String form;
     /**
      * Version(Optional)
      */
-    protected              String      version;
+    protected              String version;
 
     /**
      * Prevent instantiation of it outside the class
      */
-    protected ProviderConsumerStubBeanNameBuilder(String interfaceClassName, Environment env) {
-        Assert.hasText(interfaceClassName, "Interface class name must NOT be empty!");
-        Assert.notNull(env, "Environment must NOT be null!");
+    protected ProviderConsumerStubBeanNameBuilder(String interfaceClassName) {
+        Validate.notEmpty(interfaceClassName, "Interface class name must NOT be empty!");
         this.interfaceClassName = interfaceClassName;
-        this.env = env;
     }
 
     protected String build(String prefix) {
@@ -44,9 +37,7 @@ public abstract class ProviderConsumerStubBeanNameBuilder {
         // Optional
         append(beanNameBuilder, form);
         append(beanNameBuilder, version);
-        String rawBeanName = beanNameBuilder.toString();
-        // Resolve placeholders
-        return env.resolvePlaceholders(rawBeanName);
+        return beanNameBuilder.toString();
     }
 
     protected static void append(StringBuilder builder, String value) {

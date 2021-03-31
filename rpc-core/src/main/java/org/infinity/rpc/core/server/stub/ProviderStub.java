@@ -21,6 +21,7 @@ import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
+import org.infinity.rpc.core.utils.name.ProviderStubBeanNameBuilder;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.Max;
@@ -97,7 +98,7 @@ public class ProviderStub<T> {
     @Min(value = 0, message = "The [maxPayload] property of @Provider must NOT be a positive number!")
     private           Integer             maxPayload;
     /**
-     * Indicates whether the provider needs to be exposed
+     * Indicates whether the provider needs to be exposed to registry
      */
     private           boolean             exposed;
     /**
@@ -299,5 +300,21 @@ public class ProviderStub<T> {
         // Copy options
         response.setOptions(request.getOptions());
         return response;
+    }
+
+    /**
+     * Build provider stub bean name
+     *
+     * @param interfaceClass provider interface class
+     * @param form           form
+     * @param version        version
+     * @return provider stub bean name
+     */
+    public static String buildProviderStubBeanName(Class<?> interfaceClass, String form, String version) {
+        return ProviderStubBeanNameBuilder
+                .builder(interfaceClass.getName())
+                .form(form)
+                .version(version)
+                .build();
     }
 }

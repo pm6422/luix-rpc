@@ -7,7 +7,7 @@ import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.democlient.dto.UniversalInvokeDTO;
-import org.infinity.rpc.spring.boot.bean.name.ConsumerStubBeanNameBuilder;
+import org.infinity.rpc.core.utils.name.ConsumerStubBeanNameBuilder;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -83,7 +83,7 @@ public class RpcInvocationController {
             optionMap.put(entry.getKey(), entry.getValue());
         }
         String beanName = ConsumerStubBeanNameBuilder
-                .builder(dto.getInterfaceName(), env)
+                .builder(dto.getInterfaceName())
                 .attributes(optionMap)
                 .build();
 

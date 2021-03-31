@@ -1,9 +1,8 @@
-package org.infinity.rpc.spring.boot.bean.name;
+package org.infinity.rpc.core.utils.name;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.env.Environment;
-import org.springframework.util.Assert;
+import org.apache.commons.lang3.Validate;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -22,10 +21,6 @@ public class ConsumerStubBeanNameBuilder {
      */
     protected final        String              interfaceClassName;
     /**
-     * Environment(Required)
-     */
-    protected final        Environment         env;
-    /**
      *
      */
     protected              Map<String, Object> attributes;
@@ -34,15 +29,13 @@ public class ConsumerStubBeanNameBuilder {
     /**
      * Prevent instantiation of it outside the class
      */
-    private ConsumerStubBeanNameBuilder(String interfaceClassName, Environment env) {
-        Assert.hasText(interfaceClassName, "Interface class name must NOT be empty!");
-        Assert.notNull(env, "Environment must NOT be null!");
+    private ConsumerStubBeanNameBuilder(String interfaceClassName) {
+        Validate.notEmpty(interfaceClassName, "Interface class name must NOT be empty!");
         this.interfaceClassName = interfaceClassName;
-        this.env = env;
     }
 
-    public static ConsumerStubBeanNameBuilder builder(String interfaceClassName, Environment environment) {
-        return new ConsumerStubBeanNameBuilder(interfaceClassName, environment);
+    public static ConsumerStubBeanNameBuilder builder(String interfaceClassName) {
+        return new ConsumerStubBeanNameBuilder(interfaceClassName);
     }
 
     public ConsumerStubBeanNameBuilder attributes(Map<String, Object> attributes) {

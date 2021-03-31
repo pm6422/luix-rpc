@@ -27,7 +27,7 @@ import static org.infinity.rpc.democlient.utils.HttpHeaderUtils.generatePageHead
 @Slf4j
 public class AppController {
 
-    @Consumer(group = "f1", requestTimeout = 10000)
+    @Consumer(form = "f1", requestTimeout = 10000)
     private AppService appService;
 
     private final HttpHeaderCreator httpHeaderCreator;

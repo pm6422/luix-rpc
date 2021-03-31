@@ -62,7 +62,7 @@ public @interface Consumer {
      *
      * @return group
      */
-    String group() default "";
+    String form() default "";
 
     /**
      * @return version
