@@ -56,8 +56,6 @@ public class ServiceCallTests extends ZkBaseTest {
         providerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
         providerStub.setForm(GROUP);
         providerStub.setVersion("1.0.0");
-        String beanName = buildProviderStubBeanName(providerStub.getInterfaceClass(), providerStub.getForm(), providerStub.getVersion());
-        providerStub.setBeanName(beanName);
         providerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();

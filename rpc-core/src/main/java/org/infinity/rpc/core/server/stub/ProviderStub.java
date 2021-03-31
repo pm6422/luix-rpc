@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
@@ -122,8 +123,10 @@ public class ProviderStub<T> {
     public void init() {
         // Put methods to cache in order to accelerate the speed of executing.
         discoverMethods(interfaceClass);
-        // Automatically add {@link ProviderStub} instance to {@link ProviderStubHolder}
-        ProviderStubHolder.getInstance().addStub(beanName, this);
+        if (StringUtils.isNotEmpty(beanName)) {
+            // Automatically add {@link ProviderStub} instance to {@link ProviderStubHolder}
+            ProviderStubHolder.getInstance().addStub(beanName, this);
+        }
     }
 
     /**

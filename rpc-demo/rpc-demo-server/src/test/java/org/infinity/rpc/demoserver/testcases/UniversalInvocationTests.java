@@ -23,7 +23,6 @@ import java.util.Map;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
-import static org.infinity.rpc.core.server.stub.ProviderStub.buildProviderStubBeanName;
 import static org.junit.Assert.assertEquals;
 
 public class UniversalInvocationTests extends ZkBaseTest {
@@ -70,8 +69,6 @@ public class UniversalInvocationTests extends ZkBaseTest {
         providerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
         providerStub.setForm(GROUP);
         providerStub.setVersion("1.0.0");
-        String beanName = buildProviderStubBeanName(providerStub.getInterfaceClass(), providerStub.getForm(), providerStub.getVersion());
-        providerStub.setBeanName(beanName);
         providerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
