@@ -115,7 +115,9 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
 
     @Override
     public void destroy() {
-        invokers.forEach(Invokable::destroy);
+        if (CollectionUtils.isNotEmpty(invokers)) {
+            invokers.forEach(Invokable::destroy);
+        }
     }
 
     /**
