@@ -50,9 +50,9 @@ public class RefreshUrlTests extends ZkBaseTest {
         // Register once
         registerProvider(providerStub, 100);
 
-        String activePath = ZookeeperUtils.getProviderStatusNodePath(providerStub.getUrl(), ZookeeperStatusNode.ACTIVE);
+        String activePath = ZookeeperUtils.getProviderStatusNodePath(providerStub.getUrl().getForm(), providerStub.getUrl().getPath(), ZookeeperStatusNode.ACTIVE);
         List<String> activateAddrFiles = zkClient.getChildren(activePath);
-        String filePath = ZookeeperUtils.getProviderStatusNodePath(providerStub.getUrl(), ZookeeperStatusNode.ACTIVE) + "/" + activateAddrFiles.get(0);
+        String filePath = ZookeeperUtils.getProviderStatusNodePath(providerStub.getUrl().getForm(), providerStub.getUrl().getPath(), ZookeeperStatusNode.ACTIVE) + "/" + activateAddrFiles.get(0);
 
         Url url1 = Url.valueOf(zkClient.readData(filePath));
         assertEquals("100", url1.getOption(REQUEST_TIMEOUT));
@@ -72,6 +72,8 @@ public class RefreshUrlTests extends ZkBaseTest {
         providerStub.setForm(GROUP);
         providerStub.setVersion("1.0.0");
         providerStub.setRequestTimeout(requestTimeout);
+        providerStub.setBeanName(ProviderStub.class.getSimpleName() + ":" + TestService.class.getName());
+        providerStub.setExposed(true);
         providerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
@@ -95,9 +97,7 @@ public class RefreshUrlTests extends ZkBaseTest {
         providerStub.register(applicationConfig, protocolConfig, registryConfig);
 
         // Activate provider
-        if (!SwitcherHolder.getInstance().isOn(SwitcherHolder.SERVICE_ACTIVE)) {
-            SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVE, true);
-        }
+        SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVE, true);
     }
 
     @Test

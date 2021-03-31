@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.rpc.core.constant.RpcConstants.PATH_SEPARATOR;
+import static org.apache.commons.io.IOUtils.DIR_SEPARATOR_UNIX;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
@@ -406,7 +406,7 @@ public final class Url implements Serializable {
         if (StringUtils.isEmpty(path)) {
             return protocol + PROTOCOL_SEPARATOR + host + ":" + port;
         }
-        return protocol + PROTOCOL_SEPARATOR + host + ":" + port + PATH_SEPARATOR + path;
+        return protocol + PROTOCOL_SEPARATOR + host + ":" + port + DIR_SEPARATOR_UNIX + path;
     }
 
     /**

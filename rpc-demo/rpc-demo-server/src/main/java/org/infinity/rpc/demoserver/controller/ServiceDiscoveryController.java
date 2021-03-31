@@ -68,15 +68,15 @@ public class ServiceDiscoveryController {
                                                            @ApiParam(value = "服务提供者分组", required = true)
                                                            @RequestParam(value = "group") String group) {
         Registry registry = registryService.findRegistry(url);
-        Map<String, Map<String, List<AddressInfo>>> nodeMap = registry.getAllProviders(group);
+//        Map<String, Map<String, List<AddressInfo>>> nodeMap = registry.getAllProviders(group);
         List<ProviderDTO> providers = new ArrayList<>();
-        if (MapUtils.isNotEmpty(nodeMap)) {
-            for (Map.Entry<String, Map<String, List<AddressInfo>>> entry : nodeMap.entrySet()) {
-                List<AddressInfo> activeProviders = entry.getValue().get(ZookeeperStatusNode.ACTIVE.getValue());
-                List<AddressInfo> inactiveProviders = entry.getValue().get(ZookeeperStatusNode.INACTIVE.getValue());
-                providers.add(ProviderDTO.of(entry.getKey(), activeProviders, inactiveProviders));
-            }
-        }
+//        if (MapUtils.isNotEmpty(nodeMap)) {
+//            for (Map.Entry<String, Map<String, List<AddressInfo>>> entry : nodeMap.entrySet()) {
+//                List<AddressInfo> activeProviders = entry.getValue().get(ZookeeperStatusNode.ACTIVE.getValue());
+//                List<AddressInfo> inactiveProviders = entry.getValue().get(ZookeeperStatusNode.INACTIVE.getValue());
+//                providers.add(ProviderDTO.of(entry.getKey(), activeProviders, inactiveProviders));
+//            }
+//        }
         return ResponseEntity.ok(providers);
     }
 

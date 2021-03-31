@@ -32,19 +32,21 @@ public class ZookeeperRegistryServiceImpl implements RegistryService {
     @Deprecated
     @Override
     public List<String> getProvidersByGroup(String group) {
-        return ZookeeperUtils.getProvidersByForm(zkClient, group);
+        return ZookeeperUtils.getChildrenNames(zkClient, ZookeeperUtils.getFormPath(group));
     }
 
     @Deprecated
     @Override
     public List<AddressInfo> getNodes(String group, String provider, String statusNode) {
-        return ZookeeperUtils.getProviderAddresses(zkClient, group, provider, ZookeeperStatusNode.fromValue(statusNode));
+//        return ZookeeperUtils.getProviderAddresses(zkClient, group, provider, ZookeeperStatusNode.fromValue(statusNode));
+        return null;
     }
 
     @Deprecated
     @Override
     public Map<String, Map<String, List<AddressInfo>>> getAllNodes(String group) {
-        return ZookeeperUtils.getAllProviders(zkClient, group);
+        return null;
+//        return ZookeeperUtils.getAllProviders(zkClient, group);
     }
 
     @Deprecated

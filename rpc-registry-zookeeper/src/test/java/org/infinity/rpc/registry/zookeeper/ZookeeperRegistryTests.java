@@ -24,7 +24,7 @@ import java.util.*;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_VAL_INFINITY;
 import static org.infinity.rpc.core.constant.ProviderConstants.EXPOSED;
-import static org.infinity.rpc.core.constant.RegistryConstants.*;
+import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_ZOOKEEPER;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.junit.Assert.*;
 
@@ -81,9 +81,9 @@ public class ZookeeperRegistryTests {
         List<String> activateAddrFiles;
         List<String> deactivateAddrFiles;
 
-        String inactivePath = ZookeeperUtils.getProviderStatusNodePath(providerUrl1, ZookeeperStatusNode.INACTIVE);
+        String inactivePath = ZookeeperUtils.getProviderStatusNodePath(providerUrl1.getForm(), providerUrl1.getPath(), ZookeeperStatusNode.INACTIVE);
         log.debug("inactivePath: {}", inactivePath);
-        String activePath = ZookeeperUtils.getProviderStatusNodePath(providerUrl1, ZookeeperStatusNode.ACTIVE);
+        String activePath = ZookeeperUtils.getProviderStatusNodePath(providerUrl1.getForm(), providerUrl1.getPath(), ZookeeperStatusNode.ACTIVE);
         log.debug("activePath: {}", activePath);
 
         registry.doRegister(providerUrl1);
@@ -236,9 +236,9 @@ public class ZookeeperRegistryTests {
         List<String> activateAddrFiles;
         List<String> deactivateAddrFiles;
 
-        String inactivePath = ZookeeperUtils.getProviderStatusNodePath(providerUrl1, ZookeeperStatusNode.INACTIVE);
+        String inactivePath = ZookeeperUtils.getProviderStatusNodePath(providerUrl1.getForm(), providerUrl1.getPath(), ZookeeperStatusNode.INACTIVE);
         log.debug("inactivePath: {}", inactivePath);
-        String activePath = ZookeeperUtils.getProviderStatusNodePath(providerUrl1, ZookeeperStatusNode.ACTIVE);
+        String activePath = ZookeeperUtils.getProviderStatusNodePath(providerUrl1.getForm(), providerUrl1.getPath(), ZookeeperStatusNode.ACTIVE);
         log.debug("activePath: {}", activePath);
 
         registry.register(providerUrl1);

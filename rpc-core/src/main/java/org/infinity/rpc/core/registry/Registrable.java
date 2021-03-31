@@ -50,8 +50,4 @@ public interface Registrable {
      */
     List<String> getAllProviderForms();
 
-    /**
-     *
-     */
-    Map<String, Map<String, List<AddressInfo>>> getAllProviders(String group);
 }

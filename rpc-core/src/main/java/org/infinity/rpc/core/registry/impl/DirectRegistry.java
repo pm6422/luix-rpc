@@ -3,7 +3,6 @@ package org.infinity.rpc.core.registry.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.registry.AbstractRegistry;
-import org.infinity.rpc.core.registry.AddressInfo;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.url.Url;
@@ -13,7 +12,6 @@ import org.infinity.rpc.utilities.network.AddressUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_ADDRESSES;
 
@@ -103,11 +101,6 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
 
     @Override
     public List<String> getAllProviderForms() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Map<String, Map<String, List<AddressInfo>>> getAllProviders(String group) {
         throw new UnsupportedOperationException();
     }
 

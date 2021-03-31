@@ -9,6 +9,7 @@ import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.switcher.impl.SwitcherHolder;
 import org.infinity.rpc.core.url.Url;
 
+import static org.apache.commons.io.IOUtils.DIR_SEPARATOR_UNIX;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER;
 
@@ -60,8 +61,8 @@ public class RpcFrameworkUtils {
      * @return
      */
     public static String getProtocolKey(Url url) {
-        return url.getProtocol() + RpcConstants.PROTOCOL_SEPARATOR + url.getAddress() + RpcConstants.PATH_SEPARATOR
-                + url.getForm() + RpcConstants.PATH_SEPARATOR + url.getPath() + RpcConstants.PATH_SEPARATOR + url.getVersion();
+        return url.getProtocol() + RpcConstants.PROTOCOL_SEPARATOR + url.getAddress() + DIR_SEPARATOR_UNIX
+                + url.getForm() + DIR_SEPARATOR_UNIX + url.getPath() + DIR_SEPARATOR_UNIX + url.getVersion();
     }
 
     /**
@@ -189,7 +190,7 @@ public class RpcFrameworkUtils {
      * @return
      */
     private static String getServiceKey(String group, String interfaceName, String version) {
-        return group + RpcConstants.PATH_SEPARATOR + interfaceName + RpcConstants.PATH_SEPARATOR + version;
+        return group + DIR_SEPARATOR_UNIX + interfaceName + DIR_SEPARATOR_UNIX + version;
     }
 
     /**

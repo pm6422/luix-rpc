@@ -52,6 +52,7 @@ public class ServiceCallTests extends ZkBaseTest {
         providerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
         providerStub.setForm(GROUP);
         providerStub.setVersion("1.0.0");
+        providerStub.setBeanName(TestService.class.getName() + ":" + providerStub.getForm() + ":" + providerStub.getVersion());
         providerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
@@ -90,6 +91,7 @@ public class ServiceCallTests extends ZkBaseTest {
         consumerStub.setVersion("1.0.0");
         consumerStub.setProxy(PROXY_VAL_JDK);
         consumerStub.setHealthChecker(HEALTH_CHECKER_VAL_DEFAULT);
+        consumerStub.setBeanName(TestService.class.getName() + ":" + consumerStub.getForm() + ":" + consumerStub.getVersion());
         consumerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
