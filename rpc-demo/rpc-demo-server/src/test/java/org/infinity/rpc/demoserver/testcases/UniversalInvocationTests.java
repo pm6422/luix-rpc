@@ -72,7 +72,6 @@ public class UniversalInvocationTests extends ZkBaseTest {
         providerStub.setVersion("1.0.0");
         String beanName = buildProviderStubBeanName(providerStub.getInterfaceClass(), providerStub.getForm(), providerStub.getVersion());
         providerStub.setBeanName(beanName);
-        providerStub.setExposed(true);
         providerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();

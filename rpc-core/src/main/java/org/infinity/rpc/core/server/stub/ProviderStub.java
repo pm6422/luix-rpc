@@ -100,7 +100,7 @@ public class ProviderStub<T> {
     /**
      * Indicates whether the provider needs to be exposed to registry
      */
-    private           boolean             exposed;
+    private           boolean             exposed      = true;
     /**
      * The provider instance
      * Disable serialize
