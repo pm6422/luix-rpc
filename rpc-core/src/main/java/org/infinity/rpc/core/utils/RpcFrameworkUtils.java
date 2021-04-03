@@ -1,5 +1,6 @@
 package org.infinity.rpc.core.utils;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.constant.RpcConstants;
@@ -16,19 +17,15 @@ import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER;
 public class RpcFrameworkUtils {
 
     public static String getFormFromRequest(Requestable request) {
-        return getValueFromRequest(request, ServiceConstants.FORM, ServiceConstants.FORM_VAL_DEFAULT);
+        return getValueFromRequest(request, ServiceConstants.FORM);
     }
 
     public static String getVersionFromRequest(Requestable request) {
-        return getValueFromRequest(request, ServiceConstants.VERSION, ServiceConstants.VERSION_VAL_DEFAULT);
+        return getValueFromRequest(request, ServiceConstants.VERSION);
     }
 
-    public static String getValueFromRequest(Requestable request, String key, String defaultValue) {
-        String value = defaultValue;
-        if (request.getOptions() != null && request.getOptions().containsKey(key)) {
-            value = request.getOption(key);
-        }
-        return value;
+    public static String getValueFromRequest(Requestable request, String key) {
+        return MapUtils.isNotEmpty(request.getOptions()) ? request.getOption(key) : null;
     }
 
     /**
@@ -215,7 +212,6 @@ public class RpcFrameworkUtils {
 //        local.setRegProtocol("local");
 //        return local;
 //    }
-
     public static RpcResponse buildErrorResponse(Requestable request, Exception e) {
         return buildErrorResponse(request.getRequestId(), request.getProtocolVersion(), e);
     }

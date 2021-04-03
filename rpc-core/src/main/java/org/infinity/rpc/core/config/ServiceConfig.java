@@ -12,12 +12,12 @@ public abstract class ServiceConfig implements Configurable {
      * Used to distinguish between different implementations of RPC service interface
      */
     @NotEmpty
-    private String form           = FORM_VAL_DEFAULT;
+    private String form;
     /**
      * Version
      */
     @NotEmpty
-    private String version        = VERSION_VAL_DEFAULT;
+    private String version;
     /**
      * Check health factory
      */

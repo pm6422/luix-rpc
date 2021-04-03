@@ -24,7 +24,6 @@ import java.util.*;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_VAL_INFINITY;
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_ZOOKEEPER;
-import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.junit.Assert.*;
 
 @Slf4j
@@ -50,12 +49,10 @@ public class ZookeeperRegistryTests {
         registryUrl = Url.registryUrl(REGISTRY_VAL_ZOOKEEPER, REGISTRY_HOST, zkPort);
 
         // client url has the same protocol and provider path to provider, but port is 0
-        clientUrl = Url.clientUrl(PROTOCOL_VAL_INFINITY, AddressUtils.LOCALHOST, provider, FORM_VAL_DEFAULT, VERSION_VAL_DEFAULT);
-        clientUrl.addOption(FORM, FORM_VAL_DEFAULT);
+        clientUrl = Url.clientUrl(PROTOCOL_VAL_INFINITY, AddressUtils.LOCALHOST, provider);
 
-        providerUrl1 = Url.providerUrl(PROTOCOL_VAL_INFINITY, AddressUtils.LOCALHOST, 2000, provider, FORM_VAL_DEFAULT, VERSION_VAL_DEFAULT);
-
-        providerUrl2 = Url.providerUrl(PROTOCOL_VAL_INFINITY, "192.168.100.100", 2000, provider, FORM_VAL_DEFAULT, VERSION_VAL_DEFAULT);
+        providerUrl1 = Url.providerUrl(PROTOCOL_VAL_INFINITY, AddressUtils.LOCALHOST, 2000, provider);
+        providerUrl2 = Url.providerUrl(PROTOCOL_VAL_INFINITY, "192.168.100.100", 2000, provider);
 
         zookeeper = new EmbeddedZookeeper();
         zookeeper.start();

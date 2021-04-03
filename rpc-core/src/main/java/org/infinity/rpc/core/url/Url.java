@@ -14,7 +14,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.apache.commons.io.IOUtils.DIR_SEPARATOR_UNIX;
-import static org.infinity.rpc.core.constant.ServiceConstants.*;
+import static org.infinity.rpc.core.constant.ServiceConstants.FORM;
+import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
 
 /**
  * Url used to represent a provider or client or registry
@@ -26,7 +27,7 @@ public final class Url implements Serializable {
      * URL Pattern
      * <scheme>://<host>:<port>/<path>?<optionKey>=<optionValue>
      * e.g.
-     * infinity://172.25.11.79:26010/org.infinity.rpc.service.AppService?group=default&version=1.0.0
+     * infinity://172.25.11.79:26010/org.infinity.rpc.service.AppService?healthChecker=false&requestTimeout=1000
      *
      * <scheme>=infinity|direct
      */
@@ -113,10 +114,14 @@ public final class Url implements Serializable {
         return of(protocol, host, port, path, new ConcurrentHashMap<>(16));
     }
 
-    public static Url providerUrl(String protocol, String host, Integer port, String path, String group, String version) {
+    public static Url providerUrl(String protocol, String host, Integer port, String path) {
+        return providerUrl(protocol, host, port, path, null, null);
+    }
+
+    public static Url providerUrl(String protocol, String host, Integer port, String path, String form, String version) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
-        if (StringUtils.isNotEmpty(group)) {
-            options.put(FORM, group);
+        if (StringUtils.isNotEmpty(form)) {
+            options.put(FORM, form);
         }
         if (StringUtils.isNotEmpty(version)) {
             options.put(VERSION, version);
@@ -133,14 +138,14 @@ public final class Url implements Serializable {
      * @param host     host
      * @param port     port
      * @param path     RPC interface fully-qualified name
-     * @param group    group
+     * @param form    group
      * @param version  version
      * @return consumer url
      */
-    public static Url consumerUrl(String protocol, String host, Integer port, String path, String group, String version) {
+    public static Url consumerUrl(String protocol, String host, Integer port, String path, String form, String version) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
-        if (StringUtils.isNotEmpty(group)) {
-            options.put(FORM, group);
+        if (StringUtils.isNotEmpty(form)) {
+            options.put(FORM, form);
         }
         if (StringUtils.isNotEmpty(version)) {
             options.put(VERSION, version);
@@ -155,14 +160,26 @@ public final class Url implements Serializable {
      * @param protocol protocol
      * @param host     host
      * @param path     RPC interface fully-qualified name
-     * @param group    group
+     * @return
+     */
+    public static Url clientUrl(String protocol, String host, String path) {
+        return clientUrl(protocol, host, path, null, null);
+    }
+
+    /**
+     * If we can NOT know the host and port, we can use clientUrl instead of provider url
+     *
+     * @param protocol protocol
+     * @param host     host
+     * @param path     RPC interface fully-qualified name
+     * @param form     form
      * @param version  version
      * @return
      */
-    public static Url clientUrl(String protocol, String host, String path, String group, String version) {
+    public static Url clientUrl(String protocol, String host, String path, String form, String version) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
-        if (StringUtils.isNotEmpty(group)) {
-            options.put(FORM, group);
+        if (StringUtils.isNotEmpty(form)) {
+            options.put(FORM, form);
         }
         if (StringUtils.isNotEmpty(version)) {
             options.put(VERSION, version);
@@ -181,8 +198,6 @@ public final class Url implements Serializable {
      */
     public static Url registryUrl(String protocol, String host, Integer port) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
-        options.put(FORM, FORM_VAL_DEFAULT);
-        options.put(VERSION, VERSION_VAL_DEFAULT);
         options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_REGISTRY);
         return of(protocol, host, port, Registry.class.getName(), options);
     }
@@ -380,11 +395,11 @@ public final class Url implements Serializable {
     }
 
     public String getForm() {
-        return getOption(FORM, FORM_VAL_DEFAULT);
+        return getOption(FORM);
     }
 
     public String getVersion() {
-        return getOption(VERSION, VERSION_VAL_DEFAULT);
+        return getOption(VERSION);
     }
 
     @Override
@@ -394,12 +409,12 @@ public final class Url implements Serializable {
     }
 
     /**
-     * Including protocol, host, port, group
+     * Including protocol, host, port, form
      *
      * @return combination string
      */
     public String toSimpleString() {
-        return getUri() + "?group=" + getForm() + "&version=" + getVersion();
+        return getUri() + "?form=" + getForm() + "&version=" + getVersion();
     }
 
     public String getUri() {

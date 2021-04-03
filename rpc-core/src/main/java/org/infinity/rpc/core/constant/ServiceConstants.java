@@ -11,9 +11,7 @@ public interface ServiceConstants {
     String INTERFACE_CLASS = "interfaceClass";
 
     String FORM                        = "form";
-    String FORM_VAL_DEFAULT            = "default";
     String VERSION                     = "version";
-    String VERSION_VAL_DEFAULT         = "1.0.0";
     String HEALTH_CHECKER              = "healthChecker";
     String HEALTH_CHECKER_VAL_DEFAULT  = "default";
     String MAX_RETRIES                 = "maxRetries";
