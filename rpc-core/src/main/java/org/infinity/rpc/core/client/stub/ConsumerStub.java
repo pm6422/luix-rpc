@@ -182,8 +182,8 @@ public class ConsumerStub<T> {
         // Create consumer url
         url = this.createConsumerUrl(applicationConfig, protocolConfig);
 
-        // We do NOT know the host and port of provider right now, so we use client URL
-        clientUrl = Url.clientUrl(protocol, protocolConfig.getHost(), interfaceName, form, version);
+        // Client url is similar to consumer url, but it has less options
+        clientUrl = Url.clientUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
         clientUrl.addOption(THROW_EXCEPTION, String.valueOf(protocolConfig.isThrowException()));
 
         // Initialize provider invoker cluster before consumer initialization

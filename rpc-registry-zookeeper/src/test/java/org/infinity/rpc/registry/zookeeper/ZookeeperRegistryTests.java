@@ -49,8 +49,8 @@ public class ZookeeperRegistryTests {
 
         registryUrl = Url.registryUrl(REGISTRY_VAL_ZOOKEEPER, REGISTRY_HOST, zkPort);
 
-        // client url has the same protocol and provider path to provider, but port is 0
-        clientUrl = Url.clientUrl(PROTOCOL_VAL_INFINITY, AddressUtils.LOCALHOST, provider);
+        // Client url is similar to consumer url, but it has less options
+        clientUrl = Url.clientUrl(PROTOCOL_VAL_INFINITY, AddressUtils.LOCALHOST, 3000, provider);
 
         providerUrl1 = Url.providerUrl(PROTOCOL_VAL_INFINITY, AddressUtils.LOCALHOST, 2000, provider);
         providerUrl2 = Url.providerUrl(PROTOCOL_VAL_INFINITY, "192.168.100.100", 2000, provider);

@@ -66,11 +66,11 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     /**
      *
      */
-    private final    Set<ClientListener>             clientListeners            = new ConcurrentHashSet<>();
+    private final    Set<ClientListener>             clientListeners           = new ConcurrentHashSet<>();
     /**
-     * Active provider urls per group map
+     * Active provider urls per form map
      */
-    private final    Map<String, List<Url>>          activeProviderUrlsPerGroup = new ConcurrentHashMap<>();
+    private final    Map<String, List<Url>>          activeProviderUrlsPerForm = new ConcurrentHashMap<>();
     /**
      *
      */
@@ -78,7 +78,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     /**
      *
      */
-    private          String                          rpcCommandStrCache         = "";
+    private          String                          rpcCommandStrCache        = "";
 
     public CommandServiceListener(Url clientUrl, CommandFailbackAbstractRegistry registry) {
         this.clientUrl = clientUrl;
@@ -119,7 +119,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     @Override
     public void onNotify(Url clientUrl, Url registryUrl, List<Url> providerUrls) {
         String group = clientUrl.getForm();
-        activeProviderUrlsPerGroup.put(group, providerUrls);
+        activeProviderUrlsPerForm.put(group, providerUrls);
 
         List<Url> providerUrlList;
         if (rpcCommandCache != null) {
@@ -175,10 +175,10 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
             }
 
             // 指令变化时，删除不再有效的缓存，取消订阅不再有效的group
-            Set<String> groupKeys = activeProviderUrlsPerGroup.keySet();
+            Set<String> groupKeys = activeProviderUrlsPerForm.keySet();
             for (String gk : groupKeys) {
                 if (!weights.containsKey(gk)) {
-                    activeProviderUrlsPerGroup.remove(gk);
+                    activeProviderUrlsPerForm.remove(gk);
                     Url urlTemp = urlCopy.copy();
                     urlTemp.addOption(FORM, gk);
                     registry.unsubscribeServiceListener(urlTemp, this);
@@ -347,8 +347,8 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
         }
 
         for (String key : weights.keySet()) {
-            if (activeProviderUrlsPerGroup.containsKey(key)) {
-                finalResult.addAll(activeProviderUrlsPerGroup.get(key));
+            if (activeProviderUrlsPerForm.containsKey(key)) {
+                finalResult.addAll(activeProviderUrlsPerForm.get(key));
             } else {
                 Url urlTemp = providerUrl.copy();
                 urlTemp.addOption(FORM, key);
@@ -367,10 +367,10 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
      */
     private List<Url> discoverActiveProvidersByGroup(Url clientUrl) {
         String group = clientUrl.getForm();
-        List<Url> providerUrls = activeProviderUrlsPerGroup.get(group);
+        List<Url> providerUrls = activeProviderUrlsPerForm.get(group);
         if (providerUrls == null) {
             providerUrls = registry.discoverActiveProviders(clientUrl);
-            activeProviderUrlsPerGroup.put(group, providerUrls);
+            activeProviderUrlsPerForm.put(group, providerUrls);
         }
         log.info("Discovered url by param group of url [{}]", clientUrl);
         return providerUrls;

@@ -33,7 +33,6 @@ public final class Url implements Serializable {
      */
     private static final String              URL_PATTERN        = "{0}://{1}:{2}/{3}?{4}";
     private static final String              PROTOCOL_SEPARATOR = "://";
-    private static final int                 CLIENT_URL_PORT    = 0;
     /**
      * RPC protocol
      */
@@ -154,28 +153,30 @@ public final class Url implements Serializable {
     }
 
     /**
-     * If we can NOT know the host and port, we can use clientUrl instead of provider url
+     * Client url is similar to consumer url, but it has less options
      *
      * @param protocol protocol
      * @param host     host
+     * @param port     port
      * @param path     RPC interface fully-qualified name
      * @return
      */
-    public static Url clientUrl(String protocol, String host, String path) {
-        return clientUrl(protocol, host, path, null, null);
+    public static Url clientUrl(String protocol, String host, Integer port, String path) {
+        return clientUrl(protocol, host, port, path, null, null);
     }
 
     /**
-     * If we can NOT know the host and port, we can use clientUrl instead of provider url
+     * Client url is similar to consumer url, but it has less options
      *
      * @param protocol protocol
      * @param host     host
+     * @param port     port
      * @param path     RPC interface fully-qualified name
      * @param form     form
      * @param version  version
      * @return
      */
-    public static Url clientUrl(String protocol, String host, String path, String form, String version) {
+    public static Url clientUrl(String protocol, String host, Integer port, String path, String form, String version) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
         if (StringUtils.isNotEmpty(form)) {
             options.put(FORM, form);
@@ -184,7 +185,7 @@ public final class Url implements Serializable {
             options.put(VERSION, version);
         }
         options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_CLIENT);
-        return of(protocol, host, CLIENT_URL_PORT, path, options);
+        return of(protocol, host, port, path, options);
     }
 
     /**
@@ -394,11 +395,11 @@ public final class Url implements Serializable {
     }
 
     public String getForm() {
-        return getOption(FORM);
+        return StringUtils.defaultString(getOption(FORM));
     }
 
     public String getVersion() {
-        return getOption(VERSION);
+        return StringUtils.defaultString(getOption(VERSION));
     }
 
     @Override
