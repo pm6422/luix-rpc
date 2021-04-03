@@ -1,7 +1,5 @@
 package org.infinity.rpc.core.constant;
 
-import org.infinity.rpc.core.utils.MethodParameterUtils;
-
 import java.util.regex.Pattern;
 
 public class RpcConstants {
@@ -53,28 +51,28 @@ public class RpcConstants {
      **/
 
     // netty codec
-    public static final short  NETTY_MAGIC_TYPE                   = (short) 0xF1F1;
+    public static final short  NETTY_MAGIC_TYPE             = (short) 0xF1F1;
     // netty header length
-    public static final int    NETTY_HEADER                       = 16;
+    public static final int    NETTY_HEADER                 = 16;
     // netty server max excutor thread
-    public static final int    NETTY_EXECUTOR_MAX_SIZE            = 800;
+    public static final int    NETTY_EXECUTOR_MAX_SIZE      = 800;
     // netty thread idle time: 1 mintue
-    public static final int    NETTY_THREAD_KEEPALIVE_TIME        = 60 * 1000;
+    public static final int    NETTY_THREAD_KEEPALIVE_TIME  = 60 * 1000;
     // netty client max concurrent request TODO 2W is suitable?
-    public static final int    NETTY_CLIENT_MAX_REQUEST           = 20000;
-    public static final byte   NETTY_REQUEST_TYPE                 = 1;
-    public static final byte   FLAG_REQUEST                       = 0x00;
-    public static final byte   FLAG_RESPONSE                      = 0x01;
-    public static final byte   FLAG_RESPONSE_VOID                 = 0x03;
-    public static final byte   FLAG_RESPONSE_EXCEPTION            = 0x05;
-    public static final byte   FLAG_RESPONSE_ATTACHMENT           = 0x07;
-    public static final byte   FLAG_OTHER                         = (byte) 0xFF;
+    public static final int    NETTY_CLIENT_MAX_REQUEST     = 20000;
+    public static final byte   NETTY_REQUEST_TYPE           = 1;
+    public static final byte   FLAG_REQUEST                 = 0x00;
+    public static final byte   FLAG_RESPONSE                = 0x01;
+    public static final byte   FLAG_RESPONSE_VOID           = 0x03;
+    public static final byte   FLAG_RESPONSE_EXCEPTION      = 0x05;
+    public static final byte   FLAG_RESPONSE_ATTACHMENT     = 0x07;
+    public static final byte   FLAG_OTHER                   = (byte) 0xFF;
     /**
      * heartbeat constants end
      */
 
-    public static final String ZOOKEEPER_REGISTRY_NAMESPACE       = "/motan";
-    public static final String ZOOKEEPER_REGISTRY_COMMAND         = "/command";
+    public static final String ZOOKEEPER_REGISTRY_NAMESPACE = "/motan";
+    public static final String ZOOKEEPER_REGISTRY_COMMAND   = "/command";
 
     public static final String MOTAN_TRACE_INFO_SWITCHER = "feature.motan.trace.info";
 

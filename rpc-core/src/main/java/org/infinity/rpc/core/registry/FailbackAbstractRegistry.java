@@ -21,10 +21,10 @@ import static org.infinity.rpc.core.constant.RegistryConstants.*;
 @Slf4j
 public abstract class FailbackAbstractRegistry extends AbstractRegistry {
 
-    private final Set<Url>                                    failedRegisteredUrl              = new ConcurrentHashSet<>();
-    private final Set<Url>                                    failedUnregisteredUrl            = new ConcurrentHashSet<>();
-    private final Map<Url, ConcurrentHashSet<ClientListener>> failedSubscriptionPerClientUrl   = new ConcurrentHashMap<>();
-    private final Map<Url, ConcurrentHashSet<ClientListener>> failedUnsubscriptionPerClientUrl = new ConcurrentHashMap<>();
+    private final Set<Url>                                    failedRegisteredUrl                = new ConcurrentHashSet<>();
+    private final Set<Url>                                    failedUnregisteredUrl              = new ConcurrentHashSet<>();
+    private final Map<Url, ConcurrentHashSet<ClientListener>> failedSubscriptionPerConsumerUrl   = new ConcurrentHashMap<>();
+    private final Map<Url, ConcurrentHashSet<ClientListener>> failedUnsubscriptionPerConsumerUrl = new ConcurrentHashMap<>();
 
     public FailbackAbstractRegistry(Url registryUrl) {
         super(registryUrl);
@@ -87,19 +87,19 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     }
 
     private void doRetryFailedSubscription() {
-        if (MapUtils.isEmpty(failedSubscriptionPerClientUrl)) {
+        if (MapUtils.isEmpty(failedSubscriptionPerConsumerUrl)) {
             return;
         }
         // Do the clean empty value task
-        for (Map.Entry<Url, ConcurrentHashSet<ClientListener>> entry : failedSubscriptionPerClientUrl.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<ClientListener>> entry : failedSubscriptionPerConsumerUrl.entrySet()) {
             if (CollectionUtils.isEmpty(entry.getValue())) {
-                failedSubscriptionPerClientUrl.remove(entry.getKey());
+                failedSubscriptionPerConsumerUrl.remove(entry.getKey());
             }
         }
-        if (MapUtils.isEmpty(failedSubscriptionPerClientUrl)) {
+        if (MapUtils.isEmpty(failedSubscriptionPerConsumerUrl)) {
             return;
         }
-        for (Map.Entry<Url, ConcurrentHashSet<ClientListener>> entry : failedSubscriptionPerClientUrl.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<ClientListener>> entry : failedSubscriptionPerConsumerUrl.entrySet()) {
             Url url = entry.getKey();
             Iterator<ClientListener> iterator = entry.getValue().iterator();
             while (iterator.hasNext()) {
@@ -117,19 +117,19 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     }
 
     private void doRetryFailedUnsubscription() {
-        if (MapUtils.isEmpty(failedUnsubscriptionPerClientUrl)) {
+        if (MapUtils.isEmpty(failedUnsubscriptionPerConsumerUrl)) {
             return;
         }
         // Do the clean empty value task
-        for (Map.Entry<Url, ConcurrentHashSet<ClientListener>> entry : failedUnsubscriptionPerClientUrl.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<ClientListener>> entry : failedUnsubscriptionPerConsumerUrl.entrySet()) {
             if (CollectionUtils.isEmpty(entry.getValue())) {
-                failedUnsubscriptionPerClientUrl.remove(entry.getKey());
+                failedUnsubscriptionPerConsumerUrl.remove(entry.getKey());
             }
         }
-        if (MapUtils.isEmpty(failedUnsubscriptionPerClientUrl)) {
+        if (MapUtils.isEmpty(failedUnsubscriptionPerConsumerUrl)) {
             return;
         }
-        for (Map.Entry<Url, ConcurrentHashSet<ClientListener>> entry : failedUnsubscriptionPerClientUrl.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<ClientListener>> entry : failedUnsubscriptionPerConsumerUrl.entrySet()) {
             Url url = entry.getKey();
             Iterator<ClientListener> iterator = entry.getValue().iterator();
             while (iterator.hasNext()) {
@@ -196,55 +196,55 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      * It contains the functionality of method subscribeServiceListener and subscribeCommandListener
      * And execute the listener
      *
-     * @param clientUrl client url
-     * @param listener  client listener
+     * @param consumerUrl consumer url
+     * @param listener    client listener
      */
     @Override
-    public void subscribe(Url clientUrl, ClientListener listener) {
-        Validate.notNull(clientUrl, "Client url must NOT be null!");
+    public void subscribe(Url consumerUrl, ClientListener listener) {
+        Validate.notNull(consumerUrl, "Client url must NOT be null!");
         Validate.notNull(listener, "Client listener must NOT be null!");
 
         // Remove failed listener from the local cache before subscribe
-        removeFailedListener(clientUrl, listener);
+        removeFailedListener(consumerUrl, listener);
 
         try {
-            super.subscribe(clientUrl, listener);
+            super.subscribe(consumerUrl, listener);
         } catch (Exception e) {
             log.warn("Exception occurred!", e);
             // Add the failed listener to the local cache if exception occurred in order to retry later
-            List<Url> cachedProviderUrls = super.getCachedProviderUrls(clientUrl);
+            List<Url> cachedProviderUrls = super.getCachedProviderUrls(consumerUrl);
             if (CollectionUtils.isNotEmpty(cachedProviderUrls)) {
                 // Notify if the cached provider urls not empty
                 listener.onNotify(registryUrl, cachedProviderUrls);
             } else if (needThrowException(registryUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to subscribe the listener [{0}] to the client [{1}] on registry [{2}] by using [{3}]",
-                        listener, clientUrl, registryUrl, getRegistryClassName()), e);
+                        listener, consumerUrl, registryUrl, getRegistryClassName()), e);
             }
-            addToFailedMap(failedSubscriptionPerClientUrl, clientUrl, listener);
+            addToFailedMap(failedSubscriptionPerConsumerUrl, consumerUrl, listener);
         }
     }
 
     /**
      * It contains the functionality of method unsubscribeServiceListener and unsubscribeCommandListener
      *
-     * @param clientUrl client url
-     * @param listener  client listener
+     * @param consumerUrl consumer url
+     * @param listener    client listener
      */
     @Override
-    public void unsubscribe(Url clientUrl, ClientListener listener) {
-        Validate.notNull(clientUrl, "Client url must NOT be null!");
+    public void unsubscribe(Url consumerUrl, ClientListener listener) {
+        Validate.notNull(consumerUrl, "Client url must NOT be null!");
         Validate.notNull(listener, "Client listener must NOT be null!");
 
-        removeFailedListener(clientUrl, listener);
+        removeFailedListener(consumerUrl, listener);
 
         try {
-            super.unsubscribe(clientUrl, listener);
+            super.unsubscribe(consumerUrl, listener);
         } catch (Exception e) {
             if (needThrowException(registryUrl)) {
                 throw new RuntimeException(MessageFormat.format("Failed to unsubscribe the listener [{0}] from the client [{1}] on registry [{2}] by using [{3}]",
-                        listener, clientUrl, registryUrl, getRegistryClassName()), e);
+                        listener, consumerUrl, registryUrl, getRegistryClassName()), e);
             }
-            addToFailedMap(failedUnsubscriptionPerClientUrl, clientUrl, listener);
+            addToFailedMap(failedUnsubscriptionPerConsumerUrl, consumerUrl, listener);
         }
     }
 
@@ -259,41 +259,41 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     }
 
     /**
-     * Get all the provider urls based on the client url
+     * Get all the provider urls based on the consumer url
      *
-     * @param clientUrl client url
+     * @param consumerUrl consumer url
      * @return provider urls
      */
     @Override
     @SuppressWarnings("unchecked")
-    public List<Url> discover(Url clientUrl) {
-        if (clientUrl == null) {
+    public List<Url> discover(Url consumerUrl) {
+        if (consumerUrl == null) {
             log.warn("Url must NOT be null!");
             return Collections.EMPTY_LIST;
         }
         try {
-            return super.discover(clientUrl);
+            return super.discover(consumerUrl);
         } catch (Exception e) {
-            log.warn(MessageFormat.format("Failed to discover provider urls with client url {0} on registry [{1}]!", clientUrl, registryUrl), e);
+            log.warn(MessageFormat.format("Failed to discover provider urls with consumer url {0} on registry [{1}]!", consumerUrl, registryUrl), e);
             return Collections.EMPTY_LIST;
         }
     }
 
-    private void addToFailedMap(Map<Url, ConcurrentHashSet<ClientListener>> failedMap, Url clientUrl, ClientListener listener) {
-        Set<ClientListener> listeners = failedMap.get(clientUrl);
+    private void addToFailedMap(Map<Url, ConcurrentHashSet<ClientListener>> failedMap, Url consumerUrl, ClientListener listener) {
+        Set<ClientListener> listeners = failedMap.get(consumerUrl);
         if (listeners == null) {
-            failedMap.putIfAbsent(clientUrl, new ConcurrentHashSet<>());
-            listeners = failedMap.get(clientUrl);
+            failedMap.putIfAbsent(consumerUrl, new ConcurrentHashSet<>());
+            listeners = failedMap.get(consumerUrl);
         }
         listeners.add(listener);
     }
 
-    private void removeFailedListener(Url clientUrl, ClientListener listener) {
-        Set<ClientListener> listeners = failedSubscriptionPerClientUrl.get(clientUrl);
+    private void removeFailedListener(Url consumerUrl, ClientListener listener) {
+        Set<ClientListener> listeners = failedSubscriptionPerConsumerUrl.get(consumerUrl);
         if (CollectionUtils.isNotEmpty(listeners)) {
             listeners.remove(listener);
         }
-        listeners = failedUnsubscriptionPerClientUrl.get(clientUrl);
+        listeners = failedUnsubscriptionPerConsumerUrl.get(consumerUrl);
         if (CollectionUtils.isNotEmpty(listeners)) {
             listeners.remove(listener);
         }

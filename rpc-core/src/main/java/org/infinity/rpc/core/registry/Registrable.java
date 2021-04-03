@@ -3,7 +3,6 @@ package org.infinity.rpc.core.registry;
 import org.infinity.rpc.core.url.Url;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**

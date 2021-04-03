@@ -46,52 +46,52 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
     }
 
     @Override
-    protected synchronized void doSubscribe(Url clientUrl, ClientListener listener) {
-        List<Url> providerUrls = doDiscover(clientUrl);
+    protected synchronized void doSubscribe(Url consumerUrl, ClientListener listener) {
+        List<Url> providerUrls = doDiscover(consumerUrl);
         // Notify
         listener.onNotify(registryUrl, providerUrls);
     }
 
     @Override
-    protected synchronized void doUnsubscribe(Url clientUrl, ClientListener listener) {
-        List<Url> providerUrls = doDiscover(clientUrl);
+    protected synchronized void doUnsubscribe(Url consumerUrl, ClientListener listener) {
+        List<Url> providerUrls = doDiscover(consumerUrl);
         // Notify
         listener.onNotify(registryUrl, providerUrls);
     }
 
     @Override
-    protected void subscribeServiceListener(Url clientUrl, ServiceListener listener) {
+    protected void subscribeServiceListener(Url consumerUrl, ServiceListener listener) {
         // Do nothing
     }
 
     @Override
-    protected void unsubscribeServiceListener(Url clientUrl, ServiceListener listener) {
+    protected void unsubscribeServiceListener(Url consumerUrl, ServiceListener listener) {
         // Do nothing
     }
 
     /**
      * Discover the provider urls
      *
-     * @param clientUrl client url
+     * @param consumerUrl consumer url
      * @return provider urls
      */
     @Override
-    protected List<Url> doDiscover(Url clientUrl) {
+    protected List<Url> doDiscover(Url consumerUrl) {
         List<Url> providerUrls = new ArrayList<>(providerHostAndPortList.size());
         for (Pair<String, Integer> directProviderUrl : providerHostAndPortList) {
-            Url clientUrlCopy = clientUrl.copy();
-            // Convert client url to provider url
-            clientUrlCopy.setHost(directProviderUrl.getLeft());
-            clientUrlCopy.setPort(directProviderUrl.getRight());
-            clientUrlCopy.addOption(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
-            providerUrls.add(clientUrlCopy);
+            Url consumerUrlCopy = consumerUrl.copy();
+            // Convert consumer url to provider url
+            consumerUrlCopy.setHost(directProviderUrl.getLeft());
+            consumerUrlCopy.setPort(directProviderUrl.getRight());
+            consumerUrlCopy.addOption(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
+            providerUrls.add(consumerUrlCopy);
         }
         return providerUrls;
     }
 
     @Override
-    protected List<Url> discoverActiveProviders(Url clientUrl) {
-        return doDiscover(clientUrl);
+    protected List<Url> discoverActiveProviders(Url consumerUrl) {
+        return doDiscover(consumerUrl);
     }
 
     @Override

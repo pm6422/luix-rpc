@@ -15,12 +15,11 @@ import java.util.List;
  * todo: see ClusterSupport
  * Listener used to subscribe providers change event,
  * method {@link ProviderDiscoveryListener#onNotify(Url, List)} will be invoked if providers change event occurs.
- *
  */
 @Slf4j
 @ThreadSafe
 public class ProviderDiscoveryListener extends ProviderNotifyListener {
-    private Url clientUrl;
+    private Url consumerUrl;
 
     /**
      * Prevent instantiation of it outside the class
@@ -33,16 +32,16 @@ public class ProviderDiscoveryListener extends ProviderNotifyListener {
      * Pass provider invoker cluster to listener, listener will update provider invoker cluster after provider urls changed
      *
      * @param invokerCluster provider invoker cluster
-     * @param interfaceName   The interface class name of the consumer
-     * @param clientUrl       client url
+     * @param interfaceName  The interface class name of the consumer
+     * @param consumerUrl    consumer url
      * @return listener listener
      */
-    public static  ProviderDiscoveryListener of(InvokerCluster invokerCluster, String interfaceName, Url clientUrl) {
+    public static ProviderDiscoveryListener of(InvokerCluster invokerCluster, String interfaceName, Url consumerUrl) {
         ProviderDiscoveryListener listener = new ProviderDiscoveryListener();
         listener.invokerCluster = invokerCluster;
         listener.interfaceName = interfaceName;
-        listener.clientUrl = clientUrl;
-        listener.protocol = Protocol.getInstance(clientUrl.getProtocol());
+        listener.consumerUrl = consumerUrl;
+        listener.protocol = Protocol.getInstance(consumerUrl.getProtocol());
         return listener;
     }
 
@@ -57,7 +56,7 @@ public class ProviderDiscoveryListener extends ProviderNotifyListener {
         for (Url registryUrl : registryUrls) {
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             // Bind this listener to the client
-            registry.subscribe(clientUrl, this);
+            registry.subscribe(consumerUrl, this);
         }
     }
 

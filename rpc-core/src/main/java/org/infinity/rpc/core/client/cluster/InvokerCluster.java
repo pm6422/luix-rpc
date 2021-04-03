@@ -77,19 +77,19 @@ public interface InvokerCluster {
      * @param interfaceName      interface name
      * @param faultToleranceName fault tolerance name
      * @param loadBalancerName   load balancer name
-     * @param clientUrl          client url
+     * @param consumerUrl        consumer url
      * @return provider invoker cluster
      */
     static InvokerCluster createCluster(String clusterName,
                                         String interfaceName,
                                         String faultToleranceName,
                                         String loadBalancerName,
-                                        Url clientUrl) {
+                                        Url consumerUrl) {
         // It support one cluster for one protocol for now, but do not support one cluster for one provider
         InvokerCluster invokerCluster = InvokerCluster.getInstance(clusterName);
         invokerCluster.setInterfaceName(interfaceName);
         FaultTolerance faultTolerance = FaultTolerance.getInstance(faultToleranceName);
-        faultTolerance.setClientUrl(clientUrl);
+        faultTolerance.setConsumerUrl(consumerUrl);
         faultTolerance.setLoadBalancer(LoadBalancer.getInstance(loadBalancerName));
         invokerCluster.setFaultTolerance(faultTolerance);
         // Initialize

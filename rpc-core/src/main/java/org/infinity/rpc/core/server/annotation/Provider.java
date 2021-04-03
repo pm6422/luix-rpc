@@ -1,6 +1,5 @@
 package org.infinity.rpc.core.server.annotation;
 
-import org.infinity.rpc.core.constant.BooleanEnum;
 import org.infinity.rpc.core.constant.ServiceConstants;
 
 import java.lang.annotation.ElementType;

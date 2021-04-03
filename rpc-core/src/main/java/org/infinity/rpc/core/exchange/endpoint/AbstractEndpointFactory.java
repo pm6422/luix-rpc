@@ -4,11 +4,11 @@ package org.infinity.rpc.core.exchange.endpoint;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
-import org.infinity.rpc.core.server.messagehandler.MessageHandler;
+import org.infinity.rpc.core.exchange.checkhealth.HealthChecker;
 import org.infinity.rpc.core.exchange.client.Client;
 import org.infinity.rpc.core.exchange.endpoint.impl.CheckHealthClientEndpointManager;
-import org.infinity.rpc.core.exchange.checkhealth.HealthChecker;
 import org.infinity.rpc.core.exchange.server.Server;
+import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 

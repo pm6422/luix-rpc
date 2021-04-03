@@ -41,6 +41,7 @@ public interface Responseable extends Exchangable {
 
     /**
      * Get serialization number
+     *
      * @return serialization number
      */
     int getSerializeNum();

@@ -34,7 +34,7 @@ public class ZookeeperRegistryTests {
     private static Url               registryUrl;
     private static Url               providerUrl1;
     private static Url               providerUrl2;
-    private static Url               clientUrl;
+    private static Url               consumerUrl;
     private static EmbeddedZookeeper zookeeper;
     private static ZkClient          zkClient;
     private static String            provider      = TestDummyService.class.getName();
@@ -48,10 +48,7 @@ public class ZookeeperRegistryTests {
         in.close();
 
         registryUrl = Url.registryUrl(REGISTRY_VAL_ZOOKEEPER, REGISTRY_HOST, zkPort);
-
-        // Client url is similar to consumer url, but it has less options
-        clientUrl = Url.clientUrl(PROTOCOL_VAL_INFINITY, AddressUtils.LOCALHOST, 3000, provider);
-
+        consumerUrl = Url.consumerUrl(PROTOCOL_VAL_INFINITY, AddressUtils.LOCALHOST, 3000, provider);
         providerUrl1 = Url.providerUrl(PROTOCOL_VAL_INFINITY, AddressUtils.LOCALHOST, 2000, provider);
         providerUrl2 = Url.providerUrl(PROTOCOL_VAL_INFINITY, "192.168.100.100", 2000, provider);
 
@@ -108,12 +105,12 @@ public class ZookeeperRegistryTests {
     public void testDiscoverProviders() throws InterruptedException {
         registry.doRegister(providerUrl1);
         registry.doRegister(providerUrl2);
-        List<Url> activeProviderUrls = registry.discoverActiveProviders(clientUrl);
+        List<Url> activeProviderUrls = registry.discoverActiveProviders(consumerUrl);
         assertTrue(activeProviderUrls.isEmpty());
 
         registry.doActivate(providerUrl1);
         registry.doActivate(providerUrl2);
-        activeProviderUrls = registry.discoverActiveProviders(clientUrl);
+        activeProviderUrls = registry.discoverActiveProviders(consumerUrl);
         assertEquals(2, activeProviderUrls.size());
         assertTrue(activeProviderUrls.contains(providerUrl1));
         assertTrue(activeProviderUrls.contains(providerUrl2));
@@ -121,7 +118,7 @@ public class ZookeeperRegistryTests {
 
     @Test
     public void testDiscoverCommand() {
-        String result = registry.readCommand(clientUrl);
+        String result = registry.readCommand(consumerUrl);
         assertTrue(StringUtils.isEmpty(result));
 
         String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
@@ -132,7 +129,7 @@ public class ZookeeperRegistryTests {
         // Write command to zookeeper node
         zkClient.writeData(commandPath, command);
 
-        result = registry.readCommand(clientUrl);
+        result = registry.readCommand(consumerUrl);
         Assert.assertEquals(command, result);
     }
 
@@ -144,33 +141,33 @@ public class ZookeeperRegistryTests {
                 assertTrue(urls.contains(providerUrl1));
             }
         };
-        registry.subscribeServiceListener(clientUrl, serviceListener);
-        assertTrue(containsServiceListener(clientUrl, serviceListener));
+        registry.subscribeServiceListener(consumerUrl, serviceListener);
+        assertTrue(containsServiceListener(consumerUrl, serviceListener));
 
         registry.doRegister(providerUrl1);
         // Add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener
         registry.doActivate(providerUrl1);
         Thread.sleep(2000);
 
-        registry.unsubscribeServiceListener(clientUrl, serviceListener);
-        assertFalse(containsServiceListener(clientUrl, serviceListener));
+        registry.unsubscribeServiceListener(consumerUrl, serviceListener);
+        assertFalse(containsServiceListener(consumerUrl, serviceListener));
     }
 
-    private boolean containsServiceListener(Url clientUrl, ServiceListener serviceListener) {
-        return registry.getProviderListenersPerClientUrl().get(clientUrl).containsKey(serviceListener);
+    private boolean containsServiceListener(Url consumerUrl, ServiceListener serviceListener) {
+        return registry.getProviderListenersPerConsumerUrl().get(consumerUrl).containsKey(serviceListener);
     }
 
     @Test
     @EventMarker
     public void testSubscribeCommandListener() throws Exception {
         String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
-        CommandListener commandListener = (clientUrl, commandString) -> {
+        CommandListener commandListener = (consumerUrl, commandString) -> {
             if (StringUtils.isNotEmpty(commandString)) {
                 assertTrue(commandString.equals(command));
             }
         };
-        registry.subscribeCommandListener(clientUrl, commandListener);
-        assertTrue(containsCommandListener(clientUrl, commandListener));
+        registry.subscribeCommandListener(consumerUrl, commandListener);
+        assertTrue(containsCommandListener(consumerUrl, commandListener));
 
         String commandPath = FULL_PATH_COMMAND;
         if (!zkClient.exists(commandPath)) {
@@ -182,12 +179,12 @@ public class ZookeeperRegistryTests {
 
         zkClient.delete(commandPath);
 
-        registry.unsubscribeCommandListener(clientUrl, commandListener);
-        assertFalse(containsCommandListener(clientUrl, commandListener));
+        registry.unsubscribeCommandListener(consumerUrl, commandListener);
+        assertFalse(containsCommandListener(consumerUrl, commandListener));
     }
 
-    private boolean containsCommandListener(Url clientUrl, CommandListener commandListener) {
-        return registry.getCommandListenersPerClientUrl().get(clientUrl).containsKey(commandListener);
+    private boolean containsCommandListener(Url consumerUrl, CommandListener commandListener) {
+        return registry.getCommandListenersPerConsumerUrl().get(consumerUrl).containsKey(commandListener);
     }
 
     @Test
@@ -203,8 +200,8 @@ public class ZookeeperRegistryTests {
             }
         };
         // subscribe = subscribeServiceListener + subscribeCommandListener+ execute the clientListener
-        registry.subscribe(clientUrl, clientListener);
-        assertTrue(containsSubscribeListener(clientUrl, clientListener));
+        registry.subscribe(consumerUrl, clientListener);
+        assertTrue(containsSubscribeListener(consumerUrl, clientListener));
 
         Thread.sleep(2000);
 
@@ -217,12 +214,12 @@ public class ZookeeperRegistryTests {
         zkClient.writeData(commandPath, command);
         Thread.sleep(2000);
 
-        registry.unsubscribe(clientUrl, clientListener);
-        assertFalse(containsSubscribeListener(clientUrl, clientListener));
+        registry.unsubscribe(consumerUrl, clientListener);
+        assertFalse(containsSubscribeListener(consumerUrl, clientListener));
     }
 
-    private boolean containsSubscribeListener(Url clientUrl, ClientListener clientListener) {
-        return registry.getCommandServiceListenerPerClientUrl().get(clientUrl).getClientListeners().contains(clientListener);
+    private boolean containsSubscribeListener(Url consumerUrl, ClientListener clientListener) {
+        return registry.getCommandServiceListenerPerConsumerUrl().get(consumerUrl).getClientListeners().contains(clientListener);
     }
 
     @Test

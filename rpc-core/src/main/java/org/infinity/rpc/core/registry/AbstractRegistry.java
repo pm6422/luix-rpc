@@ -30,7 +30,7 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * The registry subclass name
      */
-    private final String                           registryClassName               = this.getClass().getSimpleName();
+    private final String                           registryClassName                 = this.getClass().getSimpleName();
     /**
      * Registry url
      */
@@ -38,11 +38,11 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * Registered provider urls cache
      */
-    private final Set<Url>                         registeredProviderUrls          = new ConcurrentHashSet<>();
+    private final Set<Url>                         registeredProviderUrls            = new ConcurrentHashSet<>();
     /**
      * Provider urls cache grouped by 'type' parameter value of {@link Url}
      */
-    private final Map<Url, Map<String, List<Url>>> providerUrlsPerTypePerClientUrl = new ConcurrentHashMap<>();
+    private final Map<Url, Map<String, List<Url>>> providerUrlsPerTypePerConsumerUrl = new ConcurrentHashMap<>();
 
     @Override
     public String getRegistryClassName() {
@@ -168,51 +168,51 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Subscribe the client url to specified listener
+     * Subscribe the consumer url to specified listener
      *
-     * @param clientUrl client url
-     * @param listener  listener
+     * @param consumerUrl consumer url
+     * @param listener    listener
      */
     @Override
-    public void subscribe(Url clientUrl, ClientListener listener) {
-        Validate.notNull(clientUrl, "Client url must NOT be null!");
+    public void subscribe(Url consumerUrl, ClientListener listener) {
+        Validate.notNull(consumerUrl, "Client url must NOT be null!");
         Validate.notNull(listener, "Client listener must NOT be null!");
 
-        doSubscribe(clientUrl, listener);
+        doSubscribe(consumerUrl, listener);
         log.info("Subscribed the url [{}] to listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
     }
 
     /**
      * Unsubscribe the url from specified listener
      *
-     * @param clientUrl provider url
-     * @param listener  listener
+     * @param consumerUrl provider url
+     * @param listener    listener
      */
     @Override
-    public void unsubscribe(Url clientUrl, ClientListener listener) {
-        Validate.notNull(clientUrl, "Client url must NOT be null!");
+    public void unsubscribe(Url consumerUrl, ClientListener listener) {
+        Validate.notNull(consumerUrl, "Client url must NOT be null!");
         Validate.notNull(listener, "Client listener must NOT be null!");
 
-        doUnsubscribe(clientUrl, listener);
+        doUnsubscribe(consumerUrl, listener);
         log.info("Unsubscribed the url [{}] from listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
     }
 
     /**
      * todo: check usage
-     * Get all the provider urls based on the client url
+     * Get all the provider urls based on the consumer url
      *
-     * @param clientUrl client url
+     * @param consumerUrl consumer url
      * @return provider urls
      */
     @Override
     @SuppressWarnings("unchecked")
-    public List<Url> discover(Url clientUrl) {
-        if (clientUrl == null) {
+    public List<Url> discover(Url consumerUrl) {
+        if (consumerUrl == null) {
             log.warn("Url must NOT be null!");
             return Collections.EMPTY_LIST;
         }
         List<Url> results = new ArrayList<>();
-        Map<String, List<Url>> urlsPerType = providerUrlsPerTypePerClientUrl.get(clientUrl);
+        Map<String, List<Url>> urlsPerType = providerUrlsPerTypePerConsumerUrl.get(consumerUrl);
         if (MapUtils.isNotEmpty(urlsPerType)) {
             // Get all the provider urls from cache no matter what the type is
             results = urlsPerType.values()
@@ -221,7 +221,7 @@ public abstract class AbstractRegistry implements Registry {
                     .collect(Collectors.toList());
         } else {
             // Read the provider urls from registry if local cache does not exist
-            List<Url> discoveredUrls = doDiscover(clientUrl);
+            List<Url> discoveredUrls = doDiscover(consumerUrl);
             if (CollectionUtils.isNotEmpty(discoveredUrls)) {
                 // Make a url copy and add to results
                 results = discoveredUrls.stream().map(Url::copy).collect(Collectors.toList());
@@ -233,11 +233,11 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * Get provider urls from cache
      *
-     * @param clientUrl client url
+     * @param consumerUrl consumer url
      * @return provider urls
      */
-    protected List<Url> getCachedProviderUrls(Url clientUrl) {
-        Map<String, List<Url>> urls = providerUrlsPerTypePerClientUrl.get(clientUrl);
+    protected List<Url> getCachedProviderUrls(Url consumerUrl) {
+        Map<String, List<Url>> urls = providerUrlsPerTypePerConsumerUrl.get(consumerUrl);
         if (MapUtils.isEmpty(urls)) {
             return Collections.emptyList();
         }
@@ -251,20 +251,20 @@ public abstract class AbstractRegistry implements Registry {
      * Group urls by url type parameter, and put it in local cache, then execute the listener
      *
      * @param providerUrls provider urls
-     * @param clientUrl    client url
+     * @param consumerUrl  consumer url
      * @param listener     listener
      */
-    protected void notify(List<Url> providerUrls, Url clientUrl, ClientListener listener) {
+    protected void notify(List<Url> providerUrls, Url consumerUrl, ClientListener listener) {
         if (listener == null || CollectionUtils.isEmpty(providerUrls)) {
             return;
         }
         // Group urls by type parameter value of url
         Map<String, List<Url>> providerUrlsPerType = groupUrlsByType(providerUrls);
 
-        Map<String, List<Url>> cachedProviderUrlsPerType = providerUrlsPerTypePerClientUrl.get(clientUrl);
+        Map<String, List<Url>> cachedProviderUrlsPerType = providerUrlsPerTypePerConsumerUrl.get(consumerUrl);
         if (cachedProviderUrlsPerType == null) {
             cachedProviderUrlsPerType = new ConcurrentHashMap<>();
-            providerUrlsPerTypePerClientUrl.putIfAbsent(clientUrl, cachedProviderUrlsPerType);
+            providerUrlsPerTypePerConsumerUrl.putIfAbsent(consumerUrl, cachedProviderUrlsPerType);
         }
 
         // Update urls cache
@@ -301,15 +301,15 @@ public abstract class AbstractRegistry implements Registry {
 
     protected abstract void doDeactivate(Url url);
 
-    protected abstract List<Url> discoverActiveProviders(Url clientUrl);
+    protected abstract List<Url> discoverActiveProviders(Url consumerUrl);
 
     protected abstract void doSubscribe(Url url, ClientListener listener);
 
     protected abstract void doUnsubscribe(Url url, ClientListener listener);
 
-    protected abstract void subscribeServiceListener(Url clientUrl, ServiceListener listener);
+    protected abstract void subscribeServiceListener(Url consumerUrl, ServiceListener listener);
 
-    protected abstract void unsubscribeServiceListener(Url clientUrl, ServiceListener listener);
+    protected abstract void unsubscribeServiceListener(Url consumerUrl, ServiceListener listener);
 
     protected abstract List<Url> doDiscover(Url url);
 }

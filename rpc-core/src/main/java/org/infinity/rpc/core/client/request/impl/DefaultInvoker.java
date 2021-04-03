@@ -14,7 +14,6 @@ import org.infinity.rpc.core.url.Url;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY;
 import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY_VAL_NETTY;
-import static org.infinity.rpc.core.constant.ServiceConstants.FORM;
 
 
 /**

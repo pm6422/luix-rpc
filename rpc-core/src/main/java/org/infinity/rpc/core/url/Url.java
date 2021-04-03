@@ -136,6 +136,20 @@ public final class Url implements Serializable {
      * @param host     host
      * @param port     port
      * @param path     RPC interface fully-qualified name
+     * @return consumer url
+     */
+    public static Url consumerUrl(String protocol, String host, Integer port, String path) {
+        return consumerUrl(protocol, host, port, path, null, null);
+    }
+
+    /**
+     * The consumer url used to export to registry only for consumers discovery management,
+     * but it have nothing to do with the service calling.
+     *
+     * @param protocol protocol
+     * @param host     host
+     * @param port     port
+     * @param path     RPC interface fully-qualified name
      * @param form     group
      * @param version  version
      * @return consumer url
@@ -149,42 +163,6 @@ public final class Url implements Serializable {
             options.put(VERSION, version);
         }
         options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_CONSUMER);
-        return of(protocol, host, port, path, options);
-    }
-
-    /**
-     * Client url is similar to consumer url, but it has less options
-     *
-     * @param protocol protocol
-     * @param host     host
-     * @param port     port
-     * @param path     RPC interface fully-qualified name
-     * @return
-     */
-    public static Url clientUrl(String protocol, String host, Integer port, String path) {
-        return clientUrl(protocol, host, port, path, null, null);
-    }
-
-    /**
-     * Client url is similar to consumer url, but it has less options
-     *
-     * @param protocol protocol
-     * @param host     host
-     * @param port     port
-     * @param path     RPC interface fully-qualified name
-     * @param form     form
-     * @param version  version
-     * @return
-     */
-    public static Url clientUrl(String protocol, String host, Integer port, String path, String form, String version) {
-        Map<String, String> options = new ConcurrentHashMap<>(16);
-        if (StringUtils.isNotEmpty(form)) {
-            options.put(FORM, form);
-        }
-        if (StringUtils.isNotEmpty(version)) {
-            options.put(VERSION, version);
-        }
-        options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_CLIENT);
         return of(protocol, host, port, path, options);
     }
 

@@ -12,24 +12,24 @@ public interface Subscribable {
     /**
      * Discover all the provider urls of the client, including 'inactive' urls
      *
-     * @param clientUrl client url
+     * @param consumerUrl consumer url
      * @return provider urls
      */
-    List<Url> discover(Url clientUrl);
+    List<Url> discover(Url consumerUrl);
 
     /**
      * Bind a listener to a client
      *
-     * @param clientUrl client url
-     * @param listener  client listener
+     * @param consumerUrl consumer url
+     * @param listener    client listener
      */
-    void subscribe(Url clientUrl, ClientListener listener);
+    void subscribe(Url consumerUrl, ClientListener listener);
 
     /**
      * Unbind a listener from a client
      *
-     * @param clientUrl client url
-     * @param listener  client listener
+     * @param consumerUrl consumer url
+     * @param listener    client listener
      */
-    void unsubscribe(Url clientUrl, ClientListener listener);
+    void unsubscribe(Url consumerUrl, ClientListener listener);
 }

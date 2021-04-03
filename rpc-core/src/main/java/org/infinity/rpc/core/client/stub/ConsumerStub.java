@@ -124,7 +124,6 @@ public class ConsumerStub<T> {
     /**
      * The consumer url used to export to registry only for consumers discovery management,
      * but it have nothing to do with the service calling.
-     * todo: 暂时无用
      */
     private Url      url;
 
@@ -133,10 +132,6 @@ public class ConsumerStub<T> {
      * Disable serialize
      */
     private transient T              proxyInstance;
-    /**
-     *
-     */
-    private           Url            clientUrl;
     /**
      *
      */
@@ -182,17 +177,13 @@ public class ConsumerStub<T> {
         // Create consumer url
         url = this.createConsumerUrl(applicationConfig, protocolConfig);
 
-        // Client url is similar to consumer url, but it has less options
-        clientUrl = Url.clientUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
-        clientUrl.addOption(THROW_EXCEPTION, String.valueOf(protocolConfig.isThrowException()));
-
         // Initialize provider invoker cluster before consumer initialization
         invokerCluster = createInvokerCluster();
 
         if (StringUtils.isEmpty(directAddresses)) {
             // Non-direct registry
             // Pass provider invoker cluster to listener, listener will update provider invoker cluster after provider urls changed
-            ProviderDiscoveryListener listener = ProviderDiscoveryListener.of(invokerCluster, interfaceName, clientUrl);
+            ProviderDiscoveryListener listener = ProviderDiscoveryListener.of(invokerCluster, interfaceName, url);
             listener.subscribe(registryUrls);
             return;
         }
@@ -210,6 +201,7 @@ public class ConsumerStub<T> {
      */
     private Url createConsumerUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
         url = Url.consumerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
+        url.addOption(THROW_EXCEPTION, String.valueOf(protocolConfig.isThrowException()));
         url.addOption(APP, applicationConfig.getName());
         url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
@@ -256,7 +248,7 @@ public class ConsumerStub<T> {
 
     private InvokerCluster createInvokerCluster() {
         // One cluster is created for one protocol, only one server node under a cluster can receive the request
-        return InvokerCluster.createCluster(cluster, interfaceName, faultTolerance, loadBalancer, clientUrl);
+        return InvokerCluster.createCluster(cluster, interfaceName, faultTolerance, loadBalancer, url);
     }
 
     /**

@@ -58,7 +58,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     /**
      * Client url
      */
-    private final    Url                             clientUrl;
+    private final    Url                             consumerUrl;
     /**
      * Registry
      */
@@ -80,10 +80,10 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
      */
     private          String                          rpcCommandStrCache        = "";
 
-    public CommandServiceListener(Url clientUrl, CommandFailbackAbstractRegistry registry) {
-        this.clientUrl = clientUrl;
+    public CommandServiceListener(Url consumerUrl, CommandFailbackAbstractRegistry registry) {
+        this.consumerUrl = consumerUrl;
         this.registry = registry;
-        log.info("Created command service listener for url [{}]", clientUrl.toFullStr());
+        log.info("Created command service listener for url [{}]", consumerUrl.toFullStr());
     }
 
     /**
@@ -111,23 +111,23 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     /**
      * Service listener event
      *
-     * @param clientUrl    client url
+     * @param consumerUrl  consumer url
      * @param registryUrl  registry url
      * @param providerUrls provider urls
      */
     @EventReceiver("providersChangeEvent")
     @Override
-    public void onNotify(Url clientUrl, Url registryUrl, List<Url> providerUrls) {
-        String group = clientUrl.getForm();
+    public void onNotify(Url consumerUrl, Url registryUrl, List<Url> providerUrls) {
+        String group = consumerUrl.getForm();
         activeProviderUrlsPerForm.put(group, providerUrls);
 
         List<Url> providerUrlList;
         if (rpcCommandCache != null) {
             Map<String, Integer> weights = new HashMap<>();
-            providerUrlList = discoverServiceWithCommand(this.clientUrl, weights, rpcCommandCache);
+            providerUrlList = discoverServiceWithCommand(this.consumerUrl, weights, rpcCommandCache);
         } else {
             log.info("Discovering the active provider urls based on group param of url when RPC command is null");
-            providerUrlList = new ArrayList<>(discoverActiveProvidersByGroup(this.clientUrl));
+            providerUrlList = new ArrayList<>(discoverActiveProvidersByGroup(this.consumerUrl));
         }
 
         for (ClientListener clientListener : clientListeners) {
@@ -139,13 +139,13 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     /**
      * Command listener event
      *
-     * @param clientUrl     client url
+     * @param consumerUrl   consumer url
      * @param commandString command string
      */
     @Override
     @EventReceiver("providerDataChangeEvent")
-    public void onNotify(Url clientUrl, String commandString) {
-        log.info("CommandServiceManager notify command. service:" + clientUrl.toSimpleString() + ", command:" + commandString);
+    public void onNotify(Url consumerUrl, String commandString) {
+        log.info("CommandServiceManager notify command. service:" + consumerUrl.toSimpleString() + ", command:" + commandString);
 
         if (!SwitcherHolder.getInstance().isOn(COMMAND_SWITCHER) || commandString == null) {
             log.info("command reset empty since switcher is close.");
@@ -153,7 +153,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
         }
 
         List<Url> result;
-        Url urlCopy = clientUrl.copy();
+        Url urlCopy = consumerUrl.copy();
 
         if (!StringUtils.equals(commandString, rpcCommandStrCache)) {
             rpcCommandStrCache = commandString;
@@ -162,7 +162,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
 
             if (rpcCommandCache != null && rpcCommandCache.getClientCommandList() != null && !rpcCommandCache.getClientCommandList().isEmpty()) {
                 rpcCommandCache.sort();
-                result = discoverServiceWithCommand(this.clientUrl, weights, rpcCommandCache);
+                result = discoverServiceWithCommand(this.consumerUrl, weights, rpcCommandCache);
             } else {
                 // 如果是指令有异常时，应当按没有指令处理，防止错误指令导致服务异常
                 if (StringUtils.isNotBlank(commandString)) {
@@ -170,7 +170,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
                     commandString = "";
                 }
                 // 没有命令时，只返回这个manager实际group对应的结果
-                result = new ArrayList<>(discoverActiveProvidersByGroup(this.clientUrl));
+                result = new ArrayList<>(discoverActiveProvidersByGroup(this.consumerUrl));
 
             }
 
@@ -186,11 +186,11 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
             }
             // 当指令从有改到无时，或者没有流量切换指令时，会触发取消订阅所有的group，需要重新订阅本组的service
             if ("".equals(commandString) || weights.isEmpty()) {
-                log.info("reSub service" + this.clientUrl.toSimpleString());
-                registry.subscribeServiceListener(this.clientUrl, this);
+                log.info("reSub service" + this.consumerUrl.toSimpleString());
+                registry.subscribeServiceListener(this.consumerUrl, this);
             }
         } else {
-            log.info("command not change. url:" + clientUrl.toSimpleString());
+            log.info("command not change. url:" + consumerUrl.toSimpleString());
             // 指令没有变化，什么也不做
             return;
         }
@@ -362,17 +362,17 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
     /**
      * Discover providers urls based on group param of url
      *
-     * @param clientUrl client url
+     * @param consumerUrl consumer url
      * @return active provider urls
      */
-    private List<Url> discoverActiveProvidersByGroup(Url clientUrl) {
-        String group = clientUrl.getForm();
+    private List<Url> discoverActiveProvidersByGroup(Url consumerUrl) {
+        String group = consumerUrl.getForm();
         List<Url> providerUrls = activeProviderUrlsPerForm.get(group);
         if (providerUrls == null) {
-            providerUrls = registry.discoverActiveProviders(clientUrl);
+            providerUrls = registry.discoverActiveProviders(consumerUrl);
             activeProviderUrlsPerForm.put(group, providerUrls);
         }
-        log.info("Discovered url by param group of url [{}]", clientUrl);
+        log.info("Discovered url by param group of url [{}]", consumerUrl);
         return providerUrls;
     }
 
@@ -393,6 +393,6 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
 
     @Override
     public String toString() {
-        return CommandServiceListener.class.getSimpleName().concat(":").concat(clientUrl.getPath());
+        return CommandServiceListener.class.getSimpleName().concat(":").concat(consumerUrl.getPath());
     }
 }

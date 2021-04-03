@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * A utility used to handle method parameters
  */
 public class MethodParameterUtils {
-    public static final String                PARAM_TYPE_STR_DELIMITER        = ",";
+    public static final  String                PARAM_TYPE_STR_DELIMITER        = ",";
     public static final  String                VOID                            = "void";
     private static final String                ARRAY_TYPE_SUFFIX               = "[]";
     private static final Class<?>[]            EMPTY_CLASS_ARRAY               = new Class<?>[0];
@@ -75,7 +75,7 @@ public class MethodParameterUtils {
      * Get the method name with its parameter class name list string.
      * e.g, invoke(java.util.List,java.lang.Long)
      *
-     * @param methodName      method name
+     * @param methodName       method name
      * @param methodParameters method parameter class name list string
      * @return method name with parameter class name list string
      */

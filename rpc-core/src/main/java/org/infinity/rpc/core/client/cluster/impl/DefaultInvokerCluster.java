@@ -62,7 +62,7 @@ public class DefaultInvokerCluster implements InvokerCluster {
             throw (RuntimeException) cause;
         }
 
-        boolean parameter = faultTolerance.getClientUrl().getBooleanOption(THROW_EXCEPTION, THROW_EXCEPTION_VAL_DEFAULT);
+        boolean parameter = faultTolerance.getConsumerUrl().getBooleanOption(THROW_EXCEPTION, THROW_EXCEPTION_VAL_DEFAULT);
         if (parameter) {
             if (cause instanceof RpcAbstractException) {
                 throw (RpcAbstractException) cause;

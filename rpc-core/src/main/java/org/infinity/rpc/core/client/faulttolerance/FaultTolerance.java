@@ -16,18 +16,18 @@ import org.infinity.rpc.utilities.spi.annotation.SpiScope;
 public interface FaultTolerance {
 
     /**
-     * Set client url
+     * Set consumer url
      *
-     * @param clientUrl client url
+     * @param consumerUrl consumer url
      */
-    void setClientUrl(Url clientUrl);
+    void setConsumerUrl(Url consumerUrl);
 
     /**
-     * Get client url
+     * Get consumer url
      *
-     * @return client url
+     * @return consumer url
      */
-    Url getClientUrl();
+    Url getConsumerUrl();
 
     /**
      * Set load balancer

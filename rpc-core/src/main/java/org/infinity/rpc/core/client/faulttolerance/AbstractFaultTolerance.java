@@ -11,7 +11,7 @@ import org.infinity.rpc.core.url.Url;
 @Setter
 @Getter
 public abstract class AbstractFaultTolerance implements FaultTolerance {
-    protected Url          clientUrl;
+    protected Url          consumerUrl;
     protected LoadBalancer loadBalancer;
 
     public AbstractFaultTolerance() {
