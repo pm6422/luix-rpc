@@ -14,32 +14,33 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Provider {
-    // The interface class name of provider
-    // For the generic call must provide interfaceName attribute
+    /**
+     * The interface class fully-qualified name of RPC provider class
+     *
+     * @return fully-qualified class name
+     */
     String interfaceName() default "";
 
-    // Interface class of provider
+    /**
+     * Interface class of RPC provider
+     *
+     * @return interface class
+     */
     Class<?> interfaceClass() default void.class;
 
     /**
-     * Available values: [infinity, zookeeper, local, direct, injvm]
+     * Protocol used to handle RPC request
+     * Available values: [infinity, zookeeper, direct]
      *
      * @return protocol
      */
     String protocol() default "";
 
     /**
-     * Available values: [zookeeper]
-     *
-     * @return registry
-     */
-//    String registry() default "";
-
-    /**
      * One service interface may have multiple implementations(forms),
      * It used to distinguish between different implementations of service provider interface
      *
-     * @return group
+     * @return form service implementation
      */
     String form() default "";
 
@@ -58,13 +59,25 @@ public @interface Provider {
     String version() default "";
 
     /**
+     * Provider health checker
+     *
      * @return health checker
      */
     String healthChecker() default "";
 
     // Timeout value for service invocation
+
+    /**
+     * RPC invocation timeout in milliseconds
+     *
+     * @return timeout
+     */
     int requestTimeout() default Integer.MAX_VALUE;
 
-    // The max retry times of RPC request
+    /**
+     * The max retry times of RPC invocation
+     *
+     * @return max retry times
+     */
     int maxRetries() default Integer.MAX_VALUE;
 }
