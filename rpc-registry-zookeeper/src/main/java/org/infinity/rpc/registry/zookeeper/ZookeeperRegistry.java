@@ -485,7 +485,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
-     * Monitor the specified zookeeper node linked to url whether the data have been changed, and it will invoke custom command listener if data change.
+     * Monitor the specified zookeeper node linked to url whether the data have been changed,
+     * and it will invoke custom command listener if data change.
      *
      * @param clientUrl       client url to identify the zookeeper path
      * @param commandListener command listener
