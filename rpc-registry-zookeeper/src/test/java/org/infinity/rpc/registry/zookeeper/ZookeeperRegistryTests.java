@@ -24,6 +24,7 @@ import java.util.*;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_VAL_INFINITY;
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_ZOOKEEPER;
+import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.FULL_PATH_COMMAND;
 import static org.junit.Assert.*;
 
 @Slf4j
@@ -124,7 +125,7 @@ public class ZookeeperRegistryTests {
         assertTrue(StringUtils.isEmpty(result));
 
         String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
-        String commandPath = ZookeeperUtils.getCommandPath(clientUrl);
+        String commandPath = FULL_PATH_COMMAND;
         if (!zkClient.exists(commandPath)) {
             zkClient.createPersistent(commandPath, true);
         }
@@ -171,7 +172,7 @@ public class ZookeeperRegistryTests {
         registry.subscribeCommandListener(clientUrl, commandListener);
         assertTrue(containsCommandListener(clientUrl, commandListener));
 
-        String commandPath = ZookeeperUtils.getCommandPath(clientUrl);
+        String commandPath = FULL_PATH_COMMAND;
         if (!zkClient.exists(commandPath)) {
             zkClient.createPersistent(commandPath, true);
         }
@@ -208,7 +209,7 @@ public class ZookeeperRegistryTests {
         Thread.sleep(2000);
 
         String command = "{\"index\":0,\"mergeGroups\":[\"aaa:1\",\"bbb:1\"],\"pattern\":\"*\",\"routeRules\":[]}\n";
-        String commandPath = ZookeeperUtils.getCommandPath(clientUrl);
+        String commandPath = FULL_PATH_COMMAND;
         if (!zkClient.exists(commandPath)) {
             zkClient.createPersistent(commandPath, true);
         }

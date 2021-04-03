@@ -32,8 +32,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static org.apache.commons.io.IOUtils.DIR_SEPARATOR_UNIX;
-import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.FULL_PATH_PROVIDER;
-import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.getProviderFilePath;
+import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.*;
 
 /**
  * Zookeeper registry implementation used to subscribe, unsubscribe, register or unregister data.
@@ -399,7 +398,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Override
     protected String readCommand(Url clientUrl) {
         try {
-            String commandPath = ZookeeperUtils.getCommandPath(clientUrl);
+            String commandPath = FULL_PATH_COMMAND;
             String command = "";
             if (zkClient.exists(commandPath)) {
                 command = zkClient.readData(commandPath);
@@ -523,7 +522,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 dataChangeListeners.putIfAbsent(commandListener, zkDataListener);
             }
 
-            String commandPath = ZookeeperUtils.getCommandPath(clientUrl);
+            String commandPath = FULL_PATH_COMMAND;
             // Bind the path with zookeeper data change listener, any the data changes under the path will trigger the zkDataListener
             zkClient.subscribeDataChanges(commandPath, zkDataListener);
             log.info("Subscribed the command listener for the path [{}]", commandPath);
@@ -548,7 +547,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             if (dataChangeListeners != null) {
                 IZkDataListener zkDataListener = dataChangeListeners.get(commandListener);
                 if (zkDataListener != null) {
-                    zkClient.unsubscribeDataChanges(ZookeeperUtils.getCommandPath(clientUrl), zkDataListener);
+                    zkClient.unsubscribeDataChanges(FULL_PATH_COMMAND, zkDataListener);
                     dataChangeListeners.remove(commandListener);
                 }
             }

@@ -3,7 +3,6 @@ package org.infinity.rpc.registry.zookeeper.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.StatusDir;
 
 import java.util.Collections;
@@ -56,16 +55,5 @@ public abstract class ZookeeperUtils {
      */
     public static List<String> getChildrenNames(ZkClient zkClient, String parentPath) {
         return zkClient.exists(parentPath) ? zkClient.getChildren(parentPath) : Collections.emptyList();
-    }
-
-    /**
-     * todo: check use
-     * Get the command full path
-     *
-     * @param url url
-     * @return command full path
-     */
-    public static String getCommandPath(Url url) {
-        return FULL_PATH_COMMAND;
     }
 }
