@@ -2,15 +2,11 @@ package org.infinity.rpc.registry.zookeeper;
 
 import java.util.Arrays;
 
-/**
- * Zookeeper active status node name
- */
 public enum StatusDir {
 
     ACTIVE("active"),
     INACTIVE("inactive"),
-    // todo: remove
-    CLIENT("client");
+    CONSUMING("consuming");
 
     StatusDir(String value) {
         this.value = value;

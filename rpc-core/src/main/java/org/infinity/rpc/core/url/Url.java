@@ -137,7 +137,7 @@ public final class Url implements Serializable {
      * @param host     host
      * @param port     port
      * @param path     RPC interface fully-qualified name
-     * @param form    group
+     * @param form     group
      * @param version  version
      * @return consumer url
      */
@@ -413,7 +413,23 @@ public final class Url implements Serializable {
      * @return combination string
      */
     public String toSimpleString() {
-        return getUri() + "?form=" + getForm() + "&version=" + getVersion();
+        if (StringUtils.isEmpty(getForm()) && StringUtils.isEmpty(getVersion())) {
+            return getUri();
+        }
+        StringBuffer sb = new StringBuffer(getUri());
+        boolean hasForm = false;
+        if (StringUtils.isNotEmpty(getForm())) {
+            sb.append("?form=").append(getForm());
+            hasForm = true;
+        }
+        if (StringUtils.isNotEmpty(getVersion())) {
+            if (hasForm) {
+                sb.append("&version=").append(getVersion());
+            } else {
+                sb.append("?version=").append(getVersion());
+            }
+        }
+        return sb.toString();
     }
 
     public String getUri() {
