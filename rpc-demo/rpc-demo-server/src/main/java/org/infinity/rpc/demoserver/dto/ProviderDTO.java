@@ -7,6 +7,8 @@ import org.infinity.rpc.core.url.Url;
 
 import java.util.List;
 
+import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
+
 @Data
 public class ProviderDTO {
     private String            name;
@@ -23,11 +25,11 @@ public class ProviderDTO {
         // Set app
         if (CollectionUtils.isNotEmpty(activeProviders)) {
             Url url = Url.valueOf(activeProviders.get(0).getContents());
-            dto.setApp(url.getOption(Url.PARAM_APP));
+            dto.setApp(url.getOption(APP));
         }
         if (CollectionUtils.isNotEmpty(inactiveProviders)) {
             Url url = Url.valueOf(inactiveProviders.get(0).getContents());
-            dto.setApp(url.getOption(Url.PARAM_APP));
+            dto.setApp(url.getOption(APP));
         }
         return dto;
     }

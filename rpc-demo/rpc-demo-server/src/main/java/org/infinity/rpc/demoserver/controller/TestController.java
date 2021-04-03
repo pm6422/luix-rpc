@@ -11,6 +11,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
+
 @RestController
 @Api(tags = "测试")
 @Slf4j
@@ -38,7 +40,7 @@ public class TestController {
                 AppService.class.getName());
 
         // Assign values to parameters
-        providerUrl.addOption(Url.PARAM_APP, infinityProperties.getApplication().getName());
+        providerUrl.addOption(APP, infinityProperties.getApplication().getName());
 
         infinityProperties.getRegistryList().forEach(registryConfig -> {
             registryConfig.getRegistryImpl().register(providerUrl);

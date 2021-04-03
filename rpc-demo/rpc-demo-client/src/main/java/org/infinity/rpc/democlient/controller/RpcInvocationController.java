@@ -6,8 +6,8 @@ import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
-import org.infinity.rpc.democlient.dto.UniversalInvokeDTO;
 import org.infinity.rpc.core.utils.name.ConsumerStubBeanNameBuilder;
+import org.infinity.rpc.democlient.dto.UniversalInvokeDTO;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
  * REST controller for RPC calling.
@@ -73,7 +74,7 @@ public class RpcInvocationController {
         ConsumerStub<?> consumerStub = getConsumerStub(dto);
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler universalInvocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
-        Object result = universalInvocationHandler.invoke(dto.getMethodName(), dto.getMethodParamTypes(), dto.getArgs(), dto.getOptions());
+        Object result = universalInvocationHandler.invoke(dto.getMethodName(), dto.getMethodParamTypes(), dto.getArgs());
         return ResponseEntity.ok().body(result);
     }
 
@@ -98,6 +99,19 @@ public class RpcInvocationController {
         consumerStub.setLoadBalancer(infinityProperties.getConsumer().getLoadBalancer());
         consumerStub.setProxy(infinityProperties.getConsumer().getProxyFactory());
         consumerStub.setHealthChecker(infinityProperties.getConsumer().getHealthChecker());
+        if (dto.getOptions().containsKey(FORM)) {
+            consumerStub.setForm(dto.getOptions().get(FORM));
+        }
+        if (dto.getOptions().containsKey(VERSION)) {
+            consumerStub.setVersion(dto.getOptions().get(VERSION));
+        }
+        if (dto.getOptions().containsKey(REQUEST_TIMEOUT)) {
+            consumerStub.setRequestTimeout(Integer.parseInt(dto.getOptions().get(REQUEST_TIMEOUT)));
+        }
+        if (dto.getOptions().containsKey(MAX_RETRIES)) {
+            consumerStub.setMaxRetries(Integer.parseInt(dto.getOptions().get(MAX_RETRIES)));
+        }
+
         // Must NOT call init()
 
         consumerStub.subscribeProviders(infinityProperties.getApplication(),

@@ -2,11 +2,15 @@ package org.infinity.rpc.registry.zookeeper.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.registry.zookeeper.StatusDir;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.io.IOUtils.DIR_SEPARATOR_UNIX;
 
 @Slf4j
 public abstract class ZookeeperUtils {
@@ -33,6 +37,15 @@ public abstract class ZookeeperUtils {
             return String.format(PROVIDER_FILE_PATH, path, statusDir.getValue(), address);
         }
         return String.format(PROVIDER_FILE_PATH, path, statusDir.getValue(), address + ":" + form);
+    }
+
+    public static List<String> getProviderFilePath(ZkClient zkClient, String path, StatusDir statusDir) {
+        String statusDirPath = getStatusDirPath(path, statusDir);
+        List<String> addrFiles = getChildrenNames(zkClient, statusDirPath);
+        if (CollectionUtils.isEmpty(addrFiles)) {
+            return Collections.emptyList();
+        }
+        return addrFiles.stream().map(file -> statusDirPath + DIR_SEPARATOR_UNIX + file).collect(Collectors.toList());
     }
 
     /**

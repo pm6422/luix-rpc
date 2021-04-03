@@ -3,6 +3,7 @@ package org.infinity.rpc.core.client.invocationhandler;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.ratelimit.RateLimiter;
 import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.server.response.Responseable;
@@ -11,6 +12,7 @@ import org.infinity.rpc.core.utils.RpcRequestIdHolder;
 import java.lang.reflect.Method;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.RATE_LIMITER_GUAVA;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
  * @param <T>: The interface class of the consumer
@@ -18,6 +20,28 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.RATE_LIMITER_GUAV
 @Slf4j
 public abstract class AbstractConsumerInvocationHandler<T> {
     protected ConsumerStub<T> consumerStub;
+
+    /**
+     * @param request    RPC request
+     * @param args       method arguments
+     * @param returnType return type of method
+     * @return result of method
+     */
+    protected Object process(RpcRequest request, Object[] args, Class<?> returnType) {
+        // Set method arguments
+        request.setMethodArguments(args);
+
+        // Set some options
+        request.addOption(FORM, consumerStub.getForm());
+        request.addOption(VERSION, consumerStub.getVersion());
+        request.addOption(HEALTH_CHECKER, consumerStub.getHealthChecker());
+        request.addOption(REQUEST_TIMEOUT, consumerStub.getRequestTimeout(), REQUEST_TIMEOUT_VAL_DEFAULT);
+        request.addOption(MAX_RETRIES, consumerStub.getMaxRetries(), MAX_RETRIES_VAL_DEFAULT);
+        request.addOption(MAX_PAYLOAD, consumerStub.getMaxPayload(), MAX_PAYLOAD_VAL_DEFAULT);
+
+        return processRequest(request, returnType);
+    }
+
 
     /**
      * @param request    RPC request

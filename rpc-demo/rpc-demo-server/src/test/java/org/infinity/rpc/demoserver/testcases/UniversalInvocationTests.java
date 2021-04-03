@@ -27,9 +27,8 @@ import static org.junit.Assert.assertEquals;
 
 public class UniversalInvocationTests extends ZkBaseTest {
 
-    private static final int    PROVIDER_PORT = 2001;
-    private static final int    CLIENT_PORT = 2002;
-    private static final String FORM        = UniversalInvocationTests.class.getSimpleName();
+    private static final int PROVIDER_PORT = 2001;
+    private static final int CLIENT_PORT   = 2002;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -54,11 +53,10 @@ public class UniversalInvocationTests extends ZkBaseTest {
         appMap.put("name", "testApp");
         appMap.put("enabled", true);
         // Save app first
-        universalInvocationHandler.invoke("save", new String[]{"org.infinity.rpc.demoserver.service.App"},
-                new Object[]{appMap}, new HashMap<>());
+        universalInvocationHandler.invoke("save", new String[]{"org.infinity.rpc.demoserver.service.App"}, new Object[]{appMap});
         Thread.sleep(100);
         // Then find
-        List<App> results = (List<App>) universalInvocationHandler.invoke("findAll", null, null, new HashMap<>());
+        List<App> results = (List<App>) universalInvocationHandler.invoke("findAll", null, null);
         assertEquals(1, results.size());
     }
 
@@ -68,8 +66,6 @@ public class UniversalInvocationTests extends ZkBaseTest {
         providerStub.setInterfaceName(TestService.class.getName());
         providerStub.setInstance(new TestServiceImpl());
         providerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
-        providerStub.setForm(FORM);
-        providerStub.setVersion("1.0.0");
         providerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
@@ -103,8 +99,6 @@ public class UniversalInvocationTests extends ZkBaseTest {
         consumerStub.setCluster(CLUSTER_VAL_DEFAULT);
         consumerStub.setFaultTolerance(FAULT_TOLERANCE_VAL_FAILOVER);
         consumerStub.setLoadBalancer(LOAD_BALANCER_VAL_RANDOM);
-        consumerStub.setForm(FORM);
-        consumerStub.setVersion("1.0.0");
         consumerStub.setProxy(PROXY_VAL_JDK);
         consumerStub.setHealthChecker(HEALTH_CHECKER_VAL_DEFAULT);
         // must NOT call init

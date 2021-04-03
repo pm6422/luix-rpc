@@ -26,6 +26,7 @@ import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_DIRECT;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
@@ -209,8 +210,7 @@ public class ConsumerStub<T> {
      */
     private Url createConsumerUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
         url = Url.consumerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
-
-        url.addOption(Url.PARAM_APP, applicationConfig.getName());
+        url.addOption(APP, applicationConfig.getName());
         url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
 

@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
@@ -186,7 +187,7 @@ public class ProviderStub<T> {
      */
     private Url createProviderUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, RegistryConfig registryConfig) {
         url = Url.providerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
-        url.addOption(Url.PARAM_APP, applicationConfig.getName());
+        url.addOption(APP, applicationConfig.getName());
         url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
         url.addOption(ENDPOINT_FACTORY, protocolConfig.getEndpointFactory());

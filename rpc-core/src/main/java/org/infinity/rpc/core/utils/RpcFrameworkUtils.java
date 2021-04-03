@@ -15,40 +15,44 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER;
 
 public class RpcFrameworkUtils {
-
-    public static String getFormFromRequest(Requestable request) {
-        return getValueFromRequest(request, ServiceConstants.FORM);
-    }
-
-    public static String getVersionFromRequest(Requestable request) {
-        return getValueFromRequest(request, ServiceConstants.VERSION);
-    }
-
-    public static String getValueFromRequest(Requestable request, String key) {
-        return MapUtils.isNotEmpty(request.getOptions()) ? request.getOption(key) : null;
-    }
-
     /**
-     * 目前根据 group/interface/version 来唯一标示一个服务
+     * 目前根据 interface:group:version 来唯一标示一个服务
      *
      * @param request
      * @return
      */
 
     public static String getServiceKey(Requestable request) {
-        String version = getVersionFromRequest(request);
-        String group = getFormFromRequest(request);
-        return getServiceKey(group, request.getInterfaceName(), version);
+        return getServiceKey(request.getInterfaceName(), getFormFromRequest(request), getVersionFromRequest(request));
     }
 
     /**
-     * 目前根据 group/interface/version 来唯一标示一个服务
+     * 目前根据 interface:group:version 来唯一标示一个服务
      *
      * @param url
      * @return
      */
     public static String getServiceKey(Url url) {
-        return getServiceKey(url.getForm(), url.getPath(), url.getVersion());
+        return getServiceKey(url.getPath(), url.getForm(), url.getVersion());
+    }
+
+    /**
+     * serviceKey: interface:group:version
+     *
+     * @param interfaceName
+     * @param form
+     * @param version
+     * @return
+     */
+    private static String getServiceKey(String interfaceName, String form, String version) {
+        StringBuffer sb = new StringBuffer(interfaceName);
+        if (StringUtils.isNotBlank(form)) {
+            sb.append(":").append(form);
+        }
+        if (StringUtils.isNotBlank(version)) {
+            sb.append(":").append(version);
+        }
+        return sb.toString();
     }
 
     /**
@@ -178,16 +182,16 @@ public class RpcFrameworkUtils {
 
     }
 
-    /**
-     * serviceKey: group/interface/version
-     *
-     * @param group
-     * @param interfaceName
-     * @param version
-     * @return
-     */
-    private static String getServiceKey(String group, String interfaceName, String version) {
-        return group + DIR_SEPARATOR_UNIX + interfaceName + DIR_SEPARATOR_UNIX + version;
+    public static String getFormFromRequest(Requestable request) {
+        return getValueFromRequest(request, ServiceConstants.FORM);
+    }
+
+    public static String getVersionFromRequest(Requestable request) {
+        return getValueFromRequest(request, ServiceConstants.VERSION);
+    }
+
+    public static String getValueFromRequest(Requestable request, String key) {
+        return MapUtils.isNotEmpty(request.getOptions()) ? request.getOption(key) : null;
     }
 
     /**

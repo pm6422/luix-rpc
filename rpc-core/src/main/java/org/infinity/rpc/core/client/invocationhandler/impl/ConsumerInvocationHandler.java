@@ -12,9 +12,7 @@ import org.infinity.rpc.utilities.id.IdGenerator;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Map;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.infinity.rpc.core.utils.MethodParameterUtils.*;
 
 /**
@@ -50,18 +48,19 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
                 getMethodParameters(method),
                 isAsyncMethod(method));
 
-        // Set method arguments
-        request.setMethodArguments(args);
+        return process(request, args, method.getReturnType());
+    }
 
-        // Set some options
-        request.addOption(FORM, consumerStub.getForm());
-        request.addOption(VERSION, consumerStub.getVersion());
-        request.addOption(HEALTH_CHECKER, consumerStub.getHealthChecker());
-        request.addOption(REQUEST_TIMEOUT, consumerStub.getRequestTimeout(), REQUEST_TIMEOUT_VAL_DEFAULT);
-        request.addOption(MAX_RETRIES, consumerStub.getMaxRetries(), MAX_RETRIES_VAL_DEFAULT);
-        request.addOption(MAX_PAYLOAD, consumerStub.getMaxPayload(), MAX_PAYLOAD_VAL_DEFAULT);
+    @Override
+    public Object invoke(String methodName, String[] methodParamTypes, Object[] args) {
+        // Create a new RpcRequest for each request
+        RpcRequest request = new RpcRequest(IdGenerator.generateTimestampId(),
+                consumerStub.getInterfaceName(),
+                methodName,
+                ArrayUtils.isEmpty(methodParamTypes) ? VOID : String.join(PARAM_TYPE_STR_DELIMITER, methodParamTypes),
+                false);
 
-        return processRequest(request, method.getReturnType());
+        return process(request, args, Object.class);
     }
 
     /**
@@ -72,22 +71,5 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
      */
     private boolean isAsyncMethod(Method method) {
         return method.getReturnType().equals(FutureResponse.class);
-    }
-
-    @Override
-    public Object invoke(String methodName, String[] methodParamTypes, Object[] args, Map<String, String> options) {
-        // Create a new RpcRequest for each request
-        RpcRequest request = new RpcRequest(IdGenerator.generateTimestampId(),
-                consumerStub.getInterfaceName(),
-                methodName,
-                ArrayUtils.isEmpty(methodParamTypes) ? VOID : String.join(PARAM_TYPE_STR_DELIMITER, methodParamTypes),
-                false);
-
-        // Set method arguments
-        request.setMethodArguments(args);
-
-        // Set some options
-        request.setOptions(options);
-        return processRequest(request, Object.class);
     }
 }
