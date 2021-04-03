@@ -38,7 +38,7 @@ public abstract class ZkBaseTest {
     }
 
     protected static void cleanup() {
-        zkClient.deleteRecursive(ZookeeperUtils.REGISTRY_NAMESPACE);
+        zkClient.deleteRecursive(ZookeeperUtils.NAMESPACE);
     }
 
 }

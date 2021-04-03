@@ -2,15 +2,12 @@ package org.infinity.rpc.demoserver.controller;
 
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.config.ApplicationExtConfig;
-import org.infinity.rpc.core.registry.AddressInfo;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.demoserver.dto.ProviderDTO;
 import org.infinity.rpc.demoserver.dto.RegistryDTO;
 import org.infinity.rpc.demoserver.service.RegistryService;
-import org.infinity.rpc.registry.zookeeper.ZookeeperStatusNode;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 

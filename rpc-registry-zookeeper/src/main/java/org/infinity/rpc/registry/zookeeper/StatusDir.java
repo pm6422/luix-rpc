@@ -5,14 +5,14 @@ import java.util.Arrays;
 /**
  * Zookeeper active status node name
  */
-public enum ZookeeperStatusNode {
+public enum StatusDir {
 
     ACTIVE("active"),
     INACTIVE("inactive"),
     // todo: remove
     CLIENT("client");
 
-    ZookeeperStatusNode(String value) {
+    StatusDir(String value) {
         this.value = value;
     }
 
@@ -22,7 +22,7 @@ public enum ZookeeperStatusNode {
         return value;
     }
 
-    public static ZookeeperStatusNode fromValue(String value) {
-        return Arrays.stream(ZookeeperStatusNode.values()).filter(x -> x.getValue().equals(value)).findFirst().orElse(null);
+    public static StatusDir fromValue(String value) {
+        return Arrays.stream(StatusDir.values()).filter(x -> x.getValue().equals(value)).findFirst().orElse(null);
     }
 }

@@ -12,7 +12,7 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.demoserver.service.TestService;
 import org.infinity.rpc.demoserver.service.impl.TestServiceImpl;
 import org.infinity.rpc.demoserver.testcases.base.ZkBaseTest;
-import org.infinity.rpc.registry.zookeeper.ZookeeperStatusNode;
+import org.infinity.rpc.registry.zookeeper.StatusDir;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -30,7 +30,7 @@ public class RefreshUrlTests extends ZkBaseTest {
 
     private static final int    PROVIDER_PORT = 2001;
     private static final int    CLIENT_PORT   = 2002;
-    private static final String GROUP         = RefreshUrlTests.class.getSimpleName();
+    private static final String FORM          = RefreshUrlTests.class.getSimpleName();
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -45,14 +45,14 @@ public class RefreshUrlTests extends ZkBaseTest {
     }
 
     @Test
-    public void testRefreshProvider() {
+    public void testRefreshProvider() throws InterruptedException {
         ProviderStub<TestService> providerStub = new ProviderStub<>();
         // Register once
         registerProvider(providerStub, 100);
 
-        String activePath = ZookeeperUtils.getProviderStatusNodePath(providerStub.getUrl().getForm(), providerStub.getUrl().getPath(), ZookeeperStatusNode.ACTIVE);
+        String activePath = ZookeeperUtils.getStatusDirPath(providerStub.getUrl().getPath(), StatusDir.ACTIVE);
         List<String> activateAddrFiles = zkClient.getChildren(activePath);
-        String filePath = ZookeeperUtils.getProviderStatusNodePath(providerStub.getUrl().getForm(), providerStub.getUrl().getPath(), ZookeeperStatusNode.ACTIVE) + "/" + activateAddrFiles.get(0);
+        String filePath = ZookeeperUtils.getStatusDirPath(providerStub.getUrl().getPath(), StatusDir.ACTIVE) + "/" + activateAddrFiles.get(0);
 
         Url url1 = Url.valueOf(zkClient.readData(filePath));
         assertEquals("100", url1.getOption(REQUEST_TIMEOUT));
@@ -69,7 +69,7 @@ public class RefreshUrlTests extends ZkBaseTest {
         providerStub.setInterfaceName(TestService.class.getName());
         providerStub.setInstance(new TestServiceImpl());
         providerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
-        providerStub.setForm(GROUP);
+        providerStub.setForm(FORM);
         providerStub.setVersion("1.0.0");
         providerStub.setRequestTimeout(requestTimeout);
         providerStub.init();
@@ -112,7 +112,7 @@ public class RefreshUrlTests extends ZkBaseTest {
         consumerStub.setCluster(CLUSTER_VAL_DEFAULT);
         consumerStub.setFaultTolerance(FAULT_TOLERANCE_VAL_FAILOVER);
         consumerStub.setLoadBalancer(LOAD_BALANCER_VAL_RANDOM);
-        consumerStub.setForm(GROUP);
+        consumerStub.setForm(FORM);
         consumerStub.setVersion("1.0.0");
         consumerStub.setProxy(PROXY_VAL_JDK);
         consumerStub.setHealthChecker(HEALTH_CHECKER_VAL_DEFAULT);

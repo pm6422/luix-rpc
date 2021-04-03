@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.registry.AddressInfo;
-import org.infinity.rpc.registry.zookeeper.ZookeeperStatusNode;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.webcenter.service.RegistryService;
 
@@ -12,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.PROVIDER_PATH;
+import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.FULL_PATH_PROVIDER;
 
 @Slf4j
 public class ZookeeperRegistryServiceImpl implements RegistryService {
@@ -26,13 +25,7 @@ public class ZookeeperRegistryServiceImpl implements RegistryService {
     @Deprecated
     @Override
     public List<String> getGroups() {
-        return ZookeeperUtils.getChildrenNames(zkClient, PROVIDER_PATH);
-    }
-
-    @Deprecated
-    @Override
-    public List<String> getProvidersByGroup(String group) {
-        return ZookeeperUtils.getChildrenNames(zkClient, ZookeeperUtils.getFormPath(group));
+        return ZookeeperUtils.getChildrenNames(zkClient, FULL_PATH_PROVIDER);
     }
 
     @Deprecated
