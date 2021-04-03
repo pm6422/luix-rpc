@@ -86,7 +86,14 @@ public class ConsumerStub<T> {
      */
     private String   form;
     /**
-     * Version
+     * When the service changes, such as adding or deleting methods, and interface parameters change,
+     * the provider and consumer application instances need to be upgraded.
+     * In order to deploy in a production environment without affecting user use,
+     * a gradual migration scheme is generally adopted.
+     * First upgrade some provider application instances,
+     * and then use the same version number to upgrade some consumer instances.
+     * The old version of the consumer instance calls the old version of the provider instance.
+     * Observe that there is no problem and repeat this process to complete the upgrade.
      */
     private String   version;
     /**
