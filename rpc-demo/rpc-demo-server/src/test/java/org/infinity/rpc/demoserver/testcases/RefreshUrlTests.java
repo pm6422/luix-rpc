@@ -9,8 +9,8 @@ import org.infinity.rpc.core.constant.ProtocolConstants;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.switcher.impl.SwitcherHolder;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.demoserver.service.TestService;
-import org.infinity.rpc.demoserver.service.impl.TestServiceImpl;
+import org.infinity.rpc.demoserver.service.RefreshUrlService;
+import org.infinity.rpc.demoserver.service.impl.RefreshUrlServiceImpl;
 import org.infinity.rpc.demoserver.testcases.base.ZkBaseTest;
 import org.infinity.rpc.registry.zookeeper.StatusDir;
 import org.junit.After;
@@ -45,7 +45,7 @@ public class RefreshUrlTests extends ZkBaseTest {
 
     @Test
     public void testRefreshProvider() {
-        ProviderStub<TestService> providerStub = new ProviderStub<>();
+        ProviderStub<RefreshUrlService> providerStub = new ProviderStub<>();
         // Register once
         registerProvider(providerStub, 100);
 
@@ -61,11 +61,13 @@ public class RefreshUrlTests extends ZkBaseTest {
         assertEquals("200", url2.getOption(REQUEST_TIMEOUT));
     }
 
-    private void registerProvider(ProviderStub<TestService> providerStub, int requestTimeout) {
-        providerStub.setInterfaceClass(TestService.class);
-        providerStub.setInterfaceName(TestService.class.getName());
-        providerStub.setInstance(new TestServiceImpl());
+    private void registerProvider(ProviderStub<RefreshUrlService> providerStub, int requestTimeout) {
+        providerStub.setInterfaceClass(RefreshUrlService.class);
+        providerStub.setInterfaceName(RefreshUrlService.class.getName());
+        providerStub.setInstance(new RefreshUrlServiceImpl());
         providerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
+        providerStub.setForm(RefreshUrlTests.class.getSimpleName());
+        providerStub.setVersion("1.0.0");
         providerStub.setRequestTimeout(requestTimeout);
         providerStub.init();
 
@@ -95,18 +97,20 @@ public class RefreshUrlTests extends ZkBaseTest {
 
     @Test
     public void testRefreshConsumer() {
-        ConsumerStub<TestService> consumerStub = new ConsumerStub<>();
+        ConsumerStub<RefreshUrlService> consumerStub = new ConsumerStub<>();
         subscribeProvider(consumerStub);
         subscribeProvider(consumerStub);
     }
 
-    private void subscribeProvider(ConsumerStub<TestService> consumerStub) {
-        consumerStub.setInterfaceClass(TestService.class);
-        consumerStub.setInterfaceName(TestService.class.getName());
+    private void subscribeProvider(ConsumerStub<RefreshUrlService> consumerStub) {
+        consumerStub.setInterfaceClass(RefreshUrlService.class);
+        consumerStub.setInterfaceName(RefreshUrlService.class.getName());
         consumerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
         consumerStub.setCluster(CLUSTER_VAL_DEFAULT);
         consumerStub.setFaultTolerance(FAULT_TOLERANCE_VAL_FAILOVER);
         consumerStub.setLoadBalancer(LOAD_BALANCER_VAL_RANDOM);
+        consumerStub.setForm(RefreshUrlTests.class.getSimpleName());
+        consumerStub.setVersion("1.0.0");
         consumerStub.setProxy(PROXY_VAL_JDK);
         consumerStub.setHealthChecker(HEALTH_CHECKER_VAL_DEFAULT);
         consumerStub.init();

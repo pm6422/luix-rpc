@@ -20,9 +20,8 @@ import static org.junit.Assert.assertEquals;
 
 public class ServiceCallTests extends ZkBaseTest {
 
-    private static final int    PROVIDER_PORT = 2001;
-    private static final int    CLIENT_PORT = 2002;
-    private static final String TEST_FORM   = ServiceCallTests.class.getSimpleName();
+    private static final int PROVIDER_PORT = 2001;
+    private static final int CLIENT_PORT   = 2002;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -50,7 +49,7 @@ public class ServiceCallTests extends ZkBaseTest {
         providerStub.setInterfaceName(TestService.class.getName());
         providerStub.setInstance(new TestServiceImpl());
         providerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
-        providerStub.setForm(TEST_FORM);
+        providerStub.setForm(ServiceCallTests.class.getSimpleName());
         providerStub.setVersion("1.0.0");
         providerStub.init();
 
@@ -86,7 +85,7 @@ public class ServiceCallTests extends ZkBaseTest {
         consumerStub.setCluster(CLUSTER_VAL_DEFAULT);
         consumerStub.setFaultTolerance(FAULT_TOLERANCE_VAL_FAILOVER);
         consumerStub.setLoadBalancer(LOAD_BALANCER_VAL_RANDOM);
-        consumerStub.setForm(TEST_FORM);
+        consumerStub.setForm(ServiceCallTests.class.getSimpleName());
         consumerStub.setVersion("1.0.0");
         consumerStub.setProxy(PROXY_VAL_JDK);
         consumerStub.setHealthChecker(HEALTH_CHECKER_VAL_DEFAULT);

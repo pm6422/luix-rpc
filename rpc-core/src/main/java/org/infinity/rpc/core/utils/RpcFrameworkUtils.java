@@ -16,7 +16,7 @@ import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER;
 
 public class RpcFrameworkUtils {
     /**
-     * 目前根据 interface:group:version 来唯一标示一个服务
+     * 目前根据 interface/group/version 来唯一标示一个服务
      *
      * @param request
      * @return
@@ -27,7 +27,7 @@ public class RpcFrameworkUtils {
     }
 
     /**
-     * 目前根据 interface:group:version 来唯一标示一个服务
+     * 目前根据 interface/group/version 来唯一标示一个服务
      *
      * @param url
      * @return
@@ -37,7 +37,7 @@ public class RpcFrameworkUtils {
     }
 
     /**
-     * serviceKey: interface:group:version
+     * serviceKey: interface/group/version
      *
      * @param interfaceName
      * @param form
@@ -47,23 +47,23 @@ public class RpcFrameworkUtils {
     private static String getServiceKey(String interfaceName, String form, String version) {
         StringBuffer sb = new StringBuffer(interfaceName);
         if (StringUtils.isNotBlank(form)) {
-            sb.append(":").append(form);
+            sb.append(DIR_SEPARATOR_UNIX).append(form);
         }
         if (StringUtils.isNotBlank(version)) {
-            sb.append(":").append(version);
+            sb.append(DIR_SEPARATOR_UNIX).append(version);
         }
         return sb.toString();
     }
 
     /**
-     * protocol key: protocol://host:port/group/interface/version
+     * protocol key: protocol://host:port/interface/form/version
      *
      * @param url
      * @return
      */
     public static String getProtocolKey(Url url) {
         return url.getProtocol() + RpcConstants.PROTOCOL_SEPARATOR + url.getAddress() + DIR_SEPARATOR_UNIX
-                + url.getForm() + DIR_SEPARATOR_UNIX + url.getPath() + DIR_SEPARATOR_UNIX + url.getVersion();
+                + url.getPath() + DIR_SEPARATOR_UNIX + url.getForm() + DIR_SEPARATOR_UNIX + url.getVersion();
     }
 
     /**
