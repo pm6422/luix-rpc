@@ -81,7 +81,8 @@ public class ConsumerStub<T> {
      */
     private String   loadBalancer;
     /**
-     * Used to distinguish between different implementations of service provider interface
+     * One service interface may have multiple implementations(forms),
+     * It used to distinguish between different implementations of service provider interface
      */
     private String   form;
     /**

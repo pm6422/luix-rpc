@@ -36,7 +36,8 @@ public @interface Provider {
 //    String registry() default "";
 
     /**
-     * Used to distinguish between different implementations of service provider interface
+     * One service interface may have multiple implementations(forms),
+     * It used to distinguish between different implementations of service provider interface
      *
      * @return group
      */
