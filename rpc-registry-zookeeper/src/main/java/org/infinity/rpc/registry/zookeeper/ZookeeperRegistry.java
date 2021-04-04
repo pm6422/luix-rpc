@@ -8,13 +8,13 @@ import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.zookeeper.Watcher;
 import org.infinity.rpc.core.registry.CommandFailbackAbstractRegistry;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.utilities.annotation.EventPublisher;
 import org.infinity.rpc.utilities.annotation.EventSubscriber;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
@@ -30,7 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static org.apache.commons.io.IOUtils.DIR_SEPARATOR_UNIX;
 import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.*;
 
 /**
@@ -47,12 +46,12 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     /**
      * Used to resolve concurrency problems for subscribe or unsubscribe service listeners
      */
-    private final Lock                                                           listenerLock                  = new ReentrantLock();
+    private final Lock                                                           listenerLock                    = new ReentrantLock();
     /**
      * Used to resolve concurrency problems for register or unregister providers
      */
-    private final Lock                                                           providerLock                  = new ReentrantLock();
-    private final Set<Url>                                                       activeProviderUrls            = new ConcurrentHashSet<>();
+    private final Lock                                                           providerLock                    = new ReentrantLock();
+    private final Set<Url>                                                       activeProviderUrls              = new ConcurrentHashSet<>();
     private final Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> providerListenersPerConsumerUrl = new ConcurrentHashMap<>();
     private final Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>  commandListenersPerConsumerUrl  = new ConcurrentHashMap<>();
 
@@ -280,7 +279,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * @param dir         directory
      */
     private void removeNode(Url providerUrl, StatusDir dir) {
-        String nodePath = getProviderFilePath(providerUrl.getPath(), dir, providerUrl.getAddress(), providerUrl.getForm());
+        String nodePath = ZookeeperUtils.getProviderFilePath(providerUrl.getPath(), dir, providerUrl.getAddress(), providerUrl.getForm());
         if (zkClient.exists(nodePath)) {
             zkClient.delete(nodePath);
         }
@@ -300,7 +299,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         }
         // Create a temporary file, which name is an address(host:port), which content is the full string of the url
         // And temporary files will be deleted automatically after closed zk session
-        zkClient.createEphemeral(getProviderFilePath(providerUrl.getPath(), statusNode, providerUrl.getAddress(), providerUrl.getForm()), providerUrl.toFullStr());
+        zkClient.createEphemeral(ZookeeperUtils.getProviderFilePath(providerUrl.getPath(), statusNode, providerUrl.getAddress(), providerUrl.getForm()), providerUrl.toFullStr());
     }
 
     /**
@@ -330,44 +329,11 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Override
     protected List<Url> discoverActiveProviders(Url consumerUrl) {
         try {
-            String parentPath = getStatusDirPath(consumerUrl.getPath(), StatusDir.ACTIVE);
-            List<String> addrFiles = getChildrenNames(zkClient, parentPath);
-            return readProviderUrls(parentPath, addrFiles);
+            return readProviderUrls(zkClient, consumerUrl.getPath(), StatusDir.ACTIVE);
         } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to discover provider [{0}] from registry [{1}] with the error: {2}", consumerUrl, getRegistryUrl(), e.getMessage()), e);
+            throw new RuntimeException(MessageFormat.format("Failed to discover provider [{0}] from registry [{1}] with the error: {2}",
+                    consumerUrl, getRegistryUrl(), e.getMessage()), e);
         }
-    }
-
-    /**
-     * Read provider urls from address files' data
-     *
-     * @param dirName   zookeeper dir path, e.g. /infinity/default/org.infinity.app.common.service.AppService/active
-     * @param fileNames address file names list, e.g. 172.25.11.111:26010,172.25.11.222:26010
-     * @return provider urls
-     */
-    private List<Url> readProviderUrls(String dirName, List<String> fileNames) {
-        List<Url> urls = new ArrayList<>();
-        if (CollectionUtils.isEmpty(fileNames)) {
-            return urls;
-        }
-        for (String fileName : fileNames) {
-            String fullPath = dirName + DIR_SEPARATOR_UNIX + fileName;
-            String fileData = null;
-            try {
-                fileData = zkClient.readData(fullPath, true);
-                log.debug("Read zookeeper file data: {}", fileData);
-            } catch (Exception e) {
-                log.warn("Failed to read the zookeeper file data!");
-            }
-            if (StringUtils.isNotBlank(fileData)) {
-                try {
-                    urls.add(Url.valueOf(fileData));
-                } catch (Exception e) {
-                    log.warn(MessageFormat.format("Found illegal zookeeper file data with path [{0}]", fullPath), e);
-                }
-            }
-        }
-        return urls;
     }
 
     @Override
@@ -411,7 +377,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     /**
      * Monitor the specified zookeeper node linked to url whether the child nodes have been changed, and it will invoke custom service listener if child nodes change.
      *
-     * @param consumerUrl       consumer url to identify the zookeeper path
+     * @param consumerUrl     consumer url to identify the zookeeper path
      * @param serviceListener service listener
      */
     @Override
@@ -430,7 +396,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 zkChildListener = (dirName, currentChildren) -> {
                     @EventPublisher("providersChangeEvent")
                     List<String> fileNames = ListUtils.emptyIfNull(currentChildren);
-                    serviceListener.onNotify(consumerUrl, getRegistryUrl(), readProviderUrls(dirName, fileNames));
+                    serviceListener.onNotify(consumerUrl, getRegistryUrl(), readProviderUrls(zkClient, dirName, fileNames));
                     log.info("Provider files [{}] changed under path [{}]", String.join(",", fileNames), dirName);
                 };
                 childChangeListeners.putIfAbsent(serviceListener, zkChildListener);
@@ -442,14 +408,14 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 createNode(consumerUrl, StatusDir.CONSUMING);
             } catch (Exception e) {
                 log.warn(MessageFormat.format("Failed to remove or create the node with path [{0}]",
-                        getProviderFilePath(consumerUrl.getPath(), StatusDir.CONSUMING, consumerUrl.getAddress(), consumerUrl.getForm())), e);
+                        ZookeeperUtils.getProviderFilePath(consumerUrl.getPath(), StatusDir.CONSUMING, consumerUrl.getAddress(), consumerUrl.getForm())), e);
             }
 
             String path = getStatusDirPath(consumerUrl.getPath(), StatusDir.ACTIVE);
             // Bind the path with zookeeper child change listener, any the child list changes under the path will trigger the zkChildListener
             zkClient.subscribeChildChanges(path, zkChildListener);
             log.info("Subscribed the service listener for the path [{}]",
-                    getProviderFilePath(consumerUrl.getPath(), StatusDir.ACTIVE, consumerUrl.getAddress(), consumerUrl.getForm()));
+                    ZookeeperUtils.getProviderFilePath(consumerUrl.getPath(), StatusDir.ACTIVE, consumerUrl.getAddress(), consumerUrl.getForm()));
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to subscribe service listeners for url [{}]", consumerUrl), e);
         } finally {
@@ -460,7 +426,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     /**
      * Unsubscribe the service listener from the specified zookeeper node
      *
-     * @param consumerUrl       consumer url to identify the zookeeper path
+     * @param consumerUrl     consumer url to identify the zookeeper path
      * @param serviceListener service listener
      */
     @Override
@@ -488,7 +454,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * Monitor the specified zookeeper node linked to url whether the data have been changed,
      * and it will invoke custom command listener if data change.
      *
-     * @param consumerUrl       consumer url to identify the zookeeper path
+     * @param consumerUrl     consumer url to identify the zookeeper path
      * @param commandListener command listener
      */
     @Override
@@ -536,7 +502,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     /**
      * Unsubscribe the command listener from the specified zookeeper node
      *
-     * @param consumerUrl       consumer url to identify the zookeeper path
+     * @param consumerUrl     consumer url to identify the zookeeper path
      * @param commandListener command listener
      */
     @Override

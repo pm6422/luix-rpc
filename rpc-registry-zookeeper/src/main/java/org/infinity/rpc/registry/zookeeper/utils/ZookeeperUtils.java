@@ -4,11 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.StatusDir;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.apache.commons.io.IOUtils.DIR_SEPARATOR_UNIX;
 
@@ -26,10 +28,10 @@ public abstract class ZookeeperUtils {
     /**
      * Get the full path of provider address file
      *
-     * @param path      provider class fully-qualified name
+     * @param path      provider class fully-qualified name, e.g. org.infinity.app.common.service.AppService
      * @param statusDir status directory
      * @param address   Server IP address of provider
-     * @param form      provider form
+     * @param form      provider form, e.g. f1
      * @return full path of provider address file
      */
     public static String getProviderFilePath(String path, StatusDir statusDir, String address, String form) {
@@ -39,19 +41,52 @@ public abstract class ZookeeperUtils {
         return String.format(PROVIDER_FILE_PATH, path, statusDir.getValue(), address + ":" + form);
     }
 
-    public static List<String> getProviderFilePath(ZkClient zkClient, String path, StatusDir statusDir) {
+    /**
+     * Read provider urls from data of address files
+     *
+     * @param zkClient  zk client
+     * @param path      provider class fully-qualified name, e.g. org.infinity.app.common.service.AppService
+     * @param statusDir status directory
+     * @return provider urls
+     */
+    public static List<Url> readProviderUrls(ZkClient zkClient, String path, StatusDir statusDir) {
         String statusDirPath = getStatusDirPath(path, statusDir);
         List<String> addrFiles = getChildrenNames(zkClient, statusDirPath);
-        if (CollectionUtils.isEmpty(addrFiles)) {
+        return CollectionUtils.isEmpty(addrFiles) ? Collections.emptyList() : readProviderUrls(zkClient, statusDirPath, addrFiles);
+    }
+
+    /**
+     * Read provider urls from data of address files
+     *
+     * @param zkClient      zk client
+     * @param statusDirPath status directory path, e.g. /infinity/default/org.infinity.app.common.service.AppService/active
+     * @param fileNames     address file names list, e.g. 172.25.11.111:26010,172.25.11.222:26010
+     * @return provider urls
+     */
+    public static List<Url> readProviderUrls(ZkClient zkClient, String statusDirPath, List<String> fileNames) {
+        if (CollectionUtils.isEmpty(fileNames)) {
             return Collections.emptyList();
         }
-        return addrFiles.stream().map(file -> statusDirPath + DIR_SEPARATOR_UNIX + file).collect(Collectors.toList());
+        List<Url> urls = new ArrayList<>();
+        for (String fileName : fileNames) {
+            String fullPath = null;
+            try {
+                fullPath = statusDirPath + DIR_SEPARATOR_UNIX + fileName;
+                String fileData = zkClient.readData(fullPath, true);
+                if (StringUtils.isNotBlank(fileData)) {
+                    urls.add(Url.valueOf(fileData));
+                }
+            } catch (Exception e) {
+                log.warn(MessageFormat.format("Failed to read the file or read illegal file data for the path [{0}]", fullPath), e);
+            }
+        }
+        return urls;
     }
 
     /**
      * Get the full path of provider status directory
      *
-     * @param path      provider class fully-qualified name
+     * @param path      provider class fully-qualified name, e.g. org.infinity.app.common.service.AppService
      * @param statusDir status directory
      * @return full path of provider status directory
      */
@@ -63,6 +98,7 @@ public abstract class ZookeeperUtils {
     /**
      * Get all child directory or file names under the specified parent path
      *
+     * @param zkClient   zk client
      * @param parentPath parent directory path
      * @return names of child node
      */

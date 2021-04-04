@@ -13,6 +13,7 @@ import org.infinity.rpc.demoserver.service.RefreshUrlService;
 import org.infinity.rpc.demoserver.service.impl.RefreshUrlServiceImpl;
 import org.infinity.rpc.demoserver.testcases.base.ZkBaseTest;
 import org.infinity.rpc.registry.zookeeper.StatusDir;
+import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,7 +23,7 @@ import java.util.List;
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
 import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT;
-import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.getProviderFilePath;
+import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.readProviderUrls;
 import static org.junit.Assert.assertEquals;
 
 @Slf4j
@@ -49,16 +50,14 @@ public class RefreshUrlTests extends ZkBaseTest {
         // Register once
         registerProvider(providerStub, 100);
 
-        List<String> providerFilePath = getProviderFilePath(zkClient, providerStub.getUrl().getPath(), StatusDir.ACTIVE);
-
-        Url url1 = Url.valueOf(zkClient.readData(providerFilePath.get(0)));
-        assertEquals("100", url1.getOption(REQUEST_TIMEOUT));
+        List<Url> providerUrls = ZookeeperUtils.readProviderUrls(zkClient, providerStub.getUrl().getPath(), StatusDir.ACTIVE);
+        assertEquals("100", providerUrls.get(0).getOption(REQUEST_TIMEOUT));
 
         // Register twice
         registerProvider(providerStub, 200);
 
-        Url url2 = Url.valueOf(zkClient.readData(providerFilePath.get(0)));
-        assertEquals("200", url2.getOption(REQUEST_TIMEOUT));
+        providerUrls = ZookeeperUtils.readProviderUrls(zkClient, providerStub.getUrl().getPath(), StatusDir.ACTIVE);
+        assertEquals("200", providerUrls.get(0).getOption(REQUEST_TIMEOUT));
     }
 
     private void registerProvider(ProviderStub<RefreshUrlService> providerStub, int requestTimeout) {
