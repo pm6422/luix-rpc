@@ -54,7 +54,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     private final Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> providerListenersPerConsumerUrl = new ConcurrentHashMap<>();
     private final Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>  commandListenersPerConsumerUrl  = new ConcurrentHashMap<>();
 
-    public ZookeeperRegistry(Url registryUrl, ZkClient zkClient) {
+    public ZookeeperRegistry(ZkClient zkClient, Url registryUrl) {
         super(registryUrl);
         Validate.notNull(zkClient, "Zookeeper client must NOT be null!");
         this.zkClient = zkClient;
@@ -140,8 +140,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * e.g, Zookeeper was shutdown after the infinity application startup, then zookeeper startup again will cause a new session.
      */
     protected void reregisterListeners() {
+        listenerLock.lock();
         try {
-            listenerLock.lock();
             if (MapUtils.isNotEmpty(providerListenersPerConsumerUrl)) {
                 for (Map.Entry<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> entry : providerListenersPerConsumerUrl.entrySet()) {
                     Url url = entry.getKey();
@@ -183,8 +183,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      */
     @Override
     protected void doRegister(Url providerUrl) {
+        providerLock.lock();
         try {
-            providerLock.lock();
             // Remove old node in order to avoid using dirty data
             removeNode(providerUrl, StatusDir.ACTIVE);
             removeNode(providerUrl, StatusDir.INACTIVE);
@@ -206,8 +206,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      */
     @Override
     protected void doActivate(Url providerUrl) {
+        providerLock.lock();
         try {
-            providerLock.lock();
             if (providerUrl == null) {
                 // Register all provider urls to 'active' node if parameter url is null
                 // Do NOT save Url.PARAM_ACTIVATED_TIME to activeProviderUrls
@@ -244,8 +244,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      */
     @Override
     protected void doDeactivate(Url providerUrl) {
+        providerLock.lock();
         try {
-            providerLock.lock();
             if (providerUrl == null) {
                 // Register all provider urls to 'inactive' node if parameter url is null
                 activeProviderUrls.removeAll(getRegisteredProviderUrls());
@@ -272,11 +272,11 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     /**
      * Delete specified provider file
      *
-     * @param providerUrl provider url
-     * @param statusDir   status directory
+     * @param url       url
+     * @param statusDir status directory
      */
-    private void removeNode(Url providerUrl, StatusDir statusDir) {
-        String filePath = getProviderFilePath(providerUrl, statusDir);
+    private void removeNode(Url url, StatusDir statusDir) {
+        String filePath = getProviderFilePath(url, statusDir);
         if (zkClient.exists(filePath)) {
             zkClient.delete(filePath);
         }
@@ -285,19 +285,19 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     /**
      * Create zookeeper persistent directory and ephemeral root node
      *
-     * @param providerUrl provider url
-     * @param statusDir   status directory
+     * @param url       url
+     * @param statusDir status directory
      */
-    private void createNode(Url providerUrl, StatusDir statusDir) {
-        String statusDirPath = getStatusDirPath(providerUrl.getPath(), statusDir);
+    private void createNode(Url url, StatusDir statusDir) {
+        String statusDirPath = getStatusDirPath(url.getPath(), statusDir);
         if (!zkClient.exists(statusDirPath)) {
             // Create a persistent directory
             zkClient.createPersistent(statusDirPath, true);
         }
-        // Create a temporary file, which name pattern is an address(host:port:form),
-        // which content is the full string of the url
+        // Create a temporary file, whose name pattern is an address(host:port:form),
+        // and whose content is the full string of the url,
         // And temporary files will be deleted automatically after closed zk session
-        zkClient.createEphemeral(getProviderFilePath(providerUrl, statusDir), providerUrl.toFullStr());
+        zkClient.createEphemeral(getProviderFilePath(url, statusDir), url.toFullStr());
     }
 
     /**
@@ -307,8 +307,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      */
     @Override
     protected void doUnregister(Url providerUrl) {
+        providerLock.lock();
         try {
-            providerLock.lock();
             removeNode(providerUrl, StatusDir.ACTIVE);
             removeNode(providerUrl, StatusDir.INACTIVE);
         } catch (Throwable e) {
@@ -384,11 +384,11 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Override
     @EventSubscriber("providersChangeEvent")
     protected void subscribeServiceListener(Url consumerUrl, ServiceListener serviceListener) {
+        listenerLock.lock();
         try {
-            listenerLock.lock();
             Map<ServiceListener, IZkChildListener> childChangeListeners = providerListenersPerConsumerUrl.get(consumerUrl);
             if (childChangeListeners == null) {
-                providerListenersPerConsumerUrl.putIfAbsent(consumerUrl, new ConcurrentHashMap<>());
+                providerListenersPerConsumerUrl.putIfAbsent(consumerUrl, new ConcurrentHashMap<>(16));
                 childChangeListeners = providerListenersPerConsumerUrl.get(consumerUrl);
             }
             IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
@@ -431,8 +431,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      */
     @Override
     protected void unsubscribeServiceListener(Url consumerUrl, ServiceListener serviceListener) {
+        listenerLock.lock();
         try {
-            listenerLock.lock();
             Map<ServiceListener, IZkChildListener> childChangeListeners = providerListenersPerConsumerUrl.get(consumerUrl);
             if (childChangeListeners == null) {
                 return;
@@ -460,11 +460,11 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Override
     @EventSubscriber("providerDataChangeEvent")
     protected void subscribeCommandListener(Url consumerUrl, final CommandListener commandListener) {
+        listenerLock.lock();
         try {
-            listenerLock.lock();
             Map<CommandListener, IZkDataListener> dataChangeListeners = commandListenersPerConsumerUrl.get(consumerUrl);
             if (dataChangeListeners == null) {
-                commandListenersPerConsumerUrl.putIfAbsent(consumerUrl, new ConcurrentHashMap<>());
+                commandListenersPerConsumerUrl.putIfAbsent(consumerUrl, new ConcurrentHashMap<>(16));
                 dataChangeListeners = commandListenersPerConsumerUrl.get(consumerUrl);
             }
             IZkDataListener zkDataListener = dataChangeListeners.get(commandListener);
@@ -507,8 +507,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      */
     @Override
     protected void unsubscribeCommandListener(Url consumerUrl, CommandListener commandListener) {
+        listenerLock.lock();
         try {
-            listenerLock.lock();
             Map<CommandListener, IZkDataListener> dataChangeListeners = commandListenersPerConsumerUrl.get(consumerUrl);
             if (dataChangeListeners != null) {
                 IZkDataListener zkDataListener = dataChangeListeners.get(commandListener);

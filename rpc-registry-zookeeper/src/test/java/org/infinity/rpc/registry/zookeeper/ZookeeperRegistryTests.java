@@ -56,7 +56,7 @@ public class ZookeeperRegistryTests {
         zookeeper.start();
         Thread.sleep(1000);
         zkClient = new ZkClient(REGISTRY_HOST + ":" + zkPort, 5000);
-        registry = new ZookeeperRegistry(registryUrl, zkClient);
+        registry = new ZookeeperRegistry(zkClient, registryUrl);
 
         // Delete old data
         zkClient.deleteRecursive(ZookeeperUtils.NAMESPACE);

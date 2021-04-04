@@ -23,7 +23,7 @@ public class ZookeeperRegistryFactory extends AbstractRegistryFactory {
         int sessionTimeout = registryUrl.getIntOption(SESSION_TIMEOUT);
         int connectTimeout = registryUrl.getIntOption(CONNECT_TIMEOUT);
         ZkClient zkClient = createZkClient(registryUrl.getAddress(), sessionTimeout, connectTimeout);
-        return new ZookeeperRegistry(registryUrl, zkClient);
+        return new ZookeeperRegistry(zkClient, registryUrl);
     }
 
     private ZkClient createZkClient(String zkServers, int sessionTimeout, int connectionTimeout) {
