@@ -23,7 +23,6 @@ import java.util.List;
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
 import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT;
-import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.readProviderUrls;
 import static org.junit.Assert.assertEquals;
 
 @Slf4j
