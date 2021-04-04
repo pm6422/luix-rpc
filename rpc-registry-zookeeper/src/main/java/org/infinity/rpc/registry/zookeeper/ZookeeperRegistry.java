@@ -14,7 +14,6 @@ import org.infinity.rpc.core.registry.CommandFailbackAbstractRegistry;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.utilities.annotation.EventPublisher;
 import org.infinity.rpc.utilities.annotation.EventSubscriber;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
@@ -273,33 +272,34 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
-     * Delete specified directory
+     * Delete specified provider file
      *
      * @param providerUrl provider url
-     * @param dir         directory
+     * @param statusDir   status directory
      */
-    private void removeNode(Url providerUrl, StatusDir dir) {
-        String nodePath = ZookeeperUtils.getProviderFilePath(providerUrl.getPath(), dir, providerUrl.getAddress(), providerUrl.getForm());
-        if (zkClient.exists(nodePath)) {
-            zkClient.delete(nodePath);
+    private void removeNode(Url providerUrl, StatusDir statusDir) {
+        String filePath = getProviderFilePath(providerUrl, statusDir);
+        if (zkClient.exists(filePath)) {
+            zkClient.delete(filePath);
         }
     }
 
     /**
      * Create zookeeper persistent directory and ephemeral root node
      *
-     * @param providerUrl url
-     * @param statusNode  directory
+     * @param providerUrl provider url
+     * @param statusDir   status directory
      */
-    private void createNode(Url providerUrl, StatusDir statusNode) {
-        String activeStatusPath = getStatusDirPath(providerUrl.getPath(), statusNode);
-        if (!zkClient.exists(activeStatusPath)) {
+    private void createNode(Url providerUrl, StatusDir statusDir) {
+        String statusDirPath = getStatusDirPath(providerUrl.getPath(), statusDir);
+        if (!zkClient.exists(statusDirPath)) {
             // Create a persistent directory
-            zkClient.createPersistent(activeStatusPath, true);
+            zkClient.createPersistent(statusDirPath, true);
         }
-        // Create a temporary file, which name is an address(host:port), which content is the full string of the url
+        // Create a temporary file, which name pattern is an address(host:port:form),
+        // which content is the full string of the url
         // And temporary files will be deleted automatically after closed zk session
-        zkClient.createEphemeral(ZookeeperUtils.getProviderFilePath(providerUrl.getPath(), statusNode, providerUrl.getAddress(), providerUrl.getForm()), providerUrl.toFullStr());
+        zkClient.createEphemeral(getProviderFilePath(providerUrl, statusDir), providerUrl.toFullStr());
     }
 
     /**
@@ -314,7 +314,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             removeNode(providerUrl, StatusDir.ACTIVE);
             removeNode(providerUrl, StatusDir.INACTIVE);
         } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to unregister [{0}] from zookeeper [{1}] with the error: {2}", providerUrl, getRegistryUrl(), e.getMessage()), e);
+            String msg = MessageFormat.format("Failed to unregister [{0}] from zookeeper [{1}] with the error: {2}",
+                    providerUrl, getRegistryUrl(), e.getMessage());
+            throw new RuntimeException(msg, e);
         } finally {
             providerLock.unlock();
         }
@@ -340,17 +342,17 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     public List<String> discoverActiveProviderAddress(String providerPath) {
         List<String> addrFiles = new ArrayList<>();
         try {
-            List<String> groups = getChildrenNames(zkClient, FULL_PATH_PROVIDER);
-            if (CollectionUtils.isEmpty(groups)) {
+            List<String> providerDirectories = getChildrenNames(zkClient, FULL_PATH_PROVIDER);
+            if (CollectionUtils.isEmpty(providerDirectories)) {
                 return addrFiles;
             }
-            for (String group : groups) {
-                String parentPath = getStatusDirPath(providerPath, StatusDir.ACTIVE);
-                addrFiles.addAll(CollectionUtils.emptyIfNull(getChildrenNames(zkClient, parentPath)));
-            }
+            String statusDirPath = getStatusDirPath(providerPath, StatusDir.ACTIVE);
+            addrFiles.addAll(getChildrenNames(zkClient, statusDirPath));
             return addrFiles;
         } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to discover providers from registry [{0}] with the error: {1}", getRegistryUrl(), e.getMessage()), e);
+            String msg = MessageFormat.format("Failed to discover providers from registry [{0}] with the error: {1}",
+                    getRegistryUrl(), e.getMessage());
+            throw new RuntimeException(msg, e);
         }
     }
 
@@ -370,7 +372,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             }
             return command;
         } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to discover command [{0}] from zookeeper [{1}]", consumerUrl, getRegistryUrl()), e);
+            String msg = MessageFormat.format("Failed to discover command [{0}] from zookeeper [{1}]", consumerUrl, getRegistryUrl());
+            throw new RuntimeException(msg, e);
         }
     }
 
@@ -408,14 +411,13 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 createNode(consumerUrl, StatusDir.CONSUMING);
             } catch (Exception e) {
                 log.warn(MessageFormat.format("Failed to remove or create the node with path [{0}]",
-                        ZookeeperUtils.getProviderFilePath(consumerUrl.getPath(), StatusDir.CONSUMING, consumerUrl.getAddress(), consumerUrl.getForm())), e);
+                        getProviderFilePath(consumerUrl, StatusDir.CONSUMING)), e);
             }
 
             String path = getStatusDirPath(consumerUrl.getPath(), StatusDir.ACTIVE);
             // Bind the path with zookeeper child change listener, any the child list changes under the path will trigger the zkChildListener
             zkClient.subscribeChildChanges(path, zkChildListener);
-            log.info("Subscribed the service listener for the path [{}]",
-                    ZookeeperUtils.getProviderFilePath(consumerUrl.getPath(), StatusDir.ACTIVE, consumerUrl.getAddress(), consumerUrl.getForm()));
+            log.info("Subscribed the service listener for the path [{}]", getProviderFilePath(consumerUrl, StatusDir.ACTIVE));
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to subscribe service listeners for url [{}]", consumerUrl), e);
         } finally {

@@ -28,17 +28,15 @@ public abstract class ZookeeperUtils {
     /**
      * Get the full path of provider address file
      *
-     * @param path      provider class fully-qualified name, e.g. org.infinity.app.common.service.AppService
+     * @param url       url
      * @param statusDir status directory
-     * @param address   Server IP address of provider
-     * @param form      provider form, e.g. f1
      * @return full path of provider address file
      */
-    public static String getProviderFilePath(String path, StatusDir statusDir, String address, String form) {
-        if (StringUtils.isEmpty(form)) {
-            return String.format(PROVIDER_FILE_PATH, path, statusDir.getValue(), address);
+    public static String getProviderFilePath(Url url, StatusDir statusDir) {
+        if (StringUtils.isEmpty(url.getForm())) {
+            return String.format(PROVIDER_FILE_PATH, url.getPath(), statusDir.getValue(), url.getAddress());
         }
-        return String.format(PROVIDER_FILE_PATH, path, statusDir.getValue(), address + ":" + form);
+        return String.format(PROVIDER_FILE_PATH, url.getPath(), statusDir.getValue(), url.getAddress() + ":" + url.getForm());
     }
 
     /**
