@@ -215,8 +215,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
 
                 for (Url u : super.getRegisteredProviderUrls()) {
                     Url copy = u.copy();
-                    // Add registered time parameter
-//                    copy.addParameter(Url.PARAM_ACTIVATED_TIME, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
                     // Remove the dirty data node
                     removeNode(copy, StatusDir.ACTIVE);
                     removeNode(copy, StatusDir.INACTIVE);
