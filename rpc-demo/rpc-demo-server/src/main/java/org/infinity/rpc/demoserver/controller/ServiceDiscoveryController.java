@@ -38,28 +38,28 @@ public class ServiceDiscoveryController {
         return ResponseEntity.ok(registryService.getRegistries());
     }
 
+    @ApiOperation("获取所有服务提供者路径")
+    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
+    @GetMapping("api/service-discovery/providers")
+    public ResponseEntity<List<String>> findAllProviderPaths(@ApiParam(value = "注册中心URL", required = true)
+                                                             @RequestParam(value = "registryUrl") String registryUrl) {
+        Registry registry = registryService.findRegistry(registryUrl);
+        return ResponseEntity.ok(registry.getAllProviderPaths());
+    }
+
     @ApiOperation("获取所有应用")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
     @GetMapping("api/service-discovery/apps")
-    public ResponseEntity<List<ApplicationExtConfig>> findApps(@ApiParam(value = "URL", required = true)
+    public ResponseEntity<List<ApplicationExtConfig>> findApps(@ApiParam(value = "url", required = true)
                                                                @RequestParam(value = "url") String url) {
 //        return ResponseEntity.ok(registryService.getAllApps());
         return null;
     }
 
-    @ApiOperation("获取所有服务提供者分组")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
-    @GetMapping("api/service-discovery/provider/groups")
-    public ResponseEntity<List<String>> findProviderGroups(@ApiParam(value = "URL", required = true)
-                                                           @RequestParam(value = "url") String url) {
-        Registry registry = registryService.findRegistry(url);
-        return ResponseEntity.ok(registry.getAllProviderForms());
-    }
-
     @ApiOperation("获取所有服务提供者")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功获取")})
     @GetMapping("api/service-discovery/provider/providers")
-    public ResponseEntity<List<ProviderDTO>> findProviders(@ApiParam(value = "URL", required = true)
+    public ResponseEntity<List<ProviderDTO>> findProviders(@ApiParam(value = "url", required = true)
                                                            @RequestParam(value = "url") String url,
                                                            @ApiParam(value = "服务提供者分组", required = true)
                                                            @RequestParam(value = "group") String group) {

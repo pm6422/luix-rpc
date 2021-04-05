@@ -171,11 +171,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         }
     }
 
-    @Override
-    public List<String> getAllProviderForms() {
-        return getChildrenNames(zkClient, FULL_PATH_PROVIDER);
-    }
-
     /**
      * Register specified url info to zookeeper
      *
@@ -376,7 +371,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
-     * Monitor the specified zookeeper node linked to url whether the child nodes have been changed, and it will invoke custom service listener if child nodes change.
+     * Monitor the specified zookeeper node linked to url whether the child nodes have been changed,
+     * and it will invoke custom service listener if child nodes change.
      *
      * @param consumerUrl     consumer url to identify the zookeeper path
      * @param serviceListener service listener
@@ -412,9 +408,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                         getProviderFilePath(consumerUrl, StatusDir.CONSUMING)), e);
             }
 
-            String path = getStatusDirPath(consumerUrl.getPath(), StatusDir.ACTIVE);
+            String activeDirPath = getStatusDirPath(consumerUrl.getPath(), StatusDir.ACTIVE);
             // Bind the path with zookeeper child change listener, any the child list changes under the path will trigger the zkChildListener
-            zkClient.subscribeChildChanges(path, zkChildListener);
+            zkClient.subscribeChildChanges(activeDirPath, zkChildListener);
             log.info("Subscribed the service listener for the path [{}]", getProviderFilePath(consumerUrl, StatusDir.ACTIVE));
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to subscribe service listeners for url [{}]", consumerUrl), e);
@@ -522,6 +518,11 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         } finally {
             listenerLock.unlock();
         }
+    }
+
+    @Override
+    public List<String> getAllProviderPaths() {
+        return getChildrenNames(zkClient, FULL_PATH_PROVIDER);
     }
 
     /**

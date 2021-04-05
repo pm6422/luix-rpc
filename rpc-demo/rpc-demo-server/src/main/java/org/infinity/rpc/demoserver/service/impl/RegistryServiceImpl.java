@@ -34,6 +34,7 @@ public class RegistryServiceImpl implements RegistryService, InitializingBean {
         }
         infinityProperties.getRegistryList().forEach(registryConfig -> {
             REGISTRY_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig.getRegistryImpl());
+            log.info("Found registry: [{}]", registryConfig.getRegistryUrl().getIdentity());
             REGISTRIES.add(new RegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
         });
     }
