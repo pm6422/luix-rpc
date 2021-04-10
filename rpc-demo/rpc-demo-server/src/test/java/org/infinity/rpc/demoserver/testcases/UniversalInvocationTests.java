@@ -101,8 +101,7 @@ public class UniversalInvocationTests extends ZkBaseTest {
         consumerStub.setLoadBalancer(LOAD_BALANCER_VAL_RANDOM);
         consumerStub.setProxy(PROXY_VAL_JDK);
         consumerStub.setHealthChecker(HEALTH_CHECKER_VAL_DEFAULT);
-        // must NOT call init
-//        consumerStub.init();
+        // Must NOT call init()
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
         applicationConfig.setName("client");
