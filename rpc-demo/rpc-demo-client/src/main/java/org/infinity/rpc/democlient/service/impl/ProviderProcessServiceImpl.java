@@ -45,6 +45,7 @@ public class ProviderProcessServiceImpl implements ProviderProcessable {
                 provider.setRegistryUrl(registryUrl.getIdentity());
                 provider.setActive(true);
 
+                // Insert or update provider
                 providerRepository.save(provider);
             }
         } else {

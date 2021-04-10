@@ -47,7 +47,7 @@ public class ServiceDiscoveryController {
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("api/service-discovery/applications")
     public ResponseEntity<List<String>> findApplications(
-            @ApiParam(value = "注册中心URL", required = true) @RequestParam(value = "registryUrl") String registryUrl) {
+            @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181") @RequestParam(value = "registryUrl") String registryUrl) {
         return ResponseEntity.ok(providerService.findDistinctApplicationByRegistryUrl(registryUrl));
     }
 
@@ -56,7 +56,7 @@ public class ServiceDiscoveryController {
     @GetMapping("/api/service-discovery/providers")
     public ResponseEntity<List<Provider>> findProviders(
             Pageable pageable,
-            @ApiParam(value = "注册中心URL", required = true) @RequestParam(value = "registryUrl") String registryUrl,
+            @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181") @RequestParam(value = "registryUrl") String registryUrl,
             @ApiParam(value = "应用名称") @RequestParam(value = "application", required = false) String application,
             @ApiParam(value = "接口名称") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
         Page<Provider> list = providerService.findByRegistryUrlAndApplicationAndInterfaceName(pageable, registryUrl, application, interfaceName);
