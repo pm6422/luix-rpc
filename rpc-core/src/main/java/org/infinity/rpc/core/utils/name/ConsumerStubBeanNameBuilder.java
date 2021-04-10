@@ -14,16 +14,20 @@ import java.util.Map;
  */
 public class ConsumerStubBeanNameBuilder {
 
-    public static final    String              CONSUMER_STUB_BEAN_PREFIX = "ConsumerStub";
-    protected static final String              SEPARATOR                 = ":";
+    public static final    String              PREFIX    = "ConsumerStub";
+    protected static final String              SEPARATOR = ":";
     /**
-     * Provider interface class(Required)
+     * Consumer interface class(Required)
      */
     protected final        String              interfaceClassName;
     /**
      *
      */
     protected              Map<String, Object> attributes;
+    /**
+     * Use prefix indicator
+     */
+    protected              boolean             usePrefix = true;
 
 
     /**
@@ -43,8 +47,13 @@ public class ConsumerStubBeanNameBuilder {
         return this;
     }
 
+    public ConsumerStubBeanNameBuilder disablePrefix() {
+        this.usePrefix = false;
+        return this;
+    }
+
     public String build() {
-        StringBuilder beanNameBuilder = new StringBuilder(CONSUMER_STUB_BEAN_PREFIX);
+        StringBuilder beanNameBuilder = new StringBuilder(usePrefix ? PREFIX : StringUtils.EMPTY);
         // Required
         append(beanNameBuilder, interfaceClassName);
         // Optional

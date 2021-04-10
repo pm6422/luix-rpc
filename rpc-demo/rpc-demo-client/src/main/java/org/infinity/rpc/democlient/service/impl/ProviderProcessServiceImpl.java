@@ -33,6 +33,7 @@ public class ProviderProcessServiceImpl implements ProviderProcessable {
                         .builder(providerUrl.getPath())
                         .form(providerUrl.getForm())
                         .version(providerUrl.getVersion())
+                        .disablePrefix()
                         .build();
                 provider.setId(id);
                 provider.setInterfaceName(providerUrl.getPath());
