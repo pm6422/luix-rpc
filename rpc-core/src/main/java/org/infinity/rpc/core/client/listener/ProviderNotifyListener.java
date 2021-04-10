@@ -28,6 +28,7 @@ public class ProviderNotifyListener implements ClientListener {
      */
     protected     String                    interfaceName;
     protected     Protocol                  protocol;
+    protected     ProviderProcessable       providerProcessor;
     private final Map<Url, List<Invokable>> invokersPerRegistryUrl = new ConcurrentHashMap<>();
 
     protected ProviderNotifyListener() {
@@ -36,16 +37,19 @@ public class ProviderNotifyListener implements ClientListener {
     /**
      * Pass provider invoker cluster to listener, listener will update provider invoker cluster after provider urls changed
      *
-     * @param invokerCluster provider invoker cluster
-     * @param interfaceName  The interface class name of the consumer
-     * @param protocol       protocol
+     * @param invokerCluster    provider invoker cluster
+     * @param interfaceName     interface class name of the consumer
+     * @param protocol          protocol
+     * @param providerProcessor provider processor
      * @return listener listener
      */
-    public static ProviderNotifyListener of(InvokerCluster invokerCluster, String interfaceName, String protocol) {
+    public static ProviderNotifyListener of(InvokerCluster invokerCluster, String interfaceName, String protocol,
+                                            ProviderProcessable providerProcessor) {
         ProviderNotifyListener listener = new ProviderNotifyListener();
         listener.invokerCluster = invokerCluster;
         listener.interfaceName = interfaceName;
         listener.protocol = Protocol.getInstance(protocol);
+        listener.providerProcessor = providerProcessor;
         return listener;
     }
 
@@ -58,6 +62,9 @@ public class ProviderNotifyListener implements ClientListener {
     @Override
     @EventReceiver("providersDiscoveryEvent")
     public synchronized void onNotify(Url registryUrl, List<Url> providerUrls) {
+        if (providerProcessor != null) {
+            providerProcessor.process(registryUrl, providerUrls, interfaceName);
+        }
         if (CollectionUtils.isEmpty(providerUrls)) {
             log.warn("No active providers found on registry [{}]", registryUrl.getUri());
             removeInactiveRegistry(registryUrl);

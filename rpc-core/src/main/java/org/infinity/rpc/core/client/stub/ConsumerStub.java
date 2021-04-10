@@ -9,6 +9,7 @@ import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.client.cluster.InvokerCluster;
 import org.infinity.rpc.core.client.listener.ProviderDiscoveryListener;
 import org.infinity.rpc.core.client.listener.ProviderNotifyListener;
+import org.infinity.rpc.core.client.listener.ProviderProcessable;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.proxy.impl.JdkProxy;
 import org.infinity.rpc.core.config.ApplicationConfig;
@@ -165,7 +166,33 @@ public class ConsumerStub<T> {
      * @param registry          registry
      */
     public void subscribeProviders(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, RegistryConfig registry) {
-        subscribeProviders(applicationConfig, protocolConfig, Collections.singleton(registry));
+        subscribeProviders(applicationConfig, protocolConfig, Collections.singleton(registry), null);
+    }
+
+    /**
+     * Subscribe the RPC providers from registry
+     *
+     * @param applicationConfig application configuration
+     * @param protocolConfig    protocol configuration
+     * @param registry          registry
+     * @param providerProcessor provider processor
+     */
+    public void subscribeProviders(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
+                                   RegistryConfig registry, ProviderProcessable providerProcessor) {
+        subscribeProviders(applicationConfig, protocolConfig, Collections.singleton(registry), providerProcessor);
+    }
+
+
+    /**
+     * Subscribe the RPC providers from registry
+     *
+     * @param applicationConfig application configuration
+     * @param protocolConfig    protocol configuration
+     * @param registries        registries
+     */
+    public void subscribeProviders(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
+                                   Collection<RegistryConfig> registries) {
+        subscribeProviders(applicationConfig, protocolConfig, registries, null);
     }
 
     /**
@@ -174,9 +201,10 @@ public class ConsumerStub<T> {
      * @param applicationConfig application configuration
      * @param protocolConfig    protocol configuration
      * @param registries        registries
+     * @param providerProcessor provider processor
      */
     public void subscribeProviders(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
-                                   Collection<RegistryConfig> registries) {
+                                   Collection<RegistryConfig> registries, ProviderProcessable providerProcessor) {
         List<Url> registryUrls = registries
                 .stream()
                 .map(RegistryConfig::getRegistryUrl)
@@ -191,13 +219,13 @@ public class ConsumerStub<T> {
         if (StringUtils.isEmpty(directAddresses)) {
             // Non-direct registry
             // Pass provider invoker cluster to listener, listener will update provider invoker cluster after provider urls changed
-            ProviderDiscoveryListener listener = ProviderDiscoveryListener.of(invokerCluster, interfaceName, url);
+            ProviderDiscoveryListener listener = ProviderDiscoveryListener.of(invokerCluster, interfaceName, url, providerProcessor);
             listener.subscribe(registryUrls);
             return;
         }
 
         // Direct registry
-        notifyDirectProviderUrls(protocolConfig, registryUrls);
+        notifyDirectProviderUrls(protocolConfig, registryUrls, providerProcessor);
     }
 
     /**
@@ -221,9 +249,10 @@ public class ConsumerStub<T> {
         return url;
     }
 
-    private void notifyDirectProviderUrls(ProtocolConfig protocolConfig, List<Url> globalRegistryUrls) {
+    private void notifyDirectProviderUrls(ProtocolConfig protocolConfig, List<Url> globalRegistryUrls,
+                                          ProviderProcessable providerProcessor) {
         // Pass provider invoker cluster to listener, listener will update provider invoker cluster after provider urls changed
-        ProviderNotifyListener listener = ProviderNotifyListener.of(invokerCluster, interfaceName, protocol);
+        ProviderNotifyListener listener = ProviderNotifyListener.of(invokerCluster, interfaceName, protocol, providerProcessor);
 
         for (Url globalRegistryUrl : globalRegistryUrls) {
             List<Url> directProviderUrls = createDirectProviderUrls(protocolConfig);

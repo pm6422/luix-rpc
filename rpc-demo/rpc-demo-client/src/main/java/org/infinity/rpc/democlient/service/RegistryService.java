@@ -1,7 +1,7 @@
-package org.infinity.rpc.demoserver.service;
+package org.infinity.rpc.democlient.service;
 
 import org.infinity.rpc.core.registry.Registry;
-import org.infinity.rpc.demoserver.dto.RegistryDTO;
+import org.infinity.rpc.democlient.dto.RegistryDTO;
 
 import java.util.List;
 

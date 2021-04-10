@@ -31,17 +31,20 @@ public class ProviderDiscoveryListener extends ProviderNotifyListener {
     /**
      * Pass provider invoker cluster to listener, listener will update provider invoker cluster after provider urls changed
      *
-     * @param invokerCluster provider invoker cluster
-     * @param interfaceName  The interface class name of the consumer
-     * @param consumerUrl    consumer url
+     * @param invokerCluster    provider invoker cluster
+     * @param interfaceName     The interface class name of the consumer
+     * @param consumerUrl       consumer url
+     * @param providerProcessor provider processor
      * @return listener listener
      */
-    public static ProviderDiscoveryListener of(InvokerCluster invokerCluster, String interfaceName, Url consumerUrl) {
+    public static ProviderDiscoveryListener of(InvokerCluster invokerCluster, String interfaceName, Url consumerUrl,
+                                               ProviderProcessable providerProcessor) {
         ProviderDiscoveryListener listener = new ProviderDiscoveryListener();
         listener.invokerCluster = invokerCluster;
         listener.interfaceName = interfaceName;
         listener.consumerUrl = consumerUrl;
         listener.protocol = Protocol.getInstance(consumerUrl.getProtocol());
+        listener.providerProcessor = providerProcessor;
         return listener;
     }
 
