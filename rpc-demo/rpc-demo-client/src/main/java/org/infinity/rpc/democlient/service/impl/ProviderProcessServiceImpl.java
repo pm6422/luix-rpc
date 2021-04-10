@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.client.listener.ProviderProcessable;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.core.utils.name.ProviderStubBeanNameBuilder;
 import org.infinity.rpc.democlient.domain.Provider;
 import org.infinity.rpc.democlient.repository.ProviderRepository;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,12 @@ public class ProviderProcessServiceImpl implements ProviderProcessable {
             log.info("Discovered active providers [{}]", providerUrls);
             for (Url providerUrl : providerUrls) {
                 Provider provider = new Provider();
-
+                String id = ProviderStubBeanNameBuilder
+                        .builder(providerUrl.getPath())
+                        .form(providerUrl.getForm())
+                        .version(providerUrl.getVersion())
+                        .build();
+                provider.setId(id);
                 provider.setInterfaceName(providerUrl.getPath());
                 provider.setForm(providerUrl.getForm());
                 provider.setVersion(providerUrl.getVersion());
