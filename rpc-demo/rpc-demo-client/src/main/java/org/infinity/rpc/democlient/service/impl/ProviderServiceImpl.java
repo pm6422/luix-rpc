@@ -52,19 +52,4 @@ public class ProviderServiceImpl implements ProviderService {
         }
         return mongoTemplate.findDistinct(query, FIELD_APPLICATION, Provider.class, String.class);
     }
-
-    @Override
-    public void insert(Provider provider) {
-        providerRepository.save(provider);
-    }
-
-    @Override
-    public void update(Provider provider) {
-
-    }
-
-    @Override
-    public void deleteById(String id) {
-
-    }
 }

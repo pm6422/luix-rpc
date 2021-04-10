@@ -27,7 +27,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         Query query = Query.query(Criteria.where(FIELD_REGISTRY_URL).is(registryUrl));
         if (active != null) {
             if (Boolean.TRUE.equals(active)) {
-                Criteria criteria = new Criteria().orOperator(Criteria.where(FIELD_ACTIVE_PROVIDER).is(true),
+                // or criteria
+                Criteria criteria = new Criteria().orOperator(
+                        Criteria.where(FIELD_ACTIVE_PROVIDER).is(true),
                         Criteria.where(FIELD_ACTIVE_CONSUMER).is(true));
                 query.addCriteria(criteria);
             } else {

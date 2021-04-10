@@ -11,11 +11,4 @@ public interface ProviderService {
     Page<Provider> find(Pageable pageable, String registryUrl, String application, String interfaceName, Boolean active);
 
     List<String> findDistinctApplications(String registryUrl, Boolean active);
-
-    void insert(Provider provider);
-
-    void update(Provider provider);
-
-    void deleteById(String id);
-
 }
