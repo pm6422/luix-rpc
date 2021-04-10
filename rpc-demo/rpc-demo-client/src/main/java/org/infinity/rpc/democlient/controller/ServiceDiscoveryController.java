@@ -3,8 +3,10 @@ package org.infinity.rpc.democlient.controller;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.democlient.domain.Application;
 import org.infinity.rpc.democlient.domain.Provider;
 import org.infinity.rpc.democlient.dto.RegistryDTO;
+import org.infinity.rpc.democlient.service.ApplicationService;
 import org.infinity.rpc.democlient.service.ProviderService;
 import org.infinity.rpc.democlient.service.RegistryService;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
@@ -27,13 +29,16 @@ public class ServiceDiscoveryController {
     private final InfinityProperties infinityProperties;
     private final RegistryService    registryService;
     private final ProviderService    providerService;
+    private final ApplicationService applicationService;
 
     public ServiceDiscoveryController(InfinityProperties infinityProperties,
                                       RegistryService registryService,
-                                      ProviderService providerService) {
+                                      ProviderService providerService,
+                                      ApplicationService applicationService) {
         this.infinityProperties = infinityProperties;
         this.registryService = registryService;
         this.providerService = providerService;
+        this.applicationService = applicationService;
     }
 
     @ApiOperation("检索所有注册中心列表")
@@ -43,13 +48,15 @@ public class ServiceDiscoveryController {
         return ResponseEntity.ok(registryService.getRegistries());
     }
 
-    @ApiOperation("检索应用列表")
+    @ApiOperation("分页检索应用列表")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("api/service-discovery/applications")
-    public ResponseEntity<List<String>> findApplications(
+    public ResponseEntity<List<Application>> findApplications(
+            Pageable pageable,
             @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181") @RequestParam(value = "registryUrl") String registryUrl,
             @ApiParam(value = "是否活跃") @RequestParam(value = "active", required = false) Boolean active) {
-        return ResponseEntity.ok(providerService.findDistinctApplications(registryUrl, active));
+        Page<Application> list = applicationService.find(pageable, registryUrl, active);
+        return ResponseEntity.ok().headers(generatePageHeaders(list)).body(list.getContent());
     }
 
     @ApiOperation("分页检索服务提供者列表")

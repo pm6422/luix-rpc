@@ -5,11 +5,14 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.client.listener.ProviderProcessable;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.name.ProviderStubBeanNameBuilder;
+import org.infinity.rpc.democlient.domain.Application;
 import org.infinity.rpc.democlient.domain.Provider;
+import org.infinity.rpc.democlient.repository.ApplicationRepository;
 import org.infinity.rpc.democlient.repository.ProviderRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 
@@ -17,10 +20,13 @@ import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 @Slf4j
 public class ProviderProcessServiceImpl implements ProviderProcessable {
 
-    private final ProviderRepository providerRepository;
+    private final ProviderRepository    providerRepository;
+    private final ApplicationRepository applicationRepository;
 
-    public ProviderProcessServiceImpl(ProviderRepository providerRepository) {
+    public ProviderProcessServiceImpl(ProviderRepository providerRepository,
+                                      ApplicationRepository applicationRepository) {
         this.providerRepository = providerRepository;
+        this.applicationRepository = applicationRepository;
     }
 
     @Override
@@ -48,12 +54,40 @@ public class ProviderProcessServiceImpl implements ProviderProcessable {
 
                 // Insert or update provider
                 providerRepository.save(provider);
+
+                // Insert application
+                if (applicationRepository.countByNameAndRegistryUrl(provider.getApplication(), provider.getRegistryUrl()) > 0) {
+                    return;
+                }
+                Application application = new Application();
+                application.setName(provider.getApplication());
+                application.setRegistryUrl(provider.getRegistryUrl());
+                application.setActiveProvider(true);
+                applicationRepository.save(application);
             }
         } else {
-            List<Provider> list = providerRepository.findByInterfaceName(interfaceName);
-            list.stream().forEach(provider -> provider.setActive(false));
-            providerRepository.saveAll(list);
             log.info("Discovered inactive providers of [{}]", interfaceName);
+
+            // Update providers to inactive
+            List<Provider> list = providerRepository.findByInterfaceName(interfaceName);
+            if (CollectionUtils.isEmpty(list)) {
+                return;
+            }
+            list.forEach(provider -> provider.setActive(false));
+            providerRepository.saveAll(list);
+
+            // Update application to inactive
+            int activeCount = providerRepository.countByApplicationAndRegistryUrlAndActiveIsTrue(list.get(0).getApplication(),
+                    list.get(0).getRegistryUrl());
+            if (activeCount == 0) {
+                Optional<Application> application = applicationRepository.findByNameAndRegistryUrl(list.get(0).getApplication(),
+                        list.get(0).getRegistryUrl());
+                if (!application.isPresent()) {
+                    return;
+                }
+                application.get().setActiveProvider(false);
+                applicationRepository.save(application.get());
+            }
         }
     }
 }

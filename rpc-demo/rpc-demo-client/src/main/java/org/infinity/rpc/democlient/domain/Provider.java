@@ -19,33 +19,23 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Provider implements Serializable {
-    public static final String FIELD_INTERFACE_NAME = "interfaceName";
-    public static final String FIELD_APPLICATION    = "application";
-    public static final String FIELD_REGISTRY_URL   = "registryUrl";
-    public static final String FIELD_ACTIVE         = "active";
+    private static final long   serialVersionUID     = 1L;
+    public static final  String FIELD_INTERFACE_NAME = "interfaceName";
+    public static final  String FIELD_APPLICATION    = "application";
+    public static final  String FIELD_REGISTRY_URL   = "registryUrl";
+    public static final  String FIELD_ACTIVE         = "active";
 
     @Id
-    protected String id;
-
-    private String interfaceName;
-
-    private String form;
-
-    private String version;
-
-    private String application;
-
-    private String host;
-
-    private String address;
-
-    private String providerUrl;
-
-    private String registryUrl;
-
-    private Boolean active;
-
-    protected Instant createdTime;
-
-    protected Instant modifiedTime;
+    protected String  id;
+    private   String  interfaceName;
+    private   String  form;
+    private   String  version;
+    private   String  application;
+    private   String  host;
+    private   String  address;
+    private   String  providerUrl;
+    private   String  registryUrl;
+    private   Boolean active;
+    private   Instant createdTime;
+    private   Instant modifiedTime;
 }
