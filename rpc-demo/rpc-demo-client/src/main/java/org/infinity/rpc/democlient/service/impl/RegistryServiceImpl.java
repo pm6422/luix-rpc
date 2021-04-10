@@ -17,9 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.FORM;
-import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
-
 @Service
 @Slf4j
 public class RegistryServiceImpl implements RegistryService, InitializingBean {
@@ -49,7 +46,7 @@ public class RegistryServiceImpl implements RegistryService, InitializingBean {
         });
     }
 
-    private ConsumerStub<?> createConsumerStub(String interfaceName, RegistryConfig registryConfig) {
+    private void createConsumerStub(String interfaceName, RegistryConfig registryConfig) {
         ConsumerStub<?> consumerStub = new ConsumerStub<>();
         consumerStub.setInterfaceName(interfaceName);
         consumerStub.setProtocol(infinityProperties.getAvailableProtocol().getName());
@@ -58,14 +55,10 @@ public class RegistryServiceImpl implements RegistryService, InitializingBean {
         consumerStub.setLoadBalancer(infinityProperties.getConsumer().getLoadBalancer());
         consumerStub.setProxy(infinityProperties.getConsumer().getProxyFactory());
         consumerStub.setHealthChecker(infinityProperties.getConsumer().getHealthChecker());
-
-//        consumerStub.setForm(dto.getOptions().get(FORM));
-//        consumerStub.setVersion(dto.getOptions().get(VERSION));
         // Must NOT call init()
 
         consumerStub.subscribeProviders(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(),
                 registryConfig, providerProcessService);
-        return consumerStub;
     }
 
     @Override
@@ -76,10 +69,5 @@ public class RegistryServiceImpl implements RegistryService, InitializingBean {
     @Override
     public Registry findRegistry(String urlIdentity) {
         return REGISTRY_MAP.get(urlIdentity);
-    }
-
-    @Override
-    public Object getAllApps() {
-        return null;
     }
 }

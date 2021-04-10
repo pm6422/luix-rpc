@@ -9,5 +9,4 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ProviderRepository extends MongoRepository<Provider, String> {
-
 }

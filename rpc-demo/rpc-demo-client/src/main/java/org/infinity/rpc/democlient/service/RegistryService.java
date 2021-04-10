@@ -10,6 +10,4 @@ public interface RegistryService {
     List<RegistryDTO> getRegistries();
 
     Registry findRegistry(String url);
-
-    Object getAllApps();
 }
