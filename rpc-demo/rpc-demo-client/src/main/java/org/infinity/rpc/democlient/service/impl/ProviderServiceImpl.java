@@ -12,7 +12,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.infinity.rpc.democlient.domain.Provider.*;
@@ -29,29 +28,29 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     @Override
-    public List<String> findDistinctApplicationByRegistryUrl(String registryUrl) {
-        List<String> results = new ArrayList<>();
+    public Page<Provider> find(Pageable pageable, String registryUrl, String application, String interfaceName, Boolean active) {
         Query query = Query.query(Criteria.where(FIELD_REGISTRY_URL).is(registryUrl));
-        mongoTemplate
-                .getCollection(COLLECTION_PROVIDER)
-                .distinct(FIELD_APPLICATION, query.getQueryObject(), String.class)
-                .forEach(results::add);
-        return results;
-    }
-
-    @Override
-    public Page<Provider> findByRegistryUrlAndApplicationAndInterfaceName(Pageable pageable, String registryUrl,
-                                                                          String application, String interfaceName) {
-        Query query = new Query(Criteria.where(FIELD_REGISTRY_URL).is(registryUrl));
         if (StringUtils.isNotEmpty(application)) {
             query.addCriteria(Criteria.where(FIELD_APPLICATION).is(application));
         }
         if (StringUtils.isNotEmpty(interfaceName)) {
             query.addCriteria(Criteria.where(FIELD_INTERFACE_NAME).is(interfaceName));
         }
+        if (active != null) {
+            query.addCriteria(Criteria.where(FIELD_ACTIVE).is(active));
+        }
         long totalCount = mongoTemplate.count(query, Provider.class);
         query.with(pageable);
         return new PageImpl<>(mongoTemplate.find(query, Provider.class), pageable, totalCount);
+    }
+
+    @Override
+    public List<String> findDistinctApplications(String registryUrl, Boolean active) {
+        Query query = Query.query(Criteria.where(FIELD_REGISTRY_URL).is(registryUrl));
+        if (active != null) {
+            query.addCriteria(Criteria.where(FIELD_ACTIVE).is(active));
+        }
+        return mongoTemplate.findDistinct(query, FIELD_APPLICATION, Provider.class, String.class);
     }
 
     @Override

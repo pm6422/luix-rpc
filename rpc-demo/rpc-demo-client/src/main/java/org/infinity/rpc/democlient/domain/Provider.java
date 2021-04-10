@@ -19,10 +19,10 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Provider implements Serializable {
-    public static final String COLLECTION_PROVIDER  = "Provider";
     public static final String FIELD_INTERFACE_NAME = "interfaceName";
     public static final String FIELD_APPLICATION    = "application";
     public static final String FIELD_REGISTRY_URL   = "registryUrl";
+    public static final String FIELD_ACTIVE         = "active";
 
     @Id
     protected String id;

@@ -8,10 +8,9 @@ import java.util.List;
 
 public interface ProviderService {
 
-    List<String> findDistinctApplicationByRegistryUrl(String registryUrl);
+    Page<Provider> find(Pageable pageable, String registryUrl, String application, String interfaceName, Boolean active);
 
-    Page<Provider> findByRegistryUrlAndApplicationAndInterfaceName(Pageable pageable, String registryUrl,
-                                                                   String application, String interfaceName);
+    List<String> findDistinctApplications(String registryUrl, Boolean active);
 
     void insert(Provider provider);
 

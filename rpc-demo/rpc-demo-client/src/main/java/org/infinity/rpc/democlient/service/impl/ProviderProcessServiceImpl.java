@@ -50,6 +50,9 @@ public class ProviderProcessServiceImpl implements ProviderProcessable {
                 providerRepository.save(provider);
             }
         } else {
+            List<Provider> list = providerRepository.findByInterfaceName(interfaceName);
+            list.stream().forEach(provider -> provider.setActive(false));
+            providerRepository.saveAll(list);
             log.info("Discovered inactive providers of [{}]", interfaceName);
         }
     }
