@@ -404,7 +404,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 removeNode(consumerUrl, StatusDir.CONSUMING);
                 createNode(consumerUrl, StatusDir.CONSUMING);
             } catch (Exception e) {
-                log.warn(MessageFormat.format("Failed to remove or create the node with path [{0}]",
+                log.warn(MessageFormat.format("Failed to remove or create the node for the path [{0}]",
                         getProviderFilePath(consumerUrl, StatusDir.CONSUMING)), e);
             }
 
