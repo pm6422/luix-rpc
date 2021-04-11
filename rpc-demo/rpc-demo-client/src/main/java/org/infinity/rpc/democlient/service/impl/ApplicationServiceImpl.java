@@ -11,6 +11,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.regex.Pattern;
+
 import static org.infinity.rpc.democlient.domain.Application.*;
 import static org.infinity.rpc.democlient.domain.Provider.FIELD_REGISTRY_URL;
 
@@ -26,7 +28,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     public Page<Application> find(Pageable pageable, String registryUrl, String name, Boolean active) {
         Query query = Query.query(Criteria.where(FIELD_REGISTRY_URL).is(registryUrl));
         if (StringUtils.isNotEmpty(name)) {
-            query.addCriteria(Criteria.where(FIELD_NAME).is(name));
+            //Fuzzy search
+            Pattern pattern = Pattern.compile("^.*" + name + ".*$", Pattern.CASE_INSENSITIVE);
+            query.addCriteria(Criteria.where(FIELD_NAME).regex(pattern));
         }
         if (active != null) {
             if (Boolean.TRUE.equals(active)) {

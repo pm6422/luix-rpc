@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.infinity.rpc.democlient.domain.Provider.*;
 
@@ -34,7 +35,9 @@ public class ProviderServiceImpl implements ProviderService {
             query.addCriteria(Criteria.where(FIELD_APPLICATION).is(application));
         }
         if (StringUtils.isNotEmpty(interfaceName)) {
-            query.addCriteria(Criteria.where(FIELD_INTERFACE_NAME).is(interfaceName));
+            //Fuzzy search
+            Pattern pattern = Pattern.compile("^.*" + interfaceName + ".*$", Pattern.CASE_INSENSITIVE);
+            query.addCriteria(Criteria.where(FIELD_INTERFACE_NAME).regex(pattern));
         }
         if (active != null) {
             query.addCriteria(Criteria.where(FIELD_ACTIVE).is(active));
