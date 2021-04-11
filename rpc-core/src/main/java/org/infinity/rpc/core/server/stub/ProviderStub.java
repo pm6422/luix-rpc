@@ -50,7 +50,7 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 @Setter
 @Getter
 public class ProviderStub<T> {
-    private static final String              METHOD_META     = "$methodMeta";
+    public static final String              METHOD_META     = "$methodMeta";
     /**
      * Provider stub bean name
      */

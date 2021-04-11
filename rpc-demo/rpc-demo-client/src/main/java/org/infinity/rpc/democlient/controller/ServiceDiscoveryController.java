@@ -3,6 +3,10 @@ package org.infinity.rpc.democlient.controller;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
+import org.infinity.rpc.core.client.proxy.Proxy;
+import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.rpc.core.server.stub.MethodData;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democlient.domain.Application;
 import org.infinity.rpc.democlient.domain.Provider;
@@ -24,6 +28,8 @@ import javax.annotation.Resource;
 import java.util.List;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
+import static org.infinity.rpc.core.server.stub.ProviderStub.METHOD_META;
 import static org.infinity.rpc.democlient.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
@@ -83,6 +89,25 @@ public class ServiceDiscoveryController {
             @ApiParam(value = "是否活跃") @RequestParam(value = "active", required = false) Boolean active) {
         Page<Provider> list = providerService.find(pageable, registryUrl, application, interfaceName, active);
         return ResponseEntity.ok().headers(generatePageHeaders(list)).body(list.getContent());
+    }
+
+    @ApiOperation("检索服务提供者所有方法")
+    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功执行")})
+    @GetMapping("/api/service-discovery/provider/methods")
+    public ResponseEntity<List<MethodData>> findMethods(
+            @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181") @RequestParam(value = "registryUrl") String registryUrl,
+            @ApiParam(value = "服务提供者URL") @RequestParam(value = "providerUrl", required = false) String providerUrl) {
+        Url url = Url.valueOf(providerUrl);
+        ConsumerStub<?> consumerStub = ConsumerStub.create(url.getPath(), infinityProperties.getApplication(),
+                registryService.findRegistryConfig(registryUrl),
+                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
+                null, url.getForm(), url.getVersion(),
+                url.getIntOption(REQUEST_TIMEOUT, REQUEST_TIMEOUT_VAL_DEFAULT),
+                url.getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT));
+        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
+        UniversalInvocationHandler universalInvocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
+        List<MethodData> result = (List<MethodData>) universalInvocationHandler.invoke(METHOD_META, null, null);
+        return ResponseEntity.ok().body(result);
     }
 
     @ApiOperation("启用服务提供者")

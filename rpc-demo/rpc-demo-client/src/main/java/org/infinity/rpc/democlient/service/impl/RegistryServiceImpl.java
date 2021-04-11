@@ -21,8 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @Slf4j
 public class RegistryServiceImpl implements RegistryService, InitializingBean {
-    private static final Map<String, Registry> REGISTRY_MAP = new ConcurrentHashMap<>();
-    private static final List<RegistryDTO>     REGISTRIES   = new ArrayList<>();
+    private static final Map<String, Registry>       REGISTRY_MAP        = new ConcurrentHashMap<>();
+    private static final Map<String, RegistryConfig> REGISTRY_CONFIG_MAP = new ConcurrentHashMap<>();
+    private static final List<RegistryDTO>           REGISTRIES          = new ArrayList<>();
 
     @Resource
     private       InfinityProperties  infinityProperties;
@@ -40,10 +41,10 @@ public class RegistryServiceImpl implements RegistryService, InitializingBean {
         }
         infinityProperties.getRegistryList().forEach(registryConfig -> {
             REGISTRY_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig.getRegistryImpl());
-            log.info("Found registry: [{}]", registryConfig.getRegistryUrl().getIdentity());
+            REGISTRY_CONFIG_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig);
             REGISTRIES.add(new RegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
-
             registryConfig.getRegistryImpl().getAllProviderPaths().forEach(interfaceName -> createConsumerStub(interfaceName, registryConfig));
+            log.info("Found registry: [{}]", registryConfig.getRegistryUrl().getIdentity());
         });
     }
 
@@ -61,5 +62,10 @@ public class RegistryServiceImpl implements RegistryService, InitializingBean {
     @Override
     public Registry findRegistry(String urlIdentity) {
         return REGISTRY_MAP.get(urlIdentity);
+    }
+
+    @Override
+    public RegistryConfig findRegistryConfig(String urlIdentity) {
+        return REGISTRY_CONFIG_MAP.get(urlIdentity);
     }
 }
