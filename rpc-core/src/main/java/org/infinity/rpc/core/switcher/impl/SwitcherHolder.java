@@ -13,9 +13,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @NotThreadSafe
 public class SwitcherHolder {
-    public static final String                              SERVICE_ACTIVE = "serviceActive";
-    private final       Map<String, Switcher>               switcherMap    = new ConcurrentHashMap<>();
-    private final       Map<String, List<SwitcherListener>> listenerMap    = new ConcurrentHashMap<>();
+
+    private static final SwitcherHolder                      INSTANCE       = new SwitcherHolder();
+    public static final  String                              SERVICE_ACTIVE = "serviceActive";
+    private final        Map<String, Switcher>               switcherMap    = new ConcurrentHashMap<>();
+    private final        Map<String, List<SwitcherListener>> listenerMap    = new ConcurrentHashMap<>();
 
     /**
      * Prevent instantiation of it outside the class
@@ -29,7 +31,7 @@ public class SwitcherHolder {
      * @return instance
      */
     public static SwitcherHolder getInstance() {
-        return SingletonHolder.INSTANCE;
+        return INSTANCE;
     }
 
     public Switcher getSwitcher(String name) {
@@ -101,13 +103,5 @@ public class SwitcherHolder {
             // Clear all the listeners
             listeners.clear();
         }
-    }
-
-    /**
-     * The singleton instance holder static inner class
-     */
-    private static class SingletonHolder {
-        // Static variable will be instantiated on class loading
-        private static final SwitcherHolder INSTANCE = new SwitcherHolder();
     }
 }

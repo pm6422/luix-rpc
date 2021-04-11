@@ -3,9 +3,17 @@ package org.infinity.rpc.core.config;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
-public class ApplicationExtConfig extends ApplicationConfig {
+public class ApplicationExtConfig extends ApplicationConfig implements Serializable {
+
+    private static final long   serialVersionUID = -7916757272373849145L;
+    /**
+     * Infinity RPC jar version
+     */
+    private              String infinityRpcVersion;
 
     public ApplicationExtConfig(ApplicationConfig applicationConfig) {
         setName(applicationConfig.getName());
@@ -14,17 +22,4 @@ public class ApplicationExtConfig extends ApplicationConfig {
         setOwnerMail(applicationConfig.getOwnerMail());
         setEnv(applicationConfig.getEnv());
     }
-
-    /**
-     * Infinity RPC jar version
-     */
-    private String  infinityRpcVersion;
-    /**
-     * Application start time
-     */
-    private String  startTime;
-    /**
-     *
-     */
-    private boolean active = false;
 }

@@ -155,7 +155,7 @@ public class ConsumerStub<T> {
         this.proxyInstance = Proxy.getInstance(proxy).getProxy(this);
         if (StringUtils.isNotEmpty(beanName)) {
             // Automatically add {@link ConsumerStub} instance to {@link ConsumerStubHolder}
-            ConsumerStubHolder.getInstance().addStub(beanName, this);
+            ConsumerStubHolder.getInstance().add(beanName, this);
         }
     }
 

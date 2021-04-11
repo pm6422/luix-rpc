@@ -52,8 +52,8 @@ public class RpcInvocationController {
             }
         }
         String beanName = ConsumerStub.buildConsumerStubBeanName(data.getInterfaceName(), attributesMap);
-        if (ConsumerStubHolder.getInstance().getStubs().containsKey(beanName)) {
-            return ConsumerStubHolder.getInstance().getStubs().get(beanName);
+        if (ConsumerStubHolder.getInstance().get().containsKey(beanName)) {
+            return ConsumerStubHolder.getInstance().get().get(beanName);
         }
 
         Integer requestTimeout = null;
@@ -67,7 +67,7 @@ public class RpcInvocationController {
         ConsumerStub<?> consumerStub = ConsumerStub.create(data.getInterfaceName(), infinityProperties.getApplication(),
                 infinityProperties.getRegistry(), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
                 null, data.getAttributes().get(FORM), data.getAttributes().get(VERSION), requestTimeout, maxRetries);
-        ConsumerStubHolder.getInstance().addStub(beanName, consumerStub);
+        ConsumerStubHolder.getInstance().add(beanName, consumerStub);
         return consumerStub;
     }
 }

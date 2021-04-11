@@ -2,10 +2,10 @@ package org.infinity.rpc.spring.boot.startup;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.config.ApplicationConfig;
+import org.infinity.rpc.core.config.ApplicationConfigHolder;
 import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.server.stub.ProviderStub;
@@ -15,7 +15,6 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -27,14 +26,15 @@ import static org.infinity.rpc.spring.boot.utils.JarUtils.readJarVersion;
  */
 @Slf4j
 public class RpcLifecycle {
+    private static final RpcLifecycle  INSTANCE = new RpcLifecycle();
     /**
      * Indicates whether the RPC server already started or not
      */
-    private final AtomicBoolean started = new AtomicBoolean(false);
+    private final        AtomicBoolean started  = new AtomicBoolean(false);
     /**
      * Indicates whether the RPC server already stopped or not
      */
-    private final AtomicBoolean stopped = new AtomicBoolean(false);
+    private final        AtomicBoolean stopped  = new AtomicBoolean(false);
 
     /**
      * Prevent instantiation of it outside the class
@@ -48,15 +48,7 @@ public class RpcLifecycle {
      * @return singleton instance {@link RpcLifecycle}
      */
     public static RpcLifecycle getInstance() {
-        return SingletonHolder.INSTANCE;
-    }
-
-    /**
-     * The singleton instance holder static inner class
-     */
-    private static class SingletonHolder {
-        // static variable will be instantiated on class loading.
-        private static final RpcLifecycle INSTANCE = new RpcLifecycle();
+        return INSTANCE;
     }
 
     public AtomicBoolean getStarted() {
@@ -105,10 +97,11 @@ public class RpcLifecycle {
                 publishProviders(infinityProperties, registryConfig);
             }
         });
+        publishApplication(infinityProperties.getApplication());
     }
 
     private void publishProviders(InfinityProperties infinityProperties, RegistryConfig registryConfig) {
-        Map<String, ProviderStub<?>> providerStubs = ProviderStubHolder.getInstance().getStubs();
+        Map<String, ProviderStub<?>> providerStubs = ProviderStubHolder.getInstance().get();
         if (MapUtils.isEmpty(providerStubs)) {
             log.info("No RPC service providers found to register to registry [{}]!", registryConfig.getName());
             return;
@@ -124,13 +117,10 @@ public class RpcLifecycle {
         }
     }
 
-    private ApplicationExtConfig getApplicationExtConfig(ApplicationConfig applicationConfig) {
+    private void publishApplication(ApplicationConfig applicationConfig) {
         ApplicationExtConfig application = new ApplicationExtConfig(applicationConfig);
         application.setInfinityRpcVersion(readJarVersion());
-        // Override the old data every time
-        application.setStartTime(DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
-        application.setActive(true);
-        return application;
+        ApplicationConfigHolder.set(application);
     }
 
     /**
@@ -139,7 +129,7 @@ public class RpcLifecycle {
      * @param infinityProperties RPC configuration properties
      */
     private void subscribe(InfinityProperties infinityProperties) {
-        Map<String, ConsumerStub<?>> consumerStubs = ConsumerStubHolder.getInstance().getStubs();
+        Map<String, ConsumerStub<?>> consumerStubs = ConsumerStubHolder.getInstance().get();
         if (MapUtils.isEmpty(consumerStubs)) {
             log.info("No RPC consumers found on registry!");
             return;
@@ -171,6 +161,6 @@ public class RpcLifecycle {
      * Unregister RPC providers from registry
      */
     private void unregisterProviders(Url... registryUrls) {
-        ProviderStubHolder.getInstance().getStubs().forEach((name, stub) -> stub.unregister(registryUrls));
+        ProviderStubHolder.getInstance().get().forEach((name, stub) -> stub.unregister(registryUrls));
     }
 }

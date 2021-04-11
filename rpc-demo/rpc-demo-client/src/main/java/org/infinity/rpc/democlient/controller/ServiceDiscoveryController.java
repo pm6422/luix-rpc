@@ -148,18 +148,18 @@ public class ServiceDiscoveryController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    private ConsumerStub<?> getConsumerStub(String registryUrl, Url url) {
-        String beanName = ConsumerStub.buildConsumerStubBeanName(url.getPath(), new HashMap<>(0));
-        if (ConsumerStubHolder.getInstance().getStubs().containsKey(beanName)) {
-            return ConsumerStubHolder.getInstance().getStubs().get(beanName);
+    private ConsumerStub<?> getConsumerStub(String registryUrl, Url providerUrl) {
+        String beanName = ConsumerStub.buildConsumerStubBeanName(providerUrl.getPath(), new HashMap<>(0));
+        if (ConsumerStubHolder.getInstance().get().containsKey(beanName)) {
+            return ConsumerStubHolder.getInstance().get().get(beanName);
         }
-        ConsumerStub<?> consumerStub = ConsumerStub.create(url.getPath(), infinityProperties.getApplication(),
+        ConsumerStub<?> consumerStub = ConsumerStub.create(providerUrl.getPath(), infinityProperties.getApplication(),
                 registryService.findRegistryConfig(registryUrl),
                 infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, url.getForm(), url.getVersion(),
-                url.getIntOption(REQUEST_TIMEOUT, REQUEST_TIMEOUT_VAL_DEFAULT),
-                url.getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT));
-        ConsumerStubHolder.getInstance().addStub(beanName, consumerStub);
+                null, providerUrl.getForm(), providerUrl.getVersion(),
+                providerUrl.getIntOption(REQUEST_TIMEOUT, REQUEST_TIMEOUT_VAL_DEFAULT),
+                providerUrl.getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT));
+        ConsumerStubHolder.getInstance().add(beanName, consumerStub);
         return consumerStub;
     }
 }

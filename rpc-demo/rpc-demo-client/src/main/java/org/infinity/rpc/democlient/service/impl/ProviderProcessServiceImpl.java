@@ -59,6 +59,7 @@ public class ProviderProcessServiceImpl implements ProviderProcessable {
                 if (applicationRepository.countByNameAndRegistryUrl(provider.getApplication(), provider.getRegistryUrl()) > 0) {
                     return;
                 }
+
                 Application application = new Application();
                 application.setName(provider.getApplication());
                 application.setRegistryUrl(provider.getRegistryUrl());

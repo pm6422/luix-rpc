@@ -7,10 +7,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @ThreadSafe
 public class ProviderStubHolder {
+
+    private static final ProviderStubHolder           INSTANCE = new ProviderStubHolder();
     /**
      * RPC provider stub map
      */
-    private final Map<String, ProviderStub<?>> stubCache = new ConcurrentHashMap<>();
+    private final        Map<String, ProviderStub<?>> cache    = new ConcurrentHashMap<>();
 
     /**
      * Prevent instantiation of it outside the class
@@ -24,24 +26,14 @@ public class ProviderStubHolder {
      * @return singleton instance {@link ProviderStubHolder}
      */
     public static ProviderStubHolder getInstance() {
-        return SingletonHolder.INSTANCE;
+        return INSTANCE;
     }
 
-    public synchronized Map<String, ProviderStub<?>> getStubs() {
-        return stubCache;
+    public synchronized void add(String name, ProviderStub<?> providerStub) {
+        cache.putIfAbsent(name, providerStub);
     }
 
-    public synchronized void addStub(String name, ProviderStub<?> providerStub) {
-        stubCache.putIfAbsent(name, providerStub);
-    }
-
-    /**
-     * The singleton instance holder static inner class
-     */
-    private static class SingletonHolder {
-        /**
-         * Static variable will be instantiated on class loading.
-         */
-        private static final ProviderStubHolder INSTANCE = new ProviderStubHolder();
+    public synchronized Map<String, ProviderStub<?>> get() {
+        return cache;
     }
 }

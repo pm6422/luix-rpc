@@ -7,6 +7,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.config.ApplicationConfig;
+import org.infinity.rpc.core.config.ApplicationConfigHolder;
 import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.constant.RpcConstants;
@@ -50,31 +51,32 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 @Setter
 @Getter
 public class ProviderStub<T> {
-    public static final String              METHOD_META     = "$methodMeta";
+    public static final String              METHOD_META      = "$methodMeta";
+    public static final String              APPLICATION_META = "$applicationMeta";
     /**
      * Provider stub bean name
      */
     @NotNull(message = "The [beanName] property must NOT be null!")
-    private              String              beanName;
+    private             String              beanName;
     /**
      * The interface class of the provider
      */
     @NotNull(message = "The [interfaceClass] property of @Provider must NOT be null!")
-    private              Class<T>            interfaceClass;
+    private             Class<T>            interfaceClass;
     /**
      * The provider interface fully-qualified name
      */
     @NotEmpty(message = "The [interfaceName] property of @Provider must NOT be empty!")
-    private              String              interfaceName;
+    private             String              interfaceName;
     /**
      * Protocol
      */
-    private              String              protocol;
+    private             String              protocol;
     /**
      * One service interface may have multiple implementations(forms),
      * It used to distinguish between different implementations of service provider interface
      */
-    private              String              form;
+    private             String              form;
     /**
      * When the service changes, such as adding or deleting methods, and interface parameters change,
      * the provider and consumer application instances need to be upgraded.
@@ -85,46 +87,49 @@ public class ProviderStub<T> {
      * The old version of the consumer instance calls the old version of the provider instance.
      * Observe that there is no problem and repeat this process to complete the upgrade.
      */
-    private              String              version;
+    private             String              version;
     /**
      *
      */
-    private              String              healthChecker;
+    private             String              healthChecker;
     /**
      *
      */
     @Min(value = 0, message = "The [timeout] property of @Provider must NOT be a negative number!")
-    private              Integer             requestTimeout;
+    private             Integer             requestTimeout;
     /**
      * The max retry times of RPC request
      */
     @Min(value = 0, message = "The [maxRetries] property of @Provider must NOT be a negative number!")
     @Max(value = 10, message = "The [maxRetries] property of @Provider must NOT be bigger than 10!")
-    private              Integer             maxRetries;
+    private             Integer             maxRetries;
     /**
      * The max response message payload size in bytes
      */
     @Min(value = 0, message = "The [maxPayload] property of @Provider must NOT be a positive number!")
-    private              Integer             maxPayload;
+    private             Integer             maxPayload;
     /**
      * The provider instance
      * Disable serialize
      */
     @NotNull
-    private transient    T                   instance;
+    private transient   T                   instance;
     /**
      * Method signature to method cache map for the provider class
      */
-    private transient    Map<String, Method> methodsCache    = new HashMap<>();
-    private              List<MethodData>    methodDataCache = new ArrayList<>();
+    private transient   Map<String, Method> methodsCache     = new HashMap<>();
+    /**
+     * All the methods of the interface class
+     */
+    private             List<MethodData>    methodDataCache  = new ArrayList<>();
     /**
      * The provider url
      */
-    private              Url                 url;
+    private             Url                 url;
     /**
      * Indicator used to identify whether the provider already been registered
      */
-    private final        AtomicBoolean       exported        = new AtomicBoolean(false);
+    private final       AtomicBoolean       exported         = new AtomicBoolean(false);
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
@@ -135,7 +140,7 @@ public class ProviderStub<T> {
         discoverMethods(interfaceClass);
         if (StringUtils.isNotEmpty(beanName)) {
             // Automatically add {@link ProviderStub} instance to {@link ProviderStubHolder}
-            ProviderStubHolder.getInstance().addStub(beanName, this);
+            ProviderStubHolder.getInstance().add(beanName, this);
         }
     }
 
@@ -258,6 +263,10 @@ public class ProviderStub<T> {
         if (method == null) {
             if (METHOD_META.equals(request.getMethodName())) {
                 response.setResultObject(methodDataCache);
+                response.setOptions(request.getOptions());
+                return response;
+            } else if (APPLICATION_META.equals(request.getMethodName())) {
+                response.setResultObject(ApplicationConfigHolder.get());
                 response.setOptions(request.getOptions());
                 return response;
             }
