@@ -12,10 +12,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.infinity.rpc.core.config.RegistryConfig.*;
 import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT;
 import static org.infinity.rpc.core.constant.RegistryConstants.SESSION_TIMEOUT;
 
@@ -24,11 +24,8 @@ import static org.infinity.rpc.core.constant.RegistryConstants.SESSION_TIMEOUT;
 @Slf4j
 public class ZookeeperRegistryConfiguration {
 
-    private final InfinityProperties infinityProperties;
-
-    public ZookeeperRegistryConfiguration(InfinityProperties infinityProperties) {
-        this.infinityProperties = infinityProperties;
-    }
+    @Resource
+    private InfinityProperties infinityProperties;
 
     @Bean
     public List<RegistryService> registryServices() {

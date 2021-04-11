@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -30,16 +31,15 @@ import static org.infinity.rpc.democlient.utils.HttpHeaderUtils.generatePageHead
 @Slf4j
 public class ServiceDiscoveryController {
 
-    private final InfinityProperties infinityProperties;
+    @Resource
+    private       InfinityProperties infinityProperties;
     private final RegistryService    registryService;
     private final ProviderService    providerService;
     private final ApplicationService applicationService;
 
-    public ServiceDiscoveryController(InfinityProperties infinityProperties,
-                                      RegistryService registryService,
+    public ServiceDiscoveryController(RegistryService registryService,
                                       ProviderService providerService,
                                       ApplicationService applicationService) {
-        this.infinityProperties = infinityProperties;
         this.registryService = registryService;
         this.providerService = providerService;
         this.applicationService = applicationService;

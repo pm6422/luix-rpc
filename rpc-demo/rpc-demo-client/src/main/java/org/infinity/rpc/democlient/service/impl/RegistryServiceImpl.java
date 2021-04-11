@@ -12,6 +12,7 @@ import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,11 +24,11 @@ public class RegistryServiceImpl implements RegistryService, InitializingBean {
     private static final Map<String, Registry> REGISTRY_MAP = new ConcurrentHashMap<>();
     private static final List<RegistryDTO>     REGISTRIES   = new ArrayList<>();
 
-    private final InfinityProperties  infinityProperties;
+    @Resource
+    private       InfinityProperties  infinityProperties;
     private final ProviderProcessable providerProcessService;
 
-    public RegistryServiceImpl(InfinityProperties infinityProperties, ProviderProcessable providerProcessService) {
-        this.infinityProperties = infinityProperties;
+    public RegistryServiceImpl(ProviderProcessable providerProcessService) {
         this.providerProcessService = providerProcessService;
     }
 

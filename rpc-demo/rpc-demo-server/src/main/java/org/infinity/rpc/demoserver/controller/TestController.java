@@ -7,9 +7,10 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democommon.service.AppService;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 
@@ -17,16 +18,12 @@ import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 @Api(tags = "测试")
 @Slf4j
 public class TestController {
-    private final InfinityProperties infinityProperties;
+    @Resource
+    private       InfinityProperties infinityProperties;
     private final ApplicationContext applicationContext;
-    private final Environment        env;
 
-    public TestController(InfinityProperties infinityProperties,
-                          ApplicationContext applicationContext,
-                          Environment env) {
-        this.infinityProperties = infinityProperties;
+    public TestController(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-        this.env = env;
     }
 
 

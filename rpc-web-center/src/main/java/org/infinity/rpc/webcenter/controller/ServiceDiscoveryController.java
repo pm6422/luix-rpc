@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,12 +29,12 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 @Api(tags = "服务发现")
 @Slf4j
 public class ServiceDiscoveryController {
+    @Resource
+    private       InfinityProperties    infinityProperties;
     private final List<RegistryService> registryServices;
-    private final InfinityProperties    infinityProperties;
 
-    public ServiceDiscoveryController(List<RegistryService> registryServices, InfinityProperties infinityProperties) {
+    public ServiceDiscoveryController(List<RegistryService> registryServices) {
         this.registryServices = registryServices;
-        this.infinityProperties = infinityProperties;
     }
 
     @ApiOperation("获取所有应用")

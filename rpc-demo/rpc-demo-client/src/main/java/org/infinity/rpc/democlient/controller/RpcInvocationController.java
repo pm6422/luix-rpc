@@ -9,12 +9,12 @@ import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.utils.name.ConsumerStubBeanNameBuilder;
 import org.infinity.rpc.democlient.dto.UniversalInvokeDTO;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
-import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,13 +30,8 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 @Slf4j
 public class RpcInvocationController {
 
-    private final Environment        env;
-    private final InfinityProperties infinityProperties;
-
-    public RpcInvocationController(Environment env, InfinityProperties infinityProperties) {
-        this.env = env;
-        this.infinityProperties = infinityProperties;
-    }
+    @Resource
+    private InfinityProperties infinityProperties;
 
     /**
      * {
