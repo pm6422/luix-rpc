@@ -1,7 +1,6 @@
 package org.infinity.rpc.democlient.service.impl;
 
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democlient.service.ConsumerStubService;
 import org.infinity.rpc.democlient.service.RegistryService;
@@ -27,6 +26,7 @@ public class ConsumerStubServiceImpl implements ConsumerStubService {
     @Override
     public ConsumerStub<?> getConsumerStub(String registryIdentity, Url providerUrl) {
         String beanName = ConsumerStub.buildConsumerStubBeanName(providerUrl.getPath(), new HashMap<>(0));
+        // 代码移到webcenter后可以打开注释
 //        if (ConsumerStubHolder.getInstance().get().containsKey(beanName)) {
 //            return ConsumerStubHolder.getInstance().get().get(beanName);
 //        }
@@ -39,4 +39,5 @@ public class ConsumerStubServiceImpl implements ConsumerStubService {
 //        ConsumerStubHolder.getInstance().add(beanName, consumerStub);
         return consumerStub;
     }
+
 }

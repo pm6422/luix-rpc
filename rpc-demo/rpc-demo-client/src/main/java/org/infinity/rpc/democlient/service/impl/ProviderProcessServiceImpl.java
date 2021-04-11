@@ -15,6 +15,7 @@ import org.infinity.rpc.democlient.repository.ApplicationRepository;
 import org.infinity.rpc.democlient.repository.ProviderRepository;
 import org.infinity.rpc.democlient.service.ConsumerStubService;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -86,12 +87,8 @@ public class ProviderProcessServiceImpl implements ProviderProcessable, Applicat
                 UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
                 ApplicationExtConfig applicationExtConfig = (ApplicationExtConfig) invocationHandler.invoke(APPLICATION_META, null, null);
                 Application application = new Application();
-                application.setName(provider.getApplication());
+                BeanUtils.copyProperties(applicationExtConfig, application);
                 application.setRegistryUrl(provider.getRegistryUrl());
-                application.setDescription(applicationExtConfig.getDescription());
-                application.setTeam(applicationExtConfig.getTeam());
-                application.setOwnerMail(applicationExtConfig.getOwnerMail());
-                application.setEnv(applicationExtConfig.getEnv());
                 application.setActiveProvider(true);
                 applicationRepository.save(application);
             }
