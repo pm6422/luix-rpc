@@ -13,6 +13,7 @@ import org.infinity.rpc.core.client.listener.ProviderProcessable;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.proxy.impl.JdkProxy;
 import org.infinity.rpc.core.config.ApplicationConfig;
+import org.infinity.rpc.core.config.ConsumerConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.url.Url;
@@ -291,14 +292,43 @@ public class ConsumerStub<T> {
     /**
      * Build the consumer stub bean name
      *
-     * @param defaultInterfaceClass the consumer service interface
-     * @param attributes            {@link Consumer annotation attributes}
+     * @param interfaceClassName the consumer service interface name
+     * @param attributes         {@link Consumer annotation attributes}
      * @return The name of bean that annotated {@link Consumer @Consumer} in spring context
      */
-    public static String buildConsumerStubBeanName(Class<?> defaultInterfaceClass, Map<String, Object> attributes) {
+    public static String buildConsumerStubBeanName(String interfaceClassName, Map<String, Object> attributes) {
         return ConsumerStubBeanNameBuilder
-                .builder(defaultInterfaceClass.getName())
+                .builder(interfaceClassName)
                 .attributes(attributes)
                 .build();
+    }
+
+    public static ConsumerStub<?> create(String interfaceName, ApplicationConfig application,
+                                         RegistryConfig registry, ProtocolConfig protocol,
+                                         ConsumerConfig consumer, ProviderProcessable providerProcessService,
+                                         String form, String version, Integer requestTimeout, Integer maxRetries) {
+        ConsumerStub<?> consumerStub = new ConsumerStub<>();
+        consumerStub.setInterfaceName(interfaceName);
+        consumerStub.setProtocol(protocol.getName());
+        consumerStub.setCluster(consumer.getCluster());
+        consumerStub.setFaultTolerance(consumer.getFaultTolerance());
+        consumerStub.setLoadBalancer(consumer.getLoadBalancer());
+        consumerStub.setProxy(consumer.getProxyFactory());
+        consumerStub.setHealthChecker(consumer.getHealthChecker());
+        if (StringUtils.isNotEmpty(form)) {
+            consumerStub.setForm(form);
+        }
+        if (StringUtils.isNotEmpty(version)) {
+            consumerStub.setVersion(version);
+        }
+        if (requestTimeout != null) {
+            consumerStub.setRequestTimeout(requestTimeout);
+        }
+        if (maxRetries != null) {
+            consumerStub.setMaxRetries(maxRetries);
+        }
+        // Must NOT call init()
+        consumerStub.subscribeProviders(application, protocol, registry, providerProcessService);
+        return consumerStub;
     }
 }

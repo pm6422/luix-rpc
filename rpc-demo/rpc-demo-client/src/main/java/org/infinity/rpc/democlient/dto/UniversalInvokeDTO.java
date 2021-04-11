@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @ApiModel("通用调用入参")
@@ -22,5 +23,5 @@ public class UniversalInvokeDTO {
     private Object[] args;
 
     @ApiModelProperty(value = "请求选项", required = true, example = "{\"group\": \"default\",\"version\": \"1.0.0\"}", notes = "example里的斜线需要去掉")
-    private Map<String, String> options;
+    private Map<String, String> options = new HashMap<>();
 }

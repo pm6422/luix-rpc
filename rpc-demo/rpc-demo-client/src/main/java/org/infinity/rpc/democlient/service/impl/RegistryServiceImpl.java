@@ -48,18 +48,9 @@ public class RegistryServiceImpl implements RegistryService, InitializingBean {
     }
 
     private void createConsumerStub(String interfaceName, RegistryConfig registryConfig) {
-        ConsumerStub<?> consumerStub = new ConsumerStub<>();
-        consumerStub.setInterfaceName(interfaceName);
-        consumerStub.setProtocol(infinityProperties.getAvailableProtocol().getName());
-        consumerStub.setCluster(infinityProperties.getConsumer().getCluster());
-        consumerStub.setFaultTolerance(infinityProperties.getConsumer().getFaultTolerance());
-        consumerStub.setLoadBalancer(infinityProperties.getConsumer().getLoadBalancer());
-        consumerStub.setProxy(infinityProperties.getConsumer().getProxyFactory());
-        consumerStub.setHealthChecker(infinityProperties.getConsumer().getHealthChecker());
-        // Must NOT call init()
-
-        consumerStub.subscribeProviders(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(),
-                registryConfig, providerProcessService);
+        ConsumerStub.create(interfaceName, infinityProperties.getApplication(), registryConfig,
+                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
+                providerProcessService, null, null, null, null);
     }
 
     @Override

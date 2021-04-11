@@ -4,6 +4,7 @@ import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.config.ApplicationConfig;
+import org.infinity.rpc.core.config.ConsumerConfig;
 import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.constant.ProtocolConstants;
@@ -21,8 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.infinity.rpc.core.constant.ConsumerConstants.*;
-import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
+import static org.infinity.rpc.core.constant.ConsumerConstants.PROXY_VAL_JDK;
 import static org.junit.Assert.assertEquals;
 
 public class UniversalInvocationTests extends ZkBaseTest {
@@ -93,16 +93,6 @@ public class UniversalInvocationTests extends ZkBaseTest {
     }
 
     private ConsumerStub<?> createConsumerStub(String interfaceName) {
-        ConsumerStub<?> consumerStub = new ConsumerStub<>();
-        consumerStub.setInterfaceName(interfaceName);
-        consumerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
-        consumerStub.setCluster(CLUSTER_VAL_DEFAULT);
-        consumerStub.setFaultTolerance(FAULT_TOLERANCE_VAL_FAILOVER);
-        consumerStub.setLoadBalancer(LOAD_BALANCER_VAL_RANDOM);
-        consumerStub.setProxy(PROXY_VAL_JDK);
-        consumerStub.setHealthChecker(HEALTH_CHECKER_VAL_DEFAULT);
-        // Must NOT call init()
-
         ApplicationConfig applicationConfig = new ApplicationConfig();
         applicationConfig.setName("client");
         applicationConfig.setDescription("Description");
@@ -116,12 +106,13 @@ public class UniversalInvocationTests extends ZkBaseTest {
         protocolConfig.init();
 
         RegistryConfig registryConfig = new RegistryConfig();
-        registryConfig.setName("zookeeper");
         registryConfig.setHost("localhost");
         registryConfig.setPort(zkPort);
         registryConfig.init();
 
-        consumerStub.subscribeProviders(applicationConfig, protocolConfig, registryConfig);
+        ConsumerStub<?> consumerStub = ConsumerStub.create(interfaceName, applicationConfig,
+                registryConfig, protocolConfig, new ConsumerConfig(),
+                null, null, null, null, null);
         return consumerStub;
     }
 }

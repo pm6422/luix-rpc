@@ -208,7 +208,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
         Class<?> resolvedConsumerInterfaceClass = AnnotationUtils.resolveInterfaceClass(attributes, consumerInterfaceClass);
 
         // Build the consumer stub bean name
-        String consumerStubBeanName = buildConsumerStubBeanName(resolvedConsumerInterfaceClass, attributes);
+        String consumerStubBeanName = buildConsumerStubBeanName(resolvedConsumerInterfaceClass.getName(), attributes);
         if (!existsConsumerStub(consumerStubBeanName)) {
             AbstractBeanDefinition stubBeanDefinition = buildConsumerStubDefinition(consumerStubBeanName, consumerInterfaceClass, consumerAnnotation);
             beanFactory.registerBeanDefinition(consumerStubBeanName, stubBeanDefinition);

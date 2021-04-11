@@ -6,7 +6,6 @@ import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
-import org.infinity.rpc.core.utils.name.ConsumerStubBeanNameBuilder;
 import org.infinity.rpc.democlient.dto.UniversalInvokeDTO;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.http.ResponseEntity;
@@ -78,41 +77,22 @@ public class RpcInvocationController {
         for (Map.Entry<String, String> entry : dto.getOptions().entrySet()) {
             optionMap.put(entry.getKey(), entry.getValue());
         }
-        String beanName = ConsumerStubBeanNameBuilder
-                .builder(dto.getInterfaceName())
-                .attributes(optionMap)
-                .build();
-
+        String beanName = ConsumerStub.buildConsumerStubBeanName(dto.getInterfaceName(), optionMap);
         if (ConsumerStubHolder.getInstance().getStubs().containsKey(beanName)) {
             return ConsumerStubHolder.getInstance().getStubs().get(beanName);
         }
-        ConsumerStub<?> consumerStub = new ConsumerStub<>();
-        consumerStub.setInterfaceName(dto.getInterfaceName());
-        consumerStub.setProtocol(infinityProperties.getAvailableProtocol().getName());
-        consumerStub.setCluster(infinityProperties.getConsumer().getCluster());
-        consumerStub.setFaultTolerance(infinityProperties.getConsumer().getFaultTolerance());
-        consumerStub.setLoadBalancer(infinityProperties.getConsumer().getLoadBalancer());
-        consumerStub.setProxy(infinityProperties.getConsumer().getProxyFactory());
-        consumerStub.setHealthChecker(infinityProperties.getConsumer().getHealthChecker());
-        if (dto.getOptions().containsKey(FORM)) {
-            consumerStub.setForm(dto.getOptions().get(FORM));
-        }
-        if (dto.getOptions().containsKey(VERSION)) {
-            consumerStub.setVersion(dto.getOptions().get(VERSION));
-        }
+
+        Integer requestTimeout = null;
         if (dto.getOptions().containsKey(REQUEST_TIMEOUT)) {
-            consumerStub.setRequestTimeout(Integer.parseInt(dto.getOptions().get(REQUEST_TIMEOUT)));
+            requestTimeout = Integer.parseInt(dto.getOptions().get(REQUEST_TIMEOUT));
         }
+        Integer maxRetries = null;
         if (dto.getOptions().containsKey(MAX_RETRIES)) {
-            consumerStub.setMaxRetries(Integer.parseInt(dto.getOptions().get(MAX_RETRIES)));
+            maxRetries = Integer.parseInt(dto.getOptions().get(MAX_RETRIES));
         }
-
-        // Must NOT call init()
-
-        consumerStub.subscribeProviders(infinityProperties.getApplication(),
-                infinityProperties.getAvailableProtocol(),
-                infinityProperties.getRegistry());
-
+        ConsumerStub<?> consumerStub = ConsumerStub.create(dto.getInterfaceName(), infinityProperties.getApplication(),
+                infinityProperties.getRegistry(), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
+                null, dto.getOptions().get(FORM), dto.getOptions().get(VERSION), requestTimeout, maxRetries);
         ConsumerStubHolder.getInstance().addStub(beanName, consumerStub);
         return consumerStub;
     }
