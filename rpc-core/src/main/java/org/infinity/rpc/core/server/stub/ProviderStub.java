@@ -30,10 +30,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
@@ -115,7 +114,8 @@ public class ProviderStub<T> {
     /**
      * Method signature to method cache map for the provider class
      */
-    private transient Map<String, Method> methodsCache = new HashMap<>();
+    private transient Map<String, Method> methodsCache    = new HashMap<>();
+    private           List<MethodData>    methodDataCache = new ArrayList<>();
     /**
      * The provider url
      */
@@ -123,7 +123,7 @@ public class ProviderStub<T> {
     /**
      * Indicator used to identify whether the provider already been registered
      */
-    private final     AtomicBoolean       exported     = new AtomicBoolean(false);
+    private final     AtomicBoolean       exported        = new AtomicBoolean(false);
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
@@ -148,6 +148,9 @@ public class ProviderStub<T> {
         Arrays.stream(interfaceClass.getMethods()).forEach(method -> {
             String methodSignature = MethodParameterUtils.getMethodSignature(method);
             methodsCache.putIfAbsent(methodSignature, method);
+            List<String> methodParameters = Arrays.stream(method.getParameterTypes()).map(Class::getName).collect(Collectors.toList());
+            MethodData methodData = new MethodData(method.getName(), methodParameters, methodSignature, method.getGenericReturnType().getTypeName());
+            methodDataCache.add(methodData);
         });
     }
 
@@ -171,7 +174,7 @@ public class ProviderStub<T> {
      */
     public void register(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, RegistryConfig registryConfig) {
         // Export provider url
-        Url providerUrl = createProviderUrl(applicationConfig, protocolConfig, registryConfig);
+        Url providerUrl = createProviderUrl(applicationConfig, protocolConfig);
 
         if (exported.compareAndSet(false, true)) {
             // Export RPC provider service
@@ -180,7 +183,6 @@ public class ProviderStub<T> {
 
         // Register provider URL to all the registries
         registryConfig.getRegistryImpl().register(providerUrl);
-//            registry.registerApplicationProvider(applicationConfig.getName(), providerUrl);
         log.debug("Registered RPC provider [{}] to registry [{}]", interfaceName,
                 registryConfig.getRegistryImpl().getRegistryUrl().getProtocol());
     }
@@ -190,10 +192,9 @@ public class ProviderStub<T> {
      *
      * @param applicationConfig application configuration
      * @param protocolConfig    protocol configuration
-     * @param registryConfig    registry configuration
      * @return provider url
      */
-    private Url createProviderUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, RegistryConfig registryConfig) {
+    private Url createProviderUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
         url = Url.providerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
         url.addOption(APP, applicationConfig.getName());
         url.addOption(CODEC, protocolConfig.getCodec());
@@ -282,9 +283,9 @@ public class ProviderStub<T> {
                 }
             }
             if (logException) {
-                log.error("Exception caught when during method invocation. request:" + request.toString(), e);
+                log.error("Exception caught when during method invocation. request:" + request, e);
             } else {
-                log.info("Exception caught when during method invocation. request:" + request.toString() + ", exception:" + response.getException().getCause().toString());
+                log.info("Exception caught when during method invocation. request:" + request + ", exception:" + response.getException().getCause().toString());
             }
         } catch (Throwable t) {
             // 如果服务发生Error，将Error转化为Exception，防止拖垮调用方
@@ -294,7 +295,7 @@ public class ProviderStub<T> {
                 response.setException(new RpcServiceException("provider has encountered a fatal error!", t));
             }
             //对于Throwable,也记录日志
-            log.error("Exception caught when during method invocation. request:" + request.toString(), t);
+            log.error("Exception caught when during method invocation. request:" + request, t);
         }
         if (response.getException() != null) {
             //是否传输业务异常栈
