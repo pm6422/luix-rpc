@@ -65,7 +65,7 @@ public class RpcInvocationController {
     @ApiOperation("通用调用")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功调用")})
     @PostMapping("/api/rpc/universal-invocation")
-    public ResponseEntity<Object> universalInvoke(@ApiParam(value = "调用参数", required = true) @Valid @RequestBody MethodInvocationData dto) {
+    public ResponseEntity<Object> universalInvoke(@ApiParam(value = "调用参数", required = true) @RequestBody MethodInvocationData dto) {
         ConsumerStub<?> consumerStub = getConsumerStub(dto);
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler universalInvocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
