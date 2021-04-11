@@ -106,6 +106,7 @@ public class ServiceDiscoveryController {
                 url.getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT));
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler universalInvocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
+        @SuppressWarnings({"unchecked"})
         List<MethodData> result = (List<MethodData>) universalInvocationHandler.invoke(METHOD_META, null, null);
         return ResponseEntity.ok().body(result);
     }
