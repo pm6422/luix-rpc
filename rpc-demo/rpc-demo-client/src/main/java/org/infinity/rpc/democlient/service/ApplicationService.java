@@ -6,6 +6,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface ApplicationService {
 
-    Page<Application> find(Pageable pageable, String registryUrl, Boolean active);
+    Page<Application> find(Pageable pageable, String registryUrl, String name, Boolean active);
 
 }

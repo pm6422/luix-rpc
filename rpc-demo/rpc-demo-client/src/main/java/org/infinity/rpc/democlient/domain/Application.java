@@ -20,6 +20,7 @@ import java.time.Instant;
 @AllArgsConstructor
 public class Application implements Serializable {
     private static final long   serialVersionUID      = 1L;
+    public static final  String FIELD_NAME = "name";
     public static final  String FIELD_ACTIVE_PROVIDER = "activeProvider";
     public static final  String FIELD_ACTIVE_CONSUMER = "activeConsumer";
 
