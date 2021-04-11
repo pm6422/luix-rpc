@@ -35,7 +35,7 @@ public class Provider implements Serializable {
     private   String  address;
     private   String  providerUrl;
     private   String  registryUrl;
-    private   Boolean active;
+    private   Boolean active = false;
     private   Instant createdTime;
     private   Instant modifiedTime;
 }

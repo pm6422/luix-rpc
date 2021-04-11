@@ -48,6 +48,15 @@ public class ServiceDiscoveryController {
         return ResponseEntity.ok(registryService.getRegistries());
     }
 
+    @ApiOperation("检索所有应用列表")
+    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
+    @GetMapping("api/service-discovery/all-applications")
+    public ResponseEntity<List<String>> findApplications(
+            @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181") @RequestParam(value = "registryUrl") String registryUrl,
+            @ApiParam(value = "是否活跃") @RequestParam(value = "active", required = false) Boolean active) {
+        return ResponseEntity.ok(providerService.findDistinctApplications(registryUrl, active));
+    }
+
     @ApiOperation("分页检索应用列表")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("api/service-discovery/applications")
