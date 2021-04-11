@@ -2,11 +2,12 @@ package org.infinity.rpc.democlient.controller;
 
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
-import org.infinity.rpc.democlient.dto.UniversalInvokeDTO;
+import org.infinity.rpc.core.client.stub.MethodInvocationData;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,7 +53,7 @@ public class RpcInvocationController {
      * "name": "ROLE_TEST",
      * "enabled": true
      * }],
-     * "options": {
+     * "attributes": {
      * "group": "default",
      * "version": "1.0.0"
      * }
@@ -64,7 +65,7 @@ public class RpcInvocationController {
     @ApiOperation("通用调用")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功调用")})
     @PostMapping("/api/rpc/universal-invocation")
-    public ResponseEntity<Object> universalInvoke(@ApiParam(value = "调用参数", required = true) @Valid @RequestBody UniversalInvokeDTO dto) {
+    public ResponseEntity<Object> universalInvoke(@ApiParam(value = "调用参数", required = true) @Valid @RequestBody MethodInvocationData dto) {
         ConsumerStub<?> consumerStub = getConsumerStub(dto);
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler universalInvocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
@@ -72,27 +73,29 @@ public class RpcInvocationController {
         return ResponseEntity.ok().body(result);
     }
 
-    private ConsumerStub<?> getConsumerStub(UniversalInvokeDTO dto) {
-        Map<String, Object> optionMap = new HashMap<>(dto.getOptions());
-        for (Map.Entry<String, String> entry : dto.getOptions().entrySet()) {
-            optionMap.put(entry.getKey(), entry.getValue());
+    private ConsumerStub<?> getConsumerStub(MethodInvocationData dto) {
+        Map<String, Object> attributesMap = new HashMap<>(0);
+        if (MapUtils.isNotEmpty(dto.getAttributes())) {
+            for (Map.Entry<String, String> entry : dto.getAttributes().entrySet()) {
+                attributesMap.put(entry.getKey(), entry.getValue());
+            }
         }
-        String beanName = ConsumerStub.buildConsumerStubBeanName(dto.getInterfaceName(), optionMap);
+        String beanName = ConsumerStub.buildConsumerStubBeanName(dto.getInterfaceName(), attributesMap);
         if (ConsumerStubHolder.getInstance().getStubs().containsKey(beanName)) {
             return ConsumerStubHolder.getInstance().getStubs().get(beanName);
         }
 
         Integer requestTimeout = null;
-        if (dto.getOptions().containsKey(REQUEST_TIMEOUT)) {
-            requestTimeout = Integer.parseInt(dto.getOptions().get(REQUEST_TIMEOUT));
+        if (dto.getAttributes().containsKey(REQUEST_TIMEOUT)) {
+            requestTimeout = Integer.parseInt(dto.getAttributes().get(REQUEST_TIMEOUT));
         }
         Integer maxRetries = null;
-        if (dto.getOptions().containsKey(MAX_RETRIES)) {
-            maxRetries = Integer.parseInt(dto.getOptions().get(MAX_RETRIES));
+        if (dto.getAttributes().containsKey(MAX_RETRIES)) {
+            maxRetries = Integer.parseInt(dto.getAttributes().get(MAX_RETRIES));
         }
         ConsumerStub<?> consumerStub = ConsumerStub.create(dto.getInterfaceName(), infinityProperties.getApplication(),
                 infinityProperties.getRegistry(), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, dto.getOptions().get(FORM), dto.getOptions().get(VERSION), requestTimeout, maxRetries);
+                null, dto.getAttributes().get(FORM), dto.getAttributes().get(VERSION), requestTimeout, maxRetries);
         ConsumerStubHolder.getInstance().addStub(beanName, consumerStub);
         return consumerStub;
     }

@@ -96,7 +96,7 @@ public class ServiceDiscoveryController {
     @GetMapping("/api/service-discovery/provider/methods")
     public ResponseEntity<List<MethodData>> findMethods(
             @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181") @RequestParam(value = "registryUrl") String registryUrl,
-            @ApiParam(value = "服务提供者URL") @RequestParam(value = "providerUrl", required = false) String providerUrl) {
+            @ApiParam(value = "服务提供者URL", required = true) @RequestParam(value = "providerUrl") String providerUrl) {
         Url url = Url.valueOf(providerUrl);
         ConsumerStub<?> consumerStub = ConsumerStub.create(url.getPath(), infinityProperties.getApplication(),
                 registryService.findRegistryConfig(registryUrl),
