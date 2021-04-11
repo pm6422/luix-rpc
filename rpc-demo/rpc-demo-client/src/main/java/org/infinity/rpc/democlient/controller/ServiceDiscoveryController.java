@@ -2,6 +2,7 @@ package org.infinity.rpc.democlient.controller;
 
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democlient.domain.Application;
 import org.infinity.rpc.democlient.domain.Provider;
@@ -14,7 +15,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -84,16 +88,28 @@ public class ServiceDiscoveryController {
     @ApiOperation("启用服务提供者")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功执行")})
     @PutMapping("/api/service-discovery/provider/activate")
-    public ResponseEntity<Void> activate(@RequestBody String providerUrl) {
-        infinityProperties.getRegistryList().forEach(config -> config.getRegistryImpl().activate(Url.valueOf(providerUrl)));
+    public ResponseEntity<Void> activate(
+            @ApiParam(value = "注册中心URL", defaultValue = "zookeeper://localhost:2181") @RequestParam(value = "registryUrl", required = false) String registryUrl,
+            @ApiParam(value = "服务提供者URL") @RequestParam(value = "providerUrl", required = false) String providerUrl) {
+        if (StringUtils.isEmpty(registryUrl)) {
+            infinityProperties.getRegistryList().forEach(config -> config.getRegistryImpl().activate(Url.valueOf(providerUrl)));
+        } else {
+            registryService.findRegistry(registryUrl).activate(Url.valueOf(providerUrl));
+        }
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @ApiOperation("禁用服务提供者")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功执行")})
     @PutMapping("/api/service-discovery/provider/deactivate")
-    public ResponseEntity<Void> deactivate(@RequestBody String providerUrl) {
-        infinityProperties.getRegistryList().forEach(config -> config.getRegistryImpl().deactivate(Url.valueOf(providerUrl)));
+    public ResponseEntity<Void> deactivate(
+            @ApiParam(value = "注册中心URL", defaultValue = "zookeeper://localhost:2181") @RequestParam(value = "registryUrl", required = false) String registryUrl,
+            @ApiParam(value = "服务提供者URL") @RequestParam(value = "providerUrl", required = false) String providerUrl) {
+        if (StringUtils.isEmpty(registryUrl)) {
+            infinityProperties.getRegistryList().forEach(config -> config.getRegistryImpl().deactivate(Url.valueOf(providerUrl)));
+        } else {
+            registryService.findRegistry(registryUrl).deactivate(Url.valueOf(providerUrl));
+        }
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
