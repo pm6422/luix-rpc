@@ -43,7 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>
  * <pre>
  * 		1） 多个service的支持
- * 		2） 区分service的方式： group/interface/version
+ * 		2） 区分service的方式： interface/form/version
  * </pre>
  */
 @Slf4j
@@ -111,7 +111,7 @@ public class ProviderMessageRouter implements MessageHandler {
                 Object[] args = ((DeserializableObject) request.getMethodArguments()[0]).deserializeMulti(method.getParameterTypes());
                 ((RpcRequest) request).setMethodArguments(args);
             } catch (IOException e) {
-                throw new RpcFrameworkException("deserialize parameters fail: " + request.toString() + ", error:" + e.getMessage());
+                throw new RpcFrameworkException("deserialize parameters fail: " + request + ", error:" + e.getMessage());
             }
         }
     }

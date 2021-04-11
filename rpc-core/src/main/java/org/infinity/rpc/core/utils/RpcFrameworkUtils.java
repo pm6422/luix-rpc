@@ -16,7 +16,7 @@ import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER;
 
 public class RpcFrameworkUtils {
     /**
-     * 目前根据 interface/group/version 来唯一标示一个服务
+     * 目前根据 interface/form/version 来唯一标示一个服务
      *
      * @param request
      * @return
@@ -27,7 +27,7 @@ public class RpcFrameworkUtils {
     }
 
     /**
-     * 目前根据 interface/group/version 来唯一标示一个服务
+     * 目前根据 interface/form/version 来唯一标示一个服务
      *
      * @param url
      * @return
@@ -37,7 +37,7 @@ public class RpcFrameworkUtils {
     }
 
     /**
-     * serviceKey: interface/group/version
+     * serviceKey: interface/form/version
      *
      * @param interfaceName
      * @param form
