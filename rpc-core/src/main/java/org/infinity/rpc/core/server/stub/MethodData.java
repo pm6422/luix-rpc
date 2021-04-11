@@ -17,7 +17,7 @@ public class MethodData implements Serializable {
     /**
      * Method parameter list. e.g, {java.util.List,java.lang.Long}
      */
-    private              List<String> methodParameters;
+    private              List<String> methodParamTypes;
     /**
      * Method signature. e.g, invoke(java.util.List,java.lang.Long)
      */
