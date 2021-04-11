@@ -35,37 +35,38 @@ public class RpcInvocationController {
     @ApiOperation("通用调用")
     @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功调用")})
     @PostMapping("/api/rpc/universal-invocation")
-    public ResponseEntity<Object> universalInvoke(@ApiParam(value = "调用参数", required = true) @RequestBody UniversalMethodInvocation req) {
-        ConsumerStub<?> consumerStub = getConsumerStub(req);
+    public ResponseEntity<Object> universalInvoke(
+            @ApiParam(value = "调用参数", required = true) @RequestBody UniversalMethodInvocation data) {
+        ConsumerStub<?> consumerStub = getConsumerStub(data);
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler universalInvocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
-        Object result = universalInvocationHandler.invoke(req.getMethodName(), req.getMethodParamTypes(), req.getArgs());
+        Object result = universalInvocationHandler.invoke(data.getMethodName(), data.getMethodParamTypes(), data.getArgs());
         return ResponseEntity.ok().body(result);
     }
 
-    private ConsumerStub<?> getConsumerStub(UniversalMethodInvocation req) {
+    private ConsumerStub<?> getConsumerStub(UniversalMethodInvocation data) {
         Map<String, Object> attributesMap = new HashMap<>(0);
-        if (MapUtils.isNotEmpty(req.getAttributes())) {
-            for (Map.Entry<String, String> entry : req.getAttributes().entrySet()) {
+        if (MapUtils.isNotEmpty(data.getAttributes())) {
+            for (Map.Entry<String, String> entry : data.getAttributes().entrySet()) {
                 attributesMap.put(entry.getKey(), entry.getValue());
             }
         }
-        String beanName = ConsumerStub.buildConsumerStubBeanName(req.getInterfaceName(), attributesMap);
+        String beanName = ConsumerStub.buildConsumerStubBeanName(data.getInterfaceName(), attributesMap);
         if (ConsumerStubHolder.getInstance().getStubs().containsKey(beanName)) {
             return ConsumerStubHolder.getInstance().getStubs().get(beanName);
         }
 
         Integer requestTimeout = null;
-        if (req.getAttributes().containsKey(REQUEST_TIMEOUT)) {
-            requestTimeout = Integer.parseInt(req.getAttributes().get(REQUEST_TIMEOUT));
+        if (data.getAttributes().containsKey(REQUEST_TIMEOUT)) {
+            requestTimeout = Integer.parseInt(data.getAttributes().get(REQUEST_TIMEOUT));
         }
         Integer maxRetries = null;
-        if (req.getAttributes().containsKey(MAX_RETRIES)) {
-            maxRetries = Integer.parseInt(req.getAttributes().get(MAX_RETRIES));
+        if (data.getAttributes().containsKey(MAX_RETRIES)) {
+            maxRetries = Integer.parseInt(data.getAttributes().get(MAX_RETRIES));
         }
-        ConsumerStub<?> consumerStub = ConsumerStub.create(req.getInterfaceName(), infinityProperties.getApplication(),
+        ConsumerStub<?> consumerStub = ConsumerStub.create(data.getInterfaceName(), infinityProperties.getApplication(),
                 infinityProperties.getRegistry(), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, req.getAttributes().get(FORM), req.getAttributes().get(VERSION), requestTimeout, maxRetries);
+                null, data.getAttributes().get(FORM), data.getAttributes().get(VERSION), requestTimeout, maxRetries);
         ConsumerStubHolder.getInstance().addStub(beanName, consumerStub);
         return consumerStub;
     }

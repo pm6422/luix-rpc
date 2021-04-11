@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.client.stub.MethodInvocation;
 import org.infinity.rpc.core.server.stub.MethodData;
 import org.infinity.rpc.core.url.Url;
@@ -23,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -95,17 +97,11 @@ public class ServiceDiscoveryController {
     public ResponseEntity<List<MethodData>> findMethods(
             @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181") @RequestParam(value = "registryUrl") String registryUrl,
             @ApiParam(value = "服务提供者URL", required = true) @RequestParam(value = "providerUrl") String providerUrl) {
-        Url url = Url.valueOf(providerUrl);
-        ConsumerStub<?> consumerStub = ConsumerStub.create(url.getPath(), infinityProperties.getApplication(),
-                registryService.findRegistryConfig(registryUrl),
-                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, url.getForm(), url.getVersion(),
-                url.getIntOption(REQUEST_TIMEOUT, REQUEST_TIMEOUT_VAL_DEFAULT),
-                url.getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT));
+        ConsumerStub<?> consumerStub = getConsumerStub(registryUrl, Url.valueOf(providerUrl));
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
-        UniversalInvocationHandler universalInvocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
+        UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         @SuppressWarnings({"unchecked"})
-        List<MethodData> result = (List<MethodData>) universalInvocationHandler.invoke(METHOD_META, null, null);
+        List<MethodData> result = (List<MethodData>) invocationHandler.invoke(METHOD_META, null, null);
         return ResponseEntity.ok().body(result);
     }
 
@@ -116,16 +112,10 @@ public class ServiceDiscoveryController {
             @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181") @RequestParam(value = "registryUrl") String registryUrl,
             @ApiParam(value = "服务提供者URL", required = true) @RequestParam(value = "providerUrl") String providerUrl,
             @ApiParam(value = "调用参数", required = true) @RequestBody MethodInvocation data) {
-        Url url = Url.valueOf(providerUrl);
-        ConsumerStub<?> consumerStub = ConsumerStub.create(url.getPath(), infinityProperties.getApplication(),
-                registryService.findRegistryConfig(registryUrl),
-                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, url.getForm(), url.getVersion(),
-                url.getIntOption(REQUEST_TIMEOUT, REQUEST_TIMEOUT_VAL_DEFAULT),
-                url.getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT));
+        ConsumerStub<?> consumerStub = getConsumerStub(registryUrl, Url.valueOf(providerUrl));
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
-        UniversalInvocationHandler universalInvocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
-        Object result = universalInvocationHandler.invoke(data.getMethodName(), data.getMethodParamTypes(), data.getArgs());
+        UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
+        Object result = invocationHandler.invoke(data.getMethodName(), data.getMethodParamTypes(), data.getArgs());
         return ResponseEntity.ok().body(result);
     }
 
@@ -155,5 +145,20 @@ public class ServiceDiscoveryController {
             registryService.findRegistry(registryUrl).deactivate(Url.valueOf(providerUrl));
         }
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    private ConsumerStub<?> getConsumerStub(String registryUrl, Url url) {
+        String beanName = ConsumerStub.buildConsumerStubBeanName(url.getPath(), new HashMap<>(0));
+        if (ConsumerStubHolder.getInstance().getStubs().containsKey(beanName)) {
+            return ConsumerStubHolder.getInstance().getStubs().get(beanName);
+        }
+        ConsumerStub<?> consumerStub = ConsumerStub.create(url.getPath(), infinityProperties.getApplication(),
+                registryService.findRegistryConfig(registryUrl),
+                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
+                null, url.getForm(), url.getVersion(),
+                url.getIntOption(REQUEST_TIMEOUT, REQUEST_TIMEOUT_VAL_DEFAULT),
+                url.getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT));
+        ConsumerStubHolder.getInstance().addStub(beanName, consumerStub);
+        return consumerStub;
     }
 }
