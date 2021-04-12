@@ -42,7 +42,7 @@ public class RegistryServiceImpl implements RegistryService, ApplicationRunner {
     }
 
     /**
-     * {@link org.springframework.beans.factory.InitializingBean#afterPropertiesSet()} execute to earlier
+     * {@link org.springframework.beans.factory.InitializingBean#afterPropertiesSet()} execute too earlier
      *
      * @param args arguments
      * @throws Exception if any exception throws
