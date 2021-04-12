@@ -13,6 +13,4 @@ import java.util.List;
 public interface ProviderRepository extends MongoRepository<Provider, String> {
 
     List<Provider> findByInterfaceName(String interfaceName);
-
-    int countByApplicationAndRegistryIdentityAndActiveIsTrue(String application, String registryIdentity);
 }

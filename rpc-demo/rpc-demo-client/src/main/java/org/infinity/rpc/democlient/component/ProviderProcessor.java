@@ -55,7 +55,6 @@ public class ProviderProcessor implements ProviderProcessable, ApplicationContex
             log.info("Discovered active providers [{}]", providerUrls);
             for (Url providerUrl : providerUrls) {
                 Provider provider = Provider.of(providerUrl, registryUrl);
-
                 // Insert or update provider
                 providerRepository.save(provider);
 
@@ -74,7 +73,7 @@ public class ProviderProcessor implements ProviderProcessable, ApplicationContex
                 applicationRepository.save(application);
             }
         } else {
-            log.info("Discovered inactive providers of [{}]", interfaceName);
+            log.info("Discovered offline providers of [{}]", interfaceName);
 
             // Update providers to inactive
             List<Provider> list = providerRepository.findByInterfaceName(interfaceName);
@@ -85,9 +84,13 @@ public class ProviderProcessor implements ProviderProcessable, ApplicationContex
             providerRepository.saveAll(list);
 
             // Update application to inactive
-            int activeCount = providerRepository.countByApplicationAndRegistryIdentityAndActiveIsTrue(list.get(0).getApplication(),
-                    list.get(0).getRegistryIdentity());
-            if (activeCount == 0) {
+            Provider probe = new Provider();
+            probe.setApplication(list.get(0).getApplication());
+            probe.setRegistryIdentity(list.get(0).getRegistryIdentity());
+            probe.setActive(true);
+            // Ignore query parameter if it has a null value
+            ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
+            if (!providerRepository.exists(Example.of(probe, matcher))) {
                 Optional<Application> application = applicationRepository.findByNameAndRegistryIdentity(list.get(0).getApplication(),
                         list.get(0).getRegistryIdentity());
                 if (!application.isPresent()) {
@@ -105,6 +108,7 @@ public class ProviderProcessor implements ProviderProcessable, ApplicationContex
         ConsumerStub<?> consumerStub = registryService.getConsumerStub(registryUrl.getIdentity(), providerUrl);
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
+        // Remote call to get ApplicationConfig
         ApplicationConfig applicationConfig = (ApplicationConfig) invocationHandler.invoke(APPLICATION_META, null, null);
         BeanUtils.copyProperties(applicationConfig, application);
         application.setRegistryIdentity(registryUrl.getIdentity());
