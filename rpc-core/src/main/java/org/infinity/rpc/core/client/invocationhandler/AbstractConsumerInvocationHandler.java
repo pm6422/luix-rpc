@@ -7,6 +7,7 @@ import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.server.response.Responseable;
+import org.infinity.rpc.core.utils.RpcConfigValidator;
 import org.infinity.rpc.core.utils.RpcRequestIdHolder;
 
 import java.lang.reflect.Method;
@@ -53,6 +54,9 @@ public abstract class AbstractConsumerInvocationHandler<T> {
             log.warn("Rate limiting!");
             return null;
         }
+
+        RpcConfigValidator.notNull(consumerStub.getInvokerCluster(), "Incorrect consumer stub configuration!");
+
         Responseable response;
 //            boolean throwException = true;
         try {

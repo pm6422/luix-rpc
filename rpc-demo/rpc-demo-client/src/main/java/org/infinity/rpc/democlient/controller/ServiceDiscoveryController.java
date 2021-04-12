@@ -13,7 +13,6 @@ import org.infinity.rpc.democlient.domain.Application;
 import org.infinity.rpc.democlient.domain.Provider;
 import org.infinity.rpc.democlient.dto.RegistryDTO;
 import org.infinity.rpc.democlient.service.ApplicationService;
-import org.infinity.rpc.democlient.service.ConsumerStubService;
 import org.infinity.rpc.democlient.service.ProviderService;
 import org.infinity.rpc.democlient.service.RegistryService;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
@@ -40,16 +39,13 @@ public class ServiceDiscoveryController {
     private final RegistryService     registryService;
     private final ProviderService     providerService;
     private final ApplicationService  applicationService;
-    private final ConsumerStubService consumerStubService;
 
     public ServiceDiscoveryController(RegistryService registryService,
                                       ProviderService providerService,
-                                      ApplicationService applicationService,
-                                      ConsumerStubService consumerStubService) {
+                                      ApplicationService applicationService) {
         this.registryService = registryService;
         this.providerService = providerService;
         this.applicationService = applicationService;
-        this.consumerStubService = consumerStubService;
     }
 
     @ApiOperation("检索所有注册中心列表")
@@ -99,7 +95,7 @@ public class ServiceDiscoveryController {
     public ResponseEntity<List<MethodData>> findMethods(
             @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "服务提供者URL", required = true) @RequestParam(value = "providerUrl") String providerUrl) {
-        ConsumerStub<?> consumerStub = consumerStubService.getConsumerStub(registryIdentity, Url.valueOf(providerUrl));
+        ConsumerStub<?> consumerStub = registryService.getConsumerStub(registryIdentity, Url.valueOf(providerUrl));
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         @SuppressWarnings({"unchecked"})
@@ -114,7 +110,7 @@ public class ServiceDiscoveryController {
             @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "服务提供者URL", required = true) @RequestParam(value = "providerUrl") String providerUrl,
             @ApiParam(value = "调用参数", required = true) @RequestBody MethodInvocation data) {
-        ConsumerStub<?> consumerStub = consumerStubService.getConsumerStub(registryIdentity, Url.valueOf(providerUrl));
+        ConsumerStub<?> consumerStub = registryService.getConsumerStub(registryIdentity, Url.valueOf(providerUrl));
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Object result = invocationHandler.invoke(data.getMethodName(), data.getMethodParamTypes(), data.getArgs());

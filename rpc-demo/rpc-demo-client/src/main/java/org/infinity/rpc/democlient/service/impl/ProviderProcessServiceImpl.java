@@ -12,7 +12,7 @@ import org.infinity.rpc.democlient.domain.Application;
 import org.infinity.rpc.democlient.domain.Provider;
 import org.infinity.rpc.democlient.repository.ApplicationRepository;
 import org.infinity.rpc.democlient.repository.ProviderRepository;
-import org.infinity.rpc.democlient.service.ConsumerStubService;
+import org.infinity.rpc.democlient.service.RegistryService;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -74,8 +74,8 @@ public class ProviderProcessServiceImpl implements ProviderProcessable, Applicat
                     continue;
                 }
 
-                ConsumerStubService consumerStubService = applicationContext.getBean(ConsumerStubService.class);
-                ConsumerStub<?> consumerStub = consumerStubService.getConsumerStub(registryUrl.getIdentity(), providerUrl);
+                RegistryService registryService = applicationContext.getBean(RegistryService.class);
+                ConsumerStub<?> consumerStub = registryService.getConsumerStub(registryUrl.getIdentity(), providerUrl);
                 Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
                 UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
                 ApplicationExtConfig applicationExtConfig = (ApplicationExtConfig) invocationHandler.invoke(APPLICATION_META, null, null);

@@ -2,25 +2,31 @@ package org.infinity.rpc.democlient.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.listener.ProviderProcessable;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.registry.Registry;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democlient.dto.RegistryDTO;
 import org.infinity.rpc.democlient.service.RegistryService;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.infinity.rpc.core.constant.ServiceConstants.FORM;
+import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
+
 @Service
 @Slf4j
-public class RegistryServiceImpl implements RegistryService, InitializingBean {
+public class RegistryServiceImpl implements RegistryService {
     private static final Map<String, Registry>       REGISTRY_MAP        = new ConcurrentHashMap<>();
     private static final Map<String, RegistryConfig> REGISTRY_CONFIG_MAP = new ConcurrentHashMap<>();
     private static final List<RegistryDTO>           REGISTRIES          = new ArrayList<>();
@@ -34,7 +40,7 @@ public class RegistryServiceImpl implements RegistryService, InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() {
+    public void init() {
         if (CollectionUtils.isEmpty(infinityProperties.getRegistryList())) {
             log.warn("No registries found!");
             return;
@@ -43,15 +49,36 @@ public class RegistryServiceImpl implements RegistryService, InitializingBean {
             REGISTRY_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig.getRegistryImpl());
             REGISTRY_CONFIG_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig);
             REGISTRIES.add(new RegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
-            registryConfig.getRegistryImpl().getAllProviderPaths().forEach(interfaceName -> createConsumerStub(interfaceName, registryConfig));
+            registryConfig.getRegistryImpl().getAllProviderPaths().forEach(interfaceName ->
+                    createConsumerStub(interfaceName, registryConfig, providerProcessService, null, null));
             log.info("Found registry: [{}]", registryConfig.getRegistryUrl().getIdentity());
         });
     }
 
-    private void createConsumerStub(String interfaceName, RegistryConfig registryConfig) {
-        ConsumerStub.create(interfaceName, infinityProperties.getApplication(), registryConfig,
+    @Override
+    public ConsumerStub<?> getConsumerStub(String registryIdentity, Url providerUrl) {
+        Map<String, Object> attributes = new HashMap<>();
+        if (StringUtils.isNotEmpty(providerUrl.getForm())) {
+            attributes.put(FORM, providerUrl.getForm());
+        }
+        if (StringUtils.isNotEmpty(providerUrl.getVersion())) {
+            attributes.put(VERSION, providerUrl.getVersion());
+        }
+        String beanName = ConsumerStub.buildConsumerStubBeanName(providerUrl.getPath(), attributes);
+        if (ConsumerStubHolder.getInstance().get().containsKey(beanName)) {
+            return ConsumerStubHolder.getInstance().get().get(beanName);
+        }
+        ConsumerStub<?> consumerStub = createConsumerStub(providerUrl.getPath(), findRegistryConfig(registryIdentity),
+                null, providerUrl.getForm(), providerUrl.getVersion());
+        ConsumerStubHolder.getInstance().add(beanName, consumerStub);
+        return consumerStub;
+    }
+
+    private ConsumerStub<?> createConsumerStub(String interfaceName, RegistryConfig registryConfig,
+                                               ProviderProcessable providerProcessService, String form, String version) {
+        return ConsumerStub.create(interfaceName, infinityProperties.getApplication(), registryConfig,
                 infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                providerProcessService, null, null, null, null);
+                providerProcessService, form, version, null, null);
     }
 
     @Override
