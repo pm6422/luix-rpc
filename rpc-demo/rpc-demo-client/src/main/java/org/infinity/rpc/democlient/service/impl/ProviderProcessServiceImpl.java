@@ -70,8 +70,8 @@ public class ProviderProcessServiceImpl implements ProviderProcessable, Applicat
 
                 // Insert application
                 if (applicationRepository.countByNameAndRegistryUrl(provider.getApplication(), provider.getRegistryUrl()) > 0) {
-                    // Exists
-                    return;
+                    // If exists
+                    continue;
                 }
 
                 ConsumerStubService consumerStubService = applicationContext.getBean(ConsumerStubService.class);
