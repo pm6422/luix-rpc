@@ -41,6 +41,12 @@ public class RegistryServiceImpl implements RegistryService, ApplicationRunner {
         this.providerProcessService = providerProcessService;
     }
 
+    /**
+     * {@link org.springframework.beans.factory.InitializingBean#afterPropertiesSet()} execute to earlier
+     *
+     * @param args arguments
+     * @throws Exception if any exception throws
+     */
     @Override
     public void run(ApplicationArguments args) throws Exception {
         if (CollectionUtils.isEmpty(infinityProperties.getRegistryList())) {
