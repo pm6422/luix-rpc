@@ -12,9 +12,7 @@ import java.util.Optional;
 @Repository
 public interface ApplicationRepository extends MongoRepository<Application, String> {
 
-    int countByNameAndRegistryUrl(String name, String registryUrl);
-
-    Optional<Application> findByNameAndRegistryUrl(String application, String registryUrl);
+    Optional<Application> findByNameAndRegistryIdentity(String application, String registryIdentity);
 }
 
 

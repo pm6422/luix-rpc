@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.regex.Pattern;
 
 import static org.infinity.rpc.democlient.domain.Application.*;
-import static org.infinity.rpc.democlient.domain.Provider.FIELD_REGISTRY_URL;
+import static org.infinity.rpc.democlient.domain.Provider.FIELD_REGISTRY_IDENTITY;
 
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
@@ -26,7 +26,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Page<Application> find(Pageable pageable, String registryUrl, String name, Boolean active) {
-        Query query = Query.query(Criteria.where(FIELD_REGISTRY_URL).is(registryUrl));
+        Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryUrl));
         if (StringUtils.isNotEmpty(name)) {
             //Fuzzy search
             Pattern pattern = Pattern.compile("^.*" + name + ".*$", Pattern.CASE_INSENSITIVE);

@@ -18,13 +18,14 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 
-import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.server.stub.ProviderStub.APPLICATION_META;
 
 @Component
@@ -53,36 +54,23 @@ public class ProviderProcessor implements ProviderProcessable, ApplicationContex
         if (CollectionUtils.isNotEmpty(providerUrls)) {
             log.info("Discovered active providers [{}]", providerUrls);
             for (Url providerUrl : providerUrls) {
-                Provider provider = new Provider();
-                provider.setId(providerUrl.getIdentity());
-                provider.setInterfaceName(providerUrl.getPath());
-                provider.setForm(providerUrl.getForm());
-                provider.setVersion(providerUrl.getVersion());
-                provider.setApplication(providerUrl.getOption(APP));
-                provider.setHost(providerUrl.getHost());
-                provider.setAddress(providerUrl.getAddress());
-                provider.setProviderUrl(providerUrl.toFullStr());
-                provider.setRegistryUrl(registryUrl.getIdentity());
-                provider.setActive(true);
+                Provider provider = Provider.of(providerUrl, registryUrl);
 
                 // Insert or update provider
                 providerRepository.save(provider);
 
                 // Insert application
-                if (applicationRepository.countByNameAndRegistryUrl(provider.getApplication(), provider.getRegistryUrl()) > 0) {
-                    // If exists
+                Application probe = new Application();
+                probe.setName(provider.getApplication());
+                probe.setRegistryIdentity(provider.getRegistryIdentity());
+                // Ignore query parameter if it has a null value
+                ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
+                if (applicationRepository.exists(Example.of(probe, matcher))) {
+                    // If exists application
                     continue;
                 }
 
-                RegistryService registryService = applicationContext.getBean(RegistryService.class);
-                ConsumerStub<?> consumerStub = registryService.getConsumerStub(registryUrl.getIdentity(), providerUrl);
-                Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
-                UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
-                ApplicationConfig applicationConfig = (ApplicationConfig) invocationHandler.invoke(APPLICATION_META, null, null);
-                Application application = new Application();
-                BeanUtils.copyProperties(applicationConfig, application);
-                application.setRegistryUrl(provider.getRegistryUrl());
-                application.setActiveProvider(true);
+                Application application = queryApplication(providerUrl, registryUrl);
                 applicationRepository.save(application);
             }
         } else {
@@ -97,11 +85,11 @@ public class ProviderProcessor implements ProviderProcessable, ApplicationContex
             providerRepository.saveAll(list);
 
             // Update application to inactive
-            int activeCount = providerRepository.countByApplicationAndRegistryUrlAndActiveIsTrue(list.get(0).getApplication(),
-                    list.get(0).getRegistryUrl());
+            int activeCount = providerRepository.countByApplicationAndRegistryIdentityAndActiveIsTrue(list.get(0).getApplication(),
+                    list.get(0).getRegistryIdentity());
             if (activeCount == 0) {
-                Optional<Application> application = applicationRepository.findByNameAndRegistryUrl(list.get(0).getApplication(),
-                        list.get(0).getRegistryUrl());
+                Optional<Application> application = applicationRepository.findByNameAndRegistryIdentity(list.get(0).getApplication(),
+                        list.get(0).getRegistryIdentity());
                 if (!application.isPresent()) {
                     return;
                 }
@@ -109,5 +97,19 @@ public class ProviderProcessor implements ProviderProcessable, ApplicationContex
                 applicationRepository.save(application.get());
             }
         }
+    }
+
+    private Application queryApplication(Url providerUrl, Url registryUrl) {
+        Application application = new Application();
+        RegistryService registryService = applicationContext.getBean(RegistryService.class);
+        ConsumerStub<?> consumerStub = registryService.getConsumerStub(registryUrl.getIdentity(), providerUrl);
+        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
+        UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
+        ApplicationConfig applicationConfig = (ApplicationConfig) invocationHandler.invoke(APPLICATION_META, null, null);
+        BeanUtils.copyProperties(applicationConfig, application);
+        application.setRegistryIdentity(registryUrl.getIdentity());
+        application.setActiveProvider(true);
+        application.setActiveConsumer(false);
+        return application;
     }
 }

@@ -29,10 +29,10 @@ public class Application implements Serializable {
     private   String  team;
     private   String  ownerMail;
     private   String  env;
-    private   String  registryUrl;
+    private   String  registryIdentity;
     private   String  jarVersion;
-    private   Boolean activeProvider = false;
-    private   Boolean activeConsumer = false;
+    private   Boolean activeProvider;
+    private   Boolean activeConsumer;
     private   Instant createdTime;
     private   Instant modifiedTime;
 }

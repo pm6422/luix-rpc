@@ -30,7 +30,7 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Override
     public Page<Provider> find(Pageable pageable, String registryUrl, String application, String interfaceName, Boolean active) {
-        Query query = Query.query(Criteria.where(FIELD_REGISTRY_URL).is(registryUrl));
+        Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryUrl));
         if (StringUtils.isNotEmpty(application)) {
             query.addCriteria(Criteria.where(FIELD_APPLICATION).is(application));
         }
@@ -49,7 +49,7 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Override
     public List<String> findDistinctApplications(String registryUrl, Boolean active) {
-        Query query = Query.query(Criteria.where(FIELD_REGISTRY_URL).is(registryUrl));
+        Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryUrl));
         if (active != null) {
             query.addCriteria(Criteria.where(FIELD_ACTIVE).is(active));
         }
