@@ -282,13 +282,22 @@ public final class Url implements Serializable {
      */
     public String getIdentity() {
         if (PARAM_TYPE_REGISTRY.equals(getOption(PARAM_TYPE))) {
-            return protocol + PROTOCOL_SEPARATOR + host + ":" + port;
+            return protocol + PROTOCOL_SEPARATOR + host + ":" + port + DIR_SEPARATOR_UNIX + PARAM_TYPE_REGISTRY;
         }
-        return protocol + PROTOCOL_SEPARATOR + host + ":" + port
-                + "/" + getForm()
-                + "/" + getPath()
-                + "/" + getVersion()
-                + "/" + getOption(PARAM_TYPE, PARAM_TYPE_PROVIDER);
+
+        StringBuffer identity = new StringBuffer(protocol);
+        identity.append(PROTOCOL_SEPARATOR)
+                .append(host).append(":").append(port)
+                .append(DIR_SEPARATOR_UNIX).append(getOption(PARAM_TYPE, PARAM_TYPE_PROVIDER))
+                .append(DIR_SEPARATOR_UNIX).append(getPath());
+
+        if (StringUtils.isNotEmpty(getForm())) {
+            identity.append(DIR_SEPARATOR_UNIX).append(getForm());
+        }
+        if (StringUtils.isNotEmpty(getVersion())) {
+            identity.append(DIR_SEPARATOR_UNIX).append(getVersion());
+        }
+        return identity.toString();
     }
 
     public static Url valueOf(String url) {

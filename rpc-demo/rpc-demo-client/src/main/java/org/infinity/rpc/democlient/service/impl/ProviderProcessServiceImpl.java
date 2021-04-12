@@ -8,7 +8,6 @@ import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.core.utils.name.ProviderStubBeanNameBuilder;
 import org.infinity.rpc.democlient.domain.Application;
 import org.infinity.rpc.democlient.domain.Provider;
 import org.infinity.rpc.democlient.repository.ApplicationRepository;
@@ -55,13 +54,7 @@ public class ProviderProcessServiceImpl implements ProviderProcessable, Applicat
             log.info("Discovered active providers [{}]", providerUrls);
             for (Url providerUrl : providerUrls) {
                 Provider provider = new Provider();
-                String id = ProviderStubBeanNameBuilder
-                        .builder(providerUrl.getPath())
-                        .form(providerUrl.getForm())
-                        .version(providerUrl.getVersion())
-                        .disablePrefix()
-                        .build();
-                provider.setId(id);
+                provider.setId(providerUrl.getIdentity());
                 provider.setInterfaceName(providerUrl.getPath());
                 provider.setForm(providerUrl.getForm());
                 provider.setVersion(providerUrl.getVersion());
