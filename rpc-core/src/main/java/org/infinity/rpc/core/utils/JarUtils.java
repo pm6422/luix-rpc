@@ -1,8 +1,8 @@
-package org.infinity.rpc.spring.boot.utils;
+package org.infinity.rpc.core.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.StreamUtils;
+import org.apache.commons.io.IOUtils;
+import org.infinity.rpc.core.config.Configurable;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -17,8 +17,9 @@ public abstract class JarUtils {
     public static String readJarVersion() {
         String version = "";
         try {
-            version = StreamUtils.copyToString(new ClassPathResource("version.txt").getInputStream(),
-                    Charset.defaultCharset());
+            version = IOUtils.resourceToString("version.txt",
+                    Charset.defaultCharset(),
+                    Configurable.class.getClassLoader());
         } catch (IOException e) {
             log.warn("Failed to read Infinity RPC version file!");
         }

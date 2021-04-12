@@ -1,6 +1,5 @@
 package org.infinity.rpc.webcenter.service;
 
-import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.registry.AddressInfo;
 
 import java.util.List;
@@ -14,5 +13,4 @@ public interface RegistryService {
 
     Map<String, Map<String, List<AddressInfo>>> getAllNodes(String group);
 
-    List<ApplicationExtConfig> getAllApplications();
 }

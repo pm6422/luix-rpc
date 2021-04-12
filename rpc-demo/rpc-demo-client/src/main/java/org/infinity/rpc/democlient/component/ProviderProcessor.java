@@ -6,7 +6,7 @@ import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler
 import org.infinity.rpc.core.client.listener.ProviderProcessable;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.core.config.ApplicationExtConfig;
+import org.infinity.rpc.core.config.ApplicationConfig;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democlient.domain.Application;
 import org.infinity.rpc.democlient.domain.Provider;
@@ -78,9 +78,9 @@ public class ProviderProcessor implements ProviderProcessable, ApplicationContex
                 ConsumerStub<?> consumerStub = registryService.getConsumerStub(registryUrl.getIdentity(), providerUrl);
                 Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
                 UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
-                ApplicationExtConfig applicationExtConfig = (ApplicationExtConfig) invocationHandler.invoke(APPLICATION_META, null, null);
+                ApplicationConfig applicationConfig = (ApplicationConfig) invocationHandler.invoke(APPLICATION_META, null, null);
                 Application application = new Application();
-                BeanUtils.copyProperties(applicationExtConfig, application);
+                BeanUtils.copyProperties(applicationConfig, application);
                 application.setRegistryUrl(provider.getRegistryUrl());
                 application.setActiveProvider(true);
                 applicationRepository.save(application);

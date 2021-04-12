@@ -2,12 +2,10 @@ package org.infinity.rpc.webcenter.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
-import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.registry.AddressInfo;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.webcenter.service.RegistryService;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -40,12 +38,5 @@ public class ZookeeperRegistryServiceImpl implements RegistryService {
     public Map<String, Map<String, List<AddressInfo>>> getAllNodes(String group) {
         return null;
 //        return ZookeeperUtils.getAllProviders(zkClient, group);
-    }
-
-    @Deprecated
-    @Override
-    public List<ApplicationExtConfig> getAllApplications() {
-        // todo
-        return Collections.emptyList();
     }
 }

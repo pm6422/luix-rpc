@@ -30,6 +30,7 @@ public class Application implements Serializable {
     private   String  ownerMail;
     private   String  env;
     private   String  registryUrl;
+    private   String  jarVersion;
     private   Boolean activeProvider = false;
     private   Boolean activeConsumer = false;
     private   Instant createdTime;

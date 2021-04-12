@@ -4,9 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
-import org.infinity.rpc.core.config.ApplicationConfig;
-import org.infinity.rpc.core.config.ApplicationConfigHolder;
-import org.infinity.rpc.core.config.ApplicationExtConfig;
 import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.server.stub.ProviderStubHolder;
@@ -19,7 +16,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_DIRECT;
-import static org.infinity.rpc.spring.boot.utils.JarUtils.readJarVersion;
 
 /**
  * Used to start and stop the RPC server
@@ -97,7 +93,6 @@ public class RpcLifecycle {
                 publishProviders(infinityProperties, registryConfig);
             }
         });
-        publishApplication(infinityProperties.getApplication());
     }
 
     private void publishProviders(InfinityProperties infinityProperties, RegistryConfig registryConfig) {
@@ -115,12 +110,6 @@ public class RpcLifecycle {
             // Activate RPC service providers
             SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVE, true);
         }
-    }
-
-    private void publishApplication(ApplicationConfig applicationConfig) {
-        ApplicationExtConfig application = new ApplicationExtConfig(applicationConfig);
-        application.setInfinityRpcVersion(readJarVersion());
-        ApplicationConfigHolder.set(application);
     }
 
     /**

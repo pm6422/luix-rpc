@@ -7,7 +7,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.config.ApplicationConfig;
-import org.infinity.rpc.core.config.ApplicationConfigHolder;
+import org.infinity.rpc.core.config.ApplicationHolder;
 import org.infinity.rpc.core.config.ProtocolConfig;
 import org.infinity.rpc.core.config.RegistryConfig;
 import org.infinity.rpc.core.constant.RpcConstants;
@@ -266,7 +266,7 @@ public class ProviderStub<T> {
                 response.setOptions(request.getOptions());
                 return response;
             } else if (APPLICATION_META.equals(request.getMethodName())) {
-                response.setResultObject(ApplicationConfigHolder.get());
+                response.setResultObject(ApplicationHolder.get());
                 response.setOptions(request.getOptions());
                 return response;
             }

@@ -7,8 +7,11 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
+import static org.infinity.rpc.core.utils.JarUtils.readJarVersion;
+
 @Data
-public class ApplicationConfig implements Configurable {
+public class ApplicationConfig implements Configurable, Serializable {
+    private static final long    serialVersionUID = -7916757272373849145L;
     public static final  String  PREFIX           = "application";
     /**
      * Application name
@@ -36,6 +39,10 @@ public class ApplicationConfig implements Configurable {
      */
     private              String  env;
     /**
+     * Infinity RPC jar version
+     */
+    private              String  jarVersion;
+    /**
      * Debug mode
      */
     private              boolean debugMode        = false;
@@ -45,6 +52,9 @@ public class ApplicationConfig implements Configurable {
         checkValidity();
         // Set debug mode
         DebugModeHolder.setDebugMode(debugMode);
+        jarVersion = readJarVersion();
+
+        ApplicationHolder.set(this);
     }
 
     @Override
