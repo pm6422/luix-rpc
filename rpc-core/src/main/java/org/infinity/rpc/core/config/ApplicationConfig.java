@@ -2,12 +2,11 @@ package org.infinity.rpc.core.config;
 
 import lombok.Data;
 import org.infinity.rpc.core.utils.DebugModeHolder;
+import org.infinity.rpc.core.utils.JarUtils;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-
-import static org.infinity.rpc.core.utils.JarUtils.readJarVersion;
 
 @Data
 public class ApplicationConfig implements Configurable, Serializable {
@@ -41,7 +40,7 @@ public class ApplicationConfig implements Configurable, Serializable {
     /**
      * Infinity RPC jar version
      */
-    private              String  jarVersion;
+    private              String  jarVersion       = JarUtils.VERSION;
     /**
      * Debug mode
      */
@@ -52,8 +51,6 @@ public class ApplicationConfig implements Configurable, Serializable {
         checkValidity();
         // Set debug mode
         DebugModeHolder.setDebugMode(debugMode);
-        jarVersion = readJarVersion();
-
         ApplicationHolder.set(this);
     }
 
