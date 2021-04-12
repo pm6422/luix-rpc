@@ -16,8 +16,6 @@ public interface RegistryService {
 
     RegistryConfig findRegistryConfig(String urlIdentity);
 
-    void init();
-
     /**
      * Create or get consumer stub
      *

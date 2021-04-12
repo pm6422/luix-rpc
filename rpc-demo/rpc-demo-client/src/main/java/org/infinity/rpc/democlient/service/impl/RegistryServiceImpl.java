@@ -12,6 +12,8 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democlient.dto.RegistryDTO;
 import org.infinity.rpc.democlient.service.RegistryService;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,7 +28,7 @@ import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
 
 @Service
 @Slf4j
-public class RegistryServiceImpl implements RegistryService {
+public class RegistryServiceImpl implements RegistryService, ApplicationRunner {
     private static final Map<String, Registry>       REGISTRY_MAP        = new ConcurrentHashMap<>();
     private static final Map<String, RegistryConfig> REGISTRY_CONFIG_MAP = new ConcurrentHashMap<>();
     private static final List<RegistryDTO>           REGISTRIES          = new ArrayList<>();
@@ -40,7 +42,7 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     @Override
-    public void init() {
+    public void run(ApplicationArguments args) throws Exception {
         if (CollectionUtils.isEmpty(infinityProperties.getRegistryList())) {
             log.warn("No registries found!");
             return;
