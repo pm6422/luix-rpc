@@ -38,8 +38,7 @@ public class ProviderProcessor implements ProviderProcessable, ApplicationContex
     private final ProviderRepository    providerRepository;
     private final ApplicationRepository applicationRepository;
 
-    public ProviderProcessor(ProviderRepository providerRepository,
-                             ApplicationRepository applicationRepository) {
+    public ProviderProcessor(ProviderRepository providerRepository, ApplicationRepository applicationRepository) {
         this.providerRepository = providerRepository;
         this.applicationRepository = applicationRepository;
     }
