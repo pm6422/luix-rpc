@@ -17,12 +17,11 @@ public abstract class JarUtils {
      * @return version
      */
     public static String getJarVersion() {
-        String version = StringUtils.EMPTY;
         try {
-            version = IOUtils.resourceToString("version.txt", Charset.defaultCharset(), JarUtils.class.getClassLoader());
+            return IOUtils.resourceToString("version.txt", Charset.defaultCharset(), JarUtils.class.getClassLoader());
         } catch (IOException e) {
-            log.warn("Failed to read Infinity RPC version file!");
+            log.warn("Failed to read infinity RPC jar version!");
+            return StringUtils.EMPTY;
         }
-        return version;
     }
 }
