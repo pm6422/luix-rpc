@@ -2,8 +2,8 @@ package org.infinity.rpc.spring.boot.bean;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.config.ProtocolConfig;
-import org.infinity.rpc.core.config.ProviderConfig;
+import org.infinity.rpc.core.config.impl.ProtocolConfig;
+import org.infinity.rpc.core.config.impl.ProviderConfig;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.spring.boot.bean.name.DefaultBeanNameGenerator;

@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.config;
+package org.infinity.rpc.core.config.impl;
 
 import lombok.Data;
 

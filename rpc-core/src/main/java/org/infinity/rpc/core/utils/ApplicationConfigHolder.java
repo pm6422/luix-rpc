@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.utils;
 
-import org.infinity.rpc.core.config.ApplicationConfig;
+import org.infinity.rpc.core.config.impl.ApplicationConfig;
 import org.infinity.rpc.utilities.concurrent.ThreadSafe;
 
 @ThreadSafe

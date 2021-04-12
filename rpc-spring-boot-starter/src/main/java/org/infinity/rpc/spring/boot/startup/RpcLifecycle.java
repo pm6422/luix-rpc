@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
-import org.infinity.rpc.core.config.RegistryConfig;
+import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.server.stub.ProviderStubHolder;
 import org.infinity.rpc.core.switcher.impl.SwitcherHolder;

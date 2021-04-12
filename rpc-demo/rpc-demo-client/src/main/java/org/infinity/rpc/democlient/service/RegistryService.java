@@ -1,7 +1,7 @@
 package org.infinity.rpc.democlient.service;
 
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.core.config.RegistryConfig;
+import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democlient.dto.RegistryDTO;

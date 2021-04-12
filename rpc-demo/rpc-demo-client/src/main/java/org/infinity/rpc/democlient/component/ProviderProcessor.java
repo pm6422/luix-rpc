@@ -6,7 +6,7 @@ import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler
 import org.infinity.rpc.core.client.listener.ProviderProcessable;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.core.config.ApplicationConfig;
+import org.infinity.rpc.core.config.impl.ApplicationConfig;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democlient.domain.Application;
 import org.infinity.rpc.democlient.domain.Provider;

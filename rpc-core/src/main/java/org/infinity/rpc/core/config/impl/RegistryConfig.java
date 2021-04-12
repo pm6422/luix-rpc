@@ -1,6 +1,7 @@
-package org.infinity.rpc.core.config;
+package org.infinity.rpc.core.config.impl;
 
 import lombok.Data;
+import org.infinity.rpc.core.config.Configurable;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;

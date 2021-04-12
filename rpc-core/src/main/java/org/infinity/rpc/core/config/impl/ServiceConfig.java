@@ -1,6 +1,7 @@
-package org.infinity.rpc.core.config;
+package org.infinity.rpc.core.config.impl;
 
 import lombok.Data;
+import org.infinity.rpc.core.config.Configurable;
 
 import javax.validation.constraints.NotEmpty;
 

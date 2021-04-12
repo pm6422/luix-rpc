@@ -2,7 +2,7 @@ package org.infinity.rpc.spring.boot.config;
 
 import lombok.Data;
 import org.apache.commons.collections4.MapUtils;
-import org.infinity.rpc.core.config.*;
+import org.infinity.rpc.core.config.impl.*;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -27,35 +27,35 @@ import static org.infinity.rpc.spring.boot.utils.PropertySourcesUtils.readProper
 @Data
 @Validated
 public class InfinityProperties implements InitializingBean {
-    public static final String                      PREFIX      = "infinity";
+    public static final String            PREFIX      = "infinity";
     @NotNull
-    private             ApplicationConfig           application = new ApplicationConfig();
+    private ApplicationConfig           application = new ApplicationConfig();
     /**
      *
      */
-    private             RegistryConfig              registry    = new RegistryConfig();
+    private RegistryConfig              registry    = new RegistryConfig();
     /**
      * Supports multiple registries
      */
-    private             Map<String, RegistryConfig> registries  = new LinkedHashMap<>(5);
+    private Map<String, RegistryConfig> registries  = new LinkedHashMap<>(5);
     /**
      *
      */
-    private             ProtocolConfig              protocol    = new ProtocolConfig();
+    private ProtocolConfig              protocol    = new ProtocolConfig();
     /**
      * Supports multiple protocols
      */
-    private             Map<String, ProtocolConfig> protocols   = new LinkedHashMap<>(5);
+    private Map<String, ProtocolConfig> protocols   = new LinkedHashMap<>(5);
     /**
      *
      */
     @NotNull
-    private             ProviderConfig              provider    = new ProviderConfig();
+    private ProviderConfig              provider    = new ProviderConfig();
     /**
      *
      */
     @NotNull
-    private             ConsumerConfig              consumer    = new ConsumerConfig();
+    private ConsumerConfig              consumer    = new ConsumerConfig();
 
     @Override
     public void afterPropertiesSet() {

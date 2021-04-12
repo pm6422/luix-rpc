@@ -1,8 +1,9 @@
-package org.infinity.rpc.core.config;
+package org.infinity.rpc.core.config.impl;
 
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.codec.Codec;
+import org.infinity.rpc.core.config.Configurable;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.network.LocalAddressFactory;
 import org.infinity.rpc.core.protocol.Protocol;

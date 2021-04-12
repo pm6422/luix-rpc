@@ -2,9 +2,9 @@ package org.infinity.rpc.demoserver.testcases;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.core.config.ApplicationConfig;
-import org.infinity.rpc.core.config.ProtocolConfig;
-import org.infinity.rpc.core.config.RegistryConfig;
+import org.infinity.rpc.core.config.impl.ApplicationConfig;
+import org.infinity.rpc.core.config.impl.ProtocolConfig;
+import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.constant.ProtocolConstants;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.switcher.impl.SwitcherHolder;
