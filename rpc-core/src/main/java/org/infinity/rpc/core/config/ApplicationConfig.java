@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.config;
 
 import lombok.Data;
+import org.infinity.rpc.core.utils.ApplicationConfigHolder;
 import org.infinity.rpc.core.utils.DebugModeHolder;
 import org.infinity.rpc.core.utils.JarUtils;
 
@@ -51,7 +52,7 @@ public class ApplicationConfig implements Configurable, Serializable {
         checkValidity();
         // Set debug mode
         DebugModeHolder.setDebugMode(debugMode);
-        ApplicationHolder.set(this);
+        ApplicationConfigHolder.set(this);
     }
 
     @Override
