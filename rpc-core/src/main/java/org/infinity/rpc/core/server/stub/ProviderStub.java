@@ -7,7 +7,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.config.impl.ApplicationConfig;
-import org.infinity.rpc.core.utils.ApplicationConfigHolder;
 import org.infinity.rpc.core.config.impl.ProtocolConfig;
 import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.constant.RpcConstants;
@@ -21,6 +20,7 @@ import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.core.utils.ApplicationConfigHolder;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 import org.infinity.rpc.core.utils.name.ProviderStubBeanNameBuilder;
@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
+import static org.infinity.rpc.core.server.response.impl.RpcCheckHealthResponse.CHECK_HEALTH_OK;
 
 /**
  * PRC provider stub
@@ -51,8 +52,9 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 @Setter
 @Getter
 public class ProviderStub<T> {
-    public static final String              METHOD_META      = "$methodMeta";
-    public static final String              APPLICATION_META = "$applicationMeta";
+    public static final String              METHOD_HEALTH           = "$health";
+    public static final String              METHOD_META             = "$methodMeta";
+    public static final String              METHOD_APPLICATION_META = "$applicationMeta";
     /**
      * Provider stub bean name
      */
@@ -117,11 +119,11 @@ public class ProviderStub<T> {
     /**
      * Method signature to method cache map for the provider class
      */
-    private transient   Map<String, Method> methodsCache     = new HashMap<>();
+    private transient   Map<String, Method> methodsCache            = new HashMap<>();
     /**
      * All the methods of the interface class
      */
-    private             List<MethodData>    methodDataCache  = new ArrayList<>();
+    private             List<MethodData>    methodDataCache         = new ArrayList<>();
     /**
      * The provider url
      */
@@ -129,7 +131,7 @@ public class ProviderStub<T> {
     /**
      * Indicator used to identify whether the provider already been registered
      */
-    private final       AtomicBoolean       exported         = new AtomicBoolean(false);
+    private final       AtomicBoolean       exported                = new AtomicBoolean(false);
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
@@ -261,11 +263,15 @@ public class ProviderStub<T> {
         RpcResponse response = new RpcResponse();
         Method method = findMethod(request.getMethodName(), request.getMethodParameters());
         if (method == null) {
-            if (METHOD_META.equals(request.getMethodName())) {
+            if (METHOD_HEALTH.equals(request.getMethodName())) {
+                response.setResultObject(CHECK_HEALTH_OK);
+                response.setOptions(request.getOptions());
+                return response;
+            } else if (METHOD_META.equals(request.getMethodName())) {
                 response.setResultObject(methodDataCache);
                 response.setOptions(request.getOptions());
                 return response;
-            } else if (APPLICATION_META.equals(request.getMethodName())) {
+            } else if (METHOD_APPLICATION_META.equals(request.getMethodName())) {
                 response.setResultObject(ApplicationConfigHolder.get());
                 response.setOptions(request.getOptions());
                 return response;

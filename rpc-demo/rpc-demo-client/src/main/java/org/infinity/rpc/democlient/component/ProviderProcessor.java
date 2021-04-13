@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 
-import static org.infinity.rpc.core.server.stub.ProviderStub.APPLICATION_META;
+import static org.infinity.rpc.core.server.stub.ProviderStub.METHOD_APPLICATION_META;
 
 @Component
 @Slf4j
@@ -108,7 +108,7 @@ public class ProviderProcessor implements ProviderProcessable, ApplicationContex
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         // Remote call to get ApplicationConfig
-        ApplicationConfig applicationConfig = (ApplicationConfig) invocationHandler.invoke(APPLICATION_META, null, null);
+        ApplicationConfig applicationConfig = (ApplicationConfig) invocationHandler.invoke(METHOD_APPLICATION_META, null, null);
         BeanUtils.copyProperties(applicationConfig, application);
         application.setRegistryIdentity(registryUrl.getIdentity());
         application.setActiveProvider(true);

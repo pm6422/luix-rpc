@@ -304,9 +304,10 @@ public class ConsumerStub<T> {
     }
 
     public static ConsumerStub<?> create(String interfaceName, ApplicationConfig application,
-                                         RegistryConfig registry, ProtocolConfig protocol,
-                                         ConsumerConfig consumer, ProviderProcessable providerProcessService,
-                                         String form, String version, Integer requestTimeout, Integer maxRetries) {
+                                         RegistryConfig registry, ProtocolConfig protocol, ConsumerConfig consumer,
+                                         ProviderProcessable providerProcessor, String directAddress,
+                                         String form, String version, Integer requestTimeout,
+                                         Integer maxRetries) {
         ConsumerStub<?> consumerStub = new ConsumerStub<>();
         consumerStub.setInterfaceName(interfaceName);
         consumerStub.setProtocol(protocol.getName());
@@ -315,12 +316,10 @@ public class ConsumerStub<T> {
         consumerStub.setLoadBalancer(consumer.getLoadBalancer());
         consumerStub.setProxy(consumer.getProxyFactory());
         consumerStub.setHealthChecker(consumer.getHealthChecker());
-        if (StringUtils.isNotEmpty(form)) {
-            consumerStub.setForm(form);
-        }
-        if (StringUtils.isNotEmpty(version)) {
-            consumerStub.setVersion(version);
-        }
+        consumerStub.setDirectAddresses(directAddress);
+        consumerStub.setForm(form);
+        consumerStub.setVersion(version);
+
         if (requestTimeout != null) {
             consumerStub.setRequestTimeout(requestTimeout);
         }
@@ -328,7 +327,7 @@ public class ConsumerStub<T> {
             consumerStub.setMaxRetries(maxRetries);
         }
         // Must NOT call init()
-        consumerStub.subscribeProviders(application, protocol, registry, providerProcessService);
+        consumerStub.subscribeProviders(application, protocol, registry, providerProcessor);
         return consumerStub;
     }
 }

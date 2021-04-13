@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.infinity.rpc.core.server.stub.ProviderStub.METHOD_HEALTH;
 import static org.infinity.rpc.core.server.stub.ProviderStub.METHOD_META;
 import static org.infinity.rpc.democlient.utils.HttpHeaderUtils.generatePageHeaders;
 
@@ -35,10 +36,10 @@ import static org.infinity.rpc.democlient.utils.HttpHeaderUtils.generatePageHead
 public class ServiceDiscoveryController {
 
     @Resource
-    private       InfinityProperties  infinityProperties;
-    private final RegistryService     registryService;
-    private final ProviderService     providerService;
-    private final ApplicationService  applicationService;
+    private       InfinityProperties infinityProperties;
+    private final RegistryService    registryService;
+    private final ProviderService    providerService;
+    private final ApplicationService applicationService;
 
     public ServiceDiscoveryController(RegistryService registryService,
                                       ProviderService providerService,
@@ -114,6 +115,25 @@ public class ServiceDiscoveryController {
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Object result = invocationHandler.invoke(data.getMethodName(), data.getMethodParamTypes(), data.getArgs());
+        return ResponseEntity.ok().body(result);
+    }
+
+    @ApiOperation("监测服务提供者健康")
+    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功调用")})
+    @GetMapping("/api/service-discovery/provider/health")
+    public ResponseEntity<String> health(@ApiParam(value = "服务提供者URL", required = true) @RequestParam(value = "providerUrl") String providerUrl) {
+        Url url = Url.valueOf(providerUrl);
+        ConsumerStub<?> consumerStub = ConsumerStub.create(url.getPath(), infinityProperties.getApplication(),
+                infinityProperties.getRegistry(), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
+                null, url.getAddress(), url.getForm(), url.getVersion(), null, null);
+        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
+        UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
+        String result;
+        try {
+            result = (String) invocationHandler.invoke(METHOD_HEALTH, null, null);
+        } catch (Exception ex) {
+            result = ex.getMessage();
+        }
         return ResponseEntity.ok().body(result);
     }
 

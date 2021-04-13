@@ -8,13 +8,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class RpcCheckHealthResponse extends RpcResponse {
-    private static final long   serialVersionUID      = -3779389154729791142L;
-    public static final  String CHECK_HEALTH_RESPONSE = "SUCCESS";
+    private static final long   serialVersionUID = -3779389154729791142L;
+    public static final  String CHECK_HEALTH_OK  = "OK";
 
     public static RpcCheckHealthResponse of(long requestId) {
         RpcCheckHealthResponse response = new RpcCheckHealthResponse();
         response.setRequestId(requestId);
-        response.setResultObject(CHECK_HEALTH_RESPONSE);
+        response.setResultObject(CHECK_HEALTH_OK);
         return response;
     }
 

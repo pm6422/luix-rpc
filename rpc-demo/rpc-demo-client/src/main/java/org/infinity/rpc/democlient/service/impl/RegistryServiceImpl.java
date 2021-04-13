@@ -86,7 +86,7 @@ public class RegistryServiceImpl implements RegistryService, ApplicationRunner {
                                                ProviderProcessable providerProcessService, String form, String version) {
         return ConsumerStub.create(interfaceName, infinityProperties.getApplication(), registryConfig,
                 infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                providerProcessService, form, version, null, null);
+                providerProcessService, null, form, version, null, null);
     }
 
     @Override

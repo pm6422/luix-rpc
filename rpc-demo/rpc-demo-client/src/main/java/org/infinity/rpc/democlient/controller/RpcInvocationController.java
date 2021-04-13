@@ -66,7 +66,8 @@ public class RpcInvocationController {
         }
         ConsumerStub<?> consumerStub = ConsumerStub.create(data.getInterfaceName(), infinityProperties.getApplication(),
                 infinityProperties.getRegistry(), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, data.getAttributes().get(FORM), data.getAttributes().get(VERSION), requestTimeout, maxRetries);
+                null, null, data.getAttributes().get(FORM), data.getAttributes().get(VERSION),
+                requestTimeout, maxRetries);
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);
         return consumerStub;
     }
