@@ -6,7 +6,6 @@ import org.infinity.rpc.democlient.config.ApplicationConstants;
 import org.infinity.rpc.spring.boot.EnableRpc;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
@@ -15,7 +14,7 @@ import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
 @EnableRpc
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class, MongoDataAutoConfiguration.class})
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @Slf4j
 public class RpcDemoClientLauncher {
     private final Environment env;
