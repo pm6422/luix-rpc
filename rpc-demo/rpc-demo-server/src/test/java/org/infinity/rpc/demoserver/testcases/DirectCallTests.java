@@ -36,7 +36,7 @@ public class DirectCallTests extends ZkBaseTest {
     }
 
     @Test
-    public void testCallByRegistry() {
+    public void directInvocation() {
         registerProvider();
         TestService proxyInstance = subscribeProvider();
         String result = proxyInstance.hello("louis");
@@ -89,6 +89,8 @@ public class DirectCallTests extends ZkBaseTest {
         consumerStub.setVersion("1.0.0");
         consumerStub.setProxy(PROXY_VAL_JDK);
         consumerStub.setHealthChecker(HEALTH_CHECKER_VAL_DEFAULT);
+        // Set direct address
+        consumerStub.setDirectAddresses("localhost:" + PROVIDER_PORT);
         consumerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
