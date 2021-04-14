@@ -111,7 +111,6 @@ mongock:
     trackIgnored: true
 infinity:
     application:
-        id: ${spring.application.name}
         name: ${spring.application.name}
         description: RPC Demo Server
         team: Infinity Team

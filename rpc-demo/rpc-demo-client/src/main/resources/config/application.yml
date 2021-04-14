@@ -109,7 +109,6 @@ logging:
         ${info.project.package}: DEBUG
 infinity:
     application:
-        id: ${spring.application.name}
         name: ${spring.application.name}
         description: RPC Demo Client
         team: Infinity Team
