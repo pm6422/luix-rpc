@@ -8,6 +8,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>rpc-demo</artifactId>
+    <name>${project.artifactId}</name>
     <modules>
         <module>rpc-demo-common</module>
         <module>rpc-demo-server</module>

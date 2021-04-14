@@ -11,7 +11,7 @@
     <artifactId>rpc-demo-client</artifactId>
     <version>1.0.0</version>
     <packaging>war</packaging>
-    <name>rpc-demo-client</name>
+    <name>${project.artifactId}</name>
 
     <!--
         *************************************************************************************
