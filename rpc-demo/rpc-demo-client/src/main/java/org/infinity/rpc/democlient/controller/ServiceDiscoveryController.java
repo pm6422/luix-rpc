@@ -1,6 +1,8 @@
 package org.infinity.rpc.democlient.controller;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
@@ -25,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
 
-import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.infinity.rpc.core.server.stub.ProviderStub.METHOD_HEALTH;
 import static org.infinity.rpc.core.server.stub.ProviderStub.METHOD_META;
 import static org.infinity.rpc.democlient.utils.HttpHeaderUtils.generatePageHeaders;
@@ -50,14 +51,12 @@ public class ServiceDiscoveryController {
     }
 
     @ApiOperation("检索所有注册中心列表")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("api/service-discovery/registries")
     public ResponseEntity<List<RegistryDTO>> findRegistries() {
         return ResponseEntity.ok(registryService.getRegistries());
     }
 
     @ApiOperation("检索所有应用列表")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("api/service-discovery/applications/all")
     public ResponseEntity<List<String>> findApplications(
             @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
@@ -66,7 +65,6 @@ public class ServiceDiscoveryController {
     }
 
     @ApiOperation("分页检索应用列表")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("api/service-discovery/applications")
     public ResponseEntity<List<Application>> findApplications(
             Pageable pageable,
@@ -78,7 +76,6 @@ public class ServiceDiscoveryController {
     }
 
     @ApiOperation("分页检索服务提供者列表")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
     @GetMapping("/api/service-discovery/providers")
     public ResponseEntity<List<Provider>> findProviders(
             Pageable pageable,
@@ -91,7 +88,6 @@ public class ServiceDiscoveryController {
     }
 
     @ApiOperation("检索服务提供者所有方法")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功执行")})
     @GetMapping("/api/service-discovery/provider/methods")
     public ResponseEntity<List<MethodData>> findMethods(
             @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
@@ -105,7 +101,6 @@ public class ServiceDiscoveryController {
     }
 
     @ApiOperation("调用服务提供者方法")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功调用")})
     @PostMapping("/api/service-discovery/provider/invoke")
     public ResponseEntity<Object> invoke(
             @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
@@ -118,8 +113,7 @@ public class ServiceDiscoveryController {
         return ResponseEntity.ok().body(result);
     }
 
-    @ApiOperation("监测服务提供者健康")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功调用")})
+    @ApiOperation(value = "监测服务提供者健康", notes = "直连方式没有服务发现，即使inactive的提供者也可以调用成功")
     @GetMapping("/api/service-discovery/provider/health")
     public ResponseEntity<String> health(@ApiParam(value = "服务提供者URL", required = true) @RequestParam(value = "providerUrl") String providerUrl) {
         Url url = Url.valueOf(providerUrl);
@@ -138,7 +132,6 @@ public class ServiceDiscoveryController {
     }
 
     @ApiOperation("启用服务提供者")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功执行")})
     @PutMapping("/api/service-discovery/provider/activate")
     public ResponseEntity<Void> activate(
             @ApiParam(value = "注册中心URL", defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
@@ -152,7 +145,6 @@ public class ServiceDiscoveryController {
     }
 
     @ApiOperation("禁用服务提供者")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功执行")})
     @PutMapping("/api/service-discovery/provider/deactivate")
     public ResponseEntity<Void> deactivate(
             @ApiParam(value = "注册中心URL", defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
