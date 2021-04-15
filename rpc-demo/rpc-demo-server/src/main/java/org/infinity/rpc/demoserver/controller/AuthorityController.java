@@ -1,7 +1,8 @@
 package org.infinity.rpc.demoserver.controller;
 
 import com.google.common.collect.ImmutableMap;
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.democommon.domain.Authority;
 import org.infinity.rpc.demoserver.component.HttpHeaderCreator;
@@ -15,10 +16,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
 
-import static javax.servlet.http.HttpServletResponse.*;
 import static org.infinity.rpc.demoserver.utils.HttpHeaderUtils.generatePageHeaders;
 
 /**
@@ -28,13 +29,10 @@ import static org.infinity.rpc.demoserver.utils.HttpHeaderUtils.generatePageHead
 @Slf4j
 public class AuthorityController {
 
-    private final AuthorityRepository authorityRepository;
-    private final HttpHeaderCreator   httpHeaderCreator;
-
-    public AuthorityController(AuthorityRepository authorityRepository, HttpHeaderCreator httpHeaderCreator) {
-        this.authorityRepository = authorityRepository;
-        this.httpHeaderCreator = httpHeaderCreator;
-    }
+    @Resource
+    private AuthorityRepository authorityRepository;
+    @Resource
+    private HttpHeaderCreator   httpHeaderCreator;
 
     @ApiOperation("create authority")
     @PostMapping("/api/authority/authorities")

@@ -1,12 +1,10 @@
 package org.infinity.rpc.demoserver.controller;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democommon.service.AppService;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,13 +16,7 @@ import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 @Slf4j
 public class TestController {
     @Resource
-    private       InfinityProperties infinityProperties;
-    private final ApplicationContext applicationContext;
-
-    public TestController(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
+    private InfinityProperties infinityProperties;
 
     @ApiOperation("register provider")
     @GetMapping("/api/test/register-provider")

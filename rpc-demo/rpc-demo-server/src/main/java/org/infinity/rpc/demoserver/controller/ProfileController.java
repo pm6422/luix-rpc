@@ -1,6 +1,5 @@
 package org.infinity.rpc.demoserver.controller;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.infinity.rpc.demoserver.config.ApplicationProperties;
 import org.infinity.rpc.demoserver.dto.ProfileInfoDTO;
@@ -9,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,14 +16,10 @@ import java.util.List;
 @RestController
 public class ProfileController {
 
-    private final Environment env;
-
-    private final ApplicationProperties applicationProperties;
-
-    public ProfileController(Environment env, ApplicationProperties applicationProperties) {
-        this.env = env;
-        this.applicationProperties = applicationProperties;
-    }
+    @Resource
+    private Environment           env;
+    @Resource
+    private ApplicationProperties applicationProperties;
 
     @ApiOperation("find system profile")
     @GetMapping("/open-api/profile-info")
