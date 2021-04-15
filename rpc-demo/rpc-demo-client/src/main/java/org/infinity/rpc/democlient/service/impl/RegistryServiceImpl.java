@@ -29,13 +29,11 @@ import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
 @Service
 @Slf4j
 public class RegistryServiceImpl implements RegistryService, ApplicationRunner {
-    private static final Map<String, Registry>       REGISTRY_MAP        = new ConcurrentHashMap<>();
     private static final Map<String, RegistryConfig> REGISTRY_CONFIG_MAP = new ConcurrentHashMap<>();
     private static final List<RegistryDTO>           REGISTRIES          = new ArrayList<>();
-
     @Resource
-    private       InfinityProperties  infinityProperties;
-    private final ProviderProcessable providerProcessService;
+    private              InfinityProperties          infinityProperties;
+    private final        ProviderProcessable         providerProcessService;
 
     public RegistryServiceImpl(ProviderProcessable providerProcessService) {
         this.providerProcessService = providerProcessService;
@@ -54,7 +52,6 @@ public class RegistryServiceImpl implements RegistryService, ApplicationRunner {
             return;
         }
         infinityProperties.getRegistryList().forEach(registryConfig -> {
-            REGISTRY_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig.getRegistryImpl());
             REGISTRY_CONFIG_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig);
             REGISTRIES.add(new RegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
             registryConfig.getRegistryImpl().getAllProviderPaths().forEach(interfaceName ->
@@ -96,7 +93,7 @@ public class RegistryServiceImpl implements RegistryService, ApplicationRunner {
 
     @Override
     public Registry findRegistry(String urlIdentity) {
-        return REGISTRY_MAP.get(urlIdentity);
+        return REGISTRY_CONFIG_MAP.get(urlIdentity).getRegistryImpl();
     }
 
     @Override
