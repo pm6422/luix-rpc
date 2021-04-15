@@ -37,7 +37,7 @@ public class PageableParameterBuilderPlugin implements OperationBuilderPlugin {
     /**
      * Constant <code>PAGE_DESCRIPTION="Page number of the requested page"</code>
      */
-    public static final String PAGE_DESCRIPTION  = "页码(从0开始)";
+    public static final String PAGE_DESCRIPTION  = "Page no.(starting from 0)";
 
     /**
      * Constant <code>DEFAULT_SIZE_NAME="size"</code>
@@ -50,7 +50,7 @@ public class PageableParameterBuilderPlugin implements OperationBuilderPlugin {
     /**
      * Constant <code>SIZE_DESCRIPTION="Size of a page"</code>
      */
-    public static final String SIZE_DESCRIPTION  = "每页大小(最大值为2000)";
+    public static final String SIZE_DESCRIPTION  = "Page size(max is 2000)";
 
     /**
      * Constant <code>DEFAULT_SORT_NAME="sort"</code>
@@ -63,7 +63,7 @@ public class PageableParameterBuilderPlugin implements OperationBuilderPlugin {
     /**
      * Constant <code>SORT_DESCRIPTION="Sorting criteria in the format: property"{trunked}</code>
      */
-    public static final String SORT_DESCRIPTION  = "排序(默认升序)。例: field1,asc或field2,desc";
+    public static final String SORT_DESCRIPTION  = "Sort(default ascending order) e,g: field1,asc or field2,desc";
 
     private final TypeNameExtractor nameExtractor;
     private final TypeResolver      resolver;

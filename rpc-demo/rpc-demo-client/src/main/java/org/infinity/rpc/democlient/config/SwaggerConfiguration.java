@@ -101,7 +101,7 @@ public class SwaggerConfiguration {
     private List<Parameter> createGlobalParameters() {
         ParameterBuilder requesterParamBuilder = new ParameterBuilder();
         requesterParamBuilder.name(REQUEST_ID)
-                .description("请求ID(全局参数)")
+                .description("Request ID(global parameter)")
                 .modelRef(new ModelRef("string"))
                 .parameterType("header")
                 .required(false)
