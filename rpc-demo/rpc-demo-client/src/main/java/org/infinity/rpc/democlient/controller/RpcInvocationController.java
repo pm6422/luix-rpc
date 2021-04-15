@@ -25,18 +25,16 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
  * REST controller for RPC calling.
  */
 @RestController
-@Api(tags = "RPC调用")
 @Slf4j
 public class RpcInvocationController {
 
     @Resource
     private InfinityProperties infinityProperties;
 
-    @ApiOperation("通用调用")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功调用")})
+    @ApiOperation("universal invocation")
     @PostMapping("/api/rpc/universal-invocation")
     public ResponseEntity<Object> universalInvoke(
-            @ApiParam(value = "调用参数", required = true) @RequestBody UniversalMethodInvocation data) {
+            @ApiParam(value = "arguments", required = true) @RequestBody UniversalMethodInvocation data) {
         ConsumerStub<?> consumerStub = getConsumerStub(data);
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler universalInvocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);

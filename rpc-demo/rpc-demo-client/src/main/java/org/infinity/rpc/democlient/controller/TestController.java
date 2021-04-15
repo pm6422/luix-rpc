@@ -1,6 +1,5 @@
 package org.infinity.rpc.democlient.controller;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.annotation.Consumer;
@@ -14,26 +13,23 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@Api(tags = "测试")
 @Slf4j
 public class TestController {
 
-    private final ApplicationContext applicationContext;
-    private final Environment        env;
+    @Resource
+    private ApplicationContext applicationContext;
+    @Resource
+    private Environment        env;
     @Consumer(directAddresses = "127.0.0.1:26010", maxRetries = 0)
-    private       AppService         appService;
+    private AppService         appService;
 
-    public TestController(ApplicationContext applicationContext, Environment env) {
-        this.applicationContext = applicationContext;
-        this.env = env;
-    }
-
-    @ApiOperation("测试直连")
+    @ApiOperation("direct connect")
     @GetMapping("/api/test/direct-url")
-    public List<App> testDirectUrl() {
+    public List<App> directUrl() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<App> all = appService.findAll(pageable);
         return all.getContent();

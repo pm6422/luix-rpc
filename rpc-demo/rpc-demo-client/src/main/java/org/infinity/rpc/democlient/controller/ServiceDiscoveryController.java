@@ -1,6 +1,5 @@
 package org.infinity.rpc.democlient.controller;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -32,66 +31,60 @@ import static org.infinity.rpc.core.server.stub.ProviderStub.METHOD_META;
 import static org.infinity.rpc.democlient.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
-@Api(tags = "服务发现")
 @Slf4j
 public class ServiceDiscoveryController {
 
     @Resource
-    private       InfinityProperties infinityProperties;
-    private final RegistryService    registryService;
-    private final ProviderService    providerService;
-    private final ApplicationService applicationService;
+    private InfinityProperties infinityProperties;
+    @Resource
+    private RegistryService    registryService;
+    @Resource
+    private ProviderService    providerService;
+    @Resource
+    private ApplicationService applicationService;
 
-    public ServiceDiscoveryController(RegistryService registryService,
-                                      ProviderService providerService,
-                                      ApplicationService applicationService) {
-        this.registryService = registryService;
-        this.providerService = providerService;
-        this.applicationService = applicationService;
-    }
-
-    @ApiOperation("检索所有注册中心列表")
+    @ApiOperation("find all registries")
     @GetMapping("api/service-discovery/registries")
     public ResponseEntity<List<RegistryDTO>> findRegistries() {
         return ResponseEntity.ok(registryService.getRegistries());
     }
 
-    @ApiOperation("检索所有应用列表")
+    @ApiOperation("find all applications")
     @GetMapping("api/service-discovery/applications/all")
     public ResponseEntity<List<String>> findApplications(
-            @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "是否活跃") @RequestParam(value = "active", required = false) Boolean active) {
+            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
+            @ApiParam(value = "active flag") @RequestParam(value = "active", required = false) Boolean active) {
         return ResponseEntity.ok(providerService.findDistinctApplications(registryIdentity, active));
     }
 
-    @ApiOperation("分页检索应用列表")
+    @ApiOperation("find application list")
     @GetMapping("api/service-discovery/applications")
     public ResponseEntity<List<Application>> findApplications(
             Pageable pageable,
-            @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "应用名称(模糊查询)") @RequestParam(value = "name", required = false) String name,
-            @ApiParam(value = "是否活跃") @RequestParam(value = "active", required = false) Boolean active) {
+            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
+            @ApiParam(value = "application name(fuzzy query)") @RequestParam(value = "name", required = false) String name,
+            @ApiParam(value = "active flag") @RequestParam(value = "active", required = false) Boolean active) {
         Page<Application> list = applicationService.find(pageable, registryIdentity, name, active);
         return ResponseEntity.ok().headers(generatePageHeaders(list)).body(list.getContent());
     }
 
-    @ApiOperation("分页检索服务提供者列表")
+    @ApiOperation("find provider list")
     @GetMapping("/api/service-discovery/providers")
     public ResponseEntity<List<Provider>> findProviders(
             Pageable pageable,
-            @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "应用名称") @RequestParam(value = "application", required = false) String application,
-            @ApiParam(value = "接口名称(模糊查询)") @RequestParam(value = "interfaceName", required = false) String interfaceName,
-            @ApiParam(value = "是否活跃") @RequestParam(value = "active", required = false) Boolean active) {
+            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
+            @ApiParam(value = "application name") @RequestParam(value = "application", required = false) String application,
+            @ApiParam(value = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName,
+            @ApiParam(value = "active flag") @RequestParam(value = "active", required = false) Boolean active) {
         Page<Provider> list = providerService.find(pageable, registryIdentity, application, interfaceName, active);
         return ResponseEntity.ok().headers(generatePageHeaders(list)).body(list.getContent());
     }
 
-    @ApiOperation("检索服务提供者所有方法")
+    @ApiOperation("find all methods of provider")
     @GetMapping("/api/service-discovery/provider/methods")
     public ResponseEntity<List<MethodData>> findMethods(
-            @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "服务提供者URL", required = true) @RequestParam(value = "providerUrl") String providerUrl) {
+            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
+            @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrl) {
         ConsumerStub<?> consumerStub = registryService.getConsumerStub(registryIdentity, Url.valueOf(providerUrl));
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
@@ -100,12 +93,12 @@ public class ServiceDiscoveryController {
         return ResponseEntity.ok().body(result);
     }
 
-    @ApiOperation("调用服务提供者方法")
+    @ApiOperation("invoke provider method")
     @PostMapping("/api/service-discovery/provider/invoke")
     public ResponseEntity<Object> invoke(
-            @ApiParam(value = "注册中心URL", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "服务提供者URL", required = true) @RequestParam(value = "providerUrl") String providerUrl,
-            @ApiParam(value = "调用参数", required = true) @RequestBody MethodInvocation data) {
+            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
+            @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrl,
+            @ApiParam(value = "argument", required = true) @RequestBody MethodInvocation data) {
         ConsumerStub<?> consumerStub = registryService.getConsumerStub(registryIdentity, Url.valueOf(providerUrl));
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
@@ -113,9 +106,9 @@ public class ServiceDiscoveryController {
         return ResponseEntity.ok().body(result);
     }
 
-    @ApiOperation(value = "监测服务提供者健康", notes = "直连方式没有服务发现，即使inactive的提供者也可以调用成功")
+    @ApiOperation(value = "check health of provider", notes = "There is no service discovery in the direct connection mode, even the inactive provider can be called successfully")
     @GetMapping("/api/service-discovery/provider/health")
-    public ResponseEntity<String> health(@ApiParam(value = "服务提供者URL", required = true) @RequestParam(value = "providerUrl") String providerUrl) {
+    public ResponseEntity<String> health(@ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrl) {
         Url url = Url.valueOf(providerUrl);
         ConsumerStub<?> consumerStub = ConsumerStub.create(url.getPath(), infinityProperties.getApplication(),
                 infinityProperties.getRegistry(), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
@@ -131,11 +124,11 @@ public class ServiceDiscoveryController {
         return ResponseEntity.ok().body(result);
     }
 
-    @ApiOperation("启用服务提供者")
+    @ApiOperation("activate provider")
     @PutMapping("/api/service-discovery/provider/activate")
     public ResponseEntity<Void> activate(
-            @ApiParam(value = "注册中心URL", defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
-            @ApiParam(value = "服务提供者URL") @RequestParam(value = "providerUrl", required = false) String providerUrl) {
+            @ApiParam(value = "registry url identity", defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
+            @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrl) {
         if (StringUtils.isEmpty(registryIdentity)) {
             infinityProperties.getRegistryList().forEach(config -> config.getRegistryImpl().activate(Url.valueOf(providerUrl)));
         } else {
@@ -144,11 +137,11 @@ public class ServiceDiscoveryController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @ApiOperation("禁用服务提供者")
+    @ApiOperation("deactivate provider")
     @PutMapping("/api/service-discovery/provider/deactivate")
     public ResponseEntity<Void> deactivate(
-            @ApiParam(value = "注册中心URL", defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
-            @ApiParam(value = "服务提供者URL") @RequestParam(value = "providerUrl", required = false) String providerUrl) {
+            @ApiParam(value = "registry url identity", defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
+            @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrl) {
         if (StringUtils.isEmpty(registryIdentity)) {
             infinityProperties.getRegistryList().forEach(config -> config.getRegistryImpl().deactivate(Url.valueOf(providerUrl)));
         } else {
