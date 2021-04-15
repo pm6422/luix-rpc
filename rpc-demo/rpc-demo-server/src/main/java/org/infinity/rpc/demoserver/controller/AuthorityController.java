@@ -25,7 +25,6 @@ import static org.infinity.rpc.demoserver.utils.HttpHeaderUtils.generatePageHead
  * REST controller for managing authorities.
  */
 @RestController
-@Api(tags = "权限管理")
 @Slf4j
 public class AuthorityController {
 
@@ -37,11 +36,9 @@ public class AuthorityController {
         this.httpHeaderCreator = httpHeaderCreator;
     }
 
-    @ApiOperation("创建权限")
-    @ApiResponses(value = {@ApiResponse(code = SC_CREATED, message = "成功创建")})
+    @ApiOperation("create authority")
     @PostMapping("/api/authority/authorities")
-    public ResponseEntity<Void> create(
-            @ApiParam(value = "权限", required = true) @Valid @RequestBody Authority domain) {
+    public ResponseEntity<Void> create(@ApiParam(value = "authority", required = true) @Valid @RequestBody Authority domain) {
         log.debug("REST request to create authority: {}", domain);
         authorityRepository.findById(domain.getName()).ifPresent(app -> {
             throw new DuplicationException(ImmutableMap.of("name", domain.getName()));
@@ -52,8 +49,7 @@ public class AuthorityController {
                 .build();
     }
 
-    @ApiOperation("分页检索权限列表")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索")})
+    @ApiOperation("find authority list")
     @GetMapping("/api/authority/authorities")
     public ResponseEntity<List<Authority>> find(Pageable pageable) {
         Page<Authority> authorities = authorityRepository.findAll(pageable);
@@ -61,33 +57,27 @@ public class AuthorityController {
         return ResponseEntity.ok().headers(headers).body(authorities.getContent());
     }
 
-    @ApiOperation("根据权限名称检索权限")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功检索"),
-            @ApiResponse(code = SC_BAD_REQUEST, message = "权限不存在")})
+    @ApiOperation("find authority by name")
     @GetMapping("/api/authority/authorities/{name}")
     public ResponseEntity<Authority> findById(
-            @ApiParam(value = "权限名称", required = true) @PathVariable String name) {
+            @ApiParam(value = "authority name", required = true) @PathVariable String name) {
         Authority domain = authorityRepository.findById(name).orElseThrow(() -> new NoDataFoundException(name));
         return ResponseEntity.ok(domain);
     }
 
-    @ApiOperation("更新权限")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功更新"),
-            @ApiResponse(code = SC_BAD_REQUEST, message = "权限不存在")})
+    @ApiOperation("update authority")
     @PutMapping("/api/authority/authorities")
     public ResponseEntity<Void> update(
-            @ApiParam(value = "新的权限", required = true) @Valid @RequestBody Authority domain) {
+            @ApiParam(value = "new authority", required = true) @Valid @RequestBody Authority domain) {
         log.debug("REST request to update authority: {}", domain);
         authorityRepository.findById(domain.getName()).orElseThrow(() -> new NoDataFoundException(domain.getName()));
         authorityRepository.save(domain);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getName())).build();
     }
 
-    @ApiOperation(value = "根据名称删除权限", notes = "数据有可能被其他数据所引用，删除之后可能出现一些问题")
-    @ApiResponses(value = {@ApiResponse(code = SC_OK, message = "成功删除"),
-            @ApiResponse(code = SC_BAD_REQUEST, message = "权限不存在")})
+    @ApiOperation(value = "delete authority by name", notes = "The data may be referenced by other data, and some problems may occur after deletion")
     @DeleteMapping("/api/authority/authorities/{name}")
-    public ResponseEntity<Void> delete(@ApiParam(value = "权限名称", required = true) @PathVariable String name) {
+    public ResponseEntity<Void> delete(@ApiParam(value = "authority name", required = true) @PathVariable String name) {
         log.debug("REST request to delete authority: {}", name);
         if (!authorityRepository.existsById(name)) {
             throw new NoDataFoundException(name);

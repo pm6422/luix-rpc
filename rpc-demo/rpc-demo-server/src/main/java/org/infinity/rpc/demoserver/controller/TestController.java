@@ -15,7 +15,6 @@ import javax.annotation.Resource;
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 
 @RestController
-@Api(tags = "测试")
 @Slf4j
 public class TestController {
     @Resource
@@ -27,7 +26,7 @@ public class TestController {
     }
 
 
-    @ApiOperation("测试注册provider")
+    @ApiOperation("register provider")
     @GetMapping("/api/test/register-provider")
     public void registerProvider() {
         Url providerUrl = Url.of(
@@ -42,12 +41,5 @@ public class TestController {
         infinityProperties.getRegistryList().forEach(registryConfig -> {
             registryConfig.getRegistryImpl().register(providerUrl);
         });
-    }
-
-    @ApiOperation("测试获取AppService provider")
-    @GetMapping("/api/test/app-service-provider")
-    public void testGetAppServiceProvider() {
-        Object bean = applicationContext.getBean(AppService.class);
-        log.info(bean.toString());
     }
 }

@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@Api(tags = "系统环境")
 public class ProfileController {
 
     private final Environment env;
@@ -26,7 +25,7 @@ public class ProfileController {
         this.applicationProperties = applicationProperties;
     }
 
-    @ApiOperation("检索系统Profile")
+    @ApiOperation("find system profile")
     @GetMapping("/open-api/profile-info")
     public ResponseEntity<ProfileInfoDTO> getProfileInfo() {
         ProfileInfoDTO profileInfoDTO = new ProfileInfoDTO(env.getActiveProfiles(), applicationProperties.getSwagger().isEnabled(), getRibbonEnv());
