@@ -15,6 +15,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * todo: AbstractProtocol
+ */
 @Slf4j
 public abstract class AbstractProtocol implements Protocol {
     protected final Map<String, Exportable<?>> exporterMap = new ConcurrentHashMap<>();
