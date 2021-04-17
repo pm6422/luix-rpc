@@ -191,7 +191,6 @@ public class ProviderStub<T> {
 
         // Register provider URL to all the registries
         registryConfig.getRegistryImpl().register(providerUrl);
-        log.debug("Registered RPC provider [{}] to registry", interfaceName);
     }
 
     /**
