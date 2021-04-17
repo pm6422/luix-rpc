@@ -144,7 +144,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
             if (registered) {
                 // Then register provider beans
                 registerProviderBeans(providerScanner, scanBasePackage);
-                log.info("Registered RPC provider instances to spring context");
+                log.info("Registered all RPC provider bean instances to spring context");
             }
         });
     }

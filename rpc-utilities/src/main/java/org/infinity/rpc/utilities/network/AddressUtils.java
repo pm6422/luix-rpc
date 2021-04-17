@@ -79,15 +79,15 @@ public abstract class AddressUtils {
         if (StringUtils.isNotEmpty(ipPrefix)) {
             // Get the IP whose network interface matches the IP prefix
             localAddress = getLocalAddressByNetworkInterface(ipPrefix);
-            log.info("Got local address [{}] by ip prefix [{}]", localAddress, ipPrefix);
+            log.info("Found local address [{}] by ip prefix [{}]", localAddress, ipPrefix);
         }
         if (!isValidAddress(localAddress)) {
             localAddress = getLocalAddressByHostname();
-            log.info("Got local address [{}] by hostname", localAddress);
+            log.info("Found local address [{}] by hostname", localAddress);
         }
         if (!isValidAddress(localAddress)) {
             localAddress = getLocalAddressByNetworkInterface(null);
-            log.info("Got local address [{}] by looping network interfaces", localAddress);
+            log.info("Found local address [{}] by looping network interfaces", localAddress);
         }
         if (!isValidAddress(localAddress)) {
             log.warn("Failed to get local address!");
