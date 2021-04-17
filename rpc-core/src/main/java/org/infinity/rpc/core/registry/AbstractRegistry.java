@@ -105,7 +105,7 @@ public abstract class AbstractRegistry implements Registry {
     public void register(Url providerUrl) {
         Validate.notNull(providerUrl, "Provider url must NOT be null!");
         doRegister(removeUnnecessaryParams(providerUrl.copy()));
-        log.info("Registered the url [{}] to registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
+        log.info("Registered the url [{}] to registry [{}]", providerUrl, registryUrl.getIdentity());
         // Added it to the cache after registered
         registeredProviderUrls.add(providerUrl);
     }

@@ -98,7 +98,7 @@ public class RpcLifecycle {
     private void publishProviders(InfinityProperties infinityProperties, RegistryConfig registryConfig) {
         Map<String, ProviderStub<?>> providerStubs = ProviderStubHolder.getInstance().get();
         if (MapUtils.isEmpty(providerStubs)) {
-            log.info("No RPC service providers found to register to registry [{}]!", registryConfig.getName());
+            log.info("No RPC service providers found to register to registry [{}]", registryConfig.getName());
             return;
         }
         providerStubs.forEach((name, providerStub) -> {
@@ -120,7 +120,7 @@ public class RpcLifecycle {
     private void subscribe(InfinityProperties infinityProperties) {
         Map<String, ConsumerStub<?>> consumerStubs = ConsumerStubHolder.getInstance().get();
         if (MapUtils.isEmpty(consumerStubs)) {
-            log.info("No RPC consumers found on registry!");
+            log.info("No RPC consumers found on the registries");
             return;
         }
         consumerStubs.forEach((name, consumerStub) ->
