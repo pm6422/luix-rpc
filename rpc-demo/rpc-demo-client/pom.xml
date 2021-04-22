@@ -343,30 +343,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <!--
-        *************************************************************************************
-        Profile
-        *************************************************************************************
-    -->
-    <profiles>
-        <profile>
-            <id>test</id>
-            <activation>
-                <!-- default Spring profiles -->
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <server.port>${app.server.port}</server.port>
-                <spring.profiles.active>test</spring.profiles.active>
-            </properties>
-        </profile>
-        <profile>
-            <id>prod</id>
-            <properties>
-                <server.port>${app.server.port}</server.port>
-                <spring.profiles.active>prod</spring.profiles.active>
-            </properties>
-        </profile>
-    </profiles>
 </project>
