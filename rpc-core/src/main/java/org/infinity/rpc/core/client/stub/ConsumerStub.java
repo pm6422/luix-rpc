@@ -130,7 +130,7 @@ public class ConsumerStub<T> {
      * Addresses of RPC provider used to connect RPC provider directly without third party registry.
      * Multiple addresses are separated by comma.
      */
-    private String   directAddresses;
+    private String   providerAddresses;
     /**
      * The consumer url used to export to registry only for consumers discovery management,
      * but it have nothing to do with the service calling.
@@ -217,7 +217,7 @@ public class ConsumerStub<T> {
         // Initialize provider invoker cluster before consumer initialization
         invokerCluster = createInvokerCluster();
 
-        if (StringUtils.isEmpty(directAddresses)) {
+        if (StringUtils.isEmpty(providerAddresses)) {
             // Non-direct registry
             // Pass provider invoker cluster to listener, listener will update provider invoker cluster after provider urls changed
             ProviderDiscoveryListener listener = ProviderDiscoveryListener.of(invokerCluster, interfaceName, url, providerProcessor);
@@ -269,7 +269,7 @@ public class ConsumerStub<T> {
 
     private List<Url> createDirectProviderUrls(ProtocolConfig protocolConfig) {
         // Get the provider host and port
-        List<Pair<String, Integer>> directUrlHostPortList = AddressUtils.parseAddress(directAddresses);
+        List<Pair<String, Integer>> directUrlHostPortList = AddressUtils.parseAddress(providerAddresses);
         List<Url> directProviderUrls = new ArrayList<>(directUrlHostPortList.size());
         for (Pair<String, Integer> providerHostPortPair : directUrlHostPortList) {
             // Note: There are no extra options added to the direct provider url
@@ -316,7 +316,7 @@ public class ConsumerStub<T> {
         consumerStub.setLoadBalancer(consumer.getLoadBalancer());
         consumerStub.setProxy(consumer.getProxyFactory());
         consumerStub.setHealthChecker(consumer.getHealthChecker());
-        consumerStub.setDirectAddresses(directAddress);
+        consumerStub.setProviderAddresses(directAddress);
         consumerStub.setForm(form);
         consumerStub.setVersion(version);
 

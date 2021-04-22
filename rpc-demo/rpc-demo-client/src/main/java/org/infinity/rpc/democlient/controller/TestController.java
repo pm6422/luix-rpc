@@ -24,7 +24,7 @@ public class TestController {
     private ApplicationContext applicationContext;
     @Resource
     private Environment        env;
-    @Consumer(directAddresses = "127.0.0.1:26010", maxRetries = 0)
+    @Consumer(providerAddresses = "127.0.0.1:26010", maxRetries = 0)
     private AppService         appService;
 
     @ApiOperation("direct connect")

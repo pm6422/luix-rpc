@@ -90,7 +90,7 @@ public class DirectCallTests extends ZkBaseTest {
         consumerStub.setProxy(PROXY_VAL_JDK);
         consumerStub.setHealthChecker(HEALTH_CHECKER_VAL_DEFAULT);
         // Set direct address
-        consumerStub.setDirectAddresses("localhost:" + PROVIDER_PORT);
+        consumerStub.setProviderAddresses("localhost:" + PROVIDER_PORT);
         consumerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();

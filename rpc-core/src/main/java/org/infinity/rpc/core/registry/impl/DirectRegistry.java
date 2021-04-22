@@ -13,7 +13,7 @@ import org.infinity.rpc.utilities.network.AddressUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_ADDRESSES;
+import static org.infinity.rpc.core.constant.ConsumerConstants.PROVIDER_ADDRESSES;
 
 @Slf4j
 @ThreadSafe
@@ -22,7 +22,7 @@ public class DirectRegistry extends AbstractRegistry implements Cleanable {
 
     public DirectRegistry(Url registryUrl) {
         super(registryUrl);
-        providerHostAndPortList = AddressUtils.parseAddress(registryUrl.getOption(DIRECT_ADDRESSES));
+        providerHostAndPortList = AddressUtils.parseAddress(registryUrl.getOption(PROVIDER_ADDRESSES));
     }
 
     @Override

@@ -13,7 +13,7 @@ import javax.validation.constraints.PositiveOrZero;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import static org.infinity.rpc.core.constant.ConsumerConstants.DIRECT_ADDRESSES;
+import static org.infinity.rpc.core.constant.ConsumerConstants.PROVIDER_ADDRESSES;
 import static org.infinity.rpc.core.constant.RegistryConstants.*;
 import static org.infinity.rpc.utilities.network.AddressUtils.LOCALHOST;
 
@@ -39,7 +39,7 @@ public class RegistryConfig implements Configurable {
      * Addresses of RPC provider used to connect RPC provider directly without third party registry.
      * Multiple addresses are separated by comma.
      */
-    private              String  directAddresses;
+    private              String  providerAddresses;
     /**
      * Timeout in milliseconds for connection session between registry client and server
      */
@@ -77,7 +77,7 @@ public class RegistryConfig implements Configurable {
             RpcConfigValidator.notEmpty(host, "Please specify value of 'infinity.registry.host' when 'infinity.registry=zookeeper'!");
             RpcConfigValidator.notNull(port, "Please specify value of 'infinity.registry.port' when 'infinity.registry=zookeeper'!");
         } else if (name.equals(REGISTRY_VAL_DIRECT)) {
-            RpcConfigValidator.notEmpty(directAddresses, "Please specify value of 'infinity.registry.directAddresses' when 'infinity.registry=direct'!");
+            RpcConfigValidator.notEmpty(providerAddresses, "Please specify value of 'infinity.registry.providerAddresses' when 'infinity.registry=direct'!");
             RpcConfigValidator.mustEmpty(host, "Do NOT specify value of 'infinity.registry.host' when 'infinity.registry=direct'!");
             RpcConfigValidator.mustNull(port, "Do NOT specify value of 'infinity.registry.port' when 'infinity.registry=direct'!");
         }
@@ -95,7 +95,7 @@ public class RegistryConfig implements Configurable {
         if (name.equals(REGISTRY_VAL_DIRECT)) {
             // Build direct registry url
             registryUrl = Url.registryUrl(name, LOCALHOST, 0);
-            registryUrl.addOption(DIRECT_ADDRESSES, directAddresses);
+            registryUrl.addOption(PROVIDER_ADDRESSES, providerAddresses);
         } else {
             registryUrl = Url.registryUrl(name, host, port);
         }

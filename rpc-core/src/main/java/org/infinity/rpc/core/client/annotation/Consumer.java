@@ -116,5 +116,5 @@ public @interface Consumer {
      *
      * @return direct urls, e.g. 127.0.0.1:26010,192.168.120.111:26010
      */
-    String directAddresses() default "";
+    String providerAddresses() default "";
 }

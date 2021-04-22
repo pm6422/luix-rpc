@@ -294,7 +294,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
 
         addPropertyValue(builder, LIMIT_RATE, infinityProperties.getConsumer().isLimitRate());
         addPropertyValue(builder, MAX_PAYLOAD, infinityProperties.getConsumer().getMaxPayload());
-        addPropertyValue(builder, DIRECT_ADDRESSES, annotation.directAddresses());
+        addPropertyValue(builder, PROVIDER_ADDRESSES, annotation.providerAddresses());
 
         return builder.getBeanDefinition();
     }
