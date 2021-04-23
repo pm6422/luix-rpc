@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
-import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_DIRECT;
+import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_NONE;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
@@ -259,7 +259,7 @@ public class ConsumerStub<T> {
             List<Url> directProviderUrls = createDirectProviderUrls(protocolConfig);
             Url directRegistryUrl = globalRegistryUrl.copy();
             // Change protocol to direct
-            directRegistryUrl.setProtocol(REGISTRY_VAL_DIRECT);
+            directRegistryUrl.setProtocol(REGISTRY_VAL_NONE);
             // 如果有directUrls，直接使用这些directUrls进行初始化，不用到注册中心discover
             // Directly notify the provider urls
             listener.onNotify(directRegistryUrl, directProviderUrls);

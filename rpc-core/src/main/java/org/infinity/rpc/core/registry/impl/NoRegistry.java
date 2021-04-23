@@ -17,10 +17,10 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.PROVIDER_ADDRESSE
 
 @Slf4j
 @ThreadSafe
-public class DirectRegistry extends AbstractRegistry implements Cleanable {
+public class NoRegistry extends AbstractRegistry implements Cleanable {
     private final List<Pair<String, Integer>> providerHostAndPortList;
 
-    public DirectRegistry(Url registryUrl) {
+    public NoRegistry(Url registryUrl) {
         super(registryUrl);
         providerHostAndPortList = AddressUtils.parseAddress(registryUrl.getOption(PROVIDER_ADDRESSES));
     }

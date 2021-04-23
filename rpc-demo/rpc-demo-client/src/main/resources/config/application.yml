@@ -117,7 +117,7 @@ infinity:
         debugMode: true
     registry:
         name: zookeeper
-#        name: direct
+#        name: none
         connectTimeout: 1000
         sessionTimeout: 60000
 # ===================================================================

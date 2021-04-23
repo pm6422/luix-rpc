@@ -76,7 +76,7 @@ public class RegistryConfig implements Configurable {
         if (name.equals(REGISTRY_VAL_ZOOKEEPER)) {
             RpcConfigValidator.notEmpty(host, "Please specify value of 'infinity.registry.host' when 'infinity.registry=zookeeper'!");
             RpcConfigValidator.notNull(port, "Please specify value of 'infinity.registry.port' when 'infinity.registry=zookeeper'!");
-        } else if (name.equals(REGISTRY_VAL_DIRECT)) {
+        } else if (name.equals(REGISTRY_VAL_NONE)) {
             RpcConfigValidator.notEmpty(providerAddresses, "Please specify value of 'infinity.registry.providerAddresses' when 'infinity.registry=direct'!");
             RpcConfigValidator.mustEmpty(host, "Do NOT specify value of 'infinity.registry.host' when 'infinity.registry=direct'!");
             RpcConfigValidator.mustNull(port, "Do NOT specify value of 'infinity.registry.port' when 'infinity.registry=direct'!");
@@ -92,7 +92,7 @@ public class RegistryConfig implements Configurable {
 
     private Url createRegistryUrl() {
         Url registryUrl;
-        if (name.equals(REGISTRY_VAL_DIRECT)) {
+        if (name.equals(REGISTRY_VAL_NONE)) {
             // Build direct registry url
             registryUrl = Url.registryUrl(name, LOCALHOST, 0);
             registryUrl.addOption(PROVIDER_ADDRESSES, providerAddresses);

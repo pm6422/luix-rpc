@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 public interface RegistryConstants {
     String  REGISTRY                    = "registry";
     String  REGISTRY_VAL_ZOOKEEPER      = "zookeeper";
-    String  REGISTRY_VAL_DIRECT         = "direct";
+    String  REGISTRY_VAL_NONE           = "none";
     String  CONNECT_TIMEOUT             = "connectTimeout";
     int     CONNECT_TIMEOUT_VAL_DEFAULT = Math.toIntExact(TimeUnit.SECONDS.toMillis(1));
     String  SESSION_TIMEOUT             = "sessionTimeout";

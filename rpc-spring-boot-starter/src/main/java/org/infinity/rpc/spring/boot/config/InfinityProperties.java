@@ -12,7 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
-import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_DIRECT;
+import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_NONE;
 import static org.infinity.rpc.spring.boot.config.InfinityProperties.PREFIX;
 import static org.infinity.rpc.spring.boot.utils.PropertySourcesUtils.readProperties;
 
@@ -88,7 +88,7 @@ public class InfinityProperties implements InitializingBean {
         if (registries.size() > 1) {
             Optional<RegistryConfig> registryConfig = registries.values()
                     .stream()
-                    .filter(registry -> registry.getName().equals(REGISTRY_VAL_DIRECT))
+                    .filter(registry -> registry.getName().equals(REGISTRY_VAL_NONE))
                     .findAny();
             if (registryConfig.isPresent()) {
                 throw new RpcConfigurationException("Do NOT use direct registry when using multiple registries!");

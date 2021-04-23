@@ -15,7 +15,7 @@ import org.infinity.rpc.utilities.destory.ShutdownHook;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_DIRECT;
+import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_NONE;
 
 /**
  * Used to start and stop the RPC server
@@ -86,7 +86,7 @@ public class RpcLifecycle {
      */
     private void publish(InfinityProperties infinityProperties) {
         infinityProperties.getRegistryList().forEach(registryConfig -> {
-            if (!registryConfig.getName().equals(REGISTRY_VAL_DIRECT)) {
+            if (!registryConfig.getName().equals(REGISTRY_VAL_NONE)) {
                 // Non-direct registry
 
                 // Publish providers next
