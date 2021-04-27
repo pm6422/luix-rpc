@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.infinity</groupId>
         <artifactId>rpc</artifactId>
+        <groupId>org.infinity</groupId>
         <version>1.0.0</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
     <artifactId>rpc-transport-netty4</artifactId>
     <name>${project.artifactId}</name>
-
     <!--
         *************************************************************************************
         Properties definition
@@ -21,9 +19,9 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.infinity</groupId>
-            <artifactId>rpc-utilities</artifactId>
-            <version>1.0.0</version>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.44.Final</version>
         </dependency>
         <dependency>
             <groupId>org.infinity</groupId>
@@ -31,9 +29,9 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.44.Final</version>
+            <groupId>org.infinity</groupId>
+            <artifactId>rpc-utilities</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 </project>
