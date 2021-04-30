@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.MAX_PAYLOAD;
 import static org.infinity.rpc.core.constant.ServiceConstants.MAX_PAYLOAD_VAL_DEFAULT;
+import static org.infinity.rpc.core.exception.RpcErrorMsgConstant.ENCODE_ERROR;
 
 @SpiName(CODEC_VAL_DEFAULT)
 public class DefaultCodec extends AbstractCodec {
@@ -44,15 +45,15 @@ public class DefaultCodec extends AbstractCodec {
             if (ExceptionUtils.isRpcException(e)) {
                 throw (RuntimeException) e;
             } else {
-                throw new RpcFrameworkException("encode error: isResponse=" + (inputObject instanceof RpcResponse), e,
-                        RpcErrorMsgConstant.FRAMEWORK_ENCODE_ERROR);
+                throw new RpcFrameworkException("Failed to encode input object: " + inputObject, e, ENCODE_ERROR);
             }
         }
     }
 
     private byte[] encodeRequest(Channel channel, RpcRequest request) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ObjectOutput output = createOutput(outputStream);
+        ObjectOutput output = createOutputStream(outputStream);
+
         output.writeUTF(request.getInterfaceName());
         output.writeUTF(request.getMethodName());
         output.writeUTF(request.getMethodParameters());
@@ -189,7 +190,7 @@ public class DefaultCodec extends AbstractCodec {
 
     private byte[] encodeResponse(Channel channel, RpcResponse value) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ObjectOutput output = createOutput(outputStream);
+        ObjectOutput output = createOutputStream(outputStream);
         Serializer serializer = getSerializer(channel);
 
         byte flag;

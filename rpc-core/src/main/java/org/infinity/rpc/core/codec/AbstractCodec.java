@@ -10,6 +10,8 @@ import java.io.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.infinity.rpc.core.exception.RpcErrorMsgConstant.ENCODE_ERROR;
+
 public abstract class AbstractCodec implements Codec {
 
     protected static Map<Integer, String> serializations = new ConcurrentHashMap<>();
@@ -53,12 +55,11 @@ public abstract class AbstractCodec implements Codec {
         return serializer.deserialize(bytes, outputObjectType);
     }
 
-    public ObjectOutput createOutput(OutputStream outputStream) {
+    public ObjectOutput createOutputStream(OutputStream outputStream) {
         try {
             return new ObjectOutputStream(outputStream);
         } catch (Exception e) {
-            throw new RpcFrameworkException("Failed to create object output stream by " + this.getClass().getSimpleName(), e,
-                    RpcErrorMsgConstant.FRAMEWORK_ENCODE_ERROR);
+            throw new RpcFrameworkException("Failed to create output stream by " + this.getClass().getSimpleName(), e, ENCODE_ERROR);
         }
     }
 

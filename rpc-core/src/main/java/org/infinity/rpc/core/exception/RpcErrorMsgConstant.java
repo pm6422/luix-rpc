@@ -57,8 +57,7 @@ public class RpcErrorMsgConstant {
     /**
      * service error end
      **/
-    public static final RpcErrorMsg FRAMEWORK_ENCODE_ERROR =
-            new RpcErrorMsg(503, FRAMEWORK_ENCODE_ERROR_CODE, "framework encode error");
+    public static final RpcErrorMsg ENCODE_ERROR           = new RpcErrorMsg(503, FRAMEWORK_ENCODE_ERROR_CODE, "Encode error");
     public static final RpcErrorMsg FRAMEWORK_DECODE_ERROR =
             new RpcErrorMsg(503, FRAMEWORK_DECODE_ERROR_CODE, "framework decode error");
     public static final RpcErrorMsg FRAMEWORK_INIT_ERROR   = new RpcErrorMsg(500, FRAMEWORK_INIT_ERROR_CODE, "framework init error");
