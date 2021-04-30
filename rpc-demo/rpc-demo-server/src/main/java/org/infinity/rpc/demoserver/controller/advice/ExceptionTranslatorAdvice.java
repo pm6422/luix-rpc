@@ -30,6 +30,8 @@ import java.util.List;
 
 /**
  * Controller advice to translate the server side exceptions to client-friendly json structures.
+ * <p>
+ * Exception list refer to {@link org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler}
  */
 @ControllerAdvice
 @Slf4j
@@ -56,7 +58,6 @@ public class ExceptionTranslatorAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     public ResponseEntity<ErrorDTO> processMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        // warn级别记录用户输入错误
         log.warn("Found invalid request parameters: ", ex);
         // Http status: 400
         return ResponseEntity.badRequest().body(processFieldErrors(ex.getBindingResult().getFieldErrors()));
@@ -97,7 +98,6 @@ public class ExceptionTranslatorAdvice {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseBody
     public ResponseEntity<ErrorDTO> processMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-        // warn级别记录用户输入错误
         log.warn("Found mismatched type request parameters: ", ex);
         // Http status: 400
         return ResponseEntity.badRequest().body(ErrorDTO.builder().code(INVALID_REQUEST_PARAM_CODE).message(ex.getMessage()).build());
