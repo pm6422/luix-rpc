@@ -1,5 +1,6 @@
 package org.infinity.rpc.democlient;
 
+import com.dtflys.forest.springboot.annotation.ForestScan;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.infinity.rpc.democlient.config.ApplicationConstants;
@@ -13,9 +14,11 @@ import org.springframework.util.Assert;
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
-@EnableRpc
+
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @Slf4j
+@EnableRpc
+@ForestScan(basePackages = "org.infinity.rpc.democlient.restservice")
 public class RpcDemoClientLauncher {
     private final Environment env;
 
