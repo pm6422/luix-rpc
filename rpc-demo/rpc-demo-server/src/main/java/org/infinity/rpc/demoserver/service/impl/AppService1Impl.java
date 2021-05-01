@@ -11,6 +11,7 @@ import org.infinity.rpc.demoserver.exception.NoDataFoundException;
 import org.infinity.rpc.demoserver.repository.AppRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.Optional;
 
@@ -35,6 +36,7 @@ public class AppService1Impl implements AppService {
     }
 
     @Override
+    @Async
     public FutureResponse insert(App domain) {
         appRepository.save(domain);
         log.debug("Created information for app: {}", domain);
