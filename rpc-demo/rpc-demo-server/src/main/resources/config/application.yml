@@ -65,13 +65,13 @@ spring:
         basename: i18n/messages
     task:
         execution:
-            thread-name-prefix: ${spring.application.name}-task-
+            thread-name-prefix: global-async-task-
             pool:
                 core-size: 5
                 max-size: 32 # 生产环境CPU是32线程
                 queue-capacity: 1000
         scheduling:
-            thread-name-prefix: ${spring.application.name}-scheduling-
+            thread-name-prefix: global-scheduling-
             pool:
                 size: 2
     thymeleaf: #ThymeleafAutoConfiguration
@@ -148,6 +148,7 @@ application:
         method-whitelist-mode: true
         method-whitelist:
             - AppController.findById
+            - AppController.create
     elapsed-time-logging:
         enabled: true
         slow-execution-threshold: 300 # unit: ms
