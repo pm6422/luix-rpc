@@ -8,7 +8,7 @@ import org.infinity.rpc.democommon.domain.App;
 /**
  * http://forest.dtflyx.com/docs
  */
-@BaseRequest(baseURL = "${rpc-demo-server-address}")
+@BaseRequest(baseURL = "${rpcDemoServerAddress}")
 public interface AppRestService {
 
     @Post(url = "/api/app/apps", timeout = 200)
