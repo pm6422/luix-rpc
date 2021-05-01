@@ -23,7 +23,6 @@ import java.util.List;
 @Slf4j
 public class TestController {
 
-    private static final String             ADDRESS = "127.0.0.1:6010";
     @Resource
     private              ApplicationContext applicationContext;
     @Resource
