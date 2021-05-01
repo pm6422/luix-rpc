@@ -26,7 +26,7 @@ public abstract class MdcWrapperExecutors {
      * @throws IllegalArgumentException if {@code nThreads <= 0}
      */
     public static ExecutorService newFixedThreadPool(int nThreads) {
-        return new ThreadPoolExecutorMdcWrapper(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+        return new MdcThreadPoolExecutor(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
     }
 
     /**
@@ -87,7 +87,7 @@ public abstract class MdcWrapperExecutors {
      * @throws IllegalArgumentException if {@code nThreads <= 0}
      */
     public static ExecutorService newFixedThreadPool(int nThreads, ThreadFactory threadFactory) {
-        return new ThreadPoolExecutorMdcWrapper(nThreads, nThreads,
+        return new MdcThreadPoolExecutor(nThreads, nThreads,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<>(),
                 threadFactory);
@@ -107,7 +107,7 @@ public abstract class MdcWrapperExecutors {
      * @return the newly created single-threaded Executor
      */
     public static ExecutorService newSingleThreadExecutor() {
-        return new FinalizeDelegatedExecutorService(new ThreadPoolExecutorMdcWrapper(1, 1,
+        return new FinalizeDelegatedExecutorService(new MdcThreadPoolExecutor(1, 1,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<>()));
     }
@@ -127,7 +127,7 @@ public abstract class MdcWrapperExecutors {
      */
     public static ExecutorService newSingleThreadExecutor(ThreadFactory threadFactory) {
         return new FinalizeDelegatedExecutorService
-                (new ThreadPoolExecutorMdcWrapper(1, 1,
+                (new MdcThreadPoolExecutor(1, 1,
                         0L, TimeUnit.MILLISECONDS,
                         new LinkedBlockingQueue<>(),
                         threadFactory));
@@ -150,7 +150,7 @@ public abstract class MdcWrapperExecutors {
      * @return the newly created thread pool
      */
     public static ExecutorService newCachedThreadPool() {
-        return new ThreadPoolExecutorMdcWrapper(0, Integer.MAX_VALUE,
+        return new MdcThreadPoolExecutor(0, Integer.MAX_VALUE,
                 60L, TimeUnit.SECONDS,
                 new SynchronousQueue<>());
     }
@@ -166,7 +166,7 @@ public abstract class MdcWrapperExecutors {
      * @throws NullPointerException if threadFactory is null
      */
     public static ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
-        return new ThreadPoolExecutorMdcWrapper(0, Integer.MAX_VALUE,
+        return new MdcThreadPoolExecutor(0, Integer.MAX_VALUE,
                 60L, TimeUnit.SECONDS,
                 new SynchronousQueue<>(),
                 threadFactory);
@@ -492,7 +492,7 @@ public abstract class MdcWrapperExecutors {
         }
     }
 
-    /**
+    /**isTerminated
      * A callable that runs under established access control settings and
      * current ClassLoader
      */
