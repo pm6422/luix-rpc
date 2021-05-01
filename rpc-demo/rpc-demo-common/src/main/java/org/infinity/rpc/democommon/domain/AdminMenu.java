@@ -3,6 +3,7 @@ package org.infinity.rpc.democommon.domain;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.infinity.rpc.democommon.domain.base.AbstractAuditableDomain;
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @Document(collection = "AdminMenu")
 @Data
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class AdminMenu extends AbstractAuditableDomain implements Serializable {
     private static final long   serialVersionUID = 1L;
