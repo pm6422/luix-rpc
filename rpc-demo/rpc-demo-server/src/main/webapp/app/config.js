@@ -380,7 +380,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/dict-list?page&sort&dictName',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/developer/dict/dict-list.html',
+                    templateUrl: 'app/views/developer/dict/timing-task-list.html',
                     controller: 'DictListController',
                     controllerAs: 'vm'
                 }
@@ -422,7 +422,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             },
             onEnter: ['$state', '$uibModal', function ($state, $uibModal) {
                 $uibModal.open({
-                    templateUrl: 'app/views/developer/dict/dict-dialog.html',
+                    templateUrl: 'app/views/developer/dict/timing-task-dialog.html',
                     controller: 'DictDialogController',
                     controllerAs: 'vm',
                     backdrop: 'static',
@@ -451,7 +451,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             },
             onEnter: ['$state', '$stateParams', '$uibModal', function ($state, $stateParams, $uibModal) {
                 $uibModal.open({
-                    templateUrl: 'app/views/developer/dict/dict-dialog.html',
+                    templateUrl: 'app/views/developer/dict/timing-task-dialog.html',
                     controller: 'DictDialogController',
                     controllerAs: 'vm',
                     backdrop: 'static',
@@ -576,6 +576,104 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             data: {
                 pageTitle: 'Loggers'
             }
+        })
+        .state('timing-task-list', {
+            parent: 'developer',
+            url: '/timing-task-list?page&sort&name&beanName&methodName',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/developer/timing-tasks/timing-task-list.html',
+                    controller: 'TimingTaskListController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'Timing task list'
+            },
+            params: {
+                page: {
+                    value: '1',
+                    squash: true
+                },
+                sort: {
+                    value: 'modifiedTime,desc',
+                    squash: true
+                }
+            },
+            resolve: {
+                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
+                    return {
+                        page: PaginationUtils.parsePage($stateParams.page),
+                        sort: $stateParams.sort,
+                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
+                        ascending: PaginationUtils.parseAscending($stateParams.sort)
+                    };
+                }],
+                criteria: ['$stateParams', function ($stateParams) {
+                    return {
+                        name: $stateParams.name,
+                        beanName: $stateParams.beanName,
+                        methodName: $stateParams.methodName
+                    };
+                }]
+            }
+        })
+        .state('timing-task-list.create', {
+            url: '/create',
+            data: {
+                pageTitle: 'Create',
+                mode: 'create'
+            },
+            onEnter: ['$state', '$uibModal', function ($state, $uibModal) {
+                $uibModal.open({
+                    templateUrl: 'app/views/developer/timing-tasks/timing-task-dialog.html',
+                    controller: 'TimingTaskDialogController',
+                    controllerAs: 'vm',
+                    backdrop: 'static',
+                    size: 'lg',
+                    resolve: {
+                        entity: {
+                            id: null,
+                            name: null,
+                            beanName: null,
+                            methodName: null,
+                            argument: null,
+                            cronExpression: null,
+                            remark: null,
+                            enabled: true
+                        }
+                    }
+                }).result.then(function () {
+                    $state.go('^', null, {reload: true});
+                }, function () {
+                    $state.go('^');
+                });
+            }]
+        })
+        .state('timing-task-list.edit', {
+            url: '/edit/:id',
+            data: {
+                pageTitle: 'Edit',
+                mode: 'edit'
+            },
+            onEnter: ['$state', '$stateParams', '$uibModal', function ($state, $stateParams, $uibModal) {
+                $uibModal.open({
+                    templateUrl: 'app/views/developer/timing-tasks/timing-task-dialog.html',
+                    controller: 'TimingTaskDialogController',
+                    controllerAs: 'vm',
+                    backdrop: 'static',
+                    size: 'lg',
+                    resolve: {
+                        entity: ['TimingTaskService', function (TimingTaskService) {
+                            return TimingTaskService.get({id: $stateParams.id}).$promise;
+                        }]
+                    }
+                }).result.then(function (result) {
+                    $state.go('^', null, {reload: true});
+                }, function () {
+                    $state.go('^');
+                });
+            }]
         })
         .state('schedule', {
             parent: 'developer',

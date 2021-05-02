@@ -15,6 +15,7 @@ angular
     .factory('HealthService', HealthService)
     .factory('ConfigurationService', ConfigurationService)
     .factory('LoggerService', LoggerService)
+    .factory('TimingTaskService', TimingTaskService)
     .factory('AdminMenuService', AdminMenuService)
     .factory('AuthorityService', AuthorityService)
     .factory('AppService', AppService);
@@ -650,6 +651,24 @@ function LoggerService($resource) {
         'changeLevel': {method: 'POST'}
     });
 
+    return service;
+}
+
+function TimingTaskService($resource) {
+    var service = $resource('api/task/:extension/:id', {}, {
+        'query': {method: 'GET', isArray: true, params: {extension: 'tasks'}},
+        'get': {
+            method: 'GET',
+            transformResponse: function (data) {
+                data = angular.fromJson(data);
+                return data;
+            },
+            params: {extension: 'tasks'}
+        },
+        'create': {method: 'POST', params: {extension: 'tasks'}},
+        'update': {method: 'PUT', params: {extension: 'tasks'}},
+        'del': {method: 'DELETE', params: {extension: 'tasks'}}
+    });
     return service;
 }
 

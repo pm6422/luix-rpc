@@ -19,6 +19,8 @@ angular
     .controller('HttpTraceController', HttpTraceController)
     .controller('HttpSessionController', HttpSessionController)
     .controller('LoggerController', LoggerController)
+    .controller('TimingTaskListController', TimingTaskListController)
+    .controller('TimingTaskDialogController', TimingTaskDialogController)
     .controller('ScheduleController', ScheduleController)
     .controller('ControlController', ControlController)
     .controller('AppListController', AppListController)
@@ -697,6 +699,138 @@ function LoggerController($state, LoggerService) {
         LoggerService.changeLevel({name: name}, {configuredLevel: level}, function () {
             vm.query();
         });
+    }
+}
+
+/**
+ * TimingTaskListController
+ */
+function TimingTaskListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, TimingTaskService) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.links = null;
+    vm.loadAll = loadAll;
+    vm.loadPage = loadPage;
+    vm.checkPressEnter = checkPressEnter;
+    vm.page = 1;
+    vm.setEnabled = setEnabled;
+    vm.totalItems = null;
+    vm.entities = [];
+    vm.predicate = pagingParams.predicate;
+    vm.reverse = pagingParams.ascending;
+    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
+    vm.transition = transition;
+    vm.criteria = criteria;
+    vm.del = del;
+
+    vm.loadAll();
+
+    function loadAll() {
+        TimingTaskService.query({
+            page: pagingParams.page - 1,
+            size: vm.itemsPerPage,
+            sort: sort(),
+            name: vm.criteria.name,
+            beanName: vm.criteria.beanName,
+            methodName: vm.criteria.methodName
+        }, function (result, headers) {
+            vm.links = ParseLinksUtils.parse(headers('link'));
+            vm.totalItems = headers('X-Total-Count');
+            vm.page = pagingParams.page;
+            vm.entities = result;
+        });
+    }
+
+    function sort() {
+        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
+        if (vm.predicate !== 'name') {
+            // default sort column
+            result.push('name,asc');
+        }
+        return result;
+    }
+
+    function loadPage(page) {
+        vm.page = page;
+        vm.transition();
+    }
+
+    function transition() {
+        $state.transitionTo($state.$current, {
+            page: vm.page,
+            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
+            name: vm.criteria.name,
+            beanName: vm.criteria.beanName,
+            methodName: vm.criteria.methodName
+        });
+    }
+
+    function checkPressEnter($event) {
+        //按下enter键重新查询数据
+        if ($event.keyCode == 13) {
+            vm.transition();
+        }
+    }
+
+    function setEnabled(entity, enabled) {
+        entity.enabled = enabled;
+        TimingTaskService.update(entity,
+            function () {
+                vm.loadAll();
+            },
+            function () {
+                entity.enabled = !enabled;
+            });
+    }
+
+    function del(id) {
+        AlertUtils.createDeleteConfirmation('数据有可能被其他数据所引用，删除之后可能出现一些问题，您确定删除吗?', function (isConfirm) {
+            if (isConfirm) {
+                TimingTaskService.del({id: id},
+                    function () {
+                        vm.loadAll();
+                    },
+                    function () {
+                    });
+            }
+        });
+    }
+}
+
+/**
+ * TimingTaskDialogController
+ */
+function TimingTaskDialogController($state, $stateParams, $uibModalInstance, TimingTaskService, entity) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.mode = $state.current.data.mode;
+    vm.entity = entity;
+    vm.isSaving = false;
+    vm.save = save;
+    vm.cancel = cancel;
+
+    function save() {
+        vm.isSaving = true;
+        if (vm.mode == 'edit') {
+            TimingTaskService.update(vm.entity, onSaveSuccess, onSaveError);
+        } else {
+            TimingTaskService.create(vm.entity, onSaveSuccess, onSaveError);
+        }
+    }
+
+    function onSaveSuccess(result) {
+        vm.isSaving = false;
+        $uibModalInstance.close(result);
+    }
+
+    function onSaveError(result) {
+        vm.isSaving = false;
+    }
+
+    function cancel() {
+        $uibModalInstance.dismiss('cancel');
     }
 }
 
