@@ -13,24 +13,10 @@
                 </div>
                 <div class="ibox-content p-w-m">
                     <div class="row p-h-xs">
-                        <div class="col-sm-4">
+                        <div class="col-sm-12">
                             <div class="form-group">
                                 <label class="control-label" for="name">Task name</label>
                                 <input type="text" id="name" class="form-control" ng-model="vm.criteria.name"
-                                       ng-keydown="vm.checkPressEnter($event)">
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label" for="name">Spring bean name</label>
-                                <input type="text" id="beanName" class="form-control" ng-model="vm.criteria.beanName"
-                                       ng-keydown="vm.checkPressEnter($event)">
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label" for="methodName">Method name</label>
-                                <input type="text" id="methodName" class="form-control" ng-model="vm.criteria.methodName"
                                        ng-keydown="vm.checkPressEnter($event)">
                             </div>
                         </div>
@@ -39,12 +25,13 @@
                         <thead>
                         <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
                             <th sort-by-directive="name"><span>Task name</span> <span class="fa fa-sort"></span></th>
-                            <th sort-by-directive="beanName"><span>Spring bean name</span> <span class="fa fa-sort"></span></th>
+                            <th>Spring bean name</th>
                             <th>Method name</th>
                             <th>Method argument</th>
                             <th>Cron expression</th>
-                            <th sort-by-directive="enabled"><span>Enabled</span> <span class="fa fa-sort"></span></th>
-                            <th sort-by-directive="modifiedTime"><span>Modified time</span> <span class="fa fa-sort"></span></th>
+                            <th>Elapsed</th>
+                            <th sort-by-directive="success"><span>Success</span> <span class="fa fa-sort"></span></th>
+                            <th sort-by-directive="createdTime"><span>Created time</span> <span class="fa fa-sort"></span></th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -55,20 +42,12 @@
                             <td>{{entity.methodName}}</td>
                             <td>{{entity.argument}}</td>
                             <td>{{entity.cronExpression}}</td>
-                            <td>
-                                <span class="label label-danger" ng-click="vm.setEnabled(entity, true)"
-                                      ng-show="!entity.enabled"
-                                      style="cursor: pointer;">否</span>
-                                <span class="label label-primary" ng-click="vm.setEnabled(entity, false)"
-                                      ng-show="entity.enabled"
-                                      style="cursor: pointer;">是</span>
-                            </td>
-                            <td>{{entity.modifiedTime | date:'yyyy/MM/dd HH:mm:ss'}}</td>
+                            <td>{{entity.elapsed}}</td>
+                            <td>{{entity.success}}</td>
+                            <td>{{entity.createdTime | date:'yyyy/MM/dd HH:mm:ss'}}</td>
                             <td>
                                 <div class="btn-group">
-                                    <button class="btn-white btn btn-xs" ui-sref=".edit({id: entity.id})">Edit</button>
-                                    <button class="btn-white btn btn-xs" ng-click="vm.del(entity.id)">Delete</button>
-                                    <button class="btn-white btn btn-xs" ng-click="vm.goToHistory(entity.name)">History</button>
+                                    <button class="btn-white btn btn-xs" ui-sref=".view({id: entity.id})">View</button>
                                 </div>
                             </td>
                         </tr>
@@ -86,6 +65,11 @@
                         </tr>
                         </tfoot>
                     </table>
+                </div>
+                <div class="text-right">
+                    <button type="button" class="btn btn-default btn-sm" ui-sref="timing-task-list">
+                        <span class="fa fa-arrow-left"></span>&nbsp;<span>Go back</span>
+                    </button>
                 </div>
             </div>
         </div>

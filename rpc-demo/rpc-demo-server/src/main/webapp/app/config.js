@@ -675,6 +675,63 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 });
             }]
         })
+        .state('timing-task-history-list', {
+            parent: 'developer',
+            url: '/timing-task-history-list?page&sort&name',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/developer/timing-tasks/timing-task-history-list.html',
+                    controller: 'TimingTaskHistoryListController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'Timing task histories'
+            },
+            params: {
+                page: {
+                    value: '1',
+                    squash: true
+                },
+                sort: {
+                    value: 'createdTime,desc',
+                    squash: true
+                }
+            },
+            resolve: {
+                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
+                    return {
+                        page: PaginationUtils.parsePage($stateParams.page),
+                        sort: $stateParams.sort,
+                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
+                        ascending: PaginationUtils.parseAscending($stateParams.sort)
+                    };
+                }],
+                criteria: ['$stateParams', function ($stateParams) {
+                    return {
+                        name: $stateParams.name
+                    };
+                }]
+            }
+        })
+        .state('timing-task-history-list.view', {
+            url: '/view/:id',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/developer/timing-tasks/timing-task-history-details.html',
+                    controller: 'TimingTaskHistoryDetailsController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'View'
+            },
+            resolve: {
+                entity: ['TimingTaskHistoryService', '$stateParams', function (TimingTaskHistoryService, $stateParams) {
+                    return TimingTaskHistoryService.get({extension: $stateParams.id}).$promise;
+                }]
+            }
+        })
         .state('schedule', {
             parent: 'developer',
             url: '/schedule',

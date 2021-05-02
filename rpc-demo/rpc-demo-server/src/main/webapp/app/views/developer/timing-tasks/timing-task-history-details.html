@@ -1,0 +1,81 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>{{vm.pageTitle}}</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="#">Homepage</a>
+            </li>
+            <li>
+                <a ui-sref="^">{{vm.parentPageTitle}}</a>
+            </li>
+            <li class="active">
+                <strong>{{vm.pageTitle}}</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInDown">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Task ID:</td>
+                            <td>{{vm.entity.id}}</td>
+                        </tr>
+                        <tr>
+                            <td>Task name:</td>
+                            <td>{{vm.entity.name}}</td>
+                        </tr>
+                        <tr>
+                            <td>Task name:</td>
+                            <td>{{vm.entity.beanName}}</td>
+                        </tr>
+                        <tr>
+                            <td>Method name:</td>
+                            <td>{{vm.entity.methodName}}</td>
+                        </tr>
+                        <tr>
+                            <td>Method argument:</td>
+                            <td>{{vm.entity.argument}}</td>
+                        </tr>
+                        <tr>
+                            <td>Cron expression:</td>
+                            <td>{{vm.entity.cronExpression}}</td>
+                        </tr>
+                        <tr>
+                            <td>Elapsed(ms):</td>
+                            <td>{{vm.entity.elapsed}}</td>
+                        </tr>
+                        <tr>
+                            <td>Success:</td>
+                            <td>{{vm.entity.success}}</td>
+                        </tr>
+                        <tr>
+                            <td>Reason:</td>
+                            <td>{{vm.entity.reason}}</td>
+                        </tr>
+                        <tr>
+                            <td>Created time:</td>
+                            <td>{{vm.entity.createdTime | date:'yyyy/MM/dd HH:mm:ss'}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-default btn-sm" ui-sref="^">
+                            <span class="fa fa-arrow-left"></span>&nbsp;<span>Go back</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

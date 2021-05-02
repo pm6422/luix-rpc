@@ -45,8 +45,11 @@ public class TaskController {
 
     @ApiOperation("find task list")
     @GetMapping("/api/task/tasks")
-    public ResponseEntity<List<Task>> find(Pageable pageable) {
-        Page<Task> tasks = taskRepository.findAll(pageable);
+    public ResponseEntity<List<Task>> find(Pageable pageable,
+                                           @ApiParam(value = "Task name") @RequestParam(value = "name", required = false) String name,
+                                           @ApiParam(value = "Bean name") @RequestParam(value = "beanName", required = false) String beanName,
+                                           @ApiParam(value = "Method name") @RequestParam(value = "methodName", required = false) String methodName) {
+        Page<Task> tasks = taskService.find(pageable, name, beanName, methodName);
         return ResponseEntity.ok().headers(generatePageHeaders(tasks)).body(tasks.getContent());
     }
 

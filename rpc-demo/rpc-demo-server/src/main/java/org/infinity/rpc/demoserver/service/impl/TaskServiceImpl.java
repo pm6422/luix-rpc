@@ -12,6 +12,10 @@ import org.infinity.rpc.demoserver.task.TaskRunnable;
 import org.infinity.rpc.utilities.id.IdGenerator;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -115,5 +119,16 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         } else {
             cronTaskRegistrar.removeCronTask(runnable);
         }
+    }
+
+    @Override
+    public Page<Task> find(Pageable pageable, String name, String beanName, String methodName) {
+        Task probe = new Task();
+        probe.setName(name);
+        probe.setBeanName(beanName);
+        probe.setMethodName(methodName);
+        // Ignore query parameter if it has a null value
+        ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
+        return taskRepository.findAll(Example.of(probe, matcher), pageable);
     }
 }

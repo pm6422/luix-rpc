@@ -21,6 +21,8 @@ angular
     .controller('LoggerController', LoggerController)
     .controller('TimingTaskListController', TimingTaskListController)
     .controller('TimingTaskDialogController', TimingTaskDialogController)
+    .controller('TimingTaskHistoryListController', TimingTaskHistoryListController)
+    .controller('TimingTaskHistoryDetailsController', TimingTaskHistoryDetailsController)
     .controller('ScheduleController', ScheduleController)
     .controller('ControlController', ControlController)
     .controller('AppListController', AppListController)
@@ -723,6 +725,7 @@ function TimingTaskListController($state, AlertUtils, ParseLinksUtils, PAGINATIO
     vm.transition = transition;
     vm.criteria = criteria;
     vm.del = del;
+    vm.goToHistory = goToHistory;
 
     vm.loadAll();
 
@@ -796,6 +799,10 @@ function TimingTaskListController($state, AlertUtils, ParseLinksUtils, PAGINATIO
             }
         });
     }
+
+    function goToHistory(name) {
+        $state.go('timing-task-history-list', {'name': name});
+    }
 }
 
 /**
@@ -832,6 +839,84 @@ function TimingTaskDialogController($state, $stateParams, $uibModalInstance, Tim
     function cancel() {
         $uibModalInstance.dismiss('cancel');
     }
+}
+
+/**
+ * TimingTaskHistoryListController
+ */
+function TimingTaskHistoryListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, TimingTaskHistoryService) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.links = null;
+    vm.loadAll = loadAll;
+    vm.loadPage = loadPage;
+    vm.checkPressEnter = checkPressEnter;
+    vm.page = 1;
+    vm.totalItems = null;
+    vm.entities = [];
+    vm.predicate = pagingParams.predicate;
+    vm.reverse = pagingParams.ascending;
+    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
+    vm.transition = transition;
+    vm.criteria = criteria;
+
+    vm.loadAll();
+
+    function loadAll() {
+        TimingTaskHistoryService.query({
+            page: pagingParams.page - 1,
+            size: vm.itemsPerPage,
+            sort: sort(),
+            name: vm.criteria.name
+        }, function (result, headers) {
+            vm.links = ParseLinksUtils.parse(headers('link'));
+            vm.totalItems = headers('X-Total-Count');
+            vm.page = pagingParams.page;
+            vm.entities = result;
+        });
+    }
+
+    function sort() {
+        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
+        if (vm.predicate !== 'name') {
+            // default sort column
+            result.push('name,asc');
+        }
+        return result;
+    }
+
+    function loadPage(page) {
+        vm.page = page;
+        vm.transition();
+    }
+
+    function transition() {
+        $state.transitionTo($state.$current, {
+            page: vm.page,
+            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
+            name: vm.criteria.name
+        });
+    }
+
+    function checkPressEnter($event) {
+        //按下enter键重新查询数据
+        if ($event.keyCode == 13) {
+            vm.transition();
+        }
+    }
+}
+
+/**
+ * TimingTaskHistoryDetailsController
+ */
+function TimingTaskHistoryDetailsController($state, $stateParams, entity) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
+    vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
+    vm.entity = entity;
 }
 
 /**

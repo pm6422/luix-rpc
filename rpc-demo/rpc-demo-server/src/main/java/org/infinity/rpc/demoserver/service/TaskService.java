@@ -1,6 +1,8 @@
 package org.infinity.rpc.demoserver.service;
 
 import org.infinity.rpc.demoserver.domain.Task;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface TaskService {
 
@@ -13,4 +15,6 @@ public interface TaskService {
     void delete(String id);
 
     void startOrPause(String id);
+
+    Page<Task> find(Pageable pageable, String name, String beanName, String methodName);
 }
