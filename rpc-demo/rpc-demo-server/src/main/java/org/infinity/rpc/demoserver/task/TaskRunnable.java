@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.infinity.rpc.demoserver.RpcDemoServerLauncher;
 import org.infinity.rpc.demoserver.domain.Task;
 import org.infinity.rpc.demoserver.domain.TaskHistory;
@@ -14,6 +13,8 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
 
 import java.lang.reflect.Method;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
@@ -36,8 +37,8 @@ public class TaskRunnable implements Runnable {
         stopWatch.start();
         TaskHistory taskHistory = new TaskHistory();
         BeanUtils.copyProperties(task, taskHistory);
-        // Automatically delete records after 2 months
-        taskHistory.setExpiration(DateUtils.addMonths(new Date(), 2));
+        // Automatically delete records after 60 days
+        taskHistory.setExpiryTime(Instant.now().plus(60, ChronoUnit.DAYS));
         taskHistory.setId(null);
         taskHistory.setCreatedTime(null);
 

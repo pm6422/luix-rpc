@@ -4,13 +4,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Date;
 
 /**
  * Spring Data MongoDB collection for the TaskHistory entity.
@@ -63,5 +61,5 @@ public class TaskHistory implements Serializable {
      * Delete records at a specific time automatically by mongoDB
      */
     @Indexed(expireAfterSeconds = 0)
-    private              Date    expiration;
+    private              Instant expiryTime;
 }
