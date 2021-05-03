@@ -66,6 +66,32 @@
             <version>4.1.17</version>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>20.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>2.9.0</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-pool</groupId>
+            <artifactId>commons-pool</artifactId>
+        </dependency>
+        <dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo</artifactId>
             <exclusions>
@@ -74,6 +100,10 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
@@ -101,6 +131,15 @@
                     <artifactId>guava</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
@@ -224,6 +263,18 @@
         </dependency>
         <dependency>
             <groupId>org.zalando</groupId>
+            <artifactId>jackson-datatype-problem</artifactId>
+            <version>0.23.0</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apiguardian</groupId>
+                    <artifactId>apiguardian-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.zalando</groupId>
             <artifactId>problem-spring-web</artifactId>
             <version>${problem-spring-web.version}</version>
             <exclusions>
@@ -305,7 +356,6 @@
                         </goals>
                         <phase>validate</phase>
                         <configuration>
-                            <outputDirectory>${project.build.sourceDirectory}/../webapp/app/</outputDirectory>
                             <resources>
                                 <resource>
                                     <filtering>true</filtering>
@@ -315,6 +365,7 @@
                                     </includes>
                                 </resource>
                             </resources>
+                            <outputDirectory>${project.build.sourceDirectory}/../webapp/app/</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -331,7 +382,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <!-- Executable war cannot be unzipped -->
-                    <executable>true</executable>
+                    <executable>false</executable>
                     <fork>true</fork>
                     <!--
                     Enable the line below to have remote debugging of your application on port 5005
