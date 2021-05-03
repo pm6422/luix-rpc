@@ -40,7 +40,7 @@ public class TaskController {
         log.debug("REST request to create task: {}", domain);
         taskService.insert(domain);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .headers(httpHeaderCreator.createSuccessHeader("SM1001", domain.getId())).build();
+                .headers(httpHeaderCreator.createSuccessHeader("SM1001", domain.getName())).build();
     }
 
     @ApiOperation("find task list")
@@ -65,7 +65,7 @@ public class TaskController {
     public ResponseEntity<Void> update(@ApiParam(value = "new task", required = true) @Valid @RequestBody Task domain) {
         log.debug("REST request to update task: {}", domain);
         taskService.update(domain);
-        return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getId())).build();
+        return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getName())).build();
     }
 
     @ApiOperation(value = "delete task by id", notes = "The data may be referenced by other data, and some problems may occur after deletion")
