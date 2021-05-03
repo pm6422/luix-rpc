@@ -1,8 +1,10 @@
 package org.infinity.rpc.demoserver.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.demoserver.component.HttpHeaderCreator;
 import org.infinity.rpc.demoserver.domain.Task;
 import org.infinity.rpc.demoserver.exception.NoDataFoundException;
@@ -20,6 +22,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.infinity.rpc.demoserver.utils.HttpHeaderUtils.generatePageHeaders;
 
@@ -43,6 +46,13 @@ public class TaskController {
     @PostMapping("/api/task/tasks")
     public ResponseEntity<Void> create(@ApiParam(value = "task", required = true) @Valid @RequestBody Task domain) {
         log.debug("REST request to create task: {}", domain);
+        if (StringUtils.isNotEmpty(domain.getArgumentsJson())) {
+            try {
+                new ObjectMapper().readValue(domain.getArgumentsJson(), Map.class);
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Illegal JSON string format of method arguments");
+            }
+        }
         taskService.insert(domain);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .headers(httpHeaderCreator.createSuccessHeader("SM1001", domain.getName())).build();
@@ -69,6 +79,13 @@ public class TaskController {
     @PutMapping("/api/task/tasks")
     public ResponseEntity<Void> update(@ApiParam(value = "new task", required = true) @Valid @RequestBody Task domain) {
         log.debug("REST request to update task: {}", domain);
+        if (StringUtils.isNotEmpty(domain.getArgumentsJson())) {
+            try {
+                new ObjectMapper().readValue(domain.getArgumentsJson(), Map.class);
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Illegal JSON string format of method arguments");
+            }
+        }
         taskService.update(domain);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getName())).build();
     }
