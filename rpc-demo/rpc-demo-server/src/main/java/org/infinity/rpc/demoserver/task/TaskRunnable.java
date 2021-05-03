@@ -6,10 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.demoserver.RpcDemoServerLauncher;
-import org.infinity.rpc.demoserver.domain.Task;
 import org.infinity.rpc.demoserver.domain.TaskHistory;
 import org.infinity.rpc.demoserver.repository.TaskHistoryRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
 
@@ -27,32 +25,36 @@ import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DA
 @Builder
 public class TaskRunnable implements Runnable {
 
-    private static final int                   SECOND = 1000;
-    private static final int                   MINUTE = 60000;
-    private final        TaskHistoryRepository taskHistoryRepository;
-    private final        Task                  task;
+    private static final    int                   SECOND = 1000;
+    private static final    int                   MINUTE = 60000;
+    private final transient TaskHistoryRepository taskHistoryRepository;
+    private final           String                name;
+    private final           String                beanName;
+    private final           String                argumentsJson;
+    private final           String                cronExpression;
 
     @Override
     public void run() {
-        log.info("Executing timing task {}.{}({}) at {}", task.getBeanName(), Taskable.METHOD_NAME, task.getArgumentsJson(),
+        log.info("Executing timing task {}.{}({}) at {}", beanName, Taskable.METHOD_NAME, argumentsJson,
                 ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         TaskHistory taskHistory = new TaskHistory();
-        BeanUtils.copyProperties(task, taskHistory);
+        taskHistory.setName(name);
+        taskHistory.setBeanName(beanName);
+        taskHistory.setArgumentsJson(argumentsJson);
+        taskHistory.setCronExpression(cronExpression);
         // Automatically delete records after 60 days
         taskHistory.setExpiryTime(Instant.now().plus(60, ChronoUnit.DAYS));
-        taskHistory.setId(null);
-        taskHistory.setCreatedTime(null);
 
         try {
-            Object target = RpcDemoServerLauncher.applicationContext.getBean(task.getBeanName());
+            Object target = RpcDemoServerLauncher.applicationContext.getBean(beanName);
             Method method = target.getClass().getDeclaredMethod(Taskable.METHOD_NAME, Map.class);
             ReflectionUtils.makeAccessible(method);
             // Convert JSON string to Map
             Map<?, ?> arguments = new HashMap<>(16);
-            if (StringUtils.isNotEmpty(task.getArgumentsJson())) {
-                arguments = new ObjectMapper().readValue(task.getArgumentsJson(), Map.class);
+            if (StringUtils.isNotEmpty(argumentsJson)) {
+                arguments = new ObjectMapper().readValue(argumentsJson, Map.class);
             }
             method.invoke(target, arguments);
             taskHistory.setSuccess(true);
@@ -60,19 +62,19 @@ public class TaskRunnable implements Runnable {
             taskHistory.setSuccess(false);
             taskHistory.setReason(ex.getMessage());
             log.error(String.format("Failed to execute timing task %s.%s(%s)",
-                    task.getBeanName(), Taskable.METHOD_NAME, task.getArgumentsJson()), ex);
+                    beanName, Taskable.METHOD_NAME, argumentsJson), ex);
         } finally {
             stopWatch.stop();
             long elapsed = stopWatch.getTotalTimeMillis();
             if (elapsed < SECOND) {
                 log.info("Executed timing task {}.{}({}) with {}ms",
-                        task.getBeanName(), Taskable.METHOD_NAME, task.getArgumentsJson(), elapsed);
+                        beanName, Taskable.METHOD_NAME, argumentsJson, elapsed);
             } else if (elapsed < MINUTE) {
                 log.info("Executed timing task {}.{}({}) with {}s",
-                        task.getBeanName(), Taskable.METHOD_NAME, task.getArgumentsJson(), elapsed / 1000);
+                        beanName, Taskable.METHOD_NAME, argumentsJson, elapsed / 1000);
             } else {
                 log.info("Executed timing task {}.{}({}) with {}m",
-                        task.getBeanName(), Taskable.METHOD_NAME, task.getArgumentsJson(), elapsed / (1000 * 60));
+                        beanName, Taskable.METHOD_NAME, argumentsJson, elapsed / (1000 * 60));
             }
 
             taskHistory.setElapsed(elapsed);
