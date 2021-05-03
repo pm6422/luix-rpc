@@ -32,7 +32,7 @@ public class TaskHistoryController {
     private TaskHistoryRepository taskHistoryRepository;
 
     @ApiOperation("find task history list")
-    @GetMapping("/api/task-history/histories")
+    @GetMapping("/api/task-histories")
     public ResponseEntity<List<TaskHistory>> find(Pageable pageable,
                                                   @ApiParam(value = "Task name") @RequestParam(value = "name", required = false) String name) {
         TaskHistory probe = new TaskHistory();
@@ -44,7 +44,7 @@ public class TaskHistoryController {
     }
 
     @ApiOperation("find task history by id")
-    @GetMapping("/api/task-history/histories/{id}")
+    @GetMapping("/api/task-histories/{id}")
     public ResponseEntity<TaskHistory> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
         TaskHistory history = taskHistoryRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         return ResponseEntity.ok(history);

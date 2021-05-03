@@ -659,20 +659,19 @@ function LoggerService($resource) {
  * TimingTaskService
  */
 function TimingTaskService($resource) {
-    var service = $resource('api/task/:extension/:id', {}, {
-        'query': {method: 'GET', isArray: true, params: {extension: 'tasks'}},
+    var service = $resource('api/tasks/:id', {}, {
+        'query': {method: 'GET', isArray: true},
         'get': {
             method: 'GET',
             transformResponse: function (data) {
                 data = angular.fromJson(data);
                 return data;
-            },
-            params: {extension: 'tasks'}
+            }
         },
-        'create': {method: 'POST', params: {extension: 'tasks'}},
-        'update': {method: 'PUT', params: {extension: 'tasks'}},
-        'del': {method: 'DELETE', params: {extension: 'tasks'}},
-        'queryBeans': {method: 'GET', isArray: true, params: {extension: 'tasks'}}
+        'create': {method: 'POST'},
+        'update': {method: 'PUT'},
+        'del': {method: 'DELETE'},
+        'queryBeans': {method: 'GET', isArray: true}
     });
     return service;
 }
@@ -681,7 +680,7 @@ function TimingTaskService($resource) {
  * TimingTaskHistoryService
  */
 function TimingTaskHistoryService($resource) {
-    var service = $resource('api/task-history/histories/:extension', {}, {
+    var service = $resource('api/task-histories', {}, {
         'query': {method: 'GET', isArray: true},
         'get': {
             method: 'GET',
