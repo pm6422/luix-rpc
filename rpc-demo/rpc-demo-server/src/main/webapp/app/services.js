@@ -697,8 +697,8 @@ function TimingTaskHistoryService($resource) {
  * AdminMenuService
  */
 function AdminMenuService($resource) {
-    return $resource('api/admin-menu/:extension', {}, {
-        'query': {method: 'GET', isArray: true, params: {extension: 'menus'}}
+    return $resource('api/admin-menus/:extension/:id', {}, {
+        'query': {method: 'GET', isArray: true}
     });
 }
 
