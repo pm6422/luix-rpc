@@ -29,13 +29,9 @@ public class TaskHistory implements Serializable {
      */
     private              String  beanName;
     /**
-     * Method name
+     * Method arguments JSON string
      */
-    private              String  methodName;
-    /**
-     * Method argument, only support one argument
-     */
-    private              String  argument;
+    private              String  argumentsJson;
     /**
      * Cron expression
      */

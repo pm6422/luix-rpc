@@ -8,6 +8,8 @@ import org.infinity.rpc.demoserver.domain.Task;
 import org.infinity.rpc.demoserver.exception.NoDataFoundException;
 import org.infinity.rpc.demoserver.repository.TaskRepository;
 import org.infinity.rpc.demoserver.service.TaskService;
+import org.infinity.rpc.demoserver.task.Taskable;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.infinity.rpc.demoserver.utils.HttpHeaderUtils.generatePageHeaders;
@@ -28,11 +31,13 @@ import static org.infinity.rpc.demoserver.utils.HttpHeaderUtils.generatePageHead
 public class TaskController {
 
     @Resource
-    private TaskRepository    taskRepository;
+    private TaskRepository     taskRepository;
     @Resource
-    private TaskService       taskService;
+    private TaskService        taskService;
     @Resource
-    private HttpHeaderCreator httpHeaderCreator;
+    private HttpHeaderCreator  httpHeaderCreator;
+    @Resource
+    private ApplicationContext applicationContext;
 
     @ApiOperation("create task")
     @PostMapping("/api/task/tasks")
@@ -74,5 +79,11 @@ public class TaskController {
         log.debug("REST request to delete task: {}", id);
         taskService.delete(id);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", id)).build();
+    }
+
+    @ApiOperation("find task bean names")
+    @GetMapping("/api/task/tasks/beans")
+    public ResponseEntity<List<String>> findBeans() {
+        return ResponseEntity.ok().body(Arrays.asList(applicationContext.getBeanNamesForType(Taskable.class)));
     }
 }

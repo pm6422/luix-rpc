@@ -813,6 +813,7 @@ function TimingTaskDialogController($state, $stateParams, $uibModalInstance, Tim
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.mode = $state.current.data.mode;
+    vm.beanNames = TimingTaskService.queryBeans({id: 'beans'});
     vm.entity = entity;
     vm.isSaving = false;
     vm.save = save;

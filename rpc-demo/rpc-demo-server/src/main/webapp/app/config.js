@@ -380,7 +380,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/dict-list?page&sort&dictName',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/developer/dict/timing-task-list.html',
+                    templateUrl: 'app/views/developer/dict/dict-list.html',
                     controller: 'DictListController',
                     controllerAs: 'vm'
                 }
@@ -422,7 +422,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             },
             onEnter: ['$state', '$uibModal', function ($state, $uibModal) {
                 $uibModal.open({
-                    templateUrl: 'app/views/developer/dict/timing-task-dialog.html',
+                    templateUrl: 'app/views/developer/dict/dict-dialog.html',
                     controller: 'DictDialogController',
                     controllerAs: 'vm',
                     backdrop: 'static',
@@ -451,7 +451,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             },
             onEnter: ['$state', '$stateParams', '$uibModal', function ($state, $stateParams, $uibModal) {
                 $uibModal.open({
-                    templateUrl: 'app/views/developer/dict/timing-task-dialog.html',
+                    templateUrl: 'app/views/developer/dict/dict-dialog.html',
                     controller: 'DictDialogController',
                     controllerAs: 'vm',
                     backdrop: 'static',
@@ -636,7 +636,6 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                             id: null,
                             name: null,
                             beanName: null,
-                            methodName: null,
                             argument: null,
                             cronExpression: null,
                             remark: null,
@@ -680,7 +679,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/timing-task-history-list?page&sort&name',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/developer/timing-tasks/timing-task-history-list.html',
+                    templateUrl: 'app/views/developer/timing-task-histories/timing-task-history-list.html',
                     controller: 'TimingTaskHistoryListController',
                     controllerAs: 'vm'
                 }
@@ -718,7 +717,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/view/:id',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/developer/timing-tasks/timing-task-history-details.html',
+                    templateUrl: 'app/views/developer/timing-task-histories/timing-task-history-details.html',
                     controller: 'TimingTaskHistoryDetailsController',
                     controllerAs: 'vm'
                 }

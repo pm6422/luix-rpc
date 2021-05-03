@@ -126,7 +126,6 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         Task probe = new Task();
         probe.setName(name);
         probe.setBeanName(beanName);
-        probe.setMethodName(methodName);
         // Ignore query parameter if it has a null value
         ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
         return taskRepository.findAll(Example.of(probe, matcher), pageable);

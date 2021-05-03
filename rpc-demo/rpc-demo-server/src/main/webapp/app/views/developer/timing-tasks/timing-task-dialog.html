@@ -11,36 +11,22 @@
         </div>
         <div class="form-group">
             <label class="control-label">Bean name</label>
-            <input type="text" class="form-control" name="beanName" ng-model="vm.entity.beanName" required
-                   ng-maxlength="50">
+            <select name="beanName" class="form-control" ng-model="vm.entity.beanName" required
+                    ng-options="item for item in vm.beanNames">
+                <option value="">Select...</option>
+            </select>
             <div ng-show="editForm.beanName.$invalid">
                 <p class="help-block" ng-show="editForm.beanName.$error.required">
                     Required
                 </p>
-                <p class="help-block" ng-show="editForm.beanName.$error.maxlength" translate-value-max="50">
-                    最大长度为50个字符
-                </p>
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label">Method name</label>
-            <input type="text" class="form-control" name="methodName" ng-model="vm.entity.methodName" required
-                   ng-maxlength="50">
-            <div ng-show="editForm.methodName.$invalid">
-                <p class="help-block" ng-show="editForm.methodName.$error.required">
-                    Required
-                </p>
-                <p class="help-block" ng-show="editForm.methodName.$error.maxlength" translate-value-max="50">
-                    最大长度为50个字符
-                </p>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label">Method argument</label>
-            <input type="text" class="form-control" name="argument" ng-model="vm.entity.argument" ng-maxlength="50">
-            <div ng-show="editForm.argument.$invalid">
-                <p class="help-block" ng-show="editForm.argument.$error.maxlength" translate-value-max="50">
-                    最大长度为50个字符
+            <label class="control-label">Method arguments with JSON string format</label>
+            <textarea class="form-control" name="argumentsJson" ng-model="vm.entity.argumentsJson" ng-maxlength="500"></textarea>
+            <div ng-show="editForm.argumentsJson.$invalid">
+                <p class="help-block" ng-show="editForm.argumentsJson.$error.maxlength" translate-value-max="500">
+                    最大长度为500个字符
                 </p>
             </div>
         </div>

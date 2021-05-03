@@ -1,5 +1,6 @@
 package org.infinity.rpc.demoserver.task;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,8 @@ import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
 
@@ -31,7 +34,7 @@ public class TaskRunnable implements Runnable {
 
     @Override
     public void run() {
-        log.info("Executing timing task {}.{}({}) at {}", task.getBeanName(), task.getMethodName(), task.getArgument(),
+        log.info("Executing timing task {}.{}({}) at {}", task.getBeanName(), Taskable.METHOD_NAME, task.getArgumentsJson(),
                 ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -44,37 +47,32 @@ public class TaskRunnable implements Runnable {
 
         try {
             Object target = RpcDemoServerLauncher.applicationContext.getBean(task.getBeanName());
-            Method method;
-            if (StringUtils.isNotEmpty(task.getArgument())) {
-                method = target.getClass().getDeclaredMethod(task.getMethodName(), String.class);
-            } else {
-                method = target.getClass().getDeclaredMethod(task.getMethodName());
-            }
-
+            Method method = target.getClass().getDeclaredMethod(Taskable.METHOD_NAME, Map.class);
             ReflectionUtils.makeAccessible(method);
-            if (StringUtils.isNotEmpty(task.getArgument())) {
-                method.invoke(target, task.getArgument());
-            } else {
-                method.invoke(target);
+            // Convert JSON string to Map
+            Map<?, ?> arguments = new HashMap<>(16);
+            if (StringUtils.isNotEmpty(task.getArgumentsJson())) {
+                arguments = new ObjectMapper().readValue(task.getArgumentsJson(), Map.class);
             }
+            method.invoke(target, arguments);
             taskHistory.setSuccess(true);
         } catch (Exception ex) {
             taskHistory.setSuccess(false);
             taskHistory.setReason(ex.getMessage());
             log.error(String.format("Failed to execute timing task %s.%s(%s)",
-                    task.getBeanName(), task.getMethodName(), task.getArgument()), ex);
+                    task.getBeanName(), Taskable.METHOD_NAME, task.getArgumentsJson()), ex);
         } finally {
             stopWatch.stop();
             long elapsed = stopWatch.getTotalTimeMillis();
             if (elapsed < SECOND) {
                 log.info("Executed timing task {}.{}({}) with {}ms",
-                        task.getBeanName(), task.getMethodName(), task.getArgument(), elapsed);
+                        task.getBeanName(), Taskable.METHOD_NAME, task.getArgumentsJson(), elapsed);
             } else if (elapsed < MINUTE) {
                 log.info("Executed timing task {}.{}({}) with {}s",
-                        task.getBeanName(), task.getMethodName(), task.getArgument(), elapsed / 1000);
+                        task.getBeanName(), Taskable.METHOD_NAME, task.getArgumentsJson(), elapsed / 1000);
             } else {
                 log.info("Executed timing task {}.{}({}) with {}m",
-                        task.getBeanName(), task.getMethodName(), task.getArgument(), elapsed / (1000 * 60));
+                        task.getBeanName(), Taskable.METHOD_NAME, task.getArgumentsJson(), elapsed / (1000 * 60));
             }
 
             taskHistory.setElapsed(elapsed);

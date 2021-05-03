@@ -40,8 +40,7 @@
                         <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
                             <th sort-by-directive="name"><span>Task name</span> <span class="fa fa-sort"></span></th>
                             <th sort-by-directive="beanName"><span>Spring bean name</span> <span class="fa fa-sort"></span></th>
-                            <th>Method name</th>
-                            <th>Method argument</th>
+                            <th>Method arguments</th>
                             <th>Cron expression</th>
                             <th sort-by-directive="enabled"><span>Enabled</span> <span class="fa fa-sort"></span></th>
                             <th sort-by-directive="modifiedTime"><span>Modified time</span> <span class="fa fa-sort"></span></th>
@@ -52,8 +51,7 @@
                         <tr ng-repeat="entity in vm.entities track by entity.id">
                             <td>{{entity.name}}</td>
                             <td>{{entity.beanName}}</td>
-                            <td>{{entity.methodName}}</td>
-                            <td>{{entity.argument}}</td>
+                            <td>{{entity.argumentsJson}}</td>
                             <td>{{entity.cronExpression}}</td>
                             <td>
                                 <span class="label label-danger" ng-click="vm.setEnabled(entity, true)"

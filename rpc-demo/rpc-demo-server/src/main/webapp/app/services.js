@@ -671,7 +671,8 @@ function TimingTaskService($resource) {
         },
         'create': {method: 'POST', params: {extension: 'tasks'}},
         'update': {method: 'PUT', params: {extension: 'tasks'}},
-        'del': {method: 'DELETE', params: {extension: 'tasks'}}
+        'del': {method: 'DELETE', params: {extension: 'tasks'}},
+        'queryBeans': {method: 'GET', isArray: true, params: {extension: 'tasks'}}
     });
     return service;
 }

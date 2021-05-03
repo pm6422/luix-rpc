@@ -31,14 +31,9 @@ public class Task extends AbstractAuditableDomain implements Serializable {
     @NotEmpty
     private              String  beanName;
     /**
-     * Method name
+     * Method arguments JSON string
      */
-    @NotEmpty
-    private              String  methodName;
-    /**
-     * Method argument, only support one argument
-     */
-    private              String  argument;
+    private              String  argumentsJson;
     /**
      * Cron expression
      */
