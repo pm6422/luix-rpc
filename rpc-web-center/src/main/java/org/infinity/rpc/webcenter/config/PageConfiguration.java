@@ -1,4 +1,4 @@
-package org.infinity.rpc.webcenter.controller;
+package org.infinity.rpc.webcenter.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.MethodParameter;
