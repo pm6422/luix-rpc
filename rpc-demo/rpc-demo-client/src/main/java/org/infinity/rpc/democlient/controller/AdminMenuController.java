@@ -26,7 +26,7 @@ public class AdminMenuController {
     }
 
     @ApiOperation("find all menus")
-    @GetMapping("/api/admin-menu/menus")
+    @GetMapping("/api/admin-menus")
     public ResponseEntity<List<AdminMenuTreeDTO>> find() {
         List<AdminMenuTreeDTO> results = adminMenuService.getMenus();
         return ResponseEntity.ok(results);
