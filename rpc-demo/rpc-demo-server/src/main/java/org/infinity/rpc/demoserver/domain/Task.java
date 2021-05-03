@@ -36,6 +36,7 @@ public class Task extends AbstractAuditableDomain implements Serializable {
     private              String  argumentsJson;
     /**
      * Cron expression
+     * https://cron.qqe2.com
      */
     @NotEmpty
     private              String  cronExpression;
