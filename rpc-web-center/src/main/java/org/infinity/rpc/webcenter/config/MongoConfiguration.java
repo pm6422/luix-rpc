@@ -2,18 +2,20 @@ package org.infinity.rpc.webcenter.config;
 
 import com.github.cloudyrock.spring.v5.EnableMongock;
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.webcenter.config.oauth2.OAuth2AccessTokenReadConverter;
+import org.infinity.rpc.webcenter.config.oauth2.OAuth2AuthenticationReadConverter;
+import org.infinity.rpc.webcenter.config.oauth2.OAuth2GrantedAuthorityTokenReadConverter;
+import org.infinity.rpc.webcenter.config.oauth2.OAuth2RefreshTokenReadConverter;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.convert.DbRefResolver;
-import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
-import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
-import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.convert.*;
 import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.data.mongodb.core.index.MongoPersistentEntityIndexResolver;
 import org.springframework.data.mongodb.core.mapping.BasicMongoPersistentEntity;
@@ -21,6 +23,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Using @EnableMongock with minimal configuration only requires changeLog package to scan
@@ -57,9 +62,20 @@ public class MongoConfiguration {
     }
 
     @Bean
+    public MongoCustomConversions customConversions() {
+        List<Converter<?, ?>> converters = new ArrayList<>();
+        converters.add(new OAuth2AccessTokenReadConverter());
+        converters.add(new OAuth2RefreshTokenReadConverter());
+        converters.add(new OAuth2AuthenticationReadConverter());
+        converters.add(new OAuth2GrantedAuthorityTokenReadConverter());
+        return new MongoCustomConversions(converters);
+    }
+
+    @Bean
     public MappingMongoConverter mappingMongoConverter() {
         DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDatabaseFactory);
         MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
+        converter.setCustomConversions(customConversions());
         // remove _class field
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
         return converter;
