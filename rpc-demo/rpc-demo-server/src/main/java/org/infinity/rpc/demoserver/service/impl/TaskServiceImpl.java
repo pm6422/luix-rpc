@@ -59,24 +59,24 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
     @Override
     public Task insert(Task domain) {
         domain.setName("T" + IdGenerator.generateShortId());
-        Task saved = taskRepository.save(domain);
-        if (Boolean.TRUE.equals(saved.getEnabled())) {
+        Task savedOne = taskRepository.save(domain);
+        if (Boolean.TRUE.equals(savedOne.getEnabled())) {
             TaskRunnable runnable = TaskRunnable.builder()
                     .taskHistoryRepository(taskHistoryRepository)
-                    .task(saved)
+                    .task(savedOne)
                     .build();
-            cronTaskRegistrar.addCronTask(runnable, saved.getCronExpression());
+            cronTaskRegistrar.addCronTask(runnable, savedOne.getCronExpression());
         }
-        return saved;
+        return savedOne;
     }
 
     @Override
     public void update(Task domain) {
         Task existingOne = taskRepository.findById(domain.getId()).orElseThrow(() -> new NoDataFoundException(domain.getId()));
-        Task saved = taskRepository.save(domain);
+        Task savedOne = taskRepository.save(domain);
 
         // Remove before adding
-        if (Boolean.TRUE.equals(saved.getEnabled())) {
+        if (Boolean.TRUE.equals(existingOne.getEnabled())) {
             TaskRunnable runnable = TaskRunnable.builder()
                     .taskHistoryRepository(taskHistoryRepository)
                     .task(existingOne)
@@ -85,10 +85,10 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         }
 
         // Add a new one
-        if (Boolean.TRUE.equals(saved.getEnabled())) {
+        if (Boolean.TRUE.equals(savedOne.getEnabled())) {
             TaskRunnable runnable = TaskRunnable.builder()
                     .taskHistoryRepository(taskHistoryRepository)
-                    .task(saved)
+                    .task(savedOne)
                     .build();
             cronTaskRegistrar.addCronTask(runnable, domain.getCronExpression());
         }
