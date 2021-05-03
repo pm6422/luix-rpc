@@ -1034,7 +1034,7 @@ function AppListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONST
     function del(name) {
         AlertUtils.createDeleteConfirmation('数据有可能被其他数据所引用，删除之后可能出现一些问题，您确定删除吗?', function (isConfirm) {
             if (isConfirm) {
-                AppService.del({extension: name},
+                AppService.del({name: name},
                     function () {
                         vm.loadAll();
                     },
@@ -1173,7 +1173,7 @@ function AuthorityListController($state, AlertUtils, ParseLinksUtils, PAGINATION
     function del(name) {
         AlertUtils.createDeleteConfirmation('数据有可能被其他数据所引用，删除之后可能出现一些问题，您确定删除吗?', function (isConfirm) {
             if (isConfirm) {
-                AuthorityService.del({extension: name},
+                AuthorityService.del({name: name},
                     function () {
                         vm.loadAll();
                     },

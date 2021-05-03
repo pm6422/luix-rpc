@@ -84,7 +84,7 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
 
     function loadLinks() {
         if (PrincipalService.isAuthenticated() == true) {
-            main.links = AuthorityAdminMenuService.queryLinks({appName: APP_NAME});
+            main.links = AuthorityAdminMenuService.queryUserLinks({appName: APP_NAME});
         }
     }
 
@@ -127,7 +127,7 @@ function LeftSidebarController($scope, $state, $element, $timeout, APP_NAME, Aut
 
     function init() {
         if (PrincipalService.isAuthenticated() == true) {
-            AuthorityAdminMenuService.query({appName: APP_NAME}, function (response) {
+            AuthorityAdminMenuService.queryUserMenus({appName: APP_NAME}, function (response) {
                 if (response) {
                     vm.groups = response;
                     // Call the metsiMenu plugin and plug it to sidebar navigation
@@ -1577,7 +1577,7 @@ function AuthorityListController($state, AlertUtils, ParseLinksUtils, PAGINATION
     function del(name) {
         AlertUtils.createDeleteConfirmation('数据有可能被其他数据所引用，删除之后可能出现一些问题，您确定删除吗?', function (isConfirm) {
             if (isConfirm) {
-                AuthorityService.del({extension: name},
+                AuthorityService.del({name: name},
                     function () {
                         vm.loadAll();
                     },
@@ -1888,7 +1888,7 @@ function AppListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONST
     function del(name) {
         AlertUtils.createDeleteConfirmation('数据有可能被其他数据所引用，删除之后可能出现一些问题，您确定删除吗?', function (isConfirm) {
             if (isConfirm) {
-                AppService.del({extension: name},
+                AppService.del({name: name},
                     function () {
                         vm.loadAll();
                     },
@@ -2127,7 +2127,7 @@ function AuthorityAdminMenuController($state, AuthorityAdminMenuService, AppAuth
     function searchMenus() {
         vm.allMenus = [];
         if (vm.criteria.authorityName) {
-            AuthorityAdminMenuService.queryMenusByAuthorityName({
+            AuthorityAdminMenuService.query({
                 appName: vm.criteria.appName,
                 authorityName: vm.criteria.authorityName
             }, function (response) {
@@ -2140,7 +2140,7 @@ function AuthorityAdminMenuController($state, AuthorityAdminMenuService, AppAuth
         vm.isSaving = true;
         if (vm.criteria.appName && vm.criteria.authorityName) {
             var adminMenuIds = getAllCheckIds(vm.allMenus, []);
-            AuthorityAdminMenuService.updateAuthorityMenus({
+            AuthorityAdminMenuService.update({
                     appName: vm.criteria.appName,
                     authorityName: vm.criteria.authorityName,
                     adminMenuIds: adminMenuIds

@@ -32,14 +32,14 @@ public class AuthorityController {
     private HttpHeaderCreator httpHeaderCreator;
 
     @ApiOperation("find authority list")
-    @GetMapping("/api/authority/authorities")
+    @GetMapping("/api/authorities")
     public ResponseEntity<List<Authority>> find(Pageable pageable) {
         Page<Authority> authorities = authorityService.findAll(pageable);
         return ResponseEntity.ok().headers(generatePageHeaders(authorities)).body(authorities.getContent());
     }
 
     @ApiOperation("find authority by name")
-    @GetMapping("/api/authority/authorities/{name}")
+    @GetMapping("/api/authorities/{name}")
     public ResponseEntity<Authority> findById(
             @ApiParam(value = "authority name", required = true) @PathVariable String name) {
         Authority authority = authorityService.findById(name).orElseThrow(() -> new NoDataFoundException(name));
@@ -47,7 +47,7 @@ public class AuthorityController {
     }
 
     @ApiOperation("update authority")
-    @PutMapping("/api/authority/authorities")
+    @PutMapping("/api/authorities")
     public ResponseEntity<Void> update(
             @ApiParam(value = "new authority", required = true) @Valid @RequestBody Authority domain) {
         log.debug("REST request to update authority: {}", domain);
@@ -58,7 +58,7 @@ public class AuthorityController {
     }
 
     @ApiOperation(value = "delete authority by name", notes = "The data may be referenced by other data, and some problems may occur after deletion")
-    @DeleteMapping("/api/authority/authorities/{name}")
+    @DeleteMapping("/api/authorities/{name}")
     public ResponseEntity<Void> delete(@ApiParam(value = "authority name", required = true) @PathVariable String name) {
         log.debug("REST request to delete authority: {}", name);
         authorityService.findById(name).orElseThrow(() -> new NoDataFoundException(name));

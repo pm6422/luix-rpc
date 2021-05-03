@@ -33,7 +33,7 @@ public class AppController {
     private HttpHeaderCreator httpHeaderCreator;
 
     @ApiOperation("create application")
-    @PostMapping("/api/app/apps")
+    @PostMapping("/api/apps")
     public ResponseEntity<Void> create(@ApiParam(value = "application", required = true) @Valid @RequestBody App domain) {
         log.debug("REST request to create app: {}", domain);
         appService.insert(domain);
@@ -42,21 +42,21 @@ public class AppController {
     }
 
     @ApiOperation("find application list")
-    @GetMapping("/api/app/apps")
+    @GetMapping("/api/apps")
     public ResponseEntity<List<App>> find(Pageable pageable) {
         Page<App> apps = appService.findAll(pageable);
         return ResponseEntity.ok().headers(generatePageHeaders(apps)).body(apps.getContent());
     }
 
     @ApiOperation("find application by name")
-    @GetMapping("/api/app/apps/{name}")
+    @GetMapping("/api/apps/{name}")
     public ResponseEntity<App> findById(@ApiParam(value = "application name", required = true) @PathVariable String name) {
         App app = appService.findById(name).orElseThrow(() -> new NoDataFoundException(name));
         return ResponseEntity.ok(app);
     }
 
     @ApiOperation("update application")
-    @PutMapping("/api/app/apps")
+    @PutMapping("/api/apps")
     public ResponseEntity<Void> update(@ApiParam(value = "new application", required = true) @Valid @RequestBody App domain) {
         log.debug("REST request to update app: {}", domain);
         appService.update(domain);
@@ -65,7 +65,7 @@ public class AppController {
     }
 
     @ApiOperation(value = "delete application by name", notes = "The data may be referenced by other data, and some problems may occur after deletion")
-    @DeleteMapping("/api/app/apps/{name}")
+    @DeleteMapping("/api/apps/{name}")
     public ResponseEntity<Void> delete(@ApiParam(value = "application name", required = true) @PathVariable String name) {
         log.debug("REST request to delete app: {}", name);
         appService.findById(name).orElseThrow(() -> new NoDataFoundException(name));

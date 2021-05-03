@@ -434,7 +434,7 @@ function ProfileService($q, $http, $localStorage) {
 
     function getProfileInfo() {
         if (angular.isUndefined(dataPromise)) {
-            dataPromise = $http.get('open-api/profile-info').then(function (result) {
+            dataPromise = $http.get('open-api/system/profile-info').then(function (result) {
                 if (result.data.activeProfiles) {
                     return result.data;
                 }
@@ -666,9 +666,8 @@ function AdminMenuService($resource) {
  * AuthorityService
  */
 function AuthorityService($resource) {
-    var service = $resource('api/authority/authorities/:extension', {}, {
+    var service = $resource('api/authorities/:name', {}, {
         'query': {method: 'GET', isArray: true},
-        'queryAll': {method: 'GET', isArray: true, params: {extension: 'all'}},
         'get': {
             method: 'GET',
             transformResponse: function (data) {
@@ -687,9 +686,8 @@ function AuthorityService($resource) {
  * AppService
  */
 function AppService($resource) {
-    var service = $resource('api/app/apps/:extension', {}, {
+    var service = $resource('api/apps/:name', {}, {
         'query': {method: 'GET', isArray: true},
-        'queryAll': {method: 'GET', isArray: true, params: {extension: 'all'}},
         'get': {
             method: 'GET',
             transformResponse: function (data) {
