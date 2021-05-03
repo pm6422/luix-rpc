@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.infinity.rpc.democommon.domain.base.AbstractAuditableDomain;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotEmpty;
@@ -24,11 +25,13 @@ public class Task extends AbstractAuditableDomain implements Serializable {
     /**
      * Task name
      */
+    @Indexed(unique = true)
     private              String  name;
     /**
      * Spring bean name
      */
     @NotEmpty
+    @Indexed(unique = true)
     private              String  beanName;
     /**
      * Method arguments JSON string

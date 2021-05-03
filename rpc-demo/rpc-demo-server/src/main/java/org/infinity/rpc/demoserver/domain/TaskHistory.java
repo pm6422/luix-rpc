@@ -23,6 +23,7 @@ public class TaskHistory implements Serializable {
     /**
      * Task name
      */
+    @Indexed
     private              String  name;
     /**
      * Spring bean name
