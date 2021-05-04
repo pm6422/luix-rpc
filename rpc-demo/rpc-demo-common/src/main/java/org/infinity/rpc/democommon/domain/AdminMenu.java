@@ -23,8 +23,8 @@ public class AdminMenu extends BaseAdminMenu implements Serializable {
 
     private static final long serialVersionUID = 5423774898556939254L;
 
-    public AdminMenu(String name, String label, Integer level, String url,
+    public AdminMenu(String code, String name, Integer level, String url,
                      Integer sequence, String parentId) {
-        super(name, label, level, url, sequence, parentId);
+        super(code, name, level, url, sequence, parentId);
     }
 }
