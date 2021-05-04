@@ -9,16 +9,16 @@ import java.util.List;
 @Data
 public class AdminMenuTreeDTO implements Serializable {
 
-    private static final long    serialVersionUID = -3123723565571697648L;
+    private static final long                   serialVersionUID = -3123723565571697648L;
     @ApiModelProperty(value = "ID", required = true)
-    private transient    String  id;
+    private transient    String                 id;
     @ApiModelProperty(value = "名称", required = true)
-    private              String  name;
+    private              String                 name;
     @ApiModelProperty(value = "链接地址", required = true)
-    private              String  url;
+    private              String                 url;
     @ApiModelProperty(value = "排序序号", required = true)
-    private transient    Integer sequence;
-
-    private List<AdminMenuTreeDTO> children;
+    private transient    Integer                sequence;
+    @ApiModelProperty(value = "叶子节点")
+    private              List<AdminMenuTreeDTO> children;
 }
 
