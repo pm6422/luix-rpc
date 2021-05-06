@@ -258,25 +258,26 @@ public class ProviderStub<T> {
      */
     private Responseable doLocalInvoke(Requestable request) {
         RpcResponse response = new RpcResponse();
+        if (METHOD_HEALTH.equals(request.getMethodName())) {
+            response.setResultObject(CHECK_HEALTH_OK);
+            response.setOptions(request.getOptions());
+            return response;
+        } else if (METHOD_META.equals(request.getMethodName())) {
+            response.setResultObject(methodDataCache);
+            response.setOptions(request.getOptions());
+            return response;
+        } else if (METHOD_APPLICATION_META.equals(request.getMethodName())) {
+            response.setResultObject(ApplicationConfigHolder.get());
+            response.setOptions(request.getOptions());
+            return response;
+        } else if (METHOD_SYSTEM_TIME.equals(request.getMethodName())) {
+            response.setResultObject(ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+            response.setOptions(request.getOptions());
+            return response;
+        }
+
         Method method = findMethod(request.getMethodName(), request.getMethodParameters());
         if (method == null) {
-            if (METHOD_HEALTH.equals(request.getMethodName())) {
-                response.setResultObject(CHECK_HEALTH_OK);
-                response.setOptions(request.getOptions());
-                return response;
-            } else if (METHOD_META.equals(request.getMethodName())) {
-                response.setResultObject(methodDataCache);
-                response.setOptions(request.getOptions());
-                return response;
-            } else if (METHOD_APPLICATION_META.equals(request.getMethodName())) {
-                response.setResultObject(ApplicationConfigHolder.get());
-                response.setOptions(request.getOptions());
-                return response;
-            } else if (METHOD_SYSTEM_TIME.equals(request.getMethodName())) {
-                response.setResultObject(ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
-                response.setOptions(request.getOptions());
-                return response;
-            }
             RpcServiceException exception =
                     new RpcServiceException("Service method not exist: " + request.getInterfaceName() + "." + request.getMethodName()
                             + "(" + request.getMethodParameters() + ")", RpcErrorMsgConstant.SERVICE_NOT_FOUND);
