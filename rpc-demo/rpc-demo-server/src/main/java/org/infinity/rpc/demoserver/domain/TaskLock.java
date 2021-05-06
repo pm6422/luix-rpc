@@ -23,6 +23,7 @@ public class TaskLock implements Serializable {
     /**
      * Task name
      */
+    @Indexed(unique = true)
     private              String  name;
     /**
      * Created time

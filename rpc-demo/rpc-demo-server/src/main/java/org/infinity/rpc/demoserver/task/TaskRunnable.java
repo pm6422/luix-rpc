@@ -7,7 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.demoserver.RpcDemoServerLauncher;
 import org.infinity.rpc.demoserver.domain.TaskHistory;
+import org.infinity.rpc.demoserver.domain.TaskLock;
 import org.infinity.rpc.demoserver.repository.TaskHistoryRepository;
+import org.infinity.rpc.demoserver.repository.TaskLockRepository;
+import org.infinity.rpc.demoserver.utils.NetworkUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
 
@@ -28,6 +31,7 @@ public class TaskRunnable implements Runnable {
     private static final    int                   SECOND = 1000;
     private static final    int                   MINUTE = 60000;
     private final transient TaskHistoryRepository taskHistoryRepository;
+    private final transient TaskLockRepository    taskLockRepository;
     private final           String                name;
     private final           String                beanName;
     private final           String                argumentsJson;
@@ -35,6 +39,17 @@ public class TaskRunnable implements Runnable {
 
     @Override
     public void run() {
+        if (taskLockRepository.findByName(name).isPresent()) {
+            log.warn("Skip to execute task for the address: {}", NetworkUtils.INTRANET_IP);
+            return;
+        }
+        // This distribute lock used to control that only one node executes the task at the same time
+        TaskLock taskLock = new TaskLock();
+        taskLock.setName(name);
+        // Set expiry time with 1 minute for the lock
+        taskLock.setExpiryTime(Instant.now().plus(1, ChronoUnit.MINUTES));
+
+        taskLockRepository.save(taskLock);
         log.info("Executing timing task {}.{}({}) at {}", beanName, Taskable.METHOD_NAME, argumentsJson,
                 ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
         StopWatch stopWatch = new StopWatch();

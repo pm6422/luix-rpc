@@ -5,6 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.demoserver.domain.Task;
 import org.infinity.rpc.demoserver.exception.NoDataFoundException;
 import org.infinity.rpc.demoserver.repository.TaskHistoryRepository;
+import org.infinity.rpc.demoserver.repository.TaskLockRepository;
 import org.infinity.rpc.demoserver.repository.TaskRepository;
 import org.infinity.rpc.demoserver.service.TaskService;
 import org.infinity.rpc.demoserver.task.CronTaskRegistrar;
@@ -29,6 +30,8 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
     @Resource
     private TaskHistoryRepository taskHistoryRepository;
     @Resource
+    private TaskLockRepository    taskLockRepository;
+    @Resource
     private CronTaskRegistrar     cronTaskRegistrar;
 
     @Override
@@ -49,6 +52,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         for (Task task : enabledTasks) {
             TaskRunnable runnable = TaskRunnable.builder()
                     .taskHistoryRepository(taskHistoryRepository)
+                    .taskLockRepository(taskLockRepository)
                     .name(task.getName())
                     .beanName(task.getBeanName())
                     .argumentsJson(task.getArgumentsJson())
@@ -66,6 +70,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         if (Boolean.TRUE.equals(savedOne.getEnabled())) {
             TaskRunnable runnable = TaskRunnable.builder()
                     .taskHistoryRepository(taskHistoryRepository)
+                    .taskLockRepository(taskLockRepository)
                     .name(savedOne.getName())
                     .beanName(savedOne.getBeanName())
                     .argumentsJson(savedOne.getArgumentsJson())
@@ -85,6 +90,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
             TaskRunnable runnable = TaskRunnable.builder()
                     .taskHistoryRepository(taskHistoryRepository)
+                    .taskLockRepository(taskLockRepository)
                     .name(existingOne.getName())
                     .beanName(existingOne.getBeanName())
                     .argumentsJson(existingOne.getArgumentsJson())
@@ -97,6 +103,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         if (Boolean.TRUE.equals(savedOne.getEnabled())) {
             TaskRunnable runnable = TaskRunnable.builder()
                     .taskHistoryRepository(taskHistoryRepository)
+                    .taskLockRepository(taskLockRepository)
                     .name(savedOne.getName())
                     .beanName(savedOne.getBeanName())
                     .argumentsJson(savedOne.getArgumentsJson())
@@ -113,6 +120,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
             TaskRunnable runnable = TaskRunnable.builder()
                     .taskHistoryRepository(taskHistoryRepository)
+                    .taskLockRepository(taskLockRepository)
                     .name(existingOne.getName())
                     .beanName(existingOne.getBeanName())
                     .argumentsJson(existingOne.getArgumentsJson())
@@ -127,6 +135,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         Task existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         TaskRunnable runnable = TaskRunnable.builder()
                 .taskHistoryRepository(taskHistoryRepository)
+                .taskLockRepository(taskLockRepository)
                 .name(existingOne.getName())
                 .beanName(existingOne.getBeanName())
                 .argumentsJson(existingOne.getArgumentsJson())
