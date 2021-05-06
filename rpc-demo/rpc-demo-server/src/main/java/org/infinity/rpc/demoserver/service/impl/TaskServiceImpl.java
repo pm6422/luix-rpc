@@ -57,6 +57,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                     .beanName(task.getBeanName())
                     .argumentsJson(task.getArgumentsJson())
                     .cronExpression(task.getCronExpression())
+                    .allHostsRun(task.isAllHostsRun())
                     .build();
             cronTaskRegistrar.addCronTask(runnable, task.getCronExpression());
         }
@@ -75,6 +76,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                     .beanName(savedOne.getBeanName())
                     .argumentsJson(savedOne.getArgumentsJson())
                     .cronExpression(savedOne.getCronExpression())
+                    .allHostsRun(savedOne.isAllHostsRun())
                     .build();
             cronTaskRegistrar.addCronTask(runnable, savedOne.getCronExpression());
         }
@@ -95,6 +97,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                     .beanName(existingOne.getBeanName())
                     .argumentsJson(existingOne.getArgumentsJson())
                     .cronExpression(existingOne.getCronExpression())
+                    .allHostsRun(existingOne.isAllHostsRun())
                     .build();
             cronTaskRegistrar.removeCronTask(runnable);
         }
@@ -108,6 +111,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                     .beanName(savedOne.getBeanName())
                     .argumentsJson(savedOne.getArgumentsJson())
                     .cronExpression(savedOne.getCronExpression())
+                    .allHostsRun(savedOne.isAllHostsRun())
                     .build();
             cronTaskRegistrar.addCronTask(runnable, domain.getCronExpression());
         }
@@ -125,6 +129,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                     .beanName(existingOne.getBeanName())
                     .argumentsJson(existingOne.getArgumentsJson())
                     .cronExpression(existingOne.getCronExpression())
+                    .allHostsRun(existingOne.isAllHostsRun())
                     .build();
             cronTaskRegistrar.removeCronTask(runnable);
         }
@@ -140,6 +145,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                 .beanName(existingOne.getBeanName())
                 .argumentsJson(existingOne.getArgumentsJson())
                 .cronExpression(existingOne.getCronExpression())
+                .allHostsRun(existingOne.isAllHostsRun())
                 .build();
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
             cronTaskRegistrar.addCronTask(runnable, existingOne.getCronExpression());

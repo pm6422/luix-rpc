@@ -46,7 +46,7 @@ public class Task extends AbstractAuditableDomain implements Serializable {
     /**
      * Indicates whether execute task on all hosts or one host
      */
-    private              Boolean runOnAllHosts;
+    private              boolean allHostsRun;
     /**
      * Remarks
      */
