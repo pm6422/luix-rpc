@@ -22,6 +22,10 @@ import static org.infinity.rpc.demoserver.utils.HttpHeaderUtils.generatePageHead
 
 /**
  * REST controller for managing apps.
+ * <p>
+ * REST API standard
+ * https://www.toutiao.com/i6958494366755226119/
+ * https://www.toutiao.com/i6808027725568147982/
  */
 @RestController
 @Slf4j
