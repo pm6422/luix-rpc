@@ -35,6 +35,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
+import static org.infinity.rpc.core.config.impl.ProviderConfig.*;
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
@@ -52,9 +54,6 @@ import static org.infinity.rpc.core.server.response.impl.RpcCheckHealthResponse.
 @Setter
 @Getter
 public class ProviderStub<T> {
-    public static final String              METHOD_HEALTH           = "$health";
-    public static final String              METHOD_META             = "$methodMeta";
-    public static final String              METHOD_APPLICATION_META = "$applicationMeta";
     /**
      * Provider stub bean name
      */
@@ -271,6 +270,10 @@ public class ProviderStub<T> {
                 return response;
             } else if (METHOD_APPLICATION_META.equals(request.getMethodName())) {
                 response.setResultObject(ApplicationConfigHolder.get());
+                response.setOptions(request.getOptions());
+                return response;
+            } else if (METHOD_SYSTEM_TIME.equals(request.getMethodName())) {
+                response.setResultObject(ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
                 response.setOptions(request.getOptions());
                 return response;
             }

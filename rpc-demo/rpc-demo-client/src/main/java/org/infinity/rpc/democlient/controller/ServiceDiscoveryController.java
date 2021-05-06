@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
 
-import static org.infinity.rpc.core.server.stub.ProviderStub.METHOD_HEALTH;
-import static org.infinity.rpc.core.server.stub.ProviderStub.METHOD_META;
+import static org.infinity.rpc.core.config.impl.ProviderConfig.METHOD_HEALTH;
+import static org.infinity.rpc.core.config.impl.ProviderConfig.METHOD_META;
 import static org.infinity.rpc.democlient.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController

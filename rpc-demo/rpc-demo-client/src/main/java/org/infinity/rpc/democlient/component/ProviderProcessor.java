@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 
-import static org.infinity.rpc.core.server.stub.ProviderStub.METHOD_APPLICATION_META;
+import static org.infinity.rpc.core.config.impl.ProviderConfig.METHOD_APPLICATION_META;
 
 @Component
 @Slf4j
