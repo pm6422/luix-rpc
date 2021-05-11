@@ -45,6 +45,11 @@ import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.a
 /**
  * Register provider bean and provider stub under specified scan base packages to spring context
  * by {@link BeanDefinitionRegistry}
+ * <p>
+ * BeanFactoryPostProcessor: Factory hook that allows for custom modification of an application context's
+ * bean definitions and the bean property values of the context's underlying bean factory.
+ * BeanDefinitionRegistryPostProcessor: It the sub-interface of {@link org.springframework.beans.factory.config.BeanFactoryPostProcessor},
+ * it can register the beanDefinition to beanFactory before {@link org.springframework.beans.factory.config.BeanFactoryPostProcessor} takes effect
  */
 @Slf4j
 public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentAware, BeanFactoryAware, ResourceLoaderAware,

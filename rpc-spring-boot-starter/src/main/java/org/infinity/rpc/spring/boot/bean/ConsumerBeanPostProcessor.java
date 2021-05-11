@@ -40,6 +40,9 @@ import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.a
  * and injected with the proxyInstance.
  * The class implements {@link BeanPostProcessor} means that all spring beans will be processed by
  * {@link ConsumerBeanPostProcessor#postProcessBeforeInitialization(Object, String)} after initialized bean
+ *
+ * BeanPostProcessor: Factory hook that allows for custom modification of new bean instances —
+ *  for example, checking for marker interfaces or wrapping beans with proxies.
  */
 @Slf4j
 public class ConsumerBeanPostProcessor implements BeanPostProcessor, EnvironmentAware, BeanFactoryAware {
