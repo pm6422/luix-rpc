@@ -26,6 +26,7 @@ import static org.infinity.rpc.demoserver.utils.HttpHeaderUtils.generatePageHead
  * REST API standard
  * https://www.toutiao.com/i6958494366755226119/
  * https://www.toutiao.com/i6808027725568147982/
+ * https://www.toutiao.com/i6915313349622465027/
  */
 @RestController
 @Slf4j
