@@ -118,7 +118,7 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(SERIALIZER), target.getOption(SERIALIZER_VAL_HESSIAN2))) {
+        if (!StringUtils.equals(source.getOption(SERIALIZER), target.getOption(SERIALIZER))) {
             return false;
         }
 
