@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+/**
+ * It used to add trace ID to HTTP header when initiating a HTTP request by forest
+ */
 @Component
 @Slf4j
 public class TraceInterceptor implements Interceptor<String> {
