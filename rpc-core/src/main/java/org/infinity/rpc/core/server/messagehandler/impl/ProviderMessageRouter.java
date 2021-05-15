@@ -108,7 +108,7 @@ public class ProviderMessageRouter implements MessageHandler {
                 && request.getMethodArguments()[0] instanceof DeserializableObject
                 && request instanceof RpcRequest) {
             try {
-                Object[] args = ((DeserializableObject) request.getMethodArguments()[0]).deserializeMulti(method.getParameterTypes());
+                Object[] args = ((DeserializableObject) request.getMethodArguments()[0]).deserializeArray(method.getParameterTypes());
                 ((RpcRequest) request).setMethodArguments(args);
             } catch (IOException e) {
                 throw new RpcFrameworkException("deserialize parameters fail: " + request + ", error:" + e.getMessage());

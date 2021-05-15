@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.serialization.impl;
+package org.infinity.rpc.core.serialization.impl.hessian2;
 
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
@@ -9,11 +9,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_HESSIAN2_TYPE_NUM;
 import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_VAL_HESSIAN2;
 
 /**
  * hession2 requirements:
- * The objects which are been serialized or deserialized must implements {@link java.io.Serializable}
+ * Serializing and deserializing objects must implements {@link java.io.Serializable}
  */
 @SpiName(SERIALIZER_VAL_HESSIAN2)
 public class Hessian2Serializer implements Serializer {
@@ -34,7 +35,7 @@ public class Hessian2Serializer implements Serializer {
     }
 
     @Override
-    public byte[] serializeMulti(Object[] data) throws IOException {
+    public byte[] serializeArray(Object[] data) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         Hessian2Output out = new Hessian2Output(bos);
         for (Object obj : data) {
@@ -45,7 +46,7 @@ public class Hessian2Serializer implements Serializer {
     }
 
     @Override
-    public Object[] deserializeMulti(byte[] data, Class<?>[] classes) throws IOException {
+    public Object[] deserializeArray(byte[] data, Class<?>[] classes) throws IOException {
         Hessian2Input input = new Hessian2Input(new ByteArrayInputStream(data));
         Object[] objects = new Object[classes.length];
         for (int i = 0; i < classes.length; i++) {
@@ -56,6 +57,6 @@ public class Hessian2Serializer implements Serializer {
 
     @Override
     public int getSerializationTypeNum() {
-        return 0;
+        return SERIALIZER_HESSIAN2_TYPE_NUM;
     }
 }

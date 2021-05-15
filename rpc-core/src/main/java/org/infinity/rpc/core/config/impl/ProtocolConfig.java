@@ -36,7 +36,7 @@ public class ProtocolConfig implements Configurable {
      * Serializer used to encode request or deserializer used to decode response
      */
     @NotEmpty
-    private             String  serializer          = SERIALIZER_VAL_HESSIAN2;
+    private             String  serializer          = SERIALIZER_VAL_KRYO;
     /**
      * Host name of the RPC server
      * Generally, we do NOT need configure the value, it will be set automatically.

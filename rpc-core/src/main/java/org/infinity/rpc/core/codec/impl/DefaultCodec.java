@@ -184,7 +184,7 @@ public class DefaultCodec extends AbstractCodec {
     }
 
     private Serializer getSerializer(Channel channel) {
-        String serializerName = channel.getProviderUrl().getOption(SERIALIZER, SERIALIZER_VAL_HESSIAN2);
+        String serializerName = channel.getProviderUrl().getOption(SERIALIZER, SERIALIZER_VAL_KRYO);
         return Serializer.getInstance(serializerName);
     }
 
@@ -260,7 +260,7 @@ public class DefaultCodec extends AbstractCodec {
         return attachments;
     }
 
-    private Object decodeResponse(byte[] body, byte dataType, long requestId, Serializer serialization) throws IOException, ClassNotFoundException {
+    private Object decodeResponse(byte[] body, byte dataType, long requestId, Serializer serializer) throws IOException, ClassNotFoundException {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(body);
         ObjectInput input = createInput(inputStream);
 
@@ -275,7 +275,7 @@ public class DefaultCodec extends AbstractCodec {
 
         String className = input.readUTF();
         Class<?> clz = MethodParameterUtils.forName(className);
-        Object result = deserialize((byte[]) input.readObject(), clz, serialization);
+        Object result = deserialize((byte[]) input.readObject(), clz, serializer);
         if (dataType == RpcConstants.FLAG_RESPONSE) {
             response.setResultObject(result);
         } else if (dataType == RpcConstants.FLAG_RESPONSE_EXCEPTION) {

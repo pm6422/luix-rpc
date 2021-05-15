@@ -9,6 +9,9 @@ public interface ProtocolConstants {
     String  CODEC_VAL_DEFAULT                  = "default";
     String  SERIALIZER                         = "serializer";
     String  SERIALIZER_VAL_HESSIAN2            = "hessian2";
+    String  SERIALIZER_VAL_KRYO                = "kryo";
+    int     SERIALIZER_HESSIAN2_TYPE_NUM       = 1;
+    int     SERIALIZER_KRYO_TYPE_NUM           = 2;
     String  LOCAL_ADDRESS_FACTORY              = "localAddressFactory";
     String  LOCAL_ADDRESS_FACTORY_VAL_DEFAULT  = "default";
     String  ENDPOINT_FACTORY                   = "endpointFactory";

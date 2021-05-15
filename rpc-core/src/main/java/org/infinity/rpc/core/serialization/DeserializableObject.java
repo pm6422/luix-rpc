@@ -16,10 +16,10 @@ public class DeserializableObject {
         return serializer.deserialize(objBytes, clz);
     }
 
-    public Object[] deserializeMulti(Class<?>[] paramTypes) throws IOException {
+    public Object[] deserializeArray(Class<?>[] paramTypes) throws IOException {
         Object[] ret = null;
         if (paramTypes != null && paramTypes.length > 0) {
-            ret = serializer.deserializeMulti(objBytes, paramTypes);
+            ret = serializer.deserializeArray(objBytes, paramTypes);
         }
         return ret;
     }
