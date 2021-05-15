@@ -3,12 +3,19 @@ package org.infinity.rpc.democlient;
 import com.dtflys.forest.springboot.annotation.ForestScan;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.infinity.rpc.core.serialization.impl.kryo.KryoUtils;
 import org.infinity.rpc.democlient.config.ApplicationConstants;
+import org.infinity.rpc.democlient.utils.serializer.PageImplSerializer;
+import org.infinity.rpc.democlient.utils.serializer.PageRequestSerializer;
+import org.infinity.rpc.democlient.utils.serializer.PageableSerializer;
 import org.infinity.rpc.spring.boot.EnableRpc;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
@@ -46,5 +53,12 @@ public class RpcDemoClientLauncher {
             log.error("Mis-configured application with an illegal profile '{}'!", activeProfile);
             System.exit(0);
         });
+    }
+
+    @PostConstruct
+    public void registerSerializers() {
+        KryoUtils.registerClass(PageRequest.class, new PageRequestSerializer());
+        KryoUtils.registerClass(Pageable.class, new PageableSerializer());
+        KryoUtils.registerClass(PageImpl.class, new PageImplSerializer());
     }
 }
