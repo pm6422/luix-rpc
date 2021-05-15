@@ -8,27 +8,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.List;
-
-import static org.infinity.rpc.democlient.utils.serializer.PageRequestSerializer.readOrders;
 import static org.infinity.rpc.democlient.utils.serializer.PageRequestSerializer.writePageable;
 
 public class PageableSerializer extends Serializer<Pageable> {
 
     @Override
-    public void write(Kryo kryo, Output output, Pageable request) {
-        writePageable(output, request);
+    public void write(Kryo kryo, Output output, Pageable pageable) {
+        writePageable(kryo, output, pageable);
     }
 
     @Override
     public Pageable read(Kryo kryo, Input input, Class<Pageable> type) {
         // Read pageNo
-        int pageNo = input.readInt();
+        int page = input.readInt();
         // Read pageSize
         int size = input.readInt();
         // Read sort
-        int sortSize = input.readInt();
-        List<Sort.Order> orders = readOrders(input, sortSize);
-        return PageRequest.of(pageNo, size, sortSize == 0 ? Sort.unsorted() : Sort.by(orders));
+        Sort sort = kryo.readObjectOrNull(input, Sort.class);
+        return PageRequest.of(page, size, sort);
     }
 }
