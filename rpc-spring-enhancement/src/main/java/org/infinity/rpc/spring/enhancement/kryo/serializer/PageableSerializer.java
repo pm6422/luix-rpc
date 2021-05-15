@@ -1,4 +1,4 @@
-package org.infinity.rpc.demoserver.utils.serializer;
+package org.infinity.rpc.spring.enhancement.kryo.serializer;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
@@ -8,7 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import static org.infinity.rpc.demoserver.utils.serializer.PageRequestSerializer.writePageable;
+import static org.infinity.rpc.spring.enhancement.kryo.serializer.PageRequestSerializer.writePageable;
 
 public class PageableSerializer extends Serializer<Pageable> {
 

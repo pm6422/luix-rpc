@@ -1,11 +1,11 @@
 package org.infinity.rpc.demoserver;
 
 import org.infinity.rpc.core.serialization.impl.kryo.KryoUtils;
-import org.infinity.rpc.demoserver.utils.serializer.PageImplSerializer;
-import org.infinity.rpc.demoserver.utils.serializer.PageRequestSerializer;
-import org.infinity.rpc.demoserver.utils.serializer.PageableSerializer;
-import org.infinity.rpc.demoserver.utils.serializer.SortSerializer;
 import org.infinity.rpc.spring.boot.EnableRpc;
+import org.infinity.rpc.spring.enhancement.kryo.serializer.PageImplSerializer;
+import org.infinity.rpc.spring.enhancement.kryo.serializer.PageRequestSerializer;
+import org.infinity.rpc.spring.enhancement.kryo.serializer.PageableSerializer;
+import org.infinity.rpc.spring.enhancement.kryo.serializer.SortSerializer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;

@@ -1,4 +1,4 @@
-package org.infinity.rpc.democlient.utils.serializer;
+package org.infinity.rpc.spring.enhancement.kryo.serializer;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
