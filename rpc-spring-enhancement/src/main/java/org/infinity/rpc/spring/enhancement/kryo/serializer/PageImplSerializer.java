@@ -23,10 +23,8 @@ public class PageImplSerializer extends Serializer<PageImpl<?>> {
                 kryo.writeObject(output, item);
             }
         }
-
         // Write Pageable
         kryo.writeObjectOrNull(output, page.getPageable(), Pageable.class);
-
         // Write total
         output.writeLong(page.getTotalElements());
     }
