@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.infinity</groupId>
         <artifactId>rpc</artifactId>
-        <version>1.0.0</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>rpc-demo</artifactId>
     <packaging>pom</packaging>
