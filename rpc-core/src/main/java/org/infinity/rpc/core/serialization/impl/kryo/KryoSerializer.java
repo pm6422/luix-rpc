@@ -19,6 +19,9 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_VAL_KR
  * Because Kryo is not thread safe and constructing and configuring a Kryo instance is relatively expensive,
  * in a multi-threaded environment ThreadLocal or pooling might be considered.
  * <p>
+ * Kryo requirements: No
+ *
+ * <p>
  * Refer to: https://github.com/EsotericSoftware/kryo
  */
 @SpiName(SERIALIZER_VAL_KRYO)
