@@ -9,7 +9,7 @@ public class PooledKryoFactory extends AbstractKryoFactory {
     /**
      * Build a thread-safe kryo pool
      */
-    private final Pool<Kryo> kryoPool = new Pool<Kryo>(true, false, 16) {
+    private final Pool<Kryo> kryoPool = new Pool<Kryo>(true, false, 64) {
         @Override
         protected Kryo create() {
             return createInstance();
