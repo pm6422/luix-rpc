@@ -19,10 +19,10 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_VAL_HE
 @SpiName(SERIALIZER_VAL_HESSIAN2)
 public class Hessian2Serializer implements Serializer {
     @Override
-    public byte[] serialize(Object data) throws IOException {
+    public byte[] serialize(Object object) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         Hessian2Output out = new Hessian2Output(bos);
-        out.writeObject(data);
+        out.writeObject(object);
         out.flush();
         return bos.toByteArray();
     }

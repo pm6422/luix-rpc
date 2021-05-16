@@ -27,10 +27,10 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_VAL_KR
 @SpiName(SERIALIZER_VAL_KRYO)
 public class KryoSerializer implements Serializer {
     @Override
-    public byte[] serialize(Object data) throws IOException {
+    public byte[] serialize(Object object) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         KryoObjectOutput out = new KryoObjectOutput(KryoUtils.get(), bos);
-        out.writeObject(data);
+        out.writeObject(object);
         out.flush();
         return bos.toByteArray();
     }

@@ -12,11 +12,11 @@ public interface Serializer {
     /**
      * Serialize input object to byte array
      *
-     * @param inputObject input object
+     * @param object input object
      * @return byte array
      * @throws IOException if any IOException thrown
      */
-    byte[] serialize(Object inputObject) throws IOException;
+    byte[] serialize(Object object) throws IOException;
 
     /**
      * Deserialize byte array to output object
