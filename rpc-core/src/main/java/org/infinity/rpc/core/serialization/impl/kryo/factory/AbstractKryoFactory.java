@@ -53,6 +53,12 @@ public abstract class AbstractKryoFactory {
 
         Kryo kryo = new CompatibleKryo();
         kryo.setRegistrationRequired(false);
+        registerSystemClasses(kryo);
+        registerCustomClasses(kryo);
+        return kryo;
+    }
+
+    private void registerSystemClasses(Kryo kryo) {
         kryo.addDefaultSerializer(Throwable.class, new JavaSerializer());
 
         // Register some known classes for performance optimization
@@ -94,16 +100,15 @@ public abstract class AbstractKryoFactory {
         kryo.register(int[].class);
         kryo.register(float[].class);
         kryo.register(double[].class);
+    }
 
+    private void registerCustomClasses(Kryo kryo) {
         // Register user custom classes
         CUSTOM_CLASSES.forEach(kryo::register);
 
         // Register user custom class serializers
         CUSTOM_CLASS_SERIALIZERS.forEach(kryo::register);
-
-        return kryo;
     }
-
 
     /**
      * Get kryo instance
