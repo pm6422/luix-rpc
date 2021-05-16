@@ -9,7 +9,7 @@ public abstract class KryoUtils {
     private static final AbstractKryoFactory KRYO_FACTORY = new PooledKryoFactory();
 
     /**
-     * Get a new {@link Kryo} instance for each thread
+     * Create a new {@link Kryo} instance for one thread
      *
      * @return kryo instance
      */
