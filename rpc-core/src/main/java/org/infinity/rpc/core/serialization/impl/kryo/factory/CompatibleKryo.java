@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.serialization.impl.kryo;
+package org.infinity.rpc.core.serialization.impl.kryo.factory;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;

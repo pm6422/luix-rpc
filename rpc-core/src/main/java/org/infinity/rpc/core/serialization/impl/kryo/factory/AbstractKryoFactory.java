@@ -6,7 +6,6 @@ import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 import com.esotericsoftware.kryo.serializers.JavaSerializer;
 import de.javakaffee.kryoserializers.*;
 import org.apache.commons.lang3.Validate;
-import org.infinity.rpc.core.serialization.impl.kryo.CompatibleKryo;
 
 import java.lang.reflect.InvocationHandler;
 import java.math.BigDecimal;

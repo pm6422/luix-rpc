@@ -1,8 +1,8 @@
-package org.infinity.rpc.core.serialization.impl.kryo;
+package org.infinity.rpc.core.serialization.impl.kryo.io;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.KryoObjectOutput;
 import com.esotericsoftware.kryo.io.Output;
+import org.infinity.rpc.core.serialization.impl.kryo.KryoUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -10,11 +10,11 @@ import java.io.OutputStream;
 /**
  * It can write object with specified type and clean up the kryo instance
  */
-public class KryoSpecifiedTypeObjectOutput extends KryoObjectOutput {
+public class KryoObjectOutput extends com.esotericsoftware.kryo.io.KryoObjectOutput {
 
     private Kryo kryo;
 
-    public KryoSpecifiedTypeObjectOutput(Kryo kryo, OutputStream outputStream) {
+    public KryoObjectOutput(Kryo kryo, OutputStream outputStream) {
         super(kryo, new Output(outputStream));
         this.kryo = kryo;
     }

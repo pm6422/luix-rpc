@@ -1,9 +1,9 @@
-package org.infinity.rpc.core.serialization.impl.kryo;
+package org.infinity.rpc.core.serialization.impl.kryo.io;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.KryoObjectInput;
+import org.infinity.rpc.core.serialization.impl.kryo.KryoUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,11 +11,11 @@ import java.io.InputStream;
 /**
  * It can read object by specified type and clean up the kryo instance
  */
-public class KryoSpecifiedTypeObjectInput extends KryoObjectInput {
+public class KryoObjectInput extends com.esotericsoftware.kryo.io.KryoObjectInput {
 
     private Kryo kryo;
 
-    public KryoSpecifiedTypeObjectInput(Kryo kryo, InputStream inputStream) {
+    public KryoObjectInput(Kryo kryo, InputStream inputStream) {
         super(kryo, new Input(inputStream));
         this.kryo = kryo;
     }

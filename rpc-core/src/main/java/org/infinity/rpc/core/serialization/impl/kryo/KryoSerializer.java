@@ -1,6 +1,8 @@
 package org.infinity.rpc.core.serialization.impl.kryo;
 
 import org.infinity.rpc.core.serialization.Serializer;
+import org.infinity.rpc.core.serialization.impl.kryo.io.KryoObjectInput;
+import org.infinity.rpc.core.serialization.impl.kryo.io.KryoObjectOutput;
 import org.infinity.rpc.utilities.spi.annotation.SpiName;
 
 import java.io.ByteArrayInputStream;
@@ -21,7 +23,7 @@ public class KryoSerializer implements Serializer {
     @Override
     public byte[] serialize(Object data) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        KryoSpecifiedTypeObjectOutput out = new KryoSpecifiedTypeObjectOutput(KryoUtils.get(), bos);
+        KryoObjectOutput out = new KryoObjectOutput(KryoUtils.get(), bos);
         out.writeObject(data);
         out.flush();
         return bos.toByteArray();
@@ -29,14 +31,14 @@ public class KryoSerializer implements Serializer {
 
     @Override
     public <T> T deserialize(byte[] data, Class<T> clz) throws IOException {
-        KryoSpecifiedTypeObjectInput input = new KryoSpecifiedTypeObjectInput(KryoUtils.get(), new ByteArrayInputStream(data));
+        KryoObjectInput input = new KryoObjectInput(KryoUtils.get(), new ByteArrayInputStream(data));
         return input.readObject(clz);
     }
 
     @Override
     public byte[] serializeArray(Object[] objects) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        KryoSpecifiedTypeObjectOutput out = new KryoSpecifiedTypeObjectOutput(KryoUtils.get(), bos);
+        KryoObjectOutput out = new KryoObjectOutput(KryoUtils.get(), bos);
         for (Object object : objects) {
             out.writeObject(object);
         }
@@ -46,7 +48,7 @@ public class KryoSerializer implements Serializer {
 
     @Override
     public Object[] deserializeArray(byte[] data, Class<?>[] classes) throws IOException {
-        KryoSpecifiedTypeObjectInput input = new KryoSpecifiedTypeObjectInput(KryoUtils.get(), new ByteArrayInputStream(data));
+        KryoObjectInput input = new KryoObjectInput(KryoUtils.get(), new ByteArrayInputStream(data));
         Object[] objects = new Object[classes.length];
         for (int i = 0; i < classes.length; i++) {
             objects[i] = input.readObject(classes[i]);
