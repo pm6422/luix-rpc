@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serializers.JavaSerializer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.utils.ReflectionUtils;
 
 @Slf4j
@@ -23,13 +24,14 @@ public class CompatibleKryo extends Kryo {
      */
     @Override
     public Serializer<?> getDefaultSerializer(Class type) {
-        if (type == null) {
-            throw new IllegalArgumentException("type cannot be null.");
-        }
+        Validate.isTrue(type != null, "Type must NOT be null!");
 
-        if (!ReflectionUtils.isJdkClass(type) && !type.isArray() && !type.isEnum() && !ReflectionUtils.hasZeroArgConstructor(type)) {
+        if (!ReflectionUtils.isJdkClass(type)
+                && !type.isArray()
+                && !type.isEnum()
+                && !ReflectionUtils.hasZeroArgConstructor(type)) {
             if (log.isWarnEnabled()) {
-                log.warn(type + " has no zero-arg constructor and this will affect the serialization performance!");
+                log.warn(type + " has no zero-arg constructor therefore this will affect the serialization performance!");
             }
             return new JavaSerializer();
         }

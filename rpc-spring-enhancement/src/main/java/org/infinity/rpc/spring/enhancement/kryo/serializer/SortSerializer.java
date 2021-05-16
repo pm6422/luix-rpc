@@ -25,7 +25,7 @@ public class SortSerializer extends Serializer<Sort> {
     }
 
     @Override
-    public Sort read(Kryo kryo, Input input, Class<Sort> type) {
+    public Sort read(Kryo kryo, Input input, Class<? extends Sort> type) {
         int sortSize = input.readInt();
         List<Sort.Order> orders = new ArrayList<>(sortSize);
         for (int i = 0; i < sortSize; i++) {

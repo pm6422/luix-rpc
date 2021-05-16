@@ -6,15 +6,25 @@ import org.infinity.rpc.core.serialization.impl.kryo.factory.AbstractKryoFactory
 import org.infinity.rpc.core.serialization.impl.kryo.factory.impl.PooledKryoFactory;
 
 public abstract class KryoUtils {
+
     private static final AbstractKryoFactory KRYO_FACTORY = new PooledKryoFactory();
 
     /**
-     * Create a new {@link Kryo} instance for one thread
+     * Get or create a new {@link Kryo} instance for one thread
      *
      * @return kryo instance
      */
     public static Kryo get() {
         return KRYO_FACTORY.getKryo();
+    }
+
+    /**
+     * Release kryo instance
+     *
+     * @param kryo kryo instance
+     */
+    public static void release(Kryo kryo) {
+        KRYO_FACTORY.releaseKryo(kryo);
     }
 
     public static void register(Class<?> clazz) {
@@ -27,15 +37,11 @@ public abstract class KryoUtils {
      * @param clazz      object type
      * @param serializer object serializer
      */
-    public static void registerClass(Class<?> clazz, Serializer serializer) {
+    public static void registerClass(Class<?> clazz, Serializer<?> serializer) {
         KRYO_FACTORY.registerClass(clazz, serializer);
     }
 
     public static void setRegistrationRequired(boolean registrationRequired) {
         KRYO_FACTORY.setRegistrationRequired(registrationRequired);
-    }
-
-    public static void release(Kryo kryo) {
-        KRYO_FACTORY.returnKryo(kryo);
     }
 }

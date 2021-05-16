@@ -64,7 +64,6 @@ public class KryoObjectOutput {
         }
     }
 
-
     public void writeUtf(String v) throws IOException {
         output.writeString(v);
     }

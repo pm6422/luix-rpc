@@ -18,7 +18,7 @@ public class PageableSerializer extends Serializer<Pageable> {
     }
 
     @Override
-    public Pageable read(Kryo kryo, Input input, Class<Pageable> type) {
+    public Pageable read(Kryo kryo, Input input, Class<? extends Pageable> type) {
         // Read pageNo
         int page = input.readInt();
         // Read pageSize

@@ -15,7 +15,7 @@ public class PageRequestSerializer extends Serializer<PageRequest> {
     }
 
     @Override
-    public PageRequest read(Kryo kryo, Input input, Class<PageRequest> type) {
+    public PageRequest read(Kryo kryo, Input input, Class<? extends PageRequest> type) {
         // Read pageNo
         int page = input.readInt();
         // Read pageSize

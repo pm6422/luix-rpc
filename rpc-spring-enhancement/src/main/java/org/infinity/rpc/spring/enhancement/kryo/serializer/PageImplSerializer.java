@@ -31,7 +31,7 @@ public class PageImplSerializer extends Serializer<PageImpl<?>> {
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public PageImpl<?> read(Kryo kryo, Input input, Class<PageImpl<?>> type) {
+    public PageImpl<?> read(Kryo kryo, Input input, Class<? extends PageImpl<?>> type) {
         // Read contents
         int contentSize = input.readInt();
         List contents = new ArrayList<>(contentSize);

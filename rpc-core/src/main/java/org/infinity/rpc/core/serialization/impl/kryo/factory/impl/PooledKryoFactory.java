@@ -1,25 +1,43 @@
 package org.infinity.rpc.core.serialization.impl.kryo.factory.impl;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.pool.KryoPool;
+import com.esotericsoftware.kryo.util.Pool;
 import org.infinity.rpc.core.serialization.impl.kryo.factory.AbstractKryoFactory;
 
 public class PooledKryoFactory extends AbstractKryoFactory {
 
-    private KryoPool pool;
+    /**
+     * Build a thread-safe kryo pool
+     */
+    private final Pool<Kryo> kryoPool = new Pool<Kryo>(true, false, 16) {
+        @Override
+        protected Kryo create() {
+            return createInstance();
+        }
+    };
 
-    public PooledKryoFactory() {
-        // Build pool with SoftReferences enabled (optional)
-        pool = new KryoPool.Builder(this).softReferences().build();
+    @Override
+    public Kryo createInstance() {
+        return super.createInstance();
     }
 
+    /**
+     * Returns an object from this pool. The object may be new or reused one
+     *
+     * @return kryo instance
+     */
     @Override
     public Kryo getKryo() {
-        return pool.borrow();
+        return kryoPool.obtain();
     }
 
+    /**
+     * Reset the kryo instance for reuse later
+     *
+     * @param kryo kryo instance
+     */
     @Override
-    public void returnKryo(Kryo kryo) {
-        pool.release(kryo);
+    public void releaseKryo(Kryo kryo) {
+        kryoPool.free(kryo);
     }
 }

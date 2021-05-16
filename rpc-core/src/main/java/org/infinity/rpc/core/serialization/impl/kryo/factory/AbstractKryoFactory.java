@@ -2,7 +2,6 @@ package org.infinity.rpc.core.serialization.impl.kryo.factory;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.pool.KryoFactory;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 import com.esotericsoftware.kryo.serializers.JavaSerializer;
 import de.javakaffee.kryoserializers.*;
@@ -18,12 +17,12 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-public abstract class AbstractKryoFactory implements KryoFactory {
+public abstract class AbstractKryoFactory {
 
-    private final        Set<Class<?>>             customClasses = new LinkedHashSet<>();
-    private static final Map<Class<?>, Serializer> REGISTRATIONS = new LinkedHashMap<>();
-    private              boolean                   registrationRequired;
-    private volatile     boolean                   created;
+    private final        Set<Class<?>>                customClasses = new LinkedHashSet<>();
+    private static final Map<Class<?>, Serializer<?>> REGISTRATIONS = new LinkedHashMap<>();
+    private              boolean                      registrationRequired;
+    private volatile     boolean                      created;
 
     /**
      * Only supposed to be called at startup time
@@ -41,13 +40,12 @@ public abstract class AbstractKryoFactory implements KryoFactory {
      * @param clazz      object type
      * @param serializer object serializer
      */
-    public void registerClass(Class<?> clazz, Serializer serializer) {
+    public void registerClass(Class<?> clazz, Serializer<?> serializer) {
         Validate.isTrue(clazz != null, "Class registered to kryo can NOT be null!");
         REGISTRATIONS.put(clazz, serializer);
     }
 
-    @Override
-    public Kryo create() {
+    public Kryo createInstance() {
         if (!created) {
             created = true;
         }
@@ -95,10 +93,10 @@ public abstract class AbstractKryoFactory implements KryoFactory {
         kryo.register(double[].class);
 
         // Register user custom classes
-        customClasses.forEach(clz -> kryo.register(clz));
+        customClasses.forEach(kryo::register);
 
         // Register user custom classes and serializers
-        REGISTRATIONS.forEach((clazz, ser) -> kryo.register(clazz, ser));
+        REGISTRATIONS.forEach(kryo::register);
 
         return kryo;
     }
@@ -108,16 +106,16 @@ public abstract class AbstractKryoFactory implements KryoFactory {
     }
 
     /**
-     * return kryo
+     * Get kryo instance
      *
-     * @param kryo kryo
-     */
-    public abstract void returnKryo(Kryo kryo);
-
-    /**
-     * Get kryo
-     *
-     * @return kryo
+     * @return kryo instance
      */
     public abstract Kryo getKryo();
+
+    /**
+     * Release kryo instance
+     *
+     * @param kryo kryo instance
+     */
+    public abstract void releaseKryo(Kryo kryo);
 }
