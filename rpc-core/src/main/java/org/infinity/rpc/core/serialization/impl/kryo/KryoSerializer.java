@@ -21,32 +21,32 @@ public class KryoSerializer implements Serializer {
     @Override
     public byte[] serialize(Object data) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        KryoObjectOutput out = new KryoObjectOutput(bos);
+        KryoSpecifiedTypeObjectOutput out = new KryoSpecifiedTypeObjectOutput(KryoUtils.get(), bos);
         out.writeObject(data);
-        out.flushBuffer();
+        out.flush();
         return bos.toByteArray();
     }
 
     @Override
     public <T> T deserialize(byte[] data, Class<T> clz) throws IOException {
-        KryoObjectInput input = new KryoObjectInput(new ByteArrayInputStream(data));
+        KryoSpecifiedTypeObjectInput input = new KryoSpecifiedTypeObjectInput(KryoUtils.get(), new ByteArrayInputStream(data));
         return input.readObject(clz);
     }
 
     @Override
     public byte[] serializeArray(Object[] objects) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        KryoObjectOutput out = new KryoObjectOutput(bos);
+        KryoSpecifiedTypeObjectOutput out = new KryoSpecifiedTypeObjectOutput(KryoUtils.get(), bos);
         for (Object object : objects) {
             out.writeObject(object);
         }
-        out.flushBuffer();
+        out.flush();
         return bos.toByteArray();
     }
 
     @Override
     public Object[] deserializeArray(byte[] data, Class<?>[] classes) throws IOException {
-        KryoObjectInput input = new KryoObjectInput(new ByteArrayInputStream(data));
+        KryoSpecifiedTypeObjectInput input = new KryoSpecifiedTypeObjectInput(KryoUtils.get(), new ByteArrayInputStream(data));
         Object[] objects = new Object[classes.length];
         for (int i = 0; i < classes.length; i++) {
             objects[i] = input.readObject(classes[i]);
