@@ -19,29 +19,30 @@ public abstract class KryoUtils {
     }
 
     /**
+     * Register the class with default serializer
+     *
+     * @param clazz class type
+     */
+    public static void register(Class<?> clazz) {
+        KRYO_FACTORY.registerClass(clazz);
+    }
+
+    /**
+     * Register the class with specified serializer
+     *
+     * @param clazz      class type
+     * @param serializer serializer
+     */
+    public static void registerClass(Class<?> clazz, Serializer<?> serializer) {
+        KRYO_FACTORY.registerClass(clazz, serializer);
+    }
+
+    /**
      * Release kryo instance
      *
      * @param kryo kryo instance
      */
     public static void release(Kryo kryo) {
         KRYO_FACTORY.releaseKryo(kryo);
-    }
-
-    public static void register(Class<?> clazz) {
-        KRYO_FACTORY.registerClass(clazz);
-    }
-
-    /**
-     * only supposed to be called at startup time
-     *
-     * @param clazz      object type
-     * @param serializer object serializer
-     */
-    public static void registerClass(Class<?> clazz, Serializer<?> serializer) {
-        KRYO_FACTORY.registerClass(clazz, serializer);
-    }
-
-    public static void setRegistrationRequired(boolean registrationRequired) {
-        KRYO_FACTORY.setRegistrationRequired(registrationRequired);
     }
 }

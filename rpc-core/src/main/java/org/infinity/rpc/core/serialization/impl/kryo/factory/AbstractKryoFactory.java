@@ -18,30 +18,29 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractKryoFactory {
 
-    private final        Set<Class<?>>                customClasses = new LinkedHashSet<>();
-    private static final Map<Class<?>, Serializer<?>> REGISTRATIONS = new LinkedHashMap<>();
-    private              boolean                      registrationRequired;
-    private volatile     boolean                      created;
+    private static final Set<Class<?>>                CUSTOM_CLASSES           = new LinkedHashSet<>();
+    private static final Map<Class<?>, Serializer<?>> CUSTOM_CLASS_SERIALIZERS = new LinkedHashMap<>();
+    private volatile     boolean                      created                  = false;
 
     /**
-     * Only supposed to be called at startup time
-     * <p>
-     * later may consider adding support for custom serializer, custom id, etc
+     * Register the class with default serializer
+     *
+     * @param clazz class type
      */
     public void registerClass(Class<?> clazz) {
-        Validate.validState(!created, "Can NOT register class after creating kryo instance!");
-        customClasses.add(clazz);
+        Validate.validState(!created, "Can NOT register class after created kryo instance!");
+        CUSTOM_CLASSES.add(clazz);
     }
 
     /**
-     * only supposed to be called at startup time
+     * Register the class with specified serializer
      *
-     * @param clazz      object type
-     * @param serializer object serializer
+     * @param clazz      class type
+     * @param serializer serializer
      */
     public void registerClass(Class<?> clazz, Serializer<?> serializer) {
-        Validate.isTrue(clazz != null, "Class registered to kryo can NOT be null!");
-        REGISTRATIONS.put(clazz, serializer);
+        Validate.validState(!created, "Can NOT register class serializer after created kryo instance!");
+        CUSTOM_CLASS_SERIALIZERS.put(clazz, serializer);
     }
 
     public Kryo createInstance() {
@@ -50,8 +49,7 @@ public abstract class AbstractKryoFactory {
         }
 
         Kryo kryo = new CompatibleKryo();
-        kryo.setRegistrationRequired(registrationRequired);
-
+        kryo.setRegistrationRequired(false);
         kryo.addDefaultSerializer(Throwable.class, new JavaSerializer());
 
         // Register some common classes for performance optimization
@@ -92,17 +90,14 @@ public abstract class AbstractKryoFactory {
         kryo.register(double[].class);
 
         // Register user custom classes
-        customClasses.forEach(kryo::register);
+        CUSTOM_CLASSES.forEach(kryo::register);
 
-        // Register user custom classes and serializers
-        REGISTRATIONS.forEach(kryo::register);
+        // Register user custom class serializers
+        CUSTOM_CLASS_SERIALIZERS.forEach(kryo::register);
 
         return kryo;
     }
 
-    public void setRegistrationRequired(boolean registrationRequired) {
-        this.registrationRequired = registrationRequired;
-    }
 
     /**
      * Get kryo instance
