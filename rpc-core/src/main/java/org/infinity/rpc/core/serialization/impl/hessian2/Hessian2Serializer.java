@@ -16,6 +16,8 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_VAL_HE
  * Hessian2 requirements:
  * Serializing and deserializing objects must implements {@link java.io.Serializable}
  * Supports: JAVA, Python, C++, PHP...
+ * <p>
+ * Refer to http://hessian.caucho.com
  */
 @SpiName(SERIALIZER_VAL_HESSIAN2)
 public class Hessian2Serializer implements Serializer {

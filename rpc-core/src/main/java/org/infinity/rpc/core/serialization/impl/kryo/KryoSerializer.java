@@ -23,7 +23,7 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_VAL_KR
  * Supports: JAVA
  *
  * <p>
- * Refer to: https://github.com/EsotericSoftware/kryo
+ * Refer to https://github.com/EsotericSoftware/kryo
  */
 @SpiName(SERIALIZER_VAL_KRYO)
 public class KryoSerializer implements Serializer {
