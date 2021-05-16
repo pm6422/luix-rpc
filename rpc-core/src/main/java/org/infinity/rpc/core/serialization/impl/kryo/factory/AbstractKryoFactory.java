@@ -65,10 +65,7 @@ public abstract class AbstractKryoFactory {
         kryo.register(Collections.singletonList("").getClass(), new ArraysAsListSerializer());
         kryo.register(GregorianCalendar.class, new GregorianCalendarSerializer());
         kryo.register(InvocationHandler.class, new JdkProxySerializer());
-        kryo.register(BigDecimal.class, new DefaultSerializers.BigDecimalSerializer());
-        kryo.register(BigInteger.class, new DefaultSerializers.BigIntegerSerializer());
         kryo.register(Pattern.class, new RegexSerializer());
-        kryo.register(BitSet.class, new BitSetSerializer());
         kryo.register(URI.class, new URISerializer());
         kryo.register(UUID.class, new UUIDSerializer());
         UnmodifiableCollectionsSerializer.registerSerializers(kryo);
@@ -80,11 +77,9 @@ public abstract class AbstractKryoFactory {
         kryo.register(HashSet.class);
         kryo.register(TreeSet.class);
         kryo.register(Hashtable.class);
-        kryo.register(Date.class);
         kryo.register(Instant.class);
         kryo.register(LocalDate.class);
         kryo.register(LocalDateTime.class);
-        kryo.register(Calendar.class);
         kryo.register(ConcurrentHashMap.class);
         kryo.register(SimpleDateFormat.class);
         kryo.register(GregorianCalendar.class);
