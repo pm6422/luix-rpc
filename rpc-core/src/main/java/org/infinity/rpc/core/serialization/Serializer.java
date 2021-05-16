@@ -32,14 +32,14 @@ public interface Serializer {
     /**
      * Serialize array
      *
-     * @param data array
+     * @param objects object array
      * @return serialized bytes
      * @throws IOException
      */
-    byte[] serializeArray(Object[] data) throws IOException;
+    byte[] serializeArray(Object[] objects) throws IOException;
 
     /**
-     * Deserialize array
+     * Deserialize object array
      *
      * @param data    serialized bytes
      * @param classes target object class

@@ -35,10 +35,10 @@ public class Hessian2Serializer implements Serializer {
     }
 
     @Override
-    public byte[] serializeArray(Object[] data) throws IOException {
+    public byte[] serializeArray(Object[] objects) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         Hessian2Output out = new Hessian2Output(bos);
-        for (Object obj : data) {
+        for (Object obj : objects) {
             out.writeObject(obj);
         }
         out.flush();

@@ -34,11 +34,11 @@ public class KryoSerializer implements Serializer {
     }
 
     @Override
-    public byte[] serializeArray(Object[] data) throws IOException {
+    public byte[] serializeArray(Object[] objects) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         KryoObjectOutput out = new KryoObjectOutput(bos);
-        for (Object obj : data) {
-            out.writeObject(obj);
+        for (Object object : objects) {
+            out.writeObject(object);
         }
         out.flushBuffer();
         return bos.toByteArray();
