@@ -6,14 +6,18 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import static org.infinity.rpc.spring.enhancement.kryo.serializer.PageRequestSerializer.writePageable;
+import org.springframework.data.domain.Sort;
 
 public class PageableSerializer extends Serializer<Pageable> {
 
     @Override
     public void write(Kryo kryo, Output output, Pageable pageable) {
-        writePageable(kryo, output, pageable);
+        // Write pageNo
+        output.writeInt(pageable.getPageNumber());
+        // Write pageSize
+        output.writeInt(pageable.getPageSize());
+        // Write sort
+        kryo.writeObjectOrNull(output, pageable.getSort(), Sort.class);
     }
 
     @Override
