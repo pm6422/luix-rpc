@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.config.impl;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.Configurable;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.registry.Registry;
@@ -18,6 +19,7 @@ import static org.infinity.rpc.core.constant.RegistryConstants.*;
 import static org.infinity.rpc.utilities.network.AddressUtils.LOCALHOST;
 
 @Data
+@Slf4j
 public class RegistryConfig implements Configurable {
     public static final  String  PREFIX              = "registry";
     private static final Pattern COLON_SPLIT_PATTERN = Pattern.compile("\\s*[:]+\\s*");
@@ -69,6 +71,7 @@ public class RegistryConfig implements Configurable {
         checkIntegrity();
         checkValidity();
         registryUrl = createRegistryUrl();
+        log.info("Infinity RPC registry configuration: {}", this);
     }
 
     @Override

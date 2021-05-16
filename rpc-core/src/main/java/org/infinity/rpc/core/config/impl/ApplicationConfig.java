@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.config.impl;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.Configurable;
 import org.infinity.rpc.core.utils.ApplicationConfigHolder;
 import org.infinity.rpc.core.utils.DebugModeHolder;
@@ -11,6 +12,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Data
+@Slf4j
 public class ApplicationConfig implements Configurable, Serializable {
     private static final long    serialVersionUID = -7916757272373849145L;
     public static final  String  PREFIX           = "application";
@@ -54,6 +56,7 @@ public class ApplicationConfig implements Configurable, Serializable {
         // Set debug mode
         DebugModeHolder.setDebugMode(debugMode);
         ApplicationConfigHolder.set(this);
+        log.info("Infinity RPC application configuration: {}", this);
     }
 
     @Override

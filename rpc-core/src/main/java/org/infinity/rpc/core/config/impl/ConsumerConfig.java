@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.config.impl;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.ratelimit.RateLimiter;
 
 import javax.validation.constraints.NotEmpty;
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 
 @Data
+@Slf4j
 public class ConsumerConfig extends ServiceConfig {
     public static final String  PREFIX           = "consumer";
     /**
@@ -43,6 +45,7 @@ public class ConsumerConfig extends ServiceConfig {
         checkIntegrity();
         checkValidity();
         initRateLimiter();
+        log.info("Infinity RPC consumer configuration: {}", this);
     }
 
     @Override

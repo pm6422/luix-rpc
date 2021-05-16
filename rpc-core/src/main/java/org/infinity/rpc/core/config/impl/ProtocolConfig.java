@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.config.impl;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.codec.Codec;
 import org.infinity.rpc.core.config.Configurable;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 
 @Data
+@Slf4j
 public class ProtocolConfig implements Configurable {
     public static final String  PREFIX              = "protocol";
     /**
@@ -117,6 +119,7 @@ public class ProtocolConfig implements Configurable {
         checkIntegrity();
         checkValidity();
         initHost();
+        log.info("Infinity RPC protocol configuration: {}", this);
     }
 
     @Override

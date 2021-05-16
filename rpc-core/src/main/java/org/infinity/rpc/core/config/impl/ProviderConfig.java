@@ -1,8 +1,10 @@
 package org.infinity.rpc.core.config.impl;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Data
+@Slf4j
 public class ProviderConfig extends ServiceConfig {
     // Build-in methods
     public static final String METHOD_HEALTH           = "$health";
@@ -17,6 +19,7 @@ public class ProviderConfig extends ServiceConfig {
     private             boolean autoExpose = true;
 
     public void init() {
+        log.info("Infinity RPC provider configuration: {}", this);
     }
 
     @Override
