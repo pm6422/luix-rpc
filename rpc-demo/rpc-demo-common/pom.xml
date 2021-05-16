@@ -24,7 +24,7 @@
         <dependency>
             <groupId>org.infinity</groupId>
             <artifactId>rpc-core</artifactId>
-            <version>1.0.0</version>
+            <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

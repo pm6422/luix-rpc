@@ -26,12 +26,12 @@
         <dependency>
             <groupId>org.infinity</groupId>
             <artifactId>rpc-core</artifactId>
-            <version>1.0.0</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.infinity</groupId>
             <artifactId>rpc-utilities</artifactId>
-            <version>1.0.0</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 </project>
