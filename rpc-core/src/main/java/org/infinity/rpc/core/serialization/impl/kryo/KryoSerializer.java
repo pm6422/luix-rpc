@@ -13,10 +13,12 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_KRYO_T
 import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_VAL_KRYO;
 
 /**
- * Kryo is a binary Java serialization library with a focus on doing it efficiently and automatically.
+ * Kryo is a fast and efficient binary object graph serialization framework for Java.
+ * Kryo can also perform automatic deep and shallow copying/cloning.
+ * This is direct copying from object to object, not object to bytes to object.
  * Because Kryo is not thread safe and constructing and configuring a Kryo instance is relatively expensive,
  * in a multi-threaded environment ThreadLocal or pooling might be considered.
- *
+ * <p>
  * Refer to: https://github.com/EsotericSoftware/kryo
  */
 @SpiName(SERIALIZER_VAL_KRYO)
