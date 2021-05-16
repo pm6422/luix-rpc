@@ -184,7 +184,7 @@ public class DefaultCodec extends AbstractCodec {
     }
 
     private Serializer getSerializer(Channel channel) {
-        String serializerName = channel.getProviderUrl().getOption(SERIALIZER, SERIALIZER_VAL_KRYO);
+        String serializerName = channel.getProviderUrl().getOption(SERIALIZER, SERIALIZER_VAL_DEFAULT);
         return Serializer.getInstance(serializerName);
     }
 
