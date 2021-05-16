@@ -20,6 +20,7 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_VAL_KR
  * in a multi-threaded environment ThreadLocal or pooling might be considered.
  * <p>
  * Kryo requirements: No
+ * Supports: JAVA
  *
  * <p>
  * Refer to: https://github.com/EsotericSoftware/kryo
