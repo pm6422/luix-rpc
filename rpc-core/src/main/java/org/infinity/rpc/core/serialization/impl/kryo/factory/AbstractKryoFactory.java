@@ -12,6 +12,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
@@ -52,7 +55,7 @@ public abstract class AbstractKryoFactory {
         kryo.setRegistrationRequired(false);
         kryo.addDefaultSerializer(Throwable.class, new JavaSerializer());
 
-        // Register some common classes for performance optimization
+        // Register some known classes for performance optimization
         kryo.register(Collections.singletonList("").getClass(), new ArraysAsListSerializer());
         kryo.register(GregorianCalendar.class, new GregorianCalendarSerializer());
         kryo.register(InvocationHandler.class, new JdkProxySerializer());
@@ -72,6 +75,9 @@ public abstract class AbstractKryoFactory {
         kryo.register(TreeSet.class);
         kryo.register(Hashtable.class);
         kryo.register(Date.class);
+        kryo.register(Instant.class);
+        kryo.register(LocalDate.class);
+        kryo.register(LocalDateTime.class);
         kryo.register(Calendar.class);
         kryo.register(ConcurrentHashMap.class);
         kryo.register(SimpleDateFormat.class);
