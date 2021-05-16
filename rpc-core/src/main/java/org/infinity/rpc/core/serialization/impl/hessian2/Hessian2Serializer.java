@@ -13,7 +13,7 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_HESSIA
 import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_VAL_HESSIAN2;
 
 /**
- * hession2 requirements:
+ * Hessian2 requirements:
  * Serializing and deserializing objects must implements {@link java.io.Serializable}
  */
 @SpiName(SERIALIZER_VAL_HESSIAN2)
