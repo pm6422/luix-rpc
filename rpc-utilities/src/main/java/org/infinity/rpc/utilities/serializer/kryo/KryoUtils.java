@@ -3,11 +3,11 @@ package org.infinity.rpc.utilities.serializer.kryo;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import org.infinity.rpc.utilities.serializer.kryo.factory.AbstractKryoFactory;
-import org.infinity.rpc.utilities.serializer.kryo.factory.impl.PooledKryoFactory;
+import org.infinity.rpc.utilities.serializer.kryo.factory.impl.ThreadLocalKryoFactory;
 
 public abstract class KryoUtils {
 
-    private static final AbstractKryoFactory KRYO_FACTORY = new PooledKryoFactory();
+    private static final AbstractKryoFactory KRYO_FACTORY = new ThreadLocalKryoFactory();
 
     /**
      * Get or create a new {@link Kryo} instance for one thread

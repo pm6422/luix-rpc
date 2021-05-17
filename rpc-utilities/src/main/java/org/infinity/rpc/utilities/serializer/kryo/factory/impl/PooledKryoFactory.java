@@ -7,6 +7,7 @@ import org.infinity.rpc.utilities.serializer.kryo.factory.AbstractKryoFactory;
 /**
  * The performance of pooled kryo is worse than thread-local one
  */
+@Deprecated
 public class PooledKryoFactory extends AbstractKryoFactory {
 
     /**
