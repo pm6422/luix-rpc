@@ -10,8 +10,8 @@ import java.io.IOException;
 public interface Serializer {
     int    SERIALIZER_ID_KRYO       = 0;
     int    SERIALIZER_ID_HESSIAN2   = 1;
-    String SERIALIZER_NAME_HESSIAN2 = "hessian2";
     String SERIALIZER_NAME_KRYO     = "kryo";
+    String SERIALIZER_NAME_HESSIAN2 = "hessian2";
 
     /**
      * Serialize input object to byte array
