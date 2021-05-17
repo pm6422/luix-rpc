@@ -18,22 +18,23 @@ public class SerializerPerfTests {
     @Rule
     public ContiPerfRule i = new ContiPerfRule();
 
+    private Serializer    kryoSerializer     = ServiceLoader.forClass(Serializer.class).load(SERIALIZER_NAME_KRYO);
+    private Serializer    hessian2Serializer = ServiceLoader.forClass(Serializer.class).load(SERIALIZER_NAME_HESSIAN2);
+
     private final AdminMenu menu = new AdminMenu("M12383213", "应用", 1,
             "https://www.baidu.com", 1, "7233434321223");
 
     @Test
     @PerfTest(invocations = 10000, threads = 16, rampUp = 100, warmUp = 10)
     public void kryoPerf() throws IOException {
-        Serializer serializer = ServiceLoader.forClass(Serializer.class).load(SERIALIZER_NAME_KRYO);
-        byte[] serialized = serializer.serialize(menu);
-        serializer.deserialize(serialized, AdminMenu.class);
+        byte[] serialized = kryoSerializer.serialize(menu);
+        kryoSerializer.deserialize(serialized, AdminMenu.class);
     }
 
     @Test
     @PerfTest(invocations = 10000, threads = 16, rampUp = 100, warmUp = 10)
     public void hessian2Perf() throws IOException {
-        Serializer serializer = ServiceLoader.forClass(Serializer.class).load(SERIALIZER_NAME_HESSIAN2);
-        byte[] serialized = serializer.serialize(menu);
-        serializer.deserialize(serialized, AdminMenu.class);
+        byte[] serialized = hessian2Serializer.serialize(menu);
+        hessian2Serializer.deserialize(serialized, AdminMenu.class);
     }
 }

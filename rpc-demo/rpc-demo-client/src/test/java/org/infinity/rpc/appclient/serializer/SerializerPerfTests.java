@@ -41,8 +41,7 @@ public class SerializerPerfTests {
         Pageable pageable = PageRequest.of(0, 100, Sort.by("name").descending());
         Page<App> all = appServiceImpl.findAll(pageable);
         byte[] serialized = kryoSerializer.serialize(all);
-        Page result = kryoSerializer.deserialize(serialized, Page.class);
-//        log.info(result.toString());
+        kryoSerializer.deserialize(serialized, Page.class);
     }
 
     @Test
@@ -52,7 +51,6 @@ public class SerializerPerfTests {
         Pageable pageable = PageRequest.of(0, 100, Sort.by("name").descending());
         Page<App> all = appServiceImpl.findAll(pageable);
         byte[] serialized = hessian2Serializer.serialize(all);
-        Page result = hessian2Serializer.deserialize(serialized, Page.class);
-//        log.info(result.toString());
+        hessian2Serializer.deserialize(serialized, Page.class);
     }
 }
