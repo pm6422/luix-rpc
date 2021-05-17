@@ -4,9 +4,9 @@ import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.server.exporter.Exportable;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.spi.ServiceLoader;
-import org.infinity.rpc.utilities.spi.annotation.Spi;
-import org.infinity.rpc.utilities.spi.annotation.SpiScope;
+import org.infinity.rpc.utilities.serviceloader.ServiceLoader;
+import org.infinity.rpc.utilities.serviceloader.annotation.Spi;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiScope;
 
 @Spi(scope = SpiScope.SINGLETON)
 public interface Protocol {

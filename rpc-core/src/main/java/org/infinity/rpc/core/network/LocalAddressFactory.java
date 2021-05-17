@@ -1,8 +1,8 @@
 package org.infinity.rpc.core.network;
 
-import org.infinity.rpc.utilities.spi.ServiceLoader;
-import org.infinity.rpc.utilities.spi.annotation.Spi;
-import org.infinity.rpc.utilities.spi.annotation.SpiScope;
+import org.infinity.rpc.utilities.serviceloader.ServiceLoader;
+import org.infinity.rpc.utilities.serviceloader.annotation.Spi;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiScope;
 
 @Spi(scope = SpiScope.SINGLETON)
 public interface LocalAddressFactory {

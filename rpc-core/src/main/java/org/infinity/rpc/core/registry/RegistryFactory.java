@@ -2,9 +2,9 @@ package org.infinity.rpc.core.registry;
 
 
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.spi.ServiceLoader;
-import org.infinity.rpc.utilities.spi.annotation.Spi;
-import org.infinity.rpc.utilities.spi.annotation.SpiScope;
+import org.infinity.rpc.utilities.serviceloader.ServiceLoader;
+import org.infinity.rpc.utilities.serviceloader.annotation.Spi;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiScope;
 
 /**
  * Registry factory used to create registry

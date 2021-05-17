@@ -7,7 +7,7 @@ import org.infinity.rpc.core.exchange.server.Server;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.transport.netty4.client.NettyClient;
 import org.infinity.rpc.transport.netty4.server.NettyServer;
-import org.infinity.rpc.utilities.spi.annotation.SpiName;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY_VAL_NETTY;
 

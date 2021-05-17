@@ -3,7 +3,7 @@ package org.infinity.rpc.core.network.impl;
 import org.infinity.rpc.core.exception.RpcConfigurationException;
 import org.infinity.rpc.core.network.LocalAddressFactory;
 import org.infinity.rpc.utilities.network.AddressUtils;
-import org.infinity.rpc.utilities.spi.annotation.SpiName;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import java.util.Optional;
 

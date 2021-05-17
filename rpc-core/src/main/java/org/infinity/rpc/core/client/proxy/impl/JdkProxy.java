@@ -5,7 +5,7 @@ import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler
 import org.infinity.rpc.core.client.invocationhandler.impl.ConsumerInvocationHandler;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.utilities.spi.annotation.SpiName;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.PROXY_VAL_JDK;
 

@@ -7,7 +7,7 @@ import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.server.response.Responseable;
-import org.infinity.rpc.utilities.spi.annotation.SpiName;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import java.text.MessageFormat;
 import java.util.List;

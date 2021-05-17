@@ -16,7 +16,7 @@ import org.infinity.rpc.core.serialization.Serializer;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.utilities.lang.ByteUtils;
-import org.infinity.rpc.utilities.spi.annotation.SpiName;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import java.io.*;
 import java.util.HashMap;

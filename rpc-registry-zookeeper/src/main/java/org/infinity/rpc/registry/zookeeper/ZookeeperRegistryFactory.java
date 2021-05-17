@@ -5,7 +5,7 @@ import org.I0Itec.zkclient.ZkClient;
 import org.infinity.rpc.core.registry.AbstractRegistryFactory;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.spi.annotation.SpiName;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import static org.infinity.rpc.core.constant.RegistryConstants.*;
 

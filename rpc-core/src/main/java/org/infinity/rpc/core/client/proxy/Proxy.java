@@ -2,9 +2,9 @@ package org.infinity.rpc.core.client.proxy;
 
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.utilities.spi.ServiceLoader;
-import org.infinity.rpc.utilities.spi.annotation.Spi;
-import org.infinity.rpc.utilities.spi.annotation.SpiScope;
+import org.infinity.rpc.utilities.serviceloader.ServiceLoader;
+import org.infinity.rpc.utilities.serviceloader.annotation.Spi;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiScope;
 
 @Spi(scope = SpiScope.PROTOTYPE)
 public interface Proxy {

@@ -3,7 +3,7 @@ package org.infinity.rpc.core.client.loadbalancer.impl;
 import org.infinity.rpc.core.client.loadbalancer.AbstractLoadBalancer;
 import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.utilities.spi.annotation.SpiName;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import java.util.ArrayList;
 import java.util.List;

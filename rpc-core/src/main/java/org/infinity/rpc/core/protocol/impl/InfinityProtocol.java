@@ -6,7 +6,7 @@ import org.infinity.rpc.core.server.exporter.Exportable;
 import org.infinity.rpc.core.server.exporter.impl.DefaultRpcExporter;
 import org.infinity.rpc.core.server.messagehandler.impl.ProviderMessageRouter;
 import org.infinity.rpc.core.server.stub.ProviderStub;
-import org.infinity.rpc.utilities.spi.annotation.SpiName;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

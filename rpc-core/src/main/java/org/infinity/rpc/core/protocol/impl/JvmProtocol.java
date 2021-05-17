@@ -5,7 +5,7 @@ import org.infinity.rpc.core.protocol.AbstractProtocol;
 import org.infinity.rpc.core.server.exporter.Exportable;
 import org.infinity.rpc.core.server.exporter.impl.JvmRpcExporter;
 import org.infinity.rpc.core.server.stub.ProviderStub;
-import org.infinity.rpc.utilities.spi.annotation.SpiName;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_VAL_JVM;
 

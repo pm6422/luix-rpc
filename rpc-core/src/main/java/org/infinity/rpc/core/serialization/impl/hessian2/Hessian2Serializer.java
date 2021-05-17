@@ -3,7 +3,7 @@ package org.infinity.rpc.core.serialization.impl.hessian2;
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
 import org.infinity.rpc.core.serialization.Serializer;
-import org.infinity.rpc.utilities.spi.annotation.SpiName;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

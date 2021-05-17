@@ -3,7 +3,7 @@ package org.infinity.rpc.core.serialization.impl.kryo;
 import org.infinity.rpc.core.serialization.Serializer;
 import org.infinity.rpc.core.serialization.impl.kryo.io.KryoObjectInput;
 import org.infinity.rpc.core.serialization.impl.kryo.io.KryoObjectOutput;
-import org.infinity.rpc.utilities.spi.annotation.SpiName;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

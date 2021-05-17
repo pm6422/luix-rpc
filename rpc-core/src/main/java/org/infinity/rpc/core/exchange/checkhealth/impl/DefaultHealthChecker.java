@@ -22,7 +22,7 @@ import org.infinity.rpc.core.exchange.checkhealth.HealthChecker;
 import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.server.messagehandler.impl.DefaultCheckHealthMessageHandleWrapper;
 import org.infinity.rpc.utilities.id.IdGenerator;
-import org.infinity.rpc.utilities.spi.annotation.SpiName;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
 

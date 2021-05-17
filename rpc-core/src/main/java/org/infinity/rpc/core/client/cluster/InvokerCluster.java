@@ -5,9 +5,9 @@ import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.spi.ServiceLoader;
-import org.infinity.rpc.utilities.spi.annotation.Spi;
-import org.infinity.rpc.utilities.spi.annotation.SpiScope;
+import org.infinity.rpc.utilities.serviceloader.ServiceLoader;
+import org.infinity.rpc.utilities.serviceloader.annotation.Spi;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiScope;
 
 /**
  * One cluster for one protocol, only one node of a cluster can handle the request

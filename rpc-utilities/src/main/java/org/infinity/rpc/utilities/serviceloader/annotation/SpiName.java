@@ -1,4 +1,4 @@
-package org.infinity.rpc.utilities.spi.annotation;
+package org.infinity.rpc.utilities.serviceloader.annotation;
 
 import java.lang.annotation.*;
 

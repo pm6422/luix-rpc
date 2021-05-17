@@ -14,7 +14,7 @@ import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
-import org.infinity.rpc.utilities.spi.annotation.SpiName;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.CLUSTER_VAL_DEFAULT;
 import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION;

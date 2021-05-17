@@ -7,7 +7,7 @@ import org.infinity.rpc.core.client.cluster.InvokerCluster;
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Responseable;
-import org.infinity.rpc.utilities.spi.annotation.SpiName;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.CLUSTER_VAL_BROADCAST;
 
