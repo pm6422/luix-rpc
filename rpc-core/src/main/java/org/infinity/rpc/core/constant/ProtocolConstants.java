@@ -11,8 +11,8 @@ public interface ProtocolConstants {
     String  SERIALIZER_VAL_HESSIAN2            = "hessian2";
     String  SERIALIZER_VAL_KRYO                = "kryo";
     String  SERIALIZER_VAL_DEFAULT             = SERIALIZER_VAL_KRYO;
-    int     SERIALIZER_HESSIAN2_TYPE_NUM       = 1;
-    int     SERIALIZER_KRYO_TYPE_NUM           = 2;
+    int     SERIALIZER_ID_KRYO                 = 0;
+    int     SERIALIZER_ID_HESSIAN2             = 1;
     String  LOCAL_ADDRESS_FACTORY              = "localAddressFactory";
     String  LOCAL_ADDRESS_FACTORY_VAL_DEFAULT  = "default";
     String  ENDPOINT_FACTORY                   = "endpointFactory";

@@ -9,7 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_KRYO_TYPE_NUM;
+import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_ID_KRYO;
 import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_VAL_KRYO;
 
 /**
@@ -64,7 +64,7 @@ public class KryoSerializer implements Serializer {
     }
 
     @Override
-    public int getSerializationTypeNum() {
-        return SERIALIZER_KRYO_TYPE_NUM;
+    public int getSerializerId() {
+        return SERIALIZER_ID_KRYO;
     }
 }

@@ -34,7 +34,7 @@ public interface Serializer {
      *
      * @param objects object array
      * @return serialized bytes
-     * @throws IOException
+     * @throws IOException if any exception throws
      */
     byte[] serializeArray(Object[] objects) throws IOException;
 
@@ -44,16 +44,16 @@ public interface Serializer {
      * @param data    serialized bytes
      * @param classes target object class
      * @return Object array
-     * @throws IOException
+     * @throws IOException if any exception throws
      */
     Object[] deserializeArray(byte[] data, Class<?>[] classes) throws IOException;
 
     /**
-     * serialization的唯一编号，用于传输协议中指定序列化方式。每种序列化的编号必须唯一。
+     * Get serializer unique ID，it used to specify serializer in transport protocol
      *
-     * @return 由于编码规范限制，序列化方式最大支持32种，因此返回值必须在0-31之间。
+     * @return a value in the range of 0-31
      */
-    int getSerializationTypeNum();
+    int getSerializerId();
 
     /**
      * Get instance associated with the specified name
