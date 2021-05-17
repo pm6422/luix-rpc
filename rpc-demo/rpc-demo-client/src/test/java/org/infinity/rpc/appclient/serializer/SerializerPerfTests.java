@@ -18,13 +18,16 @@ import java.io.IOException;
 import static org.infinity.rpc.utilities.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
 import static org.infinity.rpc.utilities.serializer.Serializer.SERIALIZER_NAME_KRYO;
 
+/**
+ * Refer to {@link org.infinity.rpc.utilities.serializer.SerializerPerfTests} for another test cases
+ */
 @Slf4j
 public class SerializerPerfTests {
 
     @Rule
-    public  ContiPerfRule i                  = new ContiPerfRule();
-    private Serializer    kryoSerializer     = ServiceLoader.forClass(Serializer.class).load(SERIALIZER_NAME_KRYO);
-    private Serializer    hessian2Serializer = ServiceLoader.forClass(Serializer.class).load(SERIALIZER_NAME_HESSIAN2);
+    public        ContiPerfRule i                  = new ContiPerfRule();
+    private final Serializer    kryoSerializer     = ServiceLoader.forClass(Serializer.class).load(SERIALIZER_NAME_KRYO);
+    private final Serializer    hessian2Serializer = ServiceLoader.forClass(Serializer.class).load(SERIALIZER_NAME_HESSIAN2);
 
     static {
         KryoUtils.registerClass(Sort.class, new SortSerializer());
