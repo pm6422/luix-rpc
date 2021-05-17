@@ -4,6 +4,9 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.util.Pool;
 import org.infinity.rpc.utilities.serializer.kryo.factory.AbstractKryoFactory;
 
+/**
+ * The performance of pooled kryo is worse than thread-local one
+ */
 public class PooledKryoFactory extends AbstractKryoFactory {
 
     /**
