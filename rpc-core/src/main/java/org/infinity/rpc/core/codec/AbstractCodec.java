@@ -4,7 +4,7 @@ package org.infinity.rpc.core.codec;
 import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
-import org.infinity.rpc.core.serialization.Serializer;
+import org.infinity.rpc.utilities.serializer.Serializer;
 
 import java.io.*;
 import java.util.Map;

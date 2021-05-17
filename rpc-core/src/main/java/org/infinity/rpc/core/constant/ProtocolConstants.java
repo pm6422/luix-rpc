@@ -1,5 +1,7 @@
 package org.infinity.rpc.core.constant;
 
+import static org.infinity.rpc.utilities.serializer.Serializer.SERIALIZER_NAME_KRYO;
+
 public interface ProtocolConstants {
 
     String  PROTOCOL                           = "protocol";
@@ -8,11 +10,7 @@ public interface ProtocolConstants {
     String  CODEC                              = "codec";
     String  CODEC_VAL_DEFAULT                  = "default";
     String  SERIALIZER                         = "serializer";
-    String  SERIALIZER_VAL_HESSIAN2            = "hessian2";
-    String  SERIALIZER_VAL_KRYO                = "kryo";
-    String  SERIALIZER_VAL_DEFAULT             = SERIALIZER_VAL_KRYO;
-    int     SERIALIZER_ID_KRYO                 = 0;
-    int     SERIALIZER_ID_HESSIAN2             = 1;
+    String  SERIALIZER_VAL_DEFAULT             = SERIALIZER_NAME_KRYO;
     String  LOCAL_ADDRESS_FACTORY              = "localAddressFactory";
     String  LOCAL_ADDRESS_FACTORY_VAL_DEFAULT  = "default";
     String  ENDPOINT_FACTORY                   = "endpointFactory";

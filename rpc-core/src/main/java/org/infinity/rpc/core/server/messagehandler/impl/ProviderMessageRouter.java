@@ -24,7 +24,7 @@ import org.infinity.rpc.core.exception.RpcBizException;
 import org.infinity.rpc.core.exception.RpcFrameworkException;
 import org.infinity.rpc.core.exception.RpcServiceException;
 import org.infinity.rpc.core.exchange.Channel;
-import org.infinity.rpc.core.serialization.DeserializableObject;
+import org.infinity.rpc.utilities.serializer.DeserializableObject;
 import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.stub.ProviderStub;

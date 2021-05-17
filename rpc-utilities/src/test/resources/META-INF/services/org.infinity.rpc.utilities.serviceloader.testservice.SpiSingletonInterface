@@ -1,0 +1,4 @@
+# The file name should be identical to the full qualified name of extension interface.
+# The file must be encoded in UTF-8.
+org.infinity.rpc.utilities.serviceloader.testservice.impl.SpiSingletonImpl
+org.infinity.rpc.utilities.serviceloader.testservice.impl.Spi单例Impl

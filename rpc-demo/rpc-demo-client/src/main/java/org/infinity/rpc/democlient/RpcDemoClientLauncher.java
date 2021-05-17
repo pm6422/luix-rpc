@@ -2,7 +2,7 @@ package org.infinity.rpc.democlient;
 
 import com.dtflys.forest.springboot.annotation.ForestScan;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.serialization.impl.kryo.KryoUtils;
+import org.infinity.rpc.utilities.serializer.kryo.KryoUtils;
 import org.infinity.rpc.spring.boot.EnableRpc;
 import org.infinity.rpc.spring.enhancement.kryo.serializer.PageImplSerializer;
 import org.infinity.rpc.spring.enhancement.kryo.serializer.PageRequestSerializer;

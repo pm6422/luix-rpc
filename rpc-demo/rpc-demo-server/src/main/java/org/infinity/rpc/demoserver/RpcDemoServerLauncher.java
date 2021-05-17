@@ -1,6 +1,6 @@
 package org.infinity.rpc.demoserver;
 
-import org.infinity.rpc.core.serialization.impl.kryo.KryoUtils;
+import org.infinity.rpc.utilities.serializer.kryo.KryoUtils;
 import org.infinity.rpc.spring.boot.EnableRpc;
 import org.infinity.rpc.spring.enhancement.kryo.serializer.PageImplSerializer;
 import org.infinity.rpc.spring.enhancement.kryo.serializer.PageRequestSerializer;
