@@ -5,7 +5,7 @@ import org.databene.contiperf.junit.ContiPerfRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class PerformanceTests {
+public class PerfTests {
     @Rule
     public  ContiPerfRule     i                 = new ContiPerfRule();
 
