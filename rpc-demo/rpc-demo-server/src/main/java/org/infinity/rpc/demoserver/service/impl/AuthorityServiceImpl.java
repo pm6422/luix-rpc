@@ -6,7 +6,10 @@ import org.infinity.rpc.democommon.service.AuthorityService;
 import org.infinity.rpc.demoserver.repository.AuthorityRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,11 +17,10 @@ import java.util.stream.Collectors;
 @Provider
 public class AuthorityServiceImpl implements AuthorityService {
 
-    private final AuthorityRepository authorityRepository;
-
-    public AuthorityServiceImpl(AuthorityRepository authorityRepository) {
-        this.authorityRepository = authorityRepository;
-    }
+    @Resource
+    private AuthorityRepository authorityRepository;
+    @Resource
+    private MongoTemplate       mongoTemplate;
 
     @Override
     public List<String> findAllAuthorityNames(Boolean enabled) {
@@ -40,6 +42,11 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Override
     public List<Authority> findAll() {
         return authorityRepository.findAll();
+    }
+
+    @Override
+    public Authority findOne(Query query) {
+        return mongoTemplate.findOne(query, Authority.class);
     }
 
     @Override

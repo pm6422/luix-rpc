@@ -7,6 +7,7 @@ import org.infinity.rpc.democommon.service.AdminMenuService;
 import org.infinity.rpc.demoserver.repository.AdminMenuRepository;
 import org.thymeleaf.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,11 +15,8 @@ import java.util.stream.Collectors;
 @Provider
 public class AdminMenuServiceImpl implements AdminMenuService {
 
-    private final AdminMenuRepository adminMenuRepository;
-
-    public AdminMenuServiceImpl(AdminMenuRepository adminMenuRepository) {
-        this.adminMenuRepository = adminMenuRepository;
-    }
+    @Resource
+    private AdminMenuRepository adminMenuRepository;
 
     @Override
     public List<AdminMenuTreeDTO> getMenus() {

@@ -13,17 +13,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 
+import javax.annotation.Resource;
 import java.util.Optional;
 
 @Provider(form = "f1", maxRetries = 1)
 @Slf4j
 public class AppService1Impl implements AppService {
 
-    private final AppRepository appRepository;
-
-    public AppService1Impl(AppRepository appRepository) {
-        this.appRepository = appRepository;
-    }
+    @Resource
+    private AppRepository appRepository;
 
     @Override
     public Page<App> findAll(Pageable pageable) {

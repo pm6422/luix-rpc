@@ -12,17 +12,15 @@ import org.infinity.rpc.demoserver.repository.AppRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import javax.annotation.Resource;
 import java.util.Optional;
 
 @Provider(form = "f2", maxRetries = 1)
 @Slf4j
 public class AppService2Impl implements AppService {
 
-    private final AppRepository appRepository;
-
-    public AppService2Impl(AppRepository appRepository) {
-        this.appRepository = appRepository;
-    }
+    @Resource
+    private AppRepository appRepository;
 
     @Override
     public Page<App> findAll(Pageable pageable) {
