@@ -19,11 +19,13 @@ import java.util.regex.Pattern;
 public abstract class AbstractKryoFactory {
 
     /**
-     * Class level holder, if the method registerClass(Class<?> clazz) was invoked once, the holder will save the values.
+     * Class level container, if the method registerClass(Class<?> clazz) was invoked once,
+     * the container will save the values for later use.
      */
     private static final Set<Class<?>>                CUSTOM_CLASSES           = new LinkedHashSet<>();
     /**
-     * Class level holder, if the method registerClass(Class<?> clazz, Serializer<?> serializer) was invoked once, the holder will save the values.
+     * Class level container, if the method registerClass(Class<?> clazz, Serializer<?> serializer) was invoked once,
+     * the container will save the values for later use.
      */
     private static final Map<Class<?>, Serializer<?>> CUSTOM_CLASS_SERIALIZERS = new LinkedHashMap<>();
     private volatile     boolean                      created                  = false;
