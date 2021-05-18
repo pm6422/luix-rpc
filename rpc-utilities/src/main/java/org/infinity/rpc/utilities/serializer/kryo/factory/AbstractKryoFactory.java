@@ -18,7 +18,13 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractKryoFactory {
 
+    /**
+     * Class level holder, if the method registerClass(Class<?> clazz) was invoked once, the holder will save the values.
+     */
     private static final Set<Class<?>>                CUSTOM_CLASSES           = new LinkedHashSet<>();
+    /**
+     * Class level holder, if the method registerClass(Class<?> clazz, Serializer<?> serializer) was invoked once, the holder will save the values.
+     */
     private static final Map<Class<?>, Serializer<?>> CUSTOM_CLASS_SERIALIZERS = new LinkedHashMap<>();
     private volatile     boolean                      created                  = false;
 
@@ -28,7 +34,7 @@ public abstract class AbstractKryoFactory {
      * @param clazz class type
      */
     public void registerClass(Class<?> clazz) {
-        Validate.validState(!created, "Can NOT register class after created kryo instance!");
+        Validate.validState(!created, "Please register class before creating kryo instance!");
         CUSTOM_CLASSES.add(clazz);
     }
 
@@ -39,7 +45,7 @@ public abstract class AbstractKryoFactory {
      * @param serializer serializer
      */
     public void registerClass(Class<?> clazz, Serializer<?> serializer) {
-        Validate.validState(!created, "Can NOT register class serializer after created kryo instance!");
+        Validate.validState(!created, "Please register class serializer before creating kryo instance!");
         CUSTOM_CLASS_SERIALIZERS.put(clazz, serializer);
     }
 
