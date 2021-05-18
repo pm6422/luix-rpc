@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.query.Query;
 public class QuerySerializer extends Serializer<Query> {
 
     @Override
-    public void write(Kryo kryo, Output output, Query sort) {
+    public void write(Kryo kryo, Output output, Query query) {
     }
 
     @Override

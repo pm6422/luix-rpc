@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 public class CriteriaSerializer extends Serializer<Criteria> {
 
     @Override
-    public void write(Kryo kryo, Output output, Criteria sort) {
+    public void write(Kryo kryo, Output output, Criteria criteria) {
     }
 
     @Override
