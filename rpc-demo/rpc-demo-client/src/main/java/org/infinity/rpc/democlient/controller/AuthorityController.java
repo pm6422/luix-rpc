@@ -10,14 +10,19 @@ import org.infinity.rpc.democommon.domain.Authority;
 import org.infinity.rpc.democommon.service.AuthorityService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.infinity.rpc.democlient.utils.HttpHeaderUtils.generatePageHeaders;
+import static org.infinity.rpc.democommon.domain.Authority.ADMIN;
+import static org.infinity.rpc.democommon.domain.Authority.USER;
 
 /**
  * REST controller for managing authorities.
@@ -44,6 +49,14 @@ public class AuthorityController {
             @ApiParam(value = "authority name", required = true) @PathVariable String name) {
         Authority authority = authorityService.findById(name).orElseThrow(() -> new NoDataFoundException(name));
         return ResponseEntity.ok(authority);
+    }
+
+    @ApiOperation("find authority names")
+    @GetMapping("/api/authority-names")
+    public ResponseEntity<List<String>> find() {
+        Query query = Query.query(Criteria.where("name").in(ADMIN, USER));
+        List<String> authorities = authorityService.find(query).stream().map(Authority::getName).collect(Collectors.toList());
+        return ResponseEntity.ok(authorities);
     }
 
     @ApiOperation("update authority")

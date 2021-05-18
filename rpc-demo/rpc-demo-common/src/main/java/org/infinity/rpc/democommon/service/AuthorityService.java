@@ -18,7 +18,7 @@ public interface AuthorityService {
 
     List<Authority> findAll();
 
-    Authority findOne(Query query);
+    List<Authority> find(Query query);
 
     Optional<Authority> findById(String id);
 

@@ -45,8 +45,8 @@ public class AuthorityServiceImpl implements AuthorityService {
     }
 
     @Override
-    public Authority findOne(Query query) {
-        return mongoTemplate.findOne(query, Authority.class);
+    public List<Authority> find(Query query) {
+        return mongoTemplate.find(query, Authority.class);
     }
 
     @Override
