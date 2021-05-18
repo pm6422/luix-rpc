@@ -51,14 +51,6 @@ public class AuthorityController {
         return ResponseEntity.ok(authority);
     }
 
-    @ApiOperation("find authority names")
-    @GetMapping("/api/authority-names")
-    public ResponseEntity<List<String>> find() {
-        Query query = Query.query(Criteria.where("name").in(ADMIN, USER));
-        List<String> authorities = authorityService.find(query).stream().map(Authority::getName).collect(Collectors.toList());
-        return ResponseEntity.ok(authorities);
-    }
-
     @ApiOperation("update authority")
     @PutMapping("/api/authorities")
     public ResponseEntity<Void> update(

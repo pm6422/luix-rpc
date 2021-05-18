@@ -5,32 +5,51 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.democlient.restservice.AppRestService;
 import org.infinity.rpc.democommon.domain.App;
+import org.infinity.rpc.democommon.domain.Authority;
 import org.infinity.rpc.democommon.service.AppService;
+import org.infinity.rpc.democommon.service.AuthorityService;
 import org.infinity.rpc.utilities.id.IdGenerator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.infinity.rpc.democommon.domain.Authority.ADMIN;
+import static org.infinity.rpc.democommon.domain.Authority.USER;
 
 @RestController
 @Slf4j
 public class TestController {
 
     @Resource
-    private              ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
     @Resource
-    private              Environment        env;
+    private Environment        env;
     @Resource
-    private              AppRestService     appRestService;
+    private AppRestService     appRestService;
+    @Consumer
+    private AuthorityService   authorityService;
     @Consumer(providerAddresses = "127.0.0.1:26010", maxRetries = 0)
-    private              AppService         appService;
+    private AppService         appService;
+
+    @ApiOperation("test kryo serialization and deserialization")
+    @GetMapping("/api/authority-names")
+    public ResponseEntity<List<String>> find() {
+        Query query = Query.query(Criteria.where("name").in(ADMIN, USER));
+        List<String> authorities = authorityService.find(query).stream().map(Authority::getName).collect(Collectors.toList());
+        return ResponseEntity.ok(authorities);
+    }
 
     @ApiOperation("direct connect")
     @GetMapping("/api/test/direct-url")
