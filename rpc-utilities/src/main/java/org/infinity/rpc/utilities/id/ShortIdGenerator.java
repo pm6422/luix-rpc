@@ -5,9 +5,6 @@ import org.infinity.rpc.utilities.concurrent.ThreadSafe;
 
 /**
  * Bad performance
- * 12位ID，如：306554419571
- *
- * @author Polim
  */
 @ThreadSafe
 final class ShortIdGenerator {
