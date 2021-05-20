@@ -1,7 +1,10 @@
-package org.infinity.rpc.core.exception;
+package org.infinity.rpc.core.exception.impl;
+
+import org.infinity.rpc.core.exception.RpcAbstractException;
 
 public class RpcFrameworkException extends RpcAbstractException {
-    private static final long serialVersionUID = -8044188121553568504L;
+
+    private static final long serialVersionUID = -3856975234463367637L;
 
     public RpcFrameworkException() {
         super();

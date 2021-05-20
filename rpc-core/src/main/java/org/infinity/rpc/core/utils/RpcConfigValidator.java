@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.utils;
 
-import org.infinity.rpc.core.exception.RpcConfigurationException;
+import org.infinity.rpc.core.exception.impl.RpcConfigurationException;
 
 /**
  * Refer to {@link org.apache.commons.lang3.Validate}

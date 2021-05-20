@@ -5,7 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.destroy.ScheduledThreadPool;
-import org.infinity.rpc.core.exception.RpcInvocationException;
+import org.infinity.rpc.core.exception.impl.RpcInvocationException;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;

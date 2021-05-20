@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exception;
+package org.infinity.rpc.core.exception.impl;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

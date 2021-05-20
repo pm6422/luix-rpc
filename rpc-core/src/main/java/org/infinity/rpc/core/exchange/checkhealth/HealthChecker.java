@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.exchange.checkhealth;
 
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.exception.RpcFrameworkException;
+import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.serviceloader.ServiceLoader;

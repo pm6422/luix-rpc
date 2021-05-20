@@ -5,7 +5,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.constant.RpcConstants;
-import org.infinity.rpc.core.exception.RpcConfigurationException;
+import org.infinity.rpc.core.exception.impl.RpcConfigurationException;
 import org.infinity.rpc.core.registry.Registry;
 
 import java.io.Serializable;

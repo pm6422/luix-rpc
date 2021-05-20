@@ -1,12 +1,13 @@
 package org.infinity.rpc.core.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.exception.impl.RpcBizException;
 
 @Slf4j
 public abstract class ExceptionUtils {
 
-    public static final StackTraceElement[] REMOTE_MOCK_STACK = new StackTraceElement[]{new StackTraceElement("remoteClass",
-            "remoteMethod", "remoteFile", 1)};
+    public static final StackTraceElement[] REMOTE_MOCK_STACK = new StackTraceElement[]{
+            new StackTraceElement("remoteClass", "remoteMethod", "remoteFile", 1)};
 
     public static boolean isBizException(Throwable t) {
         return t instanceof RpcBizException;

@@ -3,7 +3,7 @@
 //import lombok.extern.slf4j.Slf4j;
 //import org.I0Itec.zkclient.ZkClient;
 //import org.I0Itec.zkclient.exception.ZkException;
-//import org.infinity.rpc.core.exception.RpcFrameworkException;
+//import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 //import org.infinity.rpc.core.url.Url;
 //import org.infinity.rpc.spring.boot.config.InfinityProperties;
 //import org.infinity.rpc.webcenter.service.impl.ZookeeperRegistryServiceImpl;

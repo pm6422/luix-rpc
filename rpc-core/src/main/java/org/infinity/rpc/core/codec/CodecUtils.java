@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.codec.impl.DefaultCodec;
 import org.infinity.rpc.core.constant.RpcConstants;
-import org.infinity.rpc.core.exception.RpcFrameworkException;
+import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.exchange.Exchangable;
 import org.infinity.rpc.core.server.response.Responseable;
@@ -13,7 +13,7 @@ import org.infinity.rpc.utilities.lang.ByteUtils;
 
 import java.io.IOException;
 
-import static org.infinity.rpc.core.exception.RpcErrorMsgConstant.ENCODE_ERROR;
+import static org.infinity.rpc.core.exception.impl.RpcErrorMsgConstant.ENCODE_ERROR;
 
 @Slf4j
 public class CodecUtils {

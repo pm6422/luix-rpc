@@ -1,16 +1,16 @@
 package org.infinity.rpc.core.codec;
 
 
-import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
-import org.infinity.rpc.core.exception.RpcFrameworkException;
-import org.infinity.rpc.core.exception.RpcServiceException;
+import org.infinity.rpc.core.exception.impl.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
+import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.utilities.serializer.Serializer;
 
 import java.io.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.rpc.core.exception.RpcErrorMsgConstant.ENCODE_ERROR;
+import static org.infinity.rpc.core.exception.impl.RpcErrorMsgConstant.ENCODE_ERROR;
 
 public abstract class AbstractCodec implements Codec {
 

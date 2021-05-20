@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.codec.Codec;
 import org.infinity.rpc.core.config.Configurable;
-import org.infinity.rpc.core.exception.RpcConfigurationException;
+import org.infinity.rpc.core.exception.impl.RpcConfigurationException;
 import org.infinity.rpc.core.network.LocalAddressFactory;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.utils.RpcConfigValidator;

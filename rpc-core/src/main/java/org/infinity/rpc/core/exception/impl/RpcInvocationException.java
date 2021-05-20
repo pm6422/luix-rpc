@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exception;
+package org.infinity.rpc.core.exception.impl;
 
 public class RpcInvocationException extends RuntimeException {
 

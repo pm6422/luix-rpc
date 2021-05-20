@@ -5,7 +5,7 @@ import org.infinity.rpc.core.client.faulttolerance.AbstractFaultTolerance;
 import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.ExceptionUtils;
-import org.infinity.rpc.core.exception.RpcFrameworkException;
+import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 

@@ -18,7 +18,7 @@ package org.infinity.rpc.core.exchange.endpoint.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.destroy.ScheduledThreadPool;
-import org.infinity.rpc.core.exception.RpcFrameworkException;
+import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.checkhealth.HealthChecker;
 import org.infinity.rpc.core.exchange.client.Client;
 import org.infinity.rpc.core.exchange.constants.ChannelState;

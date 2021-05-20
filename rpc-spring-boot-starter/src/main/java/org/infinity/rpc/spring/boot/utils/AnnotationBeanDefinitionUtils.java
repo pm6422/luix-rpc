@@ -1,7 +1,7 @@
 package org.infinity.rpc.spring.boot.utils;
 
 import org.infinity.rpc.core.constant.BooleanEnum;
-import org.infinity.rpc.core.exception.RpcConfigurationException;
+import org.infinity.rpc.core.exception.impl.RpcConfigurationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;

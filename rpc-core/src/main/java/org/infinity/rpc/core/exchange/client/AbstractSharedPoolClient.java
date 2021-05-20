@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.exchange.client;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exception.RpcServiceException;
+import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.lang.MathUtils;

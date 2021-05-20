@@ -3,7 +3,7 @@ package org.infinity.rpc.core.config.impl;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.Configurable;
-import org.infinity.rpc.core.exception.RpcConfigurationException;
+import org.infinity.rpc.core.exception.impl.RpcConfigurationException;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;

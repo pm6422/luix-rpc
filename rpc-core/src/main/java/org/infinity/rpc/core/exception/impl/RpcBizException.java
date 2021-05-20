@@ -14,7 +14,9 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.exception;
+package org.infinity.rpc.core.exception.impl;
+
+import org.infinity.rpc.core.exception.RpcAbstractException;
 
 public class RpcBizException extends RpcAbstractException {
     private static final long serialVersionUID = -3491276058323309898L;

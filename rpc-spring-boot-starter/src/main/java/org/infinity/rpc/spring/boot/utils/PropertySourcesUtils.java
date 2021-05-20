@@ -3,7 +3,7 @@ package org.infinity.rpc.spring.boot.utils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.infinity.rpc.core.config.Configurable;
-import org.infinity.rpc.core.exception.RpcConfigurationException;
+import org.infinity.rpc.core.exception.impl.RpcConfigurationException;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.env.PropertySource;
