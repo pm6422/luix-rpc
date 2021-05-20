@@ -11,6 +11,11 @@ import org.infinity.rpc.democommon.domain.App;
 @BaseRequest(baseURL = "${rpcDemoServerAddress}")
 public interface AppRestService {
 
+    /**
+     * Create application
+     *
+     * @param domain application
+     */
     @Post(url = "/api/apps", timeout = 200)
-    void insert(@JSONBody App domain);
+    void create(@JSONBody App domain);
 }

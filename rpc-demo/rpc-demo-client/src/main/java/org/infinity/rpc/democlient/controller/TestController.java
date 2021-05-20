@@ -63,6 +63,6 @@ public class TestController {
     @PostMapping("/api/test/app")
     public void createApp() {
         App app = new App(String.valueOf(IdGenerator.generateShortId()), true);
-        appRestService.insert(app);
+        appRestService.create(app);
     }
 }
