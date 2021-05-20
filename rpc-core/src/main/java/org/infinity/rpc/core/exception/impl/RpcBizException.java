@@ -17,6 +17,7 @@
 package org.infinity.rpc.core.exception.impl;
 
 import org.infinity.rpc.core.exception.RpcAbstractException;
+import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 
 public class RpcBizException extends RpcAbstractException {
     private static final long serialVersionUID = -3491276058323309898L;

@@ -19,7 +19,7 @@ package org.infinity.rpc.core.server.messagehandler.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.exception.impl.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;

@@ -14,7 +14,9 @@
  *    limitations under the License.
  */
 
-package org.infinity.rpc.core.exception.impl;
+package org.infinity.rpc.core.exception;
+
+import org.infinity.rpc.core.exception.impl.RpcErrorMsg;
 
 public class RpcErrorMsgConstant {
     // service error status 503

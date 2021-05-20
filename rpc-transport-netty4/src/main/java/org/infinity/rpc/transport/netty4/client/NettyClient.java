@@ -12,7 +12,7 @@ import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.RpcAbstractException;
-import org.infinity.rpc.core.exception.impl.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.exchange.Channel;

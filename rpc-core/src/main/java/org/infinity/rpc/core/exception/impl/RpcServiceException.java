@@ -17,6 +17,7 @@
 package org.infinity.rpc.core.exception.impl;
 
 import org.infinity.rpc.core.exception.RpcAbstractException;
+import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 
 public class RpcServiceException extends RpcAbstractException {
 

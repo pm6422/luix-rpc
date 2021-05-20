@@ -7,7 +7,7 @@ import org.infinity.rpc.core.codec.Codec;
 import org.infinity.rpc.core.codec.CodecUtils;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
-import org.infinity.rpc.core.exception.impl.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.exchange.Channel;

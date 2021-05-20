@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.client.request.impl.DefaultInvoker;
-import org.infinity.rpc.core.exception.impl.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.exporter.Exportable;
 import org.infinity.rpc.core.server.stub.ProviderStub;

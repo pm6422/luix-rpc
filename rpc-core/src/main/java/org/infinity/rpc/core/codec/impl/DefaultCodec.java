@@ -7,7 +7,7 @@ import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.codec.AbstractCodec;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
-import org.infinity.rpc.core.exception.impl.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.exchange.Exchangable;
@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.MAX_PAYLOAD;
 import static org.infinity.rpc.core.constant.ServiceConstants.MAX_PAYLOAD_VAL_DEFAULT;
-import static org.infinity.rpc.core.exception.impl.RpcErrorMsgConstant.ENCODE_ERROR;
+import static org.infinity.rpc.core.exception.RpcErrorMsgConstant.ENCODE_ERROR;
 
 @SpiName(CODEC_VAL_DEFAULT)
 public class DefaultCodec extends AbstractCodec {

@@ -12,7 +12,7 @@ import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.impl.RpcBizException;
-import org.infinity.rpc.core.exception.impl.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
 import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.Registry;
