@@ -18,7 +18,7 @@ package org.infinity.rpc.core.exception.impl;
 
 import org.infinity.rpc.core.exception.RpcAbstractException;
 import org.infinity.rpc.core.exception.RpcErrorConstants;
-import org.infinity.rpc.core.exception.RpcErrorMsg;
+import org.infinity.rpc.core.exception.RpcError;
 
 public class RpcServiceException extends RpcAbstractException {
 
@@ -28,31 +28,31 @@ public class RpcServiceException extends RpcAbstractException {
         super(RpcErrorConstants.SERVICE_DEFAULT_ERROR);
     }
 
-    public RpcServiceException(RpcErrorMsg rpcErrorMsg) {
-        super(rpcErrorMsg);
+    public RpcServiceException(RpcError rpcError) {
+        super(rpcError);
     }
 
     public RpcServiceException(String message) {
         super(message, RpcErrorConstants.SERVICE_DEFAULT_ERROR);
     }
 
-    public RpcServiceException(String message, RpcErrorMsg rpcErrorMsg) {
-        super(message, rpcErrorMsg);
+    public RpcServiceException(String message, RpcError rpcError) {
+        super(message, rpcError);
     }
 
     public RpcServiceException(String message, Throwable cause) {
         super(message, cause, RpcErrorConstants.SERVICE_DEFAULT_ERROR);
     }
 
-    public RpcServiceException(String message, Throwable cause, RpcErrorMsg rpcErrorMsg) {
-        super(message, cause, rpcErrorMsg);
+    public RpcServiceException(String message, Throwable cause, RpcError rpcError) {
+        super(message, cause, rpcError);
     }
 
     public RpcServiceException(Throwable cause) {
         super(cause, RpcErrorConstants.SERVICE_DEFAULT_ERROR);
     }
 
-    public RpcServiceException(Throwable cause, RpcErrorMsg rpcErrorMsg) {
-        super(cause, rpcErrorMsg);
+    public RpcServiceException(Throwable cause, RpcError rpcError) {
+        super(cause, rpcError);
     }
 }

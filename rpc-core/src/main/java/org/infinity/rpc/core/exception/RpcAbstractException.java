@@ -4,17 +4,17 @@ import org.infinity.rpc.core.utils.RpcRequestIdHolder;
 
 public abstract class RpcAbstractException extends RuntimeException {
 
-    private static final long        serialVersionUID = 2095011577273198213L;
-    protected            RpcErrorMsg rpcErrorMsg      = RpcErrorConstants.FRAMEWORK_DEFAULT_ERROR;
-    protected            String      errorMsg         = null;
+    private static final long     serialVersionUID = 2095011577273198213L;
+    protected            RpcError rpcError         = RpcErrorConstants.FRAMEWORK_DEFAULT_ERROR;
+    protected            String   errorMsg         = null;
 
     public RpcAbstractException() {
         super();
     }
 
-    public RpcAbstractException(RpcErrorMsg rpcErrorMsg) {
+    public RpcAbstractException(RpcError rpcError) {
         super();
-        this.rpcErrorMsg = rpcErrorMsg;
+        this.rpcError = rpcError;
     }
 
     public RpcAbstractException(String message) {
@@ -22,9 +22,9 @@ public abstract class RpcAbstractException extends RuntimeException {
         this.errorMsg = message;
     }
 
-    public RpcAbstractException(String message, RpcErrorMsg rpcErrorMsg) {
+    public RpcAbstractException(String message, RpcError rpcError) {
         super(message);
-        this.rpcErrorMsg = rpcErrorMsg;
+        this.rpcError = rpcError;
         this.errorMsg = message;
     }
 
@@ -33,9 +33,9 @@ public abstract class RpcAbstractException extends RuntimeException {
         this.errorMsg = message;
     }
 
-    public RpcAbstractException(String message, Throwable cause, RpcErrorMsg rpcErrorMsg) {
+    public RpcAbstractException(String message, Throwable cause, RpcError rpcError) {
         super(message, cause);
-        this.rpcErrorMsg = rpcErrorMsg;
+        this.rpcError = rpcError;
         this.errorMsg = message;
     }
 
@@ -43,20 +43,20 @@ public abstract class RpcAbstractException extends RuntimeException {
         super(cause);
     }
 
-    public RpcAbstractException(Throwable cause, RpcErrorMsg rpcErrorMsg) {
+    public RpcAbstractException(Throwable cause, RpcError rpcError) {
         super(cause);
-        this.rpcErrorMsg = rpcErrorMsg;
+        this.rpcError = rpcError;
     }
 
     @Override
     public String getMessage() {
         String message = getOriginMessage();
-        return "errorMsg: " + message + ", status: " + rpcErrorMsg.getStatus() + ", errorCode: " + rpcErrorMsg.getErrorCode()
+        return "errorMsg: " + message + ", status: " + rpcError.getStatus() + ", errorCode: " + rpcError.getCode()
                 + ", requestId: " + RpcRequestIdHolder.getRequestId();
     }
 
     public String getOriginMessage() {
-        if (rpcErrorMsg == null) {
+        if (rpcError == null) {
             return super.getMessage();
         }
 
@@ -65,20 +65,20 @@ public abstract class RpcAbstractException extends RuntimeException {
         if (errorMsg != null && !"".equals(errorMsg)) {
             message = errorMsg;
         } else {
-            message = rpcErrorMsg.getMessage();
+            message = rpcError.getMessage();
         }
         return message;
     }
 
     public int getStatus() {
-        return rpcErrorMsg != null ? rpcErrorMsg.getStatus() : 0;
+        return rpcError != null ? rpcError.getStatus() : 0;
     }
 
     public int getErrorCode() {
-        return rpcErrorMsg != null ? rpcErrorMsg.getErrorCode() : 0;
+        return rpcError != null ? rpcError.getCode() : 0;
     }
 
-    public RpcErrorMsg getRpcErrorMsg() {
-        return rpcErrorMsg;
+    public RpcError getRpcErrorMsg() {
+        return rpcError;
     }
 }

@@ -7,9 +7,19 @@ import java.io.Serializable;
 
 @AllArgsConstructor
 @Getter
-public class RpcErrorMsg implements Serializable {
+public class RpcError implements Serializable {
+    
     private static final long   serialVersionUID = -3436571373083796381L;
+    /**
+     * Error status
+     */
     private final        int    status;
-    private final        int    errorCode;
+    /**
+     * Error code
+     */
+    private final        int    code;
+    /**
+     * Error message
+     */
     private final        String message;
 }

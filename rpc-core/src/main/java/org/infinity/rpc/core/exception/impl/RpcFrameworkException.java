@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.exception.impl;
 
 import org.infinity.rpc.core.exception.RpcAbstractException;
-import org.infinity.rpc.core.exception.RpcErrorMsg;
+import org.infinity.rpc.core.exception.RpcError;
 
 public class RpcFrameworkException extends RpcAbstractException {
 
@@ -19,11 +19,11 @@ public class RpcFrameworkException extends RpcAbstractException {
         super(message, cause);
     }
 
-    public RpcFrameworkException(String message, Throwable cause, RpcErrorMsg errorMsg) {
+    public RpcFrameworkException(String message, Throwable cause, RpcError errorMsg) {
         super(message, cause, errorMsg);
     }
 
-    public RpcFrameworkException(String message, RpcErrorMsg errorMsg) {
+    public RpcFrameworkException(String message, RpcError errorMsg) {
         super(message, errorMsg);
     }
 }
