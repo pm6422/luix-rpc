@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.registry;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.concurrent.NotThreadSafe;
@@ -40,7 +40,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
             registry = createRegistry(registryUrl);
             if (registry == null) {
                 throw new RpcFrameworkException("Failed to create registry for url [" + registryUrl + "]",
-                        RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+                        RpcErrorConstants.FRAMEWORK_INIT_ERROR);
             }
             long elapsed = System.currentTimeMillis() - start;
             log.debug("Created registry [{}] in {} ms", registry.getClass().getSimpleName(), elapsed);
@@ -48,7 +48,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
             return registry;
         } catch (Exception e) {
             throw new RpcFrameworkException("Failed to create registry for url [" + registryUrl + "]", e,
-                    RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+                    RpcErrorConstants.FRAMEWORK_INIT_ERROR);
         } finally {
             lock.unlock();
         }

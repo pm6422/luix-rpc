@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.codec;
 
 
-import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.utilities.serializer.Serializer;
@@ -10,7 +10,7 @@ import java.io.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.rpc.core.exception.RpcErrorMsgConstant.ENCODE_ERROR;
+import static org.infinity.rpc.core.exception.RpcErrorConstants.ENCODE_ERROR;
 
 public abstract class AbstractCodec implements Codec {
 
@@ -68,7 +68,7 @@ public abstract class AbstractCodec implements Codec {
             return new ObjectInputStream(in);
         } catch (Exception e) {
             throw new RpcFrameworkException("Failed to create object input stream by " + this.getClass().getSimpleName(), e,
-                    RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
+                    RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
         }
     }
 }

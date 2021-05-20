@@ -9,7 +9,7 @@ import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcAbstractException;
-import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
@@ -53,7 +53,7 @@ public class DefaultInvokerCluster implements InvokerCluster {
                 return handleError(request, e);
             }
         }
-        return handleError(request, new RpcServiceException(RpcErrorMsgConstant.SERVICE_NOT_FOUND));
+        return handleError(request, new RpcServiceException(RpcErrorConstants.SERVICE_NOT_FOUND));
     }
 
     private Responseable handleError(Requestable request, Exception cause) {

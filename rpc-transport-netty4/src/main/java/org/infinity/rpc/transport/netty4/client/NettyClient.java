@@ -12,7 +12,7 @@ import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.RpcAbstractException;
-import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.exchange.Channel;
@@ -150,7 +150,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         bootstrap = new Bootstrap();
         int timeout = getProviderUrl().getIntOption(CONNECT_TIMEOUT, CONNECT_TIMEOUT_VAL_DEFAULT);
         if (timeout <= 0) {
-            throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+            throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorConstants.FRAMEWORK_INIT_ERROR);
         }
         bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout);
         bootstrap.option(ChannelOption.TCP_NODELAY, true);
@@ -330,7 +330,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         if (this.callbackMap.size() >= RpcConstants.NETTY_CLIENT_MAX_REQUEST) {
             // reject request, prevent from OutOfMemoryError
             throw new RpcServiceException("NettyClient over of max concurrent request, drop request, url: "
-                    + providerUrl.getUri() + " requestId=" + requestId, RpcErrorMsgConstant.SERVICE_REJECT);
+                    + providerUrl.getUri() + " requestId=" + requestId, RpcErrorConstants.SERVICE_REJECT);
         }
 
         this.callbackMap.put(requestId, futureResponse);

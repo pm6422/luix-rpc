@@ -7,7 +7,7 @@ import org.infinity.rpc.core.codec.Codec;
 import org.infinity.rpc.core.codec.CodecUtils;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
-import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.exchange.Channel;
@@ -109,7 +109,7 @@ public class NettyChannel implements Channel {
             channelFuture = nettyClient.getBootstrap().connect(remoteAddress);
             int timeout = nettyClient.getProviderUrl().getIntOption(CONNECT_TIMEOUT, CONNECT_TIMEOUT_VAL_DEFAULT);
             if (timeout <= 0) {
-                throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+                throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorConstants.FRAMEWORK_INIT_ERROR);
             }
             // 不去依赖于connectTimeout
             boolean result = channelFuture.awaitUninterruptibly(timeout, TimeUnit.MILLISECONDS);

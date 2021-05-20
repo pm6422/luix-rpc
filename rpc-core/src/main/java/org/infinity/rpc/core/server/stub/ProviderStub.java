@@ -12,7 +12,7 @@ import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.impl.RpcBizException;
-import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.Registry;
@@ -281,7 +281,7 @@ public class ProviderStub<T> {
         if (method == null) {
             RpcServiceException exception =
                     new RpcServiceException("Service method not exist: " + request.getInterfaceName() + "." + request.getMethodName()
-                            + "(" + request.getMethodParameters() + ")", RpcErrorMsgConstant.SERVICE_NOT_FOUND);
+                            + "(" + request.getMethodParameters() + ")", RpcErrorConstants.SERVICE_NOT_FOUND);
             response.setException(exception);
             return response;
         }

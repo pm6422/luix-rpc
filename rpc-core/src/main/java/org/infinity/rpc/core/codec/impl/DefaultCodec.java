@@ -7,7 +7,7 @@ import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.codec.AbstractCodec;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
-import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.exchange.Exchangable;
@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.MAX_PAYLOAD;
 import static org.infinity.rpc.core.constant.ServiceConstants.MAX_PAYLOAD_VAL_DEFAULT;
-import static org.infinity.rpc.core.exception.RpcErrorMsgConstant.ENCODE_ERROR;
+import static org.infinity.rpc.core.exception.RpcErrorConstants.ENCODE_ERROR;
 
 @SpiName(CODEC_VAL_DEFAULT)
 public class DefaultCodec extends AbstractCodec {
@@ -136,23 +136,23 @@ public class DefaultCodec extends AbstractCodec {
     @Override
     public Object decode(Channel channel, String remoteIp, byte[] data) {
         if (data.length <= ProtocolVersion.VERSION_1.getHeaderLength()) {
-            throw new RpcFrameworkException("decode error: format problem", RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
+            throw new RpcFrameworkException("decode error: format problem", RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
         }
 
         short type = ByteUtils.bytes2short(data, 0);
 
         if (type != MAGIC) {
-            throw new RpcFrameworkException("decode error: magic error", RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
+            throw new RpcFrameworkException("decode error: magic error", RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
         }
 
         if (data[2] != ProtocolVersion.VERSION_1.getVersion()) {
-            throw new RpcFrameworkException("decode error: version error", RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
+            throw new RpcFrameworkException("decode error: version error", RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
         }
 
         int bodyLength = ByteUtils.bytes2int(data, 12);
 
         if (ProtocolVersion.VERSION_1.getHeaderLength() + bodyLength != data.length) {
-            throw new RpcFrameworkException("decode error: content length error", RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
+            throw new RpcFrameworkException("decode error: content length error", RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
         }
 
         byte flag = data[3];
@@ -173,12 +173,12 @@ public class DefaultCodec extends AbstractCodec {
             }
         } catch (ClassNotFoundException e) {
             throw new RpcFrameworkException("decode " + (isResponse ? "response" : "request") + " error: class not found", e,
-                    RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
+                    RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
         } catch (Exception e) {
             if (ExceptionUtils.isRpcException(e)) {
                 throw (RuntimeException) e;
             } else {
-                throw new RpcFrameworkException("decode error: isResponse=" + isResponse, e, RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
+                throw new RpcFrameworkException("decode error: isResponse=" + isResponse, e, RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
             }
         }
     }
@@ -282,7 +282,7 @@ public class DefaultCodec extends AbstractCodec {
             response.setException((Exception) result);
         } else {
             throw new RpcFrameworkException("decode error: response dataType not support " + dataType,
-                    RpcErrorMsgConstant.FRAMEWORK_DECODE_ERROR);
+                    RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
         }
 
         response.setRequestId(requestId);

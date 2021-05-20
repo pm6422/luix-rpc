@@ -9,7 +9,7 @@ import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.codec.Codec;
 import org.infinity.rpc.core.codec.CodecUtils;
 import org.infinity.rpc.core.constant.RpcConstants;
-import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.exchange.Channel;
@@ -100,7 +100,7 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
 
     private void rejectMessage(ChannelHandlerContext ctx, NettyMessage msg) {
         if (msg.isRequest()) {
-            returnResponse(ctx, RpcFrameworkUtils.buildErrorResponse((Requestable) msg, new RpcServiceException("process thread pool is full, reject by server: " + ctx.channel().localAddress(), RpcErrorMsgConstant.SERVICE_REJECT)));
+            returnResponse(ctx, RpcFrameworkUtils.buildErrorResponse((Requestable) msg, new RpcServiceException("process thread pool is full, reject by server: " + ctx.channel().localAddress(), RpcErrorConstants.SERVICE_REJECT)));
 
             log.error("process thread pool is full, reject, active={} poolSize={} corePoolSize={} maxPoolSize={} taskCount={} requestId={}",
                     threadPoolExecutor.getActiveCount(), threadPoolExecutor.getPoolSize(), threadPoolExecutor.getCorePoolSize(),

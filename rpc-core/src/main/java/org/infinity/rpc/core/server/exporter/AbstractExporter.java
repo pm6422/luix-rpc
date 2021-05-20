@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.server.exporter;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 
@@ -31,7 +31,7 @@ public abstract class AbstractExporter<T> implements Exportable<T> {
 
         if (!result) {
             log.error(this.getClass().getSimpleName() + " node init Error: " + toString());
-            throw new RpcFrameworkException(this.getClass().getSimpleName() + " node init Error: " + toString(), RpcErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+            throw new RpcFrameworkException(this.getClass().getSimpleName() + " node init Error: " + toString(), RpcErrorConstants.FRAMEWORK_INIT_ERROR);
         } else {
             log.info(this.getClass().getSimpleName() + " node init Success: " + toString());
             initialized = true;

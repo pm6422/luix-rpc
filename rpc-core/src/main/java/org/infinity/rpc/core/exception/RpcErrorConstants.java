@@ -18,7 +18,7 @@ package org.infinity.rpc.core.exception;
 
 import org.infinity.rpc.core.exception.impl.RpcErrorMsg;
 
-public class RpcErrorMsgConstant {
+public class RpcErrorConstants {
     // service error status 503
     public static final int         SERVICE_DEFAULT_ERROR_CODE                     = 10001;
     public static final int         SERVICE_REJECT_ERROR_CODE                      = 10002;
@@ -75,7 +75,7 @@ public class RpcErrorMsgConstant {
      * framework error end
      **/
 
-    private RpcErrorMsgConstant() {
+    private RpcErrorConstants() {
     }
     /** biz error end **/
 }

@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.exchange.TraceableContext;
@@ -165,7 +165,7 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
             state = FutureState.CANCELLED;
             exception = new RpcServiceException(this.getClass().getName() + " request timeout: serverPort=" + serverUrl.getAddress()
                     + " " + request + " cost=" + (System.currentTimeMillis() - createdTime),
-                    RpcErrorMsgConstant.SERVICE_TIMEOUT);
+                    RpcErrorConstants.SERVICE_TIMEOUT);
 
             lock.notifyAll();
         }

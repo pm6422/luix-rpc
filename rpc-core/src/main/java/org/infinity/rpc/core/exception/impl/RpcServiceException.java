@@ -17,14 +17,14 @@
 package org.infinity.rpc.core.exception.impl;
 
 import org.infinity.rpc.core.exception.RpcAbstractException;
-import org.infinity.rpc.core.exception.RpcErrorMsgConstant;
+import org.infinity.rpc.core.exception.RpcErrorConstants;
 
 public class RpcServiceException extends RpcAbstractException {
 
     private static final long serialVersionUID = -631851340032202804L;
 
     public RpcServiceException() {
-        super(RpcErrorMsgConstant.SERVICE_DEFAULT_ERROR);
+        super(RpcErrorConstants.SERVICE_DEFAULT_ERROR);
     }
 
     public RpcServiceException(RpcErrorMsg rpcErrorMsg) {
@@ -32,7 +32,7 @@ public class RpcServiceException extends RpcAbstractException {
     }
 
     public RpcServiceException(String message) {
-        super(message, RpcErrorMsgConstant.SERVICE_DEFAULT_ERROR);
+        super(message, RpcErrorConstants.SERVICE_DEFAULT_ERROR);
     }
 
     public RpcServiceException(String message, RpcErrorMsg rpcErrorMsg) {
@@ -40,7 +40,7 @@ public class RpcServiceException extends RpcAbstractException {
     }
 
     public RpcServiceException(String message, Throwable cause) {
-        super(message, cause, RpcErrorMsgConstant.SERVICE_DEFAULT_ERROR);
+        super(message, cause, RpcErrorConstants.SERVICE_DEFAULT_ERROR);
     }
 
     public RpcServiceException(String message, Throwable cause, RpcErrorMsg rpcErrorMsg) {
@@ -48,7 +48,7 @@ public class RpcServiceException extends RpcAbstractException {
     }
 
     public RpcServiceException(Throwable cause) {
-        super(cause, RpcErrorMsgConstant.SERVICE_DEFAULT_ERROR);
+        super(cause, RpcErrorConstants.SERVICE_DEFAULT_ERROR);
     }
 
     public RpcServiceException(Throwable cause, RpcErrorMsg rpcErrorMsg) {
