@@ -16,8 +16,6 @@
 
 package org.infinity.rpc.core.exception;
 
-import org.infinity.rpc.core.exception.impl.RpcErrorMsg;
-
 public class RpcErrorConstants {
     // service error status 503
     public static final int         SERVICE_DEFAULT_ERROR_CODE                     = 10001;

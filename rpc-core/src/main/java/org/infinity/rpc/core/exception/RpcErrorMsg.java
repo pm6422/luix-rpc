@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.exception.impl;
+package org.infinity.rpc.core.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

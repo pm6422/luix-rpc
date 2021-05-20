@@ -1,6 +1,5 @@
 package org.infinity.rpc.core.exception;
 
-import org.infinity.rpc.core.exception.impl.RpcErrorMsg;
 import org.infinity.rpc.core.utils.RpcRequestIdHolder;
 
 public abstract class RpcAbstractException extends RuntimeException {

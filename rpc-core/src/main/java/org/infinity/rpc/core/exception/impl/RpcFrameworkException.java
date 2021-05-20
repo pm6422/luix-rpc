@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.exception.impl;
 
 import org.infinity.rpc.core.exception.RpcAbstractException;
+import org.infinity.rpc.core.exception.RpcErrorMsg;
 
 public class RpcFrameworkException extends RpcAbstractException {
 
