@@ -9,9 +9,7 @@ import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.codec.Codec;
 import org.infinity.rpc.core.codec.CodecUtils;
 import org.infinity.rpc.core.constant.RpcConstants;
-import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
-import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.server.response.Responseable;
@@ -100,7 +98,8 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
 
     private void rejectMessage(ChannelHandlerContext ctx, NettyMessage msg) {
         if (msg.isRequest()) {
-            returnResponse(ctx, RpcFrameworkUtils.buildErrorResponse((Requestable) msg, new RpcServiceException("process thread pool is full, reject by server: " + ctx.channel().localAddress(), RpcErrorConstants.SERVICE_REJECT)));
+            returnResponse(ctx, RpcFrameworkUtils.buildErrorResponse((Requestable) msg,
+                    new RpcFrameworkException("Reject the request for no active thread on server [" + ctx.channel().localAddress() + "]")));
 
             log.error("process thread pool is full, reject, active={} poolSize={} corePoolSize={} maxPoolSize={} taskCount={} requestId={}",
                     threadPoolExecutor.getActiveCount(), threadPoolExecutor.getPoolSize(), threadPoolExecutor.getCorePoolSize(),
@@ -156,7 +155,7 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
                 result = messageHandler.handle(channel, request);
             } catch (Exception e) {
                 log.error("NettyChannelHandler processRequest fail! request:" + request, e);
-                result = RpcFrameworkUtils.buildErrorResponse(request, new RpcServiceException("process request fail. errmsg:" + e.getMessage()));
+                result = RpcFrameworkUtils.buildErrorResponse(request, new RpcFrameworkException("Failed to process request with error [" + e.getMessage() + "]"));
             }
             if (result instanceof Responseable) {
                 RpcFrameworkUtils.logEvent((Responseable) result, RpcConstants.TRACE_PROCESS);

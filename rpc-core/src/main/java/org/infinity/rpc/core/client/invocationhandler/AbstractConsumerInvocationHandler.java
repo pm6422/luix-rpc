@@ -5,7 +5,7 @@ import org.infinity.rpc.core.client.ratelimit.RateLimiter;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.core.exception.impl.RpcServiceException;
+import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.utils.RpcConfigValidator;
 import org.infinity.rpc.core.utils.RpcRequestIdHolder;
@@ -68,7 +68,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
             response = consumerStub.getInvokerCluster().invoke(request);
             return response.getResult();
         } catch (Exception ex) {
-            throw new RpcServiceException(ex);
+            throw new RpcFrameworkException(ex);
         } finally {
             RpcRequestIdHolder.destroy();
         }

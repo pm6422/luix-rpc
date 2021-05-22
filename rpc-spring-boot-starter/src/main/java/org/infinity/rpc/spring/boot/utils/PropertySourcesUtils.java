@@ -3,7 +3,7 @@ package org.infinity.rpc.spring.boot.utils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.infinity.rpc.core.config.Configurable;
-import org.infinity.rpc.core.exception.impl.RpcConfigurationException;
+import org.infinity.rpc.core.exception.impl.RpcConfigException;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.env.PropertySource;
@@ -83,7 +83,7 @@ public abstract class PropertySourcesUtils {
             try {
                 FieldUtils.writeField(configClz.getDeclaredField(entry.getKey()), config, entry.getValue(), true);
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new RpcConfigurationException("Failed to set configuration property: " + entry.getKey());
+                throw new RpcConfigException("Failed to set configuration property: " + entry.getKey());
             }
         }
     }

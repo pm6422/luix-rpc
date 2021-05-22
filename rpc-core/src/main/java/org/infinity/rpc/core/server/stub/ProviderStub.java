@@ -12,8 +12,7 @@ import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.impl.RpcBizException;
-import org.infinity.rpc.core.exception.RpcErrorConstants;
-import org.infinity.rpc.core.exception.impl.RpcServiceException;
+import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
@@ -58,26 +57,26 @@ public class ProviderStub<T> {
      * Provider stub bean name
      */
     @NotNull(message = "The [beanName] property must NOT be null!")
-    private             String              beanName;
+    private           String              beanName;
     /**
      * The interface class of the provider
      */
     @NotNull(message = "The [interfaceClass] property of @Provider must NOT be null!")
-    private             Class<T>            interfaceClass;
+    private           Class<T>            interfaceClass;
     /**
      * The provider interface fully-qualified name
      */
     @NotEmpty(message = "The [interfaceName] property of @Provider must NOT be empty!")
-    private             String              interfaceName;
+    private           String              interfaceName;
     /**
      * Protocol
      */
-    private             String              protocol;
+    private           String              protocol;
     /**
      * One service interface may have multiple implementations(forms),
      * It used to distinguish between different implementations of service provider interface
      */
-    private             String              form;
+    private           String              form;
     /**
      * When the service changes, such as adding or deleting methods, and interface parameters change,
      * the provider and consumer application instances need to be upgraded.
@@ -88,49 +87,49 @@ public class ProviderStub<T> {
      * The old version of the consumer instance calls the old version of the provider instance.
      * Observe that there is no problem and repeat this process to complete the upgrade.
      */
-    private             String              version;
+    private           String              version;
     /**
      *
      */
-    private             String              healthChecker;
+    private           String              healthChecker;
     /**
      *
      */
     @Min(value = 0, message = "The [timeout] property of @Provider must NOT be a negative number!")
-    private             Integer             requestTimeout;
+    private           Integer             requestTimeout;
     /**
      * The max retry times of RPC request
      */
     @Min(value = 0, message = "The [maxRetries] property of @Provider must NOT be a negative number!")
     @Max(value = 10, message = "The [maxRetries] property of @Provider must NOT be bigger than 10!")
-    private             Integer             maxRetries;
+    private           Integer             maxRetries;
     /**
      * The max response message payload size in bytes
      */
     @Min(value = 0, message = "The [maxPayload] property of @Provider must NOT be a positive number!")
-    private             Integer             maxPayload;
+    private           Integer             maxPayload;
     /**
      * The provider instance
      * Disable serialize
      */
     @NotNull
-    private transient   T                   instance;
+    private transient T                   instance;
     /**
      * Method signature to method cache map for the provider class
      */
-    private transient   Map<String, Method> methodsCache            = new HashMap<>();
+    private transient Map<String, Method> methodsCache    = new HashMap<>();
     /**
      * All the methods of the interface class
      */
-    private             List<MethodData>    methodDataCache         = new ArrayList<>();
+    private           List<MethodData>    methodDataCache = new ArrayList<>();
     /**
      * The provider url
      */
-    private             Url                 url;
+    private           Url                 url;
     /**
      * Indicator used to identify whether the provider already been registered
      */
-    private final       AtomicBoolean       exported                = new AtomicBoolean(false);
+    private final     AtomicBoolean       exported        = new AtomicBoolean(false);
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
@@ -279,9 +278,9 @@ public class ProviderStub<T> {
 
         Method method = findMethod(request.getMethodName(), request.getMethodParameters());
         if (method == null) {
-            RpcServiceException exception =
-                    new RpcServiceException("Service method not exist: " + request.getInterfaceName() + "." + request.getMethodName()
-                            + "(" + request.getMethodParameters() + ")", RpcErrorConstants.SERVICE_NOT_FOUND);
+            RpcFrameworkException exception =
+                    new RpcFrameworkException("Service method not exist: " + request.getInterfaceName() + "." + request.getMethodName()
+                            + "(" + request.getMethodParameters() + ")");
             response.setException(exception);
             return response;
         }
@@ -314,9 +313,9 @@ public class ProviderStub<T> {
         } catch (Throwable t) {
             // 如果服务发生Error，将Error转化为Exception，防止拖垮调用方
             if (t.getCause() != null) {
-                response.setException(new RpcServiceException("provider has encountered a fatal error!", t.getCause()));
+                response.setException(new RpcFrameworkException("Failed to invoke service provider", t.getCause()));
             } else {
-                response.setException(new RpcServiceException("provider has encountered a fatal error!", t));
+                response.setException(new RpcFrameworkException("Failed to invoke service provider", t));
             }
             //对于Throwable,也记录日志
             log.error("Exception caught when during method invocation. request:" + request, t);

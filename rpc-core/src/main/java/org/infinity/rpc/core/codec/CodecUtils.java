@@ -13,8 +13,6 @@ import org.infinity.rpc.utilities.lang.ByteUtils;
 
 import java.io.IOException;
 
-import static org.infinity.rpc.core.exception.RpcErrorConstants.ENCODE_ERROR;
-
 @Slf4j
 public class CodecUtils {
     public static byte[] encodeObjectToBytes(Channel channel, Codec codec, Exchangable msg) {
@@ -28,10 +26,10 @@ public class CodecUtils {
 //                return data;
 //            }
             else {
-                throw new RpcFrameworkException("can not encode message, unknown magic:" + type);
+                throw new RpcFrameworkException("Found invalid magic [" + type + "]");
             }
         } catch (IOException e) {
-            throw new RpcFrameworkException("encode error: isResponse=" + (msg instanceof Responseable), e, ENCODE_ERROR);
+            throw new RpcFrameworkException("Failed to encode object " + msg.toString(), e);
         }
     }
 

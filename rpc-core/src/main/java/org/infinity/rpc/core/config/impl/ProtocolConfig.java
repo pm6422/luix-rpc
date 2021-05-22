@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.codec.Codec;
 import org.infinity.rpc.core.config.Configurable;
-import org.infinity.rpc.core.exception.impl.RpcConfigurationException;
+import org.infinity.rpc.core.exception.impl.RpcConfigException;
 import org.infinity.rpc.core.network.LocalAddressFactory;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.utils.RpcConfigValidator;
@@ -129,10 +129,10 @@ public class ProtocolConfig implements Configurable {
     @Override
     public void checkValidity() {
         Optional.ofNullable(Protocol.getInstance(name))
-                .orElseThrow(() -> new RpcConfigurationException(String.format("Failed to load the specified protocol [%s]!", name)));
+                .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the specified protocol [%s]!", name)));
 
         Optional.ofNullable(Codec.getInstance(codec))
-                .orElseThrow(() -> new RpcConfigurationException(String.format("Failed to load the specified codec [%s]!", codec)));
+                .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the specified codec [%s]!", codec)));
 
         if (StringUtils.isNotEmpty(host)) {
             RpcConfigValidator.isTrue(AddressUtils.isValidIp(host), "Please specify a valid host!");

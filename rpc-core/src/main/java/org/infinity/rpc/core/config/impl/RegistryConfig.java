@@ -3,7 +3,7 @@ package org.infinity.rpc.core.config.impl;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.Configurable;
-import org.infinity.rpc.core.exception.impl.RpcConfigurationException;
+import org.infinity.rpc.core.exception.impl.RpcConfigException;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.url.Url;
@@ -89,7 +89,7 @@ public class RegistryConfig implements Configurable {
     @Override
     public void checkValidity() {
         Optional.ofNullable(RegistryFactory.getInstance(name))
-                .orElseThrow(() -> new RpcConfigurationException("Failed to load the specified registry factory, " +
+                .orElseThrow(() -> new RpcConfigException("Failed to load the specified registry factory, " +
                         "please check whether the dependency [rpc-registry-" + name + "] is in your class path!"));
     }
 

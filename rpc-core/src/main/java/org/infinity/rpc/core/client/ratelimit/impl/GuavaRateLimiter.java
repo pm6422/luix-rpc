@@ -2,7 +2,7 @@ package org.infinity.rpc.core.client.ratelimit.impl;
 
 import com.google.common.annotations.Beta;
 import org.infinity.rpc.core.client.ratelimit.RateLimiter;
-import org.infinity.rpc.core.exception.impl.RpcConfigurationException;
+import org.infinity.rpc.core.exception.impl.RpcConfigException;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.RATE_LIMITER_GUAVA;
@@ -21,7 +21,7 @@ public class GuavaRateLimiter implements RateLimiter {
     @Override
     public void update(long permitsPerSecond) {
         if (rateLimiter == null) {
-            throw new RpcConfigurationException("Please initialize it before use!");
+            throw new RpcConfigException("Please initialize it before use!");
         }
         rateLimiter.setRate(permitsPerSecond);
     }
@@ -29,7 +29,7 @@ public class GuavaRateLimiter implements RateLimiter {
     @Override
     public boolean tryAcquire() {
         if (rateLimiter == null) {
-            throw new RpcConfigurationException("Please initialize it before use!");
+            throw new RpcConfigException("Please initialize it before use!");
         }
         return rateLimiter.tryAcquire();
     }

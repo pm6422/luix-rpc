@@ -6,17 +6,15 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
-import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.exchange.TraceableContext;
 import org.infinity.rpc.core.exchange.constants.FutureState;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
-import org.infinity.rpc.utilities.serializer.DeserializableObject;
 import org.infinity.rpc.core.server.response.FutureListener;
 import org.infinity.rpc.core.server.response.FutureResponse;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.utilities.serializer.DeserializableObject;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -86,7 +84,7 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
 
     @Override
     public boolean cancel() {
-        Exception e = new RpcServiceException(this.getClass().getName() + " task cancel: serverPort=" + serverUrl.getAddress() + " "
+        Exception e = new RpcFrameworkException(this.getClass().getName() + " task cancel: serverPort=" + serverUrl.getAddress() + " "
                 + request.toString() + " cost=" + (System.currentTimeMillis() - createdTime));
         return cancel(e);
     }
@@ -163,10 +161,8 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
             }
 
             state = FutureState.CANCELLED;
-            exception = new RpcServiceException(this.getClass().getName() + " request timeout: serverPort=" + serverUrl.getAddress()
-                    + " " + request + " cost=" + (System.currentTimeMillis() - createdTime),
-                    RpcErrorConstants.SERVICE_TIMEOUT);
-
+            exception = new RpcFrameworkException(this.getClass().getName() + " request timeout: serverPort=" + serverUrl.getAddress()
+                    + " " + request + " cost=" + (System.currentTimeMillis() - createdTime));
             lock.notifyAll();
         }
 
@@ -223,7 +219,7 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
                 try {
                     lock.wait();
                 } catch (Exception e) {
-                    cancel(new RpcServiceException(this.getClass().getName() + " getValue InterruptedException : "
+                    cancel(new RpcFrameworkException(this.getClass().getName() + " getValue InterruptedException : "
                             + request.toString() + " cost=" + (System.currentTimeMillis() - createdTime), e));
                 }
                 return getResultOrThrowable();
@@ -258,7 +254,7 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
 
     private Object getResultOrThrowable() {
         if (exception != null) {
-            throw (exception instanceof RuntimeException) ? (RuntimeException) exception : new RpcServiceException(
+            throw (exception instanceof RuntimeException) ? (RuntimeException) exception : new RpcFrameworkException(
                     exception.getMessage(), exception);
         }
         if (resultObject != null && returnType != null && resultObject instanceof DeserializableObject) {

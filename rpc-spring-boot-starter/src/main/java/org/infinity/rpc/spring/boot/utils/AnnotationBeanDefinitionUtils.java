@@ -1,7 +1,7 @@
 package org.infinity.rpc.spring.boot.utils;
 
 import org.infinity.rpc.core.constant.BooleanEnum;
-import org.infinity.rpc.core.exception.impl.RpcConfigurationException;
+import org.infinity.rpc.core.exception.impl.RpcConfigException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
@@ -49,7 +49,7 @@ public abstract class AnnotationBeanDefinitionUtils {
             Assert.isTrue(CollectionUtils.isEmpty(messages), String.join(",", messages));
         } catch (Exception e) {
             // Re-throw the exception
-            throw new RpcConfigurationException(e.getMessage());
+            throw new RpcConfigException(e.getMessage());
         }
     }
 

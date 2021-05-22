@@ -1,16 +1,13 @@
 package org.infinity.rpc.core.codec;
 
 
-import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
-import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.utilities.serializer.Serializer;
 
 import java.io.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.rpc.core.exception.RpcErrorConstants.ENCODE_ERROR;
 
 public abstract class AbstractCodec implements Codec {
 
@@ -18,7 +15,7 @@ public abstract class AbstractCodec implements Codec {
 
     protected void checkMessagePayloadSize(int actualPayloadSize, int maxPayloadSize) {
         if (actualPayloadSize > maxPayloadSize) {
-            throw new RpcServiceException("The request data must NOT exceed the max message payload [" + maxPayloadSize + "]");
+            throw new RpcFrameworkException("The request data must NOT exceed the max message payload [" + maxPayloadSize + "]");
         }
     }
 
@@ -59,7 +56,7 @@ public abstract class AbstractCodec implements Codec {
         try {
             return new ObjectOutputStream(outputStream);
         } catch (Exception e) {
-            throw new RpcFrameworkException("Failed to create output stream by " + this.getClass().getSimpleName(), e, ENCODE_ERROR);
+            throw new RpcFrameworkException("Failed to create output stream by " + this.getClass().getSimpleName(), e);
         }
     }
 
@@ -67,8 +64,7 @@ public abstract class AbstractCodec implements Codec {
         try {
             return new ObjectInputStream(in);
         } catch (Exception e) {
-            throw new RpcFrameworkException("Failed to create object input stream by " + this.getClass().getSimpleName(), e,
-                    RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
+            throw new RpcFrameworkException("Failed to create object input stream by " + this.getClass().getSimpleName());
         }
     }
 }

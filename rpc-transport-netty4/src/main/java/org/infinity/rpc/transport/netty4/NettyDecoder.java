@@ -4,14 +4,13 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.constant.RpcConstants;
-import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
-import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.codec.Codec;
 import org.infinity.rpc.core.codec.CodecUtils;
-import org.infinity.rpc.core.server.response.Responseable;
+import org.infinity.rpc.core.constant.RpcConstants;
+import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
+import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 
 import java.util.List;
@@ -122,7 +121,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
         if (maxContentLength > 0 && dataLength > maxContentLength) {
             log.warn("NettyDecoder transport data content length over of limit, size: {}  > {}. remote={} local={}",
                     dataLength, maxContentLength, ctx.channel().remoteAddress(), ctx.channel().localAddress());
-            Exception e = new RpcServiceException("NettyDecoder transport data content length over of limit, size: " + dataLength + " > " + maxContentLength);
+            Exception e = new RpcFrameworkException("NettyDecoder transport data content length over of limit, size: " + dataLength + " > " + maxContentLength);
             if (isRequest) {
                 Responseable response = RpcFrameworkUtils.buildErrorResponse(requestId, version.getVersion(), e);
                 byte[] msg = CodecUtils.encodeObjectToBytes(channel, codec, response);

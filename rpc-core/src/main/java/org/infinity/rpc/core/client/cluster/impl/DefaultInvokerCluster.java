@@ -9,8 +9,7 @@ import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcAbstractException;
-import org.infinity.rpc.core.exception.RpcErrorConstants;
-import org.infinity.rpc.core.exception.impl.RpcServiceException;
+import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
@@ -53,7 +52,7 @@ public class DefaultInvokerCluster implements InvokerCluster {
                 return handleError(request, e);
             }
         }
-        return handleError(request, new RpcServiceException(RpcErrorConstants.SERVICE_NOT_FOUND));
+        return handleError(request, new RpcFrameworkException("Service not found!"));
     }
 
     private Responseable handleError(Requestable request, Exception cause) {
@@ -67,7 +66,7 @@ public class DefaultInvokerCluster implements InvokerCluster {
             if (cause instanceof RpcAbstractException) {
                 throw (RpcAbstractException) cause;
             } else {
-                throw new RpcServiceException("Failed to call the request!", cause);
+                throw new RpcFrameworkException("Failed to call the request!", cause);
             }
         }
         return RpcResponse.error(request, cause);

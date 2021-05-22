@@ -8,7 +8,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
-import org.infinity.rpc.core.exception.impl.TransportException;
+import org.infinity.rpc.core.exception.TransportException;
 import org.infinity.rpc.core.exchange.callback.StatisticCallback;
 import org.infinity.rpc.core.exchange.constants.ChannelState;
 import org.infinity.rpc.core.exchange.server.AbstractServer;

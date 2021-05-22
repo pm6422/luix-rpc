@@ -2,7 +2,6 @@ package org.infinity.rpc.core.exchange.endpoint;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.checkhealth.HealthChecker;
 import org.infinity.rpc.core.exchange.client.Client;
@@ -84,7 +83,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
                     throw new RpcFrameworkException(
                             "Service export Error: share channel but some config param is different, " +
                                     "protocol or codec or serialize or maxContentLength or maxServerConnection or maxWorkerThread or heartbeatFactory, source="
-                                    + server.getProviderUrl() + " target=" + providerUrl, RpcErrorConstants.FRAMEWORK_EXPORT_ERROR);
+                                    + server.getProviderUrl() + " target=" + providerUrl);
                 }
 
                 saveEndpoint2Urls(server2UrlsShareChannel, server, protocolKey);

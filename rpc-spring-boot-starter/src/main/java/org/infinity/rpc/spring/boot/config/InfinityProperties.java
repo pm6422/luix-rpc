@@ -3,7 +3,7 @@ package org.infinity.rpc.spring.boot.config;
 import lombok.Data;
 import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.config.impl.*;
-import org.infinity.rpc.core.exception.impl.RpcConfigurationException;
+import org.infinity.rpc.core.exception.impl.RpcConfigException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -91,7 +91,7 @@ public class InfinityProperties implements InitializingBean {
                     .filter(registry -> registry.getName().equals(REGISTRY_VAL_NONE))
                     .findAny();
             if (registryConfig.isPresent()) {
-                throw new RpcConfigurationException("Do NOT use direct registry when using multiple registries!");
+                throw new RpcConfigException("Do NOT use direct registry when using multiple registries!");
             }
         }
         return registries.values();

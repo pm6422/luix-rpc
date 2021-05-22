@@ -5,7 +5,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.constant.RpcConstants;
-import org.infinity.rpc.core.exception.impl.RpcConfigurationException;
+import org.infinity.rpc.core.exception.impl.RpcConfigException;
 import org.infinity.rpc.core.registry.Registry;
 
 import java.io.Serializable;
@@ -330,7 +330,7 @@ public final class Url implements Serializable {
         i = url.indexOf("://");
         if (i >= 0) {
             if (i == 0) {
-                throw new RpcConfigurationException("url missing protocol: \"" + url + "\"");
+                throw new RpcConfigException("url missing protocol: \"" + url + "\"");
             }
             protocol = url.substring(0, i);
             url = url.substring(i + 3);
@@ -338,7 +338,7 @@ public final class Url implements Serializable {
             i = url.indexOf(":/");
             if (i >= 0) {
                 if (i == 0) {
-                    throw new RpcConfigurationException("url missing protocol: \"" + url + "\"");
+                    throw new RpcConfigException("url missing protocol: \"" + url + "\"");
                 }
                 protocol = url.substring(0, i);
                 url = url.substring(i + 1);

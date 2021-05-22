@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.exchange;
 
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.exception.impl.TransportException;
+import org.infinity.rpc.core.exception.TransportException;
 import org.infinity.rpc.core.exchange.constants.ChannelState;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.url.Url;

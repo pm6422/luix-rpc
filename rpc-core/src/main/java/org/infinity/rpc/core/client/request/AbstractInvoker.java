@@ -1,7 +1,6 @@
 package org.infinity.rpc.core.client.request;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.url.Url;
@@ -32,8 +31,7 @@ public abstract class AbstractInvoker implements Invokable {
         }
         boolean result = doInit();
         if (!result) {
-            throw new RpcFrameworkException("Failed to initialize the provider invoker [" + this + "]!",
-                    RpcErrorConstants.FRAMEWORK_INIT_ERROR);
+            throw new RpcFrameworkException("Failed to initialize the provider invoker [" + this + "]!");
         } else {
             setActive(true);
         }

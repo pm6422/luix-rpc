@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.client.request.impl.DefaultInvoker;
-import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.exporter.Exportable;
 import org.infinity.rpc.core.server.stub.ProviderStub;
@@ -25,15 +24,14 @@ public abstract class AbstractProtocol implements Protocol {
     @Override
     public <T> Exportable<T> export(ProviderStub<T> providerStub) {
         if (providerStub.getUrl() == null) {
-            throw new RpcFrameworkException(this.getClass().getSimpleName() + " export Error: url is null", RpcErrorConstants.FRAMEWORK_INIT_ERROR);
+            throw new RpcFrameworkException("Url must NOT be null!");
         }
 
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerStub.getUrl());
         synchronized (exporterMap) {
             Exportable<T> exporter = (Exportable<T>) exporterMap.get(protocolKey);
             if (exporter != null) {
-                throw new RpcFrameworkException(this.getClass().getSimpleName() + " export Error: service already exist, url=" + providerStub.getUrl(),
-                        RpcErrorConstants.FRAMEWORK_INIT_ERROR);
+                throw new RpcFrameworkException("Can NOT re-export service [" + providerStub.getUrl() + "]");
             }
 
             exporter = doExport(providerStub);
@@ -41,7 +39,7 @@ public abstract class AbstractProtocol implements Protocol {
 
             // todo: check useless statement
             exporterMap.put(protocolKey, exporter);
-            log.info(this.getClass().getSimpleName() + " export Success: url=" + providerStub.getUrl());
+            log.info("Exported service [{}]", providerStub.getUrl());
             return exporter;
         }
     }
@@ -49,10 +47,10 @@ public abstract class AbstractProtocol implements Protocol {
     @Override
     public Invokable refer(String interfaceName, Url providerUrl) {
         if (StringUtils.isEmpty(interfaceName)) {
-            throw new RpcFrameworkException("Provider interface must NOT be null!", RpcErrorConstants.FRAMEWORK_INIT_ERROR);
+            throw new RpcFrameworkException("Provider interface must NOT be null!");
         }
         if (providerUrl == null) {
-            throw new RpcFrameworkException("Provider url must NOT be null!", RpcErrorConstants.FRAMEWORK_INIT_ERROR);
+            throw new RpcFrameworkException("Provider url must NOT be null!");
         }
         // todo: create different caller associated with the protocol
         return new DefaultInvoker(interfaceName, providerUrl);

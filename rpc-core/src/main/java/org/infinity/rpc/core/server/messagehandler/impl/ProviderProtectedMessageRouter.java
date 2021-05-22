@@ -19,8 +19,7 @@ package org.infinity.rpc.core.server.messagehandler.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.exception.RpcErrorConstants;
-import org.infinity.rpc.core.exception.impl.RpcServiceException;
+import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.server.stub.ProviderStub;
@@ -84,8 +83,8 @@ public class ProviderProtectedMessageRouter extends ProviderMessageRouter {
     }
 
     private Responseable reject(String method, int requestCounter, int totalCounter, int maxThread, Requestable request) {
-        RpcServiceException exception = new RpcServiceException("ThreadProtectedRequestRouter reject request: request_counter=" + requestCounter
-                + " total_counter=" + totalCounter + " max_thread=" + maxThread, RpcErrorConstants.SERVICE_REJECT);
+        RpcFrameworkException exception = new RpcFrameworkException("ThreadProtectedRequestRouter reject request: request_counter=" + requestCounter
+                + " total_counter=" + totalCounter + " max_thread=" + maxThread);
         exception.setStackTrace(new StackTraceElement[0]);
         RpcResponse response = RpcFrameworkUtils.buildErrorResponse(request, exception);
         log.error("ThreadProtectedRequestRouter reject request: request_method=" + method + " request_counter=" + requestCounter

@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.exchange.client;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.exception.impl.RpcServiceException;
+import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.lang.MathUtils;
@@ -75,7 +75,7 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
 
         String errorMsg = this.getClass().getSimpleName() + " getChannel Error: url=" + providerUrl.getUri();
         log.error(errorMsg);
-        throw new RpcServiceException(errorMsg);
+        throw new RpcFrameworkException(errorMsg);
     }
 
     protected void closeAllChannels() {

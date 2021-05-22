@@ -12,9 +12,7 @@ import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.RpcAbstractException;
-import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
-import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.exchange.client.AbstractSharedPoolClient;
 import org.infinity.rpc.core.exchange.client.SharedObjectFactory;
@@ -90,7 +88,7 @@ public class NettyClient extends AbstractSharedPoolClient {
     @Override
     public Responseable request(Requestable request) {
         if (!isActive()) {
-            throw new RpcServiceException("NettyChannel is unavailable: url=" + providerUrl.getUri() + request);
+            throw new RpcFrameworkException("NettyChannel is unavailable: url=" + providerUrl.getUri() + request);
         }
         return doRequest(request);
     }
@@ -116,7 +114,7 @@ public class NettyClient extends AbstractSharedPoolClient {
             if (e instanceof RpcAbstractException) {
                 throw (RpcAbstractException) e;
             } else {
-                throw new RpcServiceException("NettyClient request Error: url=" + providerUrl.getUri() + " " + request, e);
+                throw new RpcFrameworkException("NettyClient request Error: url=" + providerUrl.getUri() + " " + request, e);
             }
         }
 
@@ -126,8 +124,6 @@ public class NettyClient extends AbstractSharedPoolClient {
     }
 
     /**
-     *
-     *
      * @param response response
      * @param async    async flag
      * @return response
@@ -150,7 +146,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         bootstrap = new Bootstrap();
         int timeout = getProviderUrl().getIntOption(CONNECT_TIMEOUT, CONNECT_TIMEOUT_VAL_DEFAULT);
         if (timeout <= 0) {
-            throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.", RpcErrorConstants.FRAMEWORK_INIT_ERROR);
+            throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.");
         }
         bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout);
         bootstrap.option(ChannelOption.TCP_NODELAY, true);
@@ -329,8 +325,8 @@ public class NettyClient extends AbstractSharedPoolClient {
     public void registerCallback(long requestId, FutureResponse futureResponse) {
         if (this.callbackMap.size() >= RpcConstants.NETTY_CLIENT_MAX_REQUEST) {
             // reject request, prevent from OutOfMemoryError
-            throw new RpcServiceException("NettyClient over of max concurrent request, drop request, url: "
-                    + providerUrl.getUri() + " requestId=" + requestId, RpcErrorConstants.SERVICE_REJECT);
+            throw new RpcFrameworkException("NettyClient over of max concurrent request, drop request, url: "
+                    + providerUrl.getUri() + " requestId=" + requestId);
         }
 
         this.callbackMap.put(requestId, futureResponse);

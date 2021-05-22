@@ -1,11 +1,11 @@
-package org.infinity.rpc.core.exception.impl;
+package org.infinity.rpc.core.exception;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
 public class TransportException extends IOException {
 
-    private static final long              serialVersionUID = 7600964987123698104L;
+    private static final long              serialVersionUID = 119354326473981551L;
     private final        InetSocketAddress localAddress;
     private final        InetSocketAddress remoteAddress;
 

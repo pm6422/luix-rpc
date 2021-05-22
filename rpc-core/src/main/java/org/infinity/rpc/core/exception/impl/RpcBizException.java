@@ -17,41 +17,24 @@
 package org.infinity.rpc.core.exception.impl;
 
 import org.infinity.rpc.core.exception.RpcAbstractException;
-import org.infinity.rpc.core.exception.RpcErrorConstants;
-import org.infinity.rpc.core.exception.RpcError;
 
 public class RpcBizException extends RpcAbstractException {
-    private static final long serialVersionUID = -3491276058323309898L;
+
+    private static final long serialVersionUID = 1214118633333004121L;
 
     public RpcBizException() {
-        super(RpcErrorConstants.BIZ_DEFAULT_EXCEPTION);
-    }
-
-    public RpcBizException(RpcError rpcError) {
-        super(rpcError);
+        super();
     }
 
     public RpcBizException(String message) {
-        super(message, RpcErrorConstants.BIZ_DEFAULT_EXCEPTION);
-    }
-
-    public RpcBizException(String message, RpcError rpcError) {
-        super(message, rpcError);
-    }
-
-    public RpcBizException(String message, Throwable cause) {
-        super(message, cause, RpcErrorConstants.BIZ_DEFAULT_EXCEPTION);
-    }
-
-    public RpcBizException(String message, Throwable cause, RpcError rpcError) {
-        super(message, cause, rpcError);
+        super(message);
     }
 
     public RpcBizException(Throwable cause) {
-        super(cause, RpcErrorConstants.BIZ_DEFAULT_EXCEPTION);
+        super(cause);
     }
 
-    public RpcBizException(Throwable cause, RpcError rpcError) {
-        super(cause, rpcError);
+    public RpcBizException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

@@ -7,15 +7,14 @@ import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.codec.AbstractCodec;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
-import org.infinity.rpc.core.exception.RpcErrorConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.exchange.Exchangable;
 import org.infinity.rpc.core.protocol.constants.ProtocolVersion;
-import org.infinity.rpc.utilities.serializer.Serializer;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.utilities.lang.ByteUtils;
+import org.infinity.rpc.utilities.serializer.Serializer;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import java.io.*;
@@ -26,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.MAX_PAYLOAD;
 import static org.infinity.rpc.core.constant.ServiceConstants.MAX_PAYLOAD_VAL_DEFAULT;
-import static org.infinity.rpc.core.exception.RpcErrorConstants.ENCODE_ERROR;
 
 @SpiName(CODEC_VAL_DEFAULT)
 public class DefaultCodec extends AbstractCodec {
@@ -45,7 +43,7 @@ public class DefaultCodec extends AbstractCodec {
             if (ExceptionUtils.isRpcException(e)) {
                 throw (RuntimeException) e;
             } else {
-                throw new RpcFrameworkException("Failed to encode input object: " + inputObject, e, ENCODE_ERROR);
+                throw new RpcFrameworkException("Failed to encode input object: " + inputObject, e);
             }
         }
     }
@@ -136,23 +134,23 @@ public class DefaultCodec extends AbstractCodec {
     @Override
     public Object decode(Channel channel, String remoteIp, byte[] data) {
         if (data.length <= ProtocolVersion.VERSION_1.getHeaderLength()) {
-            throw new RpcFrameworkException("decode error: format problem", RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
+            throw new RpcFrameworkException("Failed to decode with format problem");
         }
 
         short type = ByteUtils.bytes2short(data, 0);
 
         if (type != MAGIC) {
-            throw new RpcFrameworkException("decode error: magic error", RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
+            throw new RpcFrameworkException("Failed to decode by invalid magic");
         }
 
         if (data[2] != ProtocolVersion.VERSION_1.getVersion()) {
-            throw new RpcFrameworkException("decode error: version error", RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
+            throw new RpcFrameworkException("Failed to decode by invalid version");
         }
 
         int bodyLength = ByteUtils.bytes2int(data, 12);
 
         if (ProtocolVersion.VERSION_1.getHeaderLength() + bodyLength != data.length) {
-            throw new RpcFrameworkException("decode error: content length error", RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
+            throw new RpcFrameworkException("Failed to decode by incorrect content length");
         }
 
         byte flag = data[3];
@@ -172,13 +170,12 @@ public class DefaultCodec extends AbstractCodec {
                 return decodeRequest(body, requestId, serializer);
             }
         } catch (ClassNotFoundException e) {
-            throw new RpcFrameworkException("decode " + (isResponse ? "response" : "request") + " error: class not found", e,
-                    RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
+            throw new RpcFrameworkException("Failed to decode " + (isResponse ? "response" : "request") + " with error", e);
         } catch (Exception e) {
             if (ExceptionUtils.isRpcException(e)) {
                 throw (RuntimeException) e;
             } else {
-                throw new RpcFrameworkException("decode error: isResponse=" + isResponse, e, RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
+                throw new RpcFrameworkException("Failed to decode with error", e);
             }
         }
     }
@@ -281,8 +278,7 @@ public class DefaultCodec extends AbstractCodec {
         } else if (dataType == RpcConstants.FLAG_RESPONSE_EXCEPTION) {
             response.setException((Exception) result);
         } else {
-            throw new RpcFrameworkException("decode error: response dataType not support " + dataType,
-                    RpcErrorConstants.FRAMEWORK_DECODE_ERROR);
+            throw new RpcFrameworkException("Failed to decode by invalid data type" + dataType);
         }
 
         response.setRequestId(requestId);

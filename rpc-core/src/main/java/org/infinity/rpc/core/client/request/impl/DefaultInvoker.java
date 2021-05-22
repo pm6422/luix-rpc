@@ -3,9 +3,8 @@ package org.infinity.rpc.core.client.request.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.request.AbstractInvoker;
 import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.exception.TransportException;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
-import org.infinity.rpc.core.exception.impl.RpcServiceException;
-import org.infinity.rpc.core.exception.impl.TransportException;
 import org.infinity.rpc.core.exchange.client.Client;
 import org.infinity.rpc.core.exchange.endpoint.EndpointFactory;
 import org.infinity.rpc.core.server.response.Future;
@@ -50,7 +49,7 @@ public class DefaultInvoker extends AbstractInvoker {
         try {
             return client.request(request);
         } catch (TransportException exception) {
-            throw new RpcServiceException("DefaultRpcReferer call Error: url=" + providerUrl.getUri(), exception);
+            throw new RpcFrameworkException("Failed to call [" + providerUrl.getUri() + "]", exception);
         }
     }
 

@@ -22,7 +22,6 @@ import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.exception.impl.RpcBizException;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
-import org.infinity.rpc.core.exception.impl.RpcServiceException;
 import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.utilities.serializer.DeserializableObject;
 import org.infinity.rpc.core.server.messagehandler.MessageHandler;
@@ -80,8 +79,8 @@ public class ProviderMessageRouter implements MessageHandler {
 
         if (provider == null) {
             log.error(this.getClass().getSimpleName() + " handler Error: provider not exist serviceKey=" + serviceKey + " " + request);
-            RpcServiceException exception =
-                    new RpcServiceException(this.getClass().getSimpleName() + " handler Error: provider not exist serviceKey="
+            RpcFrameworkException exception =
+                    new RpcFrameworkException(this.getClass().getSimpleName() + " handler Error: provider not exist serviceKey="
                             + serviceKey + " " + request);
 
             return RpcFrameworkUtils.buildErrorResponse(request, exception);
