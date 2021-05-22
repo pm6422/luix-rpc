@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.destroy.ScheduledThreadPool;
+import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcAbstractException;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.Channel;
@@ -97,7 +98,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         Channel channel;
         Responseable response;
         try {
-            // return channel or throw exception(timeout or connection_fail)
+            // Return channel or throw exception(timeout or connection_fail)
             channel = getChannel();
             RpcFrameworkUtils.logEvent(request, RpcConstants.TRACE_CONNECTION);
 
@@ -105,16 +106,13 @@ public class NettyClient extends AbstractSharedPoolClient {
                 log.error("NettyClient borrowObject null: url=" + providerUrl.getUri() + " " + request);
                 return null;
             }
-
             // All requests are handled asynchronously, and return type always be RpcFutureResponse
             response = channel.request(request);
         } catch (Exception e) {
-            log.error("NettyClient request Error: url=" + providerUrl.getUri() + " " + request + ", " + e.getMessage());
-
-            if (e instanceof RpcAbstractException) {
+            if (ExceptionUtils.isBizException(e)) {
                 throw (RpcAbstractException) e;
             } else {
-                throw new RpcFrameworkException("NettyClient request Error: url=" + providerUrl.getUri() + " " + request, e);
+                throw new RpcFrameworkException("Failed to process request " + request.toString(), e);
             }
         }
 
