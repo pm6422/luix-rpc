@@ -165,7 +165,7 @@ public class NettyClient extends AbstractSharedPoolClient {
                             Responseable response = (Responseable) message;
                             FutureResponse futureResponse = NettyClient.this.removeCallback(response.getRequestId());
                             if (futureResponse == null) {
-                                log.warn("NettyClient has response from server, but responseFuture not exist, requestId={}", response.getRequestId());
+                                log.warn("No response found with request ID: [{}]", response.getRequestId());
                                 return null;
                             }
                             if (response.getException() != null) {
