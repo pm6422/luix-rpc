@@ -2,10 +2,12 @@ package org.infinity.rpc.core.exception;
 
 import org.infinity.rpc.core.utils.RpcRequestIdHolder;
 
+import static org.infinity.rpc.core.exception.RpcErrorConstants.FRAMEWORK_DEFAULT_ERROR;
+
 public abstract class RpcAbstractException extends RuntimeException {
 
     private static final long     serialVersionUID = 2095011577273198213L;
-    protected            RpcError rpcError         = RpcErrorConstants.FRAMEWORK_DEFAULT_ERROR;
+    protected            RpcError rpcError         = FRAMEWORK_DEFAULT_ERROR;
     protected            String   errorMsg         = null;
 
     public RpcAbstractException() {
