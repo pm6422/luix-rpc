@@ -103,7 +103,7 @@ public class NettyClient extends AbstractSharedPoolClient {
             RpcFrameworkUtils.logEvent(request, RpcConstants.TRACE_CONNECTION);
 
             if (channel == null) {
-                log.error("NettyClient borrowObject null: url=" + providerUrl.getUri() + " " + request);
+                log.error("No channel found for request {}", request.toString());
                 return null;
             }
             // All requests are handled asynchronously, and return type always be RpcFutureResponse
