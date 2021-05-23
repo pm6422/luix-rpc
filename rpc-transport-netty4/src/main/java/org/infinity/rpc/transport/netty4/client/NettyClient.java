@@ -22,6 +22,7 @@ import org.infinity.rpc.core.server.response.FutureResponse;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.core.utils.RpcConfigValidator;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 import org.infinity.rpc.transport.netty4.NettyDecoder;
 import org.infinity.rpc.transport.netty4.NettyEncoder;
@@ -75,7 +76,7 @@ public class NettyClient extends AbstractSharedPoolClient {
                     future.cancel();
                 }
             } catch (Exception e) {
-                log.error("Clear timeout future Error: uri=" + providerUrl.getUri() + " requestId=" + entry.getKey(), e);
+                log.error("Failed to recycle the request callback for uri [" + providerUrl.getUri() + "]", e);
             }
         }
     }
@@ -89,7 +90,8 @@ public class NettyClient extends AbstractSharedPoolClient {
     @Override
     public Responseable request(Requestable request) {
         if (!isActive()) {
-            throw new RpcFrameworkException("NettyChannel is unavailable: url=" + providerUrl.getUri() + request);
+            throw new RpcFrameworkException("Current status is inactive for uri [" + providerUrl.getUri()
+                    + "] and request " + request);
         }
         return doRequest(request);
     }
@@ -112,7 +114,7 @@ public class NettyClient extends AbstractSharedPoolClient {
             if (ExceptionUtils.isBizException(e)) {
                 throw (RpcAbstractException) e;
             } else {
-                throw new RpcFrameworkException("Failed to process request " + request.toString(), e);
+                throw new RpcFrameworkException("Failed to process request " + request, e);
             }
         }
 
@@ -143,9 +145,7 @@ public class NettyClient extends AbstractSharedPoolClient {
 
         bootstrap = new Bootstrap();
         int timeout = getProviderUrl().getIntOption(CONNECT_TIMEOUT, CONNECT_TIMEOUT_VAL_DEFAULT);
-        if (timeout <= 0) {
-            throw new RpcFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.");
-        }
+        RpcConfigValidator.isTrue(timeout > 0, "connectTimeout must be a positive value!");
         bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout);
         bootstrap.option(ChannelOption.TCP_NODELAY, true);
         bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
@@ -179,7 +179,7 @@ public class NettyClient extends AbstractSharedPoolClient {
         // 初始化连接池
         initPool();
 
-        log.info("NettyClient finish Open: url={}", providerUrl);
+        log.info("Opened the netty client for url [{}]", providerUrl);
 
 //         注册统计回调
 //        StatsUtil.registryStatisticCallback(this);
@@ -203,15 +203,15 @@ public class NettyClient extends AbstractSharedPoolClient {
         try {
             cleanup();
             if (state.isUninitialized()) {
-                log.info("NettyClient close fail: state={}, url={}", state.value, providerUrl.getUri());
+                log.info("Current status is uninitialized for uri [{}]", providerUrl.getUri());
                 return;
             }
 
             // 设置close状态
             state = ChannelState.CLOSED;
-            log.info("NettyClient close Success: url={}", providerUrl.getUri());
+            log.info("Closed netty client for uri [{}]", providerUrl.getUri());
         } catch (Exception e) {
-            log.error("NettyClient close Error: url=" + providerUrl.getUri(), e);
+            log.error("Failed to close netty client for uri [" + providerUrl.getUri() + "]", e);
         }
     }
 
@@ -270,8 +270,7 @@ public class NettyClient extends AbstractSharedPoolClient {
                 count = errorCount.longValue();
 
                 if (count >= maxClientFailedConn && state.isActive()) {
-                    log.error("NettyClient unavailable Error: url=" + providerUrl.getIdentity() + " "
-                            + providerUrl.getAddress());
+                    log.error("Changed current state of netty client to inactive for uri [{}]", providerUrl.getUri());
                     state = ChannelState.INACTIVE;
                 }
             }
@@ -303,8 +302,7 @@ public class NettyClient extends AbstractSharedPoolClient {
                 // 过程中有其他并发更新errorCount的，因此这里需要进行一次判断
                 if (count < maxClientFailedConn) {
                     state = ChannelState.ACTIVE;
-                    log.info("NettyClient recover available: url=" + providerUrl.getIdentity() + " "
-                            + providerUrl.getAddress());
+                    log.info("Recovered the state of netty client to active for url [{}]", providerUrl.getUri());
                 }
             }
         }
@@ -323,8 +321,10 @@ public class NettyClient extends AbstractSharedPoolClient {
     public void registerCallback(long requestId, FutureResponse futureResponse) {
         if (this.callbackMap.size() >= RpcConstants.NETTY_CLIENT_MAX_REQUEST) {
             // reject request, prevent from OutOfMemoryError
-            throw new RpcFrameworkException("NettyClient over of max concurrent request, drop request, url: "
-                    + providerUrl.getUri() + " requestId=" + requestId);
+//            throw new RpcFrameworkException("NettyClient over of max concurrent request, drop request, url: "
+//                    + providerUrl.getUri() + " requestId=" + requestId);
+            throw new RpcFrameworkException("Discarded the request [" + requestId + "] and uri [" + providerUrl.getUri() + "] for exceeding max request limit");
+
         }
 
         this.callbackMap.put(requestId, futureResponse);
