@@ -84,9 +84,9 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
 
     @Override
     public boolean cancel() {
-        Exception e = new RpcFrameworkException(this.getClass().getName() + " task cancel: serverPort=" + serverUrl.getAddress() + " "
-                + request.toString() + " cost=" + (System.currentTimeMillis() - createdTime));
-        return cancel(e);
+        Exception exception = new RpcFrameworkException("Processed request in " + (System.currentTimeMillis() - createdTime)
+                + "ms with address " + serverUrl.getAddress() + " and " + request);
+        return cancel(exception);
     }
 
     protected boolean cancel(Exception e) {
@@ -152,7 +152,7 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
         return state;
     }
 
-    private void timeoutSoCancel() {
+    private void timeoutToCancel() {
         this.processTime = System.currentTimeMillis() - createdTime;
 
         synchronized (lock) {
@@ -161,8 +161,8 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
             }
 
             state = FutureState.CANCELLED;
-            exception = new RpcFrameworkException(this.getClass().getName() + " request timeout: serverPort=" + serverUrl.getAddress()
-                    + " " + request + " cost=" + (System.currentTimeMillis() - createdTime));
+            exception = new RpcFrameworkException("Request timeout in " + (System.currentTimeMillis() - createdTime)
+                    + "ms with address " + serverUrl.getAddress() + " and " + request);
             lock.notifyAll();
         }
 
@@ -245,7 +245,7 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
                 }
 
                 if (isDoing()) {
-                    timeoutSoCancel();
+                    timeoutToCancel();
                 }
             }
             return getResultOrThrowable();
