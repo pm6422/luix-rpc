@@ -5,6 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.destroy.ScheduledThreadPool;
+import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.collection.ConcurrentHashSet;
@@ -13,7 +14,8 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.rpc.core.constant.RegistryConstants.*;
+import static org.infinity.rpc.core.constant.RegistryConstants.RETRY_INTERVAL;
+import static org.infinity.rpc.core.constant.RegistryConstants.RETRY_INTERVAL_VAL_DEFAULT;
 
 /**
  * The registry can automatically recover services when encountered the failure.
@@ -161,11 +163,9 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             super.register(providerUrl);
         } catch (Exception e) {
             // In some extreme cases, it can cause register failure
-            if (needThrowException(registryUrl)) {
-                throw new RuntimeException(MessageFormat.format("Failed to register provider [{0}] to registry [{1}] by using [{2}]",
-                        providerUrl, registryUrl, getRegistryClassName()), e);
-            }
             failedRegisteredUrl.add(providerUrl);
+            throw new RpcFrameworkException(MessageFormat.format("Failed to register provider [{0}] to registry [{1}] by using [{2}]",
+                    providerUrl, registryUrl, getRegistryClassName()), e);
         }
     }
 
@@ -184,11 +184,9 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             super.unregister(providerUrl);
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
-            if (needThrowException(registryUrl)) {
-                throw new RuntimeException(MessageFormat.format("Failed to unregister provider [{0}] from registry [{1}] by using [{2}]",
-                        providerUrl, registryUrl, getRegistryClassName()), e);
-            }
             failedUnregisteredUrl.add(providerUrl);
+            throw new RpcFrameworkException(MessageFormat.format("Failed to unregister provider [{0}] from registry [{1}] by using [{2}]",
+                    providerUrl, registryUrl, getRegistryClassName()), e);
         }
     }
 
@@ -216,11 +214,10 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             if (CollectionUtils.isNotEmpty(cachedProviderUrls)) {
                 // Notify if the cached provider urls not empty
                 listener.onNotify(registryUrl, cachedProviderUrls);
-            } else if (needThrowException(registryUrl)) {
-                throw new RuntimeException(MessageFormat.format("Failed to subscribe the listener [{0}] to the client [{1}] on registry [{2}] by using [{3}]",
-                        listener, consumerUrl, registryUrl, getRegistryClassName()), e);
             }
             addToFailedMap(failedSubscriptionPerConsumerUrl, consumerUrl, listener);
+            throw new RpcFrameworkException(MessageFormat.format("Failed to subscribe the listener [{0}] to the client [{1}] on registry [{2}] by using [{3}]",
+                    listener, consumerUrl, registryUrl, getRegistryClassName()), e);
         }
     }
 
@@ -240,22 +237,10 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         try {
             super.unsubscribe(consumerUrl, listener);
         } catch (Exception e) {
-            if (needThrowException(registryUrl)) {
-                throw new RuntimeException(MessageFormat.format("Failed to unsubscribe the listener [{0}] from the client [{1}] on registry [{2}] by using [{3}]",
-                        listener, consumerUrl, registryUrl, getRegistryClassName()), e);
-            }
             addToFailedMap(failedUnsubscriptionPerConsumerUrl, consumerUrl, listener);
+            throw new RpcFrameworkException(MessageFormat.format("Failed to unsubscribe the listener [{0}] from the client [{1}] on registry [{2}] by using [{3}]",
+                    listener, consumerUrl, registryUrl, getRegistryClassName()), e);
         }
-    }
-
-    /**
-     * Get THROW_EXCEPTION option value of {@link Url}
-     *
-     * @param registryUrl registry url
-     * @return THROW_EXCEPTION option value
-     */
-    private boolean needThrowException(Url registryUrl) {
-        return registryUrl.getBooleanOption(THROW_EXCEPTION);
     }
 
     /**

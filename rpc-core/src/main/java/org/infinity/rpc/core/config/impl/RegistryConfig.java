@@ -59,10 +59,6 @@ public class RegistryConfig implements Configurable {
     @PositiveOrZero
     private              Integer retryInterval       = RETRY_INTERVAL_VAL_DEFAULT;
     /**
-     * Indicator used to decide whether need to throw exception after registering or unregistering failure
-     */
-    private              boolean throwException      = THROW_EXCEPTION_VAL_DEFAULT;
-    /**
      * Registry url
      */
     private              Url     registryUrl;
@@ -106,7 +102,6 @@ public class RegistryConfig implements Configurable {
         registryUrl.addOption(SESSION_TIMEOUT, sessionTimeout.toString());
         registryUrl.addOption(CONNECT_TIMEOUT, connectTimeout.toString());
         registryUrl.addOption(RETRY_INTERVAL, retryInterval.toString());
-        registryUrl.addOption(THROW_EXCEPTION, String.valueOf(throwException));
         return registryUrl;
     }
 
