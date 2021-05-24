@@ -112,7 +112,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
             if (cause instanceof RpcAbstractException) {
                 throw (RpcAbstractException) cause;
             } else {
-                throw new RpcFrameworkException("Failed to call the request with error", cause);
+                throw new RpcFrameworkException("Failed to handle the request with error", cause);
             }
         }
         return RpcResponse.error(request, cause);
