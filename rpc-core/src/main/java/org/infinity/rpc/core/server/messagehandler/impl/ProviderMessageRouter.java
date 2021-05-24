@@ -98,7 +98,7 @@ public class ProviderMessageRouter implements MessageHandler {
         try {
             return providerStub.localInvoke(request);
         } catch (Exception e) {
-            return RpcFrameworkUtils.buildErrorResponse(request, new RpcBizException("provider call process error", e));
+            return RpcFrameworkUtils.buildErrorResponse(request, new RpcBizException("Failed to call provider", e));
         }
     }
 

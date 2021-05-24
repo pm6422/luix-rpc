@@ -5,14 +5,19 @@ import org.infinity.rpc.core.client.ratelimit.RateLimiter;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.rpc.core.exception.ExceptionUtils;
+import org.infinity.rpc.core.exception.RpcAbstractException;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.response.Responseable;
+import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.utils.RpcConfigValidator;
 import org.infinity.rpc.core.utils.RpcRequestIdHolder;
 
 import java.lang.reflect.Method;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.RATE_LIMITER_GUAVA;
+import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION;
+import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION_VAL_DEFAULT;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
@@ -58,7 +63,6 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         RpcConfigValidator.notNull(consumerStub.getInvokerCluster(), "Incorrect consumer stub configuration!");
 
         Responseable response;
-//            boolean throwException = true;
         try {
             // Store request id on client side
             RpcRequestIdHolder.setRequestId(request.getRequestId());
@@ -67,8 +71,8 @@ public abstract class AbstractConsumerInvocationHandler<T> {
             // Only one server node under one cluster can process the request
             response = consumerStub.getInvokerCluster().invoke(request);
             return response.getResult();
-        } catch (Exception ex) {
-            throw new RpcFrameworkException(ex);
+        } catch (Exception e) {
+            return handleError(request, e);
         } finally {
             RpcRequestIdHolder.destroy();
         }
@@ -95,5 +99,22 @@ public abstract class AbstractConsumerInvocationHandler<T> {
 
     private boolean limitRate() {
         return consumerStub.isLimitRate() && !RateLimiter.getInstance(RATE_LIMITER_GUAVA).tryAcquire();
+    }
+
+    private Responseable handleError(Requestable request, Exception cause) {
+        if (ExceptionUtils.isBizException(cause)) {
+            // Throw the exception if it is business one
+            throw (RuntimeException) cause;
+        }
+
+        boolean throwException = consumerStub.getUrl().getBooleanOption(THROW_EXCEPTION, THROW_EXCEPTION_VAL_DEFAULT);
+        if (throwException) {
+            if (cause instanceof RpcAbstractException) {
+                throw (RpcAbstractException) cause;
+            } else {
+                throw new RpcFrameworkException("Failed to call the request with error", cause);
+            }
+        }
+        return RpcResponse.error(request, cause);
     }
 }

@@ -7,17 +7,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.cluster.InvokerCluster;
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.exception.ExceptionUtils;
-import org.infinity.rpc.core.exception.RpcAbstractException;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.response.Responseable;
-import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.CLUSTER_VAL_DEFAULT;
-import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION;
-import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION_VAL_DEFAULT;
 
 /**
  * todo: ClusterSpi
@@ -45,31 +40,10 @@ public class DefaultInvokerCluster implements InvokerCluster {
 
     @Override
     public Responseable invoke(Requestable request) {
-        if (active) {
-            try {
-                return faultTolerance.invoke(request);
-            } catch (Exception e) {
-                return handleError(request, e);
-            }
+        if (!active) {
+            throw new RpcFrameworkException("No active service found!");
         }
-        return handleError(request, new RpcFrameworkException("Service not found!"));
-    }
-
-    private Responseable handleError(Requestable request, Exception cause) {
-        if (ExceptionUtils.isBizException(cause)) {
-            // Throw the exception if it is business one
-            throw (RuntimeException) cause;
-        }
-
-        boolean parameter = faultTolerance.getConsumerUrl().getBooleanOption(THROW_EXCEPTION, THROW_EXCEPTION_VAL_DEFAULT);
-        if (parameter) {
-            if (cause instanceof RpcAbstractException) {
-                throw (RpcAbstractException) cause;
-            } else {
-                throw new RpcFrameworkException("Failed to call the request!", cause);
-            }
-        }
-        return RpcResponse.error(request, cause);
+        return faultTolerance.invoke(request);
     }
 
     @Override

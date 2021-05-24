@@ -291,9 +291,9 @@ public class ProviderStub<T> {
             response.setResultObject(result);
         } catch (Exception e) {
             if (e.getCause() != null) {
-                response.setException(new RpcBizException("provider call process error", e.getCause()));
+                response.setException(new RpcBizException("Failed to call provider", e.getCause()));
             } else {
-                response.setException(new RpcBizException("provider call process error", e));
+                response.setException(new RpcBizException("Failed to call provider", e));
             }
 
             // not print stack in error log when exception declared in method
