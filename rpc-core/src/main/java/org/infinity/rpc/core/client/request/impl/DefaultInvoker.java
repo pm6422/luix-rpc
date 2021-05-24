@@ -36,7 +36,7 @@ public class DefaultInvoker extends AbstractInvoker {
         client = endpointFactory.createClient(providerUrl);
         // Initialize
         init();
-        log.info("Initialized provider invoker [{}] in {} ms", this.toString(), System.currentTimeMillis() - start);
+        log.info("Initialized provider invoker [{}] in {} ms", this, System.currentTimeMillis() - start);
     }
 
     @Override

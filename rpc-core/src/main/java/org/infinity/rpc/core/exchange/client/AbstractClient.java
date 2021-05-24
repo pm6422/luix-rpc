@@ -27,9 +27,9 @@ public abstract class AbstractClient implements Client {
         String codecName = providerUrl.getOption(CODEC, CODEC_VAL_DEFAULT);
         this.codec = Codec.getInstance(codecName);
         if (codec == null) {
-            throw new RpcFrameworkException("Codec [" + codecName + "] must not be null!");
+            throw new RpcFrameworkException("Illegal codec name [" + codecName + "]!");
         }
-        log.info("Initializing client with codec {} for url: {}", codec.getClass().getSimpleName(), providerUrl);
+        log.info("Initializing client by {} for url [{}]", codec.getClass().getSimpleName(), providerUrl);
     }
 
     public void setLocalAddress(InetSocketAddress localAddress) {

@@ -58,7 +58,7 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
             try {
                 ip = ((InetSocketAddress) remote).getAddress().getHostAddress();
             } catch (Exception e) {
-                log.warn("get remoteIp error! default will use. msg:{}, remote:{}", e.getMessage(), remote.toString());
+                log.error("Failed to get the IP", e);
             }
         }
         return ip;
@@ -80,9 +80,11 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
                     if (((NettyMessage) msg).isRequest()) {
                         rejectMessage(ctx, (NettyMessage) msg);
                     } else {
-                        log.warn("process thread pool is full, run in io thread, active={} poolSize={} corePoolSize={} maxPoolSize={} taskCount={} requestId={}",
-                                threadPoolExecutor.getActiveCount(), threadPoolExecutor.getPoolSize(), threadPoolExecutor.getCorePoolSize(),
-                                threadPoolExecutor.getMaximumPoolSize(), threadPoolExecutor.getTaskCount(), ((NettyMessage) msg).getRequestId());
+                        log.warn("Current processing thread pool is full, active: {}, poolSize: {}, corePoolSize: {}, " +
+                                        "maxPoolSize: {}, taskCount: {}, requestId: {}",
+                                threadPoolExecutor.getActiveCount(), threadPoolExecutor.getPoolSize(),
+                                threadPoolExecutor.getCorePoolSize(), threadPoolExecutor.getMaximumPoolSize(),
+                                threadPoolExecutor.getTaskCount(), ((NettyMessage) msg).getRequestId());
                         processRequestOrResponseMsg(ctx, (NettyMessage) msg);
                     }
                 }
@@ -91,8 +93,7 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
                 processRequestOrResponseMsg(ctx, (NettyMessage) msg);
             }
         } else {
-            log.error("NettyChannelHandler messageReceived type not support: class=" + msg.getClass());
-            throw new RpcFrameworkException("NettyChannelHandler messageReceived type not support: class=" + msg.getClass());
+            throw new RpcFrameworkException("Received unsupported message type [" + msg.getClass() + "]");
         }
     }
 
@@ -100,8 +101,8 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
         if (msg.isRequest()) {
             returnResponse(ctx, RpcFrameworkUtils.buildErrorResponse((Requestable) msg,
                     new RpcFrameworkException("Reject the request for no active thread on server [" + ctx.channel().localAddress() + "]")));
-
-            log.error("process thread pool is full, reject, active={} poolSize={} corePoolSize={} maxPoolSize={} taskCount={} requestId={}",
+            log.error("Rejected message for current processing thread pool is full, active: {}, poolSize: {}, " +
+                            "corePoolSize: {}, maxPoolSize: {}, taskCount: {}, requestId: {}",
                     threadPoolExecutor.getActiveCount(), threadPoolExecutor.getPoolSize(), threadPoolExecutor.getCorePoolSize(),
                     threadPoolExecutor.getMaximumPoolSize(), threadPoolExecutor.getTaskCount(), msg.getRequestId());
             if (channel instanceof NettyServer) {
@@ -117,7 +118,7 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
         try {
             decodedObj = codec.decode(channel, remoteIp, msg.getData());
         } catch (Exception e) {
-            log.error("NettyDecoder decode fail! requestid" + msg.getRequestId() + ", size:" + msg.getData().length + ", ip:" + remoteIp + ", e:" + e.getMessage());
+            log.error("Failed to decode message with message ID [" + msg.getRequestId() + "] and remote IP [" + remoteIp + "]", e);
             Responseable response = RpcFrameworkUtils.buildErrorResponse(msg.getRequestId(), msg.getVersion().getVersion(), e);
             if (msg.isRequest()) {
                 // Step3: directly return response on server side
@@ -154,7 +155,7 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
             try {
                 result = messageHandler.handle(channel, request);
             } catch (Exception e) {
-                log.error("NettyChannelHandler processRequest fail! request:" + request, e);
+                log.error("Failed to process request " + request, e);
                 result = RpcFrameworkUtils.buildErrorResponse(request, new RpcFrameworkException("Failed to process request with error [" + e.getMessage() + "]"));
             }
             if (result instanceof Responseable) {
@@ -202,19 +203,22 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        log.info("NettyChannelHandler channelActive: remote={} local={}", ctx.channel().remoteAddress(), ctx.channel().localAddress());
+        log.info("Detected active channel with remoteAddress [{}] and localAddress [{}]",
+                ctx.channel().remoteAddress(), ctx.channel().localAddress());
         ctx.fireChannelActive();
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.info("NettyChannelHandler channelInactive: remote={} local={}", ctx.channel().remoteAddress(), ctx.channel().localAddress());
+        log.info("Detected inactive channel with remoteAddress [{}] and localAddress [{}]",
+                ctx.channel().remoteAddress(), ctx.channel().localAddress());
         ctx.fireChannelInactive();
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        log.error("NettyChannelHandler exceptionCaught: remote={} local={} event={}", ctx.channel().remoteAddress(), ctx.channel().localAddress(), cause.getMessage(), cause);
+        log.error("Caught exception with remoteAddress [{}], localAddress [{}] and event [{}]",
+                ctx.channel().remoteAddress(), ctx.channel().localAddress(), cause.getMessage(), cause);
         ctx.channel().close();
     }
 }
