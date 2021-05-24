@@ -51,7 +51,7 @@ public class ProviderProcessor implements ProviderProcessable, ApplicationContex
     @Override
     public void process(Url registryUrl, List<Url> providerUrls, String interfaceName) {
         if (CollectionUtils.isNotEmpty(providerUrls)) {
-            log.info("Discovered active providers [{}]", providerUrls);
+            log.info("Discovered active providers {}", providerUrls);
             for (Url providerUrl : providerUrls) {
                 Provider provider = Provider.of(providerUrl, registryUrl);
                 // Insert or update provider

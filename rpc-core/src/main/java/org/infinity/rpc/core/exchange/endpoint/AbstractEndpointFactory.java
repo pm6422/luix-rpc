@@ -67,23 +67,22 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
             boolean shareChannel = providerUrl.getBooleanOption(SHARED_CHANNEL, SHARED_CHANNEL_VAL_DEFAULT);
             if (!shareChannel) {
                 // 独享一个端口
-                log.info(this.getClass().getSimpleName() + " create no_share_channel server: url={}", providerUrl);
+                log.info("Created a exclusive channel server for url [{}] by [{}]", providerUrl, this.getClass().getSimpleName());
 
                 // 如果端口已经被使用了，使用该server bind会有异常
                 return innerCreateServer(providerUrl, messageHandler);
             }
 
-            log.info(this.getClass().getSimpleName() + " create share_channel server: url={}", providerUrl);
-
+            log.info("Created a shared channel server for url [{}] by [{}]", providerUrl, this.getClass().getSimpleName());
             Server server = ipPort2ServerShareChannel.get(ipPort);
 
             if (server != null) {
                 // can't share service channel
                 if (!RpcFrameworkUtils.checkIfCanShareServiceChannel(server.getProviderUrl(), providerUrl)) {
                     throw new RpcFrameworkException(
-                            "Service export Error: share channel but some config param is different, " +
-                                    "protocol or codec or serialize or maxContentLength or maxServerConnection or maxWorkerThread or heartbeatFactory, source="
-                                    + server.getProviderUrl() + " target=" + providerUrl);
+                            "Failed to create channel server for incorrect configuration parameter, e.g" +
+                                    "protocol or codec or serialize or maxContentLength or maxServerConnection or maxWorkerThread or heartbeatFactory, " +
+                                    "source=" + server.getProviderUrl() + " target=" + providerUrl);
                 }
 
                 saveEndpoint2Urls(server2UrlsShareChannel, server, protocolKey);
@@ -106,7 +105,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
 
     @Override
     public Client createClient(Url providerUrl) {
-        log.info(this.getClass().getSimpleName() + " create client: url={}", providerUrl);
+        log.info("Created a client for url [{}] by [{}]", providerUrl, this.getClass().getSimpleName());
         return createClient(providerUrl, heartbeatClientEndpointManager);
     }
 

@@ -23,12 +23,12 @@ import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.exception.impl.RpcBizException;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.Channel;
-import org.infinity.rpc.utilities.serializer.DeserializableObject;
 import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
+import org.infinity.rpc.utilities.serializer.DeserializableObject;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -139,7 +139,7 @@ public class ProviderMessageRouter implements MessageHandler {
         int publicMethodCount = methods.size();
         methodCounter.addAndGet(publicMethodCount);
 
-        log.info("RequestRouter addProvider: url=" + providerStub.getUrl() + " all_public_method_count=" + methodCounter.get());
+        log.info("Added service provider [{}] to router", providerStub.getUrl());
     }
 
     public synchronized void removeProvider(ProviderStub<?> providerStub) {
