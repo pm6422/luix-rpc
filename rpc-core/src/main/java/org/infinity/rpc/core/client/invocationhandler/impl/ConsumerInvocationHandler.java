@@ -47,7 +47,6 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
                 method.getName(),
                 getMethodParameters(method),
                 isAsyncMethod(method));
-
         return process(request, args, method.getReturnType());
     }
 
@@ -59,7 +58,6 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
                 methodName,
                 ArrayUtils.isEmpty(methodParamTypes) ? VOID : String.join(PARAM_TYPE_STR_DELIMITER, methodParamTypes),
                 false);
-
         return process(request, args, Object.class);
     }
 

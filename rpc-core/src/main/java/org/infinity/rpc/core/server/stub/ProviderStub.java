@@ -20,7 +20,6 @@ import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.ApplicationConfigHolder;
-import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 import org.infinity.rpc.core.utils.name.ProviderStubBeanNameBuilder;
 
@@ -40,6 +39,7 @@ import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.infinity.rpc.core.server.response.impl.RpcCheckHealthResponse.CHECK_HEALTH_OK;
+import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignature;
 
 /**
  * PRC provider stub
@@ -152,7 +152,7 @@ public class ProviderStub<T> {
     private void discoverMethods(Class<T> interfaceClass) {
         // Get all methods of the class passed in or its super interfaces.
         Arrays.stream(interfaceClass.getMethods()).forEach(method -> {
-            String methodSignature = MethodParameterUtils.getMethodSignature(method);
+            String methodSignature = getMethodSignature(method);
             methodsCache.putIfAbsent(methodSignature, method);
             List<String> methodParameters = Arrays.stream(method.getParameterTypes()).map(Class::getName).collect(Collectors.toList());
             MethodData methodData = new MethodData(method.getName(), methodParameters, methodSignature, method.getGenericReturnType().getTypeName());
@@ -168,7 +168,7 @@ public class ProviderStub<T> {
      * @return method
      */
     public Method findMethod(String methodName, String methodParameters) {
-        return methodsCache.get(MethodParameterUtils.getMethodSignature(methodName, methodParameters));
+        return methodsCache.get(getMethodSignature(methodName, methodParameters));
     }
 
     /**
@@ -291,9 +291,9 @@ public class ProviderStub<T> {
             response.setResultObject(result);
         } catch (Exception e) {
             if (e.getCause() != null) {
-                response.setException(new RpcBizException("Failed to call provider", e.getCause()));
+                response.setException(new RpcBizException("Failed to call provider stub [" + getMethodSignature(method) + "]", e.getCause()));
             } else {
-                response.setException(new RpcBizException("Failed to call provider", e));
+                response.setException(new RpcBizException("Failed to call provider stub [" + getMethodSignature(method) + "]", e));
             }
 
             // not print stack in error log when exception declared in method

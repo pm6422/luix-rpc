@@ -156,7 +156,7 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
                 result = messageHandler.handle(channel, request);
             } catch (Exception e) {
                 log.error("Failed to process request " + request, e);
-                result = RpcFrameworkUtils.buildErrorResponse(request, new RpcFrameworkException("Failed to process request with error [" + e.getMessage() + "]"));
+                result = RpcFrameworkUtils.buildErrorResponse(request, new RpcFrameworkException("Failed to process request", e));
             }
             if (result instanceof Responseable) {
                 RpcFrameworkUtils.logEvent((Responseable) result, RpcConstants.TRACE_PROCESS);

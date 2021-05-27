@@ -18,6 +18,10 @@ package org.infinity.rpc.core.exception.impl;
 
 import org.infinity.rpc.core.exception.RpcAbstractException;
 
+/**
+ * Business exception refers to an exception caused by a logical error in a service interface,
+ * not all interfaces have errors
+ */
 public class RpcBizException extends RpcAbstractException {
 
     private static final long serialVersionUID = 1214118633333004121L;

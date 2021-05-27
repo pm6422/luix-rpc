@@ -170,12 +170,12 @@ public class DefaultCodec extends AbstractCodec {
                 return decodeRequest(body, requestId, serializer);
             }
         } catch (ClassNotFoundException e) {
-            throw new RpcFrameworkException("Failed to decode " + (isResponse ? "response" : "request") + " with error", e);
+            throw new RpcFrameworkException("Failed to decode " + (isResponse ? "response" : "request"), e);
         } catch (Exception e) {
             if (ExceptionUtils.isRpcException(e)) {
                 throw (RuntimeException) e;
             } else {
-                throw new RpcFrameworkException("Failed to decode with error", e);
+                throw new RpcFrameworkException("Failed to decode", e);
             }
         }
     }

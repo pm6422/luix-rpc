@@ -34,6 +34,8 @@ public abstract class AbstractConsumerInvocationHandler<T> {
      * @return result of method
      */
     protected Object process(RpcRequest request, Object[] args, Class<?> returnType) {
+        validate();
+
         // Set method arguments
         request.setMethodArguments(args);
 
@@ -44,10 +46,15 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         request.addOption(REQUEST_TIMEOUT, consumerStub.getRequestTimeout(), REQUEST_TIMEOUT_VAL_DEFAULT);
         request.addOption(MAX_RETRIES, consumerStub.getMaxRetries(), MAX_RETRIES_VAL_DEFAULT);
         request.addOption(MAX_PAYLOAD, consumerStub.getMaxPayload(), MAX_PAYLOAD_VAL_DEFAULT);
-
         return processRequest(request, returnType);
     }
 
+    /**
+     * Validate
+     */
+    protected void validate() {
+        RpcConfigValidator.notNull(consumerStub.getInvokerCluster(), "Incorrect consumer stub configuration!");
+    }
 
     /**
      * @param request    RPC request
@@ -59,8 +66,6 @@ public abstract class AbstractConsumerInvocationHandler<T> {
             log.warn("Rate limiting!");
             return null;
         }
-
-        RpcConfigValidator.notNull(consumerStub.getInvokerCluster(), "Incorrect consumer stub configuration!");
 
         Responseable response;
         try {
@@ -76,6 +81,16 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         } finally {
             RpcRequestIdHolder.destroy();
         }
+    }
+
+    /**
+     * Limit rate on client side
+     * It is a temporary solution
+     *
+     * @return {@code true} if it need limit rate and {@code false} otherwise
+     */
+    private boolean limitRate() {
+        return consumerStub.isLimitRate() && !RateLimiter.getInstance(RATE_LIMITER_GUAVA).tryAcquire();
     }
 
     /**
@@ -97,13 +112,9 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         return false;
     }
 
-    private boolean limitRate() {
-        return consumerStub.isLimitRate() && !RateLimiter.getInstance(RATE_LIMITER_GUAVA).tryAcquire();
-    }
-
     private Responseable handleError(Requestable request, Exception cause) {
         if (ExceptionUtils.isBizException(cause)) {
-            // Throw the exception if it is business one
+            // Throw the exception if it is business exception
             throw (RuntimeException) cause;
         }
 
@@ -112,7 +123,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
             if (cause instanceof RpcAbstractException) {
                 throw (RpcAbstractException) cause;
             } else {
-                throw new RpcFrameworkException("Failed to handle the request with error", cause);
+                throw new RpcFrameworkException("Failed to handle the request", cause);
             }
         }
         return RpcResponse.error(request, cause);
