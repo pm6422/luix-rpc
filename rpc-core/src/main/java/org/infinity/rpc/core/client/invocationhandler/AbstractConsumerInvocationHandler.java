@@ -7,7 +7,6 @@ import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcAbstractException;
-import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.utils.RpcConfigValidator;
@@ -120,11 +119,8 @@ public abstract class AbstractConsumerInvocationHandler<T> {
 
         boolean throwException = consumerStub.getUrl().getBooleanOption(THROW_EXCEPTION, THROW_EXCEPTION_VAL_DEFAULT);
         if (throwException) {
-            if (cause instanceof RpcAbstractException) {
-                throw (RpcAbstractException) cause;
-            } else {
-                throw new RpcFrameworkException("Failed to handle the request", cause);
-            }
+            // Covert to runtime exception
+            throw (RpcAbstractException) cause;
         }
         return RpcResponse.error(request, cause);
     }

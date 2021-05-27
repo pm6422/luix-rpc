@@ -2,6 +2,9 @@ package org.infinity.rpc.core.exception.impl;
 
 import org.infinity.rpc.core.exception.RpcAbstractException;
 
+/**
+ * RPC invocation exception refers to the exception that occurs during the RPC call
+ */
 public class RpcInvocationException extends RpcAbstractException {
 
     private static final long serialVersionUID = -4974867821777714425L;
