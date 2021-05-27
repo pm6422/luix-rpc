@@ -2,6 +2,9 @@ package org.infinity.rpc.core.exception.impl;
 
 import org.infinity.rpc.core.exception.RpcAbstractException;
 
+/**
+ * Configuration exception refers to an exception caused by incorrect configuration
+ */
 public class RpcConfigException extends RpcAbstractException {
 
     private static final long serialVersionUID = -157808925039174863L;
