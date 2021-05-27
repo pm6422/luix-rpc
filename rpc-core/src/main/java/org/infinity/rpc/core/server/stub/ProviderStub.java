@@ -278,9 +278,9 @@ public class ProviderStub<T> {
 
         Method method = findMethod(request.getMethodName(), request.getMethodParameters());
         if (method == null) {
+            String methodSignature = getMethodSignature(request.getMethodName(), request.getMethodParameters());
             RpcFrameworkException exception =
-                    new RpcFrameworkException("Service method not exist: " + request.getInterfaceName() + "." + request.getMethodName()
-                            + "(" + request.getMethodParameters() + ")");
+                    new RpcFrameworkException("Method [" + methodSignature + "] of service [" + request.getInterfaceName() + "] not found!");
             response.setException(exception);
             return response;
         }
