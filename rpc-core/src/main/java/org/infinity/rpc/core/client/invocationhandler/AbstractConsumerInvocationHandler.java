@@ -33,6 +33,11 @@ public abstract class AbstractConsumerInvocationHandler<T> {
      * @return result of method
      */
     protected Object process(RpcRequest request, Object[] args, Class<?> returnType) {
+        if (limitRate()) {
+            log.warn("Rate limiting!");
+            return null;
+        }
+
         validate();
 
         // Set method arguments
@@ -52,7 +57,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
      * Validate
      */
     protected void validate() {
-        RpcConfigValidator.notNull(consumerStub.getInvokerCluster(), "Incorrect consumer stub configuration!");
+        RpcConfigValidator.notNull(consumerStub.getInvokerCluster(), "Invoker cluster must NOT be null!");
     }
 
     /**
@@ -61,11 +66,6 @@ public abstract class AbstractConsumerInvocationHandler<T> {
      * @return result of method
      */
     protected Object processRequest(Requestable request, Class<?> returnType) {
-        if (limitRate()) {
-            log.warn("Rate limiting!");
-            return null;
-        }
-
         Responseable response;
         try {
             // Store request id on client side
