@@ -8,7 +8,7 @@ import org.infinity.rpc.core.registry.listener.ServiceListener;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.concurrent.ThreadSafe;
 import org.infinity.rpc.utilities.destory.Cleanable;
-import org.infinity.rpc.utilities.network.AddressUtils;
+import org.infinity.rpc.utilities.network.IpUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class NoRegistry extends AbstractRegistry implements Cleanable {
 
     public NoRegistry(Url registryUrl) {
         super(registryUrl);
-        providerHostAndPortList = AddressUtils.parseAddress(registryUrl.getOption(PROVIDER_ADDRESSES));
+        providerHostAndPortList = IpUtils.parseAddress(registryUrl.getOption(PROVIDER_ADDRESSES));
     }
 
     @Override

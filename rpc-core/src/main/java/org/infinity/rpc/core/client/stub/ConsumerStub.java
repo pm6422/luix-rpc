@@ -18,7 +18,7 @@ import org.infinity.rpc.core.config.impl.ProtocolConfig;
 import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.name.ConsumerStubBeanNameBuilder;
-import org.infinity.rpc.utilities.network.AddressUtils;
+import org.infinity.rpc.utilities.network.IpUtils;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.Max;
@@ -241,7 +241,7 @@ public class ConsumerStub<T> {
         url.addOption(THROW_EXCEPTION, String.valueOf(protocolConfig.isThrowException()));
         url.addOption(APP, applicationConfig.getName());
         url.addOption(CODEC, protocolConfig.getCodec());
-        url.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
+        url.addOption(LOCAL_IP_FACTORY, protocolConfig.getLocalIpFactory());
 
         url.addOption(HEALTH_CHECKER, healthChecker);
         url.addOption(REQUEST_TIMEOUT, requestTimeout != null ? requestTimeout.toString() : null);
@@ -269,7 +269,7 @@ public class ConsumerStub<T> {
 
     private List<Url> createDirectProviderUrls(ProtocolConfig protocolConfig) {
         // Get the provider host and port
-        List<Pair<String, Integer>> directUrlHostPortList = AddressUtils.parseAddress(providerAddresses);
+        List<Pair<String, Integer>> directUrlHostPortList = IpUtils.parseAddress(providerAddresses);
         List<Url> directProviderUrls = new ArrayList<>(directUrlHostPortList.size());
         for (Pair<String, Integer> providerHostPortPair : directUrlHostPortList) {
             // Note: There are no extra options added to the direct provider url
@@ -277,7 +277,7 @@ public class ConsumerStub<T> {
                     providerHostPortPair.getRight(), interfaceName, form, version);
             // Please refer to ProviderStub for direct provider url options
             providerUrl.addOption(CODEC, protocolConfig.getCodec());
-            providerUrl.addOption(LOCAL_ADDRESS_FACTORY, protocolConfig.getLocalAddressFactory());
+            providerUrl.addOption(LOCAL_IP_FACTORY, protocolConfig.getLocalIpFactory());
             providerUrl.addOption(MIN_CLIENT_CONN, String.valueOf(protocolConfig.getMinClientConn()));
             directProviderUrls.add(providerUrl);
         }

@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.PROVIDER_ADDRESSES;
 import static org.infinity.rpc.core.constant.RegistryConstants.*;
-import static org.infinity.rpc.utilities.network.AddressUtils.LOCALHOST;
+import static org.infinity.rpc.utilities.network.IpUtils.LOCALHOST;
 
 @Data
 @Slf4j

@@ -7,7 +7,7 @@ import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static org.infinity.rpc.utilities.network.AddressUtils.LOCALHOST;
+import static org.infinity.rpc.utilities.network.IpUtils.LOCALHOST;
 
 public abstract class ZkBaseTest {
 

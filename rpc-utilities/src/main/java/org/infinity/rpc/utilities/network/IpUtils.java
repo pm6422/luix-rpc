@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Slf4j
-public abstract class AddressUtils {
+public abstract class IpUtils {
     public static final  String      LOCALHOST          = "127.0.0.1";
     public static final  String      ANY_HOST           = "0.0.0.0";
     public static final  String      INFINITY_IP_PREFIX = "INFINITY_IP_PREFIX";
@@ -59,7 +59,6 @@ public abstract class AddressUtils {
         return (name != null && !ANY_HOST.equals(name) && !LOCALHOST.equals(name) && IP_PATTERN.matcher(name).matches());
     }
 
-
     /**
      * Get the valid IP address based on priorities.
      * Configuration priority:
@@ -68,7 +67,7 @@ public abstract class AddressUtils {
      *
      * @return local ip address
      */
-    public static String getLocalAddress() {
+    public static String getLocalIp() {
         if (localAddressCache != null) {
             // Get from cache
             return localAddressCache.getHostAddress();
@@ -137,7 +136,7 @@ public abstract class AddressUtils {
     }
 
     public static List<Pair<String, Integer>> parseAddress(String address) {
-        return Arrays.stream(address.split(COMMA_SEPARATOR)).map(AddressUtils::parseHostPort).collect(Collectors.toList());
+        return Arrays.stream(address.split(COMMA_SEPARATOR)).map(IpUtils::parseHostPort).collect(Collectors.toList());
     }
 
     private static Pair<String, Integer> parseHostPort(String addr) {

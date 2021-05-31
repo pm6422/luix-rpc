@@ -1,21 +1,17 @@
 package org.infinity.rpc.utilities.id;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.utilities.concurrent.ThreadSafe;
+import org.infinity.rpc.utilities.network.IpUtils;
+
+import static org.apache.commons.lang3.StringUtils.substring;
 
 @ThreadSafe
 public abstract class IdGenerator {
     private static final ShortIdGenerator     SHORT_ID_GENERATOR      = new ShortIdGenerator();
     private static final SnowFlakeIdGenerator SNOW_FLAKE_ID_GENERATOR = new SnowFlakeIdGenerator(1L, false, false);
-
-    /**
-     * Generate a thread-safe digit format ID
-     *
-     * @return 18 bits length，e.g：317297928250941551
-     */
-    public static long generateSnowFlakeId() {
-        return SNOW_FLAKE_ID_GENERATOR.nextId();
-    }
+    private static final String               IP_SUFFIX               = substring(IpUtils.getLocalIp().replaceAll(".", StringUtils.EMPTY), -3);
 
     /**
      * Generate a thread-safe digit format ID
@@ -24,6 +20,16 @@ public abstract class IdGenerator {
      */
     public static long generateTimestampId() {
         return TimestampIdGenerator.nextId();
+    }
+
+    /**
+     * Generate a thread-safe digit format ID with unique value under multiple hosts cluster environment
+     * The last three bits are the IP suffix
+     *
+     * @return 22 bits length，e.g：1672888135850179037128
+     */
+    public static long generateUniqueId() {
+        return generateTimestampId();
     }
 
     /**

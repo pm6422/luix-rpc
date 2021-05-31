@@ -8,11 +8,12 @@ import org.junit.Test;
 public class PerfTests {
     @Rule
     public  ContiPerfRule     i                 = new ContiPerfRule();
+    private static final SnowFlakeIdGenerator SNOW_FLAKE_ID_GENERATOR = new SnowFlakeIdGenerator(1L, false, false);
 
     @Test
     @PerfTest(invocations = 200000, threads = 16)
     public void testSnowFlakeId() {
-        IdGenerator.generateSnowFlakeId();
+        SNOW_FLAKE_ID_GENERATOR.nextId();
     }
 
     @Test

@@ -13,7 +13,7 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.service.TestDummyService;
 import org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils;
 import org.infinity.rpc.utilities.annotation.EventMarker;
-import org.infinity.rpc.utilities.network.AddressUtils;
+import org.infinity.rpc.utilities.network.IpUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -48,8 +48,8 @@ public class ZookeeperRegistryTests {
         in.close();
 
         registryUrl = Url.registryUrl(REGISTRY_VAL_ZOOKEEPER, REGISTRY_HOST, zkPort);
-        consumerUrl = Url.consumerUrl(PROTOCOL_VAL_INFINITY, AddressUtils.LOCALHOST, 3000, provider);
-        providerUrl1 = Url.providerUrl(PROTOCOL_VAL_INFINITY, AddressUtils.LOCALHOST, 2000, provider);
+        consumerUrl = Url.consumerUrl(PROTOCOL_VAL_INFINITY, IpUtils.LOCALHOST, 3000, provider);
+        providerUrl1 = Url.providerUrl(PROTOCOL_VAL_INFINITY, IpUtils.LOCALHOST, 2000, provider);
         providerUrl2 = Url.providerUrl(PROTOCOL_VAL_INFINITY, "192.168.100.100", 2000, provider);
 
         zookeeper = new EmbeddedZookeeper();

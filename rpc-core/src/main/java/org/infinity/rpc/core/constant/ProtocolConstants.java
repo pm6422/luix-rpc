@@ -11,8 +11,8 @@ public interface ProtocolConstants {
     String  CODEC_VAL_DEFAULT                  = "default";
     String  SERIALIZER                         = "serializer";
     String  SERIALIZER_VAL_DEFAULT             = SERIALIZER_NAME_KRYO;
-    String  LOCAL_ADDRESS_FACTORY              = "localAddressFactory";
-    String  LOCAL_ADDRESS_FACTORY_VAL_DEFAULT  = "default";
+    String  LOCAL_IP_FACTORY                   = "localIpFactory";
+    String  LOCAL_IP_FACTORY_VAL_DEFAULT       = "default";
     String  ENDPOINT_FACTORY                   = "endpointFactory";
     String  ENDPOINT_FACTORY_VAL_NETTY         = "netty";
     String  MIN_CLIENT_CONN                    = "minClientConn";

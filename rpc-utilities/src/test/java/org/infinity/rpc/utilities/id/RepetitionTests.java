@@ -17,6 +17,7 @@ import java.util.stream.IntStream;
  */
 @Slf4j
 public class RepetitionTests {
+    private static final SnowFlakeIdGenerator SNOW_FLAKE_ID_GENERATOR = new SnowFlakeIdGenerator(1L, false, false);
     /**
      * single thread test
      *
@@ -65,7 +66,7 @@ public class RepetitionTests {
 
         IntStream.range(0, maxTimes).forEach(i -> {
             threadPool.execute(() -> {
-                long requestId = IdGenerator.generateSnowFlakeId();
+                long requestId = SNOW_FLAKE_ID_GENERATOR.nextId();
                 System.out.println(requestId);
                 set.add(requestId);
             });

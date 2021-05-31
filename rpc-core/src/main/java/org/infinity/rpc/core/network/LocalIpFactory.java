@@ -5,14 +5,14 @@ import org.infinity.rpc.utilities.serviceloader.annotation.Spi;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiScope;
 
 @Spi(scope = SpiScope.SINGLETON)
-public interface LocalAddressFactory {
+public interface LocalIpFactory {
 
     /**
-     * Get valid local IP address
+     * Get valid local IP
      *
-     * @return local IP address
+     * @return local IP
      */
-    String getLocalAddress();
+    String getLocalIp();
 
     /**
      * Get instance associated with the specified name
@@ -20,7 +20,7 @@ public interface LocalAddressFactory {
      * @param name specified name
      * @return instance
      */
-    static LocalAddressFactory getInstance(String name) {
-        return ServiceLoader.forClass(LocalAddressFactory.class).load(name);
+    static LocalIpFactory getInstance(String name) {
+        return ServiceLoader.forClass(LocalIpFactory.class).load(name);
     }
 }
