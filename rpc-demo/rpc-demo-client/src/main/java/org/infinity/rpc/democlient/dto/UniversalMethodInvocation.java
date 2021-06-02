@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.client.stub;
+package org.infinity.rpc.democlient.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
