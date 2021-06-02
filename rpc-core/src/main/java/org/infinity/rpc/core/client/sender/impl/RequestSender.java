@@ -35,7 +35,7 @@ public class RequestSender extends AbstractRequestSender {
         }
         client = endpointFactory.createClient(providerUrl);
         // Initialize
-        init();
+        super.init();
         log.info("Initialized request sender [{}] in {} ms", this, System.currentTimeMillis() - start);
     }
 
