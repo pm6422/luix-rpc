@@ -1,12 +1,13 @@
-package org.infinity.rpc.core.client.request;
+package org.infinity.rpc.core.client.sender;
 
+import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.url.Url;
 
 /**
- * RPC invoker used to call provider
+ * RPC sender used to call service provider
  */
-public interface Invokable {
+public interface Sendable {
 
     /**
      * Get provider url
@@ -16,19 +17,19 @@ public interface Invokable {
     Url getProviderUrl();
 
     /**
-     * Check whether the invoker is active
+     * Check whether the RPC sender is active
      *
      * @return {@code true} if it was active and {@code false} otherwise
      */
     boolean isActive();
 
     /**
-     * Invoke provider
+     * Send RPC request
      *
      * @param request request object
      * @return response object
      */
-    Responseable invoke(Requestable request);
+    Responseable sendRequest(Requestable request);
 
     /**
      * Do some cleanup task

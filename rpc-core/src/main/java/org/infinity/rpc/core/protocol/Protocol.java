@@ -1,6 +1,6 @@
 package org.infinity.rpc.core.protocol;
 
-import org.infinity.rpc.core.client.request.Invokable;
+import org.infinity.rpc.core.client.sender.Sendable;
 import org.infinity.rpc.core.server.exporter.Exportable;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
@@ -26,7 +26,7 @@ public interface Protocol {
      * @param providerUrl   provider url
      * @return provider invoker
      */
-    Invokable refer(String interfaceName, Url providerUrl);
+    Sendable refer(String interfaceName, Url providerUrl);
 
     /**
      * Destroy

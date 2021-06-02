@@ -1,6 +1,7 @@
-package org.infinity.rpc.core.client.request;
+package org.infinity.rpc.core.client.sender;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.url.Url;
@@ -12,29 +13,28 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  */
 @Slf4j
-public abstract class AbstractInvoker implements Invokable {
+public abstract class AbstractRpcSender implements Sendable {
     protected volatile boolean       active          = false;
     protected          AtomicBoolean initialized     = new AtomicBoolean(false);
     protected          AtomicInteger processingCount = new AtomicInteger(0);
     protected          String        interfaceName;
     protected          Url           providerUrl;
 
-    public AbstractInvoker(String interfaceName, Url providerUrl) {
+    public AbstractRpcSender(String interfaceName, Url providerUrl) {
         this.interfaceName = interfaceName;
         this.providerUrl = providerUrl;
     }
 
     protected void init() {
         if (!initialized.compareAndSet(false, true)) {
-            log.warn("Provider invoker [{}] has already been initialized!", this.toString());
+            log.warn("RPC sender [{}] has already been initialized!", this);
             return;
         }
         boolean result = doInit();
         if (!result) {
-            throw new RpcFrameworkException("Failed to initialize the provider invoker [" + this + "]!");
-        } else {
-            setActive(true);
+            throw new RpcFrameworkException("Failed to initialize the RPC sender [" + this + "]!");
         }
+        setActive(true);
     }
 
     public void setActive(boolean active) {
@@ -52,18 +52,18 @@ public abstract class AbstractInvoker implements Invokable {
     }
 
     @Override
-    public Responseable invoke(Requestable request) {
+    public Responseable sendRequest(Requestable request) {
         if (!active) {
-            throw new RpcFrameworkException("No active provider invoker found for now!");
+            throw new RpcFrameworkException("No active RPC sender found for now!");
         }
 
-        beforeInvoke();
+        beforeSend();
         Responseable response = null;
         try {
-            response = doInvoke(request);
+            response = doSend(request);
             return response;
         } finally {
-            afterInvoke(request, response);
+            afterSend(request, response);
         }
     }
 
@@ -79,11 +79,11 @@ public abstract class AbstractInvoker implements Invokable {
      */
     protected abstract boolean doInit();
 
-    protected abstract Responseable doInvoke(Requestable request);
+    protected abstract Responseable doSend(Requestable request);
 
-    protected void beforeInvoke() {
+    protected void beforeSend() {
         processingCount.incrementAndGet();
     }
 
-    protected abstract void afterInvoke(Requestable request, Responseable response);
+    protected abstract void afterSend(Requestable request, Responseable response);
 }

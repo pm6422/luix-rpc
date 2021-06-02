@@ -58,7 +58,7 @@ public class P2pServiceInvoker implements ServiceInvoker {
      * Call chain:
      * cluster fault tolerance strategy =>
      * LB select node =>
-     * provider invoker call
+     * RPC sender
      *
      * @param request request object
      * @return response

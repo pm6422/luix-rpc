@@ -2,7 +2,7 @@ package org.infinity.rpc.core.client.faulttolerance.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.faulttolerance.AbstractFaultTolerance;
-import org.infinity.rpc.core.client.request.Invokable;
+import org.infinity.rpc.core.client.sender.Sendable;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
@@ -27,7 +27,7 @@ public class FailoverFaultTolerance extends AbstractFaultTolerance {
     @Override
     public Responseable invoke(Requestable request) {
         // Select multiple nodes
-        List<Invokable> availableInvokers = loadBalancer.selectProviderNodes(request);
+        List<Sendable> availableInvokers = loadBalancer.selectProviderNodes(request);
         // todo: provider configuration over consumer configuration
         int maxRetries = availableInvokers.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
         if (maxRetries == 0) {
@@ -36,10 +36,10 @@ public class FailoverFaultTolerance extends AbstractFaultTolerance {
 
         // Retry the RPC request operation till the max retry times
         for (int i = 0; i <= maxRetries; i++) {
-            Invokable invoker = availableInvokers.get(i % availableInvokers.size());
+            Sendable invoker = availableInvokers.get(i % availableInvokers.size());
             try {
                 request.setRetryNumber(i);
-                return invoker.invoke(request);
+                return invoker.sendRequest(request);
             } catch (RuntimeException e) {
                 if (ExceptionUtils.isBizException(e) || i >= maxRetries) {
                     // Throw the exception if it's a business one

@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.client.loadbalancer.impl;
 
 import org.infinity.rpc.core.client.loadbalancer.AbstractLoadBalancer;
-import org.infinity.rpc.core.client.request.Invokable;
+import org.infinity.rpc.core.client.sender.Sendable;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
@@ -18,10 +18,10 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.LOAD_BALANCER_VAL
 public class RandomLoadBalancer extends AbstractLoadBalancer {
 
     @Override
-    protected Invokable doSelectNode(Requestable request) {
+    protected Sendable doSelectNode(Requestable request) {
         int index = getIndex(invokers);
         for (int i = 0; i < invokers.size(); i++) {
-            Invokable invoker = invokers.get((i + index) % invokers.size());
+            Sendable invoker = invokers.get((i + index) % invokers.size());
             if (invoker.isActive()) {
                 return invoker;
             }
@@ -30,11 +30,11 @@ public class RandomLoadBalancer extends AbstractLoadBalancer {
     }
 
     @Override
-    protected List<Invokable> doSelectNodes(Requestable request) {
-        List<Invokable> selected = new ArrayList<>();
+    protected List<Sendable> doSelectNodes(Requestable request) {
+        List<Sendable> selected = new ArrayList<>();
         int index = getIndex(invokers);
         for (int i = 0; i < invokers.size(); i++) {
-            Invokable invoker = invokers.get((i + index) % invokers.size());
+            Sendable invoker = invokers.get((i + index) % invokers.size());
             if (invoker.isActive()) {
                 selected.add(invoker);
             }
@@ -42,7 +42,7 @@ public class RandomLoadBalancer extends AbstractLoadBalancer {
         return selected;
     }
 
-    private int getIndex(List<Invokable> invokers) {
+    private int getIndex(List<Sendable> invokers) {
         return (int) (ThreadLocalRandom.current().nextDouble() * invokers.size());
     }
 }

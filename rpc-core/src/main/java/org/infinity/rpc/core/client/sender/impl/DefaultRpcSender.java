@@ -1,7 +1,7 @@
-package org.infinity.rpc.core.client.request.impl;
+package org.infinity.rpc.core.client.sender.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.client.request.AbstractInvoker;
+import org.infinity.rpc.core.client.sender.AbstractRpcSender;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.TransportException;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
@@ -17,15 +17,15 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY_
 
 /**
  * todo: DefaultRpcReferer
- * One default provider invoker for one service interface.
+ * One instance for one service interface.
  * The provider invoker is created when the provider is active.
  */
 @Slf4j
-public class DefaultInvoker extends AbstractInvoker {
+public class DefaultRpcSender extends AbstractRpcSender {
     protected EndpointFactory endpointFactory;
     protected Client          client;
 
-    public DefaultInvoker(String interfaceName, Url providerUrl) {
+    public DefaultRpcSender(String interfaceName, Url providerUrl) {
         super(interfaceName, providerUrl);
         long start = System.currentTimeMillis();
         String endpointFactoryName = providerUrl.getOption(ENDPOINT_FACTORY, ENDPOINT_FACTORY_VAL_NETTY);
@@ -45,7 +45,7 @@ public class DefaultInvoker extends AbstractInvoker {
     }
 
     @Override
-    protected Responseable doInvoke(Requestable request) {
+    protected Responseable doSend(Requestable request) {
         try {
             return client.request(request);
         } catch (TransportException exception) {
@@ -54,7 +54,7 @@ public class DefaultInvoker extends AbstractInvoker {
     }
 
     @Override
-    protected void afterInvoke(Requestable request, Responseable response) {
+    protected void afterSend(Requestable request, Responseable response) {
         if (!(response instanceof Future)) {
             processingCount.decrementAndGet();
             return;
@@ -76,6 +76,6 @@ public class DefaultInvoker extends AbstractInvoker {
 
     @Override
     public String toString() {
-        return DefaultInvoker.class.getSimpleName().concat(":").concat(interfaceName);
+        return DefaultRpcSender.class.getSimpleName().concat(":").concat(interfaceName);
     }
 }
