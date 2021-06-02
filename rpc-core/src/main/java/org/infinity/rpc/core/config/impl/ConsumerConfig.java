@@ -13,10 +13,10 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 public class ConsumerConfig extends ServiceConfig {
     public static final String  PREFIX           = "consumer";
     /**
-     * Cluster implementation
+     * Service provider invoker
      */
     @NotEmpty
-    private             String  cluster          = CLUSTER_VAL_P2P;
+    private             String  invoker          = INVOKER_VAL_P2P;
     /**
      * Fault tolerance strategy
      */

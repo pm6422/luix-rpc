@@ -71,9 +71,9 @@ public class ConsumerStub<T> {
 //     */
 //    private String   registry;
     /**
-     * Provider invoker cluster
+     * Service provider invoker
      */
-    private String   cluster;
+    private String   invoker;
     /**
      *
      */
@@ -215,7 +215,7 @@ public class ConsumerStub<T> {
         url = this.createConsumerUrl(applicationConfig, protocolConfig);
 
         // Initialize provider invoker cluster before consumer initialization
-        serviceInvoker = createInvokerCluster();
+        serviceInvoker = ServiceInvoker.getInstance(invoker).createServiceInvoker(interfaceName, faultTolerance, loadBalancer, url);
 
         if (StringUtils.isEmpty(providerAddresses)) {
             // Non-direct registry
@@ -284,11 +284,6 @@ public class ConsumerStub<T> {
         return directProviderUrls;
     }
 
-    private ServiceInvoker createInvokerCluster() {
-        // One cluster is created for one protocol, only one server node under a cluster can receive the request
-        return ServiceInvoker.createServiceInvoker(cluster, interfaceName, faultTolerance, loadBalancer, url);
-    }
-
     /**
      * Build the consumer stub bean name
      *
@@ -311,7 +306,7 @@ public class ConsumerStub<T> {
         ConsumerStub<?> consumerStub = new ConsumerStub<>();
         consumerStub.setInterfaceName(interfaceName);
         consumerStub.setProtocol(protocol.getName());
-        consumerStub.setCluster(consumer.getCluster());
+        consumerStub.setInvoker(consumer.getInvoker());
         consumerStub.setFaultTolerance(consumer.getFaultTolerance());
         consumerStub.setLoadBalancer(consumer.getLoadBalancer());
         consumerStub.setProxy(consumer.getProxyFactory());

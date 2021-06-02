@@ -4,22 +4,24 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.client.invoker.ServiceInvoker;
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
+import org.infinity.rpc.core.client.invoker.ServiceInvoker;
+import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.response.Responseable;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
-import static org.infinity.rpc.core.constant.ConsumerConstants.CLUSTER_VAL_P2P;
+import static org.infinity.rpc.core.constant.ConsumerConstants.INVOKER_VAL_P2P;
 
 /**
  * It means that only one service provider can handle one request
  * todo: ClusterSpi
  */
 @Slf4j
-@SpiName(CLUSTER_VAL_P2P)
+@SpiName(INVOKER_VAL_P2P)
 @Setter
 @Getter
 public class P2pServiceInvoker implements ServiceInvoker {
@@ -34,6 +36,18 @@ public class P2pServiceInvoker implements ServiceInvoker {
     }
 
     @Override
+    public ServiceInvoker createServiceInvoker(String interfaceName, String faultToleranceName, String loadBalancerName, Url consumerUrl) {
+        this.setInterfaceName(interfaceName);
+        FaultTolerance faultTolerance = FaultTolerance.getInstance(faultToleranceName);
+        faultTolerance.setConsumerUrl(consumerUrl);
+        faultTolerance.setLoadBalancer(LoadBalancer.getInstance(loadBalancerName));
+        this.setFaultTolerance(faultTolerance);
+        // Initialize
+        this.init();
+        return this;
+    }
+
+    @Override
     public void destroy() {
         active = false;
         faultTolerance.destroy();
@@ -42,7 +56,7 @@ public class P2pServiceInvoker implements ServiceInvoker {
     @Override
     public Responseable invoke(Requestable request) {
         if (!active) {
-            throw new RpcFrameworkException("No active service [" + toString() + "] found!");
+            throw new RpcFrameworkException("No active service [" + this + "] found!");
         }
         return faultTolerance.invoke(request);
     }

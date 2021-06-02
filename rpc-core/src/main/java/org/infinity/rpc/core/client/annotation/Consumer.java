@@ -62,11 +62,11 @@ public @interface Consumer {
     String version() default "";
 
     /**
-     * Provider invocation cluster
+     * Service provider invoker
      *
-     * @return provider invocation cluster
+     * @return service provider invoker
      */
-    String cluster() default "";
+    String invoker() default "";
 
     /**
      * Fault tolerance strategy

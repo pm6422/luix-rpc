@@ -4,9 +4,9 @@ package org.infinity.rpc.core.constant;
  * All the attribute names of {@link org.infinity.rpc.core.client.annotation.Consumer}
  */
 public interface ConsumerConstants extends ServiceConstants {
-    String CLUSTER                      = "cluster";
-    String CLUSTER_VAL_P2P              = "p2p";
-    String CLUSTER_VAL_BROADCAST        = "broadcast";
+    String INVOKER                      = "invoker";
+    String INVOKER_VAL_P2P              = "p2p";
+    String INVOKER_VAL_BROADCAST        = "broadcast";
     String FAULT_TOLERANCE              = "faultTolerance";
     String FAULT_TOLERANCE_VAL_FAILOVER = "failover";
     String FAULT_TOLERANCE_VAL_FAILFAST = "failfast";
