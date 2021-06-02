@@ -21,11 +21,11 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY_
  * The request sender is created when the provider is active.
  */
 @Slf4j
-public class DefaultRequestSender extends AbstractRequestSender {
-    protected EndpointFactory endpointFactory;
-    protected Client          client;
+public class RequestSender extends AbstractRequestSender {
+    private final Client          client;
+    private final EndpointFactory endpointFactory;
 
-    public DefaultRequestSender(String interfaceName, Url providerUrl) {
+    public RequestSender(String interfaceName, Url providerUrl) {
         super(interfaceName, providerUrl);
         long start = System.currentTimeMillis();
         String endpointFactoryName = providerUrl.getOption(ENDPOINT_FACTORY, ENDPOINT_FACTORY_VAL_NETTY);
@@ -36,7 +36,7 @@ public class DefaultRequestSender extends AbstractRequestSender {
         client = endpointFactory.createClient(providerUrl);
         // Initialize
         init();
-        log.info("Initialized provider invoker [{}] in {} ms", this, System.currentTimeMillis() - start);
+        log.info("Initialized request sender [{}] in {} ms", this, System.currentTimeMillis() - start);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class DefaultRequestSender extends AbstractRequestSender {
             return;
         }
         Future future = (Future) response;
-        future.addListener(future1 -> processingCount.decrementAndGet());
+        future.addListener(f -> processingCount.decrementAndGet());
     }
 
     @Override
@@ -71,11 +71,11 @@ public class DefaultRequestSender extends AbstractRequestSender {
     @Override
     public void destroy() {
         endpointFactory.safeReleaseResource(client, providerUrl);
-        log.info("DefaultRpcReferer destroy client: url {}", providerUrl);
+        log.info("Destroy request sender for provider url {}", providerUrl);
     }
 
     @Override
     public String toString() {
-        return DefaultRequestSender.class.getSimpleName().concat(":").concat(interfaceName);
+        return RequestSender.class.getSimpleName().concat(":").concat(interfaceName);
     }
 }

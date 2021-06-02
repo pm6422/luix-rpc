@@ -9,16 +9,13 @@ import org.infinity.rpc.core.url.Url;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- *
- */
 @Slf4j
 public abstract class AbstractRequestSender implements Sendable {
     protected volatile boolean       active          = false;
-    protected          AtomicBoolean initialized     = new AtomicBoolean(false);
-    protected          AtomicInteger processingCount = new AtomicInteger(0);
     protected          String        interfaceName;
     protected          Url           providerUrl;
+    protected          AtomicBoolean initialized     = new AtomicBoolean(false);
+    protected          AtomicInteger processingCount = new AtomicInteger(0);
 
     public AbstractRequestSender(String interfaceName, Url providerUrl) {
         this.interfaceName = interfaceName;
@@ -30,15 +27,10 @@ public abstract class AbstractRequestSender implements Sendable {
             log.warn("RPC sender [{}] has already been initialized!", this);
             return;
         }
-        boolean result = doInit();
-        if (!result) {
+        if (!doInit()) {
             throw new RpcFrameworkException("Failed to initialize the RPC sender [" + this + "]!");
         }
-        setActive(true);
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
+        active = true;
     }
 
     @Override
@@ -56,10 +48,9 @@ public abstract class AbstractRequestSender implements Sendable {
         if (!active) {
             throw new RpcFrameworkException("No active RPC sender found for now!");
         }
-
-        beforeSend();
         Responseable response = null;
         try {
+            beforeSend();
             response = doSend(request);
             return response;
         } finally {
@@ -69,7 +60,7 @@ public abstract class AbstractRequestSender implements Sendable {
 
     @Override
     public void destroy() {
-
+        active = false;
     }
 
     /**
@@ -79,11 +70,23 @@ public abstract class AbstractRequestSender implements Sendable {
      */
     protected abstract boolean doInit();
 
+    /**
+     * Send RPC request
+     *
+     * @param request request
+     * @return response
+     */
     protected abstract Responseable doSend(Requestable request);
 
     protected void beforeSend() {
         processingCount.incrementAndGet();
     }
 
+    /**
+     * After send handler
+     *
+     * @param request  request
+     * @param response response
+     */
     protected abstract void afterSend(Requestable request, Responseable response);
 }
