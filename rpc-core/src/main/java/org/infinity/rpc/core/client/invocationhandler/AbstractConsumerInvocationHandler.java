@@ -10,7 +10,6 @@ import org.infinity.rpc.core.exception.RpcAbstractException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.utils.RpcConfigValidator;
-import org.infinity.rpc.core.utils.RpcRequestIdHolder;
 
 import java.lang.reflect.Method;
 
@@ -50,7 +49,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         request.addOption(REQUEST_TIMEOUT, consumerStub.getRequestTimeout(), REQUEST_TIMEOUT_VAL_DEFAULT);
         request.addOption(MAX_RETRIES, consumerStub.getMaxRetries(), MAX_RETRIES_VAL_DEFAULT);
         request.addOption(MAX_PAYLOAD, consumerStub.getMaxPayload(), MAX_PAYLOAD_VAL_DEFAULT);
-        return processRequest(request, returnType);
+        return sendRequest(request, returnType);
     }
 
     /**
@@ -63,13 +62,11 @@ public abstract class AbstractConsumerInvocationHandler<T> {
     /**
      * @param request    RPC request
      * @param returnType return type of method
-     * @return result of method
+     * @return result of method execution
      */
-    protected Object processRequest(Requestable request, Class<?> returnType) {
+    protected Object sendRequest(Requestable request, Class<?> returnType) {
         Responseable response;
         try {
-            // Store request id on client side
-            RpcRequestIdHolder.setRequestId(request.getRequestId());
             // Call chain: provider invoker cluster call => cluster fault tolerance strategy =>
             // LB select node => provider invoker call
             // Only one server node under one cluster can process the request
@@ -78,7 +75,6 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         } catch (Exception e) {
             return handleError(request, e);
         } finally {
-            RpcRequestIdHolder.destroy();
         }
     }
 
