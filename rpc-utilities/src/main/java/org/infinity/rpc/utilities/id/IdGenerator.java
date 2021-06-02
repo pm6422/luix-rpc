@@ -23,13 +23,13 @@ public abstract class IdGenerator {
     }
 
     /**
-     * Generate a thread-safe digit format ID with unique value under multiple hosts cluster environment
-     * The last three bits are the IP suffix
+     * Generate a thread-safe digit format ID string with unique value under multiple hosts cluster environment
+     * The first three bits are the IP suffix
      *
-     * @return 22 bits length，e.g：1672888135850179037128
+     * @return 22 bits length，e.g：1281672888135850179037
      */
-    public static long generateUniqueId() {
-        return generateTimestampId();
+    public static String generateUniqueId() {
+        return IP_SUFFIX + generateTimestampId();
     }
 
     /**
