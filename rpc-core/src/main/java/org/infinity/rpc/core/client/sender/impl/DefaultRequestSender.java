@@ -1,8 +1,8 @@
 package org.infinity.rpc.core.client.sender.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.client.sender.AbstractRpcSender;
 import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.client.sender.AbstractRequestSender;
 import org.infinity.rpc.core.exception.TransportException;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.client.Client;
@@ -18,14 +18,14 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY_
 /**
  * todo: DefaultRpcReferer
  * One instance for one service interface.
- * The provider invoker is created when the provider is active.
+ * The request sender is created when the provider is active.
  */
 @Slf4j
-public class DefaultRpcSender extends AbstractRpcSender {
+public class DefaultRequestSender extends AbstractRequestSender {
     protected EndpointFactory endpointFactory;
     protected Client          client;
 
-    public DefaultRpcSender(String interfaceName, Url providerUrl) {
+    public DefaultRequestSender(String interfaceName, Url providerUrl) {
         super(interfaceName, providerUrl);
         long start = System.currentTimeMillis();
         String endpointFactoryName = providerUrl.getOption(ENDPOINT_FACTORY, ENDPOINT_FACTORY_VAL_NETTY);
@@ -76,6 +76,6 @@ public class DefaultRpcSender extends AbstractRpcSender {
 
     @Override
     public String toString() {
-        return DefaultRpcSender.class.getSimpleName().concat(":").concat(interfaceName);
+        return DefaultRequestSender.class.getSimpleName().concat(":").concat(interfaceName);
     }
 }

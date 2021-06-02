@@ -13,14 +13,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  */
 @Slf4j
-public abstract class AbstractRpcSender implements Sendable {
+public abstract class AbstractRequestSender implements Sendable {
     protected volatile boolean       active          = false;
     protected          AtomicBoolean initialized     = new AtomicBoolean(false);
     protected          AtomicInteger processingCount = new AtomicInteger(0);
     protected          String        interfaceName;
     protected          Url           providerUrl;
 
-    public AbstractRpcSender(String interfaceName, Url providerUrl) {
+    public AbstractRequestSender(String interfaceName, Url providerUrl) {
         this.interfaceName = interfaceName;
         this.providerUrl = providerUrl;
     }

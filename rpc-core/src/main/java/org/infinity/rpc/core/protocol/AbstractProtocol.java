@@ -3,7 +3,7 @@ package org.infinity.rpc.core.protocol;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.sender.Sendable;
-import org.infinity.rpc.core.client.sender.impl.DefaultRpcSender;
+import org.infinity.rpc.core.client.sender.impl.DefaultRequestSender;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.exporter.Exportable;
 import org.infinity.rpc.core.server.stub.ProviderStub;
@@ -53,7 +53,7 @@ public abstract class AbstractProtocol implements Protocol {
             throw new RpcFrameworkException("Provider url must NOT be null!");
         }
         // todo: create different caller associated with the protocol
-        return new DefaultRpcSender(interfaceName, providerUrl);
+        return new DefaultRequestSender(interfaceName, providerUrl);
     }
 
     /**
