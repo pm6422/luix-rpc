@@ -18,7 +18,7 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 import org.infinity.rpc.core.utils.RpcRequestIdHolder;
 import org.infinity.rpc.transport.netty4.server.NettyServer;
-import org.infinity.rpc.utilities.network.IpUtils;
+import org.infinity.rpc.utilities.network.AddressUtils;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -146,7 +146,7 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
 
     private void processRequest(final ChannelHandlerContext ctx, final Requestable request) {
         // Used by access log output
-        request.addOption(Url.PARAM_HOST, IpUtils.getHostName(ctx.channel().remoteAddress()));
+        request.addOption(Url.PARAM_HOST, AddressUtils.getHostName(ctx.channel().remoteAddress()));
         final long processStartTime = System.currentTimeMillis();
         try {
             // Store request id on server side

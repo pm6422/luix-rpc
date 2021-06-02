@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Slf4j
-public abstract class IpUtils {
+public abstract class AddressUtils {
     public static final  String      LOCALHOST          = "127.0.0.1";
     public static final  String      ANY_HOST           = "0.0.0.0";
     public static final  String      INFINITY_IP_PREFIX = "INFINITY_IP_PREFIX";
@@ -136,7 +136,7 @@ public abstract class IpUtils {
     }
 
     public static List<Pair<String, Integer>> parseAddress(String address) {
-        return Arrays.stream(address.split(COMMA_SEPARATOR)).map(IpUtils::parseHostPort).collect(Collectors.toList());
+        return Arrays.stream(address.split(COMMA_SEPARATOR)).map(AddressUtils::parseHostPort).collect(Collectors.toList());
     }
 
     private static Pair<String, Integer> parseHostPort(String addr) {

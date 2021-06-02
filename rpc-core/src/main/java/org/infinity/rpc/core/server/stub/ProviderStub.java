@@ -203,7 +203,6 @@ public class ProviderStub<T> {
         url.addOption(APP, applicationConfig.getName());
         url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(SERIALIZER, protocolConfig.getSerializer());
-        url.addOption(LOCAL_IP_FACTORY, protocolConfig.getLocalIpFactory());
         url.addOption(ENDPOINT_FACTORY, protocolConfig.getEndpointFactory());
         url.addOption(MIN_CLIENT_CONN, String.valueOf(protocolConfig.getMinClientConn()));
         url.addOption(MAX_CLIENT_FAILED_CONN, String.valueOf(protocolConfig.getMaxClientFailedConn()));

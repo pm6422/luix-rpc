@@ -6,10 +6,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.codec.Codec;
 import org.infinity.rpc.core.config.Configurable;
 import org.infinity.rpc.core.exception.impl.RpcConfigException;
-import org.infinity.rpc.core.network.LocalIpFactory;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.utils.RpcConfigValidator;
-import org.infinity.rpc.utilities.network.IpUtils;
+import org.infinity.rpc.utilities.network.AddressUtils;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -53,11 +52,6 @@ public class ProtocolConfig implements Configurable {
     @NotNull
     @Positive
     private             Integer port;
-    /**
-     * Factory used to get the local IP
-     */
-    @NotEmpty
-    private             String  localIpFactory      = LOCAL_IP_FACTORY_VAL_DEFAULT;
     /**
      * Factory used to create client and server
      */
@@ -135,13 +129,13 @@ public class ProtocolConfig implements Configurable {
                 .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the specified codec [%s]!", codec)));
 
         if (StringUtils.isNotEmpty(host)) {
-            RpcConfigValidator.isTrue(IpUtils.isValidIp(host), "Please specify a valid host!");
+            RpcConfigValidator.isTrue(AddressUtils.isValidIp(host), "Please specify a valid host!");
         }
     }
 
     private void initHost() {
         if (StringUtils.isEmpty(host)) {
-            host = LocalIpFactory.getInstance(localIpFactory).getLocalIp();
+            host = AddressUtils.getLocalIp();
         }
     }
 }

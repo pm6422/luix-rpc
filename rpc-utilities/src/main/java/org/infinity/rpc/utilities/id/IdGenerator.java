@@ -3,7 +3,7 @@ package org.infinity.rpc.utilities.id;
 
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.utilities.concurrent.ThreadSafe;
-import org.infinity.rpc.utilities.network.IpUtils;
+import org.infinity.rpc.utilities.network.AddressUtils;
 
 import static org.apache.commons.lang3.StringUtils.substring;
 
@@ -11,7 +11,7 @@ import static org.apache.commons.lang3.StringUtils.substring;
 public abstract class IdGenerator {
     private static final ShortIdGenerator     SHORT_ID_GENERATOR      = new ShortIdGenerator();
     private static final SnowFlakeIdGenerator SNOW_FLAKE_ID_GENERATOR = new SnowFlakeIdGenerator(1L, false, false);
-    private static final String               IP_SUFFIX               = substring(IpUtils.getLocalIp().replaceAll(".", StringUtils.EMPTY), -3);
+    private static final String               IP_SUFFIX               = substring(AddressUtils.getLocalIp().replaceAll(".", StringUtils.EMPTY), -3);
 
     /**
      * Generate a thread-safe digit format ID
