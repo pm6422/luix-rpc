@@ -35,9 +35,9 @@ public class ProviderNotifyListener implements ClientListener {
     }
 
     /**
-     * Pass provider invoker cluster to listener, listener will update provider invoker cluster after provider urls changed
+     * Pass service provider invoker to listener, listener will update service invoker after provider urls changed
      *
-     * @param serviceInvoker    provider invoker cluster
+     * @param serviceInvoker    service invoker
      * @param interfaceName     interface class name of the consumer
      * @param protocol          protocol
      * @param providerProcessor provider processor

@@ -36,7 +36,8 @@ public class P2pServiceInvoker implements ServiceInvoker {
     }
 
     @Override
-    public ServiceInvoker createServiceInvoker(String interfaceName, String faultToleranceName, String loadBalancerName, Url consumerUrl) {
+    public ServiceInvoker createServiceInvoker(String interfaceName, String faultToleranceName,
+                                               String loadBalancerName, Url consumerUrl) {
         this.setInterfaceName(interfaceName);
         FaultTolerance faultTolerance = FaultTolerance.getInstance(faultToleranceName);
         faultTolerance.setConsumerUrl(consumerUrl);
@@ -53,6 +54,16 @@ public class P2pServiceInvoker implements ServiceInvoker {
         faultTolerance.destroy();
     }
 
+    /**
+     * Call chain:
+     * service invoker call =>
+     * cluster fault tolerance strategy =>
+     * LB select node =>
+     * provider invoker call
+     *
+     * @param request request object
+     * @return response
+     */
     @Override
     public Responseable invoke(Requestable request) {
         if (!active) {
