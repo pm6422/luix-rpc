@@ -2,7 +2,7 @@ package org.infinity.rpc.core.client.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.rpc.core.client.cluster.InvokerCluster;
+import org.infinity.rpc.core.client.invoker.ServiceInvoker;
 import org.infinity.rpc.core.client.request.Invokable;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.listener.ClientListener;
@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @ThreadSafe
 public class ProviderNotifyListener implements ClientListener {
-    protected     InvokerCluster            invokerCluster;
+    protected ServiceInvoker serviceInvoker;
     /**
      * The interface class name of the consumer
      */
-    protected     String                    interfaceName;
+    protected String         interfaceName;
     protected     Protocol                  protocol;
     protected     ProviderProcessable       providerProcessor;
     private final Map<Url, List<Invokable>> invokersPerRegistryUrl = new ConcurrentHashMap<>();
@@ -37,16 +37,16 @@ public class ProviderNotifyListener implements ClientListener {
     /**
      * Pass provider invoker cluster to listener, listener will update provider invoker cluster after provider urls changed
      *
-     * @param invokerCluster    provider invoker cluster
+     * @param serviceInvoker    provider invoker cluster
      * @param interfaceName     interface class name of the consumer
      * @param protocol          protocol
      * @param providerProcessor provider processor
      * @return listener listener
      */
-    public static ProviderNotifyListener of(InvokerCluster invokerCluster, String interfaceName, String protocol,
+    public static ProviderNotifyListener of(ServiceInvoker serviceInvoker, String interfaceName, String protocol,
                                             ProviderProcessable providerProcessor) {
         ProviderNotifyListener listener = new ProviderNotifyListener();
-        listener.invokerCluster = invokerCluster;
+        listener.serviceInvoker = serviceInvoker;
         listener.interfaceName = interfaceName;
         listener.protocol = Protocol.getInstance(protocol);
         listener.providerProcessor = providerProcessor;
@@ -116,7 +116,7 @@ public class ProviderNotifyListener implements ClientListener {
                 .collect(Collectors.toList());
 
         // Refresh provider invokers to AbstractLoadBalancer
-        invokerCluster.getFaultTolerance().getLoadBalancer().refresh(invokers);
+        serviceInvoker.getFaultTolerance().getLoadBalancer().refresh(invokers);
     }
 
     @Override

@@ -16,7 +16,7 @@ public class ConsumerConfig extends ServiceConfig {
      * Cluster implementation
      */
     @NotEmpty
-    private             String  cluster          = CLUSTER_VAL_DEFAULT;
+    private             String  cluster          = CLUSTER_VAL_P2P;
     /**
      * Fault tolerance strategy
      */

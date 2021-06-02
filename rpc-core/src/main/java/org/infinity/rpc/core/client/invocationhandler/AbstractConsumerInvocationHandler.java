@@ -56,7 +56,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
      * Validate
      */
     protected void validate() {
-        RpcConfigValidator.notNull(consumerStub.getInvokerCluster(), "Invoker cluster must NOT be null!");
+        RpcConfigValidator.notNull(consumerStub.getServiceInvoker(), "Invoker cluster must NOT be null!");
     }
 
     /**
@@ -67,10 +67,9 @@ public abstract class AbstractConsumerInvocationHandler<T> {
     protected Object sendRequest(Requestable request, Class<?> returnType) {
         Responseable response;
         try {
-            // Call chain: provider invoker cluster call => cluster fault tolerance strategy =>
+            // Call chain: service invoker call => cluster fault tolerance strategy =>
             // LB select node => provider invoker call
-            // Only one server node under one cluster can process the request
-            response = consumerStub.getInvokerCluster().invoke(request);
+            response = consumerStub.getServiceInvoker().invoke(request);
             return response.getResult();
         } catch (Exception e) {
             return handleError(request, e);

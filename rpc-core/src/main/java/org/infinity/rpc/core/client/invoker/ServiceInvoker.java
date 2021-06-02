@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.client.cluster;
+package org.infinity.rpc.core.client.invoker;
 
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
 import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
@@ -10,10 +10,11 @@ import org.infinity.rpc.utilities.serviceloader.annotation.Spi;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiScope;
 
 /**
- * One cluster for one protocol, only one node of a cluster can handle the request
+ * A service invoker used to invoke service provider at client side
+ * One invoker for one protocol
  */
 @Spi(scope = SpiScope.PROTOTYPE)
-public interface InvokerCluster {
+public interface ServiceInvoker {
     /**
      * Initialize
      */
@@ -66,34 +67,34 @@ public interface InvokerCluster {
      * @param name specified name
      * @return instance
      */
-    static InvokerCluster getInstance(String name) {
-        return ServiceLoader.forClass(InvokerCluster.class).load(name);
+    static ServiceInvoker getInstance(String name) {
+        return ServiceLoader.forClass(ServiceInvoker.class).load(name);
     }
 
     /**
-     * Create a provider invoker cluster
+     * Create a service provider invoker instance
      *
-     * @param clusterName        provider invoker cluster name
+     * @param serviceInvokerName service invoker name
      * @param interfaceName      interface name
      * @param faultToleranceName fault tolerance name
      * @param loadBalancerName   load balancer name
      * @param consumerUrl        consumer url
-     * @return provider invoker cluster
+     * @return service invoker instance
      */
-    static InvokerCluster createCluster(String clusterName,
-                                        String interfaceName,
-                                        String faultToleranceName,
-                                        String loadBalancerName,
-                                        Url consumerUrl) {
-        // It support one cluster for one protocol for now, but do not support one cluster for one provider
-        InvokerCluster invokerCluster = InvokerCluster.getInstance(clusterName);
-        invokerCluster.setInterfaceName(interfaceName);
+    static ServiceInvoker createServiceInvoker(String serviceInvokerName,
+                                               String interfaceName,
+                                               String faultToleranceName,
+                                               String loadBalancerName,
+                                               Url consumerUrl) {
+        // It support one invoker for one protocol for now, but do not support one invoker for one provider
+        ServiceInvoker serviceInvoker = ServiceInvoker.getInstance(serviceInvokerName);
+        serviceInvoker.setInterfaceName(interfaceName);
         FaultTolerance faultTolerance = FaultTolerance.getInstance(faultToleranceName);
         faultTolerance.setConsumerUrl(consumerUrl);
         faultTolerance.setLoadBalancer(LoadBalancer.getInstance(loadBalancerName));
-        invokerCluster.setFaultTolerance(faultTolerance);
+        serviceInvoker.setFaultTolerance(faultTolerance);
         // Initialize
-        invokerCluster.init();
-        return invokerCluster;
+        serviceInvoker.init();
+        return serviceInvoker;
     }
 }
