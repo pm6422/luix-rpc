@@ -78,6 +78,9 @@ public abstract class AbstractRequestSender implements Sendable {
      */
     protected abstract Responseable doSend(Requestable request);
 
+    /**
+     * Before send handler
+     */
     protected void beforeSend() {
         processingCount.incrementAndGet();
     }

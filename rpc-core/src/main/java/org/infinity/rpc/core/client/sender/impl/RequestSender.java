@@ -17,7 +17,7 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY_
 
 /**
  * todo: DefaultRpcReferer
- * One instance for one service interface.
+ * One {@link RequestSender} instance for one service interface.
  * The request sender is created when the provider is active.
  */
 @Slf4j
