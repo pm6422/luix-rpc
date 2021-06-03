@@ -103,8 +103,6 @@ public class ScheduledThreadPool {
 
     public static void shutdownNow(String threadPoolName) {
         Validate.isTrue(THREAD_POOL_MAP.containsKey(threadPoolName), "Please specify a valid thread pool name!");
-
-        ScheduledExecutorService scheduledExecutorService = THREAD_POOL_MAP.get(threadPoolName);
-        scheduledExecutorService.shutdownNow();
+        THREAD_POOL_MAP.get(threadPoolName).shutdownNow();
     }
 }
