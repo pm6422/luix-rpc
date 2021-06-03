@@ -26,7 +26,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
     /**
      * Update RPC request senders
      *
-     * @param newSenders new provider invokers
+     * @param newSenders new RPC request senders
      */
     @Override
     public synchronized void refresh(List<Sendable> newSenders) {
@@ -43,50 +43,50 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
         if (CollectionUtils.isEmpty(inactiveOnes)) {
             return;
         }
-        // Destroy the inactive provider invokers
-        destroyInactiveInvokers(inactiveOnes);
+        // Destroy the inactive RPC request senders
+        destroyInactiveSenders(inactiveOnes);
     }
 
     @Override
     public Sendable selectSender(Requestable request) {
         if (CollectionUtils.isEmpty(this.requestSenders)) {
-            throw new RpcInvocationException("No available provider invoker for RPC call for now! " +
-                    "Please check whether there are available providers now!");
+            throw new RpcInvocationException("No active RPC request sender, " +
+                    "please check whether the server is ok!");
         }
 
         // Make a copy for thread safe purpose
-        List<Sendable> invokers = new ArrayList<>(this.requestSenders);
-        Sendable invoker = null;
-        if (invokers.size() > 1) {
-            invoker = doSelectNode(request);
-        } else if (invokers.size() == 1 && invokers.get(0).isActive()) {
-            invoker = invokers.get(0);
+        List<Sendable> senders = new ArrayList<>(this.requestSenders);
+        Sendable sender = null;
+        if (senders.size() > 1) {
+            sender = doSelectSender(request);
+        } else if (senders.size() == 1 && senders.get(0).isActive()) {
+            sender = senders.get(0);
         }
-        if (invoker == null) {
+        if (sender == null) {
             // Provider may be lost when executing doSelect
-            throw new RpcInvocationException("No active provider invoker for now, " +
+            throw new RpcInvocationException("No active RPC request sender, " +
                     "please check whether the server is ok!");
         }
-        return invoker;
+        return sender;
     }
 
     @Override
     public List<Sendable> selectSenders(Requestable request) {
         if (CollectionUtils.isEmpty(this.requestSenders)) {
-            throw new RpcInvocationException("No active provider invoker for now, " +
+            throw new RpcInvocationException("No active RPC request sender, " +
                     "please check whether the server is ok!");
         }
         // Make a copy for thread safe purpose
-        List<Sendable> invokers = new ArrayList<>(this.requestSenders);
+        List<Sendable> senders = new ArrayList<>(this.requestSenders);
         List<Sendable> selected = new ArrayList<>();
-        if (invokers.size() > 1) {
-            selected = doSelectNodes(request);
-        } else if (invokers.size() == 1 && invokers.get(0).isActive()) {
-            selected.add(invokers.get(0));
+        if (senders.size() > 1) {
+            selected = doSelectSenders(request);
+        } else if (senders.size() == 1 && senders.get(0).isActive()) {
+            selected.add(senders.get(0));
         }
         if (CollectionUtils.isEmpty(selected)) {
             // Provider may be lost when executing doSelect
-            throw new RpcInvocationException("No active provider invoker for now, " +
+            throw new RpcInvocationException("No active RPC request sender, " +
                     "please check whether the server is ok!");
         }
         return selected;
@@ -97,15 +97,15 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
         return requestSenders;
     }
 
-    private void destroyInactiveInvokers(Collection<Sendable> senders) {
+    private void destroyInactiveSenders(Collection<Sendable> senders) {
         // Execute once after a delay time
         ScheduledThreadPool.scheduleDelayTask(DESTROY_SENDER_THREAD_POOL, DESTROY_INTERVAL, TimeUnit.MILLISECONDS, () -> {
             for (Sendable sender : senders) {
                 try {
                     sender.destroy();
-                    log.info("Destroyed the RPC request sender for provider url {}", sender.getProviderUrl().getUri());
+                    log.info("Destroyed the RPC request sender for url {}", sender.getProviderUrl().getUri());
                 } catch (Exception e) {
-                    log.error(MessageFormat.format("Failed to destroy the RPC request sender for url: {0}", sender.getProviderUrl().getUri()), e);
+                    log.error(MessageFormat.format("Failed to destroy the RPC request sender for url {0}", sender.getProviderUrl().getUri()), e);
                 }
             }
         });
@@ -119,18 +119,18 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
     }
 
     /**
-     * Select one provider node
+     * Select one RPC request sender
      *
      * @param request request instance
-     * @return selected provider invoker
+     * @return selected RPC request sender
      */
-    protected abstract Sendable doSelectNode(Requestable request);
+    protected abstract Sendable doSelectSender(Requestable request);
 
     /**
-     * Select multiple provider nodes
+     * Select multiple RPC request senders
      *
      * @param request request instance
-     * @return selected provider invokers
+     * @return selected RPC request senders
      */
-    protected abstract List<Sendable> doSelectNodes(Requestable request);
+    protected abstract List<Sendable> doSelectSenders(Requestable request);
 }

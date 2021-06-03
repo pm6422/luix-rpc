@@ -18,7 +18,7 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.LOAD_BALANCER_VAL
 public class RandomLoadBalancer extends AbstractLoadBalancer {
 
     @Override
-    protected Sendable doSelectNode(Requestable request) {
+    protected Sendable doSelectSender(Requestable request) {
         int index = getIndex(requestSenders);
         for (int i = 0; i < requestSenders.size(); i++) {
             Sendable invoker = requestSenders.get((i + index) % requestSenders.size());
@@ -30,7 +30,7 @@ public class RandomLoadBalancer extends AbstractLoadBalancer {
     }
 
     @Override
-    protected List<Sendable> doSelectNodes(Requestable request) {
+    protected List<Sendable> doSelectSenders(Requestable request) {
         List<Sendable> selected = new ArrayList<>();
         int index = getIndex(requestSenders);
         for (int i = 0; i < requestSenders.size(); i++) {
