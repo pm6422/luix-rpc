@@ -14,9 +14,9 @@ public class ScheduledThreadPool {
     /**
      * 一般这个类创建的实例会比较少，如果共享的话，某个任务阻塞了，容易影响其他任务执行
      */
+    public static final String RETRY_THREAD_POOL                      = "RETRY_THREAD_POOL";
     public static final String CHECK_HEALTH_THREAD_POOL               = "CHECK_HEALTH_THREAD_POOL";
     public static final int    CHECK_HEALTH_INTERVAL                  = 500;
-    public static final String RETRY_THREAD_POOL                      = "RETRY_THREAD_POOL";
     public static final String DESTROY_SENDER_THREAD_POOL             = "DESTROY_SENDER_THREAD_POOL";
     public static final int    DESTROY_SENDER_DELAY                   = 1000;
     public static final String DESTROY_NETTY_TIMEOUT_TASK_THREAD_POOL = "DESTROY_NETTY_TIMEOUT_THREAD_POOL";
@@ -25,8 +25,8 @@ public class ScheduledThreadPool {
     private static final Map<String, ScheduledExecutorService> THREAD_POOL_MAP = new HashMap<>();
 
     static {
-        THREAD_POOL_MAP.put(CHECK_HEALTH_THREAD_POOL, Executors.newScheduledThreadPool(1));
         THREAD_POOL_MAP.put(RETRY_THREAD_POOL, Executors.newScheduledThreadPool(1));
+        THREAD_POOL_MAP.put(CHECK_HEALTH_THREAD_POOL, Executors.newScheduledThreadPool(1));
         THREAD_POOL_MAP.put(DESTROY_SENDER_THREAD_POOL, Executors.newScheduledThreadPool(1));
         THREAD_POOL_MAP.put(DESTROY_NETTY_TIMEOUT_TASK_THREAD_POOL, Executors.newScheduledThreadPool(1));
 
