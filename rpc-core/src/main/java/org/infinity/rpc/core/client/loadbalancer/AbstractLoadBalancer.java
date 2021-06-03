@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_SENDER_INTERVAL;
 import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_SENDER_THREAD_POOL;
 
 /**
@@ -20,8 +21,7 @@ import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_SENDER_T
  */
 @Slf4j
 public abstract class AbstractLoadBalancer implements LoadBalancer {
-    private static final int            DESTROY_INTERVAL = 1000;
-    protected            List<Sendable> requestSenders;
+    protected List<Sendable> requestSenders;
 
     /**
      * Update RPC request senders
@@ -99,7 +99,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
 
     private void destroyInactiveSenders(Collection<Sendable> senders) {
         // Execute once after a delay time
-        ScheduledThreadPool.scheduleDelayTask(DESTROY_SENDER_THREAD_POOL, DESTROY_INTERVAL, TimeUnit.MILLISECONDS, () -> {
+        ScheduledThreadPool.scheduleDelayTask(DESTROY_SENDER_THREAD_POOL, DESTROY_SENDER_INTERVAL, TimeUnit.MILLISECONDS, () -> {
             for (Sendable sender : senders) {
                 try {
                     sender.destroy();
