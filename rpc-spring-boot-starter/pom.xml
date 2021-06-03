@@ -19,9 +19,9 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.infinity</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>rpc-core</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

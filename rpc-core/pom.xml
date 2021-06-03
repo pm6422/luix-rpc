@@ -29,9 +29,9 @@
             <version>2.0.1.Final</version>
         </dependency>
         <dependency>
-            <groupId>org.infinity</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>rpc-utilities</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
     <!--
