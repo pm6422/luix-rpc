@@ -16,7 +16,7 @@ public class ScheduledThreadPool {
      */
     public static final String CHECK_HEALTH_THREAD_POOL         = "CHECK_HEALTH_THREAD_POOL";
     public static final String RETRY_THREAD_POOL                = "RETRY_THREAD_POOL";
-    public static final String DESTROY_INVOKER_THREAD_POOL      = "DESTROY_INVOKER_THREAD_POOL";
+    public static final String DESTROY_SENDER_THREAD_POOL       = "DESTROY_SENDER_THREAD_POOL";
     public static final String RECYCLE_TIMEOUT_TASK_THREAD_POOL = "RECYCLE_TIMEOUT_TASK_THREAD_POOL";
 
     private static final Map<String, ScheduledExecutorService> THREAD_POOL_MAP = new HashMap<>();
@@ -24,7 +24,7 @@ public class ScheduledThreadPool {
     static {
         THREAD_POOL_MAP.put(CHECK_HEALTH_THREAD_POOL, Executors.newScheduledThreadPool(1));
         THREAD_POOL_MAP.put(RETRY_THREAD_POOL, Executors.newScheduledThreadPool(1));
-        THREAD_POOL_MAP.put(DESTROY_INVOKER_THREAD_POOL, Executors.newScheduledThreadPool(1));
+        THREAD_POOL_MAP.put(DESTROY_SENDER_THREAD_POOL, Executors.newScheduledThreadPool(1));
         THREAD_POOL_MAP.put(RECYCLE_TIMEOUT_TASK_THREAD_POOL, Executors.newScheduledThreadPool(1));
 
         // Clean up the thread pools when the system exits

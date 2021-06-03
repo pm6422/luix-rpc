@@ -2,8 +2,8 @@ package org.infinity.rpc.core.client.loadbalancer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.rpc.core.client.sender.Sendable;
 import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.client.sender.Sendable;
 import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.impl.RpcInvocationException;
 
@@ -13,35 +13,33 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_INVOKER_THREAD_POOL;
+import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_SENDER_THREAD_POOL;
 
 /**
  *
  */
 @Slf4j
 public abstract class AbstractLoadBalancer implements LoadBalancer {
-    private static final int            DELAY_TIME = 1000;
-    protected            List<Sendable> invokers;
+    private static final int            DESTROY_INTERVAL = 1000;
+    protected            List<Sendable> requestSenders;
 
     /**
-     * Update new provider invokers
+     * Update RPC request senders
      *
-     * @param invokers new provider invokers
+     * @param newSenders new provider invokers
      */
     @Override
-    public synchronized void refresh(List<Sendable> invokers) {
-        if (CollectionUtils.isEmpty(invokers)) {
+    public synchronized void refresh(List<Sendable> newSenders) {
+        if (CollectionUtils.isEmpty(newSenders)) {
             return;
         }
-        List<Sendable> oldInvokers = this.invokers;
-        // Assign new ones to provider invokers
-        this.invokers = invokers;
-
-        if (CollectionUtils.isEmpty(oldInvokers)) {
+        List<Sendable> oldSenders = this.requestSenders;
+        // Assign new values
+        this.requestSenders = newSenders;
+        if (CollectionUtils.isEmpty(oldSenders)) {
             return;
         }
-
-        Collection<Sendable> inactiveOnes = CollectionUtils.subtract(invokers, oldInvokers);
+        Collection<Sendable> inactiveOnes = CollectionUtils.subtract(newSenders, oldSenders);
         if (CollectionUtils.isEmpty(inactiveOnes)) {
             return;
         }
@@ -50,14 +48,14 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
     }
 
     @Override
-    public Sendable selectProviderNode(Requestable request) {
-        if (CollectionUtils.isEmpty(this.invokers)) {
+    public Sendable selectSender(Requestable request) {
+        if (CollectionUtils.isEmpty(this.requestSenders)) {
             throw new RpcInvocationException("No available provider invoker for RPC call for now! " +
                     "Please check whether there are available providers now!");
         }
 
         // Make a copy for thread safe purpose
-        List<Sendable> invokers = new ArrayList<>(this.invokers);
+        List<Sendable> invokers = new ArrayList<>(this.requestSenders);
         Sendable invoker = null;
         if (invokers.size() > 1) {
             invoker = doSelectNode(request);
@@ -73,13 +71,13 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
     }
 
     @Override
-    public List<Sendable> selectProviderNodes(Requestable request) {
-        if (CollectionUtils.isEmpty(this.invokers)) {
+    public List<Sendable> selectSenders(Requestable request) {
+        if (CollectionUtils.isEmpty(this.requestSenders)) {
             throw new RpcInvocationException("No active provider invoker for now, " +
                     "please check whether the server is ok!");
         }
         // Make a copy for thread safe purpose
-        List<Sendable> invokers = new ArrayList<>(this.invokers);
+        List<Sendable> invokers = new ArrayList<>(this.requestSenders);
         List<Sendable> selected = new ArrayList<>();
         if (invokers.size() > 1) {
             selected = doSelectNodes(request);
@@ -95,19 +93,19 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
     }
 
     @Override
-    public List<Sendable> getInvokers() {
-        return invokers;
+    public List<Sendable> getRequestSenders() {
+        return requestSenders;
     }
 
-    private void destroyInactiveInvokers(Collection<Sendable> delayDestroyInvokers) {
-        // Execute once after a daley time
-        ScheduledThreadPool.scheduleDelayTask(DESTROY_INVOKER_THREAD_POOL, DELAY_TIME, TimeUnit.MILLISECONDS, () -> {
-            for (Sendable invoker : delayDestroyInvokers) {
+    private void destroyInactiveInvokers(Collection<Sendable> senders) {
+        // Execute once after a delay time
+        ScheduledThreadPool.scheduleDelayTask(DESTROY_SENDER_THREAD_POOL, DESTROY_INTERVAL, TimeUnit.MILLISECONDS, () -> {
+            for (Sendable sender : senders) {
                 try {
-                    invoker.destroy();
-                    log.info("Destroyed the caller with url: {}", invoker.getProviderUrl().getUri());
+                    sender.destroy();
+                    log.info("Destroyed the RPC request sender for provider url {}", sender.getProviderUrl().getUri());
                 } catch (Exception e) {
-                    log.error(MessageFormat.format("Failed to destroy the caller with url: {0}", invoker.getProviderUrl().getUri()), e);
+                    log.error(MessageFormat.format("Failed to destroy the RPC request sender for url: {0}", sender.getProviderUrl().getUri()), e);
                 }
             }
         });
@@ -115,8 +113,8 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
 
     @Override
     public void destroy() {
-        if (CollectionUtils.isNotEmpty(invokers)) {
-            invokers.forEach(Sendable::destroy);
+        if (CollectionUtils.isNotEmpty(requestSenders)) {
+            requestSenders.forEach(Sendable::destroy);
         }
     }
 

@@ -16,7 +16,7 @@
 
 package org.infinity.rpc.core.exchange.endpoint;
 
-import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
+import org.infinity.rpc.core.exception.impl.RpcConfigException;
 import org.infinity.rpc.core.exchange.client.Client;
 import org.infinity.rpc.core.exchange.server.Server;
 import org.infinity.rpc.core.server.messagehandler.MessageHandler;
@@ -71,7 +71,7 @@ public interface EndpointFactory {
      */
     static EndpointFactory getInstance(String name) {
         return Optional.ofNullable(ServiceLoader.forClass(EndpointFactory.class).load(name))
-                .orElseThrow(() -> new RpcFrameworkException("Endpoint factory [" + name + "] does NOT exist, " +
-                        "please check whether the dependency is in your class path!"));
+                .orElseThrow(() -> new RpcConfigException("Endpoint factory [" + name + "] does NOT exist, " +
+                        "please check whether the correct dependency is in your class path!"));
     }
 }

@@ -1,13 +1,15 @@
 package org.infinity.rpc.core.client.loadbalancer;
 
 import org.infinity.rpc.core.client.faulttolerance.FaultTolerance;
-import org.infinity.rpc.core.client.sender.Sendable;
 import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.client.sender.Sendable;
+import org.infinity.rpc.core.exception.impl.RpcConfigException;
 import org.infinity.rpc.utilities.serviceloader.ServiceLoader;
 import org.infinity.rpc.utilities.serviceloader.annotation.Spi;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiScope;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * {@link FaultTolerance} select providers via load balance algorithm.
@@ -15,34 +17,39 @@ import java.util.List;
 @Spi(scope = SpiScope.PROTOTYPE)
 public interface LoadBalancer {
     /**
-     * Get provider invokers
+     * Get RPC request senders
      *
-     * @return provider invokers
+     * @return RPC request senders
      */
-    List<Sendable> getInvokers();
+    List<Sendable> getRequestSenders();
 
     /**
-     * Refresh provider invokers after providers become active or inactive
+     * Refresh RPC request senders after providers become active or inactive
      *
-     * @param invokers new discovered provider invokers
+     * @param requestSender new discovered RPC request senders
      */
-    void refresh(List<Sendable> invokers);
+    void refresh(List<Sendable> requestSender);
 
     /**
-     * Select provider node via load balance algorithm
+     * Select one RPC request sender via load balance algorithm
      *
      * @param request RPC request instance
-     * @return selected provider invoker
+     * @return selected RPC request sender
      */
-    Sendable selectProviderNode(Requestable request);
+    Sendable selectSender(Requestable request);
 
     /**
-     * Select multiple provider nodes via load balance algorithm
+     * Select multiple RPC request senders via load balance algorithm
      *
      * @param request RPC request instance
-     * @return selected provider invokers
+     * @return selected RPC request senders
      */
-    List<Sendable> selectProviderNodes(Requestable request);
+    List<Sendable> selectSenders(Requestable request);
+
+    /**
+     * Destroy
+     */
+    void destroy();
 
     /**
      * Get instance associated with the specified name
@@ -50,16 +57,9 @@ public interface LoadBalancer {
      * @param name specified name
      * @return instance
      */
-    @SuppressWarnings("unchecked")
     static LoadBalancer getInstance(String name) {
-        return ServiceLoader.forClass(LoadBalancer.class).load(name);
+        return Optional.ofNullable(ServiceLoader.forClass(LoadBalancer.class).load(name))
+                .orElseThrow(() -> new RpcConfigException("Fault tolerance [" + name + "] does NOT exist, " +
+                        "please check whether the correct dependency is in your class path!"));
     }
-
-    /**
-     * Destroy
-     */
-    void destroy();
-
-//
-//    void setWeightString(String weightString);
 }

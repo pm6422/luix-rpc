@@ -19,9 +19,9 @@ public class RandomLoadBalancer extends AbstractLoadBalancer {
 
     @Override
     protected Sendable doSelectNode(Requestable request) {
-        int index = getIndex(invokers);
-        for (int i = 0; i < invokers.size(); i++) {
-            Sendable invoker = invokers.get((i + index) % invokers.size());
+        int index = getIndex(requestSenders);
+        for (int i = 0; i < requestSenders.size(); i++) {
+            Sendable invoker = requestSenders.get((i + index) % requestSenders.size());
             if (invoker.isActive()) {
                 return invoker;
             }
@@ -32,9 +32,9 @@ public class RandomLoadBalancer extends AbstractLoadBalancer {
     @Override
     protected List<Sendable> doSelectNodes(Requestable request) {
         List<Sendable> selected = new ArrayList<>();
-        int index = getIndex(invokers);
-        for (int i = 0; i < invokers.size(); i++) {
-            Sendable invoker = invokers.get((i + index) % invokers.size());
+        int index = getIndex(requestSenders);
+        for (int i = 0; i < requestSenders.size(); i++) {
+            Sendable invoker = requestSenders.get((i + index) % requestSenders.size());
             if (invoker.isActive()) {
                 selected.add(invoker);
             }

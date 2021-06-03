@@ -18,7 +18,7 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_V
 public class FailfastFaultTolerance extends AbstractFaultTolerance {
     @Override
     public Responseable invoke(Requestable request) {
-        Sendable availableInvoker = loadBalancer.selectProviderNode(request);
+        Sendable availableInvoker = loadBalancer.selectSender(request);
         // Do NOT retry when exception occurred
         return availableInvoker.sendRequest(request);
     }
