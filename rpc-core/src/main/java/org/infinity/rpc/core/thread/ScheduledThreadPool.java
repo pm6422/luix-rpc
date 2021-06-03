@@ -10,10 +10,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class ScheduledThreadPool {
-    /**
-     * 一般这个类创建的实例会比较少，如果共享的话，某个任务阻塞了，容易影响其他任务执行
-     */
+public abstract class ScheduledThreadPool {
     public static final String RETRY_THREAD_POOL                      = "RETRY_THREAD_POOL";
     public static final String CHECK_HEALTH_THREAD_POOL               = "CHECK_HEALTH_THREAD_POOL";
     public static final int    CHECK_HEALTH_INTERVAL                  = 500;
