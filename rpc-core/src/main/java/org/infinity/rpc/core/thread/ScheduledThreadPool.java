@@ -1,4 +1,4 @@
-package org.infinity.rpc.core.destroy;
+package org.infinity.rpc.core.thread;
 
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
@@ -14,11 +14,13 @@ public class ScheduledThreadPool {
     /**
      * 一般这个类创建的实例会比较少，如果共享的话，某个任务阻塞了，容易影响其他任务执行
      */
-    public static final String CHECK_HEALTH_THREAD_POOL         = "CHECK_HEALTH_THREAD_POOL";
-    public static final String RETRY_THREAD_POOL                = "RETRY_THREAD_POOL";
-    public static final String DESTROY_SENDER_THREAD_POOL       = "DESTROY_SENDER_THREAD_POOL";
-    public static final int    DESTROY_SENDER_INTERVAL          = 1000;
-    public static final String RECYCLE_TIMEOUT_TASK_THREAD_POOL = "RECYCLE_TIMEOUT_TASK_THREAD_POOL";
+    public static final String CHECK_HEALTH_THREAD_POOL               = "CHECK_HEALTH_THREAD_POOL";
+    public static final int    CHECK_HEALTH_INTERVAL                  = 500;
+    public static final String RETRY_THREAD_POOL                      = "RETRY_THREAD_POOL";
+    public static final String DESTROY_SENDER_THREAD_POOL             = "DESTROY_SENDER_THREAD_POOL";
+    public static final int    DESTROY_SENDER_DELAY                   = 1000;
+    public static final String DESTROY_NETTY_TIMEOUT_TASK_THREAD_POOL = "DESTROY_NETTY_TIMEOUT_THREAD_POOL";
+    public static final int    DESTROY_NETTY_TIMEOUT_INTERVAL         = 100;
 
     private static final Map<String, ScheduledExecutorService> THREAD_POOL_MAP = new HashMap<>();
 
@@ -26,7 +28,7 @@ public class ScheduledThreadPool {
         THREAD_POOL_MAP.put(CHECK_HEALTH_THREAD_POOL, Executors.newScheduledThreadPool(1));
         THREAD_POOL_MAP.put(RETRY_THREAD_POOL, Executors.newScheduledThreadPool(1));
         THREAD_POOL_MAP.put(DESTROY_SENDER_THREAD_POOL, Executors.newScheduledThreadPool(1));
-        THREAD_POOL_MAP.put(RECYCLE_TIMEOUT_TASK_THREAD_POOL, Executors.newScheduledThreadPool(1));
+        THREAD_POOL_MAP.put(DESTROY_NETTY_TIMEOUT_TASK_THREAD_POOL, Executors.newScheduledThreadPool(1));
 
         // Clean up the thread pools when the system exits
         ShutdownHook.add(() -> {
@@ -52,13 +54,17 @@ public class ScheduledThreadPool {
         return THREAD_POOL_MAP.get(threadPoolName).scheduleAtFixedRate(task, initialDelay, interval, timeUnit);
     }
 
-    public static ScheduledExecutorService scheduleDelayTask(String threadPoolName, long interval,
-                                                             TimeUnit timeUnit, Runnable command) {
+    public static ScheduledExecutorService scheduleDelayTask(String threadPoolName, long delay, Runnable task) {
+        return scheduleDelayTask(threadPoolName, delay, TimeUnit.MILLISECONDS, task);
+    }
+
+    public static ScheduledExecutorService scheduleDelayTask(String threadPoolName, long delay,
+                                                             TimeUnit timeUnit, Runnable task) {
         Validate.isTrue(THREAD_POOL_MAP.containsKey(threadPoolName), "Please specify a valid thread pool name!");
 
         // Execute once after a daley time
         ScheduledExecutorService scheduledExecutorService = THREAD_POOL_MAP.get(threadPoolName);
-        scheduledExecutorService.schedule(command, interval, timeUnit);
+        scheduledExecutorService.schedule(task, delay, timeUnit);
         return scheduledExecutorService;
     }
 

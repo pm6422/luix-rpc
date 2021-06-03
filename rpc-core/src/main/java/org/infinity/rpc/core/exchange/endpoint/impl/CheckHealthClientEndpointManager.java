@@ -1,29 +1,13 @@
-/*
- *  Copyright 2009-2016 Weibo, Inc.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
-
 package org.infinity.rpc.core.exchange.endpoint.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.checkhealth.HealthChecker;
 import org.infinity.rpc.core.exchange.client.Client;
 import org.infinity.rpc.core.exchange.constants.ChannelState;
 import org.infinity.rpc.core.exchange.endpoint.Endpoint;
 import org.infinity.rpc.core.exchange.endpoint.EndpointManager;
+import org.infinity.rpc.core.thread.ScheduledThreadPool;
 import org.infinity.rpc.core.url.Url;
 
 import java.util.Collections;
@@ -33,7 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER;
 import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
-import static org.infinity.rpc.core.destroy.ScheduledThreadPool.CHECK_HEALTH_THREAD_POOL;
+import static org.infinity.rpc.core.thread.ScheduledThreadPool.CHECK_HEALTH_INTERVAL;
+import static org.infinity.rpc.core.thread.ScheduledThreadPool.CHECK_HEALTH_THREAD_POOL;
 
 /**
  *
@@ -45,12 +30,11 @@ public class CheckHealthClientEndpointManager implements EndpointManager {
      * Check health interval in milliseconds
      * todo: move to global config
      */
-    private static final int                        CHECK_HEALTH_TIMER_INTERVAL = 500;
-    private final        Map<Client, HealthChecker> endpoints                   = new ConcurrentHashMap<>();
+    private final Map<Client, HealthChecker> endpoints = new ConcurrentHashMap<>();
 
     @Override
     public void init() {
-        ScheduledThreadPool.schedulePeriodicalTask(CHECK_HEALTH_THREAD_POOL, CHECK_HEALTH_TIMER_INTERVAL, this::checkHealth);
+        ScheduledThreadPool.schedulePeriodicalTask(CHECK_HEALTH_THREAD_POOL, CHECK_HEALTH_INTERVAL, this::checkHealth);
     }
 
     private void checkHealth() {

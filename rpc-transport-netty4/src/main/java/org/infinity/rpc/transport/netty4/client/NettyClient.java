@@ -10,7 +10,6 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.constant.RpcConstants;
-import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcAbstractException;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
@@ -21,6 +20,7 @@ import org.infinity.rpc.core.exchange.constants.ChannelState;
 import org.infinity.rpc.core.server.response.FutureResponse;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
+import org.infinity.rpc.core.thread.ScheduledThreadPool;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcConfigValidator;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
@@ -36,14 +36,14 @@ import java.util.concurrent.atomic.AtomicLong;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT;
 import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT_VAL_DEFAULT;
-import static org.infinity.rpc.core.destroy.ScheduledThreadPool.RECYCLE_TIMEOUT_TASK_THREAD_POOL;
+import static org.infinity.rpc.core.thread.ScheduledThreadPool.DESTROY_NETTY_TIMEOUT_INTERVAL;
+import static org.infinity.rpc.core.thread.ScheduledThreadPool.DESTROY_NETTY_TIMEOUT_TASK_THREAD_POOL;
 
 /**
  * toto: implements StatisticCallback
  */
 @Slf4j
 public class NettyClient extends AbstractSharedPoolClient {
-    private static final int                       NETTY_TIMEOUT_TIMER_INTERVAL = 100;
     private static final NioEventLoopGroup         NIO_EVENT_LOOP_GROUP         = new NioEventLoopGroup();
     /**
      * 异步的request，需要注册callback future
@@ -61,8 +61,8 @@ public class NettyClient extends AbstractSharedPoolClient {
     public NettyClient(Url providerUrl) {
         super(providerUrl);
         maxClientFailedConn = providerUrl.getIntOption(MAX_CLIENT_FAILED_CONN, MAX_CLIENT_FAILED_CONN_VAL_DEFAULT);
-        timeoutFuture = ScheduledThreadPool.schedulePeriodicalTask(RECYCLE_TIMEOUT_TASK_THREAD_POOL,
-                NETTY_TIMEOUT_TIMER_INTERVAL, this::recycleTimeoutTask);
+        timeoutFuture = ScheduledThreadPool.schedulePeriodicalTask(DESTROY_NETTY_TIMEOUT_TASK_THREAD_POOL,
+                DESTROY_NETTY_TIMEOUT_INTERVAL, this::recycleTimeoutTask);
     }
 
     private void recycleTimeoutTask() {

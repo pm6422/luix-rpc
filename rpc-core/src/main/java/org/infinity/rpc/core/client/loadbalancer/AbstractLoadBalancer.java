@@ -4,17 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.client.sender.Sendable;
-import org.infinity.rpc.core.destroy.ScheduledThreadPool;
 import org.infinity.rpc.core.exception.impl.RpcInvocationException;
+import org.infinity.rpc.core.thread.ScheduledThreadPool;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_SENDER_INTERVAL;
-import static org.infinity.rpc.core.destroy.ScheduledThreadPool.DESTROY_SENDER_THREAD_POOL;
+import static org.infinity.rpc.core.thread.ScheduledThreadPool.DESTROY_SENDER_DELAY;
+import static org.infinity.rpc.core.thread.ScheduledThreadPool.DESTROY_SENDER_THREAD_POOL;
 
 /**
  *
@@ -99,13 +98,14 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
 
     private void destroyInactiveSenders(Collection<Sendable> senders) {
         // Execute once after a delay time
-        ScheduledThreadPool.scheduleDelayTask(DESTROY_SENDER_THREAD_POOL, DESTROY_SENDER_INTERVAL, TimeUnit.MILLISECONDS, () -> {
+        ScheduledThreadPool.scheduleDelayTask(DESTROY_SENDER_THREAD_POOL, DESTROY_SENDER_DELAY, () -> {
             for (Sendable sender : senders) {
                 try {
                     sender.destroy();
                     log.info("Destroyed the RPC request sender for url {}", sender.getProviderUrl().getUri());
                 } catch (Exception e) {
-                    log.error(MessageFormat.format("Failed to destroy the RPC request sender for url {0}", sender.getProviderUrl().getUri()), e);
+                    log.error(MessageFormat.format("Failed to destroy the RPC request sender for url {0}",
+                            sender.getProviderUrl().getUri()), e);
                 }
             }
         });
