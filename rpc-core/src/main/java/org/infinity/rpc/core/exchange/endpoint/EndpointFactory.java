@@ -16,6 +16,7 @@
 
 package org.infinity.rpc.core.exchange.endpoint;
 
+import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.client.Client;
 import org.infinity.rpc.core.exchange.server.Server;
 import org.infinity.rpc.core.server.messagehandler.MessageHandler;
@@ -24,11 +25,13 @@ import org.infinity.rpc.utilities.serviceloader.ServiceLoader;
 import org.infinity.rpc.utilities.serviceloader.annotation.Spi;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiScope;
 
+import java.util.Optional;
+
 @Spi(scope = SpiScope.SINGLETON)
 public interface EndpointFactory {
 
     /**
-     * create remote server
+     * Create remote server
      *
      * @param providerUrl    provider url
      * @param messageHandler message handler
@@ -37,7 +40,7 @@ public interface EndpointFactory {
     Server createServer(Url providerUrl, MessageHandler messageHandler);
 
     /**
-     * create remote client
+     * Create remote client
      *
      * @param providerUrl provider url
      * @return client
@@ -45,7 +48,7 @@ public interface EndpointFactory {
     Client createClient(Url providerUrl);
 
     /**
-     * safe release server
+     * Safe release server
      *
      * @param server      server
      * @param providerUrl provider url
@@ -53,7 +56,7 @@ public interface EndpointFactory {
     void safeReleaseResource(Server server, Url providerUrl);
 
     /**
-     * safe release client
+     * Safe release client
      *
      * @param client      client
      * @param providerUrl provider url
@@ -67,6 +70,8 @@ public interface EndpointFactory {
      * @return instance
      */
     static EndpointFactory getInstance(String name) {
-        return ServiceLoader.forClass(EndpointFactory.class).load(name);
+        return Optional.ofNullable(ServiceLoader.forClass(EndpointFactory.class).load(name))
+                .orElseThrow(() -> new RpcFrameworkException("Endpoint factory [" + name + "] does NOT exist, " +
+                        "please check whether the dependency is in your class path!"));
     }
 }

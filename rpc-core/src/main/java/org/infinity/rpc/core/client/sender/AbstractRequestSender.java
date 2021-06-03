@@ -28,7 +28,7 @@ public abstract class AbstractRequestSender implements Sendable {
             return;
         }
         if (!doInit()) {
-            throw new RpcFrameworkException("Failed to initialize the RPC sender [" + this + "]!");
+            throw new RpcFrameworkException("Failed to initialize the RPC request sender [" + this + "]!");
         }
         active = true;
     }
@@ -46,7 +46,7 @@ public abstract class AbstractRequestSender implements Sendable {
     @Override
     public Responseable sendRequest(Requestable request) {
         if (!active) {
-            throw new RpcFrameworkException("No active RPC sender found for now!");
+            throw new RpcFrameworkException("No active RPC request sender found!");
         }
         Responseable response = null;
         try {

@@ -22,21 +22,24 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.ENDPOINT_FACTORY_
  */
 @Slf4j
 public class RequestSender extends AbstractRequestSender {
-    private final Client          client;
     private final EndpointFactory endpointFactory;
+    private final Client          client;
 
     public RequestSender(String interfaceName, Url providerUrl) {
         super(interfaceName, providerUrl);
         long start = System.currentTimeMillis();
-        String endpointFactoryName = providerUrl.getOption(ENDPOINT_FACTORY, ENDPOINT_FACTORY_VAL_NETTY);
-        endpointFactory = EndpointFactory.getInstance(endpointFactoryName);
-        if (endpointFactory == null) {
-            throw new RpcFrameworkException("Endpoint factory [" + endpointFactoryName + "] must NOT be null!");
-        }
+        endpointFactory = createEndpointFactory(providerUrl);
         client = endpointFactory.createClient(providerUrl);
         // Initialize
         super.init();
         log.info("Initialized request sender [{}] in {} ms", this, System.currentTimeMillis() - start);
+    }
+
+    private EndpointFactory createEndpointFactory(Url providerUrl) {
+        final EndpointFactory endpointFactory;
+        String name = providerUrl.getOption(ENDPOINT_FACTORY, ENDPOINT_FACTORY_VAL_NETTY);
+        endpointFactory = EndpointFactory.getInstance(name);
+        return endpointFactory;
     }
 
     @Override
@@ -56,6 +59,7 @@ public class RequestSender extends AbstractRequestSender {
     @Override
     protected void afterSend(Requestable request, Responseable response) {
         if (!(response instanceof Future)) {
+            // Sync response
             processingCount.decrementAndGet();
             return;
         }
