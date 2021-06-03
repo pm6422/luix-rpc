@@ -51,13 +51,13 @@ public class ScheduledThreadPool {
         return THREAD_POOL_MAP.get(threadPoolName).scheduleAtFixedRate(task, initialDelay, interval, timeUnit);
     }
 
-    public static ScheduledExecutorService scheduleDelayTask(String threadPoolName, long delay,
+    public static ScheduledExecutorService scheduleDelayTask(String threadPoolName, long interval,
                                                              TimeUnit timeUnit, Runnable command) {
         Validate.isTrue(THREAD_POOL_MAP.containsKey(threadPoolName), "Please specify a valid thread pool name!");
 
         // Execute once after a daley time
         ScheduledExecutorService scheduledExecutorService = THREAD_POOL_MAP.get(threadPoolName);
-        scheduledExecutorService.schedule(command, delay, timeUnit);
+        scheduledExecutorService.schedule(command, interval, timeUnit);
         return scheduledExecutorService;
     }
 
