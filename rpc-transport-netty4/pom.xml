@@ -19,11 +19,6 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.49.Final</version>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>rpc-core</artifactId>
             <version>${project.version}</version>
@@ -32,6 +27,11 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>rpc-utilities</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.49.Final</version>
         </dependency>
     </dependencies>
 </project>
