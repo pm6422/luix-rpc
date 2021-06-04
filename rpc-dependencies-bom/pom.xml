@@ -18,7 +18,7 @@
         <activation_version>1.2.0</activation_version>
         <!-- Alibaba -->
         <alibaba_spring_context_support_version>1.0.6</alibaba_spring_context_support_version>
-        <apollo_client_version>1.1.1</apollo_client_version>
+        <apollo_client_version>1.6.0</apollo_client_version>
         <avro_version>1.8.2</avro_version>
         <commons_collections4_version>4.2</commons_collections4_version>
         <commons_io_version>2.7</commons_io_version>
@@ -77,7 +77,7 @@
         <rs_api_version>2.0</rs_api_version>
         <servlet_version>3.1.0</servlet_version>
         <!-- Log libs -->
-        <slf4j_version>1.7.25</slf4j_version>
+        <slf4j_version>1.7.30</slf4j_version>
         <snakeyaml_version>1.20</snakeyaml_version>
         <sofa_registry_version>5.2.0</sofa_registry_version>
         <spring_boot_version>2.3.0.RELEASE</spring_boot_version>
@@ -85,7 +85,8 @@
         <spring_test_version>4.3.16.RELEASE</spring_test_version>
         <!-- Common libs -->
         <spring_version>5.2.6.RELEASE</spring_version>
-        <swagger_version>1.5.19</swagger_version>
+        <springfox_version>2.7.0</springfox_version>
+        <swagger_version>1.5.13</swagger_version>
         <test_container_version>1.11.2</test_container_version>
         <thrift_version>0.12.0</thrift_version>
         <tomcat_embed_version>8.5.31</tomcat_embed_version>
@@ -347,6 +348,33 @@
                 <groupId>io.protostuff</groupId>
                 <artifactId>protostuff-runtime</artifactId>
                 <version>${protostuff_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-bean-validators</artifactId>
+                <version>${springfox_version}</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.google.guava</groupId>
+                        <artifactId>guava</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${springfox_version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.mapstruct</groupId>
+                        <artifactId>mapstruct</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.google.guava</groupId>
+                        <artifactId>guava</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <!-- swagger -->
             <dependency>
