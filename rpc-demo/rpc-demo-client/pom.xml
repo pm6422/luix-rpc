@@ -21,10 +21,8 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.version>3.0.0</maven.version>
-        <problem-spring-web.version>0.25.2</problem-spring-web.version>
         <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
         <run.addResources>false</run.addResources>
-        <springfox.version>2.7.0</springfox.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -108,7 +106,6 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-bean-validators</artifactId>
-            <version>${springfox.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -120,7 +117,6 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>${springfox.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.mapstruct</groupId>
@@ -209,7 +205,6 @@
         <dependency>
             <groupId>org.zalando</groupId>
             <artifactId>problem-spring-web</artifactId>
-            <version>${problem-spring-web.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
