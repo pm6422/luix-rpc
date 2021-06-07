@@ -33,7 +33,7 @@
         <embedded_redis_version>0.6</embedded_redis_version>
         <etcd_launcher_version>0.3.0</etcd_launcher_version>
         <!-- Eureka -->
-        <eureka.version>1.9.12</eureka.version>
+        <eureka_version>1.9.12</eureka_version>
         <fastjson_version>1.2.67</fastjson_version>
         <fst_version>2.48-jdk-6</fst_version>
         <grizzly_version>2.1.4</grizzly_version>
@@ -42,7 +42,7 @@
         <guava_version>20.0</guava_version>
         <hessian_lite_version>3.2.6</hessian_lite_version>
         <hessian_version>4.0.65</hessian_version>
-        <hibernate_validator_version>5.4.1.Final</hibernate_validator_version>
+        <hibernate_validator_version>6.1.7.Final</hibernate_validator_version>
         <httpclient_version>4.5.3</httpclient_version>
         <httpcore_version>4.4.6</httpcore_version>
         <jackson_version>2.11.0</jackson_version>
@@ -224,12 +224,12 @@
             <dependency>
                 <groupId>com.netflix.eureka</groupId>
                 <artifactId>eureka-client</artifactId>
-                <version>${eureka.version}</version>
+                <version>${eureka_version}</version>
             </dependency>
             <dependency>
                 <groupId>com.netflix.eureka</groupId>
                 <artifactId>eureka-core</artifactId>
-                <version>${eureka.version}</version>
+                <version>${eureka_version}</version>
             </dependency>
             <dependency>
                 <groupId>com.orbitz.consul</groupId>
