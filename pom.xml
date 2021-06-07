@@ -23,7 +23,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.infinity</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>rpc-dependencies-bom</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
