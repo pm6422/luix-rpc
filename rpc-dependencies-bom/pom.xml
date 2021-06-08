@@ -35,6 +35,7 @@
         <!-- Eureka -->
         <eureka_version>1.9.12</eureka_version>
         <fastjson_version>1.2.67</fastjson_version>
+        <forest_spring_boot_starter_version>1.5.0</forest_spring_boot_starter_version>
         <fst_version>2.48-jdk-6</fst_version>
         <grizzly_version>2.1.4</grizzly_version>
         <grpc.version>1.22.1</grpc.version>
@@ -45,6 +46,7 @@
         <hibernate_validator_version>6.1.7.Final</hibernate_validator_version>
         <httpclient_version>4.5.3</httpclient_version>
         <httpcore_version>4.4.6</httpcore_version>
+        <jackson_datatype_problem_version>0.23.0</jackson_datatype_problem_version>
         <jackson_version>2.11.0</jackson_version>
         <javassist_version>3.20.0-GA</javassist_version>
         <jaxb_version>2.2.7</jaxb_version>
@@ -65,6 +67,7 @@
         <maven_flatten_pluggin_version>1.1.0</maven_flatten_pluggin_version>
         <metrics_version>2.0.1</metrics_version>
         <mina_version>1.1.7</mina_version>
+        <mongodb_springdata_v3_driver_version>4.1.17</mongodb_springdata_v3_driver_version>
         <mortbay_jetty_version>6.1.26</mortbay_jetty_version>
         <nacos_version>1.1.1</nacos_version>
         <netty4_version>4.1.49.Final</netty4_version>
@@ -84,6 +87,7 @@
         <sofa_registry_version>5.2.0</sofa_registry_version>
         <spring_boot_version>2.3.0.RELEASE</spring_boot_version>
         <spring_data_mongodb_version>3.0.0.RELEASE</spring_data_mongodb_version>
+        <spring_security_oauth2_version>2.3.6.RELEASE</spring_security_oauth2_version>
         <spring_test_version>4.3.16.RELEASE</spring_test_version>
         <!-- Common libs -->
         <spring_version>5.2.6.RELEASE</spring_version>
@@ -167,6 +171,25 @@
                 <version>${apollo_client_version}</version>
             </dependency>
             <dependency>
+                <groupId>com.dtflys.forest</groupId>
+                <artifactId>forest-spring-boot-starter</artifactId>
+                <version>${forest_spring_boot_starter_version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-io</groupId>
+                        <artifactId>commons-io</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.google.code.findbugs</groupId>
+                        <artifactId>jsr305</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>com.ecwid.consul</groupId>
                 <artifactId>consul-api</artifactId>
                 <version>${consul_version}</version>
@@ -185,6 +208,22 @@
                 <groupId>com.github.briandilley.jsonrpc4j</groupId>
                 <artifactId>jsonrpc4j</artifactId>
                 <version>${jsonrpc_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.cloudyrock.mongock</groupId>
+                <artifactId>mongock-spring-v5</artifactId>
+                <version>${mongodb_springdata_v3_driver_version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.reflections</groupId>
+                        <artifactId>reflections</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.github.cloudyrock.mongock</groupId>
+                <artifactId>mongodb-springdata-v3-driver</artifactId>
+                <version>${mongodb_springdata_v3_driver_version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.kstyrc</groupId>
@@ -683,6 +722,11 @@
                 <version>${spring_data_mongodb_version}</version>
             </dependency>
             <dependency>
+                <groupId>org.springframework.security.oauth</groupId>
+                <artifactId>spring-security-oauth2</artifactId>
+                <version>${spring_security_oauth2_version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers</artifactId>
                 <version>${test_container_version}</version>
@@ -691,6 +735,17 @@
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>${snakeyaml_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.zalando</groupId>
+                <artifactId>jackson-datatype-problem</artifactId>
+                <version>${jackson_datatype_problem_version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apiguardian</groupId>
+                        <artifactId>apiguardian-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.zalando</groupId>

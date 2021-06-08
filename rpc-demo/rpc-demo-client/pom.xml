@@ -24,11 +24,9 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.version>3.0.0</maven.version>
-        <problem-spring-web.version>0.25.2</problem-spring-web.version>
         <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
         <revision>1.0.0</revision>
         <run.addResources>false</run.addResources>
-        <springfox.version>2.7.0</springfox.version>
     </properties>
     <!--
         *************************************************************************************
@@ -80,7 +78,6 @@
         <dependency>
             <groupId>com.dtflys.forest</groupId>
             <artifactId>forest-spring-boot-starter</artifactId>
-            <version>1.5.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -117,7 +114,6 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-bean-validators</artifactId>
-            <version>${springfox.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -129,7 +125,6 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>${springfox.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.mapstruct</groupId>
@@ -145,13 +140,11 @@
         <dependency>
             <groupId>org.databene</groupId>
             <artifactId>contiperf</artifactId>
-            <version>2.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>6.1.7.Final</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -220,7 +213,6 @@
         <dependency>
             <groupId>org.zalando</groupId>
             <artifactId>problem-spring-web</artifactId>
-            <version>${problem-spring-web.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

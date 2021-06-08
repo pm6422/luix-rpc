@@ -24,11 +24,9 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.version>3.0.0</maven.version>
-        <problem-spring-web.version>0.25.2</problem-spring-web.version>
         <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
         <revision>1.0.0</revision>
         <run.addResources>false</run.addResources>
-        <springfox.version>2.7.0</springfox.version>
     </properties>
     <!--
         *************************************************************************************
@@ -88,7 +86,6 @@
         <dependency>
             <groupId>com.github.cloudyrock.mongock</groupId>
             <artifactId>mongock-spring-v5</artifactId>
-            <version>4.1.17</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.reflections</groupId>
@@ -99,7 +96,6 @@
         <dependency>
             <groupId>com.github.cloudyrock.mongock</groupId>
             <artifactId>mongodb-springdata-v3-driver</artifactId>
-            <version>4.1.17</version>
         </dependency>
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
@@ -114,7 +110,6 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-bean-validators</artifactId>
-            <version>${springfox.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -126,7 +121,6 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>${springfox.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.mapstruct</groupId>
@@ -219,7 +213,6 @@
         <dependency>
             <groupId>org.zalando</groupId>
             <artifactId>problem-spring-web</artifactId>
-            <version>${problem-spring-web.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
