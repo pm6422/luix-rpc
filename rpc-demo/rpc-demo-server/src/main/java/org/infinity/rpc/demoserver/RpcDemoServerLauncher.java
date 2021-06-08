@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.domain.*;
+import org.springframework.data.mongodb.core.query.Criteria;
 
 import javax.annotation.PostConstruct;
 
@@ -33,5 +34,6 @@ public class RpcDemoServerLauncher {
         KryoUtils.registerClass(Pageable.class, new PageableSerializer());
         KryoUtils.registerClass(PageImpl.class, new PageImplSerializer());
         KryoUtils.registerClass(Page.class, new PageSerializer());
+        KryoUtils.registerClass(Criteria.class, new CriteriaSerializer());
     }
 }
