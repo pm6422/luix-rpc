@@ -164,7 +164,7 @@ public class ProviderStub<T> {
      * Find method associated with name and parameter list
      *
      * @param methodName       method name
-     * @param methodParameters method parameter list. e.g, java.util.List,java.lang.Long
+     * @param methodParameters method parameters string. e.g, java.util.List,java.lang.Long
      * @return method
      */
     public Method findMethod(String methodName, String methodParameters) {
