@@ -81,7 +81,7 @@ public class MethodParameterUtils {
      */
     public static String getMethodSignature(String methodName, String methodParameters) {
         if (StringUtils.isEmpty(methodParameters)) {
-            return methodName + "()";
+            return methodName + "(" + VOID + ")";
         } else {
             return methodName + "(" + methodParameters + ")";
         }
