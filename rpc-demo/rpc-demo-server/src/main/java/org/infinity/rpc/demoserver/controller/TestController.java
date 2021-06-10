@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democommon.service.AppService;
+import org.infinity.rpc.democommon.service.AuthorityService;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,5 +34,15 @@ public class TestController {
         infinityProperties.getRegistryList().forEach(registryConfig -> {
             registryConfig.getRegistryImpl().register(providerUrl);
         });
+    }
+
+    @Resource
+    private AuthorityService authorityService;
+
+    @ApiOperation("test aspect")
+    @GetMapping("/api/test/aspect")
+    public void testAspect() {
+        authorityService.findAllAuthorityNames(true);
+        authorityService.findAllAuthorityNames();
     }
 }

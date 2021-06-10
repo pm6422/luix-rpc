@@ -3,6 +3,7 @@ package org.infinity.rpc.demoserver.service.impl;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.infinity.rpc.democommon.domain.Authority;
 import org.infinity.rpc.democommon.service.AuthorityService;
+import org.infinity.rpc.demoserver.annotation.ExecutionSwitch;
 import org.infinity.rpc.demoserver.repository.AuthorityRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,11 +25,13 @@ public class AuthorityServiceImpl implements AuthorityService {
 
     @Override
     public List<String> findAllAuthorityNames(Boolean enabled) {
+        findAllAuthorityNames();
         return authorityRepository.findByEnabled(enabled).stream().map(Authority::getName)
                 .collect(Collectors.toList());
     }
 
     @Override
+    @ExecutionSwitch(on = "true")
     public List<String> findAllAuthorityNames() {
         return authorityRepository.findAll().stream().map(Authority::getName)
                 .collect(Collectors.toList());
