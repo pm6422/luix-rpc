@@ -17,7 +17,7 @@ import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 import static org.infinity.rpc.core.constant.ConsumerConstants.INVOKER_VAL_P2P;
 
 /**
- * It means that only one service provider can handle one request
+ * Only one service provider can process one request
  * todo: ClusterSpi
  */
 @Slf4j
@@ -56,7 +56,7 @@ public class P2pServiceInvoker implements ServiceInvoker {
 
     /**
      * Call chain:
-     * cluster fault tolerance strategy =>
+     * Cluster fault tolerance strategy =>
      * LB select node =>
      * RPC sender
      *

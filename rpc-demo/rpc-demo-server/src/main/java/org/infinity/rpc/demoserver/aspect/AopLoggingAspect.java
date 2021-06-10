@@ -1,11 +1,12 @@
-package org.infinity.rpc.democlient.config;
+package org.infinity.rpc.demoserver.aspect;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.infinity.rpc.democlient.utils.TraceIdUtils;
+import org.infinity.rpc.demoserver.config.ApplicationProperties;
+import org.infinity.rpc.demoserver.utils.TraceIdUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
