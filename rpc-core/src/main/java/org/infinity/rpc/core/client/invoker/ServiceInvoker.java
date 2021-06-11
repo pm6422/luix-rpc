@@ -15,11 +15,6 @@ import org.infinity.rpc.utilities.serviceloader.annotation.SpiScope;
 @Spi(scope = SpiScope.PROTOTYPE)
 public interface ServiceInvoker {
     /**
-     * Initialize
-     */
-    void init();
-
-    /**
      * Create a service provider invoker instance
      *
      * @param interfaceName      interface name
@@ -28,10 +23,15 @@ public interface ServiceInvoker {
      * @param consumerUrl        consumer url
      * @return service invoker instance
      */
-    ServiceInvoker createServiceInvoker(String interfaceName,
-                                        String faultToleranceName,
-                                        String loadBalancerName,
-                                        Url consumerUrl);
+    ServiceInvoker createInstance(String interfaceName,
+                                  String faultToleranceName,
+                                  String loadBalancerName,
+                                  Url consumerUrl);
+
+    /**
+     * Initialize
+     */
+    void init();
 
     /**
      * Initiate a RPC call

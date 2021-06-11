@@ -2,6 +2,9 @@ package org.infinity.rpc.utilities.serviceloader.annotation;
 
 import java.lang.annotation.*;
 
+/**
+ * Service provider interface
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

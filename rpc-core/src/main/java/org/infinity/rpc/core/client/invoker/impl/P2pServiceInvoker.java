@@ -30,22 +30,22 @@ public class P2pServiceInvoker implements ServiceInvoker {
     private FaultTolerance faultTolerance;
 
     @Override
-    public void init() {
-        active = true;
-        ShutdownHook.add(this::destroy);
-    }
-
-    @Override
-    public ServiceInvoker createServiceInvoker(String interfaceName, String faultToleranceName,
-                                               String loadBalancerName, Url consumerUrl) {
+    public ServiceInvoker createInstance(String interfaceName, String faultToleranceName,
+                                         String loadBalancerName, Url consumerUrl) {
         this.setInterfaceName(interfaceName);
         FaultTolerance faultTolerance = FaultTolerance.getInstance(faultToleranceName);
-        faultTolerance.setConsumerUrl(consumerUrl);
         faultTolerance.setLoadBalancer(LoadBalancer.getInstance(loadBalancerName));
+        faultTolerance.setConsumerUrl(consumerUrl);
         this.setFaultTolerance(faultTolerance);
         // Initialize
         this.init();
         return this;
+    }
+
+    @Override
+    public void init() {
+        active = true;
+        ShutdownHook.add(this::destroy);
     }
 
     @Override

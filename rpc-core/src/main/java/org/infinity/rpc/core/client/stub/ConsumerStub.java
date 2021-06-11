@@ -215,7 +215,7 @@ public class ConsumerStub<T> {
         url = this.createConsumerUrl(applicationConfig, protocolConfig);
 
         // Initialize service invoker before consumer initialization
-        serviceInvoker = ServiceInvoker.getInstance(invoker).createServiceInvoker(interfaceName, faultTolerance, loadBalancer, url);
+        serviceInvoker = ServiceInvoker.getInstance(invoker).createInstance(interfaceName, faultTolerance, loadBalancer, url);
 
         if (StringUtils.isEmpty(providerAddresses)) {
             // Non-direct registry
