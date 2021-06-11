@@ -11,11 +11,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public abstract class AbstractRequestSender implements Sendable {
-    protected volatile boolean       active          = false;
     protected          String        interfaceName;
     protected          Url           providerUrl;
     protected          AtomicBoolean initialized     = new AtomicBoolean(false);
     protected          AtomicInteger processingCount = new AtomicInteger(0);
+    protected volatile boolean       active          = false;
 
     public AbstractRequestSender(String interfaceName, Url providerUrl) {
         this.interfaceName = interfaceName;
@@ -34,16 +34,6 @@ public abstract class AbstractRequestSender implements Sendable {
     }
 
     @Override
-    public boolean isActive() {
-        return active;
-    }
-
-    @Override
-    public Url getProviderUrl() {
-        return providerUrl;
-    }
-
-    @Override
     public Responseable sendRequest(Requestable request) {
         if (!active) {
             throw new RpcFrameworkException("No active RPC request sender found!");
@@ -56,6 +46,16 @@ public abstract class AbstractRequestSender implements Sendable {
         } finally {
             afterSend(request, response);
         }
+    }
+
+    @Override
+    public boolean isActive() {
+        return active;
+    }
+
+    @Override
+    public Url getProviderUrl() {
+        return providerUrl;
     }
 
     @Override
