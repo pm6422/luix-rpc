@@ -1,8 +1,8 @@
 package org.infinity.rpc.core.client.loadbalancer.impl;
 
 import org.infinity.rpc.core.client.loadbalancer.AbstractLoadBalancer;
-import org.infinity.rpc.core.client.sender.Sendable;
 import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.client.sender.Sendable;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import java.util.ArrayList;
@@ -21,9 +21,9 @@ public class RandomLoadBalancer extends AbstractLoadBalancer {
     protected Sendable doSelectSender(Requestable request) {
         int index = getIndex(requestSenders);
         for (int i = 0; i < requestSenders.size(); i++) {
-            Sendable invoker = requestSenders.get((i + index) % requestSenders.size());
-            if (invoker.isActive()) {
-                return invoker;
+            Sendable sender = requestSenders.get((i + index) % requestSenders.size());
+            if (sender.isActive()) {
+                return sender;
             }
         }
         return null;
@@ -34,15 +34,15 @@ public class RandomLoadBalancer extends AbstractLoadBalancer {
         List<Sendable> selected = new ArrayList<>();
         int index = getIndex(requestSenders);
         for (int i = 0; i < requestSenders.size(); i++) {
-            Sendable invoker = requestSenders.get((i + index) % requestSenders.size());
-            if (invoker.isActive()) {
-                selected.add(invoker);
+            Sendable sender = requestSenders.get((i + index) % requestSenders.size());
+            if (sender.isActive()) {
+                selected.add(sender);
             }
         }
         return selected;
     }
 
-    private int getIndex(List<Sendable> invokers) {
-        return (int) (ThreadLocalRandom.current().nextDouble() * invokers.size());
+    private int getIndex(List<Sendable> senders) {
+        return (int) (ThreadLocalRandom.current().nextDouble() * senders.size());
     }
 }
