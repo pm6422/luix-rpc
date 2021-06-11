@@ -102,7 +102,6 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
             for (Sendable sender : senders) {
                 try {
                     sender.destroy();
-                    log.info("Destroyed the RPC request sender for url {}", sender.getProviderUrl().getUri());
                 } catch (Exception e) {
                     log.error(MessageFormat.format("Failed to destroy the RPC request sender for url {0}",
                             sender.getProviderUrl().getUri()), e);
