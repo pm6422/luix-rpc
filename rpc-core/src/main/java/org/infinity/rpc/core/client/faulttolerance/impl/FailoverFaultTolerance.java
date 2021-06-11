@@ -26,16 +26,16 @@ public class FailoverFaultTolerance extends AbstractFaultTolerance {
     @Override
     public Responseable invoke(Requestable request) {
         // Select multiple nodes
-        List<Sendable> availableInvokers = loadBalancer.selectSenders(request);
-        // todo: provider configuration over consumer configuration
-        int maxRetries = availableInvokers.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
+        List<Sendable> availableSenders = loadBalancer.selectSenders(request);
+        // todo: test provider configuration over consumer configuration
+        int maxRetries = availableSenders.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
         if (maxRetries == 0) {
             maxRetries = request.getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
         }
 
         // Retry the RPC request operation till the max retry times
         for (int i = 0; i <= maxRetries; i++) {
-            Sendable invoker = availableInvokers.get(i % availableInvokers.size());
+            Sendable invoker = availableSenders.get(i % availableSenders.size());
             try {
                 request.setRetryNumber(i);
                 return invoker.sendRequest(request);
@@ -49,6 +49,6 @@ public class FailoverFaultTolerance extends AbstractFaultTolerance {
                 log.warn(MessageFormat.format("Failed to call {0}", invoker.getProviderUrl()), e);
             }
         }
-        throw new RpcFrameworkException("Failed to perform " + maxRetries + " retries to call " + availableInvokers.get(0).getProviderUrl() + "!");
+        throw new RpcFrameworkException("Failed to perform " + maxRetries + " retries to call " + availableSenders.get(0).getProviderUrl() + "!");
     }
 }
