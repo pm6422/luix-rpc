@@ -28,7 +28,7 @@ public class RequestSender extends AbstractRequestSender {
     public RequestSender(String interfaceName, Url providerUrl) {
         super(interfaceName, providerUrl);
         long start = System.currentTimeMillis();
-        endpointFactory = createEndpointFactory(providerUrl);
+        endpointFactory = this.createEndpointFactory(providerUrl);
         client = endpointFactory.createClient(providerUrl);
         // Initialize
         super.init();
@@ -36,10 +36,8 @@ public class RequestSender extends AbstractRequestSender {
     }
 
     private EndpointFactory createEndpointFactory(Url providerUrl) {
-        final EndpointFactory endpointFactory;
         String name = providerUrl.getOption(ENDPOINT_FACTORY, ENDPOINT_FACTORY_VAL_NETTY);
-        endpointFactory = EndpointFactory.getInstance(name);
-        return endpointFactory;
+        return EndpointFactory.getInstance(name);
     }
 
     @Override
