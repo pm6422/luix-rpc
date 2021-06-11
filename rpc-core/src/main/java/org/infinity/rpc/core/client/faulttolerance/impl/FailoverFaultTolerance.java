@@ -2,8 +2,8 @@ package org.infinity.rpc.core.client.faulttolerance.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.faulttolerance.AbstractFaultTolerance;
-import org.infinity.rpc.core.client.sender.Sendable;
 import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.client.sender.Sendable;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.response.Responseable;
@@ -25,20 +25,20 @@ import static org.infinity.rpc.core.constant.ServiceConstants.MAX_RETRIES_VAL_DE
 public class FailoverFaultTolerance extends AbstractFaultTolerance {
     @Override
     public Responseable invoke(Requestable request) {
-        // Select multiple nodes
-        List<Sendable> availableSenders = loadBalancer.selectSenders(request);
+        // Select all active senders
+        List<Sendable> allActiveSenders = loadBalancer.selectAllActiveSenders(request);
         // todo: test provider configuration over consumer configuration
-        int maxRetries = availableSenders.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
+        int maxRetries = allActiveSenders.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
         if (maxRetries == 0) {
             maxRetries = request.getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
         }
 
         // Retry the RPC request operation till the max retry times
         for (int i = 0; i <= maxRetries; i++) {
-            Sendable invoker = availableSenders.get(i % availableSenders.size());
+            Sendable sender = allActiveSenders.get(i % allActiveSenders.size());
             try {
                 request.setRetryNumber(i);
-                return invoker.sendRequest(request);
+                return sender.sendRequest(request);
             } catch (RuntimeException e) {
                 if (ExceptionUtils.isBizException(e) || i >= maxRetries) {
                     // Throw the exception if it's a business one
@@ -46,9 +46,9 @@ public class FailoverFaultTolerance extends AbstractFaultTolerance {
                     throw e;
                 }
                 // If one of the provider nodes fails, try to use another backup available one
-                log.warn(MessageFormat.format("Failed to call {0}", invoker.getProviderUrl()), e);
+                log.warn(MessageFormat.format("Failed to call {0}", sender.getProviderUrl()), e);
             }
         }
-        throw new RpcFrameworkException("Failed to perform " + maxRetries + " retries to call " + availableSenders.get(0).getProviderUrl() + "!");
+        throw new RpcFrameworkException("Failed to perform " + maxRetries + " retries to call " + allActiveSenders.get(0).getProviderUrl() + "!");
     }
 }

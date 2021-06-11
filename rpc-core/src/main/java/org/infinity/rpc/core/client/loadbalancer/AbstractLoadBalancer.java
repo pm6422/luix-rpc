@@ -47,12 +47,11 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
     }
 
     @Override
-    public Sendable selectSender(Requestable request) {
+    public Sendable selectActiveSender(Requestable request) {
         if (CollectionUtils.isEmpty(this.requestSenders)) {
             throw new RpcInvocationException("No active RPC request sender, " +
                     "please check whether the server is ok!");
         }
-
         // Make a copy for thread safe purpose
         List<Sendable> senders = new ArrayList<>(this.requestSenders);
         Sendable sender = null;
@@ -70,7 +69,7 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
     }
 
     @Override
-    public List<Sendable> selectSenders(Requestable request) {
+    public List<Sendable> selectAllActiveSenders(Requestable request) {
         if (CollectionUtils.isEmpty(this.requestSenders)) {
             throw new RpcInvocationException("No active RPC request sender, " +
                     "please check whether the server is ok!");

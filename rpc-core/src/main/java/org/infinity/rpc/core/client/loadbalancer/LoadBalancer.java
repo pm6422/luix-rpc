@@ -31,20 +31,20 @@ public interface LoadBalancer {
     void refresh(List<Sendable> requestSender);
 
     /**
-     * Select one RPC request sender via load balance algorithm
+     * Select one active RPC request sender via load balance algorithm
      *
      * @param request RPC request instance
      * @return selected RPC request sender
      */
-    Sendable selectSender(Requestable request);
+    Sendable selectActiveSender(Requestable request);
 
     /**
-     * Select multiple RPC request senders via load balance algorithm
+     * Select all active RPC request senders with a specified order via load balance algorithm
      *
      * @param request RPC request instance
      * @return selected RPC request senders
      */
-    List<Sendable> selectSenders(Requestable request);
+    List<Sendable> selectAllActiveSenders(Requestable request);
 
     /**
      * Destroy

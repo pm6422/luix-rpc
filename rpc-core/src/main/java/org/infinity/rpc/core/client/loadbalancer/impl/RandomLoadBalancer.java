@@ -33,6 +33,7 @@ public class RandomLoadBalancer extends AbstractLoadBalancer {
     protected List<Sendable> doSelectSenders(Requestable request) {
         List<Sendable> selected = new ArrayList<>();
         int index = getIndex(requestSenders);
+        // Select senders with a random order
         for (int i = 0; i < requestSenders.size(); i++) {
             Sendable sender = requestSenders.get((i + index) % requestSenders.size());
             if (sender.isActive()) {
