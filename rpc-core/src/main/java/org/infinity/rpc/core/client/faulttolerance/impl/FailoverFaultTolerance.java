@@ -38,6 +38,7 @@ public class FailoverFaultTolerance extends AbstractFaultTolerance {
             Sendable sender = allActiveSenders.get(i % allActiveSenders.size());
             try {
                 request.setRetryNumber(i);
+                // Send RPC request
                 return sender.sendRequest(request);
             } catch (RuntimeException e) {
                 if (ExceptionUtils.isBizException(e) || i >= maxRetries) {

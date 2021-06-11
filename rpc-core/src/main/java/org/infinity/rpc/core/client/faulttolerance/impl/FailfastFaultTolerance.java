@@ -20,7 +20,7 @@ public class FailfastFaultTolerance extends AbstractFaultTolerance {
     @Override
     public Responseable invoke(Requestable request) {
         Sendable activeSender = loadBalancer.selectActiveSender(request);
-        // Do NOT retry when exception occurred
+        // Send RPC request and do NOT retry when exception occurred
         return activeSender.sendRequest(request);
     }
 }
