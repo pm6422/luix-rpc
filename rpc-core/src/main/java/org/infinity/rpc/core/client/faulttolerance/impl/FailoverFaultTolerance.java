@@ -17,9 +17,8 @@ import static org.infinity.rpc.core.constant.ServiceConstants.MAX_RETRIES;
 import static org.infinity.rpc.core.constant.ServiceConstants.MAX_RETRIES_VAL_DEFAULT;
 
 /**
- * Failover fault tolerance strategy
  * Failover is a backup mode of operation, when the primary system exception that functions to the secondary system.
- * 失败自动切换，当出现失败会重试其它服务器
+ * Failover fault tolerance strategy means that when a service node fails to call, it will continue to call other service nodes.
  */
 @Slf4j
 @SpiName(FAULT_TOLERANCE_VAL_FAILOVER)

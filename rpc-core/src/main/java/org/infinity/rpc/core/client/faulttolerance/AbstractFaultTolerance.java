@@ -5,9 +5,6 @@ import lombok.Setter;
 import org.infinity.rpc.core.client.loadbalancer.LoadBalancer;
 import org.infinity.rpc.core.url.Url;
 
-/**
- *
- */
 @Setter
 @Getter
 public abstract class AbstractFaultTolerance implements FaultTolerance {
