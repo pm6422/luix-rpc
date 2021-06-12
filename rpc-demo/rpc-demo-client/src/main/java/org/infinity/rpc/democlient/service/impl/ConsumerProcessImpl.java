@@ -28,11 +28,11 @@ public class ConsumerProcessImpl implements ConsumerProcessable {
     private ApplicationService    applicationService;
 
     @Override
-    public void process(Url registryUrl, List<Url> providerUrls, String interfaceName) {
-        if (CollectionUtils.isNotEmpty(providerUrls)) {
-            log.info("Discovered active consumers {}", providerUrls);
-            for (Url providerUrl : providerUrls) {
-                Consumer provider = Consumer.of(providerUrl, registryUrl);
+    public void process(Url registryUrl, List<Url> consumerUrls, String interfaceName) {
+        if (CollectionUtils.isNotEmpty(consumerUrls)) {
+            log.info("Discovered active consumers {}", consumerUrls);
+            for (Url consumerUrl : consumerUrls) {
+                Consumer provider = Consumer.of(consumerUrl, registryUrl);
                 // Insert or update consumer
                 consumerRepository.save(provider);
 
@@ -47,7 +47,7 @@ public class ConsumerProcessImpl implements ConsumerProcessable {
                     continue;
                 }
 
-                Application application = applicationService.remoteQueryApplication(registryUrl, providerUrl);
+                Application application = applicationService.remoteQueryApplication(registryUrl, consumerUrl);
                 applicationRepository.save(application);
             }
         } else {
