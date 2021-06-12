@@ -161,8 +161,8 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
             }
 
             state = FutureState.CANCELLED;
-            exception = new RpcFrameworkException("Request timeout in " + (System.currentTimeMillis() - createdTime)
-                    + "ms with address " + serverUrl.getAddress() + " and " + request);
+            exception = new RpcFrameworkException("Failed to request server " + serverUrl.getAddress()
+                    + " with timeout of " + processTime + "ms for " + request);
             lock.notifyAll();
         }
 
