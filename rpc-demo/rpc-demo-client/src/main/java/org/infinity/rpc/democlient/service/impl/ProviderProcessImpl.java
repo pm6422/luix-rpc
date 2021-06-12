@@ -28,7 +28,7 @@ public class ProviderProcessImpl implements ProviderProcessable {
     private ApplicationService    applicationService;
 
     @Override
-    public void process(Url registryUrl, List<Url> providerUrls, String interfaceName) {
+    public void process(Url registryUrl, String interfaceName, List<Url> providerUrls) {
         if (CollectionUtils.isNotEmpty(providerUrls)) {
             log.info("Discovered active providers {}", providerUrls);
             for (Url providerUrl : providerUrls) {

@@ -28,7 +28,7 @@ public class ConsumerProcessImpl implements ConsumerProcessable {
     private ApplicationService    applicationService;
 
     @Override
-    public void process(Url registryUrl, List<Url> consumerUrls, String interfaceName) {
+    public void process(Url registryUrl, String interfaceName, List<Url> consumerUrls) {
         if (CollectionUtils.isNotEmpty(consumerUrls)) {
             log.info("Discovered active consumers {}", consumerUrls);
             for (Url consumerUrl : consumerUrls) {

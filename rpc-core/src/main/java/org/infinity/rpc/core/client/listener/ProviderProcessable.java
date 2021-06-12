@@ -9,8 +9,8 @@ public interface ProviderProcessable {
      * Process providers
      *
      * @param registryUrl   registry url
-     * @param providerUrls  provider urls
      * @param interfaceName interface name
+     * @param providerUrls  provider urls
      */
-    void process(Url registryUrl, List<Url> providerUrls, String interfaceName);
+    void process(Url registryUrl, String interfaceName, List<Url> providerUrls);
 }

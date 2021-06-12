@@ -9,8 +9,8 @@ public interface ConsumerProcessable {
      * Process consumers
      *
      * @param registryUrl   registry url
-     * @param consumerUrls  consumer urls
      * @param interfaceName interface name
+     * @param consumerUrls  consumer urls
      */
-    void process(Url registryUrl, List<Url> consumerUrls, String interfaceName);
+    void process(Url registryUrl, String interfaceName, List<Url> consumerUrls);
 }

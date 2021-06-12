@@ -63,7 +63,7 @@ public class ProviderNotifyListener implements ClientListener {
     @EventReceiver("providersDiscoveryEvent")
     public synchronized void onNotify(Url registryUrl, List<Url> providerUrls) {
         if (providerProcessor != null) {
-            providerProcessor.process(registryUrl, providerUrls, interfaceName);
+            providerProcessor.process(registryUrl, interfaceName, providerUrls);
         }
         if (CollectionUtils.isEmpty(providerUrls)) {
             log.warn("No active providers found on registry [{}]", registryUrl.getUri());
