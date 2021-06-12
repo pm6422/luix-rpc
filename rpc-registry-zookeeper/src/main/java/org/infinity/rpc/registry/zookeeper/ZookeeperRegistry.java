@@ -384,14 +384,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     protected void subscribeProviderListener(Url consumerUrl, ProviderListener providerListener) {
         listenerLock.lock();
         try {
-            // Create 'consuming' node
             createConsumingNode(consumerUrl);
-
-            String activeDirPath = getStatusDirPath(consumerUrl.getPath(), StatusDir.ACTIVE);
-            IZkChildListener zkChildListener = getZkChildListener(consumerUrl, providerListener);
-            // Bind the path with zookeeper child change listener, any the child list changes under the path will trigger the zkChildListener
-            zkClient.subscribeChildChanges(activeDirPath, zkChildListener);
-            log.info("Subscribed the service listener for the path [{}]", getProviderFilePath(consumerUrl, StatusDir.ACTIVE));
+            doSubscribeProviderListener(consumerUrl, providerListener);
         } catch (Throwable e) {
             String msg = String.format("Failed to subscribe service listeners for url [%s]", consumerUrl);
             throw new RpcFrameworkException(msg, e);
@@ -431,6 +425,14 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             childChangeListeners.putIfAbsent(providerListener, zkChildListener);
         }
         return zkChildListener;
+    }
+
+    private void doSubscribeProviderListener(Url consumerUrl, ProviderListener providerListener) {
+        String activeDirPath = getStatusDirPath(consumerUrl.getPath(), StatusDir.ACTIVE);
+        IZkChildListener zkChildListener = getZkChildListener(consumerUrl, providerListener);
+        // Bind the path with zookeeper child change listener, any the child list changes under the path will trigger the zkChildListener
+        zkClient.subscribeChildChanges(activeDirPath, zkChildListener);
+        log.info("Subscribed the service listener for the path [{}]", getProviderFilePath(consumerUrl, StatusDir.ACTIVE));
     }
 
     /**
