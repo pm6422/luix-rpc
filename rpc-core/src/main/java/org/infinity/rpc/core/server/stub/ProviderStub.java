@@ -42,7 +42,7 @@ import static org.infinity.rpc.core.server.response.impl.RpcCheckHealthResponse.
 import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignature;
 
 /**
- * PRC provider stub
+ * RPC provider stub
  * A stub in distributed computing is a piece of code that converts parameters passed between client and server
  * during a remote procedure call(RPC).
  * A provider stub take charge of handling remote method invocation and delegate to associate local method to execute.

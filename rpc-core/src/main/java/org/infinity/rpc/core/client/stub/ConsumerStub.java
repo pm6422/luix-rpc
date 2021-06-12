@@ -34,7 +34,7 @@ import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_NONE
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
- * PRC consumer stub
+ * RPC consumer stub
  * A stub in distributed computing is a piece of code that converts parameters passed between client and server
  * during a remote procedure call(RPC).
  * A consumer stub take charge of creating a proxy instance of the consumer interface class, any method invocation
