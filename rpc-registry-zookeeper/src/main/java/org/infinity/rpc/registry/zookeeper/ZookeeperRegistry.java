@@ -148,7 +148,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                     ConcurrentHashMap<ProviderListener, IZkChildListener> childChangeListeners = providerListenersPerConsumerUrl.get(url);
                     if (MapUtils.isNotEmpty(childChangeListeners)) {
                         for (Map.Entry<ProviderListener, IZkChildListener> e : childChangeListeners.entrySet()) {
-                            subscribeServiceListener(url, e.getKey());
+                            subscribeProviderListener(url, e.getKey());
                         }
                     }
                 }
@@ -379,7 +379,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      */
     @Override
     @EventSubscriber("providersChangeEvent")
-    protected void subscribeServiceListener(Url consumerUrl, ProviderListener providerListener) {
+    protected void subscribeProviderListener(Url consumerUrl, ProviderListener providerListener) {
         listenerLock.lock();
         try {
             Map<ProviderListener, IZkChildListener> childChangeListeners = providerListenersPerConsumerUrl.get(consumerUrl);
@@ -426,7 +426,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * @param providerListener service listener
      */
     @Override
-    protected void unsubscribeServiceListener(Url consumerUrl, ProviderListener providerListener) {
+    protected void unsubscribeProviderListener(Url consumerUrl, ProviderListener providerListener) {
         listenerLock.lock();
         try {
             Map<ProviderListener, IZkChildListener> childChangeListeners = providerListenersPerConsumerUrl.get(consumerUrl);

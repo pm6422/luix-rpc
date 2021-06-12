@@ -307,9 +307,9 @@ public abstract class AbstractRegistry implements Registry {
 
     protected abstract void doUnsubscribe(Url url, ClientListener listener);
 
-    protected abstract void subscribeServiceListener(Url consumerUrl, ProviderListener listener);
+    protected abstract void subscribeProviderListener(Url consumerUrl, ProviderListener listener);
 
-    protected abstract void unsubscribeServiceListener(Url consumerUrl, ProviderListener listener);
+    protected abstract void unsubscribeProviderListener(Url consumerUrl, ProviderListener listener);
 
     protected abstract List<Url> doDiscover(Url url);
 }

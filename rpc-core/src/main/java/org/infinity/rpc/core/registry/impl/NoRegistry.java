@@ -60,12 +60,12 @@ public class NoRegistry extends AbstractRegistry implements Cleanable {
     }
 
     @Override
-    protected void subscribeServiceListener(Url consumerUrl, ProviderListener listener) {
+    protected void subscribeProviderListener(Url consumerUrl, ProviderListener listener) {
         // Do nothing
     }
 
     @Override
-    protected void unsubscribeServiceListener(Url consumerUrl, ProviderListener listener) {
+    protected void unsubscribeProviderListener(Url consumerUrl, ProviderListener listener) {
         // Do nothing
     }
 

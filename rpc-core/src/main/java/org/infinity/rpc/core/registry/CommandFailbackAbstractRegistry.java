@@ -44,7 +44,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
         commandServiceListener.addNotifyListener(listener);
 
         // Trigger onNotify method of commandServiceListener if child change event happens
-        subscribeServiceListener(consumerUrlCopy, commandServiceListener);
+        subscribeProviderListener(consumerUrlCopy, commandServiceListener);
         // Trigger onNotify method of commandServiceListener if data change event happens
         subscribeCommandListener(consumerUrlCopy, commandServiceListener);
         // Discover active providers
@@ -69,7 +69,7 @@ public abstract class CommandFailbackAbstractRegistry extends FailbackAbstractRe
         // Remove notify listener from command service listener
         commandServiceListener.removeNotifyListener(listener);
         // Unsubscribe service listener
-        unsubscribeServiceListener(urlCopy, commandServiceListener);
+        unsubscribeProviderListener(urlCopy, commandServiceListener);
         // Unsubscribe command listener
         unsubscribeCommandListener(urlCopy, commandServiceListener);
         log.info("Unsubscribed the listener for the url [{}]", consumerUrl);

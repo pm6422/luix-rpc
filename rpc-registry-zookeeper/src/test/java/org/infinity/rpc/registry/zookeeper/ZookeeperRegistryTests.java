@@ -141,7 +141,7 @@ public class ZookeeperRegistryTests {
                 assertTrue(urls.contains(providerUrl1));
             }
         };
-        registry.subscribeServiceListener(consumerUrl, providerListener);
+        registry.subscribeProviderListener(consumerUrl, providerListener);
         assertTrue(containsServiceListener(consumerUrl, providerListener));
 
         registry.doRegister(providerUrl1);
@@ -149,7 +149,7 @@ public class ZookeeperRegistryTests {
         registry.doActivate(providerUrl1);
         Thread.sleep(2000);
 
-        registry.unsubscribeServiceListener(consumerUrl, providerListener);
+        registry.unsubscribeProviderListener(consumerUrl, providerListener);
         assertFalse(containsServiceListener(consumerUrl, providerListener));
     }
 

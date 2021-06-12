@@ -180,13 +180,13 @@ public class CommandProviderListener implements ProviderListener, CommandListene
                     activeProviderUrlsPerForm.remove(gk);
                     Url urlTemp = urlCopy.copy();
                     urlTemp.addOption(FORM, gk);
-                    registry.unsubscribeServiceListener(urlTemp, this);
+                    registry.unsubscribeProviderListener(urlTemp, this);
                 }
             }
             // 当指令从有改到无时，或者没有流量切换指令时，会触发取消订阅所有的group，需要重新订阅本组的service
             if ("".equals(commandString) || weights.isEmpty()) {
                 log.info("reSub service" + this.consumerUrl.toSimpleString());
-                registry.subscribeServiceListener(this.consumerUrl, this);
+                registry.subscribeProviderListener(this.consumerUrl, this);
             }
         } else {
             log.info("command not change. url:" + consumerUrl.toSimpleString());
@@ -351,7 +351,7 @@ public class CommandProviderListener implements ProviderListener, CommandListene
                 Url urlTemp = providerUrl.copy();
                 urlTemp.addOption(FORM, key);
                 finalResult.addAll(discoverActiveProvidersByGroup(urlTemp));
-                registry.subscribeServiceListener(urlTemp, this);
+                registry.subscribeProviderListener(urlTemp, this);
             }
         }
         return finalResult;
