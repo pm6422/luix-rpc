@@ -45,7 +45,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
             registryPerUri.put(registryUri, registry);
             return registry;
         } catch (Exception e) {
-            throw new RpcFrameworkException("Failed to create registry for url [" + registryUrl + "]", e);
+            throw new RpcFrameworkException("Failed to create " + registryUrl.getProtocol() + " registry", e);
         } finally {
             lock.unlock();
         }
