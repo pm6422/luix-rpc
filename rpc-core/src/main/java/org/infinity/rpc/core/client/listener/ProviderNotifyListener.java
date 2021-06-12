@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @ThreadSafe
 public class ProviderNotifyListener implements ClientListener {
-    protected ServiceInvoker serviceInvoker;
+    protected     ServiceInvoker           serviceInvoker;
     /**
      * The interface class name of the consumer
      */
-    protected String         interfaceName;
-    protected     Protocol                  protocol;
+    protected     String                   interfaceName;
+    protected     Protocol                 protocol;
     protected     ProviderProcessable      providerProcessor;
     private final Map<Url, List<Sendable>> invokersPerRegistryUrl = new ConcurrentHashMap<>();
 
