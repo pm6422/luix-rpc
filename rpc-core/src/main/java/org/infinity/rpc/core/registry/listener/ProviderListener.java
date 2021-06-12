@@ -5,7 +5,7 @@ import org.infinity.rpc.core.url.Url;
 import java.util.List;
 
 /**
- * Provider listener used to handle the provider changes event
+ * Provider listener used to discover provider changes event
  */
 public interface ProviderListener {
 
