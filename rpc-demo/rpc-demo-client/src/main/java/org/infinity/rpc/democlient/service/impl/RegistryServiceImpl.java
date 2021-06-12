@@ -8,6 +8,7 @@ import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.registry.Registry;
+import org.infinity.rpc.core.server.listener.ConsumerProcessable;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democlient.dto.RegistryDTO;
 import org.infinity.rpc.democlient.service.RegistryService;
@@ -33,11 +34,10 @@ public class RegistryServiceImpl implements RegistryService, ApplicationRunner {
     private static final List<RegistryDTO>           REGISTRIES          = new ArrayList<>();
     @Resource
     private              InfinityProperties          infinityProperties;
-    private final        ProviderProcessable         providerProcessService;
-
-    public RegistryServiceImpl(ProviderProcessable providerProcessService) {
-        this.providerProcessService = providerProcessService;
-    }
+    @Resource
+    private              ProviderProcessable         providerProcessService;
+    @Resource
+    private              ConsumerProcessable         consumerProcessService;
 
     /**
      * {@link org.springframework.beans.factory.InitializingBean#afterPropertiesSet()} execute too earlier
