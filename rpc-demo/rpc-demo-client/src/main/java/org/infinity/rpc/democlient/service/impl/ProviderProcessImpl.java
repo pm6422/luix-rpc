@@ -1,4 +1,4 @@
-package org.infinity.rpc.democlient.component;
+package org.infinity.rpc.democlient.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -21,6 +21,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -29,9 +30,9 @@ import java.util.Optional;
 import static org.infinity.rpc.core.config.impl.ProviderConfig.METHOD_APPLICATION_META;
 import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT;
 
-@Component
+@Service
 @Slf4j
-public class ProviderProcessor implements ProviderProcessable, ApplicationContextAware {
+public class ProviderProcessImpl implements ProviderProcessable, ApplicationContextAware {
 
     @Resource
     private       InfinityProperties    infinityProperties;
@@ -39,7 +40,7 @@ public class ProviderProcessor implements ProviderProcessable, ApplicationContex
     private final ProviderRepository    providerRepository;
     private final ApplicationRepository applicationRepository;
 
-    public ProviderProcessor(ProviderRepository providerRepository, ApplicationRepository applicationRepository) {
+    public ProviderProcessImpl(ProviderRepository providerRepository, ApplicationRepository applicationRepository) {
         this.providerRepository = providerRepository;
         this.applicationRepository = applicationRepository;
     }
