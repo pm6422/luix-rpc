@@ -406,6 +406,14 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         }
     }
 
+    private void doSubscribeProviderListener(Url consumerUrl, ProviderListener providerListener) {
+        String activeDirPath = getStatusDirPath(consumerUrl.getPath(), StatusDir.ACTIVE);
+        IZkChildListener zkChildListener = getZkChildListener(consumerUrl, providerListener);
+        // Bind the path with zookeeper child change listener, any the child list changes under the path will trigger the zkChildListener
+        zkClient.subscribeChildChanges(activeDirPath, zkChildListener);
+        log.info("Subscribed the service listener for the path [{}]", getProviderFilePath(consumerUrl, StatusDir.ACTIVE));
+    }
+
     @EventSubscriber("providersChangeEvent")
     private IZkChildListener getZkChildListener(Url consumerUrl, ProviderListener providerListener) {
         Map<ProviderListener, IZkChildListener> childChangeListeners = providerListenersPerConsumerUrl.get(consumerUrl);
@@ -425,14 +433,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             childChangeListeners.putIfAbsent(providerListener, zkChildListener);
         }
         return zkChildListener;
-    }
-
-    private void doSubscribeProviderListener(Url consumerUrl, ProviderListener providerListener) {
-        String activeDirPath = getStatusDirPath(consumerUrl.getPath(), StatusDir.ACTIVE);
-        IZkChildListener zkChildListener = getZkChildListener(consumerUrl, providerListener);
-        // Bind the path with zookeeper child change listener, any the child list changes under the path will trigger the zkChildListener
-        zkClient.subscribeChildChanges(activeDirPath, zkChildListener);
-        log.info("Subscribed the service listener for the path [{}]", getProviderFilePath(consumerUrl, StatusDir.ACTIVE));
     }
 
     /**
