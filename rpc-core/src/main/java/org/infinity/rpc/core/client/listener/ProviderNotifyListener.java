@@ -82,7 +82,7 @@ public class ProviderNotifyListener implements ClientListener {
         }
 
         if (CollectionUtils.isEmpty(newSenders)) {
-            log.warn("No active provider invoker!");
+            log.warn("No active provider sender!");
         }
         invokersPerRegistryUrl.put(registryUrl, newSenders);
         refreshCluster();
