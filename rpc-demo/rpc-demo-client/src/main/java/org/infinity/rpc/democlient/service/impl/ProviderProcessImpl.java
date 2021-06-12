@@ -59,7 +59,7 @@ public class ProviderProcessImpl implements ProviderProcessable {
                 // Ignore query parameter if it has a null value
                 ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
                 if (applicationRepository.exists(Example.of(probe, matcher))) {
-                    // If exists application
+                    // If application exists
                     continue;
                 }
 
@@ -106,7 +106,7 @@ public class ProviderProcessImpl implements ProviderProcessable {
         consumerStub.setRequestTimeout(timeout);
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
-        // Remote call to get ApplicationConfig
+        // Send a remote request to get ApplicationConfig
         ApplicationConfig applicationConfig = (ApplicationConfig) invocationHandler.invoke(METHOD_APPLICATION_META, null, null);
         BeanUtils.copyProperties(applicationConfig, application);
         application.setRegistryIdentity(registryUrl.getIdentity());
