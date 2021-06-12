@@ -10,6 +10,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.zookeeper.Watcher;
+import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.registry.CommandFailbackAbstractRegistry;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ProviderListener;
@@ -186,9 +187,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             // Create data under 'inactive' node
             createNode(providerUrl, StatusDir.INACTIVE);
         } catch (Throwable e) {
-            String errorMsg = MessageFormat.format("Failed to register [{0}] to zookeeper [{1}] with the error: {2}",
+            String msg = String.format("Failed to register [%s] to zookeeper [%s] with the error: %s",
                     providerUrl, getRegistryUrl(), e.getMessage());
-            throw new RuntimeException(errorMsg, e);
+            throw new RpcFrameworkException(msg, e);
         } finally {
             providerLock.unlock();
         }
@@ -307,9 +308,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             removeNode(providerUrl, StatusDir.ACTIVE);
             removeNode(providerUrl, StatusDir.INACTIVE);
         } catch (Throwable e) {
-            String msg = MessageFormat.format("Failed to unregister [{0}] from zookeeper [{1}] with the error: {2}",
+            String msg = String.format("Failed to unregister [%s] from zookeeper [%s] with the error: %s",
                     providerUrl, getRegistryUrl(), e.getMessage());
-            throw new RuntimeException(msg, e);
+            throw new RpcFrameworkException(msg, e);
         } finally {
             providerLock.unlock();
         }
@@ -326,8 +327,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         try {
             return readProviderUrls(zkClient, consumerUrl.getPath(), StatusDir.ACTIVE);
         } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to discover provider [{0}] from registry [{1}] with the error: {2}",
-                    consumerUrl, getRegistryUrl(), e.getMessage()), e);
+            String msg = String.format("Failed to discover provider [%s] from registry [%s] with the error: %s",
+                    consumerUrl, getRegistryUrl(), e.getMessage());
+            throw new RpcFrameworkException(msg, e);
         }
     }
 
@@ -343,9 +345,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             addrFiles.addAll(getChildrenNames(zkClient, statusDirPath));
             return addrFiles;
         } catch (Throwable e) {
-            String msg = MessageFormat.format("Failed to discover providers from registry [{0}] with the error: {1}",
+            String msg = String.format("Failed to discover providers from registry [%s] with the error: %s",
                     getRegistryUrl(), e.getMessage());
-            throw new RuntimeException(msg, e);
+            throw new RpcFrameworkException(msg, e);
         }
     }
 
@@ -365,8 +367,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             }
             return command;
         } catch (Throwable e) {
-            String msg = MessageFormat.format("Failed to discover command [{0}] from zookeeper [{1}]", consumerUrl, getRegistryUrl());
-            throw new RuntimeException(msg, e);
+            String msg = String.format("Failed to discover command [%s] from zookeeper [%s]",
+                    consumerUrl, getRegistryUrl());
+            throw new RpcFrameworkException(msg, e);
         }
     }
 
@@ -381,25 +384,31 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     protected void subscribeProviderListener(Url consumerUrl, ProviderListener providerListener) {
         listenerLock.lock();
         try {
-            try {
-                // Remove dirty data
-                removeNode(consumerUrl, StatusDir.CONSUMING);
-                // Create consumer url data under 'consuming' node
-                createNode(consumerUrl, StatusDir.CONSUMING);
-            } catch (Exception e) {
-                log.warn(MessageFormat.format("Failed to remove or create the node for the path [{0}]",
-                        getProviderFilePath(consumerUrl, StatusDir.CONSUMING)), e);
-            }
+            // Create 'consuming' node
+            createConsumingNode(consumerUrl);
 
-            IZkChildListener zkChildListener = getZkChildListener(consumerUrl, providerListener);
             String activeDirPath = getStatusDirPath(consumerUrl.getPath(), StatusDir.ACTIVE);
+            IZkChildListener zkChildListener = getZkChildListener(consumerUrl, providerListener);
             // Bind the path with zookeeper child change listener, any the child list changes under the path will trigger the zkChildListener
             zkClient.subscribeChildChanges(activeDirPath, zkChildListener);
             log.info("Subscribed the service listener for the path [{}]", getProviderFilePath(consumerUrl, StatusDir.ACTIVE));
         } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to subscribe service listeners for url [{}]", consumerUrl), e);
+            String msg = String.format("Failed to subscribe service listeners for url [%s]", consumerUrl);
+            throw new RpcFrameworkException(msg, e);
         } finally {
             listenerLock.unlock();
+        }
+    }
+
+    private void createConsumingNode(Url consumerUrl) {
+        try {
+            // Remove dirty data
+            removeNode(consumerUrl, StatusDir.CONSUMING);
+            // Create consumer url data under 'consuming' node
+            createNode(consumerUrl, StatusDir.CONSUMING);
+        } catch (Exception e) {
+            log.warn(MessageFormat.format("Failed to remove or create the node for the path [{0}]",
+                    getProviderFilePath(consumerUrl, StatusDir.CONSUMING)), e);
         }
     }
 
@@ -445,7 +454,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 childChangeListeners.remove(providerListener);
             }
         } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to unsubscribe service listeners for url [{}]", consumerUrl), e);
+            String msg = String.format("Failed to unsubscribe service listeners for url [%s]", consumerUrl);
+            throw new RpcFrameworkException(msg, e);
         } finally {
             listenerLock.unlock();
         }
@@ -494,7 +504,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             zkClient.subscribeDataChanges(commandPath, zkDataListener);
             log.info("Subscribed the command listener for the path [{}]", commandPath);
         } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to subscribe command listeners for url [{}]", consumerUrl), e);
+            String msg = String.format("Failed to subscribe command listeners for url [%s]", consumerUrl);
+            throw new RpcFrameworkException(msg, e);
         } finally {
             listenerLock.unlock();
         }
@@ -519,7 +530,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 }
             }
         } catch (Throwable e) {
-            throw new RuntimeException(MessageFormat.format("Failed to unsubscribe command listeners for url [{}]", consumerUrl), e);
+            String msg = String.format("Failed to unsubscribe command listeners for url [%s]", consumerUrl);
+            throw new RpcFrameworkException(msg, e);
         } finally {
             listenerLock.unlock();
         }
