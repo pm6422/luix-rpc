@@ -71,20 +71,20 @@ public class ProviderNotifyListener implements ClientListener {
             return;
         }
 
-        List<Sendable> newInvokers = new ArrayList<>();
+        List<Sendable> newSenders = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
             // Find provider invoker associated with the provider url
             Sendable invoker = findInvokerByProviderUrl(registryUrl, providerUrl);
             if (invoker == null) {
                 invoker = protocol.refer(interfaceName, providerUrl.copy());
             }
-            newInvokers.add(invoker);
+            newSenders.add(invoker);
         }
 
-        if (CollectionUtils.isEmpty(newInvokers)) {
+        if (CollectionUtils.isEmpty(newSenders)) {
             log.warn("No active provider invoker!");
         }
-        invokersPerRegistryUrl.put(registryUrl, newInvokers);
+        invokersPerRegistryUrl.put(registryUrl, newSenders);
         refreshCluster();
     }
 

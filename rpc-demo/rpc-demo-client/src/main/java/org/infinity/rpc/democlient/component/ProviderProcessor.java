@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.infinity.rpc.core.config.impl.ProviderConfig.METHOD_APPLICATION_META;
+import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT;
 
 @Component
 @Slf4j
@@ -104,7 +105,11 @@ public class ProviderProcessor implements ProviderProcessable, ApplicationContex
     private Application queryApplication(Url providerUrl, Url registryUrl) {
         Application application = new Application();
         RegistryService registryService = applicationContext.getBean(RegistryService.class);
-        ConsumerStub<?> consumerStub = registryService.getConsumerStub(registryUrl.getIdentity(), providerUrl);
+        Url copy = providerUrl.copy();
+        int timeout = 100000;
+        copy.addOption(REQUEST_TIMEOUT, String.valueOf(timeout));
+        ConsumerStub<?> consumerStub = registryService.getConsumerStub(registryUrl.getIdentity(), copy);
+        consumerStub.setRequestTimeout(timeout);
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         // Remote call to get ApplicationConfig

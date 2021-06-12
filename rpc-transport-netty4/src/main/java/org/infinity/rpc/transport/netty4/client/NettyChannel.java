@@ -45,11 +45,16 @@ public class NettyChannel implements Channel {
 
     @Override
     public Responseable request(Requestable request) {
-        // todo: provider configuration over consumer configuration
         // Get method level parameter value
-        int timeout = nettyClient.getProviderUrl()
+        int providerTimeout = nettyClient.getProviderUrl()
                 .getMethodParameter(request.getMethodName(), request.getMethodParameters(),
                         REQUEST_TIMEOUT, REQUEST_TIMEOUT_VAL_DEFAULT);
+
+        int timeout = providerTimeout;
+        if (REQUEST_TIMEOUT_VAL_DEFAULT == providerTimeout) {
+            // provider configuration over consumer configuration
+            timeout = Integer.parseInt(request.getOption(REQUEST_TIMEOUT, String.valueOf(REQUEST_TIMEOUT_VAL_DEFAULT)));
+        }
         // All requests are handled asynchronously
         FutureResponse response = new RpcFutureResponse(request, timeout, this.nettyClient.getProviderUrl());
         this.nettyClient.registerCallback(request.getRequestId(), response);
