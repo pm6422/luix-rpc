@@ -378,37 +378,20 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * @param providerListener service listener
      */
     @Override
-    @EventSubscriber("providersChangeEvent")
     protected void subscribeProviderListener(Url consumerUrl, ProviderListener providerListener) {
         listenerLock.lock();
         try {
-            Map<ProviderListener, IZkChildListener> childChangeListeners = providerListenersPerConsumerUrl.get(consumerUrl);
-            if (childChangeListeners == null) {
-                providerListenersPerConsumerUrl.putIfAbsent(consumerUrl, new ConcurrentHashMap<>(16));
-                childChangeListeners = providerListenersPerConsumerUrl.get(consumerUrl);
-            }
-            IZkChildListener zkChildListener = childChangeListeners.get(providerListener);
-            if (zkChildListener == null) {
-                // child files change listener under specified directory
-                zkChildListener = (dirName, currentChildren) -> {
-                    @EventPublisher("providersChangeEvent")
-                    List<String> fileNames = ListUtils.emptyIfNull(currentChildren);
-                    providerListener.onNotify(consumerUrl, getRegistryUrl(), readProviderUrls(zkClient, dirName, fileNames));
-                    log.info("Provider files [{}] changed under path [{}]", String.join(",", fileNames), dirName);
-                };
-                childChangeListeners.putIfAbsent(providerListener, zkChildListener);
-            }
-
             try {
                 // Remove dirty data
                 removeNode(consumerUrl, StatusDir.CONSUMING);
-                // Create consumer url node under consuming directory
+                // Create consumer url data under 'consuming' node
                 createNode(consumerUrl, StatusDir.CONSUMING);
             } catch (Exception e) {
                 log.warn(MessageFormat.format("Failed to remove or create the node for the path [{0}]",
                         getProviderFilePath(consumerUrl, StatusDir.CONSUMING)), e);
             }
 
+            IZkChildListener zkChildListener = getZkChildListener(consumerUrl, providerListener);
             String activeDirPath = getStatusDirPath(consumerUrl.getPath(), StatusDir.ACTIVE);
             // Bind the path with zookeeper child change listener, any the child list changes under the path will trigger the zkChildListener
             zkClient.subscribeChildChanges(activeDirPath, zkChildListener);
@@ -418,6 +401,27 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         } finally {
             listenerLock.unlock();
         }
+    }
+
+    @EventSubscriber("providersChangeEvent")
+    private IZkChildListener getZkChildListener(Url consumerUrl, ProviderListener providerListener) {
+        Map<ProviderListener, IZkChildListener> childChangeListeners = providerListenersPerConsumerUrl.get(consumerUrl);
+        if (childChangeListeners == null) {
+            providerListenersPerConsumerUrl.putIfAbsent(consumerUrl, new ConcurrentHashMap<>(16));
+            childChangeListeners = providerListenersPerConsumerUrl.get(consumerUrl);
+        }
+        IZkChildListener zkChildListener = childChangeListeners.get(providerListener);
+        if (zkChildListener == null) {
+            // Child files change listener under specified directory
+            zkChildListener = (dirName, currentChildren) -> {
+                @EventPublisher("providersChangeEvent")
+                List<String> fileNames = ListUtils.emptyIfNull(currentChildren);
+                providerListener.onNotify(consumerUrl, getRegistryUrl(), readProviderUrls(zkClient, dirName, fileNames));
+                log.info("Provider files [{}] changed under path [{}]", String.join(",", fileNames), dirName);
+            };
+            childChangeListeners.putIfAbsent(providerListener, zkChildListener);
+        }
+        return zkChildListener;
     }
 
     /**
