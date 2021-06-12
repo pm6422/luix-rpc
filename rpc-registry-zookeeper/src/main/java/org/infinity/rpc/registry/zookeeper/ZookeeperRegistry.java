@@ -41,15 +41,15 @@ import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.*;
 @Slf4j
 @ThreadSafe
 public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implements Cleanable {
-    private final ZkClient                                                       zkClient;
+    private final ZkClient                                                        zkClient;
     /**
      * Used to resolve concurrency problems for subscribe or unsubscribe service listeners
      */
-    private final Lock                                                           listenerLock                    = new ReentrantLock();
+    private final Lock                                                            listenerLock                    = new ReentrantLock();
     /**
      * Used to resolve concurrency problems for register or unregister providers
      */
-    private final Lock                                                           providerLock                    = new ReentrantLock();
+    private final Lock                                                            providerLock                    = new ReentrantLock();
     private final Set<Url>                                                        activeProviderUrls              = new ConcurrentHashSet<>();
     private final Map<Url, ConcurrentHashMap<ProviderListener, IZkChildListener>> providerListenersPerConsumerUrl = new ConcurrentHashMap<>();
     private final Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>   commandListenersPerConsumerUrl  = new ConcurrentHashMap<>();
@@ -374,7 +374,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * Monitor the specified zookeeper node linked to url whether the child nodes have been changed,
      * and it will invoke custom service listener if child nodes change.
      *
-     * @param consumerUrl     consumer url to identify the zookeeper path
+     * @param consumerUrl      consumer url to identify the zookeeper path
      * @param providerListener service listener
      */
     @Override
@@ -402,6 +402,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             try {
                 // Remove dirty data
                 removeNode(consumerUrl, StatusDir.CONSUMING);
+                // Create consumer url node under consuming directory
                 createNode(consumerUrl, StatusDir.CONSUMING);
             } catch (Exception e) {
                 log.warn(MessageFormat.format("Failed to remove or create the node for the path [{0}]",
@@ -422,7 +423,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     /**
      * Unsubscribe the service listener from the specified zookeeper node
      *
-     * @param consumerUrl     consumer url to identify the zookeeper path
+     * @param consumerUrl      consumer url to identify the zookeeper path
      * @param providerListener service listener
      */
     @Override
