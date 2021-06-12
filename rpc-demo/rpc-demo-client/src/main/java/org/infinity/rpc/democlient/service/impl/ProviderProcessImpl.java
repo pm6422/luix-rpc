@@ -11,16 +11,14 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democlient.domain.Application;
 import org.infinity.rpc.democlient.domain.Provider;
 import org.infinity.rpc.democlient.repository.ApplicationRepository;
+import org.infinity.rpc.democlient.repository.ConsumerRepository;
 import org.infinity.rpc.democlient.repository.ProviderRepository;
 import org.infinity.rpc.democlient.service.RegistryService;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -32,23 +30,18 @@ import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT;
 
 @Service
 @Slf4j
-public class ProviderProcessImpl implements ProviderProcessable, ApplicationContextAware {
+public class ProviderProcessImpl implements ProviderProcessable {
 
     @Resource
-    private       InfinityProperties    infinityProperties;
-    private       ApplicationContext    applicationContext;
-    private final ProviderRepository    providerRepository;
-    private final ApplicationRepository applicationRepository;
-
-    public ProviderProcessImpl(ProviderRepository providerRepository, ApplicationRepository applicationRepository) {
-        this.providerRepository = providerRepository;
-        this.applicationRepository = applicationRepository;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
+    private InfinityProperties    infinityProperties;
+    @Resource
+    private ApplicationContext    applicationContext;
+    @Resource
+    private ProviderRepository    providerRepository;
+    @Resource
+    private ConsumerRepository    consumerRepository;
+    @Resource
+    private ApplicationRepository applicationRepository;
 
     @Override
     public void process(Url registryUrl, List<Url> providerUrls, String interfaceName) {

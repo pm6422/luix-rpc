@@ -14,14 +14,14 @@ import java.time.Instant;
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 
 /**
- * Spring Data MongoDB collection for the Provider entity.
+ * Spring Data MongoDB collection for the Consumer entity.
  */
-@ApiModel("Service provider")
-@Document(collection = "Provider")
+@ApiModel("Service consumer")
+@Document(collection = "Consumer")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Provider implements Serializable {
+public class Consumer implements Serializable {
     private static final long   serialVersionUID        = 1L;
     public static final  String FIELD_INTERFACE_NAME    = "interfaceName";
     public static final  String FIELD_APPLICATION       = "application";
@@ -36,24 +36,23 @@ public class Provider implements Serializable {
     private   String  application;
     private   String  host;
     private   String  address;
-    private   String  providerUrl;
+    private   String  consumerUrl;
     private   String  registryIdentity;
-    private   Boolean active    = false;
-    private   Boolean consuming = false;
+    private   Boolean active = false;
     private   Instant createdTime;
     private   Instant modifiedTime;
 
-    public static Provider of(Url providerUrl, Url registryUrl) {
-        Provider provider = new Provider();
+    public static Consumer of(Url consumerUrl, Url registryUrl) {
+        Consumer provider = new Consumer();
         // Set ID with identity
-        provider.setId(providerUrl.getIdentity());
-        provider.setInterfaceName(providerUrl.getPath());
-        provider.setForm(providerUrl.getForm());
-        provider.setVersion(providerUrl.getVersion());
-        provider.setApplication(providerUrl.getOption(APP));
-        provider.setHost(providerUrl.getHost());
-        provider.setAddress(providerUrl.getAddress());
-        provider.setProviderUrl(providerUrl.toFullStr());
+        provider.setId(consumerUrl.getIdentity());
+        provider.setInterfaceName(consumerUrl.getPath());
+        provider.setForm(consumerUrl.getForm());
+        provider.setVersion(consumerUrl.getVersion());
+        provider.setApplication(consumerUrl.getOption(APP));
+        provider.setHost(consumerUrl.getHost());
+        provider.setAddress(consumerUrl.getAddress());
+        provider.setConsumerUrl(consumerUrl.toFullStr());
         provider.setRegistryIdentity(registryUrl.getIdentity());
         provider.setActive(true);
         return provider;
