@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.CommandListener;
-import org.infinity.rpc.core.registry.listener.ServiceListener;
+import org.infinity.rpc.core.registry.listener.ProviderListener;
 import org.infinity.rpc.core.switcher.impl.SwitcherHolder;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.registry.zookeeper.service.TestDummyService;
@@ -136,25 +136,25 @@ public class ZookeeperRegistryTests {
     @Test
     @EventMarker
     public void testSubscribeServiceListener() throws Exception {
-        ServiceListener serviceListener = (refUrl, registryUrl, urls) -> {
+        ProviderListener providerListener = (refUrl, registryUrl, urls) -> {
             if (CollectionUtils.isNotEmpty(urls)) {
                 assertTrue(urls.contains(providerUrl1));
             }
         };
-        registry.subscribeServiceListener(consumerUrl, serviceListener);
-        assertTrue(containsServiceListener(consumerUrl, serviceListener));
+        registry.subscribeServiceListener(consumerUrl, providerListener);
+        assertTrue(containsServiceListener(consumerUrl, providerListener));
 
         registry.doRegister(providerUrl1);
         // Add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener
         registry.doActivate(providerUrl1);
         Thread.sleep(2000);
 
-        registry.unsubscribeServiceListener(consumerUrl, serviceListener);
-        assertFalse(containsServiceListener(consumerUrl, serviceListener));
+        registry.unsubscribeServiceListener(consumerUrl, providerListener);
+        assertFalse(containsServiceListener(consumerUrl, providerListener));
     }
 
-    private boolean containsServiceListener(Url consumerUrl, ServiceListener serviceListener) {
-        return registry.getProviderListenersPerConsumerUrl().get(consumerUrl).containsKey(serviceListener);
+    private boolean containsServiceListener(Url consumerUrl, ProviderListener providerListener) {
+        return registry.getProviderListenersPerConsumerUrl().get(consumerUrl).containsKey(providerListener);
     }
 
     @Test

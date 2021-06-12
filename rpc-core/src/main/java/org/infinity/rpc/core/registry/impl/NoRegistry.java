@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.registry.AbstractRegistry;
 import org.infinity.rpc.core.registry.listener.ClientListener;
-import org.infinity.rpc.core.registry.listener.ServiceListener;
+import org.infinity.rpc.core.registry.listener.ProviderListener;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.concurrent.ThreadSafe;
 import org.infinity.rpc.utilities.destory.Cleanable;
@@ -60,12 +60,12 @@ public class NoRegistry extends AbstractRegistry implements Cleanable {
     }
 
     @Override
-    protected void subscribeServiceListener(Url consumerUrl, ServiceListener listener) {
+    protected void subscribeServiceListener(Url consumerUrl, ProviderListener listener) {
         // Do nothing
     }
 
     @Override
-    protected void unsubscribeServiceListener(Url consumerUrl, ServiceListener listener) {
+    protected void unsubscribeServiceListener(Url consumerUrl, ProviderListener listener) {
         // Do nothing
     }
 

@@ -12,7 +12,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.zookeeper.Watcher;
 import org.infinity.rpc.core.registry.CommandFailbackAbstractRegistry;
 import org.infinity.rpc.core.registry.listener.CommandListener;
-import org.infinity.rpc.core.registry.listener.ServiceListener;
+import org.infinity.rpc.core.registry.listener.ProviderListener;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.annotation.EventPublisher;
 import org.infinity.rpc.utilities.annotation.EventSubscriber;
@@ -50,9 +50,9 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * Used to resolve concurrency problems for register or unregister providers
      */
     private final Lock                                                           providerLock                    = new ReentrantLock();
-    private final Set<Url>                                                       activeProviderUrls              = new ConcurrentHashSet<>();
-    private final Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> providerListenersPerConsumerUrl = new ConcurrentHashMap<>();
-    private final Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>  commandListenersPerConsumerUrl  = new ConcurrentHashMap<>();
+    private final Set<Url>                                                        activeProviderUrls              = new ConcurrentHashSet<>();
+    private final Map<Url, ConcurrentHashMap<ProviderListener, IZkChildListener>> providerListenersPerConsumerUrl = new ConcurrentHashMap<>();
+    private final Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>   commandListenersPerConsumerUrl  = new ConcurrentHashMap<>();
 
     public ZookeeperRegistry(ZkClient zkClient, Url registryUrl) {
         super(registryUrl);
@@ -90,7 +90,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      *
      * @return provider listeners
      */
-    Map<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> getProviderListenersPerConsumerUrl() {
+    Map<Url, ConcurrentHashMap<ProviderListener, IZkChildListener>> getProviderListenersPerConsumerUrl() {
         return providerListenersPerConsumerUrl;
     }
 
@@ -143,11 +143,11 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         listenerLock.lock();
         try {
             if (MapUtils.isNotEmpty(providerListenersPerConsumerUrl)) {
-                for (Map.Entry<Url, ConcurrentHashMap<ServiceListener, IZkChildListener>> entry : providerListenersPerConsumerUrl.entrySet()) {
+                for (Map.Entry<Url, ConcurrentHashMap<ProviderListener, IZkChildListener>> entry : providerListenersPerConsumerUrl.entrySet()) {
                     Url url = entry.getKey();
-                    ConcurrentHashMap<ServiceListener, IZkChildListener> childChangeListeners = providerListenersPerConsumerUrl.get(url);
+                    ConcurrentHashMap<ProviderListener, IZkChildListener> childChangeListeners = providerListenersPerConsumerUrl.get(url);
                     if (MapUtils.isNotEmpty(childChangeListeners)) {
-                        for (Map.Entry<ServiceListener, IZkChildListener> e : childChangeListeners.entrySet()) {
+                        for (Map.Entry<ProviderListener, IZkChildListener> e : childChangeListeners.entrySet()) {
                             subscribeServiceListener(url, e.getKey());
                         }
                     }
@@ -375,28 +375,28 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * and it will invoke custom service listener if child nodes change.
      *
      * @param consumerUrl     consumer url to identify the zookeeper path
-     * @param serviceListener service listener
+     * @param providerListener service listener
      */
     @Override
     @EventSubscriber("providersChangeEvent")
-    protected void subscribeServiceListener(Url consumerUrl, ServiceListener serviceListener) {
+    protected void subscribeServiceListener(Url consumerUrl, ProviderListener providerListener) {
         listenerLock.lock();
         try {
-            Map<ServiceListener, IZkChildListener> childChangeListeners = providerListenersPerConsumerUrl.get(consumerUrl);
+            Map<ProviderListener, IZkChildListener> childChangeListeners = providerListenersPerConsumerUrl.get(consumerUrl);
             if (childChangeListeners == null) {
                 providerListenersPerConsumerUrl.putIfAbsent(consumerUrl, new ConcurrentHashMap<>(16));
                 childChangeListeners = providerListenersPerConsumerUrl.get(consumerUrl);
             }
-            IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
+            IZkChildListener zkChildListener = childChangeListeners.get(providerListener);
             if (zkChildListener == null) {
                 // child files change listener under specified directory
                 zkChildListener = (dirName, currentChildren) -> {
                     @EventPublisher("providersChangeEvent")
                     List<String> fileNames = ListUtils.emptyIfNull(currentChildren);
-                    serviceListener.onNotify(consumerUrl, getRegistryUrl(), readProviderUrls(zkClient, dirName, fileNames));
+                    providerListener.onNotify(consumerUrl, getRegistryUrl(), readProviderUrls(zkClient, dirName, fileNames));
                     log.info("Provider files [{}] changed under path [{}]", String.join(",", fileNames), dirName);
                 };
-                childChangeListeners.putIfAbsent(serviceListener, zkChildListener);
+                childChangeListeners.putIfAbsent(providerListener, zkChildListener);
             }
 
             try {
@@ -423,21 +423,21 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * Unsubscribe the service listener from the specified zookeeper node
      *
      * @param consumerUrl     consumer url to identify the zookeeper path
-     * @param serviceListener service listener
+     * @param providerListener service listener
      */
     @Override
-    protected void unsubscribeServiceListener(Url consumerUrl, ServiceListener serviceListener) {
+    protected void unsubscribeServiceListener(Url consumerUrl, ProviderListener providerListener) {
         listenerLock.lock();
         try {
-            Map<ServiceListener, IZkChildListener> childChangeListeners = providerListenersPerConsumerUrl.get(consumerUrl);
+            Map<ProviderListener, IZkChildListener> childChangeListeners = providerListenersPerConsumerUrl.get(consumerUrl);
             if (childChangeListeners == null) {
                 return;
             }
-            IZkChildListener zkChildListener = childChangeListeners.get(serviceListener);
+            IZkChildListener zkChildListener = childChangeListeners.get(providerListener);
             if (zkChildListener != null) {
                 // Unbind the path with zookeeper child change listener
                 zkClient.unsubscribeChildChanges(getStatusDirPath(consumerUrl.getPath(), StatusDir.CONSUMING), zkChildListener);
-                childChangeListeners.remove(serviceListener);
+                childChangeListeners.remove(providerListener);
             }
         } catch (Throwable e) {
             throw new RuntimeException(MessageFormat.format("Failed to unsubscribe service listeners for url [{}]", consumerUrl), e);

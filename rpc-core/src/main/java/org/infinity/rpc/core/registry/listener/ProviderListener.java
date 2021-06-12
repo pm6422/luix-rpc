@@ -5,9 +5,9 @@ import org.infinity.rpc.core.url.Url;
 import java.util.List;
 
 /**
- * Listener of provider used to handle the subscribed event
+ * Provider listener used to handle the provider changes event
  */
-public interface ServiceListener {
+public interface ProviderListener {
 
     void onNotify(Url consumerUrl, Url registryUrl, List<Url> providerUrls);
 }

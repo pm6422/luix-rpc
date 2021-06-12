@@ -21,7 +21,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.CommandListener;
-import org.infinity.rpc.core.registry.listener.ServiceListener;
+import org.infinity.rpc.core.registry.listener.ProviderListener;
 import org.infinity.rpc.core.subscribe.RpcCommand;
 import org.infinity.rpc.core.subscribe.RpcCommandUtils;
 import org.infinity.rpc.core.switcher.impl.SwitcherHolder;
@@ -45,7 +45,7 @@ import static org.infinity.rpc.core.constant.ServiceConstants.FORM;
  */
 @Slf4j
 @NotThreadSafe
-public class CommandServiceListener implements ServiceListener, CommandListener {
+public class CommandProviderListener implements ProviderListener, CommandListener {
 
     public static final  String  COMMAND_SWITCHER = "feature.motanrpc.command.enable";
     private static final Pattern IP_PATTERN       = Pattern.compile("^!?[0-9.]*\\*?$");
@@ -79,7 +79,7 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
      */
     private          String                          rpcCommandStrCache        = "";
 
-    public CommandServiceListener(Url consumerUrl, CommandFailbackAbstractRegistry registry) {
+    public CommandProviderListener(Url consumerUrl, CommandFailbackAbstractRegistry registry) {
         this.consumerUrl = consumerUrl;
         this.registry = registry;
         log.info("Created command service listener for url [{}]", consumerUrl.toFullStr());
@@ -391,6 +391,6 @@ public class CommandServiceListener implements ServiceListener, CommandListener 
 
     @Override
     public String toString() {
-        return CommandServiceListener.class.getSimpleName().concat(":").concat(consumerUrl.getPath());
+        return CommandProviderListener.class.getSimpleName().concat(":").concat(consumerUrl.getPath());
     }
 }

@@ -6,7 +6,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.registry.listener.ClientListener;
-import org.infinity.rpc.core.registry.listener.ServiceListener;
+import org.infinity.rpc.core.registry.listener.ProviderListener;
 import org.infinity.rpc.core.switcher.impl.SwitcherHolder;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.annotation.EventMarker;
@@ -307,9 +307,9 @@ public abstract class AbstractRegistry implements Registry {
 
     protected abstract void doUnsubscribe(Url url, ClientListener listener);
 
-    protected abstract void subscribeServiceListener(Url consumerUrl, ServiceListener listener);
+    protected abstract void subscribeServiceListener(Url consumerUrl, ProviderListener listener);
 
-    protected abstract void unsubscribeServiceListener(Url consumerUrl, ServiceListener listener);
+    protected abstract void unsubscribeServiceListener(Url consumerUrl, ProviderListener listener);
 
     protected abstract List<Url> doDiscover(Url url);
 }
