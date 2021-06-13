@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.stub.MethodData;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democlient.domain.Application;
@@ -26,8 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
 
-import static org.infinity.rpc.core.config.impl.ProviderConfig.METHOD_HEALTH;
-import static org.infinity.rpc.core.config.impl.ProviderConfig.METHOD_META;
+import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_HEALTH;
+import static org.infinity.rpc.core.server.stub.ProviderStub.METHOD_META;
 import static org.infinity.rpc.democlient.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
@@ -110,14 +111,14 @@ public class ServiceDiscoveryController {
     @GetMapping("/api/service-discovery/provider/health")
     public ResponseEntity<String> health(@ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrl) {
         Url url = Url.valueOf(providerUrl);
-        ConsumerStub<?> consumerStub = ConsumerStub.create(url.getPath(), infinityProperties.getApplication(),
+        ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(), infinityProperties.getApplication(),
                 infinityProperties.getRegistry(), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, url.getAddress(), url.getForm(), url.getVersion(), null, null);
+                null, url.getAddress(), null, null, null, null);
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         String result;
         try {
-            result = (String) invocationHandler.invoke(METHOD_HEALTH, null, null);
+            result = (String) invocationHandler.invoke(METHOD_GET_HEALTH, null, null);
         } catch (Exception ex) {
             result = ex.getMessage();
         }

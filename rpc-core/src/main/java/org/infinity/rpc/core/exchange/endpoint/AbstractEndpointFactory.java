@@ -2,6 +2,7 @@ package org.infinity.rpc.core.exchange.endpoint;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.checkhealth.HealthChecker;
 import org.infinity.rpc.core.exchange.client.Client;
@@ -80,7 +81,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
                 // can't share service channel
                 if (!RpcFrameworkUtils.checkIfCanShareServiceChannel(server.getProviderUrl(), providerUrl)) {
                     throw new RpcFrameworkException(
-                            "Failed to create channel server for incorrect configuration parameter, e.g" +
+                            "Failed to create channel server for incorrect configuration parameter, e.g. " +
                                     "protocol or codec or serialize or maxContentLength or maxServerConnection or maxWorkerThread or heartbeatFactory, " +
                                     "source=" + server.getProviderUrl() + " target=" + providerUrl);
                 }
@@ -90,12 +91,10 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
                 return server;
             }
 
-            providerUrl = providerUrl.copy();
+            Url copyUrl = providerUrl.copy();
             // 共享server端口，由于有多个interfaces存在，所以把path设置为空
-            providerUrl.setPath("");
-
-            server = innerCreateServer(providerUrl, messageHandler);
-
+            copyUrl.setPath(StringUtils.EMPTY);
+            server = innerCreateServer(copyUrl, messageHandler);
             ipPort2ServerShareChannel.put(ipPort, server);
             saveEndpoint2Urls(server2UrlsShareChannel, server, protocolKey);
 

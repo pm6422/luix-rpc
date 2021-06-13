@@ -23,8 +23,7 @@ public abstract class ServiceConfig implements Configurable {
     /**
      * Check health factory
      */
-    @NotEmpty
-    private String healthChecker  = HEALTH_CHECKER_VAL_DEFAULT;
+    private String healthChecker;
     /**
      * Timeout in milliseconds for handling request between client and server sides
      */

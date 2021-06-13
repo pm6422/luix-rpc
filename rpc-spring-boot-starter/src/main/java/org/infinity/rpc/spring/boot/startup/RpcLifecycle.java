@@ -2,20 +2,27 @@ package org.infinity.rpc.spring.boot.startup;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.config.impl.RegistryConfig;
+import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.server.stub.ProviderStubHolder;
 import org.infinity.rpc.core.switcher.impl.SwitcherHolder;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_NONE;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
+import static org.infinity.rpc.core.server.stub.ProviderStub.buildProviderStubBeanName;
 
 /**
  * Used to start and stop the RPC server
@@ -58,25 +65,49 @@ public class RpcLifecycle {
     /**
      * Start the RPC server
      *
+     * @param beanFactory        bean factory
      * @param infinityProperties RPC configuration properties
      */
-    public void start(InfinityProperties infinityProperties) {
+    public void start(DefaultListableBeanFactory beanFactory, InfinityProperties infinityProperties) {
         if (!started.compareAndSet(false, true)) {
             // already started
             return;
         }
         log.info("Starting the RPC server");
         registerShutdownHook();
+        registerBuildInProviderStubs(beanFactory, infinityProperties);
         publish(infinityProperties);
         subscribe(infinityProperties);
         log.info("Started the RPC server");
     }
+
 
     /**
      * Register the shutdown hook to system runtime
      */
     private void registerShutdownHook() {
         ShutdownHook.register();
+    }
+
+    /**
+     * Register build-in provider stubs
+     *
+     * @param beanFactory        bean factory
+     * @param infinityProperties RPC configuration properties
+     */
+    private void registerBuildInProviderStubs(DefaultListableBeanFactory beanFactory,
+                                              InfinityProperties infinityProperties) {
+        String beanName = buildProviderStubBeanName(BuildInService.class);
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProviderStub.class);
+        builder.addPropertyValue(BEAN_NAME, beanName);
+        builder.addPropertyValue(INTERFACE_CLASS, BuildInService.class);
+        builder.addPropertyValue(INTERFACE_NAME, BuildInService.class.getName());
+        builder.addPropertyValue(PROTOCOL, infinityProperties.getProtocol().getName());
+        builder.addPropertyReference("instance", StringUtils.uncapitalize(BuildInService.class.getSimpleName()));
+
+        beanFactory.registerBeanDefinition(beanName, builder.getBeanDefinition());
+        // Method getBean() will trigger bean initialization
+        beanFactory.getBean(beanName, ProviderStub.class);
     }
 
     /**
@@ -89,7 +120,7 @@ public class RpcLifecycle {
             if (!registryConfig.getName().equals(REGISTRY_VAL_NONE)) {
                 // Non-direct registry
 
-                // Publish providers next
+                // Publish providers
                 publishProviders(infinityProperties, registryConfig);
             }
         });

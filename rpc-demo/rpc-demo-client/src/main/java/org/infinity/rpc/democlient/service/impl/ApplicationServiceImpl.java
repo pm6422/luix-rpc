@@ -5,6 +5,8 @@ import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.config.impl.ApplicationConfig;
+import org.infinity.rpc.core.config.impl.RegistryConfig;
+import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democlient.domain.Application;
 import org.infinity.rpc.democlient.domain.Consumer;
@@ -27,8 +29,7 @@ import javax.annotation.Resource;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import static org.infinity.rpc.core.config.impl.ProviderConfig.METHOD_APPLICATION_META;
-import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT;
+import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_APPLICATION_CONFIG;
 import static org.infinity.rpc.democlient.domain.Application.*;
 import static org.infinity.rpc.democlient.domain.Provider.FIELD_REGISTRY_IDENTITY;
 
@@ -75,18 +76,20 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Application remoteQueryApplication(Url registryUrl, Url url) {
-        Application application = new Application();
         RegistryService registryService = applicationContext.getBean(RegistryService.class);
-        Url copy = url.copy();
-        int timeout = 100000;
-        copy.addOption(REQUEST_TIMEOUT, String.valueOf(timeout));
-        ConsumerStub<?> consumerStub = registryService.getConsumerStub(registryUrl.getIdentity(), copy);
-        consumerStub.setRequestTimeout(timeout);
+        RegistryConfig registryConfig = registryService.findRegistryConfig(registryUrl.getIdentity());
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
+
+        ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
+                infinityProperties.getApplication(), registryConfig,
+                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
+                null, url.getAddress(), null, null, 10000, null);
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         // Send a remote request to get ApplicationConfig
         ApplicationConfig applicationConfig = (ApplicationConfig)
-                invocationHandler.invoke(METHOD_APPLICATION_META, null, null);
+                invocationHandler.invoke(METHOD_GET_APPLICATION_CONFIG, null, null);
+
+        Application application = new Application();
         BeanUtils.copyProperties(applicationConfig, application);
         application.setRegistryIdentity(registryUrl.getIdentity());
         application.setActiveProvider(true);

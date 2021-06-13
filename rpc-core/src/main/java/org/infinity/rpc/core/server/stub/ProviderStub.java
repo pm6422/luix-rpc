@@ -19,7 +19,6 @@ import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.core.utils.ApplicationConfigHolder;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 import org.infinity.rpc.core.utils.name.ProviderStubBeanNameBuilder;
 
@@ -33,12 +32,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
-import static org.infinity.rpc.core.config.impl.ProviderConfig.*;
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
-import static org.infinity.rpc.core.server.response.impl.RpcCheckHealthResponse.CHECK_HEALTH_OK;
 import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignature;
 
 /**
@@ -53,30 +49,32 @@ import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignatur
 @Setter
 @Getter
 public class ProviderStub<T> {
+    // Build-in methods
+    public static final String              METHOD_META     = "$methodMeta";
     /**
      * Provider stub bean name
      */
     @NotNull(message = "The [beanName] property must NOT be null!")
-    private           String              beanName;
+    private             String              beanName;
     /**
      * The interface class of the provider
      */
     @NotNull(message = "The [interfaceClass] property of @Provider must NOT be null!")
-    private           Class<T>            interfaceClass;
+    private             Class<T>            interfaceClass;
     /**
      * The provider interface fully-qualified name
      */
     @NotEmpty(message = "The [interfaceName] property of @Provider must NOT be empty!")
-    private           String              interfaceName;
+    private             String              interfaceName;
     /**
      * Protocol
      */
-    private           String              protocol;
+    private             String              protocol;
     /**
      * One service interface may have multiple implementations(forms),
      * It used to distinguish between different implementations of service provider interface
      */
-    private           String              form;
+    private             String              form;
     /**
      * When the service changes, such as adding or deleting methods, and interface parameters change,
      * the provider and consumer application instances need to be upgraded.
@@ -87,49 +85,49 @@ public class ProviderStub<T> {
      * The old version of the consumer instance calls the old version of the provider instance.
      * Observe that there is no problem and repeat this process to complete the upgrade.
      */
-    private           String              version;
+    private             String              version;
     /**
      *
      */
-    private           String              healthChecker;
+    private             String              healthChecker;
     /**
      *
      */
     @Min(value = 0, message = "The [timeout] property of @Provider must NOT be a negative number!")
-    private           Integer             requestTimeout;
+    private             Integer             requestTimeout;
     /**
      * The max retry times of RPC request
      */
     @Min(value = 0, message = "The [maxRetries] property of @Provider must NOT be a negative number!")
     @Max(value = 10, message = "The [maxRetries] property of @Provider must NOT be bigger than 10!")
-    private           Integer             maxRetries;
+    private             Integer             maxRetries;
     /**
      * The max response message payload size in bytes
      */
     @Min(value = 0, message = "The [maxPayload] property of @Provider must NOT be a positive number!")
-    private           Integer             maxPayload;
+    private             Integer             maxPayload;
     /**
      * The provider instance
      * Disable serialize
      */
     @NotNull
-    private transient T                   instance;
+    private transient   T                   instance;
     /**
      * Method signature to method cache map for the provider class
      */
-    private transient Map<String, Method> methodsCache    = new HashMap<>();
+    private transient   Map<String, Method> methodsCache    = new HashMap<>();
     /**
      * All the methods of the interface class
      */
-    private           List<MethodData>    methodDataCache = new ArrayList<>();
+    private             List<MethodData>    methodDataCache = new ArrayList<>();
     /**
      * The provider url
      */
-    private           Url                 url;
+    private             Url                 url;
     /**
      * Indicator used to identify whether the provider already been registered
      */
-    private final     AtomicBoolean       exported        = new AtomicBoolean(false);
+    private final       AtomicBoolean       exported        = new AtomicBoolean(false);
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
@@ -257,20 +255,8 @@ public class ProviderStub<T> {
      */
     private Responseable doLocalInvoke(Requestable request) {
         RpcResponse response = new RpcResponse();
-        if (METHOD_HEALTH.equals(request.getMethodName())) {
-            response.setResultObject(CHECK_HEALTH_OK);
-            response.setOptions(request.getOptions());
-            return response;
-        } else if (METHOD_META.equals(request.getMethodName())) {
+        if (METHOD_META.equals(request.getMethodName())) {
             response.setResultObject(methodDataCache);
-            response.setOptions(request.getOptions());
-            return response;
-        } else if (METHOD_APPLICATION_META.equals(request.getMethodName())) {
-            response.setResultObject(ApplicationConfigHolder.get());
-            response.setOptions(request.getOptions());
-            return response;
-        } else if (METHOD_SYSTEM_TIME.equals(request.getMethodName())) {
-            response.setResultObject(ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
             response.setOptions(request.getOptions());
             return response;
         }
@@ -329,6 +315,16 @@ public class ProviderStub<T> {
         // Copy options
         response.setOptions(request.getOptions());
         return response;
+    }
+
+    /**
+     * Build provider stub bean name
+     *
+     * @param interfaceClass provider interface class
+     * @return provider stub bean name
+     */
+    public static String buildProviderStubBeanName(Class<?> interfaceClass) {
+        return buildProviderStubBeanName(interfaceClass, null, null);
     }
 
     /**
