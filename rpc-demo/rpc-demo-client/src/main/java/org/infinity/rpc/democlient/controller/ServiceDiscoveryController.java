@@ -11,10 +11,12 @@ import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.stub.MethodData;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.democlient.domain.Application;
+import org.infinity.rpc.democlient.domain.Consumer;
 import org.infinity.rpc.democlient.domain.Provider;
 import org.infinity.rpc.democlient.dto.MethodInvocation;
 import org.infinity.rpc.democlient.dto.RegistryDTO;
 import org.infinity.rpc.democlient.service.ApplicationService;
+import org.infinity.rpc.democlient.service.ConsumerService;
 import org.infinity.rpc.democlient.service.ProviderService;
 import org.infinity.rpc.democlient.service.RegistryService;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
@@ -41,6 +43,8 @@ public class ServiceDiscoveryController {
     private RegistryService    registryService;
     @Resource
     private ProviderService    providerService;
+    @Resource
+    private ConsumerService    consumerService;
     @Resource
     private ApplicationService applicationService;
 
@@ -78,6 +82,18 @@ public class ServiceDiscoveryController {
             @ApiParam(value = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName,
             @ApiParam(value = "active flag") @RequestParam(value = "active", required = false) Boolean active) {
         Page<Provider> list = providerService.find(pageable, registryIdentity, application, interfaceName, active);
+        return ResponseEntity.ok().headers(generatePageHeaders(list)).body(list.getContent());
+    }
+
+    @ApiOperation("find consumer list")
+    @GetMapping("/api/service-discovery/consumers")
+    public ResponseEntity<List<Consumer>> findConsumers(
+            Pageable pageable,
+            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
+            @ApiParam(value = "application name") @RequestParam(value = "application", required = false) String application,
+            @ApiParam(value = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName,
+            @ApiParam(value = "active flag") @RequestParam(value = "active", required = false) Boolean active) {
+        Page<Consumer> list = consumerService.find(pageable, registryIdentity, application, interfaceName, active);
         return ResponseEntity.ok().headers(generatePageHeaders(list)).body(list.getContent());
     }
 

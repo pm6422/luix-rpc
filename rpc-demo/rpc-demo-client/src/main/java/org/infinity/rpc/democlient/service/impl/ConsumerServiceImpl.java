@@ -1,9 +1,9 @@
 package org.infinity.rpc.democlient.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.democlient.domain.Provider;
-import org.infinity.rpc.democlient.repository.ProviderRepository;
-import org.infinity.rpc.democlient.service.ProviderService;
+import org.infinity.rpc.democlient.domain.Consumer;
+import org.infinity.rpc.democlient.repository.ConsumerRepository;
+import org.infinity.rpc.democlient.service.ConsumerService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -19,14 +19,14 @@ import java.util.regex.Pattern;
 import static org.infinity.rpc.democlient.domain.Provider.*;
 
 @Service
-public class ProviderServiceImpl implements ProviderService {
+public class ConsumerServiceImpl implements ConsumerService {
     @Resource
     private MongoTemplate      mongoTemplate;
     @Resource
-    private ProviderRepository providerRepository;
+    private ConsumerRepository consumerRepository;
 
     @Override
-    public Page<Provider> find(Pageable pageable, String registryUrl, String application, String interfaceName, Boolean active) {
+    public Page<Consumer> find(Pageable pageable, String registryUrl, String application, String interfaceName, Boolean active) {
         Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryUrl));
         if (StringUtils.isNotEmpty(application)) {
             query.addCriteria(Criteria.where(FIELD_APPLICATION).is(application));
@@ -39,9 +39,9 @@ public class ProviderServiceImpl implements ProviderService {
         if (active != null) {
             query.addCriteria(Criteria.where(FIELD_ACTIVE).is(active));
         }
-        long totalCount = mongoTemplate.count(query, Provider.class);
+        long totalCount = mongoTemplate.count(query, Consumer.class);
         query.with(pageable);
-        return new PageImpl<>(mongoTemplate.find(query, Provider.class), pageable, totalCount);
+        return new PageImpl<>(mongoTemplate.find(query, Consumer.class), pageable, totalCount);
     }
 
     @Override
@@ -50,6 +50,6 @@ public class ProviderServiceImpl implements ProviderService {
         if (active != null) {
             query.addCriteria(Criteria.where(FIELD_ACTIVE).is(active));
         }
-        return mongoTemplate.findDistinct(query, FIELD_APPLICATION, Provider.class, String.class);
+        return mongoTemplate.findDistinct(query, FIELD_APPLICATION, Consumer.class, String.class);
     }
 }
