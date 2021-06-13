@@ -47,8 +47,8 @@ public class ConsumerProcessImpl implements ConsumerProcessable {
                     continue;
                 }
 
-                Application application = applicationService.remoteQueryApplication(registryUrl, consumerUrl);
-                applicationRepository.save(application);
+//                Application application = applicationService.remoteQueryApplication(registryUrl, consumerUrl);
+//                applicationRepository.save(application);
             }
         } else {
             log.info("Discovered offline consumers of [{}]", interfaceName);

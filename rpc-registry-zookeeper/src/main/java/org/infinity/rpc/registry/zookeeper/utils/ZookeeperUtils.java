@@ -40,28 +40,28 @@ public abstract class ZookeeperUtils {
     }
 
     /**
-     * Read provider urls from data of address files
+     * Read urls from data of address files
      *
      * @param zkClient  zk client
      * @param path      provider class fully-qualified name, e.g. org.infinity.app.common.service.AppService
      * @param statusDir status directory
      * @return provider urls
      */
-    public static List<Url> readProviderUrls(ZkClient zkClient, String path, StatusDir statusDir) {
+    public static List<Url> readUrls(ZkClient zkClient, String path, StatusDir statusDir) {
         String statusDirPath = getStatusDirPath(path, statusDir);
         List<String> addrFiles = getChildrenNames(zkClient, statusDirPath);
-        return CollectionUtils.isEmpty(addrFiles) ? Collections.emptyList() : readProviderUrls(zkClient, statusDirPath, addrFiles);
+        return CollectionUtils.isEmpty(addrFiles) ? Collections.emptyList() : readUrls(zkClient, statusDirPath, addrFiles);
     }
 
     /**
-     * Read provider urls from data of address files
+     * Read urls from data of address files
      *
      * @param zkClient      zk client
      * @param statusDirPath status directory path, e.g. /infinity/default/org.infinity.app.common.service.AppService/active
      * @param fileNames     address file names list, e.g. 172.25.11.111:26010,172.25.11.222:26010
      * @return provider urls
      */
-    public static List<Url> readProviderUrls(ZkClient zkClient, String statusDirPath, List<String> fileNames) {
+    public static List<Url> readUrls(ZkClient zkClient, String statusDirPath, List<String> fileNames) {
         if (CollectionUtils.isEmpty(fileNames)) {
             return Collections.emptyList();
         }

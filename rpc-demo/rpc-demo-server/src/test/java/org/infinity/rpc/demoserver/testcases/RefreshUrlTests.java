@@ -49,13 +49,13 @@ public class RefreshUrlTests extends ZkBaseTest {
         // Register once
         registerProvider(providerStub, 100);
 
-        List<Url> providerUrls = ZookeeperUtils.readProviderUrls(zkClient, providerStub.getUrl().getPath(), StatusDir.ACTIVE);
+        List<Url> providerUrls = ZookeeperUtils.readUrls(zkClient, providerStub.getUrl().getPath(), StatusDir.ACTIVE);
         assertEquals("100", providerUrls.get(0).getOption(REQUEST_TIMEOUT));
 
         // Register twice
         registerProvider(providerStub, 200);
 
-        providerUrls = ZookeeperUtils.readProviderUrls(zkClient, providerStub.getUrl().getPath(), StatusDir.ACTIVE);
+        providerUrls = ZookeeperUtils.readUrls(zkClient, providerStub.getUrl().getPath(), StatusDir.ACTIVE);
         assertEquals("200", providerUrls.get(0).getOption(REQUEST_TIMEOUT));
     }
 

@@ -1,5 +1,6 @@
 package org.infinity.rpc.core.registry;
 
+import org.infinity.rpc.core.server.listener.ConsumerProcessable;
 import org.infinity.rpc.core.subscribe.Subscribable;
 import org.infinity.rpc.core.url.Url;
 
@@ -37,4 +38,6 @@ public interface Registry extends Registrable, Subscribable {
      * @return address list
      */
     List<String> discoverActiveProviderAddress(String providerPath);
+
+    void subscribeConsumerListener(String interfaceName, ConsumerProcessable consumerProcessor);
 }

@@ -5,6 +5,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.rpc.core.registry.AbstractRegistry;
 import org.infinity.rpc.core.registry.listener.ClientListener;
 import org.infinity.rpc.core.registry.listener.ProviderListener;
+import org.infinity.rpc.core.server.listener.ConsumerProcessable;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.concurrent.ThreadSafe;
 import org.infinity.rpc.utilities.destory.Cleanable;
@@ -102,6 +103,11 @@ public class NoRegistry extends AbstractRegistry implements Cleanable {
     @Override
     public List<String> getAllProviderPaths() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void subscribeConsumerListener(String interfaceName, ConsumerProcessable consumerProcessor) {
+
     }
 
     @Override

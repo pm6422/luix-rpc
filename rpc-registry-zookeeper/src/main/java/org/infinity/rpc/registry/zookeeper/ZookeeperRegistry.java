@@ -14,6 +14,7 @@ import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.registry.CommandFailbackAbstractRegistry;
 import org.infinity.rpc.core.registry.listener.CommandListener;
 import org.infinity.rpc.core.registry.listener.ProviderListener;
+import org.infinity.rpc.core.server.listener.ConsumerProcessable;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.annotation.EventPublisher;
 import org.infinity.rpc.utilities.annotation.EventSubscriber;
@@ -54,6 +55,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     private final Set<Url>                                                        activeProviderUrls              = new ConcurrentHashSet<>();
     private final Map<Url, ConcurrentHashMap<ProviderListener, IZkChildListener>> providerListenersPerConsumerUrl = new ConcurrentHashMap<>();
     private final Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>   commandListenersPerConsumerUrl  = new ConcurrentHashMap<>();
+    private final Map<String, IZkChildListener>                                   zkChildListenerPerInterfaceName = new ConcurrentHashMap<>();
 
     public ZookeeperRegistry(ZkClient zkClient, Url registryUrl) {
         super(registryUrl);
@@ -325,7 +327,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Override
     protected List<Url> discoverActiveProviders(Url consumerUrl) {
         try {
-            return readProviderUrls(zkClient, consumerUrl.getPath(), StatusDir.ACTIVE);
+            return readUrls(zkClient, consumerUrl.getPath(), StatusDir.ACTIVE);
         } catch (Throwable e) {
             String msg = String.format("Failed to discover provider [%s] from registry [%s] with the error: %s",
                     consumerUrl, getRegistryUrl(), e.getMessage());
@@ -387,7 +389,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             createConsumingNode(consumerUrl);
             doSubscribeProviderListener(consumerUrl, providerListener);
         } catch (Throwable e) {
-            String msg = String.format("Failed to subscribe service listeners for url [%s]", consumerUrl);
+            String msg = String.format("Failed to subscribe provider listeners for url [%s]", consumerUrl);
             throw new RpcFrameworkException(msg, e);
         } finally {
             listenerLock.unlock();
@@ -411,7 +413,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         IZkChildListener zkChildListener = getZkChildListener(consumerUrl, providerListener);
         // Bind the path with zookeeper child change listener, any the child list changes under the path will trigger the zkChildListener
         zkClient.subscribeChildChanges(activeDirPath, zkChildListener);
-        log.info("Subscribed the service listener for the path [{}]", getProviderFilePath(consumerUrl, StatusDir.ACTIVE));
+        log.info("Subscribed the provider listener for the path [{}]", getProviderFilePath(consumerUrl, StatusDir.ACTIVE));
     }
 
     @EventSubscriber("providersChangeEvent")
@@ -427,7 +429,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             zkChildListener = (dirName, currentChildren) -> {
                 @EventPublisher("providersChangeEvent")
                 List<String> fileNames = ListUtils.emptyIfNull(currentChildren);
-                providerListener.onNotify(consumerUrl, getRegistryUrl(), readProviderUrls(zkClient, dirName, fileNames));
+                providerListener.onNotify(consumerUrl, getRegistryUrl(), readUrls(zkClient, dirName, fileNames));
                 log.info("Provider files [{}] changed under path [{}]", String.join(",", fileNames), dirName);
             };
             childChangeListeners.putIfAbsent(providerListener, zkChildListener);
@@ -456,7 +458,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                 childChangeListeners.remove(providerListener);
             }
         } catch (Throwable e) {
-            String msg = String.format("Failed to unsubscribe service listeners for url [%s]", consumerUrl);
+            String msg = String.format("Failed to unsubscribe provider listeners for url [%s]", consumerUrl);
             throw new RpcFrameworkException(msg, e);
         } finally {
             listenerLock.unlock();
@@ -542,6 +544,36 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Override
     public List<String> getAllProviderPaths() {
         return getChildrenNames(zkClient, FULL_PATH_PROVIDER);
+    }
+
+    @Override
+    public void subscribeConsumerListener(String interfaceName, ConsumerProcessable consumerProcessor) {
+        listenerLock.lock();
+        try {
+            IZkChildListener zkChildListener = zkChildListenerPerInterfaceName.get(interfaceName);
+            if (zkChildListener == null) {
+                // Child files change listener under specified directory
+                zkChildListener = (dirName, currentChildren) -> {
+                    @EventPublisher("consumersChangeEvent")
+                    List<String> fileNames = ListUtils.emptyIfNull(currentChildren);
+                    consumerProcessor.process(getRegistryUrl(), interfaceName, readUrls(zkClient, dirName, fileNames));
+                    log.info("Consumer files [{}] changed under path [{}]", String.join(",", fileNames), dirName);
+                };
+                zkChildListenerPerInterfaceName.putIfAbsent(interfaceName, zkChildListener);
+            }
+            String consumingDirPath = getStatusDirPath(interfaceName, StatusDir.CONSUMING);
+            // Bind the path with zookeeper child change listener, any the child list changes under the path will trigger the zkChildListener
+            zkClient.subscribeChildChanges(consumingDirPath, zkChildListener);
+            log.info("Subscribed the service listener for the path [{}]", consumingDirPath);
+
+            List<String> fileNames = ListUtils.emptyIfNull(getChildrenNames(zkClient, consumingDirPath));
+            consumerProcessor.process(getRegistryUrl(), interfaceName, readUrls(zkClient, consumingDirPath, fileNames));
+        } catch (Throwable e) {
+            String msg = String.format("Failed to subscribe consumer listeners for the path [%s]", interfaceName);
+            throw new RpcFrameworkException(msg, e);
+        } finally {
+            listenerLock.unlock();
+        }
     }
 
     /**

@@ -51,13 +51,19 @@ public class RegistryServiceImpl implements RegistryService, ApplicationRunner {
             log.warn("No registries found!");
             return;
         }
-        infinityProperties.getRegistryList().forEach(registryConfig -> {
-            REGISTRY_CONFIG_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig);
-            REGISTRIES.add(new RegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
-            registryConfig.getRegistryImpl().getAllProviderPaths().forEach(interfaceName ->
-                    createConsumerStub(interfaceName, registryConfig, providerProcessService, null, null));
-            log.info("Found registry: [{}]", registryConfig.getRegistryUrl().getIdentity());
-        });
+        try {
+            infinityProperties.getRegistryList().forEach(registryConfig -> {
+                REGISTRY_CONFIG_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig);
+                REGISTRIES.add(new RegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
+                registryConfig.getRegistryImpl().getAllProviderPaths().forEach(interfaceName -> {
+                    createConsumerStub(interfaceName, registryConfig, providerProcessService, null, null);
+                    registryConfig.getRegistryImpl().subscribeConsumerListener(interfaceName, consumerProcessService);
+                });
+                log.info("Found registry: [{}]", registryConfig.getRegistryUrl().getIdentity());
+            });
+        } catch (Exception e) {
+            log.error("Failed to get provider or consumer", e);
+        }
     }
 
     @Override
