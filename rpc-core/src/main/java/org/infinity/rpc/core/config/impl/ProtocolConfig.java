@@ -123,13 +123,16 @@ public class ProtocolConfig implements Configurable {
     @Override
     public void checkValidity() {
         Optional.ofNullable(Protocol.getInstance(name))
-                .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the specified protocol [%s]!", name)));
+                .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the protocol [%s]!", name)));
 
         Optional.ofNullable(Codec.getInstance(codec))
-                .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the specified codec [%s]!", codec)));
+                .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the codec [%s]!", codec)));
 
         Optional.ofNullable(Serializer.getInstance(serializer))
-                .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the specified serializer [%s]!", serializer)));
+                .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the serializer [%s]!", serializer)));
+
+        Optional.ofNullable(Serializer.getInstance(endpointFactory))
+                .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the endpoint factory [%s]!", endpointFactory)));
 
         if (StringUtils.isNotEmpty(host)) {
             RpcConfigValidator.isTrue(AddressUtils.isValidIp(host), "Please specify a valid host!");

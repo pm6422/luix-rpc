@@ -85,7 +85,7 @@ public class RegistryConfig implements Configurable {
     @Override
     public void checkValidity() {
         Optional.ofNullable(RegistryFactory.getInstance(name))
-                .orElseThrow(() -> new RpcConfigException("Failed to load the specified registry factory, " +
+                .orElseThrow(() -> new RpcConfigException("Failed to load the registry factory, " +
                         "please check whether the dependency [rpc-registry-" + name + "] is in your class path!"));
     }
 
