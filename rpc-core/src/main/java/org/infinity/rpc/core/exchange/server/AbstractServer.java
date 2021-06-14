@@ -15,12 +15,10 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC_VAL_DEFAULT
 public abstract class AbstractServer implements Server {
     protected InetSocketAddress localAddress;
     protected InetSocketAddress remoteAddress;
-
-    protected Url   providerUrl;
-    protected Codec codec;
+    protected Url               providerUrl;
+    protected Codec             codec;
 
     protected volatile ChannelState state = ChannelState.UNINITIALIZED;
-
 
     public AbstractServer() {
     }

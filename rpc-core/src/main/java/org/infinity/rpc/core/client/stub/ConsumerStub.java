@@ -239,7 +239,6 @@ public class ConsumerStub<T> {
         url.addOption(MAX_RETRIES, maxRetries);
         url.addOption(MAX_PAYLOAD, maxPayload);
 
-        url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(THROW_EXCEPTION, String.valueOf(protocolConfig.isThrowException()));
         return url;
     }

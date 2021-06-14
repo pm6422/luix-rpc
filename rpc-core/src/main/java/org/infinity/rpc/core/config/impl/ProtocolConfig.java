@@ -9,6 +9,7 @@ import org.infinity.rpc.core.exception.impl.RpcConfigException;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.utils.RpcConfigValidator;
 import org.infinity.rpc.utilities.network.AddressUtils;
+import org.infinity.rpc.utilities.serializer.Serializer;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -29,7 +30,6 @@ public class ProtocolConfig implements Configurable {
     private             String  name                = PROTOCOL_VAL_INFINITY;
     /**
      * Protocol codec used to encode request and decode response
-     * todo: codec和serializer的区别
      */
     @NotEmpty
     private             String  codec               = CODEC_VAL_DEFAULT;
@@ -127,6 +127,9 @@ public class ProtocolConfig implements Configurable {
 
         Optional.ofNullable(Codec.getInstance(codec))
                 .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the specified codec [%s]!", codec)));
+
+        Optional.ofNullable(Serializer.getInstance(serializer))
+                .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the specified serializer [%s]!", serializer)));
 
         if (StringUtils.isNotEmpty(host)) {
             RpcConfigValidator.isTrue(AddressUtils.isValidIp(host), "Please specify a valid host!");
