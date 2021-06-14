@@ -17,17 +17,17 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.Optional;
 
-import static org.infinity.rpc.core.constant.ProtocolConstants.*;
+import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_VAL_INFINITY;
 
 @Data
 @Slf4j
 public class ProtocolConfig implements Configurable {
-    public static final String  PREFIX              = "protocol";
+    public static final String  PREFIX = "protocol";
     /**
      * Name of protocol
      */
     @NotEmpty
-    private             String  name                = PROTOCOL_VAL_INFINITY;
+    private             String  name   = PROTOCOL_VAL_INFINITY;
     /**
      * Host name of the RPC server
      * Generally, we do NOT need configure the value, it will be set automatically.
@@ -45,18 +45,15 @@ public class ProtocolConfig implements Configurable {
     /**
      * Protocol codec used to encode request and decode response
      */
-    @NotEmpty
-    private             String  codec               = CODEC_VAL_DEFAULT;
+    private             String  codec;
     /**
      * Serializer used to encode request or deserializer used to decode response
      */
-    @NotEmpty
-    private             String  serializer          = SERIALIZER_VAL_DEFAULT;
+    private             String  serializer;
     /**
      * Factory used to create client and server
      */
-    @NotEmpty
-    private             String  endpointFactory     = ENDPOINT_FACTORY_VAL_NETTY;
+    private             String  endpointFactory;
     /**
      * Minimum client channel count used to handle RPC request
      */
@@ -115,14 +112,20 @@ public class ProtocolConfig implements Configurable {
         Optional.ofNullable(Protocol.getInstance(name))
                 .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the protocol [%s]!", name)));
 
-        Optional.ofNullable(Codec.getInstance(codec))
-                .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the codec [%s]!", codec)));
+        if (StringUtils.isNotEmpty(codec)) {
+            Optional.ofNullable(Codec.getInstance(codec))
+                    .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the codec [%s]!", codec)));
+        }
 
-        Optional.ofNullable(Serializer.getInstance(serializer))
-                .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the serializer [%s]!", serializer)));
+        if (StringUtils.isNotEmpty(serializer)) {
+            Optional.ofNullable(Serializer.getInstance(serializer))
+                    .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the serializer [%s]!", serializer)));
+        }
 
-        Optional.ofNullable(EndpointFactory.getInstance(endpointFactory))
-                .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the endpoint factory [%s]!", endpointFactory)));
+        if (StringUtils.isNotEmpty(endpointFactory)) {
+            Optional.ofNullable(EndpointFactory.getInstance(endpointFactory))
+                    .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the endpoint factory [%s]!", endpointFactory)));
+        }
 
         if (StringUtils.isNotEmpty(host)) {
             RpcConfigValidator.isTrue(AddressUtils.isValidIp(host), "Please specify a valid host!");
