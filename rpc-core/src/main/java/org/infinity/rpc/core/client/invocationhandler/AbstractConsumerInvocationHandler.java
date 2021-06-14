@@ -45,10 +45,9 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         // Set some options
         request.addOption(FORM, consumerStub.getForm());
         request.addOption(VERSION, consumerStub.getVersion());
-        request.addOption(HEALTH_CHECKER, consumerStub.getHealthChecker());
-        request.addOption(REQUEST_TIMEOUT, consumerStub.getRequestTimeout(), REQUEST_TIMEOUT_VAL_DEFAULT);
-        request.addOption(MAX_RETRIES, consumerStub.getMaxRetries(), MAX_RETRIES_VAL_DEFAULT);
-        request.addOption(MAX_PAYLOAD, consumerStub.getMaxPayload(), MAX_PAYLOAD_VAL_DEFAULT);
+        request.addOption(REQUEST_TIMEOUT, consumerStub.getRequestTimeout());
+        request.addOption(MAX_RETRIES, consumerStub.getMaxRetries());
+        request.addOption(MAX_PAYLOAD, consumerStub.getMaxPayload());
         return sendRequest(request, returnType);
     }
 

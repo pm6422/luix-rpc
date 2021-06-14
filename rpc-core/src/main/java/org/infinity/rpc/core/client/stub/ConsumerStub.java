@@ -105,10 +105,6 @@ public class ConsumerStub<T> {
     /**
      *
      */
-    private String   healthChecker;
-    /**
-     *
-     */
     @Min(value = 0, message = "The [timeout] property of @Consumer must NOT be a positive number!")
     private Integer  requestTimeout;
     /**
@@ -241,10 +237,9 @@ public class ConsumerStub<T> {
         url.addOption(THROW_EXCEPTION, String.valueOf(protocolConfig.isThrowException()));
         url.addOption(APP, applicationConfig.getName());
         url.addOption(CODEC, protocolConfig.getCodec());
-        url.addOption(HEALTH_CHECKER, healthChecker);
-        url.addOption(REQUEST_TIMEOUT, requestTimeout != null ? requestTimeout.toString() : null);
-        url.addOption(MAX_RETRIES, maxRetries != null ? maxRetries.toString() : null);
-        url.addOption(MAX_PAYLOAD, maxPayload != null ? maxPayload.toString() : null);
+        url.addOption(REQUEST_TIMEOUT, requestTimeout);
+        url.addOption(MAX_RETRIES, maxRetries);
+        url.addOption(MAX_PAYLOAD, maxPayload);
         return url;
     }
 
@@ -307,17 +302,11 @@ public class ConsumerStub<T> {
         consumerStub.setFaultTolerance(consumer.getFaultTolerance());
         consumerStub.setLoadBalancer(consumer.getLoadBalancer());
         consumerStub.setProxy(consumer.getProxyFactory());
-        consumerStub.setHealthChecker(consumer.getHealthChecker());
         consumerStub.setProviderAddresses(directAddress);
         consumerStub.setForm(form);
         consumerStub.setVersion(version);
-
-        if (requestTimeout != null) {
-            consumerStub.setRequestTimeout(requestTimeout);
-        }
-        if (maxRetries != null) {
-            consumerStub.setMaxRetries(maxRetries);
-        }
+        consumerStub.setRequestTimeout(requestTimeout);
+        consumerStub.setMaxRetries(maxRetries);
         // Must NOT call init()
         consumerStub.subscribeProviders(application, protocol, registry, providerProcessor);
         return consumerStub;

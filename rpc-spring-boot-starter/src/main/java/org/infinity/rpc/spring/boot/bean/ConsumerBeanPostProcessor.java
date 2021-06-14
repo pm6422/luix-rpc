@@ -28,6 +28,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.rpc.core.client.stub.ConsumerStub.buildConsumerStubBeanName;
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
@@ -244,56 +245,34 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
         addPropertyValue(builder, INTERFACE_CLASS, interfaceClass);
         addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName());
 
-        if (StringUtils.isEmpty(annotation.protocol())) {
-            addPropertyValue(builder, PROTOCOL, infinityProperties.getProtocol().getName());
-        } else {
-            addPropertyValue(builder, PROTOCOL, annotation.protocol());
-        }
-        if (StringUtils.isEmpty(annotation.invoker())) {
-            addPropertyValue(builder, INVOKER, infinityProperties.getConsumer().getInvoker());
-        } else {
-            addPropertyValue(builder, INVOKER, annotation.invoker());
-        }
-        if (StringUtils.isEmpty(annotation.faultTolerance())) {
-            addPropertyValue(builder, FAULT_TOLERANCE, infinityProperties.getConsumer().getFaultTolerance());
-        } else {
-            addPropertyValue(builder, FAULT_TOLERANCE, annotation.faultTolerance());
-        }
-        if (StringUtils.isEmpty(annotation.loadBalancer())) {
-            addPropertyValue(builder, LOAD_BALANCER, infinityProperties.getConsumer().getLoadBalancer());
-        } else {
-            addPropertyValue(builder, LOAD_BALANCER, annotation.loadBalancer());
-        }
-        if (StringUtils.isEmpty(annotation.form())) {
-            addPropertyValue(builder, FORM, infinityProperties.getConsumer().getForm());
-        } else {
-            addPropertyValue(builder, FORM, annotation.form());
-        }
-        if (StringUtils.isEmpty(annotation.version())) {
-            addPropertyValue(builder, VERSION, infinityProperties.getConsumer().getVersion());
-        } else {
-            addPropertyValue(builder, VERSION, annotation.version());
-        }
-        if (StringUtils.isEmpty(annotation.proxyFactory())) {
-            addPropertyValue(builder, PROXY, infinityProperties.getConsumer().getProxyFactory());
-        } else {
-            addPropertyValue(builder, PROXY, annotation.proxyFactory());
-        }
-        if (StringUtils.isEmpty(annotation.healthChecker())) {
-            addPropertyValue(builder, HEALTH_CHECKER, infinityProperties.getConsumer().getHealthChecker());
-        } else {
-            addPropertyValue(builder, HEALTH_CHECKER, annotation.healthChecker());
-        }
-        if (Integer.MAX_VALUE == annotation.requestTimeout()) {
-            addPropertyValue(builder, REQUEST_TIMEOUT, infinityProperties.getConsumer().getRequestTimeout());
-        } else {
-            addPropertyValue(builder, REQUEST_TIMEOUT, annotation.requestTimeout());
-        }
-        if (Integer.MAX_VALUE == annotation.maxRetries()) {
-            addPropertyValue(builder, MAX_RETRIES, infinityProperties.getConsumer().getMaxRetries());
-        } else {
-            addPropertyValue(builder, MAX_RETRIES, annotation.maxRetries());
-        }
+        String protocol = defaultIfEmpty(annotation.protocol(), infinityProperties.getProtocol().getName());
+        addPropertyValue(builder, PROTOCOL, protocol);
+
+        String invoker = defaultIfEmpty(annotation.invoker(), infinityProperties.getConsumer().getInvoker());
+        addPropertyValue(builder, INVOKER, invoker);
+
+        String faultTolerance = defaultIfEmpty(annotation.faultTolerance(), infinityProperties.getConsumer().getFaultTolerance());
+        addPropertyValue(builder, FAULT_TOLERANCE, faultTolerance);
+
+        String loadBalancer = defaultIfEmpty(annotation.loadBalancer(), infinityProperties.getConsumer().getLoadBalancer());
+        addPropertyValue(builder, LOAD_BALANCER, loadBalancer);
+
+        String form = defaultIfEmpty(annotation.form(), infinityProperties.getConsumer().getForm());
+        addPropertyValue(builder, FORM, form);
+
+        String version = defaultIfEmpty(annotation.version(), infinityProperties.getConsumer().getVersion());
+        addPropertyValue(builder, VERSION, version);
+
+        String proxyFactory = defaultIfEmpty(annotation.proxyFactory(), infinityProperties.getConsumer().getProxyFactory());
+        addPropertyValue(builder, PROXY, proxyFactory);
+
+        Integer requestTimeout = StringUtils.isEmpty(annotation.requestTimeout())
+                ? infinityProperties.getConsumer().getRequestTimeout() : Integer.valueOf(annotation.requestTimeout());
+        addPropertyValue(builder, REQUEST_TIMEOUT, requestTimeout);
+
+        Integer maxRetries = StringUtils.isEmpty(annotation.maxRetries())
+                ? infinityProperties.getConsumer().getMaxRetries() : Integer.valueOf(annotation.maxRetries());
+        addPropertyValue(builder, MAX_RETRIES, maxRetries);
 
         addPropertyValue(builder, LIMIT_RATE, infinityProperties.getConsumer().isLimitRate());
         addPropertyValue(builder, MAX_PAYLOAD, infinityProperties.getConsumer().getMaxPayload());

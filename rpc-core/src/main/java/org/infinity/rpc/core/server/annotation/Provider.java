@@ -69,15 +69,17 @@ public @interface Provider {
 
     /**
      * RPC invocation timeout in milliseconds
+     * Format: integer
      *
      * @return timeout
      */
-    int requestTimeout() default Integer.MAX_VALUE;
+    String requestTimeout() default "";
 
     /**
      * The max retry times of RPC invocation
+     * Format: integer
      *
      * @return max retry times
      */
-    int maxRetries() default Integer.MAX_VALUE;
+    String maxRetries() default "";
 }

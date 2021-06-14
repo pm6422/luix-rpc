@@ -34,6 +34,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.infinity.rpc.core.server.stub.ProviderStub.buildProviderStubBeanName;
@@ -314,36 +315,25 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         addPropertyValue(builder, INTERFACE_CLASS, interfaceClass);
         addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName());
 
-        if (StringUtils.isEmpty(annotation.protocol())) {
-            addPropertyValue(builder, PROTOCOL, protocolConfig.getName());
-        } else {
-            addPropertyValue(builder, PROTOCOL, annotation.protocol());
-        }
-        if (StringUtils.isEmpty(annotation.form())) {
-            addPropertyValue(builder, FORM, providerConfig.getForm());
-        } else {
-            addPropertyValue(builder, FORM, annotation.form());
-        }
-        if (StringUtils.isEmpty(annotation.version())) {
-            addPropertyValue(builder, VERSION, providerConfig.getVersion());
-        } else {
-            addPropertyValue(builder, VERSION, annotation.version());
-        }
-        if (StringUtils.isEmpty(annotation.healthChecker())) {
-            addPropertyValue(builder, HEALTH_CHECKER, providerConfig.getHealthChecker());
-        } else {
-            addPropertyValue(builder, HEALTH_CHECKER, annotation.healthChecker());
-        }
-        if (Integer.MAX_VALUE == annotation.requestTimeout()) {
-            addPropertyValue(builder, REQUEST_TIMEOUT, providerConfig.getRequestTimeout());
-        } else {
-            addPropertyValue(builder, REQUEST_TIMEOUT, annotation.requestTimeout());
-        }
-        if (Integer.MAX_VALUE == annotation.maxRetries()) {
-            addPropertyValue(builder, MAX_RETRIES, providerConfig.getMaxRetries());
-        } else {
-            addPropertyValue(builder, MAX_RETRIES, annotation.maxRetries());
-        }
+        String protocol = defaultIfEmpty(annotation.protocol(), protocolConfig.getName());
+        addPropertyValue(builder, PROTOCOL, protocol);
+
+        String form = defaultIfEmpty(annotation.form(), providerConfig.getForm());
+        addPropertyValue(builder, FORM, form);
+
+        String version = defaultIfEmpty(annotation.version(), providerConfig.getVersion());
+        addPropertyValue(builder, VERSION, version);
+
+        String healthChecker = defaultIfEmpty(annotation.healthChecker(), providerConfig.getHealthChecker());
+        addPropertyValue(builder, HEALTH_CHECKER, healthChecker);
+
+        Integer requestTimeout = StringUtils.isEmpty(annotation.requestTimeout())
+                ? providerConfig.getRequestTimeout() : Integer.valueOf(annotation.requestTimeout());
+        addPropertyValue(builder, REQUEST_TIMEOUT, requestTimeout);
+
+        Integer maxRetries = StringUtils.isEmpty(annotation.maxRetries())
+                ? providerConfig.getMaxRetries() : Integer.valueOf(annotation.maxRetries());
+        addPropertyValue(builder, MAX_RETRIES, maxRetries);
 
         addPropertyValue(builder, MAX_PAYLOAD, providerConfig.getMaxPayload());
 

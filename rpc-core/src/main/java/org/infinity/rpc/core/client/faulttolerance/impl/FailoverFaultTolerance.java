@@ -1,6 +1,7 @@
 package org.infinity.rpc.core.client.faulttolerance.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.faulttolerance.AbstractFaultTolerance;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.client.sender.Sendable;
@@ -27,10 +28,14 @@ public class FailoverFaultTolerance extends AbstractFaultTolerance {
     public Responseable invoke(Requestable request) {
         // Select all active senders
         List<Sendable> allActiveSenders = loadBalancer.selectAllActiveSenders(request);
-        // todo: test provider configuration over consumer configuration
-        int maxRetries = allActiveSenders.get(0).getProviderUrl().getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
-        if (maxRetries == 0) {
-            maxRetries = request.getIntOption(MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
+        int maxRetries;
+        if (StringUtils.isNotEmpty(request.getOption(MAX_RETRIES))) {
+            maxRetries = request.getIntOption(MAX_RETRIES);
+        } else {
+            // Get method level parameter value
+            maxRetries = allActiveSenders.get(0).getProviderUrl()
+                    .getMethodParameter(request.getMethodName(), request.getMethodParameters(),
+                            MAX_RETRIES, MAX_RETRIES_VAL_DEFAULT);
         }
 
         // Retry the RPC request operation till the max retry times

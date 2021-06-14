@@ -217,6 +217,13 @@ public final class Url implements Serializable {
         options.put(name, value);
     }
 
+    public void addOption(String name, Integer value) {
+        if (StringUtils.isEmpty(name) || value == null) {
+            return;
+        }
+        options.put(name, value.toString());
+    }
+
 
     public String getOption(String name, String defaultValue) {
         String value = getOption(name);

@@ -88,7 +88,6 @@ public class DirectCallTests extends ZkBaseTest {
         consumerStub.setForm(DirectCallTests.class.getSimpleName());
         consumerStub.setVersion("1.0.0");
         consumerStub.setProxy(PROXY_VAL_JDK);
-        consumerStub.setHealthChecker(HEALTH_CHECKER_VAL_DEFAULT);
         consumerStub.setRequestTimeout(1000);
         // Set direct address
         consumerStub.setProviderAddresses("localhost:" + PROVIDER_PORT);

@@ -40,7 +40,7 @@ public class TestController {
     private AppRestService     appRestService;
     @Consumer
     private AuthorityService   authorityService;
-    @Consumer(providerAddresses = "127.0.0.1:26010", maxRetries = 0)
+    @Consumer(providerAddresses = "127.0.0.1:26010")
     private AppService         appService;
 
     @ApiOperation("test kryo serialization and deserialization")

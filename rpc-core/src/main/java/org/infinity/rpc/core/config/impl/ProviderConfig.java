@@ -8,6 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ProviderConfig extends ServiceConfig {
     public static final String  PREFIX     = "provider";
     /**
+     * Health checker
+     */
+    private             String  healthChecker;
+    /**
      * Indicates whether all the providers were exposed to registry automatically
      */
     private             boolean autoExpose = true;

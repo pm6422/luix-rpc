@@ -15,7 +15,7 @@ import org.springframework.data.domain.Pageable;
 import javax.annotation.Resource;
 import java.util.Optional;
 
-@Provider(form = "f2", maxRetries = 1)
+@Provider(form = "f2", maxRetries = "1")
 @Slf4j
 public class AppService2Impl implements AppService {
 

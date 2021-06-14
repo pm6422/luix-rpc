@@ -16,7 +16,7 @@ import org.springframework.scheduling.annotation.Async;
 import javax.annotation.Resource;
 import java.util.Optional;
 
-@Provider(form = "f1", maxRetries = 1)
+@Provider(form = "f1", maxRetries = "1")
 @Slf4j
 public class AppService1Impl implements AppService {
 

@@ -2,6 +2,7 @@ package org.infinity.rpc.transport.netty4.client;
 
 import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.codec.Codec;
 import org.infinity.rpc.core.codec.CodecUtils;
@@ -45,15 +46,14 @@ public class NettyChannel implements Channel {
 
     @Override
     public Responseable request(Requestable request) {
-        // Get method level parameter value
-        int providerTimeout = nettyClient.getProviderUrl()
-                .getMethodParameter(request.getMethodName(), request.getMethodParameters(),
-                        REQUEST_TIMEOUT, REQUEST_TIMEOUT_VAL_DEFAULT);
-
-        int timeout = providerTimeout;
-        if (REQUEST_TIMEOUT_VAL_DEFAULT == providerTimeout) {
-            // provider configuration over consumer configuration
-            timeout = Integer.parseInt(request.getOption(REQUEST_TIMEOUT, String.valueOf(REQUEST_TIMEOUT_VAL_DEFAULT)));
+        int timeout;
+        if (StringUtils.isNotEmpty(request.getOption(REQUEST_TIMEOUT))) {
+            timeout = request.getIntOption(REQUEST_TIMEOUT);
+        } else {
+            // Get method level parameter value
+            timeout = nettyClient.getProviderUrl()
+                    .getMethodParameter(request.getMethodName(), request.getMethodParameters(),
+                            REQUEST_TIMEOUT, REQUEST_TIMEOUT_VAL_DEFAULT);
         }
         // All requests are handled asynchronously
         FutureResponse response = new RpcFutureResponse(request, timeout, this.nettyClient.getProviderUrl());

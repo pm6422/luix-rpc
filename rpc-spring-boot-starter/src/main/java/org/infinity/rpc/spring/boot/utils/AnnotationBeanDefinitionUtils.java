@@ -1,6 +1,5 @@
 package org.infinity.rpc.spring.boot.utils;
 
-import org.infinity.rpc.core.constant.BooleanEnum;
 import org.infinity.rpc.core.exception.impl.RpcConfigException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.core.env.Environment;
@@ -29,11 +28,7 @@ public abstract class AnnotationBeanDefinitionUtils {
             String propertyName = annotationProperty.getName();
             if (!excluded.contains(propertyName)) {
                 Object value = ReflectionUtils.invokeMethod(annotationProperty, ann);
-                if (value instanceof BooleanEnum) {
-                    addPropertyValue(builder, propertyName, ((BooleanEnum) value).getValue());
-                } else {
-                    addPropertyValue(builder, propertyName, value);
-                }
+                addPropertyValue(builder, propertyName, value);
             }
         }
     }

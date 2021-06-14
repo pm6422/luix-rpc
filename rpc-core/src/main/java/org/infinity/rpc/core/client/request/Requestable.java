@@ -68,4 +68,12 @@ public interface Requestable extends Exchangable {
      * @return {@code true} if it was asynchronous and {@code false} otherwise
      */
     boolean isAsync();
+
+    /**
+     * Add option
+     *
+     * @param key   option key
+     * @param value option value
+     */
+    void addOption(String key, Integer value);
 }

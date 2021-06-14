@@ -1,40 +1,47 @@
 package org.infinity.rpc.core.config.impl;
 
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.Configurable;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
-
-import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 @Data
 public abstract class ServiceConfig implements Configurable {
     /**
-     * Used to distinguish between different implementations of RPC service interface
+     * One service interface may have multiple implementations(forms),
+     * It used to distinguish between different implementations of service provider interface
      */
     @NotEmpty
-    private String form;
+    private String  form;
     /**
-     * Version
+     * When the service changes, such as adding or deleting methods, and interface parameters change,
+     * the provider and consumer application instances need to be upgraded.
+     * In order to deploy in a production environment without affecting user use,
+     * a gradual migration scheme is generally adopted.
+     * First upgrade some provider application instances,
+     * and then use the same version number to upgrade some consumer instances.
+     * The old version of the consumer instance calls the old version of the provider instance.
+     * Observe that there is no problem and repeat this process to complete the upgrade.
      */
     @NotEmpty
-    private String version;
-    /**
-     * Check health factory
-     */
-    private String healthChecker;
+    private String  version;
     /**
      * Timeout in milliseconds for handling request between client and server sides
      */
-    private int    requestTimeout = REQUEST_TIMEOUT_VAL_DEFAULT;
+    @Min(value = 0, message = "The [timeout] property must NOT be a negative number!")
+    private Integer requestTimeout;
     /**
      * Max retry count after calling failure
      */
-    private int    maxRetries     = MAX_RETRIES_VAL_DEFAULT;
+    @Min(value = 0, message = "The [maxRetries] property must NOT be a negative number!")
+    @Max(value = 10, message = "The [maxRetries] property must NOT be bigger than 10!")
+    private Integer maxRetries;
     /**
-     * Max request/response message data payload size in bytes
-     * NOT support configuration per consumer/provider level
+     * Max request or response message data payload size in bytes
+     * NOT supported configuration per consumer or provider level
      */
-    private int    maxPayload     = MAX_PAYLOAD_VAL_DEFAULT;
+    @Min(value = 0, message = "The [maxPayload] property of must NOT be a positive number!")
+    private Integer maxPayload;
 }
