@@ -199,6 +199,11 @@ public class ProviderStub<T> {
     private Url createProviderUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
         url = Url.providerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
         url.addOption(APP, applicationConfig.getName());
+        url.addOption(HEALTH_CHECKER, healthChecker);
+        url.addOption(REQUEST_TIMEOUT, requestTimeout);
+        url.addOption(MAX_RETRIES, maxRetries);
+        url.addOption(MAX_PAYLOAD, maxPayload);
+
         url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(SERIALIZER, protocolConfig.getSerializer());
         url.addOption(ENDPOINT_FACTORY, protocolConfig.getEndpointFactory());
@@ -211,11 +216,6 @@ public class ProviderStub<T> {
         url.addOption(WORK_QUEUE_SIZE, String.valueOf(protocolConfig.getWorkQueueSize()));
         url.addOption(SHARED_CHANNEL, String.valueOf(protocolConfig.isSharedChannel()));
         url.addOption(ASYNC_INIT_CONN, String.valueOf(protocolConfig.isAsyncInitConn()));
-        url.addOption(HEALTH_CHECKER, healthChecker);
-        url.addOption(REQUEST_TIMEOUT, requestTimeout);
-        url.addOption(MAX_RETRIES, maxRetries);
-        url.addOption(MAX_PAYLOAD, maxPayload);
-
         return url;
     }
 

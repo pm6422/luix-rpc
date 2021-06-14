@@ -234,12 +234,13 @@ public class ConsumerStub<T> {
      */
     private Url createConsumerUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
         url = Url.consumerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
-        url.addOption(THROW_EXCEPTION, String.valueOf(protocolConfig.isThrowException()));
         url.addOption(APP, applicationConfig.getName());
-        url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(REQUEST_TIMEOUT, requestTimeout);
         url.addOption(MAX_RETRIES, maxRetries);
         url.addOption(MAX_PAYLOAD, maxPayload);
+
+        url.addOption(CODEC, protocolConfig.getCodec());
+        url.addOption(THROW_EXCEPTION, String.valueOf(protocolConfig.isThrowException()));
         return url;
     }
 
