@@ -207,8 +207,8 @@ public class ProviderStub<T> {
         url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(SERIALIZER, protocolConfig.getSerializer());
         url.addOption(ENDPOINT_FACTORY, protocolConfig.getEndpointFactory());
-        url.addOption(MIN_CLIENT_CONN, String.valueOf(protocolConfig.getMinClientConn()));
-        url.addOption(MAX_CLIENT_FAILED_CONN, String.valueOf(protocolConfig.getMaxClientFailedConn()));
+        url.addOption(MIN_CLIENT_CONN, protocolConfig.getMinClientConn() == null ? null : protocolConfig.getMinClientConn().toString());
+        url.addOption(MAX_CLIENT_FAILED_CONN, protocolConfig.getMaxClientFailedConn() == null ? null : protocolConfig.getMaxClientFailedConn().toString());
         url.addOption(MAX_SERVER_CONN, String.valueOf(protocolConfig.getMaxServerConn()));
         url.addOption(MAX_CONTENT_LENGTH, String.valueOf(protocolConfig.getMaxContentLength()));
         url.addOption(MIN_THREAD, String.valueOf(protocolConfig.getMinThread()));

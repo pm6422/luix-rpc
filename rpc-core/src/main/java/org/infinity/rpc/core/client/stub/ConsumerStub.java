@@ -29,7 +29,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
-import static org.infinity.rpc.core.constant.ProtocolConstants.*;
+import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_VAL_INFINITY;
+import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION;
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_NONE;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
@@ -268,9 +269,6 @@ public class ConsumerStub<T> {
             // Note: There are no extra options added to the direct provider url
             Url providerUrl = Url.providerUrl(PROTOCOL_VAL_INFINITY, providerHostPortPair.getLeft(),
                     providerHostPortPair.getRight(), interfaceName, form, version);
-            // Please refer to ProviderStub for direct provider url options
-            providerUrl.addOption(CODEC, protocolConfig.getCodec());
-            providerUrl.addOption(MIN_CLIENT_CONN, String.valueOf(protocolConfig.getMinClientConn()));
             directProviderUrls.add(providerUrl);
         }
         return directProviderUrls;

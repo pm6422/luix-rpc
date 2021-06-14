@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.codec.Codec;
 import org.infinity.rpc.core.config.Configurable;
 import org.infinity.rpc.core.exception.impl.RpcConfigException;
+import org.infinity.rpc.core.exchange.endpoint.EndpointFactory;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.utils.RpcConfigValidator;
 import org.infinity.rpc.utilities.network.AddressUtils;
@@ -60,13 +61,12 @@ public class ProtocolConfig implements Configurable {
     /**
      * Minimum client channel count used to handle RPC request
      */
-    @Positive
-    private             int     minClientConn       = MIN_CLIENT_CONN_VAL_DEFAULT;
+//    @Positive
+    private             Integer minClientConn;
     /**
      * Allowed maximum client connecting failure count
      */
-    @Positive
-    private             int     maxClientFailedConn = MAX_CLIENT_FAILED_CONN_VAL_DEFAULT;
+    private             Integer maxClientFailedConn;
     /**
      * Maximum server channel count used to handle RPC request
      */
@@ -131,7 +131,7 @@ public class ProtocolConfig implements Configurable {
         Optional.ofNullable(Serializer.getInstance(serializer))
                 .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the serializer [%s]!", serializer)));
 
-        Optional.ofNullable(Serializer.getInstance(endpointFactory))
+        Optional.ofNullable(EndpointFactory.getInstance(endpointFactory))
                 .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the endpoint factory [%s]!", endpointFactory)));
 
         if (StringUtils.isNotEmpty(host)) {
