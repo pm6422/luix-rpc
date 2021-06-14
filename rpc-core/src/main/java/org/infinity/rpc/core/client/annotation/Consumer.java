@@ -90,13 +90,6 @@ public @interface Consumer {
     String proxyFactory() default "";
 
     /**
-     * Provider health checker
-     *
-     * @return health checker
-     */
-    String healthChecker() default "";
-
-    /**
      * RPC invocation timeout in milliseconds
      * Format: integer
      *
@@ -113,8 +106,8 @@ public @interface Consumer {
     String maxRetries() default "";
 
     /**
-     * Addresses of RPC provider used to connect RPC provider directly without third party registry.
-     * Multiple addresses are separated by comma.
+     * Addresses of RPC provider used to connect RPC provider directly without third party registry
+     * Multiple addresses are separated by comma
      *
      * @return direct urls, e.g. 127.0.0.1:26010,192.168.120.111:26010
      */
