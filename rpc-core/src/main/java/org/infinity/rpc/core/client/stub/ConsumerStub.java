@@ -240,7 +240,8 @@ public class ConsumerStub<T> {
         url.addOption(MAX_RETRIES, maxRetries);
         url.addOption(MAX_PAYLOAD, maxPayload);
 
-        url.addOption(THROW_EXCEPTION, String.valueOf(protocolConfig.isThrowException()));
+        String throwException = protocolConfig.getThrowException() == null ? null : protocolConfig.getThrowException().toString();
+        url.addOption(THROW_EXCEPTION, throwException);
         return url;
     }
 

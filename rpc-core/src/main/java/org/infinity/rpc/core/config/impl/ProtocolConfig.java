@@ -15,7 +15,6 @@ import org.infinity.rpc.utilities.serializer.Serializer;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.Optional;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
@@ -70,44 +69,35 @@ public class ProtocolConfig implements Configurable {
     /**
      * Maximum server channel count used to handle RPC request
      */
-    @Positive
-    private             int     maxServerConn       = MAX_SERVER_CONN_VAL_DEFAULT;
+    private             Integer maxServerConn;
     /**
      * Allowed maximum response size in bytes
      */
-    @Positive
-    private             int     maxContentLength    = MAX_CONTENT_LENGTH_VAL_DEFAULT;
+    private             Integer maxContentLength;
     /**
      * Minimum thread pool size on server side
      */
-    @Positive
-    private             int     minThread           = MIN_THREAD_VAL_DEFAULT;
+    private             Integer minThread;
     /**
      * Maximum thread pool size on server side
      */
-    @Positive
-    private             int     maxThread           = MAX_THREAD_VAL_DEFAULT;
+    private             Integer maxThread;
     /**
      * Thread pool work queue size on server side
      */
-    @PositiveOrZero
-    private             int     workQueueSize       = WORK_QUEUE_SIZE_VAL_DEFAULT;
+    private             Integer workQueueSize;
     /**
      * Indicator used to decide whether multiple servers share the same channel
      */
-    private             boolean sharedChannel       = SHARED_CHANNEL_VAL_DEFAULT;
+    private             Boolean sharedChannel;
     /**
      * Indicator used to decide whether initialize client connection asynchronously
      */
-    private             boolean asyncInitConn       = ASYNC_INIT_CONN_VAL_DEFAULT;
+    private             Boolean asyncInitConn;
     /**
      * Indicator used to decide whether throw exception after request failure
      */
-    private             boolean throwException      = THROW_EXCEPTION_VAL_DEFAULT;
-    /**
-     * Indicator used to decide whether transport response exception to client
-     */
-    private             boolean transExceptionStack = TRANS_EXCEPTION_STACK_VAL_DEFAULT;
+    private             Boolean throwException;
 
     public void init() {
         checkIntegrity();

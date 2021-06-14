@@ -207,15 +207,34 @@ public class ProviderStub<T> {
         url.addOption(CODEC, protocolConfig.getCodec());
         url.addOption(SERIALIZER, protocolConfig.getSerializer());
         url.addOption(ENDPOINT_FACTORY, protocolConfig.getEndpointFactory());
-        url.addOption(MIN_CLIENT_CONN, protocolConfig.getMinClientConn() == null ? null : protocolConfig.getMinClientConn().toString());
-        url.addOption(MAX_CLIENT_FAILED_CONN, protocolConfig.getMaxClientFailedConn() == null ? null : protocolConfig.getMaxClientFailedConn().toString());
-        url.addOption(MAX_SERVER_CONN, String.valueOf(protocolConfig.getMaxServerConn()));
-        url.addOption(MAX_CONTENT_LENGTH, String.valueOf(protocolConfig.getMaxContentLength()));
-        url.addOption(MIN_THREAD, String.valueOf(protocolConfig.getMinThread()));
-        url.addOption(MAX_THREAD, String.valueOf(protocolConfig.getMaxThread()));
-        url.addOption(WORK_QUEUE_SIZE, String.valueOf(protocolConfig.getWorkQueueSize()));
-        url.addOption(SHARED_CHANNEL, String.valueOf(protocolConfig.isSharedChannel()));
-        url.addOption(ASYNC_INIT_CONN, String.valueOf(protocolConfig.isAsyncInitConn()));
+
+        String minClientConn = protocolConfig.getMinClientConn() == null ? null : protocolConfig.getMinClientConn().toString();
+        url.addOption(MIN_CLIENT_CONN, minClientConn);
+
+        String maxClientFailedConn = protocolConfig.getMaxClientFailedConn() == null ? null : protocolConfig.getMaxClientFailedConn().toString();
+        url.addOption(MAX_CLIENT_FAILED_CONN, maxClientFailedConn);
+
+        String maxServerConn = protocolConfig.getMaxServerConn() == null ? null : protocolConfig.getMaxServerConn().toString();
+        url.addOption(MAX_SERVER_CONN, maxServerConn);
+
+        String maxContentLength = protocolConfig.getMaxContentLength() == null ? null : protocolConfig.getMaxContentLength().toString();
+        url.addOption(MAX_CONTENT_LENGTH, maxContentLength);
+
+        String minThread = protocolConfig.getMinThread() == null ? null : protocolConfig.getMinThread().toString();
+        url.addOption(MIN_THREAD, minThread);
+
+        String maxThread = protocolConfig.getMaxThread() == null ? null : protocolConfig.getMaxThread().toString();
+        url.addOption(MAX_THREAD, maxThread);
+
+        String workQueueSize = protocolConfig.getWorkQueueSize() == null ? null : protocolConfig.getWorkQueueSize().toString();
+        url.addOption(WORK_QUEUE_SIZE, workQueueSize);
+
+        String sharedChannel = protocolConfig.getSharedChannel() == null ? null : protocolConfig.getSharedChannel().toString();
+        url.addOption(SHARED_CHANNEL, sharedChannel);
+
+        String asyncInitConn = protocolConfig.getAsyncInitConn() == null ? null : protocolConfig.getAsyncInitConn().toString();
+        url.addOption(ASYNC_INIT_CONN, asyncInitConn);
+
         return url;
     }
 

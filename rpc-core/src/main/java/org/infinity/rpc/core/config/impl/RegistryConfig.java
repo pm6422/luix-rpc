@@ -45,19 +45,16 @@ public class RegistryConfig implements Configurable {
     /**
      * Timeout in milliseconds for connection session between registry client and server
      */
-    @PositiveOrZero
-    private              Integer sessionTimeout      = SESSION_TIMEOUT_VAL_DEFAULT;
+    private              Integer sessionTimeout;
     /**
      * Timeout in milliseconds when registry client building a connection to registry server
      */
-    @PositiveOrZero
-    private              Integer connectTimeout      = CONNECT_TIMEOUT_VAL_DEFAULT;
+    private              Integer connectTimeout;
     /**
      * Registration and subscription retry interval in milliseconds
      * after the connection failure between provider, consumer and registry.
      */
-    @PositiveOrZero
-    private              Integer retryInterval       = RETRY_INTERVAL_VAL_DEFAULT;
+    private              Integer retryInterval;
     /**
      * Registry url
      */
@@ -99,9 +96,9 @@ public class RegistryConfig implements Configurable {
             registryUrl = Url.registryUrl(name, host, port);
         }
 
-        registryUrl.addOption(SESSION_TIMEOUT, sessionTimeout.toString());
-        registryUrl.addOption(CONNECT_TIMEOUT, connectTimeout.toString());
-        registryUrl.addOption(RETRY_INTERVAL, retryInterval.toString());
+        registryUrl.addOption(SESSION_TIMEOUT, sessionTimeout == null ? null : sessionTimeout.toString());
+        registryUrl.addOption(CONNECT_TIMEOUT, connectTimeout == null ? null : connectTimeout.toString());
+        registryUrl.addOption(RETRY_INTERVAL, retryInterval == null ? null : retryInterval.toString());
         return registryUrl;
     }
 
