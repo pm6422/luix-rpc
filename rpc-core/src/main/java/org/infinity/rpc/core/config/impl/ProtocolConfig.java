@@ -29,16 +29,6 @@ public class ProtocolConfig implements Configurable {
     @NotEmpty
     private             String  name                = PROTOCOL_VAL_INFINITY;
     /**
-     * Protocol codec used to encode request and decode response
-     */
-    @NotEmpty
-    private             String  codec               = CODEC_VAL_DEFAULT;
-    /**
-     * Serializer used to encode request or deserializer used to decode response
-     */
-    @NotEmpty
-    private             String  serializer          = SERIALIZER_VAL_DEFAULT;
-    /**
      * Host name of the RPC server
      * Generally, we do NOT need configure the value, it will be set automatically.
      * If there are exported providers, netty server will use it as starting host.
@@ -52,6 +42,16 @@ public class ProtocolConfig implements Configurable {
     @NotNull
     @Positive
     private             Integer port;
+    /**
+     * Protocol codec used to encode request and decode response
+     */
+    @NotEmpty
+    private             String  codec               = CODEC_VAL_DEFAULT;
+    /**
+     * Serializer used to encode request or deserializer used to decode response
+     */
+    @NotEmpty
+    private             String  serializer          = SERIALIZER_VAL_DEFAULT;
     /**
      * Factory used to create client and server
      */
