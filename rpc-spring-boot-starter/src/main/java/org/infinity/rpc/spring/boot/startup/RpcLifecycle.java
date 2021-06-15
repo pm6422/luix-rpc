@@ -1,11 +1,14 @@
 package org.infinity.rpc.spring.boot.startup;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.config.impl.RegistryConfig;
+import org.infinity.rpc.core.registry.Registry;
+import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.server.stub.ProviderStubHolder;
@@ -181,6 +184,14 @@ public class RpcLifecycle {
      * Unregister RPC providers from registry
      */
     private void unregisterProviders(Url... registryUrls) {
-        ProviderStubHolder.getInstance().get().forEach((name, stub) -> stub.unregister(registryUrls));
+        for (Url registryUrl : registryUrls) {
+            Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
+            if (registry == null || CollectionUtils.isEmpty(registry.getRegisteredProviderUrls())) {
+                log.warn("No registry found!");
+                return;
+            }
+            registry.getRegisteredProviderUrls().forEach(registry::unregister);
+            log.debug("Unregistered all the RPC providers from registry [{}]", registryUrl.getProtocol());
+        }
     }
 }

@@ -11,6 +11,7 @@ import org.infinity.rpc.core.registry.Registry;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.apache.commons.io.IOUtils.DIR_SEPARATOR_UNIX;
@@ -464,5 +465,27 @@ public final class Url implements Serializable {
             return getOption(name);
         }
         return value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(protocol, host, port, path, getForm(), getVersion());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Url url = (Url) o;
+        return Objects.equals(protocol, url.protocol)
+                && Objects.equals(host, url.host)
+                && Objects.equals(port, url.port)
+                && Objects.equals(path, url.path)
+                && Objects.equals(getForm(), url.getForm())
+                && Objects.equals(getVersion(), url.getVersion());
     }
 }

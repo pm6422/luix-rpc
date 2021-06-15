@@ -21,7 +21,6 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
-import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
 import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT;
 import static org.junit.Assert.assertEquals;
 
@@ -45,21 +44,30 @@ public class RefreshUrlTests extends ZkBaseTest {
 
     @Test
     public void testRefreshProvider() {
+        RegistryConfig registryConfig = new RegistryConfig();
+        registryConfig.setName("zookeeper");
+        registryConfig.setHost("localhost");
+        registryConfig.setPort(zkPort);
+        registryConfig.init();
+
         ProviderStub<RefreshUrlService> providerStub = new ProviderStub<>();
         // Register once
-        registerProvider(providerStub, 100);
+        registerProvider(registryConfig, providerStub, 100);
 
         List<Url> providerUrls = ZookeeperUtils.readUrls(zkClient, providerStub.getUrl().getPath(), StatusDir.ACTIVE);
         assertEquals("100", providerUrls.get(0).getOption(REQUEST_TIMEOUT));
 
+        // Unregister
+        providerStub.unregister(registryConfig.getRegistryUrl());
+
         // Register twice
-        registerProvider(providerStub, 200);
+        registerProvider(registryConfig, providerStub, 200);
 
         providerUrls = ZookeeperUtils.readUrls(zkClient, providerStub.getUrl().getPath(), StatusDir.ACTIVE);
         assertEquals("200", providerUrls.get(0).getOption(REQUEST_TIMEOUT));
     }
 
-    private void registerProvider(ProviderStub<RefreshUrlService> providerStub, int requestTimeout) {
+    private void registerProvider(RegistryConfig registryConfig, ProviderStub<RefreshUrlService> providerStub, int requestTimeout) {
         providerStub.setInterfaceClass(RefreshUrlService.class);
         providerStub.setInterfaceName(RefreshUrlService.class.getName());
         providerStub.setInstance(new RefreshUrlServiceImpl());
@@ -80,12 +88,6 @@ public class RefreshUrlTests extends ZkBaseTest {
         ProtocolConfig protocolConfig = new ProtocolConfig();
         protocolConfig.setPort(PROVIDER_PORT);
         protocolConfig.init();
-
-        RegistryConfig registryConfig = new RegistryConfig();
-        registryConfig.setName("zookeeper");
-        registryConfig.setHost("localhost");
-        registryConfig.setPort(zkPort);
-        registryConfig.init();
 
         providerStub.register(applicationConfig, protocolConfig, registryConfig);
 

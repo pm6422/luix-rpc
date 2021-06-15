@@ -239,7 +239,7 @@ public class ProviderStub<T> {
     }
 
     /**
-     * Unregister the RPC provider from registry
+     * Unregister current RPC provider from registry
      */
     public void unregister(Url... registryUrls) {
         for (Url registryUrl : registryUrls) {
@@ -248,7 +248,7 @@ public class ProviderStub<T> {
                 log.warn("No registry found!");
                 return;
             }
-            registry.getRegisteredProviderUrls().forEach(registry::unregister);
+            registry.unregister(url);
             log.debug("Unregistered RPC provider [{}] from registry [{}]", interfaceName, registryUrl.getProtocol());
         }
     }
