@@ -1,6 +1,7 @@
 package org.infinity.rpc.demoserver.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.common.RpcMethod;
 import org.infinity.rpc.core.server.annotation.Provider;
 import org.infinity.rpc.core.server.response.FutureResponse;
 import org.infinity.rpc.core.server.response.impl.RpcFutureResponse;
@@ -24,6 +25,7 @@ public class AppService1Impl implements AppService {
     private AppRepository appRepository;
 
     @Override
+    @RpcMethod(maxRetries = "2")
     public Page<App> findAll(Pageable pageable) {
         return appRepository.findAll(pageable);
     }
