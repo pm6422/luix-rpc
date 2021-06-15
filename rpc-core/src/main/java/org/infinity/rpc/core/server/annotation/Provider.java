@@ -68,8 +68,6 @@ public @interface Provider {
      */
     String healthChecker() default "";
 
-    // Timeout value for service invocation
-
     /**
      * RPC invocation timeout in milliseconds
      * Format: integer
