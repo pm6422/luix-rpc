@@ -1,11 +1,15 @@
 package org.infinity.rpc.core.server.buildin;
 
 import org.infinity.rpc.core.config.impl.ApplicationConfig;
+import org.infinity.rpc.core.server.stub.MethodData;
+
+import java.util.List;
 
 public interface BuildInService {
     String METHOD_GET_APPLICATION_CONFIG = "getApplicationConfig";
     String METHOD_GET_HEALTH             = "getHealth";
     String METHOD_GET_SYSTEM_TIME        = "getSystemTime";
+    String METHOD_GET_METHODS            = "getMethods";
 
     /**
      * Get application configuration
@@ -27,4 +31,12 @@ public interface BuildInService {
      * @return system time of the server
      */
     String getSystemTime();
+
+    /**
+     * Get all methods of provider interface
+     *
+     * @param providerStubBeanName provider stub bean name
+     * @return methods
+     */
+    List<MethodData> getMethods(String providerStubBeanName);
 }

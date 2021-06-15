@@ -10,6 +10,7 @@ import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.stub.MethodData;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.core.utils.name.ProviderStubBeanNameBuilder;
 import org.infinity.rpc.democlient.domain.Application;
 import org.infinity.rpc.democlient.domain.Consumer;
 import org.infinity.rpc.democlient.domain.Provider;
@@ -30,7 +31,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_HEALTH;
-import static org.infinity.rpc.core.server.stub.ProviderStub.METHOD_META;
+import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_METHODS;
 import static org.infinity.rpc.democlient.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
@@ -101,12 +102,23 @@ public class ServiceDiscoveryController {
     @GetMapping("/api/service-discovery/provider/methods")
     public ResponseEntity<List<MethodData>> findMethods(
             @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrl) {
-        ConsumerStub<?> consumerStub = registryService.getConsumerStub(registryIdentity, Url.valueOf(providerUrl));
+            @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
+        Url providerUrl = Url.valueOf(providerUrlStr);
+        ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
+                infinityProperties.getApplication(), registryService.findRegistryConfig(registryIdentity),
+                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
+                null, providerUrl.getAddress(), null, null, 10000, null);
+
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
+        String providerStubBeanName = ProviderStubBeanNameBuilder
+                .builder(providerUrl.getPath())
+                .form(providerUrl.getForm())
+                .version(providerUrl.getVersion())
+                .build();
         @SuppressWarnings({"unchecked"})
-        List<MethodData> result = (List<MethodData>) invocationHandler.invoke(METHOD_META, null, null);
+        List<MethodData> result = (List<MethodData>) invocationHandler.invoke(METHOD_GET_METHODS,
+                new String[]{String.class.getName()}, new Object[]{providerStubBeanName});
         return ResponseEntity.ok().body(result);
     }
 
