@@ -10,6 +10,9 @@ import java.lang.annotation.Target;
 /**
  * RPC provider annotation
  * Please refer {@link ServiceConstants} for the property definition
+ * <p>
+ * The method level takes precedence, the interface level is second, and the global configuration is again.
+ * If the level is the same, the consumer will be given priority, and the provider will be second.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
