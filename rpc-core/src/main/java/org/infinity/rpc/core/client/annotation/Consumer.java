@@ -8,6 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * todo: rename to RpcConsumer
  * RPC consumer annotation
  * Please refer {@link ServiceConstants} for the property definition
  * <p>

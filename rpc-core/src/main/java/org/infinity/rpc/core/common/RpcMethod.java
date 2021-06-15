@@ -12,8 +12,8 @@ import java.lang.annotation.Target;
  * If the level is the same, the consumer will be given priority, and the provider will be second.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-public @interface ServiceMethod {
+@Target({ElementType.METHOD})
+public @interface RpcMethod {
     /**
      * RPC invocation timeout in milliseconds
      * Format: integer
