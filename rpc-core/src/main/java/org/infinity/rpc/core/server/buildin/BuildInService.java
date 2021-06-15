@@ -35,8 +35,10 @@ public interface BuildInService {
     /**
      * Get all methods of provider interface
      *
-     * @param providerStubBeanName provider stub bean name
+     * @param interfaceClassName provider interface class name
+     * @param form               form
+     * @param version            version
      * @return methods
      */
-    List<MethodData> getMethods(String providerStubBeanName);
+    List<MethodData> getMethods(String interfaceClassName, String form, String version);
 }

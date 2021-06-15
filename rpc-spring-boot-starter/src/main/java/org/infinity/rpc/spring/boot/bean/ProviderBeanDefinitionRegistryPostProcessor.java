@@ -247,7 +247,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
         Provider providerAnnotation = findProviderAnnotation(providerInstanceClass);
         Class<?> providerInterfaceClass = resolveProviderInterface(providerAnnotation, providerInstanceClass);
 
-        String providerStubBeanName = buildProviderStubBeanName(providerInterfaceClass,
+        String providerStubBeanName = buildProviderStubBeanName(providerInterfaceClass.getName(),
                 providerAnnotation.form(), providerAnnotation.version());
         AbstractBeanDefinition stubBeanDefinition = buildProviderStubDefinition(providerStubBeanName,
                 providerInterfaceClass, providerAnnotation, providerBeanDefinitionHolder.getBeanName());

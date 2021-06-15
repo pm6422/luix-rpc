@@ -10,7 +10,6 @@ import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.stub.MethodData;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.core.utils.name.ProviderStubBeanNameBuilder;
 import org.infinity.rpc.democlient.domain.Application;
 import org.infinity.rpc.democlient.domain.Consumer;
 import org.infinity.rpc.democlient.domain.Provider;
@@ -111,14 +110,10 @@ public class ServiceDiscoveryController {
 
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
-        String providerStubBeanName = ProviderStubBeanNameBuilder
-                .builder(providerUrl.getPath())
-                .form(providerUrl.getForm())
-                .version(providerUrl.getVersion())
-                .build();
         @SuppressWarnings({"unchecked"})
         List<MethodData> result = (List<MethodData>) invocationHandler.invoke(METHOD_GET_METHODS,
-                new String[]{String.class.getName()}, new Object[]{providerStubBeanName});
+                new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
+                new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
         return ResponseEntity.ok().body(result);
     }
 

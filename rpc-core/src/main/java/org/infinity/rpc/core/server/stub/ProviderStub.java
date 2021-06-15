@@ -331,24 +331,24 @@ public class ProviderStub<T> {
     /**
      * Build provider stub bean name
      *
-     * @param interfaceClass provider interface class
+     * @param interfaceClassName provider interface class name
      * @return provider stub bean name
      */
-    public static String buildProviderStubBeanName(Class<?> interfaceClass) {
-        return buildProviderStubBeanName(interfaceClass, null, null);
+    public static String buildProviderStubBeanName(String interfaceClassName) {
+        return buildProviderStubBeanName(interfaceClassName, null, null);
     }
 
     /**
      * Build provider stub bean name
      *
-     * @param interfaceClass provider interface class
-     * @param form           form
-     * @param version        version
+     * @param interfaceClassName provider interface class name
+     * @param form               form
+     * @param version            version
      * @return provider stub bean name
      */
-    public static String buildProviderStubBeanName(Class<?> interfaceClass, String form, String version) {
+    public static String buildProviderStubBeanName(String interfaceClassName, String form, String version) {
         return ProviderStubBeanNameBuilder
-                .builder(interfaceClass.getName())
+                .builder(interfaceClassName)
                 .form(form)
                 .version(version)
                 .build();

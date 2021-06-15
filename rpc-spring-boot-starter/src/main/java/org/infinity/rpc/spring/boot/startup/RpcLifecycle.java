@@ -100,7 +100,7 @@ public class RpcLifecycle {
      */
     private void registerBuildInProviderStubs(DefaultListableBeanFactory beanFactory,
                                               InfinityProperties infinityProperties) {
-        String beanName = buildProviderStubBeanName(BuildInService.class);
+        String beanName = buildProviderStubBeanName(BuildInService.class.getName());
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProviderStub.class);
         builder.addPropertyValue(BEAN_NAME, beanName);
         builder.addPropertyValue(INTERFACE_CLASS, BuildInService.class);
