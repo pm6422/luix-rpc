@@ -24,7 +24,6 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,7 +49,7 @@ public class ConsumerStub<T> {
     /**
      * Provider stub bean name
      */
-    @NotNull(message = "The [beanName] property must NOT be null!")
+    @NotEmpty(message = "The [beanName] property must NOT be null!")
     private           String         beanName;
     /**
      * The interface class of the consumer
@@ -65,6 +64,7 @@ public class ConsumerStub<T> {
     /**
      * Protocol
      */
+    @NotEmpty(message = "The [protocol] property of @Consumer must NOT be empty!")
     private           String         protocol;
 //    /**
 //     * 多注册中心，所以不能使用单个
@@ -74,14 +74,21 @@ public class ConsumerStub<T> {
     /**
      * Service provider invoker
      */
+    @NotEmpty(message = "The [invoker] property of @Consumer must NOT be empty!")
     private           String         invoker;
     /**
      *
      */
+    private           ServiceInvoker serviceInvoker;
+    /**
+     *
+     */
+    @NotEmpty(message = "The [faultTolerance] property of @Consumer must NOT be empty!")
     private           String         faultTolerance;
     /**
      *
      */
+    @NotEmpty(message = "The [loadBalancer] property of @Consumer must NOT be empty!")
     private           String         loadBalancer;
     /**
      * One service interface may have multiple implementations(forms),
@@ -102,7 +109,13 @@ public class ConsumerStub<T> {
     /**
      * Consumer proxy used to create {@link #proxyInstance} which is the implementation of consumer interface class
      */
+    @NotEmpty(message = "The [proxy] property of @Consumer must NOT be empty!")
     private           String         proxy;
+    /**
+     * The consumer proxy instance, refer the return type of {@link JdkProxy#getProxy(ConsumerStub)}
+     * Disable serialize
+     */
+    private transient T              proxyInstance;
     /**
      *
      */
@@ -133,15 +146,6 @@ public class ConsumerStub<T> {
      * but it have nothing to do with the service calling.
      */
     private           Url            url;
-    /**
-     * The consumer proxy instance, refer the return type of {@link JdkProxy#getProxy(ConsumerStub)}
-     * Disable serialize
-     */
-    private transient T              proxyInstance;
-    /**
-     *
-     */
-    private           ServiceInvoker serviceInvoker;
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
