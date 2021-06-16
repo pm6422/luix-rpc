@@ -141,6 +141,9 @@ application:
     http:
         cache: # Used by the CachingHttpHeadersFilter
             expired-after: 31
+    http-client:
+        read-timeout: 3 # unit: seconds
+        retry-count: 1
     swagger:
         enabled: true
         api:

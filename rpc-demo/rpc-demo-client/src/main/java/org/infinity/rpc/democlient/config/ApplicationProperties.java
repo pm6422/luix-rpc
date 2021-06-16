@@ -25,6 +25,7 @@ public class ApplicationProperties {
     private final AopLogging         aopLogging         = new AopLogging();
     private final ElapsedTimeLogging elapsedTimeLogging = new ElapsedTimeLogging();
     private final Ribbon             ribbon             = new Ribbon();
+    private final HttpClient         httpClient         = new HttpClient();
 
     @Data
     public static class Http {
@@ -82,5 +83,11 @@ public class ApplicationProperties {
     @Data
     public static class Ribbon {
         private String[] displayOnActiveProfiles;
+    }
+
+    @Data
+    public static class HttpClient {
+        private int readTimeout;
+        private int retryCount;
     }
 }
