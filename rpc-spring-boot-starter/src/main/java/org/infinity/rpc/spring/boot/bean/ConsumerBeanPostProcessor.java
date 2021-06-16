@@ -6,7 +6,6 @@ import org.infinity.rpc.core.client.annotation.Consumer;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
-import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -34,6 +33,7 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
 import static org.infinity.rpc.core.constant.ServiceConstants.INTERFACE_CLASS;
 import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.addPropertyValue;
+import static org.infinity.rpc.spring.boot.utils.ProxyUtils.getTargetClass;
 
 
 /**
@@ -93,18 +93,6 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
         // Inject consumer proxy instances to method parameters
         injectConsumerToMethodParam(bean, clazz);
         return bean;
-    }
-
-    private Class<?> getTargetClass(Object bean) {
-        if (isProxyBean(bean)) {
-            // Get class of the bean if it is a proxy bean
-            return AopUtils.getTargetClass(bean);
-        }
-        return bean.getClass();
-    }
-
-    private boolean isProxyBean(Object bean) {
-        return AopUtils.isAopProxy(bean);
     }
 
     private boolean matchScanPackages(Class<?> clazz) {

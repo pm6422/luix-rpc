@@ -6,10 +6,12 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
+import org.infinity.rpc.core.common.RpcMethod;
 import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
 import org.infinity.rpc.core.server.buildin.BuildInService;
+import org.infinity.rpc.core.server.stub.MethodConfig;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.server.stub.ProviderStubHolder;
 import org.infinity.rpc.core.switcher.impl.SwitcherHolder;
@@ -18,14 +20,20 @@ import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.core.annotation.AnnotationUtils;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_NONE;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.infinity.rpc.core.server.stub.ProviderStub.buildProviderStubBeanName;
+import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignature;
+import static org.infinity.rpc.spring.boot.utils.ProxyUtils.getTargetClass;
 
 /**
  * Used to start and stop the RPC server
@@ -138,11 +146,32 @@ public class RpcLifecycle {
         providerStubs.forEach((name, providerStub) -> {
             // Register providers
             providerStub.register(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(), registryConfig);
+
+            // Set method level configuration
+            Arrays.stream(getTargetClass(providerStub.getInstance()).getMethods()).forEach(method -> {
+                setMethodConfig(providerStub, method);
+            });
+            if (providerStub.getInterfaceClass() != null) {
+                Arrays.stream(providerStub.getInterfaceClass().getMethods()).forEach(method -> {
+                    setMethodConfig(providerStub, method);
+                });
+            }
         });
 
         if (infinityProperties.getProvider().isAutoExpose()) {
             // Activate RPC service providers
             SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVE, true);
+        }
+    }
+
+    private void setMethodConfig(ProviderStub<?> providerStub, Method method) {
+        RpcMethod annotation = AnnotationUtils.getAnnotation(method, RpcMethod.class);
+        if (annotation != null) {
+            MethodConfig methodConfig = MethodConfig.builder()
+                    .maxRetries(defaultIfEmpty(annotation.maxRetries(), null))
+                    .requestTimeout(defaultIfEmpty(annotation.requestTimeout(), null))
+                    .build();
+            providerStub.getMethodConfig().putIfAbsent(getMethodSignature(method), methodConfig);
         }
     }
 
