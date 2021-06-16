@@ -21,17 +21,11 @@ public interface ServiceInvoker {
      * @param faultToleranceName fault tolerance name
      * @param loadBalancerName   load balancer name
      * @param consumerUrl        consumer url
-     * @return service invoker instance
      */
-    ServiceInvoker createInstance(String interfaceName,
-                                  String faultToleranceName,
-                                  String loadBalancerName,
-                                  Url consumerUrl);
-
-    /**
-     * Initialize
-     */
-    void init();
+    void init(String interfaceName,
+              String faultToleranceName,
+              String loadBalancerName,
+              Url consumerUrl);
 
     /**
      * Initiate a RPC call

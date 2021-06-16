@@ -21,16 +21,10 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.INVOKER_VAL_BROAD
 @Getter
 public class BroadcastServiceInvoker implements ServiceInvoker {
     @Override
-    public ServiceInvoker createInstance(String interfaceName,
-                                         String faultToleranceName,
-                                         String loadBalancerName,
-                                         Url consumerUrl) {
-        return null;
-    }
-
-    @Override
-    public void init() {
-
+    public void init(String interfaceName,
+                     String faultToleranceName,
+                     String loadBalancerName,
+                     Url consumerUrl) {
     }
 
     @Override

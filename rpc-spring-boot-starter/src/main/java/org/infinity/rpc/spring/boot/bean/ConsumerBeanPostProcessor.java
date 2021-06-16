@@ -188,7 +188,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
     /**
      * Register consumer stub to spring context
      *
-     * @param rpcConsumerAnnotation     {@link RpcConsumer} annotation
+     * @param rpcConsumerAnnotation  {@link RpcConsumer} annotation
      * @param attributes             {@link AnnotationAttributes annotation attributes}
      * @param consumerInterfaceClass Consumer interface class
      * @return ConsumerStub instance
@@ -236,6 +236,12 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
         String protocol = defaultIfEmpty(annotation.protocol(), infinityProperties.getProtocol().getName());
         addPropertyValue(builder, PROTOCOL, protocol);
 
+        String form = defaultIfEmpty(annotation.form(), infinityProperties.getConsumer().getForm());
+        addPropertyValue(builder, FORM, form);
+
+        String version = defaultIfEmpty(annotation.version(), infinityProperties.getConsumer().getVersion());
+        addPropertyValue(builder, VERSION, version);
+
         String invoker = defaultIfEmpty(annotation.invoker(), infinityProperties.getConsumer().getInvoker());
         addPropertyValue(builder, INVOKER, invoker);
 
@@ -244,12 +250,6 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
 
         String loadBalancer = defaultIfEmpty(annotation.loadBalancer(), infinityProperties.getConsumer().getLoadBalancer());
         addPropertyValue(builder, LOAD_BALANCER, loadBalancer);
-
-        String form = defaultIfEmpty(annotation.form(), infinityProperties.getConsumer().getForm());
-        addPropertyValue(builder, FORM, form);
-
-        String version = defaultIfEmpty(annotation.version(), infinityProperties.getConsumer().getVersion());
-        addPropertyValue(builder, VERSION, version);
 
         String proxyFactory = defaultIfEmpty(annotation.proxyFactory(), infinityProperties.getConsumer().getProxyFactory());
         addPropertyValue(builder, PROXY, proxyFactory);

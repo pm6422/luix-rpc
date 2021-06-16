@@ -52,11 +52,6 @@ public class ConsumerStub<T> {
     @NotEmpty(message = "The [beanName] property must NOT be null!")
     private           String         beanName;
     /**
-     * Protocol
-     */
-    @NotEmpty(message = "The [protocol] property of @Consumer must NOT be empty!")
-    private           String         protocol;
-    /**
      * The interface class of the consumer
      * It can be null if it is a generic call.
      */
@@ -66,6 +61,11 @@ public class ConsumerStub<T> {
      */
     @NotEmpty(message = "The [interfaceName] property of @Consumer must NOT be empty!")
     private           String         interfaceName;
+    /**
+     * Protocol
+     */
+    @NotEmpty(message = "The [protocol] property of @Consumer must NOT be empty!")
+    private           String         protocol;
     /**
      * One service interface may have multiple implementations(forms),
      * It used to distinguish between different implementations of service provider interface
@@ -215,7 +215,8 @@ public class ConsumerStub<T> {
         url = this.createConsumerUrl(applicationConfig, protocolConfig);
 
         // Initialize service invoker before consumer initialization
-        invokerInstance = ServiceInvoker.getInstance(invoker).createInstance(interfaceName, faultTolerance, loadBalancer, url);
+        invokerInstance = ServiceInvoker.getInstance(invoker);
+        invokerInstance.init(interfaceName, faultTolerance, loadBalancer, url);
 
         if (StringUtils.isEmpty(providerAddresses)) {
             // Non-direct registry
