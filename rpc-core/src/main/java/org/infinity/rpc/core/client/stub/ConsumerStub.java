@@ -51,21 +51,21 @@ public class ConsumerStub<T> {
      * Provider stub bean name
      */
     @NotNull(message = "The [beanName] property must NOT be null!")
-    private String   beanName;
+    private           String         beanName;
     /**
      * The interface class of the consumer
      * It can be null if it is a generic call.
      */
-    private Class<T> interfaceClass;
+    private           Class<T>       interfaceClass;
     /**
      * The provider interface fully-qualified name
      */
     @NotEmpty(message = "The [interfaceName] property of @Consumer must NOT be empty!")
-    private String   interfaceName;
+    private           String         interfaceName;
     /**
      * Protocol
      */
-    private String   protocol;
+    private           String         protocol;
 //    /**
 //     * 多注册中心，所以不能使用单个
 //     * Registry
@@ -74,20 +74,20 @@ public class ConsumerStub<T> {
     /**
      * Service provider invoker
      */
-    private String   invoker;
+    private           String         invoker;
     /**
      *
      */
-    private String   faultTolerance;
+    private           String         faultTolerance;
     /**
      *
      */
-    private String   loadBalancer;
+    private           String         loadBalancer;
     /**
      * One service interface may have multiple implementations(forms),
      * It used to distinguish between different implementations of service provider interface
      */
-    private String   form;
+    private           String         form;
     /**
      * When the service changes, such as adding or deleting methods, and interface parameters change,
      * the provider and consumer application instances need to be upgraded.
@@ -98,42 +98,41 @@ public class ConsumerStub<T> {
      * The old version of the consumer instance calls the old version of the provider instance.
      * Observe that there is no problem and repeat this process to complete the upgrade.
      */
-    private String   version;
+    private           String         version;
     /**
      * Consumer proxy used to create {@link #proxyInstance} which is the implementation of consumer interface class
      */
-    private String   proxy;
+    private           String         proxy;
     /**
      *
      */
     @Min(value = 0, message = "The [timeout] property of @Consumer must NOT be a positive number!")
-    private Integer  requestTimeout;
+    private           Integer        requestTimeout;
     /**
      * The max retry count of RPC request
      */
     @Min(value = 0, message = "The [retryCount] property of @Consumer must NOT be a positive number!")
     @Max(value = 10, message = "The [retryCount] property of @Consumer must NOT be bigger than 10!")
-    private Integer  retryCount;
+    private           Integer        retryCount;
     /**
      * The max request message payload size in bytes
      */
     @Min(value = 0, message = "The [maxPayload] property of @Consumer must NOT be a positive number!")
-    private Integer  maxPayload;
+    private           Integer        maxPayload;
     /**
      * Indicates whether rate limit enabled or not
      */
-    private boolean  limitRate;
+    private           boolean        limitRate;
     /**
      * Addresses of RPC provider used to connect RPC provider directly without third party registry.
      * Multiple addresses are separated by comma.
      */
-    private String   providerAddresses;
+    private           String         providerAddresses;
     /**
      * The consumer url used to export to registry only for consumers discovery management,
      * but it have nothing to do with the service calling.
      */
-    private Url      url;
-
+    private           Url            url;
     /**
      * The consumer proxy instance, refer the return type of {@link JdkProxy#getProxy(ConsumerStub)}
      * Disable serialize
