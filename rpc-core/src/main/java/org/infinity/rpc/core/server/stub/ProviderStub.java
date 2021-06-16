@@ -1,9 +1,13 @@
 package org.infinity.rpc.core.server.stub;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.config.impl.ApplicationConfig;
@@ -243,6 +247,16 @@ public class ProviderStub<T> {
         String asyncInitConn = protocolConfig.getAsyncInitConn() == null ? null : protocolConfig.getAsyncInitConn().toString();
         url.addOption(ASYNC_INIT_CONN, asyncInitConn);
 
+        try {
+            if (MapUtils.isNotEmpty(methodConfig)) {
+                String methodConfigStr = new ObjectMapper()
+                        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                        .writeValueAsString(methodConfig);
+                url.addOption(METHOD_CONFIG, methodConfigStr);
+            }
+        } catch (JsonProcessingException e) {
+            log.error("Failed to convert JSON object", e);
+        }
         return url;
     }
 

@@ -144,9 +144,6 @@ public class RpcLifecycle {
             return;
         }
         providerStubs.forEach((name, providerStub) -> {
-            // Register providers
-            providerStub.register(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(), registryConfig);
-
             // Set method level configuration
             Arrays.stream(getTargetClass(providerStub.getInstance()).getMethods()).forEach(method -> {
                 setMethodConfig(providerStub, method);
@@ -156,6 +153,9 @@ public class RpcLifecycle {
                     setMethodConfig(providerStub, method);
                 });
             }
+
+            // Register providers
+            providerStub.register(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(), registryConfig);
         });
 
         if (infinityProperties.getProvider().isAutoExpose()) {
