@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
+import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.infinity.rpc.core.server.stub.ProviderStub.buildProviderStubBeanName;
 import static org.infinity.rpc.spring.boot.config.InfinityProperties.readProtocolConfig;
@@ -284,7 +285,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     /**
      * Get provider interface class
      *
-     * @param rpcProviderAnnotation    {@link RpcProvider} annotation
+     * @param rpcProviderAnnotation {@link RpcProvider} annotation
      * @param providerInstanceClass provider instance class, e.g AppServiceImpl
      * @return provider interface
      */

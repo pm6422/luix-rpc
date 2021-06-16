@@ -24,7 +24,7 @@ import org.infinity.rpc.core.server.messagehandler.impl.DefaultCheckHealthMessag
 import org.infinity.rpc.utilities.id.IdGenerator;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
+import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER_VAL_DEFAULT;
 
 /**
  *

@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
+import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignature;
 
@@ -71,6 +72,7 @@ public class ProviderStub<T> {
     /**
      * Protocol
      */
+    @NotEmpty(message = "The [protocol] property of @Provider must NOT be empty!")
     private           String                    protocol;
     /**
      * One service interface may have multiple implementations(forms),
@@ -110,16 +112,10 @@ public class ProviderStub<T> {
     private           Integer                   maxPayload;
     /**
      * The provider instance
-     * Disable serialize
+     * Disable deserialization
      */
     @NotNull
     private transient T                         instance;
-    /**
-     * The raw provider instance
-     * Disable serialize
-     */
-    @NotNull
-    private transient T                         rawInstance;
     /**
      * Method signature to method cache map for the provider class
      */

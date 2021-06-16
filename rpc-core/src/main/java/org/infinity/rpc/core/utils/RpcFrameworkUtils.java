@@ -12,7 +12,7 @@ import org.infinity.rpc.core.url.Url;
 
 import static org.apache.commons.io.IOUtils.DIR_SEPARATOR_UNIX;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
-import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER;
+import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
 
 public class RpcFrameworkUtils {
     /**

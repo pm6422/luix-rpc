@@ -15,8 +15,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER;
-import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
+import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
+import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER_VAL_DEFAULT;
 import static org.infinity.rpc.core.thread.ScheduledThreadPool.CHECK_HEALTH_INTERVAL;
 import static org.infinity.rpc.core.thread.ScheduledThreadPool.CHECK_HEALTH_THREAD_POOL;
 

@@ -15,7 +15,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
-import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
 import static org.junit.Assert.assertEquals;
 
 public class DirectCallTests extends ZkBaseTest {

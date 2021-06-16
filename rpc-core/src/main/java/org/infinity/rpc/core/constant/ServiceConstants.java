@@ -15,8 +15,6 @@ public interface ServiceConstants {
 
     String FORM                        = "form";
     String VERSION                     = "version";
-    String HEALTH_CHECKER              = "healthChecker";
-    String HEALTH_CHECKER_VAL_DEFAULT  = "default";
     String RETRY_COUNT                 = "retryCount";
     int    RETRY_COUNT_VAL_DEFAULT     = 0;
     String REQUEST_TIMEOUT             = "requestTimeout";

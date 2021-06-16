@@ -10,8 +10,8 @@ import org.infinity.rpc.utilities.serviceloader.annotation.SpiScope;
 
 import java.util.Optional;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER;
-import static org.infinity.rpc.core.constant.ServiceConstants.HEALTH_CHECKER_VAL_DEFAULT;
+import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
+import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER_VAL_DEFAULT;
 
 @Spi(scope = SpiScope.SINGLETON)
 public interface HealthChecker {
