@@ -55,7 +55,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
      * Validate
      */
     protected void validate() {
-        RpcConfigValidator.notNull(consumerStub.getServiceInvoker(), "Service invoker must NOT be null!");
+        RpcConfigValidator.notNull(consumerStub.getInvokerInstance(), "Service invoker must NOT be null!");
     }
 
     /**
@@ -66,7 +66,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
     protected Object sendRequest(Requestable request, Class<?> returnType) {
         Responseable response;
         try {
-            response = consumerStub.getServiceInvoker().invoke(request);
+            response = consumerStub.getInvokerInstance().invoke(request);
             return response.getResult();
         } catch (Exception e) {
             return handleError(request, e);

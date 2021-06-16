@@ -52,6 +52,11 @@ public class ConsumerStub<T> {
     @NotEmpty(message = "The [beanName] property must NOT be null!")
     private           String         beanName;
     /**
+     * Protocol
+     */
+    @NotEmpty(message = "The [protocol] property of @Consumer must NOT be empty!")
+    private           String         protocol;
+    /**
      * The interface class of the consumer
      * It can be null if it is a generic call.
      */
@@ -61,35 +66,6 @@ public class ConsumerStub<T> {
      */
     @NotEmpty(message = "The [interfaceName] property of @Consumer must NOT be empty!")
     private           String         interfaceName;
-    /**
-     * Protocol
-     */
-    @NotEmpty(message = "The [protocol] property of @Consumer must NOT be empty!")
-    private           String         protocol;
-//    /**
-//     * 多注册中心，所以不能使用单个
-//     * Registry
-//     */
-//    private String   registry;
-    /**
-     * Service provider invoker
-     */
-    @NotEmpty(message = "The [invoker] property of @Consumer must NOT be empty!")
-    private           String         invoker;
-    /**
-     *
-     */
-    private           ServiceInvoker serviceInvoker;
-    /**
-     *
-     */
-    @NotEmpty(message = "The [faultTolerance] property of @Consumer must NOT be empty!")
-    private           String         faultTolerance;
-    /**
-     *
-     */
-    @NotEmpty(message = "The [loadBalancer] property of @Consumer must NOT be empty!")
-    private           String         loadBalancer;
     /**
      * One service interface may have multiple implementations(forms),
      * It used to distinguish between different implementations of service provider interface
@@ -106,16 +82,40 @@ public class ConsumerStub<T> {
      * Observe that there is no problem and repeat this process to complete the upgrade.
      */
     private           String         version;
+//    /**
+//     * 多注册中心，所以不能使用单个
+//     * Registry
+//     */
+//    private String   registry;
     /**
-     * Consumer proxy used to create {@link #proxyInstance} which is the implementation of consumer interface class
+     * Service provider invoker name used to create {@link #invokerInstance}
+     */
+    @NotEmpty(message = "The [invoker] property of @Consumer must NOT be empty!")
+    private           String         invoker;
+    /**
+     * The service provider invoker instance
+     */
+    private           ServiceInvoker invokerInstance;
+    /**
+     * Consumer proxy name used to create {@link #proxyInstance} which is the implementation of consumer interface class
      */
     @NotEmpty(message = "The [proxy] property of @Consumer must NOT be empty!")
     private           String         proxy;
     /**
      * The consumer proxy instance, refer the return type of {@link JdkProxy#getProxy(ConsumerStub)}
-     * Disable serialize
+     * Disable deserialization
      */
     private transient T              proxyInstance;
+    /**
+     *
+     */
+    @NotEmpty(message = "The [faultTolerance] property of @Consumer must NOT be empty!")
+    private           String         faultTolerance;
+    /**
+     *
+     */
+    @NotEmpty(message = "The [loadBalancer] property of @Consumer must NOT be empty!")
+    private           String         loadBalancer;
     /**
      *
      */
@@ -215,12 +215,12 @@ public class ConsumerStub<T> {
         url = this.createConsumerUrl(applicationConfig, protocolConfig);
 
         // Initialize service invoker before consumer initialization
-        serviceInvoker = ServiceInvoker.getInstance(invoker).createInstance(interfaceName, faultTolerance, loadBalancer, url);
+        invokerInstance = ServiceInvoker.getInstance(invoker).createInstance(interfaceName, faultTolerance, loadBalancer, url);
 
         if (StringUtils.isEmpty(providerAddresses)) {
             // Non-direct registry
             // Pass service provider invoker to listener, listener will update service invoker after provider urls changed
-            ProviderDiscoveryListener listener = ProviderDiscoveryListener.of(serviceInvoker, interfaceName, url, providerProcessor);
+            ProviderDiscoveryListener listener = ProviderDiscoveryListener.of(invokerInstance, interfaceName, url, providerProcessor);
             listener.subscribe(registryUrls);
             return;
         }
@@ -251,7 +251,7 @@ public class ConsumerStub<T> {
     private void notifyDirectProviderUrls(ProtocolConfig protocolConfig, List<Url> globalRegistryUrls,
                                           ProviderProcessable providerProcessor) {
         // Pass provider service invoker to listener, listener will update service invoker after provider urls changed
-        ProviderNotifyListener listener = ProviderNotifyListener.of(serviceInvoker, interfaceName, protocol, providerProcessor);
+        ProviderNotifyListener listener = ProviderNotifyListener.of(invokerInstance, interfaceName, protocol, providerProcessor);
 
         for (Url globalRegistryUrl : globalRegistryUrls) {
             List<Url> directProviderUrls = createDirectProviderUrls(protocolConfig);
