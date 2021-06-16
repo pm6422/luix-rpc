@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.config.impl.ProtocolConfig;
 import org.infinity.rpc.core.config.impl.ProviderConfig;
-import org.infinity.rpc.core.server.annotation.Provider;
+import org.infinity.rpc.core.server.annotation.RpcProvider;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.spring.boot.bean.name.DefaultBeanNameGenerator;
 import org.infinity.rpc.spring.boot.bean.registry.ClassPathBeanDefinitionRegistryScanner;
@@ -174,12 +174,12 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
                                                                          BeanNameGenerator beanNameGenerator) {
         ClassPathBeanDefinitionRegistryScanner scanner = new ClassPathBeanDefinitionRegistryScanner(registry, env, resourceLoader);
         scanner.setBeanNameGenerator(beanNameGenerator);
-        scanner.addIncludeFilter(new AnnotationTypeFilter(Provider.class));
+        scanner.addIncludeFilter(new AnnotationTypeFilter(RpcProvider.class));
         return scanner;
     }
 
     /**
-     * Register provider beans with {@link Provider} annotation
+     * Register provider beans with {@link RpcProvider} annotation
      *
      * @param providerScanner provider bean definition registry scanner
      * @param scanBasePackage provider packages to be scanned
@@ -244,13 +244,13 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
                                           BeanDefinitionRegistry registry,
                                           ClassPathBeanDefinitionRegistryScanner providerScanner) {
         Class<?> providerInstanceClass = resolveProviderClass(providerBeanDefinitionHolder);
-        Provider providerAnnotation = findProviderAnnotation(providerInstanceClass);
-        Class<?> providerInterfaceClass = resolveProviderInterface(providerAnnotation, providerInstanceClass);
+        RpcProvider rpcProviderAnnotation = findProviderAnnotation(providerInstanceClass);
+        Class<?> providerInterfaceClass = resolveProviderInterface(rpcProviderAnnotation, providerInstanceClass);
 
         String providerStubBeanName = buildProviderStubBeanName(providerInterfaceClass.getName(),
-                providerAnnotation.form(), providerAnnotation.version());
+                rpcProviderAnnotation.form(), rpcProviderAnnotation.version());
         AbstractBeanDefinition stubBeanDefinition = buildProviderStubDefinition(providerStubBeanName,
-                providerInterfaceClass, providerAnnotation, providerBeanDefinitionHolder.getBeanName());
+                providerInterfaceClass, rpcProviderAnnotation, providerBeanDefinitionHolder.getBeanName());
 
         // Check duplicated candidate bean
         if (providerScanner.checkCandidate(providerStubBeanName, stubBeanDefinition)) {
@@ -272,25 +272,25 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     }
 
     /**
-     * Get {@link Provider} annotation
+     * Get {@link RpcProvider} annotation
      *
      * @param beanClass provider bean class
-     * @return {@link Provider} annotation
+     * @return {@link RpcProvider} annotation
      */
-    private Provider findProviderAnnotation(Class<?> beanClass) {
-        return beanClass.getAnnotation(Provider.class);
+    private RpcProvider findProviderAnnotation(Class<?> beanClass) {
+        return beanClass.getAnnotation(RpcProvider.class);
     }
 
     /**
      * Get provider interface class
      *
-     * @param providerAnnotation    {@link Provider} annotation
+     * @param rpcProviderAnnotation    {@link RpcProvider} annotation
      * @param providerInstanceClass provider instance class, e.g AppServiceImpl
      * @return provider interface
      */
-    private Class<?> resolveProviderInterface(Provider providerAnnotation, Class<?> providerInstanceClass) {
+    private Class<?> resolveProviderInterface(RpcProvider rpcProviderAnnotation, Class<?> providerInstanceClass) {
         AnnotationAttributes annotationAttributes = AnnotationUtils
-                .getAnnotationAttributes(providerInstanceClass, Provider.class, env, false, true);
+                .getAnnotationAttributes(providerInstanceClass, RpcProvider.class, env, false, true);
         return AnnotationUtils.resolveInterfaceClass(annotationAttributes, providerInstanceClass);
     }
 
@@ -299,13 +299,13 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
      *
      * @param beanName             provider stub bean name
      * @param interfaceClass       provider interface class
-     * @param annotation           {@link Provider} annotation
+     * @param annotation           {@link RpcProvider} annotation
      * @param providerInstanceName provider instance name
      * @return {@link ProviderStub} bean definition
      */
     private AbstractBeanDefinition buildProviderStubDefinition(String beanName,
                                                                Class<?> interfaceClass,
-                                                               Provider annotation,
+                                                               RpcProvider annotation,
                                                                String providerInstanceName) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProviderStub.class);
         ProtocolConfig protocolConfig = readProtocolConfig(env);

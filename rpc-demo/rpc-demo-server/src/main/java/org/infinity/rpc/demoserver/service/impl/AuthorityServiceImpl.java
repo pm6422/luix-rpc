@@ -1,6 +1,6 @@
 package org.infinity.rpc.demoserver.service.impl;
 
-import org.infinity.rpc.core.server.annotation.Provider;
+import org.infinity.rpc.core.server.annotation.RpcProvider;
 import org.infinity.rpc.democommon.domain.Authority;
 import org.infinity.rpc.democommon.service.AuthorityService;
 import org.infinity.rpc.demoserver.repository.AuthorityRepository;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Provider
+@RpcProvider
 public class AuthorityServiceImpl implements AuthorityService {
 
     @Resource

@@ -2,7 +2,7 @@ package org.infinity.rpc.democlient.controller;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.client.annotation.Consumer;
+import org.infinity.rpc.core.client.annotation.RpcConsumer;
 import org.infinity.rpc.democlient.restservice.AppRestService;
 import org.infinity.rpc.democommon.domain.App;
 import org.infinity.rpc.democommon.domain.Authority;
@@ -38,9 +38,9 @@ public class TestController {
     private Environment        env;
     @Resource
     private AppRestService     appRestService;
-    @Consumer
+    @RpcConsumer
     private AuthorityService   authorityService;
-    @Consumer(providerAddresses = "127.0.0.1:26010", form = "f1")
+    @RpcConsumer(providerAddresses = "127.0.0.1:26010", form = "f1")
     private AppService         appService;
 
     @ApiOperation("test kryo serialization and deserialization")

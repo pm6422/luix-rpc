@@ -8,7 +8,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * todo: rename to RpcConsumer
  * RPC consumer annotation
  * Please refer {@link ServiceConstants} for the property definition
  * <p>
@@ -19,7 +18,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
-public @interface Consumer {
+public @interface RpcConsumer {
     /**
      * The interface class fully-qualified name of RPC consumer class.
      * Especially for the generic consumer instance must specify interfaceName attribute

@@ -3,7 +3,7 @@ package org.infinity.rpc.democlient.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.client.annotation.Consumer;
+import org.infinity.rpc.core.client.annotation.RpcConsumer;
 import org.infinity.rpc.democlient.component.HttpHeaderCreator;
 import org.infinity.rpc.democlient.exception.NoDataFoundException;
 import org.infinity.rpc.democommon.domain.App;
@@ -27,7 +27,7 @@ import static org.infinity.rpc.democlient.utils.HttpHeaderUtils.generatePageHead
 @Slf4j
 public class AppController {
 
-    @Consumer(form = "f1", requestTimeout = "10000")
+    @RpcConsumer(form = "f1", requestTimeout = "10000")
     private AppService        appService;
     @Resource
     private HttpHeaderCreator httpHeaderCreator;

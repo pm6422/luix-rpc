@@ -1,7 +1,9 @@
 package org.infinity.rpc.core.constant;
 
+import org.infinity.rpc.core.client.annotation.RpcConsumer;
+
 /**
- * All the attribute names of {@link org.infinity.rpc.core.client.annotation.Consumer}
+ * All the attribute names of {@link RpcConsumer}
  */
 public interface ConsumerConstants extends ServiceConstants {
     String INVOKER                      = "invoker";

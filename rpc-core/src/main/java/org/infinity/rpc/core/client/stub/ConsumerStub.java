@@ -5,7 +5,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.infinity.rpc.core.client.annotation.Consumer;
+import org.infinity.rpc.core.client.annotation.RpcConsumer;
 import org.infinity.rpc.core.client.invoker.ServiceInvoker;
 import org.infinity.rpc.core.client.listener.ProviderDiscoveryListener;
 import org.infinity.rpc.core.client.listener.ProviderNotifyListener;
@@ -279,8 +279,8 @@ public class ConsumerStub<T> {
      * Build the consumer stub bean name
      *
      * @param interfaceClassName the consumer service interface name
-     * @param attributes         {@link Consumer annotation attributes}
-     * @return The name of bean that annotated {@link Consumer @Consumer} in spring context
+     * @param attributes         {@link RpcConsumer annotation attributes}
+     * @return The name of bean that annotated {@link RpcConsumer @Consumer} in spring context
      */
     public static String buildConsumerStubBeanName(String interfaceClassName, Map<String, Object> attributes) {
         return ConsumerStubBeanNameBuilder

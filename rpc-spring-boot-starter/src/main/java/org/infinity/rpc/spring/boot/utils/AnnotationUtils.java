@@ -2,8 +2,8 @@ package org.infinity.rpc.spring.boot.utils;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.client.annotation.Consumer;
-import org.infinity.rpc.core.server.annotation.Provider;
+import org.infinity.rpc.core.client.annotation.RpcConsumer;
+import org.infinity.rpc.core.server.annotation.RpcProvider;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
@@ -242,7 +242,7 @@ public abstract class AnnotationUtils {
     /**
      * Resolve the interface name from {@link AnnotationAttributes} or defaultInterfaceClass
      *
-     * @param attributes               {@link AnnotationAttributes} instance, e.g {@link Consumer @Consumer} or {@link Provider @Provider}
+     * @param attributes               {@link AnnotationAttributes} instance, e.g {@link RpcConsumer @Consumer} or {@link RpcProvider @Provider}
      * @param instanceOrInterfaceClass provider instance class, e.g AppServiceImpl or consumer interface class, e.g AppService
      * @return the interface name if found
      */

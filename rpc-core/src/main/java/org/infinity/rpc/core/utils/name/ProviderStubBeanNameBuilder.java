@@ -2,9 +2,10 @@ package org.infinity.rpc.core.utils.name;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.infinity.rpc.core.server.annotation.RpcProvider;
 
 /**
- * RPC provider {@link org.infinity.rpc.core.server.annotation.Provider} stub bean name builder
+ * RPC provider {@link RpcProvider} stub bean name builder
  * RPC provider interface only can have multiple implementations with different form or version.
  */
 public class ProviderStubBeanNameBuilder {

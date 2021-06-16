@@ -1,9 +1,12 @@
 package org.infinity.rpc.core.constant;
 
+import org.infinity.rpc.core.client.annotation.RpcConsumer;
+import org.infinity.rpc.core.server.annotation.RpcProvider;
+
 /**
  * All the attribute names of
- * {@link org.infinity.rpc.core.client.annotation.Consumer}
- * {@link org.infinity.rpc.core.server.annotation.Provider}
+ * {@link RpcConsumer}
+ * {@link RpcProvider}
  */
 public interface ServiceConstants {
     String BEAN_NAME       = "beanName";

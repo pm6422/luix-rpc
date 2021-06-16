@@ -1,7 +1,7 @@
 package org.infinity.rpc.demoserver.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.server.annotation.Provider;
+import org.infinity.rpc.core.server.annotation.RpcProvider;
 import org.infinity.rpc.core.server.response.FutureResponse;
 import org.infinity.rpc.core.server.response.impl.RpcFutureResponse;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
@@ -15,7 +15,7 @@ import org.springframework.data.domain.Pageable;
 import javax.annotation.Resource;
 import java.util.Optional;
 
-@Provider(form = "f2", maxRetries = "1")
+@RpcProvider(form = "f2", maxRetries = "1")
 @Slf4j
 public class AppService2Impl implements AppService {
 

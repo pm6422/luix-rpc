@@ -2,7 +2,7 @@ package org.infinity.rpc.democlient.controller;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.core.client.annotation.Consumer;
+import org.infinity.rpc.core.client.annotation.RpcConsumer;
 import org.infinity.rpc.democommon.dto.AdminMenuTreeDTO;
 import org.infinity.rpc.democommon.service.AdminMenuService;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class AdminMenuController {
 
     private AdminMenuService adminMenuService;
 
-    @Consumer(requestTimeout = "10000")
+    @RpcConsumer(requestTimeout = "10000")
     public void setAdminMenuService(AdminMenuService adminMenuService) {
         this.adminMenuService = adminMenuService;
     }

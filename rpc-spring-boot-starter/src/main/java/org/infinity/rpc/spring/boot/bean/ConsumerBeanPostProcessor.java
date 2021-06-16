@@ -2,7 +2,7 @@ package org.infinity.rpc.spring.boot.bean;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.client.annotation.Consumer;
+import org.infinity.rpc.core.client.annotation.RpcConsumer;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.spring.boot.utils.AnnotationUtils;
@@ -37,7 +37,7 @@ import static org.infinity.rpc.spring.boot.utils.ProxyUtils.getTargetClass;
 
 
 /**
- * Scan all spring bean to discover the fields and method annotated with {@link Consumer} annotation
+ * Scan all spring bean to discover the fields and method annotated with {@link RpcConsumer} annotation
  * and injected with the proxyInstance.
  * The class implements {@link BeanPostProcessor} means that all spring beans will be processed by
  * {@link ConsumerBeanPostProcessor#postProcessBeforeInitialization(Object, String)} after initialized bean
@@ -100,7 +100,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
     }
 
     /**
-     * Inject RPC consumer proxy instances to fields which annotated with {@link Consumer} by reflection
+     * Inject RPC consumer proxy instances to fields which annotated with {@link RpcConsumer} by reflection
      * and register its {@link ConsumerStub} instance to spring context
      *
      * @param bean      bean instance to be injected
@@ -113,14 +113,14 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
                 continue;
             }
             try {
-                Consumer consumerAnnotation = field.getAnnotation(Consumer.class);
-                if (consumerAnnotation == null) {
+                RpcConsumer rpcConsumerAnnotation = field.getAnnotation(RpcConsumer.class);
+                if (rpcConsumerAnnotation == null) {
                     // No @Consumer annotated field found
                     continue;
                 }
                 AnnotationAttributes attributes = getConsumerAnnotationAttributes(field);
                 // Register consumer stub instance to spring context
-                ConsumerStub<?> consumerStub = registerConsumerStub(consumerAnnotation, attributes, field.getType());
+                ConsumerStub<?> consumerStub = registerConsumerStub(rpcConsumerAnnotation, attributes, field.getType());
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
@@ -134,7 +134,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
     }
 
     /**
-     * Inject RPC consumer proxy instances to setter method parameters which annotated with {@link Consumer} by reflection
+     * Inject RPC consumer proxy instances to setter method parameters which annotated with {@link RpcConsumer} by reflection
      * and register its {@link ConsumerStub} instance to spring context
      *
      * @param bean      bean instance to be injected
@@ -150,15 +150,15 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
                 // The Java compiler generates the bridge method, in order to be compatible with the byte code
                 // under previous JDK version of JDK 1.5, for the generic erasure occasion
                 Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
-                Consumer consumerAnnotation = bridgedMethod.getAnnotation(Consumer.class);
-                if (consumerAnnotation == null) {
+                RpcConsumer rpcConsumerAnnotation = bridgedMethod.getAnnotation(RpcConsumer.class);
+                if (rpcConsumerAnnotation == null) {
                     // No @Consumer annotated method found
                     continue;
                 }
 
                 AnnotationAttributes attributes = getConsumerAnnotationAttributes(bridgedMethod);
                 // Register consumer stub instance to spring context
-                ConsumerStub<?> consumerStub = registerConsumerStub(consumerAnnotation, attributes, method.getParameterTypes()[0]);
+                ConsumerStub<?> consumerStub = registerConsumerStub(rpcConsumerAnnotation, attributes, method.getParameterTypes()[0]);
                 // Inject RPC consumer proxy instance
                 method.invoke(bean, consumerStub.getProxyInstance());
             } catch (Throwable t) {
@@ -170,7 +170,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
 
     private boolean isConsumerAnnotatedField(Field field) {
         return !Modifier.isStatic(field.getModifiers())
-                && field.isAnnotationPresent(Consumer.class);
+                && field.isAnnotationPresent(RpcConsumer.class);
     }
 
     private boolean isConsumerAnnotatedMethod(Method method) {
@@ -178,22 +178,22 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
                 && method.getParameterTypes().length == 1
                 && Modifier.isPublic(method.getModifiers())
                 && !Modifier.isStatic(method.getModifiers())
-                && method.isAnnotationPresent(Consumer.class);
+                && method.isAnnotationPresent(RpcConsumer.class);
     }
 
     private AnnotationAttributes getConsumerAnnotationAttributes(AnnotatedElement element) {
-        return AnnotationUtils.getAnnotationAttributes(element, Consumer.class, env, true, true);
+        return AnnotationUtils.getAnnotationAttributes(element, RpcConsumer.class, env, true, true);
     }
 
     /**
      * Register consumer stub to spring context
      *
-     * @param consumerAnnotation     {@link Consumer} annotation
+     * @param rpcConsumerAnnotation     {@link RpcConsumer} annotation
      * @param attributes             {@link AnnotationAttributes annotation attributes}
      * @param consumerInterfaceClass Consumer interface class
      * @return ConsumerStub instance
      */
-    private ConsumerStub<?> registerConsumerStub(Consumer consumerAnnotation,
+    private ConsumerStub<?> registerConsumerStub(RpcConsumer rpcConsumerAnnotation,
                                                  AnnotationAttributes attributes,
                                                  Class<?> consumerInterfaceClass) {
         // Resolve the interface class of the consumer proxy instance
@@ -202,7 +202,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
         // Build the consumer stub bean name
         String consumerStubBeanName = buildConsumerStubBeanName(resolvedConsumerInterfaceClass.getName(), attributes);
         if (!existsConsumerStub(consumerStubBeanName)) {
-            AbstractBeanDefinition stubBeanDefinition = buildConsumerStubDefinition(consumerStubBeanName, consumerInterfaceClass, consumerAnnotation);
+            AbstractBeanDefinition stubBeanDefinition = buildConsumerStubDefinition(consumerStubBeanName, consumerInterfaceClass, rpcConsumerAnnotation);
             beanFactory.registerBeanDefinition(consumerStubBeanName, stubBeanDefinition);
             log.info("Registered RPC consumer stub [{}] to spring context", consumerStubBeanName);
         }
@@ -219,12 +219,12 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
      *
      * @param beanName       consumer stub bean name
      * @param interfaceClass consumer interface class
-     * @param annotation     {@link Consumer} annotation
+     * @param annotation     {@link RpcConsumer} annotation
      * @return {@link ConsumerStub} bean definition
      */
     private AbstractBeanDefinition buildConsumerStubDefinition(String beanName,
                                                                Class<?> interfaceClass,
-                                                               Consumer annotation) {
+                                                               RpcConsumer annotation) {
         // Create and load infinityProperties bean
         InfinityProperties infinityProperties = beanFactory.getBean(InfinityProperties.class);
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ConsumerStub.class);

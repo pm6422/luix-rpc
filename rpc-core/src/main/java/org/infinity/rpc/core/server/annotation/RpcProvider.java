@@ -8,7 +8,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * todo: rename to RpcProvider
  * RPC provider annotation
  * Please refer {@link ServiceConstants} for the property definition
  * <p>
@@ -17,7 +16,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface Provider {
+public @interface RpcProvider {
     /**
      * The interface class fully-qualified name of RPC provider class
      *

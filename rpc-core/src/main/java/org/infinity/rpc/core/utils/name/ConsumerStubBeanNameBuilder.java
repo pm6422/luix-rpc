@@ -3,12 +3,13 @@ package org.infinity.rpc.core.utils.name;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.infinity.rpc.core.client.annotation.RpcConsumer;
 
 import java.util.Iterator;
 import java.util.Map;
 
 /**
- * RPC consumer {@link org.infinity.rpc.core.client.annotation.Consumer} stub bean name builder
+ * RPC consumer {@link RpcConsumer} stub bean name builder
  * Consumer stub bean name is different from provider stub name,
  * RPC consumer can have various implementations depending on different annotation attributes of @Consumer
  */

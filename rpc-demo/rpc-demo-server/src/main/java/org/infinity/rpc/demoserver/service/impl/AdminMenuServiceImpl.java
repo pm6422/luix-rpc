@@ -1,6 +1,6 @@
 package org.infinity.rpc.demoserver.service.impl;
 
-import org.infinity.rpc.core.server.annotation.Provider;
+import org.infinity.rpc.core.server.annotation.RpcProvider;
 import org.infinity.rpc.democommon.domain.AdminMenu;
 import org.infinity.rpc.democommon.dto.AdminMenuTreeDTO;
 import org.infinity.rpc.democommon.service.AdminMenuService;
@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Provider
+@RpcProvider
 public class AdminMenuServiceImpl implements AdminMenuService {
 
     @Resource
