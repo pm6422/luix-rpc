@@ -258,9 +258,9 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
                 ? infinityProperties.getConsumer().getRequestTimeout() : Integer.valueOf(annotation.requestTimeout());
         addPropertyValue(builder, REQUEST_TIMEOUT, requestTimeout);
 
-        Integer maxRetries = StringUtils.isEmpty(annotation.maxRetries())
-                ? infinityProperties.getConsumer().getMaxRetries() : Integer.valueOf(annotation.maxRetries());
-        addPropertyValue(builder, MAX_RETRIES, maxRetries);
+        Integer retryCount = StringUtils.isEmpty(annotation.retryCount())
+                ? infinityProperties.getConsumer().getRetryCount() : Integer.valueOf(annotation.retryCount());
+        addPropertyValue(builder, RETRY_COUNT, retryCount);
 
         addPropertyValue(builder, LIMIT_RATE, infinityProperties.getConsumer().isLimitRate());
         addPropertyValue(builder, MAX_PAYLOAD, infinityProperties.getConsumer().getMaxPayload());

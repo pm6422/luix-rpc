@@ -35,9 +35,9 @@ public abstract class ServiceConfig implements Configurable {
     /**
      * Max retry count after calling failure
      */
-    @Min(value = 0, message = "The [maxRetries] property must NOT be a negative number!")
-    @Max(value = 10, message = "The [maxRetries] property must NOT be bigger than 10!")
-    private Integer maxRetries;
+    @Min(value = 0, message = "The [retryCount] property must NOT be a negative number!")
+    @Max(value = 10, message = "The [retryCount] property must NOT be bigger than 10!")
+    private Integer retryCount;
     /**
      * Max request or response message data payload size in bytes
      * NOT supported configuration per consumer or provider level

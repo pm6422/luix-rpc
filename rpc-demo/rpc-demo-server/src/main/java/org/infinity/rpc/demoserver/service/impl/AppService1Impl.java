@@ -17,7 +17,7 @@ import org.springframework.scheduling.annotation.Async;
 import javax.annotation.Resource;
 import java.util.Optional;
 
-@RpcProvider(form = "f1", maxRetries = "1")
+@RpcProvider(form = "f1", retryCount = "1")
 @Slf4j
 public class AppService1Impl implements AppService {
 
@@ -25,7 +25,7 @@ public class AppService1Impl implements AppService {
     private AppRepository appRepository;
 
     @Override
-    @RpcMethod(maxRetries = "2")
+    @RpcMethod(retryCount = "2")
     public Page<App> findAll(Pageable pageable) {
         return appRepository.findAll(pageable);
     }

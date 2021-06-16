@@ -98,11 +98,11 @@ public class ProviderStub<T> {
     @Min(value = 0, message = "The [timeout] property of @Provider must NOT be a negative number!")
     private           Integer                   requestTimeout;
     /**
-     * The max retry times of RPC request
+     * The max retry count of RPC request
      */
-    @Min(value = 0, message = "The [maxRetries] property of @Provider must NOT be a negative number!")
-    @Max(value = 10, message = "The [maxRetries] property of @Provider must NOT be bigger than 10!")
-    private           Integer                   maxRetries;
+    @Min(value = 0, message = "The [retryCount] property of @Provider must NOT be a negative number!")
+    @Max(value = 10, message = "The [retryCount] property of @Provider must NOT be bigger than 10!")
+    private           Integer                   retryCount;
     /**
      * The max response message payload size in bytes
      */
@@ -213,7 +213,7 @@ public class ProviderStub<T> {
         url.addOption(APP, applicationConfig.getName());
         url.addOption(HEALTH_CHECKER, healthChecker);
         url.addOption(REQUEST_TIMEOUT, requestTimeout);
-        url.addOption(MAX_RETRIES, maxRetries);
+        url.addOption(RETRY_COUNT, retryCount);
         url.addOption(MAX_PAYLOAD, maxPayload);
 
         url.addOption(CODEC, protocolConfig.getCodec());

@@ -17,8 +17,8 @@ public interface ServiceConstants {
     String VERSION                     = "version";
     String HEALTH_CHECKER              = "healthChecker";
     String HEALTH_CHECKER_VAL_DEFAULT  = "default";
-    String MAX_RETRIES                 = "maxRetries";
-    int    MAX_RETRIES_VAL_DEFAULT     = 0;
+    String RETRY_COUNT                 = "retryCount";
+    int    RETRY_COUNT_VAL_DEFAULT     = 0;
     String REQUEST_TIMEOUT             = "requestTimeout";
     int    REQUEST_TIMEOUT_VAL_DEFAULT = 500;
     String MAX_PAYLOAD                 = "maxPayload";

@@ -109,11 +109,11 @@ public class ConsumerStub<T> {
     @Min(value = 0, message = "The [timeout] property of @Consumer must NOT be a positive number!")
     private Integer  requestTimeout;
     /**
-     * The max retry times of RPC request
+     * The max retry count of RPC request
      */
-    @Min(value = 0, message = "The [maxRetries] property of @Consumer must NOT be a positive number!")
-    @Max(value = 10, message = "The [maxRetries] property of @Consumer must NOT be bigger than 10!")
-    private Integer  maxRetries;
+    @Min(value = 0, message = "The [retryCount] property of @Consumer must NOT be a positive number!")
+    @Max(value = 10, message = "The [retryCount] property of @Consumer must NOT be bigger than 10!")
+    private Integer  retryCount;
     /**
      * The max request message payload size in bytes
      */
@@ -237,7 +237,7 @@ public class ConsumerStub<T> {
         url = Url.consumerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
         url.addOption(APP, applicationConfig.getName());
         url.addOption(REQUEST_TIMEOUT, requestTimeout);
-        url.addOption(MAX_RETRIES, maxRetries);
+        url.addOption(RETRY_COUNT, retryCount);
         url.addOption(MAX_PAYLOAD, maxPayload);
 
         String throwException = protocolConfig.getThrowException() == null ? null : protocolConfig.getThrowException().toString();
@@ -305,7 +305,7 @@ public class ConsumerStub<T> {
         consumerStub.setForm(form);
         consumerStub.setVersion(version);
         consumerStub.setRequestTimeout(requestTimeout);
-        consumerStub.setMaxRetries(maxRetries);
+        consumerStub.setRetryCount(maxRetries);
         // Must NOT call init()
         consumerStub.subscribeProviders(application, protocol, registry, providerProcessor);
         return consumerStub;

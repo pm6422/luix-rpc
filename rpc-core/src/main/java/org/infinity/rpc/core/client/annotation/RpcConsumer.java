@@ -101,12 +101,12 @@ public @interface RpcConsumer {
     String requestTimeout() default "";
 
     /**
-     * The max retry times of RPC invocation
+     * The max retry count of RPC invocation
      * Format: integer
      *
-     * @return max retry times
+     * @return max retry count
      */
-    String maxRetries() default "";
+    String retryCount() default "";
 
     /**
      * Addresses of RPC provider used to connect RPC provider directly without third party registry

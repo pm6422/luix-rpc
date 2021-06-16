@@ -58,14 +58,14 @@ public class RpcInvocationController {
         if (data.getAttributes().containsKey(REQUEST_TIMEOUT)) {
             requestTimeout = Integer.parseInt(data.getAttributes().get(REQUEST_TIMEOUT));
         }
-        Integer maxRetries = null;
-        if (data.getAttributes().containsKey(MAX_RETRIES)) {
-            maxRetries = Integer.parseInt(data.getAttributes().get(MAX_RETRIES));
+        Integer retryCount = null;
+        if (data.getAttributes().containsKey(RETRY_COUNT)) {
+            retryCount = Integer.parseInt(data.getAttributes().get(RETRY_COUNT));
         }
         ConsumerStub<?> consumerStub = ConsumerStub.create(data.getInterfaceName(), infinityProperties.getApplication(),
                 infinityProperties.getRegistry(), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
                 null, null, data.getAttributes().get(FORM), data.getAttributes().get(VERSION),
-                requestTimeout, maxRetries);
+                requestTimeout, retryCount);
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);
         return consumerStub;
     }

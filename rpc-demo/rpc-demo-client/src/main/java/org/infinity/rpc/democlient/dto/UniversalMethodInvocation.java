@@ -15,7 +15,7 @@ import java.util.Map;
  *   "methodParamTypes": [],
  *   "args": [],
  *   "attributes": {
- *     "maxRetries": 2
+ *     "retryCount": 2
  *   }
  * }
  *

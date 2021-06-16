@@ -168,7 +168,7 @@ public class RpcLifecycle {
         RpcMethod annotation = AnnotationUtils.getAnnotation(method, RpcMethod.class);
         if (annotation != null) {
             MethodConfig methodConfig = MethodConfig.builder()
-                    .maxRetries(defaultIfEmpty(annotation.maxRetries(), null))
+                    .retryCount(defaultIfEmpty(annotation.retryCount(), null))
                     .requestTimeout(defaultIfEmpty(annotation.requestTimeout(), null))
                     .build();
             providerStub.getMethodConfig().putIfAbsent(getMethodSignature(method), methodConfig);

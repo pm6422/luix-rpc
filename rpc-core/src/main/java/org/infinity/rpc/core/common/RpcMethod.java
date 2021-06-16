@@ -23,10 +23,10 @@ public @interface RpcMethod {
     String requestTimeout() default "";
 
     /**
-     * The max retry times of RPC invocation
+     * The max retry count of RPC invocation
      * Format: integer
      *
-     * @return max retry times
+     * @return max retry count
      */
-    String maxRetries() default "";
+    String retryCount() default "";
 }

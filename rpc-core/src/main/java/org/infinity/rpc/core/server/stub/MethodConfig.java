@@ -18,8 +18,8 @@ public class MethodConfig implements Serializable {
     private String requestTimeout;
 
     /**
-     * The max retry times of RPC invocation
+     * The max retry count of RPC invocation
      * Format: integer
      */
-    private String maxRetries;
+    private String retryCount;
 }

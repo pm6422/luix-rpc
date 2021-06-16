@@ -163,7 +163,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
      * @return bean definition registry scanner
      *
      * <code>
-     * '@Provider(maxRetries=1)
+     * '@RpcProvider(retryCount="1")
      * public class AppServiceImpl {
      * ...
      * ...
@@ -331,9 +331,9 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
                 ? providerConfig.getRequestTimeout() : Integer.valueOf(annotation.requestTimeout());
         addPropertyValue(builder, REQUEST_TIMEOUT, requestTimeout);
 
-        Integer maxRetries = StringUtils.isEmpty(annotation.maxRetries())
-                ? providerConfig.getMaxRetries() : Integer.valueOf(annotation.maxRetries());
-        addPropertyValue(builder, MAX_RETRIES, maxRetries);
+        Integer retryCount = StringUtils.isEmpty(annotation.retryCount())
+                ? providerConfig.getRetryCount() : Integer.valueOf(annotation.retryCount());
+        addPropertyValue(builder, RETRY_COUNT, retryCount);
 
         addPropertyValue(builder, MAX_PAYLOAD, providerConfig.getMaxPayload());
 
