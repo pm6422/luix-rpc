@@ -28,16 +28,12 @@ public class RequestSender extends AbstractRequestSender {
     public RequestSender(String interfaceName, Url providerUrl) {
         super(interfaceName, providerUrl);
         long start = System.currentTimeMillis();
-        endpointFactory = this.createEndpointFactory(providerUrl);
+        String name = providerUrl.getOption(ENDPOINT_FACTORY, ENDPOINT_FACTORY_VAL_NETTY);
+        endpointFactory = EndpointFactory.getInstance(name);
         client = endpointFactory.createClient(providerUrl);
         // Initialize
         super.init();
         log.info("Initialized request sender [{}] in {} ms", this, System.currentTimeMillis() - start);
-    }
-
-    private EndpointFactory createEndpointFactory(Url providerUrl) {
-        String name = providerUrl.getOption(ENDPOINT_FACTORY, ENDPOINT_FACTORY_VAL_NETTY);
-        return EndpointFactory.getInstance(name);
     }
 
     @Override
