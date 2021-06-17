@@ -45,13 +45,7 @@ public abstract class AbstractProtocol implements Protocol {
     }
 
     @Override
-    public Sendable refer(String interfaceName, Url providerUrl) {
-        if (StringUtils.isEmpty(interfaceName)) {
-            throw new RpcFrameworkException("Provider interface must NOT be null!");
-        }
-        if (providerUrl == null) {
-            throw new RpcFrameworkException("Provider url must NOT be null!");
-        }
+    public Sendable createSender(String interfaceName, Url providerUrl) {
         // todo: create different caller associated with the protocol
         return new RequestSender(interfaceName, providerUrl);
     }

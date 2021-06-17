@@ -29,7 +29,7 @@ public class ProviderNotifyListener implements ClientListener {
     protected     String                   interfaceName;
     protected     Protocol                 protocol;
     protected     ProviderProcessable      providerProcessor;
-    private final Map<Url, List<Sendable>> invokersPerRegistryUrl = new ConcurrentHashMap<>();
+    private final Map<Url, List<Sendable>> sendersPerRegistryUrl = new ConcurrentHashMap<>();
 
     protected ProviderNotifyListener() {
     }
@@ -76,7 +76,7 @@ public class ProviderNotifyListener implements ClientListener {
             // Find provider invoker associated with the provider url
             Sendable invoker = findInvokerByProviderUrl(registryUrl, providerUrl);
             if (invoker == null) {
-                invoker = protocol.refer(interfaceName, providerUrl.copy());
+                invoker = protocol.createSender(interfaceName, providerUrl.copy());
             }
             newSenders.add(invoker);
         }
@@ -84,14 +84,14 @@ public class ProviderNotifyListener implements ClientListener {
         if (CollectionUtils.isEmpty(newSenders)) {
             log.warn("No active provider sender!");
         }
-        invokersPerRegistryUrl.put(registryUrl, newSenders);
-        refreshCluster();
+        sendersPerRegistryUrl.put(registryUrl, newSenders);
+        refreshSenders();
     }
 
     private Sendable findInvokerByProviderUrl(Url registryUrl, Url providerUrl) {
-        List<Sendable> invokers = invokersPerRegistryUrl.get(registryUrl);
-        return CollectionUtils.isEmpty(invokers) ? null :
-                invokers.stream()
+        List<Sendable> senders = sendersPerRegistryUrl.get(registryUrl);
+        return CollectionUtils.isEmpty(senders) ? null :
+                senders.stream()
                         .filter(caller -> Objects.equals(providerUrl, caller.getProviderUrl()))
                         .findFirst()
                         .orElse(null);
@@ -103,20 +103,20 @@ public class ProviderNotifyListener implements ClientListener {
      * @param inactiveRegistryUrl inactive registry url
      */
     private synchronized void removeInactiveRegistry(Url inactiveRegistryUrl) {
-        if (invokersPerRegistryUrl.size() > 1) {
-            invokersPerRegistryUrl.remove(inactiveRegistryUrl);
-            refreshCluster();
+        if (sendersPerRegistryUrl.size() > 1) {
+            sendersPerRegistryUrl.remove(inactiveRegistryUrl);
+            refreshSenders();
         }
     }
 
-    private synchronized void refreshCluster() {
-        List<Sendable> invokers = invokersPerRegistryUrl.values()
+    private synchronized void refreshSenders() {
+        List<Sendable> senders = sendersPerRegistryUrl.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-        // Refresh provider invokers to AbstractLoadBalancer
-        serviceInvoker.getFaultTolerance().getLoadBalancer().refresh(invokers);
+        // Refresh provider senders to AbstractLoadBalancer
+        serviceInvoker.getFaultTolerance().getLoadBalancer().refresh(senders);
     }
 
     @Override

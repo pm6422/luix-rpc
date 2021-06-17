@@ -26,7 +26,7 @@ public interface Protocol {
      * @param providerUrl   provider url
      * @return provider invoker
      */
-    Sendable refer(String interfaceName, Url providerUrl);
+    Sendable createSender(String interfaceName, Url providerUrl);
 
     /**
      * Destroy
