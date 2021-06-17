@@ -8,6 +8,7 @@ import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.zookeeper.Watcher;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
@@ -30,6 +31,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import static org.infinity.rpc.registry.zookeeper.utils.ZookeeperUtils.*;
 
@@ -429,7 +431,14 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             zkChildListener = (dirName, currentChildren) -> {
                 @EventPublisher("providersChangeEvent")
                 List<String> fileNames = ListUtils.emptyIfNull(currentChildren);
-                providerListener.onNotify(consumerUrl, getRegistryUrl(), readUrls(zkClient, dirName, fileNames));
+                List<Url> providerUrls = readUrls(zkClient, dirName, fileNames);
+                if (CollectionUtils.isNotEmpty(providerUrls)) {
+                    providerUrls = providerUrls
+                            .stream()
+                            .filter(x -> StringUtils.equals(x.getForm(), consumerUrl.getForm()))
+                            .collect(Collectors.toList());
+                }
+                providerListener.onNotify(consumerUrl, getRegistryUrl(), providerUrls);
                 log.info("Provider files [{}] changed under path [{}]", String.join(",", fileNames), dirName);
             };
             childChangeListeners.putIfAbsent(providerListener, zkChildListener);

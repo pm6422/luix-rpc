@@ -2,7 +2,6 @@ package org.infinity.rpc.core.client.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.invoker.ServiceInvoker;
 import org.infinity.rpc.core.client.sender.Sendable;
 import org.infinity.rpc.core.protocol.Protocol;
@@ -85,9 +84,6 @@ public class ProviderNotifyListener implements ClientListener {
 
         List<Sendable> newSenders = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
-            if (!StringUtils.equals(defaultString(form), providerUrl.getForm())) {
-                continue;
-            }
             // Find provider invoker associated with the provider url
             Sendable invoker = findInvokerByProviderUrl(registryUrl, providerUrl);
             if (invoker == null) {
@@ -136,6 +132,6 @@ public class ProviderNotifyListener implements ClientListener {
 
     @Override
     public String toString() {
-        return ProviderNotifyListener.class.getSimpleName().concat(":").concat(interfaceName);
+        return ProviderNotifyListener.class.getSimpleName().concat(":").concat(interfaceName).concat(defaultString(form));
     }
 }
