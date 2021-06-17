@@ -33,15 +33,20 @@ public class ProviderDiscoveryListener extends ProviderNotifyListener {
      *
      * @param serviceInvoker    provider invoker cluster
      * @param interfaceName     The interface class name of the consumer
+     * @param form              form
      * @param consumerUrl       consumer url
      * @param providerProcessor provider processor
      * @return listener listener
      */
-    public static ProviderDiscoveryListener of(ServiceInvoker serviceInvoker, String interfaceName, Url consumerUrl,
+    public static ProviderDiscoveryListener of(ServiceInvoker serviceInvoker,
+                                               String interfaceName,
+                                               String form,
+                                               Url consumerUrl,
                                                ProviderProcessable providerProcessor) {
         ProviderDiscoveryListener listener = new ProviderDiscoveryListener();
         listener.serviceInvoker = serviceInvoker;
         listener.interfaceName = interfaceName;
+        listener.form = form;
         listener.consumerUrl = consumerUrl;
         listener.protocol = Protocol.getInstance(consumerUrl.getProtocol());
         listener.providerProcessor = providerProcessor;

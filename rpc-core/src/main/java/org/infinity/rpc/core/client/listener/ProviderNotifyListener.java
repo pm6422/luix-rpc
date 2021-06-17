@@ -2,6 +2,7 @@ package org.infinity.rpc.core.client.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.invoker.ServiceInvoker;
 import org.infinity.rpc.core.client.sender.Sendable;
 import org.infinity.rpc.core.protocol.Protocol;
@@ -14,6 +15,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
 /**
  * todo: see ClusterSupport
  * Listener used to subscribe providers change event,
@@ -23,11 +26,15 @@ import java.util.stream.Collectors;
 @ThreadSafe
 public class ProviderNotifyListener implements ClientListener {
     protected     ServiceInvoker           serviceInvoker;
+    protected     Protocol                 protocol;
     /**
      * The interface class name of the consumer
      */
     protected     String                   interfaceName;
-    protected     Protocol                 protocol;
+    /**
+     * Form
+     */
+    protected     String                   form;
     protected     ProviderProcessable      providerProcessor;
     private final Map<Url, List<Sendable>> sendersPerRegistryUrl = new ConcurrentHashMap<>();
 
@@ -38,17 +45,22 @@ public class ProviderNotifyListener implements ClientListener {
      * Pass service provider invoker to listener, listener will update service invoker after provider urls changed
      *
      * @param serviceInvoker    service invoker
-     * @param interfaceName     interface class name of the consumer
      * @param protocol          protocol
+     * @param interfaceName     interface class name of the consumer
+     * @param form              form
      * @param providerProcessor provider processor
      * @return listener listener
      */
-    public static ProviderNotifyListener of(ServiceInvoker serviceInvoker, String interfaceName, String protocol,
+    public static ProviderNotifyListener of(ServiceInvoker serviceInvoker,
+                                            String protocol,
+                                            String interfaceName,
+                                            String form,
                                             ProviderProcessable providerProcessor) {
         ProviderNotifyListener listener = new ProviderNotifyListener();
         listener.serviceInvoker = serviceInvoker;
-        listener.interfaceName = interfaceName;
         listener.protocol = Protocol.getInstance(protocol);
+        listener.interfaceName = interfaceName;
+        listener.form = form;
         listener.providerProcessor = providerProcessor;
         return listener;
     }
@@ -73,6 +85,9 @@ public class ProviderNotifyListener implements ClientListener {
 
         List<Sendable> newSenders = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
+            if (!StringUtils.equals(defaultString(form), providerUrl.getForm())) {
+                continue;
+            }
             // Find provider invoker associated with the provider url
             Sendable invoker = findInvokerByProviderUrl(registryUrl, providerUrl);
             if (invoker == null) {

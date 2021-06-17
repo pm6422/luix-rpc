@@ -221,7 +221,7 @@ public class ConsumerStub<T> {
         if (StringUtils.isEmpty(providerAddresses)) {
             // Non-direct registry
             // Pass service provider invoker to listener, listener will update service invoker after provider urls changed
-            ProviderDiscoveryListener listener = ProviderDiscoveryListener.of(invokerInstance, interfaceName, url, providerProcessor);
+            ProviderDiscoveryListener listener = ProviderDiscoveryListener.of(invokerInstance, interfaceName, form, url, providerProcessor);
             listener.subscribe(registryUrls);
             return;
         }
@@ -252,7 +252,7 @@ public class ConsumerStub<T> {
     private void notifyDirectProviderUrls(ProtocolConfig protocolConfig, List<Url> globalRegistryUrls,
                                           ProviderProcessable providerProcessor) {
         // Pass provider service invoker to listener, listener will update service invoker after provider urls changed
-        ProviderNotifyListener listener = ProviderNotifyListener.of(invokerInstance, interfaceName, protocol, providerProcessor);
+        ProviderNotifyListener listener = ProviderNotifyListener.of(invokerInstance, protocol, interfaceName, form, providerProcessor);
 
         for (Url globalRegistryUrl : globalRegistryUrls) {
             List<Url> directProviderUrls = createDirectProviderUrls(protocolConfig);
