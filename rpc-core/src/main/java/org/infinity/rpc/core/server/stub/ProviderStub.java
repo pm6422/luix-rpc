@@ -123,7 +123,7 @@ public class ProviderStub<T> {
     /**
      * Method signature to method level configuration map for the provider class
      */
-    private transient Map<String, MethodConfig> methodConfig    = new HashMap<>();
+    private           Map<String, MethodConfig> methodConfig    = new HashMap<>();
     /**
      * All the methods of the interface class
      */
