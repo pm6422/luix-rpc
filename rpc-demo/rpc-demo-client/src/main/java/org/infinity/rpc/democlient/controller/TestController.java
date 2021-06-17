@@ -40,7 +40,7 @@ public class TestController {
     private AppRestService     appRestService;
     @RpcConsumer
     private AuthorityService   authorityService;
-    @RpcConsumer(providerAddresses = "127.0.0.1:26010", form = "f1")
+    @RpcConsumer(providerAddresses = "127.0.0.1:26010", form = "f2")
     private AppService         appService;
 
     @ApiOperation("test kryo serialization and deserialization")
