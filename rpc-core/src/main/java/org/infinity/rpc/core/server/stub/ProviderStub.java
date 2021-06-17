@@ -1,8 +1,5 @@
 package org.infinity.rpc.core.server.stub;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +13,7 @@ import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.impl.RpcBizException;
+import org.infinity.rpc.core.exception.impl.RpcConfigException;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.Registry;
@@ -31,7 +29,9 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -40,6 +40,7 @@ import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
+import static org.infinity.rpc.core.url.Url.METHOD_CONFIG_PREFIX;
 import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignature;
 
 /**
@@ -243,15 +244,20 @@ public class ProviderStub<T> {
         String asyncInitConn = protocolConfig.getAsyncInitConn() == null ? null : protocolConfig.getAsyncInitConn().toString();
         url.addOption(ASYNC_INIT_CONN, asyncInitConn);
 
-        try {
-            if (MapUtils.isNotEmpty(methodConfig)) {
-                String methodConfigStr = new ObjectMapper()
-                        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                        .writeValueAsString(methodConfig);
-                url.addOption(METHOD_CONFIG, methodConfigStr);
+        if (MapUtils.isNotEmpty(methodConfig)) {
+            for (Map.Entry<String, MethodConfig> entry : methodConfig.entrySet()) {
+                for (Field field : MethodConfig.class.getDeclaredFields()) {
+                    try {
+                        field.setAccessible(true);
+                        if (!Modifier.isStatic(field.getModifiers()) && field.get(entry.getValue()) != null) {
+                            String name = METHOD_CONFIG_PREFIX + entry.getKey() + "." + field.getName();
+                            url.addOption(name, field.get(entry.getValue()).toString());
+                        }
+                    } catch (IllegalAccessException e) {
+                        throw new RpcConfigException("Failed to read method configuration", e);
+                    }
+                }
             }
-        } catch (JsonProcessingException e) {
-            log.error("Failed to convert JSON object", e);
         }
         return url;
     }

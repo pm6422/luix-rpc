@@ -24,5 +24,4 @@ public interface ServiceConstants {
      * 8M bytes
      */
     int    MAX_PAYLOAD_VAL_DEFAULT     = 8 * 1024 * 1024;
-    String METHOD_CONFIG               = "mConfig";
 }

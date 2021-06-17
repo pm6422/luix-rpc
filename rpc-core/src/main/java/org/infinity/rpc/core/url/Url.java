@@ -4,7 +4,6 @@ import lombok.Data;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.impl.RpcConfigException;
 import org.infinity.rpc.core.registry.Registry;
 
@@ -17,13 +16,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.apache.commons.io.IOUtils.DIR_SEPARATOR_UNIX;
 import static org.infinity.rpc.core.constant.ServiceConstants.FORM;
 import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
+import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignature;
 
 /**
  * Url used to represent a provider or client or registry
  */
 @Data
 public final class Url implements Serializable {
-    private static final long                serialVersionUID   = 2970867582138131181L;
+    private static final long                serialVersionUID     = 2970867582138131181L;
+    public static final  String              METHOD_CONFIG_PREFIX = "$.";
     /**
      * URL Pattern
      * <scheme>://<host>:<port>/<path>?<optionKey>=<optionValue>
@@ -32,8 +33,8 @@ public final class Url implements Serializable {
      *
      * <scheme>=infinity|direct
      */
-    private static final String              URL_PATTERN        = "{0}://{1}:{2}/{3}?{4}";
-    private static final String              PROTOCOL_SEPARATOR = "://";
+    private static final String              URL_PATTERN          = "{0}://{1}:{2}/{3}?{4}";
+    private static final String              PROTOCOL_SEPARATOR   = "://";
     /**
      * RPC protocol
      */
@@ -53,12 +54,12 @@ public final class Url implements Serializable {
     /**
      * Extended options
      */
-    private              Map<String, String> options            = new ConcurrentHashMap<>();
+    private              Map<String, String> options              = new ConcurrentHashMap<>();
     /**
      * Extended options which are number types
      * transient fields will be ignored to generate equals() and hashcode() by lombok
      */
-    private transient    Map<String, Number> numOptions         = new ConcurrentHashMap<>();
+    private transient    Map<String, Number> numOptions           = new ConcurrentHashMap<>();
 
     // ◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘◘
     // Constants definitions
@@ -445,13 +446,13 @@ public final class Url implements Serializable {
      * @return value
      */
     public Integer getMethodParameter(String methodName, String methodParameters, String name, int defaultValue) {
-        String key = methodName + "(" + methodParameters + ")." + name;
+        String key = METHOD_CONFIG_PREFIX + getMethodSignature(methodName, methodParameters) + "." + name;
         Number n = getNumOptions().get(key);
         if (n != null) {
             return n.intValue();
         }
         String value = getMethodParameter(methodName, methodParameters, name);
-        if (value == null || value.length() == 0) {
+        if (StringUtils.isEmpty(value)) {
             return defaultValue;
         }
         int i = Integer.parseInt(value);
@@ -460,11 +461,9 @@ public final class Url implements Serializable {
     }
 
     public String getMethodParameter(String methodName, String methodParameters, String name) {
-        String value = getOption(RpcConstants.METHOD_CONFIG_PREFIX + methodName + "(" + methodParameters + ")." + name);
-        if (value == null || value.length() == 0) {
-            return getOption(name);
-        }
-        return value;
+        String key = METHOD_CONFIG_PREFIX + getMethodSignature(methodName, methodParameters) + "." + name;
+        String value = getOption(key);
+        return StringUtils.isEmpty(value) ? getOption(name) : value;
     }
 
     @Override

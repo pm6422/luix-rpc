@@ -30,7 +30,6 @@ public class RpcConstants {
     public static final String  PROXY_JAVASSIST             = "javassist";
     public static final String  FRAMEWORK_NAME              = "motan";
     public static final String  PROTOCOL_SWITCHER_PREFIX    = "protocol:";
-    public static final String  METHOD_CONFIG_PREFIX        = "methodconfig.";
     public static final int     MILLS                       = 1;
     public static final int     SECOND_MILLS                = 1000;
     public static final int     MINUTE_MILLS                = 60 * SECOND_MILLS;
