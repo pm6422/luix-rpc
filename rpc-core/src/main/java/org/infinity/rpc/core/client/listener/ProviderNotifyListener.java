@@ -132,6 +132,8 @@ public class ProviderNotifyListener implements ClientListener {
 
     @Override
     public String toString() {
-        return ProviderNotifyListener.class.getSimpleName().concat(":").concat(interfaceName).concat(defaultString(form));
+        return ProviderNotifyListener.class.getSimpleName()
+                .concat(":").concat(interfaceName)
+                .concat(":").concat(defaultString(form));
     }
 }

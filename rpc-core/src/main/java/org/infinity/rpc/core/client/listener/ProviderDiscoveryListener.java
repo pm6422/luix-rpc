@@ -11,6 +11,8 @@ import org.infinity.rpc.utilities.concurrent.ThreadSafe;
 
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
 /**
  * todo: see ClusterSupport
  * Listener used to subscribe providers change event,
@@ -70,6 +72,8 @@ public class ProviderDiscoveryListener extends ProviderNotifyListener {
 
     @Override
     public String toString() {
-        return ProviderDiscoveryListener.class.getSimpleName().concat(":").concat(interfaceName);
+        return ProviderDiscoveryListener.class.getSimpleName()
+                .concat(":").concat(interfaceName)
+                .concat(":").concat(defaultString(form));
     }
 }

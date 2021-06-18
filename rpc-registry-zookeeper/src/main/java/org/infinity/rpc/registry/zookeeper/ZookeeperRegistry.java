@@ -327,7 +327,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Override
     protected List<Url> discoverActiveProviders(Url consumerUrl) {
         try {
-            return readUrls(zkClient, consumerUrl.getPath(), StatusDir.ACTIVE);
+            return readUrls(zkClient, consumerUrl.getPath(), consumerUrl.getForm(), StatusDir.ACTIVE);
         } catch (Throwable e) {
             String msg = String.format("Failed to discover provider [%s] from registry [%s] with the error: %s",
                     consumerUrl, getRegistryUrl(), e.getMessage());
