@@ -58,6 +58,38 @@ public abstract class ZookeeperUtils {
      *
      * @param zkClient      zk client
      * @param statusDirPath status directory path, e.g. /infinity/default/org.infinity.app.common.service.AppService/active
+     * @param form
+     * @param fileNames     address file names list, e.g. 172.25.11.111:26010,172.25.11.222:26010
+     * @return provider urls
+     */
+    public static List<Url> readUrls(ZkClient zkClient, String statusDirPath, String form, List<String> fileNames) {
+        if (CollectionUtils.isEmpty(fileNames)) {
+            return Collections.emptyList();
+        }
+        List<Url> urls = new ArrayList<>();
+        for (String fileName : fileNames) {
+            String fullPath = null;
+            try {
+                fullPath = statusDirPath + DIR_SEPARATOR_UNIX + fileName;
+                String fileData = zkClient.readData(fullPath, true);
+                if (StringUtils.isNotBlank(fileData)) {
+                    Url url = Url.valueOf(fileData);
+                    if (StringUtils.equals(form, url.getForm())) {
+                        urls.add(Url.valueOf(fileData));
+                    }
+                }
+            } catch (Exception e) {
+                log.warn(MessageFormat.format("Failed to read the file or read illegal file data for the path [{0}]", fullPath), e);
+            }
+        }
+        return urls;
+    }
+
+    /**
+     * Read urls from data of address files
+     *
+     * @param zkClient      zk client
+     * @param statusDirPath status directory path, e.g. /infinity/default/org.infinity.app.common.service.AppService/active
      * @param fileNames     address file names list, e.g. 172.25.11.111:26010,172.25.11.222:26010
      * @return provider urls
      */
