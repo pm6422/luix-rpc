@@ -114,10 +114,8 @@ public class ProviderNotifyListener implements ClientListener {
      * @param inactiveRegistryUrl inactive registry url
      */
     private synchronized void removeInactiveRegistry(Url inactiveRegistryUrl) {
-        if (sendersPerRegistryUrl.size() > 1) {
-            sendersPerRegistryUrl.remove(inactiveRegistryUrl);
-            refreshSenders();
-        }
+        sendersPerRegistryUrl.remove(inactiveRegistryUrl);
+        refreshSenders();
     }
 
     private synchronized void refreshSenders() {

@@ -29,9 +29,6 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
      */
     @Override
     public synchronized void refresh(List<Sendable> newSenders) {
-        if (CollectionUtils.isEmpty(newSenders)) {
-            return;
-        }
         List<Sendable> oldSenders = this.requestSenders;
         // Assign new values
         this.requestSenders = newSenders;
