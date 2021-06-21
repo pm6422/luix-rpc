@@ -11,7 +11,7 @@ public abstract class StatisticsUtils {
         log.info("Memory usage: {} ", calculateMemory());
     }
 
-    public static String calculateMemory() {
+    private static String calculateMemory() {
         Runtime runtime = Runtime.getRuntime();
         double totalMemory = (double) runtime.totalMemory() / (1024 * 1024);
         double freeMemory = (double) runtime.freeMemory() / (1024 * 1024);
