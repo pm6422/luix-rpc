@@ -15,7 +15,9 @@ import org.infinity.rpc.core.server.stub.MethodConfig;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.server.stub.ProviderStubHolder;
 import org.infinity.rpc.core.switcher.impl.SwitcherHolder;
+import org.infinity.rpc.core.thread.ScheduledThreadPool;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.core.utils.StatisticsUtils;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -32,6 +34,8 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_NONE;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.infinity.rpc.core.server.stub.ProviderStub.buildProviderStubBeanName;
+import static org.infinity.rpc.core.thread.ScheduledThreadPool.CALCULATE_MEMORY_INTERVAL;
+import static org.infinity.rpc.core.thread.ScheduledThreadPool.CALCULATE_MEMORY_THREAD_POOL;
 import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignature;
 import static org.infinity.rpc.spring.boot.utils.ProxyUtils.getTargetClass;
 
@@ -89,6 +93,8 @@ public class RpcLifecycle {
         registerBuildInProviderStubs(beanFactory, infinityProperties);
         publish(infinityProperties);
         subscribe(infinityProperties);
+        ScheduledThreadPool.schedulePeriodicalTask(CALCULATE_MEMORY_THREAD_POOL, CALCULATE_MEMORY_INTERVAL,
+                StatisticsUtils::logMemoryStatistic);
         log.info("Started the RPC server");
     }
 

@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class ScheduledThreadPool {
     public static final String RETRY_THREAD_POOL                      = "RETRY_THREAD_POOL";
+    public static final String CALCULATE_MEMORY_THREAD_POOL           = "CALCULATE_MEMORY_THREAD_POOL";
+    public static final int    CALCULATE_MEMORY_INTERVAL              = 60000;
     public static final String CHECK_HEALTH_THREAD_POOL               = "CHECK_HEALTH_THREAD_POOL";
     public static final int    CHECK_HEALTH_INTERVAL                  = 500;
     public static final String DESTROY_SENDER_THREAD_POOL             = "DESTROY_SENDER_THREAD_POOL";
@@ -23,6 +25,7 @@ public abstract class ScheduledThreadPool {
 
     static {
         THREAD_POOL_MAP.put(RETRY_THREAD_POOL, Executors.newScheduledThreadPool(1));
+        THREAD_POOL_MAP.put(CALCULATE_MEMORY_THREAD_POOL, Executors.newScheduledThreadPool(1));
         THREAD_POOL_MAP.put(CHECK_HEALTH_THREAD_POOL, Executors.newScheduledThreadPool(1));
         THREAD_POOL_MAP.put(DESTROY_SENDER_THREAD_POOL, Executors.newScheduledThreadPool(1));
         THREAD_POOL_MAP.put(DESTROY_NETTY_TIMEOUT_TASK_THREAD_POOL, Executors.newScheduledThreadPool(1));
