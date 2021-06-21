@@ -43,7 +43,6 @@ initialization performed by Boot
     <logger name="sun.rmi" level="WARN"/>
     <logger name="liquibase" level="WARN"/>
     <logger name="sun.rmi.transport" level="WARN"/>
-    <logger name="com.alibaba.dubbo.common.extension.ExtensionLoader" level="INFO"/>
     <logger name="org.mybatis.spring.SqlSessionUtils" level="INFO"/>
     <logger name="org.mybatis.spring.mapper.ClassPathMapperScanner" level="INFO"/>
     <logger name="org.mongodb.driver" level="WARN"/>
