@@ -1,4 +1,4 @@
-package org.infinity.rpc.utilities.statistics.access;
+package org.infinity.rpc.utilities.statistics;
 
 import com.codahale.metrics.MetricRegistry;
 

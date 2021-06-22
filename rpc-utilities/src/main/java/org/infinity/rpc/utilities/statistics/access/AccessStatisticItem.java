@@ -2,6 +2,7 @@ package org.infinity.rpc.utilities.statistics.access;
 
 
 import com.codahale.metrics.Histogram;
+import org.infinity.rpc.utilities.statistics.CachedMetricsFactory;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -9,16 +10,16 @@ import static org.infinity.rpc.utilities.statistics.StatisticsUtils.ACCESS_STATI
 import static org.infinity.rpc.utilities.statistics.StatisticsUtils.HISTOGRAM_NAME;
 
 public class AccessStatisticItem {
-    private String          name;
-    private int             currentIndex;
-    private AtomicInteger[] costTimes;
-    private AtomicInteger[] bizProcessTimes;
-    private AtomicInteger[] totalCounter;
-    private AtomicInteger[] slowCounter;
-    private AtomicInteger[] bizExceptionCounter;
-    private AtomicInteger[] otherExceptionCounter;
-    private Histogram       histogram;
-    private int             length;
+    private final String          name;
+    private final AtomicInteger[] costTimes;
+    private final AtomicInteger[] bizProcessTimes;
+    private final AtomicInteger[] totalCounter;
+    private final AtomicInteger[] slowCounter;
+    private final AtomicInteger[] bizExceptionCounter;
+    private final AtomicInteger[] otherExceptionCounter;
+    private final Histogram       histogram;
+    private final int             length;
+    private       int             currentIndex;
 
     public AccessStatisticItem(String name, long currentTimeMillis) {
         this(name, currentTimeMillis, ACCESS_STATISTIC_INTERVAL * 2);
@@ -26,35 +27,32 @@ public class AccessStatisticItem {
 
     public AccessStatisticItem(String name, long currentTimeMillis, int length) {
         this.name = name;
-        this.costTimes = initAtomicIntegerArr(length);
-        this.bizProcessTimes = initAtomicIntegerArr(length);
-        this.totalCounter = initAtomicIntegerArr(length);
-        this.slowCounter = initAtomicIntegerArr(length);
-        this.bizExceptionCounter = initAtomicIntegerArr(length);
-        this.otherExceptionCounter = initAtomicIntegerArr(length);
+        this.costTimes = initAtomicIntegerArray(length);
+        this.bizProcessTimes = initAtomicIntegerArray(length);
+        this.totalCounter = initAtomicIntegerArray(length);
+        this.slowCounter = initAtomicIntegerArray(length);
+        this.bizExceptionCounter = initAtomicIntegerArray(length);
+        this.otherExceptionCounter = initAtomicIntegerArray(length);
         this.length = length;
         this.currentIndex = getIndex(currentTimeMillis, length);
         this.histogram = CachedMetricsFactory.getRegistryInstance(name).histogram(HISTOGRAM_NAME);
     }
 
-    private AtomicInteger[] initAtomicIntegerArr(int size) {
-        AtomicInteger[] arrs = new AtomicInteger[size];
-        for (int i = 0; i < arrs.length; i++) {
-            arrs[i] = new AtomicInteger(0);
+    private AtomicInteger[] initAtomicIntegerArray(int size) {
+        AtomicInteger[] values = new AtomicInteger[size];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = new AtomicInteger(0);
         }
-
-        return arrs;
+        return values;
     }
 
     /**
-     * currentTimeMillis: 此刻记录的时间 (ms) costTimeMillis: 这次操作的耗时 (ms)
-     *
-     * @param currentTimeMillis
-     * @param costTimeMillis
-     * @param bizProcessTime
-     * @param accessStatus
+     * @param currentTimeMillis current time in milliseconds
+     * @param costTimeMillis    cost time in milliseconds
+     * @param bizProcessTime    business process time
+     * @param statisticType     statistic type
      */
-    public void statistic(long currentTimeMillis, long costTimeMillis, long bizProcessTime, int slowCost, AccessStatus accessStatus) {
+    public void statistic(long currentTimeMillis, long costTimeMillis, long bizProcessTime, int slowCost, StatisticType statisticType) {
         int tempIndex = getIndex(currentTimeMillis, length);
 
         if (currentIndex != tempIndex) {
@@ -75,9 +73,9 @@ public class AccessStatisticItem {
             slowCounter[currentIndex].incrementAndGet();
         }
 
-        if (accessStatus == AccessStatus.BIZ_EXCEPTION) {
+        if (statisticType == StatisticType.BIZ_EXCEPTION) {
             bizExceptionCounter[currentIndex].incrementAndGet();
-        } else if (accessStatus == AccessStatus.OTHER_EXCEPTION) {
+        } else if (statisticType == StatisticType.OTHER_EXCEPTION) {
             otherExceptionCounter[currentIndex].incrementAndGet();
         }
         histogram.update(costTimeMillis);
@@ -100,15 +98,13 @@ public class AccessStatisticItem {
         otherExceptionCounter[index].set(0);
     }
 
-    public AccessStatisticResult getStatisticResult(long currentTimeMillis, int peroidSecond) {
+    public AccessStatisticResult getStatisticResult(long currentTimeMillis, int interval) {
         long currentTimeSecond = currentTimeMillis / 1000;
-        currentTimeSecond--; // 当前这秒还没完全结束，因此数据不全，统计从上一秒开始，往前推移peroidSecond
-
+        currentTimeSecond--; // 当前这秒还没完全结束，因此数据不全，统计从上一秒开始，往前推移interval
         int startIndex = getIndex(currentTimeSecond * 1000, length);
-
         AccessStatisticResult result = new AccessStatisticResult();
 
-        for (int i = 0; i < peroidSecond; i++) {
+        for (int i = 0; i < interval; i++) {
             int currentIndex = (startIndex - i + length) % length;
 
             result.costTime += costTimes[currentIndex].get();
@@ -117,28 +113,23 @@ public class AccessStatisticItem {
             result.slowCount += slowCounter[currentIndex].get();
             result.bizExceptionCount += bizExceptionCounter[currentIndex].get();
             result.otherExceptionCount += otherExceptionCounter[currentIndex].get();
-
             if (totalCounter[currentIndex].get() > result.maxCount) {
                 result.maxCount = totalCounter[currentIndex].get();
             } else if (totalCounter[currentIndex].get() < result.minCount || result.minCount == -1) {
                 result.minCount = totalCounter[currentIndex].get();
             }
         }
-
         return result;
     }
 
-    void clearStatistic(long currentTimeMillis, int peroidSecond) {
+    public void clearStatistic(long currentTimeMillis, int interval) {
         long currentTimeSecond = currentTimeMillis / 1000;
-        currentTimeSecond--; // 当前这秒还没完全结束，因此数据不全，统计从上一秒开始，往前推移peroidSecond
+        currentTimeSecond--; // 当前这秒还没完全结束，因此数据不全，统计从上一秒开始，往前推移interval
 
         int startIndex = getIndex(currentTimeSecond * 1000, length);
-
-        for (int i = 0; i < peroidSecond; i++) {
+        for (int i = 0; i < interval; i++) {
             int currentIndex = (startIndex - i + length) % length;
-
             reset(currentIndex);
         }
     }
-
 }

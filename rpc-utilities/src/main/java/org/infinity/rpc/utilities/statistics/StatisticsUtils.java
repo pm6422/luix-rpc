@@ -3,9 +3,10 @@ package org.infinity.rpc.utilities.statistics;
 import com.codahale.metrics.MetricRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.utilities.statistics.access.AccessStatisticItem;
 import org.infinity.rpc.utilities.statistics.access.AccessStatisticResult;
-import org.infinity.rpc.utilities.statistics.access.AccessStatus;
+import org.infinity.rpc.utilities.statistics.access.StatisticType;
 
 import java.text.DecimalFormat;
 import java.util.Map;
@@ -18,9 +19,9 @@ public abstract class StatisticsUtils {
      * Access statistic interval in seconds
      */
     public static final  int                                        ACCESS_STATISTIC_INTERVAL = 30;
-    public static        String                                     SEPARATE                  = "\\|";
-    public static final  String                                     HISTOGRAM_NAME    = MetricRegistry.name(AccessStatisticItem.class, "costTimeMillis");
-    private static final ConcurrentMap<String, AccessStatisticItem> ACCESS_STATISTICS = new ConcurrentHashMap<>();
+    public static        String                                     DELIMITER                 = "\\|";
+    public static final  String                                     HISTOGRAM_NAME            = MetricRegistry.name(AccessStatisticItem.class, "costTimeMillis");
+    private static final ConcurrentMap<String, AccessStatisticItem> ACCESS_STATISTICS         = new ConcurrentHashMap<>();
 
     public static String getMemoryStatistic() {
         Runtime runtime = Runtime.getRuntime();
@@ -47,39 +48,37 @@ public abstract class StatisticsUtils {
                                           long costTimeMillis,
                                           long bizProcessTime,
                                           int slowThreshold,
-                                          AccessStatus accessStatus) {
+                                          StatisticType statisticType) {
         if (StringUtils.isEmpty(name)) {
             return;
         }
         try {
             AccessStatisticItem item = getStatisticItem(name + "|" + application + "|" + module, currentTimeMillis);
-            item.statistic(currentTimeMillis, costTimeMillis, bizProcessTime, slowThreshold, accessStatus);
+            item.statistic(currentTimeMillis, costTimeMillis, bizProcessTime, slowThreshold, statisticType);
         } catch (Exception e) {
             log.error("Failed to calculate access statistic", e);
         }
     }
 
-    private static AccessStatisticItem getStatisticItem(String name, long currentTime) {
+    private static AccessStatisticItem getStatisticItem(String name, long currentTimeMillis) {
         AccessStatisticItem item = ACCESS_STATISTICS.get(name);
         if (item == null) {
-            item = ACCESS_STATISTICS.putIfAbsent(name, new AccessStatisticItem(name, currentTime));
+            item = ACCESS_STATISTICS.putIfAbsent(name, new AccessStatisticItem(name, currentTimeMillis));
         }
         return item;
     }
 
     public static ConcurrentMap<String, AccessStatisticResult> getTotalAccessStatistic(int interval) {
-        if (interval > ACCESS_STATISTIC_INTERVAL) {
-            throw new RuntimeException("Interval must NOT be greater than " + ACCESS_STATISTIC_INTERVAL);
-        }
-        long currentTimeMillis = System.currentTimeMillis();
-        ConcurrentMap<String, AccessStatisticResult> totalResults = new ConcurrentHashMap<>();
+        Validate.isTrue(interval <= ACCESS_STATISTIC_INTERVAL,
+                "Interval must NOT be greater than " + ACCESS_STATISTIC_INTERVAL);
 
+        ConcurrentMap<String, AccessStatisticResult> totalResults = new ConcurrentHashMap<>();
         for (Map.Entry<String, AccessStatisticItem> entry : ACCESS_STATISTICS.entrySet()) {
             AccessStatisticItem item = entry.getValue();
-            AccessStatisticResult result = item.getStatisticResult(currentTimeMillis, ACCESS_STATISTIC_INTERVAL);
+            AccessStatisticResult result = item.getStatisticResult(System.currentTimeMillis(), ACCESS_STATISTIC_INTERVAL);
 
             String key = entry.getKey();
-            String[] keys = key.split(SEPARATE);
+            String[] keys = key.split(DELIMITER);
             if (keys.length != 3) {
                 continue;
             }
