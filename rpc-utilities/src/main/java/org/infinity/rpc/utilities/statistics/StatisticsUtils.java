@@ -3,7 +3,6 @@ package org.infinity.rpc.utilities.statistics;
 import com.codahale.metrics.MetricRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.utilities.statistics.access.AccessStatisticItem;
 import org.infinity.rpc.utilities.statistics.access.AccessStatisticResult;
 import org.infinity.rpc.utilities.statistics.access.StatisticType;
@@ -41,14 +40,9 @@ public abstract class StatisticsUtils {
                 percentageFormat.format(usedPercentage) + "%) used";
     }
 
-    public static void getAccessStatistic(String name,
-                                          String application,
-                                          String module,
-                                          long currentTimeMillis,
-                                          long costTimeMillis,
-                                          long bizProcessTime,
-                                          int slowThreshold,
-                                          StatisticType statisticType) {
+    public static void logAccess(String name, String application, String module,
+                                 long currentTimeMillis, long costTimeMillis, long bizProcessTime, int slowThreshold,
+                                 StatisticType statisticType) {
         if (StringUtils.isEmpty(name)) {
             return;
         }
@@ -56,7 +50,7 @@ public abstract class StatisticsUtils {
             AccessStatisticItem item = getStatisticItem(name + "|" + application + "|" + module, currentTimeMillis);
             item.statistic(currentTimeMillis, costTimeMillis, bizProcessTime, slowThreshold, statisticType);
         } catch (Exception e) {
-            log.error("Failed to calculate access statistic!", e);
+            log.error("Failed to log access!", e);
         }
     }
 
@@ -68,10 +62,7 @@ public abstract class StatisticsUtils {
         return item;
     }
 
-    public static ConcurrentMap<String, AccessStatisticResult> getTotalAccessStatistic(int interval) {
-        Validate.isTrue(interval <= ACCESS_STATISTIC_INTERVAL,
-                "Interval must NOT be greater than " + ACCESS_STATISTIC_INTERVAL);
-
+    public static ConcurrentMap<String, AccessStatisticResult> getTotalAccessStatistic() {
         ConcurrentMap<String, AccessStatisticResult> totalResults = new ConcurrentHashMap<>();
         for (Map.Entry<String, AccessStatisticItem> entry : ACCESS_STATISTICS.entrySet()) {
             AccessStatisticItem item = entry.getValue();
