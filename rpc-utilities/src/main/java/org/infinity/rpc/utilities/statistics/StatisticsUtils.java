@@ -20,7 +20,7 @@ public abstract class StatisticsUtils {
      */
     public static final  int                                        ACCESS_STATISTIC_INTERVAL = 30;
     public static        String                                     DELIMITER                 = "\\|";
-    public static final  String                                     ELAPSED_TIME_HISTOGRAM    = MetricRegistry.name(AccessStatisticItem.class, "elapsedTimeMillis");
+    public static final  String                                     ELAPSED_TIME_HISTOGRAM    = MetricRegistry.name(AccessStatisticItem.class, "elapsedTime");
     private static final ConcurrentMap<String, AccessStatisticItem> ACCESS_STATISTICS         = new ConcurrentHashMap<>();
 
     public static String getMemoryStatistic() {
