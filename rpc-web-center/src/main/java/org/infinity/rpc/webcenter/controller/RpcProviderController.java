@@ -11,14 +11,9 @@ import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.stub.MethodData;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
-import org.infinity.rpc.webcenter.domain.RpcApplication;
-import org.infinity.rpc.webcenter.domain.RpcConsumer;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
 import org.infinity.rpc.webcenter.dto.MethodInvocation;
-import org.infinity.rpc.webcenter.dto.RegistryDTO;
 import org.infinity.rpc.webcenter.service.RegistryService;
-import org.infinity.rpc.webcenter.service.RpcApplicationService;
-import org.infinity.rpc.webcenter.service.RpcConsumerService;
 import org.infinity.rpc.webcenter.service.RpcProviderService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,46 +30,17 @@ import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeade
 
 @RestController
 @Slf4j
-public class ServiceDiscoveryController {
+public class RpcProviderController {
 
     @Resource
-    private InfinityProperties    infinityProperties;
+    private InfinityProperties infinityProperties;
     @Resource
-    private RegistryService       registryService;
+    private RegistryService    registryService;
     @Resource
-    private RpcProviderService    rpcProviderService;
-    @Resource
-    private RpcConsumerService    rpcConsumerService;
-    @Resource
-    private RpcApplicationService rpcApplicationService;
-
-    @ApiOperation("find all registries")
-    @GetMapping("api/service-discovery/registries")
-    public ResponseEntity<List<RegistryDTO>> findRegistries() {
-        return ResponseEntity.ok(registryService.getRegistries());
-    }
-
-    @ApiOperation("find all applications")
-    @GetMapping("api/service-discovery/applications/all")
-    public ResponseEntity<List<String>> findApplications(
-            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "active flag") @RequestParam(value = "active", required = false) Boolean active) {
-        return ResponseEntity.ok(rpcProviderService.findDistinctApplications(registryIdentity, active));
-    }
-
-    @ApiOperation("find application list")
-    @GetMapping("api/service-discovery/applications")
-    public ResponseEntity<List<RpcApplication>> findApplications(
-            Pageable pageable,
-            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "application name(fuzzy query)") @RequestParam(value = "name", required = false) String name,
-            @ApiParam(value = "active flag") @RequestParam(value = "active", required = false) Boolean active) {
-        Page<RpcApplication> list = rpcApplicationService.find(pageable, registryIdentity, name, active);
-        return ResponseEntity.ok().headers(generatePageHeaders(list)).body(list.getContent());
-    }
+    private RpcProviderService rpcProviderService;
 
     @ApiOperation("find provider list")
-    @GetMapping("/api/service-discovery/providers")
+    @GetMapping("/api/rpc-provider/providers")
     public ResponseEntity<List<RpcProvider>> findProviders(
             Pageable pageable,
             @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
@@ -85,20 +51,8 @@ public class ServiceDiscoveryController {
         return ResponseEntity.ok().headers(generatePageHeaders(list)).body(list.getContent());
     }
 
-    @ApiOperation("find consumer list")
-    @GetMapping("/api/service-discovery/consumers")
-    public ResponseEntity<List<RpcConsumer>> findConsumers(
-            Pageable pageable,
-            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "application name") @RequestParam(value = "application", required = false) String application,
-            @ApiParam(value = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName,
-            @ApiParam(value = "active flag") @RequestParam(value = "active", required = false) Boolean active) {
-        Page<RpcConsumer> list = rpcConsumerService.find(pageable, registryIdentity, application, interfaceName, active);
-        return ResponseEntity.ok().headers(generatePageHeaders(list)).body(list.getContent());
-    }
-
     @ApiOperation("find all methods of provider")
-    @GetMapping("/api/service-discovery/provider/methods")
+    @GetMapping("/api/rpc-provider/methods")
     public ResponseEntity<List<MethodData>> findMethods(
             @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
@@ -118,7 +72,7 @@ public class ServiceDiscoveryController {
     }
 
     @ApiOperation("invoke provider method")
-    @PostMapping("/api/service-discovery/provider/invoke")
+    @PostMapping("/api/rpc-provider/invoke")
     public ResponseEntity<Object> invoke(
             @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrl,
@@ -131,7 +85,7 @@ public class ServiceDiscoveryController {
     }
 
     @ApiOperation(value = "check health of provider", notes = "There is no service discovery in the direct connection mode, even the inactive provider can be called successfully")
-    @GetMapping("/api/service-discovery/provider/health")
+    @GetMapping("/api/rpc-provider/health")
     public ResponseEntity<String> health(@ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrl) {
         Url url = Url.valueOf(providerUrl);
         ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(), infinityProperties.getApplication(),
@@ -149,7 +103,7 @@ public class ServiceDiscoveryController {
     }
 
     @ApiOperation("activate provider")
-    @PutMapping("/api/service-discovery/provider/activate")
+    @PutMapping("/api/rpc-provider/activate")
     public ResponseEntity<Void> activate(
             @ApiParam(value = "registry url identity", defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrl) {
@@ -162,7 +116,7 @@ public class ServiceDiscoveryController {
     }
 
     @ApiOperation("deactivate provider")
-    @PutMapping("/api/service-discovery/provider/deactivate")
+    @PutMapping("/api/rpc-provider/deactivate")
     public ResponseEntity<Void> deactivate(
             @ApiParam(value = "registry url identity", defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrl) {
