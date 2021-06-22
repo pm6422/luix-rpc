@@ -7,24 +7,20 @@ import java.text.DecimalFormat;
 @Slf4j
 public abstract class StatisticsUtils {
 
-    public static void logMemoryStatistic() {
-        log.info("Memory usage: {} ", calculateMemory());
-    }
-
-    private static String calculateMemory() {
+    public static String calculateMemory() {
         Runtime runtime = Runtime.getRuntime();
         double totalMemory = (double) runtime.totalMemory() / (1024 * 1024);
         double freeMemory = (double) runtime.freeMemory() / (1024 * 1024);
         double maxMemory = (double) runtime.maxMemory() / (1024 * 1024);
 
         double usedMemory = totalMemory - freeMemory;
-        double percentFree = ((maxMemory - usedMemory) / maxMemory) * 100.0;
-        double percentUsed = 100 - percentFree;
+        double freePercentage = ((maxMemory - usedMemory) / maxMemory) * 100.0;
+        double usedPercentage = 100 - freePercentage;
 
         DecimalFormat storageFormat = new DecimalFormat("#0.00");
         DecimalFormat percentageFormat = new DecimalFormat("#0.0");
 
         return storageFormat.format(usedMemory) + "MB of " + storageFormat.format(maxMemory) + " MB (" +
-                percentageFormat.format(percentUsed) + "%) used";
+                percentageFormat.format(usedPercentage) + "%) used";
     }
 }
