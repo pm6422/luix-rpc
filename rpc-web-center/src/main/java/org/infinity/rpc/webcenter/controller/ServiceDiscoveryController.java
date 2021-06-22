@@ -16,10 +16,10 @@ import org.infinity.rpc.webcenter.domain.RpcConsumer;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
 import org.infinity.rpc.webcenter.dto.MethodInvocation;
 import org.infinity.rpc.webcenter.dto.RegistryDTO;
+import org.infinity.rpc.webcenter.service.RegistryService;
 import org.infinity.rpc.webcenter.service.RpcApplicationService;
 import org.infinity.rpc.webcenter.service.RpcConsumerService;
 import org.infinity.rpc.webcenter.service.RpcProviderService;
-import org.infinity.rpc.webcenter.service.RegistryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -38,9 +38,9 @@ import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeade
 public class ServiceDiscoveryController {
 
     @Resource
-    private InfinityProperties infinityProperties;
+    private InfinityProperties    infinityProperties;
     @Resource
-    private RegistryService    registryService;
+    private RegistryService       registryService;
     @Resource
     private RpcProviderService    rpcProviderService;
     @Resource
