@@ -2,8 +2,8 @@ package org.infinity.rpc.webcenter.controller;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.webcenter.dto.RegistryDTO;
-import org.infinity.rpc.webcenter.service.RegistryService;
+import org.infinity.rpc.webcenter.dto.RpcRegistryDTO;
+import org.infinity.rpc.webcenter.service.RpcRegistryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,11 +16,11 @@ import java.util.List;
 public class RpcRegistryController {
 
     @Resource
-    private RegistryService registryService;
+    private RpcRegistryService rpcRegistryService;
 
     @ApiOperation("find all registries")
     @GetMapping("api/rpc-registry/registries")
-    public ResponseEntity<List<RegistryDTO>> findRegistries() {
-        return ResponseEntity.ok(registryService.getRegistries());
+    public ResponseEntity<List<RpcRegistryDTO>> findRegistries() {
+        return ResponseEntity.ok(rpcRegistryService.getRegistries());
     }
 }

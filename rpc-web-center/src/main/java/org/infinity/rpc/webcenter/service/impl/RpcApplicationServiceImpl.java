@@ -16,7 +16,7 @@ import org.infinity.rpc.webcenter.repository.RpcConsumerRepository;
 import org.infinity.rpc.webcenter.repository.RpcProviderRepository;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.service.RpcApplicationService;
-import org.infinity.rpc.webcenter.service.RegistryService;
+import org.infinity.rpc.webcenter.service.RpcRegistryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.*;
@@ -76,8 +76,8 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
 
     @Override
     public RpcApplication remoteQueryApplication(Url registryUrl, Url url) {
-        RegistryService registryService = applicationContext.getBean(RegistryService.class);
-        RegistryConfig registryConfig = registryService.findRegistryConfig(registryUrl.getIdentity());
+        RpcRegistryService rpcRegistryService = applicationContext.getBean(RpcRegistryService.class);
+        RegistryConfig registryConfig = rpcRegistryService.findRegistryConfig(registryUrl.getIdentity());
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
 
         ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),

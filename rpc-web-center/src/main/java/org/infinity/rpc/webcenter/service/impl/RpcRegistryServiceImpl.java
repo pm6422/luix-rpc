@@ -11,8 +11,8 @@ import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.server.listener.ConsumerProcessable;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
-import org.infinity.rpc.webcenter.dto.RegistryDTO;
-import org.infinity.rpc.webcenter.service.RegistryService;
+import org.infinity.rpc.webcenter.dto.RpcRegistryDTO;
+import org.infinity.rpc.webcenter.service.RpcRegistryService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
@@ -29,9 +29,9 @@ import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
 
 @Service
 @Slf4j
-public class RegistryServiceImpl implements RegistryService, ApplicationRunner {
+public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRunner {
     private static final Map<String, RegistryConfig> REGISTRY_CONFIG_MAP = new ConcurrentHashMap<>();
-    private static final List<RegistryDTO>           REGISTRIES          = new ArrayList<>();
+    private static final List<RpcRegistryDTO>        REGISTRIES          = new ArrayList<>();
     @Resource
     private              InfinityProperties          infinityProperties;
     @Resource
@@ -54,7 +54,7 @@ public class RegistryServiceImpl implements RegistryService, ApplicationRunner {
         try {
             infinityProperties.getRegistryList().forEach(registryConfig -> {
                 REGISTRY_CONFIG_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig);
-                REGISTRIES.add(new RegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
+                REGISTRIES.add(new RpcRegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
                 registryConfig.getRegistryImpl().getAllProviderPaths().forEach(interfaceName -> {
                     createConsumerStub(interfaceName, registryConfig, providerProcessService, null, null);
                     registryConfig.getRegistryImpl().subscribeConsumerListener(interfaceName, consumerProcessService);
@@ -93,7 +93,7 @@ public class RegistryServiceImpl implements RegistryService, ApplicationRunner {
     }
 
     @Override
-    public List<RegistryDTO> getRegistries() {
+    public List<RpcRegistryDTO> getRegistries() {
         return REGISTRIES;
     }
 

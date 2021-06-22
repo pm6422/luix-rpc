@@ -10,15 +10,15 @@ import java.util.List;
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 
 @Data
-public class ProviderDTO {
+public class RpcProviderDTO {
     private String            name;
     private String            app;
     private String            activatedTime;
     private List<AddressInfo> activeProviders;
     private List<AddressInfo> inactiveProviders;
 
-    public static ProviderDTO of(String name, List<AddressInfo> activeProviders, List<AddressInfo> inactiveProviders) {
-        ProviderDTO dto = new ProviderDTO();
+    public static RpcProviderDTO of(String name, List<AddressInfo> activeProviders, List<AddressInfo> inactiveProviders) {
+        RpcProviderDTO dto = new RpcProviderDTO();
         dto.setName(name);
         dto.setActiveProviders(activeProviders);
         dto.setInactiveProviders(inactiveProviders);

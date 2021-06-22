@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistryDTO implements Serializable {
+public class RpcRegistryDTO implements Serializable {
     private static final long serialVersionUID = 1617014195662314914L;
 
     @ApiModelProperty(value = "注册中心类型")

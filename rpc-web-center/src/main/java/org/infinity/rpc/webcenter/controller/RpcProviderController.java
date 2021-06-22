@@ -13,7 +13,7 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
 import org.infinity.rpc.webcenter.dto.MethodInvocation;
-import org.infinity.rpc.webcenter.service.RegistryService;
+import org.infinity.rpc.webcenter.service.RpcRegistryService;
 import org.infinity.rpc.webcenter.service.RpcProviderService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +35,7 @@ public class RpcProviderController {
     @Resource
     private InfinityProperties infinityProperties;
     @Resource
-    private RegistryService    registryService;
+    private RpcRegistryService rpcRegistryService;
     @Resource
     private RpcProviderService rpcProviderService;
 
@@ -58,7 +58,7 @@ public class RpcProviderController {
             @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
         ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
-                infinityProperties.getApplication(), registryService.findRegistryConfig(registryIdentity),
+                infinityProperties.getApplication(), rpcRegistryService.findRegistryConfig(registryIdentity),
                 infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
                 null, providerUrl.getAddress(), null, null, 10000, null);
 
@@ -77,7 +77,7 @@ public class RpcProviderController {
             @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrl,
             @ApiParam(value = "argument", required = true) @RequestBody MethodInvocation data) {
-        ConsumerStub<?> consumerStub = registryService.getConsumerStub(registryIdentity, Url.valueOf(providerUrl));
+        ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(registryIdentity, Url.valueOf(providerUrl));
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Object result = invocationHandler.invoke(data.getMethodName(), data.getMethodParamTypes(), data.getArgs());
@@ -110,7 +110,7 @@ public class RpcProviderController {
         if (StringUtils.isEmpty(registryIdentity)) {
             infinityProperties.getRegistryList().forEach(config -> config.getRegistryImpl().activate(Url.valueOf(providerUrl)));
         } else {
-            registryService.findRegistry(registryIdentity).activate(Url.valueOf(providerUrl));
+            rpcRegistryService.findRegistry(registryIdentity).activate(Url.valueOf(providerUrl));
         }
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -123,7 +123,7 @@ public class RpcProviderController {
         if (StringUtils.isEmpty(registryIdentity)) {
             infinityProperties.getRegistryList().forEach(config -> config.getRegistryImpl().deactivate(Url.valueOf(providerUrl)));
         } else {
-            registryService.findRegistry(registryIdentity).deactivate(Url.valueOf(providerUrl));
+            rpcRegistryService.findRegistry(registryIdentity).deactivate(Url.valueOf(providerUrl));
         }
         return ResponseEntity.status(HttpStatus.OK).build();
     }

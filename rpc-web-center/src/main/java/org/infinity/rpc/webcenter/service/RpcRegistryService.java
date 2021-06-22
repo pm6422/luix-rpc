@@ -4,13 +4,13 @@ import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.webcenter.dto.RegistryDTO;
+import org.infinity.rpc.webcenter.dto.RpcRegistryDTO;
 
 import java.util.List;
 
-public interface RegistryService {
+public interface RpcRegistryService {
 
-    List<RegistryDTO> getRegistries();
+    List<RpcRegistryDTO> getRegistries();
 
     Registry findRegistry(String urlIdentity);
 
