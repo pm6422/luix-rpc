@@ -1,9 +1,9 @@
 package org.infinity.rpc.webcenter.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.webcenter.domain.Provider;
-import org.infinity.rpc.webcenter.repository.ProviderRepository;
-import org.infinity.rpc.webcenter.service.ProviderService;
+import org.infinity.rpc.webcenter.domain.RpcConsumer;
+import org.infinity.rpc.webcenter.repository.RpcConsumerRepository;
+import org.infinity.rpc.webcenter.service.RpcConsumerService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -16,18 +16,17 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static org.infinity.rpc.webcenter.domain.Provider.*;
-
+import static org.infinity.rpc.webcenter.domain.RpcProvider.*;
 
 @Service
-public class ProviderServiceImpl implements ProviderService {
+public class RpcConsumerServiceImpl implements RpcConsumerService {
     @Resource
-    private MongoTemplate      mongoTemplate;
+    private MongoTemplate         mongoTemplate;
     @Resource
-    private ProviderRepository providerRepository;
+    private RpcConsumerRepository rpcConsumerRepository;
 
     @Override
-    public Page<Provider> find(Pageable pageable, String registryUrl, String application, String interfaceName, Boolean active) {
+    public Page<RpcConsumer> find(Pageable pageable, String registryUrl, String application, String interfaceName, Boolean active) {
         Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryUrl));
         if (StringUtils.isNotEmpty(application)) {
             query.addCriteria(Criteria.where(FIELD_APPLICATION).is(application));
@@ -40,9 +39,9 @@ public class ProviderServiceImpl implements ProviderService {
         if (active != null) {
             query.addCriteria(Criteria.where(FIELD_ACTIVE).is(active));
         }
-        long totalCount = mongoTemplate.count(query, Provider.class);
+        long totalCount = mongoTemplate.count(query, RpcConsumer.class);
         query.with(pageable);
-        return new PageImpl<>(mongoTemplate.find(query, Provider.class), pageable, totalCount);
+        return new PageImpl<>(mongoTemplate.find(query, RpcConsumer.class), pageable, totalCount);
     }
 
     @Override
@@ -51,6 +50,6 @@ public class ProviderServiceImpl implements ProviderService {
         if (active != null) {
             query.addCriteria(Criteria.where(FIELD_ACTIVE).is(active));
         }
-        return mongoTemplate.findDistinct(query, FIELD_APPLICATION, Provider.class, String.class);
+        return mongoTemplate.findDistinct(query, FIELD_APPLICATION, RpcConsumer.class, String.class);
     }
 }

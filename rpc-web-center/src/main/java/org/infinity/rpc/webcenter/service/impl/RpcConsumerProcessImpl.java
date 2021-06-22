@@ -4,11 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.server.listener.ConsumerProcessable;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.webcenter.domain.Application;
-import org.infinity.rpc.webcenter.domain.Consumer;
-import org.infinity.rpc.webcenter.repository.ApplicationRepository;
-import org.infinity.rpc.webcenter.repository.ConsumerRepository;
-import org.infinity.rpc.webcenter.service.ApplicationService;
+import org.infinity.rpc.webcenter.domain.RpcApplication;
+import org.infinity.rpc.webcenter.domain.RpcConsumer;
+import org.infinity.rpc.webcenter.repository.RpcApplicationRepository;
+import org.infinity.rpc.webcenter.repository.RpcConsumerRepository;
+import org.infinity.rpc.webcenter.service.RpcApplicationService;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -18,51 +18,51 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class ConsumerProcessImpl implements ConsumerProcessable {
+public class RpcConsumerProcessImpl implements ConsumerProcessable {
 
     @Resource
-    private ConsumerRepository    consumerRepository;
+    private RpcConsumerRepository    rpcConsumerRepository;
     @Resource
-    private ApplicationRepository applicationRepository;
+    private RpcApplicationRepository rpcApplicationRepository;
     @Resource
-    private ApplicationService    applicationService;
+    private RpcApplicationService    rpcApplicationService;
 
     @Override
     public void process(Url registryUrl, String interfaceName, List<Url> consumerUrls) {
         if (CollectionUtils.isNotEmpty(consumerUrls)) {
             log.info("Discovered active consumers {}", consumerUrls);
             for (Url consumerUrl : consumerUrls) {
-                Consumer provider = Consumer.of(consumerUrl, registryUrl);
+                RpcConsumer provider = RpcConsumer.of(consumerUrl, registryUrl);
                 // Insert or update consumer
-                consumerRepository.save(provider);
+                rpcConsumerRepository.save(provider);
 
                 // Insert application
-                Application probe = new Application();
+                RpcApplication probe = new RpcApplication();
                 probe.setName(provider.getApplication());
                 probe.setRegistryIdentity(provider.getRegistryIdentity());
                 // Ignore query parameter if it has a null value
                 ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
-                if (applicationRepository.exists(Example.of(probe, matcher))) {
+                if (rpcApplicationRepository.exists(Example.of(probe, matcher))) {
                     // If application exists
                     continue;
                 }
 
-                Application application = applicationService.remoteQueryApplication(registryUrl, consumerUrl);
-                applicationRepository.save(application);
+                RpcApplication rpcApplication = rpcApplicationService.remoteQueryApplication(registryUrl, consumerUrl);
+                rpcApplicationRepository.save(rpcApplication);
             }
         } else {
             log.info("Discovered offline consumers of [{}]", interfaceName);
 
             // Update consumers to inactive
-            List<Consumer> list = consumerRepository.findByInterfaceName(interfaceName);
+            List<RpcConsumer> list = rpcConsumerRepository.findByInterfaceName(interfaceName);
             if (CollectionUtils.isEmpty(list)) {
                 return;
             }
             list.forEach(provider -> provider.setActive(false));
-            consumerRepository.saveAll(list);
+            rpcConsumerRepository.saveAll(list);
 
             // Update application to inactive
-            applicationService.inactivate(list.get(0).getApplication(), list.get(0).getRegistryIdentity());
+            rpcApplicationService.inactivate(list.get(0).getApplication(), list.get(0).getRegistryIdentity());
         }
     }
 }

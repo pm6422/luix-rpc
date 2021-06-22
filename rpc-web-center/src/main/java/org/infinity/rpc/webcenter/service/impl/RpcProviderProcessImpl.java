@@ -4,11 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.client.listener.ProviderProcessable;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.webcenter.domain.Application;
-import org.infinity.rpc.webcenter.domain.Provider;
-import org.infinity.rpc.webcenter.repository.ApplicationRepository;
-import org.infinity.rpc.webcenter.repository.ProviderRepository;
-import org.infinity.rpc.webcenter.service.ApplicationService;
+import org.infinity.rpc.webcenter.domain.RpcApplication;
+import org.infinity.rpc.webcenter.domain.RpcProvider;
+import org.infinity.rpc.webcenter.repository.RpcApplicationRepository;
+import org.infinity.rpc.webcenter.repository.RpcProviderRepository;
+import org.infinity.rpc.webcenter.service.RpcApplicationService;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -18,51 +18,51 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class ProviderProcessImpl implements ProviderProcessable {
+public class RpcProviderProcessImpl implements ProviderProcessable {
 
     @Resource
-    private ProviderRepository    providerRepository;
+    private RpcProviderRepository    rpcProviderRepository;
     @Resource
-    private ApplicationRepository applicationRepository;
+    private RpcApplicationRepository rpcApplicationRepository;
     @Resource
-    private ApplicationService    applicationService;
+    private RpcApplicationService    rpcApplicationService;
 
     @Override
     public void process(Url registryUrl, String interfaceName, List<Url> providerUrls) {
         if (CollectionUtils.isNotEmpty(providerUrls)) {
             log.info("Discovered active providers {}", providerUrls);
             for (Url providerUrl : providerUrls) {
-                Provider provider = Provider.of(providerUrl, registryUrl);
+                RpcProvider rpcProvider = RpcProvider.of(providerUrl, registryUrl);
                 // Insert or update provider
-                providerRepository.save(provider);
+                rpcProviderRepository.save(rpcProvider);
 
                 // Insert application
-                Application probe = new Application();
-                probe.setName(provider.getApplication());
-                probe.setRegistryIdentity(provider.getRegistryIdentity());
+                RpcApplication probe = new RpcApplication();
+                probe.setName(rpcProvider.getApplication());
+                probe.setRegistryIdentity(rpcProvider.getRegistryIdentity());
                 // Ignore query parameter if it has a null value
                 ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
-                if (applicationRepository.exists(Example.of(probe, matcher))) {
+                if (rpcApplicationRepository.exists(Example.of(probe, matcher))) {
                     // If application exists
                     continue;
                 }
 
-                Application application = applicationService.remoteQueryApplication(registryUrl, providerUrl);
-                applicationRepository.save(application);
+                RpcApplication rpcApplication = rpcApplicationService.remoteQueryApplication(registryUrl, providerUrl);
+                rpcApplicationRepository.save(rpcApplication);
             }
         } else {
             log.info("Discovered offline providers of [{}]", interfaceName);
 
             // Update providers to inactive
-            List<Provider> list = providerRepository.findByInterfaceName(interfaceName);
+            List<RpcProvider> list = rpcProviderRepository.findByInterfaceName(interfaceName);
             if (CollectionUtils.isEmpty(list)) {
                 return;
             }
             list.forEach(provider -> provider.setActive(false));
-            providerRepository.saveAll(list);
+            rpcProviderRepository.saveAll(list);
 
             // Update application to inactive
-            applicationService.inactivate(list.get(0).getApplication(), list.get(0).getRegistryIdentity());
+            rpcApplicationService.inactivate(list.get(0).getApplication(), list.get(0).getRegistryIdentity());
         }
     }
 }

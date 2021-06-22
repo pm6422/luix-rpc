@@ -14,14 +14,14 @@ import java.time.Instant;
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 
 /**
- * Spring Data MongoDB collection for the Consumer entity.
+ * Spring Data MongoDB collection for the RpcProvider entity.
  */
-@ApiModel("Service consumer")
-@Document(collection = "Consumer")
+@ApiModel("RPC service provider")
+@Document(collection = "RpcProvider")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Consumer implements Serializable {
+public class RpcProvider implements Serializable {
     private static final long   serialVersionUID        = 1L;
     public static final  String FIELD_INTERFACE_NAME    = "interfaceName";
     public static final  String FIELD_APPLICATION       = "application";
@@ -36,25 +36,26 @@ public class Consumer implements Serializable {
     private   String  application;
     private   String  host;
     private   String  address;
-    private   String  consumerUrl;
+    private   String  providerUrl;
     private   String  registryIdentity;
-    private   Boolean active = false;
+    private   Boolean active    = false;
+    private   Boolean consuming = false;
     private   Instant createdTime;
     private   Instant modifiedTime;
 
-    public static Consumer of(Url consumerUrl, Url registryUrl) {
-        Consumer provider = new Consumer();
+    public static RpcProvider of(Url providerUrl, Url registryUrl) {
+        RpcProvider rpcProvider = new RpcProvider();
         // Set ID with identity
-        provider.setId(consumerUrl.getIdentity());
-        provider.setInterfaceName(consumerUrl.getPath());
-        provider.setForm(consumerUrl.getForm());
-        provider.setVersion(consumerUrl.getVersion());
-        provider.setApplication(consumerUrl.getOption(APP));
-        provider.setHost(consumerUrl.getHost());
-        provider.setAddress(consumerUrl.getAddress());
-        provider.setConsumerUrl(consumerUrl.toFullStr());
-        provider.setRegistryIdentity(registryUrl.getIdentity());
-        provider.setActive(true);
-        return provider;
+        rpcProvider.setId(providerUrl.getIdentity());
+        rpcProvider.setInterfaceName(providerUrl.getPath());
+        rpcProvider.setForm(providerUrl.getForm());
+        rpcProvider.setVersion(providerUrl.getVersion());
+        rpcProvider.setApplication(providerUrl.getOption(APP));
+        rpcProvider.setHost(providerUrl.getHost());
+        rpcProvider.setAddress(providerUrl.getAddress());
+        rpcProvider.setProviderUrl(providerUrl.toFullStr());
+        rpcProvider.setRegistryIdentity(registryUrl.getIdentity());
+        rpcProvider.setActive(true);
+        return rpcProvider;
     }
 }

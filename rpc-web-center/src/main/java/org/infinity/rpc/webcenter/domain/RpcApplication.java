@@ -10,13 +10,13 @@ import java.io.Serializable;
 import java.time.Instant;
 
 /**
- * Spring Data MongoDB collection for the App entity.
+ * Spring Data MongoDB collection for the RpcApplication entity.
  */
-@ApiModel("应用")
-@Document(collection = "Application")
+@ApiModel("RPC application")
+@Document(collection = "RpcApplication")
 @Data
 @NoArgsConstructor
-public class Application implements Serializable {
+public class RpcApplication implements Serializable {
     private static final long   serialVersionUID      = 1L;
     public static final  String FIELD_NAME            = "name";
     public static final  String FIELD_ACTIVE_PROVIDER = "activeProvider";
