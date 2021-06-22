@@ -34,7 +34,7 @@ public class AccessStatisticItem {
         this.otherExceptionCounter = initAtomicIntegerArr(length);
         this.length = length;
         this.currentIndex = getIndex(currentTimeMillis, length);
-        this.histogram = InternalMetricsFactory.getRegistryInstance(name).histogram(HISTOGRAM_NAME);
+        this.histogram = CachedMetricsFactory.getRegistryInstance(name).histogram(HISTOGRAM_NAME);
     }
 
     private AtomicInteger[] initAtomicIntegerArr(int size) {
@@ -83,7 +83,7 @@ public class AccessStatisticItem {
         histogram.update(costTimeMillis);
         String[] names = name.split("\\|");
         String appName = names[1] + "|" + names[2];
-        InternalMetricsFactory.getRegistryInstance(appName).histogram(HISTOGRAM_NAME)
+        CachedMetricsFactory.getRegistryInstance(appName).histogram(HISTOGRAM_NAME)
                 .update(costTimeMillis);
     }
 
