@@ -1,4 +1,4 @@
-package org.infinity.rpc.democlient.controller;
+package org.infinity.rpc.webcenter.controller;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -8,7 +8,7 @@ import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
-import org.infinity.rpc.democlient.dto.UniversalMethodInvocation;
+import org.infinity.rpc.webcenter.dto.UniversalMethodInvocation;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

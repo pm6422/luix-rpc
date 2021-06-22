@@ -1,6 +1,6 @@
-package org.infinity.rpc.democlient.service;
+package org.infinity.rpc.webcenter.service;
 
-import org.infinity.rpc.democlient.domain.Consumer;
+import org.infinity.rpc.webcenter.domain.Consumer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

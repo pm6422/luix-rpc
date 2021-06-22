@@ -1,9 +1,9 @@
-package org.infinity.rpc.democlient.service.impl;
+package org.infinity.rpc.webcenter.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.democlient.domain.Consumer;
-import org.infinity.rpc.democlient.repository.ConsumerRepository;
-import org.infinity.rpc.democlient.service.ConsumerService;
+import org.infinity.rpc.webcenter.domain.Consumer;
+import org.infinity.rpc.webcenter.repository.ConsumerRepository;
+import org.infinity.rpc.webcenter.service.ConsumerService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static org.infinity.rpc.democlient.domain.Provider.*;
+import static org.infinity.rpc.webcenter.domain.Provider.*;
 
 @Service
 public class ConsumerServiceImpl implements ConsumerService {

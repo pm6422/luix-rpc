@@ -1,4 +1,4 @@
-package org.infinity.rpc.democlient.controller;
+package org.infinity.rpc.webcenter.controller;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -10,16 +10,16 @@ import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.stub.MethodData;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.democlient.domain.Application;
-import org.infinity.rpc.democlient.domain.Consumer;
-import org.infinity.rpc.democlient.domain.Provider;
-import org.infinity.rpc.democlient.dto.MethodInvocation;
-import org.infinity.rpc.democlient.dto.RegistryDTO;
-import org.infinity.rpc.democlient.service.ApplicationService;
-import org.infinity.rpc.democlient.service.ConsumerService;
-import org.infinity.rpc.democlient.service.ProviderService;
-import org.infinity.rpc.democlient.service.RegistryService;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
+import org.infinity.rpc.webcenter.domain.Application;
+import org.infinity.rpc.webcenter.domain.Consumer;
+import org.infinity.rpc.webcenter.domain.Provider;
+import org.infinity.rpc.webcenter.dto.MethodInvocation;
+import org.infinity.rpc.webcenter.dto.RegistryDTO;
+import org.infinity.rpc.webcenter.service.ApplicationService;
+import org.infinity.rpc.webcenter.service.ConsumerService;
+import org.infinity.rpc.webcenter.service.ProviderService;
+import org.infinity.rpc.webcenter.service.RegistryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,7 @@ import java.util.List;
 
 import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_HEALTH;
 import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_METHODS;
-import static org.infinity.rpc.democlient.utils.HttpHeaderUtils.generatePageHeaders;
+import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
 @Slf4j

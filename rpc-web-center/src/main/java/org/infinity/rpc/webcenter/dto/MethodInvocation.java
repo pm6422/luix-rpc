@@ -1,4 +1,4 @@
-package org.infinity.rpc.democlient.dto;
+package org.infinity.rpc.webcenter.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

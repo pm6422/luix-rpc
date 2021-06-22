@@ -1,4 +1,4 @@
-package org.infinity.rpc.democlient.service.impl;
+package org.infinity.rpc.webcenter.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
@@ -8,15 +8,15 @@ import org.infinity.rpc.core.config.impl.ApplicationConfig;
 import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.democlient.domain.Application;
-import org.infinity.rpc.democlient.domain.Consumer;
-import org.infinity.rpc.democlient.domain.Provider;
-import org.infinity.rpc.democlient.repository.ApplicationRepository;
-import org.infinity.rpc.democlient.repository.ConsumerRepository;
-import org.infinity.rpc.democlient.repository.ProviderRepository;
-import org.infinity.rpc.democlient.service.ApplicationService;
-import org.infinity.rpc.democlient.service.RegistryService;
+import org.infinity.rpc.webcenter.domain.Application;
+import org.infinity.rpc.webcenter.domain.Consumer;
+import org.infinity.rpc.webcenter.domain.Provider;
+import org.infinity.rpc.webcenter.repository.ApplicationRepository;
+import org.infinity.rpc.webcenter.repository.ConsumerRepository;
+import org.infinity.rpc.webcenter.repository.ProviderRepository;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
+import org.infinity.rpc.webcenter.service.ApplicationService;
+import org.infinity.rpc.webcenter.service.RegistryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.*;
@@ -30,8 +30,8 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_APPLICATION_CONFIG;
-import static org.infinity.rpc.democlient.domain.Application.*;
-import static org.infinity.rpc.democlient.domain.Provider.FIELD_REGISTRY_IDENTITY;
+import static org.infinity.rpc.webcenter.domain.Application.*;
+import static org.infinity.rpc.webcenter.domain.Provider.FIELD_REGISTRY_IDENTITY;
 
 @Service
 public class ApplicationServiceImpl implements ApplicationService {

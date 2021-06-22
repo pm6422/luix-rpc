@@ -1,4 +1,4 @@
-package org.infinity.rpc.democlient.dto;
+package org.infinity.rpc.webcenter.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

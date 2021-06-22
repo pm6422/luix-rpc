@@ -1,14 +1,14 @@
-package org.infinity.rpc.democlient.service.impl;
+package org.infinity.rpc.webcenter.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.rpc.core.server.listener.ConsumerProcessable;
+import org.infinity.rpc.core.client.listener.ProviderProcessable;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.democlient.domain.Application;
-import org.infinity.rpc.democlient.domain.Consumer;
-import org.infinity.rpc.democlient.repository.ApplicationRepository;
-import org.infinity.rpc.democlient.repository.ConsumerRepository;
-import org.infinity.rpc.democlient.service.ApplicationService;
+import org.infinity.rpc.webcenter.domain.Application;
+import org.infinity.rpc.webcenter.domain.Provider;
+import org.infinity.rpc.webcenter.repository.ApplicationRepository;
+import org.infinity.rpc.webcenter.repository.ProviderRepository;
+import org.infinity.rpc.webcenter.service.ApplicationService;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -18,23 +18,23 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class ConsumerProcessImpl implements ConsumerProcessable {
+public class ProviderProcessImpl implements ProviderProcessable {
 
     @Resource
-    private ConsumerRepository    consumerRepository;
+    private ProviderRepository    providerRepository;
     @Resource
     private ApplicationRepository applicationRepository;
     @Resource
     private ApplicationService    applicationService;
 
     @Override
-    public void process(Url registryUrl, String interfaceName, List<Url> consumerUrls) {
-        if (CollectionUtils.isNotEmpty(consumerUrls)) {
-            log.info("Discovered active consumers {}", consumerUrls);
-            for (Url consumerUrl : consumerUrls) {
-                Consumer provider = Consumer.of(consumerUrl, registryUrl);
-                // Insert or update consumer
-                consumerRepository.save(provider);
+    public void process(Url registryUrl, String interfaceName, List<Url> providerUrls) {
+        if (CollectionUtils.isNotEmpty(providerUrls)) {
+            log.info("Discovered active providers {}", providerUrls);
+            for (Url providerUrl : providerUrls) {
+                Provider provider = Provider.of(providerUrl, registryUrl);
+                // Insert or update provider
+                providerRepository.save(provider);
 
                 // Insert application
                 Application probe = new Application();
@@ -47,19 +47,19 @@ public class ConsumerProcessImpl implements ConsumerProcessable {
                     continue;
                 }
 
-                Application application = applicationService.remoteQueryApplication(registryUrl, consumerUrl);
+                Application application = applicationService.remoteQueryApplication(registryUrl, providerUrl);
                 applicationRepository.save(application);
             }
         } else {
-            log.info("Discovered offline consumers of [{}]", interfaceName);
+            log.info("Discovered offline providers of [{}]", interfaceName);
 
-            // Update consumers to inactive
-            List<Consumer> list = consumerRepository.findByInterfaceName(interfaceName);
+            // Update providers to inactive
+            List<Provider> list = providerRepository.findByInterfaceName(interfaceName);
             if (CollectionUtils.isEmpty(list)) {
                 return;
             }
             list.forEach(provider -> provider.setActive(false));
-            consumerRepository.saveAll(list);
+            providerRepository.saveAll(list);
 
             // Update application to inactive
             applicationService.inactivate(list.get(0).getApplication(), list.get(0).getRegistryIdentity());

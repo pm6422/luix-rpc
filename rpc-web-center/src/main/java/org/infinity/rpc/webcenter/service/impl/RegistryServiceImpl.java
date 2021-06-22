@@ -1,4 +1,4 @@
-package org.infinity.rpc.democlient.service.impl;
+package org.infinity.rpc.webcenter.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -10,9 +10,9 @@ import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.server.listener.ConsumerProcessable;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.democlient.dto.RegistryDTO;
-import org.infinity.rpc.democlient.service.RegistryService;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
+import org.infinity.rpc.webcenter.dto.RegistryDTO;
+import org.infinity.rpc.webcenter.service.RegistryService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;

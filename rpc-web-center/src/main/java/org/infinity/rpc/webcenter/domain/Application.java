@@ -1,4 +1,4 @@
-package org.infinity.rpc.democlient.domain;
+package org.infinity.rpc.webcenter.domain;
 
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
