@@ -41,14 +41,14 @@ public abstract class StatisticsUtils {
     }
 
     public static void logAccess(String name, String application, String module,
-                                 long currentTimeMillis, long costTimeMillis, long bizProcessTime, int slowThreshold,
+                                 long currentTimeMillis, long elapsedTimeMillis, long bizProcessTime, int slowThreshold,
                                  StatisticType statisticType) {
         if (StringUtils.isEmpty(name)) {
             return;
         }
         try {
             AccessStatisticItem item = getStatisticItem(name + "|" + application + "|" + module, currentTimeMillis);
-            item.statistic(currentTimeMillis, costTimeMillis, bizProcessTime, slowThreshold, statisticType);
+            item.statistic(currentTimeMillis, elapsedTimeMillis, bizProcessTime, slowThreshold, statisticType);
         } catch (Exception e) {
             log.error("Failed to log access!", e);
         }
