@@ -48,11 +48,11 @@ public class AccessStatisticItem {
 
     /**
      * @param currentTimeMillis current time in milliseconds
-     * @param costTimeMillis    cost time in milliseconds
+     * @param elapsedTimeMillis elapsed time in milliseconds
      * @param bizProcessTime    business process time
      * @param statisticType     statistic type
      */
-    public void statistic(long currentTimeMillis, long costTimeMillis, long bizProcessTime, int slowCost, StatisticType statisticType) {
+    public void statistic(long currentTimeMillis, long elapsedTimeMillis, long bizProcessTime, int slowCost, StatisticType statisticType) {
         int tempIndex = getIndex(currentTimeMillis, length);
 
         if (currentIndex != tempIndex) {
@@ -65,11 +65,11 @@ public class AccessStatisticItem {
             }
         }
 
-        costTimes[currentIndex].addAndGet((int) costTimeMillis);
+        costTimes[currentIndex].addAndGet((int) elapsedTimeMillis);
         bizProcessTimes[currentIndex].addAndGet((int) bizProcessTime);
         totalCounter[currentIndex].incrementAndGet();
 
-        if (costTimeMillis >= slowCost) {
+        if (elapsedTimeMillis >= slowCost) {
             slowCounter[currentIndex].incrementAndGet();
         }
 
@@ -78,11 +78,11 @@ public class AccessStatisticItem {
         } else if (statisticType == StatisticType.OTHER_EXCEPTION) {
             otherExceptionCounter[currentIndex].incrementAndGet();
         }
-        histogram.update(costTimeMillis);
+        histogram.update(elapsedTimeMillis);
         String[] names = name.split("\\|");
         String appName = names[1] + "|" + names[2];
         CachedMetricsFactory.getRegistryInstance(appName).histogram(ELAPSED_TIME_HISTOGRAM)
-                .update(costTimeMillis);
+                .update(elapsedTimeMillis);
     }
 
     private int getIndex(long currentTimeMillis, int periodSecond) {

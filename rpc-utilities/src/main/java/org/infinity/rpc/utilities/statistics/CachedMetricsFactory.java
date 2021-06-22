@@ -25,7 +25,8 @@ public abstract class CachedMetricsFactory {
     public static MetricRegistry getRegistryInstance(String name) {
         MetricRegistry instance = METRIC_REGISTRIES.get(name);
         if (instance == null) {
-            instance = METRIC_REGISTRIES.putIfAbsent(name, new MetricRegistry());
+            METRIC_REGISTRIES.putIfAbsent(name, new MetricRegistry());
+            instance = METRIC_REGISTRIES.get(name);
         }
         return instance;
     }
@@ -42,7 +43,8 @@ public abstract class CachedMetricsFactory {
         String key = MetricRegistry.name(name, names);
         MetricRegistry instance = METRIC_REGISTRIES.get(key);
         if (instance == null) {
-            instance = METRIC_REGISTRIES.putIfAbsent(key, new MetricRegistry());
+            METRIC_REGISTRIES.putIfAbsent(key, new MetricRegistry());
+            instance = METRIC_REGISTRIES.get(name);
         }
         return instance;
     }
@@ -59,7 +61,8 @@ public abstract class CachedMetricsFactory {
         String key = MetricRegistry.name(clazz, names);
         MetricRegistry instance = METRIC_REGISTRIES.get(key);
         if (instance == null) {
-            instance = METRIC_REGISTRIES.putIfAbsent(key, new MetricRegistry());
+            METRIC_REGISTRIES.putIfAbsent(key, new MetricRegistry());
+            instance = METRIC_REGISTRIES.get(key);
         }
         return instance;
     }

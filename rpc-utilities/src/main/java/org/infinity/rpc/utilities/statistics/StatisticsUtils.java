@@ -57,7 +57,8 @@ public abstract class StatisticsUtils {
     private static AccessStatisticItem getStatisticItem(String name, long currentTimeMillis) {
         AccessStatisticItem item = ACCESS_STATISTICS.get(name);
         if (item == null) {
-            item = ACCESS_STATISTICS.putIfAbsent(name, new AccessStatisticItem(name, currentTimeMillis));
+            ACCESS_STATISTICS.putIfAbsent(name, new AccessStatisticItem(name, currentTimeMillis));
+            item = ACCESS_STATISTICS.get(name);
         }
         return item;
     }
