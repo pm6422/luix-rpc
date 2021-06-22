@@ -20,7 +20,7 @@ public abstract class StatisticsUtils {
      */
     public static final  int                                        ACCESS_STATISTIC_INTERVAL = 30;
     public static        String                                     DELIMITER                 = "\\|";
-    public static final  String                                     HISTOGRAM_NAME            = MetricRegistry.name(AccessStatisticItem.class, "costTimeMillis");
+    public static final  String                                     ELAPSED_TIME_HISTOGRAM    = MetricRegistry.name(AccessStatisticItem.class, "elapsedTimeMillis");
     private static final ConcurrentMap<String, AccessStatisticItem> ACCESS_STATISTICS         = new ConcurrentHashMap<>();
 
     public static String getMemoryStatistic() {
@@ -56,7 +56,7 @@ public abstract class StatisticsUtils {
             AccessStatisticItem item = getStatisticItem(name + "|" + application + "|" + module, currentTimeMillis);
             item.statistic(currentTimeMillis, costTimeMillis, bizProcessTime, slowThreshold, statisticType);
         } catch (Exception e) {
-            log.error("Failed to calculate access statistic", e);
+            log.error("Failed to calculate access statistic!", e);
         }
     }
 

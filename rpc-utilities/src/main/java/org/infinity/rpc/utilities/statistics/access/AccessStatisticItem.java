@@ -7,7 +7,7 @@ import org.infinity.rpc.utilities.statistics.CachedMetricsFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.infinity.rpc.utilities.statistics.StatisticsUtils.ACCESS_STATISTIC_INTERVAL;
-import static org.infinity.rpc.utilities.statistics.StatisticsUtils.HISTOGRAM_NAME;
+import static org.infinity.rpc.utilities.statistics.StatisticsUtils.ELAPSED_TIME_HISTOGRAM;
 
 public class AccessStatisticItem {
     private final String          name;
@@ -35,7 +35,7 @@ public class AccessStatisticItem {
         this.otherExceptionCounter = initAtomicIntegerArray(length);
         this.length = length;
         this.currentIndex = getIndex(currentTimeMillis, length);
-        this.histogram = CachedMetricsFactory.getRegistryInstance(name).histogram(HISTOGRAM_NAME);
+        this.histogram = CachedMetricsFactory.getRegistryInstance(name).histogram(ELAPSED_TIME_HISTOGRAM);
     }
 
     private AtomicInteger[] initAtomicIntegerArray(int size) {
@@ -81,7 +81,7 @@ public class AccessStatisticItem {
         histogram.update(costTimeMillis);
         String[] names = name.split("\\|");
         String appName = names[1] + "|" + names[2];
-        CachedMetricsFactory.getRegistryInstance(appName).histogram(HISTOGRAM_NAME)
+        CachedMetricsFactory.getRegistryInstance(appName).histogram(ELAPSED_TIME_HISTOGRAM)
                 .update(costTimeMillis);
     }
 
