@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
 import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER_VAL_DEFAULT;
 import static org.infinity.rpc.core.thread.ScheduledThreadPool.*;
-import static org.infinity.rpc.core.utils.StatisticsUtils.calculateMemory;
+import static org.infinity.rpc.utilities.StatisticsUtils.calculateMemory;
 
 /**
  *
