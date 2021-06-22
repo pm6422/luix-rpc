@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
 import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER_VAL_DEFAULT;
 import static org.infinity.rpc.core.thread.ScheduledThreadPool.*;
-import static org.infinity.rpc.utilities.StatisticsUtils.calculateMemory;
+import static org.infinity.rpc.utilities.statistics.StatisticsUtils.getMemoryStatistic;
 
 /**
  *
@@ -35,7 +35,7 @@ public class CheckHealthClientEndpointManager implements EndpointManager {
     @Override
     public void init() {
         ScheduledThreadPool.schedulePeriodicalTask(CALCULATE_MEMORY_THREAD_POOL, CALCULATE_MEMORY_INTERVAL,
-                () -> log.info("Memory usage: {} ", calculateMemory()));
+                () -> log.info("Memory usage: {} ", getMemoryStatistic()));
         ScheduledThreadPool.schedulePeriodicalTask(CHECK_HEALTH_THREAD_POOL, CHECK_HEALTH_INTERVAL, this::checkHealth);
     }
 

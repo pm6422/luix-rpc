@@ -66,6 +66,7 @@
         <lombok_version>1.18.10</lombok_version>
         <maven_flatten_pluggin_version>1.1.0</maven_flatten_pluggin_version>
         <metrics_version>2.0.1</metrics_version>
+        <micrometer_version>1.5.1</micrometer_version>
         <mina_version>1.1.7</mina_version>
         <mongodb_springdata_v3_driver_version>4.1.17</mongodb_springdata_v3_driver_version>
         <mortbay_jetty_version>6.1.26</mortbay_jetty_version>
@@ -386,6 +387,11 @@
                 <groupId>io.grpc</groupId>
                 <artifactId>grpc-stub</artifactId>
                 <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-core</artifactId>
+                <version>${micrometer_version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
