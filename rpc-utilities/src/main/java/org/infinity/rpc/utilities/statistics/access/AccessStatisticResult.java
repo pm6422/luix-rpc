@@ -9,5 +9,6 @@ public class AccessStatisticResult {
     public int    otherExceptionCount = 0;
     public double costTime            = 0;
     public double bizTime             = 0;
+    public long   slowThreshold       = 200;
     public long[] intervalCounts      = new long[5];
 }

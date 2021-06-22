@@ -14,20 +14,16 @@ public class StatisticsUtilsTests {
 
     @Test
     public void test() throws InterruptedException, JsonProcessingException {
-        long now1 = System.currentTimeMillis();
         StatisticsUtils.logAccess("requestProcess", "rpc-demo-client", "rpc-demo-client",
-                now1, now1 - 100, now1 - 200, 50, StatisticType.NORMAL);
+                System.currentTimeMillis(), 7, 2, 200, StatisticType.NORMAL);
+        StatisticsUtils.logAccess("requestProcess", "rpc-demo-client", "rpc-demo-client",
+                System.currentTimeMillis(), 250, 210, 200, StatisticType.NORMAL);
 
-        Thread.sleep(100L);
-        long now2 = System.currentTimeMillis();
-        StatisticsUtils.logAccess("rpcRequestProcess", "rpc-demo-client", "rpc-demo-client",
-                now2, now2 - 100, now2 - 200, 50, StatisticType.NORMAL);
-
-        Thread.sleep(100L);
-        long now3 = System.currentTimeMillis();
         StatisticsUtils.logAccess("responseProcess", "rpc-demo-server", "rpc-demo-server",
-                now3, now3 - 100, now3 - 200, 50, StatisticType.BIZ_EXCEPTION);
+                System.currentTimeMillis(), 80, 70, 200, StatisticType.BIZ_EXCEPTION);
 
+        // It must sleep for a while
+        Thread.sleep(1000L);
         ConcurrentMap<String, AccessStatisticResult> totalAccessStatistic = StatisticsUtils.getTotalAccessStatistic();
         log.info(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(totalAccessStatistic));
     }
