@@ -19,5 +19,5 @@ public class RpcRegistryDTO implements Serializable {
     private String type;
 
     @ApiModelProperty(value = "URL")
-    private String url;
+    private String identity;
 }

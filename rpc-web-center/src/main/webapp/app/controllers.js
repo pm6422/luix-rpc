@@ -67,6 +67,8 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
     main.account = null;
     main.isAuthenticated = null;
     main.links = [];
+    main.registries = [];
+    main.selectedRegistryIdentity = null;
     main.selectedLink = null;
     main.selectLink = selectLink;
     $rootScope.companyName = COMPANY_NAME;
@@ -80,12 +82,22 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
 
     $scope.$watch(PrincipalService.isAuthenticated, function () {
         loadLinks();
+        loadRegistries();
     });
 
     function loadLinks() {
         if (PrincipalService.isAuthenticated() == true) {
             main.links = AuthorityAdminMenuService.queryUserLinks({appName: APP_NAME});
         }
+    }
+
+    function loadRegistries() {
+        $http.get('api/rpc-registry/registries').then(function (response) {
+            main.registries = response.data;
+            if(main.registries) {
+                main.selectedRegistryIdentity = main.registries[0].identity;
+            }
+        });
     }
 
     function getAccount() {

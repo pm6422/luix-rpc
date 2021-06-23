@@ -7,19 +7,17 @@
                 <span class="navbar-version">v{{VERSION}}</span>
             </a>
         </div>
-        <form role="search" class="navbar-form-custom" autocomplete="off">
-            <div class="form-group">
-                <input type="text" id="top-search" name="top-search" placeholder="{{ 'SEARCH' | translate }}"
-                       class="form-control" ng-model="main.selectedLink"
-                       uib-typeahead="item as item.label for item in main.links | filter:$viewValue | limitTo:5"
-                       typeahead-on-select="main.selectLink($item, $model, $label, $event)">
-            </div>
-        </form>
+        <div class="navbar-form-custom">
+            <select class="form-control" id="registry" ng-model="main.selectedRegistryIdentity"
+                    ng-options="item.identity as item.identity for item in main.registries">
+                <option value="">Select registry...</option>
+            </select>
+        </div>
         <ul class="nav navbar-top-links navbar-right">
             <li uib-dropdown ng-switch-when="true" has-authority-directive="ROLE_DEVELOPER">
                 <a class="count-info" href uib-dropdown-toggle>
                     <span class="fa fa-child"></span>&nbsp;
-                    <span>开发者工具</span>
+                    <span>Dev tools</span>
                 </a>
                 <ul uib-dropdown-menu class="animated fadeInDown m-t-xs">
                     <li ng-show="vm.swaggerEnabled" ui-sref-active="active">
@@ -111,17 +109,16 @@
             <li uib-dropdown>
                 <a class="count-info" href uib-dropdown-toggle>
                     <span class="fa fa-language"></span>&nbsp;
-                    <span>语言</span>
+                    <span>Languages</span>
                 </a>
                 <ul uib-dropdown-menu class="animated fadeInDown m-t-xs">
                     <li><a ng-click="vm.changeLanguage('en')">English</a></li>
-                    <li><a ng-click="vm.changeLanguage('es')">Spanish</a></li>
                 </ul>
             </li>
             <li>
                 <a ng-click="vm.logout()">
                     <span class="fa fa-sign-out"></span>&nbsp;
-                    <span>退出</span>
+                    <span>Sign out</span>
                 </a>
             </li>
         </ul>
