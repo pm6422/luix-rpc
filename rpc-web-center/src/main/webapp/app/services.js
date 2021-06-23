@@ -38,7 +38,8 @@ angular
     .factory('OAuth2AccessTokenService', OAuth2AccessTokenService)
     .factory('OAuth2RefreshTokenService', OAuth2RefreshTokenService)
     .factory('OAuth2ApprovalService', OAuth2ApprovalService)
-    .factory('AdminMenuService', AdminMenuService);
+    .factory('AdminMenuService', AdminMenuService)
+    .factory('RpcApplicationService', RpcApplicationService);
 
 /**
  * StateHandler
@@ -1317,6 +1318,22 @@ function AdminMenuService($resource) {
         'del': {method: 'DELETE'},
         'moveUp': {method: 'PUT', params: {extension: 'move-up', id: '@id'}},
         'moveDown': {method: 'PUT', params: {extension: 'move-down', id: '@id'}}
+    });
+    return service;
+}
+/**
+ * RpcApplicationService
+ */
+function RpcApplicationService($resource) {
+    var service = $resource('api/rpc-application/applications/:extension', {}, {
+        'query': {method: 'GET', isArray: true},
+        'get': {
+            method: 'GET',
+            transformResponse: function (data) {
+                data = angular.fromJson(data);
+                return data;
+            }
+        }
     });
     return service;
 }

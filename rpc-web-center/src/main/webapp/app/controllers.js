@@ -33,7 +33,7 @@ angular
     .controller('LoggerController', LoggerController)
     .controller('ScheduleController', ScheduleController)
     .controller('ControlController', ControlController)
-    .controller('ServiceAppListController', ServiceAppListController)
+    .controller('RpcApplicationListController', RpcApplicationListController)
     .controller('ProviderListController', ProviderListController)
     .controller('ProviderDetailsController', ProviderDetailsController)
     .controller('AppListController', AppListController)
@@ -68,7 +68,7 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
     main.isAuthenticated = null;
     main.links = [];
     main.registries = [];
-    main.selectedRegistryIdentity = null;
+    $rootScope.selectedRegistryIdentity = null;
     main.selectedLink = null;
     main.selectLink = selectLink;
     $rootScope.companyName = COMPANY_NAME;
@@ -95,7 +95,7 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
         $http.get('api/rpc-registry/registries').then(function (response) {
             main.registries = response.data;
             if(main.registries) {
-                main.selectedRegistryIdentity = main.registries[0].identity;
+                $rootScope.selectedRegistryIdentity = main.registries[0].identity;
             }
         });
     }
@@ -1433,22 +1433,14 @@ function ControlController($state, $http, AlertUtils) {
     }
 }
 /**
- * ServiceAppListController
+ * RpcApplicationListController
  */
-function ServiceAppListController($state, $http) {
+function RpcApplicationListController($state, $http, $rootScope, RpcApplicationService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.items = null;
-    vm.refresh = refresh;
-    vm.refresh();
-
-    function refresh() {
-        $http.get('api/service-discovery/apps').then(function (response) {
-            vm.items = response.data;
-        });
-    }
+    vm.items = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity});;
 }
 /**
  * ProviderListController

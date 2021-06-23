@@ -8,6 +8,7 @@ import org.infinity.rpc.core.config.impl.ApplicationConfig;
 import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.utilities.id.IdGenerator;
 import org.infinity.rpc.webcenter.domain.RpcApplication;
 import org.infinity.rpc.webcenter.domain.RpcConsumer;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
@@ -26,6 +27,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -94,6 +96,8 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
         rpcApplication.setRegistryIdentity(registryUrl.getIdentity());
         rpcApplication.setActiveProvider(true);
         rpcApplication.setActiveConsumer(false);
+        rpcApplication.setCreatedTime(Instant.now());
+        rpcApplication.setModifiedTime(rpcApplication.getCreatedTime());
         return rpcApplication;
     }
 

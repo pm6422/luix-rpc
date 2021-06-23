@@ -19,7 +19,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="form-group">
-                    <label class="control-label">Filter</label>
+                    <label class="control-label">Filter (Full-text search)</label>
                     <input id="filter" type="text" class="form-control" placeholder="Filter by keyword">
                 </div>
             </div>
@@ -32,29 +32,42 @@
                     <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
                         <thead>
                             <tr>
-                                <th class="col-sm-1" data-toggle="true">ID</th>
-                                <th class="col-sm-1">Name</th>
+                                <th class="col-sm-1" data-toggle="true">Name</th>
                                 <th class="col-sm-1">Team</th>
                                 <th class="col-sm-1">Owner</th>
                                 <th class="col-sm-1">Environment</th>
-                                <th class="col-sm-2">Latest Registered time</th>
-                                <th class="col-sm-1">Status</th>
+                                <th class="col-sm-1">Active</th>
+                                <th class="col-sm-1">Actions</th>
                                 <th data-hide="all">Description</th>
+                                <th data-hide="all">Infinity RPC jar version</th>
+                                <th data-hide="all">Online time</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr on-footable-finish-render ng-repeat="item in vm.items">
-                                <td><span>{{item.id}}</span></td>
                                 <td><span>{{item.name}}</span></td>
                                 <td><span>{{item.team}}</span></td>
-                                <td><span>{{item.owner}}</span></td>
+                                <td><span>{{item.ownerMail}}</span></td>
                                 <td><span>{{item.env}}</span></td>
-                                <td><span>{{item.latestRegisteredTime | date:'yyyy/MM/dd HH:mm:ss'}}</span></td>
                                 <td>
-                                    <i class="fa fa-circle text-navy" title="Active" ng-show="item.name"></i>
-                                    <i class="fa fa-circle text-danger"title="Inactive"  ng-show="!item.name"></i>
+                                    <i class="fa fa-circle text-navy" title="Active" ng-show="item.activeProvider || item.activeConsumer"></i>
+                                    <i class="fa fa-circle text-danger"title="Inactive"  ng-show="!item.activeProvider && !item.activeConsumer"></i>
                                 </td>
-                                <td class="break"><span>{{item.description}}</span></td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn-white btn btn-xs" ui-sref=".edit({id: entity.id})">Providers</button>
+                                        <button class="btn-white btn btn-xs" ng-click="vm.del(entity.id)">Consumers</button>
+                                    </div>
+                                </td>
+                                <td class="break">
+                                    <span>{{item.description}}</span>
+                                </td>
+                                <td class="break">
+                                    <span>{{item.jarVersion}}</span>
+                                </td>
+                                <td class="break">
+                                    <span>{{item.createdTime | date:'yyyy/MM/dd HH:mm:ss'}}</span>
+                                </td>
                             </tr>
                         </tbody>
                         <tfoot>

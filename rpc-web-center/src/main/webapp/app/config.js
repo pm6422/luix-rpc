@@ -811,13 +811,13 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/app-list?page&sort',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/admin/service-app/service-app-list.html',
-                    controller: 'ServiceAppListController',
+                    templateUrl: 'app/views/admin/rpc-application/rpc-application-list.html',
+                    controller: 'RpcApplicationListController',
                     controllerAs: 'vm'
                 }
             },
             data: {
-                pageTitle: '应用列表'
+                pageTitle: 'RPC应用列表'
             },
             params: {
                 page: {
