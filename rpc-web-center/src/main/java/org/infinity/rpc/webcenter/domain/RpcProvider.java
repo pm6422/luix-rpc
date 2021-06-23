@@ -4,7 +4,9 @@ import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.core.utils.name.ProviderStubBeanNameBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -46,7 +48,13 @@ public class RpcProvider implements Serializable {
     public static RpcProvider of(Url providerUrl, Url registryUrl) {
         RpcProvider rpcProvider = new RpcProvider();
         // Set ID with identity
-        rpcProvider.setId(providerUrl.getIdentity());
+        String id = ProviderStubBeanNameBuilder
+                .builder(providerUrl.getPath())
+                .disablePrefix()
+                .form(providerUrl.getForm())
+                .version(providerUrl.getVersion())
+                .build();
+        rpcProvider.setId(id);
         rpcProvider.setInterfaceName(providerUrl.getPath());
         rpcProvider.setForm(providerUrl.getForm());
         rpcProvider.setVersion(providerUrl.getVersion());

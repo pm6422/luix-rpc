@@ -32,17 +32,18 @@
                     <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
                         <thead>
                             <tr>
-                                <th class="col-sm-4" data-toggle="true">Provider</th>
+                                <th class="col-sm-3" data-toggle="true">Provider</th>
+                                <th class="col-sm-1">Application</th>
                                 <th class="col-sm-1" data-sort-ignore="true">Status</th>
                                 <th class="col-sm-1" data-sort-ignore="true">Actions</th>
-                                <th data-hide="all">Application</th>
                                 <th data-hide="all">Active providers</th>
                                 <th data-hide="all">Inactive providers</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr on-footable-finish-render ng-repeat="item in vm.items">
-                                <td>{{item.name}}</td>
+                                <td>{{item.id}}</td>
+                                <td>{{item.application}}</td>
                                 <td><pie-chart data="item.status.data" options="item.status.options"></pie-chart></td>
                                 <td>
                                     <div class="btn-group">
@@ -52,7 +53,6 @@
                                         <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Route</button>
                                     </div>
                                 </td>
-                                <td>{{item.app}}</td>
                                 <td>
                                     <ul class="list-unstyled m-b-none">
                                         <li ng-repeat="activeProvider in item.activeProviders">

@@ -807,8 +807,8 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 pageTitle: '服务发现'
             }
         })
-        .state('service-discovery.service-app-list', {
-            url: '/app-list?page&sort',
+        .state('service-discovery.rpc-application-list', {
+            url: '/rpc-application-list?page&sort',
             views: {
                 'content@': {
                     templateUrl: 'app/views/admin/rpc-application/rpc-application-list.html',
@@ -825,7 +825,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                     squash: true
                 },
                 sort: {
-                    value: 'name,asc',
+                    value: 'team,asc',
                     squash: true
                 }
             },
@@ -843,17 +843,17 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('service-discovery.provider-list', {
-            url: '/provider-list?page&sort',
+        .state('service-discovery.rpc-provider-list', {
+            url: '/rpc-provider-list?page&sort',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/admin/provider/provider-list.html',
-                    controller: 'ProviderListController',
+                    templateUrl: 'app/views/admin/rpc-provider/rpc-provider-list.html',
+                    controller: 'RpcProviderListController',
                     controllerAs: 'vm'
                 }
             },
             data: {
-                pageTitle: '服务提供者'
+                pageTitle: 'RPC服务提供者列表'
             },
             params: {
                 page: {
@@ -891,7 +891,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/view',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/admin/provider/provider-details.html',
+                    templateUrl: 'app/views/admin/provider/rpc-provider-details.html',
                     controller: 'ProviderDetailsController',
                     controllerAs: 'vm'
                 }

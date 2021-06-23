@@ -39,7 +39,8 @@ angular
     .factory('OAuth2RefreshTokenService', OAuth2RefreshTokenService)
     .factory('OAuth2ApprovalService', OAuth2ApprovalService)
     .factory('AdminMenuService', AdminMenuService)
-    .factory('RpcApplicationService', RpcApplicationService);
+    .factory('RpcApplicationService', RpcApplicationService)
+    .factory('RpcProviderService', RpcProviderService);
 
 /**
  * StateHandler
@@ -1327,6 +1328,23 @@ function AdminMenuService($resource) {
 function RpcApplicationService($resource) {
     var service = $resource('api/rpc-application/applications/:extension', {}, {
         'query': {method: 'GET', isArray: true},
+        'get': {
+            method: 'GET',
+            transformResponse: function (data) {
+                data = angular.fromJson(data);
+                return data;
+            }
+        }
+    });
+    return service;
+}
+
+/**
+ * RpcProviderService
+ */
+function RpcProviderService($resource) {
+    var service = $resource('api/rpc-provider/:extension', {}, {
+        'query': {method: 'GET', isArray: true, params: {extension: 'providers'}},
         'get': {
             method: 'GET',
             transformResponse: function (data) {

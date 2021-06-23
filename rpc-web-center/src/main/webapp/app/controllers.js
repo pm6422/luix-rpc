@@ -34,7 +34,7 @@ angular
     .controller('ScheduleController', ScheduleController)
     .controller('ControlController', ControlController)
     .controller('RpcApplicationListController', RpcApplicationListController)
-    .controller('ProviderListController', ProviderListController)
+    .controller('RpcProviderListController', RpcProviderListController)
     .controller('ProviderDetailsController', ProviderDetailsController)
     .controller('AppListController', AppListController)
     .controller('AppDialogController', AppDialogController)
@@ -1435,7 +1435,7 @@ function ControlController($state, $http, AlertUtils) {
 /**
  * RpcApplicationListController
  */
-function RpcApplicationListController($state, $http, $rootScope, RpcApplicationService) {
+function RpcApplicationListController($state, $rootScope, RpcApplicationService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -1443,9 +1443,9 @@ function RpcApplicationListController($state, $http, $rootScope, RpcApplicationS
     vm.items = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity});;
 }
 /**
- * ProviderListController
+ * RpcProviderListController
  */
-function ProviderListController($state, $http) {
+function RpcProviderListController($state, $http, $rootScope, RpcProviderService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -1458,8 +1458,8 @@ function ProviderListController($state, $http) {
     vm.refresh();
 
     function refresh() {
-        $http.get('api/service-discovery/providers').then(function (response) {
-            vm.items = response.data;
+        RpcProviderService.query({registryIdentity: $rootScope.selectedRegistryIdentity}, function (data) {
+            vm.items = data;
             if(response.data) {
                 for (var i = 0; i < response.data.length; i++) {
                     vm.items[i].status = {

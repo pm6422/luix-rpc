@@ -126,11 +126,11 @@ public class DatabaseInitializer {
         AdminMenu serviceDiscovery = new AdminMenu(APP_NAME, "service-discovery", "服务发现", 1, "service-discovery", 10, null);
         mongoTemplate.save(serviceDiscovery);
 
-        AdminMenu serviceAppList = new AdminMenu(APP_NAME, "service-app-list", "应用", 2, "service-discovery.service-app-list",
+        AdminMenu serviceAppList = new AdminMenu(APP_NAME, "rpc-application-list", "RPC应用列表", 2, "service-discovery.rpc-application-list",
                 11, serviceDiscovery.getId());
         mongoTemplate.save(serviceAppList);
 
-        AdminMenu providerList = new AdminMenu(APP_NAME, "provider-list", "服务提供者", 2, "service-discovery.provider-list",
+        AdminMenu providerList = new AdminMenu(APP_NAME, "rpc-provider-list", "RPC服务提供者列表", 2, "service-discovery.rpc-provider-list",
                 12, serviceDiscovery.getId());
         mongoTemplate.save(providerList);
 
