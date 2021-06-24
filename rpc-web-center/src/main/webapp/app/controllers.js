@@ -1446,59 +1446,135 @@ function RpcApplicationListController($state, $rootScope, RpcApplicationService)
 /**
  * RpcServiceListController
  */
-function RpcServiceListController($state, $rootScope, RpcServiceService) {
+function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcServiceService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.items = RpcServiceService.query({registryIdentity: $rootScope.selectedRegistryIdentity});;
+    vm.links = null;
+    vm.loadAll = loadAll;
+    vm.loadPage = loadPage;
+    vm.checkPressEnter = checkPressEnter;
+    vm.page = 1;
+    vm.totalItems = null;
+    vm.entities = [];
+    vm.predicate = pagingParams.predicate;
+    vm.reverse = pagingParams.ascending;
+    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
+    vm.transition = transition;
+    vm.criteria = criteria;
+
+    vm.loadAll();
+
+    function loadAll() {
+        RpcServiceService.query({
+            page: pagingParams.page - 1,
+            size: vm.itemsPerPage,
+            registryIdentity: $rootScope.selectedRegistryIdentity,
+            application: vm.criteria.application,
+            sort: sort()
+        }, function (result, headers) {
+            vm.links = ParseLinksUtils.parse(headers('link'));
+            vm.totalItems = headers('X-Total-Count');
+            vm.page = pagingParams.page;
+            vm.entities = result;
+        });
+    }
+
+    function sort() {
+        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
+        if (vm.predicate !== 'application') {
+            // default sort column
+            result.push('application,asc');
+        }
+        return result;
+    }
+
+    function loadPage(page) {
+        vm.page = page;
+        vm.transition();
+    }
+
+    function transition() {
+        $state.transitionTo($state.$current, {
+            page: vm.page,
+            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
+            application: vm.criteria.application
+        });
+    }
+
+    function checkPressEnter($event) {
+        //按下enter键重新查询数据
+        if ($event.keyCode == 13) {
+            vm.transition();
+        }
+    }
 }
 /**
  * RpcProviderListController
  */
-function RpcProviderListController($state, $http, $rootScope, RpcProviderService) {
+function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcProviderService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.items = null;
-    vm.refresh = refresh;
-    vm.deactivate = deactivate;
-    vm.activate = activate;
-    vm.view = view;
-    vm.refresh();
+    vm.links = null;
+    vm.loadAll = loadAll;
+    vm.loadPage = loadPage;
+    vm.checkPressEnter = checkPressEnter;
+    vm.page = 1;
+    vm.totalItems = null;
+    vm.entities = [];
+    vm.predicate = pagingParams.predicate;
+    vm.reverse = pagingParams.ascending;
+    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
+    vm.transition = transition;
+    vm.criteria = criteria;
 
-    function refresh() {
-        RpcProviderService.query({registryIdentity: $rootScope.selectedRegistryIdentity}, function (data) {
-            vm.items = data;
-            if(response.data) {
-                for (var i = 0; i < response.data.length; i++) {
-                    vm.items[i].status = {
-                        options: {
-                            fill: ["#1ab394", "red"]
-                        }
-                    };
-                    if(_.isEmpty(response.data[i].activeProviders)) {
-                        vm.items[i].status.data = [0, 1];
-                    }
-                    else {
-                        vm.items[i].status.data = [1, 0];
-                    }
-                }
-            }
+    vm.loadAll();
+
+    function loadAll() {
+        RpcProviderService.query({
+            page: pagingParams.page - 1,
+            size: vm.itemsPerPage,
+            registryIdentity: $rootScope.selectedRegistryIdentity,
+            application: vm.criteria.application,
+            sort: sort()
+        }, function (result, headers) {
+            vm.links = ParseLinksUtils.parse(headers('link'));
+            vm.totalItems = headers('X-Total-Count');
+            vm.page = pagingParams.page;
+            vm.entities = result;
         });
     }
 
-    function view(entity) {
-        $state.go('.view', {'entity' : entity});
+    function sort() {
+        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
+        if (vm.predicate !== 'application') {
+            // default sort column
+            result.push('application,asc');
+        }
+        return result;
     }
 
-    function deactivate(url) {
-        $http.post('api/service-discovery/deactivate', url);
+    function loadPage(page) {
+        vm.page = page;
+        vm.transition();
     }
 
-    function activate(url) {
-        $http.post('api/service-discovery/activate', url);
+    function transition() {
+        $state.transitionTo($state.$current, {
+            page: vm.page,
+            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
+            application: vm.criteria.application
+        });
+    }
+
+    function checkPressEnter($event) {
+        //按下enter键重新查询数据
+        if ($event.keyCode == 13) {
+            vm.transition();
+        }
     }
 }
 /**

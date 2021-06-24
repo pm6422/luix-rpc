@@ -844,7 +844,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             }
         })
         .state('service-discovery.rpc-service-list', {
-            url: '/rpc-service-list?page&sort',
+            url: '/rpc-service-list?page&sort&application',
             views: {
                 'content@': {
                     templateUrl: 'app/views/admin/rpc-service/rpc-service-list.html',
@@ -875,12 +875,14 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                     };
                 }],
                 criteria: ['$stateParams', function ($stateParams) {
-                    return {};
+                    return {
+                        application: $stateParams.application
+                    };
                 }]
             }
         })
         .state('service-discovery.rpc-provider-list', {
-            url: '/rpc-provider-list?page&sort',
+            url: '/rpc-provider-list?page&sort&application',
             views: {
                 'content@': {
                     templateUrl: 'app/views/admin/rpc-provider/rpc-provider-list.html',
@@ -897,7 +899,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                     squash: true
                 },
                 sort: {
-                    value: 'name,asc',
+                    value: 'application,asc',
                     squash: true
                 }
             },
@@ -919,7 +921,9 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                     };
                 }],
                 criteria: ['$stateParams', function ($stateParams) {
-                    return {};
+                    return {
+                        application: $stateParams.application
+                    };
                 }]
             }
         })

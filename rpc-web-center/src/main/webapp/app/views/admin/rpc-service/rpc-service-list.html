@@ -38,21 +38,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr on-footable-finish-render ng-repeat="item in vm.items">
-                                <td>{{item.interfaceName}}</td>
-                                <td>{{item.application}}</td>
+                            <tr on-footable-finish-render ng-repeat="entity in vm.entities">
+                                <td>{{entity.interfaceName}}</td>
+                                <td>{{entity.application}}</td>
                                 <td>
                                     <div class="btn-group">
-                                        <button class="btn-white btn btn-xs" ng-show="item.providing" ui-sref=".edit({id: entity.id})">Providers</button>
-                                        <button class="btn-white btn btn-xs" ng-show="item.consuming" ng-click="vm.del(entity.id)">Consumers</button>
+                                        <button class="btn-white btn btn-xs" ng-show="entity.providing" ui-sref=".edit({id: entity.id})">Providers</button>
+                                        <button class="btn-white btn btn-xs" ng-show="entity.consuming" ng-click="vm.del(entity.id)">Consumers</button>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
+                    </table>
+                    <table class="table table-striped">
                         <tfoot>
                             <tr>
-                                <td colspan="8">
-                                    <ul class="pagination pull-right"></ul>
+                                <td colspan="12" class="text-center">
+                                    <strong><item-count-component page="vm.page" total="vm.totalItems" items-per-page="vm.itemsPerPage"></item-count-component></strong>
+                                    <uib-pagination class="pagination-sm m-xs" total-items="vm.totalItems" ng-model="vm.page" ng-change="vm.transition()"></uib-pagination>
                                 </td>
                             </tr>
                         </tfoot>
