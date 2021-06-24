@@ -34,9 +34,8 @@ public class RpcConsumer implements Serializable {
     private String  form;
     private String  version;
     private String  application;
-    private String  host;
     private String  address;
-    private String  consumerUrl;
+    private String  url;
     private String  registryIdentity;
     private Boolean active = false;
     private Instant createdTime;
@@ -49,9 +48,8 @@ public class RpcConsumer implements Serializable {
         provider.setForm(consumerUrl.getForm());
         provider.setVersion(consumerUrl.getVersion());
         provider.setApplication(consumerUrl.getOption(APP));
-        provider.setHost(consumerUrl.getHost());
         provider.setAddress(consumerUrl.getAddress());
-        provider.setConsumerUrl(consumerUrl.toFullStr());
+        provider.setUrl(consumerUrl.toFullStr());
         provider.setRegistryIdentity(registryUrl.getIdentity());
         provider.setActive(true);
         return provider;

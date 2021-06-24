@@ -4,9 +4,7 @@ import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.core.utils.name.ProviderStubBeanNameBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -32,18 +30,17 @@ public class RpcProvider implements Serializable {
 
     @Id
     private String  id;
-    private   String  interfaceName;
-    private   String  form;
-    private   String  version;
-    private   String  application;
-    private   String  host;
-    private   String  address;
-    private   String  providerUrl;
-    private   String  registryIdentity;
-    private   Boolean active    = false;
-    private   Boolean consuming = false;
-    private   Instant createdTime;
-    private   Instant modifiedTime;
+    private String  interfaceName;
+    private String  form;
+    private String  version;
+    private String  application;
+    private String  address;
+    private String  url;
+    private String  registryIdentity;
+    private Boolean active    = false;
+    private Boolean consuming = false;
+    private Instant createdTime;
+    private Instant modifiedTime;
 
     public static RpcProvider of(Url providerUrl, Url registryUrl) {
         RpcProvider rpcProvider = new RpcProvider();
@@ -52,9 +49,8 @@ public class RpcProvider implements Serializable {
         rpcProvider.setForm(providerUrl.getForm());
         rpcProvider.setVersion(providerUrl.getVersion());
         rpcProvider.setApplication(providerUrl.getOption(APP));
-        rpcProvider.setHost(providerUrl.getHost());
         rpcProvider.setAddress(providerUrl.getAddress());
-        rpcProvider.setProviderUrl(providerUrl.toFullStr());
+        rpcProvider.setUrl(providerUrl.toFullStr());
         rpcProvider.setRegistryIdentity(registryUrl.getIdentity());
         rpcProvider.setActive(true);
         return rpcProvider;

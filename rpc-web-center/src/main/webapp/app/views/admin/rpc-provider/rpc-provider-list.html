@@ -32,19 +32,23 @@
                     <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
                         <thead>
                             <tr>
-                                <th class="col-sm-3" data-toggle="true">Provider</th>
+                                <th class="col-sm-1" data-toggle="true">Address</th>
+                                <th class="col-sm-3">Service</th>
                                 <th class="col-sm-1">Application</th>
-                                <th class="col-sm-1" data-sort-ignore="true">Status</th>
+                                <th class="col-sm-1" data-sort-ignore="true">Active</th>
                                 <th class="col-sm-1" data-sort-ignore="true">Actions</th>
-                                <th data-hide="all">Active providers</th>
-                                <th data-hide="all">Inactive providers</th>
+                                <th data-hide="all">URL</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr on-footable-finish-render ng-repeat="item in vm.items">
-                                <td>{{item.id}}</td>
+                                <td>{{item.address}}</td>
+                                <td>{{item.interfaceName}}</td>
                                 <td>{{item.application}}</td>
-                                <td><pie-chart data="item.status.data" options="item.status.options"></pie-chart></td>
+                                <td>
+                                    <i class="fa fa-circle text-navy" title="Active" ng-show="item.active"></i>
+                                    <i class="fa fa-circle text-danger"title="Inactive" ng-show="!item.active"></i>
+                                </td>
                                 <td>
                                     <div class="btn-group">
     <!--                                    <button class="btn-white btn btn-xs" ng-click="vm.view(item)">View</button>-->
@@ -53,21 +57,8 @@
                                         <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Route</button>
                                     </div>
                                 </td>
-                                <td>
-                                    <ul class="list-unstyled m-b-none">
-                                        <li ng-repeat="activeProvider in item.activeProviders">
-                                            <span><small>{{activeProvider.contents}}</small></span>&nbsp;&nbsp;&nbsp;
-                                            <button class="btn-white btn btn-xs" ng-click="vm.deactivate(activeProvider.contents)">Deactivate</button>
-                                        </li>
-                                    </ul>
-                                </td>
-                                <td>
-                                    <ul class="list-unstyled m-b-none">
-                                        <li ng-repeat="inactiveProvider in item.inactiveProviders">
-                                            <span><small>{{inactiveProvider.contents}}</small></span>&nbsp;&nbsp;&nbsp;
-                                            <button class="btn-white btn btn-xs" ng-click="vm.activate(inactiveProvider.contents)">Activate</button>
-                                        </li>
-                                    </ul>
+                                <td class="break">
+                                    <span>{{item.url}}</span>
                                 </td>
                             </tr>
                         </tbody>
