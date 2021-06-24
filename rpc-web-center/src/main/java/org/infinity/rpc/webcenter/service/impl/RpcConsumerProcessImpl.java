@@ -2,6 +2,7 @@ package org.infinity.rpc.webcenter.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.listener.ConsumerProcessable;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.webcenter.domain.RpcApplication;
@@ -42,6 +43,9 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
             log.info("Discovered active consumers {}", consumerUrls);
             for (Url consumerUrl : consumerUrls) {
                 RpcConsumer rpcConsumer = RpcConsumer.of(consumerUrl, registryUrl);
+                if (BuildInService.class.getName().equals(rpcConsumer.getInterfaceName())) {
+                    continue;
+                }
                 // Insert or update consumer
                 rpcConsumerRepository.save(rpcConsumer);
 

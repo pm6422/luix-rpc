@@ -3,6 +3,7 @@ package org.infinity.rpc.webcenter.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.client.listener.ProviderProcessable;
+import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.webcenter.domain.RpcApplication;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
@@ -42,6 +43,9 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
             log.info("Discovered active providers {}", providerUrls);
             for (Url providerUrl : providerUrls) {
                 RpcProvider rpcProvider = RpcProvider.of(providerUrl, registryUrl);
+                if (BuildInService.class.getName().equals(rpcProvider.getInterfaceName())) {
+                    continue;
+                }
                 // Insert or update provider
                 rpcProviderRepository.save(rpcProvider);
 
