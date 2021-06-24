@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -44,12 +45,21 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
                 // Insert or update consumer
                 rpcConsumerRepository.save(rpcConsumer);
 
-                // Insert service
-                RpcService rpcService = new RpcService();
-                BeanUtils.copyProperties(rpcConsumer, rpcService);
-                rpcService.setId(registryUrl.getIdentity() + ":" + rpcService.getInterfaceName());
-                rpcService.setConsuming(true);
-                rpcServiceRepository.save(rpcService);
+                // Insert or update service
+                Optional<RpcService> existingRpcService = rpcServiceRepository
+                        .findByInterfaceNameAndRegistryIdentity(rpcConsumer.getInterfaceName(), rpcConsumer.getRegistryIdentity());
+                if (existingRpcService.isPresent()) {
+                    // Update
+                    existingRpcService.get().setConsuming(true);
+                    rpcServiceRepository.save(existingRpcService.get());
+                } else {
+                    // Insert
+                    RpcService rpcService = new RpcService();
+                    BeanUtils.copyProperties(rpcConsumer, rpcService);
+                    rpcService.setId(null);
+                    rpcService.setConsuming(true);
+                    rpcServiceRepository.save(rpcService);
+                }
 
                 // Insert application
                 RpcApplication applicationProbe = new RpcApplication();

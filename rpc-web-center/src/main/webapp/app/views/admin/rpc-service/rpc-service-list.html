@@ -43,7 +43,8 @@
                                 <td>{{item.application}}</td>
                                 <td>
                                     <div class="btn-group">
-                                        <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Priority</button>
+                                        <button class="btn-white btn btn-xs" ng-show="item.providing" ui-sref=".edit({id: entity.id})">Providers</button>
+                                        <button class="btn-white btn btn-xs" ng-show="item.consuming" ng-click="vm.del(entity.id)">Consumers</button>
                                     </div>
                                 </td>
                             </tr>

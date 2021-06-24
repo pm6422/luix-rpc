@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -44,12 +45,21 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
                 // Insert or update provider
                 rpcProviderRepository.save(rpcProvider);
 
-                // Insert service
-                RpcService rpcService = new RpcService();
-                BeanUtils.copyProperties(rpcProvider, rpcService);
-                rpcService.setId(registryUrl.getIdentity() + ":" + rpcService.getInterfaceName());
-                rpcService.setProviding(true);
-                rpcServiceRepository.save(rpcService);
+                // Insert or update service
+                Optional<RpcService> existingRpcService = rpcServiceRepository
+                        .findByInterfaceNameAndRegistryIdentity(rpcProvider.getInterfaceName(), rpcProvider.getRegistryIdentity());
+                if (existingRpcService.isPresent()) {
+                    // Update
+                    existingRpcService.get().setProviding(true);
+                    rpcServiceRepository.save(existingRpcService.get());
+                } else {
+                    // Insert
+                    RpcService rpcService = new RpcService();
+                    BeanUtils.copyProperties(rpcProvider, rpcService);
+                    rpcService.setId(null);
+                    rpcService.setProviding(true);
+                    rpcServiceRepository.save(rpcService);
+                }
 
                 // Insert application
                 RpcApplication applicationProbe = new RpcApplication();
