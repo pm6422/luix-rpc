@@ -46,7 +46,7 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
 
                 // Insert service
                 RpcService serviceProbe = new RpcService();
-                serviceProbe.setInterfaceName(rpcProvider.getApplication());
+                serviceProbe.setInterfaceName(rpcProvider.getInterfaceName());
                 serviceProbe.setRegistryIdentity(rpcProvider.getRegistryIdentity());
 
                 // Ignore query parameter if it has a null value

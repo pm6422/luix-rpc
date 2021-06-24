@@ -46,7 +46,7 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
 
                 // Insert service
                 RpcService serviceProbe = new RpcService();
-                serviceProbe.setInterfaceName(rpcConsumer.getApplication());
+                serviceProbe.setInterfaceName(rpcConsumer.getInterfaceName());
                 serviceProbe.setRegistryIdentity(rpcConsumer.getRegistryIdentity());
 
                 // Ignore query parameter if it has a null value
