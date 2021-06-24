@@ -17,10 +17,21 @@
 <div class="wrapper wrapper-content p-h-xs animated fadeInDown">
     <div class="ibox-content m-b-sm border-bottom">
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-6">
                 <div class="form-group">
-                    <label class="control-label">Filter (Full-text search)</label>
-                    <input id="filter" type="text" class="form-control" placeholder="Filter by provider">
+                    <label class="control-label" for="application">Application</label>
+                    <select class="form-control" id="application" ng-model="vm.criteria.application"
+                            ng-options="item as item for item in vm.applications"
+                            ng-change="vm.transition()">
+                        <option value="">Select...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="control-label" for="interfaceName">Name (fuzzy query)</label>
+                    <input type="text" id="interfaceName" class="form-control"
+                           ng-model="vm.criteria.interfaceName" ng-keydown="vm.checkPressEnter($event)">
                 </div>
             </div>
         </div>
@@ -29,35 +40,33 @@
         <div class="col-lg-12">
             <div class="ibox">
                 <div class="ibox-content">
-                    <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
+                    <table class="table table-striped">
                         <thead>
-                            <tr>
-                                <th class="col-sm-5" data-toggle="true">Name</th>
-                                <th class="col-sm-1">Application</th>
-                                <th class="col-sm-1" data-sort-ignore="true">Actions</th>
-                            </tr>
+                        <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
+                            <th sort-by-directive="interfaceName"><span>Name</span> <span class="fa fa-sort"></span></th>
+                            <th sort-by-directive="application"><span>Application</span> <span class="fa fa-sort"></span></th>
+                            <th>Actions</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            <tr on-footable-finish-render ng-repeat="entity in vm.entities">
-                                <td>{{entity.interfaceName}}</td>
-                                <td>{{entity.application}}</td>
-                                <td>
-                                    <div class="btn-group">
-                                        <button class="btn-white btn btn-xs" ng-show="entity.providing" ui-sref=".edit({id: entity.id})">Providers</button>
-                                        <button class="btn-white btn btn-xs" ng-show="entity.consuming" ng-click="vm.del(entity.id)">Consumers</button>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tr ng-repeat="entity in vm.entities track by entity.id">
+                            <td>{{entity.interfaceName}}</td>
+                            <td>{{entity.application}}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn-white btn btn-xs" ng-show="entity.providing" ui-sref=".edit({id: entity.id})">Providers</button>
+                                    <button class="btn-white btn btn-xs" ng-show="entity.consuming" ng-click="vm.del(entity.id)">Consumers</button>
+                                </div>
+                            </td>
+                        </tr>
                         </tbody>
-                    </table>
-                    <table class="table table-striped">
                         <tfoot>
-                            <tr>
-                                <td colspan="12" class="text-center">
-                                    <strong><item-count-component page="vm.page" total="vm.totalItems" items-per-page="vm.itemsPerPage"></item-count-component></strong>
-                                    <uib-pagination class="pagination-sm m-xs" total-items="vm.totalItems" ng-model="vm.page" ng-change="vm.transition()"></uib-pagination>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td colspan="12" class="text-center">
+                                <strong><item-count-component page="vm.page" total="vm.totalItems" items-per-page="vm.itemsPerPage"></item-count-component></strong>
+                                <uib-pagination class="pagination-sm m-xs" total-items="vm.totalItems" ng-model="vm.page" ng-change="vm.transition()"></uib-pagination>
+                            </td>
+                        </tr>
                         </tfoot>
                     </table>
                 </div>

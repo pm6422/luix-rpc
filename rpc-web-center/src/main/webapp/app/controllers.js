@@ -1446,11 +1446,12 @@ function RpcApplicationListController($state, $rootScope, RpcApplicationService)
 /**
  * RpcServiceListController
  */
-function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcServiceService) {
+function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcServiceService, RpcApplicationService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
+    vm.applications = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity, extension: 'all', active: true});
     vm.links = null;
     vm.loadAll = loadAll;
     vm.loadPage = loadPage;
@@ -1472,6 +1473,7 @@ function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtil
             size: vm.itemsPerPage,
             registryIdentity: $rootScope.selectedRegistryIdentity,
             application: vm.criteria.application,
+            interfaceName: vm.criteria.interfaceName,
             sort: sort()
         }, function (result, headers) {
             vm.links = ParseLinksUtils.parse(headers('link'));
@@ -1499,7 +1501,8 @@ function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtil
         $state.transitionTo($state.$current, {
             page: vm.page,
             sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
-            application: vm.criteria.application
+            application: vm.criteria.application,
+            interfaceName: vm.criteria.interfaceName
         });
     }
 
