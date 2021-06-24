@@ -34,6 +34,7 @@ angular
     .controller('ScheduleController', ScheduleController)
     .controller('ControlController', ControlController)
     .controller('RpcApplicationListController', RpcApplicationListController)
+    .controller('RpcServiceListController', RpcServiceListController)
     .controller('RpcProviderListController', RpcProviderListController)
     .controller('ProviderDetailsController', ProviderDetailsController)
     .controller('AppListController', AppListController)
@@ -1441,6 +1442,16 @@ function RpcApplicationListController($state, $rootScope, RpcApplicationService)
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
     vm.items = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity});;
+}
+/**
+ * RpcServiceListController
+ */
+function RpcServiceListController($state, $rootScope, RpcServiceService) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
+    vm.items = RpcServiceService.query({registryIdentity: $rootScope.selectedRegistryIdentity});;
 }
 /**
  * RpcProviderListController

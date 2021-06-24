@@ -33,6 +33,4 @@ public class RpcService implements Serializable {
     private String  registryIdentity;
     private Boolean providing = false;
     private Boolean consuming = false;
-    private Instant createdTime;
-    private Instant modifiedTime;
 }

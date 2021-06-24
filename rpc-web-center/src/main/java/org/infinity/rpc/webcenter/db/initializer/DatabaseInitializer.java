@@ -126,13 +126,17 @@ public class DatabaseInitializer {
         AdminMenu serviceDiscovery = new AdminMenu(APP_NAME, "service-discovery", "服务发现", 1, "service-discovery", 10, null);
         mongoTemplate.save(serviceDiscovery);
 
-        AdminMenu serviceAppList = new AdminMenu(APP_NAME, "rpc-application-list", "RPC应用列表", 2, "service-discovery.rpc-application-list",
+        AdminMenu rpcApplicationList = new AdminMenu(APP_NAME, "rpc-application-list", "RPC应用列表", 2, "service-discovery.rpc-application-list",
                 11, serviceDiscovery.getId());
-        mongoTemplate.save(serviceAppList);
+        mongoTemplate.save(rpcApplicationList);
 
-        AdminMenu providerList = new AdminMenu(APP_NAME, "rpc-provider-list", "RPC服务提供者列表", 2, "service-discovery.rpc-provider-list",
+        AdminMenu rpcServiceList = new AdminMenu(APP_NAME, "rpc-service-list", "RPC服务列表", 2, "service-discovery.rpc-service-list",
                 12, serviceDiscovery.getId());
-        mongoTemplate.save(providerList);
+        mongoTemplate.save(rpcServiceList);
+
+        AdminMenu rpcProviderList = new AdminMenu(APP_NAME, "rpc-provider-list", "RPC服务提供者列表", 2, "service-discovery.rpc-provider-list",
+                13, serviceDiscovery.getId());
+        mongoTemplate.save(rpcProviderList);
 
         AdminMenu userAuthority = new AdminMenu(APP_NAME, "user-authority", "用户权限", 1, "user-authority", 100, null);
         mongoTemplate.save(userAuthority);
@@ -185,9 +189,11 @@ public class DatabaseInitializer {
         //AuthorityAdminMenu
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, serviceDiscovery.getId()));
 
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, serviceAppList.getId()));
+        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcApplicationList.getId()));
 
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, providerList.getId()));
+        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcServiceList.getId()));
+
+        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcProviderList.getId()));
 
 //        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, userAuthority.getId()));
 //

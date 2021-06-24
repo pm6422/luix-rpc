@@ -1,0 +1,63 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>{{vm.pageTitle}}</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="#">首页</a>
+            </li>
+            <li>
+                <a style="pointer-events: none">{{vm.parentPageTitle}}</a>
+            </li>
+            <li class="active">
+                <a href="#{{$state.$current.url.sourcePath}}"><strong>{{vm.pageTitle}}</strong></a>
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="wrapper wrapper-content p-h-xs animated fadeInDown">
+    <div class="ibox-content m-b-sm border-bottom">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="control-label">Filter (Full-text search)</label>
+                    <input id="filter" type="text" class="form-control" placeholder="Filter by provider">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
+                        <thead>
+                            <tr>
+                                <th class="col-sm-5" data-toggle="true">Name</th>
+                                <th class="col-sm-1">Application</th>
+                                <th class="col-sm-1" data-sort-ignore="true">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr on-footable-finish-render ng-repeat="item in vm.items">
+                                <td>{{item.interfaceName}}</td>
+                                <td>{{item.application}}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn-white btn btn-xs" ui-sref=".view({name: item.name})">Priority</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="6">
+                                    <ul class="pagination pull-right"></ul>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

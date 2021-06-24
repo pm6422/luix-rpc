@@ -44,18 +44,28 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
                 // Insert or update provider
                 rpcProviderRepository.save(rpcProvider);
 
-                RpcService rpcService = new RpcService();
-                BeanUtils.copyProperties(rpcProvider, rpcService);
-                rpcService.setProviding(true);
-                rpcServiceRepository.save(rpcService);
+                // Insert service
+                RpcService serviceProbe = new RpcService();
+                serviceProbe.setInterfaceName(rpcProvider.getApplication());
+                serviceProbe.setRegistryIdentity(rpcProvider.getRegistryIdentity());
+
+                // Ignore query parameter if it has a null value
+                ExampleMatcher serviceMatcher = ExampleMatcher.matching().withIgnoreNullValues();
+                if (!rpcServiceRepository.exists(Example.of(serviceProbe, serviceMatcher))) {
+                    RpcService rpcService = new RpcService();
+                    BeanUtils.copyProperties(rpcProvider, rpcService);
+                    rpcService.setId(null);
+                    rpcService.setProviding(true);
+                    rpcServiceRepository.save(rpcService);
+                }
 
                 // Insert application
-                RpcApplication probe = new RpcApplication();
-                probe.setName(rpcProvider.getApplication());
-                probe.setRegistryIdentity(rpcProvider.getRegistryIdentity());
+                RpcApplication applicationProbe = new RpcApplication();
+                applicationProbe.setName(rpcProvider.getApplication());
+                applicationProbe.setRegistryIdentity(rpcProvider.getRegistryIdentity());
                 // Ignore query parameter if it has a null value
-                ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
-                if (rpcApplicationRepository.exists(Example.of(probe, matcher))) {
+                ExampleMatcher applicationMatcher = ExampleMatcher.matching().withIgnoreNullValues();
+                if (rpcApplicationRepository.exists(Example.of(applicationProbe, applicationMatcher))) {
                     // If application exists
                     continue;
                 }

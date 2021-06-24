@@ -40,6 +40,7 @@ angular
     .factory('OAuth2ApprovalService', OAuth2ApprovalService)
     .factory('AdminMenuService', AdminMenuService)
     .factory('RpcApplicationService', RpcApplicationService)
+    .factory('RpcServiceService', RpcServiceService)
     .factory('RpcProviderService', RpcProviderService);
 
 /**
@@ -1340,6 +1341,16 @@ function RpcApplicationService($resource) {
 }
 
 /**
+ * RpcServiceService
+ */
+function RpcServiceService($resource) {
+    var service = $resource('api/rpc-service/services', {}, {
+        'query': {method: 'GET', isArray: true}
+    });
+    return service;
+}
+
+/**
  * RpcProviderService
  */
 function RpcProviderService($resource) {
@@ -1355,4 +1366,3 @@ function RpcProviderService($resource) {
     });
     return service;
 }
-

@@ -45,7 +45,6 @@ public class RpcConsumer implements Serializable {
     public static RpcConsumer of(Url consumerUrl, Url registryUrl) {
         RpcConsumer provider = new RpcConsumer();
         // Set ID with identity
-        provider.setId(consumerUrl.getIdentity());
         provider.setInterfaceName(consumerUrl.getPath());
         provider.setForm(consumerUrl.getForm());
         provider.setVersion(consumerUrl.getVersion());

@@ -843,6 +843,42 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
+        .state('service-discovery.rpc-service-list', {
+            url: '/rpc-service-list?page&sort',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/rpc-service/rpc-service-list.html',
+                    controller: 'RpcServiceListController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'RPC服务列表'
+            },
+            params: {
+                page: {
+                    value: '1',
+                    squash: true
+                },
+                sort: {
+                    value: 'application,asc',
+                    squash: true
+                }
+            },
+            resolve: {
+                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
+                    return {
+                        page: PaginationUtils.parsePage($stateParams.page),
+                        sort: $stateParams.sort,
+                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
+                        ascending: PaginationUtils.parseAscending($stateParams.sort)
+                    };
+                }],
+                criteria: ['$stateParams', function ($stateParams) {
+                    return {};
+                }]
+            }
+        })
         .state('service-discovery.rpc-provider-list', {
             url: '/rpc-provider-list?page&sort',
             views: {
