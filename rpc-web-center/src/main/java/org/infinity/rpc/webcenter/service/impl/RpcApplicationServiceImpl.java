@@ -8,14 +8,13 @@ import org.infinity.rpc.core.config.impl.ApplicationConfig;
 import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.id.IdGenerator;
+import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.domain.RpcApplication;
 import org.infinity.rpc.webcenter.domain.RpcConsumer;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
 import org.infinity.rpc.webcenter.repository.RpcApplicationRepository;
 import org.infinity.rpc.webcenter.repository.RpcConsumerRepository;
 import org.infinity.rpc.webcenter.repository.RpcProviderRepository;
-import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.service.RpcApplicationService;
 import org.infinity.rpc.webcenter.service.RpcRegistryService;
 import org.springframework.beans.BeanUtils;
@@ -38,15 +37,15 @@ import static org.infinity.rpc.webcenter.domain.RpcProvider.FIELD_REGISTRY_IDENT
 @Service
 public class RpcApplicationServiceImpl implements RpcApplicationService {
     @Resource
-    private InfinityProperties    infinityProperties;
+    private InfinityProperties       infinityProperties;
     @Resource
-    private ApplicationContext    applicationContext;
+    private ApplicationContext       applicationContext;
     @Resource
-    private MongoTemplate         mongoTemplate;
+    private MongoTemplate            mongoTemplate;
     @Resource
-    private RpcProviderRepository rpcProviderRepository;
+    private RpcProviderRepository    rpcProviderRepository;
     @Resource
-    private RpcConsumerRepository rpcConsumerRepository;
+    private RpcConsumerRepository    rpcConsumerRepository;
     @Resource
     private RpcApplicationRepository rpcApplicationRepository;
 

@@ -23,7 +23,7 @@ public class RpcApplication implements Serializable {
     public static final  String FIELD_ACTIVE_CONSUMER = "activeConsumer";
 
     @Id
-    protected String  id;
+    private String  id;
     private   String  name;
     private   String  description;
     private   String  team;

@@ -2,7 +2,6 @@ package org.infinity.rpc.webcenter.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.webcenter.domain.RpcConsumer;
-import org.infinity.rpc.webcenter.repository.RpcConsumerRepository;
 import org.infinity.rpc.webcenter.service.RpcConsumerService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,13 +20,11 @@ import static org.infinity.rpc.webcenter.domain.RpcProvider.*;
 @Service
 public class RpcConsumerServiceImpl implements RpcConsumerService {
     @Resource
-    private MongoTemplate         mongoTemplate;
-    @Resource
-    private RpcConsumerRepository rpcConsumerRepository;
+    private MongoTemplate mongoTemplate;
 
     @Override
-    public Page<RpcConsumer> find(Pageable pageable, String registryUrl, String application, String interfaceName, Boolean active) {
-        Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryUrl));
+    public Page<RpcConsumer> find(Pageable pageable, String registryIdentity, String application, String interfaceName, Boolean active) {
+        Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryIdentity));
         if (StringUtils.isNotEmpty(application)) {
             query.addCriteria(Criteria.where(FIELD_APPLICATION).is(application));
         }

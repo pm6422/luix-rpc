@@ -31,7 +31,7 @@ public class RpcProvider implements Serializable {
     public static final  String FIELD_ACTIVE            = "active";
 
     @Id
-    protected String  id;
+    private String  id;
     private   String  interfaceName;
     private   String  form;
     private   String  version;

@@ -9,6 +9,7 @@ import org.infinity.rpc.webcenter.domain.RpcConsumer;
 import org.infinity.rpc.webcenter.repository.RpcApplicationRepository;
 import org.infinity.rpc.webcenter.repository.RpcConsumerRepository;
 import org.infinity.rpc.webcenter.service.RpcApplicationService;
+import org.infinity.rpc.webcenter.service.RpcServiceService;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
     private RpcConsumerRepository    rpcConsumerRepository;
     @Resource
     private RpcApplicationRepository rpcApplicationRepository;
+    @Resource
+    private RpcServiceService        rpcServiceService;
     @Resource
     private RpcApplicationService    rpcApplicationService;
 
@@ -60,6 +63,9 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
             }
             list.forEach(provider -> provider.setActive(false));
             rpcConsumerRepository.saveAll(list);
+
+            // Update consuming flag
+            rpcServiceService.inactivate(list.get(0).getInterfaceName(), list.get(0).getRegistryIdentity());
 
             // Update application to inactive
             rpcApplicationService.inactivate(list.get(0).getApplication(), list.get(0).getRegistryIdentity());
