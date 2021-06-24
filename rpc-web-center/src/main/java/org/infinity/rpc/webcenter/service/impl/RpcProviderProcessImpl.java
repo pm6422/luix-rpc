@@ -45,24 +45,16 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
                 rpcProviderRepository.save(rpcProvider);
 
                 // Insert service
-                RpcService serviceProbe = new RpcService();
-                serviceProbe.setInterfaceName(rpcProvider.getInterfaceName());
-                serviceProbe.setRegistryIdentity(rpcProvider.getRegistryIdentity());
-
-                // Ignore query parameter if it has a null value
-                ExampleMatcher serviceMatcher = ExampleMatcher.matching().withIgnoreNullValues();
-                if (!rpcServiceRepository.exists(Example.of(serviceProbe, serviceMatcher))) {
-                    RpcService rpcService = new RpcService();
-                    BeanUtils.copyProperties(rpcProvider, rpcService);
-                    rpcService.setId(null);
-                    rpcService.setProviding(true);
-                    rpcServiceRepository.save(rpcService);
-                }
+                RpcService rpcService = new RpcService();
+                BeanUtils.copyProperties(rpcProvider, rpcService);
+                rpcService.setId(registryUrl.getIdentity() + ":" + rpcService.getInterfaceName());
+                rpcService.setProviding(true);
+                rpcServiceRepository.save(rpcService);
 
                 // Insert application
                 RpcApplication applicationProbe = new RpcApplication();
-                applicationProbe.setName(rpcProvider.getApplication());
                 applicationProbe.setRegistryIdentity(rpcProvider.getRegistryIdentity());
+                applicationProbe.setName(rpcProvider.getApplication());
                 // Ignore query parameter if it has a null value
                 ExampleMatcher applicationMatcher = ExampleMatcher.matching().withIgnoreNullValues();
                 if (rpcApplicationRepository.exists(Example.of(applicationProbe, applicationMatcher))) {

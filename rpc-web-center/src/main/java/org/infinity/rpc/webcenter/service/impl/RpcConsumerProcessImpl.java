@@ -45,24 +45,16 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
                 rpcConsumerRepository.save(rpcConsumer);
 
                 // Insert service
-                RpcService serviceProbe = new RpcService();
-                serviceProbe.setInterfaceName(rpcConsumer.getInterfaceName());
-                serviceProbe.setRegistryIdentity(rpcConsumer.getRegistryIdentity());
-
-                // Ignore query parameter if it has a null value
-                ExampleMatcher serviceMatcher = ExampleMatcher.matching().withIgnoreNullValues();
-                if (!rpcServiceRepository.exists(Example.of(serviceProbe, serviceMatcher))) {
-                    RpcService rpcService = new RpcService();
-                    BeanUtils.copyProperties(rpcConsumer, rpcService);
-                    rpcService.setId(null);
-                    rpcService.setConsuming(true);
-                    rpcServiceRepository.save(rpcService);
-                }
+                RpcService rpcService = new RpcService();
+                BeanUtils.copyProperties(rpcConsumer, rpcService);
+                rpcService.setId(registryUrl.getIdentity() + ":" + rpcService.getInterfaceName());
+                rpcService.setConsuming(true);
+                rpcServiceRepository.save(rpcService);
 
                 // Insert application
                 RpcApplication applicationProbe = new RpcApplication();
-                applicationProbe.setName(rpcConsumer.getApplication());
                 applicationProbe.setRegistryIdentity(rpcConsumer.getRegistryIdentity());
+                applicationProbe.setName(rpcConsumer.getApplication());
                 // Ignore query parameter if it has a null value
                 ExampleMatcher applicationMatcher = ExampleMatcher.matching().withIgnoreNullValues();
                 if (rpcApplicationRepository.exists(Example.of(applicationProbe, applicationMatcher))) {

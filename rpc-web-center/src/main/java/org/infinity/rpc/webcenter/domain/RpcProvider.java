@@ -47,14 +47,7 @@ public class RpcProvider implements Serializable {
 
     public static RpcProvider of(Url providerUrl, Url registryUrl) {
         RpcProvider rpcProvider = new RpcProvider();
-        // Set ID with identity
-        String id = ProviderStubBeanNameBuilder
-                .builder(providerUrl.getPath())
-                .disablePrefix()
-                .form(providerUrl.getForm())
-                .version(providerUrl.getVersion())
-                .build();
-        rpcProvider.setId(id);
+        rpcProvider.setId(registryUrl.getIdentity() + ":" + providerUrl.getIdentity());
         rpcProvider.setInterfaceName(providerUrl.getPath());
         rpcProvider.setForm(providerUrl.getForm());
         rpcProvider.setVersion(providerUrl.getVersion());

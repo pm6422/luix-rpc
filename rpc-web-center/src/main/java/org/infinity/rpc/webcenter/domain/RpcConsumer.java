@@ -30,21 +30,21 @@ public class RpcConsumer implements Serializable {
 
     @Id
     private String  id;
-    private   String  interfaceName;
-    private   String  form;
-    private   String  version;
-    private   String  application;
-    private   String  host;
-    private   String  address;
-    private   String  consumerUrl;
-    private   String  registryIdentity;
-    private   Boolean active = false;
-    private   Instant createdTime;
-    private   Instant modifiedTime;
+    private String  interfaceName;
+    private String  form;
+    private String  version;
+    private String  application;
+    private String  host;
+    private String  address;
+    private String  consumerUrl;
+    private String  registryIdentity;
+    private Boolean active = false;
+    private Instant createdTime;
+    private Instant modifiedTime;
 
     public static RpcConsumer of(Url consumerUrl, Url registryUrl) {
         RpcConsumer provider = new RpcConsumer();
-        // Set ID with identity
+        provider.setId(registryUrl.getIdentity() + ":" + consumerUrl.getIdentity());
         provider.setInterfaceName(consumerUrl.getPath());
         provider.setForm(consumerUrl.getForm());
         provider.setVersion(consumerUrl.getVersion());
