@@ -1451,7 +1451,7 @@ function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtil
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.applications = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity, extension: 'all', active: true});
+    vm.applications = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity, extension: 'all'});
     vm.links = null;
     vm.loadAll = loadAll;
     vm.loadPage = loadPage;

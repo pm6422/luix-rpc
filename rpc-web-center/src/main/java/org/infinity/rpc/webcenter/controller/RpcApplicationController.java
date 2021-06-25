@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.webcenter.domain.RpcApplication;
+import org.infinity.rpc.webcenter.repository.RpcApplicationRepository;
 import org.infinity.rpc.webcenter.service.RpcApplicationService;
 import org.infinity.rpc.webcenter.service.RpcProviderService;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
@@ -23,17 +25,18 @@ import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeade
 public class RpcApplicationController {
 
     @Resource
-    private RpcProviderService    rpcProviderService;
+    private RpcApplicationRepository rpcApplicationRepository;
     @Resource
-    private RpcApplicationService rpcApplicationService;
+    private RpcApplicationService    rpcApplicationService;
 
     @ApiOperation("find all applications")
     @GetMapping("api/rpc-application/applications/all")
     public ResponseEntity<List<String>> findApplications(
             @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry")
-            @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "active flag") @RequestParam(value = "active", required = false) Boolean active) {
-        return ResponseEntity.ok(rpcProviderService.findDistinctApplications(registryIdentity, active));
+            @RequestParam(value = "registryIdentity") String registryIdentity) {
+        List<String> list = rpcApplicationRepository.findByRegistryIdentity(registryIdentity)
+                .stream().map(RpcApplication::getName).collect(Collectors.toList());
+        return ResponseEntity.ok(list);
     }
 
     @ApiOperation("find application list")
