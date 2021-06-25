@@ -21,7 +21,6 @@ import java.time.Instant;
 public class RpcService implements Serializable {
     private static final long   serialVersionUID        = 1L;
     public static final  String FIELD_INTERFACE_NAME    = "interfaceName";
-    public static final  String FIELD_APPLICATION       = "application";
     public static final  String FIELD_REGISTRY_IDENTITY = "registryIdentity";
     public static final  String FIELD_PROVIDING         = "providing";
     public static final  String FIELD_CONSUMING         = "consuming";
@@ -29,7 +28,6 @@ public class RpcService implements Serializable {
     @Id
     private String  id;
     private String  interfaceName;
-    private String  application;
     private String  registryIdentity;
     private Boolean providing = false;
     private Boolean consuming = false;

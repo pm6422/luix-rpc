@@ -30,11 +30,10 @@ public class RpcServiceController {
             Pageable pageable,
             @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry")
             @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "application name") @RequestParam(value = "application", required = false) String application,
             @ApiParam(value = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName,
             @ApiParam(value = "providing flag") @RequestParam(value = "providing", required = false) Boolean providing,
             @ApiParam(value = "consuming flag") @RequestParam(value = "consuming", required = false) Boolean consuming) {
-        Page<RpcService> list = rpcServiceService.find(pageable, registryIdentity, application, interfaceName, providing, consuming);
+        Page<RpcService> list = rpcServiceService.find(pageable, registryIdentity, interfaceName, providing, consuming);
         return ResponseEntity.ok().headers(generatePageHeaders(list)).body(list.getContent());
     }
 }

@@ -17,17 +17,17 @@
 <div class="wrapper wrapper-content p-h-xs animated fadeInDown">
     <div class="ibox-content m-b-sm border-bottom">
         <div class="row">
-            <div class="col-sm-6">
-                <div class="form-group">
-                    <label class="control-label" for="application">Application</label>
-                    <select class="form-control" id="application" ng-model="vm.criteria.application"
-                            ng-options="item as item for item in vm.applications"
-                            ng-change="vm.transition()">
-                        <option value="">Select...</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-sm-6">
+<!--            <div class="col-sm-6">-->
+<!--                <div class="form-group">-->
+<!--                    <label class="control-label" for="application">Application</label>-->
+<!--                    <select class="form-control" id="application" ng-model="vm.criteria.application"-->
+<!--                            ng-options="item as item for item in vm.applications"-->
+<!--                            ng-change="vm.transition()">-->
+<!--                        <option value="">Select...</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="col-sm-12">
                 <div class="form-group">
                     <label class="control-label" for="interfaceName">Name (fuzzy query)</label>
                     <input type="text" id="interfaceName" class="form-control"
@@ -44,14 +44,12 @@
                         <thead>
                         <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
                             <th sort-by-directive="interfaceName"><span>Name</span> <span class="fa fa-sort"></span></th>
-                            <th sort-by-directive="application"><span>Application</span> <span class="fa fa-sort"></span></th>
                             <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr ng-repeat="entity in vm.entities track by entity.id">
                             <td>{{entity.interfaceName}}</td>
-                            <td>{{entity.application}}</td>
                             <td>
                                 <div class="btn-group">
                                     <button class="btn-white btn btn-xs" ng-disabled="!entity.providing" ui-sref="service-discovery.rpc-provider-list({application: entity.name})">Providers</button>

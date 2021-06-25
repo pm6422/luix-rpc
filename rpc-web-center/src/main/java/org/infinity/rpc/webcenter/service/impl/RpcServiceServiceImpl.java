@@ -33,12 +33,9 @@ public class RpcServiceServiceImpl implements RpcServiceService {
     private RpcServiceRepository  rpcServiceRepository;
 
     @Override
-    public Page<RpcService> find(Pageable pageable, String registryIdentity, String application, String interfaceName,
+    public Page<RpcService> find(Pageable pageable, String registryIdentity, String interfaceName,
                                  Boolean providing, Boolean consuming) {
         Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryIdentity));
-        if (StringUtils.isNotEmpty(application)) {
-            query.addCriteria(Criteria.where(FIELD_APPLICATION).is(application));
-        }
         if (StringUtils.isNotEmpty(interfaceName)) {
             //Fuzzy search
             Pattern pattern = Pattern.compile("^.*" + interfaceName + ".*$", Pattern.CASE_INSENSITIVE);

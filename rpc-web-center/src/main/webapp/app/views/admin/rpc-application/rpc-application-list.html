@@ -55,7 +55,6 @@
                                 </td>
                                 <td>
                                     <div class="btn-group">
-                                        <button class="btn-white btn btn-xs" ui-sref="service-discovery.rpc-service-list({application: item.name})">Services</button>
                                         <button class="btn-white btn btn-xs" ng-disabled="!item.providing" ui-sref="service-discovery.rpc-provider-list({application: item.name})">Providers</button>
                                         <button class="btn-white btn btn-xs" ng-disabled="!item.consuming" ui-sref="service-discovery.rpc-consumer-list({application: item.name})">Consumers</button>
                                     </div>
