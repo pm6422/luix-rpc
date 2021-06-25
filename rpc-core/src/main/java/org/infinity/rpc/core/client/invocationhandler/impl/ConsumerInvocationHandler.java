@@ -51,6 +51,11 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
     }
 
     @Override
+    public Object invoke(String methodName) {
+        return invoke(methodName, new String[]{}, null);
+    }
+
+    @Override
     public Object invoke(String methodName, String[] methodParamTypes, Object[] args) {
         // Create a new RpcRequest for each request
         RpcRequest request = new RpcRequest(IdGenerator.generateTimestampId(),

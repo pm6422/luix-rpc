@@ -10,6 +10,14 @@ public interface UniversalInvocationHandler {
     /**
      * Universal RPC invocation
      *
+     * @param methodName method name
+     * @return return object
+     */
+    Object invoke(String methodName);
+
+    /**
+     * Universal RPC invocation
+     *
      * @param methodName       method name
      * @param methodParamTypes method parameter types string
      * @param args             method arguments

@@ -7,9 +7,11 @@ import org.springframework.data.domain.Pageable;
 
 public interface RpcApplicationService {
 
-    Page<RpcApplication> find(Pageable pageable, String registryUrl, String name, Boolean active);
+    boolean exists(String registryIdentity, String name);
 
-    RpcApplication remoteQueryApplication(Url registryUrl, Url url);
+    Page<RpcApplication> find(Pageable pageable, String registryIdentity, String name, Boolean active);
 
-    void inactivate(String applicationName, String registryIdentity);
+    RpcApplication loadApplication(Url registryIdentity, Url url);
+
+    void inactivate(String registryIdentity, String name);
 }

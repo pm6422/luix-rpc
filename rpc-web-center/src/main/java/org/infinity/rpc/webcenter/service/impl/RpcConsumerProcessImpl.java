@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -47,33 +46,21 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
                 // Insert or update consumer
                 rpcConsumerRepository.save(rpcConsumer);
 
-                // Insert or update service
-                Optional<RpcService> existingRpcService = rpcServiceRepository
-                        .findByInterfaceNameAndRegistryIdentity(rpcConsumer.getInterfaceName(), rpcConsumer.getRegistryIdentity());
-                if (existingRpcService.isPresent()) {
-                    // Update
-                    existingRpcService.get().setConsuming(true);
-                    rpcServiceRepository.save(existingRpcService.get());
-                } else {
-                    // Insert
+                // Insert service
+                boolean existsService = rpcServiceService
+                        .exists(rpcConsumer.getRegistryIdentity(), rpcConsumer.getInterfaceName());
+                if (!existsService) {
                     RpcService rpcService = new RpcService();
                     BeanUtils.copyProperties(rpcConsumer, rpcService);
                     rpcService.setId(null);
-                    rpcService.setConsuming(true);
                     rpcServiceRepository.save(rpcService);
                 }
 
-                // Insert or update application
-                Optional<RpcApplication> rpcApplication = rpcApplicationRepository
-                        .findByNameAndRegistryIdentity(rpcConsumer.getApplication(), rpcConsumer.getRegistryIdentity());
-                if (rpcApplication.isPresent()) {
-                    // Update
-                    rpcApplication.get().setConsuming(true);
-                    rpcApplicationRepository.save(rpcApplication.get());
-                } else {
-                    // Insert
-                    RpcApplication remoteRpcApplication = rpcApplicationService.remoteQueryApplication(registryUrl, consumerUrl);
-                    remoteRpcApplication.setConsuming(true);
+                // Insert application
+                boolean existsApplication = rpcApplicationService
+                        .exists(rpcConsumer.getRegistryIdentity(), rpcConsumer.getApplication());
+                if (!existsApplication) {
+                    RpcApplication remoteRpcApplication = rpcApplicationService.loadApplication(registryUrl, consumerUrl);
                     rpcApplicationRepository.save(remoteRpcApplication);
                 }
             }
@@ -89,10 +76,10 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
             rpcConsumerRepository.saveAll(list);
 
             // Update consuming flag
-            rpcServiceService.inactivate(list.get(0).getInterfaceName(), list.get(0).getRegistryIdentity());
+            rpcServiceService.inactivate(list.get(0).getRegistryIdentity(), list.get(0).getInterfaceName());
 
             // Update application to inactive
-            rpcApplicationService.inactivate(list.get(0).getApplication(), list.get(0).getRegistryIdentity());
+            rpcApplicationService.inactivate(list.get(0).getRegistryIdentity(), list.get(0).getApplication());
         }
     }
 }

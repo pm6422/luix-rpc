@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.webcenter.domain.RpcService;
+import org.infinity.rpc.webcenter.service.RpcConsumerService;
+import org.infinity.rpc.webcenter.service.RpcProviderService;
 import org.infinity.rpc.webcenter.service.RpcServiceService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +24,11 @@ import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeade
 public class RpcServiceController {
 
     @Resource
-    private RpcServiceService rpcServiceService;
+    private RpcServiceService  rpcServiceService;
+    @Resource
+    private RpcProviderService rpcProviderService;
+    @Resource
+    private RpcConsumerService rpcConsumerService;
 
     @ApiOperation("find service list")
     @GetMapping("/api/rpc-service/services")
@@ -30,10 +36,18 @@ public class RpcServiceController {
             Pageable pageable,
             @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry")
             @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName,
-            @ApiParam(value = "providing flag") @RequestParam(value = "providing", required = false) Boolean providing,
-            @ApiParam(value = "consuming flag") @RequestParam(value = "consuming", required = false) Boolean consuming) {
-        Page<RpcService> list = rpcServiceService.find(pageable, registryIdentity, interfaceName, providing, consuming);
-        return ResponseEntity.ok().headers(generatePageHeaders(list)).body(list.getContent());
+            @ApiParam(value = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
+        Page<RpcService> results = rpcServiceService.find(pageable, registryIdentity, interfaceName);
+        if (!results.isEmpty()) {
+            results.getContent().forEach(service -> {
+                if (rpcProviderService.existsService(registryIdentity, service.getInterfaceName(), true)) {
+                    service.setProviding(true);
+                }
+                if (rpcConsumerService.existsService(registryIdentity, service.getInterfaceName(), true)) {
+                    service.setConsuming(true);
+                }
+            });
+        }
+        return ResponseEntity.ok().headers(generatePageHeaders(results)).body(results.getContent());
     }
 }

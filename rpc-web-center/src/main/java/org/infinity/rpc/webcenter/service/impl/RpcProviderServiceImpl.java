@@ -2,6 +2,7 @@ package org.infinity.rpc.webcenter.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
+import org.infinity.rpc.webcenter.repository.RpcProviderRepository;
 import org.infinity.rpc.webcenter.service.RpcProviderService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,11 +21,15 @@ import static org.infinity.rpc.webcenter.domain.RpcProvider.*;
 
 @Service
 public class RpcProviderServiceImpl implements RpcProviderService {
+
     @Resource
-    private MongoTemplate mongoTemplate;
+    private RpcProviderRepository rpcProviderRepository;
+    @Resource
+    private MongoTemplate         mongoTemplate;
 
     @Override
-    public Page<RpcProvider> find(Pageable pageable, String registryIdentity, String application, String interfaceName, Boolean active) {
+    public Page<RpcProvider> find(Pageable pageable, String registryIdentity,
+                                  String application, String interfaceName, Boolean active) {
         Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryIdentity));
         if (StringUtils.isNotEmpty(application)) {
             query.addCriteria(Criteria.where(FIELD_APPLICATION).is(application));
@@ -43,11 +48,23 @@ public class RpcProviderServiceImpl implements RpcProviderService {
     }
 
     @Override
-    public List<String> findDistinctApplications(String registryUrl, Boolean active) {
-        Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryUrl));
+    public List<String> findDistinctApplications(String registryIdentity, Boolean active) {
+        Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryIdentity));
         if (active != null) {
             query.addCriteria(Criteria.where(FIELD_ACTIVE).is(active));
         }
         return mongoTemplate.findDistinct(query, FIELD_APPLICATION, RpcProvider.class, String.class);
+    }
+
+    @Override
+    public boolean existsApplication(String registryIdentity, String application, boolean active) {
+        return rpcProviderRepository
+                .existsByRegistryIdentityAndApplicationAndActive(registryIdentity, application, true);
+    }
+
+    @Override
+    public boolean existsService(String registryIdentity, String interfaceName, boolean active) {
+        return rpcProviderRepository
+                .existsByRegistryIdentityAndInterfaceNameAndActive(registryIdentity, interfaceName, true);
     }
 }

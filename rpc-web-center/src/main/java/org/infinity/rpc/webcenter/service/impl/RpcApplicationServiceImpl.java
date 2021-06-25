@@ -10,16 +10,16 @@ import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.domain.RpcApplication;
-import org.infinity.rpc.webcenter.domain.RpcConsumer;
-import org.infinity.rpc.webcenter.domain.RpcProvider;
 import org.infinity.rpc.webcenter.repository.RpcApplicationRepository;
-import org.infinity.rpc.webcenter.repository.RpcConsumerRepository;
-import org.infinity.rpc.webcenter.repository.RpcProviderRepository;
 import org.infinity.rpc.webcenter.service.RpcApplicationService;
+import org.infinity.rpc.webcenter.service.RpcConsumerService;
+import org.infinity.rpc.webcenter.service.RpcProviderService;
 import org.infinity.rpc.webcenter.service.RpcRegistryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -31,7 +31,8 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_APPLICATION_CONFIG;
-import static org.infinity.rpc.webcenter.domain.RpcApplication.*;
+import static org.infinity.rpc.webcenter.domain.RpcApplication.FIELD_ACTIVE;
+import static org.infinity.rpc.webcenter.domain.RpcApplication.FIELD_NAME;
 import static org.infinity.rpc.webcenter.domain.RpcProvider.FIELD_REGISTRY_IDENTITY;
 
 @Service
@@ -43,31 +44,27 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
     @Resource
     private MongoTemplate            mongoTemplate;
     @Resource
-    private RpcProviderRepository    rpcProviderRepository;
-    @Resource
-    private RpcConsumerRepository    rpcConsumerRepository;
-    @Resource
     private RpcApplicationRepository rpcApplicationRepository;
+    @Resource
+    private RpcProviderService       rpcProviderService;
+    @Resource
+    private RpcConsumerService       rpcConsumerService;
 
     @Override
-    public Page<RpcApplication> find(Pageable pageable, String registryUrl, String name, Boolean active) {
-        Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryUrl));
+    public boolean exists(String registryIdentity, String name) {
+        return rpcApplicationRepository.existsByRegistryIdentityAndName(registryIdentity, name);
+    }
+
+    @Override
+    public Page<RpcApplication> find(Pageable pageable, String registryIdentity, String name, Boolean active) {
+        Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryIdentity));
         if (StringUtils.isNotEmpty(name)) {
             //Fuzzy search
             Pattern pattern = Pattern.compile("^.*" + name + ".*$", Pattern.CASE_INSENSITIVE);
             query.addCriteria(Criteria.where(FIELD_NAME).regex(pattern));
         }
         if (active != null) {
-            if (Boolean.TRUE.equals(active)) {
-                // or criteria
-                Criteria criteria = new Criteria().orOperator(
-                        Criteria.where(FIELD_ACTIVE_PROVIDER).is(true),
-                        Criteria.where(FIELD_ACTIVE_CONSUMER).is(true));
-                query.addCriteria(criteria);
-            } else {
-                query.addCriteria(Criteria.where(FIELD_ACTIVE_PROVIDER).is(false));
-                query.addCriteria(Criteria.where(FIELD_ACTIVE_CONSUMER).is(false));
-            }
+            query.addCriteria(Criteria.where(FIELD_ACTIVE).is(active));
         }
 
         long totalCount = mongoTemplate.count(query, RpcApplication.class);
@@ -76,9 +73,9 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
     }
 
     @Override
-    public RpcApplication remoteQueryApplication(Url registryUrl, Url url) {
+    public RpcApplication loadApplication(Url registryIdentity, Url url) {
         RpcRegistryService rpcRegistryService = applicationContext.getBean(RpcRegistryService.class);
-        RegistryConfig registryConfig = rpcRegistryService.findRegistryConfig(registryUrl.getIdentity());
+        RegistryConfig registryConfig = rpcRegistryService.findRegistryConfig(registryIdentity.getIdentity());
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
 
         ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
@@ -87,39 +84,27 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
                 null, url.getAddress(), null, null, 10000, null);
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         // Send a remote request to get ApplicationConfig
-        ApplicationConfig applicationConfig = (ApplicationConfig)
-                invocationHandler.invoke(METHOD_GET_APPLICATION_CONFIG, null, null);
+        ApplicationConfig applicationConfig = (ApplicationConfig) invocationHandler.invoke(METHOD_GET_APPLICATION_CONFIG);
 
         RpcApplication rpcApplication = new RpcApplication();
         BeanUtils.copyProperties(applicationConfig, rpcApplication);
-        rpcApplication.setRegistryIdentity(registryUrl.getIdentity());
+        rpcApplication.setRegistryIdentity(registryIdentity.getIdentity());
+        rpcApplication.setActive(true);
         rpcApplication.setCreatedTime(Instant.now());
         rpcApplication.setModifiedTime(rpcApplication.getCreatedTime());
         return rpcApplication;
     }
 
     @Override
-    public void inactivate(String applicationName, String registryIdentity) {
-        RpcProvider rpcProviderProbe = new RpcProvider();
-        rpcProviderProbe.setApplication(applicationName);
-        rpcProviderProbe.setRegistryIdentity(registryIdentity);
-        rpcProviderProbe.setActive(true);
-
-        RpcConsumer rpcConsumerProbe = new RpcConsumer();
-        rpcConsumerProbe.setApplication(applicationName);
-        rpcConsumerProbe.setRegistryIdentity(registryIdentity);
-        rpcConsumerProbe.setActive(true);
-
-        // Ignore query parameter if it has a null value
-        ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
-        if (!rpcProviderRepository.exists(Example.of(rpcProviderProbe, matcher)) &&
-                !rpcConsumerRepository.exists(Example.of(rpcConsumerProbe, matcher))) {
-            Optional<RpcApplication> application = rpcApplicationRepository.findByNameAndRegistryIdentity(applicationName,
-                    registryIdentity);
+    public void inactivate(String registryIdentity, String name) {
+        if (!rpcProviderService.existsApplication(registryIdentity, name, true)
+                && !rpcConsumerService.existsApplication(registryIdentity, name, true)) {
+            Optional<RpcApplication> application = rpcApplicationRepository
+                    .findByRegistryIdentityAndName(registryIdentity, name);
             if (!application.isPresent()) {
                 return;
             }
-            application.get().setProviding(false);
+            application.get().setActive(false);
             rpcApplicationRepository.save(application.get());
         }
     }

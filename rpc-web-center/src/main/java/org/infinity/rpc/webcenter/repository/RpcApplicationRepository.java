@@ -13,7 +13,9 @@ import java.util.Optional;
 @Repository
 public interface RpcApplicationRepository extends MongoRepository<RpcApplication, String> {
 
-    Optional<RpcApplication> findByNameAndRegistryIdentity(String application, String registryIdentity);
+    boolean existsByRegistryIdentityAndName(String registryIdentity, String application);
+
+    Optional<RpcApplication> findByRegistryIdentityAndName(String registryIdentity, String application);
 
     List<RpcApplication> findByRegistryIdentity(String registryIdentity);
 }

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -50,45 +49,21 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
                 // Insert or update provider
                 rpcProviderRepository.save(rpcProvider);
 
-                // Insert or update service
-                Optional<RpcService> existingRpcService = rpcServiceRepository
-                        .findByInterfaceNameAndRegistryIdentity(rpcProvider.getInterfaceName(), rpcProvider.getRegistryIdentity());
-                if (existingRpcService.isPresent()) {
-                    // Update
-                    existingRpcService.get().setProviding(true);
-                    if (rpcConsumerRepository.countByInterfaceName(rpcProvider.getInterfaceName()) > 0) {
-                        existingRpcService.get().setConsuming(true);
-                    }
-                    rpcServiceRepository.save(existingRpcService.get());
-                } else {
-                    // Insert
+                // Insert service
+                boolean existsService = rpcServiceService
+                        .exists(rpcProvider.getRegistryIdentity(), rpcProvider.getInterfaceName());
+                if (!existsService) {
                     RpcService rpcService = new RpcService();
                     BeanUtils.copyProperties(rpcProvider, rpcService);
                     rpcService.setId(null);
-                    rpcService.setProviding(true);
-                    if (rpcConsumerRepository.countByInterfaceName(rpcProvider.getInterfaceName()) > 0) {
-                        rpcService.setConsuming(true);
-                    }
                     rpcServiceRepository.save(rpcService);
                 }
 
-                // Insert or update application
-                Optional<RpcApplication> rpcApplication = rpcApplicationRepository
-                        .findByNameAndRegistryIdentity(rpcProvider.getApplication(), rpcProvider.getRegistryIdentity());
-                if (rpcApplication.isPresent()) {
-                    // Update
-                    rpcApplication.get().setProviding(true);
-                    if (rpcConsumerRepository.countByInterfaceName(rpcProvider.getInterfaceName()) > 0) {
-                        rpcApplication.get().setConsuming(true);
-                    }
-                    rpcApplicationRepository.save(rpcApplication.get());
-                } else {
-                    // Insert
-                    RpcApplication remoteRpcApplication = rpcApplicationService.remoteQueryApplication(registryUrl, providerUrl);
-                    remoteRpcApplication.setProviding(true);
-                    if (rpcConsumerRepository.countByInterfaceName(rpcProvider.getInterfaceName()) > 0) {
-                        remoteRpcApplication.setConsuming(true);
-                    }
+                // Insert application
+                boolean existsApplication = rpcApplicationService
+                        .exists(rpcProvider.getRegistryIdentity(), rpcProvider.getApplication());
+                if (!existsApplication) {
+                    RpcApplication remoteRpcApplication = rpcApplicationService.loadApplication(registryUrl, providerUrl);
                     rpcApplicationRepository.save(remoteRpcApplication);
                 }
             }

@@ -5,10 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.time.Instant;
 
 /**
  * Spring Data MongoDB collection for the RpcService entity.
@@ -29,6 +29,9 @@ public class RpcService implements Serializable {
     private String  id;
     private String  interfaceName;
     private String  registryIdentity;
-    private Boolean providing = false;
-    private Boolean consuming = false;
+    private Boolean active;
+    @Transient
+    private Boolean providing;
+    @Transient
+    private Boolean consuming;
 }

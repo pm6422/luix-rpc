@@ -13,4 +13,8 @@ import java.util.List;
 public interface RpcProviderRepository extends MongoRepository<RpcProvider, String> {
 
     List<RpcProvider> findByInterfaceName(String interfaceName);
+
+    boolean existsByRegistryIdentityAndApplicationAndActive(String registryIdentity, String application, boolean active);
+
+    boolean existsByRegistryIdentityAndInterfaceNameAndActive(String registryIdentity, String interfaceName, boolean active);
 }
