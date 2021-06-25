@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Spring Data MongoDB repository for the RpcConsumer entity.
@@ -13,4 +14,6 @@ import java.util.List;
 public interface RpcConsumerRepository extends MongoRepository<RpcConsumer, String> {
 
     List<RpcConsumer> findByInterfaceName(String interfaceName);
+
+    int countByInterfaceName(String interfaceName);
 }

@@ -9,6 +9,7 @@ import org.infinity.rpc.webcenter.domain.RpcApplication;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
 import org.infinity.rpc.webcenter.domain.RpcService;
 import org.infinity.rpc.webcenter.repository.RpcApplicationRepository;
+import org.infinity.rpc.webcenter.repository.RpcConsumerRepository;
 import org.infinity.rpc.webcenter.repository.RpcProviderRepository;
 import org.infinity.rpc.webcenter.repository.RpcServiceRepository;
 import org.infinity.rpc.webcenter.service.RpcApplicationService;
@@ -26,6 +27,8 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
 
     @Resource
     private RpcProviderRepository    rpcProviderRepository;
+    @Resource
+    private RpcConsumerRepository    rpcConsumerRepository;
     @Resource
     private RpcServiceRepository     rpcServiceRepository;
     @Resource
@@ -53,6 +56,9 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
                 if (existingRpcService.isPresent()) {
                     // Update
                     existingRpcService.get().setProviding(true);
+                    if (rpcConsumerRepository.countByInterfaceName(rpcProvider.getInterfaceName()) > 0) {
+                        existingRpcService.get().setConsuming(true);
+                    }
                     rpcServiceRepository.save(existingRpcService.get());
                 } else {
                     // Insert
@@ -60,6 +66,9 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
                     BeanUtils.copyProperties(rpcProvider, rpcService);
                     rpcService.setId(null);
                     rpcService.setProviding(true);
+                    if (rpcConsumerRepository.countByInterfaceName(rpcProvider.getInterfaceName()) > 0) {
+                        rpcService.setConsuming(true);
+                    }
                     rpcServiceRepository.save(rpcService);
                 }
 
@@ -69,11 +78,17 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
                 if (rpcApplication.isPresent()) {
                     // Update
                     rpcApplication.get().setProviding(true);
+                    if (rpcConsumerRepository.countByInterfaceName(rpcProvider.getInterfaceName()) > 0) {
+                        rpcApplication.get().setConsuming(true);
+                    }
                     rpcApplicationRepository.save(rpcApplication.get());
                 } else {
                     // Insert
                     RpcApplication remoteRpcApplication = rpcApplicationService.remoteQueryApplication(registryUrl, providerUrl);
                     remoteRpcApplication.setProviding(true);
+                    if (rpcConsumerRepository.countByInterfaceName(rpcProvider.getInterfaceName()) > 0) {
+                        remoteRpcApplication.setConsuming(true);
+                    }
                     rpcApplicationRepository.save(remoteRpcApplication);
                 }
             }

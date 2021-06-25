@@ -56,8 +56,10 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                 REGISTRY_CONFIG_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig);
                 REGISTRIES.add(new RpcRegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
                 registryConfig.getRegistryImpl().getAllProviderPaths().forEach(interfaceName -> {
-                    createConsumerStub(interfaceName, registryConfig, providerProcessService, null, null);
+                    // First discover all consumers
                     registryConfig.getRegistryImpl().subscribeConsumerListener(interfaceName, consumerProcessService);
+                    // Then discover all providers
+                    createConsumerStub(interfaceName, registryConfig, providerProcessService, null, null);
                 });
                 log.info("Found registry: [{}]", registryConfig.getRegistryUrl().getIdentity());
             });
