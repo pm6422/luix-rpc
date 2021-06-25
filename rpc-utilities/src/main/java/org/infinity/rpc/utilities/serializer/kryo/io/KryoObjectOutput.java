@@ -20,8 +20,12 @@ public class KryoObjectOutput extends com.esotericsoftware.kryo.io.KryoObjectOut
     }
 
     @Override
-    public void writeObject(Object object) throws IOException {
+    public void writeObject(Object object) {
         kryo.writeObjectOrNull(output, object, object.getClass());
+    }
+
+    public void writeClassAndObject(Object object) {
+        kryo.writeClassAndObject(output, object);
     }
 
     public void writeBytes(byte[] v) throws IOException {

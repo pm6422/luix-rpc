@@ -24,6 +24,10 @@ public class KryoObjectInput extends com.esotericsoftware.kryo.io.KryoObjectInpu
         return kryo.readObjectOrNull(input, clazz);
     }
 
+    public <T> T readClassAndObject() {
+        return (T) kryo.readClassAndObject(input);
+    }
+
     public byte[] readBytes() throws IOException {
         try {
             int len = input.readInt();
