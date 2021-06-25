@@ -24,15 +24,15 @@ public class RpcApplication implements Serializable {
 
     @Id
     private String  id;
-    private   String  name;
-    private   String  description;
-    private   String  team;
-    private   String  ownerMail;
-    private   String  env;
-    private   String  registryIdentity;
-    private   String  jarVersion;
-    private   Boolean activeProvider;
-    private   Boolean activeConsumer;
-    private   Instant createdTime;
-    private   Instant modifiedTime;
+    private String  name;
+    private String  description;
+    private String  team;
+    private String  ownerMail;
+    private String  env;
+    private String  registryIdentity;
+    private String  jarVersion;
+    private Boolean providing;
+    private Boolean consuming;
+    private Instant createdTime;
+    private Instant modifiedTime;
 }

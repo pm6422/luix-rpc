@@ -93,8 +93,6 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
         RpcApplication rpcApplication = new RpcApplication();
         BeanUtils.copyProperties(applicationConfig, rpcApplication);
         rpcApplication.setRegistryIdentity(registryUrl.getIdentity());
-        rpcApplication.setActiveProvider(true);
-        rpcApplication.setActiveConsumer(false);
         rpcApplication.setCreatedTime(Instant.now());
         rpcApplication.setModifiedTime(rpcApplication.getCreatedTime());
         return rpcApplication;
@@ -121,7 +119,7 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
             if (!application.isPresent()) {
                 return;
             }
-            application.get().setActiveProvider(false);
+            application.get().setProviding(false);
             rpcApplicationRepository.save(application.get());
         }
     }

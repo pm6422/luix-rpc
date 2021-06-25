@@ -14,8 +14,6 @@ import org.infinity.rpc.webcenter.repository.RpcServiceRepository;
 import org.infinity.rpc.webcenter.service.RpcApplicationService;
 import org.infinity.rpc.webcenter.service.RpcServiceService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -65,19 +63,19 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
                     rpcServiceRepository.save(rpcService);
                 }
 
-                // Insert application
-                RpcApplication applicationProbe = new RpcApplication();
-                applicationProbe.setRegistryIdentity(rpcConsumer.getRegistryIdentity());
-                applicationProbe.setName(rpcConsumer.getApplication());
-                // Ignore query parameter if it has a null value
-                ExampleMatcher applicationMatcher = ExampleMatcher.matching().withIgnoreNullValues();
-                if (rpcApplicationRepository.exists(Example.of(applicationProbe, applicationMatcher))) {
-                    // If application exists
-                    continue;
+                // Insert or update application
+                Optional<RpcApplication> rpcApplication = rpcApplicationRepository
+                        .findByNameAndRegistryIdentity(rpcConsumer.getApplication(), rpcConsumer.getRegistryIdentity());
+                if (rpcApplication.isPresent()) {
+                    // Update
+                    rpcApplication.get().setConsuming(true);
+                    rpcApplicationRepository.save(rpcApplication.get());
+                } else {
+                    // Insert
+                    RpcApplication remoteRpcApplication = rpcApplicationService.remoteQueryApplication(registryUrl, consumerUrl);
+                    remoteRpcApplication.setConsuming(true);
+                    rpcApplicationRepository.save(remoteRpcApplication);
                 }
-
-                RpcApplication rpcApplication = rpcApplicationService.remoteQueryApplication(registryUrl, consumerUrl);
-                rpcApplicationRepository.save(rpcApplication);
             }
         } else {
             log.info("Discovered offline consumers of [{}]", interfaceName);
