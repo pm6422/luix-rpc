@@ -130,9 +130,9 @@ public class DatabaseInitializer {
                 11, serviceDiscovery.getId());
         mongoTemplate.save(rpcApplicationList);
 
-        AdminMenu rpcMachineList = new AdminMenu(APP_NAME, "rpc-machine-list", "RPC机器列表", 2, "service-discovery.rpc-machine-list",
+        AdminMenu rpcServerList = new AdminMenu(APP_NAME, "rpc-server-list", "RPC服务器列表", 2, "service-discovery.rpc-server-list",
                 12, serviceDiscovery.getId());
-        mongoTemplate.save(rpcMachineList);
+        mongoTemplate.save(rpcServerList);
 
         AdminMenu rpcServiceList = new AdminMenu(APP_NAME, "rpc-service-list", "RPC服务列表", 2, "service-discovery.rpc-service-list",
                 13, serviceDiscovery.getId());
@@ -199,7 +199,7 @@ public class DatabaseInitializer {
 
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcApplicationList.getId()));
 
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcMachineList.getId()));
+        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcServerList.getId()));
 
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcServiceList.getId()));
 
