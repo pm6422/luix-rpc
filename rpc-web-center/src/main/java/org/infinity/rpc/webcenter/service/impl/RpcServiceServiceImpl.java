@@ -3,6 +3,7 @@ package org.infinity.rpc.webcenter.service.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.webcenter.domain.RpcService;
 import org.infinity.rpc.webcenter.repository.RpcServiceRepository;
+import org.infinity.rpc.webcenter.service.RpcConsumerService;
 import org.infinity.rpc.webcenter.service.RpcProviderService;
 import org.infinity.rpc.webcenter.service.RpcServiceService;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,8 @@ public class RpcServiceServiceImpl implements RpcServiceService {
     private RpcServiceRepository rpcServiceRepository;
     @Resource
     private RpcProviderService   rpcProviderService;
+    @Resource
+    private RpcConsumerService   rpcConsumerService;
 
     @Override
     public boolean exists(String registryIdentity, String interfaceName) {
@@ -50,7 +53,7 @@ public class RpcServiceServiceImpl implements RpcServiceService {
     @Override
     public void inactivate(String registryIdentity, String interfaceName) {
         if (!rpcProviderService.existsService(registryIdentity, interfaceName, true)
-                && !rpcProviderService.existsService(registryIdentity, interfaceName, true)) {
+                && !rpcConsumerService.existsService(registryIdentity, interfaceName, true)) {
             RpcService rpcService = rpcServiceRepository
                     .findByRegistryIdentityAndInterfaceName(registryIdentity, interfaceName);
             if (rpcService == null) {
