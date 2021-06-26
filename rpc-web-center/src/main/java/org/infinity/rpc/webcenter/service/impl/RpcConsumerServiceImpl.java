@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static org.infinity.rpc.webcenter.domain.RpcProvider.*;
+import static org.infinity.rpc.webcenter.domain.RpcConsumer.*;
 
 @Service
 public class RpcConsumerServiceImpl implements RpcConsumerService {

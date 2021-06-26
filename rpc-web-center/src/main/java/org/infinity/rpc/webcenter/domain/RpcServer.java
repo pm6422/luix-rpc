@@ -22,8 +22,6 @@ public class RpcServer implements Serializable {
     private static final long   serialVersionUID        = 1L;
     public static final  String FIELD_REGISTRY_IDENTITY = "registryIdentity";
     public static final  String FIELD_INTERFACE_NAME    = "address";
-    public static final  String FIELD_PROVIDING         = "providing";
-    public static final  String FIELD_CONSUMING         = "consuming";
 
     @Id
     private String  id;
