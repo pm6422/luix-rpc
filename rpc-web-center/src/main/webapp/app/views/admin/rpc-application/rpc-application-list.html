@@ -15,7 +15,7 @@
     </div>
 </div>
 <div class="wrapper wrapper-content p-h-xs animated fadeInDown">
-    <div class="ibox-content m-b-sm border-bottom">
+    <div class="ibox-content m-b-sm">
         <div class="row">
             <div class="col-sm-12">
                 <div class="form-group">
@@ -25,58 +25,52 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="ibox">
-                <div class="ibox-content">
-                    <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
-                        <thead>
-                            <tr>
-                                <th class="col-sm-1" data-toggle="true">Name</th>
-                                <th class="col-sm-1">Team</th>
-                                <th class="col-sm-1">Owner</th>
-                                <th class="col-sm-1">Environment</th>
-                                <th class="col-sm-1">Active</th>
-                                <th class="col-sm-1">Actions</th>
-                                <th data-hide="all">Description</th>
-                                <th data-hide="all">Infinity RPC jar version</th>
-                                <th data-hide="all">Online time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr on-footable-finish-render ng-repeat="item in vm.items">
-                                <td><span>{{item.name}}</span></td>
-                                <td><span>{{item.team}}</span></td>
-                                <td><span>{{item.ownerMail}}</span></td>
-                                <td><span>{{item.env}}</span></td>
-                                <td>
-                                    <i class="fa fa-circle text-navy" title="Active" ng-show="item.providing || item.consuming"></i>
-                                    <i class="fa fa-circle text-danger" title="Inactive" ng-show="!item.providing && !item.consuming"></i>
-                                </td>
-                                <td>
-                                    <div class="btn-group">
-                                        <button class="btn-white btn btn-xs" ng-disabled="!item.providing"
-                                                ui-sref="service-discovery.rpc-provider-list({application: item.name})"
-                                                uib-tooltip="Discover all providers of this application">Providers</button>
-                                        <button class="btn-white btn btn-xs" ng-disabled="!item.consuming"
-                                                ui-sref="service-discovery.rpc-consumer-list({application: item.name})"
-                                                uib-tooltip="Discover all consumers of this application">Consumers</button>
-                                    </div>
-                                </td>
-                                <td class="break">
-                                    <span>{{item.description}}</span>
-                                </td>
-                                <td class="break">
-                                    <span>{{item.jarVersion}}</span>
-                                </td>
-                                <td class="break">
-                                    <span>{{item.createdTime | date:'yyyy/MM/dd HH:mm:ss'}}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+    <div class="ibox-content">
+        <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
+            <thead>
+                <tr>
+                    <th class="col-sm-1" data-toggle="true">Name</th>
+                    <th class="col-sm-1">Team</th>
+                    <th class="col-sm-1">Owner</th>
+                    <th class="col-sm-1">Environment</th>
+                    <th class="col-sm-1">Active</th>
+                    <th class="col-sm-1">Actions</th>
+                    <th data-hide="all">Description</th>
+                    <th data-hide="all">Infinity RPC jar version</th>
+                    <th data-hide="all">Online time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr on-footable-finish-render ng-repeat="item in vm.items">
+                    <td><span>{{item.name}}</span></td>
+                    <td><span>{{item.team}}</span></td>
+                    <td><span>{{item.ownerMail}}</span></td>
+                    <td><span>{{item.env}}</span></td>
+                    <td>
+                        <i class="fa fa-circle text-navy" title="Active" ng-show="item.providing || item.consuming"></i>
+                        <i class="fa fa-circle text-danger" title="Inactive" ng-show="!item.providing && !item.consuming"></i>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn-white btn btn-xs" ng-disabled="!item.providing"
+                                    ui-sref="service-discovery.rpc-provider-list({application: item.name})"
+                                    uib-tooltip="Discover all providers of this application">Providers</button>
+                            <button class="btn-white btn btn-xs" ng-disabled="!item.consuming"
+                                    ui-sref="service-discovery.rpc-consumer-list({application: item.name})"
+                                    uib-tooltip="Discover all consumers of this application">Consumers</button>
+                        </div>
+                    </td>
+                    <td class="break">
+                        <span>{{item.description}}</span>
+                    </td>
+                    <td class="break">
+                        <span>{{item.jarVersion}}</span>
+                    </td>
+                    <td class="break">
+                        <span>{{item.createdTime | date:'yyyy/MM/dd HH:mm:ss'}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>

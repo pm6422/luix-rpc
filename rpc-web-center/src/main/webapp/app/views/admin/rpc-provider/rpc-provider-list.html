@@ -15,7 +15,7 @@
     </div>
 </div>
 <div class="wrapper wrapper-content p-h-xs animated fadeInDown">
-    <div class="ibox-content m-b-sm border-bottom">
+    <div class="ibox-content m-b-sm">
         <div class="row">
             <div class="col-sm-12">
                 <div class="form-group">
@@ -25,57 +25,43 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="ibox">
-                <div class="ibox-content">
-                    <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
-                        <thead>
-                            <tr>
-                                <th class="col-sm-1" data-toggle="true">Address</th>
-                                <th class="col-sm-3">Service</th>
-                                <th class="col-sm-1">Application</th>
-                                <th class="col-sm-1" data-sort-ignore="true">Active</th>
-                                <th class="col-sm-1" data-sort-ignore="true">Actions</th>
-                                <th data-hide="all">URL</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr on-footable-finish-render ng-repeat="entity in vm.entities">
-                                <td>{{entity.address}}</td>
-                                <td>{{entity.interfaceName}}</td>
-                                <td>{{entity.application}}</td>
-                                <td>
-                                    <i class="fa fa-circle text-navy" title="Active" ng-show="entity.active"></i>
-                                    <i class="fa fa-circle text-danger"title="Inactive" ng-show="!entity.active"></i>
-                                </td>
-                                <td>
-                                    <div class="btn-group">
-    <!--                                    <button class="btn-white btn btn-xs" ng-click="vm.view(item)">View</button>-->
-                                        <button class="btn-white btn btn-xs" ui-sref=".view({name: entity.name})">Priority</button>
-                                        <button class="btn-white btn btn-xs" ui-sref=".view({name: entity.name})">Load Balance</button>
-                                    </div>
-                                </td>
-                                <td class="break">
-                                    <span>{{entity.url}}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                        </tfoot>
-                    </table>
-                    <table class="table table-striped">
-                        <tfoot>
-                            <tr>
-                                <td colspan="12" class="text-center">
-                                    <strong><item-count-component page="vm.page" total="vm.totalItems" items-per-page="vm.itemsPerPage"></item-count-component></strong>
-                                    <uib-pagination class="pagination-sm m-xs" total-items="vm.totalItems" ng-model="vm.page" ng-change="vm.transition()"></uib-pagination>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
+    <div class="ibox-content">
+        <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
+            <thead>
+                <tr>
+                    <th class="col-sm-1" data-toggle="true">Address</th>
+                    <th class="col-sm-3">Service</th>
+                    <th class="col-sm-1">Application</th>
+                    <th class="col-sm-1" data-sort-ignore="true">Active</th>
+                    <th class="col-sm-1" data-sort-ignore="true">Actions</th>
+                    <th data-hide="all">URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr on-footable-finish-render ng-repeat="entity in vm.entities">
+                    <td>{{entity.address}}</td>
+                    <td>{{entity.interfaceName}}</td>
+                    <td>{{entity.application}}</td>
+                    <td>
+                        <i class="fa fa-circle text-navy" title="Active" ng-show="entity.active"></i>
+                        <i class="fa fa-circle text-danger"title="Inactive" ng-show="!entity.active"></i>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+<!--                                    <button class="btn-white btn btn-xs" ng-click="vm.view(item)">View</button>-->
+                            <button class="btn-white btn btn-xs" ui-sref=".view({name: entity.name})">Priority</button>
+                            <button class="btn-white btn btn-xs" ui-sref=".view({name: entity.name})">Load Balance</button>
+                        </div>
+                    </td>
+                    <td class="break">
+                        <span>{{entity.url}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="text-center">
+            <strong><item-count-component page="vm.page" total="vm.totalItems" items-per-page="vm.itemsPerPage"></item-count-component></strong>
+            <uib-pagination class="pagination-sm m-xs" total-items="vm.totalItems" ng-model="vm.page" ng-change="vm.transition()"></uib-pagination>
         </div>
     </div>
 </div>
