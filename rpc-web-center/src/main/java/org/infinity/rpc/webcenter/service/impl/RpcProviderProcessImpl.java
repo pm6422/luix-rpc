@@ -58,6 +58,7 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
                         .exists(rpcProvider.getRegistryIdentity(), rpcProvider.getAddress());
                 if (!existsServer) {
                     RpcServer rpcServer = new RpcServer();
+                    rpcServer.setRegistryIdentity(rpcProvider.getRegistryIdentity());
                     rpcServer.setAddress(rpcProvider.getAddress());
                     rpcServerRepository.save(rpcServer);
                 }

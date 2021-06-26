@@ -58,6 +58,7 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
                         .exists(rpcConsumer.getRegistryIdentity(), rpcConsumer.getAddress());
                 if (!existsServer) {
                     RpcServer rpcServer = new RpcServer();
+                    rpcServer.setRegistryIdentity(rpcConsumer.getRegistryIdentity());
                     rpcServer.setAddress(rpcConsumer.getAddress());
                     rpcServerRepository.save(rpcServer);
                 }
