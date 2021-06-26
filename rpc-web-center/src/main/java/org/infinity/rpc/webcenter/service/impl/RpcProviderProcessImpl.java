@@ -9,7 +9,6 @@ import org.infinity.rpc.webcenter.domain.RpcApplication;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
 import org.infinity.rpc.webcenter.domain.RpcService;
 import org.infinity.rpc.webcenter.repository.RpcApplicationRepository;
-import org.infinity.rpc.webcenter.repository.RpcConsumerRepository;
 import org.infinity.rpc.webcenter.repository.RpcProviderRepository;
 import org.infinity.rpc.webcenter.repository.RpcServiceRepository;
 import org.infinity.rpc.webcenter.service.RpcApplicationService;
@@ -26,8 +25,6 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
 
     @Resource
     private RpcProviderRepository    rpcProviderRepository;
-    @Resource
-    private RpcConsumerRepository    rpcConsumerRepository;
     @Resource
     private RpcServiceRepository     rpcServiceRepository;
     @Resource

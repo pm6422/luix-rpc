@@ -11,24 +11,24 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.io.Serializable;
 
 /**
- * Spring Data MongoDB collection for the RpcService entity.
+ * Spring Data MongoDB collection for the RpcServer entity.
  */
-@ApiModel("RPC service")
-@Document(collection = "RpcService")
+@ApiModel("RPC server")
+@Document(collection = "RpcServer")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RpcService implements Serializable {
+public class RpcServer implements Serializable {
     private static final long   serialVersionUID        = 1L;
     public static final  String FIELD_REGISTRY_IDENTITY = "registryIdentity";
-    public static final  String FIELD_INTERFACE_NAME    = "interfaceName";
+    public static final  String FIELD_INTERFACE_NAME    = "address";
     public static final  String FIELD_PROVIDING         = "providing";
     public static final  String FIELD_CONSUMING         = "consuming";
 
     @Id
     private String  id;
     private String  registryIdentity;
-    private String  interfaceName;
+    private String  address;
     private Boolean active;
     @Transient
     private Boolean providing;

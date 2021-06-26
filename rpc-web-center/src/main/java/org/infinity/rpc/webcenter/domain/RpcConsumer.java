@@ -30,13 +30,13 @@ public class RpcConsumer implements Serializable {
 
     @Id
     private String  id;
+    private String  registryIdentity;
     private String  interfaceName;
     private String  form;
     private String  version;
     private String  application;
     private String  address;
     private String  url;
-    private String  registryIdentity;
     private Boolean active = false;
     private Instant createdTime;
     private Instant modifiedTime;

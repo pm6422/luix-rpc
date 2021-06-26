@@ -23,20 +23,20 @@ import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 @AllArgsConstructor
 public class RpcProvider implements Serializable {
     private static final long   serialVersionUID        = 1L;
+    public static final  String FIELD_REGISTRY_IDENTITY = "registryIdentity";
     public static final  String FIELD_INTERFACE_NAME    = "interfaceName";
     public static final  String FIELD_APPLICATION       = "application";
-    public static final  String FIELD_REGISTRY_IDENTITY = "registryIdentity";
     public static final  String FIELD_ACTIVE            = "active";
 
     @Id
     private String  id;
+    private String  registryIdentity;
     private String  interfaceName;
     private String  form;
     private String  version;
     private String  application;
     private String  address;
     private String  url;
-    private String  registryIdentity;
     private Boolean active    = false;
     private Boolean consuming = false;
     private Instant createdTime;
