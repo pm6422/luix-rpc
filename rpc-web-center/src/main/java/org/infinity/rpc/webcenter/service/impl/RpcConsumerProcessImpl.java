@@ -7,11 +7,14 @@ import org.infinity.rpc.core.server.listener.ConsumerProcessable;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.webcenter.domain.RpcApplication;
 import org.infinity.rpc.webcenter.domain.RpcConsumer;
+import org.infinity.rpc.webcenter.domain.RpcServer;
 import org.infinity.rpc.webcenter.domain.RpcService;
 import org.infinity.rpc.webcenter.repository.RpcApplicationRepository;
 import org.infinity.rpc.webcenter.repository.RpcConsumerRepository;
+import org.infinity.rpc.webcenter.repository.RpcServerRepository;
 import org.infinity.rpc.webcenter.repository.RpcServiceRepository;
 import org.infinity.rpc.webcenter.service.RpcApplicationService;
+import org.infinity.rpc.webcenter.service.RpcServerService;
 import org.infinity.rpc.webcenter.service.RpcServiceService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -26,9 +29,13 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
     @Resource
     private RpcConsumerRepository    rpcConsumerRepository;
     @Resource
+    private RpcServerRepository      rpcServerRepository;
+    @Resource
     private RpcServiceRepository     rpcServiceRepository;
     @Resource
     private RpcApplicationRepository rpcApplicationRepository;
+    @Resource
+    private RpcServerService         rpcServerService;
     @Resource
     private RpcServiceService        rpcServiceService;
     @Resource
@@ -45,6 +52,15 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
                 }
                 // Insert or update consumer
                 rpcConsumerRepository.save(rpcConsumer);
+
+                // Insert server
+                boolean existsServer = rpcServerService
+                        .exists(rpcConsumer.getRegistryIdentity(), rpcConsumer.getAddress());
+                if (!existsServer) {
+                    RpcServer rpcServer = new RpcServer();
+                    rpcServer.setAddress(rpcConsumer.getAddress());
+                    rpcServerRepository.save(rpcServer);
+                }
 
                 // Insert service
                 boolean existsService = rpcServiceService

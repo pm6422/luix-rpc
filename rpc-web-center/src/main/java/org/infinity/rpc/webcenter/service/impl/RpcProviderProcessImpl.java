@@ -7,11 +7,14 @@ import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.webcenter.domain.RpcApplication;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
+import org.infinity.rpc.webcenter.domain.RpcServer;
 import org.infinity.rpc.webcenter.domain.RpcService;
 import org.infinity.rpc.webcenter.repository.RpcApplicationRepository;
 import org.infinity.rpc.webcenter.repository.RpcProviderRepository;
+import org.infinity.rpc.webcenter.repository.RpcServerRepository;
 import org.infinity.rpc.webcenter.repository.RpcServiceRepository;
 import org.infinity.rpc.webcenter.service.RpcApplicationService;
+import org.infinity.rpc.webcenter.service.RpcServerService;
 import org.infinity.rpc.webcenter.service.RpcServiceService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -26,9 +29,13 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
     @Resource
     private RpcProviderRepository    rpcProviderRepository;
     @Resource
+    private RpcServerRepository      rpcServerRepository;
+    @Resource
     private RpcServiceRepository     rpcServiceRepository;
     @Resource
     private RpcApplicationRepository rpcApplicationRepository;
+    @Resource
+    private RpcServerService         rpcServerService;
     @Resource
     private RpcServiceService        rpcServiceService;
     @Resource
@@ -45,6 +52,15 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
                 }
                 // Insert or update provider
                 rpcProviderRepository.save(rpcProvider);
+
+                // Insert server
+                boolean existsServer = rpcServerService
+                        .exists(rpcProvider.getRegistryIdentity(), rpcProvider.getAddress());
+                if (!existsServer) {
+                    RpcServer rpcServer = new RpcServer();
+                    rpcServer.setAddress(rpcProvider.getAddress());
+                    rpcServerRepository.save(rpcServer);
+                }
 
                 // Insert service
                 boolean existsService = rpcServiceService
