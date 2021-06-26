@@ -65,6 +65,7 @@
         <logback_version>1.2.3</logback_version>
         <lombok_version>1.18.10</lombok_version>
         <maven_flatten_pluggin_version>1.1.0</maven_flatten_pluggin_version>
+        <maven_version>3.2.1</maven_version>
         <metrics_version>2.0.1</metrics_version>
         <micrometer_version>1.5.1</micrometer_version>
         <mina_version>1.1.7</mina_version>
