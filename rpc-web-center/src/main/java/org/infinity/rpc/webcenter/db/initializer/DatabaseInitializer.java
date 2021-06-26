@@ -130,13 +130,21 @@ public class DatabaseInitializer {
                 11, serviceDiscovery.getId());
         mongoTemplate.save(rpcApplicationList);
 
-        AdminMenu rpcServiceList = new AdminMenu(APP_NAME, "rpc-service-list", "RPC服务列表", 2, "service-discovery.rpc-service-list",
+        AdminMenu rpcMachineList = new AdminMenu(APP_NAME, "rpc-machine-list", "RPC机器列表", 2, "service-discovery.rpc-machine-list",
                 12, serviceDiscovery.getId());
+        mongoTemplate.save(rpcMachineList);
+
+        AdminMenu rpcServiceList = new AdminMenu(APP_NAME, "rpc-service-list", "RPC服务列表", 2, "service-discovery.rpc-service-list",
+                13, serviceDiscovery.getId());
         mongoTemplate.save(rpcServiceList);
 
         AdminMenu rpcProviderList = new AdminMenu(APP_NAME, "rpc-provider-list", "RPC服务提供者列表", 2, "service-discovery.rpc-provider-list",
-                13, serviceDiscovery.getId());
+                14, serviceDiscovery.getId());
         mongoTemplate.save(rpcProviderList);
+
+        AdminMenu rpcConsumerList = new AdminMenu(APP_NAME, "rpc-consumer-list", "RPC服务消费者列表", 2, "service-discovery.rpc-consumer-list",
+                15, serviceDiscovery.getId());
+        mongoTemplate.save(rpcConsumerList);
 
         AdminMenu userAuthority = new AdminMenu(APP_NAME, "user-authority", "用户权限", 1, "user-authority", 100, null);
         mongoTemplate.save(userAuthority);
@@ -191,9 +199,13 @@ public class DatabaseInitializer {
 
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcApplicationList.getId()));
 
+        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcMachineList.getId()));
+
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcServiceList.getId()));
 
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcProviderList.getId()));
+
+        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcConsumerList.getId()));
 
 //        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, userAuthority.getId()));
 //
