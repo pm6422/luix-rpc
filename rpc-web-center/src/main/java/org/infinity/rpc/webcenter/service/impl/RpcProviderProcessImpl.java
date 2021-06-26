@@ -75,7 +75,7 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
             list.forEach(provider -> provider.setActive(false));
             rpcProviderRepository.saveAll(list);
 
-            // Update providing flag
+            // Update service to inactive
             rpcServiceService.inactivate(list.get(0).getInterfaceName(), list.get(0).getRegistryIdentity());
 
             // Update application to inactive

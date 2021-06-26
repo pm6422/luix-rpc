@@ -75,7 +75,7 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
             list.forEach(provider -> provider.setActive(false));
             rpcConsumerRepository.saveAll(list);
 
-            // Update consuming flag
+            // Update service to inactive
             rpcServiceService.inactivate(list.get(0).getRegistryIdentity(), list.get(0).getInterfaceName());
 
             // Update application to inactive
