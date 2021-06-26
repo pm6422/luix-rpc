@@ -17,4 +17,6 @@ public interface RpcConsumerRepository extends MongoRepository<RpcConsumer, Stri
     boolean existsByRegistryIdentityAndApplicationAndActive(String registryIdentity, String application, boolean active);
 
     boolean existsByRegistryIdentityAndInterfaceNameAndActive(String registryIdentity, String interfaceName, boolean active);
+
+    boolean existsByRegistryIdentityAndAddressAndActive(String registryIdentity, String address, boolean active);
 }

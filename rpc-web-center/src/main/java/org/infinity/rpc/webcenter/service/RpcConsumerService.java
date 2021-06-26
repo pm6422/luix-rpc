@@ -15,4 +15,6 @@ public interface RpcConsumerService {
     boolean existsApplication(String registryIdentity, String application, boolean active);
 
     boolean existsService(String registryIdentity, String interfaceName, boolean active);
+
+    boolean existsAddress(String registryIdentity, String address, boolean active);
 }

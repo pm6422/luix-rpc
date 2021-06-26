@@ -66,4 +66,9 @@ public class RpcConsumerServiceImpl implements RpcConsumerService {
         return rpcConsumerRepository
                 .existsByRegistryIdentityAndInterfaceNameAndActive(registryIdentity, interfaceName, true);
     }
+
+    @Override
+    public boolean existsAddress(String registryIdentity, String address, boolean active) {
+        return rpcConsumerRepository.existsByRegistryIdentityAndAddressAndActive(registryIdentity, address, true);
+    }
 }

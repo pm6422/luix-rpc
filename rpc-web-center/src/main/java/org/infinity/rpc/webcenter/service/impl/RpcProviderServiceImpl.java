@@ -67,4 +67,9 @@ public class RpcProviderServiceImpl implements RpcProviderService {
         return rpcProviderRepository
                 .existsByRegistryIdentityAndInterfaceNameAndActive(registryIdentity, interfaceName, true);
     }
+
+    @Override
+    public boolean existsAddress(String registryIdentity, String address, boolean active) {
+        return rpcProviderRepository.existsByRegistryIdentityAndAddressAndActive(registryIdentity, address, true);
+    }
 }
