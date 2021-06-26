@@ -29,8 +29,8 @@
         <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
             <thead>
                 <tr>
-                    <th class="col-sm-1" data-toggle="true">Address</th>
-                    <th class="col-sm-3">Service</th>
+                    <th class="col-sm-1" data-toggle="true">Service</th>
+                    <th class="col-sm-3">Address</th>
                     <th class="col-sm-1">Application</th>
                     <th class="col-sm-1" data-sort-ignore="true">Active</th>
                     <th class="col-sm-1" data-sort-ignore="true">Actions</th>
@@ -39,8 +39,8 @@
             </thead>
             <tbody>
                 <tr on-footable-finish-render ng-repeat="entity in vm.entities">
-                    <td>{{entity.address}}</td>
                     <td>{{entity.interfaceName}}</td>
+                    <td>{{entity.address}}</td>
                     <td>{{entity.application}}</td>
                     <td>
                         <i class="fa fa-circle text-navy" title="Active" ng-show="entity.active"></i>

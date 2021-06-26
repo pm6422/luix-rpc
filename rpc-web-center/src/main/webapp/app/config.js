@@ -937,7 +937,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                     squash: true
                 },
                 sort: {
-                    value: 'application,asc',
+                    value: 'interfaceName,asc',
                     squash: true
                 }
             },
@@ -985,7 +985,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                     squash: true
                 },
                 sort: {
-                    value: 'application,asc',
+                    value: 'interfaceName,asc',
                     squash: true
                 }
             },
