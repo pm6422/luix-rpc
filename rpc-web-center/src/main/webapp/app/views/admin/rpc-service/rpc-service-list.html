@@ -42,21 +42,25 @@
                 <div class="ibox-content">
                     <table class="table table-striped">
                         <thead>
-                        <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
-                            <th sort-by-directive="interfaceName"><span>Name</span> <span class="fa fa-sort"></span></th>
-                            <th>Actions</th>
-                        </tr>
+                            <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
+                                <th sort-by-directive="interfaceName"><span>Name</span> <span class="fa fa-sort"></span></th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="entity in vm.entities track by entity.id">
-                            <td>{{entity.interfaceName}}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <button class="btn-white btn btn-xs" ng-disabled="!entity.providing" ui-sref="service-discovery.rpc-provider-list({application: entity.name})">Providers</button>
-                                    <button class="btn-white btn btn-xs" ng-disabled="!entity.consuming" ui-sref="service-discovery.rpc-consumer-list({application: entity.name})">Consumers</button>
-                                </div>
-                            </td>
-                        </tr>
+                            <tr ng-repeat="entity in vm.entities track by entity.id">
+                                <td>{{entity.interfaceName}}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn-white btn btn-xs" ng-disabled="!entity.providing"
+                                                ui-sref="service-discovery.rpc-provider-list({interfaceName: entity.interfaceName})"
+                                                uib-tooltip="Discover all providers of this service">Providers</button>
+                                        <button class="btn-white btn btn-xs" ng-disabled="!entity.consuming"
+                                                ui-sref="service-discovery.rpc-consumer-list({interfaceName: entity.interfaceName})"
+                                                uib-tooltip="Discover all consumers of this service">Consumers</button>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                         <tfoot>
                         <tr>
