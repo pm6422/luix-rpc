@@ -40,8 +40,10 @@ angular
     .factory('OAuth2ApprovalService', OAuth2ApprovalService)
     .factory('AdminMenuService', AdminMenuService)
     .factory('RpcApplicationService', RpcApplicationService)
+    .factory('RpcServerService', RpcServerService)
     .factory('RpcServiceService', RpcServiceService)
-    .factory('RpcProviderService', RpcProviderService);
+    .factory('RpcProviderService', RpcProviderService)
+    .factory('RpcConsumerService', RpcConsumerService);
 
 /**
  * StateHandler
@@ -1341,6 +1343,16 @@ function RpcApplicationService($resource) {
 }
 
 /**
+ * RpcServerService
+ */
+function RpcServerService($resource) {
+    var service = $resource('api/rpc-server/servers', {}, {
+        'query': {method: 'GET', isArray: true}
+    });
+    return service;
+}
+
+/**
  * RpcServiceService
  */
 function RpcServiceService($resource) {
@@ -1356,6 +1368,23 @@ function RpcServiceService($resource) {
 function RpcProviderService($resource) {
     var service = $resource('api/rpc-provider/:extension', {}, {
         'query': {method: 'GET', isArray: true, params: {extension: 'providers'}},
+        'get': {
+            method: 'GET',
+            transformResponse: function (data) {
+                data = angular.fromJson(data);
+                return data;
+            }
+        }
+    });
+    return service;
+}
+
+/**
+ * RpcConsumerService
+ */
+function RpcConsumerService($resource) {
+    var service = $resource('api/rpc-consumer/:extension', {}, {
+        'query': {method: 'GET', isArray: true, params: {extension: 'consumers'}},
         'get': {
             method: 'GET',
             transformResponse: function (data) {

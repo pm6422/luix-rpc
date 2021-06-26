@@ -1,0 +1,58 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>{{vm.pageTitle}}</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="#">首页</a>
+            </li>
+            <li>
+                <a style="pointer-events: none">{{vm.parentPageTitle}}</a>
+            </li>
+            <li class="active">
+                <a href="#{{$state.$current.url.sourcePath}}"><strong>{{vm.pageTitle}}</strong></a>
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="wrapper wrapper-content p-h-xs animated fadeInDown">
+    <div class="ibox-content m-b-sm">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="control-label" for="address">Address (fuzzy query)</label>
+                    <input type="text" id="address" class="form-control"
+                           ng-model="vm.criteria.address" ng-keydown="vm.checkPressEnter($event)">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ibox-content">
+        <table class="table table-striped">
+            <thead>
+                <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
+                    <th sort-by-directive="address"><span>Address</span> <span class="fa fa-sort"></span></th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="entity in vm.entities track by entity.id">
+                    <td>{{entity.address}}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn-white btn btn-xs" ng-disabled="!entity.providing"
+                                    ui-sref="service-discovery.rpc-provider-list({address: entity.address})"
+                                    uib-tooltip="Discover all providers of this service">Providers</button>
+                            <button class="btn-white btn btn-xs" ng-disabled="!entity.consuming"
+                                    ui-sref="service-discovery.rpc-consumer-list({address: entity.address})"
+                                    uib-tooltip="Discover all consumers of this service">Consumers</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="text-center">
+            <strong><item-count-component page="vm.page" total="vm.totalItems" items-per-page="vm.itemsPerPage"></item-count-component></strong>
+            <uib-pagination class="pagination-sm m-xs" total-items="vm.totalItems" ng-model="vm.page" ng-change="vm.transition()"></uib-pagination>
+        </div>
+    </div>
+</div>

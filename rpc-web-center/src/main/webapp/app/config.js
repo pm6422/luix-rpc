@@ -843,8 +843,46 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
+        .state('service-discovery.rpc-server-list', {
+            url: '/rpc-server-list?page&sort&address',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/rpc-server/rpc-server-list.html',
+                    controller: 'RpcServerListController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'RPC服务器列表'
+            },
+            params: {
+                page: {
+                    value: '1',
+                    squash: true
+                },
+                sort: {
+                    value: 'address,asc',
+                    squash: true
+                }
+            },
+            resolve: {
+                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
+                    return {
+                        page: PaginationUtils.parsePage($stateParams.page),
+                        sort: $stateParams.sort,
+                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
+                        ascending: PaginationUtils.parseAscending($stateParams.sort)
+                    };
+                }],
+                criteria: ['$stateParams', function ($stateParams) {
+                    return {
+                        address: $stateParams.address
+                    };
+                }]
+            }
+        })
         .state('service-discovery.rpc-service-list', {
-            url: '/rpc-service-list?page&sort&application&interfaceName',
+            url: '/rpc-service-list?page&sort&interfaceName',
             views: {
                 'content@': {
                     templateUrl: 'app/views/admin/rpc-service/rpc-service-list.html',
@@ -861,7 +899,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                     squash: true
                 },
                 sort: {
-                    value: 'application,asc',
+                    value: 'interfaceName,asc',
                     squash: true
                 }
             },
@@ -876,14 +914,13 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }],
                 criteria: ['$stateParams', function ($stateParams) {
                     return {
-                        application: $stateParams.application,
                         interfaceName: $stateParams.interfaceName
                     };
                 }]
             }
         })
         .state('service-discovery.rpc-provider-list', {
-            url: '/rpc-provider-list?page&sort&application&interfaceName',
+            url: '/rpc-provider-list?page&sort&application&interfaceName&address',
             views: {
                 'content@': {
                     templateUrl: 'app/views/admin/rpc-provider/rpc-provider-list.html',
@@ -924,29 +961,57 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 criteria: ['$stateParams', function ($stateParams) {
                     return {
                         application: $stateParams.application,
-                        interfaceName: $stateParams.interfaceName
+                        interfaceName: $stateParams.interfaceName,
+                        address: $stateParams.address
                     };
                 }]
             }
         })
-        .state('service-discovery.provider-list.view', {
-            url: '/view',
+        .state('service-discovery.rpc-consumer-list', {
+            url: '/rpc-consumer-list?page&sort&application&interfaceName&address',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/admin/provider/rpc-provider-details.html',
-                    controller: 'ProviderDetailsController',
+                    templateUrl: 'app/views/admin/rpc-consumer/rpc-consumer-list.html',
+                    controller: 'RpcConsumerListController',
                     controllerAs: 'vm'
                 }
             },
             data: {
-                pageTitle: '查看服务提供者信息'
+                pageTitle: 'RPC服务消费者列表'
             },
             params: {
-                'entity': {}
+                page: {
+                    value: '1',
+                    squash: true
+                },
+                sort: {
+                    value: 'application,asc',
+                    squash: true
+                }
             },
             resolve: {
-                entity: ['$stateParams', function ($stateParams) {
-                    return $stateParams.entity;
+                loadPlugin: function ($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        {
+                            name: 'angular-peity',
+                            files: ['content/js/plugins/peity/jquery.peity.min.js', 'content/js/plugins/peity/angular-peity.js']
+                        }
+                    ]);
+                },
+                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
+                    return {
+                        page: PaginationUtils.parsePage($stateParams.page),
+                        sort: $stateParams.sort,
+                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
+                        ascending: PaginationUtils.parseAscending($stateParams.sort)
+                    };
+                }],
+                criteria: ['$stateParams', function ($stateParams) {
+                    return {
+                        application: $stateParams.application,
+                        interfaceName: $stateParams.interfaceName,
+                        address: $stateParams.address
+                    };
                 }]
             }
         })

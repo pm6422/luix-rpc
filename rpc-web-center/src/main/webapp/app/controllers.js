@@ -34,8 +34,10 @@ angular
     .controller('ScheduleController', ScheduleController)
     .controller('ControlController', ControlController)
     .controller('RpcApplicationListController', RpcApplicationListController)
+    .controller('RpcServerListController', RpcServerListController)
     .controller('RpcServiceListController', RpcServiceListController)
     .controller('RpcProviderListController', RpcProviderListController)
+    .controller('RpcConsumerListController', RpcConsumerListController)
     .controller('ProviderDetailsController', ProviderDetailsController)
     .controller('AppListController', AppListController)
     .controller('AppDialogController', AppDialogController)
@@ -1444,14 +1446,13 @@ function RpcApplicationListController($state, $rootScope, RpcApplicationService)
     vm.items = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity});;
 }
 /**
- * RpcServiceListController
+ * RpcServerListController
  */
-function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcServiceService, RpcApplicationService) {
+function RpcServerListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcServerService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.applications = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity, extension: 'all'});
     vm.links = null;
     vm.loadAll = loadAll;
     vm.loadPage = loadPage;
@@ -1468,12 +1469,11 @@ function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtil
     vm.loadAll();
 
     function loadAll() {
-        RpcServiceService.query({
+        RpcServerService.query({
             page: pagingParams.page - 1,
             size: vm.itemsPerPage,
             registryIdentity: $rootScope.selectedRegistryIdentity,
-            application: vm.criteria.application,
-            interfaceName: vm.criteria.interfaceName,
+            address: vm.criteria.address,
             sort: sort()
         }, function (result, headers) {
             vm.links = ParseLinksUtils.parse(headers('link'));
@@ -1502,6 +1502,74 @@ function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtil
             page: vm.page,
             sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
             application: vm.criteria.application,
+            address: vm.criteria.address
+        });
+    }
+
+    function checkPressEnter($event) {
+        //按下enter键重新查询数据
+        if ($event.keyCode == 13) {
+            vm.transition();
+        }
+    }
+}
+/**
+ * RpcServiceListController
+ */
+function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcServiceService, RpcApplicationService) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
+    vm.applications = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity, extension: 'all'});
+    vm.links = null;
+    vm.loadAll = loadAll;
+    vm.loadPage = loadPage;
+    vm.checkPressEnter = checkPressEnter;
+    vm.page = 1;
+    vm.totalItems = null;
+    vm.entities = [];
+    vm.predicate = pagingParams.predicate;
+    vm.reverse = pagingParams.ascending;
+    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
+    vm.transition = transition;
+    vm.criteria = criteria;
+
+    vm.loadAll();
+
+    function loadAll() {
+        RpcServiceService.query({
+            page: pagingParams.page - 1,
+            size: vm.itemsPerPage,
+            registryIdentity: $rootScope.selectedRegistryIdentity,
+            interfaceName: vm.criteria.interfaceName,
+            sort: sort()
+        }, function (result, headers) {
+            vm.links = ParseLinksUtils.parse(headers('link'));
+            vm.totalItems = headers('X-Total-Count');
+            vm.page = pagingParams.page;
+            vm.entities = result;
+        });
+    }
+
+    function sort() {
+        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
+        if (vm.predicate !== 'application') {
+            // default sort column
+            result.push('application,asc');
+        }
+        return result;
+    }
+
+    function loadPage(page) {
+        vm.page = page;
+        vm.transition();
+    }
+
+    function transition() {
+        $state.transitionTo($state.$current, {
+            page: vm.page,
+            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
             interfaceName: vm.criteria.interfaceName
         });
     }
@@ -1543,6 +1611,7 @@ function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUti
             registryIdentity: $rootScope.selectedRegistryIdentity,
             application: vm.criteria.application,
             interfaceName: vm.criteria.interfaceName,
+            address: vm.criteria.address,
             sort: sort()
         }, function (result, headers) {
             vm.links = ParseLinksUtils.parse(headers('link'));
@@ -1571,7 +1640,79 @@ function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUti
             page: vm.page,
             sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
             application: vm.criteria.application,
-            interfaceName: vm.criteria.interfaceName
+            interfaceName: vm.criteria.interfaceName,
+            address: vm.criteria.address
+        });
+    }
+
+    function checkPressEnter($event) {
+        //按下enter键重新查询数据
+        if ($event.keyCode == 13) {
+            vm.transition();
+        }
+    }
+}
+/**
+ * RpcConsumerListController
+ */
+function RpcConsumerListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcConsumerService) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
+    vm.links = null;
+    vm.loadAll = loadAll;
+    vm.loadPage = loadPage;
+    vm.checkPressEnter = checkPressEnter;
+    vm.page = 1;
+    vm.totalItems = null;
+    vm.entities = [];
+    vm.predicate = pagingParams.predicate;
+    vm.reverse = pagingParams.ascending;
+    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
+    vm.transition = transition;
+    vm.criteria = criteria;
+
+    vm.loadAll();
+
+    function loadAll() {
+        RpcConsumerService.query({
+            page: pagingParams.page - 1,
+            size: vm.itemsPerPage,
+            registryIdentity: $rootScope.selectedRegistryIdentity,
+            application: vm.criteria.application,
+            interfaceName: vm.criteria.interfaceName,
+            address: vm.criteria.address,
+            sort: sort()
+        }, function (result, headers) {
+            vm.links = ParseLinksUtils.parse(headers('link'));
+            vm.totalItems = headers('X-Total-Count');
+            vm.page = pagingParams.page;
+            vm.entities = result;
+        });
+    }
+
+    function sort() {
+        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
+        if (vm.predicate !== 'application') {
+            // default sort column
+            result.push('application,asc');
+        }
+        return result;
+    }
+
+    function loadPage(page) {
+        vm.page = page;
+        vm.transition();
+    }
+
+    function transition() {
+        $state.transitionTo($state.$current, {
+            page: vm.page,
+            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
+            application: vm.criteria.application,
+            interfaceName: vm.criteria.interfaceName,
+            address: vm.criteria.address
         });
     }
 
