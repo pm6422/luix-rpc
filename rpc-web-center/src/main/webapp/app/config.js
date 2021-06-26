@@ -883,7 +883,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             }
         })
         .state('service-discovery.rpc-provider-list', {
-            url: '/rpc-provider-list?page&sort&application',
+            url: '/rpc-provider-list?page&sort&application&interfaceName',
             views: {
                 'content@': {
                     templateUrl: 'app/views/admin/rpc-provider/rpc-provider-list.html',
@@ -923,7 +923,8 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }],
                 criteria: ['$stateParams', function ($stateParams) {
                     return {
-                        application: $stateParams.application
+                        application: $stateParams.application,
+                        interfaceName: $stateParams.interfaceName
                     };
                 }]
             }

@@ -1542,6 +1542,7 @@ function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUti
             size: vm.itemsPerPage,
             registryIdentity: $rootScope.selectedRegistryIdentity,
             application: vm.criteria.application,
+            interfaceName: vm.criteria.interfaceName,
             sort: sort()
         }, function (result, headers) {
             vm.links = ParseLinksUtils.parse(headers('link'));
@@ -1569,7 +1570,8 @@ function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUti
         $state.transitionTo($state.$current, {
             page: vm.page,
             sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
-            application: vm.criteria.application
+            application: vm.criteria.application,
+            interfaceName: vm.criteria.interfaceName
         });
     }
 
