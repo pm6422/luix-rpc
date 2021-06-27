@@ -327,7 +327,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     @Override
     protected List<Url> discoverActiveProviders(Url consumerUrl) {
         try {
-            return readUrls(zkClient, consumerUrl.getPath(), consumerUrl.getForm(), StatusDir.ACTIVE);
+            return readUrls(zkClient, consumerUrl.getPath(), StatusDir.ACTIVE);
         } catch (Throwable e) {
             String msg = String.format("Failed to discover provider [%s] from registry [%s] with the error: %s",
                     consumerUrl, getRegistryUrl(), e.getMessage());
@@ -429,8 +429,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             zkChildListener = (dirName, currentChildren) -> {
                 @EventPublisher("providersChangeEvent")
                 List<String> fileNames = ListUtils.emptyIfNull(currentChildren);
-                List<Url> providerUrls = readUrls(zkClient, dirName, consumerUrl.getForm(), fileNames);
-                providerListener.onNotify(consumerUrl, getRegistryUrl(), providerUrls);
+                providerListener.onNotify(consumerUrl, getRegistryUrl(), readUrls(zkClient, dirName, fileNames));
                 log.info("Provider files [{}] changed under path [{}]", String.join(",", fileNames), dirName);
             };
             childChangeListeners.putIfAbsent(providerListener, zkChildListener);

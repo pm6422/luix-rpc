@@ -84,6 +84,9 @@ public class ProviderNotifyListener implements ClientListener {
 
         List<Sendable> newSenders = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
+            if (!providerUrl.getForm().equals(defaultString(form))) {
+                continue;
+            }
             // Find provider invoker associated with the provider url
             Sendable invoker = findInvokerByProviderUrl(registryUrl, providerUrl);
             if (invoker == null) {
