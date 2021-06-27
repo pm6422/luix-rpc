@@ -1516,12 +1516,11 @@ function RpcServerListController($state, $rootScope, AlertUtils, ParseLinksUtils
 /**
  * RpcServiceListController
  */
-function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcServiceService, RpcApplicationService) {
+function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcServiceService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.applications = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity, extension: 'all'});
     vm.links = null;
     vm.loadAll = loadAll;
     vm.loadPage = loadPage;
@@ -1584,11 +1583,12 @@ function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtil
 /**
  * RpcProviderListController
  */
-function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcProviderService) {
+function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcProviderService, RpcApplicationService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
+    vm.applications = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity, extension: 'all'});
     vm.links = null;
     vm.loadAll = loadAll;
     vm.loadPage = loadPage;
@@ -1655,11 +1655,12 @@ function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUti
 /**
  * RpcConsumerListController
  */
-function RpcConsumerListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcConsumerService) {
+function RpcConsumerListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcConsumerService, RpcApplicationService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
+    vm.applications = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity, extension: 'all'});
     vm.links = null;
     vm.loadAll = loadAll;
     vm.loadPage = loadPage;

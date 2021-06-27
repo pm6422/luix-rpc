@@ -17,37 +17,50 @@
 <div class="wrapper wrapper-content p-h-xs animated fadeInDown">
     <div class="ibox-content m-b-sm">
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-6">
                 <div class="form-group">
-                    <label class="control-label">Filter (Full-text search)</label>
-                    <input id="filter" type="text" class="form-control" placeholder="Filter by provider">
+                    <label class="control-label" for="application">Application</label>
+                    <select class="form-control" id="application" ng-model="vm.criteria.application"
+                            ng-options="item as item for item in vm.applications"
+                            ng-change="vm.transition()">
+                        <option value="">Select...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="control-label" for="interfaceName">Service (fuzzy query)</label>
+                    <input type="text" id="interfaceName" class="form-control"
+                           ng-model="vm.criteria.interfaceName" ng-keydown="vm.checkPressEnter($event)">
                 </div>
             </div>
         </div>
     </div>
     <div class="ibox-content">
-        <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
+        <table class="table table-striped">
             <thead>
-                <tr>
-                    <th class="col-sm-3" data-toggle="true">Service</th>
-                    <th class="col-sm-1">Address</th>
-                    <th class="col-sm-1">Form</th>
-                    <th class="col-sm-1">Version</th>
-                    <th class="col-sm-1">Application</th>
-                    <th data-hide="all">URL</th>
-                </tr>
+            <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
+                <th sort-by-directive="interfaceName"><span>Service</span> <span class="fa fa-sort"></span></th>
+                <th>Address</th>
+                <th>Form</th>
+                <th>Version</th>
+                <th>Application</th>
+                <th>Actions</th>
+            </tr>
             </thead>
             <tbody>
-                <tr on-footable-finish-render ng-repeat="entity in vm.entities">
-                    <td>{{entity.interfaceName}}</td>
-                    <td>{{entity.address}}</td>
-                    <td>{{entity.form}}</td>
-                    <td>{{entity.version}}</td>
-                    <td>{{entity.application}}</td>
-                    <td class="break">
-                        <span>{{entity.url}}</span>
-                    </td>
-                </tr>
+            <tr ng-repeat="entity in vm.entities track by entity.id">
+                <td>{{entity.interfaceName}}</td>
+                <td>{{entity.address}}</td>
+                <td>{{entity.form}}</td>
+                <td>{{entity.version}}</td>
+                <td>{{entity.application}}</td>
+                <td>
+                    <div class="btn-group">
+                        <button class="btn-white btn btn-xs" ui-sref=".view({name: entity.name})">Configure</button>
+                    </div>
+                </td>
+            </tr>
             </tbody>
         </table>
         <div class="text-center">
