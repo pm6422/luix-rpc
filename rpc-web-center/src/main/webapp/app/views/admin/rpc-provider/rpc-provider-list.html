@@ -47,8 +47,10 @@
                     <td>{{entity.application}}</td>
                     <td>
                         <div class="btn-group">
-<!--                                    <button class="btn-white btn btn-xs" ng-click="vm.view(item)">View</button>-->
-                            <button class="btn-white btn btn-xs" ui-sref=".view({name: entity.name})">View</button>
+                            <button class="btn-white btn btn-xs" ui-sref=".view({name: entity.name})">Configure</button>
+                            <button class="btn-white btn btn-xs" ui-sref=".view({name: entity.name})">Invoke</button>
+                            <button class="btn-white btn btn-xs" ng-click="vm.activate(item)">Activate</button>
+                            <button class="btn-white btn btn-xs" ng-click="vm.deactivate(item)">Deactivate</button>
                         </div>
                     </td>
                     <td class="break">
