@@ -29,10 +29,11 @@
         <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
             <thead>
                 <tr>
-                    <th class="col-sm-1" data-toggle="true">Service</th>
-                    <th class="col-sm-3">Address</th>
+                    <th class="col-sm-3" data-toggle="true">Service</th>
+                    <th class="col-sm-1">Address</th>
+                    <th class="col-sm-1">Form</th>
+                    <th class="col-sm-1">Version</th>
                     <th class="col-sm-1">Application</th>
-                    <th class="col-sm-1" data-sort-ignore="true">Active</th>
                     <th class="col-sm-1" data-sort-ignore="true">Actions</th>
                     <th data-hide="all">URL</th>
                 </tr>
@@ -41,16 +42,13 @@
                 <tr on-footable-finish-render ng-repeat="entity in vm.entities">
                     <td>{{entity.interfaceName}}</td>
                     <td>{{entity.address}}</td>
+                    <td>{{entity.form}}</td>
+                    <td>{{entity.version}}</td>
                     <td>{{entity.application}}</td>
-                    <td>
-                        <i class="fa fa-circle text-navy" title="Active" ng-show="entity.active"></i>
-                        <i class="fa fa-circle text-danger"title="Inactive" ng-show="!entity.active"></i>
-                    </td>
                     <td>
                         <div class="btn-group">
 <!--                                    <button class="btn-white btn btn-xs" ng-click="vm.view(item)">View</button>-->
                             <button class="btn-white btn btn-xs" ui-sref=".view({name: entity.name})">Priority</button>
-                            <button class="btn-white btn btn-xs" ui-sref=".view({name: entity.name})">Load Balance</button>
                         </div>
                     </td>
                     <td class="break">

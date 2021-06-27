@@ -33,7 +33,6 @@
                     <th class="col-sm-3">Address</th>
                     <th class="col-sm-1">Application</th>
                     <th class="col-sm-1" data-sort-ignore="true">Active</th>
-                    <th class="col-sm-1" data-sort-ignore="true">Actions</th>
                     <th data-hide="all">URL</th>
                 </tr>
             </thead>
@@ -45,10 +44,6 @@
                     <td>
                         <i class="fa fa-circle text-navy" title="Active" ng-show="entity.active"></i>
                         <i class="fa fa-circle text-danger"title="Inactive" ng-show="!entity.active"></i>
-                    </td>
-                    <td>
-                        <div class="btn-group">
-                        </div>
                     </td>
                     <td class="break">
                         <span>{{entity.url}}</span>
