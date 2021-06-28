@@ -95,7 +95,7 @@ public class RpcProviderController {
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         String result;
         try {
-            result = (String) invocationHandler.invoke(METHOD_GET_HEALTH, null, null);
+            result = (String) invocationHandler.invoke(METHOD_GET_HEALTH);
         } catch (Exception ex) {
             result = ex.getMessage();
         }
