@@ -13,8 +13,10 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
 import org.infinity.rpc.webcenter.dto.MethodInvocation;
-import org.infinity.rpc.webcenter.service.RpcRegistryService;
+import org.infinity.rpc.webcenter.exception.NoDataFoundException;
+import org.infinity.rpc.webcenter.repository.RpcProviderRepository;
 import org.infinity.rpc.webcenter.service.RpcProviderService;
+import org.infinity.rpc.webcenter.service.RpcRegistryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -33,11 +35,20 @@ import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeade
 public class RpcProviderController {
 
     @Resource
-    private InfinityProperties infinityProperties;
+    private InfinityProperties    infinityProperties;
     @Resource
-    private RpcRegistryService rpcRegistryService;
+    private RpcRegistryService    rpcRegistryService;
     @Resource
-    private RpcProviderService rpcProviderService;
+    private RpcProviderService    rpcProviderService;
+    @Resource
+    private RpcProviderRepository rpcProviderRepository;
+
+    @ApiOperation("find provider by ID")
+    @GetMapping("/api/rpc-provider/{id}")
+    public ResponseEntity<RpcProvider> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
+        RpcProvider domain = rpcProviderRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        return ResponseEntity.ok(domain);
+    }
 
     @ApiOperation("find provider list")
     @GetMapping("/api/rpc-provider/providers")
