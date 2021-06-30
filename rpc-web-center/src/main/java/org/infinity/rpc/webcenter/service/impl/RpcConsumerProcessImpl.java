@@ -16,7 +16,6 @@ import org.infinity.rpc.webcenter.repository.RpcServiceRepository;
 import org.infinity.rpc.webcenter.service.RpcApplicationService;
 import org.infinity.rpc.webcenter.service.RpcServerService;
 import org.infinity.rpc.webcenter.service.RpcServiceService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -63,15 +62,9 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
                     rpcServerRepository.save(rpcServer);
                 }
 
-                // Insert service
-                boolean existsService = rpcServiceService
-                        .exists(rpcConsumer.getRegistryIdentity(), rpcConsumer.getInterfaceName());
-                if (!existsService) {
-                    RpcService rpcService = new RpcService();
-                    BeanUtils.copyProperties(rpcConsumer, rpcService);
-                    rpcService.setId(null);
-                    rpcServiceRepository.save(rpcService);
-                }
+                // Insert or update service
+                RpcService rpcService = RpcService.of(rpcConsumer.getInterfaceName(), registryUrl);
+                rpcServiceRepository.save(rpcService);
 
                 // Insert application
                 boolean existsApplication = rpcApplicationService

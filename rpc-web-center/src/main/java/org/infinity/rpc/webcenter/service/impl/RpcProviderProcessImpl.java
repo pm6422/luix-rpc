@@ -63,15 +63,9 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
                     rpcServerRepository.save(rpcServer);
                 }
 
-                // Insert service
-                boolean existsService = rpcServiceService
-                        .exists(rpcProvider.getRegistryIdentity(), rpcProvider.getInterfaceName());
-                if (!existsService) {
-                    RpcService rpcService = new RpcService();
-                    BeanUtils.copyProperties(rpcProvider, rpcService);
-                    rpcService.setId(null);
-                    rpcServiceRepository.save(rpcService);
-                }
+                // Insert or update service
+                RpcService rpcService = RpcService.of(rpcProvider.getInterfaceName(), registryUrl);
+                rpcServiceRepository.save(rpcService);
 
                 // Insert application
                 boolean existsApplication = rpcApplicationService

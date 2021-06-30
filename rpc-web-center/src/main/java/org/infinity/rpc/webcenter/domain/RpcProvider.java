@@ -47,13 +47,13 @@ public class RpcProvider implements Serializable {
         RpcProvider rpcProvider = new RpcProvider();
         String id = DigestUtils.md5DigestAsHex((providerUrl.getIdentity() + "@" + registryUrl.getIdentity()).getBytes());
         rpcProvider.setId(id);
+        rpcProvider.setRegistryIdentity(registryUrl.getIdentity());
         rpcProvider.setInterfaceName(providerUrl.getPath());
         rpcProvider.setForm(providerUrl.getForm());
         rpcProvider.setVersion(providerUrl.getVersion());
         rpcProvider.setApplication(providerUrl.getOption(APP));
         rpcProvider.setAddress(providerUrl.getAddress());
         rpcProvider.setUrl(providerUrl.toFullStr());
-        rpcProvider.setRegistryIdentity(registryUrl.getIdentity());
         rpcProvider.setActive(true);
         return rpcProvider;
     }

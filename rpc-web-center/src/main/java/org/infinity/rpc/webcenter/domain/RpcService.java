@@ -4,9 +4,11 @@ import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.infinity.rpc.core.url.Url;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.util.DigestUtils;
 
 import java.io.Serializable;
 
@@ -32,4 +34,13 @@ public class RpcService implements Serializable {
     private Boolean providing;
     @Transient
     private Boolean consuming;
+
+    public static RpcService of(String interfaceName, Url registryUrl) {
+        RpcService rpcService = new RpcService();
+        String id = DigestUtils.md5DigestAsHex((interfaceName + "@" + registryUrl.getIdentity()).getBytes());
+        rpcService.setId(id);
+        rpcService.setRegistryIdentity(registryUrl.getIdentity());
+        rpcService.setInterfaceName(interfaceName);
+        return rpcService;
+    }
 }
