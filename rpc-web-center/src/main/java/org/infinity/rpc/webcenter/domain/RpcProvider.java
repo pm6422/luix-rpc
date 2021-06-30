@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.infinity.rpc.core.url.Url;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.util.DigestUtils;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -44,7 +45,8 @@ public class RpcProvider implements Serializable {
 
     public static RpcProvider of(Url providerUrl, Url registryUrl) {
         RpcProvider rpcProvider = new RpcProvider();
-        rpcProvider.setId(registryUrl.getIdentity() + ":" + providerUrl.getIdentity());
+        String id = DigestUtils.md5DigestAsHex((providerUrl.getIdentity() + "@" + registryUrl.getIdentity()).getBytes());
+        rpcProvider.setId(id);
         rpcProvider.setInterfaceName(providerUrl.getPath());
         rpcProvider.setForm(providerUrl.getForm());
         rpcProvider.setVersion(providerUrl.getVersion());
