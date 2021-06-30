@@ -972,7 +972,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             views: {
                 'content@': {
                     templateUrl: 'app/views/admin/rpc-provider/rpc-provider-details.html',
-                    controller: 'ProviderDetailsController',
+                    controller: 'RpcProviderDetailsController',
                     controllerAs: 'vm'
                 }
             },

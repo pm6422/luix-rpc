@@ -37,8 +37,8 @@ angular
     .controller('RpcServerListController', RpcServerListController)
     .controller('RpcServiceListController', RpcServiceListController)
     .controller('RpcProviderListController', RpcProviderListController)
+    .controller('RpcProviderDetailsController', RpcProviderDetailsController)
     .controller('RpcConsumerListController', RpcConsumerListController)
-    .controller('ProviderDetailsController', ProviderDetailsController)
     .controller('AppListController', AppListController)
     .controller('AppDialogController', AppDialogController)
     .controller('AppDetailsController', AppDetailsController)
@@ -1653,6 +1653,22 @@ function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUti
     }
 }
 /**
+ * RpcProviderDetailsController
+ */
+function RpcProviderDetailsController($state, $stateParams, $rootScope, entity, RpcServiceService) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
+    vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
+    vm.entity = entity;
+
+    RpcServiceService.get({registryIdentity: $rootScope.selectedRegistryIdentity, interfaceName: vm.entity.interfaceName},
+        function (response) {
+            vm.entity.consuming = response.consuming;
+        });
+}
+/**
  * RpcConsumerListController
  */
 function RpcConsumerListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcConsumerService, RpcApplicationService) {
@@ -1723,17 +1739,6 @@ function RpcConsumerListController($state, $rootScope, AlertUtils, ParseLinksUti
             vm.transition();
         }
     }
-}
-/**
- * ProviderDetailsController
- */
-function ProviderDetailsController($state, $stateParams, entity) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
-    vm.entity = entity;
 }
 /**
  * AuthorityListController

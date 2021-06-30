@@ -1356,8 +1356,15 @@ function RpcServerService($resource) {
  * RpcServiceService
  */
 function RpcServiceService($resource) {
-    var service = $resource('api/rpc-service/services', {}, {
-        'query': {method: 'GET', isArray: true}
+    var service = $resource('api/rpc-service/:extension', {}, {
+        'query': {method: 'GET', isArray: true, params: {extension: 'services'}},
+        'get': {
+            method: 'GET',
+            transformResponse: function (data) {
+                data = angular.fromJson(data);
+                return data;
+            }
+        }
     });
     return service;
 }
