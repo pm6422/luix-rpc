@@ -81,31 +81,34 @@
                 <div class="panel blank-panel ui-tab">
                     <uib-tabset>
                         <uib-tab heading="Invocation" active="tab.active">
-                            <div class="feed-activity-list">
-                                <div class="feed-element">
-                                    <div class="media-body ">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="form-group">
-                                                    <label class="control-label" for="method">Method</label>
-                                                    <div class="input-group">
-                                                        <select class="form-control" id="method" ng-model="vm.selectedMethod"
-                                                                ng-options="item.methodSignature as item.methodSignature for item in vm.methods"
-                                                                ng-change="vm.transition()">
-                                                            <option value="">Select...</option>
-                                                        </select>
-                                                        <span class="input-group-btn">
-                                                            <button type="button" class="btn btn-primary" ng-click="vm.invoke()">
-                                                                <span>Invoke</span>
-                                                            </button>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                            <form method="get" class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">Method</label>
+                                    <div class="col-sm-11">
+                                        <select class="form-control" id="method" ng-model="vm.selectedMethod"
+                                                ng-options="item.methodSignature as item.methodSignature for item in vm.methods"
+                                                ng-change="vm.transition()">
+                                            <option value="">Select...</option>
+                                        </select>
+                                        <span class="help-block m-b-none" ng-show="vm.selectedMethod">Selected: {{vm.entity.interfaceName}}.{{vm.selectedMethod}}</span>
                                     </div>
                                 </div>
-                            </div>
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">Arguments</label>
+                                    <div class="col-sm-11">
+                                        <textarea class="form-control" rows="5"></textarea>
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <button type="button" class="btn btn-primary pull-right" ng-click="vm.invoke()">
+                                            <span>Invoke</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </uib-tab>
                         <uib-tab heading="Health">
                             <table class="table table-striped">
