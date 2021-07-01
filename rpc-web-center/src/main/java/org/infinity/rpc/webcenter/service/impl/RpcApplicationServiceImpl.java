@@ -51,6 +51,7 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
     @Resource
     private RpcConsumerService       rpcConsumerService;
 
+    @Deprecated
     @Override
     public boolean exists(String registryIdentity, String name) {
         return rpcApplicationRepository.existsByRegistryIdentityAndName(registryIdentity, name);
