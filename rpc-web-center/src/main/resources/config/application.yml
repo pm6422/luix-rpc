@@ -121,6 +121,7 @@ infinity:
         name: ${spring.application.name}
         description: RPC Web Center
         team: Infinity Team
+        mailSuffixes: '@126.com'
         ownerMail: pm6422@126.com
         env: ${spring.profiles.active}
     registries:

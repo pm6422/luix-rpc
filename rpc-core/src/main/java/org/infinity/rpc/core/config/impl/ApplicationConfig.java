@@ -3,6 +3,7 @@ package org.infinity.rpc.core.config.impl;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.Configurable;
+import org.infinity.rpc.core.exception.impl.RpcConfigException;
 import org.infinity.rpc.core.utils.ApplicationConfigHolder;
 import org.infinity.rpc.core.utils.DebugModeHolder;
 import org.infinity.rpc.core.utils.JarUtils;
@@ -10,45 +11,51 @@ import org.infinity.rpc.core.utils.JarUtils;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Slf4j
 public class ApplicationConfig implements Configurable, Serializable {
-    private static final long    serialVersionUID = -7916757272373849145L;
-    public static final  String  PREFIX           = "application";
+    private static final long         serialVersionUID = -7916757272373849145L;
+    public static final  String       PREFIX           = "application";
     /**
      * Application name
      * Keep unique
      */
     @NotEmpty
-    private              String  name;
+    private              String       name;
     /**
      * Application description
      */
     @Size(max = 20)
-    private              String  description;
+    private              String       description;
     /**
      * Team name
      */
     @NotEmpty
-    private              String  team;
+    private              String       team;
     /**
-     * Owner mail
+     * Owner mail whose suffix must be one of {@link #mailSuffixes}
      */
     @NotEmpty
-    private              String  ownerMail;
+    private              String       ownerMail;
+    /**
+     * Valid mail suffix, generally speaking, it refers to the enterprise mailbox. e.g. @baidu.com, @baidu.cn
+     */
+    @NotEmpty
+    private              List<String> mailSuffixes;
     /**
      * Environment variable, e.g. dev, test or prod
      */
-    private              String  env;
+    private              String       env;
     /**
      * Infinity RPC jar version
      */
-    private              String  jarVersion       = JarUtils.VERSION;
+    private              String       jarVersion       = JarUtils.VERSION;
     /**
      * Debug mode
      */
-    private              boolean debugMode        = false;
+    private              boolean      debugMode        = false;
 
     public void init() {
         checkIntegrity();
@@ -65,5 +72,7 @@ public class ApplicationConfig implements Configurable, Serializable {
 
     @Override
     public void checkValidity() {
+        mailSuffixes.stream().filter(suffix -> ownerMail.endsWith(suffix)).findAny()
+                .orElseThrow(() -> new RpcConfigException("Please specify a valid ownerMail!"));
     }
 }
