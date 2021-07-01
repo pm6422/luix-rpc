@@ -1655,13 +1655,14 @@ function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUti
 /**
  * RpcProviderDetailsController
  */
-function RpcProviderDetailsController($state, $stateParams, $rootScope, entity, RpcServiceService) {
+function RpcProviderDetailsController($state, $stateParams, $rootScope, entity, RpcServiceService, RpcProviderService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
     vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
     vm.entity = entity;
+    vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url});
 
     RpcServiceService.get({registryIdentity: $rootScope.selectedRegistryIdentity, interfaceName: vm.entity.interfaceName},
         function (response) {

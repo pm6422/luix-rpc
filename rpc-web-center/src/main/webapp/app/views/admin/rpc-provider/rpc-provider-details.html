@@ -80,17 +80,29 @@
             <div class="col-lg-12">
                 <div class="panel blank-panel ui-tab">
                     <uib-tabset>
-                        <uib-tab heading="Invocation" active="tab.active" class="dsads">
+                        <uib-tab heading="Invocation" active="tab.active">
                             <div class="feed-activity-list">
                                 <div class="feed-element">
-                                    <a href="" class="pull-left">
-                                        <img alt="image" class="img-circle" src="img/a3.jpg">
-                                    </a>
-
                                     <div class="media-body ">
-                                        <small class="pull-right">2h ago</small>
-                                        <strong>Janet Rosowski</strong> add 1 photo on <strong>Monica Smith</strong>. <br>
-                                        <small class="text-muted">2 days ago at 8:30am</small>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label class="control-label" for="method">Method</label>
+                                                    <div class="input-group">
+                                                        <select class="form-control" id="method" ng-model="vm.selectedMethod"
+                                                                ng-options="item.methodSignature as item.methodSignature for item in vm.methods"
+                                                                ng-change="vm.transition()">
+                                                            <option value="">Select...</option>
+                                                        </select>
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-primary" ng-click="vm.invoke()">
+                                                                <span>Invoke</span>
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
