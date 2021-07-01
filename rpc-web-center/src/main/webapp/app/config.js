@@ -800,14 +800,14 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('service-discovery', {
+        .state('rpc', {
             abstract: true,
             parent: 'admin',
             data: {
-                pageTitle: '服务发现'
+                pageTitle: 'RPC'
             }
         })
-        .state('service-discovery.rpc-application-list', {
+        .state('rpc.rpc-application-list', {
             url: '/rpc-application-list?page&sort',
             views: {
                 'content@': {
@@ -817,7 +817,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             data: {
-                pageTitle: 'RPC应用列表'
+                pageTitle: 'RPC applications'
             },
             params: {
                 page: {
@@ -843,7 +843,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('service-discovery.rpc-server-list', {
+        .state('rpc.rpc-server-list', {
             url: '/rpc-server-list?page&sort&address',
             views: {
                 'content@': {
@@ -853,7 +853,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             data: {
-                pageTitle: 'RPC服务器列表'
+                pageTitle: 'RPC servers'
             },
             params: {
                 page: {
@@ -881,7 +881,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('service-discovery.rpc-service-list', {
+        .state('rpc.rpc-service-list', {
             url: '/rpc-service-list?page&sort&interfaceName',
             views: {
                 'content@': {
@@ -891,7 +891,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             data: {
-                pageTitle: 'RPC服务列表'
+                pageTitle: 'RPC services'
             },
             params: {
                 page: {
@@ -919,7 +919,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('service-discovery.rpc-provider-list', {
+        .state('rpc.rpc-provider-list', {
             url: '/rpc-provider-list?page&sort&application&interfaceName&address',
             views: {
                 'content@': {
@@ -929,7 +929,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             data: {
-                pageTitle: 'RPC服务提供者列表'
+                pageTitle: 'RPC providers'
             },
             params: {
                 page: {
@@ -967,7 +967,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('service-discovery.rpc-provider-list.view', {
+        .state('rpc.rpc-provider-list.view', {
             url: '/view/:id',
             views: {
                 'content@': {
@@ -985,7 +985,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('service-discovery.rpc-consumer-list', {
+        .state('rpc.rpc-consumer-list', {
             url: '/rpc-consumer-list?page&sort&application&interfaceName&address',
             views: {
                 'content@': {
@@ -995,7 +995,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             data: {
-                pageTitle: 'RPC服务消费者列表'
+                pageTitle: 'RPC consumers'
             },
             params: {
                 page: {

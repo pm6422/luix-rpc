@@ -123,28 +123,32 @@ public class DatabaseInitializer {
     @ChangeSet(order = "04", author = "Louis", id = "addAuthorityAdminMenu", runAlways = true)
     public void addAuthorityAdminMenu(MongockTemplate mongoTemplate) {
 
-        AdminMenu serviceDiscovery = new AdminMenu(APP_NAME, "service-discovery", "服务发现", 1, "service-discovery", 10, null);
-        mongoTemplate.save(serviceDiscovery);
+        AdminMenu rpc = new AdminMenu(APP_NAME, "rpc", "RPC", 1, "rpc", 10, null);
+        mongoTemplate.save(rpc);
 
-        AdminMenu rpcApplicationList = new AdminMenu(APP_NAME, "rpc-application-list", "RPC应用列表", 2, "service-discovery.rpc-application-list",
-                11, serviceDiscovery.getId());
+        AdminMenu rpcApplicationList = new AdminMenu(APP_NAME, "rpc-application-list", "Applications", 2, "rpc.rpc-application-list",
+                11, rpc.getId());
         mongoTemplate.save(rpcApplicationList);
 
-        AdminMenu rpcServerList = new AdminMenu(APP_NAME, "rpc-server-list", "RPC服务器列表", 2, "service-discovery.rpc-server-list",
-                12, serviceDiscovery.getId());
+        AdminMenu rpcServerList = new AdminMenu(APP_NAME, "rpc-server-list", "Servers", 2, "rpc.rpc-server-list",
+                12, rpc.getId());
         mongoTemplate.save(rpcServerList);
 
-        AdminMenu rpcServiceList = new AdminMenu(APP_NAME, "rpc-service-list", "RPC服务列表", 2, "service-discovery.rpc-service-list",
-                13, serviceDiscovery.getId());
+        AdminMenu rpcServiceList = new AdminMenu(APP_NAME, "rpc-service-list", "Services", 2, "rpc.rpc-service-list",
+                13, rpc.getId());
         mongoTemplate.save(rpcServiceList);
 
-        AdminMenu rpcProviderList = new AdminMenu(APP_NAME, "rpc-provider-list", "RPC服务提供者列表", 2, "service-discovery.rpc-provider-list",
-                14, serviceDiscovery.getId());
+        AdminMenu rpcProviderList = new AdminMenu(APP_NAME, "rpc-provider-list", "Providers", 2, "rpc.rpc-provider-list",
+                14, rpc.getId());
         mongoTemplate.save(rpcProviderList);
 
-        AdminMenu rpcConsumerList = new AdminMenu(APP_NAME, "rpc-consumer-list", "RPC服务消费者列表", 2, "service-discovery.rpc-consumer-list",
-                15, serviceDiscovery.getId());
+        AdminMenu rpcConsumerList = new AdminMenu(APP_NAME, "rpc-consumer-list", "Consumers", 2, "rpc.rpc-consumer-list",
+                15, rpc.getId());
         mongoTemplate.save(rpcConsumerList);
+
+
+        AdminMenu governance = new AdminMenu(APP_NAME, "governance", "Governance", 1, "governance", 20, null);
+        mongoTemplate.save(governance);
 
         AdminMenu userAuthority = new AdminMenu(APP_NAME, "user-authority", "用户权限", 1, "user-authority", 100, null);
         mongoTemplate.save(userAuthority);
@@ -195,7 +199,7 @@ public class DatabaseInitializer {
 //        mongoTemplate.save(oAuth2ApprovalDetails);
 
         //AuthorityAdminMenu
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, serviceDiscovery.getId()));
+        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpc.getId()));
 
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcApplicationList.getId()));
 
@@ -206,6 +210,8 @@ public class DatabaseInitializer {
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcProviderList.getId()));
 
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcConsumerList.getId()));
+
+        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, governance.getId()));
 
 //        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, userAuthority.getId()));
 //
