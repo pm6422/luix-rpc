@@ -26,6 +26,7 @@
                     <th class="col-sm-1">Actions</th>
                     <th data-hide="all">Description</th>
                     <th data-hide="all">Infinity RPC jar version</th>
+                    <th data-hide="all">Spring boot jar version</th>
                     <th data-hide="all">Online time</th>
                 </tr>
             </thead>
@@ -42,10 +43,10 @@
                     <td>
                         <div class="btn-group">
                             <button class="btn-white btn btn-xs" ng-disabled="!item.providing"
-                                    ui-sref="service-discovery.rpc-provider-list({application: item.name})"
+                                    ui-sref="rpc.rpc-provider-list({application: item.name})"
                                     uib-tooltip="Discover all providers of this application">Providers</button>
                             <button class="btn-white btn btn-xs" ng-disabled="!item.consuming"
-                                    ui-sref="service-discovery.rpc-consumer-list({application: item.name})"
+                                    ui-sref="rpc.rpc-consumer-list({application: item.name})"
                                     uib-tooltip="Discover all consumers of this application">Consumers</button>
                         </div>
                     </td>
@@ -54,6 +55,9 @@
                     </td>
                     <td class="break">
                         <span>{{item.jarVersion}}</span>
+                    </td>
+                    <td class="break">
+                        <span>{{item.springBootJarVersion}}</span>
                     </td>
                     <td class="break">
                         <span>{{item.createdTime | date:'yyyy/MM/dd HH:mm:ss'}}</span>

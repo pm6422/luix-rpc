@@ -61,8 +61,8 @@
         <div class="row">
             <div class="col-lg-6">
                 <dl class="dl-horizontal">
-                    <dt>Address:</dt>
-                    <dd>{{vm.entity.address}}</dd>
+                    <dt>Online time:</dt>
+                    <dd>{{vm.entity.modifiedTime | date:'yyyy/MM/dd HH:mm:ss'}}</dd>
                 </dl>
             </div>
             <div class="col-lg-6">
@@ -70,7 +70,7 @@
                     <dt>Consumers:</dt>
                     <dd>
                         <button class="btn-white btn btn-xs" ng-disabled="!vm.entity.consuming"
-                            ui-sref="service-discovery.rpc-consumer-list({interfaceName: vm.entity.interfaceName})"
+                            ui-sref="rpc.rpc-consumer-list({interfaceName: vm.entity.interfaceName})"
                             uib-tooltip="Discover all consumers of this service">{{vm.entity.consuming ? 'Go' : 'None'}}</button>
                     </dd>
                 </dl>
