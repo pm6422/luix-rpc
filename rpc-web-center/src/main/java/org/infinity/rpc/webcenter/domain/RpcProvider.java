@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 import org.infinity.rpc.core.url.Url;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.util.DigestUtils;
 
 import java.io.Serializable;
 import java.time.Instant;
 
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
+import static org.infinity.rpc.webcenter.domain.RpcService.generateMd5Id;
 
 /**
  * Spring Data MongoDB collection for the RpcProvider entity.
@@ -45,7 +45,7 @@ public class RpcProvider implements Serializable {
 
     public static RpcProvider of(Url providerUrl, Url registryUrl) {
         RpcProvider rpcProvider = new RpcProvider();
-        String id = DigestUtils.md5DigestAsHex((providerUrl.getIdentity() + "@" + registryUrl.getIdentity()).getBytes());
+        String id = generateMd5Id(providerUrl.getIdentity(), registryUrl.getIdentity());
         rpcProvider.setId(id);
         rpcProvider.setRegistryIdentity(registryUrl.getIdentity());
         rpcProvider.setInterfaceName(providerUrl.getPath());

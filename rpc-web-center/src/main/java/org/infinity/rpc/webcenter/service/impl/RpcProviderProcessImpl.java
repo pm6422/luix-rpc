@@ -16,11 +16,12 @@ import org.infinity.rpc.webcenter.repository.RpcServiceRepository;
 import org.infinity.rpc.webcenter.service.RpcApplicationService;
 import org.infinity.rpc.webcenter.service.RpcServerService;
 import org.infinity.rpc.webcenter.service.RpcServiceService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+
+import static org.infinity.rpc.webcenter.domain.RpcService.generateMd5Id;
 
 @Service
 @Slf4j
@@ -54,25 +55,21 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
                 rpcProviderRepository.save(rpcProvider);
 
                 // Insert server
-                boolean existsServer = rpcServerService
-                        .exists(rpcProvider.getRegistryIdentity(), rpcProvider.getAddress());
-                if (!existsServer) {
-                    RpcServer rpcServer = new RpcServer();
-                    rpcServer.setRegistryIdentity(rpcProvider.getRegistryIdentity());
-                    rpcServer.setAddress(rpcProvider.getAddress());
-                    rpcServerRepository.save(rpcServer);
+                if (!rpcServerRepository.existsById(generateMd5Id(rpcProvider.getAddress(), registryUrl.getIdentity()))) {
+                    RpcServer rpcServer = RpcServer.of(rpcProvider.getAddress(), registryUrl);
+                    rpcServerRepository.insert(rpcServer);
                 }
 
-                // Insert or update service
-                RpcService rpcService = RpcService.of(rpcProvider.getInterfaceName(), registryUrl);
-                rpcServiceRepository.save(rpcService);
+                // Insert service
+                if (!rpcServiceRepository.existsById(generateMd5Id(rpcProvider.getInterfaceName(), registryUrl.getIdentity()))) {
+                    RpcService rpcService = RpcService.of(rpcProvider.getInterfaceName(), registryUrl);
+                    rpcServiceRepository.insert(rpcService);
+                }
 
                 // Insert application
-                boolean existsApplication = rpcApplicationService
-                        .exists(rpcProvider.getRegistryIdentity(), rpcProvider.getApplication());
-                if (!existsApplication) {
+                if (!rpcApplicationRepository.existsById(generateMd5Id(rpcProvider.getApplication(), registryUrl.getIdentity()))) {
                     RpcApplication remoteRpcApplication = rpcApplicationService.loadApplication(registryUrl, providerUrl);
-                    rpcApplicationRepository.save(remoteRpcApplication);
+                    rpcApplicationRepository.insert(remoteRpcApplication);
                 }
             }
         } else {

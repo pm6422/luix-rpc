@@ -4,11 +4,14 @@ import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.infinity.rpc.core.url.Url;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+
+import static org.infinity.rpc.webcenter.domain.RpcService.generateMd5Id;
 
 /**
  * Spring Data MongoDB collection for the RpcServer entity.
@@ -32,4 +35,13 @@ public class RpcServer implements Serializable {
     private Boolean providing;
     @Transient
     private Boolean consuming;
+
+    public static RpcServer of(String address, Url registryUrl) {
+        RpcServer rpcServer = new RpcServer();
+        String id = generateMd5Id(address, registryUrl.getIdentity());
+        rpcServer.setId(id);
+        rpcServer.setRegistryIdentity(registryUrl.getIdentity());
+        rpcServer.setAddress(address);
+        return rpcServer;
+    }
 }

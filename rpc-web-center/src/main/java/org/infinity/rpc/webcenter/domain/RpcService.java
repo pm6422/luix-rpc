@@ -37,10 +37,14 @@ public class RpcService implements Serializable {
 
     public static RpcService of(String interfaceName, Url registryUrl) {
         RpcService rpcService = new RpcService();
-        String id = DigestUtils.md5DigestAsHex((interfaceName + "@" + registryUrl.getIdentity()).getBytes());
+        String id = generateMd5Id(interfaceName, registryUrl.getIdentity());
         rpcService.setId(id);
         rpcService.setRegistryIdentity(registryUrl.getIdentity());
         rpcService.setInterfaceName(interfaceName);
         return rpcService;
+    }
+
+    public static String generateMd5Id(String serviceIdentity, String registryIdentity) {
+        return DigestUtils.md5DigestAsHex((serviceIdentity + "@" + registryIdentity).getBytes());
     }
 }

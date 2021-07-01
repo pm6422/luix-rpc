@@ -34,6 +34,7 @@ import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_APP
 import static org.infinity.rpc.webcenter.domain.RpcApplication.FIELD_ACTIVE;
 import static org.infinity.rpc.webcenter.domain.RpcApplication.FIELD_NAME;
 import static org.infinity.rpc.webcenter.domain.RpcProvider.FIELD_REGISTRY_IDENTITY;
+import static org.infinity.rpc.webcenter.domain.RpcService.generateMd5Id;
 
 @Service
 public class RpcApplicationServiceImpl implements RpcApplicationService {
@@ -88,6 +89,8 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
 
         RpcApplication rpcApplication = new RpcApplication();
         BeanUtils.copyProperties(applicationConfig, rpcApplication);
+        String id = generateMd5Id(rpcApplication.getName(), registryIdentity.getIdentity());
+        rpcApplication.setId(id);
         rpcApplication.setRegistryIdentity(registryIdentity.getIdentity());
         rpcApplication.setActive(true);
         rpcApplication.setCreatedTime(Instant.now());

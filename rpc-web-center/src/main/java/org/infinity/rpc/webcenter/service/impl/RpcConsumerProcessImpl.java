@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static org.infinity.rpc.webcenter.domain.RpcService.generateMd5Id;
+
 @Service
 @Slf4j
 public class RpcConsumerProcessImpl implements ConsumerProcessable {
@@ -53,25 +55,21 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
                 rpcConsumerRepository.save(rpcConsumer);
 
                 // Insert server
-                boolean existsServer = rpcServerService
-                        .exists(rpcConsumer.getRegistryIdentity(), rpcConsumer.getAddress());
-                if (!existsServer) {
-                    RpcServer rpcServer = new RpcServer();
-                    rpcServer.setRegistryIdentity(rpcConsumer.getRegistryIdentity());
-                    rpcServer.setAddress(rpcConsumer.getAddress());
-                    rpcServerRepository.save(rpcServer);
+                if (!rpcServerRepository.existsById(generateMd5Id(rpcConsumer.getAddress(), registryUrl.getIdentity()))) {
+                    RpcServer rpcServer = RpcServer.of(rpcConsumer.getAddress(), registryUrl);
+                    rpcServerRepository.insert(rpcServer);
                 }
 
-                // Insert or update service
-                RpcService rpcService = RpcService.of(rpcConsumer.getInterfaceName(), registryUrl);
-                rpcServiceRepository.save(rpcService);
+                // Insert service
+                if (!rpcServiceRepository.existsById(generateMd5Id(rpcConsumer.getInterfaceName(), registryUrl.getIdentity()))) {
+                    RpcService rpcService = RpcService.of(rpcConsumer.getInterfaceName(), registryUrl);
+                    rpcServiceRepository.insert(rpcService);
+                }
 
                 // Insert application
-                boolean existsApplication = rpcApplicationService
-                        .exists(rpcConsumer.getRegistryIdentity(), rpcConsumer.getApplication());
-                if (!existsApplication) {
+                if (!rpcApplicationRepository.existsById(generateMd5Id(rpcConsumer.getApplication(), registryUrl.getIdentity()))) {
                     RpcApplication remoteRpcApplication = rpcApplicationService.loadApplication(registryUrl, consumerUrl);
-                    rpcApplicationRepository.save(remoteRpcApplication);
+                    rpcApplicationRepository.insert(remoteRpcApplication);
                 }
             }
         } else {
