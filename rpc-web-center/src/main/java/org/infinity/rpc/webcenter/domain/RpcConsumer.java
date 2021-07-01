@@ -42,16 +42,17 @@ public class RpcConsumer implements Serializable {
     private Instant modifiedTime;
 
     public static RpcConsumer of(Url consumerUrl, Url registryUrl) {
-        RpcConsumer provider = new RpcConsumer();
-        provider.setId(registryUrl.getIdentity() + ":" + consumerUrl.getIdentity());
-        provider.setInterfaceName(consumerUrl.getPath());
-        provider.setForm(consumerUrl.getForm());
-        provider.setVersion(consumerUrl.getVersion());
-        provider.setApplication(consumerUrl.getOption(APP));
-        provider.setAddress(consumerUrl.getAddress());
-        provider.setUrl(consumerUrl.toFullStr());
-        provider.setRegistryIdentity(registryUrl.getIdentity());
-        provider.setActive(true);
-        return provider;
+        RpcConsumer consumer = new RpcConsumer();
+        consumer.setId(registryUrl.getIdentity() + ":" + consumerUrl.getIdentity());
+        consumer.setInterfaceName(consumerUrl.getPath());
+        consumer.setForm(consumerUrl.getForm());
+        consumer.setVersion(consumerUrl.getVersion());
+        consumer.setApplication(consumerUrl.getOption(APP));
+        consumer.setAddress(consumerUrl.getAddress());
+        consumer.setUrl(consumerUrl.toFullStr());
+        consumer.setRegistryIdentity(registryUrl.getIdentity());
+        consumer.setActive(true);
+        consumer.setModifiedTime(Instant.now());
+        return consumer;
     }
 }

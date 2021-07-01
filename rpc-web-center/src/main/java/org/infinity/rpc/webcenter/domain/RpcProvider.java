@@ -40,7 +40,6 @@ public class RpcProvider implements Serializable {
     private String  url;
     private Boolean active    = false;
     private Boolean consuming = false;
-    private Instant createdTime;
     private Instant modifiedTime;
 
     public static RpcProvider of(Url providerUrl, Url registryUrl) {
@@ -55,6 +54,7 @@ public class RpcProvider implements Serializable {
         rpcProvider.setAddress(providerUrl.getAddress());
         rpcProvider.setUrl(providerUrl.toFullStr());
         rpcProvider.setActive(true);
+        rpcProvider.setModifiedTime(Instant.now());
         return rpcProvider;
     }
 }
