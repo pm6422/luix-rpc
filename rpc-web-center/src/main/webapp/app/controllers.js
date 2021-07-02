@@ -1727,11 +1727,17 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, e
     }
 
     function deactivate(entity) {
-        RpcProviderService.deactivate({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: entity.url});
+        RpcProviderService.deactivate({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: entity.url},
+            function (response) {
+                vm.entity.active = false;
+            });
     }
 
     function activate(entity) {
-        RpcProviderService.activate({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: entity.url});
+        RpcProviderService.activate({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: entity.url},
+            function (response) {
+                vm.entity.active = true;
+            });
     }
 }
 /**
