@@ -72,7 +72,7 @@ public class RpcProviderController {
         ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
                 infinityProperties.getApplication(), rpcRegistryService.findRegistryConfig(registryIdentity),
                 infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, providerUrl.getAddress(), null, null, 10000, null);
+                null, providerUrl.getAddress(), providerUrl.getForm(), providerUrl.getVersion(), 10000, null);
 
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
@@ -101,7 +101,7 @@ public class RpcProviderController {
         Url url = Url.valueOf(providerUrl);
         ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(), infinityProperties.getApplication(),
                 rpcRegistryService.findRegistryConfig(registryIdentity), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, url.getAddress(), null, null, null, null);
+                null, url.getAddress(), url.getForm(), url.getVersion(), null, null);
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         String result;
@@ -114,7 +114,7 @@ public class RpcProviderController {
     }
 
     @ApiOperation("activate provider")
-    @PutMapping("/api/rpc-provider/activate")
+    @GetMapping("/api/rpc-provider/activate")
     public ResponseEntity<Void> activate(
             @ApiParam(value = "registry url identity", defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrl) {
@@ -127,7 +127,7 @@ public class RpcProviderController {
     }
 
     @ApiOperation("deactivate provider")
-    @PutMapping("/api/rpc-provider/deactivate")
+    @GetMapping("/api/rpc-provider/deactivate")
     public ResponseEntity<Void> deactivate(
             @ApiParam(value = "registry url identity", defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrl) {

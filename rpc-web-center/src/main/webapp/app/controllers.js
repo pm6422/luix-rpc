@@ -1671,6 +1671,8 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, e
     vm.selectMethod = selectMethod;
     vm.invoke = invoke;
     vm.checkHealth = checkHealth;
+    vm.deactivate = deactivate;
+    vm.activate = activate;
 
     RpcServiceService.get({registryIdentity: $rootScope.selectedRegistryIdentity, interfaceName: vm.entity.interfaceName},
         function (response) {
@@ -1717,9 +1719,19 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, e
                     vm.checkProgress = 100;
                     vm.healthSuccess = true
                 } else {
+                    vm.checkProgress = 100;
                     vm.healthFailure = true
+                    vm.healthMessage = response.data;
                 }
             }); }, 200);
+    }
+
+    function deactivate(entity) {
+        RpcProviderService.deactivate({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: entity.url});
+    }
+
+    function activate(entity) {
+        RpcProviderService.activate({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: entity.url});
     }
 }
 /**

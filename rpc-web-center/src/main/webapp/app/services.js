@@ -1389,7 +1389,9 @@ function RpcProviderService($resource) {
                 return {data: data};
             },
             params: {extension: 'health'}
-        }
+        },
+        'activate': {method: 'GET', params: {extension: 'activate'}},
+        'deactivate': {method: 'GET', params: {extension: 'deactivate'}}
     });
     return service;
 }

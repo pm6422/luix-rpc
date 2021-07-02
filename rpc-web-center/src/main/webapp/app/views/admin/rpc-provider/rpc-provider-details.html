@@ -58,11 +58,16 @@
             </div>
             <div class="col-lg-6">
                 <dl class="dl-horizontal">
-                    <dt>Consumers:</dt>
+                    <dt>Actions:</dt>
                     <dd>
-                        <button class="btn-white btn btn-xs" ng-disabled="!vm.entity.consuming"
-                            ui-sref="rpc.rpc-consumer-list({interfaceName: vm.entity.interfaceName})"
-                            uib-tooltip="Discover all consumers of this service">{{vm.entity.consuming ? 'Go' : 'None'}}</button>
+                        <div class="btn-group">
+                            <button class="btn-white btn btn-xs" ng-disabled="!vm.entity.consuming"
+                                    ui-sref="rpc.rpc-consumer-list({interfaceName: vm.entity.interfaceName})"
+                                    uib-tooltip="Discover all consumers of this service">{{vm.entity.consuming ? 'Go consumers' : 'No consumer'}}</button>
+                            <button class="btn-white btn btn-xs" ng-click="vm.deactivate(vm.entity)">Deactivate</button>
+                            <button class="btn-white btn btn-xs" ng-click="vm.activate(vm.entity)">Activate</button>
+                            <button class="btn-white btn btn-xs" ui-sref="^">Back</button>
+                        </div>
                     </dd>
                 </dl>
             </div>
@@ -112,10 +117,7 @@
                                 <div class="pull-right">
                                     <div class="form-group">
                                         <div class="col-sm-12">
-                                            <button type="button" class="btn btn-default btn-sm" ui-sref="^">
-                                                <span>Back</span>
-                                            </button>
-                                            <button type="button" class="btn btn-primary btn-sm" ng-disabled="invocationForm.$invalid || vm.selectedMethod.indexOf('void') == -1 && !vm.args" ng-click="vm.invoke()">
+                                            <button class="btn btn-primary btn-sm" ng-disabled="invocationForm.$invalid || vm.selectedMethod.indexOf('void') == -1 && !vm.args" ng-click="vm.invoke()">
                                                 <span>Invoke</span>
                                             </button>
                                         </div>
@@ -133,6 +135,7 @@
                                     <uib-progressbar value="vm.checkProgress" type="primary" class="progress-mini">
                                         {{vm.checkProgress}}%
                                     </uib-progressbar>
+                                    <small>{{vm.healthMessage}}</small>
                                 </div>
                                 <div class="col-sm-1">
                                     <button type="button" class="btn btn-primary btn-sm pull-right" ng-click="vm.checkHealth()">
