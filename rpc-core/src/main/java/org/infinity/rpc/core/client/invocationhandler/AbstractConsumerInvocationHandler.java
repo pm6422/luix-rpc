@@ -1,6 +1,8 @@
 package org.infinity.rpc.core.client.invocationhandler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.client.ratelimit.RateLimiter;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.client.request.impl.RpcRequest;
@@ -17,6 +19,7 @@ import static org.infinity.rpc.core.constant.ConsumerConstants.RATE_LIMITER_GUAV
 import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION;
 import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION_VAL_DEFAULT;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
+import static org.infinity.rpc.core.utils.MethodParameterUtils.VOID;
 
 /**
  * @param <T>: The interface class of the consumer
@@ -37,7 +40,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
             return null;
         }
 
-        validate();
+        validate(request, args);
 
         // Set method arguments
         request.setMethodArguments(args);
@@ -54,8 +57,15 @@ public abstract class AbstractConsumerInvocationHandler<T> {
     /**
      * Validate
      */
-    protected void validate() {
+    protected void validate(RpcRequest request, Object[] args) {
         RpcConfigValidator.notNull(consumerStub.getInvokerInstance(), "Service invoker must NOT be null!");
+
+        // Validate arguments
+        if (!VOID.equals(request.getMethodParameters())) {
+            Validate.isTrue(ArrayUtils.isNotEmpty(args), "Argument(s) must match the parameter(s)!");
+        } else {
+            Validate.isTrue(ArrayUtils.isEmpty(args), "Argument(s) must match the parameter(s)!");
+        }
     }
 
     /**

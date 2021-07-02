@@ -3,7 +3,9 @@ package org.infinity.rpc.webcenter.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
@@ -24,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 
 import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_HEALTH;
@@ -84,11 +87,8 @@ public class RpcProviderController {
 
     @ApiOperation("invoke provider method")
     @PostMapping("/api/rpc-provider/invoke")
-    public ResponseEntity<Object> invoke(
-            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrl,
-            @ApiParam(value = "methodInvocation", required = true) @RequestBody MethodInvocation methodInvocation) {
-        ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(registryIdentity, Url.valueOf(providerUrl));
+    public ResponseEntity<Object> invoke(@ApiParam(value = "methodInvocation", required = true) @Valid @RequestBody MethodInvocation methodInvocation) {
+        ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(methodInvocation.getRegistryIdentity(), Url.valueOf(methodInvocation.getProviderUrl()));
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Object result = invocationHandler.invoke(methodInvocation.getMethodName(), methodInvocation.getMethodParamTypes(), methodInvocation.getArgs());

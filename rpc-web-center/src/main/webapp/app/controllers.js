@@ -1655,7 +1655,7 @@ function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUti
 /**
  * RpcProviderDetailsController
  */
-function RpcProviderDetailsController($state, $stateParams, $rootScope, entity, RpcServiceService, RpcProviderService) {
+function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, entity, RpcServiceService, RpcProviderService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -1663,6 +1663,9 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, entity, 
     vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
     vm.entity = entity;
     vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url});
+    vm.argsPlaceholder = '[\n' +
+        '    {}\n' +
+        ']';
     vm.invoke = invoke;
 
     RpcServiceService.get({registryIdentity: $rootScope.selectedRegistryIdentity, interfaceName: vm.entity.interfaceName},
@@ -1671,10 +1674,16 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, entity, 
         });
 
     function invoke() {
-        var method = _.filter(vm.methods, function(m){ return m.methodSignature == vm.selectedMethod; });
-        if(method) {
-            RpcProviderService.invoke({registryIdentity: $rootScope.selectedRegistryIdentity,
-                providerUrl: vm.entity.url, methodInvocation: method});
+        var filteredMethods = _.filter(vm.methods, function(m){ return m.methodSignature == vm.selectedMethod; });
+        if(!_.isEmpty(filteredMethods)) {
+            var methodInvocation = filteredMethods[0];
+            methodInvocation.registryIdentity = $rootScope.selectedRegistryIdentity;
+            methodInvocation.providerUrl = vm.entity.url;
+            methodInvocation.args = angular.fromJson(vm.args);
+
+            $http.post('api/rpc-provider/invoke', methodInvocation).then(function (response) {
+                vm.result = response.data;
+            });
         }
     }
 }

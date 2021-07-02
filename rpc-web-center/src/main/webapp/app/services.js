@@ -1383,7 +1383,6 @@ function RpcProviderService($resource) {
             }
         },
         'queryMethods': {method: 'GET', isArray: true, params: {extension: 'methods'}},
-        'invoke': {method: 'POST', params: {extension: 'invoke'}},
     });
     return service;
 }

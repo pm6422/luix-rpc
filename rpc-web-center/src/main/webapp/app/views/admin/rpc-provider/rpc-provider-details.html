@@ -74,10 +74,11 @@
                         <uib-tab heading="Invocation" active="tab.active">
                             <form name="invocationForm" role="form" class="form-horizontal" novalidate show-validation-directive>
                                 <div class="form-group">
-                                    <label class="col-sm-1 control-label">Method
+                                    <label class="col-sm-1 control-label">
                                         <b ng-show="invocationForm.method.$invalid">
                                             <b ng-show="invocationForm.method.$error.required">✱</b>
                                         </b>
+                                        Method
                                     </label>
                                     <div class="col-sm-11">
                                         <select name="method" class="form-control" ng-model="vm.selectedMethod" required
@@ -91,7 +92,18 @@
                                 <div class="form-group">
                                     <label class="col-sm-1 control-label">Arguments</label>
                                     <div class="col-sm-11">
-                                        <textarea class="form-control" rows="5" style="resize:none" ng-model="vm.arguments"></textarea>
+                                        <textarea class="form-control" rows="5" style="resize:none" ng-model="vm.args" placeholder="{{vm.argsPlaceholder}}"></textarea>
+                                        <p class="label label-warning">
+                                            <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
+                                            An array with JSON string format
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">Result</label>
+                                    <div class="col-sm-11">
+                                        <pre class="p-m">{{vm.result|json}}</pre>
                                     </div>
                                 </div>
                                 <div class="hr-line-dashed"></div>
