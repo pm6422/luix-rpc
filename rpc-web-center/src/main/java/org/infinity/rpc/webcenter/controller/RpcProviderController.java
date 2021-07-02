@@ -87,11 +87,11 @@ public class RpcProviderController {
     public ResponseEntity<Object> invoke(
             @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry") @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrl,
-            @ApiParam(value = "argument", required = true) @RequestBody MethodInvocation data) {
+            @ApiParam(value = "methodInvocation", required = true) @RequestBody MethodInvocation methodInvocation) {
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(registryIdentity, Url.valueOf(providerUrl));
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
-        Object result = invocationHandler.invoke(data.getMethodName(), data.getMethodParamTypes(), data.getArgs());
+        Object result = invocationHandler.invoke(methodInvocation.getMethodName(), methodInvocation.getMethodParamTypes(), methodInvocation.getArgs());
         return ResponseEntity.ok().body(result);
     }
 

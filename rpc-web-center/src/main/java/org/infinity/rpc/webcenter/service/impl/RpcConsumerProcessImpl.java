@@ -57,19 +57,19 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
                 // Insert server
                 if (!rpcServerRepository.existsById(generateMd5Id(rpcConsumer.getAddress(), registryUrl.getIdentity()))) {
                     RpcServer rpcServer = RpcServer.of(rpcConsumer.getAddress(), registryUrl);
-                    rpcServerRepository.insert(rpcServer);
+                    rpcServerRepository.save(rpcServer);
                 }
 
                 // Insert service
                 if (!rpcServiceRepository.existsById(generateMd5Id(rpcConsumer.getInterfaceName(), registryUrl.getIdentity()))) {
                     RpcService rpcService = RpcService.of(rpcConsumer.getInterfaceName(), registryUrl);
-                    rpcServiceRepository.insert(rpcService);
+                    rpcServiceRepository.save(rpcService);
                 }
 
                 // Insert application
                 if (!rpcApplicationRepository.existsById(generateMd5Id(rpcConsumer.getApplication(), registryUrl.getIdentity()))) {
                     RpcApplication remoteRpcApplication = rpcApplicationService.loadApplication(registryUrl, consumerUrl);
-                    rpcApplicationRepository.insert(remoteRpcApplication);
+                    rpcApplicationRepository.save(remoteRpcApplication);
                 }
             }
         } else {

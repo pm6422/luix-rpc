@@ -57,19 +57,19 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
                 // Insert server
                 if (!rpcServerRepository.existsById(generateMd5Id(rpcProvider.getAddress(), registryUrl.getIdentity()))) {
                     RpcServer rpcServer = RpcServer.of(rpcProvider.getAddress(), registryUrl);
-                    rpcServerRepository.insert(rpcServer);
+                    rpcServerRepository.save(rpcServer);
                 }
 
                 // Insert service
                 if (!rpcServiceRepository.existsById(generateMd5Id(rpcProvider.getInterfaceName(), registryUrl.getIdentity()))) {
                     RpcService rpcService = RpcService.of(rpcProvider.getInterfaceName(), registryUrl);
-                    rpcServiceRepository.insert(rpcService);
+                    rpcServiceRepository.save(rpcService);
                 }
 
                 // Insert application
                 if (!rpcApplicationRepository.existsById(generateMd5Id(rpcProvider.getApplication(), registryUrl.getIdentity()))) {
                     RpcApplication remoteRpcApplication = rpcApplicationService.loadApplication(registryUrl, providerUrl);
-                    rpcApplicationRepository.insert(remoteRpcApplication);
+                    rpcApplicationRepository.save(remoteRpcApplication);
                 }
             }
         } else {

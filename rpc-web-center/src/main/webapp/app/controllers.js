@@ -1663,11 +1663,20 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, entity, 
     vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
     vm.entity = entity;
     vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url});
+    vm.invoke = invoke;
 
     RpcServiceService.get({registryIdentity: $rootScope.selectedRegistryIdentity, interfaceName: vm.entity.interfaceName},
         function (response) {
             vm.entity.consuming = response.consuming;
         });
+
+    function invoke() {
+        var method = _.filter(vm.methods, function(m){ return m.methodSignature == vm.selectedMethod; });
+        if(method) {
+            RpcProviderService.invoke({registryIdentity: $rootScope.selectedRegistryIdentity,
+                providerUrl: vm.entity.url, methodInvocation: method});
+        }
+    }
 }
 /**
  * RpcConsumerListController

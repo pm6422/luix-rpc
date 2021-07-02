@@ -6,15 +6,6 @@
 <div class="wrapper wrapper-content p-h-xs animated fadeInDown">
     <div class="ibox-content">
         <div class="row">
-            <div class="col-lg-12">
-                <div class="m-b-md">
-                    <button type="button" class="btn btn-default btn-sm pull-right" ui-sref="^">
-                        <span class="fa fa-arrow-left"></span>&nbsp;<span>Back</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="row">
             <div class="col-lg-6">
                 <dl class="dl-horizontal">
                     <dt>Application:</dt>
@@ -81,13 +72,16 @@
                 <div class="panel blank-panel ui-tab">
                     <uib-tabset>
                         <uib-tab heading="Invocation" active="tab.active">
-                            <form method="get" class="form-horizontal">
+                            <form name="invocationForm" role="form" class="form-horizontal" novalidate show-validation-directive>
                                 <div class="form-group">
-                                    <label class="col-sm-1 control-label">Method</label>
+                                    <label class="col-sm-1 control-label">Method
+                                        <b ng-show="invocationForm.method.$invalid">
+                                            <b ng-show="invocationForm.method.$error.required">✱</b>
+                                        </b>
+                                    </label>
                                     <div class="col-sm-11">
-                                        <select class="form-control" id="method" ng-model="vm.selectedMethod"
-                                                ng-options="item.methodSignature as item.methodSignature for item in vm.methods"
-                                                ng-change="vm.transition()">
+                                        <select name="method" class="form-control" ng-model="vm.selectedMethod" required
+                                                ng-options="item.methodSignature as item.methodSignature for item in vm.methods">
                                             <option value="">Select...</option>
                                         </select>
                                         <span class="help-block m-b-none" ng-show="vm.selectedMethod">Selected: {{vm.entity.interfaceName}}.{{vm.selectedMethod}}</span>
@@ -97,15 +91,20 @@
                                 <div class="form-group">
                                     <label class="col-sm-1 control-label">Arguments</label>
                                     <div class="col-sm-11">
-                                        <textarea class="form-control" rows="5"></textarea>
+                                        <textarea class="form-control" rows="5" style="resize:none" ng-model="vm.arguments"></textarea>
                                     </div>
                                 </div>
                                 <div class="hr-line-dashed"></div>
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <button type="button" class="btn btn-primary pull-right" ng-click="vm.invoke()">
-                                            <span>Invoke</span>
-                                        </button>
+                                <div class="pull-right">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <button type="button" class="btn btn-default" ui-sref="^">
+                                                <span>Back</span>
+                                            </button>
+                                            <button type="button" class="btn btn-primary" ng-disabled="invocationForm.$invalid" ng-click="vm.invoke()">
+                                                <span>Invoke</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -149,7 +148,6 @@
                             <div class="feed-activity-list">
                                 <div class="feed-element">
                                     <a href="" class="pull-left">
-                                        <img alt="image" class="img-circle" src="img/a3.jpg">
                                     </a>
 
                                     <div class="media-body ">
