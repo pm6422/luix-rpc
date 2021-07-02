@@ -1663,12 +1663,14 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, e
     vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
     vm.entity = entity;
     vm.argsDisabled = true;
+    vm.checkProgress = 0;
     vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url});
     vm.argsPlaceholder = '[\n' +
         '    {}\n' +
         ']';
     vm.selectMethod = selectMethod;
     vm.invoke = invoke;
+    vm.checkHealth = checkHealth;
 
     RpcServiceService.get({registryIdentity: $rootScope.selectedRegistryIdentity, interfaceName: vm.entity.interfaceName},
         function (response) {
@@ -1705,6 +1707,19 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, e
                 vm.elasped = response.headers('X-ELAPSED')
             });
         }
+    }
+
+    function checkHealth() {
+        vm.checkProgress = 0;
+        setTimeout(function(){ RpcProviderService.checkHealth({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url},
+            function (response) {
+                if('OK' == response.data) {
+                    vm.checkProgress = 100;
+                    vm.healthSuccess = true
+                } else {
+                    vm.healthFailure = true
+                }
+            }); }, 200);
     }
 }
 /**

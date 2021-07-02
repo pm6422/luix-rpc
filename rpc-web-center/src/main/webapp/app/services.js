@@ -1382,7 +1382,14 @@ function RpcProviderService($resource) {
                 return data;
             }
         },
-        'queryMethods': {method: 'GET', isArray: true, params: {extension: 'methods'}}
+        'queryMethods': {method: 'GET', isArray: true, params: {extension: 'methods'}},
+        'checkHealth': {
+            method: 'GET',
+            transformResponse: function (data) {
+                return {data: data};
+            },
+            params: {extension: 'health'}
+        }
     });
     return service;
 }

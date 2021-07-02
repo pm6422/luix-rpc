@@ -86,7 +86,7 @@
                                                 ng-change="vm.selectMethod()">
                                             <option value="">Select...</option>
                                         </select>
-                                        <span class="help-block m-b-none" ng-show="vm.selectedMethod">Selected: {{vm.entity.interfaceName}}.{{vm.selectedMethod}}</span>
+                                        <kbd ng-show="vm.selectedMethod">{{vm.entity.interfaceName}}.{{vm.selectedMethod}}</kbd>
                                     </div>
                                 </div>
                                 <div class="hr-line-dashed"></div>
@@ -105,17 +105,17 @@
                                     <label class="col-sm-1 control-label">Result</label>
                                     <div class="col-sm-11">
                                         <pre class="p-m">{{vm.result|json}}</pre>
-                                        <span class="help-block m-b-none">{{vm.elasped}}</span>
+                                        <kbd ng-show="vm.elasped">{{vm.elasped}}</kbd>
                                     </div>
                                 </div>
                                 <div class="hr-line-dashed"></div>
                                 <div class="pull-right">
                                     <div class="form-group">
                                         <div class="col-sm-12">
-                                            <button type="button" class="btn btn-default" ui-sref="^">
+                                            <button type="button" class="btn btn-default btn-sm" ui-sref="^">
                                                 <span>Back</span>
                                             </button>
-                                            <button type="button" class="btn btn-primary" ng-disabled="invocationForm.$invalid || vm.selectedMethod.indexOf('void') == -1 && !vm.args" ng-click="vm.invoke()">
+                                            <button type="button" class="btn btn-primary btn-sm" ng-disabled="invocationForm.$invalid || vm.selectedMethod.indexOf('void') == -1 && !vm.args" ng-click="vm.invoke()">
                                                 <span>Invoke</span>
                                             </button>
                                         </div>
@@ -124,6 +124,24 @@
                             </form>
                         </uib-tab>
                         <uib-tab heading="Health">
+                            <div class="form-group">
+                                <div class="col-sm-11">
+                                    <small>Completion with: {{vm.checkProgress}}%</small>
+                                    <i class="fa fa-check" ng-show="vm.healthSuccess"></i>
+                                    <i class="fa fa-times" ng-show="vm.healthFailure"></i>
+                                    </button>
+                                    <uib-progressbar value="vm.checkProgress" type="primary" class="progress-mini">
+                                        {{vm.checkProgress}}%
+                                    </uib-progressbar>
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="button" class="btn btn-primary btn-sm pull-right" ng-click="vm.checkHealth()">
+                                        <span>Check</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </uib-tab>
+                        <uib-tab heading="Timing tasks">
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
@@ -157,20 +175,6 @@
                                 </tr>
                                 </tbody>
                             </table>
-                        </uib-tab>
-                        <uib-tab heading="Timing tasks">
-                            <div class="feed-activity-list">
-                                <div class="feed-element">
-                                    <a href="" class="pull-left">
-                                    </a>
-
-                                    <div class="media-body ">
-                                        <small class="pull-right">2h ago</small>
-                                        <strong>Janet Rosowski</strong> add 1 photo on <strong>Monica Smith</strong>. <br>
-                                        <small class="text-muted">2 days ago at 8:30am</small>
-                                    </div>
-                                </div>
-                            </div>
                         </uib-tab>
                     </uib-tabset>
                 </div>
