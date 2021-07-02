@@ -115,7 +115,7 @@
                                             <button type="button" class="btn btn-default" ui-sref="^">
                                                 <span>Back</span>
                                             </button>
-                                            <button type="button" class="btn btn-primary" ng-disabled="invocationForm.$invalid" ng-click="vm.invoke()">
+                                            <button type="button" class="btn btn-primary" ng-disabled="invocationForm.$invalid || vm.selectedMethod.indexOf('void') == -1 && !vm.args" ng-click="vm.invoke()">
                                                 <span>Invoke</span>
                                             </button>
                                         </div>
