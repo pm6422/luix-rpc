@@ -3,9 +3,7 @@ package org.infinity.rpc.webcenter.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
@@ -87,6 +85,7 @@ public class RpcProviderController {
 
     @ApiOperation("invoke provider method")
     @PostMapping("/api/rpc-provider/invoke")
+    @CrossOrigin(origins = "*", exposedHeaders = "X-ELAPSED")
     public ResponseEntity<Object> invoke(@ApiParam(value = "methodInvocation", required = true) @Valid @RequestBody MethodInvocation methodInvocation) {
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(methodInvocation.getRegistryIdentity(), Url.valueOf(methodInvocation.getProviderUrl()));
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());

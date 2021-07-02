@@ -1700,8 +1700,9 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, e
             methodInvocation.providerUrl = vm.entity.url;
             methodInvocation.args = angular.fromJson(vm.args);
 
-            $http.post('api/rpc-provider/invoke', methodInvocation).then(function (response) {
+            $http.post('api/rpc-provider/invoke', methodInvocation).then(function(response) {
                 vm.result = response.data;
+                vm.elasped = response.headers('X-ELAPSED')
             });
         }
     }
