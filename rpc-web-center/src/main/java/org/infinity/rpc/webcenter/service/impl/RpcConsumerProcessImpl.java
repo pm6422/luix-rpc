@@ -5,10 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.listener.ConsumerProcessable;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.webcenter.domain.RpcApplication;
-import org.infinity.rpc.webcenter.domain.RpcConsumer;
-import org.infinity.rpc.webcenter.domain.RpcServer;
-import org.infinity.rpc.webcenter.domain.RpcService;
+import org.infinity.rpc.webcenter.domain.*;
 import org.infinity.rpc.webcenter.repository.RpcApplicationRepository;
 import org.infinity.rpc.webcenter.repository.RpcConsumerRepository;
 import org.infinity.rpc.webcenter.repository.RpcServerRepository;
@@ -16,6 +13,7 @@ import org.infinity.rpc.webcenter.repository.RpcServiceRepository;
 import org.infinity.rpc.webcenter.service.RpcApplicationService;
 import org.infinity.rpc.webcenter.service.RpcServerService;
 import org.infinity.rpc.webcenter.service.RpcServiceService;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -55,22 +53,13 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
                 rpcConsumerRepository.save(rpcConsumer);
 
                 // Insert server
-                if (!rpcServerRepository.existsById(generateMd5Id(rpcConsumer.getAddress(), registryUrl.getIdentity()))) {
-                    RpcServer rpcServer = RpcServer.of(rpcConsumer.getAddress(), registryUrl);
-                    rpcServerRepository.save(rpcServer);
-                }
+                insertServer(registryUrl, rpcConsumer);
 
                 // Insert service
-                if (!rpcServiceRepository.existsById(generateMd5Id(rpcConsumer.getInterfaceName(), registryUrl.getIdentity()))) {
-                    RpcService rpcService = RpcService.of(rpcConsumer.getInterfaceName(), registryUrl);
-                    rpcServiceRepository.save(rpcService);
-                }
+                insertService(registryUrl, rpcConsumer);
 
                 // Insert application
-                if (!rpcApplicationRepository.existsById(generateMd5Id(rpcConsumer.getApplication(), registryUrl.getIdentity()))) {
-                    RpcApplication remoteRpcApplication = rpcApplicationService.loadApplication(registryUrl, consumerUrl);
-                    rpcApplicationRepository.save(remoteRpcApplication);
-                }
+                insertApplication(registryUrl, consumerUrl, rpcConsumer);
             }
         } else {
             log.info("Discovered offline consumers of [{}]", interfaceName);
@@ -88,6 +77,39 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
 
             // Update application to inactive
             rpcApplicationService.inactivate(list.get(0).getRegistryIdentity(), list.get(0).getApplication());
+        }
+    }
+
+    private void insertServer(Url registryUrl, RpcConsumer rpcConsumer) {
+        if (!rpcServerRepository.existsById(generateMd5Id(rpcConsumer.getAddress(), registryUrl.getIdentity()))) {
+            RpcServer rpcServer = RpcServer.of(rpcConsumer.getAddress(), registryUrl);
+            try {
+                rpcServerRepository.insert(rpcServer);
+            } catch (DuplicateKeyException ex) {
+                log.warn("Ignore the duplicated index issue!");
+            }
+        }
+    }
+
+    private synchronized void insertService(Url registryUrl, RpcConsumer rpcConsumer) {
+        if (!rpcServiceRepository.existsById(generateMd5Id(rpcConsumer.getInterfaceName(), registryUrl.getIdentity()))) {
+            RpcService rpcService = RpcService.of(rpcConsumer.getInterfaceName(), registryUrl);
+            try {
+                rpcServiceRepository.insert(rpcService);
+            } catch (DuplicateKeyException ex) {
+                log.warn("Ignore the duplicated index issue!");
+            }
+        }
+    }
+
+    private void insertApplication(Url registryUrl, Url consumerUrl, RpcConsumer rpcConsumer) {
+        if (!rpcApplicationRepository.existsById(generateMd5Id(rpcConsumer.getApplication(), registryUrl.getIdentity()))) {
+            RpcApplication rpcApplication = rpcApplicationService.loadApplication(registryUrl, consumerUrl);
+            try {
+                rpcApplicationRepository.insert(rpcApplication);
+            } catch (DuplicateKeyException ex) {
+                log.warn("Ignore the duplicated index issue!");
+            }
         }
     }
 }

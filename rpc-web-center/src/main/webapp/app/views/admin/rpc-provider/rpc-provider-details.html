@@ -56,10 +56,12 @@
                             <button class="btn-white btn btn-xs" ng-disabled="!vm.entity.consuming"
                                     ui-sref="rpc.rpc-consumer-list({interfaceName: vm.entity.interfaceName})"
                                     uib-tooltip="Discover all consumers of this service">{{vm.entity.consuming ? 'Go consumers' : 'No consumer'}}</button>
-                            <button class="btn-white btn btn-xs" ng-click="vm.deactivate(vm.entity)">Deactivate</button>
-                            <button class="btn-white btn btn-xs" ng-click="vm.activate(vm.entity)">Activate</button>
-                            <button class="btn-primary btn btn-xs" ui-sref="^">Back</button>
+                            <button class="btn-white btn btn-xs" ng-click="vm.deactivate(vm.entity)"
+                                    uib-tooltip="Take the service offline and cannot be accessed by other apps">Deactivate</button>
+                            <button class="btn-white btn btn-xs" ng-click="vm.activate(vm.entity)"
+                                    uib-tooltip="Take the service online and can be accessed by other apps">Activate</button>
                         </div>
+                        <button class="btn-primary btn btn-xs" ui-sref="^">Back</button>
                     </dd>
                 </dl>
             </div>

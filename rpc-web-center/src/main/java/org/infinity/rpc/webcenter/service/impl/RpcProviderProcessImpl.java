@@ -16,6 +16,7 @@ import org.infinity.rpc.webcenter.repository.RpcServiceRepository;
 import org.infinity.rpc.webcenter.service.RpcApplicationService;
 import org.infinity.rpc.webcenter.service.RpcServerService;
 import org.infinity.rpc.webcenter.service.RpcServiceService;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -55,22 +56,13 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
                 rpcProviderRepository.save(rpcProvider);
 
                 // Insert server
-                if (!rpcServerRepository.existsById(generateMd5Id(rpcProvider.getAddress(), registryUrl.getIdentity()))) {
-                    RpcServer rpcServer = RpcServer.of(rpcProvider.getAddress(), registryUrl);
-                    rpcServerRepository.save(rpcServer);
-                }
+                insertServer(registryUrl, rpcProvider);
 
                 // Insert service
-                if (!rpcServiceRepository.existsById(generateMd5Id(rpcProvider.getInterfaceName(), registryUrl.getIdentity()))) {
-                    RpcService rpcService = RpcService.of(rpcProvider.getInterfaceName(), registryUrl);
-                    rpcServiceRepository.save(rpcService);
-                }
+                insertService(registryUrl, rpcProvider);
 
                 // Insert application
-                if (!rpcApplicationRepository.existsById(generateMd5Id(rpcProvider.getApplication(), registryUrl.getIdentity()))) {
-                    RpcApplication remoteRpcApplication = rpcApplicationService.loadApplication(registryUrl, providerUrl);
-                    rpcApplicationRepository.save(remoteRpcApplication);
-                }
+                insertApplication(registryUrl, providerUrl, rpcProvider);
             }
         } else {
             log.info("Discovered offline providers of [{}]", interfaceName);
@@ -88,6 +80,39 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
 
             // Update application to inactive
             rpcApplicationService.inactivate(list.get(0).getApplication(), list.get(0).getRegistryIdentity());
+        }
+    }
+
+    private void insertServer(Url registryUrl, RpcProvider rpcProvider) {
+        if (!rpcServerRepository.existsById(generateMd5Id(rpcProvider.getAddress(), registryUrl.getIdentity()))) {
+            RpcServer rpcServer = RpcServer.of(rpcProvider.getAddress(), registryUrl);
+            try {
+                rpcServerRepository.insert(rpcServer);
+            } catch (DuplicateKeyException ex) {
+                log.warn("Ignore the duplicated index issue!");
+            }
+        }
+    }
+
+    private synchronized void insertService(Url registryUrl, RpcProvider rpcProvider) {
+        if (!rpcServiceRepository.existsById(generateMd5Id(rpcProvider.getInterfaceName(), registryUrl.getIdentity()))) {
+            RpcService rpcService = RpcService.of(rpcProvider.getInterfaceName(), registryUrl);
+            try {
+                rpcServiceRepository.insert(rpcService);
+            } catch (DuplicateKeyException ex) {
+                log.warn("Ignore the duplicated index issue!");
+            }
+        }
+    }
+
+    private void insertApplication(Url registryUrl, Url providerUrl, RpcProvider rpcProvider) {
+        if (!rpcApplicationRepository.existsById(generateMd5Id(rpcProvider.getApplication(), registryUrl.getIdentity()))) {
+            RpcApplication rpcApplication = rpcApplicationService.loadApplication(registryUrl, providerUrl);
+            try {
+                rpcApplicationRepository.insert(rpcApplication);
+            } catch (DuplicateKeyException ex) {
+                log.warn("Ignore the duplicated index issue!");
+            }
         }
     }
 }
