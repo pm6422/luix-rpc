@@ -1662,16 +1662,35 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, e
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
     vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
     vm.entity = entity;
+    vm.argsDisabled = true;
     vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url});
     vm.argsPlaceholder = '[\n' +
         '    {}\n' +
         ']';
+    vm.selectMethod = selectMethod;
     vm.invoke = invoke;
 
     RpcServiceService.get({registryIdentity: $rootScope.selectedRegistryIdentity, interfaceName: vm.entity.interfaceName},
         function (response) {
             vm.entity.consuming = response.consuming;
         });
+
+    function selectMethod() {
+        if(!vm.selectedMethod) {
+            vm.argsDisabled = true;
+            return;
+        }
+
+        var filteredMethods = _.filter(vm.methods, function(m){ return m.methodSignature == vm.selectedMethod; });
+        if(!_.isEmpty(filteredMethods)) {
+            var methodInvocation = filteredMethods[0];
+            if(_.isEmpty(methodInvocation.methodParamTypes)) {
+                vm.argsDisabled = true;
+            } else {
+                vm.argsDisabled = false;
+            }
+        }
+    }
 
     function invoke() {
         var filteredMethods = _.filter(vm.methods, function(m){ return m.methodSignature == vm.selectedMethod; });

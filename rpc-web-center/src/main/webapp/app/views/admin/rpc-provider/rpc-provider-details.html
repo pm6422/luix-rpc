@@ -82,7 +82,8 @@
                                     </label>
                                     <div class="col-sm-11">
                                         <select name="method" class="form-control" ng-model="vm.selectedMethod" required
-                                                ng-options="item.methodSignature as item.methodSignature for item in vm.methods">
+                                                ng-options="item.methodSignature as item.methodSignature for item in vm.methods"
+                                                ng-change="vm.selectMethod()">
                                             <option value="">Select...</option>
                                         </select>
                                         <span class="help-block m-b-none" ng-show="vm.selectedMethod">Selected: {{vm.entity.interfaceName}}.{{vm.selectedMethod}}</span>
@@ -92,7 +93,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-1 control-label">Arguments</label>
                                     <div class="col-sm-11">
-                                        <textarea class="form-control" rows="5" style="resize:none" ng-model="vm.args" placeholder="{{vm.argsPlaceholder}}"></textarea>
+                                        <textarea class="form-control" rows="5" style="resize:none" ng-model="vm.args" placeholder="{{vm.argsPlaceholder}}" ng-disabled="vm.argsDisabled"></textarea>
                                         <p class="label label-warning">
                                             <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
                                             An array with JSON string format
