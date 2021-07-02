@@ -85,7 +85,6 @@ public class RpcProviderController {
 
     @ApiOperation("invoke provider method")
     @PostMapping("/api/rpc-provider/invoke")
-    @CrossOrigin(origins = "*", exposedHeaders = "X-ELAPSED")
     public ResponseEntity<Object> invoke(@ApiParam(value = "methodInvocation", required = true) @Valid @RequestBody MethodInvocation methodInvocation) {
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(methodInvocation.getRegistryIdentity(), Url.valueOf(methodInvocation.getProviderUrl()));
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
