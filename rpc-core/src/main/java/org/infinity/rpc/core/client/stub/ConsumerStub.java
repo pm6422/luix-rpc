@@ -302,7 +302,7 @@ public class ConsumerStub<T> {
 
     public static ConsumerStub<?> create(String interfaceName, ApplicationConfig application,
                                          RegistryConfig registry, ProtocolConfig protocol, ConsumerConfig consumer,
-                                         ProviderProcessable providerProcessor, String directAddress,
+                                         ProviderProcessable providerProcessor, String providerAddresses,
                                          String form, String version, Integer requestTimeout,
                                          Integer retryCount) {
         ConsumerStub<?> consumerStub = new ConsumerStub<>();
@@ -312,7 +312,7 @@ public class ConsumerStub<T> {
         consumerStub.setFaultTolerance(consumer.getFaultTolerance());
         consumerStub.setLoadBalancer(consumer.getLoadBalancer());
         consumerStub.setProxy(consumer.getProxyFactory());
-        consumerStub.setProviderAddresses(directAddress);
+        consumerStub.setProviderAddresses(providerAddresses);
         consumerStub.setForm(form);
         consumerStub.setVersion(version);
         consumerStub.setRequestTimeout(requestTimeout);
