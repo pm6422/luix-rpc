@@ -74,7 +74,7 @@ public class RpcProviderController {
         ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
                 infinityProperties.getApplication(), rpcRegistryService.findRegistryConfig(registryIdentity),
                 infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, providerUrl.getAddress(), null, null, null, null);
+                null, providerUrl.getAddress());
 
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
@@ -91,9 +91,10 @@ public class RpcProviderController {
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrl) {
         Url url = Url.valueOf(providerUrl);
-        ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(), infinityProperties.getApplication(),
-                rpcRegistryService.findRegistryConfig(registryIdentity), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, url.getAddress(), url.getForm(), url.getVersion(), null, null);
+        ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
+                infinityProperties.getApplication(), rpcRegistryService.findRegistryConfig(registryIdentity),
+                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
+                null, url.getAddress());
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         String result;
