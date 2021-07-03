@@ -2,6 +2,8 @@ package org.infinity.rpc.democlient.controller;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.annotation.RpcConsumer;
 import org.infinity.rpc.democlient.component.HttpHeaderCreator;
@@ -10,6 +12,7 @@ import org.infinity.rpc.democommon.domain.Authority;
 import org.infinity.rpc.democommon.service.AuthorityService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +20,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
 
+import static javax.servlet.http.HttpServletResponse.SC_CREATED;
 import static org.infinity.rpc.democlient.utils.HttpHeaderUtils.generatePageHeaders;
 
 /**
@@ -30,6 +34,17 @@ public class AuthorityController {
     private AuthorityService  authorityService;
     @Resource
     private HttpHeaderCreator httpHeaderCreator;
+
+    @ApiOperation("create authority")
+    @PostMapping("/api/authorities")
+    public ResponseEntity<Void> create(
+            @ApiParam(value = "authority", required = true) @Valid @RequestBody Authority domain) {
+        log.debug("REST request to create authority: {}", domain);
+        authorityService.save(domain);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .headers(httpHeaderCreator.createSuccessHeader("SM1001", domain.getName()))
+                .build();
+    }
 
     @ApiOperation("find authority list")
     @GetMapping("/api/authorities")
