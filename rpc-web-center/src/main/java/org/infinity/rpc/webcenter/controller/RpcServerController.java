@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
@@ -34,7 +35,7 @@ public class RpcServerController {
     @GetMapping("/api/rpc-server/servers")
     public ResponseEntity<List<RpcServer>> findRpcServers(
             Pageable pageable,
-            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry")
+            @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
             @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "address(fuzzy query)") @RequestParam(value = "address", required = false) String address) {
         Page<RpcServer> results = rpcServerService.find(pageable, registryIdentity, address);

@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
@@ -37,7 +38,7 @@ public class RpcApplicationController {
     @ApiOperation("find all applications")
     @GetMapping("api/rpc-application/applications/all")
     public ResponseEntity<List<String>> findApplications(
-            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry")
+            @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
             @RequestParam(value = "registryIdentity") String registryIdentity) {
         List<String> results = rpcApplicationRepository.findByRegistryIdentity(registryIdentity)
                 .stream().map(RpcApplication::getName).collect(Collectors.toList());
@@ -48,7 +49,7 @@ public class RpcApplicationController {
     @GetMapping("api/rpc-application/applications")
     public ResponseEntity<List<RpcApplication>> findApplications(
             Pageable pageable,
-            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry")
+            @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
             @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "application name(fuzzy query)") @RequestParam(value = "name", required = false) String name,
             @ApiParam(value = "active flag") @RequestParam(value = "active", required = false) Boolean active) {

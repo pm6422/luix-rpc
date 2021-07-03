@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
@@ -28,7 +29,7 @@ public class RpcConsumerController {
     @GetMapping("/api/rpc-consumer/consumers")
     public ResponseEntity<List<RpcConsumer>> findConsumers(
             Pageable pageable,
-            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry")
+            @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
             @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "application name") @RequestParam(value = "application", required = false) String application,
             @ApiParam(value = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName,

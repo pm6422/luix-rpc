@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController
@@ -38,7 +39,7 @@ public class RpcServiceController {
     @ApiOperation("find service")
     @GetMapping("/api/rpc-service")
     public ResponseEntity<RpcService> findById(
-            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry")
+            @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
             @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
         String id = DigestUtils.md5DigestAsHex((interfaceName + "@" + registryIdentity).getBytes());
@@ -56,7 +57,7 @@ public class RpcServiceController {
     @GetMapping("/api/rpc-service/services")
     public ResponseEntity<List<RpcService>> findRpcServices(
             Pageable pageable,
-            @ApiParam(value = "registry url identity", required = true, defaultValue = "zookeeper://localhost:2181/registry")
+            @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
             @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
         Page<RpcService> results = rpcServiceService.find(pageable, registryIdentity, interfaceName);
