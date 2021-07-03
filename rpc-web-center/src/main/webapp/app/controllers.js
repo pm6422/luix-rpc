@@ -1713,14 +1713,17 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, e
 
     function checkHealth() {
         vm.checkProgress = 0;
+        vm.healthMessage = '';
+        vm.healthSuccess = false;
+        vm.healthFailure = false;
         setTimeout(function(){ RpcProviderService.checkHealth({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url},
             function (response) {
                 if('OK' == response.data) {
                     vm.checkProgress = 100;
-                    vm.healthSuccess = true
+                    vm.healthSuccess = true;
                 } else {
                     vm.checkProgress = 100;
-                    vm.healthFailure = true
+                    vm.healthFailure = true;
                     vm.healthMessage = response.data;
                 }
             }); }, 200);

@@ -28,8 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 
-import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_CHECK_HEALTH;
-import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_METHODS;
+import static org.infinity.rpc.core.server.buildin.BuildInService.*;
 import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
@@ -123,11 +122,22 @@ public class RpcProviderController {
     @GetMapping("/api/rpc-provider/deactivate")
     public ResponseEntity<Void> deactivate(
             @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
-            @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrl) {
+            @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
+        Url providerUrl = Url.valueOf(providerUrlStr);
+
         if (StringUtils.isEmpty(registryIdentity)) {
-            infinityProperties.getRegistryList().forEach(config -> config.getRegistryImpl().deactivate(Url.valueOf(providerUrl)));
+            infinityProperties.getRegistryList().forEach(registry -> {
+                String identity = registry.getRegistryImpl().getRegistryUrl().getIdentity();
+                UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(identity, providerUrl);
+                invocationHandler.invoke(METHOD_DEACTIVATE,
+                        new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
+                        new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
+            });
         } else {
-            rpcRegistryService.findRegistry(registryIdentity).deactivate(Url.valueOf(providerUrl));
+            UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
+            invocationHandler.invoke(METHOD_DEACTIVATE,
+                    new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
+                    new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
         }
         return ResponseEntity.status(HttpStatus.OK).build();
     }
