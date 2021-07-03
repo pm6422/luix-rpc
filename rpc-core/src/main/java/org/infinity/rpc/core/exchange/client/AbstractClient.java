@@ -9,7 +9,7 @@ import org.infinity.rpc.core.url.Url;
 import java.net.InetSocketAddress;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC;
-import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC_VAL_DEFAULT;
+import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC_VAL_V1;
 
 @Slf4j
 public abstract class AbstractClient implements Client {
@@ -24,7 +24,7 @@ public abstract class AbstractClient implements Client {
 
     public AbstractClient(Url providerUrl) {
         this.providerUrl = providerUrl;
-        String codecName = providerUrl.getOption(CODEC, CODEC_VAL_DEFAULT);
+        String codecName = providerUrl.getOption(CODEC, CODEC_VAL_V1);
         this.codec = Codec.getInstance(codecName);
         if (codec == null) {
             throw new RpcFrameworkException("Illegal codec name [" + codecName + "]!");

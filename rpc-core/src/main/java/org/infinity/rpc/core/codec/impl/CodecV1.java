@@ -26,8 +26,8 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.MAX_PAYLOAD;
 import static org.infinity.rpc.core.constant.ServiceConstants.MAX_PAYLOAD_VAL_DEFAULT;
 
-@SpiName(CODEC_VAL_DEFAULT)
-public class DefaultCodec extends AbstractCodec {
+@SpiName(CODEC_VAL_V1)
+public class CodecV1 extends AbstractCodec {
     public static final  short MAGIC = (short) 0xF0F0;
     private static final byte  MASK  = 0x07;
 
@@ -86,9 +86,7 @@ public class DefaultCodec extends AbstractCodec {
 
     /**
      * 数据协议：
-     *
      * <pre>
-     *
      * header:  16个字节
      *
      * 0-15 bit 	:  magic
@@ -96,7 +94,6 @@ public class DefaultCodec extends AbstractCodec {
      * 24-31 bit	:  extend flag , 其中： 29-30 bit: event 可支持4种event，比如normal, exception等,  31 bit : 0 is request , 1 is response
      * 32-95 bit 	:  request id
      * 96-127 bit 	:  body content length
-     *
      * </pre>
      *
      * @param body      message body

@@ -26,7 +26,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC;
-import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC_VAL_DEFAULT;
+import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC_VAL_V1;
 
 /**
  * @todo: NettyChannelHandler
@@ -41,14 +41,14 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
     public NettyServerClientHandler(Channel channel, MessageHandler messageHandler) {
         this.channel = channel;
         this.messageHandler = messageHandler;
-        codec = Codec.getInstance(channel.getProviderUrl().getOption(CODEC, CODEC_VAL_DEFAULT));
+        codec = Codec.getInstance(channel.getProviderUrl().getOption(CODEC, CODEC_VAL_V1));
     }
 
     public NettyServerClientHandler(Channel channel, MessageHandler messageHandler, ThreadPoolExecutor threadPoolExecutor) {
         this.channel = channel;
         this.messageHandler = messageHandler;
         this.threadPoolExecutor = threadPoolExecutor;
-        codec = Codec.getInstance(channel.getProviderUrl().getOption(CODEC, CODEC_VAL_DEFAULT));
+        codec = Codec.getInstance(channel.getProviderUrl().getOption(CODEC, CODEC_VAL_V1));
     }
 
     private String getRemoteIp(ChannelHandlerContext ctx) {

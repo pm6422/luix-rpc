@@ -2,7 +2,7 @@ package org.infinity.rpc.core.codec;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.request.Requestable;
-import org.infinity.rpc.core.codec.impl.DefaultCodec;
+import org.infinity.rpc.core.codec.impl.CodecV1;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.exchange.Channel;
@@ -19,7 +19,7 @@ public class CodecUtils {
         try {
             byte[] data = encodeMessage(channel, codec, msg);
             short type = ByteUtils.bytes2short(data, 0);
-            if (type == DefaultCodec.MAGIC) {
+            if (type == CodecV1.MAGIC) {
                 return encodeV1(msg, data);
             }
 //            else if (type == MotanV2Header.MAGIC) {

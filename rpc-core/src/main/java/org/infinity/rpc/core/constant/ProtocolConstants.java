@@ -8,7 +8,8 @@ public interface ProtocolConstants {
     String  PROTOCOL_VAL_INFINITY              = "infinity";
     String  PROTOCOL_VAL_JVM                   = "jvm";
     String  CODEC                              = "codec";
-    String  CODEC_VAL_DEFAULT                  = "default";
+    String  CODEC_VAL_V1                       = "v1";
+    String  CODEC_VAL_V2                       = "v2";
     String  SERIALIZER                         = "serializer";
     String  SERIALIZER_VAL_DEFAULT             = SERIALIZER_NAME_KRYO;
     String  ENDPOINT_FACTORY                   = "endpointFactory";
