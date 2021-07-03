@@ -1,5 +1,6 @@
 package org.infinity.rpc.democlient.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -11,11 +12,15 @@ import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.democlient.dto.MethodInvocation;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,12 +38,13 @@ public class RpcInvocationController {
 
     @ApiOperation("universal invocation")
     @PostMapping("/api/rpc/universal-invocation")
-    public ResponseEntity<Object> universalInvoke(
-            @ApiParam(value = "arguments", required = true) @RequestBody MethodInvocation data) {
-        ConsumerStub<?> consumerStub = getConsumerStub(data);
+    public ResponseEntity<Object> universalInvoke(@ApiParam(value = "file", required = true) @RequestPart MultipartFile file) throws IOException {
+        String input = StreamUtils.copyToString(file.getInputStream(), Charset.defaultCharset());
+        MethodInvocation methodInvocation = new ObjectMapper().readValue(input, MethodInvocation.class);
+        ConsumerStub<?> consumerStub = getConsumerStub(methodInvocation);
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler universalInvocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
-        Object result = universalInvocationHandler.invoke(data.getMethodName(), data.getMethodParamTypes(), data.getArgs());
+        Object result = universalInvocationHandler.invoke(methodInvocation.getMethodName(), methodInvocation.getMethodParamTypes(), methodInvocation.getArgs());
         return ResponseEntity.ok().body(result);
     }
 
