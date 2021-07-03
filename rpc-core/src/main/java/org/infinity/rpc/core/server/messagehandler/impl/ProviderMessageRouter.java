@@ -78,11 +78,8 @@ public class ProviderMessageRouter implements MessageHandler {
         ProviderStub<?> provider = providers.get(serviceKey);
 
         if (provider == null) {
-            log.error(this.getClass().getSimpleName() + " handler Error: provider not exist serviceKey=" + serviceKey + " " + request);
-            RpcFrameworkException exception =
-                    new RpcFrameworkException(this.getClass().getSimpleName() + " handler Error: provider not exist serviceKey="
-                            + serviceKey + " " + request);
-
+            log.error("No provider found with key [{}] for {}", serviceKey, request);
+            RpcFrameworkException exception = new RpcFrameworkException("No provider found with key [" + serviceKey + "] for " + request);
             return RpcFrameworkUtils.buildErrorResponse(request, exception);
         }
         Method method = provider.findMethod(request.getMethodName(), request.getMethodParameters());
