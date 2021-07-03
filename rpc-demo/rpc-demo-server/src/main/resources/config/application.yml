@@ -121,6 +121,8 @@ infinity:
         name: zookeeper
         connectTimeout: 1000
         sessionTimeout: 60000
+    protocol:
+        serializer: kryo
 # ===================================================================
 # Application specific properties
 # ===================================================================
