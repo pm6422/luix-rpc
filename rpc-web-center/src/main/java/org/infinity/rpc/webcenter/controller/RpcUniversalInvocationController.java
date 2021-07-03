@@ -1,22 +1,27 @@
 package org.infinity.rpc.webcenter.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.dto.MethodInvocation;
 import org.infinity.rpc.webcenter.service.RpcRegistryService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.nio.charset.Charset;
 
 /**
  * REST controller for RPC universal calling.
@@ -35,7 +40,20 @@ public class RpcUniversalInvocationController {
     public ResponseEntity<Object> invoke(@ApiParam(value = "methodInvocation", required = true)
                                          @Valid @RequestBody MethodInvocation methodInvocation) {
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(methodInvocation.getRegistryIdentity(),
-                Url.valueOf(methodInvocation.getProviderUrl()), methodInvocation.getInterfaceName(), methodInvocation.getAttributes());
+                methodInvocation.getProviderUrl(), methodInvocation.getInterfaceName(), methodInvocation.getAttributes());
+        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
+        UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
+        Object result = invocationHandler.invoke(methodInvocation.getMethodName(), methodInvocation.getMethodParamTypes(), methodInvocation.getArgs());
+        return ResponseEntity.ok().body(result);
+    }
+
+    @ApiOperation("universal invocation by file")
+    @PostMapping("/api/rpc-invocation/invoke-by-file")
+    public ResponseEntity<Object> invokeByFile(@ApiParam(value = "file", required = true) @RequestPart MultipartFile file) throws IOException {
+        String input = StreamUtils.copyToString(file.getInputStream(), Charset.defaultCharset());
+        MethodInvocation methodInvocation = new ObjectMapper().readValue(input, MethodInvocation.class);
+        ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(methodInvocation.getRegistryIdentity(),
+                methodInvocation.getProviderUrl(), methodInvocation.getInterfaceName(), methodInvocation.getAttributes());
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Object result = invocationHandler.invoke(methodInvocation.getMethodName(), methodInvocation.getMethodParamTypes(), methodInvocation.getArgs());

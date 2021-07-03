@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 @Service
@@ -74,39 +73,44 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
     }
 
     @Override
-    public ConsumerStub<?> getConsumerStub(String registryIdentity, Url providerUrl, String interfaceName, Map<String, String> attributes) {
-        Validate.isTrue(providerUrl != null || StringUtils.isNotEmpty(interfaceName),
+    public ConsumerStub<?> getConsumerStub(String registryIdentity, String providerUrlStr, String interfaceName, Map<String, String> attributes) {
+        Validate.isTrue(StringUtils.isNotEmpty(providerUrlStr) || StringUtils.isNotEmpty(interfaceName),
                 "[providerUrl] and [interfaceName] can NOT be null at the same time!");
 
-        String resolvedInterfaceName = defaultIfEmpty(interfaceName, providerUrl.getPath());
+        String resolvedInterfaceName;
         String form = null;
         String version = null;
         Integer requestTimeout = null;
         Integer retryCount = null;
-
         Map<String, Object> attributesMap = new HashMap<>(0);
-        if (MapUtils.isEmpty(attributes)) {
+
+        if (StringUtils.isNotEmpty(providerUrlStr)) {
+            Url providerUrl = Url.valueOf(providerUrlStr);
+            resolvedInterfaceName = providerUrl.getPath();
             form = providerUrl.getForm();
             version = providerUrl.getVersion();
             requestTimeout = providerUrl.containsOption(REQUEST_TIMEOUT) ? providerUrl.getIntOption(REQUEST_TIMEOUT) : null;
             retryCount = providerUrl.containsOption(RETRY_COUNT) ? providerUrl.getIntOption(RETRY_COUNT) : null;
         } else {
-            for (Map.Entry<String, String> entry : attributes.entrySet()) {
-                if (FORM.equals(entry.getKey())) {
-                    form = entry.getValue();
-                    attributesMap.put(entry.getKey(), form);
-                }
-                if (VERSION.equals(entry.getKey())) {
-                    version = entry.getValue();
-                    attributesMap.put(entry.getKey(), version);
-                }
-                if (REQUEST_TIMEOUT.equals(entry.getKey())) {
-                    requestTimeout = entry.getValue() != null ? Integer.parseInt(entry.getValue()) : null;
-                    attributesMap.put(entry.getKey(), requestTimeout);
-                }
-                if (RETRY_COUNT.equals(entry.getKey())) {
-                    retryCount = entry.getValue() != null ? Integer.parseInt(entry.getValue()) : null;
-                    attributesMap.put(entry.getKey(), retryCount);
+            resolvedInterfaceName = interfaceName;
+            if (MapUtils.isNotEmpty(attributes)) {
+                for (Map.Entry<String, String> entry : attributes.entrySet()) {
+                    if (FORM.equals(entry.getKey())) {
+                        form = entry.getValue();
+                        attributesMap.put(entry.getKey(), form);
+                    }
+                    if (VERSION.equals(entry.getKey())) {
+                        version = entry.getValue();
+                        attributesMap.put(entry.getKey(), version);
+                    }
+                    if (REQUEST_TIMEOUT.equals(entry.getKey())) {
+                        requestTimeout = entry.getValue() != null ? Integer.parseInt(entry.getValue()) : null;
+                        attributesMap.put(entry.getKey(), requestTimeout);
+                    }
+                    if (RETRY_COUNT.equals(entry.getKey())) {
+                        retryCount = entry.getValue() != null ? Integer.parseInt(entry.getValue()) : null;
+                        attributesMap.put(entry.getKey(), retryCount);
+                    }
                 }
             }
         }

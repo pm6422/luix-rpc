@@ -8,34 +8,6 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Map;
 
-/**
- * {
- * "interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
- * "methodName": "findAll",
- * "methodParamTypes": [],
- * "args": [],
- * "attributes": {
- * "retryCount": 2
- * }
- * }
- * <p>
- * or
- * <p>
- * {
- * "interfaceName": "org.infinity.rpc.democommon.service.AuthorityService",
- * "methodName": "save",
- * "methodParamTypes": [
- * "org.infinity.rpc.democommon.domain.Authority"
- * ],
- * "args": [
- * {
- * "name": "ROLE_TEST",
- * "enabled": true
- * }
- * ],
- * "attributes": {}
- * }
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -48,12 +20,13 @@ public class MethodInvocation implements Serializable {
     private              String              registryIdentity;
     /**
      * Interface name
+     * interfaceName or providerUrl must have value
      */
     private              String              interfaceName;
     /**
      * Provider url
+     * interfaceName or providerUrl must have value
      */
-    @NotEmpty
     private              String              providerUrl;
     /**
      * Method name. e.g, save
