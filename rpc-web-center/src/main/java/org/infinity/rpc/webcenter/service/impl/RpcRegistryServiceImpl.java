@@ -2,7 +2,7 @@ package org.infinity.rpc.webcenter.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.client.listener.ProviderProcessable;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.rpc.core.constant.ServiceConstants.FORM;
-import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 @Service
 @Slf4j
@@ -59,7 +59,10 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                     // First discover all consumers
                     registryConfig.getRegistryImpl().subscribeConsumerListener(interfaceName, consumerProcessService);
                     // Then discover all providers
-                    createConsumerStub(interfaceName, registryConfig, providerProcessService, null, null);
+                    ConsumerStub.create(interfaceName, infinityProperties.getApplication(), registryConfig,
+                            infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
+                            providerProcessService);
+
                 });
                 log.info("Found registry: [{}]", registryConfig.getRegistryUrl().getIdentity());
             });
@@ -69,30 +72,49 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
     }
 
     @Override
-    public ConsumerStub<?> getConsumerStub(String registryIdentity, Url providerUrl) {
-        Map<String, Object> attributes = new HashMap<>();
-        if (StringUtils.isNotEmpty(providerUrl.getForm())) {
-            attributes.put(FORM, providerUrl.getForm());
+    public ConsumerStub<?> getConsumerStub(String registryIdentity, Url providerUrl, String interfaceName, Map<String, String> attributes) {
+        String form = null;
+        String version = null;
+        Integer requestTimeout = null;
+        Integer retryCount = null;
+        Map<String, Object> attributesMap = new HashMap<>(0);
+        if (MapUtils.isEmpty(attributes)) {
+            form = providerUrl.getForm();
+            version = providerUrl.getVersion();
+            requestTimeout = providerUrl.getIntOption(REQUEST_TIMEOUT);
+            retryCount = providerUrl.getIntOption(RETRY_COUNT);
+        } else {
+            for (Map.Entry<String, String> entry : attributes.entrySet()) {
+                if (FORM.equals(entry.getKey())) {
+                    form = entry.getValue();
+                    attributesMap.put(entry.getKey(), form);
+                }
+                if (VERSION.equals(entry.getKey())) {
+                    version = entry.getValue();
+                    attributesMap.put(entry.getKey(), version);
+                }
+                if (REQUEST_TIMEOUT.equals(entry.getKey())) {
+                    requestTimeout = entry.getValue() != null ? Integer.parseInt(entry.getValue()) : null;
+                    attributesMap.put(entry.getKey(), requestTimeout);
+                }
+                if (RETRY_COUNT.equals(entry.getKey())) {
+                    retryCount = entry.getValue() != null ? Integer.parseInt(entry.getValue()) : null;
+                    attributesMap.put(entry.getKey(), retryCount);
+                }
+            }
         }
-        if (StringUtils.isNotEmpty(providerUrl.getVersion())) {
-            attributes.put(VERSION, providerUrl.getVersion());
-        }
-        String beanName = ConsumerStub.buildConsumerStubBeanName(providerUrl.getPath(), attributes);
+
+        String beanName = ConsumerStub.buildConsumerStubBeanName(defaultIfEmpty(interfaceName, providerUrl.getPath()), attributesMap);
         if (ConsumerStubHolder.getInstance().get().containsKey(beanName)) {
             return ConsumerStubHolder.getInstance().get().get(beanName);
         }
-        ConsumerStub<?> consumerStub = createConsumerStub(providerUrl.getPath(), findRegistryConfig(registryIdentity),
-                null, providerUrl.getForm(), providerUrl.getVersion());
+        ConsumerStub<?> consumerStub = ConsumerStub.create(defaultIfEmpty(interfaceName, providerUrl.getPath()), infinityProperties.getApplication(),
+                findRegistryConfig(registryIdentity), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
+                null, null, form, version, requestTimeout, retryCount);
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);
         return consumerStub;
     }
 
-    private ConsumerStub<?> createConsumerStub(String interfaceName, RegistryConfig registryConfig,
-                                               ProviderProcessable providerProcessService, String form, String version) {
-        return ConsumerStub.create(interfaceName, infinityProperties.getApplication(), registryConfig,
-                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                providerProcessService, null, form, version, null, null);
-    }
 
     @Override
     public List<RpcRegistryDTO> getRegistries() {

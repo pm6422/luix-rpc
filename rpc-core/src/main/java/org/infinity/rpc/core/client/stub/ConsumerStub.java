@@ -295,9 +295,16 @@ public class ConsumerStub<T> {
 
     public static ConsumerStub<?> create(String interfaceName, ApplicationConfig application,
                                          RegistryConfig registry, ProtocolConfig protocol, ConsumerConfig consumer,
+                                         ProviderProcessable providerProcessor) {
+        return create(interfaceName, application, registry, protocol, consumer, providerProcessor,
+                null, null, null, null, null);
+    }
+
+    public static ConsumerStub<?> create(String interfaceName, ApplicationConfig application,
+                                         RegistryConfig registry, ProtocolConfig protocol, ConsumerConfig consumer,
                                          ProviderProcessable providerProcessor, String directAddress,
                                          String form, String version, Integer requestTimeout,
-                                         Integer maxRetries) {
+                                         Integer retryCount) {
         ConsumerStub<?> consumerStub = new ConsumerStub<>();
         consumerStub.setInterfaceName(interfaceName);
         consumerStub.setProtocol(protocol.getName());
@@ -309,7 +316,7 @@ public class ConsumerStub<T> {
         consumerStub.setForm(form);
         consumerStub.setVersion(version);
         consumerStub.setRequestTimeout(requestTimeout);
-        consumerStub.setRetryCount(maxRetries);
+        consumerStub.setRetryCount(retryCount);
         // Must NOT call init()
         consumerStub.subscribeProviders(application, protocol, registry, providerProcessor);
         return consumerStub;

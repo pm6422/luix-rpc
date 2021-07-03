@@ -111,8 +111,7 @@ public class UniversalInvocationTests extends ZkBaseTest {
         registryConfig.init();
 
         ConsumerStub<?> consumerStub = ConsumerStub.create(interfaceName, applicationConfig,
-                registryConfig, protocolConfig, new ConsumerConfig(),
-                null, null, null, null, null, null);
+                registryConfig, protocolConfig, new ConsumerConfig(), null);
         return consumerStub;
     }
 }

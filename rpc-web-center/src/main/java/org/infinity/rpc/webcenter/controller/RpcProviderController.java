@@ -12,7 +12,6 @@ import org.infinity.rpc.core.server.stub.MethodData;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
-import org.infinity.rpc.webcenter.dto.MethodInvocation;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.RpcProviderRepository;
 import org.infinity.rpc.webcenter.service.RpcProviderService;
@@ -21,10 +20,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
 import java.util.List;
 
 import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_HEALTH;
@@ -80,16 +81,6 @@ public class RpcProviderController {
         List<MethodData> result = (List<MethodData>) invocationHandler.invoke(METHOD_GET_METHODS,
                 new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
                 new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
-        return ResponseEntity.ok().body(result);
-    }
-
-    @ApiOperation("invoke provider method")
-    @PostMapping("/api/rpc-provider/invoke")
-    public ResponseEntity<Object> invoke(@ApiParam(value = "methodInvocation", required = true) @Valid @RequestBody MethodInvocation methodInvocation) {
-        ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(methodInvocation.getRegistryIdentity(), Url.valueOf(methodInvocation.getProviderUrl()));
-        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
-        UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
-        Object result = invocationHandler.invoke(methodInvocation.getMethodName(), methodInvocation.getMethodParamTypes(), methodInvocation.getArgs());
         return ResponseEntity.ok().body(result);
     }
 

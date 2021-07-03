@@ -7,6 +7,7 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.webcenter.dto.RpcRegistryDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface RpcRegistryService {
 
@@ -21,7 +22,9 @@ public interface RpcRegistryService {
      *
      * @param registryIdentity registry url identity
      * @param providerUrl      provider url
+     * @param interfaceName    interface name
+     * @param attributes       consumer stub attributes map
      * @return consumer stub
      */
-    ConsumerStub<?> getConsumerStub(String registryIdentity, Url providerUrl);
+    ConsumerStub<?> getConsumerStub(String registryIdentity, Url providerUrl, String interfaceName, Map<String, String> attributes);
 }
