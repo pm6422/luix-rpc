@@ -40,6 +40,7 @@ import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
+import static org.infinity.rpc.core.server.response.impl.RpcCheckHealthResponse.CHECK_HEALTH_OK;
 import static org.infinity.rpc.core.url.Url.METHOD_CONFIG_PREFIX;
 import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignature;
 
@@ -380,6 +381,14 @@ public class ProviderStub<T> {
                 .build();
     }
 
+    /**
+     * Check health status of the service
+     *
+     * @return status
+     */
+    public String checkHealth() {
+        return CHECK_HEALTH_OK;
+    }
 
     @Override
     public int hashCode() {

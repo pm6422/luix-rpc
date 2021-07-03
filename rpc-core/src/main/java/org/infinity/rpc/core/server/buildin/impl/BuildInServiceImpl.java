@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 
 import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
-import static org.infinity.rpc.core.server.response.impl.RpcCheckHealthResponse.CHECK_HEALTH_OK;
 
 public class BuildInServiceImpl implements BuildInService {
     @Override
@@ -20,13 +19,14 @@ public class BuildInServiceImpl implements BuildInService {
     }
 
     @Override
-    public String getHealth() {
-        return CHECK_HEALTH_OK;
+    public String getSystemTime() {
+        return ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date());
     }
 
     @Override
-    public String getSystemTime() {
-        return ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date());
+    public String checkHealth(String interfaceClassName, String form, String version) {
+        String providerStubBeanName = ProviderStub.buildProviderStubBeanName(interfaceClassName, form, version);
+        return ProviderStubHolder.getInstance().get().get(providerStubBeanName).checkHealth();
     }
 
     @Override

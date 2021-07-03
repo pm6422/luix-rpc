@@ -3,6 +3,8 @@ package org.infinity.rpc.webcenter.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.client.listener.ProviderProcessable;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
@@ -73,6 +75,9 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
 
     @Override
     public ConsumerStub<?> getConsumerStub(String registryIdentity, Url providerUrl, String interfaceName, Map<String, String> attributes) {
+        Validate.isTrue(providerUrl != null || StringUtils.isNotEmpty(interfaceName),
+                "[providerUrl] and [interfaceName] can NOT be null at the same time!");
+
         String resolvedInterfaceName = defaultIfEmpty(interfaceName, providerUrl.getPath());
         String form = null;
         String version = null;

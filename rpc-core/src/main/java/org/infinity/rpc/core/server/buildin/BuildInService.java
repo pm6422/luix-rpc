@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface BuildInService {
     String METHOD_GET_APPLICATION_CONFIG = "getApplicationConfig";
-    String METHOD_GET_HEALTH             = "getHealth";
     String METHOD_GET_SYSTEM_TIME        = "getSystemTime";
+    String METHOD_CHECK_HEALTH           = "checkHealth";
     String METHOD_GET_METHODS            = "getMethods";
 
     /**
@@ -19,18 +19,21 @@ public interface BuildInService {
     ApplicationConfig getApplicationConfig();
 
     /**
-     * Get health status
-     *
-     * @return OK status
-     */
-    String getHealth();
-
-    /**
      * Get system time
      *
      * @return system time of the server
      */
     String getSystemTime();
+
+    /**
+     * Check health status
+     *
+     * @param interfaceClassName provider interface class name
+     * @param form               form
+     * @param version            version
+     * @return OK status
+     */
+    String checkHealth(String interfaceClassName, String form, String version);
 
     /**
      * Get all methods of provider interface

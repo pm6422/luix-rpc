@@ -302,6 +302,13 @@ public class ConsumerStub<T> {
 
     public static ConsumerStub<?> create(String interfaceName, ApplicationConfig application,
                                          RegistryConfig registry, ProtocolConfig protocol, ConsumerConfig consumer,
+                                         ProviderProcessable providerProcessor, String providerAddresses) {
+        return create(interfaceName, application, registry, protocol, consumer, providerProcessor,
+                providerAddresses, null, null, null, null);
+    }
+
+    public static ConsumerStub<?> create(String interfaceName, ApplicationConfig application,
+                                         RegistryConfig registry, ProtocolConfig protocol, ConsumerConfig consumer,
                                          ProviderProcessable providerProcessor, String providerAddresses,
                                          String form, String version, Integer requestTimeout,
                                          Integer retryCount) {

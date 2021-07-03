@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 
-import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_HEALTH;
+import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_CHECK_HEALTH;
 import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_METHODS;
 import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
@@ -71,13 +71,7 @@ public class RpcProviderController {
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
-        ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
-                infinityProperties.getApplication(), rpcRegistryService.findRegistryConfig(registryIdentity),
-                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, providerUrl.getAddress());
-
-        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
-        UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
+        UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
         @SuppressWarnings({"unchecked"})
         List<MethodData> result = (List<MethodData>) invocationHandler.invoke(METHOD_GET_METHODS,
                 new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
@@ -89,21 +83,27 @@ public class RpcProviderController {
     @GetMapping("/api/rpc-provider/health")
     public ResponseEntity<String> health(
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrl) {
-        Url url = Url.valueOf(providerUrl);
-        ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
-                infinityProperties.getApplication(), rpcRegistryService.findRegistryConfig(registryIdentity),
-                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, url.getAddress());
-        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
-        UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
+            @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
+        Url providerUrl = Url.valueOf(providerUrlStr);
+        UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
         String result;
         try {
-            result = (String) invocationHandler.invoke(METHOD_GET_HEALTH);
+            result = (String) invocationHandler.invoke(METHOD_CHECK_HEALTH,
+                    new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
+                    new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
         } catch (Exception ex) {
             result = ex.getMessage();
         }
         return ResponseEntity.ok().body(result);
+    }
+
+    private UniversalInvocationHandler createBuildInInvocationHandler(String registryIdentity, Url providerUrl) {
+        ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
+                infinityProperties.getApplication(), rpcRegistryService.findRegistryConfig(registryIdentity),
+                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
+                null, providerUrl.getAddress());
+        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
+        return proxyFactory.createUniversalInvocationHandler(consumerStub);
     }
 
     @ApiOperation("activate provider")
