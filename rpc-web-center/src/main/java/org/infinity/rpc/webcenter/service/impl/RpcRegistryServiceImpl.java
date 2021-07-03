@@ -83,8 +83,8 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
         if (MapUtils.isEmpty(attributes)) {
             form = providerUrl.getForm();
             version = providerUrl.getVersion();
-            requestTimeout = providerUrl.getIntOption(REQUEST_TIMEOUT);
-            retryCount = providerUrl.getIntOption(RETRY_COUNT);
+            requestTimeout = providerUrl.containsOption(REQUEST_TIMEOUT) ? providerUrl.getIntOption(REQUEST_TIMEOUT) : null;
+            retryCount = providerUrl.containsOption(RETRY_COUNT) ? providerUrl.getIntOption(RETRY_COUNT) : null;
         } else {
             for (Map.Entry<String, String> entry : attributes.entrySet()) {
                 if (FORM.equals(entry.getKey())) {

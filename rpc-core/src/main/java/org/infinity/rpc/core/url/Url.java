@@ -226,7 +226,6 @@ public final class Url implements Serializable {
         options.put(name, value.toString());
     }
 
-
     public String getOption(String name, String defaultValue) {
         String value = getOption(name);
         if (value == null) {
@@ -282,6 +281,10 @@ public final class Url implements Serializable {
             return null;
         }
         return Boolean.parseBoolean(value);
+    }
+
+    public boolean containsOption(String name) {
+        return options.containsKey(name);
     }
 
     /**
