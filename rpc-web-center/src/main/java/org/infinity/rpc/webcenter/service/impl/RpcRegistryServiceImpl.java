@@ -73,10 +73,12 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
 
     @Override
     public ConsumerStub<?> getConsumerStub(String registryIdentity, Url providerUrl, String interfaceName, Map<String, String> attributes) {
+        String resolvedInterfaceName = defaultIfEmpty(interfaceName, providerUrl.getPath());
         String form = null;
         String version = null;
         Integer requestTimeout = null;
         Integer retryCount = null;
+
         Map<String, Object> attributesMap = new HashMap<>(0);
         if (MapUtils.isEmpty(attributes)) {
             form = providerUrl.getForm();
@@ -104,11 +106,11 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
             }
         }
 
-        String beanName = ConsumerStub.buildConsumerStubBeanName(defaultIfEmpty(interfaceName, providerUrl.getPath()), attributesMap);
+        String beanName = ConsumerStub.buildConsumerStubBeanName(resolvedInterfaceName, attributesMap);
         if (ConsumerStubHolder.getInstance().get().containsKey(beanName)) {
             return ConsumerStubHolder.getInstance().get().get(beanName);
         }
-        ConsumerStub<?> consumerStub = ConsumerStub.create(defaultIfEmpty(interfaceName, providerUrl.getPath()), infinityProperties.getApplication(),
+        ConsumerStub<?> consumerStub = ConsumerStub.create(resolvedInterfaceName, infinityProperties.getApplication(),
                 findRegistryConfig(registryIdentity), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
                 null, null, form, version, requestTimeout, retryCount);
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);
