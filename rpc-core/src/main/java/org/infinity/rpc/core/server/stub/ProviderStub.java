@@ -18,6 +18,7 @@ import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.registry.Registry;
 import org.infinity.rpc.core.registry.RegistryFactory;
+import org.infinity.rpc.core.server.exporter.Exportable;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.url.Url;
@@ -40,6 +41,7 @@ import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
+import static org.infinity.rpc.core.server.response.impl.RpcCheckHealthResponse.CHECK_HEALTH_DOWN;
 import static org.infinity.rpc.core.server.response.impl.RpcCheckHealthResponse.CHECK_HEALTH_OK;
 import static org.infinity.rpc.core.url.Url.METHOD_CONFIG_PREFIX;
 import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignature;
@@ -135,9 +137,21 @@ public class ProviderStub<T> {
      */
     private           Url                       url;
     /**
+     * Service provider exporter used to export the provider to registry
+     */
+    private           Exportable<T>             exporter;
+    /**
      * Indicator used to identify whether the provider already been registered
      */
     private final     AtomicBoolean             exported        = new AtomicBoolean(false);
+    /**
+     * Protocol configuration
+     */
+    private           ProtocolConfig            protocolConfig;
+    /**
+     * Registry configuration
+     */
+    private           RegistryConfig            registryConfig;
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
@@ -187,16 +201,17 @@ public class ProviderStub<T> {
      * @param registryConfig    registry configuration
      */
     public void register(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, RegistryConfig registryConfig) {
-        // Export provider url
-        Url providerUrl = createProviderUrl(applicationConfig, protocolConfig);
-
         if (exported.compareAndSet(false, true)) {
-            // Export RPC provider service
-            Protocol.getInstance(providerUrl.getProtocol()).export(this);
-        }
+            this.protocolConfig = protocolConfig;
+            this.registryConfig = registryConfig;
 
-        // Register provider URL to all the registries
-        registryConfig.getRegistryImpl().register(providerUrl);
+            // Export provider url
+            url = createProviderUrl(applicationConfig, protocolConfig);
+            // Export RPC provider service
+            exporter = Protocol.getInstance(url.getProtocol()).export(this);
+            // Register provider URL to all the registries
+            this.registryConfig.getRegistryImpl().register(url);
+        }
     }
 
     /**
@@ -207,7 +222,7 @@ public class ProviderStub<T> {
      * @return provider url
      */
     private Url createProviderUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
-        url = Url.providerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
+        Url url = Url.providerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
         url.addOption(APP, applicationConfig.getName());
         url.addOption(HEALTH_CHECKER, healthChecker);
         url.addOption(REQUEST_TIMEOUT, requestTimeout);
@@ -261,6 +276,17 @@ public class ProviderStub<T> {
             }
         }
         return url;
+    }
+
+    /**
+     * Deactivate the RPC providers from registries
+     */
+    public void deactivate() {
+        if (exported.get() && exporter != null) {
+            this.registryConfig.getRegistryImpl().deactivate(url);
+            exporter.cancelExport();
+            exported.set(false);
+        }
     }
 
     /**
@@ -387,7 +413,7 @@ public class ProviderStub<T> {
      * @return status
      */
     public String checkHealth() {
-        return CHECK_HEALTH_OK;
+        return exported.get() ? CHECK_HEALTH_OK : CHECK_HEALTH_DOWN;
     }
 
     @Override
