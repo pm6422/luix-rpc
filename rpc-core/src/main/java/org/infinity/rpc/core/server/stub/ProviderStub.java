@@ -215,6 +215,32 @@ public class ProviderStub<T> {
     }
 
     /**
+     * Unregister current RPC provider from registry
+     */
+    public void unregister(Url... registryUrls) {
+        for (Url registryUrl : registryUrls) {
+            Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
+            if (registry == null || CollectionUtils.isEmpty(registry.getRegisteredProviderUrls())) {
+                log.warn("No registry found!");
+                return;
+            }
+            registry.unregister(url);
+            log.debug("Unregistered RPC provider [{}] from registry [{}]", interfaceName, registryUrl.getProtocol());
+        }
+    }
+
+    /**
+     * Deactivate the RPC providers from registries
+     */
+    public void deactivate() {
+        if (exported.get() && exporter != null) {
+            this.registryConfig.getRegistryImpl().deactivate(url);
+            exporter.cancelExport();
+            exported.set(false);
+        }
+    }
+
+    /**
      * Merge high priority properties to provider stub and generate provider url
      *
      * @param applicationConfig application configuration
@@ -276,32 +302,6 @@ public class ProviderStub<T> {
             }
         }
         return url;
-    }
-
-    /**
-     * Deactivate the RPC providers from registries
-     */
-    public void deactivate() {
-        if (exported.get() && exporter != null) {
-            this.registryConfig.getRegistryImpl().deactivate(url);
-            exporter.cancelExport();
-            exported.set(false);
-        }
-    }
-
-    /**
-     * Unregister current RPC provider from registry
-     */
-    public void unregister(Url... registryUrls) {
-        for (Url registryUrl : registryUrls) {
-            Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
-            if (registry == null || CollectionUtils.isEmpty(registry.getRegisteredProviderUrls())) {
-                log.warn("No registry found!");
-                return;
-            }
-            registry.unregister(url);
-            log.debug("Unregistered RPC provider [{}] from registry [{}]", interfaceName, registryUrl.getProtocol());
-        }
     }
 
     /**
