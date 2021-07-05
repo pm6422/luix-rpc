@@ -111,21 +111,7 @@ public class RpcProviderController {
             @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
-
-        if (StringUtils.isEmpty(registryIdentity)) {
-            infinityProperties.getRegistryList().forEach(registry -> {
-                String identity = registry.getRegistryImpl().getRegistryUrl().getIdentity();
-                UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(identity, providerUrl);
-                invocationHandler.invoke(METHOD_ACTIVATE,
-                        new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
-                        new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
-            });
-        } else {
-            UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
-            invocationHandler.invoke(METHOD_ACTIVATE,
-                    new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
-                    new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
-        }
+        control(registryIdentity, providerUrl, METHOD_ACTIVATE);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -135,21 +121,24 @@ public class RpcProviderController {
             @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
+        control(registryIdentity, providerUrl, METHOD_DEACTIVATE);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 
+    private void control(String registryIdentity, Url providerUrl, String methodName) {
         if (StringUtils.isEmpty(registryIdentity)) {
             infinityProperties.getRegistryList().forEach(registry -> {
                 String identity = registry.getRegistryImpl().getRegistryUrl().getIdentity();
                 UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(identity, providerUrl);
-                invocationHandler.invoke(METHOD_DEACTIVATE,
+                invocationHandler.invoke(methodName,
                         new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
                         new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
             });
         } else {
             UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
-            invocationHandler.invoke(METHOD_DEACTIVATE,
+            invocationHandler.invoke(methodName,
                     new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
                     new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
         }
-        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
