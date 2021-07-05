@@ -109,11 +109,22 @@ public class RpcProviderController {
     @GetMapping("/api/rpc-provider/activate")
     public ResponseEntity<Void> activate(
             @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
-            @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrl) {
+            @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
+        Url providerUrl = Url.valueOf(providerUrlStr);
+
         if (StringUtils.isEmpty(registryIdentity)) {
-            infinityProperties.getRegistryList().forEach(config -> config.getRegistryImpl().activate(Url.valueOf(providerUrl)));
+            infinityProperties.getRegistryList().forEach(registry -> {
+                String identity = registry.getRegistryImpl().getRegistryUrl().getIdentity();
+                UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(identity, providerUrl);
+                invocationHandler.invoke(METHOD_ACTIVATE,
+                        new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
+                        new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
+            });
         } else {
-            rpcRegistryService.findRegistry(registryIdentity).activate(Url.valueOf(providerUrl));
+            UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
+            invocationHandler.invoke(METHOD_ACTIVATE,
+                    new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
+                    new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
         }
         return ResponseEntity.status(HttpStatus.OK).build();
     }

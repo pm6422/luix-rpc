@@ -10,6 +10,7 @@ public interface BuildInService {
     String METHOD_GET_SYSTEM_TIME        = "getSystemTime";
     String METHOD_CHECK_HEALTH           = "checkHealth";
     String METHOD_GET_METHODS            = "getMethods";
+    String METHOD_ACTIVATE               = "activate";
     String METHOD_DEACTIVATE             = "deactivate";
 
     /**
@@ -45,6 +46,15 @@ public interface BuildInService {
      * @return methods
      */
     List<MethodData> getMethods(String interfaceClassName, String form, String version);
+
+    /**
+     * Activate the provider service
+     *
+     * @param interfaceClassName provider interface class name
+     * @param form               form
+     * @param version            version
+     */
+    void activate(String interfaceClassName, String form, String version);
 
     /**
      * Deactivate the provider service

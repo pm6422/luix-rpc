@@ -241,6 +241,17 @@ public class ProviderStub<T> {
     }
 
     /**
+     * Activate the RPC providers from registries
+     */
+    public void activate() {
+        if (!exported.get() && exporter != null) {
+            this.registryConfig.getRegistryImpl().activate(url);
+            Protocol.getInstance(url.getProtocol()).export(this);
+            exported.set(true);
+        }
+    }
+
+    /**
      * Merge high priority properties to provider stub and generate provider url
      *
      * @param applicationConfig application configuration

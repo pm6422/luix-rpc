@@ -36,6 +36,12 @@ public class BuildInServiceImpl implements BuildInService {
     }
 
     @Override
+    public void activate(String interfaceClassName, String form, String version) {
+        String providerStubBeanName = ProviderStub.buildProviderStubBeanName(interfaceClassName, form, version);
+        ProviderStubHolder.getInstance().get().get(providerStubBeanName).activate();
+    }
+
+    @Override
     public void deactivate(String interfaceClassName, String form, String version) {
         String providerStubBeanName = ProviderStub.buildProviderStubBeanName(interfaceClassName, form, version);
         ProviderStubHolder.getInstance().get().get(providerStubBeanName).deactivate();
