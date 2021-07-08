@@ -34,18 +34,12 @@ import static org.infinity.rpc.core.utils.SerializerHolder.getSerializerById;
 @Slf4j
 @SpiName(CODEC_VAL_V2)
 public class CodecV2 extends AbstractCodec {
-    private static final byte   MASK                = 0x07;
     private static final String M_INTERFACE         = "M_i";
     private static final String M_METHOD            = "M_m";
     private static final String M_METHOD_PARAMETERS = "M_mp";
     private static final String M_RETURN_TYPE       = "M_rt";
     private static final String M_ELAPSED_TIME      = "M_et";
     private static final String M_ERROR             = "M_e";
-    /**
-     * 调用方来源标识，同与application
-     */
-    private static final String M2_SOURCE           = "M_s";
-    private static final String M2_MODULE           = "M_mdu";
 
     @Override
     public byte[] encode(Channel channel, Exchangable input) throws IOException {
