@@ -3,20 +3,16 @@ package org.infinity.rpc.utilities.serializer;
 
 import java.io.IOException;
 
-public class DeserializableObject {
+public class DeserializableArgs {
     private final Serializer serializer;
     private final byte[]     objBytes;
 
-    public DeserializableObject(Serializer serializer, byte[] objBytes) {
+    public DeserializableArgs(Serializer serializer, byte[] argsBytes) {
         this.serializer = serializer;
-        this.objBytes = objBytes;
+        this.objBytes = argsBytes;
     }
 
-    public <T> T deserialize(Class<T> clz) throws IOException {
-        return serializer.deserialize(objBytes, clz);
-    }
-
-    public Object[] deserializeArray(Class<?>[] paramTypes) throws IOException {
+    public Object[] deserialize(Class<?>[] paramTypes) throws IOException {
         Object[] ret = null;
         if (paramTypes != null && paramTypes.length > 0) {
             ret = serializer.deserializeArray(objBytes, paramTypes);

@@ -28,7 +28,7 @@ import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
-import org.infinity.rpc.utilities.serializer.DeserializableObject;
+import org.infinity.rpc.utilities.serializer.DeserializableArgs;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -102,10 +102,10 @@ public class ProviderMessageRouter implements MessageHandler {
 
     private void processLazyDeserialize(Requestable request, Method method) {
         if (method != null && request.getMethodArguments() != null && request.getMethodArguments().length == 1
-                && request.getMethodArguments()[0] instanceof DeserializableObject
+                && request.getMethodArguments()[0] instanceof DeserializableArgs
                 && request instanceof RpcRequest) {
             try {
-                Object[] args = ((DeserializableObject) request.getMethodArguments()[0]).deserializeArray(method.getParameterTypes());
+                Object[] args = ((DeserializableArgs) request.getMethodArguments()[0]).deserialize(method.getParameterTypes());
                 ((RpcRequest) request).setMethodArguments(args);
             } catch (IOException e) {
                 throw new RpcFrameworkException("deserialize parameters fail: " + request + ", error:" + e.getMessage());

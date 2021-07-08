@@ -14,7 +14,7 @@ import org.infinity.rpc.core.server.response.FutureListener;
 import org.infinity.rpc.core.server.response.FutureResponse;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.utilities.serializer.DeserializableObject;
+import org.infinity.rpc.utilities.serializer.DeserializableResult;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -257,9 +257,9 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
             throw (exception instanceof RuntimeException) ? (RuntimeException) exception : new RpcFrameworkException(
                     exception.getMessage(), exception);
         }
-        if (resultObject != null && returnType != null && resultObject instanceof DeserializableObject) {
+        if (resultObject != null && returnType != null && resultObject instanceof DeserializableResult) {
             try {
-                resultObject = ((DeserializableObject) resultObject).deserialize(returnType);
+                resultObject = ((DeserializableResult) resultObject).deserialize();
             } catch (IOException e) {
                 log.error("deserialize response value fail! return type:" + returnType, e);
                 throw new RpcFrameworkException("deserialize return value fail! deserialize type:" + returnType, e);

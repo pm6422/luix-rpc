@@ -13,9 +13,8 @@ import org.infinity.rpc.core.exception.impl.RpcInvocationException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.utils.RpcConfigValidator;
-import org.infinity.rpc.utilities.serializer.DeserializableObject;
+import org.infinity.rpc.utilities.serializer.DeserializableResult;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.RATE_LIMITER_GUAVA;
@@ -32,12 +31,11 @@ public abstract class AbstractConsumerInvocationHandler<T> {
     protected ConsumerStub<T> consumerStub;
 
     /**
-     * @param request    RPC request
-     * @param args       method arguments
-     * @param returnType return type of method
+     * @param request RPC request
+     * @param args    method arguments
      * @return result of method
      */
-    protected Object process(RpcRequest request, Object[] args, Class<?> returnType) {
+    protected Object process(RpcRequest request, Object[] args) {
         if (limitRate()) {
             log.warn("Rate limiting!");
             return null;
@@ -54,9 +52,8 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         request.addOption(REQUEST_TIMEOUT, consumerStub.getRequestTimeout());
         request.addOption(RETRY_COUNT, consumerStub.getRetryCount());
         request.addOption(MAX_PAYLOAD, consumerStub.getMaxPayload());
-        Object result = sendRequest(request, returnType);
-
-        result = processResult(returnType, result);
+        Object result = sendRequest(request);
+        result = processResult(result);
         return result;
     }
 
@@ -75,11 +72,10 @@ public abstract class AbstractConsumerInvocationHandler<T> {
     }
 
     /**
-     * @param request    RPC request
-     * @param returnType return type of method
+     * @param request RPC request
      * @return result of method execution
      */
-    protected Object sendRequest(Requestable request, Class<?> returnType) {
+    protected Object sendRequest(Requestable request) {
         Responseable response;
         try {
             response = consumerStub.getInvokerInstance().invoke(request);
@@ -133,12 +129,12 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         return RpcResponse.error(request, cause);
     }
 
-    private Object processResult(Class<?> returnType, Object result) {
-        if (result != null && result instanceof DeserializableObject) {
+    private Object processResult(Object result) {
+        if (result != null && result instanceof DeserializableResult) {
             try {
-                result = ((DeserializableObject) result).deserialize(returnType);
+                result = ((DeserializableResult) result).deserialize();
             } catch (Exception e) {
-                throw new RpcInvocationException("Failed to deserialize return value with return type:" + returnType, e);
+                throw new RpcInvocationException("Failed to deserialize return value!", e);
             }
         }
         return result;

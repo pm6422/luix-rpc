@@ -30,7 +30,7 @@ public interface Codec {
      * @return output object
      * @throws IOException IOException if IOException thrown
      */
-    Object decode(Channel channel, String remoteIp, byte[] data) throws IOException;
+    Object decode(Channel channel, String remoteIp, byte[] data) throws IOException, ClassNotFoundException;
 
     /**
      * Get instance associated with the specified name

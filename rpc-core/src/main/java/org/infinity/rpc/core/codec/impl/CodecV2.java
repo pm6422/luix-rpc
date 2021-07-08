@@ -12,8 +12,10 @@ import org.infinity.rpc.core.exception.impl.RpcInvocationException;
 import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.exchange.Exchangable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
+import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.utilities.lang.MathUtils;
-import org.infinity.rpc.utilities.serializer.DeserializableObject;
+import org.infinity.rpc.utilities.serializer.DeserializableArgs;
+import org.infinity.rpc.utilities.serializer.DeserializableResult;
 import org.infinity.rpc.utilities.serializer.Serializer;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
@@ -36,6 +38,7 @@ public class CodecV2 extends AbstractCodec {
     private static final String M_INTERFACE         = "M_i";
     private static final String M_METHOD            = "M_m";
     private static final String M_METHOD_PARAMETERS = "M_mp";
+    private static final String M_RETURN_TYPE       = "M_rt";
     private static final String M_ELAPSED_TIME      = "M_et";
     private static final String M_ERROR             = "M_e";
     /**
@@ -133,21 +136,34 @@ public class CodecV2 extends AbstractCodec {
     }
 
     private byte[] encodeResponse(RpcResponse response, CodecHeader header, GrowableByteBuffer metaBuf) throws IOException {
-        byte[] resultsBytes = null;
         Serializer serializer = getSerializerById(response.getSerializerId());
+
+        // Set header
         header.setSerializerId(serializer.getSerializerId());
+        header.setRequestId(response.getRequestId());
+        header.setRequest(false);
+
+        // Set meta
+        // The actual return type is different from declared one.
+        // e.g, the declared return type of interface class may by java.util.List,
+        // but actual return type of implementation class may by java.util.ArrayList
+        if (response.getResult() != null) {
+            putString(metaBuf, M_RETURN_TYPE);
+            putString(metaBuf, response.getResult().getClass().getName());
+        }
 
         putString(metaBuf, M_ELAPSED_TIME);
         putString(metaBuf, String.valueOf(response.getElapsedTime()));
+
         if (response.getException() != null) {
             putString(metaBuf, M_ERROR);
             putString(metaBuf, org.apache.commons.lang3.exception.ExceptionUtils.getMessage(response.getException()));
             header.setStatus(CodecHeader.MessageStatus.EXCEPTION.getStatus());
         }
         putMap(metaBuf, response.getOptions());
-        header.setRequestId(response.getRequestId());
-        header.setRequest(false);
-        if (response.getException() == null) {
+
+        byte[] resultsBytes = null;
+        if (response.getException() == null && response.getResult() != null) {
             // Serialize results to bytes
             resultsBytes = serializer.serialize(response.getResult());
         }
@@ -155,7 +171,7 @@ public class CodecV2 extends AbstractCodec {
     }
 
     @Override
-    public Object decode(Channel channel, String remoteIp, byte[] data) throws IOException {
+    public Object decode(Channel channel, String remoteIp, byte[] data) throws IOException, ClassNotFoundException {
         CodecHeader header = CodecHeader.buildHeader(data);
         Map<String, String> metaMap = new HashMap<>();
         ByteBuffer buf = ByteBuffer.wrap(data);
@@ -178,7 +194,15 @@ public class CodecV2 extends AbstractCodec {
             // todo: ungzip
             // 默认自适应序列化
             Serializer serializer = getSerializerById(header.getSerializerId());
-            obj = new DeserializableObject(serializer, body);
+            if (header.isRequest()) {
+                // If method has arguments
+                obj = new DeserializableArgs(serializer, body);
+            } else {
+                // If method has result type
+                String returnType = metaMap.remove(M_RETURN_TYPE);
+                Class<?> clz = MethodParameterUtils.forName(returnType);
+                obj = new DeserializableResult(serializer, body, clz);
+            }
         }
         if (header.isRequest()) {
             // Decode request
