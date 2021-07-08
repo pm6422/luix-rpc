@@ -34,7 +34,7 @@ import static org.infinity.rpc.utilities.serializer.Serializer.SERIALIZER_NAME_H
  */
 @RestController
 @Slf4j
-public class RpcInvocationController {
+public class RpcUniversalInvocationController {
 
     @Resource
     private InfinityProperties infinityProperties;
