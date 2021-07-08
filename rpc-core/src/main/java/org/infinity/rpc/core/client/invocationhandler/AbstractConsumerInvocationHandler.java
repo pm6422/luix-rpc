@@ -9,10 +9,13 @@ import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.exception.ExceptionUtils;
 import org.infinity.rpc.core.exception.RpcAbstractException;
+import org.infinity.rpc.core.exception.impl.RpcInvocationException;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.response.impl.RpcResponse;
 import org.infinity.rpc.core.utils.RpcConfigValidator;
+import org.infinity.rpc.utilities.serializer.DeserializableObject;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.RATE_LIMITER_GUAVA;
@@ -51,7 +54,10 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         request.addOption(REQUEST_TIMEOUT, consumerStub.getRequestTimeout());
         request.addOption(RETRY_COUNT, consumerStub.getRetryCount());
         request.addOption(MAX_PAYLOAD, consumerStub.getMaxPayload());
-        return sendRequest(request, returnType);
+        Object result = sendRequest(request, returnType);
+
+        result = processResult(returnType, result);
+        return result;
     }
 
     /**
@@ -125,5 +131,16 @@ public abstract class AbstractConsumerInvocationHandler<T> {
             throw (RpcAbstractException) cause;
         }
         return RpcResponse.error(request, cause);
+    }
+
+    private Object processResult(Class<?> returnType, Object result) {
+        if (result != null && result instanceof DeserializableObject) {
+            try {
+                result = ((DeserializableObject) result).deserialize(returnType);
+            } catch (Exception e) {
+                throw new RpcInvocationException("Failed to deserialize return value with return type:" + returnType, e);
+            }
+        }
+        return result;
     }
 }

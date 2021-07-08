@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC;
-import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC_VAL_V1;
+import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC_VAL_DEFAULT;
 import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT;
 import static org.infinity.rpc.core.constant.RegistryConstants.CONNECT_TIMEOUT_VAL_DEFAULT;
 import static org.infinity.rpc.core.constant.ServiceConstants.REQUEST_TIMEOUT;
@@ -41,7 +41,7 @@ public class NettyChannel implements Channel {
     public NettyChannel(NettyClient nettyClient) {
         this.nettyClient = nettyClient;
         this.remoteAddress = new InetSocketAddress(nettyClient.getProviderUrl().getHost(), nettyClient.getProviderUrl().getPort());
-        codec = Codec.getInstance(nettyClient.getProviderUrl().getOption(CODEC, CODEC_VAL_V1));
+        codec = Codec.getInstance(nettyClient.getProviderUrl().getOption(CODEC, CODEC_VAL_DEFAULT));
     }
 
     @Override

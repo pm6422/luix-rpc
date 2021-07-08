@@ -9,6 +9,7 @@ import org.infinity.rpc.core.exception.impl.RpcConfigException;
 import org.infinity.rpc.core.exchange.endpoint.EndpointFactory;
 import org.infinity.rpc.core.protocol.Protocol;
 import org.infinity.rpc.core.utils.RpcConfigValidator;
+import org.infinity.rpc.core.utils.SerializerHolder;
 import org.infinity.rpc.utilities.network.AddressUtils;
 import org.infinity.rpc.utilities.serializer.Serializer;
 
@@ -100,6 +101,7 @@ public class ProtocolConfig implements Configurable {
         checkIntegrity();
         checkValidity();
         initHost();
+        SerializerHolder.init();
         log.info("Infinity RPC protocol configuration: {}", this);
     }
 

@@ -57,7 +57,7 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
     /**
      * default serialization is hession2
      */
-    protected            int                  serializeNum     = 0;
+    protected            int                  serializerId     = 0;
 
     public RpcFutureResponse(Requestable requestObj, int timeout, Url serverUrl) {
         this.request = requestObj;

@@ -1,23 +1,246 @@
 package org.infinity.rpc.core.codec.impl;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.codec.AbstractCodec;
+import org.infinity.rpc.core.exception.ExceptionUtils;
+import org.infinity.rpc.core.exception.impl.RpcConfigException;
+import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
+import org.infinity.rpc.core.exception.impl.RpcInvocationException;
 import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.exchange.Exchangable;
+import org.infinity.rpc.core.server.response.impl.RpcResponse;
+import org.infinity.rpc.utilities.lang.MathUtils;
+import org.infinity.rpc.utilities.serializer.DeserializableObject;
+import org.infinity.rpc.utilities.serializer.Serializer;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.infinity.rpc.core.constant.ProtocolConstants.CODEC_VAL_V2;
+import static org.infinity.rpc.core.codec.impl.CodecHeader.HEADER_SIZE;
+import static org.infinity.rpc.core.constant.ProtocolConstants.*;
+import static org.infinity.rpc.core.constant.ServiceConstants.FORM;
+import static org.infinity.rpc.core.protocol.constants.ProtocolVersion.VERSION_2;
+import static org.infinity.rpc.core.utils.SerializerHolder.getSerializerById;
 
+@Slf4j
 @SpiName(CODEC_VAL_V2)
 public class CodecV2 extends AbstractCodec {
+    private static final byte   MASK             = 0x07;
+    private static final String M2_PATH          = "M_p";
+    private static final String M2_METHOD        = "M_m";
+    private static final String M2_METHOD_PARAMS = "M_mp";
+    private static final String M2_FORM          = "M_f";
+    private static final String M2_VERSION       = "M_v";
+    private static final String M2_PROCESS_TIME  = "M_pt";
+    private static final String M2_ERROR         = "M_e";
+    /**
+     * 调用方来源标识,等同与application
+     */
+    private static final String M2_SOURCE        = "M_s";
+    private static final String M2_MODULE        = "M_mdu";
+
     @Override
-    public byte[] encode(Channel channel, Exchangable inputObject) throws IOException {
-        return new byte[0];
+    public byte[] encode(Channel channel, Exchangable input) throws IOException {
+        try {
+            CodecHeader header = new CodecHeader();
+            byte[] body;
+            GrowableByteBuffer buf = new GrowableByteBuffer(4096);
+            // meta
+            int index = HEADER_SIZE;
+            buf.position(index);
+            // meta size
+            buf.putInt(0);
+
+            if (input instanceof RpcRequest) {
+                body = encodeRequest(channel, (RpcRequest) input, header, buf);
+            } else {
+                body = encodeResponse((RpcResponse) input, header, buf);
+            }
+
+            buf.position(buf.position() - 1);
+            int metaLength = buf.position() - index - 4;
+            buf.putInt(index, metaLength);
+
+            // body
+            if (body != null && body.length > 0) {
+                // todo: gzip body
+                buf.putInt(body.length);
+                buf.put(body);
+            } else {
+                buf.putInt(0);
+            }
+
+            // header
+            int position = buf.position();
+            buf.position(0);
+            buf.put(header.toBytes());
+            buf.position(position);
+            buf.flip();
+            byte[] result = new byte[buf.remaining()];
+            buf.get(result);
+            return result;
+        } catch (Exception e) {
+            if (ExceptionUtils.isRpcException(e)) {
+                throw (RuntimeException) e;
+            } else {
+                throw new RpcFrameworkException("Failed to encode object: " + input, e);
+            }
+        }
+    }
+
+    private byte[] encodeRequest(Channel channel, RpcRequest request, CodecHeader header, GrowableByteBuffer buf) throws IOException {
+        byte[] body = null;
+        String serializerName = channel.getProviderUrl().getOption(SERIALIZER, SERIALIZER_VAL_DEFAULT);
+        Serializer serializer = Serializer.getInstance(serializerName);
+        if (serializer == null) {
+            throw new RpcConfigException("Serializer [" + serializerName + "] does NOT exist, " +
+                    "please check whether the correct dependency is in your class path!");
+        }
+        header.setSerializerId(serializer.getSerializerId());
+        putString(buf, M2_PATH);
+        putString(buf, request.getInterfaceName());
+        putString(buf, M2_METHOD);
+        putString(buf, request.getMethodName());
+        if (request.getMethodParameters() != null) {
+            putString(buf, M2_METHOD_PARAMS);
+            putString(buf, request.getMethodParameters());
+        }
+        if (request.getOptions() != null && request.getOptions().get(FORM) != null) {
+            request.addOption(M2_FORM, request.getOptions().get(FORM));
+        }
+
+        putMap(buf, request.getOptions());
+        header.setRequestId(request.getRequestId());
+        if (request.getMethodArguments() != null) {
+            body = serializer.serializeArray(request.getMethodArguments());
+        }
+        return body;
+    }
+
+    private byte[] encodeResponse(RpcResponse response, CodecHeader header, GrowableByteBuffer buf) throws IOException {
+        byte[] body = null;
+        Serializer serializer = getSerializerById(response.getSerializerId());
+        header.setSerializerId(serializer.getSerializerId());
+
+        putString(buf, M2_PROCESS_TIME);
+        putString(buf, String.valueOf(response.getElapsedTime()));
+        if (response.getException() != null) {
+            putString(buf, M2_ERROR);
+            putString(buf, org.apache.commons.lang3.exception.ExceptionUtils.getMessage(response.getException()));
+            header.setStatus(CodecHeader.MessageStatus.EXCEPTION.getStatus());
+        }
+        putMap(buf, response.getOptions());
+        header.setRequestId(response.getRequestId());
+        header.setRequest(false);
+        if (response.getException() == null) {
+            body = serializer.serialize(response.getResultObject());
+        }
+        return body;
     }
 
     @Override
     public Object decode(Channel channel, String remoteIp, byte[] data) throws IOException {
-        return null;
+        CodecHeader header = CodecHeader.buildHeader(data);
+        Map<String, String> metaMap = new HashMap<>();
+        ByteBuffer buf = ByteBuffer.wrap(data);
+        int metaSize = buf.getInt(HEADER_SIZE);
+        int index = HEADER_SIZE + 4;
+        if (metaSize > 0) {
+            byte[] meta = new byte[metaSize];
+            buf.position(index);
+            buf.get(meta);
+            metaMap = decodeMeta(meta);
+            index += metaSize;
+        }
+        int bodySize = buf.getInt(index);
+        index += 4;
+        Object obj = null;
+        if (bodySize > 0) {
+            byte[] body = new byte[bodySize];
+            buf.position(index);
+            buf.get(body);
+            // todo: ungzip
+            // 默认自适应序列化
+            Serializer serializer = getSerializerById(header.getSerializerId());
+            obj = new DeserializableObject(serializer, body);
+        }
+        if (header.isRequest()) {
+            return decodeRequest(header, metaMap, obj);
+        } else {
+            return decodeResponse(header, metaMap, obj);
+        }
+    }
+
+    private Object decodeRequest(CodecHeader header, Map<String, String> metaMap, Object obj) {
+        RpcRequest request = new RpcRequest();
+        request.setRequestId(header.getRequestId());
+        request.setInterfaceName(metaMap.remove(M2_PATH));
+        request.setMethodName(metaMap.remove(M2_METHOD));
+        request.setMethodParameters(metaMap.remove(M2_METHOD_PARAMS));
+        request.setOptions(metaMap);
+        // todo: check usage
+        request.setProtocolVersion(VERSION_2.getVersion());
+        request.setSerializerId(header.getSerializerId());
+        if (obj != null) {
+            request.setMethodArguments(new Object[]{obj});
+        }
+        if (metaMap.get(M2_FORM) != null) {
+            request.addOption(FORM, metaMap.get(M2_FORM));
+        }
+
+        if (StringUtils.isNotBlank(metaMap.get(M2_VERSION))) {
+            request.addOption(M2_VERSION, metaMap.get(M2_VERSION));
+        }
+        return request;
+    }
+
+    private Object decodeResponse(CodecHeader header, Map<String, String> metaMap, Object obj) {
+        RpcResponse response = new RpcResponse();
+        response.setRequestId(header.getRequestId());
+        response.setElapsedTime(MathUtils.parseLong(metaMap.remove(M2_PROCESS_TIME), 0));
+        response.setOptions(metaMap);
+        if (CodecHeader.MessageStatus.NORMAL.getStatus() == header.getStatus()) {
+            // 只解析正常消息
+            response.setResultObject(obj);
+        } else {
+            String errorMsg = metaMap.remove(M2_ERROR);
+            log.error(errorMsg);
+            Exception e = new RpcInvocationException(errorMsg);
+            response.setException(e);
+        }
+        return response;
+    }
+
+    private void putString(GrowableByteBuffer buf, String content) {
+        buf.put(content.getBytes(StandardCharsets.UTF_8));
+        buf.put("\n".getBytes(StandardCharsets.UTF_8));
+    }
+
+    private void putMap(GrowableByteBuffer buf, Map<String, String> map) {
+        if (MapUtils.isNotEmpty(map)) {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                putString(buf, entry.getKey());
+                putString(buf, entry.getValue());
+            }
+        }
+    }
+
+    private Map<String, String> decodeMeta(byte[] meta) {
+        Map<String, String> map = new HashMap<>();
+        if (ArrayUtils.isNotEmpty(meta)) {
+            String[] s = new String(meta).split("\n");
+            for (int i = 0; i < s.length - 1; i++) {
+                map.put(s[i++], s[i]);
+            }
+        }
+        return map;
     }
 }

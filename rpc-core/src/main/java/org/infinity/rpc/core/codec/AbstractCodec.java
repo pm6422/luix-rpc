@@ -5,13 +5,9 @@ import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.utilities.serializer.Serializer;
 
 import java.io.*;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 public abstract class AbstractCodec implements Codec {
-
-    protected static Map<Integer, String> serializations = new ConcurrentHashMap<>();
 
     protected void checkMessagePayloadSize(int actualPayloadSize, int maxPayloadSize) {
         if (actualPayloadSize > maxPayloadSize) {

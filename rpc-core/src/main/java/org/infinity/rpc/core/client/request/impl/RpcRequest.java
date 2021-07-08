@@ -44,9 +44,9 @@ public class RpcRequest implements Requestable, Serializable {
      */
     protected            Map<String, String> options          = new ConcurrentHashMap<>();
     /**
-     * Default serialization is Hession2
+     * Default serialization is Hessian2
      */
-    protected            int                 serializeNum     = 0;
+    protected            int                 serializerId;
 
     public RpcRequest(long requestId, String interfaceName, String methodName, String methodParameters, boolean async) {
         this.requestId = requestId;

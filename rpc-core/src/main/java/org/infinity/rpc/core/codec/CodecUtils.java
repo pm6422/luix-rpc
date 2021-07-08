@@ -2,6 +2,7 @@ package org.infinity.rpc.core.codec;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.client.request.Requestable;
+import org.infinity.rpc.core.codec.impl.CodecHeader;
 import org.infinity.rpc.core.codec.impl.CodecV1;
 import org.infinity.rpc.core.constant.RpcConstants;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
@@ -22,9 +23,9 @@ public class CodecUtils {
             if (type == CodecV1.MAGIC) {
                 return encodeV1(msg, data);
             }
-//            else if (type == MotanV2Header.MAGIC) {
-//                return data;
-//            }
+            else if (type == CodecHeader.MAGIC) {
+                return data;
+            }
             else {
                 throw new RpcFrameworkException("Found invalid magic [" + type + "]");
             }

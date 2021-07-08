@@ -53,14 +53,14 @@ public interface Requestable extends Exchangable {
      *
      * @param number number
      */
-    void setSerializeNum(int number);
+    void setSerializerId(int number);
 
     /**
      * Get serialize number
      *
      * @return serialize number
      */
-    int getSerializeNum();
+    int getSerializerId();
 
     /**
      * Decide whether it is a asynchronous calling

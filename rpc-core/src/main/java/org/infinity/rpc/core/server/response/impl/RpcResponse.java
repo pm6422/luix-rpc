@@ -38,9 +38,9 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
      */
     protected            Map<String, String> options          = new ConcurrentHashMap<>();
     /**
-     * default serialization is hession2
+     *
      */
-    protected            int                 serializeNum     = 0;
+    protected            int                 serializerId;
 
     public static RpcResponse of(Responseable resp) {
         RpcResponse response = new RpcResponse();
@@ -51,7 +51,7 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
         response.setElapsedTime(resp.getElapsedTime());
         response.setTimeout(resp.getTimeout());
         response.setProtocolVersion(resp.getProtocolVersion());
-        response.setSerializeNum(resp.getSerializeNum());
+        response.setSerializerId(resp.getSerializerId());
         response.setOptions(resp.getOptions());
         resp.getTraces().forEach((key, value) -> response.addTrace(key, key));
         return response;

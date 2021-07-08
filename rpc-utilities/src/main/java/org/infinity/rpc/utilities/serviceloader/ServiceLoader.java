@@ -6,8 +6,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.utilities.concurrent.ThreadSafe;
-import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 import org.infinity.rpc.utilities.serviceloader.annotation.Spi;
+import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiScope;
 
 import java.io.BufferedReader;
@@ -272,7 +272,7 @@ public class ServiceLoader<T> {
      * @param implClass service implementation class
      * @return SPI service name
      */
-    private String getSpiServiceName(Class<?> implClass) {
+    public String getSpiServiceName(Class<?> implClass) {
         SpiName spiName = implClass.getAnnotation(SpiName.class);
         return spiName != null && StringUtils.isNotEmpty(spiName.value()) ? spiName.value() : implClass.getSimpleName();
     }
@@ -315,6 +315,17 @@ public class ServiceLoader<T> {
         } catch (Exception e) {
             throw new RuntimeException("Failed to load service instance: " + name);
         }
+    }
+
+    /**
+     * Load all service implementations
+     *
+     * @return service implementations
+     */
+    public List<T> loadAll() {
+        List<T> serviceImpls = new ArrayList<>(serviceImplClasses.size());
+        serviceImplClasses.keySet().forEach(key -> serviceImpls.add(load(key)));
+        return serviceImpls;
     }
 
     private T createSingleton(String name) throws InstantiationException, IllegalAccessException {

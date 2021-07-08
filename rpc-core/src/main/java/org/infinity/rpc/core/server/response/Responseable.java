@@ -37,12 +37,12 @@ public interface Responseable extends Exchangable {
      *
      * @param number serialization number
      */
-    void setSerializeNum(int number);
+    void setSerializerId(int number);
 
     /**
      * Get serialization number
      *
      * @return serialization number
      */
-    int getSerializeNum();
+    int getSerializerId();
 }
