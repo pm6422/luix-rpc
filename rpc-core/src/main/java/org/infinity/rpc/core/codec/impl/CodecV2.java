@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.rpc.core.codec.impl.CodecHeader.HEADER_SIZE;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.FORM;
@@ -33,35 +34,41 @@ import static org.infinity.rpc.core.utils.SerializerHolder.getSerializerById;
 @Slf4j
 @SpiName(CODEC_VAL_V2)
 public class CodecV2 extends AbstractCodec {
-    private static final byte   MASK             = 0x07;
-    private static final String M2_PATH          = "M_p";
-    private static final String M2_METHOD        = "M_m";
-    private static final String M2_METHOD_PARAMS = "M_mp";
-    private static final String M2_FORM          = "M_f";
-    private static final String M2_VERSION       = "M_v";
-    private static final String M2_PROCESS_TIME  = "M_pt";
-    private static final String M2_ERROR         = "M_e";
+    private static final byte   MASK                 = 0x07;
+    private static final String M2_PATH              = "M_p";
+    private static final String M2_METHOD            = "M_m";
+    private static final String M2_METHOD_PARAMETERS = "M_mp";
+    private static final String M2_FORM              = "M_f";
+    private static final String M2_VERSION           = "M_v";
+    private static final String M2_PROCESS_TIME      = "M_pt";
+    private static final String M2_ERROR             = "M_e";
     /**
      * 调用方来源标识,等同与application
      */
-    private static final String M2_SOURCE        = "M_s";
-    private static final String M2_MODULE        = "M_mdu";
+    private static final String M2_SOURCE            = "M_s";
+    private static final String M2_MODULE            = "M_mdu";
 
     @Override
     public byte[] encode(Channel channel, Exchangable input) throws IOException {
         try {
             CodecHeader header = new CodecHeader();
-            byte[] body;
             GrowableByteBuffer buf = new GrowableByteBuffer(4096);
             // meta
             int index = HEADER_SIZE;
             buf.position(index);
-            // meta size
             buf.putInt(0);
 
+            // Body represents arguments bytes for request or results bytes for response
+            byte[] body;
             if (input instanceof RpcRequest) {
-                body = encodeRequest(channel, (RpcRequest) input, header, buf);
+                // Encode request
+                RpcRequest request = (RpcRequest) input;
+                String providerSerializer = channel.getProviderUrl().getOption(SERIALIZER, SERIALIZER_VAL_DEFAULT);
+                // Consumer configuration over provider side
+                String serializer = defaultIfEmpty(request.getOption(SERIALIZER), providerSerializer);
+                body = encodeRequest(request, header, buf, serializer);
             } else {
+                // Encode response
                 body = encodeResponse((RpcResponse) input, header, buf);
             }
 
@@ -91,14 +98,13 @@ public class CodecV2 extends AbstractCodec {
             if (ExceptionUtils.isRpcException(e)) {
                 throw (RuntimeException) e;
             } else {
-                throw new RpcFrameworkException("Failed to encode object: " + input, e);
+                throw new RpcFrameworkException("Failed to encode input object: " + input, e);
             }
         }
     }
 
-    private byte[] encodeRequest(Channel channel, RpcRequest request, CodecHeader header, GrowableByteBuffer buf) throws IOException {
-        byte[] body = null;
-        String serializerName = channel.getProviderUrl().getOption(SERIALIZER, SERIALIZER_VAL_DEFAULT);
+    private byte[] encodeRequest(RpcRequest request, CodecHeader header, GrowableByteBuffer buf, String serializerName) throws IOException {
+        byte[] argsBytes = null;
         Serializer serializer = Serializer.getInstance(serializerName);
         if (serializer == null) {
             throw new RpcConfigException("Serializer [" + serializerName + "] does NOT exist, " +
@@ -110,7 +116,7 @@ public class CodecV2 extends AbstractCodec {
         putString(buf, M2_METHOD);
         putString(buf, request.getMethodName());
         if (request.getMethodParameters() != null) {
-            putString(buf, M2_METHOD_PARAMS);
+            putString(buf, M2_METHOD_PARAMETERS);
             putString(buf, request.getMethodParameters());
         }
         if (request.getOptions() != null && request.getOptions().get(FORM) != null) {
@@ -120,13 +126,14 @@ public class CodecV2 extends AbstractCodec {
         putMap(buf, request.getOptions());
         header.setRequestId(request.getRequestId());
         if (request.getMethodArguments() != null) {
-            body = serializer.serializeArray(request.getMethodArguments());
+            // Serialize argument arrays to bytes
+            argsBytes = serializer.serializeArray(request.getMethodArguments());
         }
-        return body;
+        return argsBytes;
     }
 
     private byte[] encodeResponse(RpcResponse response, CodecHeader header, GrowableByteBuffer buf) throws IOException {
-        byte[] body = null;
+        byte[] resultsBytes = null;
         Serializer serializer = getSerializerById(response.getSerializerId());
         header.setSerializerId(serializer.getSerializerId());
 
@@ -141,9 +148,10 @@ public class CodecV2 extends AbstractCodec {
         header.setRequestId(response.getRequestId());
         header.setRequest(false);
         if (response.getException() == null) {
-            body = serializer.serialize(response.getResult());
+            // Serialize results to bytes
+            resultsBytes = serializer.serialize(response.getResult());
         }
-        return body;
+        return resultsBytes;
     }
 
     @Override
@@ -184,7 +192,7 @@ public class CodecV2 extends AbstractCodec {
         request.setRequestId(header.getRequestId());
         request.setInterfaceName(metaMap.remove(M2_PATH));
         request.setMethodName(metaMap.remove(M2_METHOD));
-        request.setMethodParameters(metaMap.remove(M2_METHOD_PARAMS));
+        request.setMethodParameters(metaMap.remove(M2_METHOD_PARAMETERS));
         request.setOptions(metaMap);
         // todo: check usage
         request.setProtocolVersion(VERSION_2.getVersion());

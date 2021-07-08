@@ -10,6 +10,9 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_ID_DEF
 @Data
 public class CodecHeader {
     public static final short   MAGIC        = (short) 0xF1F1;
+    /**
+     * Header size
+     */
     public static final int     HEADER_SIZE  = 13;
     /**
      * Protocol version
