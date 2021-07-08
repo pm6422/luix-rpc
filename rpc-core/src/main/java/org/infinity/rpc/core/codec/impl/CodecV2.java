@@ -32,17 +32,17 @@ import static org.infinity.rpc.core.utils.SerializerHolder.getSerializerById;
 @Slf4j
 @SpiName(CODEC_VAL_V2)
 public class CodecV2 extends AbstractCodec {
-    private static final byte   MASK                 = 0x07;
-    private static final String M2_PATH              = "M_p";
-    private static final String M2_METHOD            = "M_m";
-    private static final String M2_METHOD_PARAMETERS = "M_mp";
-    private static final String M2_PROCESS_TIME      = "M_pt";
-    private static final String M2_ERROR             = "M_e";
+    private static final byte   MASK                = 0x07;
+    private static final String M_INTERFACE         = "M_i";
+    private static final String M_METHOD            = "M_m";
+    private static final String M_METHOD_PARAMETERS = "M_mp";
+    private static final String M_ELAPSED_TIME      = "M_et";
+    private static final String M_ERROR             = "M_e";
     /**
      * 调用方来源标识，同与application
      */
-    private static final String M2_SOURCE            = "M_s";
-    private static final String M2_MODULE            = "M_mdu";
+    private static final String M2_SOURCE           = "M_s";
+    private static final String M2_MODULE           = "M_mdu";
 
     @Override
     public byte[] encode(Channel channel, Exchangable input) throws IOException {
@@ -100,24 +100,31 @@ public class CodecV2 extends AbstractCodec {
     }
 
     private byte[] encodeRequest(RpcRequest request, CodecHeader header, GrowableByteBuffer metaBuf, String serializerName) throws IOException {
-        byte[] argsBytes = null;
         Serializer serializer = Serializer.getInstance(serializerName);
         if (serializer == null) {
             throw new RpcConfigException("Serializer [" + serializerName + "] does NOT exist, " +
                     "please check whether the correct dependency is in your class path!");
         }
+        // Set header
         header.setSerializerId(serializer.getSerializerId());
-        putString(metaBuf, M2_PATH);
+        header.setRequestId(request.getRequestId());
+
+        // Set meta (including options)
+        putString(metaBuf, M_INTERFACE);
         putString(metaBuf, request.getInterfaceName());
-        putString(metaBuf, M2_METHOD);
+
+        putString(metaBuf, M_METHOD);
         putString(metaBuf, request.getMethodName());
+
         if (request.getMethodParameters() != null) {
-            putString(metaBuf, M2_METHOD_PARAMETERS);
+            putString(metaBuf, M_METHOD_PARAMETERS);
             putString(metaBuf, request.getMethodParameters());
         }
-        // Set options
+
         putMap(metaBuf, request.getOptions());
-        header.setRequestId(request.getRequestId());
+
+        // Serialize method arguments to bytes
+        byte[] argsBytes = null;
         if (request.getMethodArguments() != null) {
             // Serialize argument arrays to bytes
             argsBytes = serializer.serializeArray(request.getMethodArguments());
@@ -130,10 +137,10 @@ public class CodecV2 extends AbstractCodec {
         Serializer serializer = getSerializerById(response.getSerializerId());
         header.setSerializerId(serializer.getSerializerId());
 
-        putString(metaBuf, M2_PROCESS_TIME);
+        putString(metaBuf, M_ELAPSED_TIME);
         putString(metaBuf, String.valueOf(response.getElapsedTime()));
         if (response.getException() != null) {
-            putString(metaBuf, M2_ERROR);
+            putString(metaBuf, M_ERROR);
             putString(metaBuf, org.apache.commons.lang3.exception.ExceptionUtils.getMessage(response.getException()));
             header.setStatus(CodecHeader.MessageStatus.EXCEPTION.getStatus());
         }
@@ -185,9 +192,9 @@ public class CodecV2 extends AbstractCodec {
     private Object decodeRequest(CodecHeader header, Map<String, String> metaMap, Object obj) {
         RpcRequest request = new RpcRequest();
         request.setRequestId(header.getRequestId());
-        request.setInterfaceName(metaMap.remove(M2_PATH));
-        request.setMethodName(metaMap.remove(M2_METHOD));
-        request.setMethodParameters(metaMap.remove(M2_METHOD_PARAMETERS));
+        request.setInterfaceName(metaMap.remove(M_INTERFACE));
+        request.setMethodName(metaMap.remove(M_METHOD));
+        request.setMethodParameters(metaMap.remove(M_METHOD_PARAMETERS));
         request.setOptions(metaMap);
         // todo: check usage
         request.setProtocolVersion(VERSION_2.getVersion());
@@ -201,13 +208,13 @@ public class CodecV2 extends AbstractCodec {
     private Object decodeResponse(CodecHeader header, Map<String, String> metaMap, Object result) {
         RpcResponse response = new RpcResponse();
         response.setRequestId(header.getRequestId());
-        response.setElapsedTime(MathUtils.parseLong(metaMap.remove(M2_PROCESS_TIME), 0));
+        response.setElapsedTime(MathUtils.parseLong(metaMap.remove(M_ELAPSED_TIME), 0));
         response.setOptions(metaMap);
         if (CodecHeader.MessageStatus.NORMAL.getStatus() == header.getStatus()) {
             // 解析正常消息
             response.setResult(result);
         } else {
-            String errorMsg = metaMap.remove(M2_ERROR);
+            String errorMsg = metaMap.remove(M_ERROR);
             log.error(errorMsg);
             Exception e = new RpcInvocationException(errorMsg);
             response.setException(e);
