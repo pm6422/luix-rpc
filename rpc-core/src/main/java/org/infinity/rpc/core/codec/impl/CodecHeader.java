@@ -12,7 +12,7 @@ public class CodecHeader {
     /**
      * Protocol version
      */
-    private             int     version      = 1;
+//    private             int     version      = 1;
     /**
      * Check health indicator
      */
@@ -70,9 +70,9 @@ public class CodecHeader {
 
         buf.put(msgType);
         byte vs = 0x08;
-        if (version != 1) {
-            vs = (byte) ((version << 3) & 0xf8);
-        }
+//        if (version != 1) {
+//            vs = (byte) ((version << 3) & 0xf8);
+//        }
         if (status != 0) {
             vs = (byte) (vs | (status & 0x07));
         }
@@ -113,7 +113,7 @@ public class CodecHeader {
         }
 
         b = buf.get();
-        header.setVersion((b >>> 3) & 0x1f);
+//        header.setVersion((b >>> 3) & 0x1f);
         header.setStatus(b & 0x07);
 
         b = buf.get();
