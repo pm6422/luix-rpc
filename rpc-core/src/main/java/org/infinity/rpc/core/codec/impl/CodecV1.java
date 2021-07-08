@@ -271,7 +271,7 @@ public class CodecV1 extends AbstractCodec {
         Class<?> clz = MethodParameterUtils.forName(className);
         Object result = deserialize((byte[]) input.readObject(), clz, serializer);
         if (dataType == RpcConstants.FLAG_RESPONSE) {
-            response.setResultObject(result);
+            response.setResult(result);
         } else if (dataType == RpcConstants.FLAG_RESPONSE_EXCEPTION) {
             response.setException((Exception) result);
         } else {

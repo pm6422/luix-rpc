@@ -348,7 +348,7 @@ public class ProviderStub<T> {
         try {
             // Invoke method
             Object result = method.invoke(instance, request.getMethodArguments());
-            response.setResultObject(result);
+            response.setResult(result);
         } catch (Exception e) {
             if (e.getCause() != null) {
                 response.setException(new RpcBizException("Failed to call provider stub [" + getMethodSignature(method) + "]", e.getCause()));

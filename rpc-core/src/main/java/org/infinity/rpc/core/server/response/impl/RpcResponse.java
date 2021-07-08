@@ -27,7 +27,7 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
     protected            String              group;
     protected            String              version;
     protected            int                 timeout;
-    protected            Object              resultObject;
+    protected            Object              result;
     protected            Exception           exception;
     protected            long                sendingTime;
     protected            long                receivedTime;
@@ -45,7 +45,7 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
     public static RpcResponse of(Responseable resp) {
         RpcResponse response = new RpcResponse();
         response.setRequestId(resp.getRequestId());
-        response.setResultObject(resp.getResult());
+        response.setResult(resp.getResult());
         response.setException(resp.getException());
         response.setReceivedTime(resp.getReceivedTime());
         response.setElapsedTime(resp.getElapsedTime());
@@ -59,14 +59,14 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
 
     public static RpcResponse of(Object result) {
         RpcResponse response = new RpcResponse();
-        response.setResultObject(result);
+        response.setResult(result);
         return response;
     }
 
     public RpcResponse of(long requestId, Object result) {
         RpcResponse response = new RpcResponse();
         response.setRequestId(requestId);
-        response.setResultObject(result);
+        response.setResult(result);
         return response;
     }
 
@@ -89,7 +89,7 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
                     (RuntimeException) exception :
                     new RpcInvocationException(exception.getMessage(), exception);
         }
-        return resultObject;
+        return result;
     }
 
     @Override

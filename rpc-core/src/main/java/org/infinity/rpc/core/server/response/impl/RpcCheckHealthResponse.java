@@ -15,7 +15,7 @@ public class RpcCheckHealthResponse extends RpcResponse {
     public static RpcCheckHealthResponse of(long requestId) {
         RpcCheckHealthResponse response = new RpcCheckHealthResponse();
         response.setRequestId(requestId);
-        response.setResultObject(STATUS_OK);
+        response.setResult(STATUS_OK);
         return response;
     }
 

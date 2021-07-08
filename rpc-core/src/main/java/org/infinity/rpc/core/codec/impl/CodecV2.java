@@ -141,7 +141,7 @@ public class CodecV2 extends AbstractCodec {
         header.setRequestId(response.getRequestId());
         header.setRequest(false);
         if (response.getException() == null) {
-            body = serializer.serialize(response.getResultObject());
+            body = serializer.serialize(response.getResult());
         }
         return body;
     }
@@ -209,7 +209,7 @@ public class CodecV2 extends AbstractCodec {
         response.setOptions(metaMap);
         if (CodecHeader.MessageStatus.NORMAL.getStatus() == header.getStatus()) {
             // 只解析正常消息
-            response.setResultObject(obj);
+            response.setResult(obj);
         } else {
             String errorMsg = metaMap.remove(M2_ERROR);
             log.error(errorMsg);
