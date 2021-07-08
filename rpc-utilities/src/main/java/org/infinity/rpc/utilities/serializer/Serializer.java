@@ -8,6 +8,9 @@ import java.io.IOException;
 
 @Spi(scope = SpiScope.SINGLETON)
 public interface Serializer {
+    /**
+     * kryo, hessian2, grpc-pb, json, msgpack, hprose, protobuf, simple, grpc-pb-json
+     */
     int    SERIALIZER_ID_KRYO       = 0;
     int    SERIALIZER_ID_HESSIAN2   = 1;
     String SERIALIZER_NAME_KRYO     = "kryo";

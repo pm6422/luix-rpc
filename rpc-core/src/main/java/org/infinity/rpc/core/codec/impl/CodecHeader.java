@@ -5,6 +5,8 @@ import org.infinity.rpc.core.exception.impl.RpcInvocationException;
 
 import java.nio.ByteBuffer;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER_ID_DEFAULT;
+
 @Data
 public class CodecHeader {
     public static final short   MAGIC        = (short) 0xF1F1;
@@ -40,9 +42,9 @@ public class CodecHeader {
      */
     private             int     status       = 0;
     /**
-     * Message body serializer，value range is 0 to 31. 0:hessian, 1:grpc-pb, 2:json, 3:msgpack, 4:hprose, 5:protobuf, 6:simple, 7:grpc-pb-json
+     * Message body serializer，value range is 0 to 31.
      */
-    private             int     serializerId = 1;
+    private             int     serializerId = SERIALIZER_ID_DEFAULT;
     /**
      * Request ID
      */
@@ -85,7 +87,6 @@ public class CodecHeader {
         buf.putLong(requestId);
         buf.flip();
         return buf.array();
-
     }
 
     public static CodecHeader buildHeader(byte[] headerBytes) {
