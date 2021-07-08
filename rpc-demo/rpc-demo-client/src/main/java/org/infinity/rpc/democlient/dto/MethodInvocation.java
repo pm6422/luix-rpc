@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -44,5 +45,5 @@ public class MethodInvocation implements Serializable {
     /**
      * Consumer stub attributes map
      */
-    private              Map<String, String> attributes;
+    private              Map<String, String> attributes       = new HashMap<>();
 }

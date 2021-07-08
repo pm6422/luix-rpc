@@ -59,9 +59,9 @@ public class RpcInvocationController {
             }
         }
         String beanName = ConsumerStub.buildConsumerStubBeanName(data.getInterfaceName(), attributesMap);
-        if (ConsumerStubHolder.getInstance().get().containsKey(beanName)) {
-            return ConsumerStubHolder.getInstance().get().get(beanName);
-        }
+//        if (ConsumerStubHolder.getInstance().get().containsKey(beanName)) {
+//            return ConsumerStubHolder.getInstance().get().get(beanName);
+//        }
 
         Integer requestTimeout = null;
         if (data.getAttributes().containsKey(REQUEST_TIMEOUT)) {

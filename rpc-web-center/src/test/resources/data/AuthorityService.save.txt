@@ -11,8 +11,5 @@
       "systemLevel": false,
       "enabled": true
     }
-  ],
-  "attributes": {
-    "serializer": "hessian2"
-  }
+  ]
 }
