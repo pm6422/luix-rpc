@@ -53,7 +53,7 @@ public class CodecV2 extends AbstractCodec {
         try {
             CodecHeader header = new CodecHeader();
             GrowableByteBuffer buf = new GrowableByteBuffer(4096);
-            // meta
+            // Meta
             int index = HEADER_SIZE;
             buf.position(index);
             buf.putInt(0);
@@ -181,8 +181,10 @@ public class CodecV2 extends AbstractCodec {
             obj = new DeserializableObject(serializer, body);
         }
         if (header.isRequest()) {
+            // Decode request
             return decodeRequest(header, metaMap, obj);
         } else {
+            // Decode response
             return decodeResponse(header, metaMap, obj);
         }
     }
@@ -210,14 +212,14 @@ public class CodecV2 extends AbstractCodec {
         return request;
     }
 
-    private Object decodeResponse(CodecHeader header, Map<String, String> metaMap, Object obj) {
+    private Object decodeResponse(CodecHeader header, Map<String, String> metaMap, Object result) {
         RpcResponse response = new RpcResponse();
         response.setRequestId(header.getRequestId());
         response.setElapsedTime(MathUtils.parseLong(metaMap.remove(M2_PROCESS_TIME), 0));
         response.setOptions(metaMap);
         if (CodecHeader.MessageStatus.NORMAL.getStatus() == header.getStatus()) {
-            // 只解析正常消息
-            response.setResult(obj);
+            // 解析正常消息
+            response.setResult(result);
         } else {
             String errorMsg = metaMap.remove(M2_ERROR);
             log.error(errorMsg);

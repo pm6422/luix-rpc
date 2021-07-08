@@ -68,7 +68,6 @@ public class ProviderMessageRouter implements MessageHandler {
         if (channel == null || message == null) {
             throw new RpcFrameworkException("RequestRouter handler(channel, message) params is null");
         }
-
         if (!(message instanceof Requestable)) {
             throw new RpcFrameworkException("RequestRouter message type not support: " + message.getClass());
         }
@@ -84,8 +83,10 @@ public class ProviderMessageRouter implements MessageHandler {
         }
         Method method = provider.findMethod(request.getMethodName(), request.getMethodParameters());
         fillParamDesc(request, method);
+        // Process arguments
         processLazyDeserialize(request, method);
         Responseable response = invoke(request, provider);
+        // Set serializer ID of response with request's one
         response.setSerializerId(request.getSerializerId());
         response.setProtocolVersion(request.getProtocolVersion());
         return response;
