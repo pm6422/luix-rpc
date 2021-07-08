@@ -37,6 +37,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
@@ -78,6 +79,10 @@ public class ProviderStub<T> {
      */
     @NotEmpty(message = "The [protocol] property of @Provider must NOT be empty!")
     private           String                    protocol;
+    /**
+     * Serializer used to serialize and deserialize object
+     */
+    private           String                    serializer;
     /**
      * One service interface may have multiple implementations(forms),
      * It used to distinguish between different implementations of service provider interface
@@ -260,6 +265,7 @@ public class ProviderStub<T> {
      */
     private Url createProviderUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
         Url url = Url.providerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
+        url.addOption(SERIALIZER, serializer);
         url.addOption(APP, applicationConfig.getName());
         url.addOption(HEALTH_CHECKER, healthChecker);
         url.addOption(REQUEST_TIMEOUT, requestTimeout);
@@ -267,7 +273,6 @@ public class ProviderStub<T> {
         url.addOption(MAX_PAYLOAD, maxPayload);
 
         url.addOption(CODEC, protocolConfig.getCodec());
-        url.addOption(SERIALIZER, protocolConfig.getSerializer());
         url.addOption(ENDPOINT_FACTORY, protocolConfig.getEndpointFactory());
 
         String minClientConn = protocolConfig.getMinClientConn() == null ? null : protocolConfig.getMinClientConn().toString();

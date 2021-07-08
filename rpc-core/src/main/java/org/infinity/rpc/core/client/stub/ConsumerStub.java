@@ -28,8 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
-import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_VAL_INFINITY;
-import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION;
+import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_NONE;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
@@ -66,6 +65,10 @@ public class ConsumerStub<T> {
      */
     @NotEmpty(message = "The [protocol] property of @Consumer must NOT be empty!")
     private           String         protocol;
+    /**
+     * Serializer used to serialize and deserialize object
+     */
+    private           String         serializer;
     /**
      * One service interface may have multiple implementations(forms),
      * It used to distinguish between different implementations of service provider interface
@@ -240,6 +243,7 @@ public class ConsumerStub<T> {
     private Url createConsumerUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
         url = Url.consumerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
         url.addOption(APP, applicationConfig.getName());
+        url.addOption(SERIALIZER, serializer);
         url.addOption(REQUEST_TIMEOUT, requestTimeout);
         url.addOption(RETRY_COUNT, retryCount);
         url.addOption(MAX_PAYLOAD, maxPayload);
@@ -297,14 +301,14 @@ public class ConsumerStub<T> {
                                          RegistryConfig registry, ProtocolConfig protocol, ConsumerConfig consumer,
                                          ProviderProcessable providerProcessor) {
         return create(interfaceName, application, registry, protocol, consumer, providerProcessor,
-                null, null, null, null, null);
+                null, null, null, null, null, null);
     }
 
     public static ConsumerStub<?> create(String interfaceName, ApplicationConfig application,
                                          RegistryConfig registry, ProtocolConfig protocol, ConsumerConfig consumer,
                                          ProviderProcessable providerProcessor, String providerAddresses) {
         return create(interfaceName, application, registry, protocol, consumer, providerProcessor,
-                providerAddresses, null, null, null, null);
+                providerAddresses, null, null, null, null, null);
     }
 
     public static ConsumerStub<?> create(String interfaceName, ApplicationConfig application,
@@ -312,9 +316,19 @@ public class ConsumerStub<T> {
                                          ProviderProcessable providerProcessor, String providerAddresses,
                                          String form, String version, Integer requestTimeout,
                                          Integer retryCount) {
+        return create(interfaceName, application, registry, protocol, consumer, providerProcessor,
+                providerAddresses, form, version, requestTimeout, retryCount, null);
+    }
+
+    public static ConsumerStub<?> create(String interfaceName, ApplicationConfig application,
+                                         RegistryConfig registry, ProtocolConfig protocol, ConsumerConfig consumer,
+                                         ProviderProcessable providerProcessor, String providerAddresses,
+                                         String form, String version, Integer requestTimeout,
+                                         Integer retryCount, String serializer) {
         ConsumerStub<?> consumerStub = new ConsumerStub<>();
         consumerStub.setInterfaceName(interfaceName);
         consumerStub.setProtocol(protocol.getName());
+        consumerStub.setSerializer(serializer);
         consumerStub.setInvoker(consumer.getInvoker());
         consumerStub.setFaultTolerance(consumer.getFaultTolerance());
         consumerStub.setLoadBalancer(consumer.getLoadBalancer());

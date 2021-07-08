@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
+import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER;
 import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.infinity.rpc.core.server.stub.ProviderStub.buildProviderStubBeanName;
@@ -318,6 +319,9 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
 
         String protocol = defaultIfEmpty(annotation.protocol(), protocolConfig.getName());
         addPropertyValue(builder, PROTOCOL, protocol);
+
+        String serializer = defaultIfEmpty(annotation.serializer(), protocolConfig.getSerializer());
+        addPropertyValue(builder, SERIALIZER, serializer);
 
         String form = defaultIfEmpty(annotation.form(), providerConfig.getForm());
         addPropertyValue(builder, FORM, form);

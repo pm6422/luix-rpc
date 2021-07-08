@@ -31,6 +31,7 @@ import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.rpc.core.client.stub.ConsumerStub.buildConsumerStubBeanName;
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL;
+import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER;
 import static org.infinity.rpc.core.constant.ServiceConstants.INTERFACE_CLASS;
 import static org.infinity.rpc.spring.boot.utils.AnnotationBeanDefinitionUtils.addPropertyValue;
 import static org.infinity.rpc.spring.boot.utils.ProxyUtils.getTargetClass;
@@ -235,6 +236,9 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
 
         String protocol = defaultIfEmpty(annotation.protocol(), infinityProperties.getProtocol().getName());
         addPropertyValue(builder, PROTOCOL, protocol);
+
+        String serializer = defaultIfEmpty(annotation.serializer(), infinityProperties.getProtocol().getSerializer());
+        addPropertyValue(builder, SERIALIZER, serializer);
 
         String form = defaultIfEmpty(annotation.form(), infinityProperties.getConsumer().getForm());
         addPropertyValue(builder, FORM, form);

@@ -40,6 +40,13 @@ public @interface RpcProvider {
     String protocol() default "";
 
     /**
+     * Serializer used to serialize and deserialize object
+     *
+     * @return serializer
+     */
+    String serializer() default "";
+
+    /**
      * One service interface may have multiple implementations(forms),
      * It used to distinguish between different implementations of service provider interface
      *

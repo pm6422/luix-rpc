@@ -24,6 +24,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
@@ -71,7 +72,7 @@ public class RpcInvocationController {
         ConsumerStub<?> consumerStub = ConsumerStub.create(data.getInterfaceName(), infinityProperties.getApplication(),
                 infinityProperties.getRegistry(), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
                 null, null, data.getAttributes().get(FORM), data.getAttributes().get(VERSION),
-                requestTimeout, retryCount);
+                requestTimeout, retryCount, data.getAttributes().get(SERIALIZER));
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);
         return consumerStub;
     }

@@ -12,5 +12,7 @@
       "enabled": true
     }
   ],
-  "attributes": {}
+  "attributes": {
+    "serializer": "hessian2"
+  }
 }

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 @Service
@@ -121,7 +122,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
         }
         ConsumerStub<?> consumerStub = ConsumerStub.create(resolvedInterfaceName, infinityProperties.getApplication(),
                 findRegistryConfig(registryIdentity), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, null, form, version, requestTimeout, retryCount);
+                null, null, form, version, requestTimeout, retryCount, attributes.get(SERIALIZER));
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);
         return consumerStub;
     }

@@ -18,8 +18,7 @@ import org.infinity.rpc.utilities.serializer.DeserializableResult;
 import java.lang.reflect.Method;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.RATE_LIMITER_GUAVA;
-import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION;
-import static org.infinity.rpc.core.constant.ProtocolConstants.THROW_EXCEPTION_VAL_DEFAULT;
+import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.infinity.rpc.core.utils.MethodParameterUtils.VOID;
 
@@ -47,6 +46,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         request.setMethodArguments(args);
 
         // Set some options
+        request.addOption(SERIALIZER, consumerStub.getSerializer());
         request.addOption(FORM, consumerStub.getForm());
         request.addOption(VERSION, consumerStub.getVersion());
         request.addOption(REQUEST_TIMEOUT, consumerStub.getRequestTimeout());
