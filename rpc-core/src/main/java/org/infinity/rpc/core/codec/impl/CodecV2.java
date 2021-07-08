@@ -3,7 +3,6 @@ package org.infinity.rpc.core.codec.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.request.impl.RpcRequest;
 import org.infinity.rpc.core.codec.AbstractCodec;
 import org.infinity.rpc.core.exception.ExceptionUtils;
@@ -27,7 +26,6 @@ import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.rpc.core.codec.impl.CodecHeader.HEADER_SIZE;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
-import static org.infinity.rpc.core.constant.ServiceConstants.FORM;
 import static org.infinity.rpc.core.protocol.constants.ProtocolVersion.VERSION_2;
 import static org.infinity.rpc.core.utils.SerializerHolder.getSerializerById;
 
@@ -38,12 +36,10 @@ public class CodecV2 extends AbstractCodec {
     private static final String M2_PATH              = "M_p";
     private static final String M2_METHOD            = "M_m";
     private static final String M2_METHOD_PARAMETERS = "M_mp";
-    private static final String M2_FORM              = "M_f";
-    private static final String M2_VERSION           = "M_v";
     private static final String M2_PROCESS_TIME      = "M_pt";
     private static final String M2_ERROR             = "M_e";
     /**
-     * 调用方来源标识,等同与application
+     * 调用方来源标识，同与application
      */
     private static final String M2_SOURCE            = "M_s";
     private static final String M2_MODULE            = "M_mdu";
@@ -76,7 +72,7 @@ public class CodecV2 extends AbstractCodec {
             int metaLength = buf.position() - index - 4;
             buf.putInt(index, metaLength);
 
-            // body
+            // Body
             if (body != null && body.length > 0) {
                 // todo: gzip body
                 buf.putInt(body.length);
@@ -85,7 +81,7 @@ public class CodecV2 extends AbstractCodec {
                 buf.putInt(0);
             }
 
-            // header
+            // Header
             int position = buf.position();
             buf.position(0);
             buf.put(header.toBytes());
@@ -103,7 +99,7 @@ public class CodecV2 extends AbstractCodec {
         }
     }
 
-    private byte[] encodeRequest(RpcRequest request, CodecHeader header, GrowableByteBuffer buf, String serializerName) throws IOException {
+    private byte[] encodeRequest(RpcRequest request, CodecHeader header, GrowableByteBuffer metaBuf, String serializerName) throws IOException {
         byte[] argsBytes = null;
         Serializer serializer = Serializer.getInstance(serializerName);
         if (serializer == null) {
@@ -111,20 +107,16 @@ public class CodecV2 extends AbstractCodec {
                     "please check whether the correct dependency is in your class path!");
         }
         header.setSerializerId(serializer.getSerializerId());
-        putString(buf, M2_PATH);
-        putString(buf, request.getInterfaceName());
-        putString(buf, M2_METHOD);
-        putString(buf, request.getMethodName());
+        putString(metaBuf, M2_PATH);
+        putString(metaBuf, request.getInterfaceName());
+        putString(metaBuf, M2_METHOD);
+        putString(metaBuf, request.getMethodName());
         if (request.getMethodParameters() != null) {
-            putString(buf, M2_METHOD_PARAMETERS);
-            putString(buf, request.getMethodParameters());
+            putString(metaBuf, M2_METHOD_PARAMETERS);
+            putString(metaBuf, request.getMethodParameters());
         }
-        if (request.getOptions() != null && request.getOptions().get(FORM) != null) {
-            request.addOption(M2_FORM, request.getOptions().get(FORM));
-        }
-
         // Set options
-        putMap(buf, request.getOptions());
+        putMap(metaBuf, request.getOptions());
         header.setRequestId(request.getRequestId());
         if (request.getMethodArguments() != null) {
             // Serialize argument arrays to bytes
@@ -133,19 +125,19 @@ public class CodecV2 extends AbstractCodec {
         return argsBytes;
     }
 
-    private byte[] encodeResponse(RpcResponse response, CodecHeader header, GrowableByteBuffer buf) throws IOException {
+    private byte[] encodeResponse(RpcResponse response, CodecHeader header, GrowableByteBuffer metaBuf) throws IOException {
         byte[] resultsBytes = null;
         Serializer serializer = getSerializerById(response.getSerializerId());
         header.setSerializerId(serializer.getSerializerId());
 
-        putString(buf, M2_PROCESS_TIME);
-        putString(buf, String.valueOf(response.getElapsedTime()));
+        putString(metaBuf, M2_PROCESS_TIME);
+        putString(metaBuf, String.valueOf(response.getElapsedTime()));
         if (response.getException() != null) {
-            putString(buf, M2_ERROR);
-            putString(buf, org.apache.commons.lang3.exception.ExceptionUtils.getMessage(response.getException()));
+            putString(metaBuf, M2_ERROR);
+            putString(metaBuf, org.apache.commons.lang3.exception.ExceptionUtils.getMessage(response.getException()));
             header.setStatus(CodecHeader.MessageStatus.EXCEPTION.getStatus());
         }
-        putMap(buf, response.getOptions());
+        putMap(metaBuf, response.getOptions());
         header.setRequestId(response.getRequestId());
         header.setRequest(false);
         if (response.getException() == null) {
@@ -202,13 +194,6 @@ public class CodecV2 extends AbstractCodec {
         request.setSerializerId(header.getSerializerId());
         if (obj != null) {
             request.setMethodArguments(new Object[]{obj});
-        }
-        if (metaMap.get(M2_FORM) != null) {
-            request.addOption(FORM, metaMap.get(M2_FORM));
-        }
-
-        if (StringUtils.isNotBlank(metaMap.get(M2_VERSION))) {
-            request.addOption(M2_VERSION, metaMap.get(M2_VERSION));
         }
         return request;
     }
