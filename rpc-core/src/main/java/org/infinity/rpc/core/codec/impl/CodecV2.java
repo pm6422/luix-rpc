@@ -123,6 +123,7 @@ public class CodecV2 extends AbstractCodec {
             request.addOption(M2_FORM, request.getOptions().get(FORM));
         }
 
+        // Set options
         putMap(buf, request.getOptions());
         header.setRequestId(request.getRequestId());
         if (request.getMethodArguments() != null) {
