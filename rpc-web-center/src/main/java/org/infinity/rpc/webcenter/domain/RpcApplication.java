@@ -32,7 +32,9 @@ public class RpcApplication implements Serializable {
     private String  team;
     private String  ownerMail;
     private String  env;
-    private String  jarVersion;
+    private String  infinityVersion;
+    private String  springVersion;
+    private String  springBootVersion;
     private Boolean active;
     @Transient
     private Boolean providing;

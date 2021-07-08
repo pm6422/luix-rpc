@@ -49,9 +49,17 @@ public class ApplicationConfig implements Configurable, Serializable {
      */
     private              String       env;
     /**
-     * Infinity RPC jar version
+     * Infinity version
      */
-    private              String       jarVersion       = JarUtils.VERSION;
+    private              String       infinityVersion  = JarUtils.VERSION;
+    /**
+     * Spring boot version
+     */
+    private              String       springBootVersion;
+    /**
+     * Spring version
+     */
+    private              String       springVersion;
     /**
      * Debug mode
      */

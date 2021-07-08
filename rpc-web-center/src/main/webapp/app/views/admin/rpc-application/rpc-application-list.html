@@ -25,8 +25,9 @@
                     <th class="col-sm-1">Status</th>
                     <th class="col-sm-1">Actions</th>
                     <th data-hide="all">Description</th>
-                    <th data-hide="all">Infinity RPC jar version</th>
-                    <th data-hide="all">Spring boot jar version</th>
+                    <th data-hide="all">Infinity version</th>
+                    <th data-hide="all">Spring version</th>
+                    <th data-hide="all">Spring boot version</th>
                     <th data-hide="all">Online time</th>
                 </tr>
             </thead>
@@ -54,10 +55,13 @@
                         <span>{{item.description}}</span>
                     </td>
                     <td class="break">
-                        <span>{{item.jarVersion}}</span>
+                        <span>{{item.infinityVersion}}</span>
                     </td>
                     <td class="break">
-                        <span>{{item.springBootJarVersion}}</span>
+                        <span>{{item.springVersion}}</span>
+                    </td>
+                    <td class="break">
+                        <span>{{item.springBootVersion}}</span>
                     </td>
                     <td class="break">
                         <span>{{item.createdTime | date:'yyyy/MM/dd HH:mm:ss'}}</span>
