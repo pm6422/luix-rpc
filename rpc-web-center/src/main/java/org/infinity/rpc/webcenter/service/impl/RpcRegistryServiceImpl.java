@@ -26,8 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.rpc.core.constant.ProtocolConstants.SERIALIZER;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
+import static org.infinity.rpc.utilities.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
 
 @Service
 @Slf4j
@@ -120,9 +122,11 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
         if (ConsumerStubHolder.getInstance().get().containsKey(beanName)) {
             return ConsumerStubHolder.getInstance().get().get(beanName);
         }
+
+        String serializer = defaultIfEmpty(attributes.get(SERIALIZER), SERIALIZER_NAME_HESSIAN2);
         ConsumerStub<?> consumerStub = ConsumerStub.create(resolvedInterfaceName, infinityProperties.getApplication(),
                 findRegistryConfig(registryIdentity), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, null, form, version, requestTimeout, retryCount, attributes.get(SERIALIZER));
+                null, null, form, version, requestTimeout, retryCount, serializer);
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);
         return consumerStub;
     }
