@@ -35,6 +35,7 @@ angular
     .controller('ControlController', ControlController)
     .controller('RpcApplicationListController', RpcApplicationListController)
     .controller('RpcServerListController', RpcServerListController)
+    .controller('RpcServerDetailsController', RpcServerDetailsController)
     .controller('RpcServiceListController', RpcServiceListController)
     .controller('RpcProviderListController', RpcProviderListController)
     .controller('RpcProviderDetailsController', RpcProviderDetailsController)
@@ -1512,6 +1513,17 @@ function RpcServerListController($state, $rootScope, AlertUtils, ParseLinksUtils
             vm.transition();
         }
     }
+}
+/**
+ * RpcServerDetailsController
+ */
+function RpcServerDetailsController($state, $stateParams, entity) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
+    vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
+    vm.entity = entity;
 }
 /**
  * RpcServiceListController

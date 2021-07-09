@@ -11,7 +11,7 @@ public interface RpcApplicationService {
 
     Page<RpcApplication> find(Pageable pageable, String registryIdentity, String name, Boolean active);
 
-    RpcApplication loadApplication(Url registryIdentity, Url url);
-
     void inactivate(String registryIdentity, String name);
+
+    RpcApplication loadApplication(Url registryUrl, Url url);
 }

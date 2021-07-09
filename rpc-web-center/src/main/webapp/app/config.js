@@ -881,6 +881,24 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
+        .state('rpc.rpc-server-list.view', {
+            url: '/view/:id',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/rpc-server/rpc-server-details.html',
+                    controller: 'RpcServerDetailsController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'View'
+            },
+            resolve: {
+                entity: ['RpcServerService', '$stateParams', function (RpcServerService, $stateParams) {
+                    return RpcServerService.get({extension: $stateParams.id}).$promise;
+                }]
+            }
+        })
         .state('rpc.rpc-service-list', {
             url: '/rpc-service-list?page&sort&interfaceName',
             views: {

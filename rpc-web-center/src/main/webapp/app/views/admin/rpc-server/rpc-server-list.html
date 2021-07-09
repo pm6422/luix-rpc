@@ -28,6 +28,7 @@
                     <td>{{entity.address}}</td>
                     <td>
                         <div class="btn-group">
+                            <button class="btn-white btn btn-xs" ui-sref=".view({id: entity.id})">View</button>
                             <button class="btn-white btn btn-xs" ng-disabled="!entity.providing"
                                     ui-sref="rpc.rpc-provider-list({address: entity.address})"
                                     uib-tooltip="Discover all providers of this server">Providers</button>

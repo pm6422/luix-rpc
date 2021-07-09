@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.webcenter.domain.RpcServer;
+import org.infinity.rpc.webcenter.exception.NoDataFoundException;
+import org.infinity.rpc.webcenter.repository.RpcServerRepository;
 import org.infinity.rpc.webcenter.service.RpcConsumerService;
 import org.infinity.rpc.webcenter.service.RpcProviderService;
 import org.infinity.rpc.webcenter.service.RpcServerService;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,11 +28,20 @@ import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeade
 public class RpcServerController {
 
     @Resource
-    private RpcServerService   rpcServerService;
+    private RpcServerRepository rpcServerRepository;
     @Resource
-    private RpcProviderService rpcProviderService;
+    private RpcServerService    rpcServerService;
     @Resource
-    private RpcConsumerService rpcConsumerService;
+    private RpcProviderService  rpcProviderService;
+    @Resource
+    private RpcConsumerService  rpcConsumerService;
+
+    @ApiOperation("find server by ID")
+    @GetMapping("/api/rpc-server/{id}")
+    public ResponseEntity<RpcServer> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
+        RpcServer domain = rpcServerRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        return ResponseEntity.ok(domain);
+    }
 
     @ApiOperation("find server list")
     @GetMapping("/api/rpc-server/servers")

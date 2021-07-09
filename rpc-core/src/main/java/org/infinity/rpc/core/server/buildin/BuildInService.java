@@ -6,19 +6,27 @@ import org.infinity.rpc.core.server.stub.MethodData;
 import java.util.List;
 
 public interface BuildInService {
-    String METHOD_GET_APPLICATION_CONFIG = "getApplicationConfig";
-    String METHOD_GET_SYSTEM_TIME        = "getSystemTime";
-    String METHOD_CHECK_HEALTH           = "checkHealth";
-    String METHOD_GET_METHODS            = "getMethods";
-    String METHOD_ACTIVATE               = "activate";
-    String METHOD_DEACTIVATE             = "deactivate";
+    String METHOD_GET_APPLICATION_INFO = "getApplicationInfo";
+    String METHOD_GET_SERVER_INFO      = "getServerInfo";
+    String METHOD_GET_SYSTEM_TIME      = "getSystemTime";
+    String METHOD_CHECK_HEALTH         = "checkHealth";
+    String METHOD_GET_METHODS          = "getMethods";
+    String METHOD_ACTIVATE             = "activate";
+    String METHOD_DEACTIVATE           = "deactivate";
 
     /**
-     * Get application configuration
+     * Get application information
      *
-     * @return application configuration
+     * @return application information
      */
-    ApplicationConfig getApplicationConfig();
+    ApplicationConfig getApplicationInfo();
+
+    /**
+     * Get server information
+     *
+     * @return server information
+     */
+    ServerInfo getServerInfo();
 
     /**
      * Get system time

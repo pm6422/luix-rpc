@@ -30,7 +30,7 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_APPLICATION_CONFIG;
+import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_APPLICATION_INFO;
 import static org.infinity.rpc.webcenter.domain.RpcApplication.FIELD_ACTIVE;
 import static org.infinity.rpc.webcenter.domain.RpcApplication.FIELD_NAME;
 import static org.infinity.rpc.webcenter.domain.RpcProvider.FIELD_REGISTRY_IDENTITY;
@@ -75,31 +75,6 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
     }
 
     @Override
-    public RpcApplication loadApplication(Url registryIdentity, Url url) {
-        RpcRegistryService rpcRegistryService = applicationContext.getBean(RpcRegistryService.class);
-        RegistryConfig registryConfig = rpcRegistryService.findRegistryConfig(registryIdentity.getIdentity());
-        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
-
-        ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
-                infinityProperties.getApplication(), registryConfig,
-                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, url.getAddress(), null, null, 10000, 2);
-        UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
-        // Send a remote request to get ApplicationConfig
-        ApplicationConfig applicationConfig = (ApplicationConfig) invocationHandler.invoke(METHOD_GET_APPLICATION_CONFIG);
-
-        RpcApplication rpcApplication = new RpcApplication();
-        BeanUtils.copyProperties(applicationConfig, rpcApplication);
-        String id = generateMd5Id(rpcApplication.getName(), registryIdentity.getIdentity());
-        rpcApplication.setId(id);
-        rpcApplication.setRegistryIdentity(registryIdentity.getIdentity());
-        rpcApplication.setActive(true);
-        rpcApplication.setCreatedTime(Instant.now());
-        rpcApplication.setModifiedTime(rpcApplication.getCreatedTime());
-        return rpcApplication;
-    }
-
-    @Override
     public void inactivate(String registryIdentity, String name) {
         if (!rpcProviderService.existsApplication(registryIdentity, name, true)
                 && !rpcConsumerService.existsApplication(registryIdentity, name, true)) {
@@ -111,5 +86,30 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
             application.get().setActive(false);
             rpcApplicationRepository.save(application.get());
         }
+    }
+
+    @Override
+    public RpcApplication loadApplication(Url registryUrl, Url url) {
+        RpcRegistryService rpcRegistryService = applicationContext.getBean(RpcRegistryService.class);
+        RegistryConfig registryConfig = rpcRegistryService.findRegistryConfig(registryUrl.getIdentity());
+        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
+
+        ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
+                infinityProperties.getApplication(), registryConfig,
+                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
+                null, url.getAddress(), null, null, 10000, 2);
+        UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
+        // Send a remote request to get ApplicationConfig
+        ApplicationConfig applicationConfig = (ApplicationConfig) invocationHandler.invoke(METHOD_GET_APPLICATION_INFO);
+
+        RpcApplication rpcApplication = new RpcApplication();
+        BeanUtils.copyProperties(applicationConfig, rpcApplication);
+        String id = generateMd5Id(rpcApplication.getName(), registryUrl.getIdentity());
+        rpcApplication.setId(id);
+        rpcApplication.setRegistryIdentity(registryUrl.getIdentity());
+        rpcApplication.setActive(true);
+        rpcApplication.setCreatedTime(Instant.now());
+        rpcApplication.setModifiedTime(rpcApplication.getCreatedTime());
+        return rpcApplication;
     }
 }

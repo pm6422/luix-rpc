@@ -14,7 +14,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_NONE;
 import static org.infinity.rpc.spring.boot.config.InfinityProperties.PREFIX;
 import static org.infinity.rpc.spring.boot.utils.PropertySourcesUtils.readProperties;
@@ -65,8 +64,6 @@ public class InfinityProperties implements InitializingBean {
         application.init();
         application.setSpringBootVersion(SpringBootVersion.getVersion());
         application.setSpringVersion(SpringVersion.getVersion());
-        application.setJdkVendor(defaultString(System.getProperty("java.vm.vendor")));
-        application.setJdkVersion(defaultString(System.getProperty("java.runtime.version")));
         getProtocolList().forEach(ProtocolConfig::init);
         getRegistryList().forEach(RegistryConfig::init);
         provider.init();

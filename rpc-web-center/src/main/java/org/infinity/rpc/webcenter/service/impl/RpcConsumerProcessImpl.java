@@ -53,7 +53,7 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
                 rpcConsumerRepository.save(rpcConsumer);
 
                 // Insert server
-                insertServer(registryUrl, rpcConsumer);
+                insertServer(registryUrl, consumerUrl, rpcConsumer);
 
                 // Insert service
                 insertService(registryUrl, rpcConsumer);
@@ -80,9 +80,9 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
         }
     }
 
-    private void insertServer(Url registryUrl, RpcConsumer rpcConsumer) {
+    private void insertServer(Url registryUrl, Url consumerUrl, RpcConsumer rpcConsumer) {
         if (!rpcServerRepository.existsById(generateMd5Id(rpcConsumer.getAddress(), registryUrl.getIdentity()))) {
-            RpcServer rpcServer = RpcServer.of(rpcConsumer.getAddress(), registryUrl);
+            RpcServer rpcServer = rpcServerService.loadServer(registryUrl, consumerUrl);
             try {
                 rpcServerRepository.insert(rpcServer);
             } catch (DuplicateKeyException ex) {

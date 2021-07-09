@@ -1,5 +1,7 @@
 package org.infinity.rpc.webcenter.service;
 
+import org.infinity.rpc.core.url.Url;
+import org.infinity.rpc.webcenter.domain.RpcApplication;
 import org.infinity.rpc.webcenter.domain.RpcServer;
 import org.infinity.rpc.webcenter.domain.RpcService;
 import org.springframework.data.domain.Page;
@@ -12,4 +14,6 @@ public interface RpcServerService {
     Page<RpcServer> find(Pageable pageable, String registryIdentity, String address);
 
     void inactivate(String registryIdentity, String address);
+
+    RpcServer loadServer(Url registryUrl, Url url);
 }

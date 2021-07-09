@@ -56,7 +56,7 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
                 rpcProviderRepository.save(rpcProvider);
 
                 // Insert server
-                insertServer(registryUrl, rpcProvider);
+                insertServer(registryUrl, providerUrl, rpcProvider);
 
                 // Insert service
                 insertService(registryUrl, rpcProvider);
@@ -83,9 +83,9 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
         }
     }
 
-    private void insertServer(Url registryUrl, RpcProvider rpcProvider) {
+    private void insertServer(Url registryUrl, Url providerUrl, RpcProvider rpcProvider) {
         if (!rpcServerRepository.existsById(generateMd5Id(rpcProvider.getAddress(), registryUrl.getIdentity()))) {
-            RpcServer rpcServer = RpcServer.of(rpcProvider.getAddress(), registryUrl);
+            RpcServer rpcServer = rpcServerService.loadServer(registryUrl, providerUrl);
             try {
                 rpcServerRepository.insert(rpcServer);
             } catch (DuplicateKeyException ex) {
