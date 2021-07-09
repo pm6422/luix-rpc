@@ -61,6 +61,14 @@ public class ApplicationConfig implements Configurable, Serializable {
      */
     private              String       springVersion;
     /**
+     * JDK vendor
+     */
+    private              String       jdkVendor;
+    /**
+     * JDK version
+     */
+    private              String       jdkVersion;
+    /**
      * Debug mode
      */
     private              boolean      debugMode        = false;

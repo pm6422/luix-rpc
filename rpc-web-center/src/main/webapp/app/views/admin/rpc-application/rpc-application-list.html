@@ -28,6 +28,8 @@
                     <th data-hide="all">Infinity version</th>
                     <th data-hide="all">Spring version</th>
                     <th data-hide="all">Spring boot version</th>
+                    <th data-hide="all">JDK vendor</th>
+                    <th data-hide="all">JDK version</th>
                     <th data-hide="all">Online time</th>
                 </tr>
             </thead>
@@ -62,6 +64,12 @@
                     </td>
                     <td class="break">
                         <span>{{item.springBootVersion}}</span>
+                    </td>
+                    <td class="break">
+                        <span>{{item.jdkVendor}}</span>
+                    </td>
+                    <td class="break">
+                        <span>{{item.jdkVersion}}</span>
                     </td>
                     <td class="break">
                         <span>{{item.createdTime | date:'yyyy/MM/dd HH:mm:ss'}}</span>
