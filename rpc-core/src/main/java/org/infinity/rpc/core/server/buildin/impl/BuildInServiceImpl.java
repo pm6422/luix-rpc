@@ -13,6 +13,7 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
+import static org.infinity.rpc.utilities.statistics.StatisticsUtils.getMemoryStatistic;
 
 public class BuildInServiceImpl implements BuildInService {
     @Override
@@ -23,8 +24,15 @@ public class BuildInServiceImpl implements BuildInService {
     @Override
     public ServerInfo getServerInfo() {
         ServerInfo serverInfo = new ServerInfo();
+        serverInfo.setOsName(defaultString(System.getProperty("os.name")));
+        serverInfo.setOsVersion(defaultString(System.getProperty("os.version")));
+
+        serverInfo.setTimeZone(defaultString(System.getProperty("user.timezone")));
         serverInfo.setJdkVendor(defaultString(System.getProperty("java.vm.vendor")));
         serverInfo.setJdkVersion(defaultString(System.getProperty("java.runtime.version")));
+
+        serverInfo.setCpuCore(Runtime.getRuntime().availableProcessors());
+        serverInfo.setMemoryStatistic(getMemoryStatistic());
         return serverInfo;
     }
 

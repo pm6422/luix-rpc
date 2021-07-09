@@ -4,8 +4,11 @@ import lombok.Data;
 
 @Data
 public class ServerInfo {
+    private String osName;
     private String osVersion;
+    private String timeZone;
     private String jdkVendor;
     private String jdkVersion;
-    private String cpuCore;
+    private int    cpuCore;
+    private String memoryStatistic;
 }

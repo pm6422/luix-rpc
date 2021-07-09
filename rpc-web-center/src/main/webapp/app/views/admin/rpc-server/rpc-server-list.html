@@ -20,16 +20,20 @@
             <thead>
                 <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
                     <th sort-by-directive="address"><span>Address</span> <span class="fa fa-sort"></span></th>
-                    <th sort-by-directive="jdkVendor"><span>JDK vendor</span> <span class="fa fa-sort"></span></th>
-                    <th sort-by-directive="jdkVersion"><span>JDK version</span> <span class="fa fa-sort"></span></th>
+                    <th sort-by-directive="osName"><span>OS name</span> <span class="fa fa-sort"></span></th>
+                    <th sort-by-directive="osVersion"><span>OS version</span> <span class="fa fa-sort"></span></th>
+                    <th sort-by-directive="cpuCore"><span>CPU cores</span> <span class="fa fa-sort"></span></th>
+                    <th sort-by-directive="memoryStatistic"><span>Memory statistic</span> <span class="fa fa-sort"></span></th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="entity in vm.entities track by entity.id">
                     <td>{{entity.address}}</td>
-                    <td>{{entity.jdkVendor}}</td>
-                    <td>{{entity.jdkVersion}}</td>
+                    <td>{{entity.osName}}</td>
+                    <td>{{entity.osVersion}}</td>
+                    <td>{{entity.cpuCore}}</td>
+                    <td>{{entity.memoryStatistic}}</td>
                     <td>
                         <div class="btn-group">
                             <button class="btn-white btn btn-xs" ui-sref=".view({id: entity.id})">View</button>
