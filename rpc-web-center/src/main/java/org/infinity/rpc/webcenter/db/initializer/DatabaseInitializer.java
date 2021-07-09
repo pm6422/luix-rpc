@@ -146,10 +146,6 @@ public class DatabaseInitializer {
                 15, rpc.getId());
         mongoTemplate.save(rpcConsumerList);
 
-
-        AdminMenu governance = new AdminMenu(APP_NAME, "governance", "Governance", 1, "governance", 20, null);
-        mongoTemplate.save(governance);
-
         AdminMenu userAuthority = new AdminMenu(APP_NAME, "user-authority", "用户权限", 1, "user-authority", 100, null);
         mongoTemplate.save(userAuthority);
 
@@ -210,8 +206,6 @@ public class DatabaseInitializer {
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcProviderList.getId()));
 
         mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, rpcConsumerList.getId()));
-
-        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, governance.getId()));
 
 //        mongoTemplate.save(AuthorityAdminMenu.of(Authority.ADMIN, userAuthority.getId()));
 //
