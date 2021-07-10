@@ -82,24 +82,29 @@ public class RpcServerServiceImpl implements RpcServerService {
 
     @Override
     public RpcServer loadServer(Url registryUrl, Url url) {
+        return loadServer(registryUrl.getIdentity(), url.getAddress());
+    }
+
+    @Override
+    public RpcServer loadServer(String registryIdentity, String address) {
         RpcRegistryService rpcRegistryService = applicationContext.getBean(RpcRegistryService.class);
-        RegistryConfig registryConfig = rpcRegistryService.findRegistryConfig(registryUrl.getIdentity());
+        RegistryConfig registryConfig = rpcRegistryService.findRegistryConfig(registryIdentity);
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
 
         ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
                 infinityProperties.getApplication(), registryConfig,
                 infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, url.getAddress(), null, null, 10000, 2);
+                null, address, null, null, 10000, 2);
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         // Send a remote request to get ApplicationConfig
         ServerInfo serverInfo = (ServerInfo) invocationHandler.invoke(METHOD_GET_SERVER_INFO);
 
         RpcServer rpcServer = new RpcServer();
         BeanUtils.copyProperties(serverInfo, rpcServer);
-        String id = generateMd5Id(url.getAddress(), registryUrl.getIdentity());
+        String id = generateMd5Id(address, registryIdentity);
         rpcServer.setId(id);
-        rpcServer.setRegistryIdentity(registryUrl.getIdentity());
-        rpcServer.setAddress(url.getAddress());
+        rpcServer.setRegistryIdentity(registryIdentity);
+        rpcServer.setAddress(address);
         rpcServer.setActive(true);
         return rpcServer;
     }

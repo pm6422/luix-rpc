@@ -36,11 +36,14 @@ public class RpcServerController {
     @Resource
     private RpcConsumerService  rpcConsumerService;
 
-    @ApiOperation("find server by ID")
+    @ApiOperation("find server by ID in real time")
     @GetMapping("/api/rpc-server/{id}")
     public ResponseEntity<RpcServer> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
         RpcServer domain = rpcServerRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
-        return ResponseEntity.ok(domain);
+        RpcServer rpcServer = rpcServerService.loadServer(domain.getRegistryIdentity(), domain.getAddress());
+        rpcServer.setId(domain.getId());
+        rpcServerRepository.save(rpcServer);
+        return ResponseEntity.ok(rpcServer);
     }
 
     @ApiOperation("find server list")

@@ -16,4 +16,6 @@ public interface RpcServerService {
     void inactivate(String registryIdentity, String address);
 
     RpcServer loadServer(Url registryUrl, Url url);
+
+    RpcServer loadServer(String registryIdentity, String address);
 }
