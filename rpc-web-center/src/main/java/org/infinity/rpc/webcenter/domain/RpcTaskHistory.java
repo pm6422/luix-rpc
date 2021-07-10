@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.time.Instant;
 
@@ -17,46 +18,66 @@ import java.time.Instant;
 @Data
 @NoArgsConstructor
 public class RpcTaskHistory implements Serializable {
-    private static final long    serialVersionUID = 564976464702808036L;
+    private static final long     serialVersionUID = 564976464702808036L;
     @Id
-    private              String  id;
+    private              String   id;
     /**
      * Task name
      */
     @Indexed
-    private              String  name;
+    private              String   name;
     /**
-     * Spring bean name
+     * Registry identity
      */
-    private              String  beanName;
+    @NotEmpty
+    private              String   registryIdentity;
+    /**
+     * Interface name
+     * interfaceName or providerUrl must have value
+     */
+    private              String   interfaceName;
+    /**
+     * Provider url
+     * interfaceName or providerUrl must have value
+     */
+    private              String   providerUrl;
+    /**
+     * Method name. e.g, save
+     */
+    @NotEmpty
+    private              String   methodName;
+    /**
+     * Method parameter list. e.g, ["org.infinity.rpc.democommon.domain.Authority"]
+     */
+    private              String[] methodParamTypes;
     /**
      * Method arguments JSON string
      */
-    private              String  argumentsJson;
+    private              String   argumentsJson;
     /**
      * Cron expression
      */
-    private              String  cronExpression;
+    private              String   cronExpression;
     /**
      * Execution time in milliseconds
      */
-    private              Long    elapsed;
+    private              Long     elapsed;
     /**
      * Indicates whether execute task successfully ot not
      */
-    private              Boolean success;
+    private              Boolean  success;
     /**
      * Failure reason
      */
-    private              String  reason;
+    private              String   reason;
     /**
      * Created time
      */
     @CreatedDate
-    private              Instant createdTime;
+    private              Instant  createdTime;
     /**
      * Delete records at a specific time automatically by mongoDB
      */
     @Indexed(expireAfterSeconds = 0)
-    private              Instant expiryTime;
+    private              Instant  expiryTime;
 }

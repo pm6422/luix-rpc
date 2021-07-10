@@ -21,39 +21,57 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class RpcTask extends AbstractAuditableDomain implements Serializable {
-    private static final long    serialVersionUID = 8878535528271740314L;
+    private static final long     serialVersionUID = 8878535528271740314L;
     /**
      * Task name
      */
     @Indexed(unique = true)
-    private              String  name;
+    private              String   name;
     /**
-     * Spring bean name
+     * Registry identity
      */
     @NotEmpty
-    @Indexed(unique = true)
-    private              String  beanName;
+    private              String   registryIdentity;
+    /**
+     * Interface name
+     * interfaceName or providerUrl must have value
+     */
+    private              String   interfaceName;
+    /**
+     * Provider url
+     * interfaceName or providerUrl must have value
+     */
+    private              String   providerUrl;
+    /**
+     * Method name. e.g, save
+     */
+    @NotEmpty
+    private              String   methodName;
+    /**
+     * Method parameter list. e.g, ["org.infinity.rpc.democommon.domain.Authority"]
+     */
+    private              String[] methodParamTypes;
     /**
      * Method arguments JSON string
      */
-    private              String  argumentsJson;
+    private              String   argumentsJson;
     /**
      * Cron expression
      * https://cron.qqe2.com
      */
     @NotEmpty
-    private              String  cronExpression;
+    private              String   cronExpression;
     /**
      * Indicates whether execute task on all hosts or one host
      */
-    private              boolean allHostsRun;
+    private              boolean  allHostsRun;
     /**
      * Remarks
      */
-    private              String  remark;
+    private              String   remark;
     /**
      * Enabled
      */
     @NotNull
-    private              Boolean enabled;
+    private              Boolean  enabled;
 }

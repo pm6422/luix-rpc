@@ -63,9 +63,9 @@ public class RpcTaskController {
     @GetMapping("/api/tasks")
     public ResponseEntity<List<RpcTask>> find(Pageable pageable,
                                               @ApiParam(value = "Task name") @RequestParam(value = "name", required = false) String name,
-                                              @ApiParam(value = "Bean name") @RequestParam(value = "beanName", required = false) String beanName,
+                                              @ApiParam(value = "Interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName,
                                               @ApiParam(value = "Method name") @RequestParam(value = "methodName", required = false) String methodName) {
-        Page<RpcTask> tasks = taskService.find(pageable, name, beanName, methodName);
+        Page<RpcTask> tasks = taskService.find(pageable, name, interfaceName, methodName);
         return ResponseEntity.ok().headers(generatePageHeaders(tasks)).body(tasks.getContent());
     }
 

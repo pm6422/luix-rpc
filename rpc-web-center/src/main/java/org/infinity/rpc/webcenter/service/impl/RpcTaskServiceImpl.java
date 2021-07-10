@@ -2,12 +2,15 @@ package org.infinity.rpc.webcenter.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.infinity.rpc.core.client.proxy.Proxy;
+import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.id.IdGenerator;
 import org.infinity.rpc.webcenter.domain.RpcTask;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.RpcTaskHistoryRepository;
 import org.infinity.rpc.webcenter.repository.RpcTaskLockRepository;
 import org.infinity.rpc.webcenter.repository.RpcTaskRepository;
+import org.infinity.rpc.webcenter.service.RpcRegistryService;
 import org.infinity.rpc.webcenter.service.RpcTaskService;
 import org.infinity.rpc.webcenter.task.CronTaskRegistrar;
 import org.infinity.rpc.webcenter.task.TaskRunnable;
@@ -32,13 +35,11 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
     @Resource
     private RpcTaskLockRepository    taskLockRepository;
     @Resource
+    private RpcRegistryService       rpcRegistryService;
+    @Resource
     private CronTaskRegistrar        cronTaskRegistrar;
-
-    @Override
-    public void refresh() throws Exception {
-        cronTaskRegistrar.destroy();
-        run(null);
-    }
+    @Resource
+    private InfinityProperties       infinityProperties;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -50,37 +51,27 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
         }
 
         for (RpcTask task : enabledTasks) {
-            TaskRunnable runnable = TaskRunnable.builder()
-                    .taskHistoryRepository(taskHistoryRepository)
-                    .taskLockRepository(taskLockRepository)
-                    .name(task.getName())
-                    .beanName(task.getBeanName())
-                    .argumentsJson(task.getArgumentsJson())
-                    .cronExpression(task.getCronExpression())
-                    .allHostsRun(task.isAllHostsRun())
-                    .build();
+            TaskRunnable runnable = createTaskRunnable(task);
             cronTaskRegistrar.addCronTask(runnable, task.getCronExpression());
         }
         log.info("Loaded all tasks");
     }
 
     @Override
+    public void refresh() throws Exception {
+        cronTaskRegistrar.destroy();
+        run(null);
+    }
+
+    @Override
     public RpcTask insert(RpcTask domain) {
         domain.setName("T" + IdGenerator.generateShortId());
-        RpcTask savedOne = taskRepository.save(domain);
-        if (Boolean.TRUE.equals(savedOne.getEnabled())) {
-            TaskRunnable runnable = TaskRunnable.builder()
-                    .taskHistoryRepository(taskHistoryRepository)
-                    .taskLockRepository(taskLockRepository)
-                    .name(savedOne.getName())
-                    .beanName(savedOne.getBeanName())
-                    .argumentsJson(savedOne.getArgumentsJson())
-                    .cronExpression(savedOne.getCronExpression())
-                    .allHostsRun(savedOne.isAllHostsRun())
-                    .build();
-            cronTaskRegistrar.addCronTask(runnable, savedOne.getCronExpression());
+        RpcTask savedTask = taskRepository.save(domain);
+        if (Boolean.TRUE.equals(savedTask.getEnabled())) {
+            TaskRunnable runnable = createTaskRunnable(savedTask);
+            cronTaskRegistrar.addCronTask(runnable, savedTask.getCronExpression());
         }
-        return savedOne;
+        return savedTask;
     }
 
     @Override
@@ -90,29 +81,13 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
 
         // Remove before adding
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
-            TaskRunnable runnable = TaskRunnable.builder()
-                    .taskHistoryRepository(taskHistoryRepository)
-                    .taskLockRepository(taskLockRepository)
-                    .name(existingOne.getName())
-                    .beanName(existingOne.getBeanName())
-                    .argumentsJson(existingOne.getArgumentsJson())
-                    .cronExpression(existingOne.getCronExpression())
-                    .allHostsRun(existingOne.isAllHostsRun())
-                    .build();
+            TaskRunnable runnable = createTaskRunnable(existingOne);
             cronTaskRegistrar.removeCronTask(runnable);
         }
 
         // Add a new one
         if (Boolean.TRUE.equals(savedOne.getEnabled())) {
-            TaskRunnable runnable = TaskRunnable.builder()
-                    .taskHistoryRepository(taskHistoryRepository)
-                    .taskLockRepository(taskLockRepository)
-                    .name(savedOne.getName())
-                    .beanName(savedOne.getBeanName())
-                    .argumentsJson(savedOne.getArgumentsJson())
-                    .cronExpression(savedOne.getCronExpression())
-                    .allHostsRun(savedOne.isAllHostsRun())
-                    .build();
+            TaskRunnable runnable = createTaskRunnable(savedOne);
             cronTaskRegistrar.addCronTask(runnable, domain.getCronExpression());
         }
     }
@@ -122,15 +97,7 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
         RpcTask existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         taskRepository.deleteById(id);
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
-            TaskRunnable runnable = TaskRunnable.builder()
-                    .taskHistoryRepository(taskHistoryRepository)
-                    .taskLockRepository(taskLockRepository)
-                    .name(existingOne.getName())
-                    .beanName(existingOne.getBeanName())
-                    .argumentsJson(existingOne.getArgumentsJson())
-                    .cronExpression(existingOne.getCronExpression())
-                    .allHostsRun(existingOne.isAllHostsRun())
-                    .build();
+            TaskRunnable runnable = createTaskRunnable(existingOne);
             cronTaskRegistrar.removeCronTask(runnable);
         }
     }
@@ -138,15 +105,7 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
     @Override
     public void startOrPause(String id) {
         RpcTask existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
-        TaskRunnable runnable = TaskRunnable.builder()
-                .taskHistoryRepository(taskHistoryRepository)
-                .taskLockRepository(taskLockRepository)
-                .name(existingOne.getName())
-                .beanName(existingOne.getBeanName())
-                .argumentsJson(existingOne.getArgumentsJson())
-                .cronExpression(existingOne.getCronExpression())
-                .allHostsRun(existingOne.isAllHostsRun())
-                .build();
+        TaskRunnable runnable = createTaskRunnable(existingOne);
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
             cronTaskRegistrar.addCronTask(runnable, existingOne.getCronExpression());
         } else {
@@ -154,11 +113,29 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
         }
     }
 
+    private TaskRunnable createTaskRunnable(RpcTask task) {
+        return TaskRunnable.builder()
+                .taskHistoryRepository(taskHistoryRepository)
+                .taskLockRepository(taskLockRepository)
+                .rpcRegistryService(rpcRegistryService)
+                .proxyFactory(Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory()))
+                .name(task.getName())
+                .registryIdentity(task.getRegistryIdentity())
+                .interfaceName(task.getInterfaceName())
+                .providerUrl(task.getProviderUrl())
+                .methodName(task.getMethodName())
+                .methodParamTypes(task.getMethodParamTypes())
+                .argumentsJson(task.getArgumentsJson())
+                .cronExpression(task.getCronExpression())
+                .allHostsRun(task.isAllHostsRun())
+                .build();
+    }
+
     @Override
-    public Page<RpcTask> find(Pageable pageable, String name, String beanName, String methodName) {
+    public Page<RpcTask> find(Pageable pageable, String name, String interfaceName, String methodName) {
         RpcTask probe = new RpcTask();
         probe.setName(name);
-        probe.setBeanName(beanName);
+        probe.setInterfaceName(interfaceName);
         // Ignore query parameter if it has a null value
         ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
         return taskRepository.findAll(Example.of(probe, matcher), pageable);
