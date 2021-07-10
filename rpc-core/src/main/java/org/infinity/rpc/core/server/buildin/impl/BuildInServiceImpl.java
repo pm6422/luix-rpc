@@ -28,17 +28,14 @@ public class BuildInServiceImpl implements BuildInService {
         serverInfo.setOsVersion(defaultString(System.getProperty("os.version")));
 
         serverInfo.setTimeZone(defaultString(System.getProperty("user.timezone")));
+        serverInfo.setSystemTime(ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+
         serverInfo.setJdkVendor(defaultString(System.getProperty("java.vm.vendor")));
         serverInfo.setJdkVersion(defaultString(System.getProperty("java.runtime.version")));
 
         serverInfo.setCpuCore(Runtime.getRuntime().availableProcessors());
         serverInfo.setMemoryStatistic(getMemoryStatistic());
         return serverInfo;
-    }
-
-    @Override
-    public String getSystemTime() {
-        return ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date());
     }
 
     @Override

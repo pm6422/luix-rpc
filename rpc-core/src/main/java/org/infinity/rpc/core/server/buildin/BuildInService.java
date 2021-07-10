@@ -8,7 +8,6 @@ import java.util.List;
 public interface BuildInService {
     String METHOD_GET_APPLICATION_INFO = "getApplicationInfo";
     String METHOD_GET_SERVER_INFO      = "getServerInfo";
-    String METHOD_GET_SYSTEM_TIME      = "getSystemTime";
     String METHOD_CHECK_HEALTH         = "checkHealth";
     String METHOD_GET_METHODS          = "getMethods";
     String METHOD_ACTIVATE             = "activate";
@@ -27,13 +26,6 @@ public interface BuildInService {
      * @return server information
      */
     ServerInfo getServerInfo();
-
-    /**
-     * Get system time
-     *
-     * @return system time of the server
-     */
-    String getSystemTime();
 
     /**
      * Check health status
