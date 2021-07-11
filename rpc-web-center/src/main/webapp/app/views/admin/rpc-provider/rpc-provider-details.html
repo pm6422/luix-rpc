@@ -142,35 +142,45 @@
                                 </div>
                             </div>
                         </uib-tab>
-                        <uib-tab heading="Timing tasks">
-                            <table class="table table-striped">
+                        <uib-tab heading="Tasks">
+                            <div class="m-b-md">
+                                <div class="btn-group pull-right">
+                                    <button class="btn-white btn btn-sm" ng-click="vm.addTask(vm.entity)">Add</button>
+                                </div>
+                            </div>
+                            <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
                                 <thead>
                                 <tr>
-                                    <th>Status</th>
-                                    <th>Title</th>
-                                    <th>Start Time</th>
-                                    <th>End Time</th>
-                                    <th>Comments</th>
+                                    <th class="col-sm-1" data-toggle="true">Name</th>
+                                    <th class="col-sm-1">Interface name</th>
+                                    <th class="col-sm-1">Method name</th>
+                                    <th class="col-sm-1">Cron expression</th>
+                                    <th class="col-sm-1">Run on all hosts</th>
+                                    <th class="col-sm-1">Enabled</th>
+                                    <th class="col-sm-1">Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr on-footable-finish-render ng-repeat="item in vm.items">
+                                    <td><span>{{item.name}}</span></td>
+                                    <td><span>{{item.interfaceName}}</span></td>
+                                    <td><span>{{item.methodName}}</span></td>
+                                    <td><span>{{item.cronExpression}}</span></td>
+                                    <td><span>{{item.allHostsRun}}</span></td>
                                     <td>
-                                        <span class="label label-primary"><i class="fa fa-check"></i> Completed</span>
+                                        <span class="label label-danger" ng-click="vm.setEnabled(entity, true)"
+                                              ng-show="!entity.enabled"
+                                              style="cursor: pointer;">false</span>
+                                        <span class="label label-primary" ng-click="vm.setEnabled(entity, false)"
+                                              ng-show="entity.enabled"
+                                              style="cursor: pointer;">true</span>
                                     </td>
                                     <td>
-                                        Create project in webapp
-                                    </td>
-                                    <td>
-                                        12.07.2014 10:10:1
-                                    </td>
-                                    <td>
-                                        14.07.2014 10:16:36
-                                    </td>
-                                    <td>
-                                        <p class="small">
-                                            Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable.
-                                        </p>
+                                        <div class="btn-group">
+                                            <button class="btn-white btn btn-xs" ui-sref=".edit({id: entity.id})">Edit</button>
+                                            <button class="btn-white btn btn-xs" ng-click="vm.del(entity.id)">Delete</button>
+                                            <button class="btn-white btn btn-xs" ng-click="vm.goToHistory(entity.name)">History</button>
+                                        </div>
                                     </td>
                                 </tr>
                                 </tbody>
