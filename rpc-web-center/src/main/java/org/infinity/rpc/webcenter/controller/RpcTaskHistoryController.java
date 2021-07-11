@@ -3,6 +3,7 @@ package org.infinity.rpc.webcenter.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.webcenter.domain.RpcTaskHistory;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.RpcTaskHistoryRepository;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.trimToNull;
 import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
@@ -43,11 +45,11 @@ public class RpcTaskHistoryController {
                                                      @ApiParam(value = "Method signature") @RequestParam(value = "methodSignature", required = false) String methodSignature) {
         RpcTaskHistory probe = new RpcTaskHistory();
         probe.setRegistryIdentity(registryIdentity);
-        probe.setName(name);
-        probe.setInterfaceName(interfaceName);
-        probe.setForm(form);
-        probe.setVersion(version);
-        probe.setMethodSignature(methodSignature);
+        probe.setName(trimToNull(name));
+        probe.setInterfaceName(trimToNull(interfaceName));
+        probe.setForm(trimToNull(form));
+        probe.setVersion(trimToNull(version));
+        probe.setMethodSignature(trimToNull(methodSignature));
         // Ignore query parameter if it has a null value
         ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
         Page<RpcTaskHistory> histories = rpcTaskHistoryRepository.findAll(Example.of(probe, matcher), pageable);

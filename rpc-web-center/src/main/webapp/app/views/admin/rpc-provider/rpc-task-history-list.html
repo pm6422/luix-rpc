@@ -7,13 +7,13 @@
                         <div class="form-group">
                             <label class="control-label" for="name">Task name</label>
                             <input type="text" id="name" class="form-control" ng-model="vm.criteria.name"
-                                   ng-keydown="vm.checkPressEnter($event)">
+                                   ng-keydown="vm.checkTaskHistoryNamePressEnter($event)">
                         </div>
                     </div>
                 </div>
                 <table class="table table-striped">
                     <thead>
-                    <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
+                    <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.taskHistoryTransition()">
                         <th>Method signature</th>
                         <th>Method arguments</th>
                         <th>Elapsed (ms)</th>

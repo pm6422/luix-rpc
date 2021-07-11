@@ -1873,14 +1873,14 @@ function RpcTaskHistoryListController($state, $rootScope, AlertUtils, ParseLinks
     vm.links = null;
     vm.loadAll = loadAll;
     vm.loadPage = loadPage;
-    vm.checkPressEnter = checkPressEnter;
+    vm.checkTaskHistoryNamePressEnter = checkTaskHistoryNamePressEnter;
     vm.page = 1;
     vm.totalItems = null;
     vm.entities = [];
     vm.predicate = pagingParams.predicate;
     vm.reverse = pagingParams.ascending;
     vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
-    vm.transition = transition;
+    vm.taskHistoryTransition = taskHistoryTransition;
     vm.criteria = criteria;
     vm.close = close;
 
@@ -1912,21 +1912,17 @@ function RpcTaskHistoryListController($state, $rootScope, AlertUtils, ParseLinks
 
     function loadPage(page) {
         vm.page = page;
-        vm.transition();
+        vm.taskHistoryTransition();
     }
 
-    function transition() {
-        $state.transitionTo($state.$current, {
-            page: vm.page,
-            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
-            name: vm.criteria.name
-        });
+    function taskHistoryTransition() {
+        loadAll();
     }
 
-    function checkPressEnter($event) {
+    function checkTaskHistoryNamePressEnter($event) {
         //按下enter键重新查询数据
         if ($event.keyCode == 13) {
-            vm.transition();
+            vm.taskHistoryTransition();
         }
     }
 
