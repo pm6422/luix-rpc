@@ -43,7 +43,8 @@ angular
     .factory('RpcServerService', RpcServerService)
     .factory('RpcServiceService', RpcServiceService)
     .factory('RpcProviderService', RpcProviderService)
-    .factory('RpcConsumerService', RpcConsumerService);
+    .factory('RpcConsumerService', RpcConsumerService)
+    .factory('RpcTaskService', RpcTaskService);
 
 /**
  * StateHandler
@@ -1416,6 +1417,25 @@ function RpcConsumerService($resource) {
                 return data;
             }
         }
+    });
+    return service;
+}
+/**
+ * RpcTaskService
+ */
+function RpcTaskService($resource) {
+    var service = $resource('api/rpc-task/tasks/:id', {}, {
+        'query': {method: 'GET', isArray: true},
+        'get': {
+            method: 'GET',
+            transformResponse: function (data) {
+                data = angular.fromJson(data);
+                return data;
+            }
+        },
+        'create': {method: 'POST'},
+        'update': {method: 'PUT'},
+        'del': {method: 'DELETE'}
     });
     return service;
 }

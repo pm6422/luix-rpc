@@ -10,7 +10,6 @@ import org.infinity.rpc.webcenter.domain.RpcTask;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.RpcTaskRepository;
 import org.infinity.rpc.webcenter.service.RpcTaskService;
-import org.infinity.rpc.webcenter.task.Taskable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +43,7 @@ public class RpcTaskController {
     private ApplicationContext applicationContext;
 
     @ApiOperation("create task")
-    @PostMapping("/api/tasks")
+    @PostMapping("/api/rpc-task/tasks")
     public ResponseEntity<Void> create(@ApiParam(value = "task", required = true) @Valid @RequestBody RpcTask domain) {
         log.debug("REST request to create task: {}", domain);
         if (StringUtils.isNotEmpty(domain.getArgumentsJson())) {
@@ -61,7 +59,7 @@ public class RpcTaskController {
     }
 
     @ApiOperation("find task list")
-    @GetMapping("/api/tasks")
+    @GetMapping("/api/rpc-task/tasks")
     public ResponseEntity<List<RpcTask>> find(Pageable pageable,
                                               @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
                                               @ApiParam(value = "Task name(fuzzy query)") @RequestParam(value = "name", required = false) String name,
@@ -74,14 +72,14 @@ public class RpcTaskController {
     }
 
     @ApiOperation("find task by id")
-    @GetMapping("/api/tasks/{id}")
+    @GetMapping("/api/rpc-task/tasks/{id}")
     public ResponseEntity<RpcTask> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
         RpcTask task = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         return ResponseEntity.ok(task);
     }
 
     @ApiOperation("update task")
-    @PutMapping("/api/tasks")
+    @PutMapping("/api/rpc-task/tasks")
     public ResponseEntity<Void> update(@ApiParam(value = "new task", required = true) @Valid @RequestBody RpcTask domain) {
         log.debug("REST request to update task: {}", domain);
         if (StringUtils.isNotEmpty(domain.getArgumentsJson())) {
@@ -96,16 +94,10 @@ public class RpcTaskController {
     }
 
     @ApiOperation(value = "delete task by id", notes = "The data may be referenced by other data, and some problems may occur after deletion")
-    @DeleteMapping("/api/tasks/{id}")
+    @DeleteMapping("/api/rpc-task/tasks/{id}")
     public ResponseEntity<Void> delete(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
         log.debug("REST request to delete task: {}", id);
         taskService.delete(id);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", id)).build();
-    }
-
-    @ApiOperation("find task bean names")
-    @GetMapping("/api/tasks/beans")
-    public ResponseEntity<List<String>> findBeans() {
-        return ResponseEntity.ok().body(Arrays.asList(applicationContext.getBeanNamesForType(Taskable.class)));
     }
 }

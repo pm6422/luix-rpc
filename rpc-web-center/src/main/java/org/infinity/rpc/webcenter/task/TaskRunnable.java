@@ -19,7 +19,6 @@ import org.springframework.util.StopWatch;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.Date;
 
 import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
@@ -65,7 +64,7 @@ public class TaskRunnable implements Runnable {
             taskLockRepository.save(taskLock);
         }
 
-        log.info("Executing timing task {}.{}({}) at {}", interfaceName, Taskable.METHOD_NAME, argumentsJson,
+        log.info("Executing timing task {}.{}({}) at {}", interfaceName, methodName, argumentsJson,
                 ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -97,19 +96,19 @@ public class TaskRunnable implements Runnable {
             taskHistory.setSuccess(false);
             taskHistory.setReason(ex.getMessage());
             log.error(String.format("Failed to execute timing task %s.%s(%s)",
-                    interfaceName, Taskable.METHOD_NAME, argumentsJson), ex);
+                    interfaceName, methodName, argumentsJson), ex);
         } finally {
             stopWatch.stop();
             long elapsed = stopWatch.getTotalTimeMillis();
             if (elapsed < SECOND) {
                 log.info("Executed timing task {}.{}({}) with {}ms",
-                        interfaceName, Taskable.METHOD_NAME, argumentsJson, elapsed);
+                        interfaceName, methodName, argumentsJson, elapsed);
             } else if (elapsed < MINUTE) {
                 log.info("Executed timing task {}.{}({}) with {}s",
-                        interfaceName, Taskable.METHOD_NAME, argumentsJson, elapsed / 1000);
+                        interfaceName, methodName, argumentsJson, elapsed / 1000);
             } else {
                 log.info("Executed timing task {}.{}({}) with {}m",
-                        interfaceName, Taskable.METHOD_NAME, argumentsJson, elapsed / (1000 * 60));
+                        interfaceName, methodName, argumentsJson, elapsed / (1000 * 60));
             }
 
             taskHistory.setElapsed(elapsed);

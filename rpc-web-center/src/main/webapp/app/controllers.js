@@ -1667,7 +1667,7 @@ function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUti
 /**
  * RpcProviderDetailsController
  */
-function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, entity, RpcServiceService, RpcProviderService) {
+function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, entity, RpcServiceService, RpcProviderService, RpcTaskService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -1677,6 +1677,9 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, e
     vm.argsDisabled = true;
     vm.checkProgress = 0;
     vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url});
+    vm.tasks = RpcTaskService.query({registryIdentity: $rootScope.selectedRegistryIdentity,
+        interfaceName: vm.entity.interfaceName, form: vm.entity.form, version: vm.entity.version});
+
     vm.argsPlaceholder = '[\n' +
         '    {}\n' +
         ']';
