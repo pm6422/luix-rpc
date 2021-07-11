@@ -1445,7 +1445,7 @@ function RpcApplicationListController($state, $rootScope, RpcApplicationService)
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.items = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity});;
+    vm.items = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity});
 }
 /**
  * RpcServerListController

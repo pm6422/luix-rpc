@@ -152,7 +152,6 @@
                                 <thead>
                                 <tr>
                                     <th class="col-sm-1" data-toggle="true">Name</th>
-                                    <th class="col-sm-1">Interface name</th>
                                     <th class="col-sm-1">Method name</th>
                                     <th class="col-sm-1">Cron expression</th>
                                     <th class="col-sm-1">Run on all hosts</th>
@@ -161,25 +160,17 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr on-footable-finish-render ng-repeat="item in vm.items">
-                                    <td><span>{{item.name}}</span></td>
-                                    <td><span>{{item.interfaceName}}</span></td>
-                                    <td><span>{{item.methodName}}</span></td>
-                                    <td><span>{{item.cronExpression}}</span></td>
-                                    <td><span>{{item.allHostsRun}}</span></td>
-                                    <td>
-                                        <span class="label label-danger" ng-click="vm.setEnabled(entity, true)"
-                                              ng-show="!entity.enabled"
-                                              style="cursor: pointer;">false</span>
-                                        <span class="label label-primary" ng-click="vm.setEnabled(entity, false)"
-                                              ng-show="entity.enabled"
-                                              style="cursor: pointer;">true</span>
-                                    </td>
+                                <tr on-footable-finish-render ng-repeat="task in vm.tasks">
+                                    <td><span>{{task.name}}</span></td>
+                                    <td><span>{{task.methodName}}</span></td>
+                                    <td><span>{{task.cronExpression}}</span></td>
+                                    <td><span>{{task.allHostsRun}}</span></td>
+                                    <td><span>{{task.enabled}}</span></td>
                                     <td>
                                         <div class="btn-group">
-                                            <button class="btn-white btn btn-xs" ui-sref=".edit({id: entity.id})">Edit</button>
-                                            <button class="btn-white btn btn-xs" ng-click="vm.del(entity.id)">Delete</button>
-                                            <button class="btn-white btn btn-xs" ng-click="vm.goToHistory(entity.name)">History</button>
+                                            <button class="btn-white btn btn-xs" ui-sref=".edit({id: task.id})">Edit</button>
+                                            <button class="btn-white btn btn-xs" ng-click="vm.del(task.id)">Delete</button>
+                                            <button class="btn-white btn btn-xs" ng-click="vm.goToHistory(task.name)">History</button>
                                         </div>
                                     </td>
                                 </tr>
