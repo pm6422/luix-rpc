@@ -37,10 +37,10 @@
                             <button class="btn-white btn btn-xs" ui-sref=".view({id: entity.id})">View</button>
                             <button class="btn-white btn btn-xs" ng-disabled="!entity.providing"
                                     ui-sref="rpc.rpc-provider-list({address: entity.address})"
-                                    uib-tooltip="Discover all providers of this server">Providers</button>
+                                    uib-tooltip="List all providers of this server">Providers</button>
                             <button class="btn-white btn btn-xs" ng-disabled="!entity.consuming"
                                     ui-sref="rpc.rpc-consumer-list({address: entity.address})"
-                                    uib-tooltip="Discover all consumers of this server">Consumers</button>
+                                    uib-tooltip="List all consumers of this server">Consumers</button>
                         </div>
                     </td>
                 </tr>
