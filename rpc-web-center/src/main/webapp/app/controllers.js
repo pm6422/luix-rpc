@@ -1866,7 +1866,7 @@ function RpcTaskDialogController($rootScope, $state, $stateParams, $uibModalInst
 /**
  * RpcTaskHistoryListController
  */
-function RpcTaskHistoryListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcTaskHistoryService) {
+function RpcTaskHistoryListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, $uibModalInstance, pagingParams, criteria, RpcTaskHistoryService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -1882,6 +1882,7 @@ function RpcTaskHistoryListController($state, AlertUtils, ParseLinksUtils, PAGIN
     vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
     vm.transition = transition;
     vm.criteria = criteria;
+    vm.close = close;
 
     vm.loadAll();
 
@@ -1890,6 +1891,7 @@ function RpcTaskHistoryListController($state, AlertUtils, ParseLinksUtils, PAGIN
             page: pagingParams.page - 1,
             size: vm.itemsPerPage,
             sort: sort(),
+            registryIdentity: $rootScope.selectedRegistryIdentity,
             name: vm.criteria.name
         }, function (result, headers) {
             vm.links = ParseLinksUtils.parse(headers('link'));
@@ -1926,6 +1928,10 @@ function RpcTaskHistoryListController($state, AlertUtils, ParseLinksUtils, PAGIN
         if ($event.keyCode == 13) {
             vm.transition();
         }
+    }
+
+    function close() {
+        $uibModalInstance.dismiss('cancel');
     }
 }
 /**

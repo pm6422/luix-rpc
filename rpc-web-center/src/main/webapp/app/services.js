@@ -44,7 +44,8 @@ angular
     .factory('RpcServiceService', RpcServiceService)
     .factory('RpcProviderService', RpcProviderService)
     .factory('RpcConsumerService', RpcConsumerService)
-    .factory('RpcTaskService', RpcTaskService);
+    .factory('RpcTaskService', RpcTaskService)
+    .factory('RpcTaskHistoryService', RpcTaskHistoryService);
 
 /**
  * StateHandler

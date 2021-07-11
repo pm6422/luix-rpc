@@ -134,6 +134,7 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
                 .version(task.getVersion())
                 .methodName(task.getMethodName())
                 .methodParamTypes(task.getMethodParamTypes())
+                .methodSignature(task.getMethodSignature())
                 .argumentsJson(task.getArgumentsJson())
                 .cronExpression(task.getCronExpression())
                 .allHostsRun(task.isAllHostsRun())

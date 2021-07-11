@@ -44,6 +44,7 @@ public class TaskRunnable implements Runnable {
     private final           String                   version;
     private final           String                   methodName;
     private final           String[]                 methodParamTypes;
+    private final           String                   methodSignature;
     private final           String                   argumentsJson;
     private final           String                   cronExpression;
     private final           boolean                  allHostsRun;
@@ -76,6 +77,7 @@ public class TaskRunnable implements Runnable {
         taskHistory.setVersion(version);
         taskHistory.setMethodName(methodName);
         taskHistory.setMethodParamTypes(methodParamTypes);
+        taskHistory.setMethodSignature(methodSignature);
         taskHistory.setArgumentsJson(argumentsJson);
         taskHistory.setCronExpression(cronExpression);
         // Automatically delete records after 60 days
