@@ -14,21 +14,17 @@
                 <table class="table table-striped">
                     <thead>
                     <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
-                        <th sort-by-directive="name"><span>Task name</span> <span class="fa fa-sort"></span></th>
                         <th>Method signature</th>
                         <th>Method arguments</th>
-                        <th>Cron expression</th>
-                        <th>Elapsed</th>
+                        <th>Elapsed (ms)</th>
                         <th sort-by-directive="success"><span>Success</span> <span class="fa fa-sort"></span></th>
                         <th sort-by-directive="createdTime"><span>Executing time</span> <span class="fa fa-sort"></span></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="entity in vm.entities track by entity.id">
-                        <td>{{entity.name}}</td>
                         <td>{{entity.methodSignature}}</td>
                         <td>{{entity.argumentsJson}}</td>
-                        <td>{{entity.cronExpression}}</td>
                         <td>{{entity.elapsed}}</td>
                         <td>{{entity.success}}</td>
                         <td>{{entity.createdTime | date:'yyyy/MM/dd HH:mm:ss'}}</td>
