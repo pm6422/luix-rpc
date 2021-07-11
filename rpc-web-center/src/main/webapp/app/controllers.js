@@ -39,6 +39,7 @@ angular
     .controller('RpcServiceListController', RpcServiceListController)
     .controller('RpcProviderListController', RpcProviderListController)
     .controller('RpcProviderDetailsController', RpcProviderDetailsController)
+    .controller('RpcTaskDialogController', RpcTaskDialogController)
     .controller('RpcConsumerListController', RpcConsumerListController)
     .controller('AppListController', AppListController)
     .controller('AppDialogController', AppDialogController)
@@ -1756,6 +1757,42 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, e
             function (response) {
                 vm.entity.active = true;
             });
+    }
+}
+
+/**
+ * RpcTaskDialogController
+ */
+function RpcTaskDialogController($state, $stateParams, $uibModalInstance, RpcTaskService, entity) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.mode = $state.current.data.mode;
+    vm.entity = entity;
+    vm.isSaving = false;
+    vm.save = save;
+    vm.cancel = cancel;
+
+    function save() {
+        vm.isSaving = true;
+        if (vm.mode == 'edit') {
+            RpcTaskService.update(vm.entity, onSaveSuccess, onSaveError);
+        } else {
+            RpcTaskService.create(vm.entity, onSaveSuccess, onSaveError);
+        }
+    }
+
+    function onSaveSuccess(result) {
+        vm.isSaving = false;
+        $uibModalInstance.close(result);
+    }
+
+    function onSaveError(result) {
+        vm.isSaving = false;
+    }
+
+    function cancel() {
+        $uibModalInstance.dismiss('cancel');
     }
 }
 /**

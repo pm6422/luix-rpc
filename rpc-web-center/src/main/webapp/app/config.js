@@ -1003,6 +1003,37 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
+        .state('rpc.rpc-provider-list.view.create-task', {
+            url: '/create-task',
+            data: {
+                pageTitle: 'Create task',
+                mode: 'create'
+            },
+            onEnter: ['$state', '$uibModal', function ($state, $uibModal) {
+                $uibModal.open({
+                    templateUrl: 'app/views/admin/rpc-provider/rpc-task-dialog.html',
+                    controller: 'RpcTaskDialogController',
+                    controllerAs: 'vm',
+                    backdrop: 'static',
+                    size: 'lg',
+                    resolve: {
+                        entity: {
+                            id: null,
+                            name: null,
+                            beanName: null,
+                            argument: null,
+                            cronExpression: null,
+                            remark: null,
+                            enabled: true
+                        }
+                    }
+                }).result.then(function () {
+                    $state.go('^', null, {reload: true});
+                }, function () {
+                    $state.go('^');
+                });
+            }]
+        })
         .state('rpc.rpc-consumer-list', {
             url: '/rpc-consumer-list?page&sort&application&interfaceName&address',
             views: {
