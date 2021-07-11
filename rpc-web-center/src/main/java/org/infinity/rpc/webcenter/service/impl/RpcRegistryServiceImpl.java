@@ -85,6 +85,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
         String version = null;
         Integer requestTimeout = null;
         Integer retryCount = null;
+        String providerAddress = null;
         Map<String, Object> attributesMap = new HashMap<>(0);
 
         if (StringUtils.isNotEmpty(providerUrlStr)) {
@@ -95,6 +96,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
             version = providerUrl.getVersion();
             requestTimeout = providerUrl.containsOption(REQUEST_TIMEOUT) ? providerUrl.getIntOption(REQUEST_TIMEOUT) : null;
             retryCount = providerUrl.containsOption(RETRY_COUNT) ? providerUrl.getIntOption(RETRY_COUNT) : null;
+            providerAddress = providerUrl.getAddress();
         } else {
             // Invocation after discovering addresses
             resolvedInterfaceName = interfaceName;
@@ -128,7 +130,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
         String serializer = defaultIfEmpty(attributes.get(SERIALIZER), SERIALIZER_NAME_HESSIAN2);
         ConsumerStub<?> consumerStub = ConsumerStub.create(resolvedInterfaceName, infinityProperties.getApplication(),
                 findRegistryConfig(registryIdentity), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, null, form, version, requestTimeout, retryCount, serializer);
+                null, providerAddress, form, version, requestTimeout, retryCount, serializer);
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);
         return consumerStub;
     }

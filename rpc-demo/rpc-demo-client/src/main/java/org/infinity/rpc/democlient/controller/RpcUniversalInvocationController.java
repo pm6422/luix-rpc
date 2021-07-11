@@ -39,7 +39,7 @@ public class RpcUniversalInvocationController {
     @Resource
     private InfinityProperties infinityProperties;
 
-    @ApiOperation("universal invocation")
+    @ApiOperation("discover address invocation")
     @PostMapping("/api/rpc/universal-invocation")
     public ResponseEntity<Object> universalInvoke(@ApiParam(value = "file", required = true) @RequestPart MultipartFile file) throws IOException {
         String input = StreamUtils.copyToString(file.getInputStream(), Charset.defaultCharset());

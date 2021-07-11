@@ -47,7 +47,7 @@ public class RpcUniversalInvocationController {
         return ResponseEntity.ok().body(result);
     }
 
-    @ApiOperation("direct address invocation by file")
+    @ApiOperation("discover address invocation by file")
     @PostMapping("/api/rpc-invocation/invoke-by-file")
     public ResponseEntity<Object> invokeByFile(@ApiParam(value = "file", required = true) @RequestPart MultipartFile file) throws IOException {
         String input = StreamUtils.copyToString(file.getInputStream(), Charset.defaultCharset());
