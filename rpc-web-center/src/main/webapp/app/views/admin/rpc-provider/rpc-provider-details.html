@@ -21,34 +21,9 @@
             </div>
             <div class="col-lg-6">
                 <dl class="dl-horizontal">
-                    <dt>Actions:</dt>
-                    <dd>
-                        <div class="btn-group ">
-                            <button class="btn-white btn btn-xs" ng-disabled="!vm.entity.consuming"
-                                    ui-sref="rpc.rpc-consumer-list({interfaceName: vm.entity.interfaceName})"
-                                    uib-tooltip="Discover all consumers of this service">{{vm.entity.consuming ? 'Go consumers' : 'No consumer'}}</button>
-                            <button class="btn-danger btn btn-xs" ng-click="vm.deactivate(vm.entity)"
-                                    uib-tooltip="Take offline and cannot be accessed by other apps" ng-disabled="!vm.entity.active">Deactivate</button>
-                            <button class="btn-primary btn btn-xs" ng-click="vm.activate(vm.entity)"
-                                    uib-tooltip="Take online and can be accessed by other apps" ng-disabled="vm.entity.active">Activate</button>
-                            <button class="btn-white btn btn-xs" ui-sref="^">Back</button>
-                        </div>
-                    </dd>
-                </dl>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-6">
-                <dl class="dl-horizontal">
                     <dt>Status:</dt>
                     <dd ng-show="vm.entity.active"><span class="label label-primary">Active</span></dd>
                     <dd ng-show="!vm.entity.active"><span class="label label-danger">Inactive</span></dd>
-                </dl>
-            </div>
-            <div class="col-lg-6">
-                <dl class="dl-horizontal">
-                    <dt>Online time:</dt>
-                    <dd>{{vm.entity.modifiedTime | date:'yyyy/MM/dd HH:mm:ss'}}</dd>
                 </dl>
             </div>
         </div>
@@ -80,6 +55,22 @@
                     <dt>URL:</dt>
                     <dd>{{vm.entity.url}}</dd>
                 </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="m-b-md">
+                    <div class="btn-group pull-right">
+                        <button class="btn-white btn btn-sm" ng-disabled="!vm.entity.consuming"
+                                ui-sref="rpc.rpc-consumer-list({interfaceName: vm.entity.interfaceName})"
+                                uib-tooltip="Discover all consumers of this service">{{vm.entity.consuming ? 'Go consumers' : 'No consumer'}}</button>
+                        <button class="btn-danger btn btn-sm" ng-click="vm.deactivate(vm.entity)"
+                                uib-tooltip="Take offline and cannot be accessed by other apps" ng-disabled="!vm.entity.active">Deactivate</button>
+                        <button class="btn-primary btn btn-sm" ng-click="vm.activate(vm.entity)"
+                                uib-tooltip="Take online and can be accessed by other apps" ng-disabled="vm.entity.active">Activate</button>
+                        <button class="btn-white btn btn-sm" ui-sref="^">Back</button>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row m-t-sm">
