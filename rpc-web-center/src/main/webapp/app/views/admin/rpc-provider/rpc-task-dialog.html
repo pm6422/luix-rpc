@@ -5,6 +5,10 @@
         <h4 class="modal-title">{{vm.pageTitle}}</h4>
     </div>
     <div class="modal-body">
+        <div class="form-group">
+            <label class="control-label">Interface</label>
+            <input type="text" class="form-control" name="name" ng-model="vm.provider.interfaceName" disabled>
+        </div>
         <div class="form-group" ng-hide="vm.mode == 'create'">
             <label class="control-label">Task name</label>
             <input type="text" class="form-control" name="name" ng-model="vm.entity.name" disabled>

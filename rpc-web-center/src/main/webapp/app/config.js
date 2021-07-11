@@ -1033,6 +1033,31 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 });
             }]
         })
+        .state('rpc.rpc-provider-list.view.edit-task', {
+            url: '/edit-task/:taskId',
+            data: {
+                pageTitle: 'Edit task',
+                mode: 'edit'
+            },
+            onEnter: ['$state', '$stateParams', '$uibModal', function ($state, $stateParams, $uibModal) {
+                $uibModal.open({
+                    templateUrl: 'app/views/admin/rpc-provider/rpc-task-dialog.html',
+                    controller: 'RpcTaskDialogController',
+                    controllerAs: 'vm',
+                    backdrop: 'static',
+                    size: 'lg',
+                    resolve: {
+                        entity: ['RpcTaskService', function (RpcTaskService) {
+                            return RpcTaskService.get({id: $stateParams.taskId}).$promise;
+                        }]
+                    }
+                }).result.then(function () {
+                    $state.go('^', null, {reload: true});
+                }, function () {
+                    $state.go('^');
+                });
+            }]
+        })
         .state('rpc.rpc-consumer-list', {
             url: '/rpc-consumer-list?page&sort&application&interfaceName&address',
             views: {
