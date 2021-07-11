@@ -66,8 +66,9 @@ public class RpcTaskController {
                                               @ApiParam(value = "Interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName,
                                               @ApiParam(value = "Form") @RequestParam(value = "form", required = false) String form,
                                               @ApiParam(value = "Version") @RequestParam(value = "version", required = false) String version,
-                                              @ApiParam(value = "Method name") @RequestParam(value = "methodName", required = false) String methodName) {
-        Page<RpcTask> tasks = taskService.find(pageable, registryIdentity, name, interfaceName, form, version, methodName);
+                                              @ApiParam(value = "Method name") @RequestParam(value = "methodName", required = false) String methodName,
+                                              @ApiParam(value = "Method signature") @RequestParam(value = "methodSignature", required = false) String methodSignature) {
+        Page<RpcTask> tasks = taskService.find(pageable, registryIdentity, name, interfaceName, form, version, methodName, methodSignature);
         return ResponseEntity.ok().headers(generatePageHeaders(tasks)).body(tasks.getContent());
     }
 

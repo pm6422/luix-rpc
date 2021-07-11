@@ -142,7 +142,7 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
 
     @Override
     public Page<RpcTask> find(Pageable pageable, String registryIdentity, String name, String interfaceName,
-                              String form, String version, String methodName) {
+                              String form, String version, String methodName, String methodSignature) {
         Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryIdentity));
         if (StringUtils.isNotEmpty(name)) {
             //Fuzzy search
@@ -160,6 +160,9 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
         }
         if (StringUtils.isNotEmpty(methodName)) {
             query.addCriteria(Criteria.where(FIELD_METHOD_NAME).is(methodName));
+        }
+        if (StringUtils.isNotEmpty(methodSignature)) {
+            query.addCriteria(Criteria.where(FIELD_METHOD_SIGNATURE).is(methodSignature));
         }
         long totalCount = mongoTemplate.count(query, RpcTask.class);
         query.with(pageable);

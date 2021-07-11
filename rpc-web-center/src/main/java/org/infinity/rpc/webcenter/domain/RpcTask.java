@@ -28,6 +28,7 @@ public class RpcTask extends AbstractAuditableDomain implements Serializable {
     public static final  String FIELD_FORM              = "form";
     public static final  String FIELD_VERSION           = "version";
     public static final  String FIELD_METHOD_NAME       = "methodName";
+    public static final  String FIELD_METHOD_SIGNATURE  = "methodSignature";
 
     /**
      * Task name

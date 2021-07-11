@@ -17,5 +17,5 @@ public interface RpcTaskService {
     void startOrPause(String id);
 
     Page<RpcTask> find(Pageable pageable, String registryIdentity, String name, String interfaceName,
-                       String form, String version, String methodName);
+                       String form, String version, String methodName, String methodSignature);
 }
