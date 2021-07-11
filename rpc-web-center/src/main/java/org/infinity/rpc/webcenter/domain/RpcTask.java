@@ -21,60 +21,67 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class RpcTask extends AbstractAuditableDomain implements Serializable {
-    private static final long     serialVersionUID = 8878535528271740314L;
+    private static final long   serialVersionUID        = 8878535528271740314L;
+    public static final  String FIELD_REGISTRY_IDENTITY = "registryIdentity";
+    public static final  String FIELD_NAME              = "name";
+    public static final  String FIELD_INTERFACE_NAME    = "interfaceName";
+    public static final  String FIELD_FORM              = "form";
+    public static final  String FIELD_VERSION           = "version";
+    public static final  String FIELD_METHOD_NAME       = "methodName";
+
     /**
      * Task name
      */
     @Indexed(unique = true)
-    private              String   name;
+    private String   name;
     /**
      * Registry identity
      */
     @NotEmpty
-    private              String   registryIdentity;
+    private String   registryIdentity;
     /**
      * Interface name
      * interfaceName or providerUrl must have value
      */
-    private              String   interfaceName;
+    private String   interfaceName;
     /**
      * Form
      */
-    private              String   form;
+    private String   form;
     /**
      * Version
      */
-    private              String   version;
+    private String   version;
     /**
      * Method name. e.g, save
      */
     @NotEmpty
-    private              String   methodName;
+    private String   methodName;
     /**
      * Method parameter list. e.g, ["org.infinity.rpc.democommon.domain.Authority"]
      */
-    private              String[] methodParamTypes;
+    private String[] methodParamTypes;
     /**
      * Method arguments JSON string
      */
-    private              String   argumentsJson;
+    private String   argumentsJson;
     /**
      * Cron expression
      * https://cron.qqe2.com
      */
     @NotEmpty
-    private              String   cronExpression;
+    private String   cronExpression;
     /**
      * Indicates whether execute task on all hosts or one host
      */
-    private              boolean  allHostsRun;
+    private boolean  allHostsRun;
     /**
      * Remarks
      */
-    private              String   remark;
+    private String   remark;
     /**
      * Enabled
      */
     @NotNull
-    private              Boolean  enabled;
+    private Boolean  enabled;
 }

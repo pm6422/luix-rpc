@@ -2,6 +2,7 @@ package org.infinity.rpc.webcenter.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.id.IdGenerator;
@@ -16,14 +17,19 @@ import org.infinity.rpc.webcenter.task.CronTaskRegistrar;
 import org.infinity.rpc.webcenter.task.TaskRunnable;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.regex.Pattern;
+
+import static org.infinity.rpc.webcenter.domain.RpcTask.*;
 
 @Service
 @Slf4j
@@ -40,6 +46,8 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
     private CronTaskRegistrar        cronTaskRegistrar;
     @Resource
     private InfinityProperties       infinityProperties;
+    @Resource
+    private MongoTemplate            mongoTemplate;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -133,12 +141,28 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
     }
 
     @Override
-    public Page<RpcTask> find(Pageable pageable, String name, String interfaceName, String methodName) {
-        RpcTask probe = new RpcTask();
-        probe.setName(name);
-        probe.setInterfaceName(interfaceName);
-        // Ignore query parameter if it has a null value
-        ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
-        return taskRepository.findAll(Example.of(probe, matcher), pageable);
+    public Page<RpcTask> find(Pageable pageable, String registryIdentity, String name, String interfaceName,
+                              String form, String version, String methodName) {
+        Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryIdentity));
+        if (StringUtils.isNotEmpty(name)) {
+            //Fuzzy search
+            Pattern pattern = Pattern.compile("^.*" + name + ".*$", Pattern.CASE_INSENSITIVE);
+            query.addCriteria(Criteria.where(FIELD_NAME).regex(pattern));
+        }
+        if (StringUtils.isNotEmpty(interfaceName)) {
+            query.addCriteria(Criteria.where(FIELD_INTERFACE_NAME).is(interfaceName));
+        }
+        if (StringUtils.isNotEmpty(form)) {
+            query.addCriteria(Criteria.where(FIELD_FORM).is(form));
+        }
+        if (StringUtils.isNotEmpty(version)) {
+            query.addCriteria(Criteria.where(FIELD_VERSION).is(version));
+        }
+        if (StringUtils.isNotEmpty(methodName)) {
+            query.addCriteria(Criteria.where(FIELD_METHOD_NAME).is(methodName));
+        }
+        long totalCount = mongoTemplate.count(query, RpcTask.class);
+        query.with(pageable);
+        return new PageImpl<>(mongoTemplate.find(query, RpcTask.class), pageable, totalCount);
     }
 }

@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 
@@ -62,10 +63,13 @@ public class RpcTaskController {
     @ApiOperation("find task list")
     @GetMapping("/api/tasks")
     public ResponseEntity<List<RpcTask>> find(Pageable pageable,
-                                              @ApiParam(value = "Task name") @RequestParam(value = "name", required = false) String name,
+                                              @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
+                                              @ApiParam(value = "Task name(fuzzy query)") @RequestParam(value = "name", required = false) String name,
                                               @ApiParam(value = "Interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName,
+                                              @ApiParam(value = "Form") @RequestParam(value = "form", required = false) String form,
+                                              @ApiParam(value = "Version") @RequestParam(value = "version", required = false) String version,
                                               @ApiParam(value = "Method name") @RequestParam(value = "methodName", required = false) String methodName) {
-        Page<RpcTask> tasks = taskService.find(pageable, name, interfaceName, methodName);
+        Page<RpcTask> tasks = taskService.find(pageable, registryIdentity, name, interfaceName, form, version, methodName);
         return ResponseEntity.ok().headers(generatePageHeaders(tasks)).body(tasks.getContent());
     }
 
