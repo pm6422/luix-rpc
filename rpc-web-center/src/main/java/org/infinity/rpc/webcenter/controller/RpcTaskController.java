@@ -43,7 +43,7 @@ public class RpcTaskController {
     private ApplicationContext applicationContext;
 
     @ApiOperation("create task")
-    @PostMapping("/api/rpc-task/tasks")
+    @PostMapping("/api/rpc-task")
     public ResponseEntity<Void> create(@ApiParam(value = "task", required = true) @Valid @RequestBody RpcTask domain) {
         log.debug("REST request to create task: {}", domain);
         if (StringUtils.isNotEmpty(domain.getArgumentsJson())) {
@@ -73,14 +73,14 @@ public class RpcTaskController {
     }
 
     @ApiOperation("find task by id")
-    @GetMapping("/api/rpc-task/tasks/{id}")
+    @GetMapping("/api/rpc-task/{id}")
     public ResponseEntity<RpcTask> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
         RpcTask task = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         return ResponseEntity.ok(task);
     }
 
     @ApiOperation("update task")
-    @PutMapping("/api/rpc-task/tasks")
+    @PutMapping("/api/rpc-task")
     public ResponseEntity<Void> update(@ApiParam(value = "new task", required = true) @Valid @RequestBody RpcTask domain) {
         log.debug("REST request to update task: {}", domain);
         if (StringUtils.isNotEmpty(domain.getArgumentsJson())) {
@@ -95,7 +95,7 @@ public class RpcTaskController {
     }
 
     @ApiOperation(value = "delete task by id", notes = "The data may be referenced by other data, and some problems may occur after deletion")
-    @DeleteMapping("/api/rpc-task/tasks/{id}")
+    @DeleteMapping("/api/rpc-task/{id}")
     public ResponseEntity<Void> delete(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
         log.debug("REST request to delete task: {}", id);
         taskService.delete(id);

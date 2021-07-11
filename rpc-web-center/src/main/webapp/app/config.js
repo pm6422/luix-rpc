@@ -1048,7 +1048,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                     size: 'lg',
                     resolve: {
                         entity: ['RpcTaskService', function (RpcTaskService) {
-                            return RpcTaskService.get({id: $stateParams.taskId}).$promise;
+                            return RpcTaskService.get({extension: $stateParams.taskId}).$promise;
                         }]
                     }
                 }).result.then(function () {

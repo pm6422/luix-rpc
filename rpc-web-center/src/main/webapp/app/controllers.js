@@ -1769,7 +1769,7 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     function delTask(id) {
         AlertUtils.createDeleteConfirmation('Are you sure to delete?', function (isConfirm) {
             if (isConfirm) {
-                RpcTaskService.del({id: id},
+                RpcTaskService.del({extension: id},
                     function () {
                         vm.loadTasks();
                     },

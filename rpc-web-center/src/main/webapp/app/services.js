@@ -1424,8 +1424,8 @@ function RpcConsumerService($resource) {
  * RpcTaskService
  */
 function RpcTaskService($resource) {
-    var service = $resource('api/rpc-task/tasks/:id', {}, {
-        'query': {method: 'GET', isArray: true},
+    var service = $resource('api/rpc-task/:extension', {}, {
+        'query': {method: 'GET', isArray: true, params: {extension: 'tasks'}},
         'get': {
             method: 'GET',
             transformResponse: function (data) {
@@ -1436,6 +1436,22 @@ function RpcTaskService($resource) {
         'create': {method: 'POST'},
         'update': {method: 'PUT'},
         'del': {method: 'DELETE'}
+    });
+    return service;
+}
+/**
+ * RpcTaskHistoryService
+ */
+function RpcTaskHistoryService($resource) {
+    var service = $resource('api/rpc-task-history/:extension', {}, {
+        'query': {method: 'GET', isArray: true, params: {extension: 'histories'}},
+        'get': {
+            method: 'GET',
+            transformResponse: function (data) {
+                data = angular.fromJson(data);
+                return data;
+            }
+        }
     });
     return service;
 }
