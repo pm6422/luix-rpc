@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,9 +37,22 @@ public class RpcServiceController {
     @Resource
     private RpcConsumerService   rpcConsumerService;
 
+    @ApiOperation("find service by ID")
+    @GetMapping("/api/rpc-service/{id}")
+    public ResponseEntity<RpcService> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
+        RpcService domain = rpcServiceRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        if (rpcProviderService.existsService(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
+            domain.setProviding(true);
+        }
+        if (rpcConsumerService.existsService(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
+            domain.setConsuming(true);
+        }
+        return ResponseEntity.ok(domain);
+    }
+
     @ApiOperation("find service")
     @GetMapping("/api/rpc-service")
-    public ResponseEntity<RpcService> findById(
+    public ResponseEntity<RpcService> find(
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
             @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
