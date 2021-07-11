@@ -680,7 +680,7 @@ function TimingTaskService($resource) {
  * TimingTaskHistoryService
  */
 function TimingTaskHistoryService($resource) {
-    var service = $resource('api/task-histories', {}, {
+    var service = $resource('api/task-histories/:id', {}, {
         'query': {method: 'GET', isArray: true},
         'get': {
             method: 'GET',

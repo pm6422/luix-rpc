@@ -727,7 +727,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             },
             resolve: {
                 entity: ['TimingTaskHistoryService', '$stateParams', function (TimingTaskHistoryService, $stateParams) {
-                    return TimingTaskHistoryService.get({extension: $stateParams.id}).$promise;
+                    return TimingTaskHistoryService.get({id: $stateParams.id}).$promise;
                 }]
             }
         })
