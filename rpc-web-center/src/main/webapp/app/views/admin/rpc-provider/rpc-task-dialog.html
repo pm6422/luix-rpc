@@ -17,7 +17,7 @@
             <label class="control-label">Method</label>
             <select id="method" name="method" class="form-control" ng-model="vm.entity.methodSignature" required
                     ng-options="item.methodSignature as item.methodSignature for item in vm.methods"
-                    ng-change="vm.selectMethod()">
+                    ng-change="vm.selectMethod()" ng-disabled="vm.mode == 'edit'">
                 <option value="">Select...</option>
             </select>
             <div ng-show="editForm.method.$invalid">
@@ -38,7 +38,7 @@
         <div class="form-group">
             <label class="control-label">Cron expression</label>
             <input type="text" class="form-control" name="cronExpression" ng-model="vm.entity.cronExpression" placeholder="0 0/1 * * * ?" required
-                   ng-maxlength="50">
+                   ng-maxlength="50" ng-disabled="vm.mode == 'edit'">
             <div ng-show="editForm.cronExpression.$invalid">
                 <p class="help-block" ng-show="editForm.cronExpression.$error.required">
                     Required
