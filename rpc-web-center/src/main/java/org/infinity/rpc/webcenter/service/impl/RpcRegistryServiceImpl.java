@@ -88,6 +88,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
         Map<String, Object> attributesMap = new HashMap<>(0);
 
         if (StringUtils.isNotEmpty(providerUrlStr)) {
+            // Direct address invocation
             Url providerUrl = Url.valueOf(providerUrlStr);
             resolvedInterfaceName = providerUrl.getPath();
             form = providerUrl.getForm();
@@ -95,6 +96,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
             requestTimeout = providerUrl.containsOption(REQUEST_TIMEOUT) ? providerUrl.getIntOption(REQUEST_TIMEOUT) : null;
             retryCount = providerUrl.containsOption(RETRY_COUNT) ? providerUrl.getIntOption(RETRY_COUNT) : null;
         } else {
+            // Invocation after discovering addresses
             resolvedInterfaceName = interfaceName;
             if (MapUtils.isNotEmpty(attributes)) {
                 for (Map.Entry<String, String> entry : attributes.entrySet()) {

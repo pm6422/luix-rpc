@@ -35,7 +35,7 @@ public class RpcUniversalInvocationController {
     @Resource
     private RpcRegistryService rpcRegistryService;
 
-    @ApiOperation("universal invocation")
+    @ApiOperation("direct address invocation")
     @PostMapping("/api/rpc-invocation/invoke")
     public ResponseEntity<Object> invoke(@ApiParam(value = "methodInvocation", required = true)
                                          @Valid @RequestBody MethodInvocation methodInvocation) {
@@ -47,7 +47,7 @@ public class RpcUniversalInvocationController {
         return ResponseEntity.ok().body(result);
     }
 
-    @ApiOperation("universal invocation by file")
+    @ApiOperation("direct address invocation by file")
     @PostMapping("/api/rpc-invocation/invoke-by-file")
     public ResponseEntity<Object> invokeByFile(@ApiParam(value = "file", required = true) @RequestPart MultipartFile file) throws IOException {
         String input = StreamUtils.copyToString(file.getInputStream(), Charset.defaultCharset());

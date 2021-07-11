@@ -1,6 +1,7 @@
 package org.infinity.rpc.webcenter.task;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,8 @@ import java.util.Collections;
 import java.util.Date;
 
 import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
+import static org.infinity.rpc.core.constant.ServiceConstants.FORM;
+import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
 
 @Slf4j
 @EqualsAndHashCode
@@ -38,7 +41,8 @@ public class TaskRunnable implements Runnable {
     private final           String                   name;
     private final           String                   registryIdentity;
     private final           String                   interfaceName;
-    private final           String                   providerUrl;
+    private final           String                   form;
+    private final           String                   version;
     private final           String                   methodName;
     private final           String[]                 methodParamTypes;
     private final           String                   argumentsJson;
@@ -69,7 +73,8 @@ public class TaskRunnable implements Runnable {
         taskHistory.setName(name);
         taskHistory.setRegistryIdentity(registryIdentity);
         taskHistory.setInterfaceName(interfaceName);
-        taskHistory.setProviderUrl(providerUrl);
+        taskHistory.setForm(form);
+        taskHistory.setVersion(version);
         taskHistory.setMethodName(methodName);
         taskHistory.setMethodParamTypes(methodParamTypes);
         taskHistory.setArgumentsJson(argumentsJson);
@@ -79,7 +84,7 @@ public class TaskRunnable implements Runnable {
 
         try {
             ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(registryIdentity,
-                    providerUrl, interfaceName, Collections.emptyMap());
+                    null, interfaceName, ImmutableMap.of(FORM, form, VERSION, version));
             Object[] args = null;
             if (StringUtils.isNotEmpty(argumentsJson)) {
                 args = new ObjectMapper().readValue(argumentsJson, Object[].class);

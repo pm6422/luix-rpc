@@ -37,10 +37,13 @@ public class RpcTaskHistory implements Serializable {
      */
     private              String   interfaceName;
     /**
-     * Provider url
-     * interfaceName or providerUrl must have value
+     * Form
      */
-    private              String   providerUrl;
+    private              String   form;
+    /**
+     * Version
+     */
+    private              String   version;
     /**
      * Method name. e.g, save
      */
