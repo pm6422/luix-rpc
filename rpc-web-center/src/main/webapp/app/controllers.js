@@ -1763,22 +1763,63 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, e
 /**
  * RpcTaskDialogController
  */
-function RpcTaskDialogController($state, $stateParams, $uibModalInstance, RpcTaskService, entity) {
+function RpcTaskDialogController($rootScope, $state, $stateParams, $uibModalInstance, RpcTaskService, RpcProviderService, entity) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.mode = $state.current.data.mode;
     vm.entity = entity;
+
+    vm.argsPlaceholder = '[\n' +
+        '    {}\n' +
+        ']';
+    vm.selectMethod = selectMethod;
+
+    RpcProviderService.get({extension: $stateParams.id},
+        function (response) {
+            vm.provider = response;
+            vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.provider.url});
+        });
+
     vm.isSaving = false;
     vm.save = save;
     vm.cancel = cancel;
+
+    function selectMethod() {
+        if(!vm.selectedMethod) {
+            vm.argsDisabled = true;
+            return;
+        }
+
+        var filteredMethods = _.filter(vm.methods, function(m){ return m.methodSignature == vm.selectedMethod; });
+        if(!_.isEmpty(filteredMethods)) {
+            var methodInvocation = filteredMethods[0];
+            if(_.isEmpty(methodInvocation.methodParamTypes)) {
+                vm.argsDisabled = true;
+            } else {
+                vm.argsDisabled = false;
+            }
+        }
+    }
 
     function save() {
         vm.isSaving = true;
         if (vm.mode == 'edit') {
             RpcTaskService.update(vm.entity, onSaveSuccess, onSaveError);
         } else {
-            RpcTaskService.create(vm.entity, onSaveSuccess, onSaveError);
+            var filteredMethods = _.filter(vm.methods, function(m){ return m.methodSignature == vm.selectedMethod; });
+            if(!_.isEmpty(filteredMethods)) {
+                var filteredMethod = filteredMethods[0];
+
+                vm.entity.registryIdentity = $rootScope.selectedRegistryIdentity;
+                vm.entity.interfaceName = vm.provider.interfaceName;
+                vm.entity.form = vm.provider.form;
+                vm.entity.version = vm.provider.version;
+                vm.entity.methodName = filteredMethod.methodName;
+                vm.entity.methodParamTypes = filteredMethod.methodParamTypes;
+
+                RpcTaskService.create(vm.entity, onSaveSuccess, onSaveError);
+            }
         }
     }
 

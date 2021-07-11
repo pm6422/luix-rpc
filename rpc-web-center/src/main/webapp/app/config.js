@@ -1020,8 +1020,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                         entity: {
                             id: null,
                             name: null,
-                            beanName: null,
-                            argument: null,
+                            argumentsJson: null,
                             cronExpression: null,
                             remark: null,
                             enabled: true
