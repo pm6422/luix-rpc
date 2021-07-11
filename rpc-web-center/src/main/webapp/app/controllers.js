@@ -1668,7 +1668,7 @@ function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUti
 /**
  * RpcProviderDetailsController
  */
-function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, entity, RpcServiceService, RpcProviderService, RpcTaskService) {
+function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, AlertUtils, entity, RpcServiceService, RpcProviderService, RpcTaskService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -1678,8 +1678,6 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, e
     vm.argsDisabled = true;
     vm.checkProgress = 0;
     vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url});
-    vm.tasks = RpcTaskService.query({registryIdentity: $rootScope.selectedRegistryIdentity,
-        interfaceName: vm.entity.interfaceName, form: vm.entity.form, version: vm.entity.version});
 
     vm.argsPlaceholder = '[\n' +
         '    {}\n' +
@@ -1689,11 +1687,20 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, e
     vm.checkHealth = checkHealth;
     vm.deactivate = deactivate;
     vm.activate = activate;
+    vm.delTask = delTask;
+    vm.loadTasks = loadTasks;
+
+    vm.loadTasks();
 
     RpcServiceService.get({registryIdentity: $rootScope.selectedRegistryIdentity, interfaceName: vm.entity.interfaceName},
         function (response) {
             vm.entity.consuming = response.consuming;
         });
+
+    function loadTasks() {
+        vm.tasks = RpcTaskService.query({registryIdentity: $rootScope.selectedRegistryIdentity,
+            interfaceName: vm.entity.interfaceName, form: vm.entity.form, version: vm.entity.version});
+    }
 
     function selectMethod() {
         if(!vm.selectedMethod) {
@@ -1758,6 +1765,19 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, e
                 vm.entity.active = true;
             });
     }
+
+    function delTask(id) {
+        AlertUtils.createDeleteConfirmation('Are you sure to delete?', function (isConfirm) {
+            if (isConfirm) {
+                RpcTaskService.del({id: id},
+                    function () {
+                        vm.loadTasks();
+                    },
+                    function () {
+                    });
+            }
+        });
+    }
 }
 
 /**
@@ -1770,10 +1790,15 @@ function RpcTaskDialogController($rootScope, $state, $stateParams, $uibModalInst
     vm.mode = $state.current.data.mode;
     vm.entity = entity;
 
+    if(_.isEmpty(vm.entity.methodParamTypes)) {
+        vm.argsDisabled = true;
+    } else {
+        vm.argsDisabled = false;
+    }
+
     vm.argsPlaceholder = '[\n' +
         '    {}\n' +
         ']';
-    vm.selectMethod = selectMethod;
 
     RpcProviderService.get({extension: $stateParams.id},
         function (response) {
@@ -1782,16 +1807,17 @@ function RpcTaskDialogController($rootScope, $state, $stateParams, $uibModalInst
         });
 
     vm.isSaving = false;
+    vm.selectMethod = selectMethod;
     vm.save = save;
     vm.cancel = cancel;
 
     function selectMethod() {
-        if(!vm.selectedMethod) {
+        if(!vm.entity.methodSignature) {
             vm.argsDisabled = true;
             return;
         }
 
-        var filteredMethods = _.filter(vm.methods, function(m){ return m.methodSignature == vm.selectedMethod; });
+        var filteredMethods = _.filter(vm.methods, function(m){ return m.methodSignature == vm.entity.methodSignature; });
         if(!_.isEmpty(filteredMethods)) {
             var methodInvocation = filteredMethods[0];
             if(_.isEmpty(methodInvocation.methodParamTypes)) {
@@ -1807,7 +1833,7 @@ function RpcTaskDialogController($rootScope, $state, $stateParams, $uibModalInst
         if (vm.mode == 'edit') {
             RpcTaskService.update(vm.entity, onSaveSuccess, onSaveError);
         } else {
-            var filteredMethods = _.filter(vm.methods, function(m){ return m.methodSignature == vm.selectedMethod; });
+            var filteredMethods = _.filter(vm.methods, function(m){ return m.methodSignature == vm.entity.methodSignature; });
             if(!_.isEmpty(filteredMethods)) {
                 var filteredMethod = filteredMethods[0];
 

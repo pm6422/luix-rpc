@@ -62,6 +62,10 @@ public class RpcTask extends AbstractAuditableDomain implements Serializable {
      */
     private String[] methodParamTypes;
     /**
+     * Method signature. e.g, invoke(java.util.List,java.lang.Long)
+     */
+    private String   methodSignature;
+    /**
      * Method arguments JSON string
      */
     private String   argumentsJson;
