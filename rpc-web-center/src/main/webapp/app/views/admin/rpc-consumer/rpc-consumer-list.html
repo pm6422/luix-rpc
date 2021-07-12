@@ -34,7 +34,6 @@
                 <th>Form</th>
                 <th>Version</th>
                 <th sort-by-directive="application"><span>Application</span> <span class="fa fa-sort"></span></th>
-                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -44,11 +43,6 @@
                 <td>{{entity.form}}</td>
                 <td>{{entity.version}}</td>
                 <td>{{entity.application}}</td>
-                <td>
-                    <div class="btn-group">
-                        <button class="btn-white btn btn-xs" ui-sref=".view({name: entity.name})">Configure</button>
-                    </div>
-                </td>
             </tr>
             </tbody>
         </table>
