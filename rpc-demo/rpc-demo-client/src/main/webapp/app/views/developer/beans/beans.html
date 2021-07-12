@@ -19,10 +19,11 @@
                style="table-layout:fixed" ng-hide="filteredConfig.length == 0">
             <thead>
             <tr>
-                <th ng-click="predicate = 'prefix'; reverse=!reverse" class="col-sm-4"><span>Bean</span> <span class="fa fa-sort"></span></th>
+                <th ng-click="predicate = 'prefix'; reverse=!reverse" class="col-sm-3"><span>Bean</span> <span class="fa fa-sort"></span></th>
                 <th class="col-sm-4">Type</th>
                 <th class="col-sm-1">Scope</th>
                 <th class="col-sm-3">Dependencies</th>
+                <th class="col-sm-1 text-center">Details</th>
             </tr>
             </thead>
             <tr ng-repeat="entry in filtered = (vm.items | filter:filter | orderBy:predicate:reverse)">
@@ -33,6 +34,11 @@
                     <div ng-repeat="(key, value) in entry.dependencies">
                         <div class="pull-left label label-primary break">{{value}}</div>
                     </div>
+                </td>
+                <td class="text-center">
+                    <a class="hand" ng-click="vm.showBean(entry.bean)">
+                        <i class="fa fa-eye"></i>
+                    </a>
                 </td>
             </tr>
         </table>
