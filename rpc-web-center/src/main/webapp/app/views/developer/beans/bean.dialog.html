@@ -1,0 +1,19 @@
+<head>
+    <meta charset="utf-8">
+</head>
+<div class="modal-header">
+    <button aria-label="Close" data-dismiss="modal" class="close" type="button" ng-click="vm.cancel()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h4 class="modal-title"><span class="text-capitalize">{{vm.name}}</span>
+    </h4>
+</div>
+<div class="modal-body pad">
+    <div>
+        <json-formatter open="10000" json="vm.beanDetails"></json-formatter>
+    </div>
+</div>
+<div class="modal-footer">
+    <button data-dismiss="modal" class="btn btn-default btn-sm pull-right" type="button" ng-click="vm.cancel()">Done
+    </button>
+</div>

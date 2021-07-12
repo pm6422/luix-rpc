@@ -883,12 +883,13 @@ function ConfigurationController($state, ConfigurationService) {
     });
 }
 
-function BeansController($state, $http, APP_NAME) {
+function BeansController($state, $http, $uibModal, APP_NAME) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.items = null;
     vm.refresh = refresh;
+    vm.showBean = showBean;
     vm.refresh();
 
     function refresh() {
@@ -897,6 +898,29 @@ function BeansController($state, $http, APP_NAME) {
             angular.forEach(response.data['contexts'][APP_NAME]['beans'], function (val, key) {
                 vm.items.push({bean: key, type: val.type, scope: val.scope, dependencies: val.dependencies});
             });
+        });
+    }
+
+    function showBean(name) {
+        $uibModal.open({
+            templateUrl: 'app/views/developer/beans/bean.dialog.html',
+            controller: 'BeanDialogController',
+            controllerAs: 'vm',
+            size: 'lg',
+            resolve: {
+                name: function () {
+                    return name;
+                },
+                beanDetails: function () {
+                    return $http.get('api/system/bean', {
+                        params: {
+                            'name': name
+                        }
+                    }).then(function (response) {
+                        return response.data;
+                    });
+                }
+            }
         });
     }
 }

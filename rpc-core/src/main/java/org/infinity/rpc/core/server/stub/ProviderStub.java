@@ -37,7 +37,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
@@ -144,7 +143,7 @@ public class ProviderStub<T> {
     /**
      * Service provider exporter used to export the provider to registry
      */
-    private           Exportable<T>             exporter;
+    private transient Exportable<T>             exporter;
     /**
      * Indicator used to identify whether the provider already been registered
      */
