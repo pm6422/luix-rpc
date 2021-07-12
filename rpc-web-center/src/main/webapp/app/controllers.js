@@ -1866,23 +1866,23 @@ function RpcTaskDialogController($rootScope, $state, $stateParams, $uibModalInst
 /**
  * RpcTaskHistoryListController
  */
-function RpcTaskHistoryListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, $uibModalInstance, pagingParams, criteria, RpcTaskHistoryService) {
+function RpcTaskHistoryListController($rootScope, $state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcTaskHistoryService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.links = null;
     vm.loadAll = loadAll;
     vm.loadPage = loadPage;
-    vm.checkTaskHistoryNamePressEnter = checkTaskHistoryNamePressEnter;
+    vm.checkPressEnter = checkPressEnter;
     vm.page = 1;
     vm.totalItems = null;
     vm.entities = [];
     vm.predicate = pagingParams.predicate;
     vm.reverse = pagingParams.ascending;
     vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
-    vm.taskHistoryTransition = taskHistoryTransition;
+    vm.transition = transition;
     vm.criteria = criteria;
-    vm.close = close;
+    vm.goProviderView = goProviderView;
 
     vm.loadAll();
 
@@ -1912,22 +1912,27 @@ function RpcTaskHistoryListController($state, $rootScope, AlertUtils, ParseLinks
 
     function loadPage(page) {
         vm.page = page;
-        vm.taskHistoryTransition();
+        vm.transition();
     }
 
-    function taskHistoryTransition() {
-        loadAll();
+    function transition() {
+        $state.transitionTo($state.$current, {
+            page: vm.page,
+            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
+            name: vm.criteria.name,
+            providerId: vm.criteria.providerId
+        });
     }
 
-    function checkTaskHistoryNamePressEnter($event) {
+    function checkPressEnter($event) {
         //按下enter键重新查询数据
         if ($event.keyCode == 13) {
-            vm.taskHistoryTransition();
+            vm.transition();
         }
     }
 
-    function close() {
-        $uibModalInstance.dismiss('cancel');
+    function goProviderView(refreshToken) {
+        $state.go('rpc.rpc-provider-list.view', {'id': criteria.providerId});
     }
 }
 /**

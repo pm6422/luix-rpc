@@ -1058,10 +1058,18 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 });
             }]
         })
-        .state('rpc.rpc-provider-list.view.view-task-history-list', {
-            url: '/view-task-history-list?page&sort&name',
+        .state('rpc.rpc-task-history-list', {
+            parent: 'admin',
+            url: '/rpc-task-history-list?page&sort&name&providerId',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/rpc-task-history/rpc-task-history-list.html',
+                    controller: 'RpcTaskHistoryListController',
+                    controllerAs: 'vm'
+                }
+            },
             data: {
-                pageTitle: 'View task history list'
+                pageTitle: 'Task histories'
             },
             params: {
                 page: {
@@ -1073,34 +1081,22 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                     squash: true
                 }
             },
-            onEnter: ['$state', '$uibModal', function ($state, $uibModal) {
-                $uibModal.open({
-                    templateUrl: 'app/views/admin/rpc-provider/rpc-task-history-list.html',
-                    controller: 'RpcTaskHistoryListController',
-                    controllerAs: 'vm',
-                    backdrop: 'static',
-                    size: 'lg',
-                    resolve: {
-                        pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
-                            return {
-                                page: PaginationUtils.parsePage($stateParams.page),
-                                sort: $stateParams.sort,
-                                predicate: PaginationUtils.parsePredicate($stateParams.sort),
-                                ascending: PaginationUtils.parseAscending($stateParams.sort)
-                            };
-                        }],
-                        criteria: ['$stateParams', function ($stateParams) {
-                            return {
-                                name: $stateParams.name
-                            };
-                        }]
-                    }
-                }).result.then(function () {
-                    $state.go('^', null, {reload: true});
-                }, function () {
-                    $state.go('^');
-                });
-            }]
+            resolve: {
+                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
+                    return {
+                        page: PaginationUtils.parsePage($stateParams.page),
+                        sort: $stateParams.sort,
+                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
+                        ascending: PaginationUtils.parseAscending($stateParams.sort)
+                    };
+                }],
+                criteria: ['$stateParams', function ($stateParams) {
+                    return {
+                        name: $stateParams.name,
+                        providerId: $stateParams.providerId
+                    };
+                }]
+            }
         })
         .state('rpc.rpc-consumer-list', {
             url: '/rpc-consumer-list?page&sort&application&interfaceName&address',
