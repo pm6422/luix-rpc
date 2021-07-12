@@ -34,6 +34,9 @@
                             <button class="btn-white btn btn-xs" ng-disabled="!entity.consuming"
                                     ui-sref="rpc.rpc-consumer-list({interfaceName: entity.interfaceName})"
                                     uib-tooltip="List all consumers of this service">Consumers</button>
+                            <button class="btn-white btn btn-xs" ng-disabled="!entity.providing"
+                                    ui-sref="rpc.rpc-provider-list({interfaceName: entity.interfaceName})"
+                                    uib-tooltip="Take all providers of this interface offline">Degrade providers</button>
                         </div>
                     </td>
                 </tr>
