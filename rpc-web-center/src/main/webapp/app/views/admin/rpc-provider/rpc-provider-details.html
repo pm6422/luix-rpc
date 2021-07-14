@@ -112,6 +112,20 @@
                                 </tbody>
                             </table>
                         </uib-tab>
+                        <uib-tab heading="Configure">
+                            <div class="form-group">
+                                <div class="col-sm-11">
+                                    <small>Completion with: {{vm.checkProgress}}%</small>
+                                    <i class="fa fa-check" ng-show="vm.healthSuccess"></i>
+                                    <i class="fa fa-times" ng-show="vm.healthFailure"></i>
+                                    </button>
+                                    <uib-progressbar value="vm.checkProgress" type="primary" class="progress-mini">
+                                        {{vm.checkProgress}}%
+                                    </uib-progressbar>
+                                    <small>{{vm.healthMessage}}</small>
+                                </div>
+                            </div>
+                        </uib-tab>
                         <uib-tab heading="Invocation">
                             <form name="invocationForm" role="form" class="form-horizontal" novalidate show-validation-directive>
                                 <div class="form-group">
