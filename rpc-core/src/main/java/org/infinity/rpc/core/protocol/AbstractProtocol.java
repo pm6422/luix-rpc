@@ -1,12 +1,10 @@
 package org.infinity.rpc.core.protocol;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.sender.Sendable;
 import org.infinity.rpc.core.client.sender.impl.RequestSender;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
 import org.infinity.rpc.core.server.exporter.Exportable;
-import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 
@@ -19,27 +17,27 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public abstract class AbstractProtocol implements Protocol {
-    protected final Map<String, Exportable<?>> exporterMap = new ConcurrentHashMap<>();
+    protected final Map<String, Exportable> exporterMap = new ConcurrentHashMap<>();
 
     @Override
-    public <T> Exportable<T> export(ProviderStub<T> providerStub) {
-        if (providerStub.getUrl() == null) {
+    public Exportable export(Url providerUrl) {
+        if (providerUrl == null) {
             throw new RpcFrameworkException("Url must NOT be null!");
         }
 
-        String protocolKey = RpcFrameworkUtils.getProtocolKey(providerStub.getUrl());
+        String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
         synchronized (exporterMap) {
-            Exportable<T> exporter = (Exportable<T>) exporterMap.get(protocolKey);
+            Exportable exporter = exporterMap.get(protocolKey);
             if (exporter != null) {
-                throw new RpcFrameworkException("Can NOT re-export service [" + providerStub.getUrl() + "]");
+                throw new RpcFrameworkException("Can NOT re-export service [" + providerUrl + "]");
             }
 
-            exporter = doExport(providerStub);
+            exporter = doExport(providerUrl);
             exporter.init();
 
             // todo: check useless statement
             exporterMap.put(protocolKey, exporter);
-            log.info("Exported service [{}]", providerStub.getUrl());
+            log.info("Exported service [{}]", providerUrl);
             return exporter;
         }
     }
@@ -53,16 +51,16 @@ public abstract class AbstractProtocol implements Protocol {
     /**
      * Do create exporter
      *
-     * @param providerStub provider stub
+     * @param providerUrl provider url
      * @return exporter
      */
-    protected abstract <T> Exportable<T> doExport(ProviderStub<T> providerStub);
+    protected abstract Exportable doExport(Url providerUrl);
 
     @Override
     public void destroy() {
-        Iterator<Map.Entry<String, Exportable<?>>> iterator = exporterMap.entrySet().iterator();
+        Iterator<Map.Entry<String, Exportable>> iterator = exporterMap.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<String, Exportable<?>> next = iterator.next();
+            Map.Entry<String, Exportable> next = iterator.next();
             if (next.getValue() != null) {
                 try {
                     next.getValue().destroy();
@@ -75,7 +73,7 @@ public abstract class AbstractProtocol implements Protocol {
         }
     }
 
-    public Map<String, Exportable<?>> getExporterMap() {
+    public Map<String, Exportable> getExporterMap() {
         return exporterMap;
     }
 }

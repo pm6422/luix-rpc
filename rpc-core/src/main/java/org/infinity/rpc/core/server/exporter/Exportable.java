@@ -1,17 +1,14 @@
 package org.infinity.rpc.core.server.exporter;
 
-import org.infinity.rpc.core.server.stub.ProviderStub;
+import org.infinity.rpc.core.url.Url;
 
-/**
- * @param <T>
- */
-public interface Exportable<T> {
+public interface Exportable {
     /**
-     * Get provider stub
+     * Get provider URL
      *
-     * @return provider stub
+     * @return provider URL
      */
-    ProviderStub<T> getProviderStub();
+    Url getProviderUrl();
 
     /**
      * Initialize

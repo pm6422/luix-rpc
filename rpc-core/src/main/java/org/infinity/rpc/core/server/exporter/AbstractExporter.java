@@ -2,21 +2,21 @@ package org.infinity.rpc.core.server.exporter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.exception.impl.RpcFrameworkException;
-import org.infinity.rpc.core.server.stub.ProviderStub;
+import org.infinity.rpc.core.url.Url;
 
 @Slf4j
-public abstract class AbstractExporter<T> implements Exportable<T> {
-    protected          ProviderStub<T> providerStub;
-    protected volatile boolean         initialized = false;
-    protected volatile boolean         active      = false;
+public abstract class AbstractExporter implements Exportable {
+    protected          Url     providerUrl;
+    protected volatile boolean initialized = false;
+    protected volatile boolean active      = false;
 
-    public AbstractExporter(ProviderStub<T> providerStub) {
-        this.providerStub = providerStub;
+    public AbstractExporter(Url providerUrl) {
+        this.providerUrl = providerUrl;
     }
 
     @Override
-    public ProviderStub<T> getProviderStub() {
-        return providerStub;
+    public Url getProviderUrl() {
+        return providerUrl;
     }
 
     @Override
@@ -46,6 +46,6 @@ public abstract class AbstractExporter<T> implements Exportable<T> {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName().concat(":").concat(providerStub.getUrl().toFullStr());
+        return this.getClass().getSimpleName().concat(":").concat(providerUrl.toFullStr());
     }
 }

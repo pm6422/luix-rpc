@@ -16,46 +16,6 @@ import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
 
 public class RpcFrameworkUtils {
     /**
-     * 目前根据 interface/form/version 来唯一标示一个服务
-     *
-     * @param request
-     * @return
-     */
-
-    public static String getServiceKey(Requestable request) {
-        return getServiceKey(request.getInterfaceName(), getFormFromRequest(request), getVersionFromRequest(request));
-    }
-
-    /**
-     * 目前根据 interface/form/version 来唯一标示一个服务
-     *
-     * @param url
-     * @return
-     */
-    public static String getServiceKey(Url url) {
-        return getServiceKey(url.getPath(), url.getForm(), url.getVersion());
-    }
-
-    /**
-     * serviceKey: interface/form/version
-     *
-     * @param interfaceName
-     * @param form
-     * @param version
-     * @return
-     */
-    private static String getServiceKey(String interfaceName, String form, String version) {
-        StringBuffer sb = new StringBuffer(interfaceName);
-        if (StringUtils.isNotBlank(form)) {
-            sb.append(DIR_SEPARATOR_UNIX).append(form);
-        }
-        if (StringUtils.isNotBlank(version)) {
-            sb.append(DIR_SEPARATOR_UNIX).append(version);
-        }
-        return sb.toString();
-    }
-
-    /**
      * protocol key: protocol://host:port/interface/form/version
      *
      * @param url

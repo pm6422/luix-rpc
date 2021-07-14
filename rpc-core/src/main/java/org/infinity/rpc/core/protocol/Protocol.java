@@ -2,7 +2,6 @@ package org.infinity.rpc.core.protocol;
 
 import org.infinity.rpc.core.client.sender.Sendable;
 import org.infinity.rpc.core.server.exporter.Exportable;
-import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.serviceloader.ServiceLoader;
 import org.infinity.rpc.utilities.serviceloader.annotation.Spi;
@@ -14,10 +13,10 @@ public interface Protocol {
     /**
      * Create provider exporter
      *
-     * @param providerStub provider stub
+     * @param providerUrl provider URL
      * @return exporter
      */
-    <T> Exportable<T> export(ProviderStub<T> providerStub);
+    Exportable export(Url providerUrl);
 
     /**
      * Create provider invoker

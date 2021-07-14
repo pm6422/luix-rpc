@@ -26,41 +26,34 @@ import org.infinity.rpc.core.exchange.Channel;
 import org.infinity.rpc.core.server.messagehandler.MessageHandler;
 import org.infinity.rpc.core.server.response.Responseable;
 import org.infinity.rpc.core.server.stub.ProviderStub;
+import org.infinity.rpc.core.server.stub.ProviderStubHolder;
+import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.core.utils.MethodParameterUtils;
 import org.infinity.rpc.core.utils.RpcFrameworkUtils;
 import org.infinity.rpc.utilities.serializer.DeserializableArgs;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * service 消息处理
- * <p>
- * <pre>
- * 		1） 多个service的支持
- * 		2） 区分service的方式： interface/form/version
- * </pre>
- */
+import static org.infinity.rpc.core.constant.ServiceConstants.FORM;
+import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
+
 @Slf4j
-public class ProviderMessageRouter implements MessageHandler {
-    protected Map<String, ProviderStub<?>> providers = new HashMap<>();
-
+public class ProviderHandler implements MessageHandler {
     /**
-     * 所有暴露出去的方法计数
-     * 比如：messageRouter 里面涉及2个Service: ServiceA 有5个public method，ServiceB
-     * 有10个public method，那么就是15
+     * Map of provider stub name to provider URL
      */
-    protected AtomicInteger methodCounter = new AtomicInteger(0);
+    protected static final Map<String, Url> NAME_2_URL            = new ConcurrentHashMap<>();
+    /**
+     * The count of exported service methods
+     */
+    protected static final AtomicInteger    EXPORTED_METHOD_COUNT = new AtomicInteger(0);
 
-    public ProviderMessageRouter() {
-    }
-
-    public ProviderMessageRouter(ProviderStub<?> provider) {
-        addProvider(provider);
+    public ProviderHandler() {
     }
 
     @Override
@@ -73,19 +66,20 @@ public class ProviderMessageRouter implements MessageHandler {
         }
 
         Requestable request = (Requestable) message;
-        String serviceKey = RpcFrameworkUtils.getServiceKey(request);
-        ProviderStub<?> provider = providers.get(serviceKey);
+        String stubName = ProviderStub.buildProviderStubBeanName(request.getInterfaceName(),
+                request.getOption(FORM), request.getOption(VERSION));
+        ProviderStub<?> providerStub = ProviderStubHolder.getInstance().get().get(stubName);
 
-        if (provider == null) {
-            log.error("No provider found with key [{}] for {}", serviceKey, request);
-            RpcFrameworkException exception = new RpcFrameworkException("No provider found with key [" + serviceKey + "] for " + request);
+        if (providerStub == null) {
+            log.error("No provider found with key [{}] for {}", stubName, request);
+            RpcFrameworkException exception = new RpcFrameworkException("No provider found with key [" + stubName + "] for " + request);
             return RpcFrameworkUtils.buildErrorResponse(request, exception);
         }
-        Method method = provider.findMethod(request.getMethodName(), request.getMethodParameters());
+        Method method = providerStub.findMethod(request.getMethodName(), request.getMethodParameters());
         fillParamDesc(request, method);
         // Process arguments
         processLazyDeserialize(request, method);
-        Responseable response = invoke(request, provider);
+        Responseable response = invoke(request, providerStub);
         // Set serializer ID of response with request's one
         response.setSerializerId(request.getSerializerId());
         response.setProtocolVersion(request.getProtocolVersion());
@@ -121,37 +115,37 @@ public class ProviderMessageRouter implements MessageHandler {
         }
     }
 
-    public synchronized void addProvider(ProviderStub<?> providerStub) {
-        String serviceKey = RpcFrameworkUtils.getServiceKey(providerStub.getUrl());
-        if (providers.containsKey(serviceKey)) {
-            throw new RpcFrameworkException("Provider already exists with the key [" + serviceKey + "]");
+    public synchronized void addProvider(Url providerUrl) {
+        String stubName = ProviderStub.buildProviderStubBeanName(providerUrl.getPath(),
+                providerUrl.getForm(), providerUrl.getVersion());
+        ProviderStub<?> providerStub = ProviderStubHolder.getInstance().get().get(stubName);
+
+        if (NAME_2_URL.containsKey(stubName)) {
+            throw new RpcFrameworkException("Provider already exists with the key [" + stubName + "]");
         }
+        NAME_2_URL.put(stubName, providerUrl);
 
-        providers.put(serviceKey, providerStub);
-
-        // 获取该service暴露的方法数：
         List<Method> methods = MethodParameterUtils.getPublicMethod(providerStub.getInterfaceClass());
         //todo
 //        CompressRpcCodec.putMethodSign(provider, methods);// 对所有接口方法生成方法签名。适配方法签名压缩调用方式。
-
-        int publicMethodCount = methods.size();
-        methodCounter.addAndGet(publicMethodCount);
-
-        log.info("Added service provider [{}] to router", providerStub.getUrl());
+        // Calculate the total of exported public methods
+        EXPORTED_METHOD_COUNT.addAndGet(methods.size());
+        log.info("Added service provider [{}] to router", providerUrl);
     }
 
-    public synchronized void removeProvider(ProviderStub<?> providerStub) {
-        String serviceKey = RpcFrameworkUtils.getServiceKey(providerStub.getUrl());
+    public synchronized void removeProvider(Url providerUrl) {
+        String stubName = ProviderStub.buildProviderStubBeanName(providerUrl.getPath(),
+                providerUrl.getForm(), providerUrl.getVersion());
+        ProviderStub<?> providerStub = ProviderStubHolder.getInstance().get().get(stubName);
 
-        providers.remove(serviceKey);
+        NAME_2_URL.remove(stubName);
+
         List<Method> methods = MethodParameterUtils.getPublicMethod(providerStub.getInterfaceClass());
-        int publicMethodCount = methods.size();
-        methodCounter.getAndSet(methodCounter.get() - publicMethodCount);
-
-        log.info("RequestRouter removeProvider: url=" + providerStub.getUrl() + " all_public_method_count=" + methodCounter.get());
+        EXPORTED_METHOD_COUNT.getAndSet(EXPORTED_METHOD_COUNT.get() - methods.size());
+        log.info("Removed service provider [{}] from router", providerUrl);
     }
 
     public int getPublicMethodCount() {
-        return methodCounter.get();
+        return EXPORTED_METHOD_COUNT.get();
     }
 }

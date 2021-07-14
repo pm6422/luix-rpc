@@ -47,17 +47,13 @@ import static org.infinity.rpc.core.constant.ProtocolConstants.MAX_THREAD_VAL_DE
  * </pre>
  */
 @Slf4j
-public class ProviderProtectedMessageRouter extends ProviderMessageRouter {
+public class ProviderProtectedHandler extends ProviderHandler {
     protected ConcurrentMap<String, AtomicInteger> requestCounters = new ConcurrentHashMap<>();
     protected AtomicInteger                        totalCounter    = new AtomicInteger(0);
     protected AtomicInteger                        rejectCounter   = new AtomicInteger(0);
 
-    public ProviderProtectedMessageRouter() {
+    public ProviderProtectedHandler() {
         super();
-    }
-
-    public ProviderProtectedMessageRouter(ProviderStub<?> provider) {
-        super(provider);
     }
 
     @Override
@@ -123,7 +119,7 @@ public class ProviderProtectedMessageRouter extends ProviderMessageRouter {
     }
 
     protected boolean isAllowRequest(int requestCounter, int totalCounter, int maxThread, Requestable request) {
-        if (methodCounter.get() == 1) {
+        if (EXPORTED_METHOD_COUNT.get() == 1) {
             return true;
         }
 
@@ -140,7 +136,7 @@ public class ProviderProtectedMessageRouter extends ProviderMessageRouter {
 
         // 如果总体线程数超过 maxThread * 3 / 4个，并且对外的method比较多，那么意味着这个时候整体压力比较大，
         // 那么这个时候如果单method超过 maxThread * 1 / 4，那么reject
-        return !(methodCounter.get() >= 4 && totalCounter > (maxThread * 3 / 4) && requestCounter > (maxThread / 4));
+        return !(EXPORTED_METHOD_COUNT.get() >= 4 && totalCounter > (maxThread * 3 / 4) && requestCounter > (maxThread / 4));
     }
 
 //    @Override

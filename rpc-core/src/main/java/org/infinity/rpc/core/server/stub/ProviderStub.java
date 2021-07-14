@@ -143,7 +143,7 @@ public class ProviderStub<T> {
     /**
      * Service provider exporter used to export the provider to registry
      */
-    private transient Exportable<T>             exporter;
+    private transient Exportable                exporter;
     /**
      * Indicator used to identify whether the provider already been registered
      */
@@ -212,7 +212,7 @@ public class ProviderStub<T> {
             // Export provider url
             url = createProviderUrl(applicationConfig, protocolConfig);
             // Export RPC provider service
-            exporter = Protocol.getInstance(url.getProtocol()).export(this);
+            exporter = Protocol.getInstance(url.getProtocol()).export(this.getUrl());
             // Register provider URL to all the registries
             this.registryConfig.getRegistryImpl().register(url);
         }
@@ -250,7 +250,7 @@ public class ProviderStub<T> {
     public void activate() {
         if (!exported.get() && exporter != null) {
             this.registryConfig.getRegistryImpl().activate(url);
-            Protocol.getInstance(url.getProtocol()).export(this);
+            Protocol.getInstance(url.getProtocol()).export(this.getUrl());
             exported.set(true);
         }
     }
