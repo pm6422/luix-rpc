@@ -127,6 +127,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
             return ConsumerStubHolder.getInstance().get().get(beanName);
         }
 
+        // Default hessian 2 serializer
         String serializer = defaultIfEmpty(attributes.get(SERIALIZER), SERIALIZER_NAME_HESSIAN2);
         ConsumerStub<?> consumerStub = ConsumerStub.create(resolvedInterfaceName, infinityProperties.getApplication(),
                 findRegistryConfig(registryIdentity), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
