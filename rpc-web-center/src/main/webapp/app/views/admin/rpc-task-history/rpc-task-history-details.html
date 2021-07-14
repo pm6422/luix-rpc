@@ -68,8 +68,11 @@
                             <td>{{vm.entity.elapsed}}</td>
                         </tr>
                         <tr>
-                            <td>Success:</td>
-                            <td>{{vm.entity.success}}</td>
+                            <td>Status:</td>
+                            <td>
+                                <span class="label label-danger" ng-show="!vm.entity.success">Failure</span>
+                                <span class="label label-primary" ng-show="vm.entity.success">Success</span>
+                            </td>
                         </tr>
                         <tr>
                             <td>Reason:</td>
@@ -87,7 +90,7 @@
                     </table>
                     <div class="text-right">
                         <button type="button" class="btn btn-default btn-sm" ui-sref="^">
-                            <span class="fa fa-arrow-left"></span>&nbsp;<span>Go back</span>
+                            <span class="fa fa-arrow-left"></span>&nbsp;<span>Back</span>
                         </button>
                     </div>
                 </div>

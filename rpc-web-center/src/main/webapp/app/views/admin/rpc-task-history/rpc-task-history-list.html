@@ -23,21 +23,24 @@
                     </div>
                     <table class="table table-striped">
                         <thead>
-                        <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
-                            <th sort-by-directive="name"><span>Task name</span> <span class="fa fa-sort"></span></th>
-                            <th>Method signature</th>
-                            <th>Elapsed (ms)</th>
-                            <th sort-by-directive="success"><span>Success</span> <span class="fa fa-sort"></span></th>
-                            <th sort-by-directive="createdTime"><span>Execution time</span> <span class="fa fa-sort"></span></th>
-                            <th>Actions</th>
-                        </tr>
+                            <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
+                                <th sort-by-directive="name"><span>Task name</span> <span class="fa fa-sort"></span></th>
+                                <th>Method signature</th>
+                                <th>Elapsed (ms)</th>
+                                <th sort-by-directive="success"><span>Status</span> <span class="fa fa-sort"></span></th>
+                                <th sort-by-directive="createdTime"><span>Execution time</span> <span class="fa fa-sort"></span></th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody>
                         <tr ng-repeat="entity in vm.entities track by entity.id">
                             <td>{{entity.name}}</td>
                             <td>{{entity.methodSignature}}</td>
                             <td>{{entity.elapsed}}</td>
-                            <td>{{entity.success}}</td>
+                            <td>
+                                <span class="label label-danger" ng-show="!entity.success">Failure</span>
+                                <span class="label label-primary" ng-show="entity.success">Success</span>
+                            </td>
                             <td>{{entity.createdTime | date:'yyyy/MM/dd HH:mm:ss'}}</td>
                             <td>
                                 <div class="btn-group">
@@ -48,7 +51,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="12" class="text-center">
+                                <td colspan="5" class="text-center">
                                     <strong>
                                         <item-count-component page="vm.page" total="vm.totalItems"
                                                               items-per-page="vm.itemsPerPage"></item-count-component>
@@ -56,18 +59,14 @@
                                     <uib-pagination class="pagination-sm m-xs" total-items="vm.totalItems"
                                                     ng-model="vm.page" ng-change="vm.transition()"></uib-pagination>
                                 </td>
+                                <td class="text-right">
+                                    <button type="button" class="btn btn-default btn-sm" ng-click="vm.goProviderView()">
+                                        <span class="fa fa-arrow-left"></span>&nbsp;<span>Back</span>
+                                    </button>
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
-                    <div class="row p-h-sm">
-                        <div class="col-sm-12">
-                            <div class="text-right">
-                                <button type="button" class="btn btn-default btn-sm" ng-click="vm.goProviderView()">
-                                    <span class="fa fa-arrow-left"></span>&nbsp;<span>Go back</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
