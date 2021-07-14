@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class MethodData implements Serializable {
+public class MethodMeta implements Serializable {
     private static final long         serialVersionUID = 934245299068304702L;
     /**
      * Method name

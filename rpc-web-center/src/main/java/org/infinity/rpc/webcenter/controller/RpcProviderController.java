@@ -8,7 +8,7 @@ import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.server.buildin.BuildInService;
-import org.infinity.rpc.core.server.stub.MethodData;
+import org.infinity.rpc.core.server.stub.MethodMeta;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
@@ -66,13 +66,13 @@ public class RpcProviderController {
 
     @ApiOperation("find all methods of provider")
     @GetMapping("/api/rpc-provider/methods")
-    public ResponseEntity<List<MethodData>> findMethods(
+    public ResponseEntity<List<MethodMeta>> findMethods(
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
         UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
         @SuppressWarnings({"unchecked"})
-        List<MethodData> result = (List<MethodData>) invocationHandler.invoke(METHOD_GET_METHODS,
+        List<MethodMeta> result = (List<MethodMeta>) invocationHandler.invoke(METHOD_GET_METHODS,
                 new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
                 new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
         return ResponseEntity.ok().body(result);

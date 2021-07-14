@@ -3,7 +3,7 @@ package org.infinity.rpc.core.server.buildin.impl;
 import org.infinity.rpc.core.config.impl.ApplicationConfig;
 import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.buildin.ServerInfo;
-import org.infinity.rpc.core.server.stub.MethodData;
+import org.infinity.rpc.core.server.stub.MethodMeta;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.server.stub.ProviderStubHolder;
 import org.infinity.rpc.core.utils.ApplicationConfigHolder;
@@ -45,9 +45,9 @@ public class BuildInServiceImpl implements BuildInService {
     }
 
     @Override
-    public List<MethodData> getMethods(String interfaceClassName, String form, String version) {
+    public List<MethodMeta> getMethods(String interfaceClassName, String form, String version) {
         String providerStubBeanName = ProviderStub.buildProviderStubBeanName(interfaceClassName, form, version);
-        return ProviderStubHolder.getInstance().get().get(providerStubBeanName).getMethodDataCache();
+        return ProviderStubHolder.getInstance().get().get(providerStubBeanName).getMethodMetaCache();
     }
 
     @Override

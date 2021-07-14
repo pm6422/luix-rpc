@@ -135,7 +135,7 @@ public class ProviderStub<T> {
     /**
      * All the methods of the interface class
      */
-    private           List<MethodData>          methodDataCache = new ArrayList<>();
+    private           List<MethodMeta>          methodMetaCache = new ArrayList<>();
     /**
      * The provider url
      */
@@ -181,8 +181,8 @@ public class ProviderStub<T> {
             String methodSignature = getMethodSignature(method);
             methodsCache.putIfAbsent(methodSignature, method);
             List<String> methodParameters = Arrays.stream(method.getParameterTypes()).map(Class::getName).collect(Collectors.toList());
-            MethodData methodData = new MethodData(method.getName(), methodParameters, methodSignature, method.getGenericReturnType().getTypeName());
-            methodDataCache.add(methodData);
+            MethodMeta methodMeta = new MethodMeta(method.getName(), methodParameters, methodSignature, method.getGenericReturnType().getTypeName());
+            methodMetaCache.add(methodMeta);
         });
     }
 

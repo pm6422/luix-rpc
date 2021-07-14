@@ -1,7 +1,7 @@
 package org.infinity.rpc.core.server.buildin;
 
 import org.infinity.rpc.core.config.impl.ApplicationConfig;
-import org.infinity.rpc.core.server.stub.MethodData;
+import org.infinity.rpc.core.server.stub.MethodMeta;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public interface BuildInService {
      * @param version            version
      * @return methods
      */
-    List<MethodData> getMethods(String interfaceClassName, String form, String version);
+    List<MethodMeta> getMethods(String interfaceClassName, String form, String version);
 
     /**
      * Activate the provider service
