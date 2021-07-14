@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Optional;
 
 import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
@@ -92,25 +91,23 @@ public class RpcServiceController {
         return ResponseEntity.ok().headers(generatePageHeaders(results)).body(results.getContent());
     }
 
-    @ApiOperation("degrade service")
-    @GetMapping("/api/rpc-service/degrade/{id}")
-    public ResponseEntity<Void> degrade(@ApiParam(value = "ID", required = true) @PathVariable String id) {
-        Optional<RpcService> domain = rpcServiceRepository.findById(id);
-        if (domain.isPresent()) {
-            rpcProviderService.find(domain.get().getRegistryIdentity(), domain.get().getInterfaceName(), true)
-                    .forEach(provider -> rpcProviderController.deactivate(domain.get().getRegistryIdentity(), provider.getUrl()));
-        }
+    @ApiOperation("activate service")
+    @GetMapping("/api/rpc-service/activate")
+    public ResponseEntity<Void> activate(
+            @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
+            @ApiParam(value = "interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
+        rpcProviderService.find(registryIdentity, interfaceName, false)
+                .forEach(provider -> rpcProviderController.activate(registryIdentity, provider.getUrl()));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @ApiOperation("recover service")
-    @GetMapping("/api/rpc-service/recover/{id}")
-    public ResponseEntity<Void> recover(@ApiParam(value = "ID", required = true) @PathVariable String id) {
-        Optional<RpcService> domain = rpcServiceRepository.findById(id);
-        if (domain.isPresent()) {
-            rpcProviderService.find(domain.get().getRegistryIdentity(), domain.get().getInterfaceName(), false)
-                    .forEach(provider -> rpcProviderController.activate(domain.get().getRegistryIdentity(), provider.getUrl()));
-        }
+    @ApiOperation("deactivate service")
+    @GetMapping("/api/rpc-service/deactivate")
+    public ResponseEntity<Void> deactivate(
+            @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
+            @ApiParam(value = "interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
+        rpcProviderService.find(registryIdentity, interfaceName, true)
+                .forEach(provider -> rpcProviderController.deactivate(registryIdentity, provider.getUrl()));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

@@ -1365,7 +1365,7 @@ function RpcServerService($resource) {
  * RpcServiceService
  */
 function RpcServiceService($resource) {
-    var service = $resource('api/rpc-service/:extension/:id', {}, {
+    var service = $resource('api/rpc-service/:extension', {}, {
         'query': {method: 'GET', isArray: true, params: {extension: 'services'}},
         'get': {
             method: 'GET',
@@ -1374,8 +1374,8 @@ function RpcServiceService($resource) {
                 return data;
             }
         },
-        'degrade': {method: 'GET', params: {extension: 'degrade', id: '@id'}},
-        'recover': {method: 'GET', params: {extension: 'recover', id: '@id'}}
+        'activate': {method: 'GET', params: {extension: 'activate'}},
+        'deactivate': {method: 'GET', params: {extension: 'deactivate'}}
     });
     return service;
 }

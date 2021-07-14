@@ -1571,8 +1571,8 @@ function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtil
     vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
     vm.transition = transition;
     vm.criteria = criteria;
-    vm.degrade = degrade;
-    vm.recover = recover;
+    vm.deactivate = deactivate;
+    vm.activate = activate;
 
     vm.loadAll();
 
@@ -1620,15 +1620,15 @@ function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtil
         }
     }
 
-    function degrade(id) {
-        RpcServiceService.degrade(id,
+    function deactivate(entity) {
+        RpcServiceService.deactivate({registryIdentity: $rootScope.selectedRegistryIdentity, interfaceName: entity.interfaceName},
             function (response) {
                 vm.loadAll();
             });
     }
 
-    function recover(id) {
-        RpcServiceService.recover(id,
+    function activate(entity) {
+        RpcServiceService.activate({registryIdentity: $rootScope.selectedRegistryIdentity, interfaceName: entity.interfaceName},
             function (response) {
                 vm.loadAll();
             });

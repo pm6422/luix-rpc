@@ -35,11 +35,11 @@
                                     ui-sref="rpc.rpc-consumer-list({interfaceName: entity.interfaceName})"
                                     uib-tooltip="List all consumers of this service">Consumers</button>
                             <button class="btn-white btn btn-xs" ng-disabled="!entity.providing"
-                                    ng-click="vm.degrade({id: entity.id})"
-                                    uib-tooltip="Take all providers of this interface offline">Degrade</button>
+                                    ng-click="vm.deactivate(entity)"
+                                    uib-tooltip="Take all the providers of this interface offline">Deactivate</button>
                             <button class="btn-white btn btn-xs" ng-disabled="entity.providing"
-                                    ng-click="vm.recover({id: entity.id})"
-                                    uib-tooltip="Take all providers of this interface online">Recover</button>
+                                    ng-click="vm.activate(entity)"
+                                    uib-tooltip="Take all the providers of this interface online">Activate</button>
                         </div>
                     </td>
                 </tr>
