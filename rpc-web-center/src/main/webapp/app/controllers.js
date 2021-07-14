@@ -41,6 +41,7 @@ angular
     .controller('RpcProviderDetailsController', RpcProviderDetailsController)
     .controller('RpcTaskDialogController', RpcTaskDialogController)
     .controller('RpcTaskHistoryListController', RpcTaskHistoryListController)
+    .controller('RpcTaskHistoryDetailsController', RpcTaskHistoryDetailsController)
     .controller('RpcConsumerListController', RpcConsumerListController)
     .controller('AppListController', AppListController)
     .controller('AppDialogController', AppDialogController)
@@ -1974,6 +1975,17 @@ function RpcTaskHistoryListController($rootScope, $state, AlertUtils, ParseLinks
     function goProviderView(refreshToken) {
         $state.go('rpc.rpc-provider-list.view', {'id': criteria.providerId});
     }
+}
+/**
+ * RpcTaskHistoryDetailsController
+ */
+function RpcTaskHistoryDetailsController($state, $stateParams, entity) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
+    vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
+    vm.entity = entity;
 }
 /**
  * RpcConsumerListController

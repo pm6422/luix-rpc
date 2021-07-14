@@ -1098,6 +1098,24 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
+        .state('rpc.rpc-task-history-list.view', {
+            url: '/view/:id',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/rpc-task-history/rpc-task-history-details.html',
+                    controller: 'RpcTaskHistoryDetailsController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'View'
+            },
+            resolve: {
+                entity: ['RpcTaskHistoryService', '$stateParams', function (RpcTaskHistoryService, $stateParams) {
+                    return RpcTaskHistoryService.get({extension: $stateParams.id}).$promise;
+                }]
+            }
+        })
         .state('rpc.rpc-consumer-list', {
             url: '/rpc-consumer-list?page&sort&application&interfaceName&address',
             views: {
