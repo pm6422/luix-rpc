@@ -21,6 +21,7 @@ angular
     .controller('HealthDialogController', HealthDialogController)
     .controller('ConfigurationController', ConfigurationController)
     .controller('BeansController', BeansController)
+    .controller('BeanDialogController', BeanDialogController)
     .controller('MappingsController', MappingsController)
     .controller('HttpTraceController', HttpTraceController)
     .controller('HttpSessionController', HttpSessionController)
@@ -923,6 +924,18 @@ function BeansController($state, $http, $uibModal, APP_NAME) {
                 }
             }
         });
+    }
+}
+
+function BeanDialogController($uibModalInstance, name, beanDetails) {
+    var vm = this;
+
+    vm.cancel = cancel;
+    vm.name = name;
+    vm.beanDetails = beanDetails;
+
+    function cancel() {
+        $uibModalInstance.dismiss('cancel');
     }
 }
 
