@@ -58,6 +58,31 @@ import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignatur
 @Setter
 @Getter
 public class ProviderStub<T> {
+
+    public static final Map<String, String> OPTIONS = new HashMap<>();
+
+    {
+        OPTIONS.put(FORM, StringUtils.EMPTY);
+        OPTIONS.put(VERSION, StringUtils.EMPTY);
+        OPTIONS.put(APP, StringUtils.EMPTY);
+        OPTIONS.put(SERIALIZER, StringUtils.EMPTY);
+        OPTIONS.put(HEALTH_CHECKER, StringUtils.EMPTY);
+        OPTIONS.put(REQUEST_TIMEOUT, StringUtils.EMPTY);
+        OPTIONS.put(RETRY_COUNT, StringUtils.EMPTY);
+        OPTIONS.put(MAX_PAYLOAD, StringUtils.EMPTY);
+        OPTIONS.put(CODEC, StringUtils.EMPTY);
+        OPTIONS.put(ENDPOINT_FACTORY, StringUtils.EMPTY);
+        OPTIONS.put(MIN_CLIENT_CONN, StringUtils.EMPTY);
+        OPTIONS.put(MAX_CLIENT_FAILED_CONN, StringUtils.EMPTY);
+        OPTIONS.put(MAX_SERVER_CONN, StringUtils.EMPTY);
+        OPTIONS.put(MAX_CONTENT_LENGTH, StringUtils.EMPTY);
+        OPTIONS.put(MIN_THREAD, StringUtils.EMPTY);
+        OPTIONS.put(MAX_THREAD, StringUtils.EMPTY);
+        OPTIONS.put(WORK_QUEUE_SIZE, StringUtils.EMPTY);
+        OPTIONS.put(SHARED_CHANNEL, StringUtils.EMPTY);
+        OPTIONS.put(ASYNC_INIT_CONN, StringUtils.EMPTY);
+    }
+
     /**
      * Provider stub bean name
      */

@@ -45,6 +45,20 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 @Setter
 @Getter
 public class ConsumerStub<T> {
+
+    public static final Map<String, String> OPTIONS = new HashMap<>();
+
+    {
+        OPTIONS.put(FORM, StringUtils.EMPTY);
+        OPTIONS.put(VERSION, StringUtils.EMPTY);
+        OPTIONS.put(APP, StringUtils.EMPTY);
+        OPTIONS.put(SERIALIZER, StringUtils.EMPTY);
+        OPTIONS.put(REQUEST_TIMEOUT, StringUtils.EMPTY);
+        OPTIONS.put(RETRY_COUNT, StringUtils.EMPTY);
+        OPTIONS.put(MAX_PAYLOAD, StringUtils.EMPTY);
+        OPTIONS.put(THROW_EXCEPTION, StringUtils.EMPTY);
+    }
+
     /**
      * Provider stub bean name
      */
