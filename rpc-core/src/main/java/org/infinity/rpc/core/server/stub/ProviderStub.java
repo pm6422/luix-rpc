@@ -149,6 +149,10 @@ public class ProviderStub<T> {
      */
     private final     AtomicBoolean             exported        = new AtomicBoolean(false);
     /**
+     * Application configuration
+     */
+    private           ApplicationConfig         applicationConfig;
+    /**
      * Protocol configuration
      */
     private           ProtocolConfig            protocolConfig;
@@ -206,6 +210,7 @@ public class ProviderStub<T> {
      */
     public void register(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, RegistryConfig registryConfig) {
         if (exported.compareAndSet(false, true)) {
+            this.applicationConfig = applicationConfig;
             this.protocolConfig = protocolConfig;
             this.registryConfig = registryConfig;
 

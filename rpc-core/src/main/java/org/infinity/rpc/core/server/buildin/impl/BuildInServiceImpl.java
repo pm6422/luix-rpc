@@ -6,7 +6,6 @@ import org.infinity.rpc.core.server.buildin.ServerInfo;
 import org.infinity.rpc.core.server.stub.MethodMeta;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.server.stub.ProviderStubHolder;
-import org.infinity.rpc.core.utils.ApplicationConfigHolder;
 
 import java.util.Date;
 import java.util.List;
@@ -18,7 +17,8 @@ import static org.infinity.rpc.utilities.statistics.StatisticsUtils.getMemorySta
 public class BuildInServiceImpl implements BuildInService {
     @Override
     public ApplicationConfig getApplicationInfo() {
-        return ApplicationConfigHolder.get();
+        String stubBeanName = ProviderStub.buildProviderStubBeanName(BuildInService.class.getName());
+        return ProviderStubHolder.getInstance().get().get(stubBeanName).getApplicationConfig();
     }
 
     @Override
@@ -40,25 +40,25 @@ public class BuildInServiceImpl implements BuildInService {
 
     @Override
     public String checkHealth(String interfaceClassName, String form, String version) {
-        String providerStubBeanName = ProviderStub.buildProviderStubBeanName(interfaceClassName, form, version);
-        return ProviderStubHolder.getInstance().get().get(providerStubBeanName).checkHealth();
+        String stubBeanName = ProviderStub.buildProviderStubBeanName(interfaceClassName, form, version);
+        return ProviderStubHolder.getInstance().get().get(stubBeanName).checkHealth();
     }
 
     @Override
     public List<MethodMeta> getMethods(String interfaceClassName, String form, String version) {
-        String providerStubBeanName = ProviderStub.buildProviderStubBeanName(interfaceClassName, form, version);
-        return ProviderStubHolder.getInstance().get().get(providerStubBeanName).getMethodMetaCache();
+        String stubBeanName = ProviderStub.buildProviderStubBeanName(interfaceClassName, form, version);
+        return ProviderStubHolder.getInstance().get().get(stubBeanName).getMethodMetaCache();
     }
 
     @Override
     public void activate(String interfaceClassName, String form, String version) {
-        String providerStubBeanName = ProviderStub.buildProviderStubBeanName(interfaceClassName, form, version);
-        ProviderStubHolder.getInstance().get().get(providerStubBeanName).activate();
+        String stubBeanName = ProviderStub.buildProviderStubBeanName(interfaceClassName, form, version);
+        ProviderStubHolder.getInstance().get().get(stubBeanName).activate();
     }
 
     @Override
     public void deactivate(String interfaceClassName, String form, String version) {
-        String providerStubBeanName = ProviderStub.buildProviderStubBeanName(interfaceClassName, form, version);
-        ProviderStubHolder.getInstance().get().get(providerStubBeanName).deactivate();
+        String stubBeanName = ProviderStub.buildProviderStubBeanName(interfaceClassName, form, version);
+        ProviderStubHolder.getInstance().get().get(stubBeanName).deactivate();
     }
 }

@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.core.config.Configurable;
 import org.infinity.rpc.core.exception.impl.RpcConfigException;
-import org.infinity.rpc.core.utils.ApplicationConfigHolder;
 import org.infinity.rpc.core.utils.DebugModeHolder;
 import org.infinity.rpc.core.utils.JarUtils;
 
@@ -78,7 +77,6 @@ public class ApplicationConfig implements Configurable, Serializable {
         checkValidity();
         // Set debug mode
         DebugModeHolder.setDebugMode(debugMode);
-        ApplicationConfigHolder.set(this);
         log.info("Infinity RPC application configuration: {}", this);
     }
 
