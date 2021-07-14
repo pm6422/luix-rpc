@@ -48,6 +48,11 @@ public class RpcProviderServiceImpl implements RpcProviderService {
     }
 
     @Override
+    public List<RpcProvider> find(String registryIdentity, String interfaceName, Boolean active) {
+        return rpcProviderRepository.findByRegistryIdentityAndInterfaceNameAndActive(registryIdentity, interfaceName, active);
+    }
+
+    @Override
     public List<String> findDistinctApplications(String registryIdentity, Boolean active) {
         Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryIdentity));
         if (active != null) {

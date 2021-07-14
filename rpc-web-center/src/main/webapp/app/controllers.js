@@ -1571,6 +1571,8 @@ function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtil
     vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
     vm.transition = transition;
     vm.criteria = criteria;
+    vm.degrade = degrade;
+    vm.recover = recover;
 
     vm.loadAll();
 
@@ -1616,6 +1618,20 @@ function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtil
         if ($event.keyCode == 13) {
             vm.transition();
         }
+    }
+
+    function degrade(id) {
+        RpcServiceService.degrade(id,
+            function (response) {
+                vm.loadAll();
+            });
+    }
+
+    function recover(id) {
+        RpcServiceService.recover(id,
+            function (response) {
+                vm.loadAll();
+            });
     }
 }
 /**

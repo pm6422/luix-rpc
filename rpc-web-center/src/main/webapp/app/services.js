@@ -1365,7 +1365,7 @@ function RpcServerService($resource) {
  * RpcServiceService
  */
 function RpcServiceService($resource) {
-    var service = $resource('api/rpc-service/:extension', {}, {
+    var service = $resource('api/rpc-service/:extension/:id', {}, {
         'query': {method: 'GET', isArray: true, params: {extension: 'services'}},
         'get': {
             method: 'GET',
@@ -1373,7 +1373,9 @@ function RpcServiceService($resource) {
                 data = angular.fromJson(data);
                 return data;
             }
-        }
+        },
+        'degrade': {method: 'GET', params: {extension: 'degrade', id: '@id'}},
+        'recover': {method: 'GET', params: {extension: 'recover', id: '@id'}}
     });
     return service;
 }

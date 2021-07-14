@@ -14,6 +14,8 @@ public interface RpcProviderRepository extends MongoRepository<RpcProvider, Stri
 
     List<RpcProvider> findByInterfaceName(String interfaceName);
 
+    List<RpcProvider> findByRegistryIdentityAndInterfaceNameAndActive(String registryIdentity, String interfaceName, boolean active);
+
     boolean existsByRegistryIdentityAndApplicationAndActive(String registryIdentity, String application, boolean active);
 
     boolean existsByRegistryIdentityAndInterfaceNameAndActive(String registryIdentity, String interfaceName, boolean active);

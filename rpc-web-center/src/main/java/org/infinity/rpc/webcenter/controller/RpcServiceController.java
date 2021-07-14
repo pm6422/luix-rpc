@@ -11,6 +11,7 @@ import org.infinity.rpc.webcenter.service.RpcProviderService;
 import org.infinity.rpc.webcenter.service.RpcServiceService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
@@ -29,13 +31,15 @@ import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeade
 public class RpcServiceController {
 
     @Resource
-    private RpcServiceService    rpcServiceService;
+    private RpcServiceService     rpcServiceService;
     @Resource
-    private RpcServiceRepository rpcServiceRepository;
+    private RpcServiceRepository  rpcServiceRepository;
     @Resource
-    private RpcProviderService   rpcProviderService;
+    private RpcProviderService    rpcProviderService;
     @Resource
-    private RpcConsumerService   rpcConsumerService;
+    private RpcConsumerService    rpcConsumerService;
+    @Resource
+    private RpcProviderController rpcProviderController;
 
     @ApiOperation("find service by ID")
     @GetMapping("/api/rpc-service/{id}")
@@ -86,5 +90,27 @@ public class RpcServiceController {
             });
         }
         return ResponseEntity.ok().headers(generatePageHeaders(results)).body(results.getContent());
+    }
+
+    @ApiOperation("degrade service")
+    @GetMapping("/api/rpc-service/degrade/{id}")
+    public ResponseEntity<Void> degrade(@ApiParam(value = "ID", required = true) @PathVariable String id) {
+        Optional<RpcService> domain = rpcServiceRepository.findById(id);
+        if (domain.isPresent()) {
+            rpcProviderService.find(domain.get().getRegistryIdentity(), domain.get().getInterfaceName(), true)
+                    .forEach(provider -> rpcProviderController.deactivate(domain.get().getRegistryIdentity(), provider.getUrl()));
+        }
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @ApiOperation("recover service")
+    @GetMapping("/api/rpc-service/recover/{id}")
+    public ResponseEntity<Void> recover(@ApiParam(value = "ID", required = true) @PathVariable String id) {
+        Optional<RpcService> domain = rpcServiceRepository.findById(id);
+        if (domain.isPresent()) {
+            rpcProviderService.find(domain.get().getRegistryIdentity(), domain.get().getInterfaceName(), false)
+                    .forEach(provider -> rpcProviderController.activate(domain.get().getRegistryIdentity(), provider.getUrl()));
+        }
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
