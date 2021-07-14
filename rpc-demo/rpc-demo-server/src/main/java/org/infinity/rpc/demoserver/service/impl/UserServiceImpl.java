@@ -19,9 +19,9 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public Optional<User> findOneByLogin(String login) {
+    public User findOneByLogin(String login) {
         Assert.hasText(login, "it must not be null, empty, or blank");
         return userRepository.findOneByUserNameOrEmailOrMobileNo(login.toLowerCase(Locale.ENGLISH),
-                login.toLowerCase(Locale.ENGLISH), login.toLowerCase(Locale.ENGLISH));
+                login.toLowerCase(Locale.ENGLISH), login.toLowerCase(Locale.ENGLISH)).orElse(null);
     }
 }

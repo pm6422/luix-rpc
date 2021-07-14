@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface UserService {
 
-    Optional<User> findOneByLogin(String login);
+    User findOneByLogin(String login);
 }
