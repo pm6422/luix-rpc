@@ -1,5 +1,6 @@
 package org.infinity.rpc.webcenter.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -10,7 +11,6 @@ import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.dto.MethodInvocation;
 import org.infinity.rpc.webcenter.service.RpcRegistryService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,19 +37,19 @@ public class RpcUniversalInvocationController {
 
     @ApiOperation("direct address invocation")
     @PostMapping("/api/rpc-invocation/invoke")
-    public ResponseEntity<Object> invoke(@ApiParam(value = "methodInvocation", required = true)
-                                         @Valid @RequestBody MethodInvocation methodInvocation) {
+    public String invoke(@ApiParam(value = "methodInvocation", required = true)
+                         @Valid @RequestBody MethodInvocation methodInvocation) throws JsonProcessingException {
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(methodInvocation.getRegistryIdentity(),
                 methodInvocation.getProviderUrl(), methodInvocation.getInterfaceName(), methodInvocation.getAttributes());
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Object result = invocationHandler.invoke(methodInvocation.getMethodName(), methodInvocation.getMethodParamTypes(), methodInvocation.getArgs());
-        return ResponseEntity.ok().body(result);
+        return new ObjectMapper().writeValueAsString(result);
     }
 
     @ApiOperation("discover address invocation by file")
     @PostMapping("/api/rpc-invocation/invoke-by-file")
-    public ResponseEntity<Object> invokeByFile(@ApiParam(value = "file", required = true) @RequestPart MultipartFile file) throws IOException {
+    public String invokeByFile(@ApiParam(value = "file", required = true) @RequestPart MultipartFile file) throws IOException {
         String input = StreamUtils.copyToString(file.getInputStream(), Charset.defaultCharset());
         MethodInvocation methodInvocation = new ObjectMapper().readValue(input, MethodInvocation.class);
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(methodInvocation.getRegistryIdentity(),
@@ -57,6 +57,6 @@ public class RpcUniversalInvocationController {
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Object result = invocationHandler.invoke(methodInvocation.getMethodName(), methodInvocation.getMethodParamTypes(), methodInvocation.getArgs());
-        return ResponseEntity.ok().body(result);
+        return new ObjectMapper().writeValueAsString(result);
     }
 }

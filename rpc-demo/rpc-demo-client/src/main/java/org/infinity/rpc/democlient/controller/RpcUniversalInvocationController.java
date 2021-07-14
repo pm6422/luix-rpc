@@ -41,14 +41,14 @@ public class RpcUniversalInvocationController {
 
     @ApiOperation("discover address invocation")
     @PostMapping("/api/rpc/universal-invocation")
-    public ResponseEntity<Object> universalInvoke(@ApiParam(value = "file", required = true) @RequestPart MultipartFile file) throws IOException {
+    public String universalInvoke(@ApiParam(value = "file", required = true) @RequestPart MultipartFile file) throws IOException {
         String input = StreamUtils.copyToString(file.getInputStream(), Charset.defaultCharset());
         MethodInvocation methodInvocation = new ObjectMapper().readValue(input, MethodInvocation.class);
         ConsumerStub<?> consumerStub = getConsumerStub(methodInvocation);
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler universalInvocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Object result = universalInvocationHandler.invoke(methodInvocation.getMethodName(), methodInvocation.getMethodParamTypes(), methodInvocation.getArgs());
-        return ResponseEntity.ok().body(result);
+        return new ObjectMapper().writeValueAsString(result);
     }
 
     private ConsumerStub<?> getConsumerStub(MethodInvocation data) {
