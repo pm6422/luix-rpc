@@ -269,8 +269,8 @@ public class ProviderStub<T> {
      */
     private Url createProviderUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
         Url url = Url.providerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
-        url.addOption(SERIALIZER, serializer);
         url.addOption(APP, applicationConfig.getName());
+        url.addOption(SERIALIZER, serializer);
         url.addOption(HEALTH_CHECKER, healthChecker);
         url.addOption(REQUEST_TIMEOUT, requestTimeout);
         url.addOption(RETRY_COUNT, retryCount);
