@@ -59,7 +59,7 @@ import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignatur
 @Getter
 public class ProviderStub<T> {
 
-    public static final Map<String, String> OPTIONS = new HashMap<>();
+    public static final Map<String, String> OPTIONS = new LinkedHashMap<>();
 
     {
         OPTIONS.put(FORM, StringUtils.EMPTY);

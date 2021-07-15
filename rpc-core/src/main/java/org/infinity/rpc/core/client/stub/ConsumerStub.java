@@ -46,7 +46,7 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 @Getter
 public class ConsumerStub<T> {
 
-    public static final Map<String, String> OPTIONS = new HashMap<>();
+    public static final Map<String, String> OPTIONS = new LinkedHashMap<>();
 
     {
         OPTIONS.put(FORM, StringUtils.EMPTY);
