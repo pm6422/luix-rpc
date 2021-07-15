@@ -3,6 +3,7 @@ package org.infinity.rpc.webcenter.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.webcenter.domain.RpcConsumer;
 import org.infinity.rpc.webcenter.service.RpcConsumerService;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
@@ -36,5 +38,11 @@ public class RpcConsumerController {
             @ApiParam(value = "active flag") @RequestParam(value = "active", required = false) Boolean active) {
         Page<RpcConsumer> list = rpcConsumerService.find(pageable, registryIdentity, application, interfaceName, active);
         return ResponseEntity.ok().headers(generatePageHeaders(list)).body(list.getContent());
+    }
+
+    @ApiOperation("get consumer options")
+    @GetMapping("/api/rpc-consumer/options")
+    public ResponseEntity<Map<String, String>> options() {
+        return ResponseEntity.ok(ConsumerStub.OPTIONS);
     }
 }

@@ -9,6 +9,7 @@ import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.stub.MethodMeta;
+import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 import static org.infinity.rpc.core.server.buildin.BuildInService.*;
 import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
@@ -140,5 +142,11 @@ public class RpcProviderController {
                     new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
                     new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
         }
+    }
+
+    @ApiOperation("get provider options")
+    @GetMapping("/api/rpc-provider/options")
+    public ResponseEntity<Map<String, String>> options() {
+        return ResponseEntity.ok(ProviderStub.OPTIONS);
     }
 }
