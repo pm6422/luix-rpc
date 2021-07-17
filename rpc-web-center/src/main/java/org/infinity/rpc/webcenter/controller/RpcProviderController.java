@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Triple;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
@@ -28,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 import static org.infinity.rpc.core.server.buildin.BuildInService.*;
 import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
@@ -146,7 +146,7 @@ public class RpcProviderController {
 
     @ApiOperation("get provider options")
     @GetMapping("/api/rpc-provider/options")
-    public ResponseEntity<Map<String, String>> options() {
-        return ResponseEntity.ok(ProviderStub.OPTIONS);
+    public List<Triple<String, String, String>> options() {
+        return ProviderStub.OPTIONS;
     }
 }

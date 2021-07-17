@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Triple;
 import org.infinity.rpc.core.client.request.Requestable;
 import org.infinity.rpc.core.config.impl.ApplicationConfig;
 import org.infinity.rpc.core.config.impl.ProtocolConfig;
@@ -59,28 +60,28 @@ import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignatur
 @Getter
 public class ProviderStub<T> {
 
-    public static final Map<String, String> OPTIONS = new LinkedHashMap<>();
+    public static final List<Triple<String, String, String>> OPTIONS = new ArrayList<>();
 
     {
-        OPTIONS.put(FORM, StringUtils.EMPTY);
-        OPTIONS.put(VERSION, StringUtils.EMPTY);
-        OPTIONS.put(APP, StringUtils.EMPTY);
-        OPTIONS.put(SERIALIZER, StringUtils.EMPTY);
-        OPTIONS.put(HEALTH_CHECKER, StringUtils.EMPTY);
-        OPTIONS.put(REQUEST_TIMEOUT, StringUtils.EMPTY);
-        OPTIONS.put(RETRY_COUNT, StringUtils.EMPTY);
-        OPTIONS.put(MAX_PAYLOAD, StringUtils.EMPTY);
-        OPTIONS.put(CODEC, StringUtils.EMPTY);
-        OPTIONS.put(ENDPOINT_FACTORY, StringUtils.EMPTY);
-        OPTIONS.put(MIN_CLIENT_CONN, StringUtils.EMPTY);
-        OPTIONS.put(MAX_CLIENT_FAILED_CONN, StringUtils.EMPTY);
-        OPTIONS.put(MAX_SERVER_CONN, StringUtils.EMPTY);
-        OPTIONS.put(MAX_CONTENT_LENGTH, StringUtils.EMPTY);
-        OPTIONS.put(MIN_THREAD, StringUtils.EMPTY);
-        OPTIONS.put(MAX_THREAD, StringUtils.EMPTY);
-        OPTIONS.put(WORK_QUEUE_SIZE, StringUtils.EMPTY);
-        OPTIONS.put(SHARED_CHANNEL, StringUtils.EMPTY);
-        OPTIONS.put(ASYNC_INIT_CONN, StringUtils.EMPTY);
+        OPTIONS.add(Triple.of(FORM, StringUtils.EMPTY, String.class.getSimpleName()));
+        OPTIONS.add(Triple.of(VERSION, StringUtils.EMPTY, String.class.getSimpleName()));
+        OPTIONS.add(Triple.of(APP, StringUtils.EMPTY, String.class.getSimpleName()));
+        OPTIONS.add(Triple.of(SERIALIZER, StringUtils.EMPTY, String.class.getSimpleName()));
+        OPTIONS.add(Triple.of(HEALTH_CHECKER, StringUtils.EMPTY, String.class.getSimpleName()));
+        OPTIONS.add(Triple.of(REQUEST_TIMEOUT, StringUtils.EMPTY, Integer.class.getSimpleName()));
+        OPTIONS.add(Triple.of(RETRY_COUNT, StringUtils.EMPTY, Integer.class.getSimpleName()));
+        OPTIONS.add(Triple.of(MAX_PAYLOAD, StringUtils.EMPTY, Integer.class.getSimpleName()));
+        OPTIONS.add(Triple.of(CODEC, StringUtils.EMPTY, String.class.getSimpleName()));
+        OPTIONS.add(Triple.of(ENDPOINT_FACTORY, StringUtils.EMPTY, String.class.getSimpleName()));
+        OPTIONS.add(Triple.of(MIN_CLIENT_CONN, StringUtils.EMPTY, Integer.class.getSimpleName()));
+        OPTIONS.add(Triple.of(MAX_CLIENT_FAILED_CONN, StringUtils.EMPTY, Integer.class.getSimpleName()));
+        OPTIONS.add(Triple.of(MAX_SERVER_CONN, StringUtils.EMPTY, Integer.class.getSimpleName()));
+        OPTIONS.add(Triple.of(MAX_CONTENT_LENGTH, StringUtils.EMPTY, Integer.class.getSimpleName()));
+        OPTIONS.add(Triple.of(MIN_THREAD, StringUtils.EMPTY, Integer.class.getSimpleName()));
+        OPTIONS.add(Triple.of(MAX_THREAD, StringUtils.EMPTY, Integer.class.getSimpleName()));
+        OPTIONS.add(Triple.of(WORK_QUEUE_SIZE, StringUtils.EMPTY, Integer.class.getSimpleName()));
+        OPTIONS.add(Triple.of(SHARED_CHANNEL, StringUtils.EMPTY, Boolean.class.getSimpleName()));
+        OPTIONS.add(Triple.of(ASYNC_INIT_CONN, StringUtils.EMPTY, Integer.class.getSimpleName()));
     }
 
     /**

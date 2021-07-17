@@ -1394,6 +1394,7 @@ function RpcProviderService($resource) {
             }
         },
         'queryMethods': {method: 'GET', isArray: true, params: {extension: 'methods'}},
+        'queryOptions': {method: 'GET', isArray: true, params: {extension: 'options'}},
         'checkHealth': {
             method: 'GET',
             transformResponse: function (data) {
@@ -1419,7 +1420,8 @@ function RpcConsumerService($resource) {
                 data = angular.fromJson(data);
                 return data;
             }
-        }
+        },
+        'queryOptions': {method: 'GET', isArray: true, params: {extension: 'options'}}
     });
     return service;
 }

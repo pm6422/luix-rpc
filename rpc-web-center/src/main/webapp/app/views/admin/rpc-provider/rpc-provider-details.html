@@ -85,46 +85,48 @@
                             </div>
                             <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
                                 <thead>
-                                <tr>
-                                    <th class="col-sm-1" data-toggle="true">Name</th>
-                                    <th class="col-sm-1">Method signature</th>
-                                    <th class="col-sm-1">Cron expression</th>
-                                    <th class="col-sm-1">Run on all hosts</th>
-                                    <th class="col-sm-1">Enabled</th>
-                                    <th class="col-sm-1">Actions</th>
-                                </tr>
+                                    <tr>
+                                        <th class="col-sm-1" data-toggle="true">Name</th>
+                                        <th class="col-sm-1">Method signature</th>
+                                        <th class="col-sm-1">Cron expression</th>
+                                        <th class="col-sm-1">Run on all hosts</th>
+                                        <th class="col-sm-1">Enabled</th>
+                                        <th class="col-sm-1">Actions</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                <tr on-footable-finish-render ng-repeat="task in vm.tasks">
-                                    <td><span>{{task.name}}</span></td>
-                                    <td><span>{{task.methodSignature}}</span></td>
-                                    <td><span>{{task.cronExpression}}</span></td>
-                                    <td><span>{{task.allHostsRun}}</span></td>
-                                    <td><span>{{task.enabled}}</span></td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <button class="btn-white btn btn-xs" ui-sref=".edit-task({taskId: task.id})">Edit</button>
-                                            <button class="btn-white btn btn-xs" ng-click="vm.delTask(task.id)">Delete</button>
-                                            <button class="btn-white btn btn-xs" ui-sref="rpc.rpc-task-history-list({name: task.name, providerId: vm.entity.id})">History</button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                    <tr on-footable-finish-render ng-repeat="task in vm.tasks">
+                                        <td><span>{{task.name}}</span></td>
+                                        <td><span>{{task.methodSignature}}</span></td>
+                                        <td><span>{{task.cronExpression}}</span></td>
+                                        <td><span>{{task.allHostsRun}}</span></td>
+                                        <td><span>{{task.enabled}}</span></td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button class="btn-white btn btn-xs" ui-sref=".edit-task({taskId: task.id})">Edit</button>
+                                                <button class="btn-white btn btn-xs" ng-click="vm.delTask(task.id)">Delete</button>
+                                                <button class="btn-white btn btn-xs" ui-sref="rpc.rpc-task-history-list({name: task.name, providerId: vm.entity.id})">History</button>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </uib-tab>
                         <uib-tab heading="Configure">
-                            <div class="form-group">
-                                <div class="col-sm-11">
-                                    <small>Completion with: {{vm.checkProgress}}%</small>
-                                    <i class="fa fa-check" ng-show="vm.healthSuccess"></i>
-                                    <i class="fa fa-times" ng-show="vm.healthFailure"></i>
-                                    </button>
-                                    <uib-progressbar value="vm.checkProgress" type="primary" class="progress-mini">
-                                        {{vm.checkProgress}}%
-                                    </uib-progressbar>
-                                    <small>{{vm.healthMessage}}</small>
+                            <span ng-repeat="option in vm.options">
+                                <label class="col-sm-2 control-label text-right">{{option.left}}</label>
+                                <div class="col-sm-2 form-group">
+                                    <input type="number" class="form-control" ng-model="option.middle" ng-show="option.right == 'Integer'">
+                                    <input type="text" class="form-control" ng-model="option.middle" ng-show="option.right == 'String'">
+                                    <div class="onoffswitch" ng-show="option.right == 'Boolean'">
+                                        <input type="checkbox" id="{{option.left}}" ng-model="option.middle" class="onoffswitch-checkbox">
+                                        <label class="onoffswitch-label" for="{{option.left}}">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
+                            </span>
                         </uib-tab>
                         <uib-tab heading="Invocation">
                             <form name="invocationForm" role="form" class="form-horizontal" novalidate show-validation-directive>

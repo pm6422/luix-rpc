@@ -1733,6 +1733,7 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     vm.argsDisabled = true;
     vm.checkProgress = 0;
     vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url});
+    vm.options = RpcProviderService.queryOptions();
 
     vm.argsPlaceholder = '[\n' +
         '    {}\n' +
