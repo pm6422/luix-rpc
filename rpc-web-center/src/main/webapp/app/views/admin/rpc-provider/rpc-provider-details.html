@@ -114,16 +114,25 @@
                         </uib-tab>
                         <uib-tab heading="Configure">
                             <span ng-repeat="option in vm.options">
-                                <label class="col-sm-2 control-label text-right">{{option.left}}</label>
-                                <div class="col-sm-2 form-group">
-                                    <input type="number" class="form-control" ng-model="option.middle" ng-show="option.right == 'Integer'">
-                                    <input type="text" class="form-control" ng-model="option.middle" ng-show="option.right == 'String'">
-                                    <div class="onoffswitch" ng-show="option.right == 'Boolean'">
-                                        <input type="checkbox" id="{{option.left}}" ng-model="option.middle" class="onoffswitch-checkbox">
-                                        <label class="onoffswitch-label" for="{{option.left}}">
-                                            <span class="onoffswitch-inner"></span>
-                                            <span class="onoffswitch-switch"></span>
-                                        </label>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="col-sm-6 control-label text-right">{{option.left}}</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon" style="width: 80px">
+                                                <i class="">{{option.right}}</i>
+                                            </span>
+                                            <input type="number" class="form-control" ng-model="option.middle" ng-show="option.right == 'Integer'">
+                                            <input type="text" class="form-control" ng-model="option.middle" ng-show="option.right == 'String'">
+                                            <div class="form-control" ng-show="option.right == 'Boolean'">
+                                                <div class="onoffswitch">
+                                                    <input type="checkbox" id="{{option.left}}" ng-model="option.middle" class="onoffswitch-checkbox">
+                                                    <label class="onoffswitch-label" for="{{option.left}}">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </span>
