@@ -116,16 +116,13 @@
                             <span ng-repeat="option in vm.options">
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label class="col-sm-6 control-label text-right">{{option.left}}</label>
+                                        <label class="control-label col-sm-6 text-right">{{option.left}}</label>
                                         <div class="input-group">
-                                            <span class="input-group-addon" style="width: 80px">
-                                                <i class="">{{option.right}}</i>
-                                            </span>
-                                            <input type="number" class="form-control" ng-model="option.middle" ng-show="option.right == 'Integer'">
-                                            <input type="text" class="form-control" ng-model="option.middle" ng-show="option.right == 'String'">
-                                            <div class="form-control" ng-show="option.right == 'Boolean'">
+                                            <input type="number" class="form-control col-sm-6" ng-model="option.middle" ng-show="option.right == 'Integer'" placeholder="{{option.right}}">
+                                            <input type="text" class="form-control col-sm-6" ng-model="option.middle" ng-show="option.right == 'String'" placeholder="{{option.right}}">
+                                            <div class="form-control col-sm-6" ng-show="option.right == 'Boolean'">
                                                 <div class="onoffswitch">
-                                                    <input type="checkbox" id="{{option.left}}" ng-model="option.middle" class="onoffswitch-checkbox">
+                                                    <input type="checkbox" id="{{option.left}}" class="onoffswitch-checkbox" ng-model="option.middle">
                                                     <label class="onoffswitch-label" for="{{option.left}}">
                                                         <span class="onoffswitch-inner"></span>
                                                         <span class="onoffswitch-switch"></span>
