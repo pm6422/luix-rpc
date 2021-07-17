@@ -4,12 +4,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.MutableTriple;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.stub.MethodMeta;
+import org.infinity.rpc.core.server.stub.OptionMeta;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
@@ -147,13 +147,13 @@ public class RpcProviderController {
 
     @ApiOperation("get provider options")
     @GetMapping("/api/rpc-provider/options")
-    public List<MutableTriple<String, String, String>> options(
+    public List<OptionMeta> options(
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
         Map<String, String> options = providerUrl.getOptions();
         ProviderStub.OPTIONS.forEach(opt -> {
-            if (options.containsKey(opt.getLeft())) {
-                opt.setMiddle(options.get(opt.getLeft()));
+            if (options.containsKey(opt.getName())) {
+                opt.setValue(options.get(opt.getName()));
             }
         });
         return ProviderStub.OPTIONS;

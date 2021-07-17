@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
+import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER_VAL_DEFAULT;
 import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.infinity.rpc.core.server.response.impl.RpcCheckHealthResponse.STATUS_INACTIVE;
 import static org.infinity.rpc.core.server.response.impl.RpcCheckHealthResponse.STATUS_OK;
@@ -61,28 +62,28 @@ import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignatur
 @Getter
 public class ProviderStub<T> {
 
-    public static final List<MutableTriple<String, String, String>> OPTIONS = new ArrayList<>();
+    public static final List<OptionMeta> OPTIONS = new ArrayList<>();
 
     {
-        OPTIONS.add(MutableTriple.of(FORM, StringUtils.EMPTY, String.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(VERSION, StringUtils.EMPTY, String.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(APP, StringUtils.EMPTY, String.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(SERIALIZER, StringUtils.EMPTY, String.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(HEALTH_CHECKER, StringUtils.EMPTY, String.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(REQUEST_TIMEOUT, StringUtils.EMPTY, Integer.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(RETRY_COUNT, StringUtils.EMPTY, Integer.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(MAX_PAYLOAD, StringUtils.EMPTY, Integer.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(CODEC, StringUtils.EMPTY, String.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(ENDPOINT_FACTORY, StringUtils.EMPTY, String.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(MIN_CLIENT_CONN, StringUtils.EMPTY, Integer.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(MAX_CLIENT_FAILED_CONN, StringUtils.EMPTY, Integer.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(MAX_SERVER_CONN, StringUtils.EMPTY, Integer.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(MAX_CONTENT_LENGTH, StringUtils.EMPTY, Integer.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(MIN_THREAD, StringUtils.EMPTY, Integer.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(MAX_THREAD, StringUtils.EMPTY, Integer.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(WORK_QUEUE_SIZE, StringUtils.EMPTY, Integer.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(SHARED_CHANNEL, StringUtils.EMPTY, Boolean.class.getSimpleName()));
-        OPTIONS.add(MutableTriple.of(ASYNC_INIT_CONN, StringUtils.EMPTY, Integer.class.getSimpleName()));
+//        OPTIONS.add(MutableTriple.of(FORM, StringUtils.EMPTY, String.class.getSimpleName()));
+//        OPTIONS.add(MutableTriple.of(VERSION, StringUtils.EMPTY, String.class.getSimpleName()));
+//        OPTIONS.add(MutableTriple.of(APP, StringUtils.EMPTY, String.class.getSimpleName()));
+        OPTIONS.add(new OptionMeta(SERIALIZER, StringUtils.EMPTY, String.class.getSimpleName(), SERIALIZER_VAL_DEFAULT));
+        OPTIONS.add(new OptionMeta(HEALTH_CHECKER, StringUtils.EMPTY, String.class.getSimpleName(), HEALTH_CHECKER_VAL_DEFAULT));
+        OPTIONS.add(new OptionMeta(REQUEST_TIMEOUT, StringUtils.EMPTY, Integer.class.getSimpleName(), REQUEST_TIMEOUT_VAL_DEFAULT));
+        OPTIONS.add(new OptionMeta(RETRY_COUNT, StringUtils.EMPTY, Integer.class.getSimpleName(), RETRY_COUNT_VAL_DEFAULT));
+        OPTIONS.add(new OptionMeta(MAX_PAYLOAD, StringUtils.EMPTY, Integer.class.getSimpleName(), MAX_PAYLOAD_VAL_DEFAULT));
+        OPTIONS.add(new OptionMeta(CODEC, StringUtils.EMPTY, String.class.getSimpleName(), CODEC_VAL_DEFAULT));
+        OPTIONS.add(new OptionMeta(ENDPOINT_FACTORY, StringUtils.EMPTY, String.class.getSimpleName(), ENDPOINT_FACTORY_VAL_NETTY));
+        OPTIONS.add(new OptionMeta(MIN_CLIENT_CONN, StringUtils.EMPTY, Integer.class.getSimpleName(), MIN_CLIENT_CONN_VAL_DEFAULT));
+        OPTIONS.add(new OptionMeta(MAX_CLIENT_FAILED_CONN, StringUtils.EMPTY, Integer.class.getSimpleName(), MAX_CLIENT_FAILED_CONN_VAL_DEFAULT));
+        OPTIONS.add(new OptionMeta(MAX_SERVER_CONN, StringUtils.EMPTY, Integer.class.getSimpleName(), MAX_SERVER_CONN_VAL_DEFAULT));
+        OPTIONS.add(new OptionMeta(MAX_CONTENT_LENGTH, StringUtils.EMPTY, Integer.class.getSimpleName(), MAX_CONTENT_LENGTH_VAL_DEFAULT));
+        OPTIONS.add(new OptionMeta(MIN_THREAD, StringUtils.EMPTY, Integer.class.getSimpleName(), MIN_THREAD_VAL_DEFAULT));
+        OPTIONS.add(new OptionMeta(MAX_THREAD, StringUtils.EMPTY, Integer.class.getSimpleName(), MAX_THREAD_VAL_DEFAULT));
+        OPTIONS.add(new OptionMeta(WORK_QUEUE_SIZE, StringUtils.EMPTY, Integer.class.getSimpleName(), WORK_QUEUE_SIZE_VAL_DEFAULT));
+        OPTIONS.add(new OptionMeta(SHARED_CHANNEL, StringUtils.EMPTY, Boolean.class.getSimpleName(), SHARED_CHANNEL_VAL_DEFAULT));
+        OPTIONS.add(new OptionMeta(ASYNC_INIT_CONN, StringUtils.EMPTY, Boolean.class.getSimpleName(), ASYNC_INIT_CONN_VAL_DEFAULT));
     }
 
     /**

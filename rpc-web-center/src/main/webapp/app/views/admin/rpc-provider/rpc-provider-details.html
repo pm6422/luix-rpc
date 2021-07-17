@@ -116,20 +116,20 @@
                             <span ng-repeat="option in vm.options">
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label class="control-label col-sm-6 text-right">{{option.left}}</label>
+                                        <label class="control-label col-sm-6 text-right">{{option.name}}</label>
                                         <div class="input-group">
-                                            <input type="number" class="form-control col-sm-6" ng-model="option.middle" ng-show="option.right == 'Integer'" placeholder="{{option.right}}">
-                                            <input type="text" class="form-control col-sm-6" ng-model="option.middle" ng-show="option.right == 'String'" placeholder="{{option.right}}">
-                                            <div class="form-control col-sm-6" ng-show="option.right == 'Boolean'">
+                                            <input type="number" class="form-control col-sm-6" ng-model="option.value" ng-show="option.type == 'Integer'" placeholder="{{option.type}}">
+                                            <input type="text" class="form-control col-sm-6" ng-model="option.value" ng-show="option.type == 'String'" placeholder="{{option.type}}">
+                                            <div class="form-control col-sm-6" ng-show="option.type == 'Boolean'">
                                                 <div class="onoffswitch">
-                                                    <input type="checkbox" id="{{option.left}}" class="onoffswitch-checkbox" ng-model="option.middle">
-                                                    <label class="onoffswitch-label" for="{{option.left}}">
+                                                    <input type="checkbox" id="{{option.name}}" class="onoffswitch-checkbox" ng-model="option.value">
+                                                    <label class="onoffswitch-label" for="{{option.name}}">
                                                         <span class="onoffswitch-inner"></span>
                                                         <span class="onoffswitch-switch"></span>
                                                     </label>
                                                 </div>
                                             </div>
-                                            <kbd><small>default: null</small></kbd>
+                                            <kbd><small>default: {{option.defaultValue}}</small></kbd>
                                         </div>
                                     </div>
                                 </div>
