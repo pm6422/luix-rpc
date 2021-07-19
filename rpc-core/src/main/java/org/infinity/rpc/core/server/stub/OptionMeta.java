@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -13,17 +14,21 @@ public class OptionMeta implements Serializable {
     /**
      * Option name
      */
-    private String name;
+    private String       name;
     /**
      * Option value
      */
-    private String value;
+    private String       value;
+    /**
+     * Option values
+     */
+    private List<String> values;
     /**
      * Value type
      */
-    private String type;
+    private String       type;
     /**
      * Default value
      */
-    private Object defaultValue;
+    private Object       defaultValue;
 }

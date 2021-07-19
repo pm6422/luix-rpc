@@ -118,8 +118,11 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-6 text-right">{{option.name}}</label>
                                         <div class="input-group">
-                                            <input type="number" class="form-control col-sm-6" ng-model="option.value" ng-show="option.type == 'Integer'" placeholder="{{option.type}}">
-                                            <input type="text" class="form-control col-sm-6" ng-model="option.value" ng-show="option.type == 'String'" placeholder="{{option.type}}">
+                                            <input type="number" class="form-control col-sm-6" ng-model="option.value" ng-show="option.type == 'Integer'">
+                                            <input type="text" class="form-control col-sm-6" ng-model="option.value" ng-show="option.type == 'String'">
+                                            <select class="form-control col-sm-6" ng-model="option.value" ng-options="item as item for item in option.values" ng-show="option.type == 'List'">
+                                                <option value="">Select...</option>
+                                            </select>
                                             <div class="form-control col-sm-6" ng-show="option.type == 'Boolean'">
                                                 <div class="onoffswitch">
                                                     <input type="checkbox" id="{{option.name}}" class="onoffswitch-checkbox" ng-model="option.value">
