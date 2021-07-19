@@ -14,6 +14,7 @@ import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
+import org.infinity.rpc.webcenter.dto.OptionsDTO;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.RpcProviderRepository;
 import org.infinity.rpc.webcenter.service.RpcProviderService;
@@ -22,12 +23,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -157,5 +157,20 @@ public class RpcProviderController {
             }
         });
         return ProviderStub.OPTIONS;
+    }
+
+    @ApiOperation("Save options")
+    @PutMapping("/api/rpc-provider/options")
+    public ResponseEntity<Void> saveOptions(@ApiParam(value = "optionsDTO", required = true)
+                                            @Valid @RequestBody OptionsDTO optionsDTO) {
+        Iterator<OptionMeta> iterator = optionsDTO.getOptions().iterator();
+        while (iterator.hasNext()) {
+            OptionMeta next = iterator.next();
+            if (next.getDefaultValue().equals(next.getValue())) {
+                iterator.remove();
+            }
+        }
+        System.out.println();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

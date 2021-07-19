@@ -22,8 +22,8 @@
             <div class="col-lg-6">
                 <dl class="dl-horizontal">
                     <dt>Status:</dt>
-                    <dd ng-show="vm.entity.active"><span class="label label-primary">Active</span></dd>
-                    <dd ng-show="!vm.entity.active"><span class="label label-danger">Inactive</span></dd>
+                    <dd ng-if="vm.entity.active"><span class="label label-primary">Active</span></dd>
+                    <dd ng-if="!vm.entity.active"><span class="label label-danger">Inactive</span></dd>
                 </dl>
             </div>
         </div>
@@ -78,10 +78,8 @@
                 <div class="panel blank-panel ui-tab">
                     <uib-tabset>
                         <uib-tab heading="Tasks" active="tab.active">
-                            <div class="m-b-md">
-                                <div class="btn-group pull-right">
-                                    <button class="btn-white btn btn-sm" ui-sref=".create-task({id: vm.entity.id})">Add</button>
-                                </div>
+                            <div class="btn-group pull-right">
+                                <button class="btn btn-primary btn-sm" ui-sref=".create-task({id: vm.entity.id})">Add</button>
                             </div>
                             <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
                                 <thead>
@@ -118,12 +116,12 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-6 text-right">{{option.name}}</label>
                                         <div class="input-group">
-                                            <input type="number" class="form-control col-sm-6" ng-model="option.value" ng-show="option.type == 'Integer'">
-                                            <input type="text" class="form-control col-sm-6" ng-model="option.value" ng-show="option.type == 'String'">
-                                            <select class="form-control col-sm-6" ng-model="option.value" ng-options="item as item for item in option.values" ng-show="option.type == 'List'">
+                                            <input type="number" class="form-control col-sm-6" ng-model="option.value" ng-if="option.type == 'Integer'">
+                                            <input type="text" class="form-control col-sm-6" ng-model="option.value" ng-if="option.type == 'String'">
+                                            <select class="form-control col-sm-6" ng-model="option.value" ng-options="item for item in option.values" ng-if="option.type == 'List'">
                                                 <option value="">Select...</option>
                                             </select>
-                                            <div class="form-control col-sm-6" ng-show="option.type == 'Boolean'">
+                                            <div class="form-control col-sm-6" ng-if="option.type == 'Boolean'">
                                                 <div class="onoffswitch">
                                                     <input type="checkbox" id="{{option.name}}" class="onoffswitch-checkbox" ng-model="option.value">
                                                     <label class="onoffswitch-label" for="{{option.name}}">
@@ -137,6 +135,14 @@
                                     </div>
                                 </div>
                             </span>
+                            <div class="col-sm-12">
+                                <div class="hr-line-dashed"></div>
+                            </div>
+                            <div class="col-sm-12 m-b-md">
+                                <div class="btn-group pull-right">
+                                    <button class="btn btn-primary btn-sm" ng-click="vm.saveOptions()">Save</button>
+                                </div>
+                            </div>
                         </uib-tab>
                         <uib-tab heading="Invocation">
                             <form name="invocationForm" role="form" class="form-horizontal" novalidate show-validation-directive>
@@ -188,8 +194,8 @@
                             <div class="form-group">
                                 <div class="col-sm-11">
                                     <small>Completion with: {{vm.checkProgress}}%</small>
-                                    <i class="fa fa-check" ng-show="vm.healthSuccess"></i>
-                                    <i class="fa fa-times" ng-show="vm.healthFailure"></i>
+                                    <i class="fa fa-check" ng-if="vm.healthSuccess"></i>
+                                    <i class="fa fa-times" ng-if="vm.healthFailure"></i>
                                     </button>
                                     <uib-progressbar value="vm.checkProgress" type="primary" class="progress-mini">
                                         {{vm.checkProgress}}%

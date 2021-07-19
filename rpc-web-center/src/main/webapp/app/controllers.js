@@ -1744,6 +1744,7 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     vm.deactivate = deactivate;
     vm.activate = activate;
     vm.delTask = delTask;
+    vm.saveOptions = saveOptions;
     vm.loadTasks = loadTasks;
 
     vm.loadTasks();
@@ -1833,6 +1834,10 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
                     });
             }
         });
+    }
+
+    function saveOptions() {
+        RpcProviderService.saveOptions({url: entity.url, options: vm.options});
     }
 }
 

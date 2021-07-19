@@ -1403,7 +1403,8 @@ function RpcProviderService($resource) {
             params: {extension: 'health'}
         },
         'activate': {method: 'GET', params: {extension: 'activate'}},
-        'deactivate': {method: 'GET', params: {extension: 'deactivate'}}
+        'deactivate': {method: 'GET', params: {extension: 'deactivate'}},
+        'saveOptions': {method: 'PUT', params: {extension: 'options'}}
     });
     return service;
 }
