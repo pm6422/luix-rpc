@@ -163,14 +163,15 @@ public class RpcProviderController {
     @PutMapping("/api/rpc-provider/options")
     public ResponseEntity<Void> saveOptions(@ApiParam(value = "optionsDTO", required = true)
                                             @Valid @RequestBody OptionsDTO optionsDTO) {
+        Url providerUrl = Url.valueOf(optionsDTO.getUrl());
         Iterator<OptionMeta> iterator = optionsDTO.getOptions().iterator();
         while (iterator.hasNext()) {
             OptionMeta next = iterator.next();
             if (next.getDefaultValue().equals(next.getValue())) {
                 iterator.remove();
             }
+            providerUrl.addOption(next.getName(), next.getValue());
         }
-        System.out.println();
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
