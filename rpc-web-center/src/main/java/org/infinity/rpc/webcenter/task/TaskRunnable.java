@@ -84,6 +84,7 @@ public class TaskRunnable implements Runnable {
         taskHistory.setExpiryTime(Instant.now().plus(60, ChronoUnit.DAYS));
 
         try {
+            // Select one of node to execute
             ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(registryIdentity,
                     null, interfaceName, ImmutableMap.of(FORM, form, VERSION, version));
             Object[] args = null;

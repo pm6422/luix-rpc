@@ -6,6 +6,7 @@ import org.infinity.rpc.core.server.buildin.ServerInfo;
 import org.infinity.rpc.core.server.stub.MethodMeta;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.server.stub.ProviderStubHolder;
+import org.infinity.rpc.core.url.Url;
 
 import java.util.Date;
 import java.util.List;
@@ -60,5 +61,12 @@ public class BuildInServiceImpl implements BuildInService {
     public void deactivate(String interfaceClassName, String form, String version) {
         String stubBeanName = ProviderStub.buildProviderStubBeanName(interfaceClassName, form, version);
         ProviderStubHolder.getInstance().get().get(stubBeanName).deactivate();
+    }
+
+    @Override
+    public void reregister(String urlStr) {
+        Url url = Url.valueOf(urlStr);
+        String stubBeanName = ProviderStub.buildProviderStubBeanName(url.getPath(), url.getForm(), url.getVersion());
+        ProviderStubHolder.getInstance().get().get(stubBeanName).reregister(url);
     }
 }

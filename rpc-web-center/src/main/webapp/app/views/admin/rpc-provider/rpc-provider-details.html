@@ -116,20 +116,16 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-6 text-right">{{option.name}}</label>
                                         <div class="input-group">
-                                            <input type="number" class="form-control col-sm-6" ng-model="option.value" ng-if="option.type == 'Integer'">
+                                            <input type="number" class="form-control col-sm-6" ng-model="option.intValue" ng-if="option.type == 'Integer'">
                                             <input type="text" class="form-control col-sm-6" ng-model="option.value" ng-if="option.type == 'String'">
                                             <select class="form-control col-sm-6" ng-model="option.value" ng-options="item for item in option.values" ng-if="option.type == 'List'">
                                                 <option value="">Select...</option>
                                             </select>
-                                            <div class="form-control col-sm-6" ng-if="option.type == 'Boolean'">
-                                                <div class="onoffswitch">
-                                                    <input type="checkbox" id="{{option.name}}" class="onoffswitch-checkbox" ng-model="option.value">
-                                                    <label class="onoffswitch-label" for="{{option.name}}">
-                                                        <span class="onoffswitch-inner"></span>
-                                                        <span class="onoffswitch-switch"></span>
-                                                    </label>
-                                                </div>
-                                            </div>
+                                            <select class="form-control col-sm-6" ng-model="option.value" ng-if="option.type == 'Boolean'">
+                                                <option value="">Select...</option>
+                                                <option value="true">true</option>
+                                                <option value="false">false</option>
+                                            </select>
                                             <kbd><small>default: {{option.defaultValue}}</small></kbd>
                                         </div>
                                     </div>

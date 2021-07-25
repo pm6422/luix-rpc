@@ -13,6 +13,7 @@ import org.infinity.rpc.core.server.stub.OptionMeta;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
+import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
 import org.infinity.rpc.webcenter.dto.OptionsDTO;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +49,8 @@ public class RpcProviderController {
     private RpcProviderService    rpcProviderService;
     @Resource
     private RpcProviderRepository rpcProviderRepository;
+    @Resource
+    private HttpHeaderCreator     httpHeaderCreator;
 
     @ApiOperation("find provider by ID")
     @GetMapping("/api/rpc-provider/{id}")
@@ -73,6 +77,7 @@ public class RpcProviderController {
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
+        // Use specified provider url
         UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
         @SuppressWarnings({"unchecked"})
         List<MethodMeta> result = (List<MethodMeta>) invocationHandler.invoke(METHOD_GET_METHODS,
@@ -87,6 +92,7 @@ public class RpcProviderController {
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
+        // Use specified provider url
         UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
         String result;
         try {
@@ -132,12 +138,14 @@ public class RpcProviderController {
         if (StringUtils.isEmpty(registryIdentity)) {
             infinityProperties.getRegistryList().forEach(registry -> {
                 String identity = registry.getRegistryImpl().getRegistryUrl().getIdentity();
+                // Use specified provider url
                 UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(identity, providerUrl);
                 invocationHandler.invoke(methodName,
                         new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
                         new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
             });
         } else {
+            // Use specified provider url
             UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
             invocationHandler.invoke(methodName,
                     new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
@@ -151,12 +159,13 @@ public class RpcProviderController {
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
         Map<String, String> options = providerUrl.getOptions();
-        ProviderStub.OPTIONS.forEach(opt -> {
+        List<OptionMeta> all = new ArrayList<>(ProviderStub.OPTIONS);
+        all.forEach(opt -> {
             if (options.containsKey(opt.getName())) {
                 opt.setValue(options.get(opt.getName()));
             }
         });
-        return ProviderStub.OPTIONS;
+        return all;
     }
 
     @ApiOperation("Save options")
@@ -172,6 +181,31 @@ public class RpcProviderController {
             }
             providerUrl.addOption(next.getName(), next.getValue());
         }
-        return ResponseEntity.status(HttpStatus.OK).build();
+
+        //todo
+        reregister(optionsDTO.getRegistryIdentity(), providerUrl);
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(httpHeaderCreator.createSuccessHeader("SM1012")).build();
+    }
+
+    private void reregister(String registryIdentity, Url providerUrl) {
+        if (StringUtils.isEmpty(registryIdentity)) {
+            infinityProperties.getRegistryList().forEach(registry -> {
+                String identity = registry.getRegistryImpl().getRegistryUrl().getIdentity();
+                // todo: change to broadcasting
+                // Use specified provider url
+                UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(identity, providerUrl);
+                invocationHandler.invoke(METHOD_REREGISTER,
+                        new String[]{String.class.getName()},
+                        new Object[]{providerUrl.toFullStr()});
+            });
+        } else {
+            // todo: change to broadcasting
+            // Use specified provider url
+            UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
+            invocationHandler.invoke(METHOD_REREGISTER,
+                    new String[]{String.class.getName()},
+                    new Object[]{providerUrl.toFullStr()});
+        }
     }
 }

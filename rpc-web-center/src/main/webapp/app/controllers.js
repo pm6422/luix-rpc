@@ -1837,7 +1837,12 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     }
 
     function saveOptions() {
-        RpcProviderService.saveOptions({url: entity.url, options: vm.options});
+        RpcProviderService.saveOptions({registryIdentity: $rootScope.selectedRegistryIdentity, url: entity.url, options: vm.options},
+            function () {
+                $state.transitionTo($state.$current, {
+                    id: $stateParams.id
+                }, {reload: true});
+            });
     }
 }
 

@@ -12,6 +12,7 @@ public interface BuildInService {
     String METHOD_GET_METHODS          = "getMethods";
     String METHOD_ACTIVATE             = "activate";
     String METHOD_DEACTIVATE           = "deactivate";
+    String METHOD_REREGISTER           = "reregister";
 
     /**
      * Get application information
@@ -64,4 +65,11 @@ public interface BuildInService {
      * @param version            version
      */
     void deactivate(String interfaceClassName, String form, String version);
+
+    /**
+     * Re-register url
+     *
+     * @param urlStr url
+     */
+    void reregister(String urlStr);
 }
