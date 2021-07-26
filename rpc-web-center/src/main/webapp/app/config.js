@@ -986,7 +986,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             }
         })
         .state('rpc.rpc-provider-list.view', {
-            url: '/view/:id',
+            url: '/view/:id?tab',
             views: {
                 'content@': {
                     templateUrl: 'app/views/admin/rpc-provider/rpc-provider-details.html',

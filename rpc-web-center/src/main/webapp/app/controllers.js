@@ -1746,6 +1746,17 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     vm.delTask = delTask;
     vm.saveOptions = saveOptions;
     vm.loadTasks = loadTasks;
+    vm.selectTab = selectTab;
+
+    if('invocation' == $stateParams.tab) {
+        vm.tabInvocation = true;
+    } else if('health' == $stateParams.tab) {
+        vm.tabHealth = true;
+    } else if('tasks' == $stateParams.tab) {
+        vm.tabTasks = true;
+    } else {
+        vm.tabConfigure = true;
+    }
 
     vm.loadTasks();
 
@@ -1839,10 +1850,39 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     function saveOptions() {
         RpcProviderService.saveOptions({registryIdentity: $rootScope.selectedRegistryIdentity, url: entity.url, options: vm.options},
             function () {
+                var tab;
+                if(vm.tabInvocation) {
+                    tab = 'invocation';
+                } else if(vm.tabHealth) {
+                    tab = 'health';
+                } else if(vm.tabTasks) {
+                    tab = 'tasks';
+                } else {
+                    tab = 'configure';
+                }
+
                 $state.transitionTo($state.$current, {
-                    id: $stateParams.id
+                    id: $stateParams.id,
+                    tab: tab
                 }, {reload: true});
             });
+    }
+
+    function selectTab() {
+        var tab;
+        if(vm.tabInvocation) {
+            tab = 'invocation';
+        } else if(vm.tabHealth) {
+            tab = 'health';
+        } else if(vm.tabTasks) {
+            tab = 'tasks';
+        } else {
+            tab = 'configure';
+        }
+        $state.transitionTo($state.$current, {
+            tab: tab,
+            id: $stateParams.id
+        });
     }
 }
 

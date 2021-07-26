@@ -77,40 +77,7 @@
             <div class="col-lg-12">
                 <div class="panel blank-panel ui-tab">
                     <uib-tabset>
-                        <uib-tab heading="Tasks" active="tab.active">
-                            <div class="btn-group pull-right">
-                                <button class="btn btn-primary btn-sm" ui-sref=".create-task({id: vm.entity.id})">Add</button>
-                            </div>
-                            <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
-                                <thead>
-                                    <tr>
-                                        <th class="col-sm-1" data-toggle="true">Name</th>
-                                        <th class="col-sm-1">Method signature</th>
-                                        <th class="col-sm-1">Cron expression</th>
-                                        <th class="col-sm-1">Run on all hosts</th>
-                                        <th class="col-sm-1">Enabled</th>
-                                        <th class="col-sm-1">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr on-footable-finish-render ng-repeat="task in vm.tasks">
-                                        <td><span>{{task.name}}</span></td>
-                                        <td><span>{{task.methodSignature}}</span></td>
-                                        <td><span>{{task.cronExpression}}</span></td>
-                                        <td><span>{{task.allHostsRun}}</span></td>
-                                        <td><span>{{task.enabled}}</span></td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <button class="btn-white btn btn-xs" ui-sref=".edit-task({taskId: task.id})">Edit</button>
-                                                <button class="btn-white btn btn-xs" ng-click="vm.delTask(task.id)">Delete</button>
-                                                <button class="btn-white btn btn-xs" ui-sref="rpc.rpc-task-history-list({name: task.name, providerId: vm.entity.id})">History</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </uib-tab>
-                        <uib-tab heading="Configure">
+                        <uib-tab heading="Configure" active="vm.tabConfigure" ng-click="vm.selectTab()">
                             <span ng-repeat="option in vm.options">
                                 <div class="col-sm-4">
                                     <div class="form-group">
@@ -140,7 +107,7 @@
                                 </div>
                             </div>
                         </uib-tab>
-                        <uib-tab heading="Invocation">
+                        <uib-tab heading="Invocation" active="vm.tabInvocation" ng-click="vm.selectTab()">
                             <form name="invocationForm" role="form" class="form-horizontal" novalidate show-validation-directive>
                                 <div class="form-group">
                                     <label class="col-sm-1 control-label">
@@ -186,7 +153,7 @@
                                 </div>
                             </form>
                         </uib-tab>
-                        <uib-tab heading="Health">
+                        <uib-tab heading="Health" active="vm.tabHealth" ng-click="vm.selectTab()">
                             <div class="form-group">
                                 <div class="col-sm-11">
                                     <small>Completion with: {{vm.checkProgress}}%</small>
@@ -204,6 +171,39 @@
                                     </button>
                                 </div>
                             </div>
+                        </uib-tab>
+                        <uib-tab heading="Tasks" active="vm.tabTasks" ng-click="vm.selectTab()">
+                            <div class="btn-group pull-right">
+                                <button class="btn btn-primary btn-sm" ui-sref=".create-task({id: vm.entity.id})">Add</button>
+                            </div>
+                            <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
+                                <thead>
+                                <tr>
+                                    <th class="col-sm-1" data-toggle="true">Name</th>
+                                    <th class="col-sm-1">Method signature</th>
+                                    <th class="col-sm-1">Cron expression</th>
+                                    <th class="col-sm-1">Run on all hosts</th>
+                                    <th class="col-sm-1">Enabled</th>
+                                    <th class="col-sm-1">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr on-footable-finish-render ng-repeat="task in vm.tasks">
+                                    <td><span>{{task.name}}</span></td>
+                                    <td><span>{{task.methodSignature}}</span></td>
+                                    <td><span>{{task.cronExpression}}</span></td>
+                                    <td><span>{{task.allHostsRun}}</span></td>
+                                    <td><span>{{task.enabled}}</span></td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn-white btn btn-xs" ui-sref=".edit-task({taskId: task.id})">Edit</button>
+                                            <button class="btn-white btn btn-xs" ng-click="vm.delTask(task.id)">Delete</button>
+                                            <button class="btn-white btn btn-xs" ui-sref="rpc.rpc-task-history-list({name: task.name, providerId: vm.entity.id})">History</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </uib-tab>
                     </uib-tabset>
                 </div>
