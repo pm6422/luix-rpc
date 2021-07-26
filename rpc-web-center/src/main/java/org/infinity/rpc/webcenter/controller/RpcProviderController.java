@@ -179,7 +179,7 @@ public class RpcProviderController {
             }
         }
 
-        //todo
+        //todo: broadcast
         reregister(optionsDTO.getRegistryIdentity(), providerUrl);
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(httpHeaderCreator.createSuccessHeader("SM1012")).build();
