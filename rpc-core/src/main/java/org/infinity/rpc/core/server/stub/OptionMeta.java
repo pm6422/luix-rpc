@@ -18,10 +18,7 @@ public class OptionMeta implements Serializable {
      * Option name
      */
     private String       name;
-    /**
-     * Option value
-     */
-    private String       value;
+
     /**
      * Option values
      */
@@ -33,15 +30,7 @@ public class OptionMeta implements Serializable {
     /**
      * Default value
      */
-    private Object       defaultValue;
+    private String       defaultValue;
 
-    public Integer getIntValue() {
-        return StringUtils.isEmpty(value) || "true".equals(value) || "false".equals(value) ? null : Integer.parseInt(value);
-    }
 
-    public void setIntValue(Integer intValue) {
-        if (intValue != null) {
-            value = intValue.toString();
-        }
-    }
 }

@@ -9,12 +9,12 @@ import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.stub.MethodMeta;
-import org.infinity.rpc.core.server.stub.OptionMeta;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
+import org.infinity.rpc.webcenter.dto.OptionMetaDTO;
 import org.infinity.rpc.webcenter.dto.OptionsDTO;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.RpcProviderRepository;
@@ -28,10 +28,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.infinity.rpc.core.server.buildin.BuildInService.*;
 import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
@@ -116,22 +115,20 @@ public class RpcProviderController {
 
     @ApiOperation("activate provider")
     @GetMapping("/api/rpc-provider/activate")
-    public ResponseEntity<Void> activate(
+    public void activate(
             @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
         control(registryIdentity, providerUrl, METHOD_ACTIVATE);
-        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @ApiOperation("deactivate provider")
     @GetMapping("/api/rpc-provider/deactivate")
-    public ResponseEntity<Void> deactivate(
+    public void deactivate(
             @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
         control(registryIdentity, providerUrl, METHOD_DEACTIVATE);
-        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     private void control(String registryIdentity, Url providerUrl, String methodName) {
@@ -155,14 +152,15 @@ public class RpcProviderController {
 
     @ApiOperation("get provider options")
     @GetMapping("/api/rpc-provider/options")
-    public List<OptionMeta> options(
+    public List<OptionMetaDTO> options(
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
         Map<String, String> options = providerUrl.getOptions();
-        List<OptionMeta> all = new ArrayList<>(ProviderStub.OPTIONS);
-        all.forEach(opt -> {
-            if (options.containsKey(opt.getName())) {
-                opt.setValue(options.get(opt.getName()));
+
+        List<OptionMetaDTO> all = ProviderStub.OPTIONS.stream().map(OptionMetaDTO::of).collect(Collectors.toList());
+        all.forEach(dto -> {
+            if (options.containsKey(dto.getName())) {
+                dto.setValue(options.get(dto.getName()));
             }
         });
         return all;
@@ -173,13 +171,12 @@ public class RpcProviderController {
     public ResponseEntity<Void> saveOptions(@ApiParam(value = "optionsDTO", required = true)
                                             @Valid @RequestBody OptionsDTO optionsDTO) {
         Url providerUrl = Url.valueOf(optionsDTO.getUrl());
-        Iterator<OptionMeta> iterator = optionsDTO.getOptions().iterator();
-        while (iterator.hasNext()) {
-            OptionMeta next = iterator.next();
+        for (OptionMetaDTO next : optionsDTO.getOptions()) {
             if (next.getDefaultValue().equals(next.getValue())) {
-                iterator.remove();
+                providerUrl.getOptions().remove(next.getName());
+            } else {
+                providerUrl.addOption(next.getName(), next.getValue());
             }
-            providerUrl.addOption(next.getName(), next.getValue());
         }
 
         //todo
