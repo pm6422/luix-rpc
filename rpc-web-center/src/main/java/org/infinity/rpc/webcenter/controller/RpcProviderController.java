@@ -172,7 +172,7 @@ public class RpcProviderController {
                                             @Valid @RequestBody OptionsDTO optionsDTO) {
         Url providerUrl = Url.valueOf(optionsDTO.getUrl());
         for (OptionMetaDTO next : optionsDTO.getOptions()) {
-            if (next.getDefaultValue().equals(next.getValue())) {
+            if (StringUtils.isEmpty(next.getValue()) || next.getDefaultValue().equals(next.getValue())) {
                 providerUrl.getOptions().remove(next.getName());
             } else {
                 providerUrl.addOption(next.getName(), next.getValue());
