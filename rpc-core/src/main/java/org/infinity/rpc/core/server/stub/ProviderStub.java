@@ -63,9 +63,9 @@ public class ProviderStub<T> {
     public static final List<OptionMeta> OPTIONS = new ArrayList<>();
 
     {
-//        OPTIONS.add(MutableTriple.of(FORM, null, String.class.getSimpleName()));
-//        OPTIONS.add(MutableTriple.of(VERSION, null, String.class.getSimpleName()));
-//        OPTIONS.add(MutableTriple.of(APP, null, String.class.getSimpleName()));
+//        OPTIONS.add(new OptionMeta(FORM, null, String.class.getSimpleName()));
+//        OPTIONS.add(new OptionMeta(VERSION, null, String.class.getSimpleName()));
+//        OPTIONS.add(new OptionMeta(APP, null, String.class.getSimpleName()));
         OPTIONS.add(new OptionMeta(SERIALIZER, SERIALIZERS, List.class.getSimpleName(), SERIALIZER_VAL_DEFAULT));
         OPTIONS.add(new OptionMeta(HEALTH_CHECKER, null, String.class.getSimpleName(), HEALTH_CHECKER_VAL_DEFAULT));
         OPTIONS.add(new OptionMeta(REQUEST_TIMEOUT, null, Integer.class.getSimpleName(), String.valueOf(REQUEST_TIMEOUT_VAL_DEFAULT)));
