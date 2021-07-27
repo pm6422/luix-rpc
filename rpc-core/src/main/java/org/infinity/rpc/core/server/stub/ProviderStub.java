@@ -66,22 +66,22 @@ public class ProviderStub<T> {
 //        OPTIONS.add(new OptionMeta(FORM, null, String.class.getSimpleName()));
 //        OPTIONS.add(new OptionMeta(VERSION, null, String.class.getSimpleName()));
 //        OPTIONS.add(new OptionMeta(APP, null, String.class.getSimpleName()));
-        OPTIONS.add(new OptionMeta(SERIALIZER, SERIALIZERS, List.class.getSimpleName(), SERIALIZER_VAL_DEFAULT));
-        OPTIONS.add(new OptionMeta(HEALTH_CHECKER, null, String.class.getSimpleName(), HEALTH_CHECKER_VAL_DEFAULT));
-        OPTIONS.add(new OptionMeta(REQUEST_TIMEOUT, null, Integer.class.getSimpleName(), String.valueOf(REQUEST_TIMEOUT_VAL_DEFAULT)));
-        OPTIONS.add(new OptionMeta(RETRY_COUNT, null, Integer.class.getSimpleName(), String.valueOf(RETRY_COUNT_VAL_DEFAULT)));
-        OPTIONS.add(new OptionMeta(MAX_PAYLOAD, null, Integer.class.getSimpleName(), String.valueOf(MAX_PAYLOAD_VAL_DEFAULT)));
-        OPTIONS.add(new OptionMeta(CODEC, null, String.class.getSimpleName(), CODEC_VAL_DEFAULT));
-        OPTIONS.add(new OptionMeta(ENDPOINT_FACTORY, null, String.class.getSimpleName(), ENDPOINT_FACTORY_VAL_NETTY));
-        OPTIONS.add(new OptionMeta(MIN_CLIENT_CONN, null, Integer.class.getSimpleName(), String.valueOf(MIN_CLIENT_CONN_VAL_DEFAULT)));
-        OPTIONS.add(new OptionMeta(MAX_CLIENT_FAILED_CONN, null, Integer.class.getSimpleName(), String.valueOf(MAX_CLIENT_FAILED_CONN_VAL_DEFAULT)));
-        OPTIONS.add(new OptionMeta(MAX_SERVER_CONN, null, Integer.class.getSimpleName(), String.valueOf(MAX_SERVER_CONN_VAL_DEFAULT)));
-        OPTIONS.add(new OptionMeta(MAX_CONTENT_LENGTH, null, Integer.class.getSimpleName(), String.valueOf(MAX_CONTENT_LENGTH_VAL_DEFAULT)));
-        OPTIONS.add(new OptionMeta(MIN_THREAD, null, Integer.class.getSimpleName(), String.valueOf(MIN_THREAD_VAL_DEFAULT)));
-        OPTIONS.add(new OptionMeta(MAX_THREAD, null, Integer.class.getSimpleName(), String.valueOf(MAX_THREAD_VAL_DEFAULT)));
-        OPTIONS.add(new OptionMeta(WORK_QUEUE_SIZE, null, Integer.class.getSimpleName(), String.valueOf(WORK_QUEUE_SIZE_VAL_DEFAULT)));
-        OPTIONS.add(new OptionMeta(SHARED_CHANNEL, null, Boolean.class.getSimpleName(), String.valueOf(SHARED_CHANNEL_VAL_DEFAULT)));
-        OPTIONS.add(new OptionMeta(ASYNC_INIT_CONN, null, Boolean.class.getSimpleName(), String.valueOf(ASYNC_INIT_CONN_VAL_DEFAULT)));
+        OPTIONS.add(new OptionMeta(SERIALIZER, SERIALIZERS, List.class.getSimpleName(), SERIALIZER_VAL_DEFAULT, false));
+        OPTIONS.add(new OptionMeta(HEALTH_CHECKER, null, String.class.getSimpleName(), HEALTH_CHECKER_VAL_DEFAULT, true));
+        OPTIONS.add(new OptionMeta(REQUEST_TIMEOUT, null, Integer.class.getSimpleName(), String.valueOf(REQUEST_TIMEOUT_VAL_DEFAULT), true));
+        OPTIONS.add(new OptionMeta(RETRY_COUNT, null, Integer.class.getSimpleName(), String.valueOf(RETRY_COUNT_VAL_DEFAULT), true));
+        OPTIONS.add(new OptionMeta(MAX_PAYLOAD, null, Integer.class.getSimpleName(), String.valueOf(MAX_PAYLOAD_VAL_DEFAULT), true));
+        OPTIONS.add(new OptionMeta(CODEC, null, String.class.getSimpleName(), CODEC_VAL_DEFAULT, true));
+        OPTIONS.add(new OptionMeta(ENDPOINT_FACTORY, null, String.class.getSimpleName(), ENDPOINT_FACTORY_VAL_NETTY, true));
+        OPTIONS.add(new OptionMeta(MIN_CLIENT_CONN, null, Integer.class.getSimpleName(), String.valueOf(MIN_CLIENT_CONN_VAL_DEFAULT), true));
+        OPTIONS.add(new OptionMeta(MAX_CLIENT_FAILED_CONN, null, Integer.class.getSimpleName(), String.valueOf(MAX_CLIENT_FAILED_CONN_VAL_DEFAULT), true));
+        OPTIONS.add(new OptionMeta(MAX_SERVER_CONN, null, Integer.class.getSimpleName(), String.valueOf(MAX_SERVER_CONN_VAL_DEFAULT), true));
+        OPTIONS.add(new OptionMeta(MAX_CONTENT_LENGTH, null, Integer.class.getSimpleName(), String.valueOf(MAX_CONTENT_LENGTH_VAL_DEFAULT), true));
+        OPTIONS.add(new OptionMeta(MIN_THREAD, null, Integer.class.getSimpleName(), String.valueOf(MIN_THREAD_VAL_DEFAULT), true));
+        OPTIONS.add(new OptionMeta(MAX_THREAD, null, Integer.class.getSimpleName(), String.valueOf(MAX_THREAD_VAL_DEFAULT), true));
+        OPTIONS.add(new OptionMeta(WORK_QUEUE_SIZE, null, Integer.class.getSimpleName(), String.valueOf(WORK_QUEUE_SIZE_VAL_DEFAULT), true));
+        OPTIONS.add(new OptionMeta(SHARED_CHANNEL, null, Boolean.class.getSimpleName(), String.valueOf(SHARED_CHANNEL_VAL_DEFAULT), false));
+        OPTIONS.add(new OptionMeta(ASYNC_INIT_CONN, null, Boolean.class.getSimpleName(), String.valueOf(ASYNC_INIT_CONN_VAL_DEFAULT), true));
     }
 
     /**

@@ -83,18 +83,18 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-6 text-right">{{option.name}}</label>
                                         <div class="input-group">
-                                            <input type="number" class="form-control col-sm-6" ng-model="option.intValue" ng-if="option.type == 'Integer'">
-                                            <input type="text" class="form-control col-sm-6" ng-model="option.value" ng-if="option.type == 'String'">
-                                            <select class="form-control col-sm-6" ng-model="option.value" ng-options="item for item in option.values" ng-if="option.type == 'List'">
+                                            <input type="number" class="form-control col-sm-6" ng-model="option.intValue" ng-if="option.type == 'Integer'" ng-disabled="!option.updatable">
+                                            <input type="text" class="form-control col-sm-6" ng-model="option.value" ng-if="option.type == 'String'" ng-disabled="!option.updatable">
+                                            <select class="form-control col-sm-6" ng-model="option.value" ng-options="item for item in option.values" ng-if="option.type == 'List'" ng-disabled="!option.updatable">
                                                 <option value="">Select...</option>
                                             </select>
                                             <div class="form-control col-sm-6" ng-if="option.type == 'Boolean'">
                                                 <div>
-                                                    <label class="checkbox-inline"><input icheck type="radio" name="{{option.name}}" value=true ng-model="option.value"> true</label>
-                                                    <label class="checkbox-inline"><input icheck type="radio" name="{{option.name}}" value=false ng-model="option.value"> false</label>
+                                                    <label class="checkbox-inline"><input icheck type="radio" name="{{option.name}}" value=true ng-model="option.value" ng-disabled="!option.updatable"> true</label>
+                                                    <label class="checkbox-inline"><input icheck type="radio" name="{{option.name}}" value=false ng-model="option.value" ng-disabled="!option.updatable"> false</label>
                                                 </div>
                                             </div>
-                                            <kbd><small>default: {{option.defaultValue}}</small></kbd>
+                                            <kbd><small>default: {{option.defaultValue}}</small></kbd>&nbsp;<kbd ng-show="!option.updatable"><small>updatable: {{option.updatable}}</small></kbd>
                                         </div>
                                     </div>
                                 </div>

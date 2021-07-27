@@ -3,7 +3,6 @@ package org.infinity.rpc.core.server.stub;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -18,7 +17,6 @@ public class OptionMeta implements Serializable {
      * Option name
      */
     private String       name;
-
     /**
      * Option values
      */
@@ -31,6 +29,10 @@ public class OptionMeta implements Serializable {
      * Default value
      */
     private String       defaultValue;
+    /**
+     * Updatable
+     */
+    private boolean      updatable;
 
 
 }
