@@ -88,11 +88,12 @@
                                             <select class="form-control col-sm-6" ng-model="option.value" ng-options="item for item in option.values" ng-if="option.type == 'List'">
                                                 <option value="">Select...</option>
                                             </select>
-                                            <select class="form-control col-sm-6" ng-model="option.value" ng-if="option.type == 'Boolean'">
-                                                <option value="">Select...</option>
-                                                <option value="true">true</option>
-                                                <option value="false">false</option>
-                                            </select>
+                                            <div class="form-control col-sm-6" ng-if="option.type == 'Boolean'">
+                                                <div>
+                                                    <label class="checkbox-inline"><input icheck type="radio" name="{{option.name}}" value=true ng-model="option.value"> true</label>
+                                                    <label class="checkbox-inline"><input icheck type="radio" name="{{option.name}}" value=false ng-model="option.value"> false</label>
+                                                </div>
+                                            </div>
                                             <kbd><small>default: {{option.defaultValue}}</small></kbd>
                                         </div>
                                     </div>

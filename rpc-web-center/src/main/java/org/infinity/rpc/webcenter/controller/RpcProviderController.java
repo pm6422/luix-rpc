@@ -159,6 +159,9 @@ public class RpcProviderController {
 
         List<OptionMetaDTO> all = ProviderStub.OPTIONS.stream().map(OptionMetaDTO::of).collect(Collectors.toList());
         all.forEach(dto -> {
+            if(dto.getType().equals(Boolean.class.getSimpleName())) {
+                dto.setValue(dto.getDefaultValue());
+            }
             if (options.containsKey(dto.getName())) {
                 dto.setValue(options.get(dto.getName()));
             }
