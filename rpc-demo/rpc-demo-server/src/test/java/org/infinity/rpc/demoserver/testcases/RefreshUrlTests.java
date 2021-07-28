@@ -18,6 +18,7 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
@@ -71,7 +72,6 @@ public class RefreshUrlTests extends ZkBaseTest {
         providerStub.setInterfaceClass(RefreshUrlService.class);
         providerStub.setInterfaceName(RefreshUrlService.class.getName());
         providerStub.setInstance(new RefreshUrlServiceImpl());
-        providerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
         providerStub.setForm(RefreshUrlTests.class.getSimpleName());
         providerStub.setVersion("1.0.0");
         providerStub.setRequestTimeout(requestTimeout);
@@ -82,6 +82,7 @@ public class RefreshUrlTests extends ZkBaseTest {
         applicationConfig.setDescription("Description");
         applicationConfig.setTeam("Team");
         applicationConfig.setOwnerMail("test@126.com");
+        applicationConfig.setMailSuffixes(Arrays.asList("126.com"));
         applicationConfig.setEnv("test");
         applicationConfig.init();
 
@@ -105,13 +106,8 @@ public class RefreshUrlTests extends ZkBaseTest {
     private void subscribeProvider(ConsumerStub<RefreshUrlService> consumerStub) {
         consumerStub.setInterfaceClass(RefreshUrlService.class);
         consumerStub.setInterfaceName(RefreshUrlService.class.getName());
-        consumerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
-        consumerStub.setInvoker(INVOKER_VAL_DEFAULT);
-        consumerStub.setFaultTolerance(FAULT_TOLERANCE_VAL_FAILOVER);
-        consumerStub.setLoadBalancer(LOAD_BALANCER_VAL_RANDOM);
         consumerStub.setForm(RefreshUrlTests.class.getSimpleName());
         consumerStub.setVersion("1.0.0");
-        consumerStub.setProxy(PROXY_VAL_JDK);
         consumerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
@@ -119,6 +115,7 @@ public class RefreshUrlTests extends ZkBaseTest {
         applicationConfig.setDescription("Description");
         applicationConfig.setTeam("Team");
         applicationConfig.setOwnerMail("test@126.com");
+        applicationConfig.setMailSuffixes(Arrays.asList("126.com"));
         applicationConfig.setEnv("test");
         applicationConfig.init();
 

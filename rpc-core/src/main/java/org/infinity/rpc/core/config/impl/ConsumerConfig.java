@@ -21,17 +21,17 @@ public class ConsumerConfig extends ServiceConfig {
      * Fault tolerance strategy
      */
     @NotEmpty
-    private             String  faultTolerance   = FAULT_TOLERANCE_VAL_FAILOVER;
+    private             String  faultTolerance   = FAULT_TOLERANCE_VAL_DEFAULT;
     /**
      * Cluster loadBalancer implementation
      */
     @NotEmpty
-    private             String  loadBalancer     = LOAD_BALANCER_VAL_RANDOM;
+    private             String  loadBalancer     = LOAD_BALANCER_VAL_DEFAULT;
     /**
      * Consumer proxy factory
      */
     @NotEmpty
-    private             String  proxyFactory     = PROXY_VAL_JDK;
+    private             String  proxyFactory     = PROXY_VAL_DEFAULT;
     /**
      * Indicates whether rate limit enabled or not
      */

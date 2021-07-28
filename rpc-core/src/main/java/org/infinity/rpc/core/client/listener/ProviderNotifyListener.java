@@ -14,7 +14,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_VAL_DEFAULT;
 
 /**
  * todo: see ClusterSupport
@@ -57,7 +59,7 @@ public class ProviderNotifyListener implements ClientListener {
                                             ProviderProcessable providerProcessor) {
         ProviderNotifyListener listener = new ProviderNotifyListener();
         listener.serviceInvoker = serviceInvoker;
-        listener.protocol = Protocol.getInstance(protocol);
+        listener.protocol = Protocol.getInstance(defaultIfEmpty(protocol, PROTOCOL_VAL_DEFAULT));
         listener.interfaceName = interfaceName;
         listener.form = form;
         listener.providerProcessor = providerProcessor;

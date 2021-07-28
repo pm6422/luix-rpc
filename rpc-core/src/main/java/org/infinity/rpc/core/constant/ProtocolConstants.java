@@ -10,6 +10,7 @@ public interface ProtocolConstants {
     String       PROTOCOL                           = "protocol";
     String       PROTOCOL_VAL_INFINITY              = "infinity";
     String       PROTOCOL_VAL_JVM                   = "jvm";
+    String       PROTOCOL_VAL_DEFAULT               = PROTOCOL_VAL_INFINITY;
     String       CODEC                              = "codec";
     String       CODEC_VAL_V1                       = "v1";
     String       CODEC_VAL_V2                       = "v2";

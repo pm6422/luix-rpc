@@ -18,6 +18,7 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +66,6 @@ public class UniversalInvocationTests extends ZkBaseTest {
         providerStub.setInterfaceClass(TestService.class);
         providerStub.setInterfaceName(TestService.class.getName());
         providerStub.setInstance(new TestServiceImpl());
-        providerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
         providerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
@@ -73,6 +73,7 @@ public class UniversalInvocationTests extends ZkBaseTest {
         applicationConfig.setDescription("Description");
         applicationConfig.setTeam("Team");
         applicationConfig.setOwnerMail("test@126.com");
+        applicationConfig.setMailSuffixes(Arrays.asList("126.com"));
         applicationConfig.setEnv("test");
         applicationConfig.init();
 
@@ -98,6 +99,7 @@ public class UniversalInvocationTests extends ZkBaseTest {
         applicationConfig.setDescription("Description");
         applicationConfig.setTeam("Team");
         applicationConfig.setOwnerMail("test@126.com");
+        applicationConfig.setMailSuffixes(Arrays.asList("126.com"));
         applicationConfig.setEnv("test");
         applicationConfig.init();
 

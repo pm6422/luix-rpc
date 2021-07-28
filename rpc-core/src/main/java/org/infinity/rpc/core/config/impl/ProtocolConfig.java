@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.Optional;
 
-import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_VAL_INFINITY;
+import static org.infinity.rpc.core.constant.ProtocolConstants.PROTOCOL_VAL_DEFAULT;
 
 @Data
 @Slf4j
@@ -28,7 +28,7 @@ public class ProtocolConfig implements Configurable {
      * Name of protocol
      */
     @NotEmpty
-    private             String  name   = PROTOCOL_VAL_INFINITY;
+    private             String  name   = PROTOCOL_VAL_DEFAULT;
     /**
      * Host name of the RPC server
      * Generally, we do NOT need configure the value, it will be set automatically.

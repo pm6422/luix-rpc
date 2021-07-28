@@ -14,6 +14,8 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 import static org.junit.Assert.assertEquals;
 
@@ -47,7 +49,6 @@ public class DirectCallTests extends ZkBaseTest {
         providerStub.setInterfaceClass(TestService.class);
         providerStub.setInterfaceName(TestService.class.getName());
         providerStub.setInstance(new TestServiceImpl());
-        providerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
         providerStub.setForm(DirectCallTests.class.getSimpleName());
         providerStub.setVersion("1.0.0");
         providerStub.init();
@@ -57,6 +58,7 @@ public class DirectCallTests extends ZkBaseTest {
         applicationConfig.setDescription("Description");
         applicationConfig.setTeam("Team");
         applicationConfig.setOwnerMail("test@126.com");
+        applicationConfig.setMailSuffixes(Arrays.asList("126.com"));
         applicationConfig.setEnv("test");
         applicationConfig.init();
 
@@ -80,13 +82,8 @@ public class DirectCallTests extends ZkBaseTest {
         ConsumerStub<TestService> consumerStub = new ConsumerStub<>();
         consumerStub.setInterfaceClass(TestService.class);
         consumerStub.setInterfaceName(TestService.class.getName());
-        consumerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
-        consumerStub.setInvoker(INVOKER_VAL_DEFAULT);
-        consumerStub.setFaultTolerance(FAULT_TOLERANCE_VAL_FAILOVER);
-        consumerStub.setLoadBalancer(LOAD_BALANCER_VAL_RANDOM);
         consumerStub.setForm(DirectCallTests.class.getSimpleName());
         consumerStub.setVersion("1.0.0");
-        consumerStub.setProxy(PROXY_VAL_JDK);
         consumerStub.setRequestTimeout(1000);
         // Set direct address
         consumerStub.setProviderAddresses("localhost:" + PROVIDER_PORT);
@@ -97,6 +94,7 @@ public class DirectCallTests extends ZkBaseTest {
         applicationConfig.setDescription("Description");
         applicationConfig.setTeam("Team");
         applicationConfig.setOwnerMail("test@126.com");
+        applicationConfig.setMailSuffixes(Arrays.asList("126.com"));
         applicationConfig.setEnv("test");
         applicationConfig.init();
 

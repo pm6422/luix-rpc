@@ -37,6 +37,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
@@ -194,10 +195,9 @@ public class ProviderStub<T> {
     public void init() {
         // Put methods to cache in order to accelerate the speed of executing.
         discoverMethods(interfaceClass);
-        if (StringUtils.isNotEmpty(beanName)) {
-            // Automatically add {@link ProviderStub} instance to {@link ProviderStubHolder}
-            ProviderStubHolder.getInstance().add(beanName, this);
-        }
+        String name = StringUtils.defaultIfEmpty(beanName, buildProviderStubBeanName(interfaceName, form, version));
+        // Automatically add {@link ProviderStub} instance to {@link ProviderStubHolder}
+        ProviderStubHolder.getInstance().add(name, this);
     }
 
     /**
@@ -302,7 +302,8 @@ public class ProviderStub<T> {
      * @return provider url
      */
     private Url createProviderUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
-        Url url = Url.providerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
+        Url url = Url.providerUrl(defaultIfEmpty(protocol, PROTOCOL_VAL_DEFAULT), protocolConfig.getHost(),
+                protocolConfig.getPort(), interfaceName, form, version);
         url.addOption(APP, applicationConfig.getName());
         url.addOption(SERIALIZER, serializer);
         url.addOption(HEALTH_CHECKER, healthChecker);
@@ -448,14 +449,14 @@ public class ProviderStub<T> {
     /**
      * Build provider stub bean name
      *
-     * @param interfaceClassName provider interface class name
-     * @param form               form
-     * @param version            version
+     * @param interfaceName provider interface class name
+     * @param form          form
+     * @param version       version
      * @return provider stub bean name
      */
-    public static String buildProviderStubBeanName(String interfaceClassName, String form, String version) {
+    public static String buildProviderStubBeanName(String interfaceName, String form, String version) {
         return ProviderStubBeanNameBuilder
-                .builder(interfaceClassName)
+                .builder(interfaceName)
                 .form(form)
                 .version(version)
                 .build();

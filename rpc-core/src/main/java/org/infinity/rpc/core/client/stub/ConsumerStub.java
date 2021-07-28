@@ -27,10 +27,11 @@ import javax.validation.constraints.NotEmpty;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
+import static org.infinity.rpc.core.constant.ConsumerConstants.*;
 import static org.infinity.rpc.core.constant.ProtocolConstants.*;
 import static org.infinity.rpc.core.constant.RegistryConstants.REGISTRY_VAL_NONE;
-import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 /**
  * RPC consumer stub
@@ -169,7 +170,7 @@ public class ConsumerStub<T> {
      */
     @PostConstruct
     public void init() {
-        this.proxyInstance = Proxy.getInstance(proxy).getProxy(this);
+        this.proxyInstance = Proxy.getInstance(defaultIfEmpty(proxy, PROXY_VAL_DEFAULT)).getProxy(this);
         if (StringUtils.isNotEmpty(beanName)) {
             // Automatically add {@link ConsumerStub} instance to {@link ConsumerStubHolder}
             ConsumerStubHolder.getInstance().add(beanName, this);
@@ -232,8 +233,11 @@ public class ConsumerStub<T> {
         url = this.createConsumerUrl(applicationConfig, protocolConfig);
 
         // Initialize service invoker before consumer initialization
-        invokerInstance = ServiceInvoker.getInstance(invoker);
-        invokerInstance.init(interfaceName, faultTolerance, loadBalancer, url);
+        invokerInstance = ServiceInvoker.getInstance(defaultIfEmpty(invoker, INVOKER_VAL_DEFAULT));
+
+        invokerInstance.init(interfaceName,
+                defaultIfEmpty(faultTolerance, FAULT_TOLERANCE_VAL_DEFAULT),
+                defaultIfEmpty(loadBalancer, LOAD_BALANCER_VAL_DEFAULT), url);
 
         if (StringUtils.isEmpty(providerAddresses)) {
             // Non-direct registry
@@ -255,7 +259,8 @@ public class ConsumerStub<T> {
      * @return consumer url
      */
     private Url createConsumerUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
-        url = Url.consumerUrl(protocol, protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
+        url = Url.consumerUrl(defaultIfEmpty(protocol, PROTOCOL_VAL_DEFAULT),
+                protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
         url.addOption(APP, applicationConfig.getName());
         url.addOption(SERIALIZER, serializer);
         url.addOption(REQUEST_TIMEOUT, requestTimeout);
@@ -341,12 +346,7 @@ public class ConsumerStub<T> {
                                          Integer retryCount, String serializer) {
         ConsumerStub<?> consumerStub = new ConsumerStub<>();
         consumerStub.setInterfaceName(interfaceName);
-        consumerStub.setProtocol(protocol.getName());
         consumerStub.setSerializer(serializer);
-        consumerStub.setInvoker(consumer.getInvoker());
-        consumerStub.setFaultTolerance(consumer.getFaultTolerance());
-        consumerStub.setLoadBalancer(consumer.getLoadBalancer());
-        consumerStub.setProxy(consumer.getProxyFactory());
         consumerStub.setProviderAddresses(providerAddresses);
         consumerStub.setForm(form);
         consumerStub.setVersion(version);
