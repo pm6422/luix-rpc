@@ -14,17 +14,17 @@ import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.utilities.destory.ShutdownHook;
 import org.infinity.rpc.utilities.serviceloader.annotation.SpiName;
 
-import static org.infinity.rpc.core.constant.ConsumerConstants.INVOKER_VAL_P2P;
+import static org.infinity.rpc.core.constant.ConsumerConstants.INVOKER_VAL_DEFAULT;
 
 /**
  * Only one service provider can process one request
  * todo: ClusterSpi
  */
 @Slf4j
-@SpiName(INVOKER_VAL_P2P)
+@SpiName(INVOKER_VAL_DEFAULT)
 @Setter
 @Getter
-public class P2pServiceInvoker implements ServiceInvoker {
+public class DefaultServiceInvoker implements ServiceInvoker {
     private boolean        active = false;
     private String         interfaceName;
     private FaultTolerance faultTolerance;
@@ -67,8 +67,8 @@ public class P2pServiceInvoker implements ServiceInvoker {
     @Override
     public String toString() {
         if (StringUtils.isEmpty(interfaceName)) {
-            return P2pServiceInvoker.class.getSimpleName();
+            return DefaultServiceInvoker.class.getSimpleName();
         }
-        return P2pServiceInvoker.class.getSimpleName().concat(":").concat(interfaceName);
+        return DefaultServiceInvoker.class.getSimpleName().concat(":").concat(interfaceName);
     }
 }

@@ -7,8 +7,7 @@ import org.infinity.rpc.core.client.annotation.RpcConsumer;
  */
 public interface ConsumerConstants extends ServiceConstants {
     String INVOKER                       = "invoker";
-    String INVOKER_VAL_P2P               = "p2p";
-    String INVOKER_VAL_BROADCAST         = "broadcast";
+    String INVOKER_VAL_DEFAULT           = "default";
     String FAULT_TOLERANCE               = "faultTolerance";
     String FAULT_TOLERANCE_VAL_FAILOVER  = "failover";
     String FAULT_TOLERANCE_VAL_FAILFAST  = "failfast";

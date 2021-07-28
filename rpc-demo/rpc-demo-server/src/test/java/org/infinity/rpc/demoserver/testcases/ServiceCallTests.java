@@ -81,7 +81,7 @@ public class ServiceCallTests extends ZkBaseTest {
         consumerStub.setInterfaceClass(TestService.class);
         consumerStub.setInterfaceName(TestService.class.getName());
         consumerStub.setProtocol(ProtocolConstants.PROTOCOL_VAL_INFINITY);
-        consumerStub.setInvoker(INVOKER_VAL_P2P);
+        consumerStub.setInvoker(INVOKER_VAL_DEFAULT);
         consumerStub.setFaultTolerance(FAULT_TOLERANCE_VAL_FAILOVER);
         consumerStub.setLoadBalancer(LOAD_BALANCER_VAL_RANDOM);
         consumerStub.setForm(ServiceCallTests.class.getSimpleName());

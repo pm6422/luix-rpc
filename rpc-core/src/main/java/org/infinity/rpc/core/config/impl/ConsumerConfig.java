@@ -16,7 +16,7 @@ public class ConsumerConfig extends ServiceConfig {
      * Service provider invoker
      */
     @NotEmpty
-    private             String  invoker          = INVOKER_VAL_P2P;
+    private             String  invoker          = INVOKER_VAL_DEFAULT;
     /**
      * Fault tolerance strategy
      */
