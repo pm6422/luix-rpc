@@ -3,6 +3,7 @@ package org.infinity.rpc.demoserver.testcases;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.rpc.core.client.stub.ConsumerStubFactory;
 import org.infinity.rpc.core.config.impl.ApplicationConfig;
 import org.infinity.rpc.core.config.impl.ProtocolConfig;
 import org.infinity.rpc.core.config.impl.RegistryConfig;
@@ -110,6 +111,6 @@ public class UniversalInvocationTests extends ZkBaseTest {
         registryConfig.setPort(zkPort);
         registryConfig.init();
 
-        return ConsumerStub.create(interfaceName, applicationConfig, registryConfig, protocolConfig);
+        return ConsumerStubFactory.create(applicationConfig, registryConfig, protocolConfig, interfaceName);
     }
 }

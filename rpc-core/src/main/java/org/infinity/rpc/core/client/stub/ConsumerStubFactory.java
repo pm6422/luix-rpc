@@ -14,7 +14,17 @@ public abstract class ConsumerStubFactory {
                                          RegistryConfig registryConfig,
                                          ProtocolConfig protocolConfig,
                                          String interfaceName) {
-        return create(applicationConfig, registryConfig, protocolConfig, null, null, interfaceName,
+        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), null, interfaceName,
+                null, null, null, null, null, null, null, null,
+                null, null, null);
+    }
+
+    public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
+                                         RegistryConfig registryConfig,
+                                         ProtocolConfig protocolConfig,
+                                         String providerAddresses,
+                                         String interfaceName) {
+        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), providerAddresses, interfaceName,
                 null, null, null, null, null, null, null, null,
                 null, null, null);
     }
@@ -24,7 +34,7 @@ public abstract class ConsumerStubFactory {
                                          ProtocolConfig protocolConfig,
                                          String interfaceName,
                                          ProviderProcessable providerProcessor) {
-        return create(applicationConfig, registryConfig, protocolConfig, null, null, interfaceName,
+        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), null, interfaceName,
                 null, null, null, null, null, null, null, null,
                 null, null, providerProcessor);
     }
@@ -35,9 +45,63 @@ public abstract class ConsumerStubFactory {
                                          String providerAddresses,
                                          String interfaceName,
                                          ProviderProcessable providerProcessor) {
-        return create(applicationConfig, registryConfig, protocolConfig, null, providerAddresses, interfaceName,
+        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), providerAddresses, interfaceName,
                 null, null, null, null, null, null, null, null,
                 null, null, providerProcessor);
+    }
+
+    public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
+                                         RegistryConfig registryConfig,
+                                         ProtocolConfig protocolConfig,
+                                         String providerAddresses,
+                                         String interfaceName,
+                                         Integer requestTimeout,
+                                         Integer retryCount) {
+        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), providerAddresses, interfaceName,
+                null, null, null, null, null, null, null, null,
+                requestTimeout, retryCount, null);
+    }
+
+    public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
+                                         RegistryConfig registryConfig,
+                                         ProtocolConfig protocolConfig,
+                                         String interfaceName,
+                                         String serializer,
+                                         String form,
+                                         String version,
+                                         Integer requestTimeout,
+                                         Integer retryCount) {
+        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), null, interfaceName,
+                null, serializer, form, version, null, null, null, null,
+                requestTimeout, retryCount, null);
+    }
+
+    public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
+                                         RegistryConfig registryConfig,
+                                         ProtocolConfig protocolConfig,
+                                         String interfaceName,
+                                         String serializer,
+                                         String form,
+                                         String version,
+                                         String faultTolerance) {
+        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), null, interfaceName,
+                null, serializer, form, version, null, faultTolerance, null, null,
+                null, null, null);
+    }
+
+    public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
+                                         RegistryConfig registryConfig,
+                                         ProtocolConfig protocolConfig,
+                                         String providerAddresses,
+                                         String interfaceName,
+                                         String serializer,
+                                         String form,
+                                         String version,
+                                         Integer requestTimeout,
+                                         Integer retryCount) {
+        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), providerAddresses, interfaceName,
+                null, serializer, form, version, null, null, null, null,
+                requestTimeout, retryCount, null);
     }
 
     public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
@@ -50,7 +114,7 @@ public abstract class ConsumerStubFactory {
                                          Integer requestTimeout,
                                          Integer retryCount,
                                          ProviderProcessable providerProcessor) {
-        return create(applicationConfig, registryConfig, protocolConfig, null, providerAddresses, interfaceName,
+        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), providerAddresses, interfaceName,
                 null, null, form, version, null, null, null, null,
                 requestTimeout, retryCount, providerProcessor);
     }
@@ -66,7 +130,7 @@ public abstract class ConsumerStubFactory {
                                          Integer requestTimeout,
                                          Integer retryCount,
                                          ProviderProcessable providerProcessor) {
-        return create(applicationConfig, registryConfig, protocolConfig, null, providerAddresses, interfaceName,
+        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), providerAddresses, interfaceName,
                 null, serializer, form, version, null, null, null, null,
                 requestTimeout, retryCount, providerProcessor);
     }
@@ -118,10 +182,8 @@ public abstract class ConsumerStubFactory {
         consumerStub.setProxy(defaultIfEmpty(proxyFactory, consumerConfig.getProxyFactory()));
         consumerStub.setRequestTimeout(requestTimeout != null ? requestTimeout : consumerConfig.getRequestTimeout());
         consumerStub.setRetryCount(retryCount != null ? retryCount : consumerConfig.getRetryCount());
-        if (consumerConfig != null) {
-            consumerStub.setLimitRate(consumerConfig.isLimitRate());
-            consumerStub.setMaxPayload(consumerConfig.getMaxPayload());
-        }
+        consumerStub.setLimitRate(consumerConfig.isLimitRate());
+        consumerStub.setMaxPayload(consumerConfig.getMaxPayload());
 
         // Must NOT call init()
         consumerStub.subscribeProviders(applicationConfig, protocolConfig, registryConfig, providerProcessor);

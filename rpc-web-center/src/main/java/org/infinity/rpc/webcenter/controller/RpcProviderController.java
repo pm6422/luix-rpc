@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.rpc.core.client.stub.ConsumerStubFactory;
 import org.infinity.rpc.core.server.stub.MethodMeta;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
@@ -102,9 +103,9 @@ public class RpcProviderController {
     }
 
     private UniversalInvocationHandler createBuildInInvocationHandler(String registryIdentity, Url providerUrl) {
-        ConsumerStub<?> consumerStub = ConsumerStub.create(providerUrl.getPath(),
+        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(
                 infinityProperties.getApplication(), rpcRegistryService.findRegistryConfig(registryIdentity),
-                infinityProperties.getAvailableProtocol(), null, providerUrl.getAddress());
+                infinityProperties.getAvailableProtocol(), providerUrl.getAddress(), providerUrl.getPath());
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         return proxyFactory.createUniversalInvocationHandler(consumerStub);
     }
@@ -192,13 +193,10 @@ public class RpcProviderController {
     }
 
     private void doReregister(String registryIdentity, Url providerUrl) {
-        ConsumerStub<?> consumerStub = ConsumerStub.create(providerUrl.getPath(), infinityProperties.getApplication(),
+        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(infinityProperties.getApplication(),
                 rpcRegistryService.findRegistryConfig(registryIdentity),
-                infinityProperties.getAvailableProtocol());
-        // Broadcast invocation
-        consumerStub.setFaultTolerance(FAULT_TOLERANCE_VAL_BROADCAST);
-        // Hessian 2 serializer
-        consumerStub.setSerializer(SERIALIZER_NAME_HESSIAN2);
+                infinityProperties.getAvailableProtocol(),
+                providerUrl.getPath(), SERIALIZER_NAME_HESSIAN2, providerUrl.getForm(), providerUrl.getVersion(), FAULT_TOLERANCE_VAL_BROADCAST);
 
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);

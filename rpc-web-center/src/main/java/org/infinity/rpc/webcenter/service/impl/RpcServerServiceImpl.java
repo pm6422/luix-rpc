@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.rpc.core.client.stub.ConsumerStubFactory;
 import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.buildin.ServerInfo;
@@ -91,10 +92,10 @@ public class RpcServerServiceImpl implements RpcServerService {
         RegistryConfig registryConfig = rpcRegistryService.findRegistryConfig(registryIdentity);
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
 
-        ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
-                infinityProperties.getApplication(), registryConfig,
-                infinityProperties.getAvailableProtocol(),
-                null, address, null, null, 10000, 2);
+        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(infinityProperties.getApplication(), registryConfig,
+                infinityProperties.getAvailableProtocol(), address, BuildInService.class.getName(),
+                10000, 2);
+
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         // Send a remote request to get ApplicationConfig
         ServerInfo serverInfo = (ServerInfo) invocationHandler.invoke(METHOD_GET_SERVER_INFO);

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.core.client.listener.ProviderProcessable;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.rpc.core.client.stub.ConsumerStubFactory;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.registry.Registry;
@@ -63,8 +64,8 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                     // First discover all consumers
                     registryConfig.getRegistryImpl().subscribeConsumerListener(interfaceName, consumerProcessService);
                     // Then discover all providers
-                    ConsumerStub.create(interfaceName, infinityProperties.getApplication(), registryConfig,
-                            infinityProperties.getAvailableProtocol(), providerProcessService);
+                    ConsumerStubFactory.create(infinityProperties.getApplication(), registryConfig,
+                            infinityProperties.getAvailableProtocol(), interfaceName, providerProcessService);
 
                 });
                 log.info("Found registry: [{}]", registryConfig.getRegistryUrl().getIdentity());
@@ -128,13 +129,13 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
 
         // Default hessian 2 serializer
         String serializer = defaultIfEmpty(attributes.get(SERIALIZER), SERIALIZER_NAME_HESSIAN2);
-        ConsumerStub<?> consumerStub = ConsumerStub.create(resolvedInterfaceName, infinityProperties.getApplication(),
-                findRegistryConfig(registryIdentity), infinityProperties.getAvailableProtocol(),
-                null, providerAddress, form, version, requestTimeout, retryCount, serializer);
+        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(infinityProperties.getApplication(), infinityProperties.getRegistry(),
+                infinityProperties.getAvailableProtocol(), providerAddress, resolvedInterfaceName,
+                serializer, form, version, requestTimeout, retryCount);
+
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);
         return consumerStub;
     }
-
 
     @Override
     public List<RpcRegistryDTO> getRegistries() {

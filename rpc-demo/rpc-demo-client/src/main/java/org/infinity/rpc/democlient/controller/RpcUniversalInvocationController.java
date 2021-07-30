@@ -8,10 +8,10 @@ import org.apache.commons.collections4.MapUtils;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.rpc.core.client.stub.ConsumerStubFactory;
 import org.infinity.rpc.core.client.stub.ConsumerStubHolder;
 import org.infinity.rpc.democlient.dto.MethodInvocation;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -71,10 +71,10 @@ public class RpcUniversalInvocationController {
         if (data.getAttributes().containsKey(RETRY_COUNT)) {
             retryCount = Integer.parseInt(data.getAttributes().get(RETRY_COUNT));
         }
-        ConsumerStub<?> consumerStub = ConsumerStub.create(data.getInterfaceName(), infinityProperties.getApplication(),
-                infinityProperties.getRegistry(), infinityProperties.getAvailableProtocol(),
-                null, null, data.getAttributes().get(FORM), data.getAttributes().get(VERSION),
-                requestTimeout, retryCount, defaultIfEmpty(data.getAttributes().get(SERIALIZER), SERIALIZER_NAME_HESSIAN2));
+        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(infinityProperties.getApplication(), infinityProperties.getRegistry(),
+                infinityProperties.getAvailableProtocol(), data.getInterfaceName(),
+                defaultIfEmpty(data.getAttributes().get(SERIALIZER), SERIALIZER_NAME_HESSIAN2),
+                data.getAttributes().get(FORM), data.getAttributes().get(VERSION), requestTimeout, retryCount);
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);
         return consumerStub;
     }
