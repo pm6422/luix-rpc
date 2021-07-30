@@ -281,6 +281,7 @@ public class ProviderStub<T> {
     public void reregister(Map<String, String> options) {
         deactivate();
         // Override the old options
+        url.getOptions().clear();
         options.forEach((key, value) -> url.addOption(key, value));
 
         // Register provider URL to all the registries
