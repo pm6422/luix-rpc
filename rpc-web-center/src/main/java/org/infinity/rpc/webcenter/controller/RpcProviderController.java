@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.core.server.buildin.BuildInService;
 import org.infinity.rpc.core.server.stub.MethodMeta;
 import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
@@ -32,7 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.infinity.rpc.core.server.buildin.BuildInService.*;
+import static org.infinity.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_BROADCAST;
+import static org.infinity.rpc.core.server.stub.ProviderStub.*;
+import static org.infinity.rpc.utilities.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
 import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
@@ -79,9 +80,7 @@ public class RpcProviderController {
         // Use specified provider url
         UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
         @SuppressWarnings({"unchecked"})
-        List<MethodMeta> result = (List<MethodMeta>) invocationHandler.invoke(METHOD_GET_METHODS,
-                new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
-                new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
+        List<MethodMeta> result = (List<MethodMeta>) invocationHandler.invoke(METHOD_GET_METHOD_METAS);
         return ResponseEntity.ok().body(result);
     }
 
@@ -95,9 +94,7 @@ public class RpcProviderController {
         UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
         String result;
         try {
-            result = (String) invocationHandler.invoke(METHOD_CHECK_HEALTH,
-                    new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
-                    new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
+            result = (String) invocationHandler.invoke(METHOD_CHECK_HEALTH);
         } catch (Exception ex) {
             result = ex.getMessage();
         }
@@ -105,10 +102,9 @@ public class RpcProviderController {
     }
 
     private UniversalInvocationHandler createBuildInInvocationHandler(String registryIdentity, Url providerUrl) {
-        ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
+        ConsumerStub<?> consumerStub = ConsumerStub.create(providerUrl.getPath(),
                 infinityProperties.getApplication(), rpcRegistryService.findRegistryConfig(registryIdentity),
-                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                null, providerUrl.getAddress());
+                infinityProperties.getAvailableProtocol(), null, providerUrl.getAddress());
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         return proxyFactory.createUniversalInvocationHandler(consumerStub);
     }
@@ -137,9 +133,7 @@ public class RpcProviderController {
                 String identity = registry.getRegistryImpl().getRegistryUrl().getIdentity();
                 // Use specified provider url
                 UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(identity, providerUrl);
-                invocationHandler.invoke(methodName,
-                        new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
-                        new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
+                invocationHandler.invoke(methodName);
             });
         } else {
             // Use specified provider url
@@ -159,7 +153,7 @@ public class RpcProviderController {
 
         List<OptionMetaDTO> all = ProviderStub.OPTIONS.stream().map(OptionMetaDTO::of).collect(Collectors.toList());
         all.forEach(dto -> {
-            if(dto.getType().equals(Boolean.class.getSimpleName())) {
+            if (dto.getType().equals(Boolean.class.getSimpleName())) {
                 dto.setValue(dto.getDefaultValue());
             }
             if (options.containsKey(dto.getName())) {
@@ -190,21 +184,24 @@ public class RpcProviderController {
     private void reregister(String registryIdentity, Url providerUrl) {
         if (StringUtils.isEmpty(registryIdentity)) {
             infinityProperties.getRegistryList().forEach(registry -> {
-                String identity = registry.getRegistryImpl().getRegistryUrl().getIdentity();
-                // todo: change to broadcasting
-                // Use specified provider url
-                UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(identity, providerUrl);
-                invocationHandler.invoke(METHOD_REREGISTER,
-                        new String[]{String.class.getName()},
-                        new Object[]{providerUrl.toFullStr()});
+                doReregister(registry.getRegistryImpl().getRegistryUrl().getIdentity(), providerUrl);
             });
         } else {
-            // todo: change to broadcasting
-            // Use specified provider url
-            UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
-            invocationHandler.invoke(METHOD_REREGISTER,
-                    new String[]{String.class.getName()},
-                    new Object[]{providerUrl.toFullStr()});
+            doReregister(registryIdentity, providerUrl);
         }
+    }
+
+    private void doReregister(String registryIdentity, Url providerUrl) {
+        ConsumerStub<?> consumerStub = ConsumerStub.create(providerUrl.getPath(), infinityProperties.getApplication(),
+                rpcRegistryService.findRegistryConfig(registryIdentity),
+                infinityProperties.getAvailableProtocol());
+        // Broadcast invocation
+        consumerStub.setFaultTolerance(FAULT_TOLERANCE_VAL_BROADCAST);
+        // Hessian 2 serializer
+        consumerStub.setSerializer(SERIALIZER_NAME_HESSIAN2);
+
+        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
+        UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
+        invocationHandler.invoke(METHOD_REREGISTER, new String[]{Map.class.getName()}, new Object[]{providerUrl.getOptions()});
     }
 }

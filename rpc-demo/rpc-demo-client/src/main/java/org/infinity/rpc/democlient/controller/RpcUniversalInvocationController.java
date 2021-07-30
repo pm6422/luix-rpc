@@ -72,7 +72,7 @@ public class RpcUniversalInvocationController {
             retryCount = Integer.parseInt(data.getAttributes().get(RETRY_COUNT));
         }
         ConsumerStub<?> consumerStub = ConsumerStub.create(data.getInterfaceName(), infinityProperties.getApplication(),
-                infinityProperties.getRegistry(), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
+                infinityProperties.getRegistry(), infinityProperties.getAvailableProtocol(),
                 null, null, data.getAttributes().get(FORM), data.getAttributes().get(VERSION),
                 requestTimeout, retryCount, defaultIfEmpty(data.getAttributes().get(SERIALIZER), SERIALIZER_NAME_HESSIAN2));
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);

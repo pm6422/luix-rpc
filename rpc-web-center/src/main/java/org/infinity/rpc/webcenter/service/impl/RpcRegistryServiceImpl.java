@@ -64,8 +64,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                     registryConfig.getRegistryImpl().subscribeConsumerListener(interfaceName, consumerProcessService);
                     // Then discover all providers
                     ConsumerStub.create(interfaceName, infinityProperties.getApplication(), registryConfig,
-                            infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
-                            providerProcessService);
+                            infinityProperties.getAvailableProtocol(), providerProcessService);
 
                 });
                 log.info("Found registry: [{}]", registryConfig.getRegistryUrl().getIdentity());
@@ -130,7 +129,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
         // Default hessian 2 serializer
         String serializer = defaultIfEmpty(attributes.get(SERIALIZER), SERIALIZER_NAME_HESSIAN2);
         ConsumerStub<?> consumerStub = ConsumerStub.create(resolvedInterfaceName, infinityProperties.getApplication(),
-                findRegistryConfig(registryIdentity), infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
+                findRegistryConfig(registryIdentity), infinityProperties.getAvailableProtocol(),
                 null, providerAddress, form, version, requestTimeout, retryCount, serializer);
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);
         return consumerStub;

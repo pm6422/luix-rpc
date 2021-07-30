@@ -96,7 +96,7 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
 
         ConsumerStub<?> consumerStub = ConsumerStub.create(BuildInService.class.getName(),
                 infinityProperties.getApplication(), registryConfig,
-                infinityProperties.getAvailableProtocol(), infinityProperties.getConsumer(),
+                infinityProperties.getAvailableProtocol(),
                 null, url.getAddress(), null, null, 10000, 2);
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         // Send a remote request to get ApplicationConfig

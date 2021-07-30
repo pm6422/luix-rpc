@@ -13,7 +13,6 @@ import org.infinity.rpc.core.client.listener.ProviderProcessable;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.proxy.impl.JdkProxy;
 import org.infinity.rpc.core.config.impl.ApplicationConfig;
-import org.infinity.rpc.core.config.impl.ConsumerConfig;
 import org.infinity.rpc.core.config.impl.ProtocolConfig;
 import org.infinity.rpc.core.config.impl.RegistryConfig;
 import org.infinity.rpc.core.url.Url;
@@ -49,7 +48,7 @@ public class ConsumerStub<T> {
 
     public static final Map<String, String> OPTIONS = new LinkedHashMap<>();
 
-    {
+    static {
         OPTIONS.put(FORM, StringUtils.EMPTY);
         OPTIONS.put(VERSION, StringUtils.EMPTY);
         OPTIONS.put(APP, StringUtils.EMPTY);
@@ -248,7 +247,7 @@ public class ConsumerStub<T> {
         }
 
         // Direct registry
-        notifyDirectProviderUrls(protocolConfig, registryUrls, providerProcessor);
+        notifyDirectProviderUrls(registryUrls, providerProcessor);
     }
 
     /**
@@ -272,13 +271,13 @@ public class ConsumerStub<T> {
         return url;
     }
 
-    private void notifyDirectProviderUrls(ProtocolConfig protocolConfig, List<Url> globalRegistryUrls,
+    private void notifyDirectProviderUrls(List<Url> globalRegistryUrls,
                                           ProviderProcessable providerProcessor) {
         // Pass provider service invoker to listener, listener will update service invoker after provider urls changed
         ProviderNotifyListener listener = ProviderNotifyListener.of(invokerInstance, protocol, interfaceName, form, providerProcessor);
 
         for (Url globalRegistryUrl : globalRegistryUrls) {
-            List<Url> directProviderUrls = createDirectProviderUrls(protocolConfig);
+            List<Url> directProviderUrls = createDirectProviderUrls();
             Url directRegistryUrl = globalRegistryUrl.copy();
             // Change protocol to direct
             directRegistryUrl.setProtocol(REGISTRY_VAL_NONE);
@@ -289,7 +288,7 @@ public class ConsumerStub<T> {
         }
     }
 
-    private List<Url> createDirectProviderUrls(ProtocolConfig protocolConfig) {
+    private List<Url> createDirectProviderUrls() {
         // Get the provider host and port
         List<Pair<String, Integer>> directUrlHostPortList = AddressUtils.parseAddress(providerAddresses);
         List<Url> directProviderUrls = new ArrayList<>(directUrlHostPortList.size());
@@ -317,30 +316,36 @@ public class ConsumerStub<T> {
     }
 
     public static ConsumerStub<?> create(String interfaceName, ApplicationConfig application,
-                                         RegistryConfig registry, ProtocolConfig protocol, ConsumerConfig consumer,
-                                         ProviderProcessable providerProcessor) {
-        return create(interfaceName, application, registry, protocol, consumer, providerProcessor,
+                                         RegistryConfig registry, ProtocolConfig protocol) {
+        return create(interfaceName, application, registry, protocol, null,
                 null, null, null, null, null, null);
     }
 
     public static ConsumerStub<?> create(String interfaceName, ApplicationConfig application,
-                                         RegistryConfig registry, ProtocolConfig protocol, ConsumerConfig consumer,
+                                         RegistryConfig registry, ProtocolConfig protocol,
+                                         ProviderProcessable providerProcessor) {
+        return create(interfaceName, application, registry, protocol, providerProcessor,
+                null, null, null, null, null, null);
+    }
+
+    public static ConsumerStub<?> create(String interfaceName, ApplicationConfig application,
+                                         RegistryConfig registry, ProtocolConfig protocol,
                                          ProviderProcessable providerProcessor, String providerAddresses) {
-        return create(interfaceName, application, registry, protocol, consumer, providerProcessor,
+        return create(interfaceName, application, registry, protocol, providerProcessor,
                 providerAddresses, null, null, null, null, null);
     }
 
     public static ConsumerStub<?> create(String interfaceName, ApplicationConfig application,
-                                         RegistryConfig registry, ProtocolConfig protocol, ConsumerConfig consumer,
+                                         RegistryConfig registry, ProtocolConfig protocol,
                                          ProviderProcessable providerProcessor, String providerAddresses,
                                          String form, String version, Integer requestTimeout,
                                          Integer retryCount) {
-        return create(interfaceName, application, registry, protocol, consumer, providerProcessor,
+        return create(interfaceName, application, registry, protocol, providerProcessor,
                 providerAddresses, form, version, requestTimeout, retryCount, null);
     }
 
     public static ConsumerStub<?> create(String interfaceName, ApplicationConfig application,
-                                         RegistryConfig registry, ProtocolConfig protocol, ConsumerConfig consumer,
+                                         RegistryConfig registry, ProtocolConfig protocol,
                                          ProviderProcessable providerProcessor, String providerAddresses,
                                          String form, String version, Integer requestTimeout,
                                          Integer retryCount, String serializer) {

@@ -46,6 +46,7 @@ import static org.infinity.rpc.core.constant.ServiceConstants.*;
 import static org.infinity.rpc.core.server.response.impl.RpcCheckHealthResponse.STATUS_INACTIVE;
 import static org.infinity.rpc.core.server.response.impl.RpcCheckHealthResponse.STATUS_OK;
 import static org.infinity.rpc.core.url.Url.METHOD_CONFIG_PREFIX;
+import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodParameters;
 import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignature;
 
 /**
@@ -61,9 +62,16 @@ import static org.infinity.rpc.core.utils.MethodParameterUtils.getMethodSignatur
 @Getter
 public class ProviderStub<T> {
 
-    public static final List<OptionMeta> OPTIONS = new ArrayList<>();
+    public static final String           METHOD_CHECK_HEALTH     = "@checkHealth";
+    public static final String           METHOD_GET_METHOD_METAS = "@getMethodMetas";
+    public static final String           METHOD_ACTIVATE         = "@activate";
+    public static final String           METHOD_DEACTIVATE       = "@deactivate";
+    public static final String           METHOD_REREGISTER       = "@reregister";
+    public static final List<String>     BUILD_IN_METHODS        = Arrays.asList(METHOD_CHECK_HEALTH,
+            METHOD_GET_METHOD_METAS, METHOD_ACTIVATE, METHOD_DEACTIVATE, METHOD_REREGISTER);
+    public static final List<OptionMeta> OPTIONS                 = new ArrayList<>();
 
-    {
+    static {
 //        OPTIONS.add(new OptionMeta(FORM, null, String.class.getSimpleName()));
 //        OPTIONS.add(new OptionMeta(VERSION, null, String.class.getSimpleName()));
 //        OPTIONS.add(new OptionMeta(APP, null, String.class.getSimpleName()));
@@ -154,15 +162,15 @@ public class ProviderStub<T> {
     /**
      * Method signature to method cache map for the provider class
      */
-    private transient Map<String, Method>       methodsCache    = new HashMap<>();
+    private transient Map<String, Method>       methodsCache = new HashMap<>();
     /**
      * Method signature to method level configuration map for the provider class
      */
-    private           Map<String, MethodConfig> methodConfig    = new HashMap<>();
+    private           Map<String, MethodConfig> methodConfig = new HashMap<>();
     /**
      * All the methods of the interface class
      */
-    private           List<MethodMeta>          methodMetaCache = new ArrayList<>();
+    private           List<MethodMeta>          methodMetas  = new ArrayList<>();
     /**
      * The provider url
      */
@@ -174,7 +182,7 @@ public class ProviderStub<T> {
     /**
      * Indicator used to identify whether the provider already been registered
      */
-    private final     AtomicBoolean             exported        = new AtomicBoolean(false);
+    private final     AtomicBoolean             exported     = new AtomicBoolean(false);
     /**
      * Application configuration
      */
@@ -210,10 +218,31 @@ public class ProviderStub<T> {
         Arrays.stream(interfaceClass.getMethods()).forEach(method -> {
             String methodSignature = getMethodSignature(method);
             methodsCache.putIfAbsent(methodSignature, method);
+
             List<String> methodParameters = Arrays.stream(method.getParameterTypes()).map(Class::getName).collect(Collectors.toList());
             MethodMeta methodMeta = new MethodMeta(method.getName(), methodParameters, methodSignature, method.getGenericReturnType().getTypeName());
-            methodMetaCache.add(methodMeta);
+            methodMetas.add(methodMeta);
         });
+
+        try {
+            // Add build-in methods
+            Method checkHealthMethod = ProviderStub.class.getMethod(METHOD_CHECK_HEALTH.substring(1));
+            methodsCache.putIfAbsent(getMethodSignature(METHOD_CHECK_HEALTH, getMethodParameters(checkHealthMethod)), checkHealthMethod);
+
+            Method getMethodMetasMethod = ProviderStub.class.getMethod(METHOD_GET_METHOD_METAS.substring(1));
+            methodsCache.putIfAbsent(getMethodSignature(METHOD_GET_METHOD_METAS, getMethodParameters(getMethodMetasMethod)), getMethodMetasMethod);
+
+            Method activateMethod = ProviderStub.class.getMethod(METHOD_ACTIVATE.substring(1));
+            methodsCache.putIfAbsent(getMethodSignature(METHOD_ACTIVATE, getMethodParameters(activateMethod)), activateMethod);
+
+            Method deactivateMethod = ProviderStub.class.getMethod(METHOD_ACTIVATE.substring(1));
+            methodsCache.putIfAbsent(getMethodSignature(METHOD_DEACTIVATE, getMethodParameters(deactivateMethod)), deactivateMethod);
+
+            Method reregisterMethod = ProviderStub.class.getMethod(METHOD_REREGISTER.substring(1), Map.class);
+            methodsCache.putIfAbsent(getMethodSignature(METHOD_REREGISTER, getMethodParameters(reregisterMethod)), reregisterMethod);
+        } catch (NoSuchMethodException e) {
+            log.error("Failed to discover method!", e);
+        }
     }
 
     /**
@@ -249,9 +278,11 @@ public class ProviderStub<T> {
         }
     }
 
-    public void reregister(Url url) {
+    public void reregister(Map<String, String> options) {
         deactivate();
-        this.url = url;
+        // Override the old options
+        options.forEach((key, value) -> url.addOption(key, value));
+
         // Register provider URL to all the registries
         this.registryConfig.getRegistryImpl().register(url);
         activate();
@@ -391,7 +422,7 @@ public class ProviderStub<T> {
         boolean defaultThrowExceptionStack = TRANS_EXCEPTION_STACK_VAL_DEFAULT;
         try {
             // Invoke method
-            Object result = method.invoke(instance, request.getMethodArguments());
+            Object result = method.invoke(BUILD_IN_METHODS.contains(request.getMethodName()) ? this : instance, request.getMethodArguments());
             response.setResult(result);
         } catch (Exception e) {
             if (e.getCause() != null) {
