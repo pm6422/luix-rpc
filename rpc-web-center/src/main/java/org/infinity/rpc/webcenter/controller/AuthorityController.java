@@ -74,7 +74,7 @@ public class AuthorityController {
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getName())).build();
     }
 
-    @ApiOperation(value = "delete authority by name", notes = "The data may be referenced by other data, and some problems may occur after deletion")
+    @ApiOperation(value = "delete authority by name", notes = "the data may be referenced by other data, and some problems may occur after deletion")
     @DeleteMapping("/api/authorities/{name}")
     public ResponseEntity<Void> delete(@ApiParam(value = "name", required = true) @PathVariable String name) {
         log.debug("REST request to delete authority: {}", name);

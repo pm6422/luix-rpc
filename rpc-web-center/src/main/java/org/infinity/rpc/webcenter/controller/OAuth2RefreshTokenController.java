@@ -58,7 +58,7 @@ public class OAuth2RefreshTokenController {
         return ResponseEntity.ok(domain);
     }
 
-    @ApiOperation(value = "delete refresh token by ID", notes = "The data may be referenced by other data, and some problems may occur after deletion")
+    @ApiOperation(value = "delete refresh token by ID", notes = "the data may be referenced by other data, and some problems may occur after deletion")
     @DeleteMapping("/api/oauth2-refresh-tokens/{id}")
     @Secured(Authority.ADMIN)
     public ResponseEntity<Void> delete(@ApiParam(value = "ID", required = true) @PathVariable String id) {

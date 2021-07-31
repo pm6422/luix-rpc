@@ -87,7 +87,7 @@ public class AppAuthorityController {
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getAuthorityName())).build();
     }
 
-    @ApiOperation(value = "delete application authority by ID", notes = "The data may be referenced by other data, and some problems may occur after deletion")
+    @ApiOperation(value = "delete application authority by ID", notes = "the data may be referenced by other data, and some problems may occur after deletion")
     @DeleteMapping("/api/app-authorities/{id}")
     @Secured({Authority.ADMIN})
     public ResponseEntity<Void> delete(@ApiParam(value = "ID", required = true) @PathVariable String id) {

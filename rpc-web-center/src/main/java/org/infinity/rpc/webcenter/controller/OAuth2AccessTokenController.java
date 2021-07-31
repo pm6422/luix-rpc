@@ -57,7 +57,7 @@ public class OAuth2AccessTokenController {
         return ResponseEntity.ok(domain);
     }
 
-    @ApiOperation(value = "delete access token by ID", notes = "The data may be referenced by other data, and some problems may occur after deletion")
+    @ApiOperation(value = "delete access token by ID", notes = "the data may be referenced by other data, and some problems may occur after deletion")
     @DeleteMapping("/api/oauth2-access-tokens/{id}")
     @Secured(Authority.ADMIN)
     public ResponseEntity<Void> delete(@ApiParam(value = "ID", required = true) @PathVariable String id) {

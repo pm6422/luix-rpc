@@ -83,7 +83,7 @@ public class AppController {
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getName())).build();
     }
 
-    @ApiOperation(value = "delete application by name", notes = "The data may be referenced by other data, and some problems may occur after deletion")
+    @ApiOperation(value = "delete application by name", notes = "the data may be referenced by other data, and some problems may occur after deletion")
     @DeleteMapping("/api/apps/{name}")
     @Secured({Authority.ADMIN})
     public ResponseEntity<Void> delete(@ApiParam(value = "name", required = true) @PathVariable String name) {

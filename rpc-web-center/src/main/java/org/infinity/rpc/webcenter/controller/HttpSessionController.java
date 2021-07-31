@@ -47,7 +47,7 @@ public class HttpSessionController {
         return ResponseEntity.ok().headers(headers).body(sessions.getContent());
     }
 
-    @ApiOperation(value = "delete http session by ID", notes = "The data may be referenced by other data, and some problems may occur after deletion")
+    @ApiOperation(value = "delete http session by ID", notes = "the data may be referenced by other data, and some problems may occur after deletion")
     @DeleteMapping("/api/http-sessions/{id}")
     @Secured({Authority.DEVELOPER})
     public ResponseEntity<Void> delete(@ApiParam(value = "ID", required = true) @PathVariable String id) {
