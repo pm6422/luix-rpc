@@ -1,6 +1,5 @@
 package org.infinity.rpc.webcenter.controller;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.infinity.rpc.webcenter.domain.Authority;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -25,14 +25,10 @@ import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeade
  * REST controller for managing the user audit events.
  */
 @RestController
-@Api(tags = "用户审计")
 public class UserAuditEventController {
 
-    private final PersistenceAuditEventRepository persistenceAuditEventRepository;
-
-    public UserAuditEventController(PersistenceAuditEventRepository persistenceAuditEventRepository) {
-        this.persistenceAuditEventRepository = persistenceAuditEventRepository;
-    }
+    @Resource
+    private PersistenceAuditEventRepository persistenceAuditEventRepository;
 
     /**
      * 分页检索用户审计事件列表
@@ -42,12 +38,12 @@ public class UserAuditEventController {
      * @param to       结束日期 Instant反序列化会发生错误，所以使用LocalDate
      * @return 分页信息
      */
-    @ApiOperation("分页检索用户审计事件列表")
+    @ApiOperation("find user audit list")
     @GetMapping("/api/user-audit-events")
     @Secured(Authority.DEVELOPER)
     public ResponseEntity<List<PersistentAuditEvent>> getUserAuditEvents(Pageable pageable,
-                                                                         @ApiParam(value = "开始日期，例：2020-10-01") @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                                                         @ApiParam(value = "结束日期，例：2020-10-02") @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+                                                                         @ApiParam(value = "start date，e.g：2020-10-01") @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                                                         @ApiParam(value = "end date，e.g：2020-10-02") @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         Page<PersistentAuditEvent> userAuditEvents = persistenceAuditEventRepository.findByAuditEventDateBetween(pageable, from, to);
         HttpHeaders headers = generatePageHeaders(userAuditEvents);
         return ResponseEntity.ok().headers(headers).body(userAuditEvents.getContent());

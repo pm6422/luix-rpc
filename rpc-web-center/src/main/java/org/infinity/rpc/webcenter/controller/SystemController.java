@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@Api(tags = "系统")
 @Slf4j
 public class SystemController {
 
@@ -38,7 +37,7 @@ public class SystemController {
     @Resource
     private MongoTemplate         mongoTemplate;
 
-    @ApiOperation("检索系统Profile")
+    @ApiOperation("get profile")
     @GetMapping("/open-api/system/profile-info")
     public ResponseEntity<ProfileInfoDTO> getProfileInfo() {
         ProfileInfoDTO profileInfoDTO = new ProfileInfoDTO(env.getActiveProfiles(), applicationProperties.getSwagger().isEnabled(), getRibbonEnv());
