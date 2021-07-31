@@ -235,7 +235,7 @@ public class ProviderStub<T> {
             Method activateMethod = ProviderStub.class.getMethod(METHOD_ACTIVATE.substring(1));
             methodsCache.putIfAbsent(getMethodSignature(METHOD_ACTIVATE, getMethodParameters(activateMethod)), activateMethod);
 
-            Method deactivateMethod = ProviderStub.class.getMethod(METHOD_ACTIVATE.substring(1));
+            Method deactivateMethod = ProviderStub.class.getMethod(METHOD_DEACTIVATE.substring(1));
             methodsCache.putIfAbsent(getMethodSignature(METHOD_DEACTIVATE, getMethodParameters(deactivateMethod)), deactivateMethod);
 
             Method reregisterMethod = ProviderStub.class.getMethod(METHOD_REREGISTER.substring(1), Map.class);
