@@ -995,7 +995,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             data: {
-                pageTitle: 'View'
+                pageTitle: 'RPC provider details'
             },
             resolve: {
                 entity: ['RpcProviderService', '$stateParams', function (RpcProviderService, $stateParams) {
