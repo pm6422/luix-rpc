@@ -8599,7 +8599,8 @@ body.md-skin {
 @media (min-width: 768px) {
   #page-wrapper {
     position: inherit;
-    margin: 0 0 0 220px;
+      /*margin: 0 0 0 220px;*/
+    margin: 0 0 0 0px;
     min-height: 1200px;
   }
   .navbar-static-side {
