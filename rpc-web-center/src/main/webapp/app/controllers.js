@@ -90,7 +90,6 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
 
     $scope.$watch(PrincipalService.isAuthenticated, function () {
         loadLinks();
-        loadRegistries();
     });
 
     function loadLinks() {
@@ -99,21 +98,14 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
         }
     }
 
-    function loadRegistries() {
-        $http.get('api/rpc-registry/registries').then(function (response) {
-            main.registries = response.data;
-            if(main.registries) {
-                $rootScope.selectedRegistryIdentity = main.registries[0].identity;
-            }
-        });
-    }
-
     function getAccount() {
         PrincipalService.identity().then(function (account) {
             if (account == null) {
                 return;
             }
             main.account = account;
+
+            loadRegistries();
 
             var authToken = AuthServerService.getToken();
             if (authToken) {
@@ -124,6 +116,15 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
 
             if (account) {
                 AlertUtils.success('登录成功');
+            }
+        });
+    }
+
+    function loadRegistries() {
+        $http.get('api/rpc-registry/registries').then(function (response) {
+            main.registries = response.data;
+            if(main.registries) {
+                $rootScope.selectedRegistryIdentity = main.registries[0].identity;
             }
         });
     }
