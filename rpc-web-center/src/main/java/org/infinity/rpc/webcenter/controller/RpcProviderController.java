@@ -112,20 +112,24 @@ public class RpcProviderController {
 
     @ApiOperation("activate provider")
     @GetMapping("/api/rpc-provider/activate")
-    public void activate(
+    public ResponseEntity<Void> activate(
             @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
         control(registryIdentity, providerUrl, METHOD_ACTIVATE);
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(httpHeaderCreator.createSuccessHeader("SM1012")).build();
     }
 
     @ApiOperation("deactivate provider")
     @GetMapping("/api/rpc-provider/deactivate")
-    public void deactivate(
+    public ResponseEntity<Void> deactivate(
             @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
         control(registryIdentity, providerUrl, METHOD_DEACTIVATE);
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(httpHeaderCreator.createSuccessHeader("SM1012")).build();
     }
 
     private void control(String registryIdentity, Url providerUrl, String methodName) {
@@ -139,9 +143,7 @@ public class RpcProviderController {
         } else {
             // Use specified provider url
             UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
-            invocationHandler.invoke(methodName,
-                    new String[]{String.class.getName(), String.class.getName(), String.class.getName()},
-                    new Object[]{providerUrl.getPath(), providerUrl.getForm(), providerUrl.getVersion()});
+            invocationHandler.invoke(methodName);
         }
     }
 
