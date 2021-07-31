@@ -77,7 +77,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             data: {
-                pageTitle: '错误页面',
+                pageTitle: 'Error page',
                 authorities: []
             },
             params: {
@@ -93,7 +93,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             data: {
-                pageTitle: '访问拒绝',
+                pageTitle: 'Access denied',
                 authorities: []
             }
         })
@@ -103,7 +103,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             controller: 'LoginController',
             controllerAs: 'vm',
             data: {
-                pageTitle: '登录',
+                pageTitle: 'Sign in',
                 specialClass: 'gray-bg'
             }
         })
@@ -113,7 +113,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             controller: 'RegisterController',
             controllerAs: 'vm',
             data: {
-                pageTitle: '注册',
+                pageTitle: 'Sign up',
                 specialClass: 'gray-bg register-background-img'
             }
         })
@@ -123,7 +123,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             controller: 'ActivationController',
             controllerAs: 'vm',
             data: {
-                pageTitle: '激活账号',
+                pageTitle: 'Activate account',
                 specialClass: 'gray-bg activate-background-img'
             }
         })
@@ -133,7 +133,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             controller: 'ForgotPasswordController',
             controllerAs: 'vm',
             data: {
-                pageTitle: '发送密码重置邮件',
+                pageTitle: 'Forgot password',
                 specialClass: 'gray-bg forget-password-background-img'
             }
         })
@@ -143,7 +143,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             controller: 'ResetPasswordController',
             controllerAs: 'vm',
             data: {
-                pageTitle: '重置密码',
+                pageTitle: 'Reset password',
                 specialClass: 'gray-bg'
             }
         })
