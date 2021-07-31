@@ -165,7 +165,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             data: {
-                pageTitle: '个人信息'
+                pageTitle: 'Personal info'
             }
         })
         .state('password', {
@@ -179,7 +179,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             data: {
-                pageTitle: '修改密码'
+                pageTitle: 'Change password'
             }
         })
         .state('developer', {
