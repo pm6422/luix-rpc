@@ -1,6 +1,18 @@
 <div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-lg-10">
+    <div class="col-lg-8">
         <h2>RPC provider details</h2>
+    </div>
+    <div class="col-lg-4">
+        <div class="title-action">
+            <button class="btn-white btn btn-sm" ng-disabled="!vm.entity.consuming"
+                    ui-sref="rpc.rpc-consumer-list({interfaceName: vm.entity.interfaceName})"
+                    uib-tooltip="List all consumers of this service">Consumers</button>
+            <button class="btn-danger btn btn-sm" ng-click="vm.deactivate(vm.entity)"
+                    uib-tooltip="Take this provider offline and cannot be accessed by other apps" ng-disabled="!vm.entity.active">Deactivate</button>
+            <button class="btn-primary btn btn-sm" ng-click="vm.activate(vm.entity)"
+                    uib-tooltip="Take this provider online and can be accessed by other apps" ng-disabled="vm.entity.active">Activate</button>
+            <button class="btn-white btn btn-sm" ui-sref="^">Back</button>
+        </div>
     </div>
 </div>
 <div class="wrapper wrapper-content p-h-xs animated fadeInDown">
@@ -55,22 +67,6 @@
                     <dt>URL:</dt>
                     <dd>{{vm.entity.url}}</dd>
                 </dl>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="m-b-md">
-                    <div class="btn-group pull-right">
-                        <button class="btn-white btn btn-sm" ng-disabled="!vm.entity.consuming"
-                                ui-sref="rpc.rpc-consumer-list({interfaceName: vm.entity.interfaceName})"
-                                uib-tooltip="List all consumers of this service">Consumers</button>
-                        <button class="btn-danger btn btn-sm" ng-click="vm.deactivate(vm.entity)"
-                                uib-tooltip="Take this provider offline and cannot be accessed by other apps" ng-disabled="!vm.entity.active">Deactivate</button>
-                        <button class="btn-primary btn btn-sm" ng-click="vm.activate(vm.entity)"
-                                uib-tooltip="Take this provider online and can be accessed by other apps" ng-disabled="vm.entity.active">Activate</button>
-                        <button class="btn-white btn btn-sm" ui-sref="^">Back</button>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="row m-t-sm">
