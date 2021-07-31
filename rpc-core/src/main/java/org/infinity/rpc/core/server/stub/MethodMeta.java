@@ -2,11 +2,13 @@ package org.infinity.rpc.core.server.stub;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class MethodMeta implements Serializable {
     private static final long         serialVersionUID = 934245299068304702L;
