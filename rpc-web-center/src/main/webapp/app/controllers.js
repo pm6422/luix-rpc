@@ -305,6 +305,7 @@ function ProfileController($state, PrincipalService, AccountService, AuthServerS
      */
     var copyAccount = function (account) {
         return {
+            id: account.id,
             activated: account.activated,
             email: account.email,
             mobileNo: parseInt(account.mobileNo),
