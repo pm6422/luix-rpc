@@ -67,18 +67,21 @@ public class SystemController {
         return ResponseEntity.ok(applicationContext.getBean(name));
     }
 
+    @ApiOperation("get internet ip")
     @GetMapping("/api/system/internet-ip")
     @Secured(Authority.DEVELOPER)
     public ResponseEntity<String> getInternetIp() {
         return ResponseEntity.ok(NetworkUtils.INTERNET_IP);
     }
 
+    @ApiOperation("get intranet ip")
     @GetMapping("/api/system/intranet-ip")
     @Secured(Authority.DEVELOPER)
     public ResponseEntity<String> getIntranetIp() {
         return ResponseEntity.ok(NetworkUtils.INTRANET_IP);
     }
 
+    @ApiOperation("reset database")
     @GetMapping("/open-api/system/reset-database")
     public String resetDatabase() {
         mongoTemplate.getDb().drop();
