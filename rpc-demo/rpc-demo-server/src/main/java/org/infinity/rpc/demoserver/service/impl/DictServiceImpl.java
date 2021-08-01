@@ -9,17 +9,15 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import javax.annotation.Resource;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @RpcProvider
 public class DictServiceImpl implements DictService {
 
-    private final DictRepository dictRepository;
-
-    public DictServiceImpl(DictRepository dictRepository) {
-        this.dictRepository = dictRepository;
-    }
+    @Resource
+    private DictRepository dictRepository;
 
     @Override
     public Page<Dict> find(Pageable pageable, String dictName, Boolean enabled) {

@@ -5,6 +5,7 @@ import org.infinity.rpc.democommon.domain.AuthorityAdminMenu;
 import org.infinity.rpc.democommon.service.AuthorityAdminMenuService;
 import org.infinity.rpc.demoserver.repository.AuthorityAdminMenuRepository;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -12,11 +13,8 @@ import java.util.stream.Collectors;
 @RpcProvider
 public class AuthorityAdminMenuServiceImpl implements AuthorityAdminMenuService {
 
-    private final AuthorityAdminMenuRepository authorityAdminMenuRepository;
-
-    public AuthorityAdminMenuServiceImpl(AuthorityAdminMenuRepository authorityAdminMenuRepository) {
-        this.authorityAdminMenuRepository = authorityAdminMenuRepository;
-    }
+    @Resource
+    private AuthorityAdminMenuRepository authorityAdminMenuRepository;
 
     @Override
     public Set<String> findAdminMenuIds(List<String> authorityNames) {
