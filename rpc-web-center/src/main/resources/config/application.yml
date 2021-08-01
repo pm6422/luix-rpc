@@ -121,8 +121,8 @@ infinity:
         name: ${spring.application.name}
         description: RPC Web Center
         team: Infinity Team
-        mailSuffixes: '@126.com'
-        ownerMail: pm6422@126.com
+        mailSuffixes: '@pm6422.club'
+        ownerMail: louis@pm6422.club
         env: ${spring.profiles.active}
     registries:
         0:
@@ -140,13 +140,13 @@ application:
         enabled: true
         api:
             title: Infinity RPC Web Center
-            description: Infinity RPC Web Center 接口文档
+            description: Infinity RPC Web Center API
         open-api:
             title: Infinity RPC Web Center Open API
-            description: Infinity RPC Web Center 开放接口文档
+            description: Infinity RPC Web Center Open API
         version: @project.version@
         contact-name: Louis
-        contact-email: pm6422@126.com
+        contact-email: louis@pm6422.club
         host:
     aop-logging:
         enabled: true
