@@ -9,6 +9,7 @@ angular
     .controller('LoginController', LoginController)
     .controller('NavbarController', NavbarController)
     .controller('FooterController', FooterController)
+    .controller('AboutController', AboutController)
     .controller('ProfileController', ProfileController)
     .controller('RegisterController', RegisterController)
     .controller('ActivationController', ActivationController)
@@ -280,6 +281,14 @@ function FooterController($http, PrincipalService) {
                 });
             }
         });
+}
+/**
+ * AboutController
+ */
+function AboutController($state) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
 }
 /**
  * ProfileController
