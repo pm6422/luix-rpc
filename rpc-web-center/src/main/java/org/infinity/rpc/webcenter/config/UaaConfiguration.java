@@ -29,6 +29,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -70,15 +71,10 @@ public class UaaConfiguration {
     @EnableResourceServer
     @Import(SecurityProblemSupport.class)
     protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
-
-        private final SecurityProblemSupport problemSupport;
-
-        private final AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler;
-
-        public ResourceServerConfiguration(SecurityProblemSupport problemSupport, AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler) {
-            this.problemSupport = problemSupport;
-            this.ajaxLogoutSuccessHandler = ajaxLogoutSuccessHandler;
-        }
+        @Resource
+        private SecurityProblemSupport   problemSupport;
+        @Resource
+        private AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler;
 
         @Override
         public void configure(HttpSecurity http) throws Exception {
