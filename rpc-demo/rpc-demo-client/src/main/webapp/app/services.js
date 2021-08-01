@@ -288,14 +288,14 @@ function AlertUtils(SweetAlert, toaster, APP_NAME) {
 
     function createDeleteConfirmation(alerText, confirmDelete) {
         SweetAlert.swal({
-            title: '确定删除?',
+            title: 'Are you sure to delete?',
             text: alerText ? alerText : '',
             type: 'warning',
             animation: 'slide-from-top',
             showCancelButton: true,
             confirmButtonColor: '#ec4758',
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
             closeOnConfirm: true,
             closeOnCancel: true
         }, confirmDelete);
@@ -303,14 +303,14 @@ function AlertUtils(SweetAlert, toaster, APP_NAME) {
 
     function createResetPasswordConfirmation(alerText, confirmReset) {
         SweetAlert.swal({
-            title: '确定重置密码?',
+            title: 'Are you sure to reset password?',
             text: alerText ? alerText : '',
             type: 'warning',
             animation: 'slide-from-top',
             showCancelButton: true,
             confirmButtonColor: '#ec4758',
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
             closeOnConfirm: true,
             closeOnCancel: true
         }, confirmReset);

@@ -32,17 +32,17 @@ public class DatabaseInitializer {
     @ChangeSet(order = "04", author = "Louis", id = "addAuthorityAdminMenu", runAlways = true)
     public void addAuthorityAdminMenu(MongockTemplate mongoTemplate) {
 
-        AdminMenu userAuthority = new AdminMenu("user-authority", "用户权限", 1, "user-authority", 100, null);
+        AdminMenu userAuthority = new AdminMenu("user-authority", "User authority", 1, "user-authority", 100, null);
         mongoTemplate.save(userAuthority);
 
-        AdminMenu authorityList = new AdminMenu("authority-list", "权限", 2, "user-authority.authority-list",
+        AdminMenu authorityList = new AdminMenu("authority-list", "Authority", 2, "user-authority.authority-list",
                 101, userAuthority.getId());
         mongoTemplate.save(authorityList);
 
-        AdminMenu app = new AdminMenu("app", "应用系统", 1, "app", 200, null);
+        AdminMenu app = new AdminMenu("app", "Application", 1, "app", 200, null);
         mongoTemplate.save(app);
 
-        AdminMenu appList = new AdminMenu("app-list", "应用", 2, "app.app-list", 201, app.getId());
+        AdminMenu appList = new AdminMenu("app-list", "Application list", 2, "app.app-list", 201, app.getId());
         mongoTemplate.save(appList);
     }
 }

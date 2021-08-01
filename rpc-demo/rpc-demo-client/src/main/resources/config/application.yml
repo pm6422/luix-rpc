@@ -112,8 +112,8 @@ infinity:
         name: ${spring.application.name}
         description: RPC Demo Client
         team: Infinity Team
-        mailSuffixes: '@126.com'
-        ownerMail: pm6422@126.com
+        mailSuffixes: '@pm6422.club'
+        ownerMail: louis@pm6422.club
         env: ${spring.profiles.active}
         debugMode: true
     registry:
@@ -151,14 +151,14 @@ application:
         enabled: true
         api:
             title: Passport Server API
-            description: Passport Server 接口文档
+            description: Passport Server API
         open-api:
             title: Passport Server Open API
-            description: Passport Server 开放接口文档
+            description: Passport Server API
         version: @project.version@
         terms-of-service-url: http://www.infinity.org
         contact-name: Louis
-        contact-email: pm6422@126.com
+        contact-email: louis@pm6422.club
         license: 1.0
         license-url: http://www.apache.org/licenses/LICENSE-2.0.html
         host:

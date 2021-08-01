@@ -3,7 +3,6 @@ package org.infinity.rpc.demoserver.controller;
 import io.swagger.annotations.ApiOperation;
 import org.infinity.rpc.demoserver.config.ApplicationProperties;
 import org.infinity.rpc.demoserver.dto.ProfileInfoDTO;
-import org.infinity.rpc.demoserver.utils.NetworkUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -54,15 +53,5 @@ public class SystemController {
     @GetMapping("/api/system/bean")
     public ResponseEntity<Object> getBean(@RequestParam(value = "name") String name) {
         return ResponseEntity.ok(applicationContext.getBean(name));
-    }
-
-    @GetMapping("/api/system/internet-ip")
-    public ResponseEntity<String> getInternetIp() {
-        return ResponseEntity.ok(NetworkUtils.INTERNET_IP);
-    }
-
-    @GetMapping("/api/system/intranet-ip")
-    public ResponseEntity<String> getIntranetIp() {
-        return ResponseEntity.ok(NetworkUtils.INTRANET_IP);
     }
 }
