@@ -9,19 +9,16 @@ import org.infinity.rpc.democommon.service.UserProfilePhotoService;
 import org.infinity.rpc.demoserver.repository.UserProfilePhotoRepository;
 import org.infinity.rpc.demoserver.repository.UserRepository;
 
+import javax.annotation.Resource;
 import java.util.Optional;
 
 @RpcProvider
 public class UserProfilePhotoServiceImpl implements UserProfilePhotoService {
 
-    private final UserProfilePhotoRepository userProfilePhotoRepository;
-    private final UserRepository             userRepository;
-
-    public UserProfilePhotoServiceImpl(UserProfilePhotoRepository userProfilePhotoRepository,
-                                       UserRepository userRepository) {
-        this.userProfilePhotoRepository = userProfilePhotoRepository;
-        this.userRepository = userRepository;
-    }
+    @Resource
+    private UserProfilePhotoRepository userProfilePhotoRepository;
+    @Resource
+    private UserRepository             userRepository;
 
     @Override
     public void insert(String userId, byte[] photoData) {
