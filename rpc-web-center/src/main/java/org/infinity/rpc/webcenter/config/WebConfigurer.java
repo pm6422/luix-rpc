@@ -15,6 +15,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
 import org.springframework.http.MediaType;
 
+import javax.annotation.Resource;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
@@ -32,13 +33,10 @@ import static java.net.URLDecoder.decode;
 @Configuration
 @Slf4j
 public class WebConfigurer implements ServletContextInitializer, WebServerFactoryCustomizer<UndertowServletWebServerFactory> {
-    private final Environment           env;
-    private final ApplicationProperties applicationProperties;
-
-    public WebConfigurer(Environment env, ApplicationProperties applicationProperties) {
-        this.env = env;
-        this.applicationProperties = applicationProperties;
-    }
+    @Resource
+    private Environment           env;
+    @Resource
+    private ApplicationProperties applicationProperties;
 
     @Override
     public void onStartup(ServletContext servletContext) {
