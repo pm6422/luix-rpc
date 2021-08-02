@@ -1,6 +1,5 @@
 package org.infinity.rpc.webcenter.dto;
 
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.time.Instant;
@@ -8,7 +7,6 @@ import java.time.Instant;
 /**
  * DTO for storing a user's activity.
  */
-@ApiModel("用户追踪")
 @Data
 public class TrackerDTO {
 
@@ -21,5 +19,4 @@ public class TrackerDTO {
     private String page;
 
     private Instant time;
-
 }

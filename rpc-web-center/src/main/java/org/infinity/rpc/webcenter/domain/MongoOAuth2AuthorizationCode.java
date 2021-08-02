@@ -1,6 +1,5 @@
 package org.infinity.rpc.webcenter.domain;
 
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -10,7 +9,6 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
 import java.io.Serializable;
 
-@ApiModel("单点登录授权码信息")
 @Document(collection = "MongoOAuth2AuthorizationCode")
 @Data
 @NoArgsConstructor

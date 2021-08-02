@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -13,7 +12,6 @@ import java.time.Instant;
 /**
  * Spring Data MongoDB collection for the RpcTaskLock entity.
  */
-@Document(collection = "RpcTaskLock")
 @Data
 @NoArgsConstructor
 public class RpcTaskLock implements Serializable {

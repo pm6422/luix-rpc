@@ -1,7 +1,6 @@
 package org.infinity.rpc.webcenter.controller;
 
 import io.changock.runner.core.ChangockBase;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.webcenter.config.ApplicationProperties;

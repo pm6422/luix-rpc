@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.infinity.rpc.democommon.domain.base.AbstractAuditableDomain;
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -15,7 +14,6 @@ import java.io.Serializable;
 /**
  * Spring Data MongoDB collection for the RpcTask entity.
  */
-@Document(collection = "RpcTask")
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)

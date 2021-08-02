@@ -1,6 +1,5 @@
 package org.infinity.rpc.webcenter.domain;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +14,6 @@ import java.io.Serializable;
 /**
  * Spring Data MongoDB collection for the AppAuthority entity.
  */
-@ApiModel("应用权限")
 @Document(collection = "AppAuthority")
 @Data
 @NoArgsConstructor
@@ -26,13 +24,13 @@ public class AppAuthority implements Serializable {
     @Id
     private String id;
 
-    @ApiModelProperty(value = "应用名称", required = true)
+    @ApiModelProperty(required = true)
     @NotNull
     @Size(min = 2, max = 20)
     @Indexed
     private String appName;
 
-    @ApiModelProperty(value = "权限名称", required = true)
+    @ApiModelProperty(required = true)
     @NotNull
     @Size(min = 2, max = 20)
     @Indexed

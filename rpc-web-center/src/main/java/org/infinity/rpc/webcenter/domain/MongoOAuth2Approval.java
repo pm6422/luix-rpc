@@ -1,6 +1,5 @@
 package org.infinity.rpc.webcenter.domain;
 
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
@@ -9,7 +8,6 @@ import org.springframework.security.oauth2.provider.approval.Approval;
 
 import java.io.Serializable;
 
-@ApiModel("单点登录授权信息")
 @Document(collection = "MongoOAuth2Approval")
 @Data
 public class MongoOAuth2Approval extends Approval implements Serializable {

@@ -1,6 +1,5 @@
 package org.infinity.rpc.webcenter.dto;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,7 +15,6 @@ import java.util.Set;
 /**
  * A DTO extending the UserDTO, which is meant to be used in the user management UI.
  */
-@ApiModel("用户扩展DTO")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
@@ -28,7 +26,7 @@ public class ManagedUserDTO extends BaseUser {
 
     public static final int RAW_PASSWORD_MAX_LENGTH = 50;
 
-    @ApiModelProperty(value = "密码", required = true)
+    @ApiModelProperty(required = true)
     @NotNull
     @Size(min = RAW_PASSWORD_MIN_LENGTH, max = RAW_PASSWORD_MAX_LENGTH)
     private String password;

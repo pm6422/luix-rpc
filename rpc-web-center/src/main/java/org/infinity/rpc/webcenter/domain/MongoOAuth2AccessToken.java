@@ -1,6 +1,5 @@
 package org.infinity.rpc.webcenter.domain;
 
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -14,7 +13,6 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import java.io.Serializable;
 import java.time.Instant;
 
-@ApiModel("访问令牌信息")
 @Document(collection = "MongoOAuth2AccessToken")
 @Data
 @ToString(callSuper = true)

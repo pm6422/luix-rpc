@@ -1,6 +1,5 @@
 package org.infinity.rpc.webcenter.domain;
 
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,6 @@ import static org.infinity.rpc.webcenter.domain.RpcService.generateMd5Id;
 /**
  * Spring Data MongoDB collection for the RpcProvider entity.
  */
-@ApiModel("RPC service provider")
 @Document(collection = "RpcProvider")
 @Data
 @NoArgsConstructor

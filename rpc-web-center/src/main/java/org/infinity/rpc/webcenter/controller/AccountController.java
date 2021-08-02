@@ -3,8 +3,6 @@ package org.infinity.rpc.webcenter.controller;
 import com.google.common.collect.ImmutableMap;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -54,7 +52,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static javax.servlet.http.HttpServletResponse.*;
 import static org.infinity.rpc.webcenter.utils.NetworkUtils.getRequestUrl;
 
 /**

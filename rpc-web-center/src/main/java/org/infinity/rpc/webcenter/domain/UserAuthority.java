@@ -1,6 +1,5 @@
 package org.infinity.rpc.webcenter.domain;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +14,6 @@ import java.io.Serializable;
 /**
  * Spring Data MongoDB collection for the UserAuthority entity.
  */
-@ApiModel("用户权限")
 @Document(collection = "UserAuthority")
 @Data
 @ToString(callSuper = true)
@@ -24,12 +22,12 @@ public class UserAuthority extends AbstractAuditableDomain implements Serializab
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "用户ID", required = true)
+    @ApiModelProperty(required = true)
     @NotNull
     @Indexed
     private String userId;
 
-    @ApiModelProperty(value = "权限名称", required = true)
+    @ApiModelProperty(required = true)
     @NotNull
     private String authorityName;
 

@@ -1,6 +1,5 @@
 package org.infinity.rpc.webcenter.domain;
 
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,6 @@ import java.io.Serializable;
 /**
  * Spring Data MongoDB collection for the User entity.
  */
-@ApiModel("用户")
 @Document(collection = "User")
 @Data
 @EqualsAndHashCode(callSuper = true)

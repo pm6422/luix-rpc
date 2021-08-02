@@ -1,6 +1,5 @@
 package org.infinity.rpc.webcenter.domain;
 
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,7 +14,6 @@ import java.io.Serializable;
 /**
  * Spring Data MongoDB collection for the RpcServer entity.
  */
-@ApiModel("RPC server")
 @Document(collection = "RpcServer")
 @Data
 @NoArgsConstructor
