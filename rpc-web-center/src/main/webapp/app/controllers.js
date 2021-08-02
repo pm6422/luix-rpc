@@ -1743,7 +1743,9 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     vm.entity = entity;
     vm.argsDisabled = true;
     vm.checkProgress = 0;
-    vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url});
+    if(vm.entity.active) {
+        vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url});
+    }
     vm.options = RpcProviderService.queryOptions({providerUrl: vm.entity.url});
 
     vm.argsPlaceholder = '[\n' +
