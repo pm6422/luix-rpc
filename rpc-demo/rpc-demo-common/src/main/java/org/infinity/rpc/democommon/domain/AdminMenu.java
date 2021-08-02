@@ -1,6 +1,5 @@
 package org.infinity.rpc.democommon.domain;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,7 +18,6 @@ import java.io.Serializable;
 /**
  * Spring Data MongoDB collection for the AdminMenu entity.
  */
-@ApiModel("管理系统菜单")
 @Document(collection = "AdminMenu")
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -31,37 +29,35 @@ public class AdminMenu extends AbstractAuditableDomain implements Serializable {
     public static final  String FIELD_LEVEL      = "level";
     public static final  String FIELD_SEQUENCE   = "sequence";
 
-    @ApiModelProperty(value = "代码", required = true)
+    @ApiModelProperty(required = true)
     @NotNull
     @Size(min = 1, max = 30)
     @Pattern(regexp = "^[a-z0-9-]+$", message = "{EP5901}")
     @Indexed(unique = true)
     private String code;
 
-    @ApiModelProperty(value = "名称", required = true)
+    @ApiModelProperty(required = true)
     @NotNull
     @Size(min = 1, max = 30)
     private String name;
 
-    @ApiModelProperty(value = "层级", required = true)
+    @ApiModelProperty(required = true)
     @Min(1)
     @Max(9)
     private Integer level;
 
-    @ApiModelProperty(value = "链接地址", required = true)
+    @ApiModelProperty(required = true)
     @NotNull
     @Size(min = 3, max = 200)
     private String url;
 
-    @ApiModelProperty(value = "排序序号", required = true)
+    @ApiModelProperty(required = true)
     @Min(1)
     @Max(999)
     private Integer sequence;
 
-    @ApiModelProperty("父菜单ID")
     private String parentId;
 
-    @ApiModelProperty("是否选中")
     @Transient
     private Boolean checked;
 

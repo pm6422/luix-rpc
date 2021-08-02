@@ -13,7 +13,6 @@ import java.io.Serializable;
 /**
  * Spring Data MongoDB collection for the User entity.
  */
-@ApiModel("用户")
 @Document(collection = "User")
 @Data
 @EqualsAndHashCode(callSuper = true)

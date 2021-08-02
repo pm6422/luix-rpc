@@ -1,6 +1,5 @@
 package org.infinity.rpc.democommon.domain;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,6 @@ import java.io.Serializable;
 /**
  * Spring Data MongoDB collection for the Dict entity.
  */
-@ApiModel("数据字典")
 @Document(collection = "Dict")
 @Data
 @ToString(callSuper = true)
@@ -25,21 +23,19 @@ public class Dict extends AbstractAuditableDomain implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "字典编号", required = true)
+    @ApiModelProperty(required = true)
     @NotNull
     @Size(min = 2, max = 50)
     @Indexed(unique = true)
     private String dictCode;
 
-    @ApiModelProperty(value = "字典名称", required = true)
+    @ApiModelProperty(required = true)
     @NotNull
     @Size(min = 2, max = 50)
     private String dictName;
 
-    @ApiModelProperty(value = "备注")
     private String remark;
 
-    @ApiModelProperty(value = "是否可用")
     private Boolean enabled;
 
     public Dict(String dictName, Boolean enabled) {
