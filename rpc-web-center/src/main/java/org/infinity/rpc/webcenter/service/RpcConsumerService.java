@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface RpcConsumerService {
 
-    Page<RpcConsumer> find(Pageable pageable, String registryIdentity, String application, String interfaceName, Boolean active);
+    Page<RpcConsumer> find(Pageable pageable, String registryIdentity, String application, String address, String interfaceName, Boolean active);
 
     List<String> findDistinctApplications(String registryIdentity, Boolean active);
 

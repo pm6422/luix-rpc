@@ -34,9 +34,10 @@ public class RpcConsumerController {
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
             @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "application name") @RequestParam(value = "application", required = false) String application,
+            @ApiParam(value = "address") @RequestParam(value = "address", required = false) String address,
             @ApiParam(value = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName,
             @ApiParam(value = "active flag") @RequestParam(value = "active", required = false) Boolean active) {
-        Page<RpcConsumer> list = rpcConsumerService.find(pageable, registryIdentity, application, interfaceName, active);
+        Page<RpcConsumer> list = rpcConsumerService.find(pageable, registryIdentity, application, address, interfaceName, active);
         return ResponseEntity.ok().headers(generatePageHeaders(list)).body(list.getContent());
     }
 

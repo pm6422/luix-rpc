@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.infinity.rpc.webcenter.domain.RpcConsumer.*;
+import static org.infinity.rpc.webcenter.domain.RpcProvider.FIELD_ADDRESS;
 
 @Service
 public class RpcConsumerServiceImpl implements RpcConsumerService {
@@ -28,10 +29,13 @@ public class RpcConsumerServiceImpl implements RpcConsumerService {
 
     @Override
     public Page<RpcConsumer> find(Pageable pageable, String registryIdentity,
-                                  String application, String interfaceName, Boolean active) {
+                                  String application, String address, String interfaceName, Boolean active) {
         Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryIdentity));
         if (StringUtils.isNotEmpty(application)) {
             query.addCriteria(Criteria.where(FIELD_APPLICATION).is(application));
+        }
+        if (StringUtils.isNotEmpty(address)) {
+            query.addCriteria(Criteria.where(FIELD_ADDRESS).is(address));
         }
         if (StringUtils.isNotEmpty(interfaceName)) {
             //Fuzzy search

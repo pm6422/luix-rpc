@@ -29,10 +29,13 @@ public class RpcProviderServiceImpl implements RpcProviderService {
 
     @Override
     public Page<RpcProvider> find(Pageable pageable, String registryIdentity,
-                                  String application, String interfaceName, Boolean active) {
+                                  String application, String address, String interfaceName, Boolean active) {
         Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryIdentity));
         if (StringUtils.isNotEmpty(application)) {
             query.addCriteria(Criteria.where(FIELD_APPLICATION).is(application));
+        }
+        if (StringUtils.isNotEmpty(address)) {
+            query.addCriteria(Criteria.where(FIELD_ADDRESS).is(address));
         }
         if (StringUtils.isNotEmpty(interfaceName)) {
             //Fuzzy search

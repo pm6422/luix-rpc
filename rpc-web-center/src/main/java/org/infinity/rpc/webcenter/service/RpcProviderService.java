@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface RpcProviderService {
 
-    Page<RpcProvider> find(Pageable pageable, String registryIdentity, String application, String interfaceName, Boolean active);
+    Page<RpcProvider> find(Pageable pageable, String registryIdentity, String application, String address, String interfaceName, Boolean active);
 
     List<RpcProvider> find(String registryIdentity, String interfaceName, Boolean active);
 

@@ -27,6 +27,7 @@ public class RpcProvider implements Serializable {
     public static final  String FIELD_REGISTRY_IDENTITY = "registryIdentity";
     public static final  String FIELD_INTERFACE_NAME    = "interfaceName";
     public static final  String FIELD_APPLICATION       = "application";
+    public static final  String FIELD_ADDRESS           = "address";
     public static final  String FIELD_ACTIVE            = "active";
 
     @Id

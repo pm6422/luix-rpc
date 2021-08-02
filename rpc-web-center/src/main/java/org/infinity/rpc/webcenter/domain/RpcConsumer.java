@@ -23,9 +23,10 @@ import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
 @AllArgsConstructor
 public class RpcConsumer implements Serializable {
     private static final long   serialVersionUID        = 1L;
+    public static final  String FIELD_REGISTRY_IDENTITY = "registryIdentity";
     public static final  String FIELD_INTERFACE_NAME    = "interfaceName";
     public static final  String FIELD_APPLICATION       = "application";
-    public static final  String FIELD_REGISTRY_IDENTITY = "registryIdentity";
+    public static final  String FIELD_ADDRESS           = "address";
     public static final  String FIELD_ACTIVE            = "active";
 
     @Id
