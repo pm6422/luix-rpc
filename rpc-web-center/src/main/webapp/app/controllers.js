@@ -2214,7 +2214,7 @@ function AuthorityListController($state, AlertUtils, ParseLinksUtils, PAGINATION
     }
 
     function del(name) {
-        AlertUtils.createDeleteConfirmation('数据有可能被其他数据所引用，删除之后可能出现一些问题，您确定删除吗?', function (isConfirm) {
+        AlertUtils.createDeleteConfirmation('The data may be referenced by other data, and there may be some problems after deletion, are you sure to delete?', function (isConfirm) {
             if (isConfirm) {
                 AuthorityService.del({name: name},
                     function () {

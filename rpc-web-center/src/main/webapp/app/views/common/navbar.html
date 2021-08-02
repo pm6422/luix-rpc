@@ -148,6 +148,18 @@
                             <span>About</span>
                         </a>
                     </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="user-authority.authority-list" ng-click="vm.collapseNavbar()">
+                            <span class="fa fa-male"></span>&nbsp;
+                            <span>Authority</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="user-authority.user-list" ng-click="vm.collapseNavbar()">
+                            <span class="fa fa-male"></span>&nbsp;
+                            <span>User</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li uib-dropdown ng-switch-when="true" has-authority-directive="ROLE_USER">

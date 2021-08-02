@@ -643,7 +643,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             data: {
-                pageTitle: '权限列表'
+                pageTitle: 'Authority list'
             },
             params: {
                 page: {
@@ -672,7 +672,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
         .state('user-authority.authority-list.create', {
             url: '/create',
             data: {
-                pageTitle: '新建权限信息',
+                pageTitle: 'Create authority',
                 mode: 'create'
             },
             onEnter: ['$state', '$uibModal', function ($state, $uibModal) {
@@ -706,7 +706,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             data: {
-                pageTitle: '用户列表'
+                pageTitle: 'User list'
             },
             params: {
                 page: {
@@ -737,7 +737,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
         .state('user-authority.user-list.create', {
             url: '/create',
             data: {
-                pageTitle: '新建用户信息',
+                pageTitle: 'Create user',
                 mode: 'create'
             },
             onEnter: ['$state', '$uibModal', function ($state, $uibModal) {
@@ -774,7 +774,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
         .state('user-authority.user-list.edit', {
             url: '/edit/:userName',
             data: {
-                pageTitle: '编辑用户信息',
+                pageTitle: 'Edit user',
                 mode: 'edit'
             },
             onEnter: ['$state', '$stateParams', '$uibModal', function ($state, $stateParams, $uibModal) {
@@ -806,7 +806,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             data: {
-                pageTitle: '查看用户信息'
+                pageTitle: 'View user'
             },
             resolve: {
                 entity: ['UserService', '$stateParams', function (UserService, $stateParams) {
