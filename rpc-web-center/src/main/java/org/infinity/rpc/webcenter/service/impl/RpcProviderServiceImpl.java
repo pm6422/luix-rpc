@@ -1,5 +1,6 @@
 package org.infinity.rpc.webcenter.service.impl;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
 import org.infinity.rpc.webcenter.repository.RpcProviderRepository;
@@ -79,5 +80,14 @@ public class RpcProviderServiceImpl implements RpcProviderService {
     @Override
     public boolean existsAddress(String registryIdentity, String address, boolean active) {
         return rpcProviderRepository.existsByRegistryIdentityAndAddressAndActive(registryIdentity, address, true);
+    }
+
+    @Override
+    public boolean existsApplicationService(String registryIdentity, String interfaceName, boolean active) {
+        List<RpcProvider> providers = rpcProviderRepository.findByInterfaceName(interfaceName);
+        if (CollectionUtils.isEmpty(providers)) {
+            return false;
+        }
+        return existsApplication(registryIdentity, providers.get(0).getApplication(), active);
     }
 }

@@ -79,12 +79,17 @@ public class RpcServiceController {
             @ApiParam(value = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
         Page<RpcService> results = rpcServiceService.find(pageable, registryIdentity, interfaceName);
         if (!results.isEmpty()) {
-            results.getContent().forEach(service -> {
-                if (rpcProviderService.existsService(registryIdentity, service.getInterfaceName(), true)) {
-                    service.setProviding(true);
+            results.getContent().forEach(domain -> {
+                if (rpcProviderService.existsService(registryIdentity, domain.getInterfaceName(), true)) {
+                    domain.setProviding(true);
                 }
-                if (rpcConsumerService.existsService(registryIdentity, service.getInterfaceName(), true)) {
-                    service.setConsuming(true);
+                if (rpcConsumerService.existsService(registryIdentity, domain.getInterfaceName(), true)) {
+                    domain.setConsuming(true);
+                }
+                if (rpcProviderService.existsApplicationService(registryIdentity, domain.getInterfaceName(), true)) {
+                    domain.setActive(true);
+                } else {
+                    domain.setActive(false);
                 }
             });
         }

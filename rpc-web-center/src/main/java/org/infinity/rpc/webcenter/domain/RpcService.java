@@ -29,11 +29,11 @@ public class RpcService implements Serializable {
     private String  id;
     private String  registryIdentity;
     private String  interfaceName;
-    private Boolean active;
+    private boolean active;
     @Transient
-    private Boolean providing;
+    private boolean providing;
     @Transient
-    private Boolean consuming;
+    private boolean consuming;
 
     public static RpcService of(String interfaceName, Url registryUrl) {
         RpcService rpcService = new RpcService();

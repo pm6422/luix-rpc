@@ -38,7 +38,7 @@ public class RpcConsumer implements Serializable {
     private String  application;
     private String  address;
     private String  url;
-    private Boolean active = false;
+    private boolean active;
     private Instant createdTime;
     private Instant modifiedTime;
 

@@ -30,9 +30,9 @@ public class RpcServer extends ServerInfo implements Serializable {
     private String  id;
     private String  registryIdentity;
     private String  address;
-    private Boolean active;
+    private boolean active;
     @Transient
-    private Boolean providing;
+    private boolean providing;
     @Transient
-    private Boolean consuming;
+    private boolean consuming;
 }

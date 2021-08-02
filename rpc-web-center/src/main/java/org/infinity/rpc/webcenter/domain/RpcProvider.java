@@ -39,8 +39,8 @@ public class RpcProvider implements Serializable {
     private String  application;
     private String  address;
     private String  url;
-    private Boolean active    = false;
-    private Boolean consuming = false;
+    private boolean active;
+    private boolean consuming;
     private Instant modifiedTime;
 
     public static RpcProvider of(Url providerUrl, Url registryUrl) {

@@ -19,4 +19,6 @@ public interface RpcProviderService {
     boolean existsService(String registryIdentity, String interfaceName, boolean active);
 
     boolean existsAddress(String registryIdentity, String address, boolean active);
+
+    boolean existsApplicationService(String registryIdentity, String interfaceName, boolean active);
 }

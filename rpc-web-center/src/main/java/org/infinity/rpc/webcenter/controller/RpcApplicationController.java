@@ -62,7 +62,7 @@ public class RpcApplicationController {
                 if (rpcConsumerService.existsApplication(registryIdentity, domain.getName(), true)) {
                     domain.setConsuming(true);
                 }
-                if (Boolean.TRUE.equals(domain.getProviding()) || Boolean.TRUE.equals(domain.getConsuming())) {
+                if (domain.isProviding() || domain.isConsuming()) {
                     domain.setActive(true);
                 } else {
                     domain.setActive(false);

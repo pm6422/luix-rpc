@@ -28,11 +28,11 @@ public class RpcApplication extends ApplicationConfig implements Serializable {
     @Id
     private String  id;
     private String  registryIdentity;
-    private Boolean active;
+    private boolean active;
     @Transient
-    private Boolean providing;
+    private boolean providing;
     @Transient
-    private Boolean consuming;
+    private boolean consuming;
     private Instant createdTime;
     private Instant modifiedTime;
 }
