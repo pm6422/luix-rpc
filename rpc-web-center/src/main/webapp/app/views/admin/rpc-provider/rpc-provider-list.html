@@ -41,6 +41,7 @@
                 <th sort-by-directive="form"><span>Form</span> <span class="fa fa-sort"></span></th>
                 <th sort-by-directive="version"><span>Version</span> <span class="fa fa-sort"></span></th>
                 <th sort-by-directive="application"><span>Application</span> <span class="fa fa-sort"></span></th>
+                <th sort-by-directive="active"><span>Status</span> <span class="fa fa-sort"></span></th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -51,6 +52,10 @@
                 <td>{{entity.form}}</td>
                 <td>{{entity.version}}</td>
                 <td>{{entity.application}}</td>
+                <td>
+                    <span class="label label-primary" ng-show="entity.active">Active</span>
+                    <span class="label label-danger" ng-show="!entity.active">Inactive</span>
+                </td>
                 <td>
                     <div class="btn-group">
                         <button class="btn-white btn btn-xs" ui-sref=".view({id: entity.id})">View</button>
