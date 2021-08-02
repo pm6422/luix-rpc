@@ -82,6 +82,8 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
     main.selectLink = selectLink;
     $rootScope.companyName = COMPANY_NAME;
 
+    loadRegistries();
+
     // Authenticate user whether has logged in
     AuthenticationService.authorize(false, getAccount);
 
@@ -106,8 +108,6 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
             }
             main.account = account;
 
-            loadRegistries();
-
             var authToken = AuthServerService.getToken();
             if (authToken) {
                 main.account.profilePhotoUrl = '/api/account/profile-photo?access_token=' + authToken.access_token;
@@ -122,7 +122,7 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
     }
 
     function loadRegistries() {
-        $http.get('api/rpc-registry/registries').then(function (response) {
+        $http.get('open-api/rpc-registry/registries').then(function (response) {
             main.registries = response.data;
             if(main.registries) {
                 $rootScope.selectedRegistryIdentity = main.registries[0].identity;

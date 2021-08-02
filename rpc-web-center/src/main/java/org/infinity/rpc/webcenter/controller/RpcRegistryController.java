@@ -19,7 +19,7 @@ public class RpcRegistryController {
     private RpcRegistryService rpcRegistryService;
 
     @ApiOperation("find all registries")
-    @GetMapping("api/rpc-registry/registries")
+    @GetMapping("open-api/rpc-registry/registries")
     public ResponseEntity<List<RpcRegistryDTO>> findRegistries() {
         return ResponseEntity.ok(rpcRegistryService.getRegistries());
     }
