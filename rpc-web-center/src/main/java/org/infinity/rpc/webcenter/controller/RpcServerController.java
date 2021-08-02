@@ -55,12 +55,17 @@ public class RpcServerController {
             @ApiParam(value = "address(fuzzy query)") @RequestParam(value = "address", required = false) String address) {
         Page<RpcServer> results = rpcServerService.find(pageable, registryIdentity, address);
         if (!results.isEmpty()) {
-            results.getContent().forEach(service -> {
-                if (rpcProviderService.existsAddress(registryIdentity, service.getAddress(), true)) {
-                    service.setProviding(true);
+            results.getContent().forEach(domain -> {
+                if (rpcProviderService.existsAddress(registryIdentity, domain.getAddress(), true)) {
+                    domain.setProviding(true);
                 }
-                if (rpcConsumerService.existsAddress(registryIdentity, service.getAddress(), true)) {
-                    service.setConsuming(true);
+                if (rpcConsumerService.existsAddress(registryIdentity, domain.getAddress(), true)) {
+                    domain.setConsuming(true);
+                }
+                if (Boolean.TRUE.equals(domain.getProviding()) || Boolean.TRUE.equals(domain.getConsuming())) {
+                    domain.setActive(true);
+                } else {
+                    domain.setActive(false);
                 }
             });
         }

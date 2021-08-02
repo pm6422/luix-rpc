@@ -55,12 +55,17 @@ public class RpcApplicationController {
             @ApiParam(value = "active flag") @RequestParam(value = "active", required = false) Boolean active) {
         Page<RpcApplication> results = rpcApplicationService.find(pageable, registryIdentity, name, active);
         if (!results.isEmpty()) {
-            results.getContent().forEach(app -> {
-                if (rpcProviderService.existsApplication(registryIdentity, app.getName(), true)) {
-                    app.setProviding(true);
+            results.getContent().forEach(domain -> {
+                if (rpcProviderService.existsApplication(registryIdentity, domain.getName(), true)) {
+                    domain.setProviding(true);
                 }
-                if (rpcConsumerService.existsApplication(registryIdentity, app.getName(), true)) {
-                    app.setConsuming(true);
+                if (rpcConsumerService.existsApplication(registryIdentity, domain.getName(), true)) {
+                    domain.setConsuming(true);
+                }
+                if (Boolean.TRUE.equals(domain.getProviding()) || Boolean.TRUE.equals(domain.getConsuming())) {
+                    domain.setActive(true);
+                } else {
+                    domain.setActive(false);
                 }
             });
         }

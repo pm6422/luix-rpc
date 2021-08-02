@@ -32,39 +32,39 @@
                 </tr>
             </thead>
             <tbody>
-                <tr on-footable-finish-render ng-repeat="item in vm.items">
-                    <td><span>{{item.name}}</span></td>
-                    <td><span>{{item.team}}</span></td>
-                    <td><span>{{item.ownerMail}}</span></td>
-                    <td><span>{{item.env}}</span></td>
+                <tr on-footable-finish-render ng-repeat="entity in vm.entities">
+                    <td><span>{{entity.name}}</span></td>
+                    <td><span>{{entity.team}}</span></td>
+                    <td><span>{{entity.ownerMail}}</span></td>
+                    <td><span>{{entity.env}}</span></td>
                     <td>
-                        <span class="label label-primary" ng-show="item.providing || item.consuming">Active</span>
-                        <span class="label label-danger" ng-show="!item.providing && !item.consuming">Inactive</span>
+                        <span class="label label-primary" ng-show="entity.active">Active</span>
+                        <span class="label label-danger" ng-show="!entity.active">Inactive</span>
                     </td>
                     <td>
                         <div class="btn-group">
-                            <button class="btn-white btn btn-xs" ng-disabled="!item.providing"
-                                    ui-sref="rpc.rpc-provider-list({application: item.name})"
+                            <button class="btn-white btn btn-xs" ng-disabled="!entity.providing"
+                                    ui-sref="rpc.rpc-provider-list({application: entity.name})"
                                     uib-tooltip="List all providers of this application">Providers</button>
-                            <button class="btn-white btn btn-xs" ng-disabled="!item.consuming"
-                                    ui-sref="rpc.rpc-consumer-list({application: item.name})"
+                            <button class="btn-white btn btn-xs" ng-disabled="!entity.consuming"
+                                    ui-sref="rpc.rpc-consumer-list({application: entity.name})"
                                     uib-tooltip="List all consumers of this application">Consumers</button>
                         </div>
                     </td>
                     <td class="break">
-                        <span>{{item.description}}</span>
+                        <span>{{entity.description}}</span>
                     </td>
                     <td class="break">
-                        <span>{{item.luixVersion}}</span>
+                        <span>{{entity.luixVersion}}</span>
                     </td>
                     <td class="break">
-                        <span>{{item.springVersion}}</span>
+                        <span>{{entity.springVersion}}</span>
                     </td>
                     <td class="break">
-                        <span>{{item.springBootVersion}}</span>
+                        <span>{{entity.springBootVersion}}</span>
                     </td>
                     <td class="break">
-                        <span>{{item.createdTime | date:'yyyy/MM/dd HH:mm:ss'}}</span>
+                        <span>{{entity.createdTime | date:'yyyy/MM/dd HH:mm:ss'}}</span>
                     </td>
                 </tr>
             </tbody>
