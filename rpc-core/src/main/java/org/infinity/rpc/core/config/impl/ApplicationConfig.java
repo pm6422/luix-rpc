@@ -48,9 +48,9 @@ public class ApplicationConfig implements Configurable, Serializable {
      */
     private              String       env;
     /**
-     * Infinity version
+     * LUIX version
      */
-    private              String       infinityVersion  = JarUtils.VERSION;
+    private              String       luixVersion      = JarUtils.VERSION;
     /**
      * Spring boot version
      */
