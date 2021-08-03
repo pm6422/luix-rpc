@@ -12,9 +12,9 @@
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Filter by keyword" ng-model="filter">
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-warning" ng-click="vm.refresh()">
+                            <button type="button" class="btn btn-primary" ng-click="vm.refresh()">
                                 <span class="fa fa-refresh"></span>&nbsp;
-                                <span>刷新</span>
+                                <span>Refresh</span>
                             </button>
                         </span>
                     </div>
@@ -27,17 +27,17 @@
                style="table-layout:fixed" ng-hide="filteredConfig.length == 0">
             <thead>
             <tr>
-                <th ng-click="predicate = 'prefix'; reverse=!reverse" class="col-sm-4">
+                <th ng-click="predicate = 'prefix'; reverse=!reverse" class="col-sm-7">
                     <span>Path</span> <span class="fa fa-sort"></span>
                 </th>
                 <th class="col-sm-1">Time</th>
-                <th class="col-sm-7">Response</th>
+                <th class="col-sm-4">Response</th>
             </tr>
             </thead>
 
             <tr ng-repeat="entry in filtered = (vm.items | filter:filter | orderBy:predicate:reverse)">
-                <td><span>{{entry.request.uri}}</span></td>
-                <td><span>{{entry.timestamp | date:'yyyy/MM/dd HH:mm:ss'}}</span></td>
+                <td><span class="break"><small>{{entry.request.uri}}</small></span></td>
+                <td><span><small>{{entry.timestamp | date:'yyyy/MM/dd HH:mm:ss'}}</small></span></td>
                 <td>
                     <div class="row" ng-repeat="(key, value) in entry.response.headers">
                         <div class="col-md-4">{{key}}</div>

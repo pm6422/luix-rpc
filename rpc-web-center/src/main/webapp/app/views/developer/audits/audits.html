@@ -33,7 +33,7 @@
                 </thead>
                 <tr ng-repeat="entity in vm.entities | filter:filter | orderBy:predicate:reverse" ng-hide="entity.filtered">
                     <td><span>{{entity.auditEventDate| date:'yyyy/MM/dd HH:mm:ss'}}</span></td>
-                    <td><small>{{entity.principal}}</small></td>
+                    <td>{{entity.principal}}</td>
                     <td>{{entity.auditEventType}}</td>
                     <td>
                         <span ng-show="entity.data.message">{{entity.data.message}}</span>

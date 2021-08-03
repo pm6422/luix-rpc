@@ -27,17 +27,17 @@
                style="table-layout:fixed" ng-hide="filteredConfig.length == 0">
             <thead>
             <tr>
-                <th ng-click="predicate = 'prefix'; reverse=!reverse" class="col-sm-4">
+                <th ng-click="predicate = 'prefix'; reverse=!reverse" class="col-sm-7">
                     <span>Path</span> <span class="fa fa-sort"></span>
                 </th>
                 <th class="col-sm-1">Time</th>
-                <th class="col-sm-7">Response</th>
+                <th class="col-sm-4">Response</th>
             </tr>
             </thead>
 
             <tr ng-repeat="entry in filtered = (vm.items | filter:filter | orderBy:predicate:reverse)">
-                <td><span>{{entry.request.uri}}</span></td>
-                <td><span>{{entry.timestamp | date:'yyyy/MM/dd HH:mm:ss'}}</span></td>
+                <td><span class="break"><small>{{entry.request.uri}}</small></span></td>
+                <td><span><small>{{entry.timestamp | date:'yyyy/MM/dd HH:mm:ss'}}</small></span></td>
                 <td>
                     <div class="row" ng-repeat="(key, value) in entry.response.headers">
                         <div class="col-md-4">{{key}}</div>
