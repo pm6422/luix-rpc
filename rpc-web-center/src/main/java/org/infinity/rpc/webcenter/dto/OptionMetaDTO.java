@@ -26,6 +26,16 @@ public class OptionMetaDTO extends OptionMeta {
         }
     }
 
+    public Boolean getBooleanValue() {
+        return StringUtils.isEmpty(value) ? null : "true".equals(value);
+    }
+
+    public void setBooleanValue(Boolean booleanValue) {
+        if (booleanValue != null) {
+            value = "" + booleanValue;
+        }
+    }
+
     public static OptionMetaDTO of(OptionMeta optionMeta) {
         OptionMetaDTO dto = new OptionMetaDTO();
         BeanUtils.copyProperties(optionMeta, dto);
