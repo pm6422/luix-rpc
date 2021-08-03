@@ -89,6 +89,13 @@
                                                     <label class="checkbox-inline"><input icheck type="radio" name="{{option.name}}" value=true ng-model="option.value" ng-disabled="!option.updatable"> true</label>
                                                     <label class="checkbox-inline"><input icheck type="radio" name="{{option.name}}" value=false ng-model="option.value" ng-disabled="!option.updatable"> false</label>
                                                 </div>
+<!--                                                <div class="onoffswitch">-->
+<!--                                                    <input type="checkbox" id="{{option.name}}" ng-model="option.value" class="onoffswitch-checkbox" ng-disabled="!option.updatable">-->
+<!--                                                    <label class="onoffswitch-label" for="{{option.name}}">-->
+<!--                                                        <span class="onoffswitch-inner"></span>-->
+<!--                                                        <span class="onoffswitch-switch"></span>-->
+<!--                                                    </label>-->
+<!--                                                </div>-->
                                             </div>
                                             <kbd><small>default: {{option.defaultValue}}</small></kbd>&nbsp;<kbd ng-show="!option.updatable"><small>updatable: {{option.updatable}}</small></kbd>
                                         </div>
