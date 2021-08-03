@@ -27,7 +27,8 @@ public class HttpHeaderCreator {
         String message = messageSource.getMessage(code, args, ApplicationConstants.SYSTEM_LOCALE);
 
         try {
-            message = URLEncoder.encode(message, StandardCharsets.UTF_8.name());
+            // URLEncoder.encode convert space to +, but we expect the %20 as space
+            message = URLEncoder.encode(message, StandardCharsets.UTF_8.name()).replaceAll("\\+", "%20");
         } catch (Exception ex) {
             throw new RuntimeException("Cannot find the message code from message source properties.");
         }
