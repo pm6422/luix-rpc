@@ -12,6 +12,7 @@ import org.springframework.util.StopWatch;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -23,17 +24,13 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class ElapsedTimeLoggingAspect {
 
-    private static final String SERVICE_PACKAGE    = "within(" + ApplicationConstants.BASE_PACKAGE + ".service..*)";
-    private static final String CONTROLLER_PACKAGE = "within(" + ApplicationConstants.BASE_PACKAGE + ".controller..*)";
-    private static final String HEADER_KEY         = "X-ELAPSED";
-    private static final int    SECOND             = 1000;
-    private static final int    MINUTE             = 60000;
-
-    private final ApplicationProperties applicationProperties;
-
-    public ElapsedTimeLoggingAspect(ApplicationProperties applicationProperties) {
-        this.applicationProperties = applicationProperties;
-    }
+    private static final String                SERVICE_PACKAGE    = "within(" + ApplicationConstants.BASE_PACKAGE + ".service..*)";
+    private static final String                CONTROLLER_PACKAGE = "within(" + ApplicationConstants.BASE_PACKAGE + ".controller..*)";
+    private static final String                HEADER_KEY         = "X-ELAPSED";
+    private static final int                   SECOND             = 1000;
+    private static final int                   MINUTE             = 60000;
+    @Resource
+    private              ApplicationProperties applicationProperties;
 
     /**
      * Refer to http://www.imooc.com/article/297283
