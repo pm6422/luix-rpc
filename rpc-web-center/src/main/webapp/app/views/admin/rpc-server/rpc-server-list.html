@@ -44,6 +44,7 @@
                                     uib-tooltip="List all providers of this server">Providers</button>
                             <button class="btn-white btn btn-xs" ng-disabled="!entity.consuming"
                                     ui-sref="rpc.rpc-consumer-list({address: entity.address})"
+                                    tooltip-placement="bottom"
                                     uib-tooltip="List all consumers of this server">Consumers</button>
                             <button class="btn-white btn btn-xs" ng-disabled="!entity.active"
                                     ui-sref=".view({id: entity.id})">View</button>

@@ -48,6 +48,7 @@
                                     uib-tooltip="List all providers of this application">Providers</button>
                             <button class="btn-white btn btn-xs" ng-disabled="!entity.consuming"
                                     ui-sref="rpc.rpc-consumer-list({application: entity.name})"
+                                    tooltip-placement="bottom"
                                     uib-tooltip="List all consumers of this application">Consumers</button>
                         </div>
                     </td>

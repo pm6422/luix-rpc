@@ -30,16 +30,18 @@
                         <div class="btn-group">
                             <button class="btn-white btn btn-xs" ng-disabled="!entity.providing"
                                     ui-sref="rpc.rpc-provider-list({interfaceName: entity.interfaceName})"
-                                    uib-tooltip="List all providers of this service">Providers</button>
+                                    uib-tooltip="List all the providers of this service">Providers</button>
                             <button class="btn-white btn btn-xs" ng-disabled="!entity.consuming"
                                     ui-sref="rpc.rpc-consumer-list({interfaceName: entity.interfaceName})"
-                                    uib-tooltip="List all consumers of this service">Consumers</button>
+                                    tooltip-placement="bottom"
+                                    uib-tooltip="List all the consumers of this service">Consumers</button>
                             <button class="btn-white btn btn-xs" ng-disabled="!entity.providing"
                                     ng-click="vm.deactivate(entity)"
-                                    uib-tooltip="Take all the providers of this interface offline">Deactivate</button>
+                                    uib-tooltip="Take all the providers of this service offline">Deactivate</button>
                             <button class="btn-white btn btn-xs" ng-disabled="entity.providing || !entity.active"
                                     ng-click="vm.activate(entity)"
-                                    uib-tooltip="Take all the providers of this interface online">Activate</button>
+                                    tooltip-placement="bottom"
+                                    uib-tooltip="Take all the providers of this service online">Activate</button>
                         </div>
                     </td>
                 </tr>
