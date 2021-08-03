@@ -292,12 +292,12 @@ ul.nav-second-level {
   background: #293846;
 }
 .nav > li.active {
-  border-left: 4px solid #19aa8d;
+  border-left: 4px solid #4424bc;
   background: #293846;
 }
 .nav.nav-second-level > li.active {
   border: none;
-  background: #19aa8d;
+  background: #4424bc;
 }
 .nav.nav-second-level.collapse[style] {
   height: auto !important;
