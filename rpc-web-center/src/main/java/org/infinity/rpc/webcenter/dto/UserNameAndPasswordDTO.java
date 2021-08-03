@@ -15,10 +15,9 @@ import javax.validation.constraints.Size;
 @Data
 @Builder
 public class UserNameAndPasswordDTO {
-    @ApiModelProperty("用户名")
     private String userName;
 
-    @ApiModelProperty("新密码")
+    @ApiModelProperty(required = true)
     @NotNull
     @Size(min = ManagedUserDTO.RAW_PASSWORD_MIN_LENGTH, max = ManagedUserDTO.RAW_PASSWORD_MAX_LENGTH)
     private String newPassword;

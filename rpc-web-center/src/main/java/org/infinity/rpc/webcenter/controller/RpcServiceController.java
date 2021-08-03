@@ -3,6 +3,7 @@ package org.infinity.rpc.webcenter.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.RpcService;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.RpcServiceRepository;
@@ -39,6 +40,8 @@ public class RpcServiceController {
     private RpcConsumerService    rpcConsumerService;
     @Resource
     private RpcProviderController rpcProviderController;
+    @Resource
+    private HttpHeaderCreator     httpHeaderCreator;
 
     @ApiOperation("find service by ID")
     @GetMapping("/api/rpc-service/{id}")
@@ -103,7 +106,8 @@ public class RpcServiceController {
             @ApiParam(value = "interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
         rpcProviderService.find(registryIdentity, interfaceName, false)
                 .forEach(provider -> rpcProviderController.activate(registryIdentity, provider.getUrl()));
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(httpHeaderCreator.createSuccessHeader("SM1012")).build();
     }
 
     @ApiOperation("deactivate service")
@@ -113,6 +117,7 @@ public class RpcServiceController {
             @ApiParam(value = "interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
         rpcProviderService.find(registryIdentity, interfaceName, true)
                 .forEach(provider -> rpcProviderController.deactivate(registryIdentity, provider.getUrl()));
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(httpHeaderCreator.createSuccessHeader("SM1012")).build();
     }
 }
