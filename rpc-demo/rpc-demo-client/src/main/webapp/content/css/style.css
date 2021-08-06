@@ -339,13 +339,13 @@ ul.nav-second-level {
 }
 
 .nav > li.active {
-    border-left: 4px solid #4424bc;
+    border-left: 4px solid #0f043f;
     background: #293846;
 }
 
 .nav.nav-second-level > li.active {
     border: none;
-    background: #4424bc;
+    background: #0f043f;
 }
 
 .nav.nav-second-level.collapse[style] {
