@@ -37,11 +37,13 @@
                                     uib-tooltip="List all the consumers of this service">Consumers</button>
                             <button class="btn-white btn btn-xs" ng-disabled="!entity.providing"
                                     ng-click="vm.deactivate(entity)"
-                                    uib-tooltip="Take all the providers of this service offline">Deactivate</button>
+                                    uib-tooltip="Take all the providers of this service offline"
+                                    has-authority-directive="ROLE_ADMIN">Deactivate</button>
                             <button class="btn-white btn btn-xs" ng-disabled="entity.providing || !entity.active"
                                     ng-click="vm.activate(entity)"
                                     tooltip-placement="bottom"
-                                    uib-tooltip="Take all the providers of this service online">Activate</button>
+                                    uib-tooltip="Take all the providers of this service online"
+                                    has-authority-directive="ROLE_ADMIN">Activate</button>
                         </div>
                     </td>
                 </tr>

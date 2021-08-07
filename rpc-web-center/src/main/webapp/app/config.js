@@ -196,6 +196,369 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 pageTitle: 'Change password'
             }
         })
+        .state('rpc', {
+            abstract: true,
+            parent: 'user',
+            data: {
+                pageTitle: 'RPC'
+            }
+        })
+        .state('rpc.rpc-application-list', {
+            url: '/rpc-application-list?page&sort',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/rpc-application/rpc-application-list.html',
+                    controller: 'RpcApplicationListController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'RPC applications'
+            },
+            params: {
+                page: {
+                    value: '1',
+                    squash: true
+                },
+                sort: {
+                    value: 'team,asc',
+                    squash: true
+                }
+            },
+            resolve: {
+                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
+                    return {
+                        page: PaginationUtils.parsePage($stateParams.page),
+                        sort: $stateParams.sort,
+                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
+                        ascending: PaginationUtils.parseAscending($stateParams.sort)
+                    };
+                }],
+                criteria: ['$stateParams', function ($stateParams) {
+                    return {};
+                }]
+            }
+        })
+        .state('rpc.rpc-server-list', {
+            url: '/rpc-server-list?page&sort&address',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/rpc-server/rpc-server-list.html',
+                    controller: 'RpcServerListController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'RPC servers'
+            },
+            params: {
+                page: {
+                    value: '1',
+                    squash: true
+                },
+                sort: {
+                    value: 'address,asc',
+                    squash: true
+                }
+            },
+            resolve: {
+                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
+                    return {
+                        page: PaginationUtils.parsePage($stateParams.page),
+                        sort: $stateParams.sort,
+                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
+                        ascending: PaginationUtils.parseAscending($stateParams.sort)
+                    };
+                }],
+                criteria: ['$stateParams', function ($stateParams) {
+                    return {
+                        address: $stateParams.address
+                    };
+                }]
+            }
+        })
+        .state('rpc.rpc-server-list.view', {
+            url: '/view/:id',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/rpc-server/rpc-server-details.html',
+                    controller: 'RpcServerDetailsController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'View'
+            },
+            resolve: {
+                entity: ['RpcServerService', '$stateParams', function (RpcServerService, $stateParams) {
+                    return RpcServerService.get({extension: $stateParams.id}).$promise;
+                }]
+            }
+        })
+        .state('rpc.rpc-service-list', {
+            url: '/rpc-service-list?page&sort&interfaceName',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/rpc-service/rpc-service-list.html',
+                    controller: 'RpcServiceListController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'RPC services'
+            },
+            params: {
+                page: {
+                    value: '1',
+                    squash: true
+                },
+                sort: {
+                    value: 'interfaceName,asc',
+                    squash: true
+                }
+            },
+            resolve: {
+                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
+                    return {
+                        page: PaginationUtils.parsePage($stateParams.page),
+                        sort: $stateParams.sort,
+                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
+                        ascending: PaginationUtils.parseAscending($stateParams.sort)
+                    };
+                }],
+                criteria: ['$stateParams', function ($stateParams) {
+                    return {
+                        interfaceName: $stateParams.interfaceName
+                    };
+                }]
+            }
+        })
+        .state('rpc.rpc-provider-list', {
+            url: '/rpc-provider-list?page&sort&application&interfaceName&address',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/rpc-provider/rpc-provider-list.html',
+                    controller: 'RpcProviderListController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'RPC providers'
+            },
+            params: {
+                page: {
+                    value: '1',
+                    squash: true
+                },
+                sort: {
+                    value: 'interfaceName,asc',
+                    squash: true
+                }
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        {
+                            name: 'angular-peity',
+                            files: ['content/js/plugins/peity/jquery.peity.min.js', 'content/js/plugins/peity/angular-peity.js']
+                        }
+                    ]);
+                },
+                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
+                    return {
+                        page: PaginationUtils.parsePage($stateParams.page),
+                        sort: $stateParams.sort,
+                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
+                        ascending: PaginationUtils.parseAscending($stateParams.sort)
+                    };
+                }],
+                criteria: ['$stateParams', function ($stateParams) {
+                    return {
+                        application: $stateParams.application,
+                        interfaceName: $stateParams.interfaceName,
+                        address: $stateParams.address
+                    };
+                }]
+            }
+        })
+        .state('rpc.rpc-provider-list.view', {
+            url: '/view/:id?tab',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/rpc-provider/rpc-provider-details.html',
+                    controller: 'RpcProviderDetailsController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'RPC provider details'
+            },
+            resolve: {
+                entity: ['RpcProviderService', '$stateParams', function (RpcProviderService, $stateParams) {
+                    return RpcProviderService.get({extension: $stateParams.id}).$promise;
+                }]
+            }
+        })
+        .state('rpc.rpc-provider-list.view.create-task', {
+            url: '/create-task',
+            data: {
+                pageTitle: 'Create task',
+                mode: 'create'
+            },
+            onEnter: ['$state', '$uibModal', function ($state, $uibModal) {
+                $uibModal.open({
+                    templateUrl: 'app/views/admin/rpc-provider/rpc-task-dialog.html',
+                    controller: 'RpcTaskDialogController',
+                    controllerAs: 'vm',
+                    backdrop: 'static',
+                    size: 'lg',
+                    resolve: {
+                        entity: {
+                            id: null,
+                            name: null,
+                            argumentsJson: null,
+                            cronExpression: null,
+                            remark: null,
+                            enabled: true
+                        }
+                    }
+                }).result.then(function () {
+                    $state.go('^', null, {reload: true});
+                }, function () {
+                    $state.go('^');
+                });
+            }]
+        })
+        .state('rpc.rpc-provider-list.view.edit-task', {
+            url: '/edit-task/:taskId',
+            data: {
+                pageTitle: 'Edit task',
+                mode: 'edit'
+            },
+            onEnter: ['$state', '$stateParams', '$uibModal', function ($state, $stateParams, $uibModal) {
+                $uibModal.open({
+                    templateUrl: 'app/views/admin/rpc-provider/rpc-task-dialog.html',
+                    controller: 'RpcTaskDialogController',
+                    controllerAs: 'vm',
+                    backdrop: 'static',
+                    size: 'lg',
+                    resolve: {
+                        entity: ['RpcTaskService', function (RpcTaskService) {
+                            return RpcTaskService.get({extension: $stateParams.taskId}).$promise;
+                        }]
+                    }
+                }).result.then(function () {
+                    $state.go('^', null, {reload: true});
+                }, function () {
+                    $state.go('^');
+                });
+            }]
+        })
+        .state('rpc.rpc-task-history-list', {
+            url: '/rpc-task-history-list?page&sort&name&providerId',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/rpc-task-history/rpc-task-history-list.html',
+                    controller: 'RpcTaskHistoryListController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'Task histories'
+            },
+            params: {
+                page: {
+                    value: '1',
+                    squash: true
+                },
+                sort: {
+                    value: 'createdTime,desc',
+                    squash: true
+                }
+            },
+            resolve: {
+                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
+                    return {
+                        page: PaginationUtils.parsePage($stateParams.page),
+                        sort: $stateParams.sort,
+                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
+                        ascending: PaginationUtils.parseAscending($stateParams.sort)
+                    };
+                }],
+                criteria: ['$stateParams', function ($stateParams) {
+                    return {
+                        name: $stateParams.name,
+                        providerId: $stateParams.providerId
+                    };
+                }]
+            }
+        })
+        .state('rpc.rpc-task-history-list.view', {
+            url: '/view/:id',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/rpc-task-history/rpc-task-history-details.html',
+                    controller: 'RpcTaskHistoryDetailsController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'View'
+            },
+            resolve: {
+                entity: ['RpcTaskHistoryService', '$stateParams', function (RpcTaskHistoryService, $stateParams) {
+                    return RpcTaskHistoryService.get({extension: $stateParams.id}).$promise;
+                }]
+            }
+        })
+        .state('rpc.rpc-consumer-list', {
+            url: '/rpc-consumer-list?page&sort&application&interfaceName&address',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/admin/rpc-consumer/rpc-consumer-list.html',
+                    controller: 'RpcConsumerListController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'RPC consumers'
+            },
+            params: {
+                page: {
+                    value: '1',
+                    squash: true
+                },
+                sort: {
+                    value: 'interfaceName,asc',
+                    squash: true
+                }
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        {
+                            name: 'angular-peity',
+                            files: ['content/js/plugins/peity/jquery.peity.min.js', 'content/js/plugins/peity/angular-peity.js']
+                        }
+                    ]);
+                },
+                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
+                    return {
+                        page: PaginationUtils.parsePage($stateParams.page),
+                        sort: $stateParams.sort,
+                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
+                        ascending: PaginationUtils.parseAscending($stateParams.sort)
+                    };
+                }],
+                criteria: ['$stateParams', function ($stateParams) {
+                    return {
+                        application: $stateParams.application,
+                        interfaceName: $stateParams.interfaceName,
+                        address: $stateParams.address
+                    };
+                }]
+            }
+        })
         .state('developer', {
             abstract: true,
             parent: 'layout',
@@ -811,370 +1174,6 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             resolve: {
                 entity: ['UserService', '$stateParams', function (UserService, $stateParams) {
                     return UserService.get({userName: $stateParams.userName}).$promise;
-                }]
-            }
-        })
-        .state('rpc', {
-            abstract: true,
-            parent: 'admin',
-            data: {
-                pageTitle: 'RPC'
-            }
-        })
-        .state('rpc.rpc-application-list', {
-            url: '/rpc-application-list?page&sort',
-            views: {
-                'content@': {
-                    templateUrl: 'app/views/admin/rpc-application/rpc-application-list.html',
-                    controller: 'RpcApplicationListController',
-                    controllerAs: 'vm'
-                }
-            },
-            data: {
-                pageTitle: 'RPC applications'
-            },
-            params: {
-                page: {
-                    value: '1',
-                    squash: true
-                },
-                sort: {
-                    value: 'team,asc',
-                    squash: true
-                }
-            },
-            resolve: {
-                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
-                    return {
-                        page: PaginationUtils.parsePage($stateParams.page),
-                        sort: $stateParams.sort,
-                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
-                        ascending: PaginationUtils.parseAscending($stateParams.sort)
-                    };
-                }],
-                criteria: ['$stateParams', function ($stateParams) {
-                    return {};
-                }]
-            }
-        })
-        .state('rpc.rpc-server-list', {
-            url: '/rpc-server-list?page&sort&address',
-            views: {
-                'content@': {
-                    templateUrl: 'app/views/admin/rpc-server/rpc-server-list.html',
-                    controller: 'RpcServerListController',
-                    controllerAs: 'vm'
-                }
-            },
-            data: {
-                pageTitle: 'RPC servers'
-            },
-            params: {
-                page: {
-                    value: '1',
-                    squash: true
-                },
-                sort: {
-                    value: 'address,asc',
-                    squash: true
-                }
-            },
-            resolve: {
-                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
-                    return {
-                        page: PaginationUtils.parsePage($stateParams.page),
-                        sort: $stateParams.sort,
-                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
-                        ascending: PaginationUtils.parseAscending($stateParams.sort)
-                    };
-                }],
-                criteria: ['$stateParams', function ($stateParams) {
-                    return {
-                        address: $stateParams.address
-                    };
-                }]
-            }
-        })
-        .state('rpc.rpc-server-list.view', {
-            url: '/view/:id',
-            views: {
-                'content@': {
-                    templateUrl: 'app/views/admin/rpc-server/rpc-server-details.html',
-                    controller: 'RpcServerDetailsController',
-                    controllerAs: 'vm'
-                }
-            },
-            data: {
-                pageTitle: 'View'
-            },
-            resolve: {
-                entity: ['RpcServerService', '$stateParams', function (RpcServerService, $stateParams) {
-                    return RpcServerService.get({extension: $stateParams.id}).$promise;
-                }]
-            }
-        })
-        .state('rpc.rpc-service-list', {
-            url: '/rpc-service-list?page&sort&interfaceName',
-            views: {
-                'content@': {
-                    templateUrl: 'app/views/admin/rpc-service/rpc-service-list.html',
-                    controller: 'RpcServiceListController',
-                    controllerAs: 'vm'
-                }
-            },
-            data: {
-                pageTitle: 'RPC services'
-            },
-            params: {
-                page: {
-                    value: '1',
-                    squash: true
-                },
-                sort: {
-                    value: 'interfaceName,asc',
-                    squash: true
-                }
-            },
-            resolve: {
-                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
-                    return {
-                        page: PaginationUtils.parsePage($stateParams.page),
-                        sort: $stateParams.sort,
-                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
-                        ascending: PaginationUtils.parseAscending($stateParams.sort)
-                    };
-                }],
-                criteria: ['$stateParams', function ($stateParams) {
-                    return {
-                        interfaceName: $stateParams.interfaceName
-                    };
-                }]
-            }
-        })
-        .state('rpc.rpc-provider-list', {
-            url: '/rpc-provider-list?page&sort&application&interfaceName&address',
-            views: {
-                'content@': {
-                    templateUrl: 'app/views/admin/rpc-provider/rpc-provider-list.html',
-                    controller: 'RpcProviderListController',
-                    controllerAs: 'vm'
-                }
-            },
-            data: {
-                pageTitle: 'RPC providers'
-            },
-            params: {
-                page: {
-                    value: '1',
-                    squash: true
-                },
-                sort: {
-                    value: 'interfaceName,asc',
-                    squash: true
-                }
-            },
-            resolve: {
-                loadPlugin: function ($ocLazyLoad) {
-                    return $ocLazyLoad.load([
-                        {
-                            name: 'angular-peity',
-                            files: ['content/js/plugins/peity/jquery.peity.min.js', 'content/js/plugins/peity/angular-peity.js']
-                        }
-                    ]);
-                },
-                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
-                    return {
-                        page: PaginationUtils.parsePage($stateParams.page),
-                        sort: $stateParams.sort,
-                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
-                        ascending: PaginationUtils.parseAscending($stateParams.sort)
-                    };
-                }],
-                criteria: ['$stateParams', function ($stateParams) {
-                    return {
-                        application: $stateParams.application,
-                        interfaceName: $stateParams.interfaceName,
-                        address: $stateParams.address
-                    };
-                }]
-            }
-        })
-        .state('rpc.rpc-provider-list.view', {
-            url: '/view/:id?tab',
-            views: {
-                'content@': {
-                    templateUrl: 'app/views/admin/rpc-provider/rpc-provider-details.html',
-                    controller: 'RpcProviderDetailsController',
-                    controllerAs: 'vm'
-                }
-            },
-            data: {
-                pageTitle: 'RPC provider details'
-            },
-            resolve: {
-                entity: ['RpcProviderService', '$stateParams', function (RpcProviderService, $stateParams) {
-                    return RpcProviderService.get({extension: $stateParams.id}).$promise;
-                }]
-            }
-        })
-        .state('rpc.rpc-provider-list.view.create-task', {
-            url: '/create-task',
-            data: {
-                pageTitle: 'Create task',
-                mode: 'create'
-            },
-            onEnter: ['$state', '$uibModal', function ($state, $uibModal) {
-                $uibModal.open({
-                    templateUrl: 'app/views/admin/rpc-provider/rpc-task-dialog.html',
-                    controller: 'RpcTaskDialogController',
-                    controllerAs: 'vm',
-                    backdrop: 'static',
-                    size: 'lg',
-                    resolve: {
-                        entity: {
-                            id: null,
-                            name: null,
-                            argumentsJson: null,
-                            cronExpression: null,
-                            remark: null,
-                            enabled: true
-                        }
-                    }
-                }).result.then(function () {
-                    $state.go('^', null, {reload: true});
-                }, function () {
-                    $state.go('^');
-                });
-            }]
-        })
-        .state('rpc.rpc-provider-list.view.edit-task', {
-            url: '/edit-task/:taskId',
-            data: {
-                pageTitle: 'Edit task',
-                mode: 'edit'
-            },
-            onEnter: ['$state', '$stateParams', '$uibModal', function ($state, $stateParams, $uibModal) {
-                $uibModal.open({
-                    templateUrl: 'app/views/admin/rpc-provider/rpc-task-dialog.html',
-                    controller: 'RpcTaskDialogController',
-                    controllerAs: 'vm',
-                    backdrop: 'static',
-                    size: 'lg',
-                    resolve: {
-                        entity: ['RpcTaskService', function (RpcTaskService) {
-                            return RpcTaskService.get({extension: $stateParams.taskId}).$promise;
-                        }]
-                    }
-                }).result.then(function () {
-                    $state.go('^', null, {reload: true});
-                }, function () {
-                    $state.go('^');
-                });
-            }]
-        })
-        .state('rpc.rpc-task-history-list', {
-            parent: 'admin',
-            url: '/rpc-task-history-list?page&sort&name&providerId',
-            views: {
-                'content@': {
-                    templateUrl: 'app/views/admin/rpc-task-history/rpc-task-history-list.html',
-                    controller: 'RpcTaskHistoryListController',
-                    controllerAs: 'vm'
-                }
-            },
-            data: {
-                pageTitle: 'Task histories'
-            },
-            params: {
-                page: {
-                    value: '1',
-                    squash: true
-                },
-                sort: {
-                    value: 'createdTime,desc',
-                    squash: true
-                }
-            },
-            resolve: {
-                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
-                    return {
-                        page: PaginationUtils.parsePage($stateParams.page),
-                        sort: $stateParams.sort,
-                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
-                        ascending: PaginationUtils.parseAscending($stateParams.sort)
-                    };
-                }],
-                criteria: ['$stateParams', function ($stateParams) {
-                    return {
-                        name: $stateParams.name,
-                        providerId: $stateParams.providerId
-                    };
-                }]
-            }
-        })
-        .state('rpc.rpc-task-history-list.view', {
-            url: '/view/:id',
-            views: {
-                'content@': {
-                    templateUrl: 'app/views/admin/rpc-task-history/rpc-task-history-details.html',
-                    controller: 'RpcTaskHistoryDetailsController',
-                    controllerAs: 'vm'
-                }
-            },
-            data: {
-                pageTitle: 'View'
-            },
-            resolve: {
-                entity: ['RpcTaskHistoryService', '$stateParams', function (RpcTaskHistoryService, $stateParams) {
-                    return RpcTaskHistoryService.get({extension: $stateParams.id}).$promise;
-                }]
-            }
-        })
-        .state('rpc.rpc-consumer-list', {
-            url: '/rpc-consumer-list?page&sort&application&interfaceName&address',
-            views: {
-                'content@': {
-                    templateUrl: 'app/views/admin/rpc-consumer/rpc-consumer-list.html',
-                    controller: 'RpcConsumerListController',
-                    controllerAs: 'vm'
-                }
-            },
-            data: {
-                pageTitle: 'RPC consumers'
-            },
-            params: {
-                page: {
-                    value: '1',
-                    squash: true
-                },
-                sort: {
-                    value: 'interfaceName,asc',
-                    squash: true
-                }
-            },
-            resolve: {
-                loadPlugin: function ($ocLazyLoad) {
-                    return $ocLazyLoad.load([
-                        {
-                            name: 'angular-peity',
-                            files: ['content/js/plugins/peity/jquery.peity.min.js', 'content/js/plugins/peity/angular-peity.js']
-                        }
-                    ]);
-                },
-                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
-                    return {
-                        page: PaginationUtils.parsePage($stateParams.page),
-                        sort: $stateParams.sort,
-                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
-                        ascending: PaginationUtils.parseAscending($stateParams.sort)
-                    };
-                }],
-                criteria: ['$stateParams', function ($stateParams) {
-                    return {
-                        application: $stateParams.application,
-                        interfaceName: $stateParams.interfaceName,
-                        address: $stateParams.address
-                    };
                 }]
             }
         })

@@ -20,14 +20,14 @@
                 <span class="navbar-version">v{{VERSION}}</span>
             </a>
         </div>
-        <div class="navbar-form-custom" has-authority-directive="ROLE_ADMIN">
+        <div class="navbar-form-custom" has-authority-directive="ROLE_USER">
             <select class="form-control text-navy" id="registry" ng-model="selectedRegistryIdentity"
                     ng-options="item.identity as item.identity for item in main.registries">
                 <option value="">Select registry...</option>
             </select>
         </div>
         <ul class="nav navbar-top-links navbar-right">
-            <li uib-dropdown ng-switch-when="true" has-authority-directive="ROLE_ADMIN">
+            <li uib-dropdown ng-switch-when="true" has-authority-directive="ROLE_USER">
                 <a class="count-info" href uib-dropdown-toggle>
                     <span class="fa fa-globe text-navy"></span>&nbsp;
                     <span class="text-navy">Service governance</span>

@@ -13,6 +13,7 @@ import org.infinity.rpc.core.server.stub.ProviderStub;
 import org.infinity.rpc.core.url.Url;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
+import org.infinity.rpc.webcenter.domain.Authority;
 import org.infinity.rpc.webcenter.domain.RpcProvider;
 import org.infinity.rpc.webcenter.dto.OptionMetaDTO;
 import org.infinity.rpc.webcenter.dto.OptionsDTO;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -113,6 +115,7 @@ public class RpcProviderController {
 
     @ApiOperation("activate provider")
     @GetMapping("/api/rpc-provider/activate")
+    @Secured({Authority.ADMIN})
     public ResponseEntity<Void> activate(
             @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
@@ -124,6 +127,7 @@ public class RpcProviderController {
 
     @ApiOperation("deactivate provider")
     @GetMapping("/api/rpc-provider/deactivate")
+    @Secured({Authority.ADMIN})
     public ResponseEntity<Void> deactivate(
             @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
@@ -169,6 +173,7 @@ public class RpcProviderController {
 
     @ApiOperation("Save options")
     @PutMapping("/api/rpc-provider/options")
+    @Secured({Authority.ADMIN})
     public ResponseEntity<Void> saveOptions(@ApiParam(value = "optionsDTO", required = true)
                                             @Valid @RequestBody OptionsDTO optionsDTO) {
         Url providerUrl = Url.valueOf(optionsDTO.getUrl());
