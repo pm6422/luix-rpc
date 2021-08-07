@@ -207,7 +207,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/rpc-application-list?page&sort',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/admin/rpc-application/rpc-application-list.html',
+                    templateUrl: 'app/views/user/rpc-application/rpc-application-list.html',
                     controller: 'RpcApplicationListController',
                     controllerAs: 'vm'
                 }
@@ -243,7 +243,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/rpc-server-list?page&sort&address',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/admin/rpc-server/rpc-server-list.html',
+                    templateUrl: 'app/views/user/rpc-server/rpc-server-list.html',
                     controller: 'RpcServerListController',
                     controllerAs: 'vm'
                 }
@@ -281,7 +281,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/view/:id',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/admin/rpc-server/rpc-server-details.html',
+                    templateUrl: 'app/views/user/rpc-server/rpc-server-details.html',
                     controller: 'RpcServerDetailsController',
                     controllerAs: 'vm'
                 }
@@ -299,7 +299,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/rpc-service-list?page&sort&interfaceName',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/admin/rpc-service/rpc-service-list.html',
+                    templateUrl: 'app/views/user/rpc-service/rpc-service-list.html',
                     controller: 'RpcServiceListController',
                     controllerAs: 'vm'
                 }
@@ -337,7 +337,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/rpc-provider-list?page&sort&application&interfaceName&address',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/admin/rpc-provider/rpc-provider-list.html',
+                    templateUrl: 'app/views/user/rpc-provider/rpc-provider-list.html',
                     controller: 'RpcProviderListController',
                     controllerAs: 'vm'
                 }
@@ -385,7 +385,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/view/:id?tab',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/admin/rpc-provider/rpc-provider-details.html',
+                    templateUrl: 'app/views/user/rpc-provider/rpc-provider-details.html',
                     controller: 'RpcProviderDetailsController',
                     controllerAs: 'vm'
                 }
@@ -407,7 +407,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             },
             onEnter: ['$state', '$uibModal', function ($state, $uibModal) {
                 $uibModal.open({
-                    templateUrl: 'app/views/admin/rpc-provider/rpc-task-dialog.html',
+                    templateUrl: 'app/views/user/rpc-provider/rpc-task-dialog.html',
                     controller: 'RpcTaskDialogController',
                     controllerAs: 'vm',
                     backdrop: 'static',
@@ -437,7 +437,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             },
             onEnter: ['$state', '$stateParams', '$uibModal', function ($state, $stateParams, $uibModal) {
                 $uibModal.open({
-                    templateUrl: 'app/views/admin/rpc-provider/rpc-task-dialog.html',
+                    templateUrl: 'app/views/user/rpc-provider/rpc-task-dialog.html',
                     controller: 'RpcTaskDialogController',
                     controllerAs: 'vm',
                     backdrop: 'static',
@@ -458,7 +458,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/rpc-task-history-list?page&sort&name&providerId',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/admin/rpc-task-history/rpc-task-history-list.html',
+                    templateUrl: 'app/views/user/rpc-task-history/rpc-task-history-list.html',
                     controller: 'RpcTaskHistoryListController',
                     controllerAs: 'vm'
                 }
@@ -497,7 +497,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/view/:id',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/admin/rpc-task-history/rpc-task-history-details.html',
+                    templateUrl: 'app/views/user/rpc-task-history/rpc-task-history-details.html',
                     controller: 'RpcTaskHistoryDetailsController',
                     controllerAs: 'vm'
                 }
@@ -515,7 +515,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/rpc-consumer-list?page&sort&application&interfaceName&address',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/admin/rpc-consumer/rpc-consumer-list.html',
+                    templateUrl: 'app/views/user/rpc-consumer/rpc-consumer-list.html',
                     controller: 'RpcConsumerListController',
                     controllerAs: 'vm'
                 }
