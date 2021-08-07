@@ -9,7 +9,7 @@ angular
     .controller('LoginController', LoginController)
     .controller('NavbarController', NavbarController)
     .controller('FooterController', FooterController)
-    .controller('AboutController', AboutController)
+    .controller('ContactUsController', ContactUsController)
     .controller('ProfileController', ProfileController)
     .controller('RegisterController', RegisterController)
     .controller('ActivationController', ActivationController)
@@ -283,9 +283,9 @@ function FooterController($http, PrincipalService) {
         });
 }
 /**
- * AboutController
+ * ContactUsController
  */
-function AboutController($state) {
+function ContactUsController($state) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;

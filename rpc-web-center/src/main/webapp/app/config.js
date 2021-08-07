@@ -154,18 +154,18 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 authorities: ['ROLE_USER']
             }
         })
-        .state('about', {
+        .state('contact-us', {
             parent: 'user',
-            url: '/about',
+            url: '/contact-us',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/user/about/about.html',
-                    controller: 'AboutController',
+                    templateUrl: 'app/views/user/contact-us/contact-us.html',
+                    controller: 'ContactUsController',
                     controllerAs: 'vm'
                 }
             },
             data: {
-                pageTitle: 'About'
+                pageTitle: 'Contact Us'
             }
         })
         .state('profile', {
