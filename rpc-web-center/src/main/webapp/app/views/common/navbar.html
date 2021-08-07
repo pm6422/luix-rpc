@@ -29,37 +29,37 @@
         <ul class="nav navbar-top-links navbar-right">
             <li uib-dropdown ng-switch-when="true" has-authority-directive="ROLE_USER">
                 <a class="count-info" href uib-dropdown-toggle>
-                    <span class="fa fa-globe text-navy"></span>&nbsp;
+                    <span class="fas fa-dragon text-navy"></span>&nbsp;
                     <span class="text-navy">Service governance</span>
                 </a>
                 <ul uib-dropdown-menu class="animated fadeInDown m-t-xs">
                     <li ui-sref-active="active">
                         <a ui-sref="rpc.rpc-application-list">
-                            <span class="fa fa-window-restore"></span>&nbsp;
+                            <span class="fas fa-plane"></span>&nbsp;
                             <span>Applications</span>
                         </a>
                     </li>
                     <li ui-sref-active="active">
                         <a ui-sref="rpc.rpc-server-list">
-                            <span class="fa fa-desktop"></span>&nbsp;
+                            <span class="fas fa-desktop"></span>&nbsp;
                             <span>Servers</span>
                         </a>
                     </li>
                     <li ui-sref-active="active">
                         <a ui-sref="rpc.rpc-service-list">
-                            <span class="fa fa-cube"></span>&nbsp;
+                            <span class="fas fa-sitemap"></span>&nbsp;
                             <span>Services</span>
                         </a>
                     </li>
                     <li ui-sref-active="active">
                         <a ui-sref="rpc.rpc-provider-list">
-                            <span class="fa fa-sun-o"></span>&nbsp;
+                            <span class="fas fa-sun"></span>&nbsp;
                             <span>Providers</span>
                         </a>
                     </li>
                     <li ui-sref-active="active">
                         <a ui-sref="rpc.rpc-consumer-list">
-                            <span class="fa fa-star-o"></span>&nbsp;
+                            <span class="fas fa-moon"></span>&nbsp;
                             <span>Consumers</span>
                         </a>
                     </li>
@@ -67,61 +67,61 @@
             </li>
             <li uib-dropdown ng-switch-when="true" has-authority-directive="ROLE_DEVELOPER">
                 <a class="count-info" href uib-dropdown-toggle>
-                    <span class="fa fa-child text-navy"></span>&nbsp;
+                    <span class="fas fa-wrench text-navy"></span>&nbsp;
                     <span class="text-navy">Developer tools</span>
                 </a>
                 <ul uib-dropdown-menu class="animated fadeInDown m-t-xs">
                     <li ng-show="vm.swaggerEnabled" ui-sref-active="active">
                         <a ui-sref="api">
-                            <span class="fa fa-book"></span>&nbsp;
+                            <span class="fas fa-book"></span>&nbsp;
                             <span>API</span>
                         </a>
                     </li>
                     <li ui-sref-active="active">
                         <a ui-sref="health">
-                            <span class="fa fa-heart"></span>&nbsp;
+                            <span class="fas fa-heart"></span>&nbsp;
                             <span>Health</span>
                         </a>
                     </li>
                     <li ui-sref-active="active">
                         <a ui-sref="configuration">
-                            <span class="fa fa-wrench"></span>&nbsp;
+                            <span class="fas fa-wrench"></span>&nbsp;
                             <span>Configuration</span>
                         </a>
                     </li>
                     <li ui-sref-active="active">
                         <a ui-sref="beans">
-                            <span class="fa fa-bold"></span>&nbsp;
+                            <span class="fas fa-bold"></span>&nbsp;
                             <span>Beans</span>
                         </a>
                     </li>
                     <li ui-sref-active="active">
                         <a ui-sref="mappings">
-                            <span class="fa fa-link"></span>&nbsp;
+                            <span class="fas fa-link"></span>&nbsp;
                             <span>Mappings</span>
                         </a>
                     </li>
                     <li ui-sref-active="active">
                         <a ui-sref="http-trace">
-                            <span class="fa fa-random"></span>&nbsp;
+                            <span class="fas fa-random"></span>&nbsp;
                             <span>Http Trace</span>
                         </a>
                     </li>
                     <li ui-sref-active="active">
                         <a ui-sref="http-session">
-                            <span class="fa fa-retweet"></span>&nbsp;
+                            <span class="fas fa-retweet"></span>&nbsp;
                             <span>Http Session</span>
                         </a>
                     </li>
                     <li ui-sref-active="active">
                         <a ui-sref="audits">
-                            <span class="fa fa-bell"></span>&nbsp;
+                            <span class="fas fa-bell"></span>&nbsp;
                             <span>Audits</span>
                         </a>
                     </li>
                     <li ui-sref-active="active">
                         <a ui-sref="logger">
-                            <span class="fa fa-tasks"></span>&nbsp;
+                            <span class="fas fa-tasks"></span>&nbsp;
                             <span>Loggers</span>
                         </a>
                     </li>
@@ -138,25 +138,19 @@
 <!--            </li>-->
             <li uib-dropdown ng-switch-when="true" has-authority-directive="ROLE_ADMIN">
                 <a class="count-info" href uib-dropdown-toggle>
-                    <span class="fa fa-gear text-navy"></span>&nbsp;
-                    <span class="text-navy">Settings</span>
+                    <span class="fas fa-cog text-navy"></span>&nbsp;
+                    <span class="text-navy">Administration</span>
                 </a>
                 <ul uib-dropdown-menu class="animated fadeInDown m-t-xs">
                     <li ui-sref-active="active">
-                        <a ui-sref="about">
-                            <span class="fa fa-twitch"></span>&nbsp;
-                            <span>About</span>
-                        </a>
-                    </li>
-                    <li ui-sref-active="active">
                         <a ui-sref="user-authority.authority-list">
-                            <span class="fa fa-group"></span>&nbsp;
+                            <span class="fas fa-user-cog"></span>&nbsp;
                             <span>Authority</span>
                         </a>
                     </li>
                     <li ui-sref-active="active">
                         <a ui-sref="user-authority.user-list">
-                            <span class="fa fa-male"></span>&nbsp;
+                            <span class="fas fa-users"></span>&nbsp;
                             <span>User</span>
                         </a>
                     </li>
@@ -171,20 +165,26 @@
                 </a>
                 <ul uib-dropdown-menu class="animated fadeInDown m-t-xs">
                     <li ui-sref-active="active">
+                        <a ui-sref="about">
+                            <span class="fas fa-spa"></span>&nbsp;
+                            <span>About</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
                         <a ui-sref="profile">
-                            <span class="fa fa-building-o"></span>&nbsp;
+                            <span class="fas fa-address-card"></span>&nbsp;
                             <span>Profile</span>
                         </a>
                     </li>
                     <li ui-sref-active="active">
                         <a ui-sref="password">
-                            <span class="fa fa-asterisk"></span>&nbsp;
+                            <span class="fas fa-key"></span>&nbsp;
                             <span>Password</span>
                         </a>
                     </li>
                     <li>
                         <a ng-click="vm.logout()">
-                            <span class="fa fa-sign-out"></span>&nbsp;
+                            <span class="fas fa-sign-out-alt"></span>&nbsp;
                             <span>Sign out</span>
                         </a>
                     </li>
