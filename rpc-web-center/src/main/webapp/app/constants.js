@@ -5,7 +5,7 @@
     angular
         .module('smartcloudserviceApp')
         .constant('APP_NAME', 'rpc-web-center')
-        .constant('VERSION', '1.0.0')
+        .constant('VERSION', '1.0.0.RELEASE')
         .constant('COMPANY_NAME', 'Infinity Organization')
         .constant('PAGINATION_CONSTANTS', {
             'itemsPerPage': 10

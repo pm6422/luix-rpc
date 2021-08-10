@@ -18,7 +18,7 @@
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <revision>1.0.0</revision>
+        <revision>1.0.0.RELEASE</revision>
     </properties>
     <dependencyManagement>
         <dependencies>
