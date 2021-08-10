@@ -14,14 +14,14 @@ var ngAggregate = function (aggEntity, rowFactory, rowHeight) {
     self.isAggRow = true;
     self.offsetleft = aggEntity.gDepth * 25;
     self.aggLabelFilter = aggEntity.aggLabelFilter;
-    self.toggleExpand = function() {
+    self.toggleExpand = function () {
         self.collapsed = self.collapsed ? false : true;
         if (self.orig) {
             self.orig.collapsed = self.collapsed;
         }
         self.notifyChildren();
     };
-    self.setExpand = function(state) {
+    self.setExpand = function (state) {
         self.collapsed = state;
         self.notifyChildren();
     };
@@ -42,18 +42,19 @@ var ngAggregate = function (aggEntity, rowFactory, rowHeight) {
                 var offset = (30 * self.children.length);
                 agg.offsetTop = self.collapsed ? agg.offsetTop - offset : agg.offsetTop + offset;
             }
-        };
+        }
+        ;
         rowFactory.renderedChange();
     };
-    self.aggClass = function() {
+    self.aggClass = function () {
         return self.collapsed ? "ngAggArrowCollapsed" : "ngAggArrowExpanded";
     };
-    self.totalChildren = function() {
+    self.totalChildren = function () {
         if (self.aggChildren.length > 0) {
             var i = 0;
-            var recurse = function(cur) {
+            var recurse = function (cur) {
                 if (cur.aggChildren.length > 0) {
-                    angular.forEach(cur.aggChildren, function(a) {
+                    angular.forEach(cur.aggChildren, function (a) {
                         recurse(a);
                     });
                 } else {

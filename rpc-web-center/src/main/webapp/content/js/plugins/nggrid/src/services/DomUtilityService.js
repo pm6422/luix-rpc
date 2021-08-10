@@ -1,7 +1,7 @@
-﻿ngGridServices.factory('$domUtilityService',['$utilityService', function($utils) {
+﻿ngGridServices.factory('$domUtilityService', ['$utilityService', function ($utils) {
     var domUtilityService = {};
     var regexCache = {};
-    var getWidths = function() {
+    var getWidths = function () {
         var $testContainer = $('<div></div>');
         $testContainer.appendTo('body');
         // 1. Run all the following measurements on startup!
@@ -19,7 +19,7 @@
         $testContainer.remove();
     };
     domUtilityService.eventStorage = {};
-    domUtilityService.AssignGridContainers = function($scope, rootEl, grid) {
+    domUtilityService.AssignGridContainers = function ($scope, rootEl, grid) {
         grid.$root = $(rootEl);
         //Headers
         grid.$topPanel = grid.$root.find(".ngTopPanel");
@@ -35,7 +35,7 @@
         grid.$canvas = grid.$viewport.find(".ngCanvas");
         //Footers
         grid.$footerPanel = grid.$root.find(".ngFooterPanel");
-        
+
         $scope.$watch(function () {
             return grid.$viewport.scrollLeft();
         }, function (newLeft) {
@@ -45,14 +45,14 @@
     };
     domUtilityService.getRealWidth = function (obj) {
         var width = 0;
-        var props = { visibility: "hidden", display: "block" };
+        var props = {visibility: "hidden", display: "block"};
         var hiddenParents = obj.parents().andSelf().not(':visible');
         $.swap(hiddenParents[0], props, function () {
             width = obj.outerWidth();
         });
         return width;
     };
-    domUtilityService.UpdateGridLayout = function($scope, grid) {
+    domUtilityService.UpdateGridLayout = function ($scope, grid) {
         //catch this so we can return the viewer to their original scroll after the resize!
         var scrollTop = grid.$viewport.scrollTop();
         grid.elementDims.rootMaxW = grid.$root.width();
@@ -65,7 +65,7 @@
         $scope.adjustScrollTop(scrollTop, true); //ensure that the user stays scrolled where they were
     };
     domUtilityService.numberOfGrids = 0;
-    domUtilityService.BuildStyles = function($scope, grid, digest) {
+    domUtilityService.BuildStyles = function ($scope, grid, digest) {
         var rowHeight = grid.config.rowHeight,
             $style = grid.$styleSheet,
             gridId = grid.gridId,
@@ -93,7 +93,8 @@
                     "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
                 sumWidth += col.width;
             }
-        };
+        }
+        ;
         if ($utils.isIe) { // IE
             $style[0].styleSheet.cssText = css;
         } else {
@@ -105,34 +106,34 @@
             domUtilityService.digest($scope);
         }
     };
-    domUtilityService.setColLeft = function(col, colLeft, grid) {
+    domUtilityService.setColLeft = function (col, colLeft, grid) {
         if (grid.$styleSheet) {
             var regex = regexCache[col.index];
             if (!regex) {
                 regex = regexCache[col.index] = new RegExp("\.col" + col.index + " \{ width: [0-9]+px; left: [0-9]+px");
             }
-			var str = grid.$styleSheet.html();
-			var newStr = str.replace(regex, "\.col" + col.index + " \{ width: " + col.width + "px; left: " + colLeft + "px");
-			if ($utils.isIe) { // IE
-			    setTimeout(function() {
-			        grid.$styleSheet.html(newStr);
-			    });
-			} else {
-			    grid.$styleSheet.html(newStr);
-			}
-		}
+            var str = grid.$styleSheet.html();
+            var newStr = str.replace(regex, "\.col" + col.index + " \{ width: " + col.width + "px; left: " + colLeft + "px");
+            if ($utils.isIe) { // IE
+                setTimeout(function () {
+                    grid.$styleSheet.html(newStr);
+                });
+            } else {
+                grid.$styleSheet.html(newStr);
+            }
+        }
     };
     domUtilityService.setColLeft.immediate = 1;
-	domUtilityService.RebuildGrid = function($scope, grid){
-		domUtilityService.UpdateGridLayout($scope, grid);
-		if (grid.config.maintainColumnRatios) {
-			grid.configureColumnWidths();
-		}
-		$scope.adjustScrollLeft(grid.$viewport.scrollLeft());
-		domUtilityService.BuildStyles($scope, grid, true);
-	};
+    domUtilityService.RebuildGrid = function ($scope, grid) {
+        domUtilityService.UpdateGridLayout($scope, grid);
+        if (grid.config.maintainColumnRatios) {
+            grid.configureColumnWidths();
+        }
+        $scope.adjustScrollLeft(grid.$viewport.scrollLeft());
+        domUtilityService.BuildStyles($scope, grid, true);
+    };
 
-    domUtilityService.digest = function($scope) {
+    domUtilityService.digest = function ($scope) {
         if (!$scope.$root.$$phase) {
             $scope.$digest();
         }

@@ -1,9 +1,9 @@
 ﻿ngGridDirectives.directive('ngRow', ['$compile', '$domUtilityService', '$templateCache', function ($compile, domUtilityService, $templateCache) {
     var ngRow = {
         scope: false,
-        compile: function() {
+        compile: function () {
             return {
-                pre: function($scope, iElement) {
+                pre: function ($scope, iElement) {
                     $scope.row.elm = iElement;
                     if ($scope.row.clone) {
                         $scope.row.clone.elm = iElement;
@@ -19,9 +19,9 @@
                     } else {
                         iElement.append($compile($templateCache.get($scope.gridId + 'rowTemplate.html'))($scope));
                     }
-					$scope.$on('ngGridEventDigestRow', function(){
-						domUtilityService.digest($scope);
-					});
+                    $scope.$on('ngGridEventDigestRow', function () {
+                        domUtilityService.digest($scope);
+                    });
                 }
             };
         }

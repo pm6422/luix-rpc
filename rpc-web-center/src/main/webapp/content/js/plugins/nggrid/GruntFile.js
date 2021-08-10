@@ -1,7 +1,9 @@
 ﻿module.exports = function (grunt) {
     var stripBanner = function (src, options) {
 
-        if (!options) { options = {}; }
+        if (!options) {
+            options = {};
+        }
         var m = [];
         if (options.line) {
             // Strip // ... leading banners.
@@ -20,7 +22,7 @@
         src = src.replace(/\s{2,}(\r|\n|\s){2,}$/gm, '');
         return src;
     };
-    
+
     grunt.registerMultiTask('concat', 'Concatenate files.', function () {
         // Merge task-specific and/or target-specific options with these defaults.
         var options = this.options({
@@ -31,8 +33,12 @@
             process: false
         });
         // Normalize boolean options that accept options objects.
-        if (typeof options.stripBanners === 'boolean' && options.stripBanners === true) { options.stripBanners = {}; }
-        if (typeof options.process === 'boolean' && options.process === true) { options.process = {}; }
+        if (typeof options.stripBanners === 'boolean' && options.stripBanners === true) {
+            options.stripBanners = {};
+        }
+        if (typeof options.process === 'boolean' && options.process === true) {
+            options.process = {};
+        }
 
         // Process banner and footer.
         var banner = grunt.template.process(options.banner);
@@ -82,14 +88,14 @@
             'src/filters/*.js',
             'src/services/*.js',
             'src/classes/*.js',
-            
+
             'src/directives/*.js',
             'src/i18n/*.js',
             '<%= ngtemplates.ngGrid.dest %>'
         ],
         ngtemplates: {
             ngGrid: {
-                options: { base: 'src/templates' },
+                options: {base: 'src/templates'},
                 src: ['src/templates/**.html'],
                 dest: 'build/templates.js'
             }

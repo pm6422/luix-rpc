@@ -1,6 +1,6 @@
 /* global DIFF_INSERT, DIFF_DELETE, DIFF_EQUAL, diff_match_patch */
 angular.module('diff-match-patch', [])
-    .factory('dmp', function() {
+    .factory('dmp', function () {
 
         var displayType = {
             INSDEL: 0,
@@ -8,37 +8,46 @@ angular.module('diff-match-patch', [])
         };
 
         function diffClass(op) {
-            switch(op) {
-                case DIFF_INSERT: return 'ins';
-                case DIFF_DELETE: return 'del';
-                case DIFF_EQUAL: return 'match';
+            switch (op) {
+                case DIFF_INSERT:
+                    return 'ins';
+                case DIFF_DELETE:
+                    return 'del';
+                case DIFF_EQUAL:
+                    return 'match';
             }
         }
 
         function diffSymbol(op) {
-            switch(op) {
-                case DIFF_EQUAL: return ' ';
-                case DIFF_INSERT: return '+';
-                case DIFF_DELETE: return '-';
+            switch (op) {
+                case DIFF_EQUAL:
+                    return ' ';
+                case DIFF_INSERT:
+                    return '+';
+                case DIFF_DELETE:
+                    return '-';
             }
         }
 
         function diffTag(op) {
-            switch(op) {
-                case DIFF_EQUAL: return 'span';
-                case DIFF_INSERT: return 'ins';
-                case DIFF_DELETE: return 'del';
+            switch (op) {
+                case DIFF_EQUAL:
+                    return 'span';
+                case DIFF_INSERT:
+                    return 'ins';
+                case DIFF_DELETE:
+                    return 'del';
             }
         }
 
         function getHtmlPrefix(op, display) {
             var retVal = '';
-            switch(display) {
+            switch (display) {
                 case displayType.LINEDIFF:
-                    retVal = '<div class="'+diffClass(op)+'"><span class="noselect">'+diffSymbol(op)+'</span>';
+                    retVal = '<div class="' + diffClass(op) + '"><span class="noselect">' + diffSymbol(op) + '</span>';
                     break;
                 case displayType.INSDEL:
-                    retVal = '<'+diffTag(op)+'>';
+                    retVal = '<' + diffTag(op) + '>';
                     break;
             }
             return retVal;
@@ -46,12 +55,12 @@ angular.module('diff-match-patch', [])
 
         function getHtmlSuffix(op, display) {
             var retVal = '';
-            switch(display) {
+            switch (display) {
                 case displayType.LINEDIFF:
                     retVal = '</div>';
                     break;
                 case displayType.INSDEL:
-                    retVal = '</'+diffTag(op)+'>';
+                    retVal = '</' + diffTag(op) + '>';
                     break;
             }
             return retVal;
@@ -96,7 +105,7 @@ angular.module('diff-match-patch', [])
         }
 
         return {
-            createDiffHtml: function(left, right) {
+            createDiffHtml: function (left, right) {
                 if (assertArgumentsIsStrings(left, right)) {
                     var dmp = new diff_match_patch();
                     var diffs = dmp.diff_main(left, right);
@@ -106,7 +115,7 @@ angular.module('diff-match-patch', [])
                 }
             },
 
-            createProcessingDiffHtml: function(left, right) {
+            createProcessingDiffHtml: function (left, right) {
                 if (assertArgumentsIsStrings(left, right)) {
                     var dmp = new diff_match_patch();
                     var diffs = dmp.diff_main(left, right);
@@ -118,7 +127,7 @@ angular.module('diff-match-patch', [])
                 }
             },
 
-            createSemanticDiffHtml: function(left, right) {
+            createSemanticDiffHtml: function (left, right) {
                 if (assertArgumentsIsStrings(left, right)) {
                     var dmp = new diff_match_patch();
                     var diffs = dmp.diff_main(left, right);
@@ -129,7 +138,7 @@ angular.module('diff-match-patch', [])
                 }
             },
 
-            createLineDiffHtml: function(left, right) {
+            createLineDiffHtml: function (left, right) {
                 if (assertArgumentsIsStrings(left, right)) {
                     var dmp = new diff_match_patch();
                     var a = dmp.diff_linesToChars_(left, right);
@@ -149,7 +158,7 @@ angular.module('diff-match-patch', [])
                 right: '=rightObj'
             },
             link: function postLink(scope, iElement) {
-                var listener = function() {
+                var listener = function () {
                     iElement.html(dmp.createDiffHtml(scope.left, scope.right));
                     $compile(iElement.contents())(scope);
                 };
@@ -166,7 +175,7 @@ angular.module('diff-match-patch', [])
                 right: '=rightObj'
             },
             link: function postLink(scope, iElement) {
-                var listener = function() {
+                var listener = function () {
                     iElement.html(dmp.createProcessingDiffHtml(scope.left, scope.right));
                     $compile(iElement.contents())(scope);
                 };
@@ -183,7 +192,7 @@ angular.module('diff-match-patch', [])
                 right: '=rightObj'
             },
             link: function postLink(scope, iElement) {
-                var listener = function() {
+                var listener = function () {
                     iElement.html(dmp.createSemanticDiffHtml(scope.left, scope.right));
                     $compile(iElement.contents())(scope);
                 };
@@ -200,7 +209,7 @@ angular.module('diff-match-patch', [])
                 right: '=rightObj'
             },
             link: function postLink(scope, iElement) {
-                var listener = function() {
+                var listener = function () {
                     iElement.html(dmp.createLineDiffHtml(scope.left, scope.right));
                     $compile(iElement.contents())(scope);
                 };

@@ -22,7 +22,7 @@
     </div>
     <div class="ibox">
         <div class="ibox-content">
-            <table class="table table-condensed table-striped table-bordered table-responsive">
+            <table class="table table-striped">
                 <thead>
                 <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.loadAll()">
                     <th sort-by-directive="auditEventDate"><span>Event Time</span><span class="fa fa-sort"></span></th>
@@ -45,5 +45,5 @@
                 <uib-pagination class="pagination-sm" items-per-page="vm.itemsPerPage" total-items="vm.totalItems" ng-model="vm.page" ng-change="vm.loadAll()"></uib-pagination>
             </div>
         </div>
-    </div>
+   </div>
 </div>

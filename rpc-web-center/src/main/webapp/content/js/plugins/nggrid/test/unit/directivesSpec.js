@@ -14,9 +14,9 @@ describe('directives', function () {
         $linker = $compile;
         $cache = $templateCache;
     }));
-    
-    describe('ng-cell-has-focus', function() {
-        it('should do something', function() {
+
+    describe('ng-cell-has-focus', function () {
+        it('should do something', function () {
             //add work here
         });
     });

@@ -1,9 +1,9 @@
-(function() {
+(function () {
     'use strict';
 
     function maxValidator(ctrl, value, limit) {
         var max = parseFloat(limit);
-        var validity = ctrl.$isEmpty(value) || isNaN(max)|| value <= max;
+        var validity = ctrl.$isEmpty(value) || isNaN(max) || value <= max;
         ctrl.$setValidity('max', validity);
         return value;
     }
@@ -18,10 +18,10 @@
     var cnpjPattern = new StringMask('00.000.000\/0000-00');
     var cpfPattern = new StringMask('000.000.000-00');
 
-    function numberViewMask (decimals, decimalDelimiter, thousandsDelimiter) {
+    function numberViewMask(decimals, decimalDelimiter, thousandsDelimiter) {
         var mask = '#' + thousandsDelimiter + '##0';
 
-        if(decimals > 0) {
+        if (decimals > 0) {
             mask += decimalDelimiter;
             for (var i = 0; i < decimals; i++) {
                 mask += '0';
@@ -29,14 +29,14 @@
         }
 
         return new StringMask(mask, {
-            reverse:true
+            reverse: true
         });
     }
 
-    function numberModelMask (decimals) {
+    function numberModelMask(decimals) {
         var mask = '###0';
 
-        if(decimals > 0) {
+        if (decimals > 0) {
             mask += '.';
             for (var i = 0; i < decimals; i++) {
                 mask += '0';
@@ -44,27 +44,27 @@
         }
 
         return new StringMask(mask, {
-            reverse:true
+            reverse: true
         });
     }
 
-    function clearDelimitersAndLeadingZeros (value) {
+    function clearDelimitersAndLeadingZeros(value) {
         var cleanValue = value.replace(/^0*/, '');
         cleanValue = cleanValue.replace(/[^0-9]/g, '');
         return cleanValue;
     }
 
-    function preparePercentageToFormatter (value, decimals) {
-        return clearDelimitersAndLeadingZeros((parseFloat(value)*100).toFixed(decimals));
+    function preparePercentageToFormatter(value, decimals) {
+        return clearDelimitersAndLeadingZeros((parseFloat(value) * 100).toFixed(decimals));
     }
 
-    function prepareNumberToFormatter (value, decimals) {
+    function prepareNumberToFormatter(value, decimals) {
         return clearDelimitersAndLeadingZeros((parseFloat(value)).toFixed(decimals));
     }
 
     function uiBrCpfMask() {
-        function applyCpfMask (value) {
-            if(!value) {
+        function applyCpfMask(value) {
+            if (!value) {
                 return value;
             }
             var formatedValue = cpfPattern.apply(value);
@@ -79,16 +79,16 @@
                     return;
                 }
 
-                ctrl.$formatters.push(function(value) {
+                ctrl.$formatters.push(function (value) {
                     return applyCpfMask(value);
                 });
 
-                ctrl.$parsers.push(function(value) {
-                    if(!value) {
+                ctrl.$parsers.push(function (value) {
+                    if (!value) {
                         return value;
                     }
 
-                    var actualNumber = value.replace(/[^\d]/g,'');
+                    var actualNumber = value.replace(/[^\d]/g, '');
                     var formatedValue = applyCpfMask(actualNumber);
                     ctrl.$setValidity('cpf', BrV.cpf.validate(formatedValue));
 
@@ -97,20 +97,21 @@
                         ctrl.$render();
                     }
 
-                    return formatedValue.replace(/[^\d]+/g,'');
+                    return formatedValue.replace(/[^\d]+/g, '');
                 });
             }
         };
     }
 
     function uiBrCnpjMask() {
-        function applyCnpjMask (value) {
-            if(!value) {
+        function applyCnpjMask(value) {
+            if (!value) {
                 return value;
             }
             var formatedValue = cnpjPattern.apply(value);
             return formatedValue.trim().replace(/[^0-9]$/, '');
         }
+
         return {
             restrict: 'A',
             require: '?ngModel',
@@ -119,16 +120,16 @@
                     return;
                 }
 
-                ctrl.$formatters.push(function(value) {
+                ctrl.$formatters.push(function (value) {
                     return applyCnpjMask(value);
                 });
 
-                ctrl.$parsers.push(function(value) {
-                    if(!value) {
+                ctrl.$parsers.push(function (value) {
+                    if (!value) {
                         return value;
                     }
 
-                    var actualNumber = value.replace(/[^\d]+/g,'');
+                    var actualNumber = value.replace(/[^\d]+/g, '');
                     var formatedValue = applyCnpjMask(actualNumber);
                     ctrl.$setValidity('cnpj', BrV.cnpj.validate(formatedValue));
 
@@ -137,15 +138,15 @@
                         ctrl.$render();
                     }
 
-                    return formatedValue.replace(/[^\d]+/g,'');
+                    return formatedValue.replace(/[^\d]+/g, '');
                 });
             }
         };
     }
 
     function uiBrCpfCnpjMask() {
-        function applyCpfCnpjMask (value) {
-            if(!value) {
+        function applyCpfCnpjMask(value) {
+            if (!value) {
                 return value;
             }
             var formatedValue;
@@ -156,6 +157,7 @@
             }
             return formatedValue.trim().replace(/[^0-9]$/, '');
         }
+
         return {
             restrict: 'A',
             require: '?ngModel',
@@ -164,15 +166,15 @@
                     return;
                 }
 
-                ctrl.$formatters.push(function(value) {
+                ctrl.$formatters.push(function (value) {
                     return applyCpfCnpjMask(value);
                 });
 
-                ctrl.$parsers.push(function(value) {
-                    if(!value) {
+                ctrl.$parsers.push(function (value) {
+                    if (!value) {
                         return value;
                     }
-                    var actualNumber = value.replace(/[^\d]+/g,'');
+                    var actualNumber = value.replace(/[^\d]+/g, '');
 
                     var formatedValue = applyCpfCnpjMask(actualNumber);
                     if (actualNumber.length > 11) {
@@ -188,7 +190,7 @@
                         ctrl.$render();
                     }
 
-                    return formatedValue.replace(/[^\d]+/g,'');
+                    return formatedValue.replace(/[^\d]+/g, '');
                 });
             }
         };
@@ -212,15 +214,15 @@
                     }
 
                     var decimals = parseInt(attrs.uiPercentageMask);
-                    if(isNaN(decimals)) {
+                    if (isNaN(decimals)) {
                         decimals = 2;
                     }
                     var numberDecimals = decimals + 2;
                     var viewMask = numberViewMask(decimals, decimalDelimiter, thousandsDelimiter),
                         modelMask = numberModelMask(numberDecimals);
 
-                    ctrl.$formatters.push(function(value) {
-                        if(!value) {
+                    ctrl.$formatters.push(function (value) {
+                        if (!value) {
                             return ' %';
                         }
 
@@ -228,21 +230,22 @@
                         return viewMask.apply(valueToFormat) + ' %';
                     });
 
-                    ctrl.$parsers.push(function(value) {
+                    ctrl.$parsers.push(function (value) {
                         function renderValue(formatedValue) {
                             if (ctrl.$viewValue !== formatedValue) {
                                 ctrl.$setViewValue(formatedValue);
                                 ctrl.$render();
                             }
                         }
-                        if(!value) {
+
+                        if (!value) {
                             renderValue(' %');
                             return value;
                         }
 
                         var valueToFormat = clearDelimitersAndLeadingZeros(value);
-                        if(value && value.indexOf('%') < 0 && valueToFormat.length >= 1) {
-                            valueToFormat = valueToFormat.substr(0,valueToFormat.length-1);
+                        if (value && value.indexOf('%') < 0 && valueToFormat.length >= 1) {
+                            valueToFormat = valueToFormat.substr(0, valueToFormat.length - 1);
                         }
                         var formatedValue = ' %';
                         var actualNumber;
@@ -255,22 +258,22 @@
                         return actualNumber;
                     });
 
-                    if(attrs.min){
-                        ctrl.$parsers.push(function(value) {
+                    if (attrs.min) {
+                        ctrl.$parsers.push(function (value) {
                             return minValidator(ctrl, value, scope.min);
                         });
 
-                        scope.$watch('min', function() {
+                        scope.$watch('min', function () {
                             minValidator(ctrl, ctrl.$modelValue, scope.min);
                         });
                     }
 
-                    if(attrs.max) {
-                        ctrl.$parsers.push(function(value) {
+                    if (attrs.max) {
+                        ctrl.$parsers.push(function (value) {
                             return maxValidator(ctrl, value, scope.max);
                         });
 
-                        scope.$watch('max', function() {
+                        scope.$watch('max', function () {
                             maxValidator(ctrl, ctrl.$modelValue, scope.max);
                         });
                     }
@@ -294,14 +297,14 @@
                     }
 
                     var decimals = parseInt(attrs.uiNumberMask);
-                    if(isNaN(decimals)) {
+                    if (isNaN(decimals)) {
                         decimals = 2;
                     }
                     var viewMask = numberViewMask(decimals, decimalDelimiter, thousandsDelimiter),
                         modelMask = numberModelMask(decimals);
 
-                    ctrl.$formatters.push(function(value) {
-                        if(!value) {
+                    ctrl.$formatters.push(function (value) {
+                        if (!value) {
                             return value;
                         }
 
@@ -309,8 +312,8 @@
                         return viewMask.apply(valueToFormat);
                     });
 
-                    ctrl.$parsers.push(function(value) {
-                        if(!value) {
+                    ctrl.$parsers.push(function (value) {
+                        if (!value) {
                             return value;
                         }
 
@@ -318,12 +321,12 @@
                         var formatedValue = viewMask.apply(valueToFormat);
                         var actualNumber = parseFloat(modelMask.apply(valueToFormat));
 
-                        if(angular.isDefined(attrs.uiNegativeNumber)){
+                        if (angular.isDefined(attrs.uiNegativeNumber)) {
                             var isNegative = (value[0] === '-'),
                                 needsToInvertSign = (value.slice(-1) === '-');
 
                             //only apply the minus sign if is negative or(exclusive) needs to be negative
-                            if(needsToInvertSign ^ isNegative) {
+                            if (needsToInvertSign ^ isNegative) {
                                 actualNumber *= -1;
                                 formatedValue = '-' + formatedValue;
                             }
@@ -337,22 +340,22 @@
                         return actualNumber;
                     });
 
-                    if(attrs.min){
-                        ctrl.$parsers.push(function(value) {
+                    if (attrs.min) {
+                        ctrl.$parsers.push(function (value) {
                             return minValidator(ctrl, value, scope.min);
                         });
 
-                        scope.$watch('min', function() {
+                        scope.$watch('min', function () {
                             minValidator(ctrl, ctrl.$modelValue, scope.min);
                         });
                     }
 
-                    if(attrs.max) {
-                        ctrl.$parsers.push(function(value) {
+                    if (attrs.max) {
+                        ctrl.$parsers.push(function (value) {
                             return maxValidator(ctrl, value, scope.max);
                         });
 
-                        scope.$watch('max', function() {
+                        scope.$watch('max', function () {
                             maxValidator(ctrl, ctrl.$modelValue, scope.max);
                         });
                     }
@@ -381,28 +384,28 @@
                     }
 
                     var decimals = parseInt(attrs.uiMoneyMask);
-                    if(isNaN(decimals)) {
+                    if (isNaN(decimals)) {
                         decimals = 2;
                     }
                     var decimalsPattern = decimals > 0 ? decimalDelimiter + new Array(decimals + 1).join('0') : '';
-                    var maskPattern = currencySym+' #'+thousandsDelimiter+'##0'+decimalsPattern;
+                    var maskPattern = currencySym + ' #' + thousandsDelimiter + '##0' + decimalsPattern;
                     var moneyMask = new StringMask(maskPattern, {reverse: true});
 
-                    ctrl.$formatters.push(function(value) {
-                        if(!value) {
-                            return value;
-                        }
-
-                        return moneyMask.apply(value.toFixed(decimals).replace(/[^\d]+/g,''));
-                    });
-
-                    ctrl.$parsers.push(function(value) {
+                    ctrl.$formatters.push(function (value) {
                         if (!value) {
                             return value;
                         }
 
-                        var actualNumber = value.replace(/[^\d]+/g,'');
-                        actualNumber = actualNumber.replace(/^[0]+([1-9])/,'$1');
+                        return moneyMask.apply(value.toFixed(decimals).replace(/[^\d]+/g, ''));
+                    });
+
+                    ctrl.$parsers.push(function (value) {
+                        if (!value) {
+                            return value;
+                        }
+
+                        var actualNumber = value.replace(/[^\d]+/g, '');
+                        actualNumber = actualNumber.replace(/^[0]+([1-9])/, '$1');
                         var formatedValue = moneyMask.apply(actualNumber);
 
                         if (value !== formatedValue) {
@@ -410,12 +413,12 @@
                             ctrl.$render();
                         }
 
-                        return parseInt(formatedValue.replace(/[^\d]+/g,''))/Math.pow(10,decimals);
+                        return parseInt(formatedValue.replace(/[^\d]+/g, '')) / Math.pow(10, decimals);
                     });
                 }
             };
         }])
-        .directive('uiBrPhoneNumber',function() {
+        .directive('uiBrPhoneNumber', function () {
             /**
              * FIXME: all numbers will have 9 digits after 2016.
              * see http://portal.embratel.com.br/embratel/9-digito/
@@ -423,23 +426,23 @@
             var phoneMask8D = new StringMask('(00) 0000-0000'),
                 phoneMask9D = new StringMask('(00) 00000-0000');
 
-            function clearValue (value) {
-                if(!value) {
+            function clearValue(value) {
+                if (!value) {
                     return value;
                 }
 
                 return value.replace(/[^0-9]/g, '');
             }
 
-            function applyPhoneMask (value) {
-                if(!value) {
+            function applyPhoneMask(value) {
+                if (!value) {
                     return value;
                 }
 
                 var formatedValue;
-                if(value.length < 11){
+                if (value.length < 11) {
                     formatedValue = phoneMask8D.apply(value);
-                }else{
+                } else {
                     formatedValue = phoneMask9D.apply(value);
                 }
 
@@ -449,16 +452,16 @@
             return {
                 restrict: 'A',
                 require: '?ngModel',
-                link: function(scope, element, attrs, ctrl) {
+                link: function (scope, element, attrs, ctrl) {
                     if (!ctrl) {
                         return;
                     }
 
-                    ctrl.$formatters.push(function(value) {
+                    ctrl.$formatters.push(function (value) {
                         return applyPhoneMask(value);
                     });
 
-                    ctrl.$parsers.push(function(value) {
+                    ctrl.$parsers.push(function (value) {
                         if (!value) {
                             return value;
                         }
@@ -476,19 +479,19 @@
                 }
             };
         })
-        .directive('uiBrCepMask',function() {
+        .directive('uiBrCepMask', function () {
             var cepMask = new StringMask('00000-000');
 
-            function clearValue (value) {
-                if(!value) {
+            function clearValue(value) {
+                if (!value) {
                     return value;
                 }
 
                 return value.replace(/[^0-9]/g, '');
             }
 
-            function applyCepMask (value, ctrl) {
-                if(!value) {
+            function applyCepMask(value, ctrl) {
+                if (!value) {
                     return value;
                 }
                 var processed = cepMask.process(value);
@@ -500,16 +503,16 @@
             return {
                 restrict: 'A',
                 require: '?ngModel',
-                link: function(scope, element, attrs, ctrl) {
+                link: function (scope, element, attrs, ctrl) {
                     if (!ctrl) {
                         return;
                     }
 
-                    ctrl.$formatters.push(function(value) {
+                    ctrl.$formatters.push(function (value) {
                         return applyCepMask(value, ctrl);
                     });
 
-                    ctrl.$parsers.push(function(value) {
+                    ctrl.$parsers.push(function (value) {
                         if (!value) {
                             return value;
                         }
@@ -527,7 +530,7 @@
                 }
             };
         })
-        .directive('uiBrIeMask',function() {
+        .directive('uiBrIeMask', function () {
 
             var ieMasks = {
                 'AC': [{mask: new StringMask('00.000.000/000-00')}],
@@ -563,15 +566,15 @@
                 'TO': [{mask: new StringMask('00000000000')}]
             };
 
-            function clearValue (value) {
-                if(!value) {
+            function clearValue(value) {
+                if (!value) {
                     return value;
                 }
                 return value.replace(/[^0-9]/g, '');
             }
 
             function getMask(uf, value) {
-                if(!uf || !ieMasks[uf]) {
+                if (!uf || !ieMasks[uf]) {
                     return undefined;
                 }
                 var _uf = uf.toUpperCase();
@@ -580,22 +583,22 @@
                 }
                 var masks = ieMasks[uf];
                 var i = 0;
-                while(masks[i].chars && masks[i].chars < clearValue(value).length && i < masks.length - 1) {
+                while (masks[i].chars && masks[i].chars < clearValue(value).length && i < masks.length - 1) {
                     i++;
                 }
                 return masks[i].mask;
             }
 
-            function applyIEMask (value, uf, ctrl) {
+            function applyIEMask(value, uf, ctrl) {
                 var mask = getMask(uf, value);
-                if(!value || !mask) {
+                if (!value || !mask) {
                     return value;
                 }
                 var processed = mask.process(clearValue(value));
                 ctrl.$setValidity('ie', BrV.ie(uf).validate(value));
                 var formatedValue = processed.result;
                 if (uf && uf.toUpperCase() === 'SP' && /^p/i.test(value)) {
-                    return 'P'+(formatedValue ? formatedValue.trim().replace(/[^0-9]$/, '') : '');
+                    return 'P' + (formatedValue ? formatedValue.trim().replace(/[^0-9]$/, '') : '');
                 }
                 return formatedValue.trim().replace(/[^0-9]$/, '');
             }
@@ -606,20 +609,20 @@
                 scope: {
                     state: '=uiBrIeMask'
                 },
-                link: function(scope, element, attrs, ctrl) {
+                link: function (scope, element, attrs, ctrl) {
                     if (!ctrl) {
                         return;
                     }
 
-                    scope.$watch('state', function(state) {
+                    scope.$watch('state', function (state) {
                         applyIEMask(ctrl.$viewValue, state, ctrl);
                     });
 
-                    ctrl.$formatters.push(function(value) {
+                    ctrl.$formatters.push(function (value) {
                         return applyIEMask(value, scope.state, ctrl);
                     });
 
-                    ctrl.$parsers.push(function(value) {
+                    ctrl.$parsers.push(function (value) {
                         if (!value) {
                             return value;
                         }
@@ -632,7 +635,7 @@
                         }
 
                         if (scope.state && scope.state.toUpperCase() === 'SP' && /^p/i.test(value)) {
-                            return 'P'+clearValue(formatedValue);
+                            return 'P' + clearValue(formatedValue);
                         }
                         return clearValue(formatedValue);
                     });

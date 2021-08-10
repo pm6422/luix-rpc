@@ -2,7 +2,7 @@ angular.module('ui.knob', [])
     .directive('knob', function () {
         return {
             restrict: 'EACM',
-            template: function(elem, attrs){
+            template: function (elem, attrs) {
 
                 return '<input value="{{ knob }}">';
 
@@ -13,18 +13,18 @@ angular.module('ui.knob', [])
 
                 scope.knob = scope.$eval(attrs.knobData);
 
-                var renderKnob = function(){
+                var renderKnob = function () {
 
                     scope.knob = scope.$eval(attrs.knobData);
 
                     var opts = {};
-                    if(!angular.isUndefined(attrs.knobOptions)){
+                    if (!angular.isUndefined(attrs.knobOptions)) {
                         opts = scope.$eval(attrs.knobOptions);
                     }
 
-                    if(!angular.isUndefined(attrs.knobMax)){
+                    if (!angular.isUndefined(attrs.knobMax)) {
                         var max = scope.$eval(attrs.knobMax);
-                        if(!angular.isUndefined(max)){
+                        if (!angular.isUndefined(max)) {
 
                             opts.max = max;
 
@@ -53,7 +53,7 @@ angular.module('ui.knob', [])
                     renderKnob();
                 });
 
-                scope.$watch(attrs.knobMax, function() {
+                scope.$watch(attrs.knobMax, function () {
                     // There is some bug with updateMax- has to be fix
                     // updateMax();
                 });

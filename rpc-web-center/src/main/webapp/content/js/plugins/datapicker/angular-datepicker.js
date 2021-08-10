@@ -1,4 +1,8 @@
-(function (global, factory) {'use strict';var fnc;fnc = (typeof exports === 'object' && typeof module !== 'undefined') ? module.exports = factory(require('angular'), require('moment')) :(typeof define === 'function' && define.amd) ? define(['angular', 'moment'], factory) :factory(global.angular, global.moment);}(this, function (angular, moment) {
+(function (global, factory) {
+    'use strict';
+    var fnc;
+    fnc = (typeof exports === 'object' && typeof module !== 'undefined') ? module.exports = factory(require('angular'), require('moment')) : (typeof define === 'function' && define.amd) ? define(['angular', 'moment'], factory) : factory(global.angular, global.moment);
+}(this, function (angular, moment) {
 //(function (global, factory) {
 //  'use strict';
 //  var fnc;
@@ -81,7 +85,7 @@
                     now = scope.now = createMoment(),
                     selected = scope.date = createMoment(scope.model || now),
                     autoclose = attrs.autoClose === 'true',
-                // Either gets the 1st day from the attributes, or asks moment.js to give it to us as it is localized.
+                    // Either gets the 1st day from the attributes, or asks moment.js to give it to us as it is localized.
                     firstDay = attrs.firstDay && attrs.firstDay >= 0 && attrs.firstDay <= 6 ? parseInt(attrs.firstDay, 10) : moment().weekday(0).day(),
                     setDate,
                     prepareViewData,
@@ -931,7 +935,12 @@
                         var pos = element[0].getBoundingClientRect();
                         // Support IE8
                         var height = pos.height || element[0].offsetHeight;
-                        picker.css({top: (pos.top + height) + 'px', left: pos.left + 'px', display: 'block', position: position});
+                        picker.css({
+                            top: (pos.top + height) + 'px',
+                            left: pos.left + 'px',
+                            display: 'block',
+                            position: position
+                        });
                         body.append(picker);
                     } else {
                         // relative
@@ -955,7 +964,7 @@
     }]);
 //}));
 
-    angular.module('datePicker').run(['$templateCache', function($templateCache) {
+    angular.module('datePicker').run(['$templateCache', function ($templateCache) {
         $templateCache.put('templates/datepicker.html',
             "<div ng-switch=\"view\">\r" +
             "\n" +

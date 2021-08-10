@@ -1,8 +1,9 @@
 /// <reference path="../plugins/ng-grid-reorderable.js" />
 /// <reference path="../ng-grid-1.0.0.debug.js" />
 var plugins = {};
+
 function userController($scope) {
-    var self = this;	
+    var self = this;
     $('body').layout({
         applyDemoStyles: true,
         center__onresize: function (x, ui) {
@@ -10,7 +11,7 @@ function userController($scope) {
             plugins.ngGridLayoutPlugin.updateGridLayout();
         }
     });
-	plugins.ngGridLayoutPlugin = new ngGridLayoutPlugin();
+    plugins.ngGridLayoutPlugin = new ngGridLayoutPlugin();
     $scope.mySelections = [];
     $scope.mySelections2 = [];
     $scope.myData = [];
@@ -51,21 +52,26 @@ function userController($scope) {
     }, true);
     self.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage);
     $scope.gridOptions = {
-		data: 'myData',
-		jqueryUITheme: false,
-		jqueryUIDraggable: false,
+        data: 'myData',
+        jqueryUITheme: false,
+        jqueryUIDraggable: false,
         selectedItems: $scope.mySelections,
         showSelectionCheckbox: true,
         multiSelect: false,
         showGroupPanel: false,
         showColumnMenu: true,
-		plugins: [plugins.ngGridLayoutPlugin],
+        plugins: [plugins.ngGridLayoutPlugin],
         enablePaging: true,
         filterOptions: $scope.filterOptions,
         pagingOptions: $scope.pagingOptions,
-        columnDefs: [{ field: 'name', displayName: 'Very Long Name Title', sortable: false},
-                     { field: 'allowance', width: 120, aggLabelFilter: 'currency', cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>' },
-                     { field: 'birthday', width: '120px', cellFilter: 'date', resizable: false },
-                     { field: 'paid', width: '*',  cellFilter: 'checkmark' }]
-    };    
+        columnDefs: [{field: 'name', displayName: 'Very Long Name Title', sortable: false},
+            {
+                field: 'allowance',
+                width: 120,
+                aggLabelFilter: 'currency',
+                cellTemplate: '<div ng-class="{red: row.entity[col.field] > 30}"><div class="ngCellText">{{row.entity[col.field] | currency}}</div></div>'
+            },
+            {field: 'birthday', width: '120px', cellFilter: 'date', resizable: false},
+            {field: 'paid', width: '*', cellFilter: 'checkmark'}]
+    };
 };

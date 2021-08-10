@@ -24,13 +24,13 @@ describe('Dom Utility Service', function () {
                     domsizesCalled = true;
                 }
             };
-            $scope.adjustScrollTop = function(top) {
+            $scope.adjustScrollTop = function (top) {
                 expect(top).toEqual(grid.$canvas.scrollTop());
             };
             var root = angular.element('<div class="ng-scope ngGrid"></div>');
             root.append(angular.element($cache.get('gridTemplate.html')));
             $dUtils.AssignGridContainers($scope, root, grid);
-            
+
             expect(grid.$root.is(".ngGrid")).toEqual(true);
             expect(grid.$root.length).toEqual(1);
             expect(grid.$topPanel.is(".ngTopPanel")).toEqual(true);
@@ -59,11 +59,11 @@ describe('Dom Utility Service', function () {
             var scrollTopCalled;
 
             $scope.columns = [
-                { visible: true, pinned: false, width: 100, },
-                { visible: true, pinned: false, width: 100, },
-                { visible: true, pinned: false, width: 100, },
-                { visible: true, pinned: false, width: 100, }];
-            $scope.totalRowWidth = function() {
+                {visible: true, pinned: false, width: 100,},
+                {visible: true, pinned: false, width: 100,},
+                {visible: true, pinned: false, width: 100,},
+                {visible: true, pinned: false, width: 100,}];
+            $scope.totalRowWidth = function () {
                 return 400;
             };
             $scope.adjustScrollLeft = function () {
@@ -98,13 +98,17 @@ describe('Dom Utility Service', function () {
     describe('setColLeft', function () {
         it('should set the left positioning of the specified column to the given integer', function () {
             $scope.columns = [
-                { visible: true, pinned: false, width: 100, index: 0 },
-                { visible: true, pinned: false, width: 100, index: 1 },
-                { visible: true, pinned: false, width: 100, index: 2 },
-                { visible: true, pinned: false, width: 100, index: 3 }];
-            $scope.totalRowWidth = function () {return 400;};
-            $scope.adjustScrollLeft = function () {};
-            $scope.adjustScrollTop = function () {};
+                {visible: true, pinned: false, width: 100, index: 0},
+                {visible: true, pinned: false, width: 100, index: 1},
+                {visible: true, pinned: false, width: 100, index: 2},
+                {visible: true, pinned: false, width: 100, index: 3}];
+            $scope.totalRowWidth = function () {
+                return 400;
+            };
+            $scope.adjustScrollLeft = function () {
+            };
+            $scope.adjustScrollTop = function () {
+            };
             var root = angular.element('<div class="ng-scope ngGrid"></div>');
             root.append(angular.element($cache.get('gridTemplate.html')));
             var grid = {
@@ -113,7 +117,8 @@ describe('Dom Utility Service', function () {
                 },
                 gridId: 1,
                 elementDims: {},
-                refreshDomSizes: function () {}
+                refreshDomSizes: function () {
+                }
             };
             $dUtils.AssignGridContainers($scope, root, grid);
             $dUtils.BuildStyles($scope, grid, true);
@@ -141,25 +146,25 @@ describe('Utility Service', function () {
     // evalProperty
     describe('evalProperty should find the right property given a heirarchy.', function () {
         // foundme
-        it('returns foundme', function() {
-            var obj = { foo: { bar: { hello: { world: "foundme" } } } };
+        it('returns foundme', function () {
+            var obj = {foo: {bar: {hello: {world: "foundme"}}}};
             expect($utils.evalProperty(obj, "foo.bar.hello.world")).toEqual("foundme");
         });
         // undefined
         it('returns undefined', function () {
-            var obj = { foo: { bar: { hello: { world: "foundme" } } } };
+            var obj = {foo: {bar: {hello: {world: "foundme"}}}};
             expect($utils.evalProperty(obj, "foo.bar.omg")).toEqual(undefined);
         });
     });
     // visualLength
     describe('visualLength should return the correct visual length of text.', function () {
-        it('returns integer', function() {
+        it('returns integer', function () {
             var node = angular.element('<div style="width: 30px;">The quick brown fox jumped over the lazy dog.</div>');
             expect($utils.visualLength(node)).toEqual(286);
         });
     });
     // forIn
-    describe('forIn should execute the function for each key in an object.', function() {
+    describe('forIn should execute the function for each key in an object.', function () {
         it('executes some code', function () {
             var obj = {
                 foo: "foo",
@@ -180,8 +185,8 @@ describe('Utility Service', function () {
     // endsWith
     describe('endsWith should return true or false based on the last character in a string', function () {
         var str = "Peter Piper picked a peck of pickeled peppers";
-        it('returns true', function() {
-            
+        it('returns true', function () {
+
             expect($utils.endsWith(str, "peppers")).toEqual(true);
         });
         it('returns false', function () {
@@ -191,7 +196,7 @@ describe('Utility Service', function () {
     // isNullOrUndefined
     describe('isNullOrUndefined return true or false based on wherer or not a given reference is explucitly null or undefined', function () {
         it('returns true', function () {
-            var hello; 
+            var hello;
             expect($utils.isNullOrUndefined(hello)).toEqual(true);
             var hello = null;
             expect($utils.isNullOrUndefined(hello)).toEqual(true);

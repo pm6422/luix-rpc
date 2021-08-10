@@ -1,11 +1,11 @@
-﻿ngGridServices.factory('$sortService', ['$parse', function($parse) {
+﻿ngGridServices.factory('$sortService', ['$parse', function ($parse) {
     var sortService = {};
     sortService.colSortFnCache = {}; // cache of sorting functions. Once we create them, we don't want to keep re-doing it
     // this takes an piece of data from the cell and tries to determine its type and what sorting
     // function to use for it
     // @item - the cell data
-    sortService.guessSortFn = function(item) {
-        var itemType = typeof(item);
+    sortService.guessSortFn = function (item) {
+        var itemType = typeof (item);
         //check for numbers and booleans
         switch (itemType) {
             case "number":
@@ -26,7 +26,7 @@
         }
     };
     //#region Sorting Functions
-    sortService.basicSort = function(a, b) {
+    sortService.basicSort = function (a, b) {
         if (a == b) {
             return 0;
         }
@@ -35,10 +35,10 @@
         }
         return 1;
     };
-    sortService.sortNumber = function(a, b) {
+    sortService.sortNumber = function (a, b) {
         return a - b;
     };
-    sortService.sortNumberStr = function(a, b) {
+    sortService.sortNumberStr = function (a, b) {
         var numA, numB, badA = false, badB = false;
         numA = parseFloat(a.replace(/[^0-9.-]/g, ''));
         if (isNaN(numA)) {
@@ -60,17 +60,17 @@
         }
         return numA - numB;
     };
-    sortService.sortAlpha = function(a, b) {
+    sortService.sortAlpha = function (a, b) {
         var strA = a.toLowerCase(),
             strB = b.toLowerCase();
         return strA == strB ? 0 : (strA < strB ? -1 : 1);
     };
-    sortService.sortDate = function(a, b) {
+    sortService.sortDate = function (a, b) {
         var timeA = a.getTime(),
             timeB = b.getTime();
         return timeA == timeB ? 0 : (timeA < timeB ? -1 : 1);
     };
-    sortService.sortBool = function(a, b) {
+    sortService.sortBool = function (a, b) {
         if (a && b) {
             return 0;
         }
@@ -82,7 +82,7 @@
     };
     //#endregion
     // the core sorting logic trigger
-    sortService.sortData = function(sortInfo, data /*datasource*/) {
+    sortService.sortData = function (sortInfo, data /*datasource*/) {
         // first make sure we are even supposed to do work
         if (!data || !sortInfo) {
             return;
@@ -102,8 +102,8 @@
                 // grab the metadata for the rest of the logic
                 col = sortInfo.columns[indx];
                 direction = sortInfo.directions[indx],
-                sortFn = sortService.getSortFn(col, d);
-                
+                    sortFn = sortService.getSortFn(col, d);
+
                 var propA = $parse(order[indx])(itemA);
                 var propB = $parse(order[indx])(itemB);
                 // we want to allow zero values to be evaluated in the sort function
@@ -129,7 +129,7 @@
             }
         });
     };
-    sortService.Sort = function(sortInfo, data) {
+    sortService.Sort = function (sortInfo, data) {
         if (sortService.isSorting) {
             return;
         }
@@ -137,7 +137,7 @@
         sortService.sortData(sortInfo, data);
         sortService.isSorting = false;
     };
-    sortService.getSortFn = function(col, data) {
+    sortService.getSortFn = function (col, data) {
         var sortFn = undefined, item;
         //see if we already figured out what to use to sort the column
         if (sortService.colSortFnCache[col.field]) {

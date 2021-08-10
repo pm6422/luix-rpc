@@ -22,7 +22,9 @@
     "ie9"
   ],
   "author": "saintmac <martin.saintmac@gmail.com> (Martin Saint-Macary, http://vyte.in)",
-  "contributors": ["Alfred Bratterud <alfred.bratterud@hioa.no>"],
+  "contributors": [
+    "Alfred Bratterud <alfred.bratterud@hioa.no>"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/saintmac/angular-cache-buster/issues"
