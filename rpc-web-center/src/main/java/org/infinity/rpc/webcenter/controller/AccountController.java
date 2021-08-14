@@ -81,7 +81,7 @@ public class AccountController {
     private              HttpHeaderCreator          httpHeaderCreator;
 
     @ApiOperation(value = "retrieve access token", notes = "successful login returns the current access token")
-    @GetMapping("/api/account/access-token")
+    @GetMapping("/api/accounts/access-token")
     public ResponseEntity<String> getAccessToken(HttpServletRequest request) {
         String token = request.getHeader("authorization");
         if (StringUtils.isEmpty(token) || !token.toLowerCase().startsWith(OAuth2AccessToken.BEARER_TYPE.toLowerCase())) {
@@ -91,7 +91,7 @@ public class AccountController {
     }
 
     @ApiOperation(value = "retrieve the currently logged in user name", notes = "successful login returns the current user name")
-    @GetMapping("/api/account/authenticate")
+    @GetMapping("/api/accounts/authenticate")
     public ResponseEntity<String> isAuthenticated(HttpServletRequest request) {
         log.debug("REST request to check if the current user is authenticated");
         return ResponseEntity.ok(request.getRemoteUser());
@@ -106,14 +106,14 @@ public class AccountController {
      * @return principal
      */
     @ApiOperation(value = "retrieve the currently logged in user name")
-    @GetMapping("/api/account/principal")
+    @GetMapping("/api/accounts/principal")
     public ResponseEntity<Principal> getPrincipal(Principal user) {
         log.debug("REST request to get current user if the user is authenticated");
         return ResponseEntity.ok(user);
     }
 
     @ApiOperation("retrieve current user")
-    @GetMapping("/api/account/user")
+    @GetMapping("/api/accounts/user")
     @Secured({Authority.USER})
     public ResponseEntity<User> getCurrentUser() {
         User user = userService.findOneByUserName(SecurityUtils.getCurrentUserName());
@@ -127,7 +127,7 @@ public class AccountController {
     }
 
     @ApiOperation("retrieve the bound user based on the access token")
-    @GetMapping("/open-api/account/user")
+    @GetMapping("/open-api/accounts/user")
     public ResponseEntity<Object> getTokenUser(HttpServletRequest request) {
         String token = request.getHeader("authorization");
         if (token != null && token.toLowerCase().startsWith(OAuth2AccessToken.BEARER_TYPE.toLowerCase())) {
@@ -149,7 +149,7 @@ public class AccountController {
     }
 
     @ApiOperation("register a new user and send an activation email")
-    @PostMapping("/open-api/account/register")
+    @PostMapping("/open-api/accounts/register")
     public ResponseEntity<Void> registerAccount(
             @ApiParam(value = "user", required = true) @Valid @RequestBody ManagedUserDTO dto,
             HttpServletRequest request) {
@@ -161,13 +161,13 @@ public class AccountController {
     }
 
     @ApiOperation("activate the account according to the activation code")
-    @GetMapping("/open-api/account/activate/{key:[0-9]+}")
+    @GetMapping("/open-api/accounts/activate/{key:[0-9]+}")
     public void activateAccount(@ApiParam(value = "activation code", required = true) @PathVariable String key) {
         userService.activateRegistration(key).orElseThrow(() -> new NoDataFoundException(key));
     }
 
     @ApiOperation("retrieve a list of permission values")
-    @GetMapping("/api/account/authority-names")
+    @GetMapping("/api/accounts/authority-names")
     @Secured({Authority.USER})
     public ResponseEntity<List<String>> getAuthorityNames(
             @ApiParam(allowableValues = "false,true,null") @RequestParam(value = "enabled", required = false) Boolean enabled) {
@@ -176,7 +176,7 @@ public class AccountController {
     }
 
     @ApiOperation("update current user")
-    @PutMapping("/api/account/user")
+    @PutMapping("/api/accounts/user")
     @Secured({Authority.USER})
     public ResponseEntity<Void> updateCurrentAccount(@ApiParam(value = "new user", required = true) @Valid @RequestBody User domain) {
         userService.update(domain);
@@ -184,7 +184,7 @@ public class AccountController {
     }
 
     @ApiOperation("modify the password of the current user")
-    @PutMapping("/api/account/password")
+    @PutMapping("/api/accounts/password")
     @Secured({Authority.USER})
     public ResponseEntity<Void> changePassword(@ApiParam(value = "new password", required = true) @RequestBody @Valid UserNameAndPasswordDTO dto) {
         dto.setUserName(SecurityUtils.getCurrentUserName());
@@ -195,7 +195,7 @@ public class AccountController {
     }
 
     @ApiOperation("send reset password email")
-    @PostMapping("/open-api/account/reset-password/init")
+    @PostMapping("/open-api/accounts/reset-password/init")
     public ResponseEntity<Void> requestPasswordReset(@ApiParam(value = "email", required = true) @RequestBody String email,
                                                      HttpServletRequest request) {
         User user = userService.requestPasswordReset(email, RandomUtils.generateResetKey());
@@ -204,14 +204,14 @@ public class AccountController {
     }
 
     @ApiOperation("reset password")
-    @PostMapping("/open-api/account/reset-password/finish")
+    @PostMapping("/open-api/accounts/reset-password/finish")
     public ResponseEntity<Void> finishPasswordReset(@ApiParam(value = "reset code and new password", required = true) @Valid @RequestBody ResetKeyAndPasswordDTO dto) {
         userService.completePasswordReset(dto.getNewPassword(), dto.getKey());
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("NM2003")).build();
     }
 
     @ApiOperation("upload current user profile picture")
-    @PostMapping("/api/account/profile-photo/upload")
+    @PostMapping("/api/accounts/profile-photo/upload")
     @Secured({Authority.USER})
     public void uploadProfilePhoto(@ApiParam(value = "file Description", required = true) @RequestPart String description,
                                    @ApiParam(value = "user profile picture", required = true) @RequestPart MultipartFile file) throws IOException {
@@ -221,7 +221,7 @@ public class AccountController {
     }
 
     @ApiOperation("download user profile picture")
-    @GetMapping("/api/account/profile-photo/download")
+    @GetMapping("/api/accounts/profile-photo/download")
     @Secured({Authority.USER})
     public ResponseEntity<org.springframework.core.io.Resource> downloadProfilePhoto() {
         SecurityUser currentUser = SecurityUtils.getCurrentUser();
@@ -243,7 +243,7 @@ public class AccountController {
     }
 
     @ApiOperation("retrieve the current user avatar")
-    @GetMapping("/api/account/profile-photo")
+    @GetMapping("/api/accounts/profile-photo")
     @Secured({Authority.USER})
     public ModelAndView getProfilePhoto() {
         // @RestController下使用return forwardUrl不好使
