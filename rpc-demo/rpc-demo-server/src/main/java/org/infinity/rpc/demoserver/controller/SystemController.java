@@ -26,7 +26,7 @@ public class SystemController {
     private ApplicationContext    applicationContext;
 
     @ApiOperation("get profile")
-    @GetMapping("/open-api/system/profile-info")
+    @GetMapping("/open-api/systems/profile-info")
     public ResponseEntity<ProfileInfoDTO> getProfileInfo() {
         ProfileInfoDTO profileInfoDTO = new ProfileInfoDTO(env.getActiveProfiles(), applicationProperties.getSwagger().isEnabled(), getRibbonEnv());
         return ResponseEntity.ok(profileInfoDTO);
@@ -50,7 +50,7 @@ public class SystemController {
     }
 
     @ApiOperation("get bean")
-    @GetMapping("/api/system/bean")
+    @GetMapping("/api/systems/bean")
     public ResponseEntity<Object> getBean(@RequestParam(value = "name") String name) {
         return ResponseEntity.ok(applicationContext.getBean(name));
     }
