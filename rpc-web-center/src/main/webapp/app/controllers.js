@@ -110,7 +110,7 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
 
             var authToken = AuthServerService.getToken();
             if (authToken) {
-                main.account.profilePhotoUrl = '/api/account/profile-photo?access_token=' + authToken.access_token;
+                main.account.profilePhotoUrl = '/api/accounts/profile-photo?access_token=' + authToken.access_token;
             }
 
             main.isAuthenticated = PrincipalService.isAuthenticated;
@@ -307,7 +307,7 @@ function ProfileController($state, PrincipalService, AccountService, AuthServerS
 
     var authToken = AuthServerService.getToken();
     if (authToken) {
-        vm.profilePhotoUrl = '/api/account/profile-photo?access_token=' + authToken.access_token;
+        vm.profilePhotoUrl = '/api/accounts/profile-photo?access_token=' + authToken.access_token;
     }
 
     /**
@@ -349,7 +349,7 @@ function ProfileController($state, PrincipalService, AccountService, AuthServerS
             vm.uploading = true;
             vm.uploadProgress = 30;
             Upload.upload({
-                url: '/api/account/profile-photo/upload',
+                url: '/api/accounts/profile-photo/upload',
                 // the 'file' must match the parameter of backend
                 data: {file: file, description: "user profile"},
                 disableProgress: false

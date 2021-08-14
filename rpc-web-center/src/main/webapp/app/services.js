@@ -472,7 +472,7 @@ function ProfileService($q, $http, $localStorage) {
  * PasswordService
  */
 function PasswordService($resource) {
-    return $resource('api/account/password', {}, {
+    return $resource('api/accounts/password', {}, {
         'update': {method: 'PUT'}
     });
 }
@@ -480,7 +480,7 @@ function PasswordService($resource) {
  * PasswordResetInitService
  */
 function PasswordResetInitService($resource) {
-    return $resource('open-api/account/reset-password/init', {}, {
+    return $resource('open-api/accounts/reset-password/init', {}, {
         'create': {method: 'POST'}
     });
 }
@@ -488,7 +488,7 @@ function PasswordResetInitService($resource) {
  * PasswordResetFinishService
  */
 function PasswordResetFinishService($resource) {
-    return $resource('open-api/account/reset-password/finish', {}, {
+    return $resource('open-api/accounts/reset-password/finish', {}, {
         'create': {method: 'POST'}
     });
 }
@@ -845,7 +845,7 @@ function LoggerService($resource) {
  * AccountService
  */
 function AccountService($resource) {
-    var service = $resource('api/account/:extension', {}, {
+    var service = $resource('api/accounts/:extension', {}, {
         'get': {
             method: 'GET', params: {extension: 'user'},
             interceptor: {
@@ -867,7 +867,7 @@ function AccountService($resource) {
  * RegisterService
  */
 function RegisterService($resource) {
-    return $resource('open-api/account/register', {}, {
+    return $resource('open-api/accounts/register', {}, {
         'create': {method: 'POST'}
     });
 }
@@ -875,7 +875,7 @@ function RegisterService($resource) {
  * ActivateService
  */
 function ActivateService($resource) {
-    return $resource('open-api/account/activate/:key', {}, {
+    return $resource('open-api/accounts/activate/:key', {}, {
         'get': {method: 'GET', params: {}, isArray: false}
     });
 }
@@ -943,7 +943,7 @@ function PrincipalService($q, $http, AccountService, TrackerService) {
 
         // retrieve the identity data from the server, update the identity object, and then resolve.
 //      AccountService.get({}, getAccountThen, getAccountCatch);
-        $http.get('open-api/account/user').then(function (response) {
+        $http.get('open-api/accounts/user').then(function (response) {
             if (response.data.userName) {
                 getAccountThen(response);
             } else {
@@ -1025,7 +1025,7 @@ function AuthServerService($http, $localStorage) {
     }
 
     function logout() {
-        $http.post('api/account/logout').then(function () {
+        $http.post('api/accounts/logout').then(function () {
             delete $localStorage.authenticationToken;
         });
     }
