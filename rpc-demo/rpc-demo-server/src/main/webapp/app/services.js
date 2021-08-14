@@ -456,7 +456,7 @@ function MetricsService($rootScope, $http) {
     };
 
     function getMetrics() {
-        return $http.get('api/metric/metrics').then(function (response) {
+        return $http.get('api/metrics').then(function (response) {
             return response.data;
         });
     }
