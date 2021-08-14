@@ -36,7 +36,7 @@ public class RpcUniversalInvocationController {
     private RpcRegistryService rpcRegistryService;
 
     @ApiOperation("direct address invocation")
-    @PostMapping("/api/rpc-invocation/invoke")
+    @PostMapping("/api/rpc-invocations/invoke")
     public String invoke(@ApiParam(value = "methodInvocation", required = true)
                          @Valid @RequestBody MethodInvocation methodInvocation) throws JsonProcessingException {
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(methodInvocation.getRegistryIdentity(),
@@ -48,7 +48,7 @@ public class RpcUniversalInvocationController {
     }
 
     @ApiOperation("discover address invocation by file")
-    @PostMapping("/api/rpc-invocation/invoke-by-file")
+    @PostMapping("/api/rpc-invocations/invoke-by-file")
     public String invokeByFile(@ApiParam(value = "file", required = true) @RequestPart MultipartFile file) throws IOException {
         String input = StreamUtils.copyToString(file.getInputStream(), Charset.defaultCharset());
         MethodInvocation methodInvocation = new ObjectMapper().readValue(input, MethodInvocation.class);

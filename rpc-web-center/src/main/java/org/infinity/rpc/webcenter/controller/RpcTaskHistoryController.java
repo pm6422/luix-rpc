@@ -34,7 +34,7 @@ public class RpcTaskHistoryController {
     private RpcTaskHistoryRepository rpcTaskHistoryRepository;
 
     @ApiOperation("find task history list")
-    @GetMapping("/api/rpc-task-history/histories")
+    @GetMapping("/api/rpc-task-histories")
     public ResponseEntity<List<RpcTaskHistory>> find(Pageable pageable,
                                                      @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
                                                      @ApiParam(value = "Task name") @RequestParam(value = "name", required = false) String name,
@@ -56,7 +56,7 @@ public class RpcTaskHistoryController {
     }
 
     @ApiOperation("find task history by id")
-    @GetMapping("/api/rpc-task-history/{id}")
+    @GetMapping("/api/rpc-task-histories/{id}")
     public ResponseEntity<RpcTaskHistory> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
         RpcTaskHistory history = rpcTaskHistoryRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         return ResponseEntity.ok(history);

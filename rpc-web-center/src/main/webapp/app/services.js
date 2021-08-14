@@ -1413,7 +1413,7 @@ function RpcProviderService($resource) {
  * RpcConsumerService
  */
 function RpcConsumerService($resource) {
-    var service = $resource('api/rpc-consumers', {}, {
+    var service = $resource('api/rpc-consumers/:extension', {}, {
         'query': {method: 'GET', isArray: true},
         'get': {
             method: 'GET',
@@ -1430,8 +1430,8 @@ function RpcConsumerService($resource) {
  * RpcTaskService
  */
 function RpcTaskService($resource) {
-    var service = $resource('api/rpc-task/:extension', {}, {
-        'query': {method: 'GET', isArray: true, params: {extension: 'tasks'}},
+    var service = $resource('api/rpc-tasks/:extension', {}, {
+        'query': {method: 'GET', isArray: true},
         'get': {
             method: 'GET',
             transformResponse: function (data) {
@@ -1449,8 +1449,8 @@ function RpcTaskService($resource) {
  * RpcTaskHistoryService
  */
 function RpcTaskHistoryService($resource) {
-    var service = $resource('api/rpc-task-history/:extension', {}, {
-        'query': {method: 'GET', isArray: true, params: {extension: 'histories'}},
+    var service = $resource('api/rpc-task-histories/:extension', {}, {
+        'query': {method: 'GET', isArray: true},
         'get': {
             method: 'GET',
             transformResponse: function (data) {
