@@ -19,7 +19,7 @@ public class TestController {
     private InfinityProperties infinityProperties;
 
     @ApiOperation("register provider")
-    @GetMapping("/api/test/register-provider")
+    @GetMapping("/api/tests/register-provider")
     public void registerProvider() {
         Url providerUrl = Url.of(
                 infinityProperties.getAvailableProtocol().getName(),

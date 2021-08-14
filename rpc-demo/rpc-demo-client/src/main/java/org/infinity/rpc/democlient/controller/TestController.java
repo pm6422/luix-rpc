@@ -52,7 +52,7 @@ public class TestController {
     }
 
     @ApiOperation("direct connect")
-    @GetMapping("/api/test/direct-url")
+    @GetMapping("/api/tests/direct-url")
     public List<App> directUrl() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<App> all = appService.findAll(pageable);
@@ -60,7 +60,7 @@ public class TestController {
     }
 
     @ApiOperation("create app by forest http client")
-    @PostMapping("/api/test/app")
+    @PostMapping("/api/tests/app")
     public void createApp() {
         App app = new App(String.valueOf(IdGenerator.generateShortId()), true);
         appRestService.create(app);
