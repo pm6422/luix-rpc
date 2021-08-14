@@ -37,7 +37,7 @@ public class RpcServerController {
     private RpcConsumerService  rpcConsumerService;
 
     @ApiOperation("find server by ID in real time")
-    @GetMapping("/api/rpc-server/{id}")
+    @GetMapping("/api/rpc-servers/{id}")
     public ResponseEntity<RpcServer> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
         RpcServer domain = rpcServerRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         RpcServer rpcServer = rpcServerService.loadServer(domain.getRegistryIdentity(), domain.getAddress());
@@ -47,7 +47,7 @@ public class RpcServerController {
     }
 
     @ApiOperation("find server list")
-    @GetMapping("/api/rpc-server/servers")
+    @GetMapping("/api/rpc-servers")
     public ResponseEntity<List<RpcServer>> findRpcServers(
             Pageable pageable,
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)

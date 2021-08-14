@@ -122,7 +122,7 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
     }
 
     function loadRegistries() {
-        $http.get('open-api/rpc-registry/registries').then(function (response) {
+        $http.get('open-api/rpc-registries').then(function (response) {
             main.registries = response.data;
             if(main.registries) {
                 $rootScope.selectedRegistryIdentity = main.registries[0].identity;
@@ -1667,7 +1667,7 @@ function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUti
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.applications = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity, extension: 'all'});
+    vm.applications = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity, extension: 'names'});
     vm.links = null;
     vm.loadAll = loadAll;
     vm.loadPage = loadPage;
@@ -2072,7 +2072,7 @@ function RpcConsumerListController($state, $rootScope, AlertUtils, ParseLinksUti
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.applications = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity, extension: 'all'});
+    vm.applications = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity, extension: 'names'});
     vm.links = null;
     vm.loadAll = loadAll;
     vm.loadPage = loadPage;

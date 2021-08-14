@@ -28,7 +28,7 @@ public class RpcConsumerController {
     private RpcConsumerService rpcConsumerService;
 
     @ApiOperation("find consumer list")
-    @GetMapping("/api/rpc-consumer/consumers")
+    @GetMapping("/api/rpc-consumers")
     public ResponseEntity<List<RpcConsumer>> findConsumers(
             Pageable pageable,
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
@@ -42,7 +42,7 @@ public class RpcConsumerController {
     }
 
     @ApiOperation("get consumer options")
-    @GetMapping("/api/rpc-consumer/options")
+    @GetMapping("/api/rpc-consumers/options")
     public ResponseEntity<Map<String, String>> options() {
         return ResponseEntity.ok(ConsumerStub.OPTIONS);
     }

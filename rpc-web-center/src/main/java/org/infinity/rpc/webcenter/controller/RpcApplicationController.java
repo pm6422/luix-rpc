@@ -35,8 +35,8 @@ public class RpcApplicationController {
     @Resource
     private RpcConsumerService       rpcConsumerService;
 
-    @ApiOperation("find all applications")
-    @GetMapping("api/rpc-application/applications/all")
+    @ApiOperation("find all application names")
+    @GetMapping("api/rpc-applications/names")
     public ResponseEntity<List<String>> findApplications(
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
             @RequestParam(value = "registryIdentity") String registryIdentity) {
@@ -46,7 +46,7 @@ public class RpcApplicationController {
     }
 
     @ApiOperation("find application list")
-    @GetMapping("api/rpc-application/applications")
+    @GetMapping("api/rpc-applications")
     public ResponseEntity<List<RpcApplication>> findApplications(
             Pageable pageable,
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)

@@ -1331,7 +1331,7 @@ function AdminMenuService($resource) {
  * RpcApplicationService
  */
 function RpcApplicationService($resource) {
-    var service = $resource('api/rpc-application/applications/:extension', {}, {
+    var service = $resource('api/rpc-applications/:extension', {}, {
         'query': {method: 'GET', isArray: true},
         'get': {
             method: 'GET',
@@ -1348,8 +1348,8 @@ function RpcApplicationService($resource) {
  * RpcServerService
  */
 function RpcServerService($resource) {
-    var service = $resource('api/rpc-server/:extension', {}, {
-        'query': {method: 'GET', isArray: true, params: {extension: 'servers'}},
+    var service = $resource('api/rpc-servers/:extension', {}, {
+        'query': {method: 'GET', isArray: true},
         'get': {
             method: 'GET',
             transformResponse: function (data) {
@@ -1365,8 +1365,8 @@ function RpcServerService($resource) {
  * RpcServiceService
  */
 function RpcServiceService($resource) {
-    var service = $resource('api/rpc-service/:extension', {}, {
-        'query': {method: 'GET', isArray: true, params: {extension: 'services'}},
+    var service = $resource('api/rpc-services/:extension', {}, {
+        'query': {method: 'GET', isArray: true},
         'get': {
             method: 'GET',
             transformResponse: function (data) {
@@ -1384,8 +1384,8 @@ function RpcServiceService($resource) {
  * RpcProviderService
  */
 function RpcProviderService($resource) {
-    var service = $resource('api/rpc-provider/:extension', {}, {
-        'query': {method: 'GET', isArray: true, params: {extension: 'providers'}},
+    var service = $resource('api/rpc-providers/:extension', {}, {
+        'query': {method: 'GET', isArray: true},
         'get': {
             method: 'GET',
             transformResponse: function (data) {
@@ -1413,8 +1413,8 @@ function RpcProviderService($resource) {
  * RpcConsumerService
  */
 function RpcConsumerService($resource) {
-    var service = $resource('api/rpc-consumer/:extension', {}, {
-        'query': {method: 'GET', isArray: true, params: {extension: 'consumers'}},
+    var service = $resource('api/rpc-consumers', {}, {
+        'query': {method: 'GET', isArray: true},
         'get': {
             method: 'GET',
             transformResponse: function (data) {
