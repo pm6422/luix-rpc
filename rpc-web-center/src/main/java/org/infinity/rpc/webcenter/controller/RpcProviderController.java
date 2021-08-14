@@ -171,7 +171,7 @@ public class RpcProviderController {
         return all;
     }
 
-    @ApiOperation("Save options")
+    @ApiOperation("save options")
     @PutMapping("/api/rpc-providers/options")
     @Secured({Authority.ADMIN})
     public ResponseEntity<Void> saveOptions(@ApiParam(value = "optionsDTO", required = true)
