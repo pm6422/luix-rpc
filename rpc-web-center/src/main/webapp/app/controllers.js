@@ -271,7 +271,7 @@ function FooterController($http, PrincipalService) {
         .then(function (result) {
             if (result) {
                 $http({
-                    url: 'api/system/internet-ip',
+                    url: 'api/systems/internet-ip',
                     method: 'GET',
                     transformResponse: [function (data) {
                         return data;
@@ -925,7 +925,7 @@ function BeansController($state, $http, $uibModal, APP_NAME) {
                     return name;
                 },
                 beanDetails: function () {
-                    return $http.get('api/system/bean', {
+                    return $http.get('api/systems/bean', {
                         params: {
                             'name': name
                         }

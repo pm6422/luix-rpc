@@ -525,7 +525,7 @@ function BeansController($state, $http, $uibModal, APP_NAME) {
                     return name;
                 },
                 beanDetails: function () {
-                    return $http.get('api/system/bean', {
+                    return $http.get('api/systems/bean', {
                         params: {
                             'name': name
                         }
