@@ -122,7 +122,7 @@ public class UserController {
         return ResponseEntity.ok().headers(headers).body(DEFAULT_PASSWORD);
     }
 
-    public static final String GET_PROFILE_PHOTO_URL = "/api/user/profile-photo/";
+    public static final String GET_PROFILE_PHOTO_URL = "/api/users/profile-photo/";
 
     @ApiOperation("get user profile picture")
     @GetMapping(GET_PROFILE_PHOTO_URL + "{userName:[a-zA-Z0-9-]+}")
