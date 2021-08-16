@@ -47,3 +47,7 @@ logging:
 # ===================================================================
 # Application specific properties
 # ===================================================================
+application:
+    http:
+        cache: # Used by the CachingHttpHeadersFilter
+            expired-after: 31
