@@ -31,7 +31,7 @@ public class LuixPortalLauncher {
 
     @PostConstruct
     private void validateProfiles() {
-        Assert.notEmpty(env.getActiveProfiles(), "No Spring profile configured.");
+        Assert.notEmpty(env.getActiveProfiles(), "No Spring profile configured!");
         Assert.isTrue(env.getActiveProfiles().length == 1, "Multiple profiles are not allowed!");
         Arrays.stream(env.getActiveProfiles())
                 .filter(activeProfile -> !ArrayUtils.contains(ApplicationConstants.AVAILABLE_PROFILES, activeProfile))
