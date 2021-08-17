@@ -37,7 +37,6 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
 
     @Override
     public void onStartup(ServletContext servletContext) {
-        log.info("Configuring web application");
         EnumSet<DispatcherType> types = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD,
                 DispatcherType.ASYNC);
         if (env.acceptsProfiles(Profiles.of(ApplicationConstants.SPRING_PROFILE_PROD))) {
@@ -104,7 +103,6 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
      * Initializes the caching HTTP Headers Filter.
      */
     private void initCachingHttpHeadersFilter(ServletContext servletContext, EnumSet<DispatcherType> types) {
-        log.debug("Registering caching HTTP headers filter");
         FilterRegistration.Dynamic cachingHttpHeadersFilter = servletContext.addFilter("cachingHttpHeadersFilter",
                 new CachingHttpHeadersFilter(applicationProperties));
         cachingHttpHeadersFilter.addMappingForUrlPatterns(types, true, "/i18n/*");
