@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class CachingHttpHeadersFilter implements Filter {
 
     /**
-     * We consider the last modified date is the start up time of the server
+     * We consider the last modified date is the startup time of the server
      */
     private final static long                  LAST_MODIFIED = System.currentTimeMillis();
     private final        ApplicationProperties applicationProperties;
