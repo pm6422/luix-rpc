@@ -40,8 +40,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
 
     @Override
     public void onStartup(ServletContext servletContext) {
-        EnumSet<DispatcherType> types = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD,
-                DispatcherType.ASYNC);
+        EnumSet<DispatcherType> types = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC);
         if (env.acceptsProfiles(Profiles.of(ApplicationConstants.SPRING_PROFILE_PROD))) {
             initCachingHttpHeadersFilter(servletContext, types);
         }
