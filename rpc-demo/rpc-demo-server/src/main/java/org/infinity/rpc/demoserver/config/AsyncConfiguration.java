@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import javax.annotation.Resource;
 import java.util.concurrent.Executor;
 
 @Configuration
@@ -20,22 +21,19 @@ import java.util.concurrent.Executor;
 @Slf4j
 public class AsyncConfiguration implements AsyncConfigurer {
 
-    private final TaskExecutionProperties taskExecutionProperties;
-
-    public AsyncConfiguration(TaskExecutionProperties taskExecutionProperties) {
-        this.taskExecutionProperties = taskExecutionProperties;
-    }
+    @Resource
+    private TaskExecutionProperties taskExecutionProperties;
 
     @Override
     @Bean(name = "asyncTaskExecutor")
     public Executor getAsyncExecutor() {
-        log.debug("Creating Async Task Executor");
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(taskExecutionProperties.getPool().getCoreSize());
         executor.setMaxPoolSize(taskExecutionProperties.getPool().getMaxSize());
         executor.setQueueCapacity(taskExecutionProperties.getPool().getQueueCapacity());
         executor.setThreadNamePrefix(taskExecutionProperties.getThreadNamePrefix());
-        log.debug("Created Async Task Executor");
+        log.debug("Created async task executor with corePoolSize: [{}], maxPoolSize: [{}], queueCapacity: [{}]",
+                executor.getCorePoolSize(), executor.getMaxPoolSize(), taskExecutionProperties.getPool().getQueueCapacity());
         return new ExceptionHandlingAsyncTaskExecutor(executor);
     }
 
