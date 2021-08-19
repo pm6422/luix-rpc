@@ -62,7 +62,7 @@ public class ExceptionHandlingAsyncTaskExecutor implements AsyncTaskExecutor, In
     }
 
     protected void handle(Exception e) {
-        log.error("Caught async exception", e);
+        log.error("Caught async task exception", e);
     }
 
     @Override
