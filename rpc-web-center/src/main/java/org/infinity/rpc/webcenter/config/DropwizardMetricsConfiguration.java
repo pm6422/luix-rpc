@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * aggregate data for all nodes
  */
 @Slf4j
-@EnableMetrics(proxyTargetClass = true)
+@EnableMetrics
 @Configuration
 public class DropwizardMetricsConfiguration {
 
