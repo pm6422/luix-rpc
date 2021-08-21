@@ -42,7 +42,7 @@ public class AopLoggingAspect {
      * @return return value
      * @throws Throwable if exception occurs
      */
-    @Around("execution(@(org.springframework.web.bind.annotation.*Mapping) * *(..))")
+    @Around("within(@org.springframework.web.bind.annotation.RestController *)")
     public Object logController(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
