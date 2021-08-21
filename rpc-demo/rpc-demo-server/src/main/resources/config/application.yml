@@ -25,8 +25,7 @@ management: # Management http server configuration, used by ManagementServerProp
             enabled: true
     metrics:
         export:
-            # Prometheus is the default metrics backend
-            prometheus:
+            prometheus: # Prometheus is the default metrics backend
                 enabled: true
                 step: 60
         enable:
