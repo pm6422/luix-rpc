@@ -1,5 +1,6 @@
 package org.infinity.rpc.webcenter.controller;
 
+import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,7 @@ public class RpcTaskHistoryController {
 
     @ApiOperation("find task history list")
     @GetMapping("/api/rpc-task-histories")
+    @Timed
     public ResponseEntity<List<RpcTaskHistory>> find(Pageable pageable,
                                                      @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
                                                      @ApiParam(value = "Task name") @RequestParam(value = "name", required = false) String name,
@@ -57,6 +59,7 @@ public class RpcTaskHistoryController {
 
     @ApiOperation("find task history by id")
     @GetMapping("/api/rpc-task-histories/{id}")
+    @Timed
     public ResponseEntity<RpcTaskHistory> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
         RpcTaskHistory history = rpcTaskHistoryRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         return ResponseEntity.ok(history);

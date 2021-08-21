@@ -1,5 +1,6 @@
 package org.infinity.rpc.webcenter.controller;
 
+import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.webcenter.dto.RpcRegistryDTO;
@@ -20,6 +21,7 @@ public class RpcRegistryController {
 
     @ApiOperation("find all registries")
     @GetMapping("open-api/rpc-registries")
+    @Timed
     public ResponseEntity<List<RpcRegistryDTO>> findRegistries() {
         return ResponseEntity.ok(rpcRegistryService.getRegistries());
     }

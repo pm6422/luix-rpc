@@ -1,5 +1,6 @@
 package org.infinity.rpc.webcenter.controller;
 
+import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class RpcApplicationController {
 
     @ApiOperation("find all application names")
     @GetMapping("api/rpc-applications/names")
+    @Timed
     public ResponseEntity<List<String>> findApplications(
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
             @RequestParam(value = "registryIdentity") String registryIdentity) {
@@ -47,6 +49,7 @@ public class RpcApplicationController {
 
     @ApiOperation("find application list")
     @GetMapping("api/rpc-applications")
+    @Timed
     public ResponseEntity<List<RpcApplication>> findApplications(
             Pageable pageable,
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)

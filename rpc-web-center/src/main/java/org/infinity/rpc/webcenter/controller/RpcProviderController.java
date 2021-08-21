@@ -1,5 +1,6 @@
 package org.infinity.rpc.webcenter.controller;
 
+import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +58,7 @@ public class RpcProviderController {
 
     @ApiOperation("find provider by ID")
     @GetMapping("/api/rpc-providers/{id}")
+    @Timed
     public ResponseEntity<RpcProvider> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
         RpcProvider domain = rpcProviderRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         return ResponseEntity.ok(domain);
@@ -64,6 +66,7 @@ public class RpcProviderController {
 
     @ApiOperation("find provider list")
     @GetMapping("/api/rpc-providers")
+    @Timed
     public ResponseEntity<List<RpcProvider>> findProviders(
             Pageable pageable,
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
@@ -77,6 +80,7 @@ public class RpcProviderController {
 
     @ApiOperation("find all methods of provider")
     @GetMapping("/api/rpc-providers/methods")
+    @Timed
     public ResponseEntity<List<MethodMeta>> findMethods(
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
@@ -90,6 +94,7 @@ public class RpcProviderController {
 
     @ApiOperation(value = "check health of provider", notes = "There is no service discovery in the direct connection mode, even the inactive provider can be called successfully")
     @GetMapping("/api/rpc-providers/health")
+    @Timed
     public ResponseEntity<String> health(
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
@@ -116,6 +121,7 @@ public class RpcProviderController {
     @ApiOperation("activate provider")
     @GetMapping("/api/rpc-providers/activate")
     @Secured({Authority.ADMIN})
+    @Timed
     public ResponseEntity<Void> activate(
             @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
@@ -128,6 +134,7 @@ public class RpcProviderController {
     @ApiOperation("deactivate provider")
     @GetMapping("/api/rpc-providers/deactivate")
     @Secured({Authority.ADMIN})
+    @Timed
     public ResponseEntity<Void> deactivate(
             @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
             @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
@@ -174,6 +181,7 @@ public class RpcProviderController {
     @ApiOperation("save options")
     @PutMapping("/api/rpc-providers/options")
     @Secured({Authority.ADMIN})
+    @Timed
     public ResponseEntity<Void> saveOptions(@ApiParam(value = "optionsDTO", required = true)
                                             @Valid @RequestBody OptionsDTO optionsDTO) {
         Url providerUrl = Url.valueOf(optionsDTO.getUrl());

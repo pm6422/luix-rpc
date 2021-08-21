@@ -1,5 +1,6 @@
 package org.infinity.rpc.webcenter.controller;
 
+import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,7 @@ public class RpcServerController {
 
     @ApiOperation("find server by ID in real time")
     @GetMapping("/api/rpc-servers/{id}")
+    @Timed
     public ResponseEntity<RpcServer> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
         RpcServer domain = rpcServerRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         RpcServer rpcServer = rpcServerService.loadServer(domain.getRegistryIdentity(), domain.getAddress());
@@ -48,6 +50,7 @@ public class RpcServerController {
 
     @ApiOperation("find server list")
     @GetMapping("/api/rpc-servers")
+    @Timed
     public ResponseEntity<List<RpcServer>> findRpcServers(
             Pageable pageable,
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)

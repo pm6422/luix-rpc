@@ -1,5 +1,6 @@
 package org.infinity.rpc.webcenter.controller;
 
+import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +46,7 @@ public class RpcServiceController {
 
     @ApiOperation("find service by ID")
     @GetMapping("/api/rpc-services/{id}")
+    @Timed
     public ResponseEntity<RpcService> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
         RpcService domain = rpcServiceRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         if (rpcProviderService.existsService(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
@@ -58,6 +60,7 @@ public class RpcServiceController {
 
     @ApiOperation("find service")
     @GetMapping("/api/rpc-services/service")
+    @Timed
     public ResponseEntity<RpcService> find(
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
             @RequestParam(value = "registryIdentity") String registryIdentity,
@@ -75,6 +78,7 @@ public class RpcServiceController {
 
     @ApiOperation("find service list")
     @GetMapping("/api/rpc-services")
+    @Timed
     public ResponseEntity<List<RpcService>> findRpcServices(
             Pageable pageable,
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
@@ -112,6 +116,7 @@ public class RpcServiceController {
 
     @ApiOperation("deactivate service")
     @GetMapping("/api/rpc-services/deactivate")
+    @Timed
     public ResponseEntity<Void> deactivate(
             @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
             @ApiParam(value = "interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName) {

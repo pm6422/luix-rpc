@@ -1,5 +1,6 @@
 package org.infinity.rpc.webcenter.controller;
 
+import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ public class RpcConsumerController {
 
     @ApiOperation("find consumer list")
     @GetMapping("/api/rpc-consumers")
+    @Timed
     public ResponseEntity<List<RpcConsumer>> findConsumers(
             Pageable pageable,
             @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
@@ -43,6 +45,7 @@ public class RpcConsumerController {
 
     @ApiOperation("get consumer options")
     @GetMapping("/api/rpc-consumers/options")
+    @Timed
     public ResponseEntity<Map<String, String>> options() {
         return ResponseEntity.ok(ConsumerStub.OPTIONS);
     }
