@@ -132,6 +132,15 @@ infinity:
 # Application specific properties
 # ===================================================================
 application:
+    metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
+        logs: # print metrics info to the logs
+            enabled: false
+            report-frequency: 60 # in seconds
+        graphite: # output metrics info to graphite server
+            enabled: false
+            host: localhost
+            port: 2003
+            prefix: ${spring.application.name}
     http:
         cache: # Used by the CachingHttpHeadersFilter
             expired-after: 31

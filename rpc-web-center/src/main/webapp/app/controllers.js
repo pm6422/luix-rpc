@@ -556,7 +556,7 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
     vm.totalMemory = [
         {
             value: vm.metrics.gauges['jvm.memory.total.used'].value / 1000000,
-            color: '#a3e1d4',
+            color: '#8d7fbf',
             highlight: '#4424bc',
             label: '已使用'
         },
@@ -571,7 +571,7 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
     vm.heapMemory = [
         {
             value: vm.metrics.gauges['jvm.memory.heap.used'].value / 1000000,
-            color: '#a3e1d4',
+            color: '#8d7fbf',
             highlight: '#4424bc',
             label: '已使用'
         },
@@ -586,7 +586,7 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
     vm.edenSpaceMemory = [
         {
             value: vm.metrics.gauges['jvm.memory.pools.PS-Eden-Space.used'].value / 1000000,
-            color: '#a3e1d4',
+            color: '#8d7fbf',
             highlight: '#4424bc',
             label: '已使用'
         },
@@ -601,7 +601,7 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
     vm.survivorSpaceMemory = [
         {
             value: vm.metrics.gauges['jvm.memory.pools.PS-Survivor-Space.used'].value / 1000000,
-            color: '#a3e1d4',
+            color: '#8d7fbf',
             highlight: '#4424bc',
             label: '已使用'
         },
@@ -616,7 +616,7 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
     vm.oldSpaceMemory = [
         {
             value: vm.metrics.gauges['jvm.memory.pools.PS-Old-Gen.used'].value / 1000000,
-            color: '#a3e1d4',
+            color: '#8d7fbf',
             highlight: '#4424bc',
             label: '已使用'
         },
@@ -631,7 +631,7 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
     vm.nonHeapMemory = [
         {
             value: vm.metrics.gauges['jvm.memory.non-heap.used'].value / 1000000,
-            color: '#a3e1d4',
+            color: '#8d7fbf',
             highlight: '#4424bc',
             label: '已使用'
         },
@@ -646,7 +646,7 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
     vm.runnableThreads = [
         {
             value: vm.metrics.gauges['jvm.threads.runnable.count'].value,
-            color: '#a3e1d4',
+            color: '#8d7fbf',
             highlight: '#4424bc',
             label: 'Runnable'
         },
@@ -661,7 +661,7 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
     vm.timedWaitingThreads = [
         {
             value: vm.metrics.gauges['jvm.threads.timed_waiting.count'].value,
-            color: '#a3e1d4',
+            color: '#8d7fbf',
             highlight: '#4424bc',
             label: 'Timed waiting'
         },
@@ -676,7 +676,7 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
     vm.waitingThreads = [
         {
             value: vm.metrics.gauges['jvm.threads.waiting.count'].value,
-            color: '#a3e1d4',
+            color: '#8d7fbf',
             highlight: '#4424bc',
             label: 'Waiting'
         },
@@ -691,7 +691,7 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
     vm.blockedThreads = [
         {
             value: vm.metrics.gauges['jvm.threads.blocked.count'].value,
-            color: '#a3e1d4',
+            color: '#8d7fbf',
             highlight: '#4424bc',
             label: 'Blocked'
         },
