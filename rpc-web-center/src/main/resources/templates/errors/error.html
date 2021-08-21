@@ -11,13 +11,13 @@
 </head>
 <body class="gray-bg">
 <div class="middle-box text-center loginscreen animated bounceInDown">
-    <h1 style="font-size:65px" th:text="#{errorPageTitle}"></h1>
+    <h1 style="font-size:45px" th:text="#{errorPageTitle}"></h1>
     <h2 th:if="${!#strings.isEmpty(error)}">
         <span th:text="#{errorPageStatusLabel}"></span>&nbsp;<span th:text="${error}"></span><br/>
     </h2>
-    <h4 th:if="${!#strings.isEmpty(message)}">
+    <h3 th:if="${!#strings.isEmpty(message)}">
         <span th:text="#{errorPageMessageLabel}"></span>&nbsp;<span th:text="${message}"></span><br/>
-    </h4>
+    </h3>
     <br/>
     <a th:href="@{/}" class="btn btn-lg btn-primary go-back"><i class="fa fa-home"></i> Back</a>
 </div>
