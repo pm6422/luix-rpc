@@ -1,12 +1,17 @@
 package org.infinity.rpc.demoserver.aspect;
 
-import lombok.extern.slf4j.Slf4j;
+import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.infinity.rpc.demoserver.config.ApplicationProperties;
 import org.infinity.rpc.demoserver.utils.TraceIdUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -29,11 +34,25 @@ import java.util.Map;
 @Aspect
 @ConditionalOnProperty(prefix = "application.aop-logging", value = "enabled", havingValue = "true")
 @Configuration
-@Slf4j
 public class AopLoggingAspect {
 
     @Resource
     private ApplicationProperties applicationProperties;
+
+    /**
+     * Advice that logs methods throwing exceptions
+     *
+     * @param joinPoint join point for advice
+     * @param e         exception
+     */
+    @AfterThrowing(pointcut = "within(@org.springframework.web.bind.annotation.RestController *)", throwing = "e")
+    public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
+        getLogger(joinPoint).error(
+                "Exception in {}() with cause = \'{}\' and exception = \'{}\'",
+                joinPoint.getSignature().getName(),
+                e.getCause() != null ? e.getCause() : "NULL",
+                e.getMessage());
+    }
 
     /**
      * Log method arguments and result of controller
@@ -42,7 +61,7 @@ public class AopLoggingAspect {
      * @return return value
      * @throws Throwable if exception occurs
      */
-    @Around("execution(@(org.springframework.web.bind.annotation.*Mapping) * *(..))")
+    @Around("within(@org.springframework.web.bind.annotation.RestController *)")
     public Object logController(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -58,46 +77,43 @@ public class AopLoggingAspect {
             return result;
         } catch (IllegalArgumentException e) {
             // Catch illegal argument exception and re-throw
-            log.error("Illegal argument[s]: {} in {}.{}()",
-                    Arrays.toString(joinPoint.getArgs()),
-                    joinPoint.getSignature().getDeclaringType().getSimpleName(),
-                    joinPoint.getSignature().getName());
+            getLogger(joinPoint).error("Illegal argument[s]: {} in {}()",
+                    Arrays.toString(joinPoint.getArgs()), joinPoint.getSignature().getName());
             throw e;
         } finally {
             TraceIdUtils.remove();
         }
     }
 
-    public void beforeRun(ProceedingJoinPoint joinPoint, HttpServletRequest request) {
-        if (printLog(joinPoint)) {
+    public void beforeRun(ProceedingJoinPoint joinPoint, HttpServletRequest request) throws JsonProcessingException {
+        if (enablePrint(joinPoint)) {
             return;
         }
         String[] paramNames = ((MethodSignature) joinPoint.getSignature()).getParameterNames();
         Object[] arguments = joinPoint.getArgs();
-        Map<String, Object> paramMap = new HashMap<>(arguments.length);
+        Map<String, Object> validParamMap = new HashMap<>(arguments.length);
         for (int i = 0; i < arguments.length; i++) {
             if (isValidArgument(arguments[i])) {
-                paramMap.put(paramNames[i], arguments[i]);
+                validParamMap.put(paramNames[i], JSON.toJSONString(arguments[i]));
             }
         }
-        log.info("Request of {}.{}() with argument[s] = {}",
-                joinPoint.getSignature().getDeclaringType().getSimpleName(),
-                joinPoint.getSignature().getName(),
-                paramMap);
+        getLogger(joinPoint).info("Enter method {}() with argument[s] = {}",
+                joinPoint.getSignature().getName(), validParamMap);
+    }
+
+    private boolean isValidArgument(Object argument) {
+        return !(argument instanceof ServletRequest) && !(argument instanceof ServletResponse);
     }
 
     private void afterRun(ProceedingJoinPoint joinPoint, HttpServletResponse response, Object result) {
-        if (printLog(joinPoint)) {
+        if (enablePrint(joinPoint)) {
             return;
         }
-        log.info("Response of {}.{}() with result = {}",
-                joinPoint.getSignature().getDeclaringType().getSimpleName(),
-                joinPoint.getSignature().getName(),
-                result);
+        getLogger(joinPoint).info("Exit method {}() with result = {}", joinPoint.getSignature().getName(), result);
     }
 
-    private boolean printLog(ProceedingJoinPoint joinPoint) {
-        return !log.isInfoEnabled() || !matchLogMethod(joinPoint);
+    private boolean enablePrint(ProceedingJoinPoint joinPoint) {
+        return !getLogger(joinPoint).isInfoEnabled() || !matchLogMethod(joinPoint);
     }
 
     private boolean matchLogMethod(ProceedingJoinPoint joinPoint) {
@@ -109,7 +125,13 @@ public class AopLoggingAspect {
         return applicationProperties.getAopLogging().getMethodWhitelist().contains(method);
     }
 
-    private boolean isValidArgument(Object argument) {
-        return !(argument instanceof ServletRequest) && !(argument instanceof ServletResponse);
+    /**
+     * Retrieves the {@link Logger} associated to the given {@link JoinPoint}
+     *
+     * @param joinPoint join point we want the logger for
+     * @return {@link Logger} associated to the given {@link JoinPoint}
+     */
+    private Logger getLogger(JoinPoint joinPoint) {
+        return LoggerFactory.getLogger(joinPoint.getSignature().getDeclaringTypeName());
     }
 }
