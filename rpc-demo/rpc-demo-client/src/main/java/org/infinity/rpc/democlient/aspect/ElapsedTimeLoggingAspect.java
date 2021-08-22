@@ -1,11 +1,13 @@
 package org.infinity.rpc.democlient.aspect;
 
-import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.infinity.rpc.democlient.config.ApplicationConstants;
 import org.infinity.rpc.democlient.config.ApplicationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StopWatch;
@@ -16,30 +18,30 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Aspect for logging elapsed time of Spring components.
+ * Aspect for logging execution time of Spring components
+ * <p>
+ * http://www.imooc.com/article/297283
  */
 @Aspect
 @ConditionalOnProperty(prefix = "application.elapsed-time-logging", value = "enabled", havingValue = "true")
 @Configuration
-@Slf4j
 public class ElapsedTimeLoggingAspect {
 
-    private static final String                SERVICE_PACKAGE    = "within(" + ApplicationConstants.BASE_PACKAGE + ".service..*)";
-    private static final String                CONTROLLER_PACKAGE = "within(" + ApplicationConstants.BASE_PACKAGE + ".controller..*)";
-    private static final String                HEADER_KEY         = "X-ELAPSED";
-    private static final int                   SECOND             = 1000;
-    private static final int                   MINUTE             = 60000;
+    private static final String                SERVICE_PACKAGE = "within(" + ApplicationConstants.BASE_PACKAGE + ".service..*)";
+    private static final String                HEADER_KEY      = "X-ELAPSED";
+    private static final int                   SECOND          = 1000;
+    private static final int                   MINUTE          = 60000;
     @Resource
     private              ApplicationProperties applicationProperties;
 
     /**
-     * Refer to http://www.imooc.com/article/297283
+     * Log method execution time of controller
      *
      * @param joinPoint join point
      * @return return value
-     * @throws Throwable if exception occurs
+     * @throws Throwable if any exception throws
      */
-    @Around(CONTROLLER_PACKAGE)
+    @Around("within(@org.springframework.web.bind.annotation.RestController *)")
     public Object logController(ProceedingJoinPoint joinPoint) throws Throwable {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -63,6 +65,13 @@ public class ElapsedTimeLoggingAspect {
         return result;
     }
 
+    /**
+     * Log method execution time of service
+     *
+     * @param joinPoint join point
+     * @return return value
+     * @throws Throwable if any exception throws
+     */
     @Around(SERVICE_PACKAGE)
     public Object logService(ProceedingJoinPoint joinPoint) throws Throwable {
         StopWatch stopWatch = new StopWatch();
@@ -77,15 +86,25 @@ public class ElapsedTimeLoggingAspect {
     private void outputLog(ProceedingJoinPoint joinPoint, long elapsed) {
         if (elapsed > applicationProperties.getElapsedTimeLogging().getSlowExecutionThreshold()) {
             if (elapsed < SECOND) {
-                log.warn("Found slow running method {}.{}() over {}ms",
-                        joinPoint.getSignature().getDeclaringType().getSimpleName(), joinPoint.getSignature().getName(), elapsed);
+                getLogger(joinPoint).warn("Found slow running method {}() over {}ms",
+                        joinPoint.getSignature().getName(), elapsed);
             } else if (elapsed < MINUTE) {
-                log.warn("Found slow running method {}.{}() over {}s",
-                        joinPoint.getSignature().getDeclaringType().getSimpleName(), joinPoint.getSignature().getName(), elapsed / 1000);
+                getLogger(joinPoint).warn("Found slow running method {}() over {}s",
+                        joinPoint.getSignature().getName(), elapsed / 1000);
             } else {
-                log.warn("Found slow running method {}.{}() over {}m",
-                        joinPoint.getSignature().getDeclaringType().getSimpleName(), joinPoint.getSignature().getName(), elapsed / (1000 * 60));
+                getLogger(joinPoint).warn("Found slow running method {}() over {}m",
+                        joinPoint.getSignature().getName(), elapsed / (1000 * 60));
             }
         }
+    }
+
+    /**
+     * Retrieves the {@link Logger} associated to the given {@link JoinPoint}
+     *
+     * @param joinPoint join point we want the logger for
+     * @return {@link Logger} associated to the given {@link JoinPoint}
+     */
+    private Logger getLogger(JoinPoint joinPoint) {
+        return LoggerFactory.getLogger(joinPoint.getSignature().getDeclaringTypeName());
     }
 }
