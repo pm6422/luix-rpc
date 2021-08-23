@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 @SpringBootApplication
 @Slf4j
-public class LuixPortalLauncher {
+public class RpcPortalLauncher {
 
     @Resource
     private Environment env;
@@ -26,7 +26,7 @@ public class LuixPortalLauncher {
      * @param args program arguments
      */
     public static void main(String[] args) {
-        SpringApplication.run(LuixPortalLauncher.class, args);
+        SpringApplication.run(RpcPortalLauncher.class, args);
     }
 
     @PostConstruct
