@@ -51,19 +51,19 @@ public class TaskRunnable implements Runnable {
 
     @Override
     public void run() {
-        if (Boolean.FALSE.equals(allHostsRun)) {
-            // Single host execute mode
-            if (taskLockRepository.findByName(name).isPresent()) {
-                log.warn("Skip to execute task for the address: {}", NetworkUtils.INTRANET_IP);
-                return;
-            }
-            // This distributed lock used to control that only one node executes the task at the same time
-            RpcTaskLock taskLock = new RpcTaskLock();
-            taskLock.setName(name);
-            // Set expiry time with 30 seconds for the lock
-            taskLock.setExpiryTime(Instant.now().plus(10, ChronoUnit.SECONDS));
-            taskLockRepository.save(taskLock);
-        }
+//        if (Boolean.FALSE.equals(allHostsRun)) {
+//            // Single host execute mode
+//            if (taskLockRepository.findByName(name).isPresent()) {
+//                log.warn("Skip to execute task for the address: {}", NetworkUtils.INTRANET_IP);
+//                return;
+//            }
+//            // This distributed lock used to control that only one node executes the task at the same time
+//            RpcTaskLock taskLock = new RpcTaskLock();
+//            taskLock.setName(name);
+//            // Set expiry time with 30 seconds for the lock
+//            taskLock.setExpiryTime(Instant.now().plus(10, ChronoUnit.SECONDS));
+//            taskLockRepository.save(taskLock);
+//        }
 
         log.info("Executing timing task {}.{}({}) at {}", interfaceName, methodName, argumentsJson,
                 ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
