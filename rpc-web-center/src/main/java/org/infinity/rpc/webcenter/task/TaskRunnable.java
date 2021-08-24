@@ -57,11 +57,11 @@ public class TaskRunnable implements Runnable {
                 log.warn("Skip to execute task for the address: {}", NetworkUtils.INTRANET_IP);
                 return;
             }
-            // This distribute lock used to control that only one node executes the task at the same time
+            // This distributed lock used to control that only one node executes the task at the same time
             RpcTaskLock taskLock = new RpcTaskLock();
             taskLock.setName(name);
             // Set expiry time with 30 seconds for the lock
-            taskLock.setExpiryTime(Instant.now().plus(30, ChronoUnit.SECONDS));
+            taskLock.setExpiryTime(Instant.now().plus(10, ChronoUnit.SECONDS));
             taskLockRepository.save(taskLock);
         }
 
