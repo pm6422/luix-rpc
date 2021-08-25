@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * Timing task used to execute job
  */
-public interface Taskable {
+public interface TaskExecutable {
     String METHOD_NAME = "executeTask";
 
     /**

@@ -10,7 +10,7 @@ import org.infinity.rpc.demoserver.domain.Task;
 import org.infinity.rpc.demoserver.exception.NoDataFoundException;
 import org.infinity.rpc.demoserver.repository.TaskRepository;
 import org.infinity.rpc.demoserver.service.TaskService;
-import org.infinity.rpc.demoserver.task.Taskable;
+import org.infinity.rpc.demoserver.task.TaskExecutable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -101,6 +101,6 @@ public class TaskController {
     @ApiOperation("find task bean names")
     @GetMapping("/api/tasks/beans")
     public ResponseEntity<List<String>> findBeans() {
-        return ResponseEntity.ok().body(Arrays.asList(applicationContext.getBeanNamesForType(Taskable.class)));
+        return ResponseEntity.ok().body(Arrays.asList(applicationContext.getBeanNamesForType(TaskExecutable.class)));
     }
 }

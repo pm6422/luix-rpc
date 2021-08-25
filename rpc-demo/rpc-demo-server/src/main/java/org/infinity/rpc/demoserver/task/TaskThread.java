@@ -57,7 +57,7 @@ public class TaskThread implements Runnable {
             taskLockRepository.save(taskLock);
         }
 
-        log.info("Executing timing task {}.{}() at {}", beanName, Taskable.METHOD_NAME,
+        log.info("Executing timing task {}.{}() at {}", beanName, TaskExecutable.METHOD_NAME,
                 ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -76,16 +76,16 @@ public class TaskThread implements Runnable {
         } catch (Exception ex) {
             taskHistory.setSuccess(false);
             taskHistory.setReason(ex.getMessage());
-            log.error(String.format("Failed to execute timing task %s.%s()", beanName, Taskable.METHOD_NAME), ex);
+            log.error(String.format("Failed to execute timing task %s.%s()", beanName, TaskExecutable.METHOD_NAME), ex);
         } finally {
             stopWatch.stop();
             long elapsed = stopWatch.getTotalTimeMillis();
             if (elapsed < SECOND) {
-                log.info("Executed timing task {}.{}() in {}ms", beanName, Taskable.METHOD_NAME, elapsed);
+                log.info("Executed timing task {}.{}() in {}ms", beanName, TaskExecutable.METHOD_NAME, elapsed);
             } else if (elapsed < MINUTE) {
-                log.info("Executed timing task {}.{}() in {}s", beanName, Taskable.METHOD_NAME, elapsed / 1000);
+                log.info("Executed timing task {}.{}() in {}s", beanName, TaskExecutable.METHOD_NAME, elapsed / 1000);
             } else {
-                log.warn("Executed timing task {}.{}() in {}m", beanName, Taskable.METHOD_NAME, elapsed / (1000 * 60));
+                log.warn("Executed timing task {}.{}() in {}m", beanName, TaskExecutable.METHOD_NAME, elapsed / (1000 * 60));
             }
 
             taskHistory.setElapsed(elapsed);
@@ -96,7 +96,7 @@ public class TaskThread implements Runnable {
 
     private void executeTask() throws NoSuchMethodException, JsonProcessingException, IllegalAccessException, InvocationTargetException {
         Object target = RpcDemoServerLauncher.applicationContext.getBean(beanName);
-        Method method = target.getClass().getDeclaredMethod(Taskable.METHOD_NAME, Map.class);
+        Method method = target.getClass().getDeclaredMethod(TaskExecutable.METHOD_NAME, Map.class);
         ReflectionUtils.makeAccessible(method);
         // Convert JSON string to Map
         Map<?, ?> arguments = new HashMap<>(16);
