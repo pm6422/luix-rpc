@@ -35,7 +35,18 @@ public class CronTaskRegistrar implements DisposableBean {
         return new ScheduledTask(scheduledFuture);
     }
 
-    public void removeCronTask(Runnable task) {
+    public void addFixedRateTask(Runnable task, long period) {
+        Validate.notNull(task, "Task must NOT be null!");
+
+        this.scheduledTasks.put(task, createFixedRateTask(task, period));
+    }
+
+    private ScheduledTask createFixedRateTask(Runnable task, long period) {
+        ScheduledFuture<?> scheduledFuture = this.taskScheduler.scheduleAtFixedRate(task, period);
+        return new ScheduledTask(scheduledFuture);
+    }
+
+    public void removeTask(Runnable task) {
         Validate.notNull(task, "Task must NOT be null!");
 
         ScheduledTask scheduledTask = this.scheduledTasks.remove(task);

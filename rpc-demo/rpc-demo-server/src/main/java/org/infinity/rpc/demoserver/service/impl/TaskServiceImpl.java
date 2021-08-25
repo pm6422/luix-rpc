@@ -133,6 +133,6 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                 .cronExpression(task.getCronExpression())
                 .allHostsRun(task.isAllHostsRun())
                 .build();
-        cronTaskRegistrar.removeCronTask(runnableTask);
+        cronTaskRegistrar.removeTask(runnableTask);
     }
 }
