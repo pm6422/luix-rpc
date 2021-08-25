@@ -9,7 +9,7 @@ import org.infinity.rpc.demoserver.repository.TaskLockRepository;
 import org.infinity.rpc.demoserver.repository.TaskRepository;
 import org.infinity.rpc.demoserver.service.TaskService;
 import org.infinity.rpc.demoserver.task.CronTaskRegistrar;
-import org.infinity.rpc.demoserver.task.TaskRunnable;
+import org.infinity.rpc.demoserver.task.TaskThread;
 import org.infinity.rpc.utilities.id.IdGenerator;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -50,7 +50,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         }
 
         for (Task task : enabledTasks) {
-            TaskRunnable runnable = TaskRunnable.builder()
+            TaskThread taskThread = TaskThread.builder()
                     .taskHistoryRepository(taskHistoryRepository)
                     .taskLockRepository(taskLockRepository)
                     .name(task.getName())
@@ -59,7 +59,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                     .cronExpression(task.getCronExpression())
                     .allHostsRun(task.isAllHostsRun())
                     .build();
-            cronTaskRegistrar.addCronTask(runnable, task.getCronExpression());
+            cronTaskRegistrar.addCronTask(taskThread, task.getCronExpression());
         }
         log.info("Loaded all tasks");
     }
@@ -69,7 +69,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         domain.setName("T" + IdGenerator.generateShortId());
         Task savedOne = taskRepository.save(domain);
         if (Boolean.TRUE.equals(savedOne.getEnabled())) {
-            TaskRunnable runnable = TaskRunnable.builder()
+            TaskThread taskThread = TaskThread.builder()
                     .taskHistoryRepository(taskHistoryRepository)
                     .taskLockRepository(taskLockRepository)
                     .name(savedOne.getName())
@@ -78,7 +78,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                     .cronExpression(savedOne.getCronExpression())
                     .allHostsRun(savedOne.isAllHostsRun())
                     .build();
-            cronTaskRegistrar.addCronTask(runnable, savedOne.getCronExpression());
+            cronTaskRegistrar.addCronTask(taskThread, savedOne.getCronExpression());
         }
         return savedOne;
     }
@@ -90,7 +90,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
 
         // Remove before adding
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
-            TaskRunnable runnable = TaskRunnable.builder()
+            TaskThread taskThread = TaskThread.builder()
                     .taskHistoryRepository(taskHistoryRepository)
                     .taskLockRepository(taskLockRepository)
                     .name(existingOne.getName())
@@ -99,12 +99,12 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                     .cronExpression(existingOne.getCronExpression())
                     .allHostsRun(existingOne.isAllHostsRun())
                     .build();
-            cronTaskRegistrar.removeCronTask(runnable);
+            cronTaskRegistrar.removeCronTask(taskThread);
         }
 
         // Add a new one
         if (Boolean.TRUE.equals(savedOne.getEnabled())) {
-            TaskRunnable runnable = TaskRunnable.builder()
+            TaskThread taskThread = TaskThread.builder()
                     .taskHistoryRepository(taskHistoryRepository)
                     .taskLockRepository(taskLockRepository)
                     .name(savedOne.getName())
@@ -113,7 +113,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                     .cronExpression(savedOne.getCronExpression())
                     .allHostsRun(savedOne.isAllHostsRun())
                     .build();
-            cronTaskRegistrar.addCronTask(runnable, domain.getCronExpression());
+            cronTaskRegistrar.addCronTask(taskThread, domain.getCronExpression());
         }
     }
 
@@ -122,7 +122,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         Task existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         taskRepository.deleteById(id);
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
-            TaskRunnable runnable = TaskRunnable.builder()
+            TaskThread taskThread = TaskThread.builder()
                     .taskHistoryRepository(taskHistoryRepository)
                     .taskLockRepository(taskLockRepository)
                     .name(existingOne.getName())
@@ -131,14 +131,14 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                     .cronExpression(existingOne.getCronExpression())
                     .allHostsRun(existingOne.isAllHostsRun())
                     .build();
-            cronTaskRegistrar.removeCronTask(runnable);
+            cronTaskRegistrar.removeCronTask(taskThread);
         }
     }
 
     @Override
     public void startOrPause(String id) {
         Task existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
-        TaskRunnable runnable = TaskRunnable.builder()
+        TaskThread taskThread = TaskThread.builder()
                 .taskHistoryRepository(taskHistoryRepository)
                 .taskLockRepository(taskLockRepository)
                 .name(existingOne.getName())
@@ -148,9 +148,9 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                 .allHostsRun(existingOne.isAllHostsRun())
                 .build();
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
-            cronTaskRegistrar.addCronTask(runnable, existingOne.getCronExpression());
+            cronTaskRegistrar.addCronTask(taskThread, existingOne.getCronExpression());
         } else {
-            cronTaskRegistrar.removeCronTask(runnable);
+            cronTaskRegistrar.removeCronTask(taskThread);
         }
     }
 

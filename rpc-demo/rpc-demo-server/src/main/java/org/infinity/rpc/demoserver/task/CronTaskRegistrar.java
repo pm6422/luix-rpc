@@ -44,7 +44,7 @@ public class CronTaskRegistrar implements DisposableBean {
 
     public ScheduledTask scheduleCronTask(CronTask cronTask) {
         ScheduledTask scheduledTask = new ScheduledTask();
-        scheduledTask.future = this.taskScheduler.schedule(cronTask.getRunnable(), cronTask.getTrigger());
+        scheduledTask.setFuture(this.taskScheduler.schedule(cronTask.getRunnable(), cronTask.getTrigger()));
         return scheduledTask;
     }
 

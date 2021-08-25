@@ -26,10 +26,11 @@ import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DA
 @Slf4j
 @EqualsAndHashCode
 @Builder
-public class TaskRunnable implements Runnable {
+public class TaskThread implements Runnable {
 
-    private static final    int                   SECOND = 1000;
-    private static final    int                   MINUTE = 60000;
+    private static final int SECOND = 1000;
+    private static final int MINUTE = 60000;
+
     private final transient TaskHistoryRepository taskHistoryRepository;
     private final transient TaskLockRepository    taskLockRepository;
     private final           String                name;
@@ -46,7 +47,7 @@ public class TaskRunnable implements Runnable {
                 log.warn("Skip to execute task for the address: {}", NetworkUtils.INTRANET_IP);
                 return;
             }
-            // This distribute lock used to control that only one node executes the task at the same time
+            // This distributed lock used to control that only one node executes the task at the same time
             TaskLock taskLock = new TaskLock();
             taskLock.setName(name);
             // Set expiry time with 30 seconds for the lock
@@ -54,7 +55,7 @@ public class TaskRunnable implements Runnable {
             taskLockRepository.save(taskLock);
         }
 
-        log.info("Executing timing task {}.{}({}) at {}", beanName, Taskable.METHOD_NAME, argumentsJson,
+        log.info("Executing timing task {}.{}() at {}", beanName, Taskable.METHOD_NAME,
                 ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -80,20 +81,16 @@ public class TaskRunnable implements Runnable {
         } catch (Exception ex) {
             taskHistory.setSuccess(false);
             taskHistory.setReason(ex.getMessage());
-            log.error(String.format("Failed to execute timing task %s.%s(%s)",
-                    beanName, Taskable.METHOD_NAME, argumentsJson), ex);
+            log.error(String.format("Failed to execute timing task %s.%s()", beanName, Taskable.METHOD_NAME), ex);
         } finally {
             stopWatch.stop();
             long elapsed = stopWatch.getTotalTimeMillis();
             if (elapsed < SECOND) {
-                log.info("Executed timing task {}.{}({}) with {}ms",
-                        beanName, Taskable.METHOD_NAME, argumentsJson, elapsed);
+                log.info("Executed timing task {}.{}() in {}ms", beanName, Taskable.METHOD_NAME, elapsed);
             } else if (elapsed < MINUTE) {
-                log.info("Executed timing task {}.{}({}) with {}s",
-                        beanName, Taskable.METHOD_NAME, argumentsJson, elapsed / 1000);
+                log.info("Executed timing task {}.{}() in {}s", beanName, Taskable.METHOD_NAME, elapsed / 1000);
             } else {
-                log.info("Executed timing task {}.{}({}) with {}m",
-                        beanName, Taskable.METHOD_NAME, argumentsJson, elapsed / (1000 * 60));
+                log.warn("Executed timing task {}.{}() in {}m", beanName, Taskable.METHOD_NAME, elapsed / (1000 * 60));
             }
 
             taskHistory.setElapsed(elapsed);
