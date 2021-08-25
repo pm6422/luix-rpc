@@ -3,7 +3,6 @@ package org.infinity.rpc.demoserver.task;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.demoserver.RpcDemoServerLauncher;
@@ -26,7 +25,6 @@ import java.util.Map;
 import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
 
 @Slf4j
-@EqualsAndHashCode
 @Builder
 public class RunnableTask implements Runnable {
 
