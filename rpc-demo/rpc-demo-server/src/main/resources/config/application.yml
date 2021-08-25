@@ -71,7 +71,6 @@ spring:
                 queue-capacity: 1000
         scheduling:
             thread-name-prefix: global-scheduling-
-            rem
             pool:
                 size: 10
     thymeleaf: #ThymeleafAutoConfiguration
