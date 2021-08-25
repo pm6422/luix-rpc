@@ -33,12 +33,12 @@ public class RunnableTask implements Runnable {
     private static final int SECOND = 1000;
     private static final int MINUTE = 60000;
 
-    private final transient TaskHistoryRepository taskHistoryRepository;
-    private final transient TaskLockRepository    taskLockRepository;
-    private final           String                name;
-    private final transient String                beanName;
-    private final transient String                argumentsJson;
-    private final transient String                cronExpression;
+    private final TaskHistoryRepository taskHistoryRepository;
+    private final TaskLockRepository    taskLockRepository;
+    private final String                name;
+    private final String                beanName;
+    private final String                argumentsJson;
+    private final String                cronExpression;
 
     @Override
     public void run() {

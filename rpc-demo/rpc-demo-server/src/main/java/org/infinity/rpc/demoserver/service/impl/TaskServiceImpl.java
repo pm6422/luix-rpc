@@ -127,21 +127,13 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                 .cronExpression(task.getCronExpression())
                 .build();
         if (isNotEmpty(task.getCronExpression())) {
-            cronTaskRegistrar.addCronTask(runnableTask, task.getCronExpression());
+            cronTaskRegistrar.addCronTask(task.getName(), runnableTask, task.getCronExpression());
         } else {
-            cronTaskRegistrar.addFixedRateTask(runnableTask, task.getFixedRateInterval());
+            cronTaskRegistrar.addFixedRateTask(task.getName(), runnableTask, task.getFixedRateInterval());
         }
     }
 
     private void removeTask(Task task) {
-        RunnableTask runnableTask = RunnableTask.builder()
-                .taskHistoryRepository(taskHistoryRepository)
-                .taskLockRepository(taskLockRepository)
-                .name(task.getName())
-                .beanName(task.getBeanName())
-                .argumentsJson(task.getArgumentsJson())
-                .cronExpression(task.getCronExpression())
-                .build();
-        cronTaskRegistrar.removeTask(runnableTask);
+        cronTaskRegistrar.removeTask(task.getName());
     }
 }
