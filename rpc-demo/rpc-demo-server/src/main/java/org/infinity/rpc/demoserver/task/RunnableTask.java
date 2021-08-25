@@ -28,7 +28,7 @@ import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DA
 @Slf4j
 @EqualsAndHashCode
 @Builder
-public class TaskThread implements Runnable {
+public class RunnableTask implements Runnable {
 
     private static final int SECOND = 1000;
     private static final int MINUTE = 60000;
