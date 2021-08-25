@@ -1,5 +1,6 @@
 package org.infinity.rpc.demoserver.task;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -14,6 +15,7 @@ import org.infinity.rpc.demoserver.utils.NetworkUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -68,15 +70,8 @@ public class TaskThread implements Runnable {
         taskHistory.setExpiryTime(Instant.now().plus(60, ChronoUnit.DAYS));
 
         try {
-            Object target = RpcDemoServerLauncher.applicationContext.getBean(beanName);
-            Method method = target.getClass().getDeclaredMethod(Taskable.METHOD_NAME, Map.class);
-            ReflectionUtils.makeAccessible(method);
-            // Convert JSON string to Map
-            Map<?, ?> arguments = new HashMap<>(16);
-            if (StringUtils.isNotEmpty(argumentsJson)) {
-                arguments = new ObjectMapper().readValue(argumentsJson, Map.class);
-            }
-            method.invoke(target, arguments);
+            // Execute task
+            executeTask();
             taskHistory.setSuccess(true);
         } catch (Exception ex) {
             taskHistory.setSuccess(false);
@@ -97,5 +92,17 @@ public class TaskThread implements Runnable {
             // Save task history
             taskHistoryRepository.save(taskHistory);
         }
+    }
+
+    private void executeTask() throws NoSuchMethodException, JsonProcessingException, IllegalAccessException, InvocationTargetException {
+        Object target = RpcDemoServerLauncher.applicationContext.getBean(beanName);
+        Method method = target.getClass().getDeclaredMethod(Taskable.METHOD_NAME, Map.class);
+        ReflectionUtils.makeAccessible(method);
+        // Convert JSON string to Map
+        Map<?, ?> arguments = new HashMap<>(16);
+        if (StringUtils.isNotEmpty(argumentsJson)) {
+            arguments = new ObjectMapper().readValue(argumentsJson, Map.class);
+        }
+        method.invoke(target, arguments);
     }
 }
