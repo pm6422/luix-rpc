@@ -5,12 +5,14 @@ import org.infinity.rpc.demoserver.async.ExceptionHandlingAsyncTaskExecutor;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
 import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
+import org.springframework.boot.autoconfigure.task.TaskSchedulingProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import javax.annotation.Resource;
 import java.util.concurrent.Executor;
@@ -23,6 +25,9 @@ public class AsyncConfiguration implements AsyncConfigurer {
 
     @Resource
     private TaskExecutionProperties taskExecutionProperties;
+
+    @Resource
+    private TaskSchedulingProperties taskSchedulingProperties;
 
     @Override
     @Bean(name = "asyncTaskExecutor")
@@ -42,14 +47,14 @@ public class AsyncConfiguration implements AsyncConfigurer {
         return new SimpleAsyncUncaughtExceptionHandler();
     }
 
-//    @Bean
-//    public ThreadPoolTaskScheduler taskScheduler() {
-//        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
-//        taskScheduler.setPoolSize(10);
-//        taskScheduler.setRemoveOnCancelPolicy(true);
-//        taskScheduler.setErrorHandler(t -> log.error("Unexpected error occurred in scheduled task.", t));
-//        taskScheduler.setBeanName(applicationProperties.getCache().getCachePrefix() + "thread");
-//        taskScheduler.initialize();
-//        return taskScheduler;
-//    }
+    @Bean
+    public ThreadPoolTaskScheduler taskScheduler() {
+        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+        taskScheduler.setPoolSize(taskSchedulingProperties.getPool().getSize());
+        taskScheduler.setRemoveOnCancelPolicy(true);
+        taskScheduler.setErrorHandler(t -> log.error("Unexpected error occurred while executing scheduled task.", t));
+        taskScheduler.setThreadNamePrefix(taskSchedulingProperties.getThreadNamePrefix());
+        taskScheduler.initialize();
+        return taskScheduler;
+    }
 }
