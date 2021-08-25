@@ -36,10 +36,10 @@ public class RunnableTask implements Runnable {
     private final transient TaskHistoryRepository taskHistoryRepository;
     private final transient TaskLockRepository    taskLockRepository;
     private final           String                name;
-    private final           String                beanName;
-    private final           String                argumentsJson;
-    private final           String                cronExpression;
-    private final           boolean               allHostsRun;
+    private final transient String                beanName;
+    private final transient String                argumentsJson;
+    private final transient String                cronExpression;
+    private final transient boolean               allHostsRun;
 
     @Override
     public void run() {
