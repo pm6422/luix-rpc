@@ -52,7 +52,7 @@ public class AsyncConfiguration implements AsyncConfigurer {
         ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
         taskScheduler.setPoolSize(taskSchedulingProperties.getPool().getSize());
         taskScheduler.setRemoveOnCancelPolicy(true);
-        taskScheduler.setErrorHandler(t -> log.error("Unexpected error occurred while executing scheduled task.", t));
+        taskScheduler.setErrorHandler(t -> log.error("Unexpected error occurred while executing scheduled task!", t));
         taskScheduler.setThreadNamePrefix(taskSchedulingProperties.getThreadNamePrefix());
         taskScheduler.initialize();
         return taskScheduler;
