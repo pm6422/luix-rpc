@@ -125,7 +125,6 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                 .beanName(task.getBeanName())
                 .argumentsJson(task.getArgumentsJson())
                 .cronExpression(task.getCronExpression())
-                .allHostsRun(task.isAllHostsRun())
                 .build();
         if (isNotEmpty(task.getCronExpression())) {
             cronTaskRegistrar.addCronTask(runnableTask, task.getCronExpression());
@@ -142,7 +141,6 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                 .beanName(task.getBeanName())
                 .argumentsJson(task.getArgumentsJson())
                 .cronExpression(task.getCronExpression())
-                .allHostsRun(task.isAllHostsRun())
                 .build();
         cronTaskRegistrar.removeTask(runnableTask);
     }

@@ -39,23 +39,20 @@ public class RunnableTask implements Runnable {
     private final transient String                beanName;
     private final transient String                argumentsJson;
     private final transient String                cronExpression;
-    private final transient boolean               allHostsRun;
 
     @Override
     public void run() {
-        if (Boolean.FALSE.equals(allHostsRun)) {
-            // Single host execute mode
-            if (taskLockRepository.findByName(name).isPresent()) {
-                log.warn("Skip to execute task for the address: {}", NetworkUtils.INTRANET_IP);
-                return;
-            }
-            // This distributed lock used to control that only one node executes the task at the same time
-            TaskLock taskLock = new TaskLock();
-            taskLock.setName(name);
-            // Set expiry time with 30 seconds for the lock
-            taskLock.setExpiryTime(Instant.now().plus(30, ChronoUnit.SECONDS));
-            taskLockRepository.save(taskLock);
+        // Single host execute mode
+        if (taskLockRepository.findByName(name).isPresent()) {
+            log.warn("Skip to execute task for the address: {}", NetworkUtils.INTRANET_IP);
+            return;
         }
+        // This distributed lock used to control that only one node executes the task at the same time
+        TaskLock taskLock = new TaskLock();
+        taskLock.setName(name);
+        // Set expiry time with 30 seconds for the lock
+        taskLock.setExpiryTime(Instant.now().plus(30, ChronoUnit.SECONDS));
+        taskLockRepository.save(taskLock);
 
         log.info("Executing timing task {}.{}() at {}", beanName, TaskExecutable.METHOD_NAME,
                 ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
