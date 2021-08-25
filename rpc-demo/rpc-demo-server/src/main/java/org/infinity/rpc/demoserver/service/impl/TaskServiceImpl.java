@@ -2,6 +2,7 @@ package org.infinity.rpc.demoserver.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.demoserver.domain.Task;
 import org.infinity.rpc.demoserver.exception.NoDataFoundException;
 import org.infinity.rpc.demoserver.repository.TaskHistoryRepository;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Service
 @Slf4j
@@ -50,17 +53,19 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         }
 
         for (Task task : enabledTasks) {
-            addCronTask(task);
+            addTask(task);
         }
         log.info("Loaded all tasks");
     }
 
     @Override
     public Task insert(Task domain) {
+        Validate.isTrue(isNotEmpty(domain.getCronExpression()) || domain.getFixedRateInterval() != null,
+                "At least one of cron expression or fixed rate interval must NOT be null!");
         domain.setName("T" + IdGenerator.generateShortId());
         Task savedOne = taskRepository.insert(domain);
         if (Boolean.TRUE.equals(savedOne.getEnabled())) {
-            addCronTask(savedOne);
+            addTask(savedOne);
         }
         return savedOne;
     }
@@ -68,16 +73,18 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
     @Override
     public void update(Task domain) {
         Task existingOne = taskRepository.findById(domain.getId()).orElseThrow(() -> new NoDataFoundException(domain.getId()));
+        Validate.isTrue(isNotEmpty(domain.getCronExpression()) || domain.getFixedRateInterval() != null,
+                "At least one of cron expression or fixed rate interval must NOT be null!");
         Task savedOne = taskRepository.save(domain);
 
         // Remove before adding
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
-            removeCronTask(existingOne);
+            removeTask(existingOne);
         }
 
         // Add a new one
         if (Boolean.TRUE.equals(savedOne.getEnabled())) {
-            addCronTask(savedOne);
+            addTask(savedOne);
         }
     }
 
@@ -86,7 +93,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         Task existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         taskRepository.deleteById(id);
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
-            removeCronTask(existingOne);
+            removeTask(existingOne);
         }
     }
 
@@ -94,9 +101,9 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
     public void startOrStop(String id) {
         Task existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
-            addCronTask(existingOne);
+            addTask(existingOne);
         } else {
-            removeCronTask(existingOne);
+            removeTask(existingOne);
         }
     }
 
@@ -110,7 +117,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         return taskRepository.findAll(Example.of(probe, matcher), pageable);
     }
 
-    private void addCronTask(Task task) {
+    private void addTask(Task task) {
         RunnableTask runnableTask = RunnableTask.builder()
                 .taskHistoryRepository(taskHistoryRepository)
                 .taskLockRepository(taskLockRepository)
@@ -120,10 +127,14 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                 .cronExpression(task.getCronExpression())
                 .allHostsRun(task.isAllHostsRun())
                 .build();
-        cronTaskRegistrar.addCronTask(runnableTask, task.getCronExpression());
+        if (isNotEmpty(task.getCronExpression())) {
+            cronTaskRegistrar.addCronTask(runnableTask, task.getCronExpression());
+        } else {
+            cronTaskRegistrar.addFixedRateTask(runnableTask, task.getFixedRateInterval());
+        }
     }
 
-    private void removeCronTask(Task task) {
+    private void removeTask(Task task) {
         RunnableTask runnableTask = RunnableTask.builder()
                 .taskHistoryRepository(taskHistoryRepository)
                 .taskLockRepository(taskLockRepository)

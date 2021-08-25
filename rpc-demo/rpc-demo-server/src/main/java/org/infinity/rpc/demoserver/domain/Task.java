@@ -41,8 +41,11 @@ public class Task extends AbstractAuditableDomain implements Serializable {
      * Cron expression
      * https://cron.qqe2.com
      */
-    @NotEmpty
     private              String  cronExpression;
+    /**
+     * Fixed rate interval
+     */
+    private              Long    fixedRateInterval;
     /**
      * Indicates whether execute task on all hosts or one host
      */
