@@ -50,16 +50,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         }
 
         for (Task task : enabledTasks) {
-            RunnableTask runnableTask = RunnableTask.builder()
-                    .taskHistoryRepository(taskHistoryRepository)
-                    .taskLockRepository(taskLockRepository)
-                    .name(task.getName())
-                    .beanName(task.getBeanName())
-                    .argumentsJson(task.getArgumentsJson())
-                    .cronExpression(task.getCronExpression())
-                    .allHostsRun(task.isAllHostsRun())
-                    .build();
-            cronTaskRegistrar.addCronTask(runnableTask, task.getCronExpression());
+            addCronTask(task);
         }
         log.info("Loaded all tasks");
     }
@@ -69,16 +60,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         domain.setName("T" + IdGenerator.generateShortId());
         Task savedOne = taskRepository.insert(domain);
         if (Boolean.TRUE.equals(savedOne.getEnabled())) {
-            RunnableTask runnableTask = RunnableTask.builder()
-                    .taskHistoryRepository(taskHistoryRepository)
-                    .taskLockRepository(taskLockRepository)
-                    .name(savedOne.getName())
-                    .beanName(savedOne.getBeanName())
-                    .argumentsJson(savedOne.getArgumentsJson())
-                    .cronExpression(savedOne.getCronExpression())
-                    .allHostsRun(savedOne.isAllHostsRun())
-                    .build();
-            cronTaskRegistrar.addCronTask(runnableTask, savedOne.getCronExpression());
+            addCronTask(savedOne);
         }
         return savedOne;
     }
@@ -90,30 +72,12 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
 
         // Remove before adding
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
-            RunnableTask runnableTask = RunnableTask.builder()
-                    .taskHistoryRepository(taskHistoryRepository)
-                    .taskLockRepository(taskLockRepository)
-                    .name(existingOne.getName())
-                    .beanName(existingOne.getBeanName())
-                    .argumentsJson(existingOne.getArgumentsJson())
-                    .cronExpression(existingOne.getCronExpression())
-                    .allHostsRun(existingOne.isAllHostsRun())
-                    .build();
-            cronTaskRegistrar.removeCronTask(runnableTask);
+            removeCronTask(existingOne);
         }
 
         // Add a new one
         if (Boolean.TRUE.equals(savedOne.getEnabled())) {
-            RunnableTask runnableTask = RunnableTask.builder()
-                    .taskHistoryRepository(taskHistoryRepository)
-                    .taskLockRepository(taskLockRepository)
-                    .name(savedOne.getName())
-                    .beanName(savedOne.getBeanName())
-                    .argumentsJson(savedOne.getArgumentsJson())
-                    .cronExpression(savedOne.getCronExpression())
-                    .allHostsRun(savedOne.isAllHostsRun())
-                    .build();
-            cronTaskRegistrar.addCronTask(runnableTask, domain.getCronExpression());
+            addCronTask(savedOne);
         }
     }
 
@@ -122,35 +86,17 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         Task existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         taskRepository.deleteById(id);
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
-            RunnableTask runnableTask = RunnableTask.builder()
-                    .taskHistoryRepository(taskHistoryRepository)
-                    .taskLockRepository(taskLockRepository)
-                    .name(existingOne.getName())
-                    .beanName(existingOne.getBeanName())
-                    .argumentsJson(existingOne.getArgumentsJson())
-                    .cronExpression(existingOne.getCronExpression())
-                    .allHostsRun(existingOne.isAllHostsRun())
-                    .build();
-            cronTaskRegistrar.removeCronTask(runnableTask);
+            removeCronTask(existingOne);
         }
     }
 
     @Override
-    public void startOrPause(String id) {
+    public void startOrStop(String id) {
         Task existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
-        RunnableTask runnableTask = RunnableTask.builder()
-                .taskHistoryRepository(taskHistoryRepository)
-                .taskLockRepository(taskLockRepository)
-                .name(existingOne.getName())
-                .beanName(existingOne.getBeanName())
-                .argumentsJson(existingOne.getArgumentsJson())
-                .cronExpression(existingOne.getCronExpression())
-                .allHostsRun(existingOne.isAllHostsRun())
-                .build();
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
-            cronTaskRegistrar.addCronTask(runnableTask, existingOne.getCronExpression());
+            addCronTask(existingOne);
         } else {
-            cronTaskRegistrar.removeCronTask(runnableTask);
+            removeCronTask(existingOne);
         }
     }
 
@@ -162,5 +108,31 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         // Ignore query parameter if it has a null value
         ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
         return taskRepository.findAll(Example.of(probe, matcher), pageable);
+    }
+
+    private void addCronTask(Task task) {
+        RunnableTask runnableTask = RunnableTask.builder()
+                .taskHistoryRepository(taskHistoryRepository)
+                .taskLockRepository(taskLockRepository)
+                .name(task.getName())
+                .beanName(task.getBeanName())
+                .argumentsJson(task.getArgumentsJson())
+                .cronExpression(task.getCronExpression())
+                .allHostsRun(task.isAllHostsRun())
+                .build();
+        cronTaskRegistrar.addCronTask(runnableTask, task.getCronExpression());
+    }
+
+    private void removeCronTask(Task task) {
+        RunnableTask runnableTask = RunnableTask.builder()
+                .taskHistoryRepository(taskHistoryRepository)
+                .taskLockRepository(taskLockRepository)
+                .name(task.getName())
+                .beanName(task.getBeanName())
+                .argumentsJson(task.getArgumentsJson())
+                .cronExpression(task.getCronExpression())
+                .allHostsRun(task.isAllHostsRun())
+                .build();
+        cronTaskRegistrar.removeCronTask(runnableTask);
     }
 }
