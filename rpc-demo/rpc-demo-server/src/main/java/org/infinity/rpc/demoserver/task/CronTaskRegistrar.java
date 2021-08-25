@@ -27,10 +27,10 @@ public class CronTaskRegistrar implements DisposableBean {
         Validate.notEmpty(cronExpression, "Cron expression must NOT be empty!");
 
         CronTask cronTask = new CronTask(task, cronExpression);
-        this.scheduledTasks.put(task, createScheduleTask(cronTask));
+        this.scheduledTasks.put(task, createCronTask(cronTask));
     }
 
-    private ScheduledTask createScheduleTask(CronTask cronTask) {
+    private ScheduledTask createCronTask(CronTask cronTask) {
         ScheduledFuture<?> scheduledFuture = this.taskScheduler.schedule(cronTask.getRunnable(), cronTask.getTrigger());
         return new ScheduledTask(scheduledFuture);
     }
