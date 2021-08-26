@@ -41,6 +41,10 @@ public class Task extends AbstractAuditableDomain implements Serializable {
      */
     private              String       argumentsJson;
     /**
+     * Indicates whether it use cron expression, or fixed interval
+     */
+    private              Boolean      useCronExpression;
+    /**
      * Cron expression
      * https://cron.qqe2.com
      */

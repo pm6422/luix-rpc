@@ -16,5 +16,5 @@ public interface TaskService {
 
     void startOrStop(String id);
 
-    Page<Task> find(Pageable pageable, String name, String beanName, String methodName);
+    Page<Task> find(Pageable pageable, String name, String beanName);
 }

@@ -31,21 +31,45 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="control-label">Use CRON expression</label>
+            <div class="onoffswitch">
+                <input type="checkbox" id="useCronExpression" ng-model="vm.entity.useCronExpression" class="onoffswitch-checkbox">
+                <label class="onoffswitch-label" for="useCronExpression">
+                    <span class="onoffswitch-inner"></span>
+                    <span class="onoffswitch-switch"></span>
+                </label>
+            </div>
+        </div>
+        <div class="form-group" ng-if="vm.entity.useCronExpression">
             <label class="control-label">Cron expression</label>
             <input type="text" class="form-control" name="cronExpression" ng-model="vm.entity.cronExpression"
-                   ng-maxlength="50">
+                   ng-maxlength="50" required>
             <div ng-show="editForm.cronExpression.$invalid">
+                <p class="help-block" ng-show="editForm.cronExpression.$error.required">
+                    Required
+                </p>
                 <p class="help-block" ng-show="editForm.cronExpression.$error.maxlength" translate-value-max="50">
-                    最大长度为50个字符
+                    Max length: 50
                 </p>
             </div>
         </div>
-        <div class="form-group">
-            <label class="control-label">Fixed interval unit</label>
-            <select name="fixedIntervalUnit" class="form-control" ng-model="vm.entity.fixedIntervalUnit"
-                    ng-options="item for item in vm.timeUnits">
-                <option value="">Select...</option>
-            </select>
+        <div class="form-group" ng-if="!vm.entity.useCronExpression">
+            <label class="control-label">Fixed rate</label>
+            <div class="row">
+                <div class="col-md-2"><span class="form-control">Every </span></div>
+                <div class="col-md-2"><input type="number" class="form-control" ng-model="vm.entity.fixedInterval"></div>
+                <div class="col-md-2">
+                    <select name="fixedIntervalUnit" class="form-control col-md-2" ng-model="vm.entity.fixedIntervalUnit"
+                            ng-options="item for item in vm.timeUnits" required>
+                        <option value="">Select...</option>
+                    </select>
+                </div>
+            </div>
+            <div ng-show="editForm.fixedIntervalUnit.$invalid">
+                <p class="help-block" ng-show="editForm.fixedIntervalUnit.$error.required">
+                    Required
+                </p>
+            </div>
         </div>
         <div class="form-group">
             <label class="control-label">Enabled</label>
@@ -63,7 +87,7 @@
             <input type="text" class="form-control" name="remark" ng-model="vm.entity.remark" ng-maxlength="100">
             <div ng-show="editForm.remark.$invalid">
                 <p class="help-block" ng-show="editForm.remark.$error.maxlength" translate-value-max="100">
-                    最大长度为100个字符
+                    Max length: 100
                 </p>
             </div>
         </div>
