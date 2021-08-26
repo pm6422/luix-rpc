@@ -32,7 +32,7 @@
         </div>
         <div class="form-group">
             <label class="control-label">Use CRON expression</label>
-            <a tooltip-placement="right" uib-tooltip="Used to sign in"><i class="fa fa-question"></i></a>
+            <a tooltip-placement="right" uib-tooltip="A cron expression is a string consisting of six or seven subexpressions (fields) that describe individual details of the schedule"><i class="fa fa-question"></i></a>
             <div class="onoffswitch">
                 <input type="checkbox" id="useCronExpression" ng-model="vm.entity.useCronExpression" class="onoffswitch-checkbox">
                 <label class="onoffswitch-label" for="useCronExpression">
@@ -55,7 +55,7 @@
             </div>
             <a href="https://www.freeformatter.com/cron-expression-generator-quartz.html" target="view_window">
                 <span class="fa fa-exclamation-circle"></span>&nbsp;
-                <span>Online Cron Expression Generator</span>
+                <span>Online CRON Expression Generator</span>
             </a>
         </div>
         <div class="form-group" ng-if="!vm.entity.useCronExpression">
