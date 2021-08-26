@@ -34,7 +34,6 @@
                             <th sort-by-directive="name"><span>Task name</span> <span class="fa fa-sort"></span></th>
                             <th sort-by-directive="beanName"><span>Spring bean name</span> <span class="fa fa-sort"></span></th>
                             <th>Method arguments</th>
-                            <th>Cron expression</th>
                             <th sort-by-directive="enabled"><span>Enabled</span> <span class="fa fa-sort"></span></th>
                             <th sort-by-directive="modifiedTime"><span>Modified time</span> <span class="fa fa-sort"></span></th>
                             <th>Actions</th>
@@ -45,7 +44,6 @@
                             <td>{{entity.name}}</td>
                             <td>{{entity.beanName}}</td>
                             <td>{{entity.argumentsJson}}</td>
-                            <td>{{entity.cronExpression}}</td>
                             <td>
                                 <span class="label label-danger" ng-click="vm.setEnabled(entity, true)"
                                       ng-show="!entity.enabled"

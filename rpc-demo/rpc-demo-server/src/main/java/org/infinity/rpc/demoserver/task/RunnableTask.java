@@ -47,8 +47,8 @@ public class RunnableTask implements Runnable {
         // This distributed lock used to control that only one node executes the task at the same time
         TaskLock taskLock = new TaskLock();
         taskLock.setName(task.getName());
-        // Set expiry time with 30 seconds for the lock
-        taskLock.setExpiryTime(Instant.now().plus(30, ChronoUnit.SECONDS));
+        // Set expiry time with 10 seconds for the lock
+        taskLock.setExpiryTime(Instant.now().plus(10, ChronoUnit.SECONDS));
         taskLockRepository.save(taskLock);
 
         log.info("Executing timing task {}.{}() at {}", task.getBeanName(), TaskExecutable.METHOD_NAME,
