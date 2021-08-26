@@ -36,7 +36,10 @@ public class RunnableTask implements Runnable {
     private final String                name;
     private final String                beanName;
     private final String                argumentsJson;
+    private final Boolean               useCronExpression;
     private final String                cronExpression;
+    private final Long                  fixedInterval;
+    private final String                fixedIntervalUnit;
 
     @Override
     public void run() {

@@ -117,7 +117,10 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                 .name(task.getName())
                 .beanName(task.getBeanName())
                 .argumentsJson(task.getArgumentsJson())
+                .useCronExpression(task.getUseCronExpression())
                 .cronExpression(task.getCronExpression())
+                .fixedInterval(task.getFixedInterval())
+                .fixedIntervalUnit(task.getFixedIntervalUnit())
                 .build();
         if (Boolean.TRUE.equals(task.getUseCronExpression())) {
             cronTaskRegistrar.addCronTask(task.getName(), runnableTask, task.getCronExpression());

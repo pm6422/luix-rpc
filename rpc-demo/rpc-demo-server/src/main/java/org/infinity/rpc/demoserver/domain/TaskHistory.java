@@ -34,9 +34,21 @@ public class TaskHistory implements Serializable {
      */
     private              String  argumentsJson;
     /**
+     * Indicates whether it use cron expression, or fixed interval
+     */
+    private              Boolean useCronExpression;
+    /**
      * Cron expression
      */
     private              String  cronExpression;
+    /**
+     * Fixed rate interval
+     */
+    private              Long    fixedInterval;
+    /**
+     * Time unit of fixed rate interval, e.g. MINUTES, HOURS, DAYS
+     */
+    private              String  fixedIntervalUnit;
     /**
      * Execution time in milliseconds
      */
