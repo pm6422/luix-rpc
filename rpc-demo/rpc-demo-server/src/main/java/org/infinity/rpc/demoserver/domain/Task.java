@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +25,10 @@ import java.util.List;
 @NoArgsConstructor
 public class Task extends AbstractAuditableDomain implements Serializable {
     private static final long         serialVersionUID              = 8878535528271740314L;
-    public static final  List<String> AVAILABLE_FIXED_INTERVAL_UNIT = Arrays.asList("MINUTES", "HOURS", "DAYS");
+    public static final  String       UNIT_MINUTES                  = "MINUTES";
+    public static final  String       UNIT_HOURS                    = "HOURS";
+    public static final  String       UNIT_DAYS                     = "DAYS";
+    public static final  List<String> AVAILABLE_FIXED_INTERVAL_UNIT = Arrays.asList(UNIT_MINUTES, UNIT_HOURS, UNIT_DAYS);
     /**
      * Task name
      */
@@ -52,6 +56,7 @@ public class Task extends AbstractAuditableDomain implements Serializable {
     /**
      * Fixed rate interval
      */
+    @Positive
     private              Long         fixedInterval;
     /**
      * Time unit of fixed rate interval, e.g. MINUTES, HOURS, DAYS

@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static org.infinity.rpc.demoserver.domain.Task.*;
+
 @Service
 @Slf4j
 public class TaskServiceImpl implements TaskService, ApplicationRunner {
@@ -125,11 +127,23 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         if (Boolean.TRUE.equals(task.getUseCronExpression())) {
             cronTaskRegistrar.addCronTask(task.getName(), runnableTask, task.getCronExpression());
         } else {
-            cronTaskRegistrar.addFixedRateTask(task.getName(), runnableTask, task.getFixedInterval());
+            cronTaskRegistrar.addFixedRateTask(task.getName(), runnableTask, calculateMilliSeconds(task));
         }
     }
 
     private void removeTask(Task task) {
         cronTaskRegistrar.removeTask(task.getName());
+    }
+
+    private long calculateMilliSeconds(Task task) {
+        long oneMinute = 60000;
+        if (UNIT_MINUTES.equals(task.getFixedIntervalUnit())) {
+            return oneMinute * task.getFixedInterval();
+        } else if (UNIT_HOURS.equals(task.getFixedIntervalUnit())) {
+            return oneMinute * 60 * task.getFixedInterval();
+        } else if (UNIT_DAYS.equals(task.getFixedIntervalUnit())) {
+            return oneMinute * 60 * 24 * task.getFixedInterval();
+        }
+        throw new IllegalStateException("Found incorrect time unit!");
     }
 }
