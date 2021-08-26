@@ -60,7 +60,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
 
     @Override
     public Task insert(Task domain) {
-        Validate.isTrue(isNotEmpty(domain.getCronExpression()) || domain.getFixedRateInterval() != null,
+        Validate.isTrue(isNotEmpty(domain.getCronExpression()) || domain.getFixedInterval() != null,
                 "At least one of cron expression or fixed rate interval must NOT be null!");
         domain.setName("T" + IdGenerator.generateShortId());
         Task savedOne = taskRepository.insert(domain);
@@ -73,7 +73,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
     @Override
     public void update(Task domain) {
         Task existingOne = taskRepository.findById(domain.getId()).orElseThrow(() -> new NoDataFoundException(domain.getId()));
-        Validate.isTrue(isNotEmpty(domain.getCronExpression()) || domain.getFixedRateInterval() != null,
+        Validate.isTrue(isNotEmpty(domain.getCronExpression()) || domain.getFixedInterval() != null,
                 "At least one of cron expression or fixed rate interval must NOT be null!");
         Task savedOne = taskRepository.save(domain);
 
@@ -129,7 +129,7 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
         if (isNotEmpty(task.getCronExpression())) {
             cronTaskRegistrar.addCronTask(task.getName(), runnableTask, task.getCronExpression());
         } else {
-            cronTaskRegistrar.addFixedRateTask(task.getName(), runnableTask, task.getFixedRateInterval());
+            cronTaskRegistrar.addFixedRateTask(task.getName(), runnableTask, task.getFixedInterval());
         }
     }
 

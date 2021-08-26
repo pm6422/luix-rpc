@@ -32,16 +32,20 @@
         </div>
         <div class="form-group">
             <label class="control-label">Cron expression</label>
-            <input type="text" class="form-control" name="cronExpression" ng-model="vm.entity.cronExpression" required
+            <input type="text" class="form-control" name="cronExpression" ng-model="vm.entity.cronExpression"
                    ng-maxlength="50">
             <div ng-show="editForm.cronExpression.$invalid">
-                <p class="help-block" ng-show="editForm.cronExpression.$error.required">
-                    Required
-                </p>
                 <p class="help-block" ng-show="editForm.cronExpression.$error.maxlength" translate-value-max="50">
                     最大长度为50个字符
                 </p>
             </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Fixed interval unit</label>
+            <select name="fixedIntervalUnit" class="form-control" ng-model="vm.entity.fixedIntervalUnit"
+                    ng-options="item for item in vm.timeUnits">
+                <option value="">Select...</option>
+            </select>
         </div>
         <div class="form-group">
             <label class="control-label">Enabled</label>

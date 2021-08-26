@@ -11,6 +11,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Spring Data MongoDB collection for the Task entity.
@@ -21,38 +23,43 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class Task extends AbstractAuditableDomain implements Serializable {
-    private static final long    serialVersionUID = 8878535528271740314L;
+    private static final long         serialVersionUID              = 8878535528271740314L;
+    public static final  List<String> AVAILABLE_FIXED_INTERVAL_UNIT = Arrays.asList("MINUTES", "HOURS", "DAYS");
     /**
      * Task name
      */
     @Indexed(unique = true)
-    private              String  name;
+    private              String       name;
     /**
      * Spring bean name
      */
     @NotEmpty
     @Indexed(unique = true)
-    private              String  beanName;
+    private              String       beanName;
     /**
      * Method arguments JSON string
      */
-    private              String  argumentsJson;
+    private              String       argumentsJson;
     /**
      * Cron expression
      * https://cron.qqe2.com
      */
-    private              String  cronExpression;
+    private              String       cronExpression;
     /**
      * Fixed rate interval
      */
-    private              Long    fixedRateInterval;
+    private              Long         fixedInterval;
+    /**
+     * Time unit of fixed rate interval, e.g. MINUTES, HOURS, DAYS
+     */
+    private              String       fixedIntervalUnit;
     /**
      * Remarks
      */
-    private              String  remark;
+    private              String       remark;
     /**
      * Enabled
      */
     @NotNull
-    private              Boolean enabled;
+    private              Boolean      enabled;
 }

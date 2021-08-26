@@ -103,4 +103,10 @@ public class TaskController {
     public ResponseEntity<List<String>> findBeans() {
         return ResponseEntity.ok().body(Arrays.asList(applicationContext.getBeanNamesForType(TaskExecutable.class)));
     }
+
+    @ApiOperation("find available time units of fixed rate interval")
+    @GetMapping("/api/tasks/time-units")
+    public ResponseEntity<List<String>> findTimeUnits() {
+        return ResponseEntity.ok().body(Task.AVAILABLE_FIXED_INTERVAL_UNIT);
+    }
 }
