@@ -20,9 +20,10 @@ public class CronTaskRegistrar implements DisposableBean {
      * Spring task scheduler
      */
     @Resource
-    private              TaskScheduler                taskScheduler;
+    private              TaskScheduler              taskScheduler;
 
     public void addCronTask(String name, Runnable task, String cronExpression) {
+        Validate.notEmpty(name, "Task name must NOT be empty!");
         Validate.notNull(task, "Task must NOT be null!");
         Validate.notEmpty(cronExpression, "Cron expression must NOT be empty!");
 
@@ -36,6 +37,7 @@ public class CronTaskRegistrar implements DisposableBean {
     }
 
     public void addFixedRateTask(String name, Runnable task, long interval) {
+        Validate.notEmpty(name, "Task name must NOT be empty!");
         Validate.notNull(task, "Task must NOT be null!");
 
         this.SCHEDULED_TASKS.put(name, createFixedRateTask(task, interval));
