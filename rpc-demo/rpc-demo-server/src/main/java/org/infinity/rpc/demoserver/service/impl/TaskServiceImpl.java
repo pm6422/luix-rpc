@@ -70,6 +70,13 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
     @Override
     public void update(Task domain) {
         Task existingOne = taskRepository.findById(domain.getId()).orElseThrow(() -> new NoDataFoundException(domain.getId()));
+        if (Boolean.TRUE.equals(domain.getUseCronExpression())) {
+            domain.setFixedInterval(null);
+            domain.setFixedIntervalUnit(null);
+        } else {
+            domain.setCronExpression(null);
+        }
+
         Task savedOne = taskRepository.save(domain);
 
         // Remove before adding
