@@ -76,16 +76,34 @@
                 </p>
             </div>
         </div>
-        <div class="form-group">
-            <label class="control-label">Enabled</label>
-            <div class="onoffswitch">
-                <input type="checkbox" id="enabled" ng-model="vm.entity.enabled" class="onoffswitch-checkbox">
-                <label class="onoffswitch-label" for="enabled">
-                    <span class="onoffswitch-inner"></span>
-                    <span class="onoffswitch-switch"></span>
-                </label>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label class="control-label" for="startTime">Start time</label>
+                <input type="datetime-local" class="input-sm form-control" id="startTime" ng-model="vm.entity.startTime"/>
+                <p class="label label-warning">
+                    <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
+                    If left empty, schedule will take effect immediately
+                </p>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="control-label" for="stopTime">Stop time</label>
+                <input type="datetime-local" class="input-sm form-control" id="stopTime" ng-model="vm.entity.stopTime"/>
+                <p class="label label-warning">
+                    <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
+                    If left empty, schedule will run indefinitely until it is disabled or deleted
+                </p>
             </div>
         </div>
+<!--        <div class="form-group">-->
+<!--            <label class="control-label">Enabled</label>-->
+<!--            <div class="onoffswitch">-->
+<!--                <input type="checkbox" id="enabled" ng-model="vm.entity.enabled" class="onoffswitch-checkbox">-->
+<!--                <label class="onoffswitch-label" for="enabled">-->
+<!--                    <span class="onoffswitch-inner"></span>-->
+<!--                    <span class="onoffswitch-switch"></span>-->
+<!--                </label>-->
+<!--            </div>-->
+<!--        </div>-->
         <div class="form-group">
             <label class="control-label">Remark</label>
             <input type="text" class="form-control" name="remark" ng-model="vm.entity.remark" ng-maxlength="100">
