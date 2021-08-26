@@ -32,7 +32,7 @@
                             <th sort-by-directive="name"><span>Task name</span> <span class="fa fa-sort"></span></th>
                             <th>Spring bean name</th>
                             <th>Elapsed</th>
-                            <th sort-by-directive="success"><span>Success</span> <span class="fa fa-sort"></span></th>
+                            <th sort-by-directive="success"><span>Status</span> <span class="fa fa-sort"></span></th>
                             <th sort-by-directive="createdTime"><span>Created time</span> <span class="fa fa-sort"></span></th>
                             <th>Actions</th>
                         </tr>
@@ -42,7 +42,10 @@
                             <td>{{entity.name}}</td>
                             <td>{{entity.beanName}}</td>
                             <td>{{entity.elapsed}}</td>
-                            <td>{{entity.success}}</td>
+                            <td>
+                                <span class="label label-danger" ng-show="!entity.success">Failure</span>
+                                <span class="label label-primary" ng-show="entity.success">Success</span>
+                            </td>
                             <td>{{entity.createdTime | date:'yyyy/MM/dd HH:mm:ss'}}</td>
                             <td>
                                 <div class="btn-group">
