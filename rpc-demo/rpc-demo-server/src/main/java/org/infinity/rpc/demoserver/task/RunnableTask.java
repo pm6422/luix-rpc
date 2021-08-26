@@ -57,6 +57,7 @@ public class RunnableTask implements Runnable {
         stopWatch.start();
         TaskHistory taskHistory = new TaskHistory();
         BeanUtils.copyProperties(task, taskHistory);
+        taskHistory.setId(null);
 
         // Automatically delete records after 60 days
         taskHistory.setExpiryTime(Instant.now().plus(60, ChronoUnit.DAYS));
