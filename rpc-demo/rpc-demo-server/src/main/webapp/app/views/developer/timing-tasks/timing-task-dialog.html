@@ -57,7 +57,7 @@
             <label class="control-label">Fixed rate</label>
             <div class="row">
                 <div class="col-md-2"><span class="form-control pull-right">Every</span></div>
-                <div class="col-md-2"><input type="number" class="form-control" ng-model="vm.entity.fixedInterval"></div>
+                <div class="col-md-2"><input type="number" min=1 class="form-control" ng-model="vm.entity.fixedInterval"></div>
                 <div class="col-md-2">
                     <select name="fixedIntervalUnit" class="form-control col-md-2" ng-model="vm.entity.fixedIntervalUnit"
                             ng-options="item for item in vm.timeUnits" required>
