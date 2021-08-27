@@ -40,10 +40,10 @@
                     <td>
                         <div class="btn-group">
                             <button class="btn-white btn btn-xs" ng-disabled="!entity.providing"
-                                    ui-sref="rpc.rpc-provider-list({address: entity.address})"
+                                    ui-sref="rpc.provider-list({address: entity.address})"
                                     uib-tooltip="List all providers of this server">Providers</button>
                             <button class="btn-white btn btn-xs" ng-disabled="!entity.consuming"
-                                    ui-sref="rpc.rpc-consumer-list({address: entity.address})"
+                                    ui-sref="rpc.consumer-list({address: entity.address})"
                                     tooltip-placement="bottom"
                                     uib-tooltip="List all consumers of this server">Consumers</button>
                             <button class="btn-white btn btn-xs" ng-disabled="!entity.active"

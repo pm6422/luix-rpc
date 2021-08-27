@@ -203,7 +203,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 pageTitle: 'RPC'
             }
         })
-        .state('rpc.rpc-application-list', {
+        .state('rpc.application-list', {
             url: '/rpc-application-list?page&sort',
             views: {
                 'content@': {
@@ -239,7 +239,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('rpc.rpc-server-list', {
+        .state('rpc.server-list', {
             url: '/rpc-server-list?page&sort&address',
             views: {
                 'content@': {
@@ -277,7 +277,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('rpc.rpc-server-list.view', {
+        .state('rpc.server-list.view', {
             url: '/view/:id',
             views: {
                 'content@': {
@@ -295,7 +295,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('rpc.rpc-service-list', {
+        .state('rpc.service-list', {
             url: '/rpc-service-list?page&sort&interfaceName',
             views: {
                 'content@': {
@@ -333,7 +333,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('rpc.rpc-provider-list', {
+        .state('rpc.provider-list', {
             url: '/rpc-provider-list?page&sort&application&interfaceName&address',
             views: {
                 'content@': {
@@ -381,7 +381,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('rpc.rpc-provider-list.view', {
+        .state('rpc.provider-list.view', {
             url: '/view/:id?tab',
             views: {
                 'content@': {
@@ -399,7 +399,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('rpc.rpc-provider-list.view.create-task', {
+        .state('rpc.provider-list.view.create-task', {
             url: '/create-task',
             data: {
                 pageTitle: 'Create scheduled task',
@@ -429,7 +429,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 });
             }]
         })
-        .state('rpc.rpc-provider-list.view.edit-task', {
+        .state('rpc.provider-list.view.edit-task', {
             url: '/edit-task/:taskId',
             data: {
                 pageTitle: 'Edit scheduled task',
@@ -454,7 +454,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 });
             }]
         })
-        .state('rpc.rpc-scheduled-task-history-list', {
+        .state('rpc.scheduled-task-history-list', {
             url: '/rpc-scheduled-task-history-list?page&sort&name&providerId',
             views: {
                 'content@': {
@@ -493,7 +493,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('rpc.rpc-scheduled-task-history-list.view', {
+        .state('rpc.scheduled-task-history-list.view', {
             url: '/view/:id',
             views: {
                 'content@': {
@@ -511,7 +511,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('rpc.rpc-consumer-list', {
+        .state('rpc.consumer-list', {
             url: '/rpc-consumer-list?page&sort&application&interfaceName&address',
             views: {
                 'content@': {

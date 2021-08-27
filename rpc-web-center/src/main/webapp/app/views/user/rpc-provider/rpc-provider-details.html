@@ -5,7 +5,7 @@
     <div class="col-lg-4">
         <div class="title-action">
             <button class="btn-white btn btn-sm" ng-disabled="!vm.entity.consuming"
-                    ui-sref="rpc.rpc-consumer-list({interfaceName: vm.entity.interfaceName})"
+                    ui-sref="rpc.consumer-list({interfaceName: vm.entity.interfaceName})"
                     uib-tooltip="List all consumers of this service">Consumers</button>
             <button class="btn-white btn btn-sm" ng-click="vm.deactivate(vm.entity)"
                     uib-tooltip="Take this provider offline and cannot be accessed by other apps" ng-disabled="!vm.entity.active">Deactivate</button>
@@ -202,7 +202,7 @@
                                         <div class="btn-group">
                                             <button class="btn-white btn btn-xs" ui-sref=".edit-task({taskId: task.id})">Edit</button>
                                             <button class="btn-white btn btn-xs" ng-click="vm.delTask(task.id)">Delete</button>
-                                            <button class="btn-white btn btn-xs" ui-sref="rpc.rpc-scheduled-task-history-list({name: task.name, providerId: vm.entity.id})">History</button>
+                                            <button class="btn-white btn btn-xs" ui-sref="rpc.scheduled-task-history-list({name: task.name, providerId: vm.entity.id})">History</button>
                                         </div>
                                     </td>
                                 </tr>

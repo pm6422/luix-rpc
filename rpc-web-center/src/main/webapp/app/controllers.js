@@ -2063,7 +2063,7 @@ function RpcScheduledTaskHistoryListController($rootScope, $state, AlertUtils, P
     }
 
     function goProviderView(refreshToken) {
-        $state.go('rpc.rpc-provider-list.view', {'id': criteria.providerId, 'tab': 'tasks'});
+        $state.go('rpc.provider-list.view', {'id': criteria.providerId, 'tab': 'tasks'});
     }
 }
 /**
