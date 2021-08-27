@@ -1773,9 +1773,11 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
 
     vm.loadTasks();
 
-    RpcServiceService.get({registryIdentity: $rootScope.selectedRegistryIdentity, interfaceName: vm.entity.interfaceName},
+    RpcServiceService.query({registryIdentity: $rootScope.selectedRegistryIdentity, interfaceName: vm.entity.interfaceName},
         function (response) {
-            vm.entity.consuming = response.consuming;
+            if(_.size(response) > 0) {
+                vm.entity.consuming = response[0].consuming;
+            }
         });
 
     function loadTasks() {
