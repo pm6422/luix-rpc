@@ -808,7 +808,7 @@ function TimingTaskListController($state, AlertUtils, ParseLinksUtils, PAGINATIO
 /**
  * TimingTaskDialogController
  */
-function TimingTaskDialogController($state, $stateParams, $uibModalInstance, TimingTaskService, entity) {
+function TimingTaskDialogController($state, $stateParams, $uibModalInstance, $filter, TimingTaskService, entity) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -816,6 +816,17 @@ function TimingTaskDialogController($state, $stateParams, $uibModalInstance, Tim
     vm.beanNames = TimingTaskService.queryBeans({id: 'beans'});
     vm.timeUnits = TimingTaskService.queryTimeUnits({id: 'time-units'});
     vm.entity = entity;
+
+    var dateFormat = 'yyyy-MM-dd HH:mm';
+    if(vm.entity.startTime) {
+        var startTimeStr = $filter('date')(vm.entity.startTime, dateFormat);
+        vm.entity.startTime = new Date(startTimeStr);
+    }
+    if(vm.entity.stopTime) {
+        var stopTimeStr = $filter('date')(vm.entity.stopTime, dateFormat);
+        vm.entity.stopTime = new Date(stopTimeStr);
+    }
+
     vm.isSaving = false;
     vm.save = save;
     vm.cancel = cancel;
