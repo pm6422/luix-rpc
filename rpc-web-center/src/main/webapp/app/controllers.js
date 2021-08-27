@@ -1909,7 +1909,7 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.mode = $state.current.data.mode;
-    vm.timeUnits = RpcScheduledTaskService.queryTimeUnits({extension: 'time-units'});
+    vm.timeUnits = RpcScheduledTaskService.query({extension: 'time-units'});
     vm.entity = entity;
 
     var dateFormat = 'yyyy-MM-dd HH:mm';

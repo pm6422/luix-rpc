@@ -1441,8 +1441,7 @@ function RpcScheduledTaskService($resource) {
         },
         'create': {method: 'POST'},
         'update': {method: 'PUT'},
-        'del': {method: 'DELETE'},
-        'queryTimeUnits': {method: 'GET', isArray: true}
+        'del': {method: 'DELETE'}
     });
     return service;
 }

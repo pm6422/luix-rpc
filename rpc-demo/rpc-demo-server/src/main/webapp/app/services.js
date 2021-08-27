@@ -659,7 +659,7 @@ function LoggerService($resource) {
  * ScheduledTaskService
  */
 function ScheduledTaskService($resource) {
-    var service = $resource('api/scheduled-tasks/:id', {}, {
+    var service = $resource('api/scheduled-tasks/:extension', {}, {
         'query': {method: 'GET', isArray: true},
         'get': {
             method: 'GET',
@@ -670,9 +670,7 @@ function ScheduledTaskService($resource) {
         },
         'create': {method: 'POST'},
         'update': {method: 'PUT'},
-        'del': {method: 'DELETE'},
-        'queryBeans': {method: 'GET', isArray: true},
-        'queryTimeUnits': {method: 'GET', isArray: true}
+        'del': {method: 'DELETE'}
     });
     return service;
 }

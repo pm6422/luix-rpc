@@ -813,8 +813,8 @@ function ScheduledTaskDialogController($state, $stateParams, $uibModalInstance, 
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.mode = $state.current.data.mode;
-    vm.beanNames = ScheduledTaskService.queryBeans({id: 'beans'});
-    vm.timeUnits = ScheduledTaskService.queryTimeUnits({id: 'time-units'});
+    vm.beanNames = ScheduledTaskService.query({extension: 'beans'});
+    vm.timeUnits = ScheduledTaskService.query({extension: 'time-units'});
     vm.entity = entity;
 
     var dateFormat = 'yyyy-MM-dd HH:mm';
