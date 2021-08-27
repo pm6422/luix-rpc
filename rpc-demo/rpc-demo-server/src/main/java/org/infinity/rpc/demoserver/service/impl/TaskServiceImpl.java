@@ -8,8 +8,8 @@ import org.infinity.rpc.demoserver.repository.TaskHistoryRepository;
 import org.infinity.rpc.demoserver.repository.TaskLockRepository;
 import org.infinity.rpc.demoserver.repository.TaskRepository;
 import org.infinity.rpc.demoserver.service.TaskService;
-import org.infinity.rpc.demoserver.task.TaskSchedulerRegistrar;
 import org.infinity.rpc.demoserver.task.RunnableTask;
+import org.infinity.rpc.demoserver.task.TaskSchedulerRegistrar;
 import org.infinity.rpc.utilities.id.IdGenerator;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -28,9 +28,9 @@ import static org.infinity.rpc.demoserver.domain.Task.*;
 @Slf4j
 public class TaskServiceImpl implements TaskService, ApplicationRunner {
     @Resource
-    private TaskRepository        taskRepository;
+    private TaskRepository         taskRepository;
     @Resource
-    private TaskHistoryRepository taskHistoryRepository;
+    private TaskHistoryRepository  taskHistoryRepository;
     @Resource
     private TaskLockRepository     taskLockRepository;
     @Resource
