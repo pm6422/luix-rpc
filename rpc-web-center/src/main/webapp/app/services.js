@@ -44,8 +44,8 @@ angular
     .factory('RpcServiceService', RpcServiceService)
     .factory('RpcProviderService', RpcProviderService)
     .factory('RpcConsumerService', RpcConsumerService)
-    .factory('RpcTaskService', RpcTaskService)
-    .factory('RpcTaskHistoryService', RpcTaskHistoryService);
+    .factory('RpcScheduledTaskService', RpcScheduledTaskService)
+    .factory('RpcScheduledTaskHistoryService', RpcScheduledTaskHistoryService);
 
 /**
  * StateHandler
@@ -1427,9 +1427,9 @@ function RpcConsumerService($resource) {
     return service;
 }
 /**
- * RpcTaskService
+ * RpcScheduledTaskService
  */
-function RpcTaskService($resource) {
+function RpcScheduledTaskService($resource) {
     var service = $resource('api/rpc-scheduled-tasks/:extension', {}, {
         'query': {method: 'GET', isArray: true},
         'get': {
@@ -1441,14 +1441,15 @@ function RpcTaskService($resource) {
         },
         'create': {method: 'POST'},
         'update': {method: 'PUT'},
-        'del': {method: 'DELETE'}
+        'del': {method: 'DELETE'},
+        'queryTimeUnits': {method: 'GET', isArray: true}
     });
     return service;
 }
 /**
- * RpcTaskHistoryService
+ * RpcScheduledTaskHistoryService
  */
-function RpcTaskHistoryService($resource) {
+function RpcScheduledTaskHistoryService($resource) {
     var service = $resource('api/rpc-scheduled-task-histories/:extension', {}, {
         'query': {method: 'GET', isArray: true},
         'get': {

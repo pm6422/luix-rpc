@@ -46,7 +46,7 @@
                             <td>{{vm.entity.version}}</td>
                         </tr>
                         <tr>
-                            <td>Method methodSignature:</td>
+                            <td>Method signature:</td>
                             <td>{{vm.entity.methodSignature}}</td>
                         </tr>
                         <tr>
@@ -54,8 +54,20 @@
                             <td>{{vm.entity.argumentsJson}}</td>
                         </tr>
                         <tr>
-                            <td>Cron expression:</td>
+                            <td>Use CRON expression:</td>
+                            <td>{{vm.entity.useCronExpression}}</td>
+                        </tr>
+                        <tr>
+                            <td>CRON expression:</td>
                             <td>{{vm.entity.cronExpression}}</td>
+                        </tr>
+                        <tr>
+                            <td>Fixed interval:</td>
+                            <td>{{vm.entity.fixedInterval}}</td>
+                        </tr>
+                        <tr>
+                            <td>Fixed interval unit:</td>
+                            <td>{{vm.entity.fixedIntervalUnit}}</td>
                         </tr>
                         <tr>
                             <td>Elapsed (ms):</td>
@@ -69,11 +81,11 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Reason:</td>
+                            <td>Failure reason:</td>
                             <td>{{vm.entity.reason}}</td>
                         </tr>
                         <tr>
-                            <td>Execution time:</td>
+                            <td>Created time:</td>
                             <td>{{vm.entity.createdTime | date:'yyyy/MM/dd HH:mm:ss'}}</td>
                         </tr>
                         <tr>

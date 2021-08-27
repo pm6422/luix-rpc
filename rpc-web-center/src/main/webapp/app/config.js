@@ -402,13 +402,13 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
         .state('rpc.rpc-provider-list.view.create-task', {
             url: '/create-task',
             data: {
-                pageTitle: 'Create task',
+                pageTitle: 'Create scheduled task',
                 mode: 'create'
             },
             onEnter: ['$state', '$uibModal', function ($state, $uibModal) {
                 $uibModal.open({
-                    templateUrl: 'app/views/user/rpc-provider/rpc-task-dialog.html',
-                    controller: 'RpcTaskDialogController',
+                    templateUrl: 'app/views/user/rpc-provider/rpc-scheduled-task-dialog.html',
+                    controller: 'RpcScheduledTaskDialogController',
                     controllerAs: 'vm',
                     backdrop: 'static',
                     size: 'lg',
@@ -432,19 +432,19 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
         .state('rpc.rpc-provider-list.view.edit-task', {
             url: '/edit-task/:taskId',
             data: {
-                pageTitle: 'Edit task',
+                pageTitle: 'Edit scheduled task',
                 mode: 'edit'
             },
             onEnter: ['$state', '$stateParams', '$uibModal', function ($state, $stateParams, $uibModal) {
                 $uibModal.open({
-                    templateUrl: 'app/views/user/rpc-provider/rpc-task-dialog.html',
-                    controller: 'RpcTaskDialogController',
+                    templateUrl: 'app/views/user/rpc-provider/rpc-scheduled-task-dialog.html',
+                    controller: 'RpcScheduledTaskDialogController',
                     controllerAs: 'vm',
                     backdrop: 'static',
                     size: 'lg',
                     resolve: {
-                        entity: ['RpcTaskService', function (RpcTaskService) {
-                            return RpcTaskService.get({extension: $stateParams.taskId}).$promise;
+                        entity: ['RpcScheduledTaskService', function (RpcScheduledTaskService) {
+                            return RpcScheduledTaskService.get({extension: $stateParams.taskId}).$promise;
                         }]
                     }
                 }).result.then(function () {
@@ -454,17 +454,17 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 });
             }]
         })
-        .state('rpc.rpc-task-history-list', {
-            url: '/rpc-task-history-list?page&sort&name&providerId',
+        .state('rpc.rpc-scheduled-task-history-list', {
+            url: '/rpc-scheduled-task-history-list?page&sort&name&providerId',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/user/rpc-task-history/rpc-task-history-list.html',
-                    controller: 'RpcTaskHistoryListController',
+                    templateUrl: 'app/views/user/rpc-scheduled-task-history/rpc-scheduled-task-history-list.html',
+                    controller: 'RpcScheduledTaskHistoryListController',
                     controllerAs: 'vm'
                 }
             },
             data: {
-                pageTitle: 'Task histories'
+                pageTitle: 'Scheduled task histories'
             },
             params: {
                 page: {
@@ -493,12 +493,12 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('rpc.rpc-task-history-list.view', {
+        .state('rpc.rpc-scheduled-task-history-list.view', {
             url: '/view/:id',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/user/rpc-task-history/rpc-task-history-details.html',
-                    controller: 'RpcTaskHistoryDetailsController',
+                    templateUrl: 'app/views/user/rpc-scheduled-task-history/rpc-scheduled-task-history-details.html',
+                    controller: 'RpcScheduledTaskHistoryDetailsController',
                     controllerAs: 'vm'
                 }
             },
@@ -506,8 +506,8 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 pageTitle: 'View'
             },
             resolve: {
-                entity: ['RpcTaskHistoryService', '$stateParams', function (RpcTaskHistoryService, $stateParams) {
-                    return RpcTaskHistoryService.get({extension: $stateParams.id}).$promise;
+                entity: ['RpcScheduledTaskHistoryService', '$stateParams', function (RpcScheduledTaskHistoryService, $stateParams) {
+                    return RpcScheduledTaskHistoryService.get({extension: $stateParams.id}).$promise;
                 }]
             }
         })

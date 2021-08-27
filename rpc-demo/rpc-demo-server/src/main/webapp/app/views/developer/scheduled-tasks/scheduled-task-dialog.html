@@ -22,11 +22,11 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label">Method arguments with JSON string format</label>
-            <textarea class="form-control" name="argumentsJson" ng-model="vm.entity.argumentsJson" ng-maxlength="500"></textarea>
+            <label class="control-label">Method arguments (An array with JSON string format)</label>
+            <textarea class="form-control" rows="5" style="resize:none" ng-model="vm.entity.argumentsJson" ng-maxlength="500"></textarea>
             <div ng-show="editForm.argumentsJson.$invalid">
                 <p class="help-block" ng-show="editForm.argumentsJson.$error.maxlength" translate-value-max="500">
-                    最大长度为500个字符
+                    Max length: 500
                 </p>
             </div>
         </div>

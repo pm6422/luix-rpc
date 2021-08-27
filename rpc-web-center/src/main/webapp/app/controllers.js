@@ -41,9 +41,9 @@ angular
     .controller('RpcServiceListController', RpcServiceListController)
     .controller('RpcProviderListController', RpcProviderListController)
     .controller('RpcProviderDetailsController', RpcProviderDetailsController)
-    .controller('RpcTaskDialogController', RpcTaskDialogController)
-    .controller('RpcTaskHistoryListController', RpcTaskHistoryListController)
-    .controller('RpcTaskHistoryDetailsController', RpcTaskHistoryDetailsController)
+    .controller('RpcScheduledTaskDialogController', RpcScheduledTaskDialogController)
+    .controller('RpcScheduledTaskHistoryListController', RpcScheduledTaskHistoryListController)
+    .controller('RpcScheduledTaskHistoryDetailsController', RpcScheduledTaskHistoryDetailsController)
     .controller('RpcConsumerListController', RpcConsumerListController)
     .controller('AppListController', AppListController)
     .controller('AppDialogController', AppDialogController)
@@ -1734,7 +1734,7 @@ function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUti
 /**
  * RpcProviderDetailsController
  */
-function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, AlertUtils, entity, RpcServiceService, RpcProviderService, RpcTaskService) {
+function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, AlertUtils, entity, RpcServiceService, RpcProviderService, RpcScheduledTaskService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -1781,7 +1781,7 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
         });
 
     function loadTasks() {
-        vm.tasks = RpcTaskService.query({registryIdentity: $rootScope.selectedRegistryIdentity,
+        vm.tasks = RpcScheduledTaskService.query({registryIdentity: $rootScope.selectedRegistryIdentity,
             interfaceName: vm.entity.interfaceName, form: vm.entity.form, version: vm.entity.version});
     }
 
@@ -1852,7 +1852,7 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     function delTask(id) {
         AlertUtils.createDeleteConfirmation('Are you sure to delete?', function (isConfirm) {
             if (isConfirm) {
-                RpcTaskService.del({extension: id},
+                RpcScheduledTaskService.del({extension: id},
                     function () {
                         vm.loadTasks();
                     },
@@ -1902,14 +1902,25 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
 }
 
 /**
- * RpcTaskDialogController
+ * RpcScheduledTaskDialogController
  */
-function RpcTaskDialogController($rootScope, $state, $stateParams, $uibModalInstance, RpcTaskService, RpcProviderService, entity) {
+function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uibModalInstance, $filter, RpcScheduledTaskService, RpcProviderService, entity) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.mode = $state.current.data.mode;
+    vm.timeUnits = RpcScheduledTaskService.queryTimeUnits({extension: 'time-units'});
     vm.entity = entity;
+
+    var dateFormat = 'yyyy-MM-dd HH:mm';
+    if(vm.entity.startTime) {
+        var startTimeStr = $filter('date')(vm.entity.startTime, dateFormat);
+        vm.entity.startTime = new Date(startTimeStr);
+    }
+    if(vm.entity.stopTime) {
+        var stopTimeStr = $filter('date')(vm.entity.stopTime, dateFormat);
+        vm.entity.stopTime = new Date(stopTimeStr);
+    }
 
     if(_.isEmpty(vm.entity.methodParamTypes)) {
         vm.argsDisabled = true;
@@ -1952,7 +1963,7 @@ function RpcTaskDialogController($rootScope, $state, $stateParams, $uibModalInst
     function save() {
         vm.isSaving = true;
         if (vm.mode == 'edit') {
-            RpcTaskService.update(vm.entity, onSaveSuccess, onSaveError);
+            RpcScheduledTaskService.update(vm.entity, onSaveSuccess, onSaveError);
         } else {
             var filteredMethods = _.filter(vm.methods, function(m){ return m.methodSignature == vm.entity.methodSignature; });
             if(!_.isEmpty(filteredMethods)) {
@@ -1965,7 +1976,7 @@ function RpcTaskDialogController($rootScope, $state, $stateParams, $uibModalInst
                 vm.entity.methodName = filteredMethod.methodName;
                 vm.entity.methodParamTypes = filteredMethod.methodParamTypes;
 
-                RpcTaskService.create(vm.entity, onSaveSuccess, onSaveError);
+                RpcScheduledTaskService.create(vm.entity, onSaveSuccess, onSaveError);
             }
         }
     }
@@ -1984,9 +1995,9 @@ function RpcTaskDialogController($rootScope, $state, $stateParams, $uibModalInst
     }
 }
 /**
- * RpcTaskHistoryListController
+ * RpcScheduledTaskHistoryListController
  */
-function RpcTaskHistoryListController($rootScope, $state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcTaskHistoryService) {
+function RpcScheduledTaskHistoryListController($rootScope, $state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcScheduledTaskHistoryService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -2007,7 +2018,7 @@ function RpcTaskHistoryListController($rootScope, $state, AlertUtils, ParseLinks
     vm.loadAll();
 
     function loadAll() {
-        RpcTaskHistoryService.query({
+        RpcScheduledTaskHistoryService.query({
             page: pagingParams.page - 1,
             size: vm.itemsPerPage,
             sort: sort(),
@@ -2056,9 +2067,9 @@ function RpcTaskHistoryListController($rootScope, $state, AlertUtils, ParseLinks
     }
 }
 /**
- * RpcTaskHistoryDetailsController
+ * RpcScheduledTaskHistoryDetailsController
  */
-function RpcTaskHistoryDetailsController($state, $stateParams, entity) {
+function RpcScheduledTaskHistoryDetailsController($state, $stateParams, entity) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;

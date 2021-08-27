@@ -104,4 +104,10 @@ public class RpcScheduledTaskController {
         rpcScheduledTaskService.delete(id);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", id)).build();
     }
+
+    @ApiOperation("find available time units of fixed rate interval")
+    @GetMapping("/api/rpc-scheduled-tasks/time-units")
+    public ResponseEntity<List<String>> findTimeUnits() {
+        return ResponseEntity.ok().body(RpcScheduledTask.AVAILABLE_FIXED_INTERVAL_UNIT);
+    }
 }
