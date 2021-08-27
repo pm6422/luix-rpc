@@ -7,10 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.demoserver.component.HttpHeaderCreator;
-import org.infinity.rpc.demoserver.domain.Task;
+import org.infinity.rpc.demoserver.domain.ScheduledTask;
 import org.infinity.rpc.demoserver.exception.NoDataFoundException;
-import org.infinity.rpc.demoserver.repository.TaskRepository;
-import org.infinity.rpc.demoserver.service.TaskService;
+import org.infinity.rpc.demoserver.repository.ScheduledTaskRepository;
+import org.infinity.rpc.demoserver.service.ScheduledTaskService;
 import org.infinity.rpc.demoserver.task.TaskExecutable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
@@ -28,24 +28,24 @@ import java.util.Map;
 import static org.infinity.rpc.demoserver.utils.HttpHeaderUtils.generatePageHeaders;
 
 /**
- * REST controller for managing tasks.
+ * REST controller for managing scheduled tasks.
  */
 @RestController
 @Slf4j
-public class TaskController {
+public class ScheduledTaskController {
 
     @Resource
-    private TaskRepository     taskRepository;
+    private ScheduledTaskRepository scheduledTaskRepository;
     @Resource
-    private TaskService        taskService;
+    private ScheduledTaskService    scheduledTaskService;
     @Resource
-    private HttpHeaderCreator  httpHeaderCreator;
+    private HttpHeaderCreator       httpHeaderCreator;
     @Resource
-    private ApplicationContext applicationContext;
+    private ApplicationContext      applicationContext;
 
-    @ApiOperation("create task")
-    @PostMapping("/api/tasks")
-    public ResponseEntity<Void> create(@ApiParam(value = "task", required = true) @Valid @RequestBody Task domain) {
+    @ApiOperation("create scheduled task")
+    @PostMapping("/api/scheduled-tasks")
+    public ResponseEntity<Void> create(@ApiParam(value = "task", required = true) @Valid @RequestBody ScheduledTask domain) {
         log.debug("REST request to create task: {}", domain);
         if (domain.getStartTime() != null && domain.getStopTime() != null) {
             Validate.isTrue(domain.getStopTime().isAfter(domain.getStartTime()),
@@ -58,30 +58,30 @@ public class TaskController {
                 throw new IllegalArgumentException("Illegal JSON string format of method arguments");
             }
         }
-        taskService.insert(domain);
+        scheduledTaskService.insert(domain);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .headers(httpHeaderCreator.createSuccessHeader("SM1001", domain.getName())).build();
     }
 
-    @ApiOperation("find task list")
-    @GetMapping("/api/tasks")
-    public ResponseEntity<List<Task>> find(Pageable pageable,
-                                           @ApiParam(value = "Task name") @RequestParam(value = "name", required = false) String name,
-                                           @ApiParam(value = "Bean name") @RequestParam(value = "beanName", required = false) String beanName) {
-        Page<Task> tasks = taskService.find(pageable, name, beanName);
+    @ApiOperation("find scheduled task list")
+    @GetMapping("/api/scheduled-tasks")
+    public ResponseEntity<List<ScheduledTask>> find(Pageable pageable,
+                                                    @ApiParam(value = "Task name") @RequestParam(value = "name", required = false) String name,
+                                                    @ApiParam(value = "Bean name") @RequestParam(value = "beanName", required = false) String beanName) {
+        Page<ScheduledTask> tasks = scheduledTaskService.find(pageable, name, beanName);
         return ResponseEntity.ok().headers(generatePageHeaders(tasks)).body(tasks.getContent());
     }
 
-    @ApiOperation("find task by id")
-    @GetMapping("/api/tasks/{id}")
-    public ResponseEntity<Task> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
-        Task task = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
-        return ResponseEntity.ok(task);
+    @ApiOperation("find scheduled task by id")
+    @GetMapping("/api/scheduled-tasks/{id}")
+    public ResponseEntity<ScheduledTask> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
+        ScheduledTask scheduledTask = scheduledTaskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        return ResponseEntity.ok(scheduledTask);
     }
 
-    @ApiOperation("update task")
-    @PutMapping("/api/tasks")
-    public ResponseEntity<Void> update(@ApiParam(value = "new task", required = true) @Valid @RequestBody Task domain) {
+    @ApiOperation("update scheduled task")
+    @PutMapping("/api/scheduled-tasks")
+    public ResponseEntity<Void> update(@ApiParam(value = "new task", required = true) @Valid @RequestBody ScheduledTask domain) {
         log.debug("REST request to update task: {}", domain);
         if (domain.getStartTime() != null && domain.getStopTime() != null) {
             Validate.isTrue(domain.getStopTime().isAfter(domain.getStartTime()),
@@ -94,27 +94,27 @@ public class TaskController {
                 throw new IllegalArgumentException("Illegal JSON string format of method arguments");
             }
         }
-        taskService.update(domain);
+        scheduledTaskService.update(domain);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getName())).build();
     }
 
-    @ApiOperation(value = "delete task by id", notes = "The data may be referenced by other data, and some problems may occur after deletion")
-    @DeleteMapping("/api/tasks/{id}")
+    @ApiOperation(value = "delete scheduled task by id", notes = "The data may be referenced by other data, and some problems may occur after deletion")
+    @DeleteMapping("/api/scheduled-tasks/{id}")
     public ResponseEntity<Void> delete(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
         log.debug("REST request to delete task: {}", id);
-        taskService.delete(id);
+        scheduledTaskService.delete(id);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", id)).build();
     }
 
-    @ApiOperation("find task bean names")
-    @GetMapping("/api/tasks/beans")
+    @ApiOperation("find scheduled task bean names")
+    @GetMapping("/api/scheduled-tasks/beans")
     public ResponseEntity<List<String>> findBeans() {
         return ResponseEntity.ok().body(Arrays.asList(applicationContext.getBeanNamesForType(TaskExecutable.class)));
     }
 
     @ApiOperation("find available time units of fixed rate interval")
-    @GetMapping("/api/tasks/time-units")
+    @GetMapping("/api/scheduled-tasks/time-units")
     public ResponseEntity<List<String>> findTimeUnits() {
-        return ResponseEntity.ok().body(Task.AVAILABLE_FIXED_INTERVAL_UNIT);
+        return ResponseEntity.ok().body(ScheduledTask.AVAILABLE_FIXED_INTERVAL_UNIT);
     }
 }

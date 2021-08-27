@@ -659,7 +659,7 @@ function LoggerService($resource) {
  * TimingTaskService
  */
 function TimingTaskService($resource) {
-    var service = $resource('api/tasks/:id', {}, {
+    var service = $resource('api/scheduled-tasks/:id', {}, {
         'query': {method: 'GET', isArray: true},
         'get': {
             method: 'GET',

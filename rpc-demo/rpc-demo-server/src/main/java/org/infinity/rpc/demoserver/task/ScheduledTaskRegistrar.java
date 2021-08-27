@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
 @Component
-public class TaskSchedulerRegistrar implements DisposableBean {
+public class ScheduledTaskRegistrar implements DisposableBean {
 
     private static final Map<String, ScheduledTask> SCHEDULED_TASKS = new ConcurrentHashMap<>(16);
     /**

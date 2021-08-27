@@ -17,14 +17,14 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Spring Data MongoDB collection for the Task entity.
+ * Spring Data MongoDB collection for the ScheduledTask entity.
  */
-@Document(collection = "Task")
+@Document(collection = "ScheduledTask")
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class Task extends AbstractAuditableDomain implements Serializable {
+public class ScheduledTask extends AbstractAuditableDomain implements Serializable {
     private static final long         serialVersionUID              = 8878535528271740314L;
     public static final  String       UNIT_MINUTES                  = "MINUTES";
     public static final  String       UNIT_HOURS                    = "HOURS";

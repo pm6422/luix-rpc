@@ -11,12 +11,12 @@ import java.io.Serializable;
 import java.time.Instant;
 
 /**
- * Spring Data MongoDB collection for the TaskLock entity.
+ * Spring Data MongoDB collection for the ScheduledTaskLock entity.
  */
-@Document(collection = "TaskLock")
+@Document(collection = "ScheduledTaskLock")
 @Data
 @NoArgsConstructor
-public class TaskLock implements Serializable {
+public class ScheduledTaskLock implements Serializable {
     private static final long    serialVersionUID = -3024974222557800398L;
     @Id
     private              String  id;

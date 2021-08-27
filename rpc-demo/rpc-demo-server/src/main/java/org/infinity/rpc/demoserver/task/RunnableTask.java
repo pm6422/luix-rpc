@@ -6,11 +6,11 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.demoserver.RpcDemoServerLauncher;
-import org.infinity.rpc.demoserver.domain.Task;
-import org.infinity.rpc.demoserver.domain.TaskHistory;
-import org.infinity.rpc.demoserver.domain.TaskLock;
-import org.infinity.rpc.demoserver.repository.TaskHistoryRepository;
-import org.infinity.rpc.demoserver.repository.TaskLockRepository;
+import org.infinity.rpc.demoserver.domain.ScheduledTask;
+import org.infinity.rpc.demoserver.domain.ScheduledTaskHistory;
+import org.infinity.rpc.demoserver.domain.ScheduledTaskLock;
+import org.infinity.rpc.demoserver.repository.ScheduledTaskHistoryRepository;
+import org.infinity.rpc.demoserver.repository.ScheduledTaskLockRepository;
 import org.infinity.rpc.demoserver.utils.NetworkUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.ReflectionUtils;
@@ -33,77 +33,77 @@ public class RunnableTask implements Runnable {
     private static final int SECOND = 1000;
     private static final int MINUTE = 60000;
 
-    private final TaskHistoryRepository taskHistoryRepository;
-    private final TaskLockRepository    taskLockRepository;
-    private final Task                  task;
+    private final ScheduledTaskHistoryRepository scheduledTaskHistoryRepository;
+    private final ScheduledTaskLockRepository    scheduledTaskLockRepository;
+    private final ScheduledTask                  scheduledTask;
 
     @Override
     public void run() {
         Instant now = Instant.now();
-        if (now.isBefore(task.getStartTime())) {
-            log.debug("It's not time to start yet for task: [{}]", task.getName());
+        if (now.isBefore(scheduledTask.getStartTime())) {
+            log.debug("It's not time to start yet for task: [{}]", scheduledTask.getName());
             return;
         }
-        if (now.isAfter(task.getStopTime())) {
-            log.debug("It's past the stop time for task: [{}]", task.getName());
+        if (now.isAfter(scheduledTask.getStopTime())) {
+            log.debug("It's past the stop time for task: [{}]", scheduledTask.getName());
             return;
         }
         // Single host execute mode
-        if (taskLockRepository.findByName(task.getName()).isPresent()) {
+        if (scheduledTaskLockRepository.findByName(scheduledTask.getName()).isPresent()) {
             log.warn("Skip to execute task for the address: {}", NetworkUtils.INTRANET_IP);
             return;
         }
         // This distributed lock used to control that only one node executes the task at the same time
-        TaskLock taskLock = new TaskLock();
-        taskLock.setName(task.getName());
+        ScheduledTaskLock scheduledTaskLock = new ScheduledTaskLock();
+        scheduledTaskLock.setName(scheduledTask.getName());
         // Set expiry time with 10 seconds for the lock
-        taskLock.setExpiryTime(Instant.now().plus(10, ChronoUnit.SECONDS));
-        taskLockRepository.save(taskLock);
+        scheduledTaskLock.setExpiryTime(Instant.now().plus(10, ChronoUnit.SECONDS));
+        scheduledTaskLockRepository.save(scheduledTaskLock);
 
-        log.info("Executing timing task {}.{}() at {}", task.getBeanName(), TaskExecutable.METHOD_NAME,
+        log.info("Executing timing task {}.{}() at {}", scheduledTask.getBeanName(), TaskExecutable.METHOD_NAME,
                 ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        TaskHistory taskHistory = new TaskHistory();
-        BeanUtils.copyProperties(task, taskHistory);
-        taskHistory.setId(null);
+        ScheduledTaskHistory scheduledTaskHistory = new ScheduledTaskHistory();
+        BeanUtils.copyProperties(scheduledTask, scheduledTaskHistory);
+        scheduledTaskHistory.setId(null);
 
         // Automatically delete records after 60 days
-        taskHistory.setExpiryTime(Instant.now().plus(60, ChronoUnit.DAYS));
+        scheduledTaskHistory.setExpiryTime(Instant.now().plus(60, ChronoUnit.DAYS));
 
         try {
             // Execute task
             executeTask();
-            taskHistory.setSuccess(true);
+            scheduledTaskHistory.setSuccess(true);
         } catch (Exception ex) {
-            taskHistory.setSuccess(false);
-            taskHistory.setReason(ex.getMessage());
-            log.error(String.format("Failed to execute timing task %s.%s()", task.getBeanName(), TaskExecutable.METHOD_NAME), ex);
+            scheduledTaskHistory.setSuccess(false);
+            scheduledTaskHistory.setReason(ex.getMessage());
+            log.error(String.format("Failed to execute timing task %s.%s()", scheduledTask.getBeanName(), TaskExecutable.METHOD_NAME), ex);
         } finally {
             stopWatch.stop();
             long elapsed = stopWatch.getTotalTimeMillis();
             if (elapsed < SECOND) {
-                log.info("Executed timing task {}.{}() in {}ms", task.getBeanName(), TaskExecutable.METHOD_NAME, elapsed);
+                log.info("Executed timing task {}.{}() in {}ms", scheduledTask.getBeanName(), TaskExecutable.METHOD_NAME, elapsed);
             } else if (elapsed < MINUTE) {
-                log.info("Executed timing task {}.{}() in {}s", task.getBeanName(), TaskExecutable.METHOD_NAME, elapsed / 1000);
+                log.info("Executed timing task {}.{}() in {}s", scheduledTask.getBeanName(), TaskExecutable.METHOD_NAME, elapsed / 1000);
             } else {
-                log.warn("Executed timing task {}.{}() in {}m", task.getBeanName(), TaskExecutable.METHOD_NAME, elapsed / (1000 * 60));
+                log.warn("Executed timing task {}.{}() in {}m", scheduledTask.getBeanName(), TaskExecutable.METHOD_NAME, elapsed / (1000 * 60));
             }
 
-            taskHistory.setElapsed(elapsed);
+            scheduledTaskHistory.setElapsed(elapsed);
             // Save task history
-            taskHistoryRepository.save(taskHistory);
+            scheduledTaskHistoryRepository.save(scheduledTaskHistory);
         }
     }
 
     private void executeTask() throws NoSuchMethodException, JsonProcessingException, IllegalAccessException, InvocationTargetException {
-        Object target = RpcDemoServerLauncher.applicationContext.getBean(task.getBeanName());
+        Object target = RpcDemoServerLauncher.applicationContext.getBean(scheduledTask.getBeanName());
         Method method = target.getClass().getDeclaredMethod(TaskExecutable.METHOD_NAME, Map.class);
         ReflectionUtils.makeAccessible(method);
         // Convert JSON string to Map
         Map<?, ?> arguments = new HashMap<>(16);
-        if (StringUtils.isNotEmpty(task.getArgumentsJson())) {
-            arguments = new ObjectMapper().readValue(task.getArgumentsJson(), Map.class);
+        if (StringUtils.isNotEmpty(scheduledTask.getArgumentsJson())) {
+            arguments = new ObjectMapper().readValue(scheduledTask.getArgumentsJson(), Map.class);
         }
         method.invoke(target, arguments);
     }

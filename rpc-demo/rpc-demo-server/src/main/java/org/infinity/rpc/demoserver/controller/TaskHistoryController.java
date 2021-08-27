@@ -3,9 +3,9 @@ package org.infinity.rpc.demoserver.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.rpc.demoserver.domain.TaskHistory;
+import org.infinity.rpc.demoserver.domain.ScheduledTaskHistory;
 import org.infinity.rpc.demoserver.exception.NoDataFoundException;
-import org.infinity.rpc.demoserver.repository.TaskHistoryRepository;
+import org.infinity.rpc.demoserver.repository.ScheduledTaskHistoryRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -29,24 +29,24 @@ import static org.infinity.rpc.demoserver.utils.HttpHeaderUtils.generatePageHead
 public class TaskHistoryController {
 
     @Resource
-    private TaskHistoryRepository taskHistoryRepository;
+    private ScheduledTaskHistoryRepository scheduledTaskHistoryRepository;
 
     @ApiOperation("find task history list")
     @GetMapping("/api/task-histories")
-    public ResponseEntity<List<TaskHistory>> find(Pageable pageable,
-                                                  @ApiParam(value = "Task name") @RequestParam(value = "name", required = false) String name) {
-        TaskHistory probe = new TaskHistory();
+    public ResponseEntity<List<ScheduledTaskHistory>> find(Pageable pageable,
+                                                           @ApiParam(value = "Task name") @RequestParam(value = "name", required = false) String name) {
+        ScheduledTaskHistory probe = new ScheduledTaskHistory();
         probe.setName(name);
         // Ignore query parameter if it has a null value
         ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
-        Page<TaskHistory> histories = taskHistoryRepository.findAll(Example.of(probe, matcher), pageable);
+        Page<ScheduledTaskHistory> histories = scheduledTaskHistoryRepository.findAll(Example.of(probe, matcher), pageable);
         return ResponseEntity.ok().headers(generatePageHeaders(histories)).body(histories.getContent());
     }
 
     @ApiOperation("find task history by id")
     @GetMapping("/api/task-histories/{id}")
-    public ResponseEntity<TaskHistory> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
-        TaskHistory history = taskHistoryRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+    public ResponseEntity<ScheduledTaskHistory> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
+        ScheduledTaskHistory history = scheduledTaskHistoryRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         return ResponseEntity.ok(history);
     }
 }

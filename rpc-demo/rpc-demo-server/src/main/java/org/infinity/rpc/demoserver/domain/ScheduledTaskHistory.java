@@ -11,12 +11,12 @@ import java.io.Serializable;
 import java.time.Instant;
 
 /**
- * Spring Data MongoDB collection for the TaskHistory entity.
+ * Spring Data MongoDB collection for the ScheduledTaskHistory entity.
  */
-@Document(collection = "TaskHistory")
+@Document(collection = "ScheduledTaskHistory")
 @Data
 @NoArgsConstructor
-public class TaskHistory implements Serializable {
+public class ScheduledTaskHistory implements Serializable {
     private static final long    serialVersionUID = 564976464702808036L;
     @Id
     private              String  id;
