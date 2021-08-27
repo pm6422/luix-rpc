@@ -58,10 +58,10 @@ public class RunnableTask implements Runnable {
             return;
         }
         // Single host execute mode
-        if (rpcScheduledTaskLockRepository.findByName(rpcScheduledTask.getName()).isPresent()) {
-            log.warn("Skip to execute scheduled task for the address: {}", NetworkUtils.INTRANET_IP);
-            return;
-        }
+//        if (rpcScheduledTaskLockRepository.findByName(rpcScheduledTask.getName()).isPresent()) {
+//            log.warn("Skip to execute scheduled task for the address: {}", NetworkUtils.INTRANET_IP);
+//            return;
+//        }
         // This distributed lock used to control that only one node executes the task at the same time
         RpcScheduledTaskLock scheduledTaskLock = new RpcScheduledTaskLock();
         scheduledTaskLock.setName(rpcScheduledTask.getName());
@@ -93,13 +93,13 @@ public class RunnableTask implements Runnable {
             stopWatch.stop();
             long elapsed = stopWatch.getTotalTimeMillis();
             if (elapsed < SECOND) {
-                log.info("Executed timing task {}.{}({}) with {}ms",
+                log.info("Executed scheduled task {}.{}({}) with {}ms",
                         interfaceName, rpcScheduledTask.getMethodName(), rpcScheduledTask.getArgumentsJson(), elapsed);
             } else if (elapsed < MINUTE) {
-                log.info("Executed timing task {}.{}({}) with {}s",
+                log.info("Executed scheduled task {}.{}({}) with {}s",
                         interfaceName, rpcScheduledTask.getMethodName(), rpcScheduledTask.getArgumentsJson(), elapsed / 1000);
             } else {
-                log.info("Executed timing task {}.{}({}) with {}m",
+                log.info("Executed scheduled task {}.{}({}) with {}m",
                         interfaceName, rpcScheduledTask.getMethodName(), rpcScheduledTask.getArgumentsJson(), elapsed / (1000 * 60));
             }
 
