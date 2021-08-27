@@ -22,17 +22,17 @@ import java.util.List;
 import static org.infinity.rpc.demoserver.utils.HttpHeaderUtils.generatePageHeaders;
 
 /**
- * REST controller for managing task histories.
+ * REST controller for managing scheduled task histories.
  */
 @RestController
 @Slf4j
-public class TaskHistoryController {
+public class ScheduledTaskHistoryController {
 
     @Resource
     private ScheduledTaskHistoryRepository scheduledTaskHistoryRepository;
 
     @ApiOperation("find task history list")
-    @GetMapping("/api/task-histories")
+    @GetMapping("/api/scheduled-task-histories")
     public ResponseEntity<List<ScheduledTaskHistory>> find(Pageable pageable,
                                                            @ApiParam(value = "Task name") @RequestParam(value = "name", required = false) String name) {
         ScheduledTaskHistory probe = new ScheduledTaskHistory();
@@ -44,7 +44,7 @@ public class TaskHistoryController {
     }
 
     @ApiOperation("find task history by id")
-    @GetMapping("/api/task-histories/{id}")
+    @GetMapping("/api/scheduled-task-histories/{id}")
     public ResponseEntity<ScheduledTaskHistory> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
         ScheduledTaskHistory history = scheduledTaskHistoryRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         return ResponseEntity.ok(history);
