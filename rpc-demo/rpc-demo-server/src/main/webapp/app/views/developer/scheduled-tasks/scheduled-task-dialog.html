@@ -12,7 +12,7 @@
         <div class="form-group">
             <label class="control-label">Bean name</label>
             <select name="beanName" class="form-control" ng-model="vm.entity.beanName" required
-                    ng-options="item for item in vm.beanNames">
+                    ng-options="item for item in vm.beanNames" ng-disabled="vm.mode == 'edit'">
                 <option value="">Select...</option>
             </select>
             <div ng-show="editForm.beanName.$invalid">
@@ -22,7 +22,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label">Method arguments (An array with JSON string format)</label>
+            <label class="control-label">Method arguments with JSON string format</label>
             <textarea class="form-control" rows="5" style="resize:none" ng-model="vm.entity.argumentsJson" ng-maxlength="500"></textarea>
             <div ng-show="editForm.argumentsJson.$invalid">
                 <p class="help-block" ng-show="editForm.argumentsJson.$error.maxlength" translate-value-max="500">
