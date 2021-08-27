@@ -22,7 +22,7 @@ public class ScheduledTaskRegistrar implements DisposableBean {
     @Resource
     private              TaskScheduler                         taskScheduler;
 
-    public void addCronTask(String name, Runnable task, String cronExpression) {
+    public synchronized void addCronTask(String name, Runnable task, String cronExpression) {
         Validate.notEmpty(name, "Task name must NOT be empty!");
         Validate.notNull(task, "Task must NOT be null!");
         Validate.notEmpty(cronExpression, "Cron expression must NOT be empty!");
@@ -36,7 +36,7 @@ public class ScheduledTaskRegistrar implements DisposableBean {
         return new CancellableScheduledTask(scheduledFuture);
     }
 
-    public void addFixedRateTask(String name, Runnable task, long interval) {
+    public synchronized void addFixedRateTask(String name, Runnable task, long interval) {
         Validate.notEmpty(name, "Task name must NOT be empty!");
         Validate.notNull(task, "Task must NOT be null!");
 
@@ -48,7 +48,7 @@ public class ScheduledTaskRegistrar implements DisposableBean {
         return new CancellableScheduledTask(scheduledFuture);
     }
 
-    public void removeTask(String name) {
+    public synchronized void removeTask(String name) {
         Validate.notEmpty(name, "Task name must NOT be empty!");
 
         CancellableScheduledTask cancellableScheduledTask = this.SCHEDULED_TASKS.remove(name);
