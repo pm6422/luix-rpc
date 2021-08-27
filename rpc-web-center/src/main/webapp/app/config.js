@@ -454,6 +454,46 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 });
             }]
         })
+        .state('rpc.scheduled-task-list', {
+            url: '/rpc-scheduled-task-list?page&sort&name&interfaceName',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/user/rpc-scheduled-task/rpc-scheduled-task-list.html',
+                    controller: 'RpcScheduledTaskListController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'RPC scheduled task list'
+            },
+            params: {
+                page: {
+                    value: '1',
+                    squash: true
+                },
+                sort: {
+                    value: 'modifiedTime,desc',
+                    squash: true
+                }
+            },
+            resolve: {
+                pagingParams: ['$stateParams', 'PaginationUtils', function ($stateParams, PaginationUtils) {
+                    return {
+                        page: PaginationUtils.parsePage($stateParams.page),
+                        sort: $stateParams.sort,
+                        predicate: PaginationUtils.parsePredicate($stateParams.sort),
+                        ascending: PaginationUtils.parseAscending($stateParams.sort)
+                    };
+                }],
+                criteria: ['$stateParams', function ($stateParams) {
+                    return {
+                        name: $stateParams.name,
+                        beanName: $stateParams.beanName,
+                        methodName: $stateParams.methodName
+                    };
+                }]
+            }
+        })
         .state('rpc.scheduled-task-history-list', {
             url: '/rpc-scheduled-task-history-list?page&sort&name&providerId',
             views: {

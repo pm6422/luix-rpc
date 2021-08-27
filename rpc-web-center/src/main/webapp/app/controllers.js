@@ -42,6 +42,7 @@ angular
     .controller('RpcProviderListController', RpcProviderListController)
     .controller('RpcProviderDetailsController', RpcProviderDetailsController)
     .controller('RpcScheduledTaskDialogController', RpcScheduledTaskDialogController)
+    .controller('RpcScheduledTaskListController', RpcScheduledTaskListController)
     .controller('RpcScheduledTaskHistoryListController', RpcScheduledTaskHistoryListController)
     .controller('RpcScheduledTaskHistoryDetailsController', RpcScheduledTaskHistoryDetailsController)
     .controller('RpcConsumerListController', RpcConsumerListController)
@@ -1992,6 +1993,105 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
 
     function cancel() {
         $uibModalInstance.dismiss('cancel');
+    }
+}
+/**
+ * RpcScheduledTaskListController
+ */
+function RpcScheduledTaskListController($rootScope, $state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcScheduledTaskService) {
+    var vm = this;
+
+    vm.pageTitle = $state.current.data.pageTitle;
+    vm.links = null;
+    vm.loadAll = loadAll;
+    vm.loadPage = loadPage;
+    vm.checkPressEnter = checkPressEnter;
+    vm.page = 1;
+    vm.setEnabled = setEnabled;
+    vm.totalItems = null;
+    vm.entities = [];
+    vm.predicate = pagingParams.predicate;
+    vm.reverse = pagingParams.ascending;
+    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
+    vm.transition = transition;
+    vm.criteria = criteria;
+    vm.del = del;
+    vm.goToHistory = goToHistory;
+
+    vm.loadAll();
+
+    function loadAll() {
+        RpcScheduledTaskService.query({
+            page: pagingParams.page - 1,
+            size: vm.itemsPerPage,
+            sort: sort(),
+            registryIdentity: $rootScope.selectedRegistryIdentity,
+            name: vm.criteria.name,
+            interfaceName: vm.criteria.interfaceName
+        }, function (result, headers) {
+            vm.links = ParseLinksUtils.parse(headers('link'));
+            vm.totalItems = headers('X-Total-Count');
+            vm.page = pagingParams.page;
+            vm.entities = result;
+        });
+    }
+
+    function sort() {
+        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
+        if (vm.predicate !== 'name') {
+            // default sort column
+            result.push('name,asc');
+        }
+        return result;
+    }
+
+    function loadPage(page) {
+        vm.page = page;
+        vm.transition();
+    }
+
+    function transition() {
+        $state.transitionTo($state.$current, {
+            page: vm.page,
+            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
+            name: vm.criteria.name,
+            interfaceName: vm.criteria.interfaceName
+        });
+    }
+
+    function checkPressEnter($event) {
+        //按下enter键重新查询数据
+        if ($event.keyCode == 13) {
+            vm.transition();
+        }
+    }
+
+    function setEnabled(entity, enabled) {
+        entity.enabled = enabled;
+        RpcScheduledTaskService.update(entity,
+            function () {
+                vm.loadAll();
+            },
+            function () {
+                entity.enabled = !enabled;
+            });
+    }
+
+    function del(id) {
+        AlertUtils.createDeleteConfirmation('The data may be referenced by other data, and there may be some problems after deletion, are you sure to delete?', function (isConfirm) {
+            if (isConfirm) {
+                RpcScheduledTaskService.del({id: id},
+                    function () {
+                        vm.loadAll();
+                    },
+                    function () {
+                    });
+            }
+        });
+    }
+
+    function goToHistory(name) {
+        $state.go('scheduled-task-history-list', {'name': name});
     }
 }
 /**

@@ -582,7 +582,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/scheduled-task-list?page&sort&name&beanName&methodName',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/developer/scheduled-tasks/scheduled-task-list.html',
+                    templateUrl: 'app/views/developer/scheduled-task/scheduled-task-list.html',
                     controller: 'ScheduledTaskListController',
                     controllerAs: 'vm'
                 }
@@ -626,7 +626,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             },
             onEnter: ['$state', '$uibModal', function ($state, $uibModal) {
                 $uibModal.open({
-                    templateUrl: 'app/views/developer/scheduled-tasks/scheduled-task-dialog.html',
+                    templateUrl: 'app/views/developer/scheduled-task/scheduled-task-dialog.html',
                     controller: 'ScheduledTaskDialogController',
                     controllerAs: 'vm',
                     backdrop: 'static',
@@ -657,7 +657,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             },
             onEnter: ['$state', '$stateParams', '$uibModal', function ($state, $stateParams, $uibModal) {
                 $uibModal.open({
-                    templateUrl: 'app/views/developer/scheduled-tasks/scheduled-task-dialog.html',
+                    templateUrl: 'app/views/developer/scheduled-task/scheduled-task-dialog.html',
                     controller: 'ScheduledTaskDialogController',
                     controllerAs: 'vm',
                     backdrop: 'static',
@@ -679,7 +679,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/scheduled-task-history-list?page&sort&name',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/developer/scheduled-task-histories/scheduled-task-history-list.html',
+                    templateUrl: 'app/views/developer/scheduled-task-history/scheduled-task-history-list.html',
                     controller: 'ScheduledTaskHistoryListController',
                     controllerAs: 'vm'
                 }
@@ -717,7 +717,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             url: '/view/:id',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/developer/scheduled-task-histories/scheduled-task-history-details.html',
+                    templateUrl: 'app/views/developer/scheduled-task-history/scheduled-task-history-details.html',
                     controller: 'ScheduledTaskHistoryDetailsController',
                     controllerAs: 'vm'
                 }
