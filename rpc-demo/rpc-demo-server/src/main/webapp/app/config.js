@@ -577,18 +577,18 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 pageTitle: 'Loggers'
             }
         })
-        .state('timing-task-list', {
+        .state('scheduled-task-list', {
             parent: 'developer',
-            url: '/timing-task-list?page&sort&name&beanName&methodName',
+            url: '/scheduled-task-list?page&sort&name&beanName&methodName',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/developer/timing-tasks/timing-task-list.html',
-                    controller: 'TimingTaskListController',
+                    templateUrl: 'app/views/developer/scheduled-tasks/scheduled-task-list.html',
+                    controller: 'ScheduledTaskListController',
                     controllerAs: 'vm'
                 }
             },
             data: {
-                pageTitle: 'Timing task list'
+                pageTitle: 'Scheduled task list'
             },
             params: {
                 page: {
@@ -618,7 +618,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('timing-task-list.create', {
+        .state('scheduled-task-list.create', {
             url: '/create',
             data: {
                 pageTitle: 'Create',
@@ -626,8 +626,8 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             },
             onEnter: ['$state', '$uibModal', function ($state, $uibModal) {
                 $uibModal.open({
-                    templateUrl: 'app/views/developer/timing-tasks/timing-task-dialog.html',
-                    controller: 'TimingTaskDialogController',
+                    templateUrl: 'app/views/developer/scheduled-tasks/scheduled-task-dialog.html',
+                    controller: 'ScheduledTaskDialogController',
                     controllerAs: 'vm',
                     backdrop: 'static',
                     size: 'lg',
@@ -649,7 +649,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 });
             }]
         })
-        .state('timing-task-list.edit', {
+        .state('scheduled-task-list.edit', {
             url: '/edit/:id',
             data: {
                 pageTitle: 'Edit',
@@ -657,14 +657,14 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             },
             onEnter: ['$state', '$stateParams', '$uibModal', function ($state, $stateParams, $uibModal) {
                 $uibModal.open({
-                    templateUrl: 'app/views/developer/timing-tasks/timing-task-dialog.html',
-                    controller: 'TimingTaskDialogController',
+                    templateUrl: 'app/views/developer/scheduled-tasks/scheduled-task-dialog.html',
+                    controller: 'ScheduledTaskDialogController',
                     controllerAs: 'vm',
                     backdrop: 'static',
                     size: 'lg',
                     resolve: {
-                        entity: ['TimingTaskService', function (TimingTaskService) {
-                            return TimingTaskService.get({id: $stateParams.id}).$promise;
+                        entity: ['ScheduledTaskService', function (ScheduledTaskService) {
+                            return ScheduledTaskService.get({id: $stateParams.id}).$promise;
                         }]
                     }
                 }).result.then(function (result) {
@@ -674,18 +674,18 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 });
             }]
         })
-        .state('timing-task-history-list', {
+        .state('scheduled-task-history-list', {
             parent: 'developer',
-            url: '/timing-task-history-list?page&sort&name',
+            url: '/scheduled-task-history-list?page&sort&name',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/developer/timing-task-histories/timing-task-history-list.html',
-                    controller: 'TimingTaskHistoryListController',
+                    templateUrl: 'app/views/developer/scheduled-task-histories/scheduled-task-history-list.html',
+                    controller: 'ScheduledTaskHistoryListController',
                     controllerAs: 'vm'
                 }
             },
             data: {
-                pageTitle: 'Timing task histories'
+                pageTitle: 'Scheduled task histories'
             },
             params: {
                 page: {
@@ -713,12 +713,12 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
-        .state('timing-task-history-list.view', {
+        .state('scheduled-task-history-list.view', {
             url: '/view/:id',
             views: {
                 'content@': {
-                    templateUrl: 'app/views/developer/timing-task-histories/timing-task-history-details.html',
-                    controller: 'TimingTaskHistoryDetailsController',
+                    templateUrl: 'app/views/developer/scheduled-task-histories/scheduled-task-history-details.html',
+                    controller: 'ScheduledTaskHistoryDetailsController',
                     controllerAs: 'vm'
                 }
             },
@@ -726,8 +726,8 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 pageTitle: 'View'
             },
             resolve: {
-                entity: ['TimingTaskHistoryService', '$stateParams', function (TimingTaskHistoryService, $stateParams) {
-                    return TimingTaskHistoryService.get({id: $stateParams.id}).$promise;
+                entity: ['ScheduledTaskHistoryService', '$stateParams', function (ScheduledTaskHistoryService, $stateParams) {
+                    return ScheduledTaskHistoryService.get({id: $stateParams.id}).$promise;
                 }]
             }
         })

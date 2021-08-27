@@ -15,8 +15,8 @@ angular
     .factory('HealthService', HealthService)
     .factory('ConfigurationService', ConfigurationService)
     .factory('LoggerService', LoggerService)
-    .factory('TimingTaskService', TimingTaskService)
-    .factory('TimingTaskHistoryService', TimingTaskHistoryService)
+    .factory('ScheduledTaskService', ScheduledTaskService)
+    .factory('ScheduledTaskHistoryService', ScheduledTaskHistoryService)
     .factory('AdminMenuService', AdminMenuService)
     .factory('AuthorityService', AuthorityService)
     .factory('AppService', AppService);
@@ -656,9 +656,9 @@ function LoggerService($resource) {
 }
 
 /**
- * TimingTaskService
+ * ScheduledTaskService
  */
-function TimingTaskService($resource) {
+function ScheduledTaskService($resource) {
     var service = $resource('api/scheduled-tasks/:id', {}, {
         'query': {method: 'GET', isArray: true},
         'get': {
@@ -678,10 +678,10 @@ function TimingTaskService($resource) {
 }
 
 /**
- * TimingTaskHistoryService
+ * ScheduledTaskHistoryService
  */
-function TimingTaskHistoryService($resource) {
-    var service = $resource('api/task-histories/:id', {}, {
+function ScheduledTaskHistoryService($resource) {
+    var service = $resource('api/scheduled-task-histories/:id', {}, {
         'query': {method: 'GET', isArray: true},
         'get': {
             method: 'GET',

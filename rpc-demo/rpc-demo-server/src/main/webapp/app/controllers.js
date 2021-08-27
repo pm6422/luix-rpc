@@ -19,10 +19,10 @@ angular
     .controller('HttpTraceController', HttpTraceController)
     .controller('HttpSessionController', HttpSessionController)
     .controller('LoggerController', LoggerController)
-    .controller('TimingTaskListController', TimingTaskListController)
-    .controller('TimingTaskDialogController', TimingTaskDialogController)
-    .controller('TimingTaskHistoryListController', TimingTaskHistoryListController)
-    .controller('TimingTaskHistoryDetailsController', TimingTaskHistoryDetailsController)
+    .controller('ScheduledTaskListController', ScheduledTaskListController)
+    .controller('ScheduledTaskDialogController', ScheduledTaskDialogController)
+    .controller('ScheduledTaskHistoryListController', ScheduledTaskHistoryListController)
+    .controller('ScheduledTaskHistoryDetailsController', ScheduledTaskHistoryDetailsController)
     .controller('ScheduleController', ScheduleController)
     .controller('ControlController', ControlController)
     .controller('AppListController', AppListController)
@@ -705,9 +705,9 @@ function LoggerController($state, LoggerService) {
 }
 
 /**
- * TimingTaskListController
+ * ScheduledTaskListController
  */
-function TimingTaskListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, TimingTaskService) {
+function ScheduledTaskListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, ScheduledTaskService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -730,7 +730,7 @@ function TimingTaskListController($state, AlertUtils, ParseLinksUtils, PAGINATIO
     vm.loadAll();
 
     function loadAll() {
-        TimingTaskService.query({
+        ScheduledTaskService.query({
             page: pagingParams.page - 1,
             size: vm.itemsPerPage,
             sort: sort(),
@@ -778,7 +778,7 @@ function TimingTaskListController($state, AlertUtils, ParseLinksUtils, PAGINATIO
 
     function setEnabled(entity, enabled) {
         entity.enabled = enabled;
-        TimingTaskService.update(entity,
+        ScheduledTaskService.update(entity,
             function () {
                 vm.loadAll();
             },
@@ -790,7 +790,7 @@ function TimingTaskListController($state, AlertUtils, ParseLinksUtils, PAGINATIO
     function del(id) {
         AlertUtils.createDeleteConfirmation('The data may be referenced by other data, and there may be some problems after deletion, are you sure to delete?', function (isConfirm) {
             if (isConfirm) {
-                TimingTaskService.del({id: id},
+                ScheduledTaskService.del({id: id},
                     function () {
                         vm.loadAll();
                     },
@@ -801,20 +801,20 @@ function TimingTaskListController($state, AlertUtils, ParseLinksUtils, PAGINATIO
     }
 
     function goToHistory(name) {
-        $state.go('timing-task-history-list', {'name': name});
+        $state.go('scheduled-task-history-list', {'name': name});
     }
 }
 
 /**
- * TimingTaskDialogController
+ * ScheduledTaskDialogController
  */
-function TimingTaskDialogController($state, $stateParams, $uibModalInstance, $filter, TimingTaskService, entity) {
+function ScheduledTaskDialogController($state, $stateParams, $uibModalInstance, $filter, ScheduledTaskService, entity) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.mode = $state.current.data.mode;
-    vm.beanNames = TimingTaskService.queryBeans({id: 'beans'});
-    vm.timeUnits = TimingTaskService.queryTimeUnits({id: 'time-units'});
+    vm.beanNames = ScheduledTaskService.queryBeans({id: 'beans'});
+    vm.timeUnits = ScheduledTaskService.queryTimeUnits({id: 'time-units'});
     vm.entity = entity;
 
     var dateFormat = 'yyyy-MM-dd HH:mm';
@@ -834,9 +834,9 @@ function TimingTaskDialogController($state, $stateParams, $uibModalInstance, $fi
     function save() {
         vm.isSaving = true;
         if (vm.mode == 'edit') {
-            TimingTaskService.update(vm.entity, onSaveSuccess, onSaveError);
+            ScheduledTaskService.update(vm.entity, onSaveSuccess, onSaveError);
         } else {
-            TimingTaskService.create(vm.entity, onSaveSuccess, onSaveError);
+            ScheduledTaskService.create(vm.entity, onSaveSuccess, onSaveError);
         }
     }
 
@@ -855,9 +855,9 @@ function TimingTaskDialogController($state, $stateParams, $uibModalInstance, $fi
 }
 
 /**
- * TimingTaskHistoryListController
+ * ScheduledTaskHistoryListController
  */
-function TimingTaskHistoryListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, TimingTaskHistoryService) {
+function ScheduledTaskHistoryListController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, ScheduledTaskHistoryService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -877,7 +877,7 @@ function TimingTaskHistoryListController($state, AlertUtils, ParseLinksUtils, PA
     vm.loadAll();
 
     function loadAll() {
-        TimingTaskHistoryService.query({
+        ScheduledTaskHistoryService.query({
             page: pagingParams.page - 1,
             size: vm.itemsPerPage,
             sort: sort(),
@@ -921,9 +921,9 @@ function TimingTaskHistoryListController($state, AlertUtils, ParseLinksUtils, PA
 }
 
 /**
- * TimingTaskHistoryDetailsController
+ * ScheduledTaskHistoryDetailsController
  */
-function TimingTaskHistoryDetailsController($state, $stateParams, entity) {
+function ScheduledTaskHistoryDetailsController($state, $stateParams, entity) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
