@@ -2,6 +2,7 @@ package org.infinity.rpc.demoserver.task;
 
 import lombok.AllArgsConstructor;
 
+import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 
 @AllArgsConstructor
@@ -13,8 +14,6 @@ public final class ScheduledTask {
      * Cancel timed tasks
      */
     public void cancel() {
-        if (future != null) {
-            future.cancel(true);
-        }
+        Optional.ofNullable(future).ifPresent(future -> future.cancel(true));
     }
 }

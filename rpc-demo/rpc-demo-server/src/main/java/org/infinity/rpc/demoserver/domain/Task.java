@@ -12,6 +12,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -66,6 +67,14 @@ public class Task extends AbstractAuditableDomain implements Serializable {
      * Remarks
      */
     private              String       remark;
+    /**
+     * Start time
+     */
+    private              Instant      startTime;
+    /**
+     * Stop time
+     */
+    private              Instant      stopTime;
     /**
      * Enabled
      */
