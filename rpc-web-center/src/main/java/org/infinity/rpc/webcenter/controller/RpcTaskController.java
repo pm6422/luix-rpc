@@ -10,7 +10,7 @@ import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.RpcScheduledTask;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.RpcScheduledTaskRepository;
-import org.infinity.rpc.webcenter.service.RpcTaskService;
+import org.infinity.rpc.webcenter.service.RpcScheduledTaskService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -36,9 +36,9 @@ public class RpcTaskController {
     @Resource
     private RpcScheduledTaskRepository taskRepository;
     @Resource
-    private RpcTaskService             taskService;
+    private RpcScheduledTaskService    taskService;
     @Resource
-    private HttpHeaderCreator httpHeaderCreator;
+    private HttpHeaderCreator          httpHeaderCreator;
 
     @ApiOperation("create task")
     @PostMapping("/api/rpc-tasks")

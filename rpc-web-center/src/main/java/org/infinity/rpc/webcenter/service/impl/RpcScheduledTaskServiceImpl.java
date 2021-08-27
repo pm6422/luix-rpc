@@ -12,7 +12,7 @@ import org.infinity.rpc.webcenter.repository.RpcScheduledTaskHistoryRepository;
 import org.infinity.rpc.webcenter.repository.RpcScheduledTaskLockRepository;
 import org.infinity.rpc.webcenter.repository.RpcScheduledTaskRepository;
 import org.infinity.rpc.webcenter.service.RpcRegistryService;
-import org.infinity.rpc.webcenter.service.RpcTaskService;
+import org.infinity.rpc.webcenter.service.RpcScheduledTaskService;
 import org.infinity.rpc.webcenter.task.CronTaskRegistrar;
 import org.infinity.rpc.webcenter.task.TaskRunnable;
 import org.springframework.boot.ApplicationArguments;
@@ -33,7 +33,7 @@ import static org.infinity.rpc.webcenter.domain.RpcScheduledTask.*;
 
 @Service
 @Slf4j
-public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
+public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, ApplicationRunner {
     @Resource
     private RpcScheduledTaskRepository        taskRepository;
     @Resource
@@ -63,12 +63,6 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
             cronTaskRegistrar.addCronTask(runnable, task.getCronExpression());
         }
         log.info("Loaded all tasks");
-    }
-
-    @Override
-    public void refresh() throws Exception {
-        cronTaskRegistrar.destroy();
-        run(null);
     }
 
     @Override
@@ -111,7 +105,7 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
     }
 
     @Override
-    public void startOrPause(String id) {
+    public void startOrStop(String id) {
         RpcScheduledTask existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         TaskRunnable runnable = createTaskRunnable(existingOne);
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
@@ -137,7 +131,6 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
                 .methodSignature(task.getMethodSignature())
                 .argumentsJson(task.getArgumentsJson())
                 .cronExpression(task.getCronExpression())
-                .allHostsRun(task.isAllHostsRun())
                 .build();
     }
 
