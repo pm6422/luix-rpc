@@ -25,17 +25,17 @@ import static org.infinity.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG
 import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 /**
- * REST controller for managing task histories.
+ * REST controller for managing RPC scheduled task histories.
  */
 @RestController
 @Slf4j
-public class RpcTaskHistoryController {
+public class RpcScheduledTaskHistoryController {
 
     @Resource
     private RpcScheduledTaskHistoryRepository rpcScheduledTaskHistoryRepository;
 
-    @ApiOperation("find task history list")
-    @GetMapping("/api/rpc-task-histories")
+    @ApiOperation("find scheduled task history list")
+    @GetMapping("/api/rpc-scheduled-task-histories")
     @Timed
     public ResponseEntity<List<RpcScheduledTaskHistory>> find(Pageable pageable,
                                                               @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
@@ -57,8 +57,8 @@ public class RpcTaskHistoryController {
         return ResponseEntity.ok().headers(generatePageHeaders(histories)).body(histories.getContent());
     }
 
-    @ApiOperation("find task history by id")
-    @GetMapping("/api/rpc-task-histories/{id}")
+    @ApiOperation("find scheduled task history by id")
+    @GetMapping("/api/rpc-scheduled-task-histories/{id}")
     @Timed
     public ResponseEntity<RpcScheduledTaskHistory> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
         RpcScheduledTaskHistory history = rpcScheduledTaskHistoryRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));

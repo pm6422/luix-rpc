@@ -82,7 +82,7 @@ public class ScheduledTaskController {
     @ApiOperation("update scheduled task")
     @PutMapping("/api/scheduled-tasks")
     public ResponseEntity<Void> update(@ApiParam(value = "new task", required = true) @Valid @RequestBody ScheduledTask domain) {
-        log.debug("REST request to update task: {}", domain);
+        log.debug("REST request to update scheduled task: {}", domain);
         if (domain.getStartTime() != null && domain.getStopTime() != null) {
             Validate.isTrue(domain.getStopTime().isAfter(domain.getStartTime()),
                     "The stop time must be greater than the start time");
@@ -101,7 +101,7 @@ public class ScheduledTaskController {
     @ApiOperation(value = "delete scheduled task by id", notes = "The data may be referenced by other data, and some problems may occur after deletion")
     @DeleteMapping("/api/scheduled-tasks/{id}")
     public ResponseEntity<Void> delete(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
-        log.debug("REST request to delete task: {}", id);
+        log.debug("REST request to delete scheduled task: {}", id);
         scheduledTaskService.delete(id);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", id)).build();
     }

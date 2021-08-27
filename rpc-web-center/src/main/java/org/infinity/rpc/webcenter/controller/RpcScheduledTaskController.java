@@ -27,24 +27,24 @@ import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeade
 
 
 /**
- * REST controller for managing tasks.
+ * REST controller for managing RPC scheduled tasks.
  */
 @RestController
 @Slf4j
-public class RpcTaskController {
+public class RpcScheduledTaskController {
 
     @Resource
-    private RpcScheduledTaskRepository taskRepository;
+    private RpcScheduledTaskRepository rpcScheduledTaskRepository;
     @Resource
-    private RpcScheduledTaskService    taskService;
+    private RpcScheduledTaskService    rpcScheduledTaskService;
     @Resource
     private HttpHeaderCreator          httpHeaderCreator;
 
-    @ApiOperation("create task")
-    @PostMapping("/api/rpc-tasks")
+    @ApiOperation("create scheduled task")
+    @PostMapping("/api/rpc-scheduled-tasks")
     @Timed
     public ResponseEntity<Void> create(@ApiParam(value = "task", required = true) @Valid @RequestBody RpcScheduledTask domain) {
-        log.debug("REST request to create task: {}", domain);
+        log.debug("REST request to create scheduled task: {}", domain);
         if (StringUtils.isNotEmpty(domain.getArgumentsJson())) {
             try {
                 new ObjectMapper().readValue(domain.getArgumentsJson(), Map.class);
@@ -52,13 +52,13 @@ public class RpcTaskController {
                 throw new IllegalArgumentException("Illegal JSON string format of method arguments");
             }
         }
-        taskService.insert(domain);
+        rpcScheduledTaskService.insert(domain);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .headers(httpHeaderCreator.createSuccessHeader("SM1001", domain.getName())).build();
     }
 
-    @ApiOperation("find task list")
-    @GetMapping("/api/rpc-tasks")
+    @ApiOperation("find scheduled task list")
+    @GetMapping("/api/rpc-scheduled-tasks")
     @Timed
     public ResponseEntity<List<RpcScheduledTask>> find(Pageable pageable,
                                                        @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
@@ -68,23 +68,23 @@ public class RpcTaskController {
                                                        @ApiParam(value = "Version") @RequestParam(value = "version", required = false) String version,
                                                        @ApiParam(value = "Method name") @RequestParam(value = "methodName", required = false) String methodName,
                                                        @ApiParam(value = "Method signature") @RequestParam(value = "methodSignature", required = false) String methodSignature) {
-        Page<RpcScheduledTask> tasks = taskService.find(pageable, registryIdentity, name, interfaceName, form, version, methodName, methodSignature);
+        Page<RpcScheduledTask> tasks = rpcScheduledTaskService.find(pageable, registryIdentity, name, interfaceName, form, version, methodName, methodSignature);
         return ResponseEntity.ok().headers(generatePageHeaders(tasks)).body(tasks.getContent());
     }
 
-    @ApiOperation("find task by id")
-    @GetMapping("/api/rpc-tasks/{id}")
+    @ApiOperation("find scheduled task by id")
+    @GetMapping("/api/rpc-scheduled-tasks/{id}")
     @Timed
     public ResponseEntity<RpcScheduledTask> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
-        RpcScheduledTask task = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        RpcScheduledTask task = rpcScheduledTaskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         return ResponseEntity.ok(task);
     }
 
-    @ApiOperation("update task")
-    @PutMapping("/api/rpc-tasks")
+    @ApiOperation("update scheduled task")
+    @PutMapping("/api/rpc-scheduled-tasks")
     @Timed
     public ResponseEntity<Void> update(@ApiParam(value = "new task", required = true) @Valid @RequestBody RpcScheduledTask domain) {
-        log.debug("REST request to update task: {}", domain);
+        log.debug("REST request to update scheduled task: {}", domain);
         if (StringUtils.isNotEmpty(domain.getArgumentsJson())) {
             try {
                 new ObjectMapper().readValue(domain.getArgumentsJson(), Map.class);
@@ -92,16 +92,16 @@ public class RpcTaskController {
                 throw new IllegalArgumentException("Illegal JSON string format of method arguments");
             }
         }
-        taskService.update(domain);
+        rpcScheduledTaskService.update(domain);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getName())).build();
     }
 
-    @ApiOperation(value = "delete task by id", notes = "The data may be referenced by other data, and some problems may occur after deletion")
-    @DeleteMapping("/api/rpc-tasks/{id}")
+    @ApiOperation(value = "delete scheduled task by id", notes = "The data may be referenced by other data, and some problems may occur after deletion")
+    @DeleteMapping("/api/rpc-scheduled-tasks/{id}")
     @Timed
     public ResponseEntity<Void> delete(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
-        log.debug("REST request to delete task: {}", id);
-        taskService.delete(id);
+        log.debug("REST request to delete scheduled task: {}", id);
+        rpcScheduledTaskService.delete(id);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", id)).build();
     }
 }
