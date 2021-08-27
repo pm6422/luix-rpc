@@ -8,7 +8,7 @@ import org.infinity.rpc.demoserver.repository.TaskHistoryRepository;
 import org.infinity.rpc.demoserver.repository.TaskLockRepository;
 import org.infinity.rpc.demoserver.repository.TaskRepository;
 import org.infinity.rpc.demoserver.service.TaskService;
-import org.infinity.rpc.demoserver.task.CronTaskRegistrar;
+import org.infinity.rpc.demoserver.task.TaskSchedulerRegistrar;
 import org.infinity.rpc.demoserver.task.RunnableTask;
 import org.infinity.rpc.utilities.id.IdGenerator;
 import org.springframework.boot.ApplicationArguments;
@@ -32,13 +32,13 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
     @Resource
     private TaskHistoryRepository taskHistoryRepository;
     @Resource
-    private TaskLockRepository    taskLockRepository;
+    private TaskLockRepository     taskLockRepository;
     @Resource
-    private CronTaskRegistrar     cronTaskRegistrar;
+    private TaskSchedulerRegistrar taskSchedulerRegistrar;
 
     @Override
     public void refresh() throws Exception {
-        cronTaskRegistrar.destroy();
+        taskSchedulerRegistrar.destroy();
         run(null);
     }
 
@@ -126,14 +126,14 @@ public class TaskServiceImpl implements TaskService, ApplicationRunner {
                 .task(task)
                 .build();
         if (Boolean.TRUE.equals(task.getUseCronExpression())) {
-            cronTaskRegistrar.addCronTask(task.getName(), runnableTask, task.getCronExpression());
+            taskSchedulerRegistrar.addCronTask(task.getName(), runnableTask, task.getCronExpression());
         } else {
-            cronTaskRegistrar.addFixedRateTask(task.getName(), runnableTask, calculateMilliSeconds(task));
+            taskSchedulerRegistrar.addFixedRateTask(task.getName(), runnableTask, calculateMilliSeconds(task));
         }
     }
 
     private void removeTask(Task task) {
-        cronTaskRegistrar.removeTask(task.getName());
+        taskSchedulerRegistrar.removeTask(task.getName());
     }
 
     private long calculateMilliSeconds(Task task) {
