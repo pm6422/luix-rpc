@@ -7,10 +7,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Spring Data MongoDB repository for the RpcTask entity.
+ * Spring Data MongoDB repository for the RpcScheduledTask entity.
  */
 @Repository
-public interface RpcTaskRepository extends MongoRepository<RpcScheduledTask, String> {
+public interface RpcScheduledTaskRepository extends MongoRepository<RpcScheduledTask, String> {
 
     List<RpcScheduledTask> findByEnabledIsTrue();
 }

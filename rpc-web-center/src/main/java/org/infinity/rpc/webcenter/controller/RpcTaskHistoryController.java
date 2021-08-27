@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.rpc.webcenter.domain.RpcScheduledTaskHistory;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
-import org.infinity.rpc.webcenter.repository.RpcTaskHistoryRepository;
+import org.infinity.rpc.webcenter.repository.RpcScheduledTaskHistoryRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -32,7 +32,7 @@ import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeade
 public class RpcTaskHistoryController {
 
     @Resource
-    private RpcTaskHistoryRepository rpcTaskHistoryRepository;
+    private RpcScheduledTaskHistoryRepository rpcScheduledTaskHistoryRepository;
 
     @ApiOperation("find task history list")
     @GetMapping("/api/rpc-task-histories")
@@ -53,7 +53,7 @@ public class RpcTaskHistoryController {
         probe.setMethodSignature(trimToNull(methodSignature));
         // Ignore query parameter if it has a null value
         ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
-        Page<RpcScheduledTaskHistory> histories = rpcTaskHistoryRepository.findAll(Example.of(probe, matcher), pageable);
+        Page<RpcScheduledTaskHistory> histories = rpcScheduledTaskHistoryRepository.findAll(Example.of(probe, matcher), pageable);
         return ResponseEntity.ok().headers(generatePageHeaders(histories)).body(histories.getContent());
     }
 
@@ -61,7 +61,7 @@ public class RpcTaskHistoryController {
     @GetMapping("/api/rpc-task-histories/{id}")
     @Timed
     public ResponseEntity<RpcScheduledTaskHistory> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
-        RpcScheduledTaskHistory history = rpcTaskHistoryRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        RpcScheduledTaskHistory history = rpcScheduledTaskHistoryRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         return ResponseEntity.ok(history);
     }
 }

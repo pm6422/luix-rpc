@@ -7,10 +7,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 /**
- * Spring Data MongoDB repository for the RpcTaskLock entity.
+ * Spring Data MongoDB repository for the RpcScheduledTaskLock entity.
  */
 @Repository
-public interface RpcTaskLockRepository extends MongoRepository<RpcScheduledTaskLock, String> {
+public interface RpcScheduledTaskLockRepository extends MongoRepository<RpcScheduledTaskLock, String> {
 
     Optional<RpcScheduledTaskLock> findByName(String name);
 

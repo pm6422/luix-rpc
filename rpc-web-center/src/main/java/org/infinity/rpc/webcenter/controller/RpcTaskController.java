@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.RpcScheduledTask;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
-import org.infinity.rpc.webcenter.repository.RpcTaskRepository;
+import org.infinity.rpc.webcenter.repository.RpcScheduledTaskRepository;
 import org.infinity.rpc.webcenter.service.RpcTaskService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,9 +34,9 @@ import static org.infinity.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeade
 public class RpcTaskController {
 
     @Resource
-    private RpcTaskRepository taskRepository;
+    private RpcScheduledTaskRepository taskRepository;
     @Resource
-    private RpcTaskService    taskService;
+    private RpcTaskService             taskService;
     @Resource
     private HttpHeaderCreator httpHeaderCreator;
 

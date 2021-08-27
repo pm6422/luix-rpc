@@ -10,8 +10,8 @@ import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
 import org.infinity.rpc.webcenter.domain.RpcScheduledTaskHistory;
-import org.infinity.rpc.webcenter.repository.RpcTaskHistoryRepository;
-import org.infinity.rpc.webcenter.repository.RpcTaskLockRepository;
+import org.infinity.rpc.webcenter.repository.RpcScheduledTaskHistoryRepository;
+import org.infinity.rpc.webcenter.repository.RpcScheduledTaskLockRepository;
 import org.infinity.rpc.webcenter.service.RpcRegistryService;
 import org.springframework.util.StopWatch;
 
@@ -31,9 +31,9 @@ public class TaskRunnable implements Runnable {
     private static final int SECOND = 1000;
     private static final int MINUTE = 60000;
 
-    private final transient RpcTaskHistoryRepository taskHistoryRepository;
-    private final transient RpcTaskLockRepository    taskLockRepository;
-    private final transient RpcRegistryService       rpcRegistryService;
+    private final transient RpcScheduledTaskHistoryRepository taskHistoryRepository;
+    private final transient RpcScheduledTaskLockRepository    taskLockRepository;
+    private final transient RpcRegistryService                rpcRegistryService;
     private final transient Proxy                    proxyFactory;
     private final           String                   name;
     private final           String                   registryIdentity;

@@ -8,9 +8,9 @@ import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.id.IdGenerator;
 import org.infinity.rpc.webcenter.domain.RpcScheduledTask;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
-import org.infinity.rpc.webcenter.repository.RpcTaskHistoryRepository;
-import org.infinity.rpc.webcenter.repository.RpcTaskLockRepository;
-import org.infinity.rpc.webcenter.repository.RpcTaskRepository;
+import org.infinity.rpc.webcenter.repository.RpcScheduledTaskHistoryRepository;
+import org.infinity.rpc.webcenter.repository.RpcScheduledTaskLockRepository;
+import org.infinity.rpc.webcenter.repository.RpcScheduledTaskRepository;
 import org.infinity.rpc.webcenter.service.RpcRegistryService;
 import org.infinity.rpc.webcenter.service.RpcTaskService;
 import org.infinity.rpc.webcenter.task.CronTaskRegistrar;
@@ -35,13 +35,13 @@ import static org.infinity.rpc.webcenter.domain.RpcScheduledTask.*;
 @Slf4j
 public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
     @Resource
-    private RpcTaskRepository        taskRepository;
+    private RpcScheduledTaskRepository        taskRepository;
     @Resource
-    private RpcTaskHistoryRepository taskHistoryRepository;
+    private RpcScheduledTaskHistoryRepository taskHistoryRepository;
     @Resource
-    private RpcTaskLockRepository    taskLockRepository;
+    private RpcScheduledTaskLockRepository    taskLockRepository;
     @Resource
-    private RpcRegistryService       rpcRegistryService;
+    private RpcRegistryService                rpcRegistryService;
     @Resource
     private CronTaskRegistrar        cronTaskRegistrar;
     @Resource

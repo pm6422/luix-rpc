@@ -5,9 +5,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data MongoDB repository for the RpcTaskHistory entity.
+ * Spring Data MongoDB repository for the RpcScheduledTaskHistory entity.
  */
 @Repository
-public interface RpcTaskHistoryRepository extends MongoRepository<RpcScheduledTaskHistory, String> {
+public interface RpcScheduledTaskHistoryRepository extends MongoRepository<RpcScheduledTaskHistory, String> {
 
 }
