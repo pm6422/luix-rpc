@@ -13,8 +13,8 @@ import org.infinity.rpc.webcenter.repository.RpcScheduledTaskLockRepository;
 import org.infinity.rpc.webcenter.repository.RpcScheduledTaskRepository;
 import org.infinity.rpc.webcenter.service.RpcRegistryService;
 import org.infinity.rpc.webcenter.service.RpcScheduledTaskService;
-import org.infinity.rpc.webcenter.task.CronTaskRegistrar;
-import org.infinity.rpc.webcenter.task.TaskRunnable;
+import org.infinity.rpc.webcenter.task.RunnableTask;
+import org.infinity.rpc.webcenter.task.ScheduledTaskRegistrar;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.data.domain.Page;
@@ -35,103 +35,85 @@ import static org.infinity.rpc.webcenter.domain.RpcScheduledTask.*;
 @Slf4j
 public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, ApplicationRunner {
     @Resource
-    private RpcScheduledTaskRepository        taskRepository;
+    private RpcScheduledTaskRepository        rpcScheduledTaskRepository;
     @Resource
-    private RpcScheduledTaskHistoryRepository taskHistoryRepository;
+    private RpcScheduledTaskHistoryRepository rpcScheduledTaskHistoryRepository;
     @Resource
-    private RpcScheduledTaskLockRepository    taskLockRepository;
+    private RpcScheduledTaskLockRepository    rpcScheduledTaskLockRepository;
     @Resource
     private RpcRegistryService                rpcRegistryService;
     @Resource
-    private CronTaskRegistrar        cronTaskRegistrar;
+    private ScheduledTaskRegistrar            scheduledTaskRegistrar;
     @Resource
-    private InfinityProperties       infinityProperties;
+    private InfinityProperties                infinityProperties;
     @Resource
-    private MongoTemplate            mongoTemplate;
+    private MongoTemplate                     mongoTemplate;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // Timed task with normal state in initial load database
-        List<RpcScheduledTask> enabledTasks = taskRepository.findByEnabledIsTrue();
-        if (CollectionUtils.isEmpty(enabledTasks)) {
-            log.info("No tasks to execute!");
+        List<RpcScheduledTask> enabledScheduledTasks = rpcScheduledTaskRepository.findByEnabledIsTrue();
+        if (CollectionUtils.isEmpty(enabledScheduledTasks)) {
+            log.info("No scheduled tasks to execute!");
             return;
         }
 
-        for (RpcScheduledTask task : enabledTasks) {
-            TaskRunnable runnable = createTaskRunnable(task);
-            cronTaskRegistrar.addCronTask(runnable, task.getCronExpression());
+        for (RpcScheduledTask scheduledTask : enabledScheduledTasks) {
+            addTask(scheduledTask);
         }
-        log.info("Loaded all tasks");
+        log.info("Loaded all scheduled tasks");
     }
 
     @Override
     public RpcScheduledTask insert(RpcScheduledTask domain) {
         domain.setName("T" + IdGenerator.generateShortId());
-        RpcScheduledTask savedTask = taskRepository.save(domain);
-        if (Boolean.TRUE.equals(savedTask.getEnabled())) {
-            TaskRunnable runnable = createTaskRunnable(savedTask);
-            cronTaskRegistrar.addCronTask(runnable, savedTask.getCronExpression());
+        RpcScheduledTask savedOne = rpcScheduledTaskRepository.insert(domain);
+        if (Boolean.TRUE.equals(savedOne.getEnabled())) {
+            addTask(savedOne);
         }
-        return savedTask;
+        return savedOne;
     }
 
     @Override
     public void update(RpcScheduledTask domain) {
-        RpcScheduledTask existingOne = taskRepository.findById(domain.getId()).orElseThrow(() -> new NoDataFoundException(domain.getId()));
-        RpcScheduledTask savedOne = taskRepository.save(domain);
+        RpcScheduledTask existingOne = rpcScheduledTaskRepository.findById(domain.getId()).orElseThrow(() -> new NoDataFoundException(domain.getId()));
+        if (Boolean.TRUE.equals(domain.getUseCronExpression())) {
+            domain.setFixedInterval(null);
+            domain.setFixedIntervalUnit(null);
+        } else {
+            domain.setCronExpression(null);
+        }
+
+        RpcScheduledTask savedOne = rpcScheduledTaskRepository.save(domain);
 
         // Remove before adding
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
-            TaskRunnable runnable = createTaskRunnable(existingOne);
-            cronTaskRegistrar.removeCronTask(runnable);
+            removeTask(existingOne);
         }
 
         // Add a new one
         if (Boolean.TRUE.equals(savedOne.getEnabled())) {
-            TaskRunnable runnable = createTaskRunnable(savedOne);
-            cronTaskRegistrar.addCronTask(runnable, domain.getCronExpression());
+            addTask(savedOne);
         }
     }
 
     @Override
     public void delete(String id) {
-        RpcScheduledTask existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
-        taskRepository.deleteById(id);
+        RpcScheduledTask existingOne = rpcScheduledTaskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        rpcScheduledTaskRepository.deleteById(id);
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
-            TaskRunnable runnable = createTaskRunnable(existingOne);
-            cronTaskRegistrar.removeCronTask(runnable);
+            removeTask(existingOne);
         }
     }
 
     @Override
     public void startOrStop(String id) {
-        RpcScheduledTask existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
-        TaskRunnable runnable = createTaskRunnable(existingOne);
+        RpcScheduledTask existingOne = rpcScheduledTaskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
-            cronTaskRegistrar.addCronTask(runnable, existingOne.getCronExpression());
+            addTask(existingOne);
         } else {
-            cronTaskRegistrar.removeCronTask(runnable);
+            removeTask(existingOne);
         }
-    }
-
-    private TaskRunnable createTaskRunnable(RpcScheduledTask task) {
-        return TaskRunnable.builder()
-                .taskHistoryRepository(taskHistoryRepository)
-                .taskLockRepository(taskLockRepository)
-                .rpcRegistryService(rpcRegistryService)
-                .proxyFactory(Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory()))
-                .name(task.getName())
-                .registryIdentity(task.getRegistryIdentity())
-                .interfaceName(task.getInterfaceName())
-                .form(task.getForm())
-                .version(task.getVersion())
-                .methodName(task.getMethodName())
-                .methodParamTypes(task.getMethodParamTypes())
-                .methodSignature(task.getMethodSignature())
-                .argumentsJson(task.getArgumentsJson())
-                .cronExpression(task.getCronExpression())
-                .build();
     }
 
     @Override
@@ -161,5 +143,41 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
         long totalCount = mongoTemplate.count(query, RpcScheduledTask.class);
         query.with(pageable);
         return new PageImpl<>(mongoTemplate.find(query, RpcScheduledTask.class), pageable, totalCount);
+    }
+
+    private void addTask(RpcScheduledTask scheduledTask) {
+        RunnableTask runnableTask = RunnableTask.builder()
+                .rpcScheduledTaskHistoryRepository(rpcScheduledTaskHistoryRepository)
+                .rpcScheduledTaskLockRepository(rpcScheduledTaskLockRepository)
+                .rpcScheduledTask(scheduledTask)
+                .rpcRegistryService(rpcRegistryService)
+                .proxyFactory(Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory()))
+                .name(scheduledTask.getName())
+                .registryIdentity(scheduledTask.getRegistryIdentity())
+                .interfaceName(scheduledTask.getInterfaceName())
+                .form(scheduledTask.getForm())
+                .version(scheduledTask.getVersion())
+                .build();
+        if (Boolean.TRUE.equals(scheduledTask.getUseCronExpression())) {
+            scheduledTaskRegistrar.addCronTask(scheduledTask.getName(), runnableTask, scheduledTask.getCronExpression());
+        } else {
+            scheduledTaskRegistrar.addFixedRateTask(scheduledTask.getName(), runnableTask, calculateMilliSeconds(scheduledTask));
+        }
+    }
+
+    private void removeTask(RpcScheduledTask scheduledTask) {
+        scheduledTaskRegistrar.removeTask(scheduledTask.getName());
+    }
+
+    private long calculateMilliSeconds(RpcScheduledTask scheduledTask) {
+        long oneMinute = 60000;
+        if (UNIT_MINUTES.equals(scheduledTask.getFixedIntervalUnit())) {
+            return oneMinute * scheduledTask.getFixedInterval();
+        } else if (UNIT_HOURS.equals(scheduledTask.getFixedIntervalUnit())) {
+            return oneMinute * 60 * scheduledTask.getFixedInterval();
+        } else if (UNIT_DAYS.equals(scheduledTask.getFixedIntervalUnit())) {
+            return oneMinute * 60 * 24 * scheduledTask.getFixedInterval();
+        }
+        throw new IllegalStateException("Found incorrect time unit!");
     }
 }

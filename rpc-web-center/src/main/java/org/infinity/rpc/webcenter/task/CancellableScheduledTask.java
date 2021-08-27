@@ -1,18 +1,19 @@
 package org.infinity.rpc.webcenter.task;
 
+import lombok.AllArgsConstructor;
+
+import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 
+@AllArgsConstructor
 public final class CancellableScheduledTask {
 
-    volatile ScheduledFuture<?> future;
+    private ScheduledFuture<?> future;
 
     /**
      * Cancel timed tasks
      */
     public void cancel() {
-        ScheduledFuture<?> future = this.future;
-        if (future != null) {
-            future.cancel(true);
-        }
+        Optional.ofNullable(future).ifPresent(future -> future.cancel(true));
     }
 }

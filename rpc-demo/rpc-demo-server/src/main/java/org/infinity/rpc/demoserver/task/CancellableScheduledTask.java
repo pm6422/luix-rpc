@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 
 @AllArgsConstructor
-public final class ScheduledTask {
+public final class CancellableScheduledTask {
 
     private ScheduledFuture<?> future;
 

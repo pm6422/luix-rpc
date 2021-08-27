@@ -1,4 +1,4 @@
-package org.infinity.rpc.demoserver.task;
+package org.infinity.rpc.webcenter.task;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;

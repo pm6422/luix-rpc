@@ -41,16 +41,16 @@ public class RunnableTask implements Runnable {
     public void run() {
         Instant now = Instant.now();
         if (now.isBefore(scheduledTask.getStartTime())) {
-            log.debug("It's not time to start yet for task: [{}]", scheduledTask.getName());
+            log.debug("It's not time to start yet for scheduled task: [{}]", scheduledTask.getName());
             return;
         }
         if (now.isAfter(scheduledTask.getStopTime())) {
-            log.debug("It's past the stop time for task: [{}]", scheduledTask.getName());
+            log.debug("It's past the stop time for scheduled task: [{}]", scheduledTask.getName());
             return;
         }
         // Single host execute mode
         if (scheduledTaskLockRepository.findByName(scheduledTask.getName()).isPresent()) {
-            log.warn("Skip to execute task for the address: {}", NetworkUtils.INTRANET_IP);
+            log.warn("Skip to execute scheduled task for the address: {}", NetworkUtils.INTRANET_IP);
             return;
         }
         // This distributed lock used to control that only one node executes the task at the same time
@@ -60,7 +60,7 @@ public class RunnableTask implements Runnable {
         scheduledTaskLock.setExpiryTime(Instant.now().plus(10, ChronoUnit.SECONDS));
         scheduledTaskLockRepository.save(scheduledTaskLock);
 
-        log.info("Executing timing task {}.{}() at {}", scheduledTask.getBeanName(), TaskExecutable.METHOD_NAME,
+        log.info("Executing scheduled task {}.{}() at {}", scheduledTask.getBeanName(), TaskExecutable.METHOD_NAME,
                 ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -78,16 +78,16 @@ public class RunnableTask implements Runnable {
         } catch (Exception ex) {
             scheduledTaskHistory.setSuccess(false);
             scheduledTaskHistory.setReason(ex.getMessage());
-            log.error(String.format("Failed to execute timing task %s.%s()", scheduledTask.getBeanName(), TaskExecutable.METHOD_NAME), ex);
+            log.error(String.format("Failed to execute scheduled task %s.%s()", scheduledTask.getBeanName(), TaskExecutable.METHOD_NAME), ex);
         } finally {
             stopWatch.stop();
             long elapsed = stopWatch.getTotalTimeMillis();
             if (elapsed < SECOND) {
-                log.info("Executed timing task {}.{}() in {}ms", scheduledTask.getBeanName(), TaskExecutable.METHOD_NAME, elapsed);
+                log.info("Executed scheduled task {}.{}() in {}ms", scheduledTask.getBeanName(), TaskExecutable.METHOD_NAME, elapsed);
             } else if (elapsed < MINUTE) {
-                log.info("Executed timing task {}.{}() in {}s", scheduledTask.getBeanName(), TaskExecutable.METHOD_NAME, elapsed / 1000);
+                log.info("Executed scheduled task {}.{}() in {}s", scheduledTask.getBeanName(), TaskExecutable.METHOD_NAME, elapsed / 1000);
             } else {
-                log.warn("Executed timing task {}.{}() in {}m", scheduledTask.getBeanName(), TaskExecutable.METHOD_NAME, elapsed / (1000 * 60));
+                log.warn("Executed scheduled task {}.{}() in {}m", scheduledTask.getBeanName(), TaskExecutable.METHOD_NAME, elapsed / (1000 * 60));
             }
 
             scheduledTaskHistory.setElapsed(elapsed);
