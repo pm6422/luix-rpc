@@ -39,6 +39,15 @@ public class RunnableTask implements Runnable {
 
     @Override
     public void run() {
+        Instant now = Instant.now();
+        if (now.isBefore(task.getStartTime())) {
+            log.debug("It's not time to start yet for task: [{}]", task.getName());
+            return;
+        }
+        if (now.isAfter(task.getStopTime())) {
+            log.debug("It's past the stop time for task: [{}]", task.getName());
+            return;
+        }
         // Single host execute mode
         if (taskLockRepository.findByName(task.getName()).isPresent()) {
             log.warn("Skip to execute task for the address: {}", NetworkUtils.INTRANET_IP);
