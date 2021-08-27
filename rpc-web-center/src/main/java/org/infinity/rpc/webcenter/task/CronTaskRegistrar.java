@@ -13,9 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class CronTaskRegistrar implements DisposableBean {
 
-    private final Map<Runnable, ScheduledTask> scheduledTasks = new ConcurrentHashMap<>(16);
+    private final Map<Runnable, CancellableScheduledTask> scheduledTasks = new ConcurrentHashMap<>(16);
     @Resource
-    private       TaskScheduler                taskScheduler;
+    private       TaskScheduler                           taskScheduler;
 
     public TaskScheduler getScheduler() {
         return this.taskScheduler;
@@ -36,16 +36,16 @@ public class CronTaskRegistrar implements DisposableBean {
     }
 
     public void removeCronTask(Runnable task) {
-        ScheduledTask scheduledTask = this.scheduledTasks.remove(task);
-        if (scheduledTask != null) {
-            scheduledTask.cancel();
+        CancellableScheduledTask cancellableScheduledTask = this.scheduledTasks.remove(task);
+        if (cancellableScheduledTask != null) {
+            cancellableScheduledTask.cancel();
         }
     }
 
-    public ScheduledTask scheduleCronTask(CronTask cronTask) {
-        ScheduledTask scheduledTask = new ScheduledTask();
-        scheduledTask.future = this.taskScheduler.schedule(cronTask.getRunnable(), cronTask.getTrigger());
-        return scheduledTask;
+    public CancellableScheduledTask scheduleCronTask(CronTask cronTask) {
+        CancellableScheduledTask cancellableScheduledTask = new CancellableScheduledTask();
+        cancellableScheduledTask.future = this.taskScheduler.schedule(cronTask.getRunnable(), cronTask.getTrigger());
+        return cancellableScheduledTask;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CronTaskRegistrar implements DisposableBean {
         if (MapUtils.isEmpty(scheduledTasks)) {
             return;
         }
-        scheduledTasks.values().forEach(ScheduledTask::cancel);
+        scheduledTasks.values().forEach(CancellableScheduledTask::cancel);
         scheduledTasks.clear();
     }
 }

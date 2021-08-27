@@ -2,7 +2,7 @@ package org.infinity.rpc.webcenter.task;
 
 import java.util.concurrent.ScheduledFuture;
 
-public final class ScheduledTask {
+public final class CancellableScheduledTask {
 
     volatile ScheduledFuture<?> future;
 
