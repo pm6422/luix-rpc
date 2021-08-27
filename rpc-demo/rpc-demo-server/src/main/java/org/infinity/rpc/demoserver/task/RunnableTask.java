@@ -40,11 +40,11 @@ public class RunnableTask implements Runnable {
     @Override
     public void run() {
         Instant now = Instant.now();
-        if (now.isBefore(scheduledTask.getStartTime())) {
+        if (scheduledTask.getStartTime() != null && now.isBefore(scheduledTask.getStartTime())) {
             log.debug("It's not time to start yet for scheduled task: [{}]", scheduledTask.getName());
             return;
         }
-        if (now.isAfter(scheduledTask.getStopTime())) {
+        if (scheduledTask.getStopTime() != null && now.isAfter(scheduledTask.getStopTime())) {
             log.debug("It's past the stop time for scheduled task: [{}]", scheduledTask.getName());
             return;
         }
