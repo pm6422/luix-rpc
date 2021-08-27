@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.demoserver.component.HttpHeaderCreator;
 import org.infinity.rpc.demoserver.domain.Task;
 import org.infinity.rpc.demoserver.exception.NoDataFoundException;
@@ -46,6 +47,10 @@ public class TaskController {
     @PostMapping("/api/tasks")
     public ResponseEntity<Void> create(@ApiParam(value = "task", required = true) @Valid @RequestBody Task domain) {
         log.debug("REST request to create task: {}", domain);
+        if (domain.getStartTime() != null && domain.getStopTime() != null) {
+            Validate.isTrue(domain.getStopTime().isAfter(domain.getStartTime()),
+                    "The stop time must be greater than the start time");
+        }
         if (StringUtils.isNotEmpty(domain.getArgumentsJson())) {
             try {
                 new ObjectMapper().readValue(domain.getArgumentsJson(), Map.class);
@@ -78,6 +83,10 @@ public class TaskController {
     @PutMapping("/api/tasks")
     public ResponseEntity<Void> update(@ApiParam(value = "new task", required = true) @Valid @RequestBody Task domain) {
         log.debug("REST request to update task: {}", domain);
+        if (domain.getStartTime() != null && domain.getStopTime() != null) {
+            Validate.isTrue(domain.getStopTime().isAfter(domain.getStartTime()),
+                    "The stop time must be greater than the start time");
+        }
         if (StringUtils.isNotEmpty(domain.getArgumentsJson())) {
             try {
                 new ObjectMapper().readValue(domain.getArgumentsJson(), Map.class);
