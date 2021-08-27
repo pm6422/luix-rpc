@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.spring.boot.config.InfinityProperties;
 import org.infinity.rpc.utilities.id.IdGenerator;
-import org.infinity.rpc.webcenter.domain.RpcTask;
+import org.infinity.rpc.webcenter.domain.RpcScheduledTask;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.RpcTaskHistoryRepository;
 import org.infinity.rpc.webcenter.repository.RpcTaskLockRepository;
@@ -29,7 +29,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static org.infinity.rpc.webcenter.domain.RpcTask.*;
+import static org.infinity.rpc.webcenter.domain.RpcScheduledTask.*;
 
 @Service
 @Slf4j
@@ -52,13 +52,13 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // Timed task with normal state in initial load database
-        List<RpcTask> enabledTasks = taskRepository.findByEnabledIsTrue();
+        List<RpcScheduledTask> enabledTasks = taskRepository.findByEnabledIsTrue();
         if (CollectionUtils.isEmpty(enabledTasks)) {
             log.info("No tasks to execute!");
             return;
         }
 
-        for (RpcTask task : enabledTasks) {
+        for (RpcScheduledTask task : enabledTasks) {
             TaskRunnable runnable = createTaskRunnable(task);
             cronTaskRegistrar.addCronTask(runnable, task.getCronExpression());
         }
@@ -72,9 +72,9 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
     }
 
     @Override
-    public RpcTask insert(RpcTask domain) {
+    public RpcScheduledTask insert(RpcScheduledTask domain) {
         domain.setName("T" + IdGenerator.generateShortId());
-        RpcTask savedTask = taskRepository.save(domain);
+        RpcScheduledTask savedTask = taskRepository.save(domain);
         if (Boolean.TRUE.equals(savedTask.getEnabled())) {
             TaskRunnable runnable = createTaskRunnable(savedTask);
             cronTaskRegistrar.addCronTask(runnable, savedTask.getCronExpression());
@@ -83,9 +83,9 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
     }
 
     @Override
-    public void update(RpcTask domain) {
-        RpcTask existingOne = taskRepository.findById(domain.getId()).orElseThrow(() -> new NoDataFoundException(domain.getId()));
-        RpcTask savedOne = taskRepository.save(domain);
+    public void update(RpcScheduledTask domain) {
+        RpcScheduledTask existingOne = taskRepository.findById(domain.getId()).orElseThrow(() -> new NoDataFoundException(domain.getId()));
+        RpcScheduledTask savedOne = taskRepository.save(domain);
 
         // Remove before adding
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
@@ -102,7 +102,7 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
 
     @Override
     public void delete(String id) {
-        RpcTask existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        RpcScheduledTask existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         taskRepository.deleteById(id);
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
             TaskRunnable runnable = createTaskRunnable(existingOne);
@@ -112,7 +112,7 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
 
     @Override
     public void startOrPause(String id) {
-        RpcTask existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        RpcScheduledTask existingOne = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         TaskRunnable runnable = createTaskRunnable(existingOne);
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
             cronTaskRegistrar.addCronTask(runnable, existingOne.getCronExpression());
@@ -121,7 +121,7 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
         }
     }
 
-    private TaskRunnable createTaskRunnable(RpcTask task) {
+    private TaskRunnable createTaskRunnable(RpcScheduledTask task) {
         return TaskRunnable.builder()
                 .taskHistoryRepository(taskHistoryRepository)
                 .taskLockRepository(taskLockRepository)
@@ -142,8 +142,8 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
     }
 
     @Override
-    public Page<RpcTask> find(Pageable pageable, String registryIdentity, String name, String interfaceName,
-                              String form, String version, String methodName, String methodSignature) {
+    public Page<RpcScheduledTask> find(Pageable pageable, String registryIdentity, String name, String interfaceName,
+                                       String form, String version, String methodName, String methodSignature) {
         Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryIdentity));
         if (StringUtils.isNotEmpty(name)) {
             //Fuzzy search
@@ -165,8 +165,8 @@ public class RpcTaskServiceImpl implements RpcTaskService, ApplicationRunner {
         if (StringUtils.isNotEmpty(methodSignature)) {
             query.addCriteria(Criteria.where(FIELD_METHOD_SIGNATURE).is(methodSignature));
         }
-        long totalCount = mongoTemplate.count(query, RpcTask.class);
+        long totalCount = mongoTemplate.count(query, RpcScheduledTask.class);
         query.with(pageable);
-        return new PageImpl<>(mongoTemplate.find(query, RpcTask.class), pageable, totalCount);
+        return new PageImpl<>(mongoTemplate.find(query, RpcScheduledTask.class), pageable, totalCount);
     }
 }

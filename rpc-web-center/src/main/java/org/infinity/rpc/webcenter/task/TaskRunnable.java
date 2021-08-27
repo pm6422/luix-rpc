@@ -9,12 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.rpc.core.client.proxy.Proxy;
 import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.webcenter.domain.RpcTaskHistory;
-import org.infinity.rpc.webcenter.domain.RpcTaskLock;
+import org.infinity.rpc.webcenter.domain.RpcScheduledTaskHistory;
 import org.infinity.rpc.webcenter.repository.RpcTaskHistoryRepository;
 import org.infinity.rpc.webcenter.repository.RpcTaskLockRepository;
 import org.infinity.rpc.webcenter.service.RpcRegistryService;
-import org.infinity.rpc.webcenter.utils.NetworkUtils;
 import org.springframework.util.StopWatch;
 
 import java.time.Instant;
@@ -69,7 +67,7 @@ public class TaskRunnable implements Runnable {
                 ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        RpcTaskHistory taskHistory = new RpcTaskHistory();
+        RpcScheduledTaskHistory taskHistory = new RpcScheduledTaskHistory();
         taskHistory.setName(name);
         taskHistory.setRegistryIdentity(registryIdentity);
         taskHistory.setInterfaceName(interfaceName);

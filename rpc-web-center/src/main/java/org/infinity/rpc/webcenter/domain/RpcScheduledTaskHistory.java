@@ -11,11 +11,11 @@ import java.io.Serializable;
 import java.time.Instant;
 
 /**
- * Spring Data MongoDB collection for the RpcTaskHistory entity.
+ * Spring Data MongoDB collection for the RpcScheduledTaskHistory entity.
  */
 @Data
 @NoArgsConstructor
-public class RpcTaskHistory implements Serializable {
+public class RpcScheduledTaskHistory implements Serializable {
     private static final long     serialVersionUID = 564976464702808036L;
     @Id
     private              String   id;
@@ -60,9 +60,21 @@ public class RpcTaskHistory implements Serializable {
      */
     private              String   argumentsJson;
     /**
+     * Indicates whether it use cron expression, or fixed interval
+     */
+    private              Boolean  useCronExpression;
+    /**
      * Cron expression
      */
     private              String   cronExpression;
+    /**
+     * Fixed rate interval
+     */
+    private              Long     fixedInterval;
+    /**
+     * Time unit of fixed rate interval, e.g. MINUTES, HOURS, DAYS
+     */
+    private              String   fixedIntervalUnit;
     /**
      * Execution time in milliseconds
      */

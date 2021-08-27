@@ -64,10 +64,6 @@ public class ScheduledTask extends AbstractAuditableDomain implements Serializab
      */
     private              String       fixedIntervalUnit;
     /**
-     * Remarks
-     */
-    private              String       remark;
-    /**
      * Start time
      */
     private              Instant      startTime;
@@ -80,4 +76,8 @@ public class ScheduledTask extends AbstractAuditableDomain implements Serializab
      */
     @NotNull
     private              Boolean      enabled;
+    /**
+     * Remarks
+     */
+    private              String       remark;
 }

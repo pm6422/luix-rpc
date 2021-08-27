@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
-import org.infinity.rpc.webcenter.domain.RpcTask;
+import org.infinity.rpc.webcenter.domain.RpcScheduledTask;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
 import org.infinity.rpc.webcenter.repository.RpcTaskRepository;
 import org.infinity.rpc.webcenter.service.RpcTaskService;
@@ -43,7 +43,7 @@ public class RpcTaskController {
     @ApiOperation("create task")
     @PostMapping("/api/rpc-tasks")
     @Timed
-    public ResponseEntity<Void> create(@ApiParam(value = "task", required = true) @Valid @RequestBody RpcTask domain) {
+    public ResponseEntity<Void> create(@ApiParam(value = "task", required = true) @Valid @RequestBody RpcScheduledTask domain) {
         log.debug("REST request to create task: {}", domain);
         if (StringUtils.isNotEmpty(domain.getArgumentsJson())) {
             try {
@@ -60,30 +60,30 @@ public class RpcTaskController {
     @ApiOperation("find task list")
     @GetMapping("/api/rpc-tasks")
     @Timed
-    public ResponseEntity<List<RpcTask>> find(Pageable pageable,
-                                              @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
-                                              @ApiParam(value = "Task name(fuzzy query)") @RequestParam(value = "name", required = false) String name,
-                                              @ApiParam(value = "Interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName,
-                                              @ApiParam(value = "Form") @RequestParam(value = "form", required = false) String form,
-                                              @ApiParam(value = "Version") @RequestParam(value = "version", required = false) String version,
-                                              @ApiParam(value = "Method name") @RequestParam(value = "methodName", required = false) String methodName,
-                                              @ApiParam(value = "Method signature") @RequestParam(value = "methodSignature", required = false) String methodSignature) {
-        Page<RpcTask> tasks = taskService.find(pageable, registryIdentity, name, interfaceName, form, version, methodName, methodSignature);
+    public ResponseEntity<List<RpcScheduledTask>> find(Pageable pageable,
+                                                       @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
+                                                       @ApiParam(value = "Task name(fuzzy query)") @RequestParam(value = "name", required = false) String name,
+                                                       @ApiParam(value = "Interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName,
+                                                       @ApiParam(value = "Form") @RequestParam(value = "form", required = false) String form,
+                                                       @ApiParam(value = "Version") @RequestParam(value = "version", required = false) String version,
+                                                       @ApiParam(value = "Method name") @RequestParam(value = "methodName", required = false) String methodName,
+                                                       @ApiParam(value = "Method signature") @RequestParam(value = "methodSignature", required = false) String methodSignature) {
+        Page<RpcScheduledTask> tasks = taskService.find(pageable, registryIdentity, name, interfaceName, form, version, methodName, methodSignature);
         return ResponseEntity.ok().headers(generatePageHeaders(tasks)).body(tasks.getContent());
     }
 
     @ApiOperation("find task by id")
     @GetMapping("/api/rpc-tasks/{id}")
     @Timed
-    public ResponseEntity<RpcTask> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
-        RpcTask task = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+    public ResponseEntity<RpcScheduledTask> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
+        RpcScheduledTask task = taskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
         return ResponseEntity.ok(task);
     }
 
     @ApiOperation("update task")
     @PutMapping("/api/rpc-tasks")
     @Timed
-    public ResponseEntity<Void> update(@ApiParam(value = "new task", required = true) @Valid @RequestBody RpcTask domain) {
+    public ResponseEntity<Void> update(@ApiParam(value = "new task", required = true) @Valid @RequestBody RpcScheduledTask domain) {
         log.debug("REST request to update task: {}", domain);
         if (StringUtils.isNotEmpty(domain.getArgumentsJson())) {
             try {

@@ -10,11 +10,11 @@ import java.io.Serializable;
 import java.time.Instant;
 
 /**
- * Spring Data MongoDB collection for the RpcTaskLock entity.
+ * Spring Data MongoDB collection for the RpcScheduledTaskLock entity.
  */
 @Data
 @NoArgsConstructor
-public class RpcTaskLock implements Serializable {
+public class RpcScheduledTaskLock implements Serializable {
     private static final long    serialVersionUID = -3024974222557800398L;
     @Id
     private              String  id;
