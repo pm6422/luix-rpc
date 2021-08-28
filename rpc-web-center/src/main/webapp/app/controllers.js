@@ -1933,11 +1933,13 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
         '    {}\n' +
         ']';
 
-    RpcProviderService.get({extension: $stateParams.id},
-        function (response) {
-            vm.provider = response;
-            vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.provider.url});
-        });
+    if(vm.mode == 'create') {
+        RpcProviderService.get({extension: $stateParams.id},
+            function (response) {
+                vm.provider = response;
+                vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.provider.url});
+            });
+    }
 
     vm.isSaving = false;
     vm.selectMethod = selectMethod;
@@ -2078,9 +2080,9 @@ function RpcScheduledTaskListController($rootScope, $state, AlertUtils, ParseLin
     }
 
     function del(id) {
-        AlertUtils.createDeleteConfirmation('The data may be referenced by other data, and there may be some problems after deletion, are you sure to delete?', function (isConfirm) {
+        AlertUtils.createDeleteConfirmation('Are you sure to delete?', function (isConfirm) {
             if (isConfirm) {
-                RpcScheduledTaskService.del({id: id},
+                RpcScheduledTaskService.del({extension: id},
                     function () {
                         vm.loadAll();
                     },

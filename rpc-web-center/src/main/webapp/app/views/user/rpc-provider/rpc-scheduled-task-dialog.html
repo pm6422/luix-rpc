@@ -5,15 +5,15 @@
         <h4 class="modal-title">{{vm.pageTitle}}</h4>
     </div>
     <div class="modal-body">
-        <div class="form-group">
+        <div class="form-group" ng-if="vm.mode == 'edit'">
             <label class="control-label">Interface</label>
-            <input type="text" class="form-control" name="name" ng-model="vm.provider.interfaceName" disabled>
+            <input type="text" class="form-control" name="name" ng-model="vm.entity.interfaceName" disabled>
         </div>
         <div class="form-group" ng-hide="vm.mode == 'create'">
             <label class="control-label">Task name</label>
             <input type="text" class="form-control" name="name" ng-model="vm.entity.name" disabled>
         </div>
-        <div class="form-group">
+        <div class="form-group" ng-if="vm.mode == 'create'">
             <label class="control-label">Method</label>
             <select id="method" name="method" class="form-control" ng-model="vm.entity.methodSignature" required
                     ng-options="item.methodSignature as item.methodSignature for item in vm.methods"
@@ -25,6 +25,10 @@
                     Required
                 </p>
             </div>
+        </div>
+        <div class="form-group" ng-if="vm.mode == 'edit'">
+            <label class="control-label">Method</label>
+            <input type="text" class="form-control" name="name" ng-model="vm.entity.methodSignature" disabled>
         </div>
         <div class="form-group">
             <label class="control-label">Method arguments (An array with JSON string format)</label>

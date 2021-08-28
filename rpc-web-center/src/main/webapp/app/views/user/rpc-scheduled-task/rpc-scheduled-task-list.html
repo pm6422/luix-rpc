@@ -15,7 +15,7 @@
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label class="control-label" for="name">Interface name</label>
+                    <label class="control-label" for="name">Service</label>
                     <input type="text" id="beanName" class="form-control" ng-model="vm.criteria.interfaceName"
                            ng-keydown="vm.checkPressEnter($event)">
                 </div>
@@ -25,14 +25,13 @@
     <div class="ibox">
         <div class="ibox-title">
             <h5></h5>
-            <div ibox-tools-directive></div>
         </div>
         <div class="ibox-content p-w-m">
             <table class="table table-striped">
                 <thead>
                     <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
                         <th sort-by-directive="name"><span>Task name</span> <span class="fa fa-sort"></span></th>
-                        <th sort-by-directive="beanName"><span>Interface name</span> <span class="fa fa-sort"></span></th>
+                        <th sort-by-directive="beanName"><span>Service</span> <span class="fa fa-sort"></span></th>
                         <th>Method arguments</th>
                         <th sort-by-directive="startTime"><span>Start time</span> <span class="fa fa-sort"></span></th>
                         <th sort-by-directive="stopTime"><span>Stop time</span> <span class="fa fa-sort"></span></th>

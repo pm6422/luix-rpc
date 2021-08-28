@@ -494,6 +494,31 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }]
             }
         })
+        .state('rpc.scheduled-task-list.edit', {
+            url: '/edit/:id',
+            data: {
+                pageTitle: 'Edit',
+                mode: 'edit'
+            },
+            onEnter: ['$state', '$stateParams', '$uibModal', function ($state, $stateParams, $uibModal) {
+                $uibModal.open({
+                    templateUrl: 'app/views/user/rpc-provider/rpc-scheduled-task-dialog.html',
+                    controller: 'RpcScheduledTaskDialogController',
+                    controllerAs: 'vm',
+                    backdrop: 'static',
+                    size: 'lg',
+                    resolve: {
+                        entity: ['RpcScheduledTaskService', function (RpcScheduledTaskService) {
+                            return RpcScheduledTaskService.get({extension: $stateParams.id}).$promise;
+                        }]
+                    }
+                }).result.then(function (result) {
+                    $state.go('^', null, {reload: true});
+                }, function () {
+                    $state.go('^');
+                });
+            }]
+        })
         .state('rpc.scheduled-task-history-list', {
             url: '/rpc-scheduled-task-history-list?page&sort&name&providerId',
             views: {
