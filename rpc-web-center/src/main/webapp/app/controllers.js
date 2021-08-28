@@ -2091,7 +2091,7 @@ function RpcScheduledTaskListController($rootScope, $state, AlertUtils, ParseLin
     }
 
     function goToHistory(name) {
-        $state.go('scheduled-task-history-list', {'name': name});
+        $state.go('rpc.scheduled-task-history-list', {'name': name});
     }
 }
 /**
@@ -2113,7 +2113,7 @@ function RpcScheduledTaskHistoryListController($rootScope, $state, AlertUtils, P
     vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
     vm.transition = transition;
     vm.criteria = criteria;
-    vm.goProviderView = goProviderView;
+    vm.goBack = goBack;
 
     vm.loadAll();
 
@@ -2162,8 +2162,12 @@ function RpcScheduledTaskHistoryListController($rootScope, $state, AlertUtils, P
         }
     }
 
-    function goProviderView(refreshToken) {
-        $state.go('rpc.provider-list.view', {'id': criteria.providerId, 'tab': 'tasks'});
+    function goBack() {
+        if(criteria.providerId) {
+            $state.go('rpc.provider-list.view', {'id': criteria.providerId, 'tab': 'tasks'});
+        } else {
+            $state.go('rpc.scheduled-task-list');
+        }
     }
 }
 /**

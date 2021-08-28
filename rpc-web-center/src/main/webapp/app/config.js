@@ -488,7 +488,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 criteria: ['$stateParams', function ($stateParams) {
                     return {
                         name: $stateParams.name,
-                        beanName: $stateParams.beanName,
+                        interfaceName: $stateParams.interfaceName,
                         methodName: $stateParams.methodName
                     };
                 }]

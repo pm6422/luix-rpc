@@ -32,7 +32,7 @@
                 <thead>
                     <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
                         <th sort-by-directive="name"><span>Task name</span> <span class="fa fa-sort"></span></th>
-                        <th sort-by-directive="beanName"><span>Spring bean name</span> <span class="fa fa-sort"></span></th>
+                        <th sort-by-directive="beanName"><span>Interface name</span> <span class="fa fa-sort"></span></th>
                         <th>Method arguments</th>
                         <th sort-by-directive="startTime"><span>Start time</span> <span class="fa fa-sort"></span></th>
                         <th sort-by-directive="stopTime"><span>Stop time</span> <span class="fa fa-sort"></span></th>
@@ -44,7 +44,7 @@
                 <tbody>
                     <tr ng-repeat="entity in vm.entities track by entity.id">
                         <td>{{entity.name}}</td>
-                        <td>{{entity.beanName}}</td>
+                        <td>{{entity.interfaceName}}</td>
                         <td>{{entity.argumentsJson}}</td>
                         <td>{{entity.startTime | date:'yyyy/MM/dd HH:mm:ss'}}</td>
                         <td>{{entity.stopTime | date:'yyyy/MM/dd HH:mm:ss'}}</td>
