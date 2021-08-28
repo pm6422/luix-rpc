@@ -116,9 +116,9 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
 
             main.isAuthenticated = PrincipalService.isAuthenticated;
 
-            if (account) {
-                AlertUtils.success('Sign in successfully');
-            }
+            // if (account) {
+            //     AlertUtils.success('Sign in successfully');
+            // }
         });
     }
 
