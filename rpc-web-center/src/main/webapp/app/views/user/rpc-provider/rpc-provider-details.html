@@ -185,8 +185,6 @@
                                 <tr>
                                     <th class="col-sm-1" data-toggle="true">Name</th>
                                     <th class="col-sm-1">Method signature</th>
-                                    <th class="col-sm-1">Start time</th>
-                                    <th class="col-sm-1">Stop time</th>
                                     <th class="col-sm-1">Enabled</th>
                                     <th class="col-sm-1">Actions</th>
                                 </tr>
@@ -195,8 +193,6 @@
                                 <tr on-footable-finish-render ng-repeat="task in vm.tasks">
                                     <td><span>{{task.name}}</span></td>
                                     <td><span>{{task.methodSignature}}</span></td>
-                                    <td><span>{{task.startTime | date:'yyyy/MM/dd HH:mm:ss'}}</span></td>
-                                    <td><span>{{task.stopTime | date:'yyyy/MM/dd HH:mm:ss'}}</span></td>
                                     <td><span>{{task.enabled}}</span></td>
                                     <td>
                                         <div class="btn-group">
