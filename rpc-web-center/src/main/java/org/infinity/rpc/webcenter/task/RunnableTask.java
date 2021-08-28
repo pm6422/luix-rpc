@@ -2,7 +2,6 @@ package org.infinity.rpc.webcenter.task;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -15,17 +14,17 @@ import org.infinity.rpc.webcenter.domain.RpcScheduledTaskLock;
 import org.infinity.rpc.webcenter.repository.RpcScheduledTaskHistoryRepository;
 import org.infinity.rpc.webcenter.repository.RpcScheduledTaskLockRepository;
 import org.infinity.rpc.webcenter.service.RpcRegistryService;
-import org.infinity.rpc.webcenter.utils.NetworkUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.StopWatch;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
-import static org.infinity.rpc.core.constant.ServiceConstants.FORM;
-import static org.infinity.rpc.core.constant.ServiceConstants.VERSION;
+import static org.infinity.rpc.core.constant.ServiceConstants.*;
 
 @Slf4j
 @Builder
@@ -45,6 +44,8 @@ public class RunnableTask implements Runnable {
     private final           String             interfaceName;
     private final           String             form;
     private final           String             version;
+    private final           Integer            requestTimeout;
+    private final           Integer            retryCount;
 
     @Override
     public void run() {
@@ -111,8 +112,18 @@ public class RunnableTask implements Runnable {
 
     private void executeTask() throws JsonProcessingException {
         // Select one of node to execute
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put(FORM, form);
+        attributes.put(VERSION, version);
+        if (requestTimeout != null) {
+            attributes.put(REQUEST_TIMEOUT, requestTimeout.toString());
+        }
+        if (retryCount != null) {
+            attributes.put(RETRY_COUNT, retryCount.toString());
+        }
+
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(registryIdentity,
-                null, interfaceName, ImmutableMap.of(FORM, form, VERSION, version));
+                null, interfaceName, attributes);
         Object[] args = null;
         if (StringUtils.isNotEmpty(rpcScheduledTask.getArgumentsJson())) {
             args = new ObjectMapper().readValue(rpcScheduledTask.getArgumentsJson(), Object[].class);

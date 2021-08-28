@@ -60,6 +60,14 @@ public class RpcScheduledTask extends AbstractAuditableDomain implements Seriali
      */
     private String   version;
     /**
+     * Retry count
+     */
+    private Integer  retryCount;
+    /**
+     * Request timeout
+     */
+    private Integer  requestTimeout;
+    /**
      * Method name. e.g, save
      */
     @NotEmpty
