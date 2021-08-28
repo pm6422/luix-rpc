@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.demoserver.RpcDemoServerLauncher;
+import org.infinity.rpc.demoserver.LuixDemoServerLauncher;
 import org.infinity.rpc.demoserver.domain.ScheduledTask;
 import org.infinity.rpc.demoserver.domain.ScheduledTaskHistory;
 import org.infinity.rpc.demoserver.domain.ScheduledTaskLock;
@@ -97,7 +97,7 @@ public class RunnableTask implements Runnable {
     }
 
     private void executeTask() throws NoSuchMethodException, JsonProcessingException, IllegalAccessException, InvocationTargetException {
-        Object target = RpcDemoServerLauncher.applicationContext.getBean(scheduledTask.getBeanName());
+        Object target = LuixDemoServerLauncher.applicationContext.getBean(scheduledTask.getBeanName());
         Method method = target.getClass().getDeclaredMethod(TaskExecutable.METHOD_NAME, Map.class);
         ReflectionUtils.makeAccessible(method);
         // Convert JSON string to Map

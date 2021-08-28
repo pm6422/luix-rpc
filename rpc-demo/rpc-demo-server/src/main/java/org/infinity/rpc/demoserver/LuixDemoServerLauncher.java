@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 
 @EnableRpc
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
-public class RpcDemoServerLauncher {
+public class LuixDemoServerLauncher {
     public static ConfigurableApplicationContext applicationContext;
 
     /**
@@ -24,7 +24,7 @@ public class RpcDemoServerLauncher {
      * @param args program arguments
      */
     public static void main(String[] args) {
-        applicationContext = SpringApplication.run(RpcDemoServerLauncher.class, args);
+        applicationContext = SpringApplication.run(LuixDemoServerLauncher.class, args);
     }
 
     @PostConstruct

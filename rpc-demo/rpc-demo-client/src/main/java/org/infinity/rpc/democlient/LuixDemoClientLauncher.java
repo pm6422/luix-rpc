@@ -18,7 +18,7 @@ import javax.annotation.PostConstruct;
 @Slf4j
 @EnableRpc
 @ForestScan(basePackages = "org.infinity.rpc.democlient.restservice")
-public class RpcDemoClientLauncher {
+public class LuixDemoClientLauncher {
 
     /**
      * Entrance method which used to run the application. Spring profiles can be configured with a program arguments
@@ -27,7 +27,7 @@ public class RpcDemoClientLauncher {
      * @param args program arguments
      */
     public static void main(String[] args) {
-        SpringApplication.run(RpcDemoClientLauncher.class, args);
+        SpringApplication.run(LuixDemoClientLauncher.class, args);
     }
 
     @PostConstruct
