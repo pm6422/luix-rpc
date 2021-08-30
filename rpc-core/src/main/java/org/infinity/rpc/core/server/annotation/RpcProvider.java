@@ -50,7 +50,7 @@ public @interface RpcProvider {
      * One service interface may have multiple implementations(forms),
      * It used to distinguish between different implementations of service provider interface
      *
-     * @return form service implementation
+     * @return service implementation
      */
     String form() default "";
 
