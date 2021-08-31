@@ -141,29 +141,29 @@
                     <p>LUI️✘ Web Center内置了一个定时调度系统，系统可以根据CRON表达式、固定间隔模式定时发起RPC调用。另外支持超时时间设置、重试次数、邮件报警功能以及报表统计。</p>
                 </div>
                 <div class="m-t-lg">
-                    <i class="fas fa-chart-pie features-icon"></i>
+                    <i class="fas fa-atom features-icon"></i>
                     <h2>多类型与多数量注册中心</h2>
                     <p>支持ZooKeeper和Nacos作为注册中心实现，并且预留扩展接口，未来可以接入更多类型的注册中心。此外支持多注册中心，同一个应用可以注册到多个注册中心。</p>
                 </div>
                 <div class="m-t-lg">
-                    <i class="fas fa-chart-pie features-icon"></i>
+                    <i class="fas fa-baseball-ball features-icon"></i>
                     <h2>多形式接口</h2>
                     <p>同一个服务接口针对不同需求可以有多个实现类，这些实现所提供的服务是并存的，并且可以同时注册到注册中心。如：同一接口有手机端和PC端不同实现。</p>
                 </div>
                 <div class="m-t-lg">
-                    <i class="fas fa-chart-pie features-icon"></i>
+                    <i class="fas fa-code-branch features-icon"></i>
                     <h2>重试次数与请求超时</h2>
-                    <p>当服务调用失败后会重复发送请求直到成功或到达最大次数时为止。另外可以设置请求超时时间，超过该时间还未获得响应则按照失败处理。</p>
+                    <p>重试次数用于调用重试，当服务调用失败后会重复发送请求直到成功或到达最大次数时为止。另外可以设置请求超时时间，超过该时间还未获得响应则按照失败处理。</p>
                 </div>
                 <div class="m-t-lg">
-                    <i class="fas fa-chart-pie features-icon"></i>
+                    <i class="fas fa-grip-horizontal features-icon"></i>
                     <h2>直接连接调用</h2>
-                    <p>客户端应用可以通过注册中心发现服务端服务，同时也可以不使用注册中心，通过服务端地址客户端可以直接调用服务端程序。</p>
+                    <p>客户端应用可以通过注册中心发现服务端服务完成RPC调用，同时客户端也可以不使用注册中心，类似于HTTP调用方式直接通过已配置的服务端地址调用服务端程序。</p>
                 </div>
                 <div class="m-t-lg">
                     <i class="fa fa-bar-chart features-icon"></i>
                     <h2>可视化监控及报表统计</h2>
-                    <p>可以列出所有应用与服务，也可以通过可视化图形界面提供服务间依赖关系图、定时任务每日执行次数统计、执行成功与失败比例图。</p>
+                    <p>可以列出所有应用、服务器与服务，甚至可以监控服务器硬件配置，同时也可以通过可视化图形界面提供服务间依赖关系图、定时任务每日执行次数统计、执行成功与失败比例图。</p>
                 </div>
             </div>
             <div class="col-md-6 text-center  wow zoomIn">
@@ -171,32 +171,32 @@
             </div>
             <div class="col-md-3 text-center wow fadeInRight">
                 <div>
-                    <i class="fa fa-envelope features-icon"></i>
+                    <i class="fas fa-bacon features-icon"></i>
                     <h2>自动与手动服务降级</h2>
                     <p>LUI️✘ Web Center提供了多种自动服务降级规则配置，包含：定时降级、条件降级等配置，满足规则条件时系统自动进行服务降级。同时也提供手动服务降级的功能。</p>
                 </div>
                 <div class="m-t-lg">
-                    <i class="fa fa-google features-icon"></i>
+                    <i class="fas fa-bars features-icon"></i>
                     <h2>请求并发控制与数量限制</h2>
                     <p>提供多种请求并发控制算法，包含：客户端或服务端的最大并发执行线程数量等。并提供多种请求数量限制算法，包含：QPS限流算法等。</p>
                 </div>
                 <div class="m-t-lg">
-                    <i class="fas fa-chart-pie features-icon"></i>
+                    <i class="fas fa-basketball-ball features-icon"></i>
                     <h2>多版本接口</h2>
                     <p>同一个服务接口可以有多个不同版本的实现类，使用类似于多实现接口。但其目的是为了升级不影响用户体验，将原有老版本替换掉，将来不再提供老版本的服务。</p>
                 </div>
                 <div class="m-t-lg">
-                    <i class="fas fa-chart-pie features-icon"></i>
+                    <i class="fas fa-broadcast-tower features-icon"></i>
                     <h2>广播调用</h2>
                     <p>支持客户端发送一次请求同时调用同一个接口对应的的所有服务端程序进而实现广播的效果，适用于如将接口内的缓存变量同时更新为入参的值。</p>
                 </div>
                 <div class="m-t-lg">
-                    <i class="fas fa-chart-pie features-icon"></i>
+                    <i class="fas fa-grip-vertical features-icon"></i>
                     <h2>通用调用</h2>
                     <p>客户端支持在不引入服务端的接口依赖场景下通过通用调用完成RPC调用，适用于如通用接口测试平台，因为该平台不方便将所有测试目标服务端jar包都加进自己项目的依赖里面。</p>
                 </div>
                 <div class="m-t-lg">
-                    <i class="fa fa-google features-icon"></i>
+                    <i class="fas fa-hands-helping features-icon"></i>
                     <h2>智能化序列化与反序列化</h2>
                     <p>系统可以根据请求参数或者返回结果数据类型自动选取合适的序列化算法，如请求参数类型没有实现Serializable接口，系统就不会选择Hessian，而选择一个合适的序列化算法。</p>
                 </div>

@@ -53,7 +53,7 @@
             <label class="control-label">CRON expression
                 <a href="https://www.freeformatter.com/cron-expression-generator-quartz.html" target="view_window">
                     <span class="fa fa-exclamation-circle"></span>&nbsp;
-                    <span>Go to online CRON expression generator</span>
+                    <span>Go to CRON expression generator</span>
                 </a>
             </label>
             <input type="text" class="form-control" name="cronExpression" ng-model="vm.entity.cronExpression"
@@ -93,18 +93,10 @@
             <div class="form-group col-md-6">
                 <label class="control-label">Request timeout (Unit: ms)</label>
                 <input type="number" min=0 class="form-control" ng-model="vm.entity.requestTimeout">
-                <p class="label label-primary">
-                    <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
-                    Indicating that the provider did not process request within the timeout period
-                </p>
             </div>
             <div class="form-group col-md-6">
-                <label class="control-label">Retry count</label>
+                <label class="control-label">Max retry count</label>
                 <input type="number" min=0 class="form-control" ng-model="vm.entity.retryCount">
-                <p class="label label-primary">
-                    <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
-                    Specifying how many times to retry when a service call fails
-                </p>
             </div>
         </div>
         <div class="row">
