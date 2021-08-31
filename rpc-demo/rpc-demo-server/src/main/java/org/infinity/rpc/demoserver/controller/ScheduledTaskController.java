@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.config.CronTask;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -58,6 +59,13 @@ public class ScheduledTaskController {
                 throw new IllegalArgumentException("Illegal JSON string format of method arguments");
             }
         }
+        if (StringUtils.isNotEmpty(domain.getCronExpression())) {
+            try {
+                new CronTask(null, domain.getCronExpression());
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Illegal CRON expression: " + ex.getMessage());
+            }
+        }
         scheduledTaskService.insert(domain);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .headers(httpHeaderCreator.createSuccessHeader("SM1001", domain.getName())).build();
@@ -92,6 +100,13 @@ public class ScheduledTaskController {
                 new ObjectMapper().readValue(domain.getArgumentsJson(), Map.class);
             } catch (Exception ex) {
                 throw new IllegalArgumentException("Illegal JSON string format of method arguments");
+            }
+        }
+        if (StringUtils.isNotEmpty(domain.getCronExpression())) {
+            try {
+                new CronTask(null, domain.getCronExpression());
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Illegal CRON expression: " + ex.getMessage());
             }
         }
         scheduledTaskService.update(domain);

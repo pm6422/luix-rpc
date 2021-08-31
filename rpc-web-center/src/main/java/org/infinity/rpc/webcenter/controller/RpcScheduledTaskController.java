@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.infinity.rpc.webcenter.component.HttpHeaderCreator;
 import org.infinity.rpc.webcenter.domain.RpcScheduledTask;
 import org.infinity.rpc.webcenter.exception.NoDataFoundException;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.config.CronTask;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -45,6 +47,10 @@ public class RpcScheduledTaskController {
     @Timed
     public ResponseEntity<Void> create(@ApiParam(value = "task", required = true) @Valid @RequestBody RpcScheduledTask domain) {
         log.debug("REST request to create scheduled task: {}", domain);
+        if (domain.getStartTime() != null && domain.getStopTime() != null) {
+            Validate.isTrue(domain.getStopTime().isAfter(domain.getStartTime()),
+                    "The stop time must be greater than the start time");
+        }
         if (StringUtils.isNotEmpty(domain.getArgumentsJson())) {
             try {
                 new ObjectMapper().readValue(domain.getArgumentsJson(), Map.class);
@@ -52,6 +58,14 @@ public class RpcScheduledTaskController {
                 throw new IllegalArgumentException("Illegal JSON string format of method arguments");
             }
         }
+        if (StringUtils.isNotEmpty(domain.getCronExpression())) {
+            try {
+                new CronTask(null, domain.getCronExpression());
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Illegal CRON expression: " + ex.getMessage());
+            }
+        }
+
         rpcScheduledTaskService.insert(domain);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .headers(httpHeaderCreator.createSuccessHeader("SM1001", domain.getName())).build();
@@ -85,11 +99,22 @@ public class RpcScheduledTaskController {
     @Timed
     public ResponseEntity<Void> update(@ApiParam(value = "new task", required = true) @Valid @RequestBody RpcScheduledTask domain) {
         log.debug("REST request to update scheduled task: {}", domain);
+        if (domain.getStartTime() != null && domain.getStopTime() != null) {
+            Validate.isTrue(domain.getStopTime().isAfter(domain.getStartTime()),
+                    "The stop time must be greater than the start time");
+        }
         if (StringUtils.isNotEmpty(domain.getArgumentsJson())) {
             try {
                 new ObjectMapper().readValue(domain.getArgumentsJson(), Map.class);
             } catch (Exception ex) {
                 throw new IllegalArgumentException("Illegal JSON string format of method arguments");
+            }
+        }
+        if (StringUtils.isNotEmpty(domain.getCronExpression())) {
+            try {
+                new CronTask(null, domain.getCronExpression());
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Illegal CRON expression: " + ex.getMessage());
             }
         }
         rpcScheduledTaskService.update(domain);
