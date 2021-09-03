@@ -664,7 +664,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                     size: 'lg',
                     resolve: {
                         entity: ['ScheduledTaskService', function (ScheduledTaskService) {
-                            return ScheduledTaskService.get({id: $stateParams.id}).$promise;
+                            return ScheduledTaskService.get({extension: $stateParams.id}).$promise;
                         }]
                     }
                 }).result.then(function (result) {
