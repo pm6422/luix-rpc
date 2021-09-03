@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
@@ -44,10 +45,7 @@ public class CancellableScheduledTaskRegistrar implements DisposableBean {
     public synchronized void removeTask(String id) {
         Validate.notEmpty(id, "Task ID must NOT be empty!");
 
-        ScheduledFuture<?> scheduledFuture = SCHEDULED_TASKS.remove(id);
-        if (scheduledFuture != null) {
-            scheduledFuture.cancel(true);
-        }
+        Optional.ofNullable(SCHEDULED_TASKS.remove(id)).ifPresent(future -> future.cancel(true));
     }
 
     @Override
