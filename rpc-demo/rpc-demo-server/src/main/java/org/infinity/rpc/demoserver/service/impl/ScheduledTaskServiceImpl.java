@@ -48,9 +48,7 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService, Applicati
             return;
         }
 
-        for (ScheduledTask scheduledTask : enabledScheduledTasks) {
-            addTask(scheduledTask);
-        }
+        enabledScheduledTasks.forEach(this::addTask);
         log.info("Loaded all scheduled tasks");
     }
 

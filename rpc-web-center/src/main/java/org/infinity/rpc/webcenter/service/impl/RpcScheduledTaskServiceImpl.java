@@ -58,9 +58,7 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
             return;
         }
 
-        for (RpcScheduledTask scheduledTask : enabledScheduledTasks) {
-            addTask(scheduledTask);
-        }
+        enabledScheduledTasks.forEach(this::addTask);
         log.info("Loaded all scheduled tasks");
     }
 
