@@ -30,7 +30,6 @@ public class RpcStatisticsController {
     @Resource
     private RpcScheduledTaskHistoryRepository rpcScheduledTaskHistoryRepository;
 
-
     @ApiOperation("get RPC statistics data")
     @GetMapping("api/rpc-statistics/data")
     @Timed
