@@ -12,6 +12,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
+/**
+ * It has similar functions to {@link org.springframework.scheduling.config.ScheduledTaskRegistrar},
+ * and it can also cancel the started scheduled task.
+ */
 @Component
 public class CancellableScheduledTaskRegistrar implements DisposableBean {
 
