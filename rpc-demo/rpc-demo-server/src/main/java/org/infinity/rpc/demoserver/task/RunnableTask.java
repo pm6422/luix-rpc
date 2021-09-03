@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.demoserver.LuixDemoServerLauncher;
 import org.infinity.rpc.demoserver.domain.ScheduledTask;
 import org.infinity.rpc.demoserver.domain.ScheduledTaskHistory;
 import org.infinity.rpc.demoserver.domain.ScheduledTaskLock;
@@ -13,6 +12,7 @@ import org.infinity.rpc.demoserver.repository.ScheduledTaskHistoryRepository;
 import org.infinity.rpc.demoserver.repository.ScheduledTaskLockRepository;
 import org.infinity.rpc.demoserver.utils.NetworkUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
 
@@ -33,6 +33,7 @@ public class RunnableTask implements Runnable {
     private static final int SECOND = 1000;
     private static final int MINUTE = 60000;
 
+    private final ApplicationContext             applicationContext;
     private final ScheduledTaskHistoryRepository scheduledTaskHistoryRepository;
     private final ScheduledTaskLockRepository    scheduledTaskLockRepository;
     private final ScheduledTask                  scheduledTask;
@@ -97,7 +98,7 @@ public class RunnableTask implements Runnable {
     }
 
     private void executeTask() throws NoSuchMethodException, JsonProcessingException, IllegalAccessException, InvocationTargetException {
-        Object target = LuixDemoServerLauncher.applicationContext.getBean(scheduledTask.getBeanName());
+        Object target = applicationContext.getBean(scheduledTask.getBeanName());
         Method method = target.getClass().getDeclaredMethod(TaskExecutable.METHOD_NAME, Map.class);
         ReflectionUtils.makeAccessible(method);
         // Convert JSON string to Map

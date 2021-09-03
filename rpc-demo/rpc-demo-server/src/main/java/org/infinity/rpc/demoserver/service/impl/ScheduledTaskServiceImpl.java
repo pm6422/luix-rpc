@@ -9,10 +9,11 @@ import org.infinity.rpc.demoserver.repository.ScheduledTaskLockRepository;
 import org.infinity.rpc.demoserver.repository.ScheduledTaskRepository;
 import org.infinity.rpc.demoserver.service.ScheduledTaskService;
 import org.infinity.rpc.demoserver.task.RunnableTask;
-import org.infinity.rpc.demoserver.task.ScheduledTaskRegistrar;
+import org.infinity.rpc.demoserver.task.TaskSchedulerRegistrar;
 import org.infinity.rpc.utilities.id.IdGenerator;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -28,13 +29,15 @@ import static org.infinity.rpc.demoserver.domain.ScheduledTask.*;
 @Slf4j
 public class ScheduledTaskServiceImpl implements ScheduledTaskService, ApplicationRunner {
     @Resource
+    private ApplicationContext             applicationContext;
+    @Resource
     private ScheduledTaskRepository        scheduledTaskRepository;
     @Resource
     private ScheduledTaskHistoryRepository scheduledTaskHistoryRepository;
     @Resource
     private ScheduledTaskLockRepository    scheduledTaskLockRepository;
     @Resource
-    private ScheduledTaskRegistrar         scheduledTaskRegistrar;
+    private TaskSchedulerRegistrar         taskSchedulerRegistrar;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -115,19 +118,20 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService, Applicati
 
     private void addTask(ScheduledTask scheduledTask) {
         RunnableTask runnableTask = RunnableTask.builder()
+                .applicationContext(applicationContext)
                 .scheduledTaskHistoryRepository(scheduledTaskHistoryRepository)
                 .scheduledTaskLockRepository(scheduledTaskLockRepository)
                 .scheduledTask(scheduledTask)
                 .build();
         if (Boolean.TRUE.equals(scheduledTask.getUseCronExpression())) {
-            scheduledTaskRegistrar.addCronTask(scheduledTask.getName(), runnableTask, scheduledTask.getCronExpression());
+            taskSchedulerRegistrar.addCronTask(scheduledTask.getName(), runnableTask, scheduledTask.getCronExpression());
         } else {
-            scheduledTaskRegistrar.addFixedRateTask(scheduledTask.getName(), runnableTask, calculateMilliSeconds(scheduledTask));
+            taskSchedulerRegistrar.addFixedRateTask(scheduledTask.getName(), runnableTask, calculateMilliSeconds(scheduledTask));
         }
     }
 
     private void removeTask(ScheduledTask scheduledTask) {
-        scheduledTaskRegistrar.removeTask(scheduledTask.getName());
+        taskSchedulerRegistrar.removeTask(scheduledTask.getName());
     }
 
     private long calculateMilliSeconds(ScheduledTask scheduledTask) {
