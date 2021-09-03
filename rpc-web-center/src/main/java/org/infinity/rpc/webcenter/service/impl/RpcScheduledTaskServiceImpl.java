@@ -13,8 +13,8 @@ import org.infinity.rpc.webcenter.repository.RpcScheduledTaskLockRepository;
 import org.infinity.rpc.webcenter.repository.RpcScheduledTaskRepository;
 import org.infinity.rpc.webcenter.service.RpcRegistryService;
 import org.infinity.rpc.webcenter.service.RpcScheduledTaskService;
+import org.infinity.rpc.webcenter.task.CancellableScheduledTaskRegistrar;
 import org.infinity.rpc.webcenter.task.RunnableTask;
-import org.infinity.rpc.webcenter.task.TaskSchedulerRegistrar;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.data.domain.Page;
@@ -41,11 +41,11 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
     @Resource
     private RpcScheduledTaskLockRepository    rpcScheduledTaskLockRepository;
     @Resource
-    private RpcRegistryService     rpcRegistryService;
+    private RpcRegistryService                rpcRegistryService;
     @Resource
-    private TaskSchedulerRegistrar taskSchedulerRegistrar;
+    private CancellableScheduledTaskRegistrar cancellableScheduledTaskRegistrar;
     @Resource
-    private InfinityProperties     infinityProperties;
+    private InfinityProperties                infinityProperties;
     @Resource
     private MongoTemplate                     mongoTemplate;
 
@@ -161,14 +161,14 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
                 .retryCount(scheduledTask.getRetryCount())
                 .build();
         if (Boolean.TRUE.equals(scheduledTask.getUseCronExpression())) {
-            taskSchedulerRegistrar.addCronTask(scheduledTask.getName(), runnableTask, scheduledTask.getCronExpression());
+            cancellableScheduledTaskRegistrar.addCronTask(scheduledTask.getName(), runnableTask, scheduledTask.getCronExpression());
         } else {
-            taskSchedulerRegistrar.addFixedRateTask(scheduledTask.getName(), runnableTask, calculateMilliSeconds(scheduledTask));
+            cancellableScheduledTaskRegistrar.addFixedRateTask(scheduledTask.getName(), runnableTask, calculateMilliSeconds(scheduledTask));
         }
     }
 
     private void removeTask(RpcScheduledTask scheduledTask) {
-        taskSchedulerRegistrar.removeTask(scheduledTask.getName());
+        cancellableScheduledTaskRegistrar.removeTask(scheduledTask.getName());
     }
 
     private long calculateMilliSeconds(RpcScheduledTask scheduledTask) {
