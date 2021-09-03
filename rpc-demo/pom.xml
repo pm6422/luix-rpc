@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.infinity</groupId>
-        <artifactId>rpc</artifactId>
+        <artifactId>luix</artifactId>
         <version>${revision}</version>
     </parent>
     <artifactId>rpc-demo</artifactId>

@@ -38,7 +38,7 @@
         <dependencies>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>rpc</artifactId>
+                <artifactId>luix</artifactId>
                 <version>${revision}</version>
                 <type>pom</type>
                 <scope>import</scope>
