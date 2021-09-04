@@ -10,8 +10,8 @@
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <modules>
-        <module>rpc-demo-common</module>
-        <module>rpc-demo-server</module>
-        <module>rpc-demo-client</module>
+        <module>luix-demo-common</module>
+        <module>luix-demo-server</module>
+        <module>luix-demo-client</module>
     </modules>
 </project>

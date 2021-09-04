@@ -6,15 +6,15 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
     <modules>
-        <module>rpc-dependencies-bom</module>
-        <module>rpc-utilities</module>
-        <module>rpc-core</module>
-        <module>rpc-transport-netty4</module>
-        <module>rpc-registry-zookeeper</module>
-        <module>rpc-spring-boot-starter</module>
-        <module>rpc-spring-enhancement</module>
-        <module>rpc-web-center</module>
-        <module>rpc-demo</module>
+        <module>luix-dependencies-bom</module>
+        <module>luix-utilities</module>
+        <module>luix-core</module>
+        <module>luix-transport-netty4</module>
+        <module>luix-registry-zookeeper</module>
+        <module>luix-spring-boot-starter</module>
+        <module>luix-spring-enhancement</module>
+        <module>luix-web-center</module>
+        <module>luix-demo</module>
         <module>luix-portal</module>
     </modules>
     <properties>
