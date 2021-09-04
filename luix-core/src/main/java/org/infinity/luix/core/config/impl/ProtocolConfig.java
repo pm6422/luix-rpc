@@ -136,7 +136,7 @@ public class ProtocolConfig implements Configurable {
 
     private void initHost() {
         if (StringUtils.isEmpty(host)) {
-            host = AddressUtils.getLocalIp();
+            host = AddressUtils.getIntranetIp();
         }
     }
 }

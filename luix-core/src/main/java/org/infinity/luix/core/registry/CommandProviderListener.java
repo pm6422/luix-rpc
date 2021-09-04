@@ -199,7 +199,7 @@ public class CommandProviderListener implements ProviderListener, CommandListene
     }
 
     public List<Url> discoverServiceWithCommand(Url providerUrl, Map<String, Integer> weights, RpcCommand rpcCommand) {
-        return this.discoverServiceWithCommand(providerUrl, weights, rpcCommand, AddressUtils.getLocalIp());
+        return this.discoverServiceWithCommand(providerUrl, weights, rpcCommand, AddressUtils.getIntranetIp());
     }
 
     public List<Url> discoverServiceWithCommand(Url providerUrl, Map<String, Integer> weights,

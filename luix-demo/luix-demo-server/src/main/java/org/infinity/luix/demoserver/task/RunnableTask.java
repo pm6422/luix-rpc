@@ -8,9 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.demoserver.domain.ScheduledTask;
 import org.infinity.luix.demoserver.domain.ScheduledTaskHistory;
 import org.infinity.luix.demoserver.domain.ScheduledTaskLock;
-import org.infinity.luix.demoserver.utils.NetworkUtils;
 import org.infinity.luix.demoserver.repository.ScheduledTaskHistoryRepository;
 import org.infinity.luix.demoserver.repository.ScheduledTaskLockRepository;
+import org.infinity.luix.utilities.network.AddressUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.ReflectionUtils;
@@ -51,7 +51,7 @@ public class RunnableTask implements Runnable {
         }
         // Single host execute mode
         if (scheduledTaskLockRepository.findByName(scheduledTask.getName()).isPresent()) {
-            log.warn("Skip to execute scheduled task for the address: {}", NetworkUtils.INTRANET_IP);
+            log.warn("Skip to execute scheduled task for the address: {}", AddressUtils.getIntranetIp());
             return;
         }
         // This distributed lock used to control that only one node executes the task at the same time

@@ -3,7 +3,7 @@ package org.infinity.luix.webcenter.component;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.infinity.luix.webcenter.utils.NetworkUtils;
+import org.infinity.luix.utilities.network.AddressUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
@@ -29,11 +29,11 @@ public class PrintAppInfoApplicationRunner implements ApplicationRunner {
                 Charset.defaultCharset());
         log.info(appBanner, env.getProperty("spring.application.name"),
                 StringUtils.isEmpty(env.getProperty("server.ssl.key-store")) ? "http" : "https",
-                NetworkUtils.INTRANET_IP,
+                "127.0.0.1",
                 env.getProperty("server.port"),
                 StringUtils.defaultString(env.getProperty("server.servlet.context-path")),
                 StringUtils.isEmpty(env.getProperty("server.ssl.key-store")) ? "http" : "https",
-                NetworkUtils.INTERNET_IP,
+                AddressUtils.getIntranetIp(),
                 env.getProperty("server.port"),
                 StringUtils.defaultString(env.getProperty("server.servlet.context-path")),
                 org.springframework.util.StringUtils.arrayToCommaDelimitedString(env.getActiveProfiles()),

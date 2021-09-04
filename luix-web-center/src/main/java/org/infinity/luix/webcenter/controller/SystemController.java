@@ -4,7 +4,6 @@ import io.changock.runner.core.ChangockBase;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.webcenter.dto.ProfileInfoDTO;
-import org.infinity.luix.webcenter.utils.NetworkUtils;
 import org.infinity.luix.webcenter.config.ApplicationProperties;
 import org.infinity.luix.webcenter.domain.Authority;
 import org.springframework.context.ApplicationContext;

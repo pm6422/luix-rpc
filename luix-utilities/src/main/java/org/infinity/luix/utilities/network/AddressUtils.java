@@ -60,14 +60,14 @@ public abstract class AddressUtils {
     }
 
     /**
-     * Get the valid IP address based on priorities.
+     * Get the intranet IP address based on priorities.
      * Configuration priority:
      * environment variables > IP whose network interface matches the IP prefix
      * > IP associated with the hostname > Loop all the network interfaces
      *
      * @return local ip address
      */
-    public static String getLocalIp() {
+    public static String getIntranetIp() {
         if (localAddressCache != null) {
             // Get from cache
             return localAddressCache.getHostAddress();
