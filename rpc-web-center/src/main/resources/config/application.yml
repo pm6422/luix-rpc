@@ -53,7 +53,7 @@ info: # These configuration can be exported to Environment, accessing URL /manag
         id: @project.artifactId@
         version: @project.version@
     project:
-        package: org.infinity.rpc.webcenter
+        package: org.infinity.luix.webcenter
 spring:
     application:
         name: ${info.artifact.id}
