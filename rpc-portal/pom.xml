@@ -8,7 +8,7 @@
         <relativePath/>
     </parent>
     <groupId>org.infinity</groupId>
-    <artifactId>rpc-portal</artifactId>
+    <artifactId>luix-portal</artifactId>
     <version>${revision}</version>
     <packaging>war</packaging>
     <name>${project.artifactId}</name>

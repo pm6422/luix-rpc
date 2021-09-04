@@ -3,16 +3,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.infinity</groupId>
-        <artifactId>rpc-demo</artifactId>
+        <artifactId>luix-demo</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>rpc-demo-common</artifactId>
+    <artifactId>luix-demo-common</artifactId>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rpc-core</artifactId>
+            <artifactId>luix-core</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

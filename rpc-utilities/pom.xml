@@ -6,7 +6,7 @@
         <artifactId>luix</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>rpc-utilities</artifactId>
+    <artifactId>luix-utilities</artifactId>
     <name>${project.artifactId}</name>
     <!--
         *************************************************************************************

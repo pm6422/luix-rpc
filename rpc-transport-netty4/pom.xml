@@ -6,7 +6,7 @@
         <artifactId>luix</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>rpc-transport-netty4</artifactId>
+    <artifactId>luix-transport-netty4</artifactId>
     <name>${project.artifactId}</name>
     <!--
         *************************************************************************************
@@ -19,12 +19,12 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rpc-core</artifactId>
+            <artifactId>luix-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rpc-utilities</artifactId>
+            <artifactId>luix-utilities</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -8,7 +8,7 @@
         <relativePath/>
     </parent>
     <groupId>org.infinity</groupId>
-    <artifactId>rpc-web-center</artifactId>
+    <artifactId>luix-web-center</artifactId>
     <version>${revision}</version>
     <packaging>war</packaging>
     <name>${project.artifactId}</name>
@@ -53,27 +53,27 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rpc-demo-common</artifactId>
+            <artifactId>luix-demo-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rpc-registry-zookeeper</artifactId>
+            <artifactId>luix-registry-zookeeper</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rpc-spring-boot-starter</artifactId>
+            <artifactId>luix-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rpc-spring-enhancement</artifactId>
+            <artifactId>luix-spring-enhancement</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rpc-transport-netty4</artifactId>
+            <artifactId>luix-transport-netty4</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

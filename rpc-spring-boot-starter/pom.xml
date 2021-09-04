@@ -6,7 +6,7 @@
         <artifactId>luix</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>rpc-spring-boot-starter</artifactId>
+    <artifactId>luix-spring-boot-starter</artifactId>
     <name>${project.artifactId}</name>
     <!--
         *************************************************************************************
@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rpc-core</artifactId>
+            <artifactId>luix-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

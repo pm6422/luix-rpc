@@ -6,7 +6,7 @@
         <artifactId>luix</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>rpc-demo</artifactId>
+    <artifactId>luix-demo</artifactId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <modules>
