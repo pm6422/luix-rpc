@@ -1,12 +1,14 @@
 package org.infinity.luix.webcenter.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 
+@EqualsAndHashCode(callSuper = true)
 @Document(collection = "MongoOAuth2ClientDetails")
 @Data
 public class MongoOAuth2ClientDetails extends BaseClientDetails implements ClientDetails {

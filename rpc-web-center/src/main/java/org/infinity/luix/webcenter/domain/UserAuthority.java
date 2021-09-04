@@ -2,6 +2,7 @@ package org.infinity.luix.webcenter.domain;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.infinity.luix.webcenter.domain.base.AbstractAuditableDomain;
@@ -14,6 +15,7 @@ import java.io.Serializable;
 /**
  * Spring Data MongoDB collection for the UserAuthority entity.
  */
+@EqualsAndHashCode(callSuper = true)
 @Document(collection = "UserAuthority")
 @Data
 @ToString(callSuper = true)

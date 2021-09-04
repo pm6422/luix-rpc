@@ -2,11 +2,13 @@ package org.infinity.luix.webcenter.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.rpc.core.server.stub.OptionMeta;
 import org.springframework.beans.BeanUtils;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

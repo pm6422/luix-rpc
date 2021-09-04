@@ -1,6 +1,7 @@
 package org.infinity.luix.webcenter.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,6 +9,7 @@ import org.springframework.security.oauth2.provider.approval.Approval;
 
 import java.io.Serializable;
 
+@EqualsAndHashCode(callSuper = true)
 @Document(collection = "MongoOAuth2Approval")
 @Data
 public class MongoOAuth2Approval extends Approval implements Serializable {

@@ -1,6 +1,7 @@
 package org.infinity.luix.webcenter.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.infinity.luix.webcenter.domain.base.AbstractAuditableDomain;
@@ -13,6 +14,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import java.io.Serializable;
 import java.time.Instant;
 
+@EqualsAndHashCode(callSuper = true)
 @Document(collection = "MongoOAuth2AccessToken")
 @Data
 @ToString(callSuper = true)

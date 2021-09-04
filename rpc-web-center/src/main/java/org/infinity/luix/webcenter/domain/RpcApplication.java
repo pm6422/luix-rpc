@@ -1,6 +1,7 @@
 package org.infinity.luix.webcenter.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.infinity.rpc.core.config.impl.ApplicationConfig;
 import org.springframework.data.annotation.Id;
@@ -13,6 +14,7 @@ import java.time.Instant;
 /**
  * Spring Data MongoDB collection for the RpcApplication entity.
  */
+@EqualsAndHashCode(callSuper = true)
 @Document(collection = "RpcApplication")
 @Data
 @NoArgsConstructor
