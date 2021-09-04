@@ -9,7 +9,7 @@ import org.infinity.luix.webcenter.component.HttpHeaderCreator;
 import org.infinity.luix.webcenter.domain.MongoOAuth2ClientDetails;
 import org.infinity.luix.webcenter.repository.OAuth2ClientDetailsRepository;
 import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
-import org.infinity.rpc.utilities.id.IdGenerator;
+import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.webcenter.domain.Authority;
 import org.infinity.luix.webcenter.exception.DuplicationException;
 import org.infinity.luix.webcenter.exception.NoDataFoundException;

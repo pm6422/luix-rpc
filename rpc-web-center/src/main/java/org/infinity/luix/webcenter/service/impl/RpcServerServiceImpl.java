@@ -2,15 +2,15 @@ package org.infinity.luix.webcenter.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.webcenter.domain.RpcServer;
-import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
-import org.infinity.rpc.core.client.proxy.Proxy;
-import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.core.client.stub.ConsumerStubFactory;
-import org.infinity.rpc.core.config.impl.RegistryConfig;
-import org.infinity.rpc.core.server.buildin.BuildInService;
-import org.infinity.rpc.core.server.buildin.ServerInfo;
-import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.spring.boot.config.InfinityProperties;
+import org.infinity.luix.core.client.invocationhandler.UniversalInvocationHandler;
+import org.infinity.luix.core.client.proxy.Proxy;
+import org.infinity.luix.core.client.stub.ConsumerStub;
+import org.infinity.luix.core.client.stub.ConsumerStubFactory;
+import org.infinity.luix.core.config.impl.RegistryConfig;
+import org.infinity.luix.core.server.buildin.BuildInService;
+import org.infinity.luix.core.server.buildin.ServerInfo;
+import org.infinity.luix.core.url.Url;
+import org.infinity.luix.spring.boot.config.InfinityProperties;
 import org.infinity.luix.webcenter.repository.RpcServerRepository;
 import org.infinity.luix.webcenter.service.RpcConsumerService;
 import org.infinity.luix.webcenter.service.RpcProviderService;
@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.regex.Pattern;
 
-import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_SERVER_INFO;
+import static org.infinity.luix.core.server.buildin.BuildInService.METHOD_GET_SERVER_INFO;
 import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 
 @Service

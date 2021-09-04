@@ -1,15 +1,15 @@
 package org.infinity.luix.webcenter.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
-import org.infinity.rpc.core.client.proxy.Proxy;
-import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.core.client.stub.ConsumerStubFactory;
-import org.infinity.rpc.core.config.impl.ApplicationConfig;
-import org.infinity.rpc.core.config.impl.RegistryConfig;
-import org.infinity.rpc.core.server.buildin.BuildInService;
-import org.infinity.rpc.core.url.Url;
-import org.infinity.rpc.spring.boot.config.InfinityProperties;
+import org.infinity.luix.core.client.invocationhandler.UniversalInvocationHandler;
+import org.infinity.luix.core.client.proxy.Proxy;
+import org.infinity.luix.core.client.stub.ConsumerStub;
+import org.infinity.luix.core.client.stub.ConsumerStubFactory;
+import org.infinity.luix.core.config.impl.ApplicationConfig;
+import org.infinity.luix.core.config.impl.RegistryConfig;
+import org.infinity.luix.core.server.buildin.BuildInService;
+import org.infinity.luix.core.url.Url;
+import org.infinity.luix.spring.boot.config.InfinityProperties;
 import org.infinity.luix.webcenter.domain.RpcApplication;
 import org.infinity.luix.webcenter.repository.RpcApplicationRepository;
 import org.infinity.luix.webcenter.service.RpcApplicationService;
@@ -31,7 +31,7 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import static org.infinity.rpc.core.server.buildin.BuildInService.METHOD_GET_APPLICATION_INFO;
+import static org.infinity.luix.core.server.buildin.BuildInService.METHOD_GET_APPLICATION_INFO;
 import static org.infinity.luix.webcenter.domain.RpcApplication.FIELD_ACTIVE;
 import static org.infinity.luix.webcenter.domain.RpcApplication.FIELD_NAME;
 import static org.infinity.luix.webcenter.domain.RpcProvider.FIELD_REGISTRY_IDENTITY;

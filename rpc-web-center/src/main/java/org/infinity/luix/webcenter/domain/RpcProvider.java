@@ -3,14 +3,14 @@ package org.infinity.luix.webcenter.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.infinity.rpc.core.url.Url;
+import org.infinity.luix.core.url.Url;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.time.Instant;
 
-import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
+import static org.infinity.luix.core.constant.ApplicationConstants.APP;
 
 /**
  * Spring Data MongoDB collection for the RpcProvider entity.

@@ -3,7 +3,7 @@ package org.infinity.luix.webcenter.domain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.infinity.rpc.core.config.impl.ApplicationConfig;
+import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;

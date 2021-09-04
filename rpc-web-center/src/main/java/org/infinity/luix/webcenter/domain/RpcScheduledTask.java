@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.infinity.rpc.democommon.domain.base.AbstractAuditableDomain;
+import org.infinity.luix.democommon.domain.base.AbstractAuditableDomain;
 import org.springframework.data.mongodb.core.index.Indexed;
 
 import javax.validation.constraints.NotEmpty;
@@ -73,7 +73,7 @@ public class RpcScheduledTask extends AbstractAuditableDomain implements Seriali
     @NotEmpty
     private String   methodName;
     /**
-     * Method parameter list. e.g, ["org.infinity.rpc.democommon.domain.Authority"]
+     * Method parameter list. e.g, ["org.infinity.luix.democommon.domain.Authority"]
      */
     private String[] methodParamTypes;
     /**

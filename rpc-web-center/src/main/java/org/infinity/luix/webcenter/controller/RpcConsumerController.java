@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.webcenter.config.ApplicationConstants;
 import org.infinity.luix.webcenter.service.RpcConsumerService;
 import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
-import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.luix.core.client.stub.ConsumerStub;
 import org.infinity.luix.webcenter.domain.RpcConsumer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

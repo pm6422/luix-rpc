@@ -35,7 +35,7 @@ public class MethodInvocation implements Serializable {
     @NotEmpty
     private              String              methodName;
     /**
-     * Method parameter list. e.g, ["org.infinity.rpc.democommon.domain.Authority"]
+     * Method parameter list. e.g, ["org.infinity.luix.democommon.domain.Authority"]
      */
     private              String[]            methodParamTypes;
     /**

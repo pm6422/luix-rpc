@@ -51,7 +51,7 @@ info: # These configuration can be exported to Environment, accessing URL /manag
         id: @project.artifactId@
         version: @project.version@
     project:
-        package: org.infinity.rpc.demoserver
+        package: org.infinity.luix.demoserver
 spring:
     application:
         name: ${info.artifact.id}

@@ -1,8 +1,8 @@
 package org.infinity.luix.webcenter.service;
 
-import org.infinity.rpc.core.client.stub.ConsumerStub;
-import org.infinity.rpc.core.config.impl.RegistryConfig;
-import org.infinity.rpc.core.registry.Registry;
+import org.infinity.luix.core.client.stub.ConsumerStub;
+import org.infinity.luix.core.config.impl.RegistryConfig;
+import org.infinity.luix.core.registry.Registry;
 import org.infinity.luix.webcenter.dto.RpcRegistryDTO;
 
 import java.util.List;

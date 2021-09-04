@@ -6,9 +6,9 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.webcenter.domain.RpcScheduledTaskLock;
-import org.infinity.rpc.core.client.invocationhandler.UniversalInvocationHandler;
-import org.infinity.rpc.core.client.proxy.Proxy;
-import org.infinity.rpc.core.client.stub.ConsumerStub;
+import org.infinity.luix.core.client.invocationhandler.UniversalInvocationHandler;
+import org.infinity.luix.core.client.proxy.Proxy;
+import org.infinity.luix.core.client.stub.ConsumerStub;
 import org.infinity.luix.webcenter.domain.RpcScheduledTask;
 import org.infinity.luix.webcenter.domain.RpcScheduledTaskHistory;
 import org.infinity.luix.webcenter.repository.RpcScheduledTaskHistoryRepository;
@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
-import static org.infinity.rpc.core.constant.ServiceConstants.*;
+import static org.infinity.luix.core.constant.ServiceConstants.*;
 
 @Slf4j
 @Builder

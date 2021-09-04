@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.rpc.core.server.stub.OptionMeta;
+import org.infinity.luix.core.server.stub.OptionMeta;
 import org.springframework.beans.BeanUtils;
 
 @EqualsAndHashCode(callSuper = true)

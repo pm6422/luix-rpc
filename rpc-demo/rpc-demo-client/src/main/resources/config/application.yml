@@ -53,7 +53,7 @@ info: # These configuration can be exported to Environment, accessing URL /manag
         id: @project.artifactId@
         version: @project.version@
     project:
-        package: org.infinity.rpc.democlient
+        package: org.infinity.luix.democlient
 spring:
     application:
         name: ${info.artifact.id}
@@ -135,7 +135,7 @@ forest: # Refer to http://forest.dtflyx.com/docs/config/spring_boot_config
     variables:
         rpcDemoServerAddress: http://127.0.0.1:6010
     interceptors: # 可配置多个拦截器
-        org.infinity.rpc.democlient.component.TraceInterceptor
+      org.infinity.luix.democlient.component.TraceInterceptor
 # ===================================================================
 # Application specific properties
 # ===================================================================

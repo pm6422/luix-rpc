@@ -2,12 +2,12 @@ package org.infinity.luix.webcenter.dto;
 
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.rpc.core.registry.AddressInfo;
-import org.infinity.rpc.core.url.Url;
+import org.infinity.luix.core.registry.AddressInfo;
+import org.infinity.luix.core.url.Url;
 
 import java.util.List;
 
-import static org.infinity.rpc.core.constant.ApplicationConstants.APP;
+import static org.infinity.luix.core.constant.ApplicationConstants.APP;
 
 @Data
 public class RpcProviderDTO {
