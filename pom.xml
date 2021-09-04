@@ -15,7 +15,7 @@
         <module>rpc-spring-enhancement</module>
         <module>rpc-web-center</module>
         <module>rpc-demo</module>
-        <module>rpc-portal</module>
+        <module>luix-portal</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
