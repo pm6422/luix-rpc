@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.luix.core.server.response.impl.RpcCheckHealthResponse.STATUS_INACTIVE;
 import static org.infinity.luix.core.server.response.impl.RpcCheckHealthResponse.STATUS_OK;
+import static org.infinity.luix.core.utils.MethodParameterUtils.getMethodParameters;
 import static org.infinity.luix.core.utils.MethodParameterUtils.getMethodSignature;
 
 /**
@@ -95,19 +96,19 @@ public class ProviderStub<T> {
         try {
             // Add build-in methods
             Method checkHealthMethod = ProviderStub.class.getMethod(METHOD_CHECK_HEALTH.substring(1));
-            BUILD_IN_METHODS_CACHE.putIfAbsent(getMethodSignature(METHOD_CHECK_HEALTH, MethodParameterUtils.getMethodParameters(checkHealthMethod)), checkHealthMethod);
+            BUILD_IN_METHODS_CACHE.putIfAbsent(getMethodSignature(METHOD_CHECK_HEALTH, getMethodParameters(checkHealthMethod)), checkHealthMethod);
 
             Method getMethodMetasMethod = ProviderStub.class.getMethod(METHOD_GET_METHOD_METAS.substring(1));
-            BUILD_IN_METHODS_CACHE.putIfAbsent(getMethodSignature(METHOD_GET_METHOD_METAS, MethodParameterUtils.getMethodParameters(getMethodMetasMethod)), getMethodMetasMethod);
+            BUILD_IN_METHODS_CACHE.putIfAbsent(getMethodSignature(METHOD_GET_METHOD_METAS, getMethodParameters(getMethodMetasMethod)), getMethodMetasMethod);
 
             Method activateMethod = ProviderStub.class.getMethod(METHOD_ACTIVATE.substring(1));
-            BUILD_IN_METHODS_CACHE.putIfAbsent(getMethodSignature(METHOD_ACTIVATE, MethodParameterUtils.getMethodParameters(activateMethod)), activateMethod);
+            BUILD_IN_METHODS_CACHE.putIfAbsent(getMethodSignature(METHOD_ACTIVATE, getMethodParameters(activateMethod)), activateMethod);
 
             Method deactivateMethod = ProviderStub.class.getMethod(METHOD_DEACTIVATE.substring(1));
-            BUILD_IN_METHODS_CACHE.putIfAbsent(getMethodSignature(METHOD_DEACTIVATE, MethodParameterUtils.getMethodParameters(deactivateMethod)), deactivateMethod);
+            BUILD_IN_METHODS_CACHE.putIfAbsent(getMethodSignature(METHOD_DEACTIVATE, getMethodParameters(deactivateMethod)), deactivateMethod);
 
             Method reregisterMethod = ProviderStub.class.getMethod(METHOD_REREGISTER.substring(1), Map.class);
-            BUILD_IN_METHODS_CACHE.putIfAbsent(getMethodSignature(METHOD_REREGISTER, MethodParameterUtils.getMethodParameters(reregisterMethod)), reregisterMethod);
+            BUILD_IN_METHODS_CACHE.putIfAbsent(getMethodSignature(METHOD_REREGISTER, getMethodParameters(reregisterMethod)), reregisterMethod);
         } catch (NoSuchMethodException e) {
             log.error("Failed to discover method!", e);
         }
@@ -243,9 +244,6 @@ public class ProviderStub<T> {
             MethodMeta methodMeta = new MethodMeta(method.getName(), methodParameters, methodSignature, method.getGenericReturnType().getTypeName());
             methodMetas.add(methodMeta);
         });
-
-        // Add build-in methods cache
-        methodsCache.putAll(BUILD_IN_METHODS_CACHE);
     }
 
     /**
@@ -256,7 +254,11 @@ public class ProviderStub<T> {
      * @return method
      */
     public Method findMethod(String methodName, String methodParameters) {
-        return methodsCache.get(getMethodSignature(methodName, methodParameters));
+        Method method = methodsCache.get(getMethodSignature(methodName, methodParameters));
+        if (method == null) {
+            method = BUILD_IN_METHODS_CACHE.get(getMethodSignature(methodName, methodParameters));
+        }
+        return method;
     }
 
     /**
