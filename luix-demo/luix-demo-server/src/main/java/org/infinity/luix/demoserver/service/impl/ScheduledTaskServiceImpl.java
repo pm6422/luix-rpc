@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -53,6 +54,7 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService, Applicati
     @Override
     public ScheduledTask insert(ScheduledTask domain) {
         domain.setName("T" + IdGenerator.generateShortId());
+        domain.setCreatedTime(Instant.now());
         ScheduledTask savedOne = scheduledTaskRepository.insert(domain);
         if (Boolean.TRUE.equals(savedOne.getEnabled())) {
             addTask(savedOne);
@@ -70,6 +72,7 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService, Applicati
             domain.setCronExpression(null);
         }
 
+        domain.setModifiedTime(Instant.now());
         ScheduledTask savedOne = scheduledTaskRepository.save(domain);
 
         // Remove before adding
