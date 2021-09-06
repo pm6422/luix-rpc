@@ -1,4 +1,4 @@
-<div>
+<div ng-controller="DashboardController as vm">
     <div class="row border-bottom white-bg dashboard-header">
         <div class="ibox-content m-b-sm border-bottom">
             <div class="p-xs">
@@ -7,11 +7,82 @@
                 </div>
                 <h1 class="text-navy"><strong>LUI️✘ Web Center</strong></h1>
                 <span>LUI️✘ is pronounced [ˈluːɪks], which is a RPC(Remote Procedure Call) and service governance framework,
-                    it can make calls between services more simple.
-                    <br>LUI️✘ web center is a web-based service governance system used to monitor and manage services.
+                it can make calls between services more simple.
+                <br>LUI️✘ web center is a web-based service governance system used to monitor and manage services.
                 </span>
             </div>
         </div>
+        <div class="row border-bottom white-bg dashboard-header">
+            <div class="p-w-md m-t-sm">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="row m-t-xs">
+                            <div class="col-xs-6">
+                                <h5 class="m-b-xs">Applications</h5>
+                                <h1 class="no-margins text-navy">{{vm.data.applicationCount}}</h1>
+                            </div>
+                            <div class="col-xs-6">
+                                <h5 class="m-b-xs">Services</h5>
+                                <h1 class="no-margins text-navy">{{vm.data.serviceCount}}</h1>
+                            </div>
+                        </div>
+                        <table class="table small m-t-sm">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Active: <strong></strong>
+                                    </td>
+                                    <td>
+                                        Active: <strong></strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Inactive: <strong></strong>
+                                    </td>
+                                    <td>
+                                        Inactive: <strong></strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="row m-t-xs">
+                            <div class="col-xs-6">
+                                <h5 class="m-b-xs">Providers</h5>
+                                <h1 class="no-margins text-navy">{{vm.data.providerCount}}</h1>
+                            </div>
+                            <div class="col-xs-6">
+                                <h5 class="m-b-xs">Consumers</h5>
+                                <h1 class="no-margins text-navy">{{vm.data.consumerCount}}</h1>
+                            </div>
+                        </div>
+                        <table class="table small m-t-sm">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Active: <strong></strong>
+                                    </td>
+                                    <td>
+                                        Active: <strong></strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Inactive: <strong></strong>
+                                    </td>
+                                    <td>
+                                        Inactive: <strong></strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+<!--        <div class="hr-line-dashed"></div>-->
         <section class="features">
             <div class="container">
                 <div class="row">

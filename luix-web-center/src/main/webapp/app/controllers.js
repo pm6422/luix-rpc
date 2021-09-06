@@ -5,6 +5,7 @@ angular
     .module('smartcloudserviceApp')
     .controller('MainController', MainController)
     .controller('LeftSidebarController', LeftSidebarController)
+    .controller('DashboardController', DashboardController)
     .controller('ErrorPageController', ErrorPageController)
     .controller('LoginController', LoginController)
     .controller('NavbarController', NavbarController)
@@ -162,6 +163,16 @@ function LeftSidebarController($scope, $state, $element, $timeout, APP_NAME, Aut
             });
         }
     }
+}
+/**
+ * DashboardController
+ */
+function DashboardController($http) {
+    var vm = this;
+
+    $http.get('api/rpc-statistics/data').then(function (response) {
+        vm.data = response.data;
+    });
 }
 /**
  * ErrorPageController
