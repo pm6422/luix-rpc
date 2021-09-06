@@ -8,27 +8,27 @@ import org.infinity.luix.core.utils.RpcFrameworkUtils;
 import org.infinity.luix.core.exchange.endpoint.EndpointFactory;
 import org.infinity.luix.core.server.exporter.AbstractExporter;
 import org.infinity.luix.core.server.exporter.Exportable;
-import org.infinity.luix.core.server.messagehandler.impl.ProviderHandler;
-import org.infinity.luix.core.server.messagehandler.impl.ProviderProtectedHandler;
+import org.infinity.luix.core.server.messagehandler.impl.ProviderInvocationHandler;
+import org.infinity.luix.core.server.messagehandler.impl.ProviderProtectedInvocationHandler;
 
 import java.util.Map;
 
 @Slf4j
 public class DefaultRpcExporter extends AbstractExporter {
 
-    protected final Map<String, ProviderHandler> ipPort2RequestRouter;
-    protected final Map<String, Exportable> exporterMap;
+    protected final Map<String, ProviderInvocationHandler> ipPort2RequestRouter;
+    protected final Map<String, Exportable>                exporterMap;
     protected       Server                  server;
     protected       EndpointFactory         endpointFactory;
 
     public DefaultRpcExporter(Url providerUrl,
-                              Map<String, ProviderHandler> ipPort2RequestRouter,
+                              Map<String, ProviderInvocationHandler> ipPort2RequestRouter,
                               Map<String, Exportable> exporterMap) {
         super(providerUrl);
         this.exporterMap = exporterMap;
         this.ipPort2RequestRouter = ipPort2RequestRouter;
 
-        ProviderHandler requestRouter = initRequestRouter(providerUrl);
+        ProviderInvocationHandler requestRouter = initRequestRouter(providerUrl);
         String endpointFactoryName = providerUrl.getOption(ProtocolConstants.ENDPOINT_FACTORY, ProtocolConstants.ENDPOINT_FACTORY_VAL_NETTY);
         endpointFactory = EndpointFactory.getInstance(endpointFactoryName);
         server = endpointFactory.createServer(providerUrl, requestRouter);
@@ -54,7 +54,7 @@ public class DefaultRpcExporter extends AbstractExporter {
             exporter.destroy();
         }
 
-        ProviderHandler requestRouter = ipPort2RequestRouter.get(ipPort);
+        ProviderInvocationHandler requestRouter = ipPort2RequestRouter.get(ipPort);
         if (requestRouter != null) {
             requestRouter.removeProvider(providerUrl);
         }
@@ -67,12 +67,12 @@ public class DefaultRpcExporter extends AbstractExporter {
         log.info("DefaultRpcExporter destroy Success: url={}", providerUrl);
     }
 
-    protected ProviderHandler initRequestRouter(Url url) {
+    protected ProviderInvocationHandler initRequestRouter(Url url) {
         String ipPort = url.getAddress();
-        ProviderHandler requestRouter = ipPort2RequestRouter.get(ipPort);
+        ProviderInvocationHandler requestRouter = ipPort2RequestRouter.get(ipPort);
 
         if (requestRouter == null) {
-            ProviderProtectedHandler router = new ProviderProtectedHandler();
+            ProviderProtectedInvocationHandler router = new ProviderProtectedInvocationHandler();
 //            StatsUtil.registryStatisticCallback(router);
             ipPort2RequestRouter.putIfAbsent(ipPort, router);
             requestRouter = ipPort2RequestRouter.get(ipPort);

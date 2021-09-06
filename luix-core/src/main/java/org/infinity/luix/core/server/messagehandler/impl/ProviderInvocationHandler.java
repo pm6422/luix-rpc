@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
-public class ProviderHandler implements MessageHandler {
+public class ProviderInvocationHandler implements MessageHandler {
     /**
      * Map of provider stub name to provider URL
      */
@@ -52,7 +52,7 @@ public class ProviderHandler implements MessageHandler {
      */
     protected static final AtomicInteger    EXPORTED_METHOD_COUNT = new AtomicInteger(0);
 
-    public ProviderHandler() {
+    public ProviderInvocationHandler() {
     }
 
     @Override
