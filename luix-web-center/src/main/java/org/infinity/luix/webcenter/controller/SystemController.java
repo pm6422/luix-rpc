@@ -3,9 +3,10 @@ package org.infinity.luix.webcenter.controller;
 import io.changock.runner.core.ChangockBase;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.webcenter.dto.ProfileInfoDTO;
+import org.infinity.luix.utilities.network.AddressUtils;
 import org.infinity.luix.webcenter.config.ApplicationProperties;
 import org.infinity.luix.webcenter.domain.Authority;
+import org.infinity.luix.webcenter.dto.ProfileInfoDTO;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -65,18 +66,11 @@ public class SystemController {
         return ResponseEntity.ok(applicationContext.getBean(name));
     }
 
-    @ApiOperation("get internet ip")
-    @GetMapping("/api/systems/internet-ip")
-    @Secured(Authority.DEVELOPER)
-    public ResponseEntity<String> getInternetIp() {
-        return ResponseEntity.ok(NetworkUtils.INTERNET_IP);
-    }
-
     @ApiOperation("get intranet ip")
     @GetMapping("/api/systems/intranet-ip")
     @Secured(Authority.DEVELOPER)
     public ResponseEntity<String> getIntranetIp() {
-        return ResponseEntity.ok(NetworkUtils.INTRANET_IP);
+        return ResponseEntity.ok(AddressUtils.getIntranetIp());
     }
 
     @ApiOperation("reset database")
