@@ -159,20 +159,22 @@
                         </uib-tab>
                         <uib-tab heading="Health" active="vm.tabHealth" ng-click="vm.selectTab()">
                             <div class="form-group">
-                                <div class="col-sm-11">
-                                    <small>Completion with: {{vm.checkProgress}}%</small>
-                                    <i class="fa fa-check" ng-if="vm.healthSuccess"></i>
-                                    <i class="fa fa-times" ng-if="vm.healthFailure"></i>
-                                    </button>
-                                    <uib-progressbar value="vm.checkProgress" type="primary" class="progress-mini">
-                                        {{vm.checkProgress}}%
-                                    </uib-progressbar>
-                                    <small>{{vm.healthMessage}}</small>
-                                </div>
-                                <div class="col-sm-1">
-                                    <button type="button" class="btn btn-primary btn-sm pull-right" ng-click="vm.checkHealth()">
-                                        <span>Check</span>
-                                    </button>
+                                <div class="row">
+                                    <div class="col-sm-11">
+                                        <small>Completion with: {{vm.checkProgress}}%</small>
+                                        <i class="fa fa-check" ng-if="vm.healthSuccess"></i>
+                                        <i class="fa fa-times" ng-if="vm.healthFailure"></i>
+                                        </button>
+                                        <uib-progressbar value="vm.checkProgress" type="primary" class="progress-mini">
+                                            {{vm.checkProgress}}%
+                                        </uib-progressbar>
+                                        <small>{{vm.healthMessage}}</small>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <button type="button" class="btn btn-primary btn-sm pull-right" ng-click="vm.checkHealth()">
+                                            <span>Check</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </uib-tab>
