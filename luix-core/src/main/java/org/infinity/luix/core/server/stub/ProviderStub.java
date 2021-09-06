@@ -10,12 +10,10 @@ import org.infinity.luix.core.client.request.Requestable;
 import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.infinity.luix.core.config.impl.ProtocolConfig;
 import org.infinity.luix.core.config.impl.RegistryConfig;
-import org.infinity.luix.core.constant.*;
-import org.infinity.luix.core.url.Url;
-import org.infinity.luix.core.utils.MethodParameterUtils;
-import org.infinity.luix.core.utils.RpcFrameworkUtils;
-import org.infinity.luix.core.utils.name.ProviderStubBeanNameBuilder;
-import org.infinity.luix.core.constant.RpcConstants;
+import org.infinity.luix.core.constant.ApplicationConstants;
+import org.infinity.luix.core.constant.ProtocolConstants;
+import org.infinity.luix.core.constant.ProviderConstants;
+import org.infinity.luix.core.constant.ServiceConstants;
 import org.infinity.luix.core.exception.ExceptionUtils;
 import org.infinity.luix.core.exception.impl.RpcBizException;
 import org.infinity.luix.core.exception.impl.RpcConfigException;
@@ -26,6 +24,9 @@ import org.infinity.luix.core.registry.RegistryFactory;
 import org.infinity.luix.core.server.exporter.Exportable;
 import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.server.response.impl.RpcResponse;
+import org.infinity.luix.core.url.Url;
+import org.infinity.luix.core.utils.MethodParameterUtils;
+import org.infinity.luix.core.utils.name.ProviderStubBeanNameBuilder;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.Max;
@@ -165,31 +166,31 @@ public class ProviderStub<T> {
     /**
      * All the methods of the interface class
      */
-    private           List<MethodMeta>  methodMetas  = new ArrayList<>();
+    private           List<MethodMeta>          methodMetas  = new ArrayList<>();
     /**
      * The provider url
      */
-    private           Url               url;
+    private           Url                       url;
     /**
      * Service provider exporter used to export the provider to registry
      */
-    private transient Exportable        exporter;
+    private transient Exportable                exporter;
     /**
      * Indicator used to identify whether the provider already been registered
      */
-    private final     AtomicBoolean     exported     = new AtomicBoolean(false);
+    private final     AtomicBoolean             exported     = new AtomicBoolean(false);
     /**
      * Application configuration
      */
-    private           ApplicationConfig applicationConfig;
+    private           ApplicationConfig         applicationConfig;
     /**
      * Protocol configuration
      */
-    private           ProtocolConfig    protocolConfig;
+    private           ProtocolConfig            protocolConfig;
     /**
      * Registry configuration
      */
-    private           RegistryConfig    registryConfig;
+    private           RegistryConfig            registryConfig;
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition
@@ -211,7 +212,7 @@ public class ProviderStub<T> {
     private void discoverMethods(Class<T> interfaceClass) {
         // Get all methods of the class passed in or its super interfaces.
         Arrays.stream(interfaceClass.getMethods()).forEach(method -> {
-            String methodSignature = MethodParameterUtils.getMethodSignature(method);
+            String methodSignature = getMethodSignature(method);
             methodsCache.putIfAbsent(methodSignature, method);
 
             List<String> methodParameters = Arrays.stream(method.getParameterTypes()).map(Class::getName).collect(Collectors.toList());
@@ -222,19 +223,19 @@ public class ProviderStub<T> {
         try {
             // Add build-in methods
             Method checkHealthMethod = ProviderStub.class.getMethod(METHOD_CHECK_HEALTH.substring(1));
-            methodsCache.putIfAbsent(MethodParameterUtils.getMethodSignature(METHOD_CHECK_HEALTH, MethodParameterUtils.getMethodParameters(checkHealthMethod)), checkHealthMethod);
+            methodsCache.putIfAbsent(getMethodSignature(METHOD_CHECK_HEALTH, MethodParameterUtils.getMethodParameters(checkHealthMethod)), checkHealthMethod);
 
             Method getMethodMetasMethod = ProviderStub.class.getMethod(METHOD_GET_METHOD_METAS.substring(1));
-            methodsCache.putIfAbsent(MethodParameterUtils.getMethodSignature(METHOD_GET_METHOD_METAS, MethodParameterUtils.getMethodParameters(getMethodMetasMethod)), getMethodMetasMethod);
+            methodsCache.putIfAbsent(getMethodSignature(METHOD_GET_METHOD_METAS, MethodParameterUtils.getMethodParameters(getMethodMetasMethod)), getMethodMetasMethod);
 
             Method activateMethod = ProviderStub.class.getMethod(METHOD_ACTIVATE.substring(1));
-            methodsCache.putIfAbsent(MethodParameterUtils.getMethodSignature(METHOD_ACTIVATE, MethodParameterUtils.getMethodParameters(activateMethod)), activateMethod);
+            methodsCache.putIfAbsent(getMethodSignature(METHOD_ACTIVATE, MethodParameterUtils.getMethodParameters(activateMethod)), activateMethod);
 
             Method deactivateMethod = ProviderStub.class.getMethod(METHOD_DEACTIVATE.substring(1));
-            methodsCache.putIfAbsent(MethodParameterUtils.getMethodSignature(METHOD_DEACTIVATE, MethodParameterUtils.getMethodParameters(deactivateMethod)), deactivateMethod);
+            methodsCache.putIfAbsent(getMethodSignature(METHOD_DEACTIVATE, MethodParameterUtils.getMethodParameters(deactivateMethod)), deactivateMethod);
 
             Method reregisterMethod = ProviderStub.class.getMethod(METHOD_REREGISTER.substring(1), Map.class);
-            methodsCache.putIfAbsent(MethodParameterUtils.getMethodSignature(METHOD_REREGISTER, MethodParameterUtils.getMethodParameters(reregisterMethod)), reregisterMethod);
+            methodsCache.putIfAbsent(getMethodSignature(METHOD_REREGISTER, MethodParameterUtils.getMethodParameters(reregisterMethod)), reregisterMethod);
         } catch (NoSuchMethodException e) {
             log.error("Failed to discover method!", e);
         }
@@ -248,7 +249,16 @@ public class ProviderStub<T> {
      * @return method
      */
     public Method findMethod(String methodName, String methodParameters) {
-        return methodsCache.get(MethodParameterUtils.getMethodSignature(methodName, methodParameters));
+        return methodsCache.get(getMethodSignature(methodName, methodParameters));
+    }
+
+    /**
+     * Check health status of the service
+     *
+     * @return status
+     */
+    public String checkHealth() {
+        return exported.get() ? STATUS_OK : STATUS_INACTIVE;
     }
 
     /**
@@ -392,42 +402,30 @@ public class ProviderStub<T> {
      * @param request RPC request
      * @return RPC response
      */
-    public Responseable localInvoke(Requestable request) {
-        RpcFrameworkUtils.logEvent(request, RpcConstants.TRACE_BEFORE_BIZ);
-        Responseable response = doLocalInvoke(request);
-        RpcFrameworkUtils.logEvent(response, RpcConstants.TRACE_AFTER_BIZ);
-        return response;
-    }
-
-    /**
-     * Do the invocation of method
-     *
-     * @param request RPC request
-     * @return RPC response
-     */
-    private Responseable doLocalInvoke(Requestable request) {
+    public Responseable invokeMethod(Requestable request) {
         RpcResponse response = new RpcResponse();
         Method method = findMethod(request.getMethodName(), request.getMethodParameters());
         if (method == null) {
-            String methodSignature = MethodParameterUtils.getMethodSignature(request.getMethodName(), request.getMethodParameters());
+            String methodSignature = getMethodSignature(request.getMethodName(), request.getMethodParameters());
             RpcFrameworkException exception =
-                    new RpcFrameworkException("Method [" + methodSignature + "] of service [" + request.getInterfaceName() + "] not found!");
+                    new RpcFrameworkException("Method [" + methodSignature + "] of service [" + request.getInterfaceName() + "] does NOT exist!");
             response.setException(exception);
             return response;
         }
         boolean defaultThrowExceptionStack = ProtocolConstants.TRANS_EXCEPTION_STACK_VAL_DEFAULT;
         try {
-            // Invoke method
+            // Invoke real method of provider
             Object result = method.invoke(BUILD_IN_METHODS.contains(request.getMethodName()) ? this : instance, request.getMethodArguments());
             response.setResult(result);
         } catch (Exception e) {
+            // If exception occurs
             if (e.getCause() != null) {
-                response.setException(new RpcBizException("Failed to call provider stub [" + MethodParameterUtils.getMethodSignature(method) + "]", e.getCause()));
+                response.setException(new RpcBizException("Failed to invoke method [" + getMethodSignature(method) + "]", e.getCause()));
             } else {
-                response.setException(new RpcBizException("Failed to call provider stub [" + MethodParameterUtils.getMethodSignature(method) + "]", e));
+                response.setException(new RpcBizException("Failed to invoke method [" + getMethodSignature(method) + "]", e));
             }
 
-            // not print stack in error log when exception declared in method
+            // Do NOT print exception in error level log when exception declared in method
             boolean logException = true;
             for (Class<?> clazz : method.getExceptionTypes()) {
                 if (clazz.isInstance(response.getException().getCause())) {
@@ -437,39 +435,29 @@ public class ProviderStub<T> {
                 }
             }
             if (logException) {
-                log.error("Exception caught when during method invocation. request:" + request, e);
+                log.error("Failed to invoke method [" + getMethodSignature(method) + "] with request [" + request + "]", e);
             } else {
-                log.info("Exception caught when during method invocation. request:" + request + ", exception:" + response.getException().getCause().toString());
+                log.info("Failed to invoke method [{}] with request [{}] and exception [{}]",
+                        getMethodSignature(method), request, response.getException().getCause().toString());
             }
-        } catch (Throwable t) {
-            // 如果服务发生Error，将Error转化为Exception，防止拖垮调用方
-            if (t.getCause() != null) {
-                response.setException(new RpcFrameworkException("Failed to invoke service provider", t.getCause()));
+        } catch (Throwable error) {
+            // Convert error to exception if error occurs
+            if (error.getCause() != null) {
+                response.setException(new RpcFrameworkException("Failed to invoke method [" + getMethodSignature(method) + "]", error.getCause()));
             } else {
-                response.setException(new RpcFrameworkException("Failed to invoke service provider", t));
+                response.setException(new RpcFrameworkException("Failed to invoke method [" + getMethodSignature(method) + "]", error));
             }
-            //对于Throwable,也记录日志
-            log.error("Exception caught when during method invocation. request:" + request, t);
+            log.error("Failed to invoke method [" + getMethodSignature(method) + "] with request [" + request + "]", error);
         }
         if (response.getException() != null) {
-            //是否传输业务异常栈
             if (!this.url.getBooleanOption(ProtocolConstants.TRANS_EXCEPTION_STACK, defaultThrowExceptionStack)) {
-                // 不传输业务异常栈
+                // Do NOT transport exception stack
                 ExceptionUtils.setMockStackTrace(response.getException().getCause());
             }
         }
         // Copy options
         response.setOptions(request.getOptions());
         return response;
-    }
-
-    /**
-     * Check health status of the service
-     *
-     * @return status
-     */
-    public String checkHealth() {
-        return exported.get() ? STATUS_OK : STATUS_INACTIVE;
     }
 
     /**

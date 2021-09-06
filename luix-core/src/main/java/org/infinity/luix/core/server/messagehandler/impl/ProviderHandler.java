@@ -19,18 +19,19 @@ package org.infinity.luix.core.server.messagehandler.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.client.request.Requestable;
+import org.infinity.luix.core.client.request.impl.RpcRequest;
+import org.infinity.luix.core.constant.RpcConstants;
 import org.infinity.luix.core.constant.ServiceConstants;
+import org.infinity.luix.core.exception.impl.RpcBizException;
+import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.exchange.Channel;
+import org.infinity.luix.core.server.messagehandler.MessageHandler;
 import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.server.stub.ProviderStub;
 import org.infinity.luix.core.server.stub.ProviderStubHolder;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.MethodParameterUtils;
 import org.infinity.luix.core.utils.RpcFrameworkUtils;
-import org.infinity.luix.core.client.request.impl.RpcRequest;
-import org.infinity.luix.core.exception.impl.RpcBizException;
-import org.infinity.luix.core.exception.impl.RpcFrameworkException;
-import org.infinity.luix.core.server.messagehandler.MessageHandler;
 import org.infinity.luix.utilities.serializer.DeserializableArgs;
 
 import java.io.IOException;
@@ -86,7 +87,10 @@ public class ProviderHandler implements MessageHandler {
 
     protected Responseable invoke(Requestable request, ProviderStub<?> providerStub) {
         try {
-            return providerStub.localInvoke(request);
+            RpcFrameworkUtils.logEvent(request, RpcConstants.TRACE_BEFORE_BIZ);
+            Responseable response = providerStub.invokeMethod(request);
+            RpcFrameworkUtils.logEvent(response, RpcConstants.TRACE_AFTER_BIZ);
+            return response;
         } catch (Exception e) {
             return RpcFrameworkUtils.buildErrorResponse(request, new RpcBizException("Failed to call provider", e));
         }
