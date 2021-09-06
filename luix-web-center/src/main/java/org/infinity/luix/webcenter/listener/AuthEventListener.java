@@ -1,13 +1,14 @@
 package org.infinity.luix.webcenter.listener;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.webcenter.security.AjaxLogoutSuccessHandler;
 import org.infinity.luix.webcenter.event.LogoutEvent;
+import org.infinity.luix.webcenter.security.AjaxLogoutSuccessHandler;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,11 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class AuthEventListener {
 
-    private final AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler;
-
-    public AuthEventListener(AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler) {
-        this.ajaxLogoutSuccessHandler = ajaxLogoutSuccessHandler;
-    }
+    @Resource
+    private AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler;
 
     @EventListener
     public void logoutEvent(LogoutEvent event) {
