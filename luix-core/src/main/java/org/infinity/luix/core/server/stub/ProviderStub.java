@@ -464,6 +464,15 @@ public class ProviderStub<T> {
     }
 
     /**
+     * Check health status of the service
+     *
+     * @return status
+     */
+    public String checkHealth() {
+        return exported.get() ? STATUS_OK : STATUS_INACTIVE;
+    }
+
+    /**
      * Build provider stub bean name
      *
      * @param interfaceClassName provider interface class name
@@ -487,15 +496,6 @@ public class ProviderStub<T> {
                 .form(form)
                 .version(version)
                 .build();
-    }
-
-    /**
-     * Check health status of the service
-     *
-     * @return status
-     */
-    public String checkHealth() {
-        return exported.get() ? STATUS_OK : STATUS_INACTIVE;
     }
 
     @Override
