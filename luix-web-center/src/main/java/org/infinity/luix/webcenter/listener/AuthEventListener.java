@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.webcenter.event.LogoutEvent;
 import org.infinity.luix.webcenter.security.AjaxLogoutSuccessHandler;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -19,6 +20,7 @@ public class AuthEventListener {
     @Resource
     private AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler;
 
+    @Async
     @EventListener
     public void logoutEvent(LogoutEvent event) {
         log.debug("Processing logout event initiated by {}", event.getSource().getClass().getSimpleName());
