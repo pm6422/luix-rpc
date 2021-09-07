@@ -23,9 +23,9 @@ public interface Exposable {
     boolean isActive();
 
     /**
-     * Cancel exported provider
+     * Cancel exposed provider
      */
-    void cancelExport();
+    void cancelExpose();
 
     /**
      * Do some cleanup task

@@ -131,7 +131,7 @@ public final class Url implements Serializable {
     }
 
     /**
-     * The consumer url used to export to registry only for consumers discovery management,
+     * The consumer url used to expose to registry only for consumers discovery management,
      * but it have nothing to do with the service calling.
      *
      * @param protocol protocol
@@ -145,7 +145,7 @@ public final class Url implements Serializable {
     }
 
     /**
-     * The consumer url used to export to registry only for consumers discovery management,
+     * The consumer url used to expose to registry only for consumers discovery management,
      * but it have nothing to do with the service calling.
      *
      * @param protocol protocol

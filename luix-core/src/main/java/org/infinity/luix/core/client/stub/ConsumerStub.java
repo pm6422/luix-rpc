@@ -156,7 +156,7 @@ public class ConsumerStub<T> {
      */
     private           String         providerAddresses;
     /**
-     * The consumer url used to export to registry only for consumers discovery management,
+     * The consumer url used to exposed to registry only for consumers discovery management,
      * but it have nothing to do with the service calling.
      */
     private           Url            url;

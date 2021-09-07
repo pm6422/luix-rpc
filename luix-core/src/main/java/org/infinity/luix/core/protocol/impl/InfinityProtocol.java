@@ -22,7 +22,7 @@ public class InfinityProtocol extends AbstractProtocol {
     private final Map<String, ProviderInvocationHandler> ipPort2RequestRouter = new ConcurrentHashMap<>();
 
     @Override
-    protected Exposable doExport(Url providerUrl) {
-        return new DefaultExposer(providerUrl, this.ipPort2RequestRouter, this.exporterMap);
+    protected Exposable doExpose(Url providerUrl) {
+        return new DefaultExposer(providerUrl, this.ipPort2RequestRouter, this.exposedProviders);
     }
 }

@@ -11,11 +11,11 @@ import java.util.Map;
 @Slf4j
 public class JvmExposer extends AbstractExposer {
 
-    protected final Map<String, Exposable> exporterMap;
+    protected final Map<String, Exposable> exposedProviders;
 
-    public JvmExposer(Url providerUrl, Map<String, Exposable> exporterMap) {
+    public JvmExposer(Url providerUrl, Map<String, Exposable> exposedProviders) {
         super(providerUrl);
-        this.exporterMap = exporterMap;
+        this.exposedProviders = exposedProviders;
     }
 
     @Override
@@ -29,13 +29,13 @@ public class JvmExposer extends AbstractExposer {
     }
 
     @Override
-    public void cancelExport() {
+    public void cancelExpose() {
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
-        Exposable exporter = exporterMap.remove(protocolKey);
+        Exposable exporter = exposedProviders.remove(protocolKey);
         if (exporter != null) {
             exporter.destroy();
         }
-        log.info("Undone exported url [{}]", providerUrl);
+        log.info("Undone exposed url [{}]", providerUrl);
     }
 
     @Override

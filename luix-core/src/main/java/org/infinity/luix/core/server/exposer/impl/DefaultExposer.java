@@ -17,15 +17,15 @@ import java.util.Map;
 public class DefaultExposer extends AbstractExposer {
 
     protected final Map<String, ProviderInvocationHandler> ipPort2RequestRouter;
-    protected final Map<String, Exposable>                 exporterMap;
+    protected final Map<String, Exposable>                 exposedProviders;
     protected       Server                                 server;
     protected       EndpointFactory         endpointFactory;
 
     public DefaultExposer(Url providerUrl,
                           Map<String, ProviderInvocationHandler> ipPort2RequestRouter,
-                          Map<String, Exposable> exporterMap) {
+                          Map<String, Exposable> exposedProviders) {
         super(providerUrl);
-        this.exporterMap = exporterMap;
+        this.exposedProviders = exposedProviders;
         this.ipPort2RequestRouter = ipPort2RequestRouter;
 
         ProviderInvocationHandler requestRouter = initRequestRouter(providerUrl);
@@ -45,11 +45,11 @@ public class DefaultExposer extends AbstractExposer {
     }
 
     @Override
-    public void cancelExport() {
+    public void cancelExpose() {
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
         String ipPort = providerUrl.getAddress();
 
-        Exposable exporter = exporterMap.remove(protocolKey);
+        Exposable exporter = exposedProviders.remove(protocolKey);
         if (exporter != null) {
             exporter.destroy();
         }
@@ -58,13 +58,13 @@ public class DefaultExposer extends AbstractExposer {
         if (requestRouter != null) {
             requestRouter.removeProvider(providerUrl);
         }
-        log.info("Undone exported url [{}]", providerUrl);
+        log.info("Undone exposed url [{}]", providerUrl);
     }
 
     @Override
     public void destroy() {
         endpointFactory.safeReleaseResource(server, providerUrl);
-        log.info("DefaultRpcExporter destroy Success: url={}", providerUrl);
+        log.info("Destroy Success: url={}", providerUrl);
     }
 
     protected ProviderInvocationHandler initRequestRouter(Url url) {

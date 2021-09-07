@@ -17,28 +17,28 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public abstract class AbstractProtocol implements Protocol {
-    protected final Map<String, Exposable> exporterMap = new ConcurrentHashMap<>();
+    protected final Map<String, Exposable> exposedProviders = new ConcurrentHashMap<>();
 
     @Override
-    public Exposable export(Url providerUrl) {
+    public Exposable expose(Url providerUrl) {
         if (providerUrl == null) {
             throw new RpcFrameworkException("Url must NOT be null!");
         }
 
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
-        synchronized (exporterMap) {
-            Exposable exporter = exporterMap.get(protocolKey);
-            if (exporter != null) {
-                throw new RpcFrameworkException("Can NOT re-export service [" + providerUrl + "]");
+        synchronized (exposedProviders) {
+            Exposable exposer = exposedProviders.get(protocolKey);
+            if (exposer != null) {
+                throw new RpcFrameworkException("Can NOT re-expose service [" + providerUrl + "]");
             }
 
-            exporter = doExport(providerUrl);
-            exporter.init();
+            exposer = doExpose(providerUrl);
+            exposer.init();
 
             // todo: check useless statement
-            exporterMap.put(protocolKey, exporter);
-            log.info("Exported service [{}]", providerUrl);
-            return exporter;
+            exposedProviders.put(protocolKey, exposer);
+            log.info("Exposed service [{}]", providerUrl);
+            return exposer;
         }
     }
 
@@ -49,16 +49,16 @@ public abstract class AbstractProtocol implements Protocol {
     }
 
     /**
-     * Do create exporter
+     * Do create exposer
      *
      * @param providerUrl provider url
-     * @return exporter
+     * @return exposer
      */
-    protected abstract Exposable doExport(Url providerUrl);
+    protected abstract Exposable doExpose(Url providerUrl);
 
     @Override
     public void destroy() {
-        Iterator<Map.Entry<String, Exposable>> iterator = exporterMap.entrySet().iterator();
+        Iterator<Map.Entry<String, Exposable>> iterator = exposedProviders.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, Exposable> next = iterator.next();
             if (next.getValue() != null) {
@@ -73,7 +73,7 @@ public abstract class AbstractProtocol implements Protocol {
         }
     }
 
-    public Map<String, Exposable> getExporterMap() {
-        return exporterMap;
+    public Map<String, Exposable> getExposedProviders() {
+        return exposedProviders;
     }
 }

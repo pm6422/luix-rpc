@@ -101,7 +101,7 @@ public class ProviderProtectedInvocationHandler extends ProviderInvocationHandle
     }
 
     protected boolean isAllowRequest(int requestCounter, int totalCounter, int maxThread, Requestable request) {
-        if (EXPORTED_METHOD_COUNT.get() == 1) {
+        if (EXPOSED_METHOD_COUNT.get() == 1) {
             return true;
         }
 
@@ -118,7 +118,7 @@ public class ProviderProtectedInvocationHandler extends ProviderInvocationHandle
 
         // 如果总体线程数超过 maxThread * 3 / 4个，并且对外的method比较多，那么意味着这个时候整体压力比较大，
         // 那么这个时候如果单method超过 maxThread * 1 / 4，那么reject
-        return !(EXPORTED_METHOD_COUNT.get() >= 4 && totalCounter > (maxThread * 3 / 4) && requestCounter > (maxThread / 4));
+        return !(EXPOSED_METHOD_COUNT.get() >= 4 && totalCounter > (maxThread * 3 / 4) && requestCounter > (maxThread / 4));
     }
 
 //    @Override

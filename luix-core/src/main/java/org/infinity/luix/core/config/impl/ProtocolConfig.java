@@ -31,14 +31,14 @@ public class ProtocolConfig implements Configurable {
     private             String  name   = PROTOCOL_VAL_DEFAULT;
     /**
      * Host name of the RPC server
-     * Generally, we do NOT need configure the value, it will be set automatically.
-     * If there are exported providers, netty server will use it as starting host.
-     * But if there are no exported providers, no netty server will be started.
+     * Generally, we do NOT need to configure the value, it will be set automatically.
+     * If there are exposed providers, netty server will use it as starting host.
+     * But if there are no exposed providers, no netty server will be started.
      */
     private             String  host;
     /**
      * Port number of the RPC server
-     * If there are exported providers, netty server will use it as starting port.
+     * If there are exposed providers, netty server will use it as starting port.
      */
     @NotNull
     @Positive

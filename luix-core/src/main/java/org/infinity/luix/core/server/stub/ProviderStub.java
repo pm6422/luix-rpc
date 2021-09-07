@@ -282,10 +282,10 @@ public class ProviderStub<T> {
             this.protocolConfig = protocolConfig;
             this.registryConfig = registryConfig;
 
-            // Export provider url
+            // Expose provider url
             url = createProviderUrl(applicationConfig, protocolConfig);
-            // Export RPC provider service
-            exposer = Protocol.getInstance(url.getProtocol()).export(url);
+            // Expose RPC provider service
+            exposer = Protocol.getInstance(url.getProtocol()).expose(url);
             // Register provider URL to all the registries
             this.registryConfig.getRegistryImpl().register(url);
         }
@@ -322,7 +322,7 @@ public class ProviderStub<T> {
      */
     public void deactivate() {
         if (exposer != null && exposed.get()) {
-            exposer.cancelExport();
+            exposer.cancelExpose();
             this.registryConfig.getRegistryImpl().deactivate(url);
             exposed.set(false);
         }
@@ -333,7 +333,7 @@ public class ProviderStub<T> {
      */
     public void activate() {
         if (exposer != null && !exposed.get()) {
-            Protocol.getInstance(url.getProtocol()).export(url);
+            Protocol.getInstance(url.getProtocol()).expose(url);
             this.registryConfig.getRegistryImpl().activate(url);
             exposed.set(true);
         }

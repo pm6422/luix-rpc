@@ -11,12 +11,12 @@ import org.infinity.luix.utilities.serviceloader.annotation.SpiScope;
 public interface Protocol {
 
     /**
-     * Create provider exporter
+     * Create provider exposer
      *
      * @param providerUrl provider URL
-     * @return exporter
+     * @return exposer
      */
-    Exposable export(Url providerUrl);
+    Exposable expose(Url providerUrl);
 
     /**
      * Create provider invoker

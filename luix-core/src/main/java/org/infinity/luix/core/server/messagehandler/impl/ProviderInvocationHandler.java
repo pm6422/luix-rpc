@@ -46,11 +46,11 @@ public class ProviderInvocationHandler implements MessageHandler {
     /**
      * Map of provider stub name to provider URL
      */
-    protected static final Map<String, Url> NAME_2_URL            = new ConcurrentHashMap<>();
+    protected static final Map<String, Url> NAME_2_URL           = new ConcurrentHashMap<>();
     /**
-     * The count of exported service methods
+     * The count of exposed service methods
      */
-    protected static final AtomicInteger    EXPORTED_METHOD_COUNT = new AtomicInteger(0);
+    protected static final AtomicInteger    EXPOSED_METHOD_COUNT = new AtomicInteger(0);
 
     public ProviderInvocationHandler() {
     }
@@ -131,7 +131,7 @@ public class ProviderInvocationHandler implements MessageHandler {
         //todo
 //        CompressRpcCodec.putMethodSign(provider, methods);// 对所有接口方法生成方法签名。适配方法签名压缩调用方式。
         // Calculate the total of exported public methods
-        EXPORTED_METHOD_COUNT.addAndGet(methods.size());
+        EXPOSED_METHOD_COUNT.addAndGet(methods.size());
         log.info("Added service provider [{}] to router", providerUrl);
     }
 
@@ -143,11 +143,11 @@ public class ProviderInvocationHandler implements MessageHandler {
         NAME_2_URL.remove(stubName);
 
         List<Method> methods = MethodParameterUtils.getPublicMethod(providerStub.getInterfaceClass());
-        EXPORTED_METHOD_COUNT.getAndSet(EXPORTED_METHOD_COUNT.get() - methods.size());
+        EXPOSED_METHOD_COUNT.getAndSet(EXPOSED_METHOD_COUNT.get() - methods.size());
         log.info("Removed service provider [{}] from router", providerUrl);
     }
 
     public int getPublicMethodCount() {
-        return EXPORTED_METHOD_COUNT.get();
+        return EXPOSED_METHOD_COUNT.get();
     }
 }
