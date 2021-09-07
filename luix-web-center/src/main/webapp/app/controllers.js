@@ -1922,6 +1922,7 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
     vm.pageTitle = $state.current.data.pageTitle;
     vm.mode = $state.current.data.mode;
     vm.timeUnits = RpcScheduledTaskService.query({extension: 'time-units'});
+    vm.faultTolerances = RpcScheduledTaskService.query({extension: 'fault-tolerances'});
     vm.entity = entity;
 
     var dateFormat = 'yyyy-MM-dd HH:mm';

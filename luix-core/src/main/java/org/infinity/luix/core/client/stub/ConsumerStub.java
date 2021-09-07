@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.luix.core.client.annotation.RpcConsumer;
+import org.infinity.luix.core.client.invoker.ServiceInvoker;
 import org.infinity.luix.core.client.listener.ProviderDiscoveryListener;
 import org.infinity.luix.core.client.listener.ProviderNotifyListener;
 import org.infinity.luix.core.client.listener.ProviderProcessable;
@@ -17,7 +18,6 @@ import org.infinity.luix.core.config.impl.RegistryConfig;
 import org.infinity.luix.core.constant.*;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.name.ConsumerStubBeanNameBuilder;
-import org.infinity.luix.core.client.invoker.ServiceInvoker;
 import org.infinity.luix.utilities.network.AddressUtils;
 
 import javax.annotation.PostConstruct;
@@ -119,7 +119,7 @@ public class ConsumerStub<T> {
      * The consumer proxy instance, refer the return type of {@link JdkProxy#getProxy(ConsumerStub)}
      * Disable deserialization
      */
-    private transient T      proxyInstance;
+    private transient T              proxyInstance;
     /**
      *
      */
@@ -154,12 +154,12 @@ public class ConsumerStub<T> {
      * Addresses of RPC provider used to connect RPC provider directly without third party registry.
      * Multiple addresses are separated by comma.
      */
-    private           String providerAddresses;
+    private           String         providerAddresses;
     /**
      * The consumer url used to export to registry only for consumers discovery management,
      * but it have nothing to do with the service calling.
      */
-    private           Url    url;
+    private           Url            url;
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition

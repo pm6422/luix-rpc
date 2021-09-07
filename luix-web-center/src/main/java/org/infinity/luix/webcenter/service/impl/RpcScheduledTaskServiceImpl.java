@@ -157,6 +157,7 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
                 .version(scheduledTask.getVersion())
                 .requestTimeout(scheduledTask.getRequestTimeout())
                 .retryCount(scheduledTask.getRetryCount())
+                .faultTolerance(scheduledTask.getFaultTolerance())
                 .build();
         if (Boolean.TRUE.equals(scheduledTask.getUseCronExpression())) {
             cancellableScheduledTaskRegistrar.addCronTask(scheduledTask.getName(), runnableTask, scheduledTask.getCronExpression());

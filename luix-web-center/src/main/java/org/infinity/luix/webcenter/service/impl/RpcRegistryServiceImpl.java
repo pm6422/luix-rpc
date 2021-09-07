@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
+import static org.infinity.luix.core.constant.ConsumerConstants.FAULT_TOLERANCE;
 import static org.infinity.luix.core.constant.ProtocolConstants.SERIALIZER;
 import static org.infinity.luix.core.constant.ServiceConstants.*;
 import static org.infinity.luix.utilities.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
@@ -85,6 +86,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
         String version = null;
         Integer requestTimeout = null;
         Integer retryCount = null;
+        String faultTolerance = null;
         String providerAddress = null;
         Map<String, Object> attributesMap = new HashMap<>(0);
 
@@ -96,6 +98,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
             version = providerUrl.getVersion();
             requestTimeout = providerUrl.containsOption(REQUEST_TIMEOUT) ? providerUrl.getIntOption(REQUEST_TIMEOUT) : null;
             retryCount = providerUrl.containsOption(RETRY_COUNT) ? providerUrl.getIntOption(RETRY_COUNT) : null;
+            faultTolerance = providerUrl.getOption(FAULT_TOLERANCE);
             providerAddress = providerUrl.getAddress();
         } else {
             // Invocation after discovering addresses
@@ -118,6 +121,10 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                         retryCount = entry.getValue() != null ? Integer.parseInt(entry.getValue()) : null;
                         attributesMap.put(entry.getKey(), retryCount);
                     }
+                    if(FAULT_TOLERANCE.equals(entry.getKey())) {
+                        faultTolerance = entry.getValue();
+                        attributesMap.put(entry.getKey(), faultTolerance);
+                    }
                 }
             }
         }
@@ -130,8 +137,8 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
         // Default hessian 2 serializer
         String serializer = defaultIfEmpty(attributes.get(SERIALIZER), SERIALIZER_NAME_HESSIAN2);
         ConsumerStub<?> consumerStub = ConsumerStubFactory.create(infinityProperties.getApplication(),
-                findRegistryConfig(registryIdentity), infinityProperties.getAvailableProtocol(),
-                providerAddress, resolvedInterfaceName, serializer, form, version, requestTimeout, retryCount);
+                findRegistryConfig(registryIdentity), infinityProperties.getAvailableProtocol(), providerAddress,
+                resolvedInterfaceName, serializer, form, version, requestTimeout, retryCount, faultTolerance);
 
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);
         return consumerStub;

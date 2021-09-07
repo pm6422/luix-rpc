@@ -29,8 +29,7 @@ public class DefaultServiceInvoker implements ServiceInvoker {
     private FaultTolerance faultTolerance;
 
     @Override
-    public void init(String interfaceName, String faultToleranceName,
-                     String loadBalancerName, Url consumerUrl) {
+    public void init(String interfaceName, String faultToleranceName, String loadBalancerName, Url consumerUrl) {
         this.setInterfaceName(interfaceName);
         FaultTolerance faultTolerance = FaultTolerance.getInstance(faultToleranceName);
         faultTolerance.setLoadBalancer(LoadBalancer.getInstance(loadBalancerName));

@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.luix.webcenter.domain.RpcScheduledTaskLock;
 import org.infinity.luix.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.luix.core.client.proxy.Proxy;
 import org.infinity.luix.core.client.stub.ConsumerStub;
 import org.infinity.luix.webcenter.domain.RpcScheduledTask;
 import org.infinity.luix.webcenter.domain.RpcScheduledTaskHistory;
+import org.infinity.luix.webcenter.domain.RpcScheduledTaskLock;
 import org.infinity.luix.webcenter.repository.RpcScheduledTaskHistoryRepository;
 import org.infinity.luix.webcenter.repository.RpcScheduledTaskLockRepository;
 import org.infinity.luix.webcenter.service.RpcRegistryService;
@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
+import static org.infinity.luix.core.constant.ConsumerConstants.FAULT_TOLERANCE;
 import static org.infinity.luix.core.constant.ServiceConstants.*;
 
 @Slf4j
@@ -46,6 +47,7 @@ public class RunnableTask implements Runnable {
     private final           String             version;
     private final           Integer            requestTimeout;
     private final           Integer            retryCount;
+    private final           String             faultTolerance;
 
     @Override
     public void run() {
@@ -120,6 +122,9 @@ public class RunnableTask implements Runnable {
         }
         if (retryCount != null) {
             attributes.put(RETRY_COUNT, retryCount.toString());
+        }
+        if (StringUtils.isNotEmpty(faultTolerance)) {
+            attributes.put(FAULT_TOLERANCE, faultTolerance);
         }
 
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(registryIdentity,

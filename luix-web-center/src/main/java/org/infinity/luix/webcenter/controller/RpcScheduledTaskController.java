@@ -10,10 +10,10 @@ import org.apache.commons.lang3.Validate;
 import org.infinity.luix.webcenter.component.HttpHeaderCreator;
 import org.infinity.luix.webcenter.config.ApplicationConstants;
 import org.infinity.luix.webcenter.domain.RpcScheduledTask;
-import org.infinity.luix.webcenter.service.RpcScheduledTaskService;
-import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
 import org.infinity.luix.webcenter.exception.NoDataFoundException;
 import org.infinity.luix.webcenter.repository.RpcScheduledTaskRepository;
+import org.infinity.luix.webcenter.service.RpcScheduledTaskService;
+import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -23,8 +23,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import static org.infinity.luix.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_FAILFAST;
+import static org.infinity.luix.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_FAILOVER;
 
 
 /**
@@ -129,9 +133,15 @@ public class RpcScheduledTaskController {
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", id)).build();
     }
 
-    @ApiOperation("find available time units of fixed rate interval")
+    @ApiOperation("Get available time units of fixed rate interval")
     @GetMapping("/api/rpc-scheduled-tasks/time-units")
-    public ResponseEntity<List<String>> findTimeUnits() {
+    public ResponseEntity<List<String>> getTimeUnits() {
         return ResponseEntity.ok().body(RpcScheduledTask.AVAILABLE_FIXED_INTERVAL_UNIT);
+    }
+
+    @ApiOperation("Get available fault tolerances")
+    @GetMapping("/api/rpc-scheduled-tasks/fault-tolerances")
+    public ResponseEntity<List<String>> getFaultTolerances() {
+        return ResponseEntity.ok().body(Arrays.asList(FAULT_TOLERANCE_VAL_FAILFAST, FAULT_TOLERANCE_VAL_FAILOVER));
     }
 }
