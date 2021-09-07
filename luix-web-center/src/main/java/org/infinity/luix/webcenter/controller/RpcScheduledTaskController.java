@@ -142,6 +142,6 @@ public class RpcScheduledTaskController {
     @ApiOperation("Get available fault tolerances")
     @GetMapping("/api/rpc-scheduled-tasks/fault-tolerances")
     public ResponseEntity<List<String>> getFaultTolerances() {
-        return ResponseEntity.ok().body(Arrays.asList(FAULT_TOLERANCE_VAL_FAILFAST, FAULT_TOLERANCE_VAL_FAILOVER));
+        return ResponseEntity.ok().body(Arrays.asList(FAULT_TOLERANCE_VAL_FAILOVER, FAULT_TOLERANCE_VAL_FAILFAST));
     }
 }
