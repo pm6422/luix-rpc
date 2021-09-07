@@ -270,7 +270,7 @@ public class ProviderStub<T> {
     }
 
     /**
-     * Register and expose the RPC providers to registries
+     * Register the RPC providers to registries
      *
      * @param applicationConfig application configuration
      * @param protocolConfig    protocol configuration

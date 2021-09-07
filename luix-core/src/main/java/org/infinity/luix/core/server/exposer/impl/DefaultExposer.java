@@ -29,7 +29,8 @@ public class DefaultExposer extends AbstractExposer {
         this.ipPort2RequestRouter = ipPort2RequestRouter;
 
         ProviderInvocationHandler requestRouter = initRequestRouter(providerUrl);
-        String endpointFactoryName = providerUrl.getOption(ProtocolConstants.ENDPOINT_FACTORY, ProtocolConstants.ENDPOINT_FACTORY_VAL_NETTY);
+        String endpointFactoryName = providerUrl.getOption(ProtocolConstants.ENDPOINT_FACTORY,
+                ProtocolConstants.ENDPOINT_FACTORY_VAL_NETTY);
         endpointFactory = EndpointFactory.getInstance(endpointFactoryName);
         server = endpointFactory.createServer(providerUrl, requestRouter);
     }
