@@ -1,7 +1,7 @@
 package org.infinity.luix.core.protocol;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.core.server.exporter.Exportable;
+import org.infinity.luix.core.server.exposer.Exposable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.RpcFrameworkUtils;
 import org.infinity.luix.core.client.sender.Sendable;
@@ -17,17 +17,17 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public abstract class AbstractProtocol implements Protocol {
-    protected final Map<String, Exportable> exporterMap = new ConcurrentHashMap<>();
+    protected final Map<String, Exposable> exporterMap = new ConcurrentHashMap<>();
 
     @Override
-    public Exportable export(Url providerUrl) {
+    public Exposable export(Url providerUrl) {
         if (providerUrl == null) {
             throw new RpcFrameworkException("Url must NOT be null!");
         }
 
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
         synchronized (exporterMap) {
-            Exportable exporter = exporterMap.get(protocolKey);
+            Exposable exporter = exporterMap.get(protocolKey);
             if (exporter != null) {
                 throw new RpcFrameworkException("Can NOT re-export service [" + providerUrl + "]");
             }
@@ -54,13 +54,13 @@ public abstract class AbstractProtocol implements Protocol {
      * @param providerUrl provider url
      * @return exporter
      */
-    protected abstract Exportable doExport(Url providerUrl);
+    protected abstract Exposable doExport(Url providerUrl);
 
     @Override
     public void destroy() {
-        Iterator<Map.Entry<String, Exportable>> iterator = exporterMap.entrySet().iterator();
+        Iterator<Map.Entry<String, Exposable>> iterator = exporterMap.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<String, Exportable> next = iterator.next();
+            Map.Entry<String, Exposable> next = iterator.next();
             if (next.getValue() != null) {
                 try {
                     next.getValue().destroy();
@@ -73,7 +73,7 @@ public abstract class AbstractProtocol implements Protocol {
         }
     }
 
-    public Map<String, Exportable> getExporterMap() {
+    public Map<String, Exposable> getExporterMap() {
         return exporterMap;
     }
 }

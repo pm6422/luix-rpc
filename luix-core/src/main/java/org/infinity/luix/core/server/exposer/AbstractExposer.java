@@ -1,16 +1,16 @@
-package org.infinity.luix.core.server.exporter;
+package org.infinity.luix.core.server.exposer;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
+import org.infinity.luix.core.url.Url;
 
 @Slf4j
-public abstract class AbstractExporter implements Exportable {
+public abstract class AbstractExposer implements Exposable {
     protected          Url     providerUrl;
     protected volatile boolean initialized = false;
     protected volatile boolean active      = false;
 
-    public AbstractExporter(Url providerUrl) {
+    public AbstractExposer(Url providerUrl) {
         this.providerUrl = providerUrl;
     }
 

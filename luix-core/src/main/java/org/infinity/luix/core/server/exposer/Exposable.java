@@ -1,8 +1,8 @@
-package org.infinity.luix.core.server.exporter;
+package org.infinity.luix.core.server.exposer;
 
 import org.infinity.luix.core.url.Url;
 
-public interface Exportable {
+public interface Exposable {
     /**
      * Get provider URL
      *

@@ -5,7 +5,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.client.request.Requestable;
 import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.infinity.luix.core.config.impl.ProtocolConfig;
@@ -21,11 +20,10 @@ import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.protocol.Protocol;
 import org.infinity.luix.core.registry.Registry;
 import org.infinity.luix.core.registry.RegistryFactory;
-import org.infinity.luix.core.server.exporter.Exportable;
+import org.infinity.luix.core.server.exposer.Exposable;
 import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.server.response.impl.RpcResponse;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.core.utils.MethodParameterUtils;
 import org.infinity.luix.core.utils.name.ProviderStubBeanNameBuilder;
 
 import javax.annotation.PostConstruct;
@@ -197,13 +195,13 @@ public class ProviderStub<T> {
      */
     private           Url                       url;
     /**
-     * Service provider exporter used to export the provider to registry
+     * Used to expose the provider to registry
      */
-    private transient Exportable                exporter;
+    private transient Exposable                 exposer;
     /**
-     * Indicator used to identify whether the provider already been registered
+     * Indicates whether the provider were exposed to registry
      */
-    private final     AtomicBoolean             exported     = new AtomicBoolean(false);
+    private final     AtomicBoolean             exposed      = new AtomicBoolean(false);
     /**
      * Application configuration
      */
@@ -224,7 +222,7 @@ public class ProviderStub<T> {
     public void init() {
         // Put methods to cache in order to accelerate the speed of executing.
         discoverMethods(interfaceClass);
-        String name = StringUtils.defaultIfEmpty(beanName, buildProviderStubBeanName(interfaceName, form, version));
+        String name = defaultIfEmpty(beanName, buildProviderStubBeanName(interfaceName, form, version));
         // Automatically add {@link ProviderStub} instance to {@link ProviderStubHolder}
         ProviderStubHolder.getInstance().add(name, this);
     }
@@ -247,16 +245,17 @@ public class ProviderStub<T> {
     }
 
     /**
-     * Find method associated with name and parameter list
+     * Find method associated with name and parameters
      *
      * @param methodName       method name
      * @param methodParameters method parameters string. e.g, java.util.List,java.lang.Long
      * @return method
      */
     public Method findMethod(String methodName, String methodParameters) {
-        Method method = methodsCache.get(getMethodSignature(methodName, methodParameters));
+        String methodSignature = getMethodSignature(methodName, methodParameters);
+        Method method = methodsCache.get(methodSignature);
         if (method == null) {
-            method = BUILD_IN_METHODS_CACHE.get(getMethodSignature(methodName, methodParameters));
+            method = BUILD_IN_METHODS_CACHE.get(methodSignature);
         }
         return method;
     }
@@ -267,7 +266,7 @@ public class ProviderStub<T> {
      * @return status
      */
     public String checkHealth() {
-        return exported.get() ? STATUS_OK : STATUS_INACTIVE;
+        return exposed.get() ? STATUS_OK : STATUS_INACTIVE;
     }
 
     /**
@@ -278,7 +277,7 @@ public class ProviderStub<T> {
      * @param registryConfig    registry configuration
      */
     public void register(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, RegistryConfig registryConfig) {
-        if (exported.compareAndSet(false, true)) {
+        if (exposed.compareAndSet(false, true)) {
             this.applicationConfig = applicationConfig;
             this.protocolConfig = protocolConfig;
             this.registryConfig = registryConfig;
@@ -286,7 +285,7 @@ public class ProviderStub<T> {
             // Export provider url
             url = createProviderUrl(applicationConfig, protocolConfig);
             // Export RPC provider service
-            exporter = Protocol.getInstance(url.getProtocol()).export(url);
+            exposer = Protocol.getInstance(url.getProtocol()).export(url);
             // Register provider URL to all the registries
             this.registryConfig.getRegistryImpl().register(url);
         }
@@ -322,10 +321,10 @@ public class ProviderStub<T> {
      * Deactivate the RPC providers from registries
      */
     public void deactivate() {
-        if (exporter != null && exported.get()) {
-            exporter.cancelExport();
+        if (exposer != null && exposed.get()) {
+            exposer.cancelExport();
             this.registryConfig.getRegistryImpl().deactivate(url);
-            exported.set(false);
+            exposed.set(false);
         }
     }
 
@@ -333,10 +332,10 @@ public class ProviderStub<T> {
      * Activate the RPC providers from registries
      */
     public void activate() {
-        if (exporter != null && !exported.get()) {
+        if (exposer != null && !exposed.get()) {
             Protocol.getInstance(url.getProtocol()).export(url);
             this.registryConfig.getRegistryImpl().activate(url);
-            exported.set(true);
+            exposed.set(true);
         }
     }
 

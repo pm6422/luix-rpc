@@ -2,8 +2,8 @@ package org.infinity.luix.core.protocol.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.constant.ProtocolConstants;
-import org.infinity.luix.core.server.exporter.Exportable;
-import org.infinity.luix.core.server.exporter.impl.DefaultRpcExporter;
+import org.infinity.luix.core.server.exposer.Exposable;
+import org.infinity.luix.core.server.exposer.impl.DefaultExposer;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.protocol.AbstractProtocol;
 import org.infinity.luix.core.server.messagehandler.impl.ProviderInvocationHandler;
@@ -22,7 +22,7 @@ public class InfinityProtocol extends AbstractProtocol {
     private final Map<String, ProviderInvocationHandler> ipPort2RequestRouter = new ConcurrentHashMap<>();
 
     @Override
-    protected Exportable doExport(Url providerUrl) {
-        return new DefaultRpcExporter(providerUrl, this.ipPort2RequestRouter, this.exporterMap);
+    protected Exposable doExport(Url providerUrl) {
+        return new DefaultExposer(providerUrl, this.ipPort2RequestRouter, this.exporterMap);
     }
 }

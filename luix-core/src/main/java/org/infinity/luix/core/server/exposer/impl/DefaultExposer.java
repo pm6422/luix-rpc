@@ -1,4 +1,4 @@
-package org.infinity.luix.core.server.exporter.impl;
+package org.infinity.luix.core.server.exposer.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.constant.ProtocolConstants;
@@ -6,24 +6,24 @@ import org.infinity.luix.core.exchange.server.Server;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.RpcFrameworkUtils;
 import org.infinity.luix.core.exchange.endpoint.EndpointFactory;
-import org.infinity.luix.core.server.exporter.AbstractExporter;
-import org.infinity.luix.core.server.exporter.Exportable;
+import org.infinity.luix.core.server.exposer.AbstractExposer;
+import org.infinity.luix.core.server.exposer.Exposable;
 import org.infinity.luix.core.server.messagehandler.impl.ProviderInvocationHandler;
 import org.infinity.luix.core.server.messagehandler.impl.ProviderProtectedInvocationHandler;
 
 import java.util.Map;
 
 @Slf4j
-public class DefaultRpcExporter extends AbstractExporter {
+public class DefaultExposer extends AbstractExposer {
 
     protected final Map<String, ProviderInvocationHandler> ipPort2RequestRouter;
-    protected final Map<String, Exportable>                exporterMap;
-    protected       Server                  server;
+    protected final Map<String, Exposable>                 exporterMap;
+    protected       Server                                 server;
     protected       EndpointFactory         endpointFactory;
 
-    public DefaultRpcExporter(Url providerUrl,
-                              Map<String, ProviderInvocationHandler> ipPort2RequestRouter,
-                              Map<String, Exportable> exporterMap) {
+    public DefaultExposer(Url providerUrl,
+                          Map<String, ProviderInvocationHandler> ipPort2RequestRouter,
+                          Map<String, Exposable> exporterMap) {
         super(providerUrl);
         this.exporterMap = exporterMap;
         this.ipPort2RequestRouter = ipPort2RequestRouter;
@@ -49,7 +49,7 @@ public class DefaultRpcExporter extends AbstractExporter {
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
         String ipPort = providerUrl.getAddress();
 
-        Exportable exporter = exporterMap.remove(protocolKey);
+        Exposable exporter = exporterMap.remove(protocolKey);
         if (exporter != null) {
             exporter.destroy();
         }

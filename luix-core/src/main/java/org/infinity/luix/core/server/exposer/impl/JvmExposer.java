@@ -1,19 +1,19 @@
-package org.infinity.luix.core.server.exporter.impl;
+package org.infinity.luix.core.server.exposer.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.RpcFrameworkUtils;
-import org.infinity.luix.core.server.exporter.AbstractExporter;
-import org.infinity.luix.core.server.exporter.Exportable;
+import org.infinity.luix.core.server.exposer.AbstractExposer;
+import org.infinity.luix.core.server.exposer.Exposable;
 
 import java.util.Map;
 
 @Slf4j
-public class JvmRpcExporter extends AbstractExporter {
+public class JvmExposer extends AbstractExposer {
 
-    protected final Map<String, Exportable> exporterMap;
+    protected final Map<String, Exposable> exporterMap;
 
-    public JvmRpcExporter(Url providerUrl, Map<String, Exportable> exporterMap) {
+    public JvmExposer(Url providerUrl, Map<String, Exposable> exporterMap) {
         super(providerUrl);
         this.exporterMap = exporterMap;
     }
@@ -31,7 +31,7 @@ public class JvmRpcExporter extends AbstractExporter {
     @Override
     public void cancelExport() {
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
-        Exportable exporter = exporterMap.remove(protocolKey);
+        Exposable exporter = exporterMap.remove(protocolKey);
         if (exporter != null) {
             exporter.destroy();
         }
