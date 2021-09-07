@@ -270,7 +270,7 @@ public class ProviderStub<T> {
     }
 
     /**
-     * Register the RPC providers to registries
+     * Register and expose the RPC providers to registries
      *
      * @param applicationConfig application configuration
      * @param protocolConfig    protocol configuration
@@ -282,9 +282,8 @@ public class ProviderStub<T> {
             this.protocolConfig = protocolConfig;
             this.registryConfig = registryConfig;
 
-            // Expose provider url
             url = createProviderUrl(applicationConfig, protocolConfig);
-            // Expose RPC provider service
+            // Expose provider url
             exposer = Protocol.getInstance(url.getProtocol()).expose(url);
             // Register provider URL to all the registries
             this.registryConfig.getRegistryImpl().register(url);
@@ -396,7 +395,7 @@ public class ProviderStub<T> {
                             url.addOption(name, field.get(entry.getValue()).toString());
                         }
                     } catch (IllegalAccessException e) {
-                        throw new RpcConfigException("Failed to read method configuration", e);
+                        throw new RpcConfigException("Failed to read method configuration!", e);
                     }
                 }
             }
