@@ -12,6 +12,7 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,11 +37,8 @@ public class SwaggerConfiguration {
     private static final String                DEFAULT_API_INCLUDE_PATTERN      = "/api/.*";
     private static final String                DEFAULT_OPEN_API_INCLUDE_PATTERN = "/open-api/.*";
     private static final String                SECURITY_TOKEN_NAME              = "Authorization";
-    private final        ApplicationProperties applicationProperties;
-
-    public SwaggerConfiguration(ApplicationProperties applicationProperties) {
-        this.applicationProperties = applicationProperties;
-    }
+    @Resource
+    private              ApplicationProperties applicationProperties;
 
     @Bean
     public Docket apiDocket() {
