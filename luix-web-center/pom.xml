@@ -20,6 +20,7 @@
     <properties>
         <app.rpc.port>2${app.server.port}</app.rpc.port>
         <app.server.port>6030</app.server.port>
+        <arthas.console.port>3${app.server.port}</arthas.console.port>
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -123,6 +124,11 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-spring-boot-starter</artifactId>
+            <version>3.5.4</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

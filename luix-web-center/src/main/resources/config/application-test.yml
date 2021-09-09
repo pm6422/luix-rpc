@@ -23,3 +23,6 @@ infinity:
 # ===================================================================
 # Application specific properties
 # ===================================================================
+application:
+    arthas:
+        consoleUrl: http://localhost:${arthas.httpPort}

@@ -1019,6 +1019,20 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 pageTitle: 'Loggers'
             }
         })
+        .state('arthas', {
+            parent: 'developer',
+            url: '/arthas',
+            views: {
+                'content@': {
+                    templateUrl: 'app/views/developer/arthas/arthas.html',
+                    controller: 'ArthasController',
+                    controllerAs: 'vm'
+                }
+            },
+            data: {
+                pageTitle: 'Arthas web console'
+            }
+        })
         .state('schedule', {
             parent: 'developer',
             url: '/schedule',

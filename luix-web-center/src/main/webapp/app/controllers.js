@@ -34,6 +34,7 @@ angular
     .controller('DictItemListController', DictItemListController)
     .controller('DictItemDialogController', DictItemDialogController)
     .controller('LoggerController', LoggerController)
+    .controller('ArthasController', ArthasController)
     .controller('ScheduleController', ScheduleController)
     .controller('ControlController', ControlController)
     .controller('RpcApplicationListController', RpcApplicationListController)
@@ -1463,6 +1464,18 @@ function LoggerController($state, LoggerService) {
         LoggerService.changeLevel({name: name}, {configuredLevel: level}, function () {
             vm.query();
         });
+    }
+}
+
+/**
+ * ArthasController
+ */
+function ArthasController(AuthServerService) {
+    var vm = this;
+
+    var authToken = AuthServerService.getToken();
+    if (authToken) {
+        vm.url = 'api/system/arthas-console?access_token=' + authToken.access_token;
     }
 }
 

@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -71,6 +73,13 @@ public class SystemController {
     @Secured(Authority.DEVELOPER)
     public ResponseEntity<String> getIntranetIp() {
         return ResponseEntity.ok(AddressUtils.getIntranetIp());
+    }
+
+    @ApiOperation("redirect to arthas web console")
+    @GetMapping("/api/system/arthas-console")
+    @Secured(Authority.DEVELOPER)
+    public void redirectToArthasConsole(HttpServletResponse response) throws IOException {
+        response.sendRedirect(applicationProperties.getArthas().getConsoleUrl());
     }
 
     @ApiOperation("reset database")

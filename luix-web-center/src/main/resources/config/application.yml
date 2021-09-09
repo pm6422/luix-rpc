@@ -115,6 +115,8 @@ mongock:
     change-logs-scan-package:
         - ${info.project.package}.db
     trackIgnored: true
+arthas:
+    httpPort: @arthas.console.port@
 infinity:
     application:
         name: ${spring.application.name}
