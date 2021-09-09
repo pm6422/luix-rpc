@@ -95,6 +95,8 @@ spring:
     data:
         mongodb:
             auto-index-creation: false
+    arthas:
+        enabled: true
 server:
     # It can be overridden by `--server.port` value passed in the commandline or `-Dserver.port` set in `JAVA_OPTS`
     port: @app.server.port@
@@ -116,6 +118,7 @@ mongock:
         - ${info.project.package}.db
     trackIgnored: true
 arthas:
+    appName: ${spring.application.name}
     httpPort: @arthas.console.port@
 infinity:
     application:
