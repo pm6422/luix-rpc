@@ -1030,7 +1030,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             data: {
-                pageTitle: 'Arthas web console'
+                pageTitle: 'Arthas console'
             }
         })
         .state('schedule', {
