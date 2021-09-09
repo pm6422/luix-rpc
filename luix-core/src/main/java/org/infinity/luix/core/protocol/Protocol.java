@@ -1,6 +1,6 @@
 package org.infinity.luix.core.protocol;
 
-import org.infinity.luix.core.server.exposer.Exposable;
+import org.infinity.luix.core.server.exposer.ProviderExposable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.client.sender.Sendable;
 import org.infinity.luix.utilities.serviceloader.ServiceLoader;
@@ -16,7 +16,7 @@ public interface Protocol {
      * @param providerUrl provider URL
      * @return exposer
      */
-    Exposable expose(Url providerUrl);
+    ProviderExposable expose(Url providerUrl);
 
     /**
      * Create provider invoker

@@ -3,8 +3,8 @@ package org.infinity.luix.core.protocol.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.constant.ProtocolConstants;
 import org.infinity.luix.core.protocol.AbstractProtocol;
-import org.infinity.luix.core.server.exposer.Exposable;
-import org.infinity.luix.core.server.exposer.impl.ServerExposer;
+import org.infinity.luix.core.server.exposer.ProviderExposable;
+import org.infinity.luix.core.server.exposer.impl.ServerProviderExposer;
 import org.infinity.luix.core.server.messagehandler.impl.ProviderInvocationHandler;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.serviceloader.annotation.SpiName;
@@ -21,7 +21,7 @@ public class V1Protocol extends AbstractProtocol {
     private final Map<String, ProviderInvocationHandler> ipPort2RequestRouter = new ConcurrentHashMap<>();
 
     @Override
-    protected Exposable doExpose(Url providerUrl) {
-        return new ServerExposer(providerUrl, this.ipPort2RequestRouter, this.exposedProviders);
+    protected ProviderExposable doExpose(Url providerUrl) {
+        return new ServerProviderExposer(providerUrl, this.ipPort2RequestRouter, this.exposedProviders);
     }
 }

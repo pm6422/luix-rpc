@@ -20,7 +20,7 @@ import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.protocol.Protocol;
 import org.infinity.luix.core.registry.Registry;
 import org.infinity.luix.core.registry.RegistryFactory;
-import org.infinity.luix.core.server.exposer.Exposable;
+import org.infinity.luix.core.server.exposer.ProviderExposable;
 import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.server.response.impl.RpcResponse;
 import org.infinity.luix.core.url.Url;
@@ -193,15 +193,15 @@ public class ProviderStub<T> {
     /**
      * The provider url
      */
-    private           Url                       url;
+    private           Url               url;
     /**
      * Used to expose the provider to registry
      */
-    private transient Exposable                 exposer;
+    private transient ProviderExposable exposer;
     /**
      * Indicates whether the provider were exposed to registry
      */
-    private final     AtomicBoolean             exposed      = new AtomicBoolean(false);
+    private final     AtomicBoolean     exposed      = new AtomicBoolean(false);
     /**
      * Application configuration
      */

@@ -3,17 +3,17 @@ package org.infinity.luix.core.server.exposer.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.RpcFrameworkUtils;
-import org.infinity.luix.core.server.exposer.AbstractExposer;
-import org.infinity.luix.core.server.exposer.Exposable;
+import org.infinity.luix.core.server.exposer.AbstractProviderExposer;
+import org.infinity.luix.core.server.exposer.ProviderExposable;
 
 import java.util.Map;
 
 @Slf4j
-public class JvmExposer extends AbstractExposer {
+public class JvmProviderExposer extends AbstractProviderExposer {
 
-    protected final Map<String, Exposable> exposedProviders;
+    protected final Map<String, ProviderExposable> exposedProviders;
 
-    public JvmExposer(Url providerUrl, Map<String, Exposable> exposedProviders) {
+    public JvmProviderExposer(Url providerUrl, Map<String, ProviderExposable> exposedProviders) {
         super(providerUrl);
         this.exposedProviders = exposedProviders;
     }
@@ -31,7 +31,7 @@ public class JvmExposer extends AbstractExposer {
     @Override
     public void cancelExpose() {
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
-        Exposable exporter = exposedProviders.remove(protocolKey);
+        ProviderExposable exporter = exposedProviders.remove(protocolKey);
         if (exporter != null) {
             exporter.destroy();
         }

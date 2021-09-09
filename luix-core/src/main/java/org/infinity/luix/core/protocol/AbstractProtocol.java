@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.client.sender.Sendable;
 import org.infinity.luix.core.client.sender.impl.RequestSender;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
-import org.infinity.luix.core.server.exposer.Exposable;
+import org.infinity.luix.core.server.exposer.ProviderExposable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.RpcFrameworkUtils;
 
@@ -16,17 +16,17 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public abstract class AbstractProtocol implements Protocol {
-    protected final Map<String, Exposable> exposedProviders = new ConcurrentHashMap<>();
+    protected final Map<String, ProviderExposable> exposedProviders = new ConcurrentHashMap<>();
 
     @Override
-    public Exposable expose(Url providerUrl) {
+    public ProviderExposable expose(Url providerUrl) {
         if (providerUrl == null) {
             throw new RpcFrameworkException("Url must NOT be null!");
         }
 
         String providerKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
         synchronized (exposedProviders) {
-            Exposable exposer = exposedProviders.get(providerKey);
+            ProviderExposable exposer = exposedProviders.get(providerKey);
             if (exposer != null) {
                 throw new RpcFrameworkException("Can NOT re-expose provider [" + providerUrl + "]");
             }
@@ -52,7 +52,7 @@ public abstract class AbstractProtocol implements Protocol {
      * @param providerUrl provider url
      * @return exposer
      */
-    protected abstract Exposable doExpose(Url providerUrl);
+    protected abstract ProviderExposable doExpose(Url providerUrl);
 
     @Override
     public void destroy() {

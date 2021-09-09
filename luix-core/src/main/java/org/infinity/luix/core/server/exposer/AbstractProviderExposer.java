@@ -5,11 +5,11 @@ import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.url.Url;
 
 @Slf4j
-public abstract class AbstractExposer implements Exposable {
+public abstract class AbstractProviderExposer implements ProviderExposable {
     protected volatile boolean active = false;
     protected          Url     providerUrl;
 
-    public AbstractExposer(Url providerUrl) {
+    public AbstractProviderExposer(Url providerUrl) {
         this.providerUrl = providerUrl;
     }
 

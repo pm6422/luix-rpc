@@ -2,7 +2,7 @@ package org.infinity.luix.core.server.exposer;
 
 import org.infinity.luix.core.url.Url;
 
-public interface Exposable {
+public interface ProviderExposable {
     /**
      * Get provider URL
      *

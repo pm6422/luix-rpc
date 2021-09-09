@@ -6,24 +6,24 @@ import org.infinity.luix.core.exchange.server.Server;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.RpcFrameworkUtils;
 import org.infinity.luix.core.exchange.endpoint.EndpointFactory;
-import org.infinity.luix.core.server.exposer.AbstractExposer;
-import org.infinity.luix.core.server.exposer.Exposable;
+import org.infinity.luix.core.server.exposer.AbstractProviderExposer;
+import org.infinity.luix.core.server.exposer.ProviderExposable;
 import org.infinity.luix.core.server.messagehandler.impl.ProviderInvocationHandler;
 import org.infinity.luix.core.server.messagehandler.impl.ProviderProtectedInvocationHandler;
 
 import java.util.Map;
 
 @Slf4j
-public class ServerExposer extends AbstractExposer {
+public class ServerProviderExposer extends AbstractProviderExposer {
 
     protected final Map<String, ProviderInvocationHandler> ipPort2RequestRouter;
-    protected final Map<String, Exposable>                 exposedProviders;
+    protected final Map<String, ProviderExposable>         exposedProviders;
     protected       Server                                 server;
     protected       EndpointFactory         endpointFactory;
 
-    public ServerExposer(Url providerUrl,
-                         Map<String, ProviderInvocationHandler> ipPort2RequestRouter,
-                         Map<String, Exposable> exposedProviders) {
+    public ServerProviderExposer(Url providerUrl,
+                                 Map<String, ProviderInvocationHandler> ipPort2RequestRouter,
+                                 Map<String, ProviderExposable> exposedProviders) {
         super(providerUrl);
         this.exposedProviders = exposedProviders;
         this.ipPort2RequestRouter = ipPort2RequestRouter;
@@ -50,7 +50,7 @@ public class ServerExposer extends AbstractExposer {
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
         String ipPort = providerUrl.getAddress();
 
-        Exposable exporter = exposedProviders.remove(protocolKey);
+        ProviderExposable exporter = exposedProviders.remove(protocolKey);
         if (exporter != null) {
             exporter.destroy();
         }
