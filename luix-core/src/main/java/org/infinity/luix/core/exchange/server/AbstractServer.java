@@ -1,10 +1,10 @@
 package org.infinity.luix.core.exchange.server;
 
 import org.infinity.luix.core.codec.Codec;
-import org.infinity.luix.core.exchange.Channel;
-import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
+import org.infinity.luix.core.exchange.Channel;
 import org.infinity.luix.core.exchange.constants.ChannelState;
+import org.infinity.luix.core.url.Url;
 
 import java.net.InetSocketAddress;
 import java.util.Collection;
@@ -13,15 +13,11 @@ import static org.infinity.luix.core.constant.ProtocolConstants.CODEC;
 import static org.infinity.luix.core.constant.ProtocolConstants.CODEC_VAL_DEFAULT;
 
 public abstract class AbstractServer implements Server {
-    protected InetSocketAddress localAddress;
-    protected InetSocketAddress remoteAddress;
-    protected Url               providerUrl;
-    protected Codec             codec;
-
-    protected volatile ChannelState state = ChannelState.UNINITIALIZED;
-
-    public AbstractServer() {
-    }
+    protected          InetSocketAddress localAddress;
+    protected          InetSocketAddress remoteAddress;
+    protected          Url               providerUrl;
+    protected          Codec             codec;
+    protected volatile ChannelState      state = ChannelState.UNINITIALIZED;
 
     public AbstractServer(Url providerUrl) {
         this.providerUrl = providerUrl;

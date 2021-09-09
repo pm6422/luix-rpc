@@ -1,14 +1,13 @@
 package org.infinity.luix.core.protocol;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.core.server.exposer.Exposable;
-import org.infinity.luix.core.url.Url;
-import org.infinity.luix.core.utils.RpcFrameworkUtils;
 import org.infinity.luix.core.client.sender.Sendable;
 import org.infinity.luix.core.client.sender.impl.RequestSender;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
+import org.infinity.luix.core.server.exposer.Exposable;
+import org.infinity.luix.core.url.Url;
+import org.infinity.luix.core.utils.RpcFrameworkUtils;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,19 +24,18 @@ public abstract class AbstractProtocol implements Protocol {
             throw new RpcFrameworkException("Url must NOT be null!");
         }
 
-        String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
+        String providerKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
         synchronized (exposedProviders) {
-            Exposable exposer = exposedProviders.get(protocolKey);
+            Exposable exposer = exposedProviders.get(providerKey);
             if (exposer != null) {
-                throw new RpcFrameworkException("Can NOT re-expose service [" + providerUrl + "]");
+                throw new RpcFrameworkException("Can NOT re-expose provider [" + providerUrl + "]");
             }
 
             exposer = doExpose(providerUrl);
             exposer.init();
 
-            // todo: check useless statement
-            exposedProviders.put(protocolKey, exposer);
-            log.info("Exposed service [{}]", providerUrl);
+            exposedProviders.put(providerKey, exposer);
+            log.info("Exposed provider [{}]", providerUrl);
             return exposer;
         }
     }
@@ -49,7 +47,7 @@ public abstract class AbstractProtocol implements Protocol {
     }
 
     /**
-     * Do create exposer
+     * Do expose provider
      *
      * @param providerUrl provider url
      * @return exposer
@@ -58,22 +56,14 @@ public abstract class AbstractProtocol implements Protocol {
 
     @Override
     public void destroy() {
-        Iterator<Map.Entry<String, Exposable>> iterator = exposedProviders.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, Exposable> next = iterator.next();
-            if (next.getValue() != null) {
-                try {
-                    next.getValue().destroy();
-                    log.info("Destroyed [" + next.getValue() + "]");
-                } catch (Throwable t) {
-                    log.error("Failed to destroy [" + next.getValue() + "]", t);
-                }
+        exposedProviders.values().forEach(exposer -> {
+            try {
+                exposer.destroy();
+                log.info("Destroyed [" + exposer + "]");
+            } catch (Throwable t) {
+                log.error("Failed to destroy [" + exposer + "]", t);
             }
-            iterator.remove();
-        }
-    }
-
-    public Map<String, Exposable> getExposedProviders() {
-        return exposedProviders;
+        });
+        exposedProviders.clear();
     }
 }

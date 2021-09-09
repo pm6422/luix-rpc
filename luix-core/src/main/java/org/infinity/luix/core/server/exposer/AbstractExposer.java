@@ -6,9 +6,8 @@ import org.infinity.luix.core.url.Url;
 
 @Slf4j
 public abstract class AbstractExposer implements Exposable {
+    protected volatile boolean active = false;
     protected          Url     providerUrl;
-    protected volatile boolean initialized = false;
-    protected volatile boolean active      = false;
 
     public AbstractExposer(Url providerUrl) {
         this.providerUrl = providerUrl;
@@ -21,19 +20,12 @@ public abstract class AbstractExposer implements Exposable {
 
     @Override
     public synchronized void init() {
-        if (initialized) {
-            log.warn(this.getClass().getSimpleName() + " node already init: " + this);
-            return;
-        }
-
         boolean result = doInit();
-
-        if (!result) {
-            throw new RpcFrameworkException(this.getClass().getSimpleName() + " node init Error: " + this);
-        } else {
-            log.info("Initialized " + this.getClass().getSimpleName());
-            initialized = true;
+        if (result) {
             active = true;
+            log.info("Initialized provider exposer");
+        } else {
+            throw new RpcFrameworkException("Failed to initialize provider exposer");
         }
     }
 

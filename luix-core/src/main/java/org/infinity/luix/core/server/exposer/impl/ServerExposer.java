@@ -14,16 +14,16 @@ import org.infinity.luix.core.server.messagehandler.impl.ProviderProtectedInvoca
 import java.util.Map;
 
 @Slf4j
-public class DefaultExposer extends AbstractExposer {
+public class ServerExposer extends AbstractExposer {
 
     protected final Map<String, ProviderInvocationHandler> ipPort2RequestRouter;
     protected final Map<String, Exposable>                 exposedProviders;
     protected       Server                                 server;
     protected       EndpointFactory         endpointFactory;
 
-    public DefaultExposer(Url providerUrl,
-                          Map<String, ProviderInvocationHandler> ipPort2RequestRouter,
-                          Map<String, Exposable> exposedProviders) {
+    public ServerExposer(Url providerUrl,
+                         Map<String, ProviderInvocationHandler> ipPort2RequestRouter,
+                         Map<String, Exposable> exposedProviders) {
         super(providerUrl);
         this.exposedProviders = exposedProviders;
         this.ipPort2RequestRouter = ipPort2RequestRouter;
@@ -59,7 +59,7 @@ public class DefaultExposer extends AbstractExposer {
         if (requestRouter != null) {
             requestRouter.removeProvider(providerUrl);
         }
-        log.info("Undone exposed url [{}]", providerUrl);
+        log.info("Cancelled exposed provider url: [{}]", providerUrl);
     }
 
     @Override

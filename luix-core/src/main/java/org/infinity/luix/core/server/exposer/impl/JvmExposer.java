@@ -35,7 +35,7 @@ public class JvmExposer extends AbstractExposer {
         if (exporter != null) {
             exporter.destroy();
         }
-        log.info("Undone exposed url [{}]", providerUrl);
+        log.info("Cancelled exposed provider url: [{}]", providerUrl);
     }
 
     @Override
