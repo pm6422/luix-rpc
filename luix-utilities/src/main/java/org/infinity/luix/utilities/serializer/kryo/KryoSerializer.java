@@ -36,6 +36,9 @@ public class KryoSerializer implements Serializer {
 
     @Override
     public <T> T deserialize(byte[] data, Class<T> clz) throws IOException {
+        if (data == null) {
+            return null;
+        }
         KryoObjectInput input = new KryoObjectInput(KryoUtils.get(), new ByteArrayInputStream(data));
         return input.readObject(clz);
     }
@@ -53,6 +56,9 @@ public class KryoSerializer implements Serializer {
 
     @Override
     public Object[] deserializeArray(byte[] data, Class<?>[] classes) throws IOException {
+        if (data == null) {
+            return null;
+        }
         KryoObjectInput input = new KryoObjectInput(KryoUtils.get(), new ByteArrayInputStream(data));
         Object[] objects = new Object[classes.length];
         for (int i = 0; i < classes.length; i++) {
