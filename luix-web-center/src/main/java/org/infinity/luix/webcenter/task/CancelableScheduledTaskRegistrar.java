@@ -1,4 +1,4 @@
-package org.infinity.luix.demoserver.task;
+package org.infinity.luix.webcenter.task;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
@@ -18,7 +18,7 @@ import java.util.concurrent.ScheduledFuture;
  * and it can also cancel the started scheduled task.
  */
 @Component
-public class CancellableScheduledTaskRegistrar implements DisposableBean {
+public class CancelableScheduledTaskRegistrar implements DisposableBean {
 
     private static final Map<String, ScheduledFuture<?>> SCHEDULED_TASKS = new ConcurrentHashMap<>(16);
     /**

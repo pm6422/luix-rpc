@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.demoserver.domain.ScheduledTask;
 import org.infinity.luix.demoserver.service.ScheduledTaskService;
-import org.infinity.luix.demoserver.task.CancellableScheduledTaskRegistrar;
+import org.infinity.luix.demoserver.task.CancelableScheduledTaskRegistrar;
 import org.infinity.luix.demoserver.task.RunnableTask;
 import org.infinity.luix.demoserver.exception.NoDataFoundException;
 import org.infinity.luix.demoserver.repository.ScheduledTaskHistoryRepository;
@@ -34,9 +34,9 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService, Applicati
     @Resource
     private ScheduledTaskHistoryRepository    scheduledTaskHistoryRepository;
     @Resource
-    private ScheduledTaskLockRepository       scheduledTaskLockRepository;
+    private ScheduledTaskLockRepository      scheduledTaskLockRepository;
     @Resource
-    private CancellableScheduledTaskRegistrar cancellableScheduledTaskRegistrar;
+    private CancelableScheduledTaskRegistrar cancelableScheduledTaskRegistrar;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -123,14 +123,14 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService, Applicati
                 .scheduledTask(scheduledTask)
                 .build();
         if (Boolean.TRUE.equals(scheduledTask.getUseCronExpression())) {
-            cancellableScheduledTaskRegistrar.addCronTask(scheduledTask.getName(), runnableTask, scheduledTask.getCronExpression());
+            cancelableScheduledTaskRegistrar.addCronTask(scheduledTask.getName(), runnableTask, scheduledTask.getCronExpression());
         } else {
-            cancellableScheduledTaskRegistrar.addFixedRateTask(scheduledTask.getName(), runnableTask, calculateMilliSeconds(scheduledTask));
+            cancelableScheduledTaskRegistrar.addFixedRateTask(scheduledTask.getName(), runnableTask, calculateMilliSeconds(scheduledTask));
         }
     }
 
     private void removeTask(ScheduledTask scheduledTask) {
-        cancellableScheduledTaskRegistrar.removeTask(scheduledTask.getName());
+        cancelableScheduledTaskRegistrar.removeTask(scheduledTask.getName());
     }
 
     private long calculateMilliSeconds(ScheduledTask scheduledTask) {
