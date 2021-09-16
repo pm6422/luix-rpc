@@ -117,14 +117,14 @@ public class UserController {
     @ApiOperation("reset password by user name")
     @PutMapping("/api/users/{userName:[a-zA-Z0-9-]+}")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<String> resetPassword(@ApiParam(value = "user name", required = true) @PathVariable String userName) {
+    public ResponseEntity<Void> resetPassword(@ApiParam(value = "user name", required = true) @PathVariable String userName) {
         log.debug("REST reset the password of user: {}", userName);
         UserNameAndPasswordDTO dto = UserNameAndPasswordDTO.builder()
                 .userName(userName)
                 .newPassword(applicationProperties.getAccount().getDefaultPassword()).build();
         userService.changePassword(dto);
         HttpHeaders headers = httpHeaderCreator.createSuccessHeader("NM2012", applicationProperties.getAccount().getDefaultPassword());
-        return ResponseEntity.ok().headers(headers).body(applicationProperties.getAccount().getDefaultPassword());
+        return ResponseEntity.ok().headers(headers).build();
     }
 
     public static final String GET_PROFILE_PHOTO_URL = "/api/users/profile-photo/";
