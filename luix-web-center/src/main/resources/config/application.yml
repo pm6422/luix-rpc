@@ -152,11 +152,11 @@ application:
     swagger:
         enabled: true
         api:
-            title: Infinity RPC Web Center
-            description: Infinity RPC Web Center API
+            title: Luix Web Center
+            description: Luix Web Center API
         open-api:
-            title: Infinity RPC Web Center Open API
-            description: Infinity RPC Web Center Open API
+            title: Luix Web Center Open API
+            description: Luix Web Center Open API
         version: @project.version@
         contact-name: Louis
         contact-email: louis@pm6422.club
