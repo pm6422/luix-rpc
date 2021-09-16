@@ -179,7 +179,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 }
             },
             data: {
-                pageTitle: 'Personal info'
+                pageTitle: 'User profile'
             }
         })
         .state('password', {
