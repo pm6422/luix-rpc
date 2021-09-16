@@ -103,8 +103,8 @@ public class DatabaseInitializer {
         User developerRoleUser = new User();
         developerRoleUser.setUserName("louis");
         developerRoleUser.setFirstName("Louis");
-        developerRoleUser.setLastName("Liu");
-        developerRoleUser.setEmail("louis@localhost");
+        developerRoleUser.setLastName("Lau");
+        developerRoleUser.setEmail("louis@pm6422.club");
         developerRoleUser.setMobileNo("15000899488");
         // Raw password: louis
         developerRoleUser.setPasswordHash(passwordEncoder.encode("louis"));
