@@ -23,10 +23,10 @@ public class DatabaseInitializer {
 
     @ChangeSet(order = "02", author = "Louis", id = "addAuthorities", runAlways = true)
     public void addAuthorities(MongockTemplate mongoTemplate) {
-        mongoTemplate.save(new Authority(Authority.USER, true, true));
-        mongoTemplate.save(new Authority(Authority.ADMIN, true, true));
-        mongoTemplate.save(new Authority(Authority.DEVELOPER, true, true));
-        mongoTemplate.save(new Authority(Authority.ANONYMOUS, true, true));
+        mongoTemplate.save(new Authority(Authority.USER, true));
+        mongoTemplate.save(new Authority(Authority.ADMIN, true));
+        mongoTemplate.save(new Authority(Authority.DEVELOPER, true));
+        mongoTemplate.save(new Authority(Authority.ANONYMOUS, true));
     }
 
     @ChangeSet(order = "04", author = "Louis", id = "addAuthorityAdminMenu", runAlways = true)

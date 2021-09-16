@@ -42,8 +42,6 @@ public class Authority implements Serializable {
     @Id
     private String name;
 
-    private Boolean systemLevel;
-
     private Boolean enabled;
 
     public Authority(Boolean enabled) {
