@@ -25,6 +25,7 @@ public class ApplicationProperties {
     private final Metrics            metrics            = new Metrics();
     private final AopLogging         aopLogging         = new AopLogging();
     private final ElapsedTimeLogging elapsedTimeLogging = new ElapsedTimeLogging();
+    private final Account            account            = new Account();
     private final Ribbon             ribbon             = new Ribbon();
     private final Arthas             arthas             = new Arthas();
 
@@ -106,6 +107,11 @@ public class ApplicationProperties {
     public static class ElapsedTimeLogging {
         private boolean enabled;
         private int     slowExecutionThreshold;
+    }
+
+    @Data
+    public static class Account {
+        private String defaultPassword;
     }
 
     @Data

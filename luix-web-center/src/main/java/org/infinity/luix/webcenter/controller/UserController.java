@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.webcenter.component.HttpHeaderCreator;
+import org.infinity.luix.webcenter.config.ApplicationProperties;
 import org.infinity.luix.webcenter.domain.Authority;
 import org.infinity.luix.webcenter.domain.User;
 import org.infinity.luix.webcenter.domain.UserAuthority;
@@ -34,7 +35,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.infinity.luix.webcenter.domain.User.DEFAULT_PASSWORD;
 import static org.infinity.luix.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 import static org.infinity.luix.webcenter.utils.NetworkUtils.getRequestUrl;
 
@@ -46,6 +46,8 @@ import static org.infinity.luix.webcenter.utils.NetworkUtils.getRequestUrl;
 public class UserController {
 
     @Resource
+    private ApplicationProperties      applicationProperties;
+    @Resource
     private UserProfilePhotoRepository userProfilePhotoRepository;
     @Resource
     private UserAuthorityRepository    userAuthorityRepository;
@@ -54,9 +56,9 @@ public class UserController {
     @Resource
     private MailService                mailService;
     @Resource
-    private ApplicationEventPublisher applicationEventPublisher;
+    private ApplicationEventPublisher  applicationEventPublisher;
     @Resource
-    private HttpHeaderCreator         httpHeaderCreator;
+    private HttpHeaderCreator          httpHeaderCreator;
 
     @ApiOperation(value = "create new user and send activation email")
     @PostMapping("/api/users")
@@ -64,9 +66,9 @@ public class UserController {
     public ResponseEntity<Void> create(@ApiParam(value = "user", required = true) @Valid @RequestBody User domain,
                                        HttpServletRequest request) {
         log.debug("REST request to create user: {}", domain);
-        User newUser = userService.insert(domain, DEFAULT_PASSWORD);
+        User newUser = userService.insert(domain, applicationProperties.getAccount().getDefaultPassword());
         mailService.sendCreationEmail(newUser, getRequestUrl(request));
-        HttpHeaders headers = httpHeaderCreator.createSuccessHeader("NM2011", DEFAULT_PASSWORD);
+        HttpHeaders headers = httpHeaderCreator.createSuccessHeader("NM2011", applicationProperties.getAccount().getDefaultPassword());
         return ResponseEntity.status(HttpStatus.CREATED).headers(headers).build();
     }
 
@@ -117,9 +119,12 @@ public class UserController {
     @Secured({Authority.ADMIN})
     public ResponseEntity<String> resetPassword(@ApiParam(value = "user name", required = true) @PathVariable String userName) {
         log.debug("REST reset the password of user: {}", userName);
-        userService.changePassword(UserNameAndPasswordDTO.builder().userName(userName).newPassword(DEFAULT_PASSWORD).build());
-        HttpHeaders headers = httpHeaderCreator.createSuccessHeader("NM2012", DEFAULT_PASSWORD);
-        return ResponseEntity.ok().headers(headers).body(DEFAULT_PASSWORD);
+        UserNameAndPasswordDTO dto = UserNameAndPasswordDTO.builder()
+                .userName(userName)
+                .newPassword(applicationProperties.getAccount().getDefaultPassword()).build();
+        userService.changePassword(dto);
+        HttpHeaders headers = httpHeaderCreator.createSuccessHeader("NM2012", applicationProperties.getAccount().getDefaultPassword());
+        return ResponseEntity.ok().headers(headers).body(applicationProperties.getAccount().getDefaultPassword());
     }
 
     public static final String GET_PROFILE_PHOTO_URL = "/api/users/profile-photo/";
