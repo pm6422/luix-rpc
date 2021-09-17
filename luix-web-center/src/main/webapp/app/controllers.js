@@ -1593,13 +1593,18 @@ function RpcServerListController($state, $rootScope, AlertUtils, ParseLinksUtils
 /**
  * RpcServerDetailsController
  */
-function RpcServerDetailsController($state, $stateParams, entity) {
+function RpcServerDetailsController($state, $stateParams, RpcServerService, entity) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
     vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
     vm.entity = entity;
+    vm.refresh = refresh;
+
+    function refresh() {
+        vm.entity = RpcServerService.get({extension: $stateParams.id});
+    }
 }
 /**
  * RpcServiceListController
