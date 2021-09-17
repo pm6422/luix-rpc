@@ -1,11 +1,10 @@
 package org.infinity.luix.demoserver.service;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.context.request.async.DeferredResult;
+import org.infinity.luix.demoserver.task.polling.queue.Message;
 
 public interface AsyncTaskService {
 
-    String execute();
+    String sendMessage();
 
-    void execute(DeferredResult<ResponseEntity<String>> deferred);
+    void sendMessage(Message message);
 }

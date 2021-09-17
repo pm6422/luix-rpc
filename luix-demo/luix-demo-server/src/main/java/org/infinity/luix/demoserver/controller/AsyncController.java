@@ -3,6 +3,9 @@ package org.infinity.luix.demoserver.controller;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.demoserver.service.AsyncTaskService;
+import org.infinity.luix.demoserver.task.polling.queue.Message;
+import org.infinity.luix.demoserver.task.polling.queue.TaskQueue;
+import org.infinity.luix.utilities.id.IdGenerator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +22,14 @@ public class AsyncController {
 
     @Resource
     private AsyncTaskService asyncTaskService;
+    @Resource
+    private TaskQueue        taskQueue;
 
     @ApiOperation("blocking response")
     @GetMapping("/api/async/blocking-response")
     public String blockingResponse() {
         log.info("Request received");
-        String result = asyncTaskService.execute();
+        String result = asyncTaskService.sendMessage();
         log.info("Servlet thread released");
         return result;
     }
@@ -45,7 +50,7 @@ public class AsyncController {
     @GetMapping("/api/async/callable-response")
     public Callable<String> callableResponse() {
         log.info("Request received");
-        Callable<String> callable = asyncTaskService::execute;
+        Callable<String> callable = asyncTaskService::sendMessage;
         log.info("Servlet thread released");
         return callable;
     }
@@ -76,7 +81,10 @@ public class AsyncController {
         deferredResult.onError((Throwable t) -> deferredResult.setErrorResult(
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(t.getMessage())));
 
-        asyncTaskService.execute(deferredResult);
+        String msgId = IdGenerator.generateUniqueId();
+        taskQueue.put(msgId, deferredResult);
+        asyncTaskService.sendMessage(Message.builder().id(msgId).data(String.valueOf(IdGenerator.generateShortId())).build());
+
 //        CompletableFuture
 //                .supplyAsync(this::execute)
 //                .whenCompleteAsync((result, throwable) -> deferredResult.setResult(ResponseEntity.ok(result)));
