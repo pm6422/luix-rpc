@@ -3,7 +3,7 @@ package org.infinity.luix.demoserver.task.polling.queue;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MessageQueue {
+public class DistributedMessageQueue {
     private static final Map<String, Message> MAP = new HashMap<>(16);
 
     public static void put(Message msg) {

@@ -2,7 +2,7 @@ package org.infinity.luix.demoserver.task.polling;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.demoserver.task.polling.queue.Message;
-import org.infinity.luix.demoserver.task.polling.queue.MessageQueue;
+import org.infinity.luix.demoserver.task.polling.queue.DistributedMessageQueue;
 import org.infinity.luix.demoserver.task.polling.queue.Task;
 import org.infinity.luix.demoserver.task.polling.queue.InMemoryTaskQueue;
 import org.springframework.boot.ApplicationArguments;
@@ -40,7 +40,7 @@ public class ConsumeQueueTask implements ApplicationRunner {
                     continue;
                 }
 
-                Message message = MessageQueue.get(task.getId());
+                Message message = DistributedMessageQueue.get(task.getId());
                 if (message != null) {
                     // 根据taskId到redis检索，检索到则设置结果
                     ResponseEntity<String> response = ResponseEntity.ok(message.getData());

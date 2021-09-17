@@ -3,7 +3,7 @@ package org.infinity.luix.demoserver.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.demoserver.service.AsyncTaskService;
 import org.infinity.luix.demoserver.task.polling.queue.Message;
-import org.infinity.luix.demoserver.task.polling.queue.MessageQueue;
+import org.infinity.luix.demoserver.task.polling.queue.DistributedMessageQueue;
 import org.infinity.luix.demoserver.utils.TraceIdUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
         try {
             log.info("Sending message {}", message);
             TimeUnit.SECONDS.sleep(5);
-            MessageQueue.put(message);
+            DistributedMessageQueue.put(message);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
