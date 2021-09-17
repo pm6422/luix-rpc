@@ -24,8 +24,7 @@ import java.util.concurrent.Executor;
 public class AsyncConfiguration implements AsyncConfigurer {
 
     @Resource
-    private TaskExecutionProperties taskExecutionProperties;
-
+    private TaskExecutionProperties  taskExecutionProperties;
     @Resource
     private TaskSchedulingProperties taskSchedulingProperties;
 
