@@ -68,7 +68,6 @@ public class AsyncController {
     public DeferredResult<ResponseEntity<String>> deferredResult() {
         log.info("Request received");
         DeferredResult<ResponseEntity<String>> deferredResult = new DeferredResult<>(5500L);
-        asyncTaskService.execute(deferredResult);
         // Handle timeout
         deferredResult.onTimeout(() ->
                 deferredResult.setErrorResult(
@@ -77,6 +76,7 @@ public class AsyncController {
         deferredResult.onError((Throwable t) -> deferredResult.setErrorResult(
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(t.getMessage())));
 
+        asyncTaskService.execute(deferredResult);
 //        CompletableFuture
 //                .supplyAsync(this::execute)
 //                .whenCompleteAsync((result, throwable) -> deferredResult.setResult(ResponseEntity.ok(result)));
