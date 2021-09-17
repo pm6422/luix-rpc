@@ -8,11 +8,14 @@ import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Resource;
 import java.util.concurrent.Executor;
@@ -21,7 +24,7 @@ import java.util.concurrent.Executor;
 @EnableAsync
 @EnableScheduling
 @Slf4j
-public class AsyncConfiguration implements AsyncConfigurer {
+public class AsyncConfiguration implements AsyncConfigurer, WebMvcConfigurer {
 
     @Resource
     private TaskExecutionProperties  taskExecutionProperties;
@@ -55,5 +58,10 @@ public class AsyncConfiguration implements AsyncConfigurer {
         taskScheduler.setThreadNamePrefix(taskSchedulingProperties.getThreadNamePrefix());
         taskScheduler.initialize();
         return taskScheduler;
+    }
+
+    @Override
+    public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+        configurer.setTaskExecutor((AsyncTaskExecutor) getAsyncExecutor());
     }
 }
