@@ -11,7 +11,7 @@ import java.util.concurrent.BlockingQueue;
  * An in-memory queue used to store {@link org.springframework.web.context.request.async.DeferredResult}
  */
 @Slf4j
-public abstract class InMemoryDeferredTaskQueue {
+public abstract class InMemoryAsyncTaskQueue {
     private static final int                      QUEUE_SIZE = 100000;
     /**
      * Bounded blocking queue, and the size is specified by the argument value of the constructor.

@@ -3,7 +3,7 @@ package org.infinity.luix.demoserver.controller;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.demoserver.service.AsyncTaskService;
-import org.infinity.luix.demoserver.task.polling.queue.InMemoryDeferredTaskQueue;
+import org.infinity.luix.demoserver.task.polling.queue.InMemoryAsyncTaskQueue;
 import org.infinity.luix.demoserver.task.polling.queue.Message;
 import org.infinity.luix.utilities.id.IdGenerator;
 import org.springframework.http.HttpStatus;
@@ -75,7 +75,7 @@ public class AsyncController {
 
         String msgId = IdGenerator.generateUniqueId();
         // Put task in memory queue
-        boolean hasCapacity = InMemoryDeferredTaskQueue.offer(msgId, deferredResult);
+        boolean hasCapacity = InMemoryAsyncTaskQueue.offer(msgId, deferredResult);
         if (!hasCapacity) {
             // If the ArrayBlockingQueue is full
             deferredResult.setErrorResult(

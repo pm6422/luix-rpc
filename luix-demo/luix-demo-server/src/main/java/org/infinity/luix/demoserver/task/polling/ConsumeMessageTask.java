@@ -3,7 +3,7 @@ package org.infinity.luix.demoserver.task.polling;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.demoserver.task.polling.queue.AsyncTask;
 import org.infinity.luix.demoserver.task.polling.queue.DistributedMessageQueue;
-import org.infinity.luix.demoserver.task.polling.queue.InMemoryDeferredTaskQueue;
+import org.infinity.luix.demoserver.task.polling.queue.InMemoryAsyncTaskQueue;
 import org.infinity.luix.demoserver.task.polling.queue.Message;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 /**
- * Indefinite iteration polling from {@link org.infinity.luix.demoserver.task.polling.queue.InMemoryDeferredTaskQueue}
+ * Indefinite iteration polling from {@link InMemoryAsyncTaskQueue}
  * used to set result to {@link org.springframework.web.context.request.async.DeferredResult} if there are completed async task
  * <p>
  * Refer to
@@ -30,7 +30,7 @@ public class ConsumeMessageTask implements ApplicationRunner {
     private void execute() {
         while (true) {
             try {
-                AsyncTask asyncTask = InMemoryDeferredTaskQueue.poll();
+                AsyncTask asyncTask = InMemoryAsyncTaskQueue.poll();
                 if (asyncTask == null) {
                     continue;
                 }
@@ -43,7 +43,7 @@ public class ConsumeMessageTask implements ApplicationRunner {
                     asyncTask.getDeferredResult().setResult(response);
                 } else {
                     // Re-put in memory task queue if the message can NOT be found in Redis
-                    InMemoryDeferredTaskQueue.offer(asyncTask);
+                    InMemoryAsyncTaskQueue.offer(asyncTask);
                 }
             } catch (Exception e) {
                 log.error("Failed to consume async task queue!", e);
