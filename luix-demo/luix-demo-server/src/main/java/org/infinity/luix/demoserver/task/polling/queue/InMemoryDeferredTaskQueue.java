@@ -11,9 +11,11 @@ import java.util.concurrent.BlockingQueue;
 public abstract class InMemoryDeferredTaskQueue {
     private static final int                      QUEUE_LENGTH = 100000;
     /**
-     * 有界阻塞队列。数组结构固定大小的阻塞队列，大小由构造函数的参数指定
-     * ArrayBlockingQueue中只有一个ReentrantLock对象，读和写都需要获取锁，这意味着生产者和消费者无法并行运行。
-     * 当队列容量满时尝试将元素放入队列将导致操作阻塞，尝试从一个空队列中取一个元素也会同样阻塞。
+     * Bounded blocking queue, and the size is specified by the parameters of the constructor.
+     * There is only one ReentrantLock object in ArrayBlockingQueue. Both reading and writing need to obtain locks,
+     * which means that producing and consuming cannot run in parallel.
+     * When the queue is full, trying to put an element in the queue will cause the operation to block,
+     * and trying to get an element from an empty queue will also block.
      */
     private static final BlockingQueue<AsyncTask> QUEUE        = new ArrayBlockingQueue<>(QUEUE_LENGTH);
 
