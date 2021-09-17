@@ -3,7 +3,6 @@ package org.infinity.luix.demoserver.controller;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.demoserver.service.AsyncTaskService;
-import org.infinity.luix.demoserver.utils.TraceIdUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +24,7 @@ public class AsyncController {
     @GetMapping("/api/async/blocking-response")
     public String blockingResponse() {
         log.info("Request received");
-        String result = execute();
+        String result = asyncTaskService.execute();
         log.info("Servlet thread released");
         return result;
     }
@@ -46,7 +45,7 @@ public class AsyncController {
     @GetMapping("/api/async/callable-response")
     public Callable<String> callableResponse() {
         log.info("Request received");
-        Callable<String> callable = this::execute;
+        Callable<String> callable = asyncTaskService::execute;
         log.info("Servlet thread released");
         return callable;
     }
@@ -83,15 +82,5 @@ public class AsyncController {
 //                .whenCompleteAsync((result, throwable) -> deferredResult.setResult(ResponseEntity.ok(result)));
         log.info("Servlet thread released");
         return deferredResult;
-    }
-
-    public String execute() {
-        try {
-            Thread.sleep(5000);
-            log.info("Slow task executed");
-            return "Task " + TraceIdUtils.getTraceId() + " finished";
-        } catch (InterruptedException e) {
-            throw new RuntimeException();
-        }
     }
 }

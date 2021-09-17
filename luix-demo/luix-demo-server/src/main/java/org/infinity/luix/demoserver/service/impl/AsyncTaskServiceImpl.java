@@ -15,6 +15,16 @@ import java.util.concurrent.TimeUnit;
 public class AsyncTaskServiceImpl implements AsyncTaskService {
 
     @Override
+    public String execute() {
+        try {
+            TimeUnit.SECONDS.sleep(5);
+            return "Task " + TraceIdUtils.getTraceId() + " finished";
+        } catch (InterruptedException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
     @Async
     public void execute(DeferredResult<ResponseEntity<String>> deferred) {
         log.info(Thread.currentThread().getName() + " executing");
