@@ -8,8 +8,12 @@ import org.springframework.web.context.request.async.DeferredResult;
 @Data
 @Builder
 public class AsyncTask {
-
-    private String id;
-
+    /**
+     * Task ID
+     */
+    private String                                 id;
+    /**
+     * DeferredResult
+     */
     private DeferredResult<ResponseEntity<String>> deferredResult;
 }
