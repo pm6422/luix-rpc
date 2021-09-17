@@ -7,7 +7,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 @Data
 @Builder
-public class Task {
+public class AsyncTask {
 
     private String id;
 

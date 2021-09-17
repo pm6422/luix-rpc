@@ -1,16 +1,14 @@
 package org.infinity.luix.demoserver.task.polling;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.demoserver.task.polling.queue.Message;
+import org.infinity.luix.demoserver.task.polling.queue.AsyncTask;
 import org.infinity.luix.demoserver.task.polling.queue.DistributedMessageQueue;
-import org.infinity.luix.demoserver.task.polling.queue.Task;
-import org.infinity.luix.demoserver.task.polling.queue.InMemoryTaskQueue;
+import org.infinity.luix.demoserver.task.polling.queue.InMemoryDeferredTaskQueue;
+import org.infinity.luix.demoserver.task.polling.queue.Message;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  * Refer to
@@ -21,9 +19,6 @@ import javax.annotation.Resource;
 @Component
 public class ConsumeQueueTask implements ApplicationRunner {
 
-    @Resource
-    private InMemoryTaskQueue inMemoryTaskQueue;
-
     @Override
     public void run(ApplicationArguments args) throws Exception {
         new Thread(this::execute).start();
@@ -32,25 +27,22 @@ public class ConsumeQueueTask implements ApplicationRunner {
     private void execute() {
         while (true) {
             try {
-                Task task;
-                synchronized (inMemoryTaskQueue) {
-                    task = inMemoryTaskQueue.take();
-                }
-                if (task == null) {
+                AsyncTask asyncTask = InMemoryDeferredTaskQueue.poll();
+                if (asyncTask == null) {
                     continue;
                 }
 
-                Message message = DistributedMessageQueue.get(task.getId());
+                Message message = DistributedMessageQueue.get(asyncTask.getId());
                 if (message != null) {
-                    // 根据taskId到redis检索，检索到则设置结果
+                    // Set value to DeferredResult to complete the HTTP response if the message was found in Redis
                     ResponseEntity<String> response = ResponseEntity.ok(message.getData());
-                    task.getDeferredResult().setResult(response);
+                    asyncTask.getDeferredResult().setResult(response);
                 } else {
-                    // 检索不到结果，则重新放入任务队列中
-                    inMemoryTaskQueue.put(task);
+                    // Re-put in memory task queue if the message can NOT be found in Redis
+                    InMemoryDeferredTaskQueue.offer(asyncTask);
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error("Failed to consume async task queue!", e);
             }
         }
     }

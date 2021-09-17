@@ -3,8 +3,8 @@ package org.infinity.luix.demoserver.controller;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.demoserver.service.AsyncTaskService;
+import org.infinity.luix.demoserver.task.polling.queue.InMemoryDeferredTaskQueue;
 import org.infinity.luix.demoserver.task.polling.queue.Message;
-import org.infinity.luix.demoserver.task.polling.queue.InMemoryTaskQueue;
 import org.infinity.luix.utilities.id.IdGenerator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +21,7 @@ import java.util.concurrent.Callable;
 public class AsyncController {
 
     @Resource
-    private AsyncTaskService  asyncTaskService;
-    @Resource
-    private InMemoryTaskQueue inMemoryTaskQueue;
+    private AsyncTaskService asyncTaskService;
 
     @ApiOperation("blocking response")
     @GetMapping("/api/async/blocking-response")
@@ -82,13 +80,18 @@ public class AsyncController {
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(t.getMessage())));
 
         String msgId = IdGenerator.generateUniqueId();
-        inMemoryTaskQueue.put(msgId, deferredResult);
-        asyncTaskService.sendMessage(Message.builder().id(msgId).data(String.valueOf(IdGenerator.generateShortId())).build());
-
+        // Put task in memory queue
+        boolean hasCapacity = InMemoryDeferredTaskQueue.offer(msgId, deferredResult);
+        if (!hasCapacity) {
+            deferredResult.setErrorResult(
+                    ResponseEntity.status(HttpStatus.FORBIDDEN).body("Server is busy!"));
+        } else {
+            // Send message asynchronously
+            asyncTaskService.sendMessage(Message.builder().id(msgId).data(String.valueOf(IdGenerator.generateShortId())).build());
 //        CompletableFuture
 //                .supplyAsync(this::execute)
 //                .whenCompleteAsync((result, throwable) -> deferredResult.setResult(ResponseEntity.ok(result)));
-        log.info("Servlet thread released");
+        }
         return deferredResult;
     }
 }
