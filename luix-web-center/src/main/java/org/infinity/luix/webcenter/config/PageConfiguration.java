@@ -28,7 +28,6 @@ public class PageConfiguration implements WebMvcConfigurer {
         resolvers.add(pageResolver);
     }
 
-
     private static class AdditionalPageableHandlerMethodArgumentResolver extends PageableHandlerMethodArgumentResolver {
         private final SortArgumentResolver sortResolver;
 
