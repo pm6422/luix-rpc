@@ -45,7 +45,7 @@ public class ConsumeQueueTask implements ApplicationRunner {
                     // Re-put in memory task queue if the message can NOT be found in Redis
                     InMemoryDeferredTaskQueue.offer(asyncTask);
                 }
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 log.error("Failed to consume async task queue!", e);
             }
         }
