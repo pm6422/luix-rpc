@@ -8,9 +8,9 @@ import static org.infinity.luix.utilities.serializer.Serializer.*;
 public interface ProtocolConstants {
 
     String       PROTOCOL                           = "protocol";
-    String       PROTOCOL_VAL_V1                    = "v1";
+    String       PROTOCOL_VAL_LUIX                  = "luix";
     String       PROTOCOL_VAL_JVM                   = "jvm";
-    String       PROTOCOL_VAL_DEFAULT               = PROTOCOL_VAL_V1;
+    String       PROTOCOL_VAL_DEFAULT               = PROTOCOL_VAL_LUIX;
     String       CODEC                              = "codec";
     String       CODEC_VAL_V1                       = "v1";
     String       CODEC_VAL_V2                       = "v2";

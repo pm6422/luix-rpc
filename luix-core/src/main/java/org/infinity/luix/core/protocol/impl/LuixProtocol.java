@@ -12,9 +12,9 @@ import org.infinity.luix.utilities.serviceloader.annotation.SpiName;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@SpiName(ProtocolConstants.PROTOCOL_VAL_V1)
+@SpiName(ProtocolConstants.PROTOCOL_VAL_LUIX)
 @Slf4j
-public class V1Protocol extends AbstractProtocol {
+public class LuixProtocol extends AbstractProtocol {
     /**
      * 多个service可能在相同端口进行服务暴露，因此来自同个端口的请求需要进行路由以找到相应的服务，同时不在该端口暴露的服务不应该被找到
      */

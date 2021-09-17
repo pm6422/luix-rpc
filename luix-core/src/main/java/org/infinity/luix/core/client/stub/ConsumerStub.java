@@ -291,7 +291,7 @@ public class ConsumerStub<T> {
         List<Url> directProviderUrls = new ArrayList<>(directUrlHostPortList.size());
         for (Pair<String, Integer> providerHostPortPair : directUrlHostPortList) {
             // Note: There are no extra options added to the direct provider url
-            Url providerUrl = Url.providerUrl(ProtocolConstants.PROTOCOL_VAL_V1, providerHostPortPair.getLeft(),
+            Url providerUrl = Url.providerUrl(ProtocolConstants.PROTOCOL_VAL_LUIX, providerHostPortPair.getLeft(),
                     providerHostPortPair.getRight(), interfaceName, form, version);
             directProviderUrls.add(providerUrl);
         }

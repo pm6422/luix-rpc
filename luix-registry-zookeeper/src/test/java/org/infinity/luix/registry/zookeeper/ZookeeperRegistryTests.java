@@ -22,7 +22,7 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.util.*;
 
-import static org.infinity.luix.core.constant.ProtocolConstants.PROTOCOL_VAL_V1;
+import static org.infinity.luix.core.constant.ProtocolConstants.PROTOCOL_VAL_LUIX;
 import static org.infinity.luix.core.constant.RegistryConstants.REGISTRY_VAL_ZOOKEEPER;
 import static org.infinity.luix.registry.zookeeper.utils.ZookeeperUtils.FULL_PATH_COMMAND;
 import static org.junit.Assert.*;
@@ -48,9 +48,9 @@ public class ZookeeperRegistryTests {
         in.close();
 
         registryUrl = Url.registryUrl(REGISTRY_VAL_ZOOKEEPER, REGISTRY_HOST, zkPort);
-        consumerUrl = Url.consumerUrl(PROTOCOL_VAL_V1, AddressUtils.LOCALHOST, 3000, provider);
-        providerUrl1 = Url.providerUrl(PROTOCOL_VAL_V1, AddressUtils.LOCALHOST, 2000, provider);
-        providerUrl2 = Url.providerUrl(PROTOCOL_VAL_V1, "192.168.100.100", 2000, provider);
+        consumerUrl = Url.consumerUrl(PROTOCOL_VAL_LUIX, AddressUtils.LOCALHOST, 3000, provider);
+        providerUrl1 = Url.providerUrl(PROTOCOL_VAL_LUIX, AddressUtils.LOCALHOST, 2000, provider);
+        providerUrl2 = Url.providerUrl(PROTOCOL_VAL_LUIX, "192.168.100.100", 2000, provider);
 
         zookeeper = new EmbeddedZookeeper();
         zookeeper.start();
