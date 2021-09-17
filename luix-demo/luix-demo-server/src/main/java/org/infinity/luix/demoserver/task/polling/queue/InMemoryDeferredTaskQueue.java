@@ -14,7 +14,7 @@ import java.util.concurrent.BlockingQueue;
 public abstract class InMemoryDeferredTaskQueue {
     private static final int                      QUEUE_SIZE = 100000;
     /**
-     * Bounded blocking queue, and the size is specified by the parameters of the constructor.
+     * Bounded blocking queue, and the size is specified by the argument value of the constructor.
      * There is only one ReentrantLock object in ArrayBlockingQueue. Both reading and writing need to obtain locks,
      * which means that producing and consuming cannot run in parallel.
      * When the queue is full, trying to put an element in the queue will cause the operation to block,
