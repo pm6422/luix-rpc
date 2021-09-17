@@ -34,7 +34,6 @@ public class ConsumeMessageTask implements ApplicationRunner {
                 if (asyncTask == null) {
                     continue;
                 }
-
                 // Get message from distributed queue
                 Message message = DistributedMessageQueue.get(asyncTask.getId());
                 if (message != null) {
