@@ -27,6 +27,7 @@ public abstract class InMemoryDeferredTaskQueue {
      * @return returning true upon success and false if no space is currently available
      */
     public static boolean offer(String id, DeferredResult<ResponseEntity<String>> deferredResult) {
+        log.info("InMemory deferred task queue remaining capacity: [{}]", QUEUE.remainingCapacity());
         return QUEUE.offer(AsyncTask.builder().id(id).deferredResult(deferredResult).build());
     }
 
