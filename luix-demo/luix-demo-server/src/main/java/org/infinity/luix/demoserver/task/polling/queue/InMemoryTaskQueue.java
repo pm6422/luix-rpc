@@ -10,7 +10,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 @Slf4j
 @Component
-public class TaskQueue {
+public class InMemoryTaskQueue {
     private static final int                 QUEUE_LENGTH = 10;
     private final        BlockingQueue<Task> queue        = new LinkedBlockingDeque<>(QUEUE_LENGTH);
 

@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.demoserver.service.AsyncTaskService;
 import org.infinity.luix.demoserver.task.polling.queue.Message;
-import org.infinity.luix.demoserver.task.polling.queue.TaskQueue;
+import org.infinity.luix.demoserver.task.polling.queue.InMemoryTaskQueue;
 import org.infinity.luix.utilities.id.IdGenerator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +21,9 @@ import java.util.concurrent.Callable;
 public class AsyncController {
 
     @Resource
-    private AsyncTaskService asyncTaskService;
+    private AsyncTaskService  asyncTaskService;
     @Resource
-    private TaskQueue        taskQueue;
+    private InMemoryTaskQueue inMemoryTaskQueue;
 
     @ApiOperation("blocking response")
     @GetMapping("/api/async/blocking-response")
@@ -82,7 +82,7 @@ public class AsyncController {
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(t.getMessage())));
 
         String msgId = IdGenerator.generateUniqueId();
-        taskQueue.put(msgId, deferredResult);
+        inMemoryTaskQueue.put(msgId, deferredResult);
         asyncTaskService.sendMessage(Message.builder().id(msgId).data(String.valueOf(IdGenerator.generateShortId())).build());
 
 //        CompletableFuture

@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.demoserver.task.polling.queue.Message;
 import org.infinity.luix.demoserver.task.polling.queue.MessageQueue;
 import org.infinity.luix.demoserver.task.polling.queue.Task;
-import org.infinity.luix.demoserver.task.polling.queue.TaskQueue;
+import org.infinity.luix.demoserver.task.polling.queue.InMemoryTaskQueue;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 public class ConsumeQueueTask implements ApplicationRunner {
 
     @Resource
-    private TaskQueue taskQueue;
+    private InMemoryTaskQueue inMemoryTaskQueue;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -33,8 +33,8 @@ public class ConsumeQueueTask implements ApplicationRunner {
         while (true) {
             try {
                 Task task;
-                synchronized (taskQueue) {
-                    task = taskQueue.take();
+                synchronized (inMemoryTaskQueue) {
+                    task = inMemoryTaskQueue.take();
                 }
                 if (task == null) {
                     continue;
@@ -47,7 +47,7 @@ public class ConsumeQueueTask implements ApplicationRunner {
                     task.getDeferredResult().setResult(response);
                 } else {
                     // 检索不到结果，则重新放入任务队列中
-                    taskQueue.put(task);
+                    inMemoryTaskQueue.put(task);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
