@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class ConsumeQueueTask implements ApplicationRunner {
+public class ConsumeMessageTask implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
