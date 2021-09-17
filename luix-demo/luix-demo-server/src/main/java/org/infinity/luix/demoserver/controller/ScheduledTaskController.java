@@ -11,7 +11,7 @@ import org.infinity.luix.demoserver.domain.ScheduledTask;
 import org.infinity.luix.demoserver.service.ScheduledTaskService;
 import org.infinity.luix.demoserver.exception.NoDataFoundException;
 import org.infinity.luix.demoserver.repository.ScheduledTaskRepository;
-import org.infinity.luix.demoserver.task.TaskExecutable;
+import org.infinity.luix.demoserver.task.schedule.TaskExecutable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

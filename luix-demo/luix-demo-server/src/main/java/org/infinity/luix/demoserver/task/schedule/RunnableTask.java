@@ -1,4 +1,4 @@
-package org.infinity.luix.demoserver.task;
+package org.infinity.luix.demoserver.task.schedule;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

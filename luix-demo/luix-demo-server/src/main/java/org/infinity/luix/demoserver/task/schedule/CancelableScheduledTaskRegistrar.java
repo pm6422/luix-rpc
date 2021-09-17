@@ -1,4 +1,4 @@
-package org.infinity.luix.demoserver.task;
+package org.infinity.luix.demoserver.task.schedule;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
