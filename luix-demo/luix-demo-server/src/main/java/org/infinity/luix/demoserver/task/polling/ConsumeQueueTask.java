@@ -32,6 +32,7 @@ public class ConsumeQueueTask implements ApplicationRunner {
                     continue;
                 }
 
+                // Get message from distributed queue
                 Message message = DistributedMessageQueue.get(asyncTask.getId());
                 if (message != null) {
                     // Set value to DeferredResult to complete the HTTP response if the message was found in Redis
