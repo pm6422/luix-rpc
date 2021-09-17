@@ -83,6 +83,7 @@ public class AsyncController {
         // Put task in memory queue
         boolean hasCapacity = InMemoryDeferredTaskQueue.offer(msgId, deferredResult);
         if (!hasCapacity) {
+            // If the ArrayBlockingQueue is full
             deferredResult.setErrorResult(
                     ResponseEntity.status(HttpStatus.FORBIDDEN).body("Server is busy!"));
         } else {
