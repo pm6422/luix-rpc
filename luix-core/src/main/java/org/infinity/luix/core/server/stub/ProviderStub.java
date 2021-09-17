@@ -193,15 +193,15 @@ public class ProviderStub<T> {
     /**
      * The provider url
      */
-    private           Url               url;
+    private           Url                       url;
     /**
      * Used to expose the provider to registry
      */
-    private transient ProviderExposable exposer;
+    private transient ProviderExposable         exposer;
     /**
      * Indicates whether the provider were exposed to registry
      */
-    private final     AtomicBoolean     exposed      = new AtomicBoolean(false);
+    private final     AtomicBoolean             exposed      = new AtomicBoolean(false);
     /**
      * Application configuration
      */
