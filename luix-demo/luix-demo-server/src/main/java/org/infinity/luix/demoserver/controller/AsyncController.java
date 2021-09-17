@@ -71,7 +71,7 @@ public class AsyncController {
     public DeferredResult<ResponseEntity<String>> sendMessage() {
         log.info("Request received");
         DeferredResult<ResponseEntity<String>> deferredResult = new DeferredResult<>(5000L);
-        handleError(deferredResult);
+        handleAsyncError(deferredResult);
 
         String msgId = IdGenerator.generateUniqueId();
         // Put task in memory queue
@@ -88,7 +88,7 @@ public class AsyncController {
         return deferredResult;
     }
 
-    private void handleError(DeferredResult<ResponseEntity<String>> deferredResult) {
+    private void handleAsyncError(DeferredResult<ResponseEntity<String>> deferredResult) {
         // Handle timeout
         deferredResult.onTimeout(() ->
                 deferredResult.setErrorResult(
