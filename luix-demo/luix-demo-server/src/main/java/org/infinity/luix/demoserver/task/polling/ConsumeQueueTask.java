@@ -12,6 +12,11 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+/**
+ * Refer to
+ * https://blog.csdn.net/m0_37595562/article/details/81013909
+ * https://filia-aleks.medium.com/microservice-performance-battle-spring-mvc-vs-webflux-80d39fd81bf0
+ */
 @Slf4j
 @Component
 public class ConsumeQueueTask implements ApplicationRunner {
