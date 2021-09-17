@@ -82,7 +82,8 @@ public class AsyncController {
                     ResponseEntity.status(HttpStatus.FORBIDDEN).body("Server is busy!"));
         } else {
             // Send message asynchronously
-            asyncTaskService.sendMessage(Message.builder().id(msgId).data(String.valueOf(IdGenerator.generateShortId())).build());
+            Message message = Message.builder().id(msgId).data(String.valueOf(IdGenerator.generateShortId())).build();
+            asyncTaskService.sendMessage(message);
         }
         return deferredResult;
     }
