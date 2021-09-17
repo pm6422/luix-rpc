@@ -88,9 +88,6 @@ public class AsyncController {
         } else {
             // Send message asynchronously
             asyncTaskService.sendMessage(Message.builder().id(msgId).data(String.valueOf(IdGenerator.generateShortId())).build());
-//        CompletableFuture
-//                .supplyAsync(this::execute)
-//                .whenCompleteAsync((result, throwable) -> deferredResult.setResult(ResponseEntity.ok(result)));
         }
         return deferredResult;
     }
