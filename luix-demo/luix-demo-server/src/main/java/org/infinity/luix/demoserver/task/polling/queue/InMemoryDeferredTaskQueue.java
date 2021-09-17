@@ -7,9 +7,12 @@ import org.springframework.web.context.request.async.DeferredResult;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * An in-memory queue used to store {@link org.springframework.web.context.request.async.DeferredResult}
+ */
 @Slf4j
 public abstract class InMemoryDeferredTaskQueue {
-    private static final int                      QUEUE_LENGTH = 100000;
+    private static final int                      QUEUE_SIZE = 100000;
     /**
      * Bounded blocking queue, and the size is specified by the parameters of the constructor.
      * There is only one ReentrantLock object in ArrayBlockingQueue. Both reading and writing need to obtain locks,
@@ -17,7 +20,7 @@ public abstract class InMemoryDeferredTaskQueue {
      * When the queue is full, trying to put an element in the queue will cause the operation to block,
      * and trying to get an element from an empty queue will also block.
      */
-    private static final BlockingQueue<AsyncTask> QUEUE        = new ArrayBlockingQueue<>(QUEUE_LENGTH);
+    private static final BlockingQueue<AsyncTask> QUEUE      = new ArrayBlockingQueue<>(QUEUE_SIZE);
 
     /**
      * Inserts the specified element into this queue

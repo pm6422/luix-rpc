@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 /**
+ * Indefinite iteration polling from {@link org.infinity.luix.demoserver.task.polling.queue.InMemoryDeferredTaskQueue}
+ * used to set result to {@link org.springframework.web.context.request.async.DeferredResult} if there are completed async task
+ * <p>
  * Refer to
  * https://blog.csdn.net/m0_37595562/article/details/81013909
  * https://filia-aleks.medium.com/microservice-performance-battle-spring-mvc-vs-webflux-80d39fd81bf0

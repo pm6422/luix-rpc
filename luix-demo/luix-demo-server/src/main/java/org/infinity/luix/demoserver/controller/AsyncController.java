@@ -68,7 +68,7 @@ public class AsyncController {
      */
     @ApiOperation("deferred result")
     @GetMapping("/api/async/deferred-result")
-    public DeferredResult<ResponseEntity<String>> deferredResult() {
+    public DeferredResult<ResponseEntity<String>> sendMessage() {
         log.info("Request received");
         DeferredResult<ResponseEntity<String>> deferredResult = new DeferredResult<>(5000L);
         // Handle timeout
