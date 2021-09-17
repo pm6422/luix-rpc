@@ -2,18 +2,24 @@ package org.infinity.luix.demoserver.controller;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.luix.demoserver.service.AsyncTaskService;
 import org.infinity.luix.demoserver.utils.TraceIdUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 
+import javax.annotation.Resource;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @Slf4j
 public class AsyncController {
+
+    @Resource
+    private AsyncTaskService asyncTaskService;
 
     @ApiOperation("blocking response")
     @GetMapping("/api/async/blocking-response")
@@ -60,12 +66,21 @@ public class AsyncController {
      */
     @ApiOperation("deferred result")
     @GetMapping("/api/async/deferred-result")
-    public DeferredResult<String> deferredResult() {
+    public DeferredResult<ResponseEntity<String>> deferredResult() {
         log.info("Request received");
-        DeferredResult<String> deferredResult = new DeferredResult<>();
-        CompletableFuture
-                .supplyAsync(this::execute)
-                .whenCompleteAsync((result, throwable) -> deferredResult.setResult(result));
+        DeferredResult<ResponseEntity<String>> deferredResult = new DeferredResult<>(5500L);
+        asyncTaskService.execute(deferredResult);
+        // Handle timeout
+        deferredResult.onTimeout(() ->
+                deferredResult.setErrorResult(
+                        ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body("Request timeout!")));
+        // Handle error
+        deferredResult.onError((Throwable t) -> deferredResult.setErrorResult(
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(t.getMessage())));
+
+//        CompletableFuture
+//                .supplyAsync(this::execute)
+//                .whenCompleteAsync((result, throwable) -> deferredResult.setResult(ResponseEntity.ok(result)));
         log.info("Servlet thread released");
         return deferredResult;
     }
