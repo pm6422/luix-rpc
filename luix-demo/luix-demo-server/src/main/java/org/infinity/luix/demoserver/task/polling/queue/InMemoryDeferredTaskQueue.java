@@ -9,7 +9,7 @@ import java.util.concurrent.BlockingQueue;
 
 @Slf4j
 public abstract class InMemoryDeferredTaskQueue {
-    private static final int                      QUEUE_LENGTH = 5000;
+    private static final int                      QUEUE_LENGTH = 100000;
     /**
      * 有界阻塞队列。数组结构固定大小的阻塞队列，大小由构造函数的参数指定
      * ArrayBlockingQueue中只有一个ReentrantLock对象，读和写都需要获取锁，这意味着生产者和消费者无法并行运行。
