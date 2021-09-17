@@ -1,7 +1,7 @@
 package org.infinity.luix.demoserver.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.demoserver.service.AsyncTaskService;
+import org.infinity.luix.demoserver.service.AsyncTaskTestService;
 import org.infinity.luix.demoserver.task.polling.queue.DistributedMessageQueue;
 import org.infinity.luix.demoserver.task.polling.queue.Message;
 import org.infinity.luix.demoserver.utils.TraceIdUtils;
@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-public class AsyncTaskServiceImpl implements AsyncTaskService {
+public class AsyncTaskTestServiceImpl implements AsyncTaskTestService {
 
     @Override
     public String sendMessage() {
