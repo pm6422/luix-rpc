@@ -113,7 +113,8 @@ public class RpcProviderController {
     private UniversalInvocationHandler createBuildInInvocationHandler(String registryIdentity, Url providerUrl) {
         ConsumerStub<?> consumerStub = ConsumerStubFactory.create(
                 infinityProperties.getApplication(), rpcRegistryService.findRegistryConfig(registryIdentity),
-                infinityProperties.getAvailableProtocol(), providerUrl.getAddress(), providerUrl.getPath());
+                infinityProperties.getAvailableProtocol(), providerUrl.getAddress(), providerUrl.getPath(),
+                providerUrl.getForm(), providerUrl.getVersion());
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         return proxyFactory.createUniversalInvocationHandler(consumerStub);
     }

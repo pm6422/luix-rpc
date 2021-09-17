@@ -32,6 +32,18 @@ public abstract class ConsumerStubFactory {
     public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
                                          RegistryConfig registryConfig,
                                          ProtocolConfig protocolConfig,
+                                         String providerAddresses,
+                                         String interfaceName,
+                                         String form,
+                                         String version) {
+        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), providerAddresses, interfaceName,
+                null, null, form, version, null, null, null, null,
+                null, null, null);
+    }
+
+    public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
+                                         RegistryConfig registryConfig,
+                                         ProtocolConfig protocolConfig,
                                          String interfaceName,
                                          ProviderProcessable providerProcessor) {
         return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), null, interfaceName,
