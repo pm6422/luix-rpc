@@ -8,7 +8,6 @@
   "args": [
     {
       "name": "ROLE_TEST",
-      "systemLevel": false,
       "enabled": true
     }
   ]
