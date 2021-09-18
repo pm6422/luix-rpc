@@ -122,31 +122,42 @@
                                     </label>
                                     <div class="col-sm-11">
                                         <div class="input-group">
-                                            <select id="method" name="method" class="form-control" ng-model="vm.selectedMethod" required
+                                            <select id="method" name="method" class="form-control" ng-model="vm.selectedMethodSignature" required
                                                     ng-options="item.methodSignature as item.methodSignature for item in vm.methods"
                                                     ng-change="vm.selectMethod()">
                                                 <option value="">Select...</option>
                                             </select>
                                             <span class="input-group-btn">
-                                                <button type="button" class="btn btn-primary" ng-disabled="invocationForm.$invalid || vm.selectedMethod.indexOf('void') == -1 && !vm.args" ng-click="vm.invoke()">
+                                                <button type="button" class="btn btn-primary" ng-disabled="invocationForm.$invalid || vm.selectedMethodSignature.indexOf('void') == -1 && !vm.args" ng-click="vm.invoke()">
                                                     <span>Invoke</span>
                                                 </button>
                                             </span>
                                         </div>
-                                        <kbd ng-show="vm.selectedMethod">{{vm.entity.interfaceName}}.{{vm.selectedMethod}}</kbd>
+                                        <kbd ng-show="vm.selectedMethodSignature">{{vm.entity.interfaceName}}.{{vm.selectedMethodSignature}}</kbd>
                                     </div>
                                 </div>
-                                <div class="hr-line-dashed"></div>
-                                <div class="form-group">
-                                    <label class="col-sm-1 control-label">Arguments</label>
-                                    <div class="col-sm-11">
-                                        <textarea class="form-control" rows="5" style="resize:none" ng-model="vm.args" placeholder="{{vm.argsPlaceholder}}" ng-disabled="vm.argsDisabled"></textarea>
-                                        <p class="label label-primary">
-                                            <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
-                                            An array with JSON string format
-                                        </p>
+                                <div class="hr-line-dashed" ng-hide="vm.argsHidden"></div>
+                                <span ng-repeat="methodParamType in vm.selectedMethod.methodParamTypes track by $index" ng-hide="vm.argsHidden">
+                                    <div class="form-group">
+                                        <label class="col-sm-1 control-label">Argument[{{$index}}]</label>
+                                        <div class="col-sm-11">
+                                            <input type="number" class="form-control" ng-model="vm.args[$index]"
+                                                   ng-if="methodParamType == 'java.lang.Integer' || methodParamType == 'int'">
+                                            <p class="label label-primary" ng-if="methodParamType == 'java.lang.Integer' || methodParamType == 'int'">
+                                                {{methodParamType}}
+                                            </p>
+                                            <input type="text" class="form-control" ng-model="vm.args[$index]" ng-if="methodParamType == 'java.lang.String'">
+                                            <p class="label label-primary" ng-if="methodParamType == 'java.lang.String'">
+                                                {{methodParamType}}
+                                            </p>
+                                            <textarea class="form-control" rows="3" style="resize:none" ng-model="vm.args[$index]" placeholder="{}"
+                                                      ng-if="methodParamType != 'java.lang.String' && methodParamType != 'java.lang.Integer' && methodParamType != 'int'"></textarea>
+                                            <p class="label label-primary" ng-if="methodParamType != 'java.lang.String' && methodParamType != 'java.lang.Integer' && methodParamType != 'int'">
+                                                JSON string format for [{{methodParamType}}]
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
+                                </span>
                                 <div class="hr-line-dashed"></div>
                                 <div class="form-group">
                                     <label class="col-sm-1 control-label">Result</label>

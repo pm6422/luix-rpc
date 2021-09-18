@@ -1771,16 +1771,13 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
     vm.grandfatherPageTitle = $state.$current.parent.parent.data.pageTitle;
     vm.entity = entity;
-    vm.argsDisabled = true;
+    vm.argsHidden = true;
     vm.checkProgress = 0;
     if(vm.entity.active) {
         vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url});
     }
     vm.options = RpcProviderService.queryOptions({providerUrl: vm.entity.url});
 
-    vm.argsPlaceholder = '[\n' +
-        '    {}\n' +
-        ']';
     vm.selectMethod = selectMethod;
     vm.invoke = invoke;
     vm.checkHealth = checkHealth;
@@ -1790,6 +1787,8 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     vm.saveOptions = saveOptions;
     vm.loadTasks = loadTasks;
     vm.selectTab = selectTab;
+    vm.selectedMethodSignature = null;
+    vm.selectedMethod = null;
 
     if('invocation' == $stateParams.tab) {
         vm.tabInvocation = true;
@@ -1816,31 +1815,32 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     }
 
     function selectMethod() {
-        if(!vm.selectedMethod) {
-            vm.argsDisabled = true;
+        if(!vm.selectedMethodSignature) {
+            vm.argsHidden = true;
             return;
         }
 
-        var filteredMethods = _.filter(vm.methods, function(m){ return m.methodSignature == vm.selectedMethod; });
+        var filteredMethods = _.filter(vm.methods, function(m){ return m.methodSignature == vm.selectedMethodSignature; });
         if(!_.isEmpty(filteredMethods)) {
-            var methodInvocation = filteredMethods[0];
-            if(_.isEmpty(methodInvocation.methodParamTypes)) {
-                vm.argsDisabled = true;
+            vm.selectedMethod = filteredMethods[0];
+            if(_.isEmpty(vm.selectedMethod.methodParamTypes)) {
+                vm.argsHidden = true;
             } else {
-                vm.argsDisabled = false;
+                vm.argsHidden = false;
             }
         }
     }
 
     function invoke() {
-        var filteredMethods = _.filter(vm.methods, function(m){ return m.methodSignature == vm.selectedMethod; });
-        if(!_.isEmpty(filteredMethods)) {
-            var methodInvocation = filteredMethods[0];
-            methodInvocation.registryIdentity = $rootScope.selectedRegistryIdentity;
-            methodInvocation.providerUrl = vm.entity.url;
-            methodInvocation.args = angular.fromJson(vm.args);
+        if(vm.selectedMethod) {
+            vm.selectedMethod.registryIdentity = $rootScope.selectedRegistryIdentity;
+            vm.selectedMethod.providerUrl = vm.entity.url;
+            vm.selectedMethod.args = [];
+            angular.forEach(vm.args, function (val) {
+                vm.selectedMethod.args.push(val);
+            });
 
-            $http.post('api/rpc-invocations/invoke', methodInvocation).then(function(response) {
+            $http.post('api/rpc-invocations/invoke', vm.selectedMethod).then(function(response) {
                 vm.result = response.data;
                 vm.elasped = response.headers('X-ELAPSED')
             });
@@ -1954,9 +1954,9 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
     }
 
     if(_.isEmpty(vm.entity.methodParamTypes)) {
-        vm.argsDisabled = true;
+        vm.argsHidden = true;
     } else {
-        vm.argsDisabled = false;
+        vm.argsHidden = false;
     }
 
     vm.argsPlaceholder = '[\n' +
@@ -1978,7 +1978,7 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
 
     function selectMethod() {
         if(!vm.entity.methodSignature) {
-            vm.argsDisabled = true;
+            vm.argsHidden = true;
             return;
         }
 
@@ -1986,9 +1986,9 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
         if(!_.isEmpty(filteredMethods)) {
             var methodInvocation = filteredMethods[0];
             if(_.isEmpty(methodInvocation.methodParamTypes)) {
-                vm.argsDisabled = true;
+                vm.argsHidden = true;
             } else {
-                vm.argsDisabled = false;
+                vm.argsHidden = false;
             }
         }
     }
