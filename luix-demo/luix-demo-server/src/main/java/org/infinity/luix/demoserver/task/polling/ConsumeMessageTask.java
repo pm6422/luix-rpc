@@ -37,11 +37,11 @@ public class ConsumeMessageTask implements ApplicationRunner {
                 // Get message from distributed queue
                 Message message = DistributedMessageQueue.get(asyncTask.getId());
                 if (message != null) {
-                    // Set value to DeferredResult to complete the HTTP response if the message was found in Redis
+                    // Set value to DeferredResult to complete the HTTP response if the specified message was found in Redis
                     ResponseEntity<String> response = ResponseEntity.ok(message.getData());
                     asyncTask.getDeferredResult().setResult(response);
                 } else {
-                    // Re-put in memory task queue if the message can NOT be found in Redis
+                    // Re-put in memory task queue if the specified message can NOT be found in Redis
                     InMemoryAsyncTaskQueue.offer(asyncTask);
                 }
             } catch (Exception e) {
