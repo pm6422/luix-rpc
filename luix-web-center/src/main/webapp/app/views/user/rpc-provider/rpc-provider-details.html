@@ -141,23 +141,17 @@
                                     <div class="form-group">
                                         <label class="col-sm-1 control-label">Argument[{{$index}}]</label>
                                         <div class="col-sm-11">
-                                            <span ng-if="methodParamType == 'java.lang.Integer' || methodParamType == 'int'">
+                                            <span ng-if="vm.selectedMethod.methodParamCategories[$index] == 'number'">
                                                 <input type="number" class="form-control" ng-model="vm.args[$index]">
-                                                <p class="label label-primary">
-                                                    {{methodParamType}}
-                                                </p>
+                                                <kbd>{{methodParamType}}</kbd>
                                             </span>
-                                            <span ng-if="methodParamType == 'java.lang.String'">
+                                            <span ng-if="vm.selectedMethod.methodParamCategories[$index] == 'string'">
                                                 <input type="text" class="form-control" ng-model="vm.args[$index]">
-                                                <p class="label label-primary">
-                                                    {{methodParamType}}
-                                                </p>
+                                                <kbd>{{methodParamType}}</kbd>
                                             </span>
-                                            <span ng-if="methodParamType != 'java.lang.String' && methodParamType != 'java.lang.Integer' && methodParamType != 'int'">
+                                            <span ng-if="vm.selectedMethod.methodParamCategories[$index] == 'object'">
                                                 <textarea class="form-control" rows="3" style="resize:none" ng-model="vm.args[$index]" placeholder="{}"></textarea>
-                                                <p class="label label-primary">
-                                                    JSON string format for [{{methodParamType}}]
-                                                </p>
+                                                <kbd>JSON string format for [{{methodParamType}}]</kbd>
                                             </span>
                                         </div>
                                     </div>
