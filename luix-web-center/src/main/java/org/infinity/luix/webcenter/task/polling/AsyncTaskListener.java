@@ -1,7 +1,6 @@
 package org.infinity.luix.webcenter.task.polling;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.webcenter.task.polling.queue.AsyncTask;
 import org.infinity.luix.webcenter.task.polling.queue.InMemoryAsyncTaskQueue;
 import org.infinity.luix.webcenter.task.polling.resulthandler.AsyncTaskResultHandler;
 import org.springframework.boot.ApplicationArguments;

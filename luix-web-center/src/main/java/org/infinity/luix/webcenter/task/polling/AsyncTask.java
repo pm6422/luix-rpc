@@ -1,4 +1,4 @@
-package org.infinity.luix.webcenter.task.polling.queue;
+package org.infinity.luix.webcenter.task.polling;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

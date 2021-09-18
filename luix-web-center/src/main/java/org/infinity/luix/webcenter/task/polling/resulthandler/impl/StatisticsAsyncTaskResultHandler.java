@@ -1,7 +1,7 @@
 package org.infinity.luix.webcenter.task.polling.resulthandler.impl;
 
 import org.infinity.luix.webcenter.dto.StatisticsDTO;
-import org.infinity.luix.webcenter.task.polling.queue.AsyncTask;
+import org.infinity.luix.webcenter.task.polling.AsyncTask;
 import org.infinity.luix.webcenter.task.polling.queue.InMemoryAsyncTaskQueue;
 import org.infinity.luix.webcenter.task.polling.queue.StatisticsResultQueue;
 import org.infinity.luix.webcenter.task.polling.resulthandler.AsyncTaskResultHandler;
