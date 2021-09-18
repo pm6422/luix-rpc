@@ -36,6 +36,8 @@ public class AsyncTaskListener implements ApplicationRunner {
             try {
                 AsyncTask<?> asyncTask = InMemoryAsyncTaskQueue.poll();
                 if (asyncTask == null) {
+                    // Sleep for a while in order to decrease CPU occupation
+                    Thread.sleep(100L);
                     continue;
                 }
                 Objects.requireNonNull(getResultHandler(asyncTask)).handleResult(asyncTask);
