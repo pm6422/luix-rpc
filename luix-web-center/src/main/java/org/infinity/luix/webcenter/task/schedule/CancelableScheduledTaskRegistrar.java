@@ -1,4 +1,4 @@
-package org.infinity.luix.webcenter.task;
+package org.infinity.luix.webcenter.task.schedule;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
