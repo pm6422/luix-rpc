@@ -4,7 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.webcenter.dto.StatisticsDTO;
-import org.infinity.luix.webcenter.service.StatisticsService;
+import org.infinity.luix.webcenter.service.RpcStatisticsService;
 import org.infinity.luix.webcenter.task.polling.queue.InMemoryAsyncTaskQueue;
 import org.infinity.luix.webcenter.utils.TraceIdUtils;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ import static org.springframework.http.HttpStatus.*;
 public class RpcStatisticsController {
 
     @Resource
-    private StatisticsService statisticsService;
+    private RpcStatisticsService rpcStatisticsService;
 
     @ApiOperation("get RPC statistics data")
     @GetMapping("api/rpc-statistics/data")
@@ -37,7 +37,7 @@ public class RpcStatisticsController {
             deferredResult.setErrorResult(ResponseEntity.status(FORBIDDEN).body("Server is busy!"));
         } else {
             // Execute asynchronously
-            statisticsService.getStatistics(TraceIdUtils.getTraceId());
+            rpcStatisticsService.getStatistics(TraceIdUtils.getTraceId());
         }
         return deferredResult;
     }

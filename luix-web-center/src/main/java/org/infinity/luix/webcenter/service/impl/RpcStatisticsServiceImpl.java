@@ -2,7 +2,7 @@ package org.infinity.luix.webcenter.service.impl;
 
 import org.infinity.luix.webcenter.dto.StatisticsDTO;
 import org.infinity.luix.webcenter.repository.*;
-import org.infinity.luix.webcenter.service.StatisticsService;
+import org.infinity.luix.webcenter.service.RpcStatisticsService;
 import org.infinity.luix.webcenter.task.polling.queue.StatisticsResultQueue;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 @Service
-public class StatisticsServiceImpl implements StatisticsService {
+public class RpcStatisticsServiceImpl implements RpcStatisticsService {
 
     @Resource
     private RpcApplicationRepository          rpcApplicationRepository;
