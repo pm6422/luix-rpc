@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 /**
- * Indefinite iteration polling from {@link InMemoryAsyncTaskQueue}
+ * Indefinite polling from {@link InMemoryAsyncTaskQueue}
  * used to set result to {@link org.springframework.web.context.request.async.DeferredResult} if there are completed async task
  * <p>
  * Refer to
