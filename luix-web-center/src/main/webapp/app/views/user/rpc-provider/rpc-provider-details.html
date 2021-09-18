@@ -141,20 +141,24 @@
                                     <div class="form-group">
                                         <label class="col-sm-1 control-label">Argument[{{$index}}]</label>
                                         <div class="col-sm-11">
-                                            <input type="number" class="form-control" ng-model="vm.args[$index]"
-                                                   ng-if="methodParamType == 'java.lang.Integer' || methodParamType == 'int'">
-                                            <p class="label label-primary" ng-if="methodParamType == 'java.lang.Integer' || methodParamType == 'int'">
-                                                {{methodParamType}}
-                                            </p>
-                                            <input type="text" class="form-control" ng-model="vm.args[$index]" ng-if="methodParamType == 'java.lang.String'">
-                                            <p class="label label-primary" ng-if="methodParamType == 'java.lang.String'">
-                                                {{methodParamType}}
-                                            </p>
-                                            <textarea class="form-control" rows="3" style="resize:none" ng-model="vm.args[$index]" placeholder="{}"
-                                                      ng-if="methodParamType != 'java.lang.String' && methodParamType != 'java.lang.Integer' && methodParamType != 'int'"></textarea>
-                                            <p class="label label-primary" ng-if="methodParamType != 'java.lang.String' && methodParamType != 'java.lang.Integer' && methodParamType != 'int'">
-                                                JSON string format for [{{methodParamType}}]
-                                            </p>
+                                            <span ng-if="methodParamType == 'java.lang.Integer' || methodParamType == 'int'">
+                                                <input type="number" class="form-control" ng-model="vm.args[$index]">
+                                                <p class="label label-primary">
+                                                    {{methodParamType}}
+                                                </p>
+                                            </span>
+                                            <span ng-if="methodParamType == 'java.lang.String'">
+                                                <input type="text" class="form-control" ng-model="vm.args[$index]">
+                                                <p class="label label-primary">
+                                                    {{methodParamType}}
+                                                </p>
+                                            </span>
+                                            <span ng-if="methodParamType != 'java.lang.String' && methodParamType != 'java.lang.Integer' && methodParamType != 'int'">
+                                                <textarea class="form-control" rows="3" style="resize:none" ng-model="vm.args[$index]" placeholder="{}"></textarea>
+                                                <p class="label label-primary">
+                                                    JSON string format for [{{methodParamType}}]
+                                                </p>
+                                            </span>
                                         </div>
                                     </div>
                                 </span>
