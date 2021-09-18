@@ -42,7 +42,7 @@ public class AsyncTaskListener implements ApplicationRunner {
                 AsyncTaskResultHandler asyncTaskResultHandler = applicationContext.getBean(
                         asyncTask.getName().concat(AsyncTaskResultHandler.class.getSimpleName()),
                         AsyncTaskResultHandler.class);
-                Objects.requireNonNull(asyncTaskResultHandler).handle(asyncTask);
+                Objects.requireNonNull(asyncTaskResultHandler).handleResult(asyncTask);
             } catch (Exception e) {
                 log.error("Failed to consume async task queue!", e);
             }

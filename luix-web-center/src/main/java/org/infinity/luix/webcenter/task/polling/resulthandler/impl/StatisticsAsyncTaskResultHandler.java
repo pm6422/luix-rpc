@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class StatisticsAsyncTaskResultHandler implements AsyncTaskResultHandler {
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public void handle(AsyncTask asyncTask) {
+    public void handleResult(AsyncTask asyncTask) {
         // Get message from distributed queue
         StatisticsDTO result = StatisticsResultQueue.get(asyncTask.getId());
         if (result != null) {

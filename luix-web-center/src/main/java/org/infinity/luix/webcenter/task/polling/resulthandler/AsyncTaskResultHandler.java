@@ -4,5 +4,5 @@ import org.infinity.luix.webcenter.task.polling.queue.AsyncTask;
 
 public interface AsyncTaskResultHandler {
 
-    void handle(AsyncTask<?> asyncTask);
+    void handleResult(AsyncTask<?> asyncTask);
 }
