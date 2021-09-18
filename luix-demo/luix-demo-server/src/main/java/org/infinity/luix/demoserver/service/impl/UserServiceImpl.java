@@ -36,7 +36,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findOneByMobile(int mobileNo) {
         log.info("mobileNo: {}", mobileNo);
-        return null;
+        User user = new User();
+        user.setUserName("dummy");
+        user.setMobileNo("" + mobileNo);
+        return user;
     }
 
     @Override
