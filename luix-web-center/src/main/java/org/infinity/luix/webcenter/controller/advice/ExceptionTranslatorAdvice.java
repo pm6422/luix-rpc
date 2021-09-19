@@ -59,7 +59,7 @@ public class ExceptionTranslatorAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     public ResponseEntity<ErrorDTO> processMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        log.warn("Found invalid request parameters: ", ex);
+        log.warn("Found invalid request arguments: ", ex);
         // Http status: 400
         return ResponseEntity.badRequest().body(processFieldErrors(ex.getBindingResult().getFieldErrors()));
     }

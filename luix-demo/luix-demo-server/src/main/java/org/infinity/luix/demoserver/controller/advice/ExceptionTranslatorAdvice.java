@@ -74,7 +74,7 @@ public class ExceptionTranslatorAdvice {
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseBody
     public ResponseEntity<ErrorDTO> processIllegalArgumentException(IllegalArgumentException ex) {
-        log.warn("Found invalid request parameters: ", ex);
+        log.warn("Found invalid request arguments: ", ex);
         // Http status: 400
         return ResponseEntity.badRequest().body(ErrorDTO.builder().code(INVALID_REQUEST_PARAM_CODE).message(ex.getMessage()).build());
     }
