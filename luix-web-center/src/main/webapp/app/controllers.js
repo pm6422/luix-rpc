@@ -1815,6 +1815,10 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     }
 
     function selectMethod() {
+        vm.result = undefined;
+        vm.elasped = undefined;
+        vm.args = [];
+
         if(!vm.selectedMethodSignature) {
             vm.argsHidden = true;
             return;
