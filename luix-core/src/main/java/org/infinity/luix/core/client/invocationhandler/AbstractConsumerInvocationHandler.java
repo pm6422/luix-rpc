@@ -64,9 +64,9 @@ public abstract class AbstractConsumerInvocationHandler<T> {
 
         // Validate arguments
         if (!MethodParameterUtils.VOID.equals(request.getMethodParameters())) {
-            Validate.isTrue(ArrayUtils.isNotEmpty(args), "Argument(s) must match the parameter(s)!");
+            Validate.isTrue(ArrayUtils.isNotEmpty(args), "The number of arguments must be the same as the number of parameters!");
         } else {
-            Validate.isTrue(ArrayUtils.isEmpty(args), "Argument(s) must match the parameter(s)!");
+            Validate.isTrue(ArrayUtils.isEmpty(args), "The number of arguments must be the same as the number of parameters!");
         }
     }
 
