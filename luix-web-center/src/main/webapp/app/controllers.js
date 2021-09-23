@@ -1840,7 +1840,7 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
             vm.selectedMethod.registryIdentity = $rootScope.selectedRegistryIdentity;
             vm.selectedMethod.providerUrl = vm.entity.url;
             vm.selectedMethod.args = [];
-            angular.forEach(vm.args, function (val) {
+            angular.forEach(vm.args, function (val, key) {
                 vm.selectedMethod.args.push(val);
             });
 

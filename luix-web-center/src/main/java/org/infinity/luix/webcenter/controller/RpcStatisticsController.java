@@ -27,7 +27,7 @@ public class RpcStatisticsController {
     @GetMapping("api/rpc-statistics/data")
     @Timed
     public DeferredResult<ResponseEntity<StatisticsDTO>> getStatistics() {
-        DeferredResult<ResponseEntity<StatisticsDTO>> deferredResult = new DeferredResult<>(2000L);
+        DeferredResult<ResponseEntity<StatisticsDTO>> deferredResult = new DeferredResult<>(30000L);
         handleAsyncError(deferredResult);
 
         // Put task in memory queue
