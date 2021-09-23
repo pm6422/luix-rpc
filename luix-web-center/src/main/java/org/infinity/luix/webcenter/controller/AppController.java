@@ -11,7 +11,7 @@ import org.infinity.luix.webcenter.service.AppService;
 import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
 import org.infinity.luix.webcenter.domain.AppAuthority;
 import org.infinity.luix.webcenter.domain.Authority;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -63,7 +63,7 @@ public class AppController {
     @GetMapping("/api/apps/{name}")
     @Secured({Authority.ADMIN})
     public ResponseEntity<App> findById(@ApiParam(value = "name", required = true) @PathVariable String name) {
-        App app = appRepository.findById(name).orElseThrow(() -> new NoDataFoundException(name));
+        App app = appRepository.findById(name).orElseThrow(() -> new DataNotFoundException(name));
         List<AppAuthority> appAuthorities = appAuthorityRepository.findByAppName(name);
         Set<String> authorities = appAuthorities.stream().map(AppAuthority::getAuthorityName).collect(Collectors.toSet());
         app.setAuthorities(authorities);
@@ -84,7 +84,7 @@ public class AppController {
     @Secured({Authority.ADMIN})
     public ResponseEntity<Void> delete(@ApiParam(value = "name", required = true) @PathVariable String name) {
         log.debug("REST request to delete app: {}", name);
-        appRepository.findById(name).orElseThrow(() -> new NoDataFoundException(name));
+        appRepository.findById(name).orElseThrow(() -> new DataNotFoundException(name));
         appRepository.deleteById(name);
         appAuthorityRepository.deleteByAppName(name);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", name)).build();

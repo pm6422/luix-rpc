@@ -3,7 +3,7 @@ package org.infinity.luix.webcenter.service.impl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.webcenter.domain.AdminMenu;
 import org.infinity.luix.webcenter.dto.AdminMenuTreeDTO;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.infinity.luix.webcenter.repository.AdminMenuRepository;
 import org.infinity.luix.webcenter.service.AdminMenuService;
 import org.infinity.luix.webcenter.service.AuthorityAdminMenuService;
@@ -138,7 +138,7 @@ public class AdminMenuServiceImpl implements AdminMenuService {
     }
 
     private void adjustSeq(String id, int moveIndex, BiFunction<LinkedList<AdminMenu>, AdminMenu, Boolean> func) {
-        AdminMenu current = adminMenuRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        AdminMenu current = adminMenuRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         List<AdminMenu> existingList = adminMenuRepository.findByAppNameAndLevelOrderBySequenceAsc(current.getAppName(), current.getLevel());
         if (CollectionUtils.isNotEmpty(existingList) && existingList.size() == 1) {
             return;

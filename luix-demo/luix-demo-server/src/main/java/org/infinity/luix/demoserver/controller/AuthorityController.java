@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.democommon.domain.Authority;
 import org.infinity.luix.demoserver.component.HttpHeaderCreator;
 import org.infinity.luix.demoserver.exception.DuplicationException;
-import org.infinity.luix.demoserver.exception.NoDataFoundException;
+import org.infinity.luix.demoserver.exception.DataNotFoundException;
 import org.infinity.luix.demoserver.repository.AuthorityRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,7 +59,7 @@ public class AuthorityController {
     @GetMapping("/api/authorities/{name}")
     public ResponseEntity<Authority> findById(
             @ApiParam(value = "authority name", required = true) @PathVariable String name) {
-        Authority domain = authorityRepository.findById(name).orElseThrow(() -> new NoDataFoundException(name));
+        Authority domain = authorityRepository.findById(name).orElseThrow(() -> new DataNotFoundException(name));
         return ResponseEntity.ok(domain);
     }
 
@@ -68,7 +68,7 @@ public class AuthorityController {
     public ResponseEntity<Void> update(
             @ApiParam(value = "new authority", required = true) @Valid @RequestBody Authority domain) {
         log.debug("REST request to update authority: {}", domain);
-        authorityRepository.findById(domain.getName()).orElseThrow(() -> new NoDataFoundException(domain.getName()));
+        authorityRepository.findById(domain.getName()).orElseThrow(() -> new DataNotFoundException(domain.getName()));
         authorityRepository.save(domain);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getName())).build();
     }
@@ -78,7 +78,7 @@ public class AuthorityController {
     public ResponseEntity<Void> delete(@ApiParam(value = "authority name", required = true) @PathVariable String name) {
         log.debug("REST request to delete authority: {}", name);
         if (!authorityRepository.existsById(name)) {
-            throw new NoDataFoundException(name);
+            throw new DataNotFoundException(name);
         }
         authorityRepository.deleteById(name);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", name)).build();

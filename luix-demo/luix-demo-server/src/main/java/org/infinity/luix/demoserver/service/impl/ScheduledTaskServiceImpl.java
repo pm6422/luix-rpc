@@ -6,7 +6,7 @@ import org.infinity.luix.demoserver.domain.ScheduledTask;
 import org.infinity.luix.demoserver.service.ScheduledTaskService;
 import org.infinity.luix.demoserver.task.schedule.CancelableScheduledTaskRegistrar;
 import org.infinity.luix.demoserver.task.schedule.RunnableTask;
-import org.infinity.luix.demoserver.exception.NoDataFoundException;
+import org.infinity.luix.demoserver.exception.DataNotFoundException;
 import org.infinity.luix.demoserver.repository.ScheduledTaskHistoryRepository;
 import org.infinity.luix.demoserver.repository.ScheduledTaskLockRepository;
 import org.infinity.luix.demoserver.repository.ScheduledTaskRepository;
@@ -64,7 +64,7 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService, Applicati
 
     @Override
     public void update(ScheduledTask domain) {
-        ScheduledTask existingOne = scheduledTaskRepository.findById(domain.getId()).orElseThrow(() -> new NoDataFoundException(domain.getId()));
+        ScheduledTask existingOne = scheduledTaskRepository.findById(domain.getId()).orElseThrow(() -> new DataNotFoundException(domain.getId()));
         if (Boolean.TRUE.equals(domain.getUseCronExpression())) {
             domain.setFixedInterval(null);
             domain.setFixedIntervalUnit(null);
@@ -88,7 +88,7 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService, Applicati
 
     @Override
     public void delete(String id) {
-        ScheduledTask existingOne = scheduledTaskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        ScheduledTask existingOne = scheduledTaskRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         scheduledTaskRepository.deleteById(id);
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
             removeTask(existingOne);
@@ -97,7 +97,7 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService, Applicati
 
     @Override
     public void startOrStop(String id) {
-        ScheduledTask existingOne = scheduledTaskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        ScheduledTask existingOne = scheduledTaskRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
             addTask(existingOne);
         } else {

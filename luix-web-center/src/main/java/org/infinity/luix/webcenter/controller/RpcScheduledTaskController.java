@@ -10,7 +10,7 @@ import org.apache.commons.lang3.Validate;
 import org.infinity.luix.webcenter.component.HttpHeaderCreator;
 import org.infinity.luix.webcenter.config.ApplicationConstants;
 import org.infinity.luix.webcenter.domain.RpcScheduledTask;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.infinity.luix.webcenter.repository.RpcScheduledTaskRepository;
 import org.infinity.luix.webcenter.service.RpcScheduledTaskService;
 import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
@@ -93,7 +93,7 @@ public class RpcScheduledTaskController {
     @GetMapping("/api/rpc-scheduled-tasks/{id}")
     @Timed
     public ResponseEntity<RpcScheduledTask> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
-        RpcScheduledTask task = rpcScheduledTaskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        RpcScheduledTask task = rpcScheduledTaskRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(task);
     }
 

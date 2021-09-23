@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.webcenter.component.HttpHeaderCreator;
 import org.infinity.luix.webcenter.domain.RpcService;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.infinity.luix.webcenter.repository.RpcServiceRepository;
 import org.infinity.luix.webcenter.service.RpcConsumerService;
 import org.infinity.luix.webcenter.service.RpcProviderService;
@@ -48,7 +48,7 @@ public class RpcServiceController {
     @GetMapping("/api/rpc-services/{id}")
     @Timed
     public ResponseEntity<RpcService> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
-        RpcService domain = rpcServiceRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        RpcService domain = rpcServiceRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         if (rpcProviderService.existsService(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
             domain.setProviding(true);
         }
@@ -66,7 +66,7 @@ public class RpcServiceController {
             @RequestParam(value = "registryIdentity") String registryIdentity,
             @ApiParam(value = "interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
         String id = DigestUtils.md5DigestAsHex((interfaceName + "@" + registryIdentity).getBytes());
-        RpcService domain = rpcServiceRepository.findById(id).orElseThrow(() -> new NoDataFoundException(interfaceName));
+        RpcService domain = rpcServiceRepository.findById(id).orElseThrow(() -> new DataNotFoundException(interfaceName));
         if (rpcProviderService.existsService(registryIdentity, domain.getInterfaceName(), true)) {
             domain.setProviding(true);
         }

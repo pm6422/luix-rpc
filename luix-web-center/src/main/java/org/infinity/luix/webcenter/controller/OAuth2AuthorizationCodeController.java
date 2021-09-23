@@ -8,7 +8,7 @@ import org.infinity.luix.webcenter.domain.MongoOAuth2AuthorizationCode;
 import org.infinity.luix.webcenter.repository.OAuth2AuthorizationCodeRepository;
 import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
 import org.infinity.luix.webcenter.domain.Authority;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,7 +57,7 @@ public class OAuth2AuthorizationCodeController {
     @Secured({Authority.ADMIN})
     public ResponseEntity<MongoOAuth2AuthorizationCode> findById(
             @ApiParam(value = "ID", required = true) @PathVariable String id) {
-        MongoOAuth2AuthorizationCode domain = oAuth2AuthorizationCodeRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        MongoOAuth2AuthorizationCode domain = oAuth2AuthorizationCodeRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(domain);
     }
 
@@ -66,7 +66,7 @@ public class OAuth2AuthorizationCodeController {
     @Secured(Authority.ADMIN)
     public ResponseEntity<Void> delete(@ApiParam(value = "ID", required = true) @PathVariable String id) {
         log.debug("REST request to delete oauth2 authorization code: {}", id);
-        oAuth2AuthorizationCodeRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        oAuth2AuthorizationCodeRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         oAuth2AuthorizationCodeRepository.deleteById(id);
         return ResponseEntity.ok()
                 .headers(httpHeaderCreator.createSuccessHeader("SM1003", id))

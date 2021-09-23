@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.client.annotation.RpcConsumer;
 import org.infinity.luix.democlient.component.HttpHeaderCreator;
-import org.infinity.luix.democlient.exception.NoDataFoundException;
+import org.infinity.luix.democlient.exception.DataNotFoundException;
 import org.infinity.luix.democommon.domain.Authority;
 import org.infinity.luix.democommon.service.AuthorityService;
 import org.springframework.data.domain.Page;
@@ -54,7 +54,7 @@ public class AuthorityController {
     @GetMapping("/api/authorities/{name}")
     public ResponseEntity<Authority> findById(
             @ApiParam(value = "authority name", required = true) @PathVariable String name) {
-        Authority authority = authorityService.findById(name).orElseThrow(() -> new NoDataFoundException(name));
+        Authority authority = authorityService.findById(name).orElseThrow(() -> new DataNotFoundException(name));
         return ResponseEntity.ok(authority);
     }
 
@@ -73,7 +73,7 @@ public class AuthorityController {
     @DeleteMapping("/api/authorities/{name}")
     public ResponseEntity<Void> delete(@ApiParam(value = "authority name", required = true) @PathVariable String name) {
         log.debug("REST request to delete authority: {}", name);
-        authorityService.findById(name).orElseThrow(() -> new NoDataFoundException(name));
+        authorityService.findById(name).orElseThrow(() -> new DataNotFoundException(name));
         authorityService.deleteById(name);
         return ResponseEntity.ok()
                 .headers(httpHeaderCreator.createSuccessHeader("SM1003", name)).build();

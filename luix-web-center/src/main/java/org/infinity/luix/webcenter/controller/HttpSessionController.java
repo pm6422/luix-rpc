@@ -9,7 +9,7 @@ import org.infinity.luix.webcenter.domain.HttpSession;
 import org.infinity.luix.webcenter.repository.HttpSessionRepository;
 import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
 import org.infinity.luix.webcenter.domain.Authority;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -47,7 +47,7 @@ public class HttpSessionController {
     @Secured({Authority.DEVELOPER})
     public ResponseEntity<Void> delete(@ApiParam(value = "ID", required = true) @PathVariable String id) {
         log.debug("REST request to delete http session: {}", id);
-        httpSessionRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        httpSessionRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         httpSessionRepository.deleteById(id);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", id)).build();
     }

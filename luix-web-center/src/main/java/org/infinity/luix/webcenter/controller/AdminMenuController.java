@@ -15,7 +15,7 @@ import org.infinity.luix.webcenter.service.AdminMenuService;
 import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
 import org.infinity.luix.webcenter.domain.Authority;
 import org.infinity.luix.webcenter.exception.DuplicationException;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -77,7 +77,7 @@ public class AdminMenuController {
     @GetMapping("/api/admin-menus/{id}")
     @Secured({Authority.ADMIN})
     public ResponseEntity<AdminMenu> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
-        AdminMenu domain = adminMenuRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        AdminMenu domain = adminMenuRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(domain);
     }
 
@@ -87,7 +87,7 @@ public class AdminMenuController {
     public ResponseEntity<Void> update(
             @ApiParam(value = "new admin menu", required = true) @Valid @RequestBody AdminMenu domain) {
         log.debug("REST request to update admin menu: {}", domain);
-        adminMenuRepository.findById(domain.getId()).orElseThrow(() -> new NoDataFoundException(domain.getId()));
+        adminMenuRepository.findById(domain.getId()).orElseThrow(() -> new DataNotFoundException(domain.getId()));
         adminMenuRepository.save(domain);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getCode())).build();
     }
@@ -97,7 +97,7 @@ public class AdminMenuController {
     @Secured({Authority.ADMIN})
     public ResponseEntity<Void> delete(@ApiParam(value = "ID", required = true) @PathVariable String id) {
         log.debug("REST request to delete admin menu: {}", id);
-        AdminMenu adminMenu = adminMenuRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        AdminMenu adminMenu = adminMenuRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         adminMenuRepository.deleteById(id);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", adminMenu.getCode())).build();
     }

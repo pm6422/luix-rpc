@@ -8,7 +8,7 @@ import org.infinity.luix.core.server.response.impl.RpcFutureResponse;
 import org.infinity.luix.core.server.response.impl.RpcResponse;
 import org.infinity.luix.democommon.domain.App;
 import org.infinity.luix.democommon.service.AppService;
-import org.infinity.luix.demoserver.exception.NoDataFoundException;
+import org.infinity.luix.demoserver.exception.DataNotFoundException;
 import org.infinity.luix.demoserver.repository.AppRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,7 +52,7 @@ public class AppService1Impl implements AppService {
             appRepository.save(app);
             log.debug("Updated app: {}", app);
             return app;
-        }).orElseThrow(() -> new NoDataFoundException(domain.getName()));
+        }).orElseThrow(() -> new DataNotFoundException(domain.getName()));
     }
 
     @Override

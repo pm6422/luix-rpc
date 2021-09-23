@@ -17,7 +17,7 @@ import org.infinity.luix.webcenter.dto.ResetKeyAndPasswordDTO;
 import org.infinity.luix.webcenter.dto.UserNameAndPasswordDTO;
 import org.infinity.luix.webcenter.event.LogoutEvent;
 import org.infinity.luix.webcenter.exception.NoAuthorityException;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.infinity.luix.webcenter.repository.UserAuthorityRepository;
 import org.infinity.luix.webcenter.repository.UserProfilePhotoRepository;
 import org.infinity.luix.webcenter.service.AuthorityService;
@@ -163,7 +163,7 @@ public class AccountController {
     @ApiOperation("activate the account according to the activation code")
     @GetMapping("/open-api/accounts/activate/{key:[0-9]+}")
     public void activateAccount(@ApiParam(value = "activation code", required = true) @PathVariable String key) {
-        userService.activateRegistration(key).orElseThrow(() -> new NoDataFoundException(key));
+        userService.activateRegistration(key).orElseThrow(() -> new DataNotFoundException(key));
     }
 
     @ApiOperation("retrieve a list of permission values")

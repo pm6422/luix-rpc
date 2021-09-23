@@ -9,7 +9,7 @@ import org.apache.commons.lang3.Validate;
 import org.infinity.luix.demoserver.component.HttpHeaderCreator;
 import org.infinity.luix.demoserver.domain.ScheduledTask;
 import org.infinity.luix.demoserver.service.ScheduledTaskService;
-import org.infinity.luix.demoserver.exception.NoDataFoundException;
+import org.infinity.luix.demoserver.exception.DataNotFoundException;
 import org.infinity.luix.demoserver.repository.ScheduledTaskRepository;
 import org.infinity.luix.demoserver.task.schedule.TaskExecutable;
 import org.springframework.context.ApplicationContext;
@@ -83,7 +83,7 @@ public class ScheduledTaskController {
     @ApiOperation("find scheduled task by id")
     @GetMapping("/api/scheduled-tasks/{id}")
     public ResponseEntity<ScheduledTask> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
-        ScheduledTask scheduledTask = scheduledTaskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        ScheduledTask scheduledTask = scheduledTaskRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(scheduledTask);
     }
 

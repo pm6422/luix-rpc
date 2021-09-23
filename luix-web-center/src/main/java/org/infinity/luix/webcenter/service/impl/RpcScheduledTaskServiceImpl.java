@@ -9,7 +9,7 @@ import org.infinity.luix.core.client.proxy.Proxy;
 import org.infinity.luix.spring.boot.config.InfinityProperties;
 import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.webcenter.domain.RpcScheduledTask;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.infinity.luix.webcenter.repository.RpcScheduledTaskHistoryRepository;
 import org.infinity.luix.webcenter.repository.RpcScheduledTaskLockRepository;
 import org.infinity.luix.webcenter.repository.RpcScheduledTaskRepository;
@@ -74,7 +74,7 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
 
     @Override
     public void update(RpcScheduledTask domain) {
-        RpcScheduledTask existingOne = rpcScheduledTaskRepository.findById(domain.getId()).orElseThrow(() -> new NoDataFoundException(domain.getId()));
+        RpcScheduledTask existingOne = rpcScheduledTaskRepository.findById(domain.getId()).orElseThrow(() -> new DataNotFoundException(domain.getId()));
         if (Boolean.TRUE.equals(domain.getUseCronExpression())) {
             domain.setFixedInterval(null);
             domain.setFixedIntervalUnit(null);
@@ -97,7 +97,7 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
 
     @Override
     public void delete(String id) {
-        RpcScheduledTask existingOne = rpcScheduledTaskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        RpcScheduledTask existingOne = rpcScheduledTaskRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         rpcScheduledTaskRepository.deleteById(id);
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
             removeTask(existingOne);
@@ -106,7 +106,7 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
 
     @Override
     public void startOrStop(String id) {
-        RpcScheduledTask existingOne = rpcScheduledTaskRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        RpcScheduledTask existingOne = rpcScheduledTaskRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         if (Boolean.TRUE.equals(existingOne.getEnabled())) {
             addTask(existingOne);
         } else {

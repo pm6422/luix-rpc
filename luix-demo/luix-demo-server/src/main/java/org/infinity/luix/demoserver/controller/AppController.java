@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.democommon.domain.App;
 import org.infinity.luix.democommon.service.AppService;
 import org.infinity.luix.demoserver.component.HttpHeaderCreator;
-import org.infinity.luix.demoserver.exception.NoDataFoundException;
+import org.infinity.luix.demoserver.exception.DataNotFoundException;
 import org.infinity.luix.demoserver.repository.AppRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -58,7 +58,7 @@ public class AppController {
     @ApiOperation("find application by name")
     @GetMapping("/api/apps/{name}")
     public ResponseEntity<App> findById(@ApiParam(value = "application name", required = true) @PathVariable String name) {
-        App app = appRepository.findById(name).orElseThrow(() -> new NoDataFoundException(name));
+        App app = appRepository.findById(name).orElseThrow(() -> new DataNotFoundException(name));
         return ResponseEntity.ok(app);
     }
 
@@ -75,7 +75,7 @@ public class AppController {
     public ResponseEntity<Void> delete(@ApiParam(value = "application name", required = true) @PathVariable String name) {
         log.debug("REST request to delete app: {}", name);
         if (!appRepository.existsById(name)) {
-            throw new NoDataFoundException(name);
+            throw new DataNotFoundException(name);
         }
         appRepository.deleteById(name);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", name)).build();

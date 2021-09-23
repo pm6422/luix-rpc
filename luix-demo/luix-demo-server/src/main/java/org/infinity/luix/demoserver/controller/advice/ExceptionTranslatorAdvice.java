@@ -9,7 +9,7 @@ import org.infinity.luix.demoserver.component.MessageCreator;
 import org.infinity.luix.demoserver.dto.ErrorDTO;
 import org.infinity.luix.demoserver.exception.DuplicationException;
 import org.infinity.luix.demoserver.exception.NoAuthorityException;
-import org.infinity.luix.demoserver.exception.NoDataFoundException;
+import org.infinity.luix.demoserver.exception.DataNotFoundException;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -152,9 +152,9 @@ public class ExceptionTranslatorAdvice {
         return ResponseEntity.badRequest().body(error);
     }
 
-    @ExceptionHandler(NoDataFoundException.class)
+    @ExceptionHandler(DataNotFoundException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> processNoDataFoundException(NoDataFoundException ex) {
+    public ResponseEntity<ErrorDTO> processNoDataFoundException(DataNotFoundException ex) {
         log.warn("No data found: ", ex);
         ErrorDTO error = ErrorDTO.builder().code(INVALID_REQUEST_PARAM_CODE).message(messageCreator.getMessage(NO_DATA_FOUND_CODE, ex.getId())).build();
         // Http status: 404

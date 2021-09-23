@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.webcenter.domain.App;
 import org.infinity.luix.webcenter.domain.AppAuthority;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.infinity.luix.webcenter.repository.AppAuthorityRepository;
 import org.infinity.luix.webcenter.repository.AppRepository;
 import org.infinity.luix.webcenter.service.AppService;
@@ -44,6 +44,6 @@ public class AppServiceImpl implements AppService {
                 appAuthorityRepository.deleteByAppName(app.getName());
             }
             return app;
-        }).orElseThrow(() -> new NoDataFoundException(domain.getName()));
+        }).orElseThrow(() -> new DataNotFoundException(domain.getName()));
     }
 }

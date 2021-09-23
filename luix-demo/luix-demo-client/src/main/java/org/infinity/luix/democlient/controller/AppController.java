@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.client.annotation.RpcConsumer;
 import org.infinity.luix.democlient.component.HttpHeaderCreator;
-import org.infinity.luix.democlient.exception.NoDataFoundException;
+import org.infinity.luix.democlient.exception.DataNotFoundException;
 import org.infinity.luix.democommon.domain.App;
 import org.infinity.luix.democommon.service.AppService;
 import org.springframework.data.domain.Page;
@@ -51,7 +51,7 @@ public class AppController {
     @ApiOperation("find application by name")
     @GetMapping("/api/apps/{name}")
     public ResponseEntity<App> findById(@ApiParam(value = "application name", required = true) @PathVariable String name) {
-        App app = appService.findById(name).orElseThrow(() -> new NoDataFoundException(name));
+        App app = appService.findById(name).orElseThrow(() -> new DataNotFoundException(name));
         return ResponseEntity.ok(app);
     }
 
@@ -68,7 +68,7 @@ public class AppController {
     @DeleteMapping("/api/apps/{name}")
     public ResponseEntity<Void> delete(@ApiParam(value = "application name", required = true) @PathVariable String name) {
         log.debug("REST request to delete app: {}", name);
-        appService.findById(name).orElseThrow(() -> new NoDataFoundException(name));
+        appService.findById(name).orElseThrow(() -> new DataNotFoundException(name));
         appService.deleteById(name);
         return ResponseEntity.ok()
                 .headers(httpHeaderCreator.createSuccessHeader("SM1003", name)).build();

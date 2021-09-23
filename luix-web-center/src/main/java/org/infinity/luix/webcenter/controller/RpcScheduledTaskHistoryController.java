@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.webcenter.config.ApplicationConstants;
 import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
 import org.infinity.luix.webcenter.domain.RpcScheduledTaskHistory;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.infinity.luix.webcenter.repository.RpcScheduledTaskHistoryRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -61,7 +61,7 @@ public class RpcScheduledTaskHistoryController {
     @GetMapping("/api/rpc-scheduled-task-histories/{id}")
     @Timed
     public ResponseEntity<RpcScheduledTaskHistory> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
-        RpcScheduledTaskHistory history = rpcScheduledTaskHistoryRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        RpcScheduledTaskHistory history = rpcScheduledTaskHistoryRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(history);
     }
 }

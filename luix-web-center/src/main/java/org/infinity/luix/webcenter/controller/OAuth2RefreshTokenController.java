@@ -8,7 +8,7 @@ import org.infinity.luix.webcenter.domain.MongoOAuth2RefreshToken;
 import org.infinity.luix.webcenter.repository.OAuth2RefreshTokenRepository;
 import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
 import org.infinity.luix.webcenter.domain.Authority;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -53,7 +53,7 @@ public class OAuth2RefreshTokenController {
     @Secured({Authority.ADMIN})
     public ResponseEntity<MongoOAuth2RefreshToken> findById(
             @ApiParam(value = "ID", required = true) @PathVariable String id) {
-        MongoOAuth2RefreshToken domain = oAuth2RefreshTokenRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        MongoOAuth2RefreshToken domain = oAuth2RefreshTokenRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(domain);
     }
 
@@ -62,7 +62,7 @@ public class OAuth2RefreshTokenController {
     @Secured(Authority.ADMIN)
     public ResponseEntity<Void> delete(@ApiParam(value = "ID", required = true) @PathVariable String id) {
         log.debug("REST request to delete oauth2 access token: {}", id);
-        oAuth2RefreshTokenRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        oAuth2RefreshTokenRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         oAuth2RefreshTokenRepository.deleteById(id);
         return ResponseEntity.ok()
                 .headers(httpHeaderCreator.createSuccessHeader("SM1003", id))

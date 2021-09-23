@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.demoserver.domain.ScheduledTaskHistory;
-import org.infinity.luix.demoserver.exception.NoDataFoundException;
+import org.infinity.luix.demoserver.exception.DataNotFoundException;
 import org.infinity.luix.demoserver.repository.ScheduledTaskHistoryRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -46,7 +46,7 @@ public class ScheduledTaskHistoryController {
     @ApiOperation("find task history by id")
     @GetMapping("/api/scheduled-task-histories/{id}")
     public ResponseEntity<ScheduledTaskHistory> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
-        ScheduledTaskHistory history = scheduledTaskHistoryRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        ScheduledTaskHistory history = scheduledTaskHistoryRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(history);
     }
 }

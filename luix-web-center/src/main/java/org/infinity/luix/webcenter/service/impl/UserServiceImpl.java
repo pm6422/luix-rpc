@@ -9,7 +9,7 @@ import org.infinity.luix.webcenter.domain.User;
 import org.infinity.luix.webcenter.domain.UserAuthority;
 import org.infinity.luix.webcenter.dto.UserNameAndPasswordDTO;
 import org.infinity.luix.webcenter.exception.DuplicationException;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.infinity.luix.webcenter.repository.UserAuthorityRepository;
 import org.infinity.luix.webcenter.repository.UserRepository;
 import org.infinity.luix.webcenter.service.UserService;
@@ -125,14 +125,14 @@ public class UserServiceImpl implements UserService {
                 log.debug("Updated user authorities");
             }
             return u;
-        }).orElseThrow(() -> new NoDataFoundException(user.getId()));
+        }).orElseThrow(() -> new DataNotFoundException(user.getId()));
     }
 
     @Override
     public User findOneByUserName(String userName) {
         Assert.hasText(userName, "it must not be null, empty, or blank");
         return userRepository.findOneByUserName(userName.toLowerCase(Locale.ENGLISH))
-                .orElseThrow(() -> new NoDataFoundException(userName));
+                .orElseThrow(() -> new DataNotFoundException(userName));
     }
 
     @Override
@@ -176,7 +176,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User requestPasswordReset(String email, String resetKey) {
         User user = userRepository.findOneByEmailAndActivatedIsTrue(email)
-                .orElseThrow(() -> new NoDataFoundException(messageCreator.getMessage("email")));
+                .orElseThrow(() -> new DataNotFoundException(messageCreator.getMessage("email")));
         user.setResetKey(RandomUtils.generateResetKey());
         user.setResetTime(Instant.now());
         userRepository.save(user);
@@ -188,7 +188,7 @@ public class UserServiceImpl implements UserService {
     public User completePasswordReset(String newRawPassword, String resetKey) {
         User user = userRepository.findOneByResetKey(resetKey)
                 .filter(u -> u.getResetTime().isAfter(Instant.now().minusSeconds(TimeUnit.DAYS.toSeconds(1))))
-                .orElseThrow(() -> new NoDataFoundException(messageCreator.getMessage("resetKey")));
+                .orElseThrow(() -> new DataNotFoundException(messageCreator.getMessage("resetKey")));
         user.setPasswordHash(passwordEncoder.encode(newRawPassword));
         user.setResetKey(null);
         user.setResetTime(null);

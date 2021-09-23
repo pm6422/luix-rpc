@@ -18,7 +18,7 @@ import org.infinity.luix.webcenter.domain.Authority;
 import org.infinity.luix.webcenter.domain.RpcProvider;
 import org.infinity.luix.webcenter.dto.OptionMetaDTO;
 import org.infinity.luix.webcenter.dto.OptionsDTO;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.infinity.luix.webcenter.repository.RpcProviderRepository;
 import org.infinity.luix.webcenter.service.RpcProviderService;
 import org.infinity.luix.webcenter.service.RpcRegistryService;
@@ -60,7 +60,7 @@ public class RpcProviderController {
     @GetMapping("/api/rpc-providers/{id}")
     @Timed
     public ResponseEntity<RpcProvider> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
-        RpcProvider domain = rpcProviderRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        RpcProvider domain = rpcProviderRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(domain);
     }
 

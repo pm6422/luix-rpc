@@ -9,7 +9,7 @@ import org.infinity.luix.webcenter.repository.OAuth2ApprovalRepository;
 import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
 import org.infinity.luix.webcenter.domain.Authority;
 import org.infinity.luix.webcenter.domain.MongoOAuth2Approval;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -64,7 +64,7 @@ public class OAuth2ApprovalController {
     @Secured({Authority.ADMIN})
     public ResponseEntity<MongoOAuth2Approval> findById(
             @ApiParam(value = "ID", required = true) @PathVariable String id) {
-        MongoOAuth2Approval domain = oAuth2ApprovalRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        MongoOAuth2Approval domain = oAuth2ApprovalRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(domain);
     }
 
@@ -73,7 +73,7 @@ public class OAuth2ApprovalController {
     @Secured(Authority.ADMIN)
     public ResponseEntity<Void> delete(@ApiParam(value = "ID", required = true) @PathVariable String id) {
         log.debug("REST request to delete oauth2 approval: {}", id);
-        oAuth2ApprovalRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        oAuth2ApprovalRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         oAuth2ApprovalRepository.deleteById(id);
         return ResponseEntity.ok()
                 .headers(httpHeaderCreator.createSuccessHeader("SM1003", id)).build();

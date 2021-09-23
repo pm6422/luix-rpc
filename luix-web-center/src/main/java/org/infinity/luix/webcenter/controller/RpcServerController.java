@@ -10,7 +10,7 @@ import org.infinity.luix.webcenter.service.RpcConsumerService;
 import org.infinity.luix.webcenter.service.RpcProviderService;
 import org.infinity.luix.webcenter.service.RpcServerService;
 import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
-import org.infinity.luix.webcenter.exception.NoDataFoundException;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.infinity.luix.webcenter.repository.RpcServerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,7 +40,7 @@ public class RpcServerController {
     @GetMapping("/api/rpc-servers/{id}")
     @Timed
     public ResponseEntity<RpcServer> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
-        RpcServer domain = rpcServerRepository.findById(id).orElseThrow(() -> new NoDataFoundException(id));
+        RpcServer domain = rpcServerRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         RpcServer rpcServer = rpcServerService.loadServer(domain.getRegistryIdentity(), domain.getAddress());
         rpcServer.setId(domain.getId());
         rpcServerRepository.save(rpcServer);
