@@ -35,6 +35,7 @@ public class AsyncTaskListener implements ApplicationRunner {
         while (true) {
             try {
                 AsyncTask<?> asyncTask = InMemoryAsyncTaskQueue.poll();
+                log.info("Polling async task from in-memory queue");
                 if (asyncTask == null) {
                     // Sleep for a while in order to decrease CPU occupation
                     Thread.sleep(100L);
@@ -42,7 +43,7 @@ public class AsyncTaskListener implements ApplicationRunner {
                 }
                 Objects.requireNonNull(getResultHandler(asyncTask)).handleResult(asyncTask);
             } catch (Exception e) {
-                log.error("Failed to consume async task queue!", e);
+                log.error("Failed to consume async task!", e);
             }
         }
     }
