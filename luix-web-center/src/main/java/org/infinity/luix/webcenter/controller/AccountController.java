@@ -16,8 +16,8 @@ import org.infinity.luix.webcenter.dto.ManagedUserDTO;
 import org.infinity.luix.webcenter.dto.ResetKeyAndPasswordDTO;
 import org.infinity.luix.webcenter.dto.UserNameAndPasswordDTO;
 import org.infinity.luix.webcenter.event.LogoutEvent;
-import org.infinity.luix.webcenter.exception.NoAuthorityException;
 import org.infinity.luix.webcenter.exception.DataNotFoundException;
+import org.infinity.luix.webcenter.exception.NoAuthorityException;
 import org.infinity.luix.webcenter.repository.UserAuthorityRepository;
 import org.infinity.luix.webcenter.repository.UserProfilePhotoRepository;
 import org.infinity.luix.webcenter.service.AuthorityService;
@@ -50,6 +50,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import static org.infinity.luix.webcenter.utils.NetworkUtils.getRequestUrl;
@@ -128,8 +129,11 @@ public class AccountController {
 
     @ApiOperation("retrieve the bound user based on the access token")
     @GetMapping("/open-api/accounts/user")
-    public ResponseEntity<Object> getTokenUser(HttpServletRequest request) {
-        String token = request.getHeader("authorization");
+    public Callable<ResponseEntity<Object>> getTokenUser(HttpServletRequest request) {
+        return () -> doGetTokenUser(request.getHeader("authorization"));
+    }
+
+    private ResponseEntity<Object> doGetTokenUser(String token) {
         if (token != null && token.toLowerCase().startsWith(OAuth2AccessToken.BEARER_TYPE.toLowerCase())) {
             OAuth2Authentication oAuth2Authentication = tokenStore.readAuthentication(StringUtils
                     .substringAfter(token.toLowerCase(), OAuth2AccessToken.BEARER_TYPE.toLowerCase()).trim());

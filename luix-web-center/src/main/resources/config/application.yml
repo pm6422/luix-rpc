@@ -74,7 +74,7 @@ spring:
         scheduling:
             thread-name-prefix: global-scheduling-
             pool:
-                size: 2
+                size: 10
     thymeleaf: #ThymeleafAutoConfiguration
         mode: HTML
     servlet:
