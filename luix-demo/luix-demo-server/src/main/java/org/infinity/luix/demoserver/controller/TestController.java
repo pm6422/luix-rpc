@@ -1,17 +1,20 @@
 package org.infinity.luix.demoserver.controller;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.democommon.service.AppService;
 import org.infinity.luix.demoserver.service.AsyncTaskTestService;
 import org.infinity.luix.demoserver.task.polling.queue.InMemoryAsyncTaskQueue;
 import org.infinity.luix.demoserver.task.polling.queue.Message;
+import org.infinity.luix.demoserver.utils.TraceIdUtils;
 import org.infinity.luix.spring.boot.config.InfinityProperties;
 import org.infinity.luix.utilities.id.IdGenerator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
@@ -90,22 +93,27 @@ public class TestController {
      * @return deferred result
      */
     @ApiOperation("deferred result")
-    @GetMapping("/api/tests/async/deferred-result")
-    public DeferredResult<ResponseEntity<String>> sendMessage() {
-        log.info("Request received");
+    @GetMapping("/api/tests/async/deferred-result/{valid}")
+    public DeferredResult<ResponseEntity<String>> sendMessage(@ApiParam(value = "valid", required = true) @PathVariable boolean valid) {
         DeferredResult<ResponseEntity<String>> deferredResult = new DeferredResult<>(5000L);
         handleAsyncError(deferredResult);
 
-        String msgId = IdGenerator.generateUniqueId();
+        if (!valid) {
+            throw new IllegalArgumentException("invalid");
+        }
+
         // Put task in memory queue
-        boolean hasCapacity = InMemoryAsyncTaskQueue.offer(msgId, deferredResult);
+        boolean hasCapacity = InMemoryAsyncTaskQueue.offer(TraceIdUtils.getTraceId(), deferredResult);
         if (!hasCapacity) {
             // If the ArrayBlockingQueue is full
             deferredResult.setErrorResult(
                     ResponseEntity.status(HttpStatus.FORBIDDEN).body("Server is busy!"));
         } else {
             // Send message asynchronously
-            Message message = Message.builder().id(msgId).data(String.valueOf(IdGenerator.generateShortId())).build();
+            Message message = Message.builder()
+                    .id(TraceIdUtils.getTraceId())
+                    .data(String.valueOf(IdGenerator.generateShortId()))
+                    .build();
             asyncTaskTestService.sendMessage(message);
         }
         return deferredResult;
