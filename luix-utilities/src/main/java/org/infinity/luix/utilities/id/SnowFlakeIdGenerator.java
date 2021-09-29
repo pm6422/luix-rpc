@@ -309,7 +309,7 @@ final class SnowFlakeIdGenerator {
         }
 
         /**
-         * The destroy of executor service
+         * The destruction of executor service
          */
         public void destroy() {
             if (executorService != null) {
