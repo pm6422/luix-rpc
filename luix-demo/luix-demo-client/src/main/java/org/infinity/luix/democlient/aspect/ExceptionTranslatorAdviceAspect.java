@@ -1,9 +1,9 @@
-package org.infinity.luix.demoserver.aspect;
+package org.infinity.luix.democlient.aspect;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.infinity.luix.demoserver.utils.TraceIdUtils;
+import org.infinity.luix.democlient.utils.TraceIdUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
