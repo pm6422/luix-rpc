@@ -51,11 +51,9 @@ public class RpcStatisticsServiceImpl implements RpcStatisticsService {
         futures.add(CompletableFuture.supplyAsync(rpcScheduledTaskRepository::count, asyncTaskExecutor));
         futures.add(CompletableFuture.supplyAsync(rpcScheduledTaskHistoryRepository::count, asyncTaskExecutor));
 
-        CompletableFuture<Void> allFutures = CompletableFuture.allOf(futures.toArray(new CompletableFuture[7]));
-        CompletableFuture<List<Long>> listCompletableFuture = allFutures
+        List<Long> results = CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]))
                 .thenApplyAsync(val -> futures.stream().map(CompletableFuture::join)
-                        .collect(Collectors.toList()), asyncTaskExecutor);
-        List<Long> results = listCompletableFuture.join();
+                        .collect(Collectors.toList()), asyncTaskExecutor).join();
 
         StatisticsDTO dto = StatisticsDTO.builder()
                 .applicationCount(results.get(0))
