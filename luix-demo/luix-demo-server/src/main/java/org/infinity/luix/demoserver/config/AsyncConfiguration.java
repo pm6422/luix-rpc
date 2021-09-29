@@ -56,7 +56,6 @@ public class AsyncConfiguration implements AsyncConfigurer, WebMvcConfigurer {
         taskScheduler.setRemoveOnCancelPolicy(true);
         taskScheduler.setErrorHandler(t -> log.error("Unexpected error occurred while executing scheduled task!", t));
         taskScheduler.setThreadNamePrefix(taskSchedulingProperties.getThreadNamePrefix());
-        taskScheduler.initialize();
         return taskScheduler;
     }
 

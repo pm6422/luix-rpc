@@ -49,7 +49,6 @@ public class AsyncConfiguration implements AsyncConfigurer {
 //        taskScheduler.setRemoveOnCancelPolicy(true);
 //        taskScheduler.setErrorHandler(t -> log.error("Unexpected error occurred in scheduled task.", t));
 //        taskScheduler.setBeanName(applicationProperties.getCache().getCachePrefix() + "thread");
-//        taskScheduler.initialize();
 //        return taskScheduler;
 //    }
 }
