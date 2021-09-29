@@ -72,6 +72,7 @@ public class AopLoggingAspect {
             // Set traceId to http response
             TraceIdUtils.setTraceId(response);
             afterRun(joinPoint, response, result);
+            TraceIdUtils.remove();
             return result;
         } catch (Exception e) {
             // Catch illegal argument exception and re-throw
