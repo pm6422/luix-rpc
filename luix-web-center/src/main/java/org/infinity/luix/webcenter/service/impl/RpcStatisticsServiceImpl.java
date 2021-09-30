@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -42,18 +42,16 @@ public class RpcStatisticsServiceImpl implements RpcStatisticsService {
     @Override
     @Async
     public void getStatistics(String taskId) {
-        List<CompletableFuture<Long>> futures = new ArrayList<>(7);
-        futures.add(CompletableFuture.supplyAsync(rpcApplicationRepository::count, asyncTaskExecutor));
-        futures.add(CompletableFuture.supplyAsync(rpcServerRepository::count, asyncTaskExecutor));
-        futures.add(CompletableFuture.supplyAsync(rpcServiceRepository::count, asyncTaskExecutor));
-        futures.add(CompletableFuture.supplyAsync(rpcProviderRepository::count, asyncTaskExecutor));
-        futures.add(CompletableFuture.supplyAsync(rpcConsumerRepository::count, asyncTaskExecutor));
-        futures.add(CompletableFuture.supplyAsync(rpcScheduledTaskRepository::count, asyncTaskExecutor));
-        futures.add(CompletableFuture.supplyAsync(rpcScheduledTaskHistoryRepository::count, asyncTaskExecutor));
-
-        List<Long> results = CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]))
-                .thenApplyAsync(val -> futures.stream().map(CompletableFuture::join)
-                        .collect(Collectors.toList()), asyncTaskExecutor).join();
+        List<CompletableFuture<Long>> futures = Arrays.asList(
+                CompletableFuture.supplyAsync(rpcApplicationRepository::count, asyncTaskExecutor),
+                CompletableFuture.supplyAsync(rpcServerRepository::count, asyncTaskExecutor),
+                CompletableFuture.supplyAsync(rpcServiceRepository::count, asyncTaskExecutor),
+                CompletableFuture.supplyAsync(rpcProviderRepository::count, asyncTaskExecutor),
+                CompletableFuture.supplyAsync(rpcConsumerRepository::count, asyncTaskExecutor),
+                CompletableFuture.supplyAsync(rpcScheduledTaskRepository::count, asyncTaskExecutor),
+                CompletableFuture.supplyAsync(rpcScheduledTaskHistoryRepository::count, asyncTaskExecutor)
+        );
+        List<Long> results = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
 
         StatisticsDTO dto = StatisticsDTO.builder()
                 .applicationCount(results.get(0))
