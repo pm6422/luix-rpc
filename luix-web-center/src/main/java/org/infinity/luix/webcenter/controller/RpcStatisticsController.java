@@ -37,7 +37,7 @@ public class RpcStatisticsController {
             deferredResult.setErrorResult(ResponseEntity.status(FORBIDDEN).body("Server is busy!"));
         } else {
             // Execute asynchronously
-            rpcStatisticsService.getStatistics(TraceIdUtils.getTraceId());
+            rpcStatisticsService.getStatisticsResults(TraceIdUtils.getTraceId());
         }
         return deferredResult;
     }

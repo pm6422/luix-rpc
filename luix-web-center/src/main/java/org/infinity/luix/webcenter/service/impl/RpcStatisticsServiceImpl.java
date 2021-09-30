@@ -41,7 +41,7 @@ public class RpcStatisticsServiceImpl implements RpcStatisticsService {
      */
     @Override
     @Async
-    public void getStatistics(String taskId) {
+    public void getStatisticsResults(String taskId) {
         List<CompletableFuture<Long>> futures = Arrays.asList(
                 CompletableFuture.supplyAsync(rpcApplicationRepository::count, asyncTaskExecutor),
                 CompletableFuture.supplyAsync(rpcServerRepository::count, asyncTaskExecutor),
