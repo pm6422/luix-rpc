@@ -44,9 +44,7 @@ public class TestController {
         // Assign values to parameters
         providerUrl.addOption(APP, infinityProperties.getApplication().getName());
 
-        infinityProperties.getRegistryList().forEach(registryConfig -> {
-            registryConfig.getRegistryImpl().register(providerUrl);
-        });
+        infinityProperties.getRegistryList().forEach(registryConfig -> registryConfig.getRegistryImpl().register(providerUrl));
     }
 
     @ApiOperation("blocking response")
