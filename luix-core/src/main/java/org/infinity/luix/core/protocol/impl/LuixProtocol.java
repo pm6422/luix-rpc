@@ -21,7 +21,7 @@ public class LuixProtocol extends AbstractProtocol {
     private final Map<String, ProviderInvocationHandler> ipPort2RequestRouter = new ConcurrentHashMap<>();
 
     @Override
-    protected ProviderExposable doExpose(Url providerUrl) {
+    protected ProviderExposable createExposer(Url providerUrl) {
         return new ServerProviderExposer(providerUrl, this.ipPort2RequestRouter, this.EXPOSED_PROVIDERS);
     }
 }

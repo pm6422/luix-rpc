@@ -11,9 +11,14 @@ public interface ProviderExposable {
     Url getProviderUrl();
 
     /**
-     * Initialize
+     * Expose provider
      */
-    void init();
+    void expose();
+
+    /**
+     * Cancel exposed provider
+     */
+    void cancelExpose();
 
     /**
      * Check whether it is available
@@ -22,10 +27,6 @@ public interface ProviderExposable {
      */
     boolean isActive();
 
-    /**
-     * Cancel exposed provider
-     */
-    void cancelExpose();
 
     /**
      * Do some cleanup task

@@ -33,11 +33,9 @@ public abstract class AbstractProtocol implements Protocol {
                 throw new RpcFrameworkException("Can NOT re-expose provider [" + providerUrl + "]");
             }
 
-            exposer = doExpose(providerUrl);
-            exposer.init();
-
+            exposer = createExposer(providerUrl);
+            exposer.expose();
             EXPOSED_PROVIDERS.put(providerKey, exposer);
-            log.info("Exposed provider [{}]", providerUrl);
             return exposer;
         }
     }
@@ -54,17 +52,19 @@ public abstract class AbstractProtocol implements Protocol {
             if (exposer == null) {
                 throw new RpcFrameworkException("Provider [" + providerUrl + "] does NOT exist!");
             }
+
             exposer.cancelExpose();
+            EXPOSED_PROVIDERS.remove(providerKey);
         }
     }
 
     /**
-     * Do expose provider
+     * Create provider exposer
      *
      * @param providerUrl provider url
-     * @return exposer
+     * @return provider exposer
      */
-    protected abstract ProviderExposable doExpose(Url providerUrl);
+    protected abstract ProviderExposable createExposer(Url providerUrl);
 
     @Override
     public void destroy() {

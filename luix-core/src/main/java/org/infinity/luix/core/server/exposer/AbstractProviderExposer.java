@@ -19,11 +19,11 @@ public abstract class AbstractProviderExposer implements ProviderExposable {
     }
 
     @Override
-    public synchronized void init() {
+    public synchronized void expose() {
         boolean result = doInit();
         if (result) {
             active = true;
-            log.info("Initialized provider exposer");
+            log.info("Exposed provider [{}]", providerUrl);
         } else {
             throw new RpcFrameworkException("Failed to initialize provider exposer");
         }

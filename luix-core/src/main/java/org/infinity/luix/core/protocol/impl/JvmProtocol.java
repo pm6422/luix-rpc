@@ -12,7 +12,7 @@ import org.infinity.luix.utilities.serviceloader.annotation.SpiName;
 @Slf4j
 public class JvmProtocol extends AbstractProtocol {
     @Override
-    protected ProviderExposable doExpose(Url providerUrl) {
+    protected ProviderExposable createExposer(Url providerUrl) {
         return new JvmProviderExposer(providerUrl, this.EXPOSED_PROVIDERS);
     }
 }
