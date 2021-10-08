@@ -30,8 +30,8 @@ public class JvmProviderExposer extends AbstractProviderExposer {
 
     @Override
     public void cancelExpose() {
-        String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
-        ProviderExposable exporter = exposedProviders.remove(protocolKey);
+        String providerKey = RpcFrameworkUtils.getProviderKey(providerUrl);
+        ProviderExposable exporter = exposedProviders.remove(providerKey);
         if (exporter != null) {
             exporter.destroy();
         }

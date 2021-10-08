@@ -26,16 +26,16 @@ public interface Protocol {
     void hideProvider(Url providerUrl);
 
     /**
-     * Create provider invoker
+     * Create RPC request sender
      *
      * @param interfaceName provider interface name
      * @param providerUrl   provider url
-     * @return provider invoker
+     * @return RPC request sender
      */
-    Sendable createSender(String interfaceName, Url providerUrl);
+    Sendable createRequestSender(String interfaceName, Url providerUrl);
 
     /**
-     * Destroy
+     * Destroy providers
      */
     void destroy();
 

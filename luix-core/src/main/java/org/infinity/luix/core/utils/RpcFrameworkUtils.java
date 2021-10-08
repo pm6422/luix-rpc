@@ -16,14 +16,14 @@ import static org.infinity.luix.core.constant.ProviderConstants.HEALTH_CHECKER;
 
 public class RpcFrameworkUtils {
     /**
-     * protocol key: protocol://host:port/interface/form/version
+     * Get provider key
      *
-     * @param url URL
-     * @return key
+     * @param providerUrl provider URL
+     * @return provider key with format 'protocol://host:port/interface/form/version'
      */
-    public static String getProtocolKey(Url url) {
-        return url.getProtocol() + RpcConstants.PROTOCOL_SEPARATOR + url.getAddress() + DIR_SEPARATOR_UNIX
-                + url.getPath() + DIR_SEPARATOR_UNIX + url.getForm() + DIR_SEPARATOR_UNIX + url.getVersion();
+    public static String getProviderKey(Url providerUrl) {
+        return providerUrl.getProtocol() + RpcConstants.PROTOCOL_SEPARATOR + providerUrl.getAddress() + DIR_SEPARATOR_UNIX
+                + providerUrl.getPath() + DIR_SEPARATOR_UNIX + providerUrl.getForm() + DIR_SEPARATOR_UNIX + providerUrl.getVersion();
     }
 
     /**

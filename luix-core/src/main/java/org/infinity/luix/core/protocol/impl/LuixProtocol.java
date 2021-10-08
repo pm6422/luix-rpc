@@ -22,6 +22,6 @@ public class LuixProtocol extends AbstractProtocol {
 
     @Override
     protected ProviderExposable doExpose(Url providerUrl) {
-        return new ServerProviderExposer(providerUrl, this.ipPort2RequestRouter, this.exposedProviders);
+        return new ServerProviderExposer(providerUrl, this.ipPort2RequestRouter, this.EXPOSED_PROVIDERS);
     }
 }

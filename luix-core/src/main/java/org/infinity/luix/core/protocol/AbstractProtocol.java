@@ -11,22 +11,19 @@ import org.infinity.luix.core.utils.RpcFrameworkUtils;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * todo: AbstractProtocol
- */
 @Slf4j
 public abstract class AbstractProtocol implements Protocol {
-    protected final Map<String, ProviderExposable> exposedProviders = new ConcurrentHashMap<>();
+    protected static final Map<String, ProviderExposable> EXPOSED_PROVIDERS = new ConcurrentHashMap<>();
 
     @Override
     public ProviderExposable exposeProvider(Url providerUrl) {
         if (providerUrl == null) {
-            throw new RpcFrameworkException("Url must NOT be null!");
+            throw new RpcFrameworkException("Provider url must NOT be null!");
         }
 
-        String providerKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
-        synchronized (exposedProviders) {
-            ProviderExposable exposer = exposedProviders.get(providerKey);
+        String providerKey = RpcFrameworkUtils.getProviderKey(providerUrl);
+        synchronized (EXPOSED_PROVIDERS) {
+            ProviderExposable exposer = EXPOSED_PROVIDERS.get(providerKey);
             if (exposer != null) {
                 throw new RpcFrameworkException("Can NOT re-expose provider [" + providerUrl + "]");
             }
@@ -34,7 +31,7 @@ public abstract class AbstractProtocol implements Protocol {
             exposer = doExpose(providerUrl);
             exposer.init();
 
-            exposedProviders.put(providerKey, exposer);
+            EXPOSED_PROVIDERS.put(providerKey, exposer);
             log.info("Exposed provider [{}]", providerUrl);
             return exposer;
         }
@@ -43,18 +40,21 @@ public abstract class AbstractProtocol implements Protocol {
     @Override
     public void hideProvider(Url providerUrl) {
         if (providerUrl == null) {
-            throw new RpcFrameworkException("Url must NOT be null!");
+            throw new RpcFrameworkException("Provider url must NOT be null!");
         }
 
-        String providerKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
-        synchronized (exposedProviders) {
-            ProviderExposable exposer = exposedProviders.get(providerKey);
+        String providerKey = RpcFrameworkUtils.getProviderKey(providerUrl);
+        synchronized (EXPOSED_PROVIDERS) {
+            ProviderExposable exposer = EXPOSED_PROVIDERS.get(providerKey);
+            if (exposer == null) {
+                throw new RpcFrameworkException("Provider [" + providerUrl + "] does NOT exist!");
+            }
             exposer.cancelExpose();
         }
     }
 
     @Override
-    public Sendable createSender(String interfaceName, Url providerUrl) {
+    public Sendable createRequestSender(String interfaceName, Url providerUrl) {
         // todo: create different caller associated with the protocol
         return new RequestSender(interfaceName, providerUrl);
     }
@@ -69,7 +69,7 @@ public abstract class AbstractProtocol implements Protocol {
 
     @Override
     public void destroy() {
-        exposedProviders.values().forEach(exposer -> {
+        EXPOSED_PROVIDERS.values().forEach(exposer -> {
             try {
                 exposer.destroy();
                 log.info("Destroyed [" + exposer + "]");
@@ -77,6 +77,6 @@ public abstract class AbstractProtocol implements Protocol {
                 log.error("Failed to destroy [" + exposer + "]", t);
             }
         });
-        exposedProviders.clear();
+        EXPOSED_PROVIDERS.clear();
     }
 }

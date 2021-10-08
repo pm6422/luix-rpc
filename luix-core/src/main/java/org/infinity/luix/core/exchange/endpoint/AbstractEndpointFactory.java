@@ -59,7 +59,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
 
         synchronized (ipPort2ServerShareChannel) {
             String ipPort = providerUrl.getAddress();
-            String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
+            String providerKey = RpcFrameworkUtils.getProviderKey(providerUrl);
 
             boolean shareChannel = providerUrl.getBooleanOption(ProtocolConstants.SHARED_CHANNEL, ProtocolConstants.SHARED_CHANNEL_VAL_DEFAULT);
             if (!shareChannel) {
@@ -82,7 +82,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
                                     "source=" + server.getProviderUrl() + " target=" + providerUrl);
                 }
 
-                saveEndpoint2Urls(server2UrlsShareChannel, server, protocolKey);
+                saveEndpoint2Urls(server2UrlsShareChannel, server, providerKey);
 
                 return server;
             }
@@ -92,7 +92,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
             copyUrl.setPath(StringUtils.EMPTY);
             server = innerCreateServer(copyUrl, messageHandler);
             ipPort2ServerShareChannel.put(ipPort, server);
-            saveEndpoint2Urls(server2UrlsShareChannel, server, protocolKey);
+            saveEndpoint2Urls(server2UrlsShareChannel, server, providerKey);
 
             return server;
         }
@@ -125,7 +125,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
 
         synchronized (ipPort2Endpoint) {
             String ipPort = url.getAddress();
-            String protocolKey = RpcFrameworkUtils.getProtocolKey(url);
+            String providerKey = RpcFrameworkUtils.getProviderKey(url);
 
             if (endpoint != ipPort2Endpoint.get(ipPort)) {
                 destroy(endpoint);
@@ -133,7 +133,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
             }
 
             Set<String> urls = endpoint2Urls.get(endpoint);
-            urls.remove(protocolKey);
+            urls.remove(providerKey);
 
             if (urls.isEmpty()) {
                 destroy(endpoint);

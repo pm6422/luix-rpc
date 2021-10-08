@@ -92,7 +92,7 @@ public class ProviderNotifyListener implements ClientListener {
             // Find provider invoker associated with the provider url
             Sendable invoker = findInvokerByProviderUrl(registryUrl, providerUrl);
             if (invoker == null) {
-                invoker = protocol.createSender(interfaceName, providerUrl.copy());
+                invoker = protocol.createRequestSender(interfaceName, providerUrl.copy());
             }
             newSenders.add(invoker);
         }
