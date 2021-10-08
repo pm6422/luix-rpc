@@ -24,7 +24,7 @@ public abstract class RpcConfigValidator {
     }
 
     public static <T extends CharSequence> T mustEmpty(final T chars, final String message, final Object... values) {
-        if (chars != null && chars.length() >= 0) {
+        if (chars != null) {
             throw new RpcConfigException(String.format(message, values));
         }
         return chars;
@@ -43,5 +43,4 @@ public abstract class RpcConfigValidator {
         }
         return object;
     }
-
 }

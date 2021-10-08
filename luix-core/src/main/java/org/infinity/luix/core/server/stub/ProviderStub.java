@@ -317,17 +317,6 @@ public class ProviderStub<T> {
     }
 
     /**
-     * Deactivate the RPC providers from registries
-     */
-    public void deactivate() {
-        if (exposer != null && exposed.get()) {
-            exposer.cancelExpose();
-            this.registryConfig.getRegistryImpl().deactivate(url);
-            exposed.set(false);
-        }
-    }
-
-    /**
      * Activate the RPC providers from registries
      */
     public void activate() {
@@ -335,6 +324,17 @@ public class ProviderStub<T> {
             Protocol.getInstance(url.getProtocol()).expose(url);
             this.registryConfig.getRegistryImpl().activate(url);
             exposed.set(true);
+        }
+    }
+
+    /**
+     * Deactivate the RPC providers from registries
+     */
+    public void deactivate() {
+        if (exposer != null && exposed.get()) {
+            exposer.cancelExpose();
+            this.registryConfig.getRegistryImpl().deactivate(url);
+            exposed.set(false);
         }
     }
 

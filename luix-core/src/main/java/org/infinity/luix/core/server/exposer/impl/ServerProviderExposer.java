@@ -48,13 +48,12 @@ public class ServerProviderExposer extends AbstractProviderExposer {
     @Override
     public void cancelExpose() {
         String protocolKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
-        String ipPort = providerUrl.getAddress();
-
         ProviderExposable exporter = exposedProviders.remove(protocolKey);
         if (exporter != null) {
             exporter.destroy();
         }
 
+        String ipPort = providerUrl.getAddress();
         ProviderInvocationHandler requestRouter = ipPort2RequestRouter.get(ipPort);
         if (requestRouter != null) {
             requestRouter.removeProvider(providerUrl);
