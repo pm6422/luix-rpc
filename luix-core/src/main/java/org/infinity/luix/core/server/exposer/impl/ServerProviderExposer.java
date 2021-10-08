@@ -18,9 +18,9 @@ public class ServerProviderExposer extends AbstractProviderExposer {
     /**
      * 多个service可能在相同端口进行服务暴露，因此来自同个端口的请求需要进行路由以找到相应的服务，同时不在该端口暴露的服务不应该被找到
      */
-    protected final Map<String, ProviderInvocationHandler> ipPort2RequestRouter = new ConcurrentHashMap<>();
-    protected       Server                                 server;
-    protected       EndpointFactory                        endpointFactory;
+    protected static final Map<String, ProviderInvocationHandler> IP_PORT_2_REQUEST_ROUTER = new ConcurrentHashMap<>();
+    protected              Server                                 server;
+    protected              EndpointFactory                        endpointFactory;
 
     public ServerProviderExposer(Url providerUrl) {
         super(providerUrl);
@@ -34,12 +34,12 @@ public class ServerProviderExposer extends AbstractProviderExposer {
 
     private ProviderInvocationHandler initRequestRouter(Url url) {
         String ipPort = url.getAddress();
-        ProviderInvocationHandler requestRouter = ipPort2RequestRouter.get(ipPort);
+        ProviderInvocationHandler requestRouter = IP_PORT_2_REQUEST_ROUTER.get(ipPort);
         if (requestRouter == null) {
             ProviderProtectedInvocationHandler router = new ProviderProtectedInvocationHandler();
 //            StatsUtil.registryStatisticCallback(router);
-            ipPort2RequestRouter.putIfAbsent(ipPort, router);
-            requestRouter = ipPort2RequestRouter.get(ipPort);
+            IP_PORT_2_REQUEST_ROUTER.putIfAbsent(ipPort, router);
+            requestRouter = IP_PORT_2_REQUEST_ROUTER.get(ipPort);
         }
         requestRouter.addProvider(providerUrl);
         return requestRouter;
@@ -58,7 +58,7 @@ public class ServerProviderExposer extends AbstractProviderExposer {
     @Override
     public void cancelExpose() {
         String ipPort = providerUrl.getAddress();
-        ProviderInvocationHandler requestRouter = ipPort2RequestRouter.get(ipPort);
+        ProviderInvocationHandler requestRouter = IP_PORT_2_REQUEST_ROUTER.get(ipPort);
         if (requestRouter != null) {
             requestRouter.removeProvider(providerUrl);
         }
