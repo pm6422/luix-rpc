@@ -16,6 +16,11 @@ public abstract class AbstractProtocol implements Protocol {
     protected static final Map<String, ProviderExposable> EXPOSED_PROVIDERS = new ConcurrentHashMap<>();
 
     @Override
+    public Sendable createRequestSender(String interfaceName, Url providerUrl) {
+        return new RequestSender(interfaceName, providerUrl);
+    }
+
+    @Override
     public ProviderExposable exposeProvider(Url providerUrl) {
         if (providerUrl == null) {
             throw new RpcFrameworkException("Provider url must NOT be null!");
@@ -51,12 +56,6 @@ public abstract class AbstractProtocol implements Protocol {
             }
             exposer.cancelExpose();
         }
-    }
-
-    @Override
-    public Sendable createRequestSender(String interfaceName, Url providerUrl) {
-        // todo: create different caller associated with the protocol
-        return new RequestSender(interfaceName, providerUrl);
     }
 
     /**

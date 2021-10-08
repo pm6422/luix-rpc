@@ -11,6 +11,15 @@ import org.infinity.luix.utilities.serviceloader.annotation.SpiScope;
 public interface Protocol {
 
     /**
+     * Create RPC request sender
+     *
+     * @param interfaceName provider interface name
+     * @param providerUrl   provider url
+     * @return RPC request sender
+     */
+    Sendable createRequestSender(String interfaceName, Url providerUrl);
+
+    /**
      * Expose provider
      *
      * @param providerUrl provider URL
@@ -24,15 +33,6 @@ public interface Protocol {
      * @param providerUrl provider URL
      */
     void hideProvider(Url providerUrl);
-
-    /**
-     * Create RPC request sender
-     *
-     * @param interfaceName provider interface name
-     * @param providerUrl   provider url
-     * @return RPC request sender
-     */
-    Sendable createRequestSender(String interfaceName, Url providerUrl);
 
     /**
      * Destroy providers
