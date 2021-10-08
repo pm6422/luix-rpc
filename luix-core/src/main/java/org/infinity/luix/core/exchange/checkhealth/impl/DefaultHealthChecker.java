@@ -19,8 +19,8 @@ package org.infinity.luix.core.exchange.checkhealth.impl;
 import org.infinity.luix.core.client.request.Requestable;
 import org.infinity.luix.core.client.request.impl.RpcCheckHealthRequest;
 import org.infinity.luix.core.exchange.checkhealth.HealthChecker;
-import org.infinity.luix.core.server.messagehandler.MessageHandler;
-import org.infinity.luix.core.server.messagehandler.impl.DefaultCheckHealthMessageHandleWrapper;
+import org.infinity.luix.core.server.messagehandler.ProviderInvocationHandleable;
+import org.infinity.luix.core.server.messagehandler.impl.DefaultCheckHealthHandlerWrapper;
 import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.utilities.serviceloader.annotation.SpiName;
 
@@ -32,8 +32,8 @@ import static org.infinity.luix.core.constant.ProviderConstants.HEALTH_CHECKER_V
 @SpiName(HEALTH_CHECKER_VAL_DEFAULT)
 public class DefaultHealthChecker implements HealthChecker {
     @Override
-    public MessageHandler wrapMessageHandler(MessageHandler handler) {
-        return new DefaultCheckHealthMessageHandleWrapper(handler);
+    public ProviderInvocationHandleable wrapMessageHandler(ProviderInvocationHandleable handler) {
+        return new DefaultCheckHealthHandlerWrapper(handler);
     }
 
     @Override

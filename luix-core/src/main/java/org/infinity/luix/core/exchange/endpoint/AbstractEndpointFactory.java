@@ -9,7 +9,7 @@ import org.infinity.luix.core.exchange.checkhealth.HealthChecker;
 import org.infinity.luix.core.exchange.client.Client;
 import org.infinity.luix.core.exchange.endpoint.impl.CheckHealthClientEndpointManager;
 import org.infinity.luix.core.exchange.server.Server;
-import org.infinity.luix.core.server.messagehandler.MessageHandler;
+import org.infinity.luix.core.server.messagehandler.ProviderInvocationHandleable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.RpcFrameworkUtils;
 
@@ -54,8 +54,8 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
     }
 
     @Override
-    public Server createServer(Url providerUrl, MessageHandler messageHandler) {
-        messageHandler = HealthChecker.getInstance(providerUrl).wrapMessageHandler(messageHandler);
+    public Server createServer(Url providerUrl, ProviderInvocationHandleable providerInvocationHandleable) {
+        providerInvocationHandleable = HealthChecker.getInstance(providerUrl).wrapMessageHandler(providerInvocationHandleable);
 
         synchronized (ipPort2ServerShareChannel) {
             String ipPort = providerUrl.getAddress();
@@ -67,7 +67,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
                 log.info("Created a exclusive channel server for url [{}] by [{}]", providerUrl, this.getClass().getSimpleName());
 
                 // 如果端口已经被使用了，使用该server bind会有异常
-                return innerCreateServer(providerUrl, messageHandler);
+                return innerCreateServer(providerUrl, providerInvocationHandleable);
             }
 
             log.info("Created a shared channel server for url [{}] by [{}]", providerUrl, this.getClass().getSimpleName());
@@ -90,7 +90,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
             Url copyUrl = providerUrl.copy();
             // 共享server端口，由于有多个interfaces存在，所以把path设置为空
             copyUrl.setPath(StringUtils.EMPTY);
-            server = innerCreateServer(copyUrl, messageHandler);
+            server = innerCreateServer(copyUrl, providerInvocationHandleable);
             ipPort2ServerShareChannel.put(ipPort, server);
             saveEndpoint2Urls(server2UrlsShareChannel, server, providerKey);
 
@@ -179,7 +179,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
         return heartbeatClientEndpointManager;
     }
 
-    protected abstract Server innerCreateServer(Url url, MessageHandler messageHandler);
+    protected abstract Server innerCreateServer(Url url, ProviderInvocationHandleable providerInvocationHandleable);
 
     protected abstract Client innerCreateClient(Url providerUrl);
 

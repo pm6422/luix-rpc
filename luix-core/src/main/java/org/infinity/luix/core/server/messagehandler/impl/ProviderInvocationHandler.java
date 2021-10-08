@@ -25,7 +25,7 @@ import org.infinity.luix.core.constant.ServiceConstants;
 import org.infinity.luix.core.exception.impl.RpcBizException;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.exchange.Channel;
-import org.infinity.luix.core.server.messagehandler.MessageHandler;
+import org.infinity.luix.core.server.messagehandler.ProviderInvocationHandleable;
 import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.server.stub.ProviderStub;
 import org.infinity.luix.core.server.stub.ProviderStubHolder;
@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
-public class ProviderInvocationHandler implements MessageHandler {
+public class ProviderInvocationHandler implements ProviderInvocationHandleable {
     /**
      * Map of provider stub name to provider URL
      */

@@ -19,7 +19,7 @@ package org.infinity.luix.core.exchange.endpoint;
 import org.infinity.luix.core.exception.impl.RpcConfigException;
 import org.infinity.luix.core.exchange.client.Client;
 import org.infinity.luix.core.exchange.server.Server;
-import org.infinity.luix.core.server.messagehandler.MessageHandler;
+import org.infinity.luix.core.server.messagehandler.ProviderInvocationHandleable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.serviceloader.ServiceLoader;
 import org.infinity.luix.utilities.serviceloader.annotation.Spi;
@@ -34,10 +34,10 @@ public interface EndpointFactory {
      * Create remote server
      *
      * @param providerUrl    provider url
-     * @param messageHandler message handler
+     * @param providerInvocationHandleable message handler
      * @return server
      */
-    Server createServer(Url providerUrl, MessageHandler messageHandler);
+    Server createServer(Url providerUrl, ProviderInvocationHandleable providerInvocationHandleable);
 
     /**
      * Create remote client

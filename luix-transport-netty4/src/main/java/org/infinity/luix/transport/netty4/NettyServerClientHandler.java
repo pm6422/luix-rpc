@@ -11,7 +11,7 @@ import org.infinity.luix.core.codec.CodecUtils;
 import org.infinity.luix.core.constant.RpcConstants;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.exchange.Channel;
-import org.infinity.luix.core.server.messagehandler.MessageHandler;
+import org.infinity.luix.core.server.messagehandler.ProviderInvocationHandleable;
 import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.server.response.impl.RpcResponse;
 import org.infinity.luix.core.url.Url;
@@ -33,20 +33,20 @@ import static org.infinity.luix.core.constant.ProtocolConstants.CODEC_VAL_DEFAUL
  */
 @Slf4j
 public class NettyServerClientHandler extends ChannelDuplexHandler {
-    private ThreadPoolExecutor threadPoolExecutor;
-    private MessageHandler     messageHandler;
-    private Channel            channel;
+    private ThreadPoolExecutor           threadPoolExecutor;
+    private ProviderInvocationHandleable providerInvocationHandleable;
+    private Channel                      channel;
     private Codec              codec;
 
-    public NettyServerClientHandler(Channel channel, MessageHandler messageHandler) {
+    public NettyServerClientHandler(Channel channel, ProviderInvocationHandleable providerInvocationHandleable) {
         this.channel = channel;
-        this.messageHandler = messageHandler;
+        this.providerInvocationHandleable = providerInvocationHandleable;
         codec = Codec.getInstance(channel.getProviderUrl().getOption(CODEC, CODEC_VAL_DEFAULT));
     }
 
-    public NettyServerClientHandler(Channel channel, MessageHandler messageHandler, ThreadPoolExecutor threadPoolExecutor) {
+    public NettyServerClientHandler(Channel channel, ProviderInvocationHandleable providerInvocationHandleable, ThreadPoolExecutor threadPoolExecutor) {
         this.channel = channel;
-        this.messageHandler = messageHandler;
+        this.providerInvocationHandleable = providerInvocationHandleable;
         this.threadPoolExecutor = threadPoolExecutor;
         codec = Codec.getInstance(channel.getProviderUrl().getOption(CODEC, CODEC_VAL_DEFAULT));
     }
@@ -153,7 +153,7 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
             RpcRequestIdHolder.setRequestId(request.getRequestId());
             Object result;
             try {
-                result = messageHandler.handle(channel, request);
+                result = providerInvocationHandleable.handle(channel, request);
             } catch (Exception e) {
                 log.error("Failed to process request " + request, e);
                 result = RpcFrameworkUtils.buildErrorResponse(request, new RpcFrameworkException("Failed to process request", e));
@@ -198,7 +198,7 @@ public class NettyServerClientHandler extends ChannelDuplexHandler {
     }
 
     private void processResponse(Object msg) {
-        messageHandler.handle(channel, msg);
+        providerInvocationHandleable.handle(channel, msg);
     }
 
     @Override
