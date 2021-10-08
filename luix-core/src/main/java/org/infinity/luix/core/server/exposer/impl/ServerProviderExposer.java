@@ -5,11 +5,9 @@ import org.infinity.luix.core.constant.ProtocolConstants;
 import org.infinity.luix.core.exchange.endpoint.EndpointFactory;
 import org.infinity.luix.core.exchange.server.Server;
 import org.infinity.luix.core.server.exposer.AbstractProviderExposer;
-import org.infinity.luix.core.server.exposer.ProviderExposable;
 import org.infinity.luix.core.server.messagehandler.impl.ProviderInvocationHandler;
 import org.infinity.luix.core.server.messagehandler.impl.ProviderProtectedInvocationHandler;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.core.utils.RpcFrameworkUtils;
 
 import java.util.Map;
 
@@ -17,15 +15,12 @@ import java.util.Map;
 public class ServerProviderExposer extends AbstractProviderExposer {
 
     protected final Map<String, ProviderInvocationHandler> ipPort2RequestRouter;
-    protected final Map<String, ProviderExposable>         exposedProviders;
     protected       Server                                 server;
     protected       EndpointFactory                        endpointFactory;
 
     public ServerProviderExposer(Url providerUrl,
-                                 Map<String, ProviderInvocationHandler> ipPort2RequestRouter,
-                                 Map<String, ProviderExposable> exposedProviders) {
+                                 Map<String, ProviderInvocationHandler> ipPort2RequestRouter) {
         super(providerUrl);
-        this.exposedProviders = exposedProviders;
         this.ipPort2RequestRouter = ipPort2RequestRouter;
 
         ProviderInvocationHandler providerInvocationHandler = initRequestRouter(providerUrl);
@@ -60,12 +55,6 @@ public class ServerProviderExposer extends AbstractProviderExposer {
 
     @Override
     public void cancelExpose() {
-        String providerKey = RpcFrameworkUtils.getProviderKey(providerUrl);
-        ProviderExposable exporter = exposedProviders.remove(providerKey);
-        if (exporter != null) {
-            exporter.destroy();
-        }
-
         String ipPort = providerUrl.getAddress();
         ProviderInvocationHandler requestRouter = ipPort2RequestRouter.get(ipPort);
         if (requestRouter != null) {

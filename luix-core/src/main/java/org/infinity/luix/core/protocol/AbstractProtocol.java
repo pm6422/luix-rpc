@@ -54,6 +54,7 @@ public abstract class AbstractProtocol implements Protocol {
             }
 
             exposer.cancelExpose();
+            exposer.destroy();
             EXPOSED_PROVIDERS.remove(providerKey);
         }
     }
