@@ -28,12 +28,12 @@ import static org.infinity.luix.core.constant.ProtocolConstants.*;
 
 @Slf4j
 public class NettyServer extends AbstractServer implements StatisticCallback {
-    protected NettyServerChannelManage channelManage          = null;
-    private   EventLoopGroup           bossGroup;
-    private   EventLoopGroup           workerGroup;
-    private Channel                      serverChannel;
-    private ProviderInvocationHandleable providerInvocationHandleable;
-    private StandardThreadExecutor       standardThreadExecutor = null;
+    protected NettyServerChannelManage     channelManage          = null;
+    private   EventLoopGroup               bossGroup;
+    private   EventLoopGroup               workerGroup;
+    private   Channel                      serverChannel;
+    private   ProviderInvocationHandleable providerInvocationHandleable;
+    private   StandardThreadExecutor       standardThreadExecutor = null;
 
     private AtomicInteger rejectCounter = new AtomicInteger(0);
 

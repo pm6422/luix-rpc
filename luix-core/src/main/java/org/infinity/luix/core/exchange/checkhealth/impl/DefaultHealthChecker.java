@@ -32,7 +32,7 @@ import static org.infinity.luix.core.constant.ProviderConstants.HEALTH_CHECKER_V
 @SpiName(HEALTH_CHECKER_VAL_DEFAULT)
 public class DefaultHealthChecker implements HealthChecker {
     @Override
-    public ProviderInvocationHandleable wrapMessageHandler(ProviderInvocationHandleable handler) {
+    public ProviderInvocationHandleable wrap(ProviderInvocationHandleable handler) {
         return new DefaultCheckHealthHandlerWrapper(handler);
     }
 

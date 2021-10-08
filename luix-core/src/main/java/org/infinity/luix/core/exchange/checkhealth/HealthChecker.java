@@ -27,7 +27,7 @@ public interface HealthChecker {
      * @param handler message handler
      * @return wrapped message handler
      */
-    ProviderInvocationHandleable wrapMessageHandler(ProviderInvocationHandleable handler);
+    ProviderInvocationHandleable wrap(ProviderInvocationHandleable handler);
 
     /**
      * Get instance associated with the specified name
