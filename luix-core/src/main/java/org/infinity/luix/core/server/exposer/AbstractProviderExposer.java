@@ -20,7 +20,7 @@ public abstract class AbstractProviderExposer implements ProviderExposable {
 
     @Override
     public synchronized void expose() {
-        boolean result = doInit();
+        boolean result = doExpose();
         if (result) {
             active = true;
             log.info("Exposed provider [{}]", providerUrl);
@@ -30,11 +30,11 @@ public abstract class AbstractProviderExposer implements ProviderExposable {
     }
 
     /**
-     * Do initialization
+     * Do expose
      *
      * @return {@code true} if it was initialized and {@code false} otherwise
      */
-    protected abstract boolean doInit();
+    protected abstract boolean doExpose();
 
     @Override
     public String toString() {

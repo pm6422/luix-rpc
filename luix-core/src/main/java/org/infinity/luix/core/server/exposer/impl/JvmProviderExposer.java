@@ -19,7 +19,7 @@ public class JvmProviderExposer extends AbstractProviderExposer {
     }
 
     @Override
-    protected boolean doInit() {
+    protected boolean doExpose() {
         return true;
     }
 

@@ -49,7 +49,7 @@ public class ServerProviderExposer extends AbstractProviderExposer {
     }
 
     @Override
-    protected boolean doInit() {
+    protected boolean doExpose() {
         return server.open();
     }
 
