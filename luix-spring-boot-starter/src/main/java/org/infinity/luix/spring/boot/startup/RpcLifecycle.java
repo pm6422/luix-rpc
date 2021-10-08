@@ -14,7 +14,6 @@ import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.server.stub.MethodConfig;
 import org.infinity.luix.core.server.stub.ProviderStub;
 import org.infinity.luix.core.server.stub.ProviderStubHolder;
-import org.infinity.luix.core.switcher.impl.SwitcherHolder;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.spring.boot.config.InfinityProperties;
 import org.infinity.luix.utilities.destory.ShutdownHook;
@@ -160,7 +159,10 @@ public class RpcLifecycle {
 
         if (infinityProperties.getProvider().isAutoExpose()) {
             // Activate RPC service providers
-            SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVE, true);
+//            SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVE, true);
+            providerStubs.forEach((name, providerStub) -> {
+                providerStub.activate();
+            });
         }
     }
 

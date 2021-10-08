@@ -2,13 +2,13 @@ package org.infinity.luix.core.utils;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.luix.core.switcher.impl.SwitcherHolder;
-import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.client.request.Requestable;
 import org.infinity.luix.core.constant.RpcConstants;
 import org.infinity.luix.core.constant.ServiceConstants;
 import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.server.response.impl.RpcResponse;
+import org.infinity.luix.core.switcher.impl.SwitcherHolder;
+import org.infinity.luix.core.url.Url;
 
 import static org.apache.commons.io.IOUtils.DIR_SEPARATOR_UNIX;
 import static org.infinity.luix.core.constant.ProtocolConstants.*;
@@ -18,8 +18,8 @@ public class RpcFrameworkUtils {
     /**
      * protocol key: protocol://host:port/interface/form/version
      *
-     * @param url
-     * @return
+     * @param url URL
+     * @return key
      */
     public static String getProtocolKey(Url url) {
         return url.getProtocol() + RpcConstants.PROTOCOL_SEPARATOR + url.getAddress() + DIR_SEPARATOR_UNIX

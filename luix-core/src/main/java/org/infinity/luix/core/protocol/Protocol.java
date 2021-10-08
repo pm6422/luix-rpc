@@ -1,8 +1,8 @@
 package org.infinity.luix.core.protocol;
 
+import org.infinity.luix.core.client.sender.Sendable;
 import org.infinity.luix.core.server.exposer.ProviderExposable;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.core.client.sender.Sendable;
 import org.infinity.luix.utilities.serviceloader.ServiceLoader;
 import org.infinity.luix.utilities.serviceloader.annotation.Spi;
 import org.infinity.luix.utilities.serviceloader.annotation.SpiScope;
@@ -11,12 +11,19 @@ import org.infinity.luix.utilities.serviceloader.annotation.SpiScope;
 public interface Protocol {
 
     /**
-     * Create provider exposer
+     * Expose provider
      *
      * @param providerUrl provider URL
      * @return exposer
      */
-    ProviderExposable expose(Url providerUrl);
+    ProviderExposable exposeProvider(Url providerUrl);
+
+    /**
+     * Hide provider
+     *
+     * @param providerUrl provider URL
+     */
+    void hideProvider(Url providerUrl);
 
     /**
      * Create provider invoker

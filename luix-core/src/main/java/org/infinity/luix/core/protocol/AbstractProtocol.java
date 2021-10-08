@@ -19,7 +19,7 @@ public abstract class AbstractProtocol implements Protocol {
     protected final Map<String, ProviderExposable> exposedProviders = new ConcurrentHashMap<>();
 
     @Override
-    public ProviderExposable expose(Url providerUrl) {
+    public ProviderExposable exposeProvider(Url providerUrl) {
         if (providerUrl == null) {
             throw new RpcFrameworkException("Url must NOT be null!");
         }
@@ -37,6 +37,19 @@ public abstract class AbstractProtocol implements Protocol {
             exposedProviders.put(providerKey, exposer);
             log.info("Exposed provider [{}]", providerUrl);
             return exposer;
+        }
+    }
+
+    @Override
+    public void hideProvider(Url providerUrl) {
+        if (providerUrl == null) {
+            throw new RpcFrameworkException("Url must NOT be null!");
+        }
+
+        String providerKey = RpcFrameworkUtils.getProtocolKey(providerUrl);
+        synchronized (exposedProviders) {
+            ProviderExposable exposer = exposedProviders.get(providerKey);
+            exposer.cancelExpose();
         }
     }
 

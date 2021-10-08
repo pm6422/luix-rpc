@@ -20,7 +20,6 @@ import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.protocol.Protocol;
 import org.infinity.luix.core.registry.Registry;
 import org.infinity.luix.core.registry.RegistryFactory;
-import org.infinity.luix.core.server.exposer.ProviderExposable;
 import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.server.response.impl.RpcResponse;
 import org.infinity.luix.core.url.Url;
@@ -195,13 +194,9 @@ public class ProviderStub<T> {
      */
     private           Url                       url;
     /**
-     * Used to expose the provider to registry
+     * Indicates whether the provider were active
      */
-    private transient ProviderExposable         exposer;
-    /**
-     * Indicates whether the provider were exposed to registry
-     */
-    private final     AtomicBoolean             exposed      = new AtomicBoolean(false);
+    private final     AtomicBoolean             activated    = new AtomicBoolean(false);
     /**
      * Application configuration
      */
@@ -266,7 +261,7 @@ public class ProviderStub<T> {
      * @return status
      */
     public String checkHealth() {
-        return exposed.get() ? STATUS_OK : STATUS_INACTIVE;
+        return activated.get() ? STATUS_OK : STATUS_INACTIVE;
     }
 
     /**
@@ -277,17 +272,13 @@ public class ProviderStub<T> {
      * @param registryConfig    registry configuration
      */
     public void register(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, RegistryConfig registryConfig) {
-        if (exposed.compareAndSet(false, true)) {
-            this.applicationConfig = applicationConfig;
-            this.protocolConfig = protocolConfig;
-            this.registryConfig = registryConfig;
+        this.applicationConfig = applicationConfig;
+        this.protocolConfig = protocolConfig;
+        this.registryConfig = registryConfig;
 
-            url = createProviderUrl(applicationConfig, protocolConfig);
-            // Expose provider url
-            exposer = Protocol.getInstance(url.getProtocol()).expose(url);
-            // Register provider URL to all the registries
-            this.registryConfig.getRegistryImpl().register(url);
-        }
+        url = createProviderUrl(applicationConfig, protocolConfig);
+        // Register provider URL to all the registries
+        this.registryConfig.getRegistryImpl().register(url);
     }
 
     public void reregister(Map<String, String> options) {
@@ -320,10 +311,9 @@ public class ProviderStub<T> {
      * Activate the RPC providers from registries
      */
     public void activate() {
-        if (exposer != null && !exposed.get()) {
-            Protocol.getInstance(url.getProtocol()).expose(url);
+        if (activated.compareAndSet(false, true)) {
+            Protocol.getInstance(url.getProtocol()).exposeProvider(url);
             this.registryConfig.getRegistryImpl().activate(url);
-            exposed.set(true);
         }
     }
 
@@ -331,10 +321,9 @@ public class ProviderStub<T> {
      * Deactivate the RPC providers from registries
      */
     public void deactivate() {
-        if (exposer != null && exposed.get()) {
-            exposer.cancelExpose();
+        if (activated.compareAndSet(true, false)) {
+            Protocol.getInstance(url.getProtocol()).hideProvider(url);
             this.registryConfig.getRegistryImpl().deactivate(url);
-            exposed.set(false);
         }
     }
 
