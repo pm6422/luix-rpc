@@ -10,18 +10,20 @@ import org.infinity.luix.core.server.messagehandler.impl.ProviderProtectedInvoca
 import org.infinity.luix.core.url.Url;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class ServerProviderExposer extends AbstractProviderExposer {
 
-    protected final Map<String, ProviderInvocationHandler> ipPort2RequestRouter;
+    /**
+     * 多个service可能在相同端口进行服务暴露，因此来自同个端口的请求需要进行路由以找到相应的服务，同时不在该端口暴露的服务不应该被找到
+     */
+    protected final Map<String, ProviderInvocationHandler> ipPort2RequestRouter = new ConcurrentHashMap<>();
     protected       Server                                 server;
     protected       EndpointFactory                        endpointFactory;
 
-    public ServerProviderExposer(Url providerUrl,
-                                 Map<String, ProviderInvocationHandler> ipPort2RequestRouter) {
+    public ServerProviderExposer(Url providerUrl) {
         super(providerUrl);
-        this.ipPort2RequestRouter = ipPort2RequestRouter;
 
         ProviderInvocationHandler providerInvocationHandler = initRequestRouter(providerUrl);
         String endpointFactoryName = providerUrl.getOption(ProtocolConstants.ENDPOINT_FACTORY,
