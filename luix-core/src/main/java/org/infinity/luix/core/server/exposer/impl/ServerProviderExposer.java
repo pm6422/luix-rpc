@@ -28,8 +28,7 @@ public class ServerProviderExposer extends AbstractProviderExposer {
         super(providerUrl);
 
         ProviderInvocationHandler providerInvocationHandler = createHandler(providerUrl);
-        String endpointFactoryName = providerUrl.getOption(ENDPOINT_FACTORY, ENDPOINT_FACTORY_VAL_NETTY);
-        endpointFactory = EndpointFactory.getInstance(endpointFactoryName);
+        endpointFactory = createEndpointFactory(providerUrl);
         server = endpointFactory.createServer(providerUrl, providerInvocationHandler);
     }
 
@@ -44,6 +43,11 @@ public class ServerProviderExposer extends AbstractProviderExposer {
         }
         providerInvocationHandler.addProvider(providerUrl);
         return providerInvocationHandler;
+    }
+
+    private EndpointFactory createEndpointFactory(Url providerUrl) {
+        String endpointFactoryName = providerUrl.getOption(ENDPOINT_FACTORY, ENDPOINT_FACTORY_VAL_NETTY);
+        return EndpointFactory.getInstance(endpointFactoryName);
     }
 
     @Override

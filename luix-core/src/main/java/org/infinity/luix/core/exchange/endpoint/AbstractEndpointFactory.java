@@ -13,52 +13,35 @@ import org.infinity.luix.core.server.messagehandler.ProviderInvocationHandleable
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.RpcFrameworkUtils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * abstract endpoint factory
- *
- * <pre>
- * 		一些约定：
- * 		1） service :
- * 			1.1） non-shared channel: 某个service暴露服务的时候，不期望和别的service共享服务，明哲自保，比如你说：我很重要，我很重要。
- *
- * 			1.2） shared channel: 某个service暴露服务的时候，如果有某个模块，但是拆成10个接口，可以使用这种方式，不过有一些约束条件：接口的几个serviceConfig配置需要保持一致。
- *
- * 				不允许差异化的配置如下：
- * 					protocol, codec, serializer, maxContentLength, maxServerConnection, maxWorkerThread, workerQueueSize, heartbeatFactory
- *
- * 		2）心跳机制：
- *
- * 			不同的protocol的心跳包格式可能不一样，无法进行强制，那么通过可扩展的方式，依赖heartbeatFactory进行heartbeat包的创建，
- * 			同时对于service的messageHandler进行wrap heartbeat包的处理。
- * 			对于service来说把心跳包当成普通的request处理，因为这种heartbeat才能够探测到整个service处理的关键路径的可用状况
- *
- * </pre>
+ * non-shared channel: 某个service暴露服务的时候，不期望和别的service共享服务，明哲自保，比如你说：我很重要，我很重要。
+ * shared channel: 某个service暴露服务的时候，如果有某个模块，但是拆成10个接口，可以使用这种方式，不过有一些约束条件：接口的几个serviceConfig配置需要保持一致。
+ * 不允许差异化的配置如下：protocol, codec, serializer, maxContentLength, maxServerConnection, maxWorkerThread, workerQueueSize, heartbeatFactory
  */
 @Slf4j
 public abstract class AbstractEndpointFactory implements EndpointFactory {
 
-    /**
-     * 维持share channel 的service列表
-     **/
-    protected Map<String, Server>      ipPort2ServerShareChannel = new HashMap<>();
-    protected Map<Server, Set<String>> server2UrlsShareChannel   = new ConcurrentHashMap<>();
-
-    private final EndpointManager heartbeatClientEndpointManager;
+    private final EndpointManager          checkHealthClientEndpointManager;
+    protected     Map<String, Server>      address2ServerSharedChannel = new ConcurrentHashMap<>();
+    protected     Map<Server, Set<String>> server2UrlsSharedChannel    = new ConcurrentHashMap<>();
 
     public AbstractEndpointFactory() {
-        heartbeatClientEndpointManager = new CheckHealthClientEndpointManager();
-        heartbeatClientEndpointManager.init();
+        checkHealthClientEndpointManager = new CheckHealthClientEndpointManager();
+        checkHealthClientEndpointManager.init();
     }
 
     @Override
     public Server createServer(Url providerUrl, ProviderInvocationHandleable providerInvocationHandleable) {
         providerInvocationHandleable = HealthChecker.getInstance(providerUrl).wrapMessageHandler(providerInvocationHandleable);
 
-        synchronized (ipPort2ServerShareChannel) {
-            String ipPort = providerUrl.getAddress();
+        synchronized (address2ServerSharedChannel) {
+            String address = providerUrl.getAddress();
             String providerKey = RpcFrameworkUtils.getProviderKey(providerUrl);
 
             boolean shareChannel = providerUrl.getBooleanOption(ProtocolConstants.SHARED_CHANNEL, ProtocolConstants.SHARED_CHANNEL_VAL_DEFAULT);
@@ -71,7 +54,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
             }
 
             log.info("Created a shared channel server for url [{}] by [{}]", providerUrl, this.getClass().getSimpleName());
-            Server server = ipPort2ServerShareChannel.get(ipPort);
+            Server server = address2ServerSharedChannel.get(address);
 
             if (server != null) {
                 // can't share service channel
@@ -82,7 +65,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
                                     "source=" + server.getProviderUrl() + " target=" + providerUrl);
                 }
 
-                saveEndpoint2Urls(server2UrlsShareChannel, server, providerKey);
+                saveEndpoint2Urls(server2UrlsSharedChannel, server, providerKey);
 
                 return server;
             }
@@ -91,8 +74,8 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
             // 共享server端口，由于有多个interfaces存在，所以把path设置为空
             copyUrl.setPath(StringUtils.EMPTY);
             server = innerCreateServer(copyUrl, providerInvocationHandleable);
-            ipPort2ServerShareChannel.put(ipPort, server);
-            saveEndpoint2Urls(server2UrlsShareChannel, server, providerKey);
+            address2ServerSharedChannel.put(address, server);
+            saveEndpoint2Urls(server2UrlsSharedChannel, server, providerKey);
 
             return server;
         }
@@ -101,12 +84,12 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
     @Override
     public Client createClient(Url providerUrl) {
         log.info("Created a client for url [{}] by [{}]", providerUrl, this.getClass().getSimpleName());
-        return createClient(providerUrl, heartbeatClientEndpointManager);
+        return createClient(providerUrl, checkHealthClientEndpointManager);
     }
 
     @Override
     public void safeReleaseResource(Server server, Url providerUrl) {
-        safeReleaseResource(server, providerUrl, ipPort2ServerShareChannel, server2UrlsShareChannel);
+        safeReleaseResource(server, providerUrl, address2ServerSharedChannel, server2UrlsSharedChannel);
     }
 
     @Override
@@ -165,22 +148,21 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
     private <T extends Endpoint> void destroy(T endpoint) {
         if (endpoint instanceof Client) {
             endpoint.close();
-            heartbeatClientEndpointManager.removeEndpoint(endpoint);
+            checkHealthClientEndpointManager.removeEndpoint(endpoint);
         } else {
             endpoint.close();
         }
     }
 
-    public Map<String, Server> getShallServerChannels() {
-        return Collections.unmodifiableMap(ipPort2ServerShareChannel);
+    public Map<String, Server> getSharedServerChannels() {
+        return Collections.unmodifiableMap(address2ServerSharedChannel);
     }
 
     public EndpointManager getEndpointManager() {
-        return heartbeatClientEndpointManager;
+        return checkHealthClientEndpointManager;
     }
 
     protected abstract Server innerCreateServer(Url url, ProviderInvocationHandleable providerInvocationHandleable);
 
     protected abstract Client innerCreateClient(Url providerUrl);
-
 }
