@@ -2,6 +2,7 @@ package org.infinity.luix.core.exchange.endpoint;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.exchange.checkhealth.HealthChecker;
@@ -77,7 +78,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
                                     "source=" + sharedServer.getProviderUrl() + " target=" + providerUrl);
                 }
 
-                saveProviderKey(SHARED_SERVER_2_PROVIDER_KEY_SET, sharedServer, RpcFrameworkUtils.getProviderKey(providerUrl));
+                saveProviderKey(sharedServer, RpcFrameworkUtils.getProviderKey(providerUrl));
                 return sharedServer;
             }
 
@@ -86,7 +87,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
             urlCopy.setPath(StringUtils.EMPTY);
             sharedServer = doCreateServer(urlCopy, providerInvocationHandler);
             ADDRESS_2_SHARED_SERVER.put(address, sharedServer);
-            saveProviderKey(SHARED_SERVER_2_PROVIDER_KEY_SET, sharedServer, RpcFrameworkUtils.getProviderKey(providerUrl));
+            saveProviderKey(sharedServer, RpcFrameworkUtils.getProviderKey(providerUrl));
 
             return sharedServer;
         }
@@ -94,43 +95,39 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
 
     @Override
     public void destroyServer(Server server, Url providerUrl) {
-        destroyServer(server, providerUrl, ADDRESS_2_SHARED_SERVER, SHARED_SERVER_2_PROVIDER_KEY_SET);
-    }
-
-    private <T extends Endpoint> void destroyServer(T endpoint, Url url, Map<String, T> ipPort2Endpoint, Map<T, Set<String>> endpoint2Urls) {
-        boolean shareChannel = url.getBooleanOption(SHARED_CHANNEL, SHARED_CHANNEL_VAL_DEFAULT);
+        boolean shareChannel = providerUrl.getBooleanOption(SHARED_CHANNEL, SHARED_CHANNEL_VAL_DEFAULT);
         if (!shareChannel) {
-            endpoint.close();
+            server.close();
             return;
         }
 
-        synchronized (ipPort2Endpoint) {
-            String ipPort = url.getAddress();
-            String providerKey = RpcFrameworkUtils.getProviderKey(url);
+        synchronized (ADDRESS_2_SHARED_SERVER) {
+            String address = providerUrl.getAddress();
+            String providerKey = RpcFrameworkUtils.getProviderKey(providerUrl);
 
-            if (endpoint != ipPort2Endpoint.get(ipPort)) {
-                endpoint.close();
+            if (server != ADDRESS_2_SHARED_SERVER.get(address)) {
+                server.close();
                 return;
             }
 
-            Set<String> urls = endpoint2Urls.get(endpoint);
-            urls.remove(providerKey);
+            Set<String> providerKeys = SHARED_SERVER_2_PROVIDER_KEY_SET.get(server);
+            providerKeys.remove(providerKey);
 
-            if (urls.isEmpty()) {
-                endpoint.close();
-                ipPort2Endpoint.remove(ipPort);
-                endpoint2Urls.remove(endpoint);
+            if (CollectionUtils.isEmpty(providerKeys)) {
+                server.close();
+                ADDRESS_2_SHARED_SERVER.remove(address);
+                SHARED_SERVER_2_PROVIDER_KEY_SET.remove(server);
             }
         }
     }
 
-    private <T> void saveProviderKey(Map<T, Set<String>> map, T server, String providerKey) {
-        synchronized (map) {
-            Set<String> providerKeys = map.get(server);
+    private void saveProviderKey(Server server, String providerKey) {
+        synchronized (SHARED_SERVER_2_PROVIDER_KEY_SET) {
+            Set<String> providerKeys = SHARED_SERVER_2_PROVIDER_KEY_SET.get(server);
             if (providerKeys == null) {
                 providerKeys = new HashSet<>();
                 providerKeys.add(providerKey);
-                map.putIfAbsent(server, providerKeys);
+                SHARED_SERVER_2_PROVIDER_KEY_SET.putIfAbsent(server, providerKeys);
             }
             providerKeys.add(providerKey);
         }
