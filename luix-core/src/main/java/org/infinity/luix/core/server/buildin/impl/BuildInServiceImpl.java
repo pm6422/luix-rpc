@@ -16,7 +16,7 @@ public class BuildInServiceImpl implements BuildInService {
     @Override
     public ApplicationConfig getApplicationInfo() {
         String stubBeanName = ProviderStub.buildProviderStubBeanName(BuildInService.class.getName());
-        return ProviderStubHolder.getInstance().get().get(stubBeanName).getApplicationConfig();
+        return ProviderStubHolder.getInstance().getMap().get(stubBeanName).getApplicationConfig();
     }
 
     @Override

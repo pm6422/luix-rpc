@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.exchange.endpoint.NetworkTransmissionFactory;
 import org.infinity.luix.core.exchange.server.Server;
 import org.infinity.luix.core.server.exposer.AbstractProviderExposer;
-import org.infinity.luix.core.server.messagehandler.impl.ServerInvocationHandler;
-import org.infinity.luix.core.server.messagehandler.impl.ServerProtectedInvocationHandler;
+import org.infinity.luix.core.server.handler.impl.ServerInvocationHandler;
+import org.infinity.luix.core.server.handler.impl.ServerProtectedInvocationHandler;
 import org.infinity.luix.core.url.Url;
 
 import java.util.Map;

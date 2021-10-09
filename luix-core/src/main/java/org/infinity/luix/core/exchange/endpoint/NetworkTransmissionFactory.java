@@ -19,7 +19,7 @@ package org.infinity.luix.core.exchange.endpoint;
 import org.infinity.luix.core.exception.impl.RpcConfigException;
 import org.infinity.luix.core.exchange.client.Client;
 import org.infinity.luix.core.exchange.server.Server;
-import org.infinity.luix.core.server.messagehandler.ServerInvocationHandleable;
+import org.infinity.luix.core.server.handler.InvocationHandleable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.serviceloader.ServiceLoader;
 import org.infinity.luix.utilities.serviceloader.annotation.Spi;
@@ -53,7 +53,7 @@ public interface NetworkTransmissionFactory {
      * @param providerInvocationHandler provider invocation handler
      * @return server
      */
-    Server createServer(Url providerUrl, ServerInvocationHandleable providerInvocationHandler);
+    Server createServer(Url providerUrl, InvocationHandleable providerInvocationHandler);
 
     /**
      * Destroy server

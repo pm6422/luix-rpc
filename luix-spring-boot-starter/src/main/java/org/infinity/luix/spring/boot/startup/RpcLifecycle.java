@@ -137,7 +137,7 @@ public class RpcLifecycle {
     }
 
     private void publishProviders(InfinityProperties infinityProperties, RegistryConfig registryConfig) {
-        Map<String, ProviderStub<?>> providerStubs = ProviderStubHolder.getInstance().get();
+        Map<String, ProviderStub<?>> providerStubs = ProviderStubHolder.getInstance().getMap();
         if (MapUtils.isEmpty(providerStubs)) {
             log.info("No RPC service providers found to register to registry [{}]", registryConfig.getName());
             return;

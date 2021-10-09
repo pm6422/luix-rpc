@@ -9,7 +9,7 @@ import org.infinity.luix.core.exchange.checkhealth.HealthChecker;
 import org.infinity.luix.core.exchange.client.Client;
 import org.infinity.luix.core.exchange.endpoint.impl.CheckHealthClientEndpointManager;
 import org.infinity.luix.core.exchange.server.Server;
-import org.infinity.luix.core.server.messagehandler.ServerInvocationHandleable;
+import org.infinity.luix.core.server.handler.InvocationHandleable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.RpcFrameworkUtils;
 
@@ -54,7 +54,7 @@ public abstract class AbstractNetworkTransmissionFactory implements NetworkTrans
     }
 
     @Override
-    public Server createServer(Url providerUrl, ServerInvocationHandleable handler) {
+    public Server createServer(Url providerUrl, InvocationHandleable handler) {
         handler = HealthChecker.getInstance(providerUrl).wrap(handler);
 
         synchronized (ADDRESS_2_SHARED_SERVER) {
@@ -135,5 +135,5 @@ public abstract class AbstractNetworkTransmissionFactory implements NetworkTrans
 
     protected abstract Client doCreateClient(Url providerUrl);
 
-    protected abstract Server doCreateServer(Url url, ServerInvocationHandleable handler);
+    protected abstract Server doCreateServer(Url url, InvocationHandleable handler);
 }

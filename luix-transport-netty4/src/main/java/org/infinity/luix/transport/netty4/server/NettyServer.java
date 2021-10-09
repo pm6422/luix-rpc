@@ -12,7 +12,7 @@ import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.exchange.callback.StatisticCallback;
 import org.infinity.luix.core.exchange.constants.ChannelState;
 import org.infinity.luix.core.exchange.server.AbstractServer;
-import org.infinity.luix.core.server.messagehandler.ServerInvocationHandleable;
+import org.infinity.luix.core.server.handler.InvocationHandleable;
 import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.transport.netty4.NettyDecoder;
@@ -31,9 +31,9 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
     protected NettyServerChannelManage   channelManage;
     private   EventLoopGroup             bossGroup;
     private   EventLoopGroup             workerGroup;
-    private   Channel                    serverChannel;
-    private   ServerInvocationHandleable handler;
-    private   StandardThreadExecutor     standardThreadExecutor;
+    private Channel                serverChannel;
+    private InvocationHandleable   handler;
+    private StandardThreadExecutor standardThreadExecutor;
 
     private AtomicInteger rejectCounter = new AtomicInteger(0);
 
@@ -41,7 +41,7 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
         return rejectCounter;
     }
 
-    public NettyServer(Url providerUrl, ServerInvocationHandleable handler) {
+    public NettyServer(Url providerUrl, InvocationHandleable handler) {
         super(providerUrl);
         this.handler = handler;
     }

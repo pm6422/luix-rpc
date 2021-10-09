@@ -33,7 +33,7 @@ public class ProviderStubHolder {
         cache.putIfAbsent(name, providerStub);
     }
 
-    public synchronized Map<String, ProviderStub<?>> get() {
+    public synchronized Map<String, ProviderStub<?>> getMap() {
         return cache;
     }
 }

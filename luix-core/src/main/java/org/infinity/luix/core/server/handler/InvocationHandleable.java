@@ -1,8 +1,8 @@
-package org.infinity.luix.core.server.messagehandler;
+package org.infinity.luix.core.server.handler;
 
 import org.infinity.luix.core.exchange.Channel;
 
-public interface ServerInvocationHandleable {
+public interface InvocationHandleable {
 
     Object handle(Channel channel, Object message);
 

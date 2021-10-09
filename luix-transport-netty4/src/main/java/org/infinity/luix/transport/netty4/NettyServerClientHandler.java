@@ -11,7 +11,7 @@ import org.infinity.luix.core.codec.CodecUtils;
 import org.infinity.luix.core.constant.RpcConstants;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.exchange.Channel;
-import org.infinity.luix.core.server.messagehandler.ServerInvocationHandleable;
+import org.infinity.luix.core.server.handler.InvocationHandleable;
 import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.server.response.impl.RpcResponse;
 import org.infinity.luix.core.url.Url;
@@ -33,18 +33,18 @@ import static org.infinity.luix.core.constant.ProtocolConstants.CODEC_VAL_DEFAUL
  */
 @Slf4j
 public class NettyServerClientHandler extends ChannelDuplexHandler {
-    private ThreadPoolExecutor         threadPoolExecutor;
-    private ServerInvocationHandleable handler;
-    private Channel                    channel;
+    private ThreadPoolExecutor   threadPoolExecutor;
+    private InvocationHandleable handler;
+    private Channel              channel;
     private Codec              codec;
 
-    public NettyServerClientHandler(Channel channel, ServerInvocationHandleable handler) {
+    public NettyServerClientHandler(Channel channel, InvocationHandleable handler) {
         this.channel = channel;
         this.handler = handler;
         codec = Codec.getInstance(channel.getProviderUrl().getOption(CODEC, CODEC_VAL_DEFAULT));
     }
 
-    public NettyServerClientHandler(Channel channel, ServerInvocationHandleable handler, ThreadPoolExecutor threadPoolExecutor) {
+    public NettyServerClientHandler(Channel channel, InvocationHandleable handler, ThreadPoolExecutor threadPoolExecutor) {
         this.channel = channel;
         this.handler = handler;
         this.threadPoolExecutor = threadPoolExecutor;

@@ -1,15 +1,17 @@
 package org.infinity.luix.core.exchange.client;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.codec.Codec;
 import org.infinity.luix.core.constant.ProtocolConstants;
+import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.exchange.constants.ChannelState;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 
 import java.net.InetSocketAddress;
 
 @Slf4j
+@Data
 public abstract class AbstractClient implements Client {
     /**
      * Set default state with ChannelState.UNINITIALIZED
@@ -28,23 +30,5 @@ public abstract class AbstractClient implements Client {
             throw new RpcFrameworkException("Illegal codec name [" + codecName + "]!");
         }
         log.info("Initializing client by {} for url [{}]", codec.getClass().getSimpleName(), providerUrl);
-    }
-
-    public void setLocalAddress(InetSocketAddress localAddress) {
-        this.localAddress = localAddress;
-    }
-
-    @Override
-    public InetSocketAddress getLocalAddress() {
-        return localAddress;
-    }
-
-    public void setRemoteAddress(InetSocketAddress remoteAddress) {
-        this.remoteAddress = remoteAddress;
-    }
-
-    @Override
-    public InetSocketAddress getRemoteAddress() {
-        return remoteAddress;
     }
 }

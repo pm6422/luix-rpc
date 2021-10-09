@@ -19,8 +19,8 @@ package org.infinity.luix.core.exchange.checkhealth.impl;
 import org.infinity.luix.core.client.request.Requestable;
 import org.infinity.luix.core.client.request.impl.RpcCheckHealthRequest;
 import org.infinity.luix.core.exchange.checkhealth.HealthChecker;
-import org.infinity.luix.core.server.messagehandler.ServerInvocationHandleable;
-import org.infinity.luix.core.server.messagehandler.impl.DefaultCheckHealthHandlerWrapper;
+import org.infinity.luix.core.server.handler.InvocationHandleable;
+import org.infinity.luix.core.server.handler.impl.DefaultCheckHealthHandlerWrapper;
 import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.utilities.serviceloader.annotation.SpiName;
 
@@ -32,7 +32,7 @@ import static org.infinity.luix.core.constant.ProviderConstants.HEALTH_CHECKER_V
 @SpiName(HEALTH_CHECKER_VAL_V1)
 public class HealthCheckerV1 implements HealthChecker {
     @Override
-    public ServerInvocationHandleable wrap(ServerInvocationHandleable handler) {
+    public InvocationHandleable wrap(InvocationHandleable handler) {
         return new DefaultCheckHealthHandlerWrapper(handler);
     }
 
