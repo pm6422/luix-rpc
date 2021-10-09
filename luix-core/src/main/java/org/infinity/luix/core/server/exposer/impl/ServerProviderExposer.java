@@ -71,7 +71,7 @@ public class ServerProviderExposer extends AbstractProviderExposer {
 
     @Override
     public void destroy() {
-        endpointFactory.safeReleaseResource(server, providerUrl);
+        endpointFactory.destroyServer(server, providerUrl);
         log.info("Destroyed provider url: [{}]", providerUrl);
     }
 }

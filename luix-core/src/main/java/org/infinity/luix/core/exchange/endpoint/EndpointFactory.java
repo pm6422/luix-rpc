@@ -31,15 +31,6 @@ import java.util.Optional;
 public interface EndpointFactory {
 
     /**
-     * Create remote server
-     *
-     * @param providerUrl    provider url
-     * @param providerInvocationHandleable message handler
-     * @return server
-     */
-    Server createServer(Url providerUrl, ProviderInvocationHandleable providerInvocationHandleable);
-
-    /**
      * Create remote client
      *
      * @param providerUrl provider url
@@ -48,20 +39,29 @@ public interface EndpointFactory {
     Client createClient(Url providerUrl);
 
     /**
-     * Safe release server
-     *
-     * @param server      server
-     * @param providerUrl provider url
-     */
-    void safeReleaseResource(Server server, Url providerUrl);
-
-    /**
-     * Safe release client
+     * Destroy client
      *
      * @param client      client
      * @param providerUrl provider url
      */
-    void safeReleaseResource(Client client, Url providerUrl);
+    void destroyClient(Client client, Url providerUrl);
+
+    /**
+     * Create remote server
+     *
+     * @param providerUrl               provider url
+     * @param providerInvocationHandler provider invocation handler
+     * @return server
+     */
+    Server createServer(Url providerUrl, ProviderInvocationHandleable providerInvocationHandler);
+
+    /**
+     * Destroy server
+     *
+     * @param server      server
+     * @param providerUrl provider url
+     */
+    void destroyServer(Server server, Url providerUrl);
 
     /**
      * Get instance associated with the specified name

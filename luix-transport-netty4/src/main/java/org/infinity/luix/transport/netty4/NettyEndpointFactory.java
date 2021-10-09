@@ -13,13 +13,14 @@ import static org.infinity.luix.core.constant.ProtocolConstants.ENDPOINT_FACTORY
 
 @SpiName(ENDPOINT_FACTORY_VAL_NETTY)
 public class NettyEndpointFactory extends AbstractEndpointFactory {
-    @Override
-    protected Server doCreateServer(Url providerUrl, ProviderInvocationHandleable providerInvocationHandleable) {
-        return new NettyServer(providerUrl, providerInvocationHandleable);
-    }
 
     @Override
     protected Client doCreateClient(Url providerUrl) {
         return new NettyClient(providerUrl);
+    }
+
+    @Override
+    protected Server doCreateServer(Url providerUrl, ProviderInvocationHandleable providerInvocationHandleable) {
+        return new NettyServer(providerUrl, providerInvocationHandleable);
     }
 }

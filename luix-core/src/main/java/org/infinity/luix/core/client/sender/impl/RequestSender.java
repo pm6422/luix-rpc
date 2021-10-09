@@ -66,7 +66,7 @@ public class RequestSender extends AbstractRequestSender {
 
     @Override
     public void destroy() {
-        endpointFactory.safeReleaseResource(client, providerUrl);
+        endpointFactory.destroyClient(client, providerUrl);
         log.info("Destroy request sender for provider url {}", providerUrl);
     }
 
