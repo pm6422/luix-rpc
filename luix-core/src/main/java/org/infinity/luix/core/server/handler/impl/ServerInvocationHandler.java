@@ -45,6 +45,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ServerInvocationHandler implements InvocationHandleable {
     /**
      * Map of provider stub name to provider URL
+     * Note: it is useless for now
      */
     protected static final Map<String, Url> NAME_2_URL           = new ConcurrentHashMap<>();
     /**
@@ -129,9 +130,7 @@ public class ServerInvocationHandler implements InvocationHandleable {
         NAME_2_URL.put(stubName, providerUrl);
 
         List<Method> methods = MethodParameterUtils.getPublicMethod(providerStub.getInterfaceClass());
-        //todo
-//        CompressRpcCodec.putMethodSign(provider, methods);// 对所有接口方法生成方法签名。适配方法签名压缩调用方式。
-        // Calculate the total of exported public methods
+        // Calculate the total count of exposed public methods
         EXPOSED_METHOD_COUNT.addAndGet(methods.size());
         log.info("Added service provider [{}] to router", providerUrl);
     }
