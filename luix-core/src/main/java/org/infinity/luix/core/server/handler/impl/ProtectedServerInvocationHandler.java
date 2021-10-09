@@ -47,7 +47,6 @@ public class ProtectedServerInvocationHandler extends ServerInvocationHandler {
                 // reject request
                 return reject(request.getInterfaceName() + "." + request.getMethodName(), requestCounter, totalCounter, maxThread, request);
             }
-
         } finally {
             decrTotalCounter();
             decrRequestCounter(requestKey);
