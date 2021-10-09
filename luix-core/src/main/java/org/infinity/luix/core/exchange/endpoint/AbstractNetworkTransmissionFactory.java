@@ -18,8 +18,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.luix.core.constant.ProtocolConstants.SHARED_CHANNEL;
-import static org.infinity.luix.core.constant.ProtocolConstants.SHARED_CHANNEL_VAL_DEFAULT;
+import static org.infinity.luix.core.constant.ProtocolConstants.SHARED_SERVER;
+import static org.infinity.luix.core.constant.ProtocolConstants.SHARED_SERVER_VAL_DEFAULT;
 
 /**
  * non-shared channel: 某个service暴露服务的时候，不期望和别的service共享服务，明哲自保，比如你说：我很重要，我很重要。
@@ -27,13 +27,13 @@ import static org.infinity.luix.core.constant.ProtocolConstants.SHARED_CHANNEL_V
  * 不允许差异化的配置如下：protocol, codec, serializer, maxContentLength, maxServerConnection, maxWorkerThread, workerQueueSize, healthChecker
  */
 @Slf4j
-public abstract class AbstractEndpointFactory implements EndpointFactory {
+public abstract class AbstractNetworkTransmissionFactory implements NetworkTransmissionFactory {
 
     private final          EndpointManager          endpointManager;
     protected static final Map<String, Server>      ADDRESS_2_SHARED_SERVER          = new ConcurrentHashMap<>();
     protected static final Map<Server, Set<String>> SHARED_SERVER_2_PROVIDER_KEY_SET = new ConcurrentHashMap<>();
 
-    public AbstractEndpointFactory() {
+    public AbstractNetworkTransmissionFactory() {
         endpointManager = new CheckHealthClientEndpointManager();
         endpointManager.init();
     }
@@ -60,7 +60,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
         synchronized (ADDRESS_2_SHARED_SERVER) {
             String address = providerUrl.getAddress();
 
-            boolean sharedChannel = providerUrl.getBooleanOption(SHARED_CHANNEL, SHARED_CHANNEL_VAL_DEFAULT);
+            boolean sharedChannel = providerUrl.getBooleanOption(SHARED_SERVER, SHARED_SERVER_VAL_DEFAULT);
             if (!sharedChannel) {
                 // Create exclusive channel server
                 log.info("Created a exclusive channel server for url [{}] by [{}]", providerUrl, this.getClass().getSimpleName());
@@ -95,7 +95,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
 
     @Override
     public void destroyServer(Server server, Url providerUrl) {
-        boolean shareChannel = providerUrl.getBooleanOption(SHARED_CHANNEL, SHARED_CHANNEL_VAL_DEFAULT);
+        boolean shareChannel = providerUrl.getBooleanOption(SHARED_SERVER, SHARED_SERVER_VAL_DEFAULT);
         if (!shareChannel) {
             server.close();
             return;

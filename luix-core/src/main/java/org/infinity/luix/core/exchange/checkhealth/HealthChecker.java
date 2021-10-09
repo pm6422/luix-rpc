@@ -47,7 +47,7 @@ public interface HealthChecker {
      * @return instance
      */
     static HealthChecker getInstance(Url providerUrl) {
-        final String name = providerUrl.getOption(ProviderConstants.HEALTH_CHECKER, ProviderConstants.HEALTH_CHECKER_VAL_DEFAULT);
+        final String name = providerUrl.getOption(ProviderConstants.HEALTH_CHECKER, ProviderConstants.HEALTH_CHECKER_VAL_V1);
         return Optional.ofNullable(ServiceLoader.forClass(HealthChecker.class).load(name))
                 .orElseThrow(() -> new RpcFrameworkException("No health checker [" + name + "] found!"));
     }

@@ -28,7 +28,7 @@ import org.infinity.luix.utilities.serviceloader.annotation.SpiScope;
 import java.util.Optional;
 
 @Spi(scope = SpiScope.SINGLETON)
-public interface EndpointFactory {
+public interface NetworkTransmissionFactory {
 
     /**
      * Create remote client
@@ -69,8 +69,8 @@ public interface EndpointFactory {
      * @param name specified name
      * @return instance
      */
-    static EndpointFactory getInstance(String name) {
-        return Optional.ofNullable(ServiceLoader.forClass(EndpointFactory.class).load(name))
+    static NetworkTransmissionFactory getInstance(String name) {
+        return Optional.ofNullable(ServiceLoader.forClass(NetworkTransmissionFactory.class).load(name))
                 .orElseThrow(() -> new RpcConfigException("Endpoint factory [" + name + "] does NOT exist, " +
                         "please check whether the correct dependency is in your class path!"));
     }

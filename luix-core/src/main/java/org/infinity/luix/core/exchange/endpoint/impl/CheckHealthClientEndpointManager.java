@@ -67,7 +67,7 @@ public class CheckHealthClientEndpointManager implements EndpointManager {
         }
         Client client = (Client) endpoint;
         Url providerUrl = endpoint.getProviderUrl();
-        String heartbeatFactoryName = providerUrl.getOption(ProviderConstants.HEALTH_CHECKER, ProviderConstants.HEALTH_CHECKER_VAL_DEFAULT);
+        String heartbeatFactoryName = providerUrl.getOption(ProviderConstants.HEALTH_CHECKER, ProviderConstants.HEALTH_CHECKER_VAL_V1);
         HealthChecker healthChecker = HealthChecker.getInstance(heartbeatFactoryName);
         endpoints.put(client, healthChecker);
     }

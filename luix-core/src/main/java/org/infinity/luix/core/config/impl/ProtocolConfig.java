@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.codec.Codec;
 import org.infinity.luix.core.config.Configurable;
 import org.infinity.luix.core.exception.impl.RpcConfigException;
-import org.infinity.luix.core.exchange.endpoint.EndpointFactory;
+import org.infinity.luix.core.exchange.endpoint.NetworkTransmissionFactory;
 import org.infinity.luix.core.protocol.Protocol;
 import org.infinity.luix.core.utils.RpcConfigValidator;
 import org.infinity.luix.core.utils.SerializerHolder;
@@ -125,7 +125,7 @@ public class ProtocolConfig implements Configurable {
         }
 
         if (StringUtils.isNotEmpty(endpointFactory)) {
-            Optional.ofNullable(EndpointFactory.getInstance(endpointFactory))
+            Optional.ofNullable(NetworkTransmissionFactory.getInstance(endpointFactory))
                     .orElseThrow(() -> new RpcConfigException(String.format("Failed to load the endpoint factory [%s]!", endpointFactory)));
         }
 

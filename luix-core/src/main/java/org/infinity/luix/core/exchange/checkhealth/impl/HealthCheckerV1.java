@@ -24,13 +24,13 @@ import org.infinity.luix.core.server.messagehandler.impl.DefaultCheckHealthHandl
 import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.utilities.serviceloader.annotation.SpiName;
 
-import static org.infinity.luix.core.constant.ProviderConstants.HEALTH_CHECKER_VAL_DEFAULT;
+import static org.infinity.luix.core.constant.ProviderConstants.HEALTH_CHECKER_VAL_V1;
 
 /**
  *
  */
-@SpiName(HEALTH_CHECKER_VAL_DEFAULT)
-public class DefaultHealthChecker implements HealthChecker {
+@SpiName(HEALTH_CHECKER_VAL_V1)
+public class HealthCheckerV1 implements HealthChecker {
     @Override
     public ServerInvocationHandleable wrap(ServerInvocationHandleable handler) {
         return new DefaultCheckHealthHandlerWrapper(handler);

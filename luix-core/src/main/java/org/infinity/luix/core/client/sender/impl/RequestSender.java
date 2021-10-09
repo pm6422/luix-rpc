@@ -10,7 +10,7 @@ import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.exception.TransportException;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.exchange.client.Client;
-import org.infinity.luix.core.exchange.endpoint.EndpointFactory;
+import org.infinity.luix.core.exchange.endpoint.NetworkTransmissionFactory;
 
 
 /**
@@ -20,15 +20,15 @@ import org.infinity.luix.core.exchange.endpoint.EndpointFactory;
  */
 @Slf4j
 public class RequestSender extends AbstractRequestSender {
-    private final EndpointFactory endpointFactory;
-    private final Client          client;
+    private final NetworkTransmissionFactory networkTransmissionFactory;
+    private final Client                     client;
 
     public RequestSender(String interfaceName, Url providerUrl) {
         super(interfaceName, providerUrl);
         long start = System.currentTimeMillis();
-        String name = providerUrl.getOption(ProtocolConstants.ENDPOINT_FACTORY, ProtocolConstants.ENDPOINT_FACTORY_VAL_NETTY);
-        endpointFactory = EndpointFactory.getInstance(name);
-        client = endpointFactory.createClient(providerUrl);
+        String name = providerUrl.getOption(ProtocolConstants.NETWORK_TRANSMISSION, ProtocolConstants.NETWORK_TRANSMISSION_VAL_NETTY);
+        networkTransmissionFactory = NetworkTransmissionFactory.getInstance(name);
+        client = networkTransmissionFactory.createClient(providerUrl);
         // Initialize
         super.init();
         log.info("Initialized request sender [{}] in {} ms", this, System.currentTimeMillis() - start);
@@ -66,7 +66,7 @@ public class RequestSender extends AbstractRequestSender {
 
     @Override
     public void destroy() {
-        endpointFactory.destroyClient(client, providerUrl);
+        networkTransmissionFactory.destroyClient(client, providerUrl);
         log.info("Destroy request sender for provider url {}", providerUrl);
     }
 

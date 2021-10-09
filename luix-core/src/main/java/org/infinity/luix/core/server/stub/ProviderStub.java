@@ -74,12 +74,13 @@ public class ProviderStub<T> {
 //        OPTIONS.add(new OptionMeta(VERSION, null, String.class.getSimpleName()));
 //        OPTIONS.add(new OptionMeta(APP, null, String.class.getSimpleName()));
         OPTIONS.add(new OptionMeta(ProtocolConstants.SERIALIZER, ProtocolConstants.SERIALIZERS, List.class.getSimpleName(), ProtocolConstants.SERIALIZER_VAL_DEFAULT, false));
-        OPTIONS.add(new OptionMeta(ProviderConstants.HEALTH_CHECKER, null, String.class.getSimpleName(), ProviderConstants.HEALTH_CHECKER_VAL_DEFAULT, true));
+        OPTIONS.add(new OptionMeta(ProviderConstants.HEALTH_CHECKER, null, String.class.getSimpleName(), ProviderConstants.HEALTH_CHECKER_VAL_V1, true));
         OPTIONS.add(new OptionMeta(ServiceConstants.REQUEST_TIMEOUT, null, Integer.class.getSimpleName(), String.valueOf(ServiceConstants.REQUEST_TIMEOUT_VAL_DEFAULT), true));
         OPTIONS.add(new OptionMeta(ServiceConstants.RETRY_COUNT, null, Integer.class.getSimpleName(), String.valueOf(ServiceConstants.RETRY_COUNT_VAL_DEFAULT), true));
         OPTIONS.add(new OptionMeta(ServiceConstants.MAX_PAYLOAD, null, Integer.class.getSimpleName(), String.valueOf(ServiceConstants.MAX_PAYLOAD_VAL_DEFAULT), true));
         OPTIONS.add(new OptionMeta(ProtocolConstants.CODEC, null, String.class.getSimpleName(), ProtocolConstants.CODEC_VAL_DEFAULT, true));
-        OPTIONS.add(new OptionMeta(ProtocolConstants.ENDPOINT_FACTORY, null, String.class.getSimpleName(), ProtocolConstants.ENDPOINT_FACTORY_VAL_NETTY, true));
+        OPTIONS.add(new OptionMeta(ProtocolConstants.NETWORK_TRANSMISSION, null, String.class.getSimpleName(), ProtocolConstants.NETWORK_TRANSMISSION_VAL_NETTY, true));
+        OPTIONS.add(new OptionMeta(ProtocolConstants.SHARED_SERVER, null, Boolean.class.getSimpleName(), String.valueOf(ProtocolConstants.SHARED_SERVER_VAL_DEFAULT), false));
         OPTIONS.add(new OptionMeta(ProtocolConstants.MIN_CLIENT_CONN, null, Integer.class.getSimpleName(), String.valueOf(ProtocolConstants.MIN_CLIENT_CONN_VAL_DEFAULT), true));
         OPTIONS.add(new OptionMeta(ProtocolConstants.MAX_CLIENT_FAILED_CONN, null, Integer.class.getSimpleName(), String.valueOf(ProtocolConstants.MAX_CLIENT_FAILED_CONN_VAL_DEFAULT), true));
         OPTIONS.add(new OptionMeta(ProtocolConstants.MAX_SERVER_CONN, null, Integer.class.getSimpleName(), String.valueOf(ProtocolConstants.MAX_SERVER_CONN_VAL_DEFAULT), true));
@@ -87,7 +88,6 @@ public class ProviderStub<T> {
         OPTIONS.add(new OptionMeta(ProtocolConstants.MIN_THREAD, null, Integer.class.getSimpleName(), String.valueOf(ProtocolConstants.MIN_THREAD_VAL_DEFAULT), true));
         OPTIONS.add(new OptionMeta(ProtocolConstants.MAX_THREAD, null, Integer.class.getSimpleName(), String.valueOf(ProtocolConstants.MAX_THREAD_VAL_DEFAULT), true));
         OPTIONS.add(new OptionMeta(ProtocolConstants.WORK_QUEUE_SIZE, null, Integer.class.getSimpleName(), String.valueOf(ProtocolConstants.WORK_QUEUE_SIZE_VAL_DEFAULT), true));
-        OPTIONS.add(new OptionMeta(ProtocolConstants.SHARED_CHANNEL, null, Boolean.class.getSimpleName(), String.valueOf(ProtocolConstants.SHARED_CHANNEL_VAL_DEFAULT), false));
         OPTIONS.add(new OptionMeta(ProtocolConstants.ASYNC_INIT_CONN, null, Boolean.class.getSimpleName(), String.valueOf(ProtocolConstants.ASYNC_INIT_CONN_VAL_DEFAULT), true));
 
         try {
@@ -345,7 +345,7 @@ public class ProviderStub<T> {
         url.addOption(ServiceConstants.MAX_PAYLOAD, maxPayload);
 
         url.addOption(ProtocolConstants.CODEC, protocolConfig.getCodec());
-        url.addOption(ProtocolConstants.ENDPOINT_FACTORY, protocolConfig.getEndpointFactory());
+        url.addOption(ProtocolConstants.NETWORK_TRANSMISSION, protocolConfig.getEndpointFactory());
 
         String minClientConn = protocolConfig.getMinClientConn() == null ? null : protocolConfig.getMinClientConn().toString();
         url.addOption(ProtocolConstants.MIN_CLIENT_CONN, minClientConn);
@@ -369,7 +369,7 @@ public class ProviderStub<T> {
         url.addOption(ProtocolConstants.WORK_QUEUE_SIZE, workQueueSize);
 
         String sharedChannel = protocolConfig.getSharedChannel() == null ? null : protocolConfig.getSharedChannel().toString();
-        url.addOption(ProtocolConstants.SHARED_CHANNEL, sharedChannel);
+        url.addOption(ProtocolConstants.SHARED_SERVER, sharedChannel);
 
         String asyncInitConn = protocolConfig.getAsyncInitConn() == null ? null : protocolConfig.getAsyncInitConn().toString();
         url.addOption(ProtocolConstants.ASYNC_INIT_CONN, asyncInitConn);

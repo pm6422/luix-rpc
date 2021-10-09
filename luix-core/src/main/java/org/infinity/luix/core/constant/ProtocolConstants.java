@@ -19,8 +19,10 @@ public interface ProtocolConstants {
     String       SERIALIZER_VAL_DEFAULT             = SERIALIZER_NAME_KRYO;
     int          SERIALIZER_ID_DEFAULT              = SERIALIZER_ID_KRYO;
     List<String> SERIALIZERS                        = Arrays.asList(SERIALIZER_NAME_KRYO, SERIALIZER_NAME_HESSIAN2);
-    String       ENDPOINT_FACTORY                   = "endpointFactory";
-    String       ENDPOINT_FACTORY_VAL_NETTY         = "netty";
+    String       NETWORK_TRANSMISSION               = "transmission";
+    String       NETWORK_TRANSMISSION_VAL_NETTY     = "netty";
+    String       SHARED_SERVER                      = "sharedServer";
+    boolean      SHARED_SERVER_VAL_DEFAULT          = true;
     String       MIN_CLIENT_CONN                    = "minClientConn";
     int          MIN_CLIENT_CONN_VAL_DEFAULT        = 2;
     String       MAX_CLIENT_FAILED_CONN             = "maxClientFailedConn";
@@ -37,8 +39,6 @@ public interface ProtocolConstants {
     int          MAX_THREAD_SHARED_CHANNEL          = 800;
     String       WORK_QUEUE_SIZE                    = "workQueueSize";
     int          WORK_QUEUE_SIZE_VAL_DEFAULT        = 0;
-    String       SHARED_CHANNEL                     = "sharedChannel";
-    boolean      SHARED_CHANNEL_VAL_DEFAULT         = true;
     String       ASYNC_INIT_CONN                    = "asyncInitConn";
     boolean      ASYNC_INIT_CONN_VAL_DEFAULT        = false;
     String       THROW_EXCEPTION                    = "throwException";

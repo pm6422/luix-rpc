@@ -1,7 +1,7 @@
 package org.infinity.luix.core.server.exposer.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.core.exchange.endpoint.EndpointFactory;
+import org.infinity.luix.core.exchange.endpoint.NetworkTransmissionFactory;
 import org.infinity.luix.core.exchange.server.Server;
 import org.infinity.luix.core.server.exposer.AbstractProviderExposer;
 import org.infinity.luix.core.server.messagehandler.impl.ServerInvocationHandler;
@@ -11,8 +11,8 @@ import org.infinity.luix.core.url.Url;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.luix.core.constant.ProtocolConstants.ENDPOINT_FACTORY;
-import static org.infinity.luix.core.constant.ProtocolConstants.ENDPOINT_FACTORY_VAL_NETTY;
+import static org.infinity.luix.core.constant.ProtocolConstants.NETWORK_TRANSMISSION;
+import static org.infinity.luix.core.constant.ProtocolConstants.NETWORK_TRANSMISSION_VAL_NETTY;
 
 @Slf4j
 public class ServerProviderExposer extends AbstractProviderExposer {
@@ -21,15 +21,15 @@ public class ServerProviderExposer extends AbstractProviderExposer {
      * 多个服务可在不同端口进行服务暴露
      */
     protected static final Map<String, ServerInvocationHandler> ADDRESS_2_PROVIDER_INVOCATION_HANDLER = new ConcurrentHashMap<>();
-    protected              Server                               server;
-    protected              EndpointFactory                        endpointFactory;
+    protected Server                     server;
+    protected NetworkTransmissionFactory networkTransmissionFactory;
 
     public ServerProviderExposer(Url providerUrl) {
         super(providerUrl);
 
         ServerInvocationHandler providerInvocationHandler = createHandler(providerUrl);
-        endpointFactory = createEndpointFactory(providerUrl);
-        server = endpointFactory.createServer(providerUrl, providerInvocationHandler);
+        networkTransmissionFactory = createEndpointFactory(providerUrl);
+        server = networkTransmissionFactory.createServer(providerUrl, providerInvocationHandler);
     }
 
     private ServerInvocationHandler createHandler(Url providerUrl) {
@@ -45,9 +45,9 @@ public class ServerProviderExposer extends AbstractProviderExposer {
         return providerInvocationHandler;
     }
 
-    private EndpointFactory createEndpointFactory(Url providerUrl) {
-        String endpointFactoryName = providerUrl.getOption(ENDPOINT_FACTORY, ENDPOINT_FACTORY_VAL_NETTY);
-        return EndpointFactory.getInstance(endpointFactoryName);
+    private NetworkTransmissionFactory createEndpointFactory(Url providerUrl) {
+        String endpointFactoryName = providerUrl.getOption(NETWORK_TRANSMISSION, NETWORK_TRANSMISSION_VAL_NETTY);
+        return NetworkTransmissionFactory.getInstance(endpointFactoryName);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class ServerProviderExposer extends AbstractProviderExposer {
 
     @Override
     public void destroy() {
-        endpointFactory.destroyServer(server, providerUrl);
+        networkTransmissionFactory.destroyServer(server, providerUrl);
         log.info("Destroyed provider url: [{}]", providerUrl);
     }
 }
