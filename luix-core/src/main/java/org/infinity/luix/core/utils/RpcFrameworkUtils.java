@@ -27,31 +27,6 @@ public class RpcFrameworkUtils {
     }
 
     /**
-     * 根据Request得到 interface.method(paramDesc) 的 desc
-     * <p>
-     * <pre>
-     * 		比如：
-     * 			package com.weibo.api.motan;
-     *
-     * 		 	interface A { public hello(int age); }
-     *
-     * 			那么return "com.weibo.api.motan.A.hell(int)"
-     * </pre>
-     *
-     * @param request
-     * @return
-     */
-    public static String getFullMethodString(Requestable request) {
-        return request.getInterfaceName() + "." + request.getMethodName() + "("
-                + request.getMethodParameters() + ")";
-    }
-
-    public static String getGroupMethodString(Requestable request) {
-        return getFormFromRequest(request) + "_" + getFullMethodString(request);
-    }
-
-
-    /**
      * 判断url:source和url:target是否可以使用共享的service channel(port) 对外提供服务
      * <p>
      * <pre>

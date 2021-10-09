@@ -18,6 +18,7 @@ package org.infinity.luix.core.utils;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.luix.core.client.request.Requestable;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -69,6 +70,18 @@ public class MethodParameterUtils {
      */
     public static String getMethodSignature(Method method) {
         return getMethodSignature(method.getName(), getMethodParameters(method));
+    }
+
+    /**
+     * Get the method name with its class name and parameter class name list string.
+     * e.g, org.infinity.luix.democommon.service.AdminMenuService.getMenus(java.util.List,java.lang.Long)
+     *
+     * @param request RPC request
+     * @return method name with parameter class name list string
+     */
+    public static String getFullMethodSignature(Requestable request) {
+        return request.getInterfaceName() + "." + request.getMethodName() + "("
+                + request.getMethodParameters() + ")";
     }
 
     /**

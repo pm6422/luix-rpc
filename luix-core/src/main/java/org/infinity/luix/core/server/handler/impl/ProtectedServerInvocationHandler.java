@@ -8,6 +8,7 @@ import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.server.response.impl.RpcResponse;
 import org.infinity.luix.core.server.stub.ProviderStub;
+import org.infinity.luix.core.utils.MethodParameterUtils;
 import org.infinity.luix.core.utils.RpcFrameworkUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,7 +36,7 @@ public class ProtectedServerInvocationHandler extends ServerInvocationHandler {
     protected Responseable invoke(Requestable request, ProviderStub<?> providerStub) {
         // 支持的最大worker thread数
         int maxThread = providerStub.getUrl().getIntOption(ProtocolConstants.MAX_THREAD, ProtocolConstants.MAX_THREAD_VAL_DEFAULT);
-        String requestKey = RpcFrameworkUtils.getFullMethodString(request);
+        String requestKey = MethodParameterUtils.getFullMethodSignature(request);
 
         try {
             int requestCounter = incrRequestCounter(requestKey);
