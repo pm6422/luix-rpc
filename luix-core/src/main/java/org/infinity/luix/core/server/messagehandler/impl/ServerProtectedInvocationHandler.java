@@ -34,10 +34,6 @@ public class ServerProtectedInvocationHandler extends ServerInvocationHandler {
     protected AtomicInteger                        totalCounter    = new AtomicInteger(0);
     protected AtomicInteger                        rejectCounter   = new AtomicInteger(0);
 
-    public ServerProtectedInvocationHandler() {
-        super();
-    }
-
     @Override
     protected Responseable invoke(Requestable request, ProviderStub<?> providerStub) {
         // 支持的最大worker thread数

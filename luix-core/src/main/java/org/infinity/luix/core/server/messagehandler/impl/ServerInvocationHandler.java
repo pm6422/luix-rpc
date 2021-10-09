@@ -52,9 +52,6 @@ public class ServerInvocationHandler implements ServerInvocationHandleable {
      */
     protected static final AtomicInteger    EXPOSED_METHOD_COUNT = new AtomicInteger(0);
 
-    public ServerInvocationHandler() {
-    }
-
     @Override
     public Object handle(Channel channel, Object message) {
         if (channel == null || message == null) {
