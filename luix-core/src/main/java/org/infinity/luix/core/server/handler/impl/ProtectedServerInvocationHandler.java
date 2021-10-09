@@ -15,9 +15,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * TODO 可配置化策略
  * <p>
- * provider 消息处理分发：支持一定程度的自我防护
+ * provider消息处理分发：支持一定程度的自我防护
  * <p>
  * <pre>
  * 	1) 如果接口只有一个方法，那么直接return true
@@ -27,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * </pre>
  */
 @Slf4j
-public class ServerProtectedInvocationHandler extends ServerInvocationHandler {
+public class ProtectedServerInvocationHandler extends ServerInvocationHandler {
     protected ConcurrentMap<String, AtomicInteger> requestCounters = new ConcurrentHashMap<>();
     protected AtomicInteger                        totalCounter    = new AtomicInteger(0);
     protected AtomicInteger                        rejectCounter   = new AtomicInteger(0);
