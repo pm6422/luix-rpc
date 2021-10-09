@@ -4,7 +4,7 @@ import org.infinity.luix.core.constant.ProviderConstants;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.client.request.Requestable;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
-import org.infinity.luix.core.server.messagehandler.ProviderInvocationHandleable;
+import org.infinity.luix.core.server.messagehandler.ServerInvocationHandleable;
 import org.infinity.luix.utilities.serviceloader.ServiceLoader;
 import org.infinity.luix.utilities.serviceloader.annotation.Spi;
 import org.infinity.luix.utilities.serviceloader.annotation.SpiScope;
@@ -27,7 +27,7 @@ public interface HealthChecker {
      * @param handler message handler
      * @return wrapped message handler
      */
-    ProviderInvocationHandleable wrap(ProviderInvocationHandleable handler);
+    ServerInvocationHandleable wrap(ServerInvocationHandleable handler);
 
     /**
      * Get instance associated with the specified name

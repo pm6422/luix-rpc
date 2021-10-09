@@ -1,6 +1,6 @@
 package org.infinity.luix.transport.netty4;
 
-import org.infinity.luix.core.server.messagehandler.ProviderInvocationHandleable;
+import org.infinity.luix.core.server.messagehandler.ServerInvocationHandleable;
 import org.infinity.luix.core.exchange.client.Client;
 import org.infinity.luix.core.exchange.endpoint.AbstractEndpointFactory;
 import org.infinity.luix.core.exchange.server.Server;
@@ -20,7 +20,7 @@ public class NettyEndpointFactory extends AbstractEndpointFactory {
     }
 
     @Override
-    protected Server doCreateServer(Url providerUrl, ProviderInvocationHandleable providerInvocationHandleable) {
-        return new NettyServer(providerUrl, providerInvocationHandleable);
+    protected Server doCreateServer(Url providerUrl, ServerInvocationHandleable handler) {
+        return new NettyServer(providerUrl, handler);
     }
 }

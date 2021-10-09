@@ -12,7 +12,7 @@ import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.exchange.callback.StatisticCallback;
 import org.infinity.luix.core.exchange.constants.ChannelState;
 import org.infinity.luix.core.exchange.server.AbstractServer;
-import org.infinity.luix.core.server.messagehandler.ProviderInvocationHandleable;
+import org.infinity.luix.core.server.messagehandler.ServerInvocationHandleable;
 import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.transport.netty4.NettyDecoder;
@@ -28,12 +28,12 @@ import static org.infinity.luix.core.constant.ProtocolConstants.*;
 
 @Slf4j
 public class NettyServer extends AbstractServer implements StatisticCallback {
-    protected NettyServerChannelManage     channelManage          = null;
-    private   EventLoopGroup               bossGroup;
-    private   EventLoopGroup               workerGroup;
-    private   Channel                      serverChannel;
-    private   ProviderInvocationHandleable providerInvocationHandleable;
-    private   StandardThreadExecutor       standardThreadExecutor = null;
+    protected NettyServerChannelManage   channelManage;
+    private   EventLoopGroup             bossGroup;
+    private   EventLoopGroup             workerGroup;
+    private   Channel                    serverChannel;
+    private   ServerInvocationHandleable handler;
+    private   StandardThreadExecutor     standardThreadExecutor;
 
     private AtomicInteger rejectCounter = new AtomicInteger(0);
 
@@ -41,9 +41,9 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
         return rejectCounter;
     }
 
-    public NettyServer(Url providerUrl, ProviderInvocationHandleable providerInvocationHandleable) {
+    public NettyServer(Url providerUrl, ServerInvocationHandleable handler) {
         super(providerUrl);
-        this.providerInvocationHandleable = providerInvocationHandleable;
+        this.handler = handler;
     }
 
     @Override
@@ -99,7 +99,7 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
                         pipeline.addLast("channel_manage", channelManage);
                         pipeline.addLast("decoder", new NettyDecoder(codec, NettyServer.this, maxContentLength));
                         pipeline.addLast("encoder", new NettyEncoder());
-                        NettyServerClientHandler handler = new NettyServerClientHandler(NettyServer.this, providerInvocationHandleable, standardThreadExecutor);
+                        NettyServerClientHandler handler = new NettyServerClientHandler(NettyServer.this, NettyServer.this.handler, standardThreadExecutor);
                         pipeline.addLast("handler", handler);
                     }
                 });

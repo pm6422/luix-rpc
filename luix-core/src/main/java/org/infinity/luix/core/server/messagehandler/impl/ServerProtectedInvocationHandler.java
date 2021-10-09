@@ -29,12 +29,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  * </pre>
  */
 @Slf4j
-public class ProviderProtectedInvocationHandler extends ProviderInvocationHandler {
+public class ServerProtectedInvocationHandler extends ServerInvocationHandler {
     protected ConcurrentMap<String, AtomicInteger> requestCounters = new ConcurrentHashMap<>();
     protected AtomicInteger                        totalCounter    = new AtomicInteger(0);
     protected AtomicInteger                        rejectCounter   = new AtomicInteger(0);
 
-    public ProviderProtectedInvocationHandler() {
+    public ServerProtectedInvocationHandler() {
         super();
     }
 

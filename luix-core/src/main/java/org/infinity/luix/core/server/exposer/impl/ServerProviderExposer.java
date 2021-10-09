@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.exchange.endpoint.EndpointFactory;
 import org.infinity.luix.core.exchange.server.Server;
 import org.infinity.luix.core.server.exposer.AbstractProviderExposer;
-import org.infinity.luix.core.server.messagehandler.impl.ProviderInvocationHandler;
-import org.infinity.luix.core.server.messagehandler.impl.ProviderProtectedInvocationHandler;
+import org.infinity.luix.core.server.messagehandler.impl.ServerInvocationHandler;
+import org.infinity.luix.core.server.messagehandler.impl.ServerProtectedInvocationHandler;
 import org.infinity.luix.core.url.Url;
 
 import java.util.Map;
@@ -20,23 +20,23 @@ public class ServerProviderExposer extends AbstractProviderExposer {
     /**
      * 多个服务可在不同端口进行服务暴露
      */
-    protected static final Map<String, ProviderInvocationHandler> ADDRESS_2_PROVIDER_INVOCATION_HANDLER = new ConcurrentHashMap<>();
-    protected              Server                                 server;
+    protected static final Map<String, ServerInvocationHandler> ADDRESS_2_PROVIDER_INVOCATION_HANDLER = new ConcurrentHashMap<>();
+    protected              Server                               server;
     protected              EndpointFactory                        endpointFactory;
 
     public ServerProviderExposer(Url providerUrl) {
         super(providerUrl);
 
-        ProviderInvocationHandler providerInvocationHandler = createHandler(providerUrl);
+        ServerInvocationHandler providerInvocationHandler = createHandler(providerUrl);
         endpointFactory = createEndpointFactory(providerUrl);
         server = endpointFactory.createServer(providerUrl, providerInvocationHandler);
     }
 
-    private ProviderInvocationHandler createHandler(Url providerUrl) {
+    private ServerInvocationHandler createHandler(Url providerUrl) {
         String address = providerUrl.getAddress();
-        ProviderInvocationHandler providerInvocationHandler = ADDRESS_2_PROVIDER_INVOCATION_HANDLER.get(address);
+        ServerInvocationHandler providerInvocationHandler = ADDRESS_2_PROVIDER_INVOCATION_HANDLER.get(address);
         if (providerInvocationHandler == null) {
-            ProviderProtectedInvocationHandler handler = new ProviderProtectedInvocationHandler();
+            ServerProtectedInvocationHandler handler = new ServerProtectedInvocationHandler();
 //            StatsUtil.registryStatisticCallback(router);
             ADDRESS_2_PROVIDER_INVOCATION_HANDLER.putIfAbsent(address, handler);
             providerInvocationHandler = ADDRESS_2_PROVIDER_INVOCATION_HANDLER.get(address);
@@ -62,7 +62,7 @@ public class ServerProviderExposer extends AbstractProviderExposer {
 
     @Override
     public void cancelExpose() {
-        ProviderInvocationHandler handler = ADDRESS_2_PROVIDER_INVOCATION_HANDLER.get(providerUrl.getAddress());
+        ServerInvocationHandler handler = ADDRESS_2_PROVIDER_INVOCATION_HANDLER.get(providerUrl.getAddress());
         if (handler != null) {
             handler.removeProvider(providerUrl);
         }

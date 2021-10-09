@@ -4,15 +4,15 @@ import org.infinity.luix.core.client.request.Requestable;
 import org.infinity.luix.core.exchange.Channel;
 import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.server.response.impl.RpcCheckHealthResponse;
-import org.infinity.luix.core.server.messagehandler.ProviderInvocationHandleable;
+import org.infinity.luix.core.server.messagehandler.ServerInvocationHandleable;
 
 import static org.infinity.luix.core.client.request.impl.RpcCheckHealthRequest.isCheckHealthRequest;
 
-public class DefaultCheckHealthHandlerWrapper implements ProviderInvocationHandleable {
-    private final ProviderInvocationHandleable providerInvocationHandleable;
+public class DefaultCheckHealthHandlerWrapper implements ServerInvocationHandleable {
+    private final ServerInvocationHandleable serverInvocationHandleable;
 
-    public DefaultCheckHealthHandlerWrapper(ProviderInvocationHandleable providerInvocationHandleable) {
-        this.providerInvocationHandleable = providerInvocationHandleable;
+    public DefaultCheckHealthHandlerWrapper(ServerInvocationHandleable serverInvocationHandleable) {
+        this.serverInvocationHandleable = serverInvocationHandleable;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class DefaultCheckHealthHandlerWrapper implements ProviderInvocationHandl
             // Check health short circuit handling can accelerate speed
             return handleCheckHealthRequest(message);
         }
-        return providerInvocationHandleable.handle(channel, message);
+        return serverInvocationHandleable.handle(channel, message);
     }
 
     private Responseable handleCheckHealthRequest(Object message) {

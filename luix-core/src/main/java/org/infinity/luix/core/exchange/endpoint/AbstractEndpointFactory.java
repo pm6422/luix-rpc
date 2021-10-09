@@ -9,7 +9,7 @@ import org.infinity.luix.core.exchange.checkhealth.HealthChecker;
 import org.infinity.luix.core.exchange.client.Client;
 import org.infinity.luix.core.exchange.endpoint.impl.CheckHealthClientEndpointManager;
 import org.infinity.luix.core.exchange.server.Server;
-import org.infinity.luix.core.server.messagehandler.ProviderInvocationHandleable;
+import org.infinity.luix.core.server.messagehandler.ServerInvocationHandleable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.RpcFrameworkUtils;
 
@@ -48,14 +48,14 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
 
     @Override
     public void destroyClient(Client client, Url providerUrl) {
-        log.info("Destroyed the client for [{}] by [{}]", providerUrl, this.getClass().getSimpleName());
         client.close();
         endpointManager.removeEndpoint(client);
+        log.info("Destroyed the client for [{}] by [{}]", providerUrl, this.getClass().getSimpleName());
     }
 
     @Override
-    public Server createServer(Url providerUrl, ProviderInvocationHandleable providerInvocationHandler) {
-        providerInvocationHandler = HealthChecker.getInstance(providerUrl).wrap(providerInvocationHandler);
+    public Server createServer(Url providerUrl, ServerInvocationHandleable handler) {
+        handler = HealthChecker.getInstance(providerUrl).wrap(handler);
 
         synchronized (ADDRESS_2_SHARED_SERVER) {
             String address = providerUrl.getAddress();
@@ -64,7 +64,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
             if (!sharedChannel) {
                 // Create exclusive channel server
                 log.info("Created a exclusive channel server for url [{}] by [{}]", providerUrl, this.getClass().getSimpleName());
-                return doCreateServer(providerUrl, providerInvocationHandler);
+                return doCreateServer(providerUrl, handler);
             }
 
             log.info("Created a shared channel server for url [{}] by [{}]", providerUrl, this.getClass().getSimpleName());
@@ -85,7 +85,7 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
             Url urlCopy = providerUrl.copy();
             // 共享server端口，由于有多个interfaces存在，所以把path设置为空
             urlCopy.setPath(StringUtils.EMPTY);
-            sharedServer = doCreateServer(urlCopy, providerInvocationHandler);
+            sharedServer = doCreateServer(urlCopy, handler);
             ADDRESS_2_SHARED_SERVER.put(address, sharedServer);
             saveProviderKey(sharedServer, RpcFrameworkUtils.getProviderKey(providerUrl));
 
@@ -135,5 +135,5 @@ public abstract class AbstractEndpointFactory implements EndpointFactory {
 
     protected abstract Client doCreateClient(Url providerUrl);
 
-    protected abstract Server doCreateServer(Url url, ProviderInvocationHandleable providerInvocationHandleable);
+    protected abstract Server doCreateServer(Url url, ServerInvocationHandleable handler);
 }
