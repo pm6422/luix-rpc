@@ -1946,6 +1946,8 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
     vm.timeUnits = RpcScheduledTaskService.query({extension: 'time-units'});
     vm.faultTolerances = RpcScheduledTaskService.query({extension: 'fault-tolerances'});
     vm.entity = entity;
+    vm.argsHidden = true;
+    vm.selectedMethod = null;
 
     var dateFormat = 'yyyy-MM-dd HH:mm';
     if(vm.entity.startTime) {
@@ -1957,23 +1959,11 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
         vm.entity.stopTime = new Date(stopTimeStr);
     }
 
-    if(_.isEmpty(vm.entity.methodParamTypes)) {
-        vm.argsHidden = true;
-    } else {
-        vm.argsHidden = false;
-    }
-
-    vm.argsPlaceholder = '[\n' +
-        '    {}\n' +
-        ']';
-
-    if(vm.mode == 'create') {
-        RpcProviderService.get({extension: $stateParams.id},
-            function (response) {
-                vm.provider = response;
-                vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.provider.url});
-            });
-    }
+    RpcProviderService.get({extension: $stateParams.id},
+        function (response) {
+            vm.provider = response;
+            vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.provider.url});
+        });
 
     vm.isSaving = false;
     vm.selectMethod = selectMethod;
@@ -1981,6 +1971,8 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
     vm.cancel = cancel;
 
     function selectMethod() {
+        vm.args = [];
+
         if(!vm.entity.methodSignature) {
             vm.argsHidden = true;
             return;
@@ -1988,8 +1980,8 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
 
         var filteredMethods = _.filter(vm.methods, function(m){ return m.methodSignature == vm.entity.methodSignature; });
         if(!_.isEmpty(filteredMethods)) {
-            var methodInvocation = filteredMethods[0];
-            if(_.isEmpty(methodInvocation.methodParamTypes)) {
+            vm.selectedMethod = filteredMethods[0];
+            if(_.isEmpty(vm.selectedMethod.methodParamTypes)) {
                 vm.argsHidden = true;
             } else {
                 vm.argsHidden = false;
@@ -2002,16 +1994,13 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
         if (vm.mode == 'edit') {
             RpcScheduledTaskService.update(vm.entity, onSaveSuccess, onSaveError);
         } else {
-            var filteredMethods = _.filter(vm.methods, function(m){ return m.methodSignature == vm.entity.methodSignature; });
-            if(!_.isEmpty(filteredMethods)) {
-                var filteredMethod = filteredMethods[0];
-
+            if(vm.selectedMethod) {
                 vm.entity.registryIdentity = $rootScope.selectedRegistryIdentity;
                 vm.entity.interfaceName = vm.provider.interfaceName;
                 vm.entity.form = vm.provider.form;
                 vm.entity.version = vm.provider.version;
-                vm.entity.methodName = filteredMethod.methodName;
-                vm.entity.methodParamTypes = filteredMethod.methodParamTypes;
+                vm.entity.methodName = vm.selectedMethod.methodName;
+                vm.entity.methodParamTypes = vm.selectedMethod.methodParamTypes;
 
                 RpcScheduledTaskService.create(vm.entity, onSaveSuccess, onSaveError);
             }

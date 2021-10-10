@@ -129,12 +129,8 @@ public class RunnableTask implements Runnable {
 
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(registryIdentity,
                 null, interfaceName, attributes);
-        Object[] args = null;
-        if (StringUtils.isNotEmpty(rpcScheduledTask.getArgumentsJson())) {
-            args = new ObjectMapper().readValue(rpcScheduledTask.getArgumentsJson(), Object[].class);
-        }
 
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
-        invocationHandler.invoke(rpcScheduledTask.getMethodName(), rpcScheduledTask.getMethodParamTypes(), args);
+        invocationHandler.invoke(rpcScheduledTask.getMethodName(), rpcScheduledTask.getMethodParamTypes(), null);
     }
 }
