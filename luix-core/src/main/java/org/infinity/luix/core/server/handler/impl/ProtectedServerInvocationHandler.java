@@ -1,6 +1,5 @@
 package org.infinity.luix.core.server.handler.impl;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.client.request.Requestable;
 import org.infinity.luix.core.constant.ProtocolConstants;
