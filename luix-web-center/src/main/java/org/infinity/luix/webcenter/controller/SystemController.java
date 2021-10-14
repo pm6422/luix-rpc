@@ -87,6 +87,6 @@ public class SystemController {
     public String resetDatabase() {
         mongoTemplate.getDb().drop();
         changockBase.execute();
-        return "Reset successfully.";
+        return "Reset database successfully.";
     }
 }
