@@ -44,16 +44,18 @@ import static org.infinity.luix.core.thread.ScheduledThreadPool.DESTROY_NETTY_TI
  */
 @Slf4j
 public class NettyClient extends AbstractPooledClient {
-    private static final NioEventLoopGroup         NIO_EVENT_LOOP_GROUP = new NioEventLoopGroup();
+    private static final NioEventLoopGroup         NIO_EVENT_LOOP_GROUP  = new NioEventLoopGroup();
     /**
-     * 异步的request，需要注册callback future
-     * 触发remove的操作有： 1) service的返回结果处理。 2) timeout thread cancel
+     * Async response used to handle async request
+     * 触发remove的操作有：
+     * 1) service的返回结果处理
+     * 2) timeout
      */
-    private final        Map<Long, FutureResponse> callbackMap          = new ConcurrentHashMap<>();
+    private final        Map<Long, FutureResponse> requestId2ResponseMap = new ConcurrentHashMap<>();
     /**
      * Invocation error count
      */
-    private final        AtomicLong                errorCount           = new AtomicLong(0);
+    private final        AtomicLong                errorCount            = new AtomicLong(0);
     private final        ScheduledFuture<?>        timeoutFuture;
     private final        int                       maxClientFailedConn;
     private              Bootstrap                 bootstrap;
@@ -67,12 +69,12 @@ public class NettyClient extends AbstractPooledClient {
 
     private void recycleTimeoutTask() {
         long currentTime = System.currentTimeMillis();
-        for (Map.Entry<Long, FutureResponse> entry : callbackMap.entrySet()) {
+        for (Map.Entry<Long, FutureResponse> responseEntry : requestId2ResponseMap.entrySet()) {
             try {
-                FutureResponse future = entry.getValue();
+                FutureResponse future = responseEntry.getValue();
                 if (future.getCreatedTime() + future.getTimeout() < currentTime) {
-                    // timeout: remove from callback list, and then cancel
-                    removeCallback(entry.getKey());
+                    // If timeout, remove response, and then cancel
+                    removeResponse(responseEntry.getKey());
                     future.cancel();
                 }
             } catch (Exception e) {
@@ -90,7 +92,7 @@ public class NettyClient extends AbstractPooledClient {
     @Override
     public Responseable request(Requestable request) {
         if (!isActive()) {
-            throw new RpcFrameworkException("Current status is inactive for uri [" + providerUrl.getUri()
+            throw new RpcFrameworkException("Client status is inactive for url [" + providerUrl.getUri()
                     + "] and request " + request);
         }
         return doRequest(request);
@@ -100,15 +102,15 @@ public class NettyClient extends AbstractPooledClient {
         Channel channel;
         Responseable response;
         try {
-            // Return channel or throw exception(timeout or connection_fail)
+            // Get channel or throw exception(timeout or connection failure)
             channel = getChannel();
             RpcFrameworkUtils.logEvent(request, RpcConstants.TRACE_CONNECTION);
 
             if (channel == null) {
-                log.error("No channel found for request {}", request.toString());
+                log.error("No channel found for request {}", request);
                 return null;
             }
-            // All requests are handled asynchronously, and return type always be RpcFutureResponse
+            // All requests are handled asynchronously and return type always be RpcFutureResponse
             response = channel.request(request);
         } catch (Exception e) {
             if (ExceptionUtils.isBizException(e)) {
@@ -130,10 +132,10 @@ public class NettyClient extends AbstractPooledClient {
      */
     private Responseable asyncResponse(Responseable response, boolean async) {
         if (async) {
-            // If it is asynchronous call, return RpcFutureResponse directly.
+            // If it is asynchronous call, return RpcFutureResponse directly
             return response;
         }
-        // If it is synchronous call, firstly it takes time to convert RpcFutureResponse to RpcResponse, and then return it.
+        // If it is synchronous call, firstly it takes time to convert RpcFutureResponse to RpcResponse, and then return it
         return RpcResponse.of(response);
     }
 
@@ -161,7 +163,7 @@ public class NettyClient extends AbstractPooledClient {
                         pipeline.addLast("encoder", new NettyEncoder());
                         pipeline.addLast("handler", new NettyServerClientHandler(NettyClient.this, (channel, message) -> {
                             Responseable response = (Responseable) message;
-                            FutureResponse futureResponse = NettyClient.this.removeCallback(response.getRequestId());
+                            FutureResponse futureResponse = NettyClient.this.removeResponse(response.getRequestId());
                             if (futureResponse == null) {
                                 log.warn("No response found with request ID: [{}]", response.getRequestId());
                                 return null;
@@ -219,7 +221,7 @@ public class NettyClient extends AbstractPooledClient {
         // 取消定期的回收任务
         timeoutFuture.cancel(true);
         // 清空callback
-        callbackMap.clear();
+        requestId2ResponseMap.clear();
         // 关闭client持有的channel
         closeAllChannels();
         // 解除统计回调的注册
@@ -250,15 +252,15 @@ public class NettyClient extends AbstractPooledClient {
         return bootstrap;
     }
 
-    public FutureResponse removeCallback(long requestId) {
-        return callbackMap.remove(requestId);
+    public FutureResponse removeResponse(long requestId) {
+        return requestId2ResponseMap.remove(requestId);
     }
 
     /**
-     * 增加调用失败的次数：
-     * <p>
+     * 增加调用失败的次数
+     *
      * <pre>
-     * 	 	如果连续失败的次数 >= maxClientConnection, 那么把client设置成不可用状态
+     * 如果连续失败的次数 >= maxClientConnection，那么把client设置成不可用状态
      * </pre>
      */
     void incrErrorCount() {
@@ -319,7 +321,7 @@ public class NettyClient extends AbstractPooledClient {
      * @param futureResponse response future
      */
     public void registerCallback(long requestId, FutureResponse futureResponse) {
-        if (this.callbackMap.size() >= RpcConstants.NETTY_CLIENT_MAX_REQUEST) {
+        if (this.requestId2ResponseMap.size() >= RpcConstants.NETTY_CLIENT_MAX_REQUEST) {
             // reject request, prevent from OutOfMemoryError
 //            throw new RpcFrameworkException("NettyClient over of max concurrent request, drop request, url: "
 //                    + providerUrl.getUri() + " requestId=" + requestId);
@@ -327,7 +329,7 @@ public class NettyClient extends AbstractPooledClient {
 
         }
 
-        this.callbackMap.put(requestId, futureResponse);
+        this.requestId2ResponseMap.put(requestId, futureResponse);
     }
 
     @Override

@@ -81,7 +81,7 @@ public class NettyChannel implements Channel {
         }
 
         writeFuture.cancel(true);
-        response = this.nettyClient.removeCallback(request.getRequestId());
+        response = this.nettyClient.removeResponse(request.getRequestId());
         if (response != null) {
             response.cancel();
         }
