@@ -1,7 +1,6 @@
 package org.infinity.luix.core.exchange.client;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.core.constant.ProtocolConstants;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.exchange.Channel;
 import org.infinity.luix.core.url.Url;
@@ -14,6 +13,8 @@ import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
+
+import static org.infinity.luix.core.constant.ProtocolConstants.*;
 
 @Slf4j
 public abstract class AbstractSharedPoolClient extends AbstractClient {
@@ -42,17 +43,18 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
 
     public AbstractSharedPoolClient(Url providerUrl) {
         super(providerUrl);
-        channelSize = providerUrl.getIntOption(ProtocolConstants.MIN_CLIENT_CONN, ProtocolConstants.MIN_CLIENT_CONN_VAL_DEFAULT);
+        channelSize = providerUrl.getIntOption(MIN_CLIENT_CONN, MIN_CLIENT_CONN_VAL_DEFAULT);
     }
 
     protected void initPool() {
         factory = createChannelFactory();
         channels = new ArrayList<>(channelSize);
         IntStream.range(0, channelSize).forEach(x -> channels.add(factory.buildObject()));
-        initConnections(providerUrl.getBooleanOption(ProtocolConstants.ASYNC_INIT_CONN, ProtocolConstants.ASYNC_INIT_CONN_VAL_DEFAULT));
+        boolean asyncCreateConn = providerUrl.getBooleanOption(ASYNC_CREATE_CONN, ASYNC_CREATE_CONN_VAL_DEFAULT);
+        createConnections(asyncCreateConn);
     }
 
-    protected void initConnections(boolean async) {
+    protected void createConnections(boolean async) {
         if (async) {
             NETWORK_THREAD_POOL.execute(this::createConnections);
         } else {
@@ -65,7 +67,7 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
             try {
                 channel.open();
             } catch (Exception e) {
-                log.error("create connect Error: url=" + providerUrl.getUri(), e);
+                log.error("Failed to create connection for url [" + providerUrl.getUri() + "]", e);
             }
         }
     }

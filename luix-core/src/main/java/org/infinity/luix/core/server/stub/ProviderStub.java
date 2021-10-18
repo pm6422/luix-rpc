@@ -88,7 +88,7 @@ public class ProviderStub<T> {
         OPTIONS.add(new OptionMeta(ProtocolConstants.MIN_THREAD, null, Integer.class.getSimpleName(), String.valueOf(ProtocolConstants.MIN_THREAD_VAL_DEFAULT), true));
         OPTIONS.add(new OptionMeta(ProtocolConstants.MAX_THREAD, null, Integer.class.getSimpleName(), String.valueOf(ProtocolConstants.MAX_THREAD_VAL_DEFAULT), true));
         OPTIONS.add(new OptionMeta(ProtocolConstants.WORK_QUEUE_SIZE, null, Integer.class.getSimpleName(), String.valueOf(ProtocolConstants.WORK_QUEUE_SIZE_VAL_DEFAULT), true));
-        OPTIONS.add(new OptionMeta(ProtocolConstants.ASYNC_INIT_CONN, null, Boolean.class.getSimpleName(), String.valueOf(ProtocolConstants.ASYNC_INIT_CONN_VAL_DEFAULT), true));
+        OPTIONS.add(new OptionMeta(ProtocolConstants.ASYNC_CREATE_CONN, null, Boolean.class.getSimpleName(), String.valueOf(ProtocolConstants.ASYNC_CREATE_CONN_VAL_DEFAULT), true));
 
         try {
             // Add build-in methods
@@ -372,7 +372,7 @@ public class ProviderStub<T> {
         url.addOption(ProtocolConstants.SHARED_SERVER, sharedChannel);
 
         String asyncInitConn = protocolConfig.getAsyncInitConn() == null ? null : protocolConfig.getAsyncInitConn().toString();
-        url.addOption(ProtocolConstants.ASYNC_INIT_CONN, asyncInitConn);
+        url.addOption(ProtocolConstants.ASYNC_CREATE_CONN, asyncInitConn);
 
         if (MapUtils.isNotEmpty(methodConfig)) {
             for (Map.Entry<String, MethodConfig> entry : methodConfig.entrySet()) {

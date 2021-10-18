@@ -39,8 +39,8 @@ public interface ProtocolConstants {
     int          MAX_THREAD_SHARED_CHANNEL          = 800;
     String       WORK_QUEUE_SIZE                    = "workQueueSize";
     int          WORK_QUEUE_SIZE_VAL_DEFAULT        = 0;
-    String       ASYNC_INIT_CONN                    = "asyncInitConn";
-    boolean      ASYNC_INIT_CONN_VAL_DEFAULT        = false;
+    String       ASYNC_CREATE_CONN                  = "asyncCreateConn";
+    boolean      ASYNC_CREATE_CONN_VAL_DEFAULT      = false;
     String       THROW_EXCEPTION                    = "throwException";
     boolean      THROW_EXCEPTION_VAL_DEFAULT        = true;
     String       TRANS_EXCEPTION_STACK              = "transExceptionStack";
