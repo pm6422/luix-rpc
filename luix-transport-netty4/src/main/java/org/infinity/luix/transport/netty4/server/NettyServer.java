@@ -128,7 +128,7 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
 
         try {
             cleanup();
-            if (state.isUninitialized()) {
+            if (state.isCreated()) {
                 log.info("NettyServer close fail: state={}, url={}", state.value, providerUrl.getUri());
                 return;
             }

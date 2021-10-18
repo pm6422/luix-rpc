@@ -30,7 +30,7 @@ import static org.infinity.luix.core.constant.ServiceConstants.REQUEST_TIMEOUT_V
 
 @Slf4j
 public class NettyChannel implements Channel {
-    private volatile ChannelState             state = ChannelState.UNINITIALIZED;
+    private volatile ChannelState             state = ChannelState.CREATED;
     private final    NettyClient              nettyClient;
     private          io.netty.channel.Channel channel;
     private final    InetSocketAddress        remoteAddress;

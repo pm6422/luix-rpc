@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <pre>
- * The idea comes from org.apache.catalina.core.StandardThreadExecutor codes of tomcat
+ * The idea comes from codes of tomcat {@link org.apache.catalina.core.StandardThreadExecutor}
  *
  * java.util.concurrent.ThreadPoolExecutor
  * 执行策略：运行线程大于corePoolSize时将新任务加入workQueue中，workQueue满后再扩充线程到maximumPoolSize，如果已经到了maximumPoolSize就reject。

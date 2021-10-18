@@ -17,7 +17,7 @@ public abstract class AbstractServer implements Server {
     protected          InetSocketAddress remoteAddress;
     protected          Url               providerUrl;
     protected          Codec             codec;
-    protected volatile ChannelState      state = ChannelState.UNINITIALIZED;
+    protected volatile ChannelState      state = ChannelState.CREATED;
 
     public AbstractServer(Url providerUrl) {
         this.providerUrl = providerUrl;

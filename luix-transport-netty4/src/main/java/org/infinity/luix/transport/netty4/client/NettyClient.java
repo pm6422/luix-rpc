@@ -202,7 +202,7 @@ public class NettyClient extends AbstractSharedPoolClient {
 
         try {
             cleanup();
-            if (state.isUninitialized()) {
+            if (state.isCreated()) {
                 log.info("Current status is uninitialized for uri [{}]", providerUrl.getUri());
                 return;
             }
