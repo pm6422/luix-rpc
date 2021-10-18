@@ -18,8 +18,8 @@ import org.infinity.luix.core.url.Url;
 import org.infinity.luix.transport.netty4.NettyDecoder;
 import org.infinity.luix.transport.netty4.NettyEncoder;
 import org.infinity.luix.transport.netty4.NettyServerClientHandler;
-import org.infinity.luix.utilities.threadpool.DefaultThreadFactory;
-import org.infinity.luix.utilities.threadpool.StandardThreadExecutor;
+import org.infinity.luix.utilities.threadpool.NamedThreadFactory;
+import org.infinity.luix.utilities.threadpool.NetworkThreadExecutor;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,8 +32,8 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
     private   EventLoopGroup             bossGroup;
     private   EventLoopGroup             workerGroup;
     private Channel                serverChannel;
-    private InvocationHandleable   handler;
-    private StandardThreadExecutor standardThreadExecutor;
+    private InvocationHandleable  handler;
+    private NetworkThreadExecutor networkThreadExecutor;
 
     private AtomicInteger rejectCounter = new AtomicInteger(0);
 
@@ -83,9 +83,9 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
             maxWorkerThread = providerUrl.getIntOption(MAX_THREAD, MAX_THREAD_VAL_DEFAULT);
         }
 
-        standardThreadExecutor = (standardThreadExecutor != null && !standardThreadExecutor.isShutdown()) ? standardThreadExecutor
-                : new StandardThreadExecutor(minWorkerThread, maxWorkerThread, workerQueueSize, new DefaultThreadFactory("NettyServer-" + providerUrl.getAddress(), true));
-        standardThreadExecutor.prestartAllCoreThreads();
+        networkThreadExecutor = (networkThreadExecutor != null && !networkThreadExecutor.isShutdown()) ? networkThreadExecutor
+                : new NetworkThreadExecutor(minWorkerThread, maxWorkerThread, workerQueueSize, new NamedThreadFactory("NettyServer-" + providerUrl.getAddress(), true));
+        networkThreadExecutor.prestartAllCoreThreads();
 
         channelManage = new NettyServerChannelManage(maxServerConn);
 
@@ -99,7 +99,7 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
                         pipeline.addLast("channel_manage", channelManage);
                         pipeline.addLast("decoder", new NettyDecoder(codec, NettyServer.this, maxContentLength));
                         pipeline.addLast("encoder", new NettyEncoder());
-                        NettyServerClientHandler handler = new NettyServerClientHandler(NettyServer.this, NettyServer.this.handler, standardThreadExecutor);
+                        NettyServerClientHandler handler = new NettyServerClientHandler(NettyServer.this, NettyServer.this.handler, networkThreadExecutor);
                         pipeline.addLast("handler", handler);
                     }
                 });
@@ -164,8 +164,8 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
             channelManage.close();
         }
         // shutdown the threadPool
-        if (standardThreadExecutor != null) {
-            standardThreadExecutor.shutdownNow();
+        if (networkThreadExecutor != null) {
+            networkThreadExecutor.shutdownNow();
         }
         // 取消统计回调的注册
 //        StatsUtil.unRegistryStatisticCallback(this);
@@ -189,8 +189,8 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
     @Override
     public String statisticCallback() {
         return String.format("identity: %s connectionCount: %s taskCount: %s queueCount: %s maxThreadCount: %s maxTaskCount: %s executorRejectCount: %s",
-                providerUrl.getIdentity(), channelManage.getChannels().size(), standardThreadExecutor.getSubmittedTasksCount(),
-                standardThreadExecutor.getQueue().size(), standardThreadExecutor.getMaximumPoolSize(),
-                standardThreadExecutor.getMaxSubmittedTasksCount(), rejectCounter.getAndSet(0));
+                providerUrl.getIdentity(), channelManage.getChannels().size(), networkThreadExecutor.getSubmittedTasksCount(),
+                networkThreadExecutor.getQueue().size(), networkThreadExecutor.getMaximumPoolSize(),
+                networkThreadExecutor.getMaxSubmittedTasksCount(), rejectCounter.getAndSet(0));
     }
 }

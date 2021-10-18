@@ -2,12 +2,12 @@ package org.infinity.luix.core.exchange.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.constant.ProtocolConstants;
+import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.exchange.Channel;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.utilities.lang.MathUtils;
-import org.infinity.luix.utilities.threadpool.DefaultThreadFactory;
-import org.infinity.luix.utilities.threadpool.StandardThreadExecutor;
+import org.infinity.luix.utilities.threadpool.NamedThreadFactory;
+import org.infinity.luix.utilities.threadpool.NetworkThreadExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,15 +18,27 @@ import java.util.stream.IntStream;
 @Slf4j
 public abstract class AbstractSharedPoolClient extends AbstractClient {
 
-    private static final ThreadPoolExecutor           THREAD_POOL = new StandardThreadExecutor(1, 300,
-            20000, new DefaultThreadFactory(AbstractSharedPoolClient.class.getSimpleName(), true));
-    private final        AtomicInteger                idx         = new AtomicInteger();
+    /**
+     * Network thread pool
+     */
+    private static final ThreadPoolExecutor           NETWORK_THREAD_POOL = new NetworkThreadExecutor(1, 300,
+            20000, new NamedThreadFactory(AbstractSharedPoolClient.class.getSimpleName(), true));
     /**
      * Object factory used to build channel
      */
     private              SharedObjectFactory<Channel> factory;
+    /**
+     * Channel size
+     */
     private final        int                          channelSize;
+    /**
+     * Channels
+     */
     private              List<Channel>                channels;
+    /**
+     * Channel index
+     */
+    private final        AtomicInteger                idx                 = new AtomicInteger();
 
     public AbstractSharedPoolClient(Url providerUrl) {
         super(providerUrl);
@@ -42,7 +54,7 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
 
     protected void initConnections(boolean async) {
         if (async) {
-            THREAD_POOL.execute(this::createConnections);
+            NETWORK_THREAD_POOL.execute(this::createConnections);
         } else {
             createConnections();
         }
