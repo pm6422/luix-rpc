@@ -1,6 +1,7 @@
 package org.infinity.luix.core.exchange.client;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.exchange.Channel;
 import org.infinity.luix.core.url.Url;
@@ -17,13 +18,13 @@ import java.util.stream.IntStream;
 import static org.infinity.luix.core.constant.ProtocolConstants.*;
 
 @Slf4j
-public abstract class AbstractSharedPoolClient extends AbstractClient {
+public abstract class AbstractPooledClient extends AbstractClient {
 
     /**
      * Network thread pool
      */
     private static final ThreadPoolExecutor           NETWORK_THREAD_POOL = new NetworkThreadExecutor(1, 300,
-            20000, new NamedThreadFactory(AbstractSharedPoolClient.class.getSimpleName(), true));
+            20000, new NamedThreadFactory(AbstractPooledClient.class.getSimpleName(), true));
     /**
      * Object factory used to build channel
      */
@@ -41,7 +42,7 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
      */
     private final        AtomicInteger                idx                 = new AtomicInteger();
 
-    public AbstractSharedPoolClient(Url providerUrl) {
+    public AbstractPooledClient(Url providerUrl) {
         super(providerUrl);
         channelSize = providerUrl.getIntOption(MIN_CLIENT_CONN, MIN_CLIENT_CONN_VAL_DEFAULT);
     }
@@ -73,7 +74,7 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
     }
 
     protected Channel getChannel() {
-        int index = MathUtils.getNonNegativeRange24bit(idx.getAndIncrement());
+        int index = MathUtils.getRangedNonNegativeVal(idx.getAndIncrement());
         Channel channel;
 
         for (int i = index; i < channelSize + 1 + index; i++) {
@@ -85,13 +86,14 @@ public abstract class AbstractSharedPoolClient extends AbstractClient {
                 return channel;
             }
         }
-
-        String errorMsg = this.getClass().getSimpleName() + " getChannel Error: url=" + providerUrl.getUri();
-        log.error(errorMsg);
+        String errorMsg = "Failed to get channel for url [" + providerUrl.getUri() + "]";
         throw new RpcFrameworkException(errorMsg);
     }
 
     protected void closeAllChannels() {
+        if (CollectionUtils.isEmpty(channels)) {
+            return;
+        }
         channels.forEach(Channel::close);
     }
 

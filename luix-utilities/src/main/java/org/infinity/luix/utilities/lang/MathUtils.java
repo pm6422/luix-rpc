@@ -1,19 +1,3 @@
-/*
- *  Copyright 2009-2016 Weibo, Inc.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
-
 package org.infinity.luix.utilities.lang;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,59 +5,56 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class MathUtils {
     /**
-     * 针对int类型字符串进行解析，如果存在格式错误，则返回默认值（defaultValue）
-     * Parse intStr, return defaultValue when numberFormatException occurs
+     * Parse integer string to integer type value, return defaultValue if parse failure
      *
-     * @param intStr
-     * @param defaultValue
-     * @return
+     * @param intStr       integer string
+     * @param defaultValue default value
+     * @return integer value
      */
     public static int parseInt(String intStr, int defaultValue) {
         try {
             return Integer.parseInt(intStr);
         } catch (NumberFormatException e) {
-            log.debug("ParseInt false, for malformed intStr:" + intStr);
+            log.warn("Failed to parse integer!", e);
             return defaultValue;
         }
     }
 
     /**
-     * 针对long类型字符串进行解析，如果存在格式错误，则返回默认值（defaultValue）
-     * Parse longStr, return defaultValue when numberFormatException occurs
+     * Parse long string to long type value, return defaultValue if parse failure
      *
-     * @param longStr
-     * @param defaultValue
-     * @return
+     * @param longStr      long string
+     * @param defaultValue default value
+     * @return long value
      */
     public static long parseLong(String longStr, long defaultValue) {
         try {
             return Long.parseLong(longStr);
         } catch (NumberFormatException e) {
+            log.warn("Failed to parse long!", e);
             return defaultValue;
         }
     }
 
     /**
-     * 通过二进制位操作将originValue转化为非负数:
-     * 0和正数返回本身
-     * 负数通过二进制首位取反转化为正数或0（Integer.MIN_VALUE将转换为0）
-     * return non-negative int value of originValue
+     * 通过二进制位操作将原先的整数转化为非负整数
+     * 当原先的整数是0或正数时返回本身
+     * 当原先的整数是负数时通过二进制首位取反转化为正数或0(Integer.MIN_VALUE将转换为0)
      *
-     * @param originValue
-     * @return positive int
+     * @param val integer
+     * @return positive integer or zero
      */
-    public static int getNonNegative(int originValue) {
-        return 0x7fffffff & originValue;
+    public static int getNonNegativeVal(int val) {
+        return 0x7fffffff & val;
     }
 
     /**
-     * 通过二进制位操作将originValue转化为非负数:
-     * 范围在[0-16777215] 之间
+     * 通过二进制位操作将原先的整数转化为一定值范围内的非负整数
      *
-     * @param originValue
-     * @return
+     * @param val integer
+     * @return positive integer or zero with range [0-16777215]
      */
-    public static int getNonNegativeRange24bit(int originValue) {
-        return 0x00ffffff & originValue;
+    public static int getRangedNonNegativeVal(int val) {
+        return 0x00ffffff & val;
     }
 }

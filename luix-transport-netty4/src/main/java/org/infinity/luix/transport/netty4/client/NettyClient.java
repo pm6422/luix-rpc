@@ -14,7 +14,7 @@ import org.infinity.luix.core.exception.ExceptionUtils;
 import org.infinity.luix.core.exception.RpcAbstractException;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.exchange.Channel;
-import org.infinity.luix.core.exchange.client.AbstractSharedPoolClient;
+import org.infinity.luix.core.exchange.client.AbstractPooledClient;
 import org.infinity.luix.core.exchange.client.SharedObjectFactory;
 import org.infinity.luix.core.exchange.constants.ChannelState;
 import org.infinity.luix.core.server.response.FutureResponse;
@@ -43,20 +43,20 @@ import static org.infinity.luix.core.thread.ScheduledThreadPool.DESTROY_NETTY_TI
  * toto: implements StatisticCallback
  */
 @Slf4j
-public class NettyClient extends AbstractSharedPoolClient {
-    private static final NioEventLoopGroup         NIO_EVENT_LOOP_GROUP         = new NioEventLoopGroup();
+public class NettyClient extends AbstractPooledClient {
+    private static final NioEventLoopGroup         NIO_EVENT_LOOP_GROUP = new NioEventLoopGroup();
     /**
      * 异步的request，需要注册callback future
      * 触发remove的操作有： 1) service的返回结果处理。 2) timeout thread cancel
      */
-    protected            Map<Long, FutureResponse> callbackMap                  = new ConcurrentHashMap<>();
+    private final        Map<Long, FutureResponse> callbackMap          = new ConcurrentHashMap<>();
     /**
-     * 连续失败次数
+     * Invocation error count
      */
-    private final        AtomicLong                errorCount                   = new AtomicLong(0);
+    private final        AtomicLong                errorCount           = new AtomicLong(0);
     private final        ScheduledFuture<?>        timeoutFuture;
-    private              Bootstrap                 bootstrap;
     private final        int                       maxClientFailedConn;
+    private              Bootstrap                 bootstrap;
 
     public NettyClient(Url providerUrl) {
         super(providerUrl);
