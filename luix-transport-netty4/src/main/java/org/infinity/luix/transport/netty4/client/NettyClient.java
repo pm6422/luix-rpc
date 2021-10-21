@@ -96,11 +96,9 @@ public class NettyClient extends AbstractPooledClient {
     }
 
     private Responseable doRequest(Requestable request) {
-        Channel channel;
         Responseable response;
         try {
-            // Get channel or throw exception(timeout or connection failure)
-            channel = getChannel();
+            Channel channel = getChannel();
             RpcFrameworkUtils.logEvent(request, RpcConstants.TRACE_CONNECTION);
 
             if (channel == null) {
