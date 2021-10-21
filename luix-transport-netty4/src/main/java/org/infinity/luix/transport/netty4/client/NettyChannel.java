@@ -57,7 +57,7 @@ public class NettyChannel implements Channel {
         }
         // All requests are handled asynchronously
         FutureResponse response = new RpcFutureResponse(request, timeout, this.nettyClient.getProviderUrl());
-        this.nettyClient.registerCallback(request.getRequestId(), response);
+        this.nettyClient.registerResponse(request.getRequestId(), response);
         byte[] msg = CodecUtils.encodeObjectToBytes(this, codec, request);
         // Step1: encode and send request on client side
         ChannelFuture writeFuture = this.channel.writeAndFlush(msg);
@@ -70,7 +70,7 @@ public class NettyChannel implements Channel {
                         (future.isDone() && ExceptionUtils.isBizException(future.getException()))) {
                     // 成功的调用
                     // Step5: get response on client side
-                    nettyClient.resetErrorCount();
+                    nettyClient.resetInvocationError();
                 } else {
                     // 失败的调用
                     // Step5: get response on client side

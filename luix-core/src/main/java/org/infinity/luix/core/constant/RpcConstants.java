@@ -57,7 +57,6 @@ public class RpcConstants {
     public static final int    NETTY_EXECUTOR_MAX_SIZE      = 800;
     // netty thread idle time: 1 mintue
     public static final int    NETTY_THREAD_KEEPALIVE_TIME  = 60 * 1000;
-    // netty client max concurrent request TODO 2W is suitable?
     public static final int    NETTY_CLIENT_MAX_REQUEST     = 20000;
     public static final byte   NETTY_REQUEST_TYPE           = 1;
     public static final byte   FLAG_REQUEST                 = 0x00;

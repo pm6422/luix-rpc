@@ -280,12 +280,9 @@ public class NettyClient extends AbstractPooledClient {
     }
 
     /**
-     * 重置调用失败的计数 ：
-     * <pre>
-     * 把节点设置成可用
-     * </pre>
+     * Reset invocation error count and set state to 'ACTIVE'
      */
-    void resetErrorCount() {
+    public void resetInvocationError() {
         errorCount.set(0);
 
         if (state.isActive()) {
@@ -296,7 +293,6 @@ public class NettyClient extends AbstractPooledClient {
             if (state.isActive()) {
                 return;
             }
-
             // 如果节点是inactive才进行设置，而如果是close或者uninitialized，那么直接忽略
             if (state.isInactive()) {
                 long count = errorCount.longValue();
@@ -312,23 +308,16 @@ public class NettyClient extends AbstractPooledClient {
 
 
     /**
-     * 注册回调的response
-     * <pre>
-     * 进行最大的请求并发数的控制，如果超过NETTY_CLIENT_MAX_REQUEST的话，那么throw reject exception
-     * </pre>
+     * Register response associated with request ID and limit the concurrent requests
      *
      * @param requestId      request ID
      * @param futureResponse response future
      */
-    public void registerCallback(long requestId, FutureResponse futureResponse) {
+    public void registerResponse(long requestId, FutureResponse futureResponse) {
         if (this.requestId2ResponseMap.size() >= RpcConstants.NETTY_CLIENT_MAX_REQUEST) {
-            // reject request, prevent from OutOfMemoryError
-//            throw new RpcFrameworkException("NettyClient over of max concurrent request, drop request, url: "
-//                    + providerUrl.getUri() + " requestId=" + requestId);
-            throw new RpcFrameworkException("Discarded the request [" + requestId + "] and uri [" + providerUrl.getUri() + "] for exceeding max request limit");
-
+            throw new RpcFrameworkException("Discarded the request [" + requestId + "] " +
+                    "and url [" + providerUrl.getUri() + "] for exceeding max request limit!");
         }
-
         this.requestId2ResponseMap.put(requestId, futureResponse);
     }
 
@@ -336,10 +325,9 @@ public class NettyClient extends AbstractPooledClient {
     public void checkHealth(Requestable request) {
         try {
             log.info("Checking health for url [{}]", providerUrl.getUri());
-            // async request后，如果service is active，那么将会自动把该client设置成可用
             doRequest(request);
         } catch (Exception e) {
-            log.error("Failed to check health for url [{}] with message {}", providerUrl.getUri(), e.getMessage());
+            log.error("Failed to check health for url [" + providerUrl.getUri() + "]!", e);
         }
     }
 
