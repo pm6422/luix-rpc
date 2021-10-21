@@ -56,7 +56,7 @@ public class CheckHealthClientEndpointManager implements EndpointManager {
 
     private boolean isSkipCheckHealthState(Client client) {
         // Skip health check process if current endpoint is uninitialized or closed
-//        return ChannelState.UNINITIALIZED.equals(client.getState()) || client.isClosed();
+//        return ChannelState.CREATED.equals(client.getState()) || client.isClosed();
         return client.isActive() || ChannelState.CREATED.equals(client.getState()) || client.isClosed();
     }
 

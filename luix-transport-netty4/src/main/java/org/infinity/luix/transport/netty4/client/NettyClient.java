@@ -47,9 +47,6 @@ public class NettyClient extends AbstractPooledClient {
     private static final NioEventLoopGroup         NIO_EVENT_LOOP_GROUP  = new NioEventLoopGroup();
     /**
      * Async response used to handle async request
-     * 触发remove的操作有：
-     * 1) service的返回结果处理
-     * 2) timeout
      */
     private final        Map<Long, FutureResponse> requestId2ResponseMap = new ConcurrentHashMap<>();
     /**
@@ -69,13 +66,13 @@ public class NettyClient extends AbstractPooledClient {
 
     private void recycleTimeoutTask() {
         long currentTime = System.currentTimeMillis();
-        for (Map.Entry<Long, FutureResponse> responseEntry : requestId2ResponseMap.entrySet()) {
+        for (Map.Entry<Long, FutureResponse> request2ResponseEntry : requestId2ResponseMap.entrySet()) {
             try {
-                FutureResponse future = responseEntry.getValue();
-                if (future.getCreatedTime() + future.getTimeout() < currentTime) {
-                    // If timeout, remove response, and then cancel
-                    removeResponse(responseEntry.getKey());
-                    future.cancel();
+                FutureResponse futureResponse = request2ResponseEntry.getValue();
+                if (futureResponse.getCreatedTime() + futureResponse.getTimeout() < currentTime) {
+                    // If timeout, remove response and then cancel
+                    removeResponse(request2ResponseEntry.getKey());
+                    futureResponse.cancel();
                 }
             } catch (Exception e) {
                 log.error("Failed to recycle the request callback for uri [" + providerUrl.getUri() + "]", e);

@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.core.client.request.Requestable;
 import org.infinity.luix.core.exchange.TraceableContext;
 import org.infinity.luix.core.server.response.FutureResponse;
@@ -170,11 +171,10 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
     }
 
     private void notifyListeners() {
-        if (listeners != null) {
-            for (FutureListener listener : listeners) {
-                notifyListener(listener);
-            }
+        if (CollectionUtils.isEmpty(listeners)) {
+            return;
         }
+        listeners.forEach(this::notifyListener);
     }
 
     private void notifyListener(FutureListener listener) {
