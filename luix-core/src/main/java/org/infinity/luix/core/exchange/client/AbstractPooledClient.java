@@ -47,7 +47,7 @@ public abstract class AbstractPooledClient extends AbstractClient {
         channelSize = providerUrl.getIntOption(MIN_CLIENT_CONN, MIN_CLIENT_CONN_VAL_DEFAULT);
     }
 
-    protected void initPool() {
+    protected void createConnectionPool() {
         factory = createChannelFactory();
         channels = new ArrayList<>(channelSize);
         IntStream.range(0, channelSize).forEach(x -> channels.add(factory.buildObject()));

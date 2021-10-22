@@ -155,8 +155,7 @@ public class NettyClient extends AbstractPooledClient {
                     }
                 });
 
-        // Initialize connections pool
-        initPool();
+        createConnectionPool();
 //         注册统计回调
 //        StatsUtil.registryStatisticCallback(this);
         state = ChannelState.ACTIVE;
