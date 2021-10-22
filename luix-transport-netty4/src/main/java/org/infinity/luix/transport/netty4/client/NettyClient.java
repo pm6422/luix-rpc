@@ -151,20 +151,7 @@ public class NettyClient extends AbstractPooledClient {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast(NettyEncoder.ENCODER, new NettyEncoder());
                         pipeline.addLast(NettyDecoder.DECODER, new NettyDecoder(codec, NettyClient.this, maxContentLength));
-                        pipeline.addLast(NettyServerClientHandler.HANDLER, new NettyServerClientHandler(NettyClient.this, (channel, message) -> {
-                            Responseable response = (Responseable) message;
-                            FutureResponse futureResponse = NettyClient.this.removeResponse(response.getRequestId());
-                            if (futureResponse == null) {
-                                log.warn("No response found with request ID: [{}]", response.getRequestId());
-                                return null;
-                            }
-                            if (response.getException() != null) {
-                                futureResponse.onFailure(response);
-                            } else {
-                                futureResponse.onSuccess(response);
-                            }
-                            return null;
-                        }));
+                        pipeline.addLast(NettyServerClientHandler.HANDLER, createServerClientHandler());
                     }
                 });
 
@@ -179,6 +166,23 @@ public class NettyClient extends AbstractPooledClient {
 
         state = ChannelState.ACTIVE;
         return true;
+    }
+
+    private NettyServerClientHandler createServerClientHandler() {
+        return new NettyServerClientHandler(NettyClient.this, (channel, message) -> {
+            Responseable response = (Responseable) message;
+            FutureResponse futureResponse = NettyClient.this.removeResponse(response.getRequestId());
+            if (futureResponse == null) {
+                log.warn("No response found with request ID: [{}]", response.getRequestId());
+                return null;
+            }
+            if (response.getException() != null) {
+                futureResponse.onFailure(response);
+            } else {
+                futureResponse.onSuccess(response);
+            }
+            return null;
+        });
     }
 
     @Override
