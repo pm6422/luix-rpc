@@ -94,7 +94,7 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
                 .channel(NioServerSocketChannel.class)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(SocketChannel ch) throws Exception {
+                    protected void initChannel(SocketChannel ch) {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast(NettyEncoder.ENCODER, new NettyEncoder());
                         pipeline.addLast(NettyDecoder.DECODER, new NettyDecoder(codec, NettyServer.this, maxContentLength));

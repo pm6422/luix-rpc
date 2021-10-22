@@ -136,13 +136,13 @@ public class NettyClient extends AbstractPooledClient {
             return true;
         }
 
-        bootstrap = new Bootstrap();
         int timeout = getProviderUrl().getIntOption(CONNECT_TIMEOUT, CONNECT_TIMEOUT_VAL_DEFAULT);
+        int maxContentLength = providerUrl.getIntOption(MAX_CONTENT_LENGTH, MAX_CONTENT_LENGTH_VAL_DEFAULT);
+
+        bootstrap = new Bootstrap();
         bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout);
         bootstrap.option(ChannelOption.TCP_NODELAY, true);
         bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
-        // 最大响应包限制
-        final int maxContentLength = providerUrl.getIntOption(MAX_CONTENT_LENGTH, MAX_CONTENT_LENGTH_VAL_DEFAULT);
         bootstrap.group(NIO_EVENT_LOOP_GROUP)
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<SocketChannel>() {
@@ -155,16 +155,12 @@ public class NettyClient extends AbstractPooledClient {
                     }
                 });
 
-        // 初始化连接池
+        // Initialize connections pool
         initPool();
-
-        log.info("Opened the netty client for url [{}]", providerUrl);
-
 //         注册统计回调
 //        StatsUtil.registryStatisticCallback(this);
-//         设置可用状态
-
         state = ChannelState.ACTIVE;
+        log.info("Opened the netty client for provider url [{}]", providerUrl);
         return true;
     }
 

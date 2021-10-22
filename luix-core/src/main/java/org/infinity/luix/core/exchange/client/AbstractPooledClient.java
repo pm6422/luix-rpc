@@ -51,8 +51,8 @@ public abstract class AbstractPooledClient extends AbstractClient {
         factory = createChannelFactory();
         channels = new ArrayList<>(channelSize);
         IntStream.range(0, channelSize).forEach(x -> channels.add(factory.buildObject()));
-        boolean asyncCreateConn = providerUrl.getBooleanOption(ASYNC_CREATE_CONN, ASYNC_CREATE_CONN_VAL_DEFAULT);
-        createConnections(asyncCreateConn);
+        boolean asyncCreate = providerUrl.getBooleanOption(ASYNC_CREATE_CONN, ASYNC_CREATE_CONN_VAL_DEFAULT);
+        createConnections(asyncCreate);
     }
 
     protected void createConnections(boolean async) {
