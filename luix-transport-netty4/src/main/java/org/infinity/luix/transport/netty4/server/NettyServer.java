@@ -28,12 +28,12 @@ import static org.infinity.luix.core.constant.ProtocolConstants.*;
 
 @Slf4j
 public class NettyServer extends AbstractServer implements StatisticCallback {
-    protected NettyServerChannelManage   channelManage;
-    private   EventLoopGroup             bossGroup;
-    private   EventLoopGroup             workerGroup;
-    private Channel                serverChannel;
-    private InvocationHandleable  handler;
-    private NetworkThreadExecutor networkThreadExecutor;
+    protected NettyServerChannelManage channelManage;
+    private   EventLoopGroup           bossGroup;
+    private   EventLoopGroup           workerGroup;
+    private   Channel                  serverChannel;
+    private   InvocationHandleable     handler;
+    private   NetworkThreadExecutor    networkThreadExecutor;
 
     private AtomicInteger rejectCounter = new AtomicInteger(0);
 
@@ -96,11 +96,11 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
-                        pipeline.addLast("channel_manage", channelManage);
-                        pipeline.addLast("decoder", new NettyDecoder(codec, NettyServer.this, maxContentLength));
-                        pipeline.addLast("encoder", new NettyEncoder());
+                        pipeline.addLast(NettyServerChannelManage.CHANNEL_MANAGER, channelManage);
+                        pipeline.addLast(NettyEncoder.ENCODER, new NettyEncoder());
+                        pipeline.addLast(NettyDecoder.DECODER, new NettyDecoder(codec, NettyServer.this, maxContentLength));
                         NettyServerClientHandler handler = new NettyServerClientHandler(NettyServer.this, NettyServer.this.handler, networkThreadExecutor);
-                        pipeline.addLast("handler", handler);
+                        pipeline.addLast(NettyServerClientHandler.HANDLER, handler);
                     }
                 });
         serverBootstrap.childOption(ChannelOption.TCP_NODELAY, true);

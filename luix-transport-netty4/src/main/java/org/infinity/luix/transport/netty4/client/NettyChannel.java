@@ -2,7 +2,6 @@ package org.infinity.luix.transport.netty4.client;
 
 import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.client.request.Requestable;
 import org.infinity.luix.core.codec.Codec;
 import org.infinity.luix.core.codec.CodecUtils;
@@ -46,15 +45,8 @@ public class NettyChannel implements Channel {
 
     @Override
     public Responseable request(Requestable request) {
-        int timeout;
-        if (StringUtils.isNotEmpty(request.getOption(REQUEST_TIMEOUT))) {
-            timeout = request.getIntOption(REQUEST_TIMEOUT);
-        } else {
-            // Get method level parameter value
-            timeout = nettyClient.getProviderUrl()
-                    .getMethodParameter(request.getMethodName(), request.getMethodParameters(),
-                            REQUEST_TIMEOUT, REQUEST_TIMEOUT_VAL_DEFAULT);
-        }
+        int timeout = getTimeout(request);
+
         // All requests are handled asynchronously
         FutureResponse response = new RpcFutureResponse(request, timeout, this.nettyClient.getProviderUrl());
         this.nettyClient.registerResponse(request.getRequestId(), response);
@@ -97,6 +89,21 @@ public class NettyChannel implements Channel {
                     + nettyClient.getProviderUrl().getUri() + " local=" + localAddress + " "
                     + request);
         }
+    }
+
+    private int getTimeout(Requestable request) {
+        int timeout;
+        // Get method level parameter value
+        timeout = nettyClient.getProviderUrl().getMethodParameter(
+                request.getMethodName(),
+                request.getMethodParameters(),
+                REQUEST_TIMEOUT, REQUEST_TIMEOUT_VAL_DEFAULT);
+        if (REQUEST_TIMEOUT_VAL_DEFAULT != timeout) {
+            return timeout;
+        }
+
+        timeout = request.getIntOption(REQUEST_TIMEOUT, REQUEST_TIMEOUT_VAL_DEFAULT);
+        return timeout;
     }
 
     @Override

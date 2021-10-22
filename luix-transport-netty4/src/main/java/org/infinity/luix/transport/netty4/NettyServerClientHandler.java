@@ -33,10 +33,12 @@ import static org.infinity.luix.core.constant.ProtocolConstants.CODEC_VAL_DEFAUL
  */
 @Slf4j
 public class NettyServerClientHandler extends ChannelDuplexHandler {
-    private ThreadPoolExecutor   threadPoolExecutor;
-    private InvocationHandleable handler;
-    private Channel              channel;
-    private Codec              codec;
+
+    public static final String               HANDLER = "handler";
+    private             ThreadPoolExecutor   threadPoolExecutor;
+    private             InvocationHandleable handler;
+    private             Channel              channel;
+    private             Codec                codec;
 
     public NettyServerClientHandler(Channel channel, InvocationHandleable handler) {
         this.channel = channel;

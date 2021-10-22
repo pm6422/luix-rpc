@@ -6,6 +6,8 @@ import io.netty.handler.codec.MessageToByteEncoder;
 
 public class NettyEncoder extends MessageToByteEncoder<byte[]> {
 
+    public static final String ENCODER = "encoder";
+
     @Override
     protected void encode(ChannelHandlerContext ctx, byte[] msg, ByteBuf out) throws Exception {
         out.writeBytes(msg);

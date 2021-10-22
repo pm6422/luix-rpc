@@ -17,9 +17,11 @@ import java.util.List;
 
 @Slf4j
 public class NettyDecoder extends ByteToMessageDecoder {
-    private Codec   codec;
-    private Channel channel;
-    private int     maxContentLength = 0;
+
+    public static final String  DECODER          = "decoder";
+    private             Codec   codec;
+    private             Channel channel;
+    private             int     maxContentLength = 0;
 
     public NettyDecoder(Codec codec, Channel channel, int maxContentLength) {
         this.codec = codec;

@@ -10,6 +10,7 @@ import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.RpcConfigValidator;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -43,12 +44,13 @@ public class RegistryConfig implements Configurable {
      */
     private              String  providerAddresses;
     /**
-     * Timeout in milliseconds for connection session between registry client and server
+     * Timeout in milliseconds for connection session between client and server
      */
     private              Integer sessionTimeout;
     /**
-     * Timeout in milliseconds when registry client building a connection to registry server
+     * Timeout in milliseconds when client creating a connection to server
      */
+    @Positive
     private              Integer connectTimeout;
     /**
      * Registration and subscription retry interval in milliseconds
@@ -84,6 +86,8 @@ public class RegistryConfig implements Configurable {
         Optional.ofNullable(RegistryFactory.getInstance(name))
                 .orElseThrow(() -> new RpcConfigException("Failed to load the registry factory, " +
                         "please check whether the dependency [rpc-registry-" + name + "] is in your class path!"));
+
+
     }
 
     private Url createRegistryUrl() {

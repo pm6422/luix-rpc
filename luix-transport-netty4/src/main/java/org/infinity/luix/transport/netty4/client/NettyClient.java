@@ -22,7 +22,6 @@ import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.server.response.impl.RpcResponse;
 import org.infinity.luix.core.thread.ScheduledThreadPool;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.core.utils.RpcConfigValidator;
 import org.infinity.luix.core.utils.RpcFrameworkUtils;
 import org.infinity.luix.transport.netty4.NettyDecoder;
 import org.infinity.luix.transport.netty4.NettyEncoder;
@@ -126,12 +125,9 @@ public class NettyClient extends AbstractPooledClient {
      * @return response
      */
     private Responseable asyncResponse(Responseable response, boolean async) {
-        if (async) {
-            // If it is asynchronous call, return RpcFutureResponse directly
-            return response;
-        }
-        // If it is synchronous call, firstly it takes time to convert RpcFutureResponse to RpcResponse, and then return it
-        return RpcResponse.of(response);
+        // If it is asynchronous call, return RpcFutureResponse directly
+        // If it is synchronous call, firstly it takes time to convert RpcFutureResponse to RpcResponse, and then return it.
+        return async ? response : RpcResponse.of(response);
     }
 
     @Override
@@ -142,7 +138,6 @@ public class NettyClient extends AbstractPooledClient {
 
         bootstrap = new Bootstrap();
         int timeout = getProviderUrl().getIntOption(CONNECT_TIMEOUT, CONNECT_TIMEOUT_VAL_DEFAULT);
-        RpcConfigValidator.isTrue(timeout > 0, "connectTimeout must be a positive value!");
         bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout);
         bootstrap.option(ChannelOption.TCP_NODELAY, true);
         bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
@@ -154,9 +149,9 @@ public class NettyClient extends AbstractPooledClient {
                     @Override
                     protected void initChannel(SocketChannel ch) {
                         ChannelPipeline pipeline = ch.pipeline();
-                        pipeline.addLast("decoder", new NettyDecoder(codec, NettyClient.this, maxContentLength));
-                        pipeline.addLast("encoder", new NettyEncoder());
-                        pipeline.addLast("handler", new NettyServerClientHandler(NettyClient.this, (channel, message) -> {
+                        pipeline.addLast(NettyEncoder.ENCODER, new NettyEncoder());
+                        pipeline.addLast(NettyDecoder.DECODER, new NettyDecoder(codec, NettyClient.this, maxContentLength));
+                        pipeline.addLast(NettyServerClientHandler.HANDLER, new NettyServerClientHandler(NettyClient.this, (channel, message) -> {
                             Responseable response = (Responseable) message;
                             FutureResponse futureResponse = NettyClient.this.removeResponse(response.getRequestId());
                             if (futureResponse == null) {

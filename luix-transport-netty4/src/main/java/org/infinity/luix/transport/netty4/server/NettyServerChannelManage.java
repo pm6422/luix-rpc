@@ -30,9 +30,10 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 @ChannelHandler.Sharable
 public class NettyServerChannelManage extends ChannelInboundHandlerAdapter {
-    private ConcurrentMap<String, Channel> channels = new ConcurrentHashMap<>();
 
-    private int maxChannel;
+    public static final String                         CHANNEL_MANAGER = "channelManager";
+    private             ConcurrentMap<String, Channel> channels        = new ConcurrentHashMap<>();
+    private             int                            maxChannel;
 
     public NettyServerChannelManage(int maxChannel) {
         super();
