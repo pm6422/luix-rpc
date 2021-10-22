@@ -190,15 +190,12 @@ public class NettyClient extends AbstractPooledClient {
         if (state.isClosed()) {
             return;
         }
-
         try {
             cleanup();
             if (state.isCreated()) {
-                log.info("Current status is uninitialized for uri [{}]", providerUrl.getUri());
+                log.info("Netty client has NOT been initialized for uri [{}]", providerUrl.getUri());
                 return;
             }
-
-            // 设置close状态
             state = ChannelState.CLOSED;
             log.info("Closed netty client for uri [{}]", providerUrl.getUri());
         } catch (Exception e) {
@@ -207,11 +204,11 @@ public class NettyClient extends AbstractPooledClient {
     }
 
     public void cleanup() {
-        // 取消定期的回收任务
+        // Cancel recycle timeout tasks
         timeoutFuture.cancel(true);
-        // 清空callback
+        // Clear request -> response map
         requestId2ResponseMap.clear();
-        // 关闭client持有的channel
+        // Close all channels
         closeAllChannels();
         // 解除统计回调的注册
 //        StatsUtil.unRegistryStatisticCallback(this);
@@ -246,22 +243,17 @@ public class NettyClient extends AbstractPooledClient {
     }
 
     /**
-     * 增加调用失败的次数
-     *
-     * <pre>
-     * 如果连续失败的次数 >= maxClientConnection，那么把client设置成不可用状态
-     * </pre>
+     * Increments consecutive failure invocation count
      */
     void incrErrorCount() {
         long count = errorCount.incrementAndGet();
-
-        // 如果节点是可用状态，同时当前连续失败的次数超过允许的最大失败连接数，那么把该节点标示为不可用
         if (count >= maxClientFailedConn && state.isActive()) {
+            // If consecutive failure invocation count was equal or bigger than 'maxClientFailedConn',
+            // the state should be set to 'INACTIVE'.
             synchronized (this) {
                 count = errorCount.longValue();
-
                 if (count >= maxClientFailedConn && state.isActive()) {
-                    log.error("Changed current state of netty client to inactive for uri [{}]", providerUrl.getUri());
+                    log.error("Changed the state of netty client to inactive for uri [{}]", providerUrl.getUri());
                     state = ChannelState.INACTIVE;
                 }
             }
@@ -282,11 +274,11 @@ public class NettyClient extends AbstractPooledClient {
             if (state.isActive()) {
                 return;
             }
-            // 如果节点是inactive才进行设置，而如果是close或者uninitialized，那么直接忽略
             if (state.isInactive()) {
+                // Only 'INACTIVE' state should be set to 'ACTIVE'
                 long count = errorCount.longValue();
 
-                // 过程中有其他并发更新errorCount的，因此这里需要进行一次判断
+                // There are other concurrent updates to 'errorCount' in the process, so we need to compare here
                 if (count < maxClientFailedConn) {
                     state = ChannelState.ACTIVE;
                     log.info("Recovered the state of netty client to active for url [{}]", providerUrl.getUri());
