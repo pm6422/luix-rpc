@@ -28,8 +28,8 @@ import static org.infinity.luix.core.constant.ProtocolConstants.*;
 
 @Slf4j
 public class NettyServer extends AbstractServer implements StatisticCallback {
-    protected NettyServerChannelManage channelManage;
-    private   EventLoopGroup           bossGroup;
+    protected NettyServerChannelManager channelManage;
+    private   EventLoopGroup            bossGroup;
     private   EventLoopGroup           workerGroup;
     private   Channel                  serverChannel;
     private   InvocationHandleable     handler;
@@ -87,7 +87,7 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
                 : new NetworkThreadExecutor(minWorkerThread, maxWorkerThread, workerQueueSize, new NamedThreadFactory("NettyServer-" + providerUrl.getAddress(), true));
         networkThreadExecutor.prestartAllCoreThreads();
 
-        channelManage = new NettyServerChannelManage(maxServerConn);
+        channelManage = new NettyServerChannelManager(maxServerConn);
 
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bossGroup, workerGroup)
@@ -96,7 +96,7 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
-                        pipeline.addLast(NettyServerChannelManage.CHANNEL_MANAGER, channelManage);
+                        pipeline.addLast(NettyServerChannelManager.CHANNEL_MANAGER, channelManage);
                         pipeline.addLast(NettyEncoder.ENCODER, new NettyEncoder());
                         pipeline.addLast(NettyDecoder.DECODER, new NettyDecoder(codec, NettyServer.this, maxContentLength));
                         NettyServerClientHandler handler = new NettyServerClientHandler(NettyServer.this, NettyServer.this.handler, networkThreadExecutor);
