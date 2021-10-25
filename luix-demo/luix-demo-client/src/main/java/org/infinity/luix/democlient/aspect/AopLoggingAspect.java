@@ -76,8 +76,6 @@ public class AopLoggingAspect {
             return result;
         } catch (Exception e) {
             // Catch illegal argument exception and re-throw
-            getLogger(joinPoint).error("Illegal argument[s]: {} in {}()",
-                    Arrays.toString(joinPoint.getArgs()), joinPoint.getSignature().getName());
             throw e;
         } finally {
             TraceIdUtils.remove();

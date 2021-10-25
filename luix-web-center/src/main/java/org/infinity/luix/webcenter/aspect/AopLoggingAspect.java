@@ -21,7 +21,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,8 +75,6 @@ public class AopLoggingAspect {
             return result;
         } catch (Exception e) {
             // Catch illegal argument exception and re-throw
-            getLogger(joinPoint).error("Illegal argument[s]: {} in {}()",
-                    Arrays.toString(joinPoint.getArgs()), joinPoint.getSignature().getName());
             throw e;
         } finally {
             TraceIdUtils.remove();
