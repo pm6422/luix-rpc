@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Aspect for logging execution arguments and result of the method.
@@ -61,27 +62,21 @@ public class AopLoggingAspect {
      */
     @Around("within(@org.springframework.web.bind.annotation.RestController *)")
     public Object logController(ProceedingJoinPoint joinPoint) throws Throwable {
-        try {
-            ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            HttpServletRequest request = servletRequestAttributes != null ? servletRequestAttributes.getRequest() : null;
-            HttpServletResponse response = servletRequestAttributes != null ? servletRequestAttributes.getResponse() : null;
-            // Get traceId from http request
-            TraceIdUtils.setTraceId(request);
-            beforeRun(joinPoint, request);
-            Object result = joinPoint.proceed();
-            // Set traceId to http response
-            TraceIdUtils.setTraceId(response);
-            afterRun(joinPoint, response, result);
-            TraceIdUtils.remove();
-            return result;
-        } catch (Exception e) {
-            // Catch illegal argument exception and re-throw
-            throw e;
-        } finally {
-        }
+        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = servletRequestAttributes != null ? servletRequestAttributes.getRequest() : null;
+        HttpServletResponse response = servletRequestAttributes != null ? servletRequestAttributes.getResponse() : null;
+        // Get traceId from http request
+        TraceIdUtils.setTraceId(Objects.requireNonNull(request));
+        beforeRun(joinPoint);
+        Object result = joinPoint.proceed();
+        // Set traceId to http response
+        TraceIdUtils.setTraceId(response);
+        afterRun(joinPoint, result);
+        TraceIdUtils.remove();
+        return result;
     }
 
-    public void beforeRun(ProceedingJoinPoint joinPoint, HttpServletRequest request) {
+    public void beforeRun(ProceedingJoinPoint joinPoint) {
         if (enablePrint(joinPoint)) {
             return;
         }
@@ -101,7 +96,7 @@ public class AopLoggingAspect {
         return !(argument instanceof ServletRequest) && !(argument instanceof ServletResponse);
     }
 
-    private void afterRun(ProceedingJoinPoint joinPoint, HttpServletResponse response, Object result) {
+    private void afterRun(ProceedingJoinPoint joinPoint, Object result) {
         if (enablePrint(joinPoint)) {
             return;
         }
