@@ -5,7 +5,7 @@ import org.infinity.luix.webcenter.dto.StatisticsDTO;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StatisticsResultQueue {
+public class StatisticsResultHolder {
     private static final Map<String, StatisticsDTO> MAP = new HashMap<>(16);
 
     public static void put(String id, StatisticsDTO msg) {
@@ -13,6 +13,6 @@ public class StatisticsResultQueue {
     }
 
     public static StatisticsDTO get(String id) {
-        return MAP.get(id);
+        return MAP.remove(id);
     }
 }

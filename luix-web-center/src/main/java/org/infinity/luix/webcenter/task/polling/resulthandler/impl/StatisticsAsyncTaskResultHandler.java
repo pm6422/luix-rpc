@@ -3,7 +3,7 @@ package org.infinity.luix.webcenter.task.polling.resulthandler.impl;
 import org.infinity.luix.webcenter.dto.StatisticsDTO;
 import org.infinity.luix.webcenter.task.polling.AsyncTask;
 import org.infinity.luix.webcenter.task.polling.queue.InMemoryAsyncTaskQueue;
-import org.infinity.luix.webcenter.task.polling.queue.StatisticsResultQueue;
+import org.infinity.luix.webcenter.task.polling.queue.StatisticsResultHolder;
 import org.infinity.luix.webcenter.task.polling.resulthandler.AsyncTaskResultHandler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ public class StatisticsAsyncTaskResultHandler implements AsyncTaskResultHandler 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void handleResult(AsyncTask asyncTask) {
         // Get message from distributed queue
-        StatisticsDTO result = StatisticsResultQueue.get(asyncTask.getId());
+        StatisticsDTO result = StatisticsResultHolder.get(asyncTask.getId());
         if (result != null) {
             // Set value to DeferredResult to complete the HTTP response if the specified message was found in Redis
             asyncTask.getDeferredResult().setResult(ResponseEntity.ok(result));

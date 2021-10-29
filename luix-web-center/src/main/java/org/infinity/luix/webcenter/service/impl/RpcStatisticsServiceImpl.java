@@ -3,7 +3,7 @@ package org.infinity.luix.webcenter.service.impl;
 import org.infinity.luix.webcenter.dto.StatisticsDTO;
 import org.infinity.luix.webcenter.repository.*;
 import org.infinity.luix.webcenter.service.RpcStatisticsService;
-import org.infinity.luix.webcenter.task.polling.queue.StatisticsResultQueue;
+import org.infinity.luix.webcenter.task.polling.queue.StatisticsResultHolder;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +35,7 @@ public class RpcStatisticsServiceImpl implements RpcStatisticsService {
     private Executor                          asyncTaskExecutor;
 
     /**
+     *
      * Refer to https://www.toutiao.com/a6783214804937998851/
      *
      * @param taskId task ID
@@ -63,6 +64,6 @@ public class RpcStatisticsServiceImpl implements RpcStatisticsService {
                 .taskExecutedCount(results.get(6))
                 .build();
 
-        StatisticsResultQueue.put(taskId, dto);
+        StatisticsResultHolder.put(taskId, dto);
     }
 }
