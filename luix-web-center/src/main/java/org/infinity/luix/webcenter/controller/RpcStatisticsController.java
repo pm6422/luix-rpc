@@ -14,6 +14,8 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.annotation.Resource;
 
+import java.util.concurrent.TimeUnit;
+
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -27,7 +29,7 @@ public class RpcStatisticsController {
     @GetMapping("api/rpc-statistics/data")
     @Timed
     public DeferredResult<ResponseEntity<StatisticsDTO>> getStatistics() {
-        DeferredResult<ResponseEntity<StatisticsDTO>> deferredResult = new DeferredResult<>(30000L);
+        DeferredResult<ResponseEntity<StatisticsDTO>> deferredResult = new DeferredResult<>(TimeUnit.MINUTES.toMillis(1));
         handleAsyncError(deferredResult);
 
         // Put task in memory queue
