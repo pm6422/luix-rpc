@@ -8,6 +8,7 @@ import org.infinity.luix.core.client.stub.ConsumerStub;
 import org.infinity.luix.core.client.stub.ConsumerStubFactory;
 import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.infinity.luix.core.config.impl.RegistryConfig;
+import org.infinity.luix.core.server.annotation.RpcProvider;
 import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.spring.boot.config.InfinityProperties;
@@ -25,8 +26,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.Instant;
@@ -40,7 +39,7 @@ import static org.infinity.luix.webcenter.domain.RpcApplication.FIELD_NAME;
 import static org.infinity.luix.webcenter.domain.RpcProvider.FIELD_REGISTRY_IDENTITY;
 import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 
-@Service
+@RpcProvider
 public class RpcApplicationServiceImpl implements RpcApplicationService {
     @Resource
     private InfinityProperties       infinityProperties;
@@ -55,10 +54,7 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
     @Resource
     private RpcConsumerService       rpcConsumerService;
 
-    /**
-     * Update status per 2 minutes
-     */
-    @Scheduled(fixedRate = 2 * 60000, initialDelay = 1000)
+    @Override
     public void updateStatus() {
         List<RpcApplication> applications = rpcApplicationRepository.findAll();
         if (CollectionUtils.isEmpty(applications)) {
