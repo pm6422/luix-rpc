@@ -3,6 +3,7 @@ package org.infinity.luix.webcenter.initializer;
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.webcenter.domain.*;
 import org.infinity.luix.webcenter.service.RpcApplicationService;
@@ -154,6 +155,8 @@ public class DatabaseInitializer {
         rpcScheduledTask.setName("T" + IdGenerator.generateShortId());
         rpcScheduledTask.setRegistryIdentity("zookeeper://localhost:2181/registry");
         rpcScheduledTask.setInterfaceName(RpcApplicationService.class.getName());
+        rpcScheduledTask.setForm(StringUtils.EMPTY);
+        rpcScheduledTask.setVersion(StringUtils.EMPTY);
         rpcScheduledTask.setMethodName("updateStatus");
         rpcScheduledTask.setMethodSignature("updateStatus(void)");
         rpcScheduledTask.setMethodParamTypes(new String[0]);
