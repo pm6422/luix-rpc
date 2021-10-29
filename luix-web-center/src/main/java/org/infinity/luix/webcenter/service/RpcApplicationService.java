@@ -7,8 +7,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface RpcApplicationService {
 
-    boolean exists(String registryIdentity, String name);
-
     Page<RpcApplication> find(Pageable pageable, String registryIdentity, String name, Boolean active);
 
     void inactivate(String registryIdentity, String name);

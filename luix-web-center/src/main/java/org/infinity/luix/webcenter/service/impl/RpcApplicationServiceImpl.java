@@ -1,5 +1,6 @@
 package org.infinity.luix.webcenter.service.impl;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.luix.core.client.proxy.Proxy;
@@ -24,10 +25,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -52,10 +55,26 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
     @Resource
     private RpcConsumerService       rpcConsumerService;
 
-    @Deprecated
-    @Override
-    public boolean exists(String registryIdentity, String name) {
-        return rpcApplicationRepository.existsByRegistryIdentityAndName(registryIdentity, name);
+    /**
+     * Update status per 2 minutes
+     */
+    @Scheduled(fixedRate = 2 * 60000, initialDelay = 1000)
+    public void updateStatus() {
+        List<RpcApplication> applications = rpcApplicationRepository.findAll();
+        if (CollectionUtils.isEmpty(applications)) {
+            return;
+        }
+        applications.forEach(domain -> {
+            if (rpcProviderService.existsApplication(domain.getRegistryIdentity(), domain.getName(), true)) {
+                domain.setProviding(true);
+                domain.setActive(true);
+            }
+            if (rpcConsumerService.existsApplication(domain.getRegistryIdentity(), domain.getName(), true)) {
+                domain.setConsuming(true);
+                domain.setActive(true);
+            }
+        });
+        rpcApplicationRepository.saveAll(applications);
     }
 
     @Override

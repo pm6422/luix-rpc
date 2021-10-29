@@ -132,7 +132,7 @@ public class DatabaseInitializer {
         oAuth2ClientDetails.setAutoApproveScopes(Collections.singletonList("read"));
         oAuth2ClientDetails.setAuthorizedGrantTypes(
                 Arrays.asList("password", "authorization_code", "refresh_token", "client_credentials"));
-        // Note: localhost and 127.0.0.1 must be save twice.
+        // Note: localhost and 127.0.0.1 must be saved twice.
         oAuth2ClientDetails.setRegisteredRedirectUri(
                 new HashSet<>(Arrays.asList("http://127.0.0.1:9020/login", "http://localhost:9020/login")));
         oAuth2ClientDetails.setAccessTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7));
