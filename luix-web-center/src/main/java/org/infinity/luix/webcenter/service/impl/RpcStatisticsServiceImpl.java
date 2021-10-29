@@ -35,7 +35,6 @@ public class RpcStatisticsServiceImpl implements RpcStatisticsService {
     private Executor                          asyncTaskExecutor;
 
     /**
-     *
      * Refer to https://www.toutiao.com/a6783214804937998851/
      *
      * @param taskId task ID
@@ -45,10 +44,20 @@ public class RpcStatisticsServiceImpl implements RpcStatisticsService {
     public void getStatisticsResults(String taskId) {
         List<CompletableFuture<Long>> futures = Arrays.asList(
                 CompletableFuture.supplyAsync(rpcApplicationRepository::count, asyncTaskExecutor),
+                CompletableFuture.supplyAsync(() -> rpcApplicationRepository.countByActive(true), asyncTaskExecutor),
+
                 CompletableFuture.supplyAsync(rpcServerRepository::count, asyncTaskExecutor),
+                CompletableFuture.supplyAsync(() -> rpcServerRepository.countByActive(true), asyncTaskExecutor),
+
                 CompletableFuture.supplyAsync(rpcServiceRepository::count, asyncTaskExecutor),
+                CompletableFuture.supplyAsync(() -> rpcServiceRepository.countByActive(true), asyncTaskExecutor),
+
                 CompletableFuture.supplyAsync(rpcProviderRepository::count, asyncTaskExecutor),
+                CompletableFuture.supplyAsync(() -> rpcProviderRepository.countByActive(true), asyncTaskExecutor),
+
                 CompletableFuture.supplyAsync(rpcConsumerRepository::count, asyncTaskExecutor),
+                CompletableFuture.supplyAsync(() -> rpcConsumerRepository.countByActive(true), asyncTaskExecutor),
+
                 CompletableFuture.supplyAsync(rpcScheduledTaskRepository::count, asyncTaskExecutor),
                 CompletableFuture.supplyAsync(rpcScheduledTaskHistoryRepository::count, asyncTaskExecutor)
         );
@@ -56,12 +65,22 @@ public class RpcStatisticsServiceImpl implements RpcStatisticsService {
 
         StatisticsDTO dto = StatisticsDTO.builder()
                 .applicationCount(results.get(0))
-                .serverCount(results.get(1))
-                .serviceCount(results.get(2))
-                .providerCount(results.get(3))
-                .consumerCount(results.get(4))
-                .taskCount(results.get(5))
-                .taskExecutedCount(results.get(6))
+                .activeApplicationCount(results.get(1))
+                .inactiveApplicationCount(results.get(0) - results.get(1))
+                .serverCount(results.get(2))
+                .activeServerCount(results.get(3))
+                .serverCount(results.get(2) - results.get(3))
+                .serviceCount(results.get(4))
+                .activeServiceCount(results.get(5))
+                .inactiveServiceCount(results.get(4) - results.get(5))
+                .providerCount(results.get(6))
+                .activeProviderCount(results.get(7))
+                .inactiveProviderCount(results.get(6) - results.get(7))
+                .consumerCount(results.get(8))
+                .activeConsumerCount(results.get(9))
+                .inactiveConsumerCount(results.get(8) - results.get(9))
+                .taskCount(results.get(10))
+                .taskExecutedCount(results.get(11))
                 .build();
 
         StatisticsResultHolder.put(taskId, dto);

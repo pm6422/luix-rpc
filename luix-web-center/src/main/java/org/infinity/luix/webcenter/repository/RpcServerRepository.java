@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RpcServerRepository extends MongoRepository<RpcServer, String> {
 
+    long countByActive(boolean active);
+
     boolean existsByRegistryIdentityAndAddress(String registryIdentity, String address);
 
     RpcServer findByRegistryIdentityAndAddress(String registryIdentity, String address);

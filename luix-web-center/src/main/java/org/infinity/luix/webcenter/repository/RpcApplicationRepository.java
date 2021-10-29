@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface RpcApplicationRepository extends MongoRepository<RpcApplication, String> {
 
-    boolean existsByRegistryIdentityAndName(String registryIdentity, String application);
+    long countByActive(boolean active);
 
     Optional<RpcApplication> findByRegistryIdentityAndName(String registryIdentity, String application);
 
