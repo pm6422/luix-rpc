@@ -155,8 +155,6 @@ public class DatabaseInitializer {
         rpcScheduledTask.setName("T" + IdGenerator.generateShortId());
         rpcScheduledTask.setRegistryIdentity("zookeeper://localhost:2181/registry");
         rpcScheduledTask.setInterfaceName(RpcApplicationService.class.getName());
-        rpcScheduledTask.setForm(StringUtils.EMPTY);
-        rpcScheduledTask.setVersion(StringUtils.EMPTY);
         rpcScheduledTask.setMethodName("updateStatus");
         rpcScheduledTask.setMethodSignature("updateStatus(void)");
         rpcScheduledTask.setMethodParamTypes(new String[0]);
