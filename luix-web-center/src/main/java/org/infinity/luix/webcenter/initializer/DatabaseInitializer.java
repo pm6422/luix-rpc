@@ -157,7 +157,6 @@ public class DatabaseInitializer {
         rpcScheduledTask.setInterfaceName(RpcApplicationService.class.getName());
         rpcScheduledTask.setMethodName("updateStatus");
         rpcScheduledTask.setMethodSignature("updateStatus(void)");
-        rpcScheduledTask.setMethodParamTypes(new String[0]);
         rpcScheduledTask.setFixedInterval(2L);
         rpcScheduledTask.setFixedIntervalUnit(UNIT_MINUTES);
         rpcScheduledTask.setEnabled(true);
