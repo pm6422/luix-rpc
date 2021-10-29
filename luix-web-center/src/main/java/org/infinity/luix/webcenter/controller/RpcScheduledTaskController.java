@@ -133,13 +133,13 @@ public class RpcScheduledTaskController {
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", id)).build();
     }
 
-    @ApiOperation("Get available time units of fixed rate interval")
+    @ApiOperation("get available time units of fixed rate interval")
     @GetMapping("/api/rpc-scheduled-tasks/time-units")
     public ResponseEntity<List<String>> getTimeUnits() {
         return ResponseEntity.ok().body(RpcScheduledTask.AVAILABLE_FIXED_INTERVAL_UNIT);
     }
 
-    @ApiOperation("Get available fault tolerances")
+    @ApiOperation("get available fault tolerances")
     @GetMapping("/api/rpc-scheduled-tasks/fault-tolerances")
     public ResponseEntity<List<String>> getFaultTolerances() {
         return ResponseEntity.ok().body(Arrays.asList(FAULT_TOLERANCE_VAL_FAILOVER, FAULT_TOLERANCE_VAL_FAILFAST));

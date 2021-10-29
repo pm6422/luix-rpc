@@ -57,7 +57,7 @@ public class RpcScheduledTaskHistoryController {
         return ResponseEntity.ok().headers(HttpHeaderUtils.generatePageHeaders(histories)).body(histories.getContent());
     }
 
-    @ApiOperation("find scheduled task history by id")
+    @ApiOperation("find scheduled task history by ID")
     @GetMapping("/api/rpc-scheduled-task-histories/{id}")
     @Timed
     public ResponseEntity<RpcScheduledTaskHistory> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {

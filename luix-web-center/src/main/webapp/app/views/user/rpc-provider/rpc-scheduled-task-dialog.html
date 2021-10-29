@@ -130,12 +130,12 @@
             </select>
             <p class="label label-primary" ng-show="vm.entity.faultTolerance == 'failfast'">
                 <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
-                failfast means that only one call is initiated, and an error is reported immediately if a failure RPC call occurs.
+                The failfast means that only one call is initiated, and an error is reported immediately if a failure RPC call occurs.
                 It is usually used for non-idempotent operations.
             </p>
             <p class="label label-primary" ng-show="vm.entity.faultTolerance == 'failover'">
                 <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
-                failover means that when a service node fails to call, it will continue to call other service nodes. It is the default fault tolerance strategy if left empty.
+                The failover means that when a service node fails to call, it will continue to call other service nodes. It is the default fault tolerance strategy if left empty.
             </p>
         </div>
         <div class="form-group">
