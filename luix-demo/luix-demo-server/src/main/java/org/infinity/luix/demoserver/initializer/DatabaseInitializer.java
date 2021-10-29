@@ -1,4 +1,4 @@
-package org.infinity.luix.demoserver.db.initializer;
+package org.infinity.luix.demoserver.initializer;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;

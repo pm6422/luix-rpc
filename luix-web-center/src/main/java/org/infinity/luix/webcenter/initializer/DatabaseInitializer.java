@@ -1,4 +1,4 @@
-package org.infinity.luix.webcenter.db.initializer;
+package org.infinity.luix.webcenter.initializer;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
