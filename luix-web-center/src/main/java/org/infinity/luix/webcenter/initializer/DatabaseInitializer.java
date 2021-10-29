@@ -3,7 +3,9 @@ package org.infinity.luix.webcenter.initializer;
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
+import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.webcenter.domain.*;
+import org.infinity.luix.webcenter.service.RpcApplicationService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,6 +14,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
+
+import static org.infinity.luix.webcenter.domain.RpcScheduledTask.UNIT_MINUTES;
 
 /**
  * Creates the initial database
@@ -142,5 +146,19 @@ public class DatabaseInitializer {
                 new SimpleGrantedAuthority(Authority.ADMIN), new SimpleGrantedAuthority(Authority.USER),
                 new SimpleGrantedAuthority(Authority.ANONYMOUS)));
         mongoTemplate.save(oAuth2ClientDetails);
+    }
+
+    @ChangeSet(order = "06", author = "Louis", id = "addScheduledTasks", runAlways = true)
+    public void addScheduledTasks(MongockTemplate mongoTemplate) {
+        RpcScheduledTask rpcScheduledTask = new RpcScheduledTask();
+        rpcScheduledTask.setName("T" + IdGenerator.generateShortId());
+        rpcScheduledTask.setRegistryIdentity("zookeeper://localhost:2181/registry");
+        rpcScheduledTask.setInterfaceName(RpcApplicationService.class.getName());
+        rpcScheduledTask.setMethodName("updateStatus");
+        rpcScheduledTask.setMethodSignature("updateStatus(void)");
+        rpcScheduledTask.setFixedInterval(2L);
+        rpcScheduledTask.setFixedIntervalUnit(UNIT_MINUTES);
+        rpcScheduledTask.setEnabled(true);
+        mongoTemplate.save(rpcScheduledTask);
     }
 }

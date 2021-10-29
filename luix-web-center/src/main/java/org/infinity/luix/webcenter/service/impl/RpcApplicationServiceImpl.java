@@ -77,7 +77,7 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
     public Page<RpcApplication> find(Pageable pageable, String registryIdentity, String name, Boolean active) {
         Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryIdentity));
         if (StringUtils.isNotEmpty(name)) {
-            //Fuzzy search
+            // Fuzzy search
             Pattern pattern = Pattern.compile("^.*" + name + ".*$", Pattern.CASE_INSENSITIVE);
             query.addCriteria(Criteria.where(FIELD_NAME).regex(pattern));
         }
