@@ -1959,11 +1959,13 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
         vm.entity.stopTime = new Date(stopTimeStr);
     }
 
-    RpcProviderService.get({extension: $stateParams.id},
-        function (response) {
-            vm.provider = response;
-            vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.provider.url});
-        });
+    if (vm.mode == 'create') {
+        RpcProviderService.get({extension: $stateParams.id},
+            function (response) {
+                vm.provider = response;
+                vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.provider.url});
+            });
+    }
 
     vm.isSaving = false;
     vm.selectMethod = selectMethod;
