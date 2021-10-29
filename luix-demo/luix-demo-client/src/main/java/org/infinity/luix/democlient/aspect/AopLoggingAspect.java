@@ -1,6 +1,7 @@
 package org.infinity.luix.democlient.aspect;
 
 import com.alibaba.fastjson.JSON;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -15,6 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
@@ -30,13 +32,15 @@ import java.util.Objects;
  * <p>
  * http://www.imooc.com/article/297283
  */
+@Slf4j
 @Aspect
 @ConditionalOnProperty(prefix = "application.aop-logging", value = "enabled", havingValue = "true")
 @Configuration
 public class AopLoggingAspect {
 
+    private static final String                UNKNOWN_ARG_VAL = "UNKNOWN";
     @Resource
-    private ApplicationProperties applicationProperties;
+    private              ApplicationProperties applicationProperties;
 
     /**
      * Advice that logs methods throwing exceptions
@@ -84,16 +88,24 @@ public class AopLoggingAspect {
         Object[] arguments = joinPoint.getArgs();
         Map<String, Object> validParamMap = new HashMap<>(arguments.length);
         for (int i = 0; i < arguments.length; i++) {
+            String argVal = UNKNOWN_ARG_VAL;
             if (isValidArgument(arguments[i])) {
-                validParamMap.put(paramNames[i], JSON.toJSONString(arguments[i]));
+                try {
+                    argVal = JSON.toJSONString(arguments[i]);
+                } catch (Exception ex) {
+                    log.warn("Failed to serialize argument!");
+                }
             }
+            validParamMap.put(paramNames[i], argVal);
         }
         getLogger(joinPoint).info("Enter method {}() with argument[s] = {}",
                 joinPoint.getSignature().getName(), validParamMap);
     }
 
     private boolean isValidArgument(Object argument) {
-        return !(argument instanceof ServletRequest) && !(argument instanceof ServletResponse);
+        return !(argument instanceof ServletRequest)
+                && !(argument instanceof ServletResponse)
+                && !(argument instanceof MultipartFile);
     }
 
     private void afterRun(ProceedingJoinPoint joinPoint, Object result) {
