@@ -31,7 +31,7 @@ public class BuildInServiceImpl implements BuildInService {
         serverInfo.setJdkVendor(defaultString(System.getProperty("java.vm.vendor")));
         serverInfo.setJdkVersion(defaultString(System.getProperty("java.runtime.version")));
 
-        serverInfo.setCpuCore(Runtime.getRuntime().availableProcessors());
+        serverInfo.setCpuCores(Runtime.getRuntime().availableProcessors());
         serverInfo.setMemoryStatistic(getMemoryStatistic());
         return serverInfo;
     }

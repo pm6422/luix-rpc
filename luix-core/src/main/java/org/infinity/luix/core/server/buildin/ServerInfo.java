@@ -10,6 +10,6 @@ public class ServerInfo {
     private String systemTime;
     private String jdkVendor;
     private String jdkVersion;
-    private int    cpuCore;
+    private int    cpuCores;
     private String memoryStatistic;
 }

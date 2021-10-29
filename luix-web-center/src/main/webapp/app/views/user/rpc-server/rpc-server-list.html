@@ -22,7 +22,7 @@
                     <th sort-by-directive="address"><span>Address</span> <span class="fa fa-sort"></span></th>
                     <th sort-by-directive="osName"><span>OS name</span> <span class="fa fa-sort"></span></th>
                     <th sort-by-directive="osVersion"><span>OS version</span> <span class="fa fa-sort"></span></th>
-                    <th sort-by-directive="cpuCore"><span>CPU core(s)</span> <span class="fa fa-sort"></span></th>
+                    <th sort-by-directive="cpuCores"><span>CPU cores</span> <span class="fa fa-sort"></span></th>
                     <th sort-by-directive="active"><span>Status</span> <span class="fa fa-sort"></span></th>
                     <th>Actions</th>
                 </tr>
@@ -32,7 +32,7 @@
                     <td>{{entity.address}}</td>
                     <td>{{entity.osName}}</td>
                     <td>{{entity.osVersion}}</td>
-                    <td>{{entity.cpuCore}}</td>
+                    <td>{{entity.cpuCores}}</td>
                     <td>
                         <span class="label label-primary" ng-show="entity.active">Active</span>
                         <span class="label label-danger" ng-show="!entity.active">Inactive</span>
