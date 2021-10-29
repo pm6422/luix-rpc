@@ -6,6 +6,8 @@
 # https://docs.spring.io/spring-boot/docs/2.3.0.RELEASE/reference/html/appendix-application-properties.html
 # ===================================================================
 mongock:
+    enabled: true
+    track-ignored: true
     change-logs-scan-package:
         - ${info.project.package}.initializer
 infinity:

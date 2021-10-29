@@ -105,9 +105,7 @@ logging:
         root: DEBUG
         ${info.project.package}: DEBUG
 mongock:
-    change-logs-scan-package:
-        - ${info.project.package}.db
-    trackIgnored: true
+    enabled: false
 infinity:
     application:
         name: ${spring.application.name}
