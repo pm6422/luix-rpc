@@ -13,6 +13,9 @@ spring:
             enabled: false # we use gulp + BrowserSync for livereload
     thymeleaf:
         cache: false
+mongock:
+    change-logs-scan-package:
+        - ${info.project.package}.initializer
 infinity:
     registries:
         0:
