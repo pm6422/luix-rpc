@@ -29,11 +29,6 @@ public class RpcProviderServiceImpl implements RpcProviderService {
     private MongoTemplate         mongoTemplate;
 
     @Override
-    public void updateStatus() {
-
-    }
-
-    @Override
     public Page<RpcProvider> find(Pageable pageable, String registryIdentity,
                                   String application, String address, String interfaceName, Boolean active) {
         Query query = Query.query(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryIdentity));

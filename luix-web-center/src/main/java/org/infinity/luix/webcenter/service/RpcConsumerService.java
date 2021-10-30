@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface RpcConsumerService {
 
-    void updateStatus();
-
     Page<RpcConsumer> find(Pageable pageable, String registryIdentity, String application,
                            String address, String interfaceName, Boolean active);
 
