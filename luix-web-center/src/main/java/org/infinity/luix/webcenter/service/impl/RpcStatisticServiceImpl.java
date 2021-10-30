@@ -1,9 +1,9 @@
 package org.infinity.luix.webcenter.service.impl;
 
-import org.infinity.luix.webcenter.dto.StatisticsDTO;
+import org.infinity.luix.webcenter.dto.StatisticDTO;
 import org.infinity.luix.webcenter.repository.*;
-import org.infinity.luix.webcenter.service.RpcStatisticsService;
-import org.infinity.luix.webcenter.task.polling.queue.StatisticsResultHolder;
+import org.infinity.luix.webcenter.service.RpcStatisticService;
+import org.infinity.luix.webcenter.task.polling.queue.StatisticResultHolder;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 @Service
-public class RpcStatisticsServiceImpl implements RpcStatisticsService {
+public class RpcStatisticServiceImpl implements RpcStatisticService {
 
     @Resource
     private RpcApplicationRepository          rpcApplicationRepository;
@@ -63,7 +63,7 @@ public class RpcStatisticsServiceImpl implements RpcStatisticsService {
         );
         List<Long> results = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
 
-        StatisticsDTO dto = StatisticsDTO.builder()
+        StatisticDTO dto = StatisticDTO.builder()
                 .applicationCount(results.get(0))
                 .activeApplicationCount(results.get(1))
                 .inactiveApplicationCount(results.get(0) - results.get(1))
@@ -83,6 +83,6 @@ public class RpcStatisticsServiceImpl implements RpcStatisticsService {
                 .taskExecutedCount(results.get(11))
                 .build();
 
-        StatisticsResultHolder.put(taskId, dto);
+        StatisticResultHolder.put(taskId, dto);
     }
 }

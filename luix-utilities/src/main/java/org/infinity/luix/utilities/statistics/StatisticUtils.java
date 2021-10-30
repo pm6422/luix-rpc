@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
-public abstract class StatisticsUtils {
+public abstract class StatisticUtils {
     /**
      * Access statistic interval in seconds
      */

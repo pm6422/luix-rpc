@@ -6,8 +6,8 @@ import org.infinity.luix.utilities.statistics.CachedMetricsFactory;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.infinity.luix.utilities.statistics.StatisticsUtils.ACCESS_STATISTIC_INTERVAL;
-import static org.infinity.luix.utilities.statistics.StatisticsUtils.ELAPSED_TIME_HISTOGRAM;
+import static org.infinity.luix.utilities.statistics.StatisticUtils.ACCESS_STATISTIC_INTERVAL;
+import static org.infinity.luix.utilities.statistics.StatisticUtils.ELAPSED_TIME_HISTOGRAM;
 
 public class AccessStatisticItem {
     private final String          name;

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class StatisticsDTO {
+public class StatisticDTO {
     private long applicationCount;
     private long activeApplicationCount;
     private long inactiveApplicationCount;

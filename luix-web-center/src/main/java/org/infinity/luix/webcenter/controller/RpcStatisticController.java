@@ -3,8 +3,8 @@ package org.infinity.luix.webcenter.controller;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.webcenter.dto.StatisticsDTO;
-import org.infinity.luix.webcenter.service.RpcStatisticsService;
+import org.infinity.luix.webcenter.dto.StatisticDTO;
+import org.infinity.luix.webcenter.service.RpcStatisticService;
 import org.infinity.luix.webcenter.task.polling.queue.InMemoryAsyncTaskQueue;
 import org.infinity.luix.webcenter.utils.TraceIdUtils;
 import org.springframework.http.ResponseEntity;
@@ -20,16 +20,16 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @Slf4j
-public class RpcStatisticsController {
+public class RpcStatisticController {
 
     @Resource
-    private RpcStatisticsService rpcStatisticsService;
+    private RpcStatisticService rpcStatisticService;
 
     @ApiOperation("get RPC statistics data")
     @GetMapping("api/rpc-statistics/data")
     @Timed
-    public DeferredResult<ResponseEntity<StatisticsDTO>> getStatistics() {
-        DeferredResult<ResponseEntity<StatisticsDTO>> deferredResult = new DeferredResult<>(TimeUnit.MINUTES.toMillis(1));
+    public DeferredResult<ResponseEntity<StatisticDTO>> getStatistics() {
+        DeferredResult<ResponseEntity<StatisticDTO>> deferredResult = new DeferredResult<>(TimeUnit.MINUTES.toMillis(1));
         handleAsyncError(deferredResult);
 
         // Put task in memory queue
@@ -39,7 +39,7 @@ public class RpcStatisticsController {
             deferredResult.setErrorResult(ResponseEntity.status(FORBIDDEN).body("Server is busy!"));
         } else {
             // Execute asynchronously
-            rpcStatisticsService.getStatisticsResults(TraceIdUtils.getTraceId());
+            rpcStatisticService.getStatisticsResults(TraceIdUtils.getTraceId());
         }
         return deferredResult;
     }
