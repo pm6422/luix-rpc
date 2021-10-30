@@ -1,6 +1,5 @@
 package org.infinity.luix.webcenter.service.impl;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.luix.core.client.proxy.Proxy;
@@ -22,13 +21,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.infinity.luix.core.server.buildin.BuildInService.METHOD_GET_SERVER_INFO;
@@ -37,36 +36,42 @@ import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 @RpcProvider
 public class RpcServerServiceImpl implements RpcServerService {
 
+    private static final int                 PAGE_SIZE = 100;
     @Resource
-    private InfinityProperties  infinityProperties;
+    private              InfinityProperties  infinityProperties;
     @Resource
-    private ApplicationContext  applicationContext;
+    private              ApplicationContext  applicationContext;
     @Resource
-    private MongoTemplate       mongoTemplate;
+    private              MongoTemplate       mongoTemplate;
     @Resource
-    private RpcServerRepository rpcServerRepository;
+    private              RpcServerRepository rpcServerRepository;
     @Resource
-    private RpcProviderService  rpcProviderService;
+    private              RpcProviderService  rpcProviderService;
     @Resource
-    private RpcConsumerService  rpcConsumerService;
+    private              RpcConsumerService  rpcConsumerService;
 
     @Override
     public void updateStatus() {
-        List<RpcServer> servers = rpcServerRepository.findAll();
-        if (CollectionUtils.isEmpty(servers)) {
-            return;
+        long total = rpcServerRepository.count();
+        long loopCount = total % PAGE_SIZE == 0 ? total / PAGE_SIZE : total / PAGE_SIZE + 1;
+        for (int i = 0; i < loopCount; i++) {
+            Pageable pageable = PageRequest.of(i, PAGE_SIZE);
+            Page<RpcServer> servers = rpcServerRepository.findAll(pageable);
+            if (servers.isEmpty()) {
+                return;
+            }
+            servers.getContent().forEach(domain -> {
+                if (rpcProviderService.existsAddress(domain.getRegistryIdentity(), domain.getAddress(), true)) {
+                    domain.setProviding(true);
+                    domain.setActive(true);
+                }
+                if (rpcConsumerService.existsAddress(domain.getRegistryIdentity(), domain.getAddress(), true)) {
+                    domain.setConsuming(true);
+                    domain.setActive(true);
+                }
+            });
+            rpcServerRepository.saveAll(servers);
         }
-        servers.forEach(domain -> {
-            if (rpcProviderService.existsAddress(domain.getRegistryIdentity(), domain.getAddress(), true)) {
-                domain.setProviding(true);
-                domain.setActive(true);
-            }
-            if (rpcConsumerService.existsAddress(domain.getRegistryIdentity(), domain.getAddress(), true)) {
-                domain.setConsuming(true);
-                domain.setActive(true);
-            }
-        });
-        rpcServerRepository.saveAll(servers);
     }
 
     @Override
