@@ -1,5 +1,6 @@
 package org.infinity.luix.webcenter.service.impl;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.webcenter.domain.RpcService;
 import org.infinity.luix.webcenter.repository.RpcServiceRepository;
@@ -15,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.infinity.luix.webcenter.domain.RpcService.FIELD_INTERFACE_NAME;
@@ -34,7 +36,21 @@ public class RpcServiceServiceImpl implements RpcServiceService {
 
     @Override
     public void updateStatus() {
-
+        List<RpcService> services = rpcServiceRepository.findAll();
+        if (CollectionUtils.isEmpty(services)) {
+            return;
+        }
+        services.forEach(domain -> {
+            if (rpcProviderService.existsApplication(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
+                domain.setProviding(true);
+                domain.setActive(true);
+            }
+            if (rpcConsumerService.existsApplication(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
+                domain.setConsuming(true);
+                domain.setActive(true);
+            }
+        });
+        rpcServiceRepository.saveAll(services);
     }
 
     @Override

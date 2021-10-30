@@ -69,9 +69,11 @@ public class RpcServiceController {
         RpcService domain = rpcServiceRepository.findById(id).orElseThrow(() -> new DataNotFoundException(interfaceName));
         if (rpcProviderService.existsService(registryIdentity, domain.getInterfaceName(), true)) {
             domain.setProviding(true);
+            domain.setActive(true);
         }
         if (rpcConsumerService.existsService(registryIdentity, domain.getInterfaceName(), true)) {
             domain.setConsuming(true);
+            domain.setActive(true);
         }
         return ResponseEntity.ok(domain);
     }
