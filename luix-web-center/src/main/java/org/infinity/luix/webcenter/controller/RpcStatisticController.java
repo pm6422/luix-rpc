@@ -25,7 +25,7 @@ public class RpcStatisticController {
     @Resource
     private RpcStatisticService rpcStatisticService;
 
-    @ApiOperation("get RPC statistics data")
+    @ApiOperation("get RPC statistic data")
     @GetMapping("api/rpc-statistics/data")
     @Timed
     public DeferredResult<ResponseEntity<StatisticDTO>> getStatistics() {
