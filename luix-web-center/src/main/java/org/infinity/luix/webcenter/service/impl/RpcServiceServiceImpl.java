@@ -2,6 +2,7 @@ package org.infinity.luix.webcenter.service.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.luix.core.server.annotation.RpcProvider;
 import org.infinity.luix.webcenter.domain.RpcService;
 import org.infinity.luix.webcenter.repository.RpcServiceRepository;
 import org.infinity.luix.webcenter.service.RpcConsumerService;
@@ -22,7 +23,7 @@ import java.util.regex.Pattern;
 import static org.infinity.luix.webcenter.domain.RpcService.FIELD_INTERFACE_NAME;
 import static org.infinity.luix.webcenter.domain.RpcService.FIELD_REGISTRY_IDENTITY;
 
-@Service
+@RpcProvider
 public class RpcServiceServiceImpl implements RpcServiceService {
 
     @Resource

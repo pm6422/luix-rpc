@@ -2,17 +2,17 @@ package org.infinity.luix.webcenter.service.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.luix.webcenter.domain.RpcApplication;
-import org.infinity.luix.webcenter.domain.RpcServer;
 import org.infinity.luix.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.luix.core.client.proxy.Proxy;
 import org.infinity.luix.core.client.stub.ConsumerStub;
 import org.infinity.luix.core.client.stub.ConsumerStubFactory;
 import org.infinity.luix.core.config.impl.RegistryConfig;
+import org.infinity.luix.core.server.annotation.RpcProvider;
 import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.server.buildin.ServerInfo;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.spring.boot.config.InfinityProperties;
+import org.infinity.luix.webcenter.domain.RpcServer;
 import org.infinity.luix.webcenter.repository.RpcServerRepository;
 import org.infinity.luix.webcenter.service.RpcConsumerService;
 import org.infinity.luix.webcenter.service.RpcProviderService;
@@ -26,7 +26,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -35,7 +34,7 @@ import java.util.regex.Pattern;
 import static org.infinity.luix.core.server.buildin.BuildInService.METHOD_GET_SERVER_INFO;
 import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 
-@Service
+@RpcProvider
 public class RpcServerServiceImpl implements RpcServerService {
 
     @Resource
