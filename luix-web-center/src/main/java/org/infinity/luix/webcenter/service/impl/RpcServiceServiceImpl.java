@@ -33,6 +33,11 @@ public class RpcServiceServiceImpl implements RpcServiceService {
     private RpcConsumerService   rpcConsumerService;
 
     @Override
+    public void updateStatus() {
+
+    }
+
+    @Override
     public boolean exists(String registryIdentity, String interfaceName) {
         return rpcServiceRepository.existsByRegistryIdentityAndInterfaceName(registryIdentity, interfaceName);
     }

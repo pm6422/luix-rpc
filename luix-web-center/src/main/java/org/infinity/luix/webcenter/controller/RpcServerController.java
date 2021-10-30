@@ -60,14 +60,11 @@ public class RpcServerController {
             results.getContent().forEach(domain -> {
                 if (rpcProviderService.existsAddress(registryIdentity, domain.getAddress(), true)) {
                     domain.setProviding(true);
+                    domain.setActive(true);
                 }
                 if (rpcConsumerService.existsAddress(registryIdentity, domain.getAddress(), true)) {
                     domain.setConsuming(true);
-                }
-                if (domain.isProviding() || domain.isConsuming()) {
                     domain.setActive(true);
-                } else {
-                    domain.setActive(false);
                 }
             });
         }

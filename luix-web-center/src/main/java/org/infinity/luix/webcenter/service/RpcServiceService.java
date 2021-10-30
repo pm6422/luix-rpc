@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface RpcServiceService {
 
+    void updateStatus();
+
     boolean exists(String registryIdentity, String interfaceName);
 
     Page<RpcService> find(Pageable pageable, String registryIdentity, String interfaceName);

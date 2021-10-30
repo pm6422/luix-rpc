@@ -1,6 +1,8 @@
 package org.infinity.luix.webcenter.service.impl;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.luix.webcenter.domain.RpcApplication;
 import org.infinity.luix.webcenter.domain.RpcServer;
 import org.infinity.luix.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.luix.core.client.proxy.Proxy;
@@ -27,6 +29,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.infinity.luix.core.server.buildin.BuildInService.METHOD_GET_SERVER_INFO;
@@ -47,6 +50,25 @@ public class RpcServerServiceImpl implements RpcServerService {
     private RpcProviderService  rpcProviderService;
     @Resource
     private RpcConsumerService  rpcConsumerService;
+
+    @Override
+    public void updateStatus() {
+        List<RpcServer> servers = rpcServerRepository.findAll();
+        if (CollectionUtils.isEmpty(servers)) {
+            return;
+        }
+        servers.forEach(domain -> {
+            if (rpcProviderService.existsApplication(domain.getRegistryIdentity(), domain.getAddress(), true)) {
+                domain.setProviding(true);
+                domain.setActive(true);
+            }
+            if (rpcConsumerService.existsApplication(domain.getRegistryIdentity(), domain.getAddress(), true)) {
+                domain.setConsuming(true);
+                domain.setActive(true);
+            }
+        });
+        rpcServerRepository.saveAll(servers);
+    }
 
     @Override
     public boolean exists(String registryIdentity, String address) {
