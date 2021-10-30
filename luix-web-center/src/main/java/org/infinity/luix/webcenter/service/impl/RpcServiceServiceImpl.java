@@ -1,6 +1,5 @@
 package org.infinity.luix.webcenter.service.impl;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.server.annotation.RpcProvider;
 import org.infinity.luix.webcenter.domain.RpcService;
@@ -10,14 +9,13 @@ import org.infinity.luix.webcenter.service.RpcProviderService;
 import org.infinity.luix.webcenter.service.RpcServiceService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.infinity.luix.webcenter.domain.RpcService.FIELD_INTERFACE_NAME;
@@ -26,32 +24,38 @@ import static org.infinity.luix.webcenter.domain.RpcService.FIELD_REGISTRY_IDENT
 @RpcProvider
 public class RpcServiceServiceImpl implements RpcServiceService {
 
+    private static final int                  PAGE_SIZE = 100;
     @Resource
-    private MongoTemplate        mongoTemplate;
+    private              MongoTemplate        mongoTemplate;
     @Resource
-    private RpcServiceRepository rpcServiceRepository;
+    private              RpcServiceRepository rpcServiceRepository;
     @Resource
-    private RpcProviderService   rpcProviderService;
+    private              RpcProviderService   rpcProviderService;
     @Resource
-    private RpcConsumerService   rpcConsumerService;
+    private              RpcConsumerService   rpcConsumerService;
 
     @Override
     public void updateStatus() {
-        List<RpcService> services = rpcServiceRepository.findAll();
-        if (CollectionUtils.isEmpty(services)) {
-            return;
+        long total = rpcServiceRepository.count();
+        long loopCount = total % PAGE_SIZE == 0 ? total / PAGE_SIZE : total / PAGE_SIZE + 1;
+        for (int i = 0; i < loopCount; i++) {
+            Pageable pageable = PageRequest.of(i, PAGE_SIZE);
+            Page<RpcService> services = rpcServiceRepository.findAll(pageable);
+            if (services.isEmpty()) {
+                return;
+            }
+            services.getContent().forEach(domain -> {
+                if (rpcProviderService.existsService(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
+                    domain.setProviding(true);
+                    domain.setActive(true);
+                }
+                if (rpcConsumerService.existsService(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
+                    domain.setConsuming(true);
+                    domain.setActive(true);
+                }
+            });
+            rpcServiceRepository.saveAll(services);
         }
-        services.forEach(domain -> {
-            if (rpcProviderService.existsService(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
-                domain.setProviding(true);
-                domain.setActive(true);
-            }
-            if (rpcConsumerService.existsService(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
-                domain.setConsuming(true);
-                domain.setActive(true);
-            }
-        });
-        rpcServiceRepository.saveAll(services);
     }
 
     @Override
