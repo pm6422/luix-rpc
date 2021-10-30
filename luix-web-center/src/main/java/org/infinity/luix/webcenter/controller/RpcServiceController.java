@@ -51,9 +51,11 @@ public class RpcServiceController {
         RpcService domain = rpcServiceRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         if (rpcProviderService.existsService(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
             domain.setProviding(true);
+            domain.setActive(true);
         }
         if (rpcConsumerService.existsService(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
             domain.setConsuming(true);
+            domain.setActive(true);
         }
         return ResponseEntity.ok(domain);
     }
@@ -91,21 +93,18 @@ public class RpcServiceController {
             results.getContent().forEach(domain -> {
                 if (rpcProviderService.existsService(registryIdentity, domain.getInterfaceName(), true)) {
                     domain.setProviding(true);
+                    domain.setActive(true);
                 }
                 if (rpcConsumerService.existsService(registryIdentity, domain.getInterfaceName(), true)) {
                     domain.setConsuming(true);
-                }
-                if (rpcProviderService.existsApplicationService(registryIdentity, domain.getInterfaceName(), true)) {
                     domain.setActive(true);
-                } else {
-                    domain.setActive(false);
                 }
             });
         }
         return ResponseEntity.ok().headers(generatePageHeaders(results)).body(results.getContent());
     }
 
-    @ApiOperation("activate service")
+    @ApiOperation("activate all providers of the interface")
     @GetMapping("/api/rpc-services/activate")
     public ResponseEntity<Void> activate(
             @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
@@ -116,7 +115,7 @@ public class RpcServiceController {
                 .headers(httpHeaderCreator.createSuccessHeader("SM1012")).build();
     }
 
-    @ApiOperation("deactivate service")
+    @ApiOperation("deactivate all providers of the interface")
     @GetMapping("/api/rpc-services/deactivate")
     @Timed
     public ResponseEntity<Void> deactivate(
