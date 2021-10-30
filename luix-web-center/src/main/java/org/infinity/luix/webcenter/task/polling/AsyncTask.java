@@ -8,6 +8,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 @Data
 @AllArgsConstructor
 public class AsyncTask<T> {
+    public static final String NAME_STATISTIC = "statistic";
     /**
      * Task ID
      */

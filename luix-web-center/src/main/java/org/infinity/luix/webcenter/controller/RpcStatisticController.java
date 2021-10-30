@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.annotation.Resource;
-
 import java.util.concurrent.TimeUnit;
 
+import static org.infinity.luix.webcenter.task.polling.AsyncTask.NAME_STATISTIC;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -33,7 +33,7 @@ public class RpcStatisticController {
         handleAsyncError(deferredResult);
 
         // Put task in memory queue
-        boolean hasCapacity = InMemoryAsyncTaskQueue.offer(TraceIdUtils.getTraceId(), "statistics", deferredResult);
+        boolean hasCapacity = InMemoryAsyncTaskQueue.offer(TraceIdUtils.getTraceId(), NAME_STATISTIC, deferredResult);
         if (!hasCapacity) {
             // If the ArrayBlockingQueue is full
             deferredResult.setErrorResult(ResponseEntity.status(FORBIDDEN).body("Server is busy!"));
