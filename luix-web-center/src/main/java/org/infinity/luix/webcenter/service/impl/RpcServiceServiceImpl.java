@@ -42,11 +42,11 @@ public class RpcServiceServiceImpl implements RpcServiceService {
             return;
         }
         services.forEach(domain -> {
-            if (rpcProviderService.existsApplication(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
+            if (rpcProviderService.existsService(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
                 domain.setProviding(true);
                 domain.setActive(true);
             }
-            if (rpcConsumerService.existsApplication(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
+            if (rpcConsumerService.existsService(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
                 domain.setConsuming(true);
                 domain.setActive(true);
             }
