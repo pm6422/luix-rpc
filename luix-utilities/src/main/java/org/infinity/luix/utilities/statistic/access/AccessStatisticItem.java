@@ -1,13 +1,13 @@
-package org.infinity.luix.utilities.statistics.access;
+package org.infinity.luix.utilities.statistic.access;
 
 
 import com.codahale.metrics.Histogram;
-import org.infinity.luix.utilities.statistics.CachedMetricsFactory;
+import org.infinity.luix.utilities.statistic.CachedMetricsFactory;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.infinity.luix.utilities.statistics.StatisticUtils.ACCESS_STATISTIC_INTERVAL;
-import static org.infinity.luix.utilities.statistics.StatisticUtils.ELAPSED_TIME_HISTOGRAM;
+import static org.infinity.luix.utilities.statistic.StatisticUtils.ACCESS_STATISTIC_INTERVAL;
+import static org.infinity.luix.utilities.statistic.StatisticUtils.ELAPSED_TIME_HISTOGRAM;
 
 public class AccessStatisticItem {
     private final String          name;

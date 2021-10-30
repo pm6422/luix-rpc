@@ -1,11 +1,11 @@
-package org.infinity.luix.utilities.statistics;
+package org.infinity.luix.utilities.statistic;
 
 import com.codahale.metrics.MetricRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.luix.utilities.statistics.access.AccessStatisticItem;
-import org.infinity.luix.utilities.statistics.access.AccessStatisticResult;
-import org.infinity.luix.utilities.statistics.access.StatisticType;
+import org.infinity.luix.utilities.statistic.access.AccessStatisticItem;
+import org.infinity.luix.utilities.statistic.access.AccessStatisticResult;
+import org.infinity.luix.utilities.statistic.access.StatisticType;
 
 import java.text.DecimalFormat;
 import java.util.Map;

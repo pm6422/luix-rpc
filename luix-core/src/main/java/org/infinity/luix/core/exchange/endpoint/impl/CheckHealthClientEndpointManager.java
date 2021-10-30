@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.infinity.luix.utilities.statistics.StatisticUtils.getMemoryStatistic;
+import static org.infinity.luix.utilities.statistic.StatisticUtils.getMemoryStatistic;
 
 /**
  *

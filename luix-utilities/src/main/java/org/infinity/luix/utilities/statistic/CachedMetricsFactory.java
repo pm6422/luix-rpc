@@ -1,4 +1,4 @@
-package org.infinity.luix.utilities.statistics;
+package org.infinity.luix.utilities.statistic;
 
 import com.codahale.metrics.MetricRegistry;
 

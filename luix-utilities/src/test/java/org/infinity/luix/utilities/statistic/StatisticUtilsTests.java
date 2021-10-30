@@ -1,10 +1,10 @@
-package org.infinity.luix.utilities.statistics;
+package org.infinity.luix.utilities.statistic;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.utilities.statistics.access.AccessStatisticResult;
-import org.infinity.luix.utilities.statistics.access.StatisticType;
+import org.infinity.luix.utilities.statistic.access.AccessStatisticResult;
+import org.infinity.luix.utilities.statistic.access.StatisticType;
 import org.junit.Test;
 
 import java.util.concurrent.ConcurrentMap;
