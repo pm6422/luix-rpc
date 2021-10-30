@@ -69,7 +69,7 @@ public class RpcStatisticsServiceImpl implements RpcStatisticsService {
                 .inactiveApplicationCount(results.get(0) - results.get(1))
                 .serverCount(results.get(2))
                 .activeServerCount(results.get(3))
-                .serverCount(results.get(2) - results.get(3))
+                .inactiveServerCount(results.get(2) - results.get(3))
                 .serviceCount(results.get(4))
                 .activeServiceCount(results.get(5))
                 .inactiveServiceCount(results.get(4) - results.get(5))
