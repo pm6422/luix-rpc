@@ -2,6 +2,7 @@ package org.infinity.luix.demoserver.config;
 
 import com.github.cloudyrock.spring.v5.EnableMongock;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +28,6 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
  * in property file
  */
 @EnableMongoAuditing
-@EnableMongock
 @Configuration
 @Slf4j
 public class MongoConfiguration {
@@ -49,6 +49,13 @@ public class MongoConfiguration {
         this.mongoMappingContext = mongoMappingContext;
         this.mongoDatabaseFactory = mongoDatabaseFactory;
         this.validator = validator;
+    }
+
+    @Configuration
+    @EnableMongock
+    @ConditionalOnProperty(prefix = "mongock", value = "enabled", havingValue = "true")
+    protected static class EmbeddedDatabaseConfiguration {
+
     }
 
     @Bean
