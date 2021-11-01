@@ -6,6 +6,7 @@ import org.infinity.luix.webcenter.config.oauth2.OAuth2AccessTokenReadConverter;
 import org.infinity.luix.webcenter.config.oauth2.OAuth2AuthenticationReadConverter;
 import org.infinity.luix.webcenter.config.oauth2.OAuth2GrantedAuthorityTokenReadConverter;
 import org.infinity.luix.webcenter.config.oauth2.OAuth2RefreshTokenReadConverter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,6 +55,13 @@ public class MongoConfiguration {
         this.mongoMappingContext = mongoMappingContext;
         this.mongoDatabaseFactory = mongoDatabaseFactory;
         this.validator = validator;
+    }
+
+    @Configuration
+    @EnableMongock
+    @ConditionalOnProperty(prefix = "mongock", value = "enabled", havingValue = "true")
+    protected static class EmbeddedDatabaseConfiguration {
+
     }
 
     @Bean
