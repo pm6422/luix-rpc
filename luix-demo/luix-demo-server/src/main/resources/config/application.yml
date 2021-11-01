@@ -106,6 +106,9 @@ logging:
         ${info.project.package}: DEBUG
 mongock:
     enabled: false
+    track-ignored: true
+    change-logs-scan-package:
+        - ${info.project.package}.initializer
 infinity:
     application:
         name: ${spring.application.name}

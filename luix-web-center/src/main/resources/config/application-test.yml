@@ -15,9 +15,6 @@ spring:
         cache: false
 mongock:
     enabled: true
-    track-ignored: true
-    change-logs-scan-package:
-        - ${info.project.package}.initializer
 infinity:
     registries:
         0:
