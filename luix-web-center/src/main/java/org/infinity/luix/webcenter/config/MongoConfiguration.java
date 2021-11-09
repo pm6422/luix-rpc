@@ -33,7 +33,6 @@ import java.util.List;
  * in property file
  */
 @EnableMongoAuditing(auditorAwareRef = "springSecurityAuditorAware")
-@EnableMongock
 @Configuration
 @Slf4j
 public class MongoConfiguration {
