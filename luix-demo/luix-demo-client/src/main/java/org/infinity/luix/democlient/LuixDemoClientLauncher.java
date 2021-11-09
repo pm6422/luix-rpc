@@ -7,6 +7,7 @@ import org.infinity.luix.spring.enhancement.kryo.serializer.*;
 import org.infinity.luix.utilities.serializer.kryo.KryoUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -14,7 +15,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import javax.annotation.PostConstruct;
 
 
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class, MongoAutoConfiguration.class})
 @Slf4j
 @EnableRpc
 @ForestScan(basePackages = "org.infinity.luix.democlient.restservice")
