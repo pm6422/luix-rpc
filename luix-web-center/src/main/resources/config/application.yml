@@ -113,14 +113,14 @@ logging:
     level:
         root: DEBUG
         ${info.project.package}: DEBUG
+arthas:
+    appName: ${spring.application.name}
+    httpPort: @arthas.console.port@
 mongock:
     enabled: false
     track-ignored: true
     change-logs-scan-package:
         - ${info.project.package}.initializer
-arthas:
-    appName: ${spring.application.name}
-    httpPort: @arthas.console.port@
 infinity:
     application:
         name: ${spring.application.name}
