@@ -79,7 +79,7 @@
         <protobuf-java_version>3.6.0</protobuf-java_version>
         <protostuff_version>1.5.9</protostuff_version>
         <rest_assured_version>2.9.0</rest_assured_version>
-        <resteasy_version>3.0.19.Final</resteasy_version>
+        <resteasy_version>4.5.7.Final</resteasy_version>
         <revision>1.0.0.RELEASE</revision>
         <rs_api_version>2.0</rs_api_version>
         <servlet_version>3.1.0</servlet_version>
