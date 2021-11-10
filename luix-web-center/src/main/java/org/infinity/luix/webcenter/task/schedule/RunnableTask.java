@@ -60,7 +60,7 @@ public class RunnableTask implements Runnable {
             log.debug("It's past the stop time for scheduled task: [{}]", rpcScheduledTask.getName());
             return;
         }
-        // Single host execute mode
+        // Single host execution mode
 //        if (rpcScheduledTaskLockRepository.findByName(rpcScheduledTask.getName()).isPresent()) {
 //            log.warn("Skip to execute scheduled task for the address: {}", NetworkUtils.INTRANET_IP);
 //            return;
