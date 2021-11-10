@@ -92,7 +92,7 @@
         <spring_security_oauth2_version>2.3.6.RELEASE</spring_security_oauth2_version>
         <spring_test_version>5.2.6.RELEASE</spring_test_version>
         <!-- Common libs -->
-        <spring_version>5.2.6.RELEASE</spring_version>
+        <spring_version>5.2.9.RELEASE</spring_version>
         <springfox_version>2.7.0</springfox_version>
         <swagger_version>1.5.13</swagger_version>
         <test_container_version>1.11.2</test_container_version>
