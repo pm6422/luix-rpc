@@ -1,0 +1,213 @@
+<div class="row border-bottom" ng-controller="NavbarController as vm" ng-switch="vm.isAuthenticated()">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+<!--            <span minimalize-sidebar-directive></span>-->
+            <div class="navbar-brand">
+                <div class="sk-spinner sk-spinner-cube-grid">
+                    <div class="sk-cube"></div>
+                    <div class="sk-cube"></div>
+                    <div class="sk-cube"></div>
+                    <div class="sk-cube"></div>
+                    <div class="sk-cube"></div>
+                    <div class="sk-cube"></div>
+                    <div class="sk-cube"></div>
+                    <div class="sk-cube"></div>
+                    <div class="sk-cube"></div>
+                </div>
+            </div>
+            <a class="navbar-brand p-h-m text-muted" href="#">&nbsp;&nbsp;&nbsp;
+                <span class="text-navy"><strong>{{APP_NAME}}</strong></span>
+                <span class="navbar-version">v{{VERSION}}</span>
+            </a>
+        </div>
+        <div class="navbar-form-custom" has-authority-directive="ROLE_USER">
+            <select class="form-control text-navy" id="registry" ng-model="selectedRegistryIdentity"
+                    ng-options="item.identity as item.identity for item in main.registries">
+                <option value="">Select registry...</option>
+            </select>
+        </div>
+        <ul class="nav navbar-top-links navbar-right">
+            <li uib-dropdown ng-switch-when="true" has-authority-directive="ROLE_USER">
+                <a class="count-info" href uib-dropdown-toggle>
+                    <span class="fas fa-dragon text-navy"></span>&nbsp;
+                    <span class="text-navy">Service governance</span>
+                </a>
+                <ul uib-dropdown-menu class="animated fadeInDown m-t-xs">
+                    <li ui-sref-active="active">
+                        <a ui-sref="rpc.application-list">
+                            <span class="fas fa-plane"></span>&nbsp;
+                            <span>Applications</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="rpc.server-list">
+                            <span class="fas fa-desktop"></span>&nbsp;
+                            <span>Servers</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="rpc.service-list">
+                            <span class="fas fa-sitemap"></span>&nbsp;
+                            <span>Services</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="rpc.provider-list">
+                            <span class="fas fa-sun"></span>&nbsp;
+                            <span>Providers</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="rpc.consumer-list">
+                            <span class="fas fa-moon"></span>&nbsp;
+                            <span>Consumers</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="rpc.scheduled-task-list">
+                            <span class="fas fa-history"></span>&nbsp;
+                            <span>Schedule</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li uib-dropdown ng-switch-when="true" has-authority-directive="ROLE_DEVELOPER">
+                <a class="count-info" href uib-dropdown-toggle>
+                    <span class="fas fa-wrench text-navy"></span>&nbsp;
+                    <span class="text-navy">Developer tools</span>
+                </a>
+                <ul uib-dropdown-menu class="animated fadeInDown m-t-xs">
+                    <li ng-show="vm.swaggerEnabled" ui-sref-active="active">
+                        <a ui-sref="api">
+                            <span class="fas fa-book"></span>&nbsp;
+                            <span>API</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="health">
+                            <span class="fas fa-heart"></span>&nbsp;
+                            <span>Health</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="metrics">
+                            <span class="fas fa-dharmachakra"></span>&nbsp;
+                            <span>Metrics</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="configuration">
+                            <span class="fas fa-wrench"></span>&nbsp;
+                            <span>Configuration</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="beans">
+                            <span class="fas fa-bold"></span>&nbsp;
+                            <span>Beans</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="mappings">
+                            <span class="fas fa-link"></span>&nbsp;
+                            <span>Mappings</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="arthas">
+                            <span class="fas fa-hospital"></span>&nbsp;
+                            <span>Arthas</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="http-trace">
+                            <span class="fas fa-random"></span>&nbsp;
+                            <span>Http Trace</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="http-session">
+                            <span class="fas fa-retweet"></span>&nbsp;
+                            <span>Http Session</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="audits">
+                            <span class="fas fa-bell"></span>&nbsp;
+                            <span>Audits</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="logger">
+                            <span class="fas fa-tasks"></span>&nbsp;
+                            <span>Loggers</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+<!--            <li uib-dropdown>-->
+<!--                <a class="count-info" href uib-dropdown-toggle>-->
+<!--                    <span class="fa fa-language"></span>&nbsp;-->
+<!--                    <span>Languages</span>-->
+<!--                </a>-->
+<!--                <ul uib-dropdown-menu class="animated fadeInDown m-t-xs">-->
+<!--                    <li><a ng-click="vm.changeLanguage('en')">English</a></li>-->
+<!--                </ul>-->
+<!--            </li>-->
+            <li uib-dropdown ng-switch-when="true" has-authority-directive="ROLE_ADMIN">
+                <a class="count-info" href uib-dropdown-toggle>
+                    <span class="fas fa-cog text-navy"></span>&nbsp;
+                    <span class="text-navy">Administration</span>
+                </a>
+                <ul uib-dropdown-menu class="animated fadeInDown m-t-xs">
+                    <li ui-sref-active="active">
+                        <a ui-sref="user-authority.authority-list">
+                            <span class="fas fa-user-cog"></span>&nbsp;
+                            <span>Authority</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="user-authority.user-list">
+                            <span class="fas fa-users"></span>&nbsp;
+                            <span>User</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li uib-dropdown ng-switch-when="true" has-authority-directive="ROLE_USER">
+                <a class="count-info" href uib-dropdown-toggle>
+                    <img alt="image" class="img-circle" style="width:22px" ng-src="{{main.account.profilePhotoUrl}}"
+                         ng-show="main.account.hasProfilePhoto"/>
+                    <img alt="image" class="img-circle" style="width:22px" ng-src="content/img/symbol.png"
+                         ng-hide="main.account.hasProfilePhoto"/>
+                </a>
+                <ul uib-dropdown-menu class="animated fadeInDown m-t-xs">
+                    <li ui-sref-active="active">
+                        <a ui-sref="contact-us">
+                            <span class="fas fa-tty"></span>&nbsp;
+                            <span>Contact Us</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="profile">
+                            <span class="fas fa-address-card"></span>&nbsp;
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="password">
+                            <span class="fas fa-key"></span>&nbsp;
+                            <span>Password</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a ng-click="vm.logout()">
+                            <span class="fas fa-sign-out-alt"></span>&nbsp;
+                            <span>Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</div>

@@ -1,2 +1,0 @@
-#SpringSPI扩展
-#org.springframework.context.ApplicationContextInitializer=org.infinity.rpc.core.config.spring.startup.RpcConfigurationApplicationContextInitializer

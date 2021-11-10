@@ -1,0 +1,96 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-8">
+        <h2>{{vm.pageTitle}}</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="#">Homepage</a>
+            </li>
+            <li>
+                <a ui-sref="^">{{vm.parentPageTitle}}</a>
+            </li>
+            <li class="active">
+                <strong>{{vm.pageTitle}}</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-4">
+        <div class="title-action">
+            <button class="btn-primary btn btn-sm" ui-sref="^">Back</button>
+        </div>
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInDown">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Task ID:</td>
+                            <td>{{vm.entity.id}}</td>
+                        </tr>
+                        <tr>
+                            <td>Task name:</td>
+                            <td>{{vm.entity.name}}</td>
+                        </tr>
+                        <tr>
+                            <td>Bean name:</td>
+                            <td>{{vm.entity.beanName}}</td>
+                        </tr>
+                        <tr>
+                            <td>Method arguments:</td>
+                            <td>{{vm.entity.argumentsJson}}</td>
+                        </tr>
+                        <tr>
+                            <td>Use CRON expression:</td>
+                            <td>{{vm.entity.useCronExpression}}</td>
+                        </tr>
+                        <tr>
+                            <td>CRON expression:</td>
+                            <td>{{vm.entity.cronExpression}}</td>
+                        </tr>
+                        <tr>
+                            <td>Fixed interval:</td>
+                            <td>{{vm.entity.fixedInterval}}</td>
+                        </tr>
+                        <tr>
+                            <td>Fixed interval unit:</td>
+                            <td>{{vm.entity.fixedIntervalUnit}}</td>
+                        </tr>
+                        <tr>
+                            <td>Elapsed(ms):</td>
+                            <td>{{vm.entity.elapsed}}</td>
+                        </tr>
+                        <tr>
+                            <td>Status:</td>
+                            <td>
+                                <span class="label label-danger" ng-show="!vm.entity.success">Failure</span>
+                                <span class="label label-primary" ng-show="vm.entity.success">Success</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Failure reason:</td>
+                            <td>{{vm.entity.reason}}</td>
+                        </tr>
+                        <tr>
+                            <td>Created time:</td>
+                            <td>{{vm.entity.createdTime | date:'yyyy/MM/dd HH:mm:ss'}}</td>
+                        </tr>
+                        <tr>
+                            <td>Expiry time:</td>
+                            <td>{{vm.entity.expiryTime | date:'yyyy/MM/dd HH:mm:ss'}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

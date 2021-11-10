@@ -1,0 +1,86 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-8">
+        <h2>Server details</h2>
+    </div>
+    <div class="col-lg-4">
+        <div class="title-action">
+            <button class="btn-white btn btn-sm" ng-click="vm.refresh()" uib-tooltip="Refresh to get real-time data">Refresh</button>
+            <button class="btn-primary btn btn-sm" ui-sref="^">Back</button>
+        </div>
+    </div>
+</div>
+<div class="wrapper wrapper-content p-h-xs animated fadeInDown">
+    <div class="ibox-content">
+        <div class="row">
+            <div class="col-lg-6">
+                <dl class="dl-horizontal">
+                    <dt>Address:</dt>
+                    <dd>{{vm.entity.address}}</dd>
+                </dl>
+            </div>
+            <div class="col-lg-6">
+                <dl class="dl-horizontal">
+                    <dt>Status:</dt>
+                    <dd ng-show="vm.entity.active"><span class="label label-primary">Active</span></dd>
+                    <dd ng-show="!vm.entity.active"><span class="label label-danger">Inactive</span></dd>
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <dl class="dl-horizontal">
+                    <dt>OS name:</dt>
+                    <dd>{{vm.entity.osName}}</dd>
+                </dl>
+            </div>
+            <div class="col-lg-6">
+                <dl class="dl-horizontal">
+                    <dt>OS version:</dt>
+                    <dd>{{vm.entity.osVersion}}</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <dl class="dl-horizontal">
+                    <dt>JDK vendor:</dt>
+                    <dd>{{vm.entity.jdkVendor}}</dd>
+                </dl>
+            </div>
+            <div class="col-lg-6">
+                <dl class="dl-horizontal">
+                    <dt>JDK version:</dt>
+                    <dd>{{vm.entity.jdkVersion}}</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <dl class="dl-horizontal">
+                    <dt>CPU cores:</dt>
+                    <dd>{{vm.entity.cpuCores}}</dd>
+                </dl>
+            </div>
+            <div class="col-lg-6">
+                <dl class="dl-horizontal">
+                    <dt>Memory statistic:</dt>
+                    <dd>{{vm.entity.memoryStatistic}}</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <dl class="dl-horizontal">
+                    <dt>Time zone:</dt>
+                    <dd>{{vm.entity.timeZone}}</dd>
+                </dl>
+            </div>
+            <div class="col-lg-6">
+                <dl class="dl-horizontal">
+                    <dt>System time:</dt>
+                    <dd>{{vm.entity.systemTime | date:'yyyy/MM/dd HH:mm:ss'}}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>

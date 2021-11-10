@@ -1,0 +1,10 @@
+{
+  "registryIdentity": "zookeeper://localhost:2181/registry",
+  "interfaceName": "org.infinity.luix.democommon.service.AuthorityService",
+  "methodName": "findAll",
+  "methodParamTypes": [],
+  "args": [],
+  "attributes": {
+    "retryCount": 2
+  }
+}

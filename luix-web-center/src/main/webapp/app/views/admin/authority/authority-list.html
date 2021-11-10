@@ -1,0 +1,38 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>{{vm.pageTitle}}</h2>
+    </div>
+</div>
+<div class="wrapper wrapper-content p-h-xs animated fadeInDown">
+    <div class="ibox">
+        <div class="ibox-title">
+        </div>
+        <div class="ibox-content p-w-m">
+            <table class="table table-striped">
+                <thead>
+                    <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
+                        <th sort-by-directive="name"><span>Name</span> <span class="fa fa-sort"></span></th>
+                        <th sort-by-directive="enabled"><span>Enabled</span> <span class="fa fa-sort"></span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="entity in vm.entities">
+                        <td>{{entity.name}}</td>
+                        <td>
+                            <span class="label label-danger" ng-show="!entity.enabled">No</span>
+                            <span class="label label-primary" ng-show="entity.enabled">Yes</span>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="12" class="text-center">
+                            <strong><item-count-component page="vm.page" total="vm.totalItems" items-per-page="vm.itemsPerPage"></item-count-component></strong>
+                            <uib-pagination class="pagination-sm m-xs" total-items="vm.totalItems" ng-model="vm.page" ng-change="vm.transition()"></uib-pagination>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

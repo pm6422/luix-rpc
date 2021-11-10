@@ -1,0 +1,21 @@
+# ===================================================================
+# Spring Boot configuration for the "test" profile.
+#
+# This configuration overrides the application.yml file.
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# https://docs.spring.io/spring-boot/docs/2.3.0.RELEASE/reference/html/common-application-properties.html
+# ===================================================================
+infinity:
+    registry:
+        host: localhost
+        port: 2181
+#        providerAddresses: 127.0.0.1:26010
+    protocol:
+        port: @app.rpc.port@
+# ===================================================================
+# Application specific properties
+# ===================================================================

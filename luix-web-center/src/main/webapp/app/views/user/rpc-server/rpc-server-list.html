@@ -1,0 +1,61 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>{{vm.pageTitle}}</h2>
+    </div>
+</div>
+<div class="wrapper wrapper-content p-h-xs animated fadeInDown">
+    <div class="ibox-content m-b-sm">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="control-label" for="address">Address (fuzzy query)</label>
+                    <input type="text" id="address" class="form-control"
+                           ng-model="vm.criteria.address" ng-keydown="vm.checkPressEnter($event)">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ibox-content">
+        <table class="table table-striped">
+            <thead>
+                <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
+                    <th sort-by-directive="address"><span>Address</span> <span class="fa fa-sort"></span></th>
+                    <th sort-by-directive="osName"><span>OS name</span> <span class="fa fa-sort"></span></th>
+                    <th sort-by-directive="osVersion"><span>OS version</span> <span class="fa fa-sort"></span></th>
+                    <th sort-by-directive="cpuCores"><span>CPU cores</span> <span class="fa fa-sort"></span></th>
+                    <th sort-by-directive="active"><span>Status</span> <span class="fa fa-sort"></span></th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="entity in vm.entities track by entity.id">
+                    <td>{{entity.address}}</td>
+                    <td>{{entity.osName}}</td>
+                    <td>{{entity.osVersion}}</td>
+                    <td>{{entity.cpuCores}}</td>
+                    <td>
+                        <span class="label label-primary" ng-show="entity.active">Active</span>
+                        <span class="label label-danger" ng-show="!entity.active">Inactive</span>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn-white btn btn-xs" ng-disabled="!entity.providing"
+                                    ui-sref="rpc.provider-list({address: entity.address})"
+                                    uib-tooltip="List all providers of this server">Providers</button>
+                            <button class="btn-white btn btn-xs" ng-disabled="!entity.consuming"
+                                    ui-sref="rpc.consumer-list({address: entity.address})"
+                                    tooltip-placement="bottom"
+                                    uib-tooltip="List all consumers of this server">Consumers</button>
+                            <button class="btn-white btn btn-xs" ng-disabled="!entity.active"
+                                    ui-sref=".view({id: entity.id})">View</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="text-center">
+            <strong><item-count-component page="vm.page" total="vm.totalItems" items-per-page="vm.itemsPerPage"></item-count-component></strong>
+            <uib-pagination class="pagination-sm m-xs" total-items="vm.totalItems" ng-model="vm.page" ng-change="vm.transition()"></uib-pagination>
+        </div>
+    </div>
+</div>

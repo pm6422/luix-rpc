@@ -1,0 +1,57 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>{{vm.pageTitle}}</h2>
+    </div>
+</div>
+<div class="wrapper wrapper-content p-h-xs animated fadeInDown">
+    <div class="ibox-content m-b-sm">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="control-label" for="interfaceName">Service (fuzzy query)</label>
+                    <input type="text" id="interfaceName" class="form-control"
+                           ng-model="vm.criteria.interfaceName" ng-keydown="vm.checkPressEnter($event)">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ibox-content">
+        <table class="table table-striped">
+            <thead>
+                <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
+                    <th sort-by-directive="interfaceName"><span>Service</span> <span class="fa fa-sort"></span></th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="entity in vm.entities track by entity.id">
+                    <td>{{entity.interfaceName}}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn-white btn btn-xs" ng-disabled="!entity.providing"
+                                    ui-sref="rpc.provider-list({interfaceName: entity.interfaceName})"
+                                    uib-tooltip="List all the providers of this service">Providers</button>
+                            <button class="btn-white btn btn-xs" ng-disabled="!entity.consuming"
+                                    ui-sref="rpc.consumer-list({interfaceName: entity.interfaceName})"
+                                    tooltip-placement="bottom"
+                                    uib-tooltip="List all the consumers of this service">Consumers</button>
+                            <button class="btn-white btn btn-xs" ng-disabled="!entity.providing"
+                                    ng-click="vm.deactivate(entity)"
+                                    uib-tooltip="Take all the providers of this service offline"
+                                    has-authority-directive="ROLE_ADMIN">Deactivate</button>
+                            <button class="btn-white btn btn-xs" ng-disabled="entity.providing || !entity.active"
+                                    ng-click="vm.activate(entity)"
+                                    tooltip-placement="bottom"
+                                    uib-tooltip="Take all the providers of this service online"
+                                    has-authority-directive="ROLE_ADMIN">Activate</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="text-center">
+            <strong><item-count-component page="vm.page" total="vm.totalItems" items-per-page="vm.itemsPerPage"></item-count-component></strong>
+            <uib-pagination class="pagination-sm m-xs" total-items="vm.totalItems" ng-model="vm.page" ng-change="vm.transition()"></uib-pagination>
+        </div>
+    </div>
+</div>

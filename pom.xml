@@ -1,49 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.infinity</groupId>
-    <artifactId>rpc</artifactId>
-    <version>1.0.0</version>
-    <modules>
-        <module>rpc-utilities</module>
-        <module>rpc-common</module>
-        <module>rpc-core</module>
-        <module>rpc-registry-zookeeper</module>
-        <module>rpc-web-center</module>
-        <module>rpc-demo</module>
-    </modules>
+    <artifactId>luix</artifactId>
+    <version>${revision}</version>
     <packaging>pom</packaging>
+    <modules>
+        <module>luix-dependencies-bom</module>
+        <module>luix-utilities</module>
+        <module>luix-core</module>
+        <module>luix-transport-netty4</module>
+        <module>luix-registry-zookeeper</module>
+        <module>luix-spring-boot-starter</module>
+        <module>luix-spring-enhancement</module>
+        <module>luix-web-center</module>
+        <module>luix-demo</module>
+        <module>luix-portal</module>
+    </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <revision>1.0.0.RELEASE</revision>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>luix-dependencies-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <version>4.13</version>
             <scope>test</scope>
+        </dependency>
+        <!-- performance testing -->
+        <dependency>
+            <groupId>org.databene</groupId>
+            <artifactId>contiperf</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.20</version>
-        </dependency>
-        <dependency>
-            <artifactId>slf4j-api</artifactId>
-            <groupId>org.slf4j</groupId>
-            <version>1.7.30</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.github.ekryd.sortpom</groupId>
+                <artifactId>sortpom-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <sortProperties>true</sortProperties>
+                    <nrOfIndentSpace>4</nrOfIndentSpace>
+                    <sortDependencies>groupId,artifactId</sortDependencies>
+                    <keepBlankLines>false</keepBlankLines>
+                    <expandEmptyElements>false</expandEmptyElements>
+                    <createBackupFile>false</createBackupFile>
+                    <pomFile>pom.xml</pomFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>sort</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -52,6 +98,32 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    <outputDirectory>target</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <phase>clean</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

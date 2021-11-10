@@ -1,0 +1,137 @@
+<div ng-controller="DashboardController as vm">
+    <div class="row border-bottom white-bg dashboard-header">
+        <div class="ibox-content m-b-sm border-bottom">
+            <div class="p-xs col-sm-offset-2">
+                <div class="pull-left m-r-md">
+                    <img alt="image" class="img-circle" style="width:85px" ng-src="content/img/symbol.png"/>
+                </div>
+                <h1 class="text-navy"><strong>LUI️✘ Web Center</strong></h1>
+                <span>LUI️✘ is pronounced [ˈluːɪks], which is a RPC(Remote Procedure Call) and service governance framework,
+                it can make calls between services more simple.
+                <br>LUI️✘ web center is a web-based service governance system used to monitor and manage services.
+                </span>
+            </div>
+        </div>
+        <div class="row border-bottom white-bg dashboard-header">
+            <div class="p-w-md m-t-sm">
+                <div class="row">
+                    <div class="col-sm-4 col-sm-offset-2">
+                        <div class="row m-t-xs">
+                            <div class="col-xs-6">
+                                <h5 class="m-b-xs">Applications</h5>
+                                <h1 class="no-margins text-navy">{{vm.data.applicationCount}}</h1>
+                            </div>
+                            <div class="col-xs-6">
+                                <h5 class="m-b-xs">Servers</h5>
+                                <h1 class="no-margins text-navy">{{vm.data.serverCount}}</h1>
+                            </div>
+                        </div>
+                        <table class="table small m-t-sm">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Active: <strong>{{vm.data.activeApplicationCount}}</strong>
+                                    </td>
+                                    <td>
+                                        Active: <strong>{{vm.data.activeServerCount}}</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Inactive: <strong>{{vm.data.inactiveApplicationCount}}</strong>
+                                    </td>
+                                    <td>
+                                        Inactive: <strong>{{vm.data.inactiveServerCount}}</strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="row m-t-xs">
+                            <div class="col-xs-6">
+                                <h5 class="m-b-xs">Providers</h5>
+                                <h1 class="no-margins text-navy">{{vm.data.providerCount}}</h1>
+                            </div>
+                            <div class="col-xs-6">
+                                <h5 class="m-b-xs">Consumers</h5>
+                                <h1 class="no-margins text-navy">{{vm.data.consumerCount}}</h1>
+                            </div>
+                        </div>
+                        <table class="table small m-t-sm">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Active: <strong>{{vm.data.activeProviderCount}}</strong>
+                                    </td>
+                                    <td>
+                                        Active: <strong>{{vm.data.activeConsumerCount}}</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Inactive: <strong>{{vm.data.inactiveProviderCount}}</strong>
+                                    </td>
+                                    <td>
+                                        Inactive: <strong>{{vm.data.inactiveConsumerCount}}</strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="features m-lg">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <div class="navy-line"></div>
+                        <h1>More and more extra great features</h1>
+                        <p>Simple, High performance, Intelligent, Powerful </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 features-text">
+                        <small>LUI️✘</small>
+                        <h2>Interface-oriented RPC Call</h2>
+                        <i class="fas fa-cannabis medium-icon pull-right"></i>
+                        <p>Based on the TCP protocol and interface-oriented remote procedure call, the complex logic of the remote call is encapsulated, and the caller can complete the complex remote procedure call through the simplest local method call.</p>
+                    </div>
+                    <div class="col-lg-4 features-text">
+                        <small>LUI️✘</small>
+                        <h2>Service Registration and Discovery</h2>
+                        <i class="fas fa-sitemap medium-icon pull-right"></i>
+                        <p>After the application is started, there is no need to do related network configuration, the application will automatically register its own IP to the registry. Any application under the registry can automatically perceive and discover all other application services.</p>
+                    </div>
+                    <div class="col-lg-4 features-text">
+                        <small>LUI️✘</small>
+                        <h2>Fault Tolerance and Load Balancing</h2>
+                        <i class="fas fa-bomb medium-icon pull-right"></i>
+                        <p>Built-in multiple service call fault tolerance strategies and client load balancing algorithms. Service call fault tolerance strategies include: failfast, failover, etc. Client load balancing algorithms include: random, consistent hashing, low-load party calls, etc.</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 features-text">
+                        <small>LUI️✘</small>
+                        <h2>High-performance Protocols and Serializers</h2>
+                        <i class="fas fa-braille medium-icon pull-right"></i>
+                        <p>Based on the TCP long link, it is suitable for commonly used inter-service calls. Provides a variety of high-performance serialization and deserialization algorithms. The program can intelligently select the optimal serialization and deserialization algorithms according to different data types.</p>
+                    </div>
+                    <div class="col-lg-4 features-text">
+                        <small>LUI️✘</small>
+                        <h2>Service Governance Control Center</h2>
+                        <i class="fas fa-cog medium-icon pull-right"></i>
+                        <p>Provides a powerful Web-based service management control center program, through which all services can be managed and monitored, and the relevant configuration parameters of the service can also be dynamically modified.</p>
+                    </div>
+                    <div class="col-lg-4 features-text">
+                        <small>LUI️✘</small>
+                        <h2>Intelligent Configuration</h2>
+                        <i class="fas fa-fighter-jet medium-icon pull-right"></i>
+                        <p>The product design concept is powerful and easy to use. The system does not provide too many parameter configurations, but the program can select the optimal parameters based on intelligent judgment, freeing the programmer's brain.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

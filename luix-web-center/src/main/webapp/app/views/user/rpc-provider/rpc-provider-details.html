@@ -1,0 +1,224 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-8">
+        <h2>{{vm.pageTitle}}</h2>
+    </div>
+    <div class="col-lg-4">
+        <div class="title-action">
+            <button class="btn-white btn btn-sm" ng-disabled="!vm.entity.consuming"
+                    ui-sref="rpc.consumer-list({interfaceName: vm.entity.interfaceName})"
+                    uib-tooltip="List all consumers of this service">Consumers</button>
+            <button class="btn-white btn btn-sm" ng-click="vm.deactivate(vm.entity)"
+                    uib-tooltip="Take this provider offline and cannot be accessed by other apps" ng-disabled="!vm.entity.active">Deactivate</button>
+            <button class="btn-white btn btn-sm" ng-click="vm.activate(vm.entity)"
+                    uib-tooltip="Take this provider online and can be accessed by other apps" ng-disabled="vm.entity.active">Activate</button>
+            <button class="btn-primary btn btn-sm" ui-sref="^">Back</button>
+        </div>
+    </div>
+</div>
+<div class="wrapper wrapper-content p-h-xs animated fadeInDown">
+    <div class="ibox-content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="m-b-md">
+                    <h2>Overview</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <dl class="dl-horizontal">
+                    <dt>Application:</dt>
+                    <dd>{{vm.entity.application}}</dd>
+                </dl>
+            </div>
+            <div class="col-lg-6">
+                <dl class="dl-horizontal">
+                    <dt>Status:</dt>
+                    <dd ng-if="vm.entity.active"><span class="label label-primary">Active</span></dd>
+                    <dd ng-if="!vm.entity.active"><span class="label label-danger">Inactive</span></dd>
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <dl class="dl-horizontal">
+                    <dt>Service:</dt>
+                    <dd>{{vm.entity.interfaceName}}</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <dl class="dl-horizontal">
+                    <dt>Form:</dt>
+                    <dd>{{vm.entity.form}}</dd>
+                </dl>
+            </div>
+            <div class="col-lg-6">
+                <dl class="dl-horizontal">
+                    <dt>Version:</dt>
+                    <dd>{{vm.entity.version}}</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <dl class="dl-horizontal">
+                    <dt>URL:</dt>
+                    <dd class="break">{{vm.entity.url}}</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="row m-t-sm">
+            <div class="col-lg-12">
+                <div class="panel blank-panel ui-tab">
+                    <uib-tabset>
+                        <uib-tab heading="Configure" active="vm.tabConfigure" ng-click="vm.selectTab()">
+                            <span ng-repeat="option in vm.options">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-6 text-right">{{option.name}}</label>
+                                        <div class="input-group">
+                                            <input type="number" min=0 class="form-control col-sm-6" ng-model="option.intValue" ng-if="option.type == 'Integer'" ng-disabled="!option.updatable">
+                                            <input type="text" class="form-control col-sm-6" ng-model="option.value" ng-if="option.type == 'String'" ng-disabled="!option.updatable">
+                                            <select class="form-control col-sm-6" ng-model="option.value" ng-options="item for item in option.values" ng-if="option.type == 'List'" ng-disabled="!option.updatable">
+                                                <option value="">Select...</option>
+                                            </select>
+                                            <div class="form-control col-sm-6" ng-if="option.type == 'Boolean'">
+<!--                                                <div>-->
+<!--                                                    <label class="checkbox-inline"><input icheck type="radio" name="{{option.name}}" value=true ng-model="option.value" ng-disabled="!option.updatable"> true</label>-->
+<!--                                                    <label class="checkbox-inline"><input icheck type="radio" name="{{option.name}}" value=false ng-model="option.value" ng-disabled="!option.updatable"> false</label>-->
+<!--                                                </div>-->
+                                                <div class="onoffswitch">
+                                                    <input type="checkbox" id="{{option.name}}" ng-model="option.booleanValue" class="onoffswitch-checkbox" ng-disabled="!option.updatable">
+                                                    <label class="onoffswitch-label" for="{{option.name}}">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <kbd><small>default: {{option.defaultValue}}</small></kbd>&nbsp;<kbd ng-show="!option.updatable"><small>updatable: {{option.updatable}}</small></kbd>
+                                        </div>
+                                    </div>
+                                </div>
+                            </span>
+                            <div class="col-sm-12">
+                                <div class="hr-line-dashed"></div>
+                            </div>
+                            <div class="col-sm-12 m-b-md">
+                                <div class="btn-group pull-right">
+                                    <button class="btn btn-primary btn-sm" ng-click="vm.saveOptions()" has-authority-directive="ROLE_ADMIN">Save</button>
+                                </div>
+                            </div>
+                        </uib-tab>
+                        <uib-tab heading="Invocation" active="vm.tabInvocation" ng-click="vm.selectTab()">
+                            <form name="invocationForm" role="form" class="form-horizontal" novalidate show-validation-directive>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">
+                                        <b ng-show="invocationForm.method.$invalid">
+                                            <b ng-show="invocationForm.method.$error.required">✱</b>
+                                        </b>
+                                        Method
+                                    </label>
+                                    <div class="col-sm-11">
+                                        <div class="input-group">
+                                            <select id="method" name="method" class="form-control" ng-model="vm.selectedMethodSignature" required
+                                                    ng-options="item.methodSignature as item.methodSignature for item in vm.methods"
+                                                    ng-change="vm.selectMethod()">
+                                                <option value="">Select...</option>
+                                            </select>
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-primary" ng-disabled="invocationForm.$invalid || vm.selectedMethodSignature.indexOf('void') == -1 && !vm.args" ng-click="vm.invoke()">
+                                                    <span>Invoke</span>
+                                                </button>
+                                            </span>
+                                        </div>
+                                        <kbd ng-show="vm.selectedMethodSignature">{{vm.entity.interfaceName}}.{{vm.selectedMethodSignature}}</kbd>
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed" ng-hide="vm.argsHidden"></div>
+                                <span ng-repeat="methodParamType in vm.selectedMethod.methodParamTypes track by $index" ng-hide="vm.argsHidden">
+                                    <div class="form-group">
+                                        <label class="col-sm-1 control-label">Argument[{{$index}}]</label>
+                                        <div class="col-sm-11">
+                                            <span ng-if="vm.selectedMethod.methodParamCategories[$index] == 'number'">
+                                                <input type="number" class="form-control" ng-model="vm.args[$index]">
+                                                <kbd>{{methodParamType}}</kbd>
+                                            </span>
+                                            <span ng-if="vm.selectedMethod.methodParamCategories[$index] == 'string'">
+                                                <input type="text" class="form-control" ng-model="vm.args[$index]">
+                                                <kbd>{{methodParamType}}</kbd>
+                                            </span>
+                                            <span ng-if="vm.selectedMethod.methodParamCategories[$index] == 'object'">
+                                                <textarea class="form-control" rows="3" style="resize:none" ng-model="vm.args[$index]" placeholder="{}"></textarea>
+                                                <kbd>JSON string format for [{{methodParamType}}]</kbd>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </span>
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">Result</label>
+                                    <div class="col-sm-11">
+                                        <pre class="p-m">{{vm.result|json}}</pre>
+                                        <kbd ng-show="vm.elasped">Elapsed: {{vm.elasped}}</kbd>
+                                    </div>
+                                </div>
+                            </form>
+                        </uib-tab>
+                        <uib-tab heading="Health" active="vm.tabHealth" ng-click="vm.selectTab()">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-11">
+                                        <small>Completion with: {{vm.checkProgress}}%</small>
+                                        <i class="fa fa-check" ng-if="vm.healthSuccess"></i>
+                                        <i class="fa fa-times" ng-if="vm.healthFailure"></i>
+                                        </button>
+                                        <uib-progressbar value="vm.checkProgress" type="primary" class="progress-mini">
+                                            {{vm.checkProgress}}%
+                                        </uib-progressbar>
+                                        <small>{{vm.healthMessage}}</small>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <button type="button" class="btn btn-primary btn-sm pull-right" ng-click="vm.checkHealth()">
+                                            <span>Check</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </uib-tab>
+                        <uib-tab heading="Scheduled tasks" active="vm.tabTasks" ng-click="vm.selectTab()">
+                            <div class="btn-group pull-right">
+                                <button class="btn btn-primary btn-sm" ui-sref=".create-task({id: vm.entity.id})">Add</button>
+                            </div>
+                            <table class="footable table toggle-arrow-tiny" data-page-size="20" data-filter=#filter>
+                                <thead>
+                                <tr>
+                                    <th class="col-sm-1" data-toggle="true">Name</th>
+                                    <th class="col-sm-1">Method signature</th>
+                                    <th class="col-sm-1">Enabled</th>
+                                    <th class="col-sm-1">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr on-footable-finish-render ng-repeat="task in vm.tasks">
+                                    <td><span>{{task.name}}</span></td>
+                                    <td><span>{{task.methodSignature}}</span></td>
+                                    <td><span>{{task.enabled}}</span></td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn-white btn btn-xs" ui-sref=".edit-task({taskId: task.id})">Edit</button>
+                                            <button class="btn-white btn btn-xs" ng-click="vm.delTask(task.id)">Delete</button>
+                                            <button class="btn-white btn btn-xs" ui-sref="rpc.scheduled-task-history-list({name: task.name, providerId: vm.entity.id})">History</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </uib-tab>
+                    </uib-tabset>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

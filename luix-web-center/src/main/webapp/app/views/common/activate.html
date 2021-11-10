@@ -1,0 +1,14 @@
+<div class="middle-box text-center loginscreen animated bounceInDown">
+        <h1 class="logo-name" style="font-size:65px">Activate account</h1>
+        <h2 class="text-muted" ng-show="vm.success">Account has been activated, please visit<a class="alert-link" href="" ui-sref="login"> to sign in</a></h2>
+        <h2 class="text-muted" ng-hide="vm.success">Account failed to activate, please sign up</h2>
+        <div class="alert alert-danger" ng-show="!vm.success && vm.errorMessage">
+            <strong>{{vm.errorMessage}}</strong>
+        </div>
+        <a class="btn btn-sm btn-white btn-block font-bold" ui-sref="login" ng-hide="vm.success">Back</a>
+</div>
+<div class="navbar-fixed-bottom text-center">
+    <p class="m-t text-muted font-bold">
+        <small>{{companyName}}</small>
+    </p>
+</div>

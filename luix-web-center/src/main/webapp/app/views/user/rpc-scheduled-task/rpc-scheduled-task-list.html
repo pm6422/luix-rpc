@@ -1,0 +1,77 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>{{vm.pageTitle}}</h2>
+    </div>
+</div>
+<div class="wrapper wrapper-content p-h-xs animated fadeInDown">
+    <div class="ibox-content m-b-sm">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="control-label" for="name">Task name</label>
+                    <input type="text" id="name" class="form-control" ng-model="vm.criteria.name"
+                           ng-keydown="vm.checkPressEnter($event)">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="control-label" for="name">Service</label>
+                    <input type="text" id="beanName" class="form-control" ng-model="vm.criteria.interfaceName"
+                           ng-keydown="vm.checkPressEnter($event)">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ibox">
+        <div class="ibox-title">
+            <h5></h5>
+        </div>
+        <div class="ibox-content p-w-m">
+            <table class="table table-striped">
+                <thead>
+                    <tr sort-directive="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
+                        <th sort-by-directive="name"><span>Task name</span> <span class="fa fa-sort"></span></th>
+                        <th sort-by-directive="beanName"><span>Service</span> <span class="fa fa-sort"></span></th>
+                        <th>Method signature</th>
+                        <th sort-by-directive="enabled"><span>Enabled</span> <span class="fa fa-sort"></span></th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="entity in vm.entities track by entity.id">
+                        <td>{{entity.name}}</td>
+                        <td>{{entity.interfaceName}}</td>
+                        <td>{{entity.methodSignature}}</td>
+                        <td>
+                            <span class="label label-danger" ng-click="vm.setEnabled(entity, true)"
+                                  ng-show="!entity.enabled"
+                                  style="cursor: pointer;">false</span>
+                            <span class="label label-primary" ng-click="vm.setEnabled(entity, false)"
+                                  ng-show="entity.enabled"
+                                  style="cursor: pointer;">true</span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn-white btn btn-xs" ui-sref=".edit({id: entity.id})">Edit</button>
+                                <button class="btn-white btn btn-xs" ng-click="vm.del(entity.id)">Delete</button>
+                                <button class="btn-white btn btn-xs" ng-click="vm.goToHistory(entity.name)">History</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="12" class="text-center">
+                            <strong>
+                                <item-count-component page="vm.page" total="vm.totalItems"
+                                                      items-per-page="vm.itemsPerPage"></item-count-component>
+                            </strong>
+                            <uib-pagination class="pagination-sm m-xs" total-items="vm.totalItems"
+                                            ng-model="vm.page" ng-change="vm.transition()"></uib-pagination>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

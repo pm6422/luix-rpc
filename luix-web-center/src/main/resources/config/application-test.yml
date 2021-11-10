@@ -1,0 +1,30 @@
+# ===================================================================
+# Spring Boot configuration for the "test" profile.
+#
+# This configuration overrides the application.yml file.
+# Full reference is available at:
+# https://docs.spring.io/spring-boot/docs/2.3.0.RELEASE/reference/html/appendix-application-properties.html
+# ===================================================================
+spring:
+    devtools:
+        restart:
+            enabled: true # enable on test environment
+        livereload:
+            enabled: false # we use gulp + BrowserSync for livereload
+    thymeleaf:
+        cache: false
+mongock:
+    enabled: true
+infinity:
+    registries:
+        0:
+            host: localhost
+            port: 2181
+    protocol:
+        port: @app.rpc.port@
+# ===================================================================
+# Application specific properties
+# ===================================================================
+application:
+    arthas:
+        consoleUrl: http://localhost:${arthas.httpPort}

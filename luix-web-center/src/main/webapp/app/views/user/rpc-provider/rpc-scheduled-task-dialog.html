@@ -1,0 +1,171 @@
+<form name="editForm" role="form" novalidate ng-submit="vm.save()" show-validation-directive>
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="vm.cancel()">&times;
+        </button>
+        <h4 class="modal-title">{{vm.pageTitle}}</h4>
+    </div>
+    <div class="modal-body">
+        <div class="form-group" ng-if="vm.mode == 'edit'">
+            <label class="control-label">Service</label>
+            <input type="text" class="form-control" name="name" ng-model="vm.entity.interfaceName" disabled>
+        </div>
+        <div class="form-group" ng-hide="vm.mode == 'create'">
+            <label class="control-label">Task name</label>
+            <input type="text" class="form-control" name="name" ng-model="vm.entity.name" disabled>
+        </div>
+        <div class="form-group">
+            <label class="control-label">
+                <b ng-show="invocationForm.method.$invalid">
+                    <b ng-show="invocationForm.method.$error.required">✱</b>
+                </b>
+                Method
+            </label>
+            <select id="method" name="method" class="form-control" ng-model="vm.entity.methodSignature" required
+                    ng-options="item.methodSignature as item.methodSignature for item in vm.methods"
+                    ng-change="vm.selectMethod()" ng-disabled="vm.mode == 'edit'">
+                <option value="">Select...</option>
+            </select>
+            <kbd ng-show="vm.entity.methodSignature">{{vm.entity.methodSignature}}</kbd>
+        </div>
+        <span ng-repeat="methodParamType in vm.selectedMethod.methodParamTypes track by $index" ng-hide="vm.argsHidden">
+            <div class="form-group">
+                <label class="control-label">Argument[{{$index}}]</label>
+                <span ng-if="vm.selectedMethod.methodParamCategories[$index] == 'number'">
+                    <input type="number" class="form-control" ng-model="vm.args[$index]" ng-disabled="vm.mode == 'edit'">
+                    <kbd>{{methodParamType}}</kbd>
+                </span>
+                <span ng-if="vm.selectedMethod.methodParamCategories[$index] == 'string'">
+                    <input type="text" class="form-control" ng-model="vm.args[$index]" ng-disabled="vm.mode == 'edit'">
+                    <kbd>{{methodParamType}}</kbd>
+                </span>
+                <span ng-if="vm.selectedMethod.methodParamCategories[$index] == 'object'">
+                    <textarea class="form-control" rows="3" style="resize:none" ng-model="vm.args[$index]" placeholder="{}" ng-disabled="vm.mode == 'edit'"></textarea>
+                    <kbd>JSON string format for [{{methodParamType}}]</kbd>
+                </span>
+            </div>
+        </span>
+        <div class="form-group">
+            <label class="control-label">Use CRON expression</label>
+            <div class="onoffswitch">
+                <input type="checkbox" id="useCronExpression" ng-model="vm.entity.useCronExpression" class="onoffswitch-checkbox">
+                <label class="onoffswitch-label" for="useCronExpression">
+                    <span class="onoffswitch-inner"></span>
+                    <span class="onoffswitch-switch"></span>
+                </label>
+            </div>
+        </div>
+        <div class="form-group" ng-if="vm.entity.useCronExpression">
+            <label class="control-label">CRON expression
+                <a href="https://www.freeformatter.com/cron-expression-generator-quartz.html" target="view_window">
+                    <span class="fa fa-exclamation-circle"></span>&nbsp;
+                    <span>Go to online CRON expression generator</span>
+                </a>
+            </label>
+            <input type="text" class="form-control" name="cronExpression" ng-model="vm.entity.cronExpression"
+                   ng-maxlength="50" required>
+            <div ng-show="editForm.cronExpression.$invalid">
+                <p class="help-block" ng-show="editForm.cronExpression.$error.required">
+                    Required
+                </p>
+                <p class="help-block" ng-show="editForm.cronExpression.$error.maxlength" translate-value-max="50">
+                    Max length: 50
+                </p>
+            </div>
+            <p class="label label-primary">
+                <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
+                A CRON expression is a string consisting of six or seven subexpressions (fields) that describe individual details of the schedule
+            </p>
+        </div>
+        <div class="form-group" ng-if="!vm.entity.useCronExpression">
+            <label class="control-label">Frequency</label>
+            <div class="row">
+                <div class="col-md-2"><span class="form-control pull-right">Repeat every</span></div>
+                <div class="col-md-2"><input type="number" min=1 class="form-control" ng-model="vm.entity.fixedInterval"></div>
+                <div class="col-md-2">
+                    <select name="fixedIntervalUnit" class="form-control col-md-2" ng-model="vm.entity.fixedIntervalUnit"
+                            ng-options="item for item in vm.timeUnits" required>
+                        <option value="">Select...</option>
+                    </select>
+                </div>
+            </div>
+            <div ng-show="editForm.fixedIntervalUnit.$invalid">
+                <p class="help-block" ng-show="editForm.fixedIntervalUnit.$error.required">
+                    Required
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label class="control-label">Request timeout (Unit: ms)</label>
+                <input type="number" min=0 class="form-control" ng-model="vm.entity.requestTimeout">
+            </div>
+            <div class="form-group col-md-6">
+                <label class="control-label">Max retry count</label>
+                <input type="number" min=0 class="form-control" ng-model="vm.entity.retryCount">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label class="control-label" for="startTime">Start time</label>
+                <input type="datetime-local" class="input-sm form-control" id="startTime" ng-model="vm.entity.startTime"/>
+                <p class="label label-primary">
+                    <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
+                    If left empty, schedule will take effect immediately
+                </p>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="control-label" for="stopTime">Stop time</label>
+                <input type="datetime-local" class="input-sm form-control" id="stopTime" ng-model="vm.entity.stopTime"/>
+                <p class="label label-primary">
+                    <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
+                    If left empty, schedule will run indefinitely until it is disabled or deleted
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Fault tolerance</label>
+            <select id="faultTolerance" name="faultTolerance" class="form-control" ng-model="vm.entity.faultTolerance"
+                    ng-options="item for item in vm.faultTolerances">
+                <option value="">Select...</option>
+            </select>
+            <p class="label label-primary" ng-show="vm.entity.faultTolerance == 'failfast'">
+                <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
+                The failfast means that only one call is initiated, and an error is reported immediately if a failure RPC call occurs.
+                It is usually used for non-idempotent operations.
+            </p>
+            <p class="label label-primary" ng-show="vm.entity.faultTolerance == 'failover'">
+                <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
+                The failover means that when a service node fails to call, it will continue to call other service nodes. It is the default fault tolerance strategy if left empty.
+            </p>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Enabled</label>
+            <div class="onoffswitch">
+                <input type="checkbox" id="enabled" ng-model="vm.entity.enabled" class="onoffswitch-checkbox">
+                <label class="onoffswitch-label" for="enabled">
+                    <span class="onoffswitch-inner"></span>
+                    <span class="onoffswitch-switch"></span>
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Remark</label>
+            <input type="text" class="form-control" name="remark" ng-model="vm.entity.remark" ng-maxlength="100">
+            <div ng-show="editForm.remark.$invalid">
+                <p class="help-block" ng-show="editForm.remark.$error.maxlength" translate-value-max="100">
+                    Max length: 100
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" ng-click="vm.cancel()">
+            <span class="fa fa-times"></span>&nbsp;<span>Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-primary btn-sm" ng-disabled="editForm.$invalid || vm.isSaving">
+            <span class='fa fa-circle-o-notch fa-spin' ng-show="vm.isSaving"></span>
+            <span class="fa fa-check" ng-hide="vm.isSaving"></span>
+            &nbsp;<span>Save</span>
+        </button>
+    </div>
+</form>

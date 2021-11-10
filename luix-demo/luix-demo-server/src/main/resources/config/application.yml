@@ -1,0 +1,160 @@
+# ===================================================================
+# Spring Boot configuration.
+#
+# This configuration will be overridden by the Spring profile you use,
+# for example application-dev.yml if you use the "dev" profile.
+# Full reference is available at:
+# https://docs.spring.io/spring-boot/docs/2.3.0.RELEASE/reference/html/appendix-application-properties.html
+# ===================================================================
+management: # Management http server configuration, used by ManagementServerProperties
+    endpoints:
+        web:
+            base-path: /management
+            exposure: # Refer to https://docs.spring.io/spring-boot/docs/2.3.0.RELEASE/reference/html/production-ready-features.html
+                include: ['configprops', 'env', 'health', 'info', 'beans', 'mappings', 'httptrace', 'shutdown', 'auditevents', 'scheduledtasks', 'loggers', 'prometheus', 'threaddump']
+    endpoint:
+        health: # used by HealthEndpointProperties, Note: it will show health details if it has the access token by Ajax
+            enabled: true
+            show-details: ALWAYS
+        httptrace:
+            enabled: true
+        shutdown:
+            enabled: true # explicitly enable
+    health:
+        mongo:
+            enabled: true
+    metrics:
+        export:
+            prometheus: # Prometheus is the default metrics backend
+                enabled: true
+                step: 60
+        enable:
+            http: true
+            jvm: true
+            logback: true
+            process: true
+            system: true
+        distribution:
+            percentiles-histogram:
+                all: true
+            percentiles:
+                all: 0, 0.5, 0.75, 0.95, 0.99, 1.0
+        tags:
+            application: ${spring.application.name}
+        web:
+            server:
+                request:
+                    autotime:
+                        enabled: true
+info: # These configuration can be exported to Environment, accessing URL /management/info can get these properties
+    artifact:
+        id: @project.artifactId@
+        version: @project.version@
+    project:
+        package: org.infinity.luix.demoserver
+spring:
+    application:
+        name: ${info.artifact.id}
+    profiles:
+        # The commented value for `active` can be replaced with valid spring profiles to load.
+        # Otherwise, it will be filled in by maven when building the WAR file
+        # Either way, it can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
+        active: @spring.profiles.active@
+    messages:
+        basename: i18n/messages
+    task:
+        execution:
+            thread-name-prefix: global-async-task-
+            pool:
+                core-size: 5
+                max-size: 32 # 生产环境CPU是32线程
+                queue-capacity: 1000
+        scheduling:
+            thread-name-prefix: global-scheduling-
+            pool:
+                size: 10
+    thymeleaf: #ThymeleafAutoConfiguration
+        mode: HTML
+    servlet:
+        multipart: # Management http multipart configuration, used by MultipartProperties
+            enabled: true
+            max-file-size: 30MB
+            max-request-size: 30MB
+    banner:
+        location: classpath:config/banner-company.txt
+    data:
+        mongodb:
+            auto-index-creation: false
+    jackson:
+        mapper:
+            propagate-transient-marker: true # disable serialize transient fields
+server:
+    # It can be overridden by `--server.port` value passed in the commandline or `-Dserver.port` set in `JAVA_OPTS`
+    port: @app.server.port@
+    servlet:
+        session:
+            cookie:
+                name: ${spring.application.name}
+            timeout: 1D # Session timeout in 1 day, Note: this parameter can control the login expiration
+            # and this statement can effect spring session, used by SessionProperties
+logging:
+    config: classpath:config/logback-spring.xml
+    file:
+        path: ${user.home}${file.separator}Log${file.separator}${spring.application.name}${file.separator}${spring.application.name}
+    level:
+        root: DEBUG
+        ${info.project.package}: DEBUG
+mongock:
+    enabled: false
+    track-ignored: true
+    change-logs-scan-package:
+        - ${info.project.package}.initializer
+infinity:
+    application:
+        name: ${spring.application.name}
+        description: RPC Demo Server
+        team: Infinity Team
+        mailSuffixes: '@pm6422.club'
+        ownerMail: louis@pm6422.club
+        env: ${spring.profiles.active}
+    registry:
+        name: zookeeper
+        connectTimeout: 1000
+        sessionTimeout: 60000
+#    protocol:
+#        serializer: hessian2
+# ===================================================================
+# Application specific properties
+# ===================================================================
+application:
+    http:
+        cache: # Used by the CachingHttpHeadersFilter
+            expired-after: 31
+    swagger:
+        enabled: true
+        api:
+            title: RPC App Server API
+            description: RPC App Server API
+        open-api:
+            title: RPC App Server Open API
+            description: RPC App Server API
+        version: @project.version@
+        terms-of-service-url: http://www.infinity.org
+        contact-name: Louis
+        contact-url: http://www.infinity.org
+        contact-email: louis@pm6422.club
+        license: 1.0
+        license-url: http://www.apache.org/licenses/LICENSE-2.0.html
+        host:
+    aop-logging:
+        enabled: true
+        method-whitelist-mode: false
+        method-whitelist:
+            - AppController.findById
+            - AppController.create
+    elapsed-time-logging:
+        enabled: true
+        slow-execution-threshold: 300 # unit: ms
+    ribbon:
+        # comma separated list of profiles to show a ribbon on the GUI
+        display-on-active-profiles: dev,test,demo
