@@ -88,7 +88,7 @@ spring:
             collection-name: HttpSession
     mail: # specific mail property, used by MailProperties
         host: smtp.exmail.qq.com
-        username: test@pm6422.club
+        username: test@luixtech.com
         password: LoU-UHR-9dH-8G9-F3G
     banner:
         location: classpath:config/banner-company.txt
@@ -126,8 +126,8 @@ infinity:
         name: ${spring.application.name}
         description: RPC Web Center
         team: Infinity Team
-        mailSuffixes: '@pm6422.club'
-        ownerMail: louis@pm6422.club
+        mailSuffixes: '@luixtech.com'
+        ownerMail: louis@luixtech.com
         env: ${spring.profiles.active}
     registries:
         0:
@@ -160,7 +160,7 @@ application:
             description: Luix Web Center Open API
         version: @project.version@
         contact-name: Louis
-        contact-email: louis@pm6422.club
+        contact-email: louis@luixtech.com
         host:
     aop-logging:
         enabled: true

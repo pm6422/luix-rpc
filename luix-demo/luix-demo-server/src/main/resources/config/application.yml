@@ -114,8 +114,8 @@ infinity:
         name: ${spring.application.name}
         description: RPC Demo Server
         team: Infinity Team
-        mailSuffixes: '@pm6422.club'
-        ownerMail: louis@pm6422.club
+        mailSuffixes: '@luixtech.com'
+        ownerMail: louis@luixtech.com
         env: ${spring.profiles.active}
     registry:
         name: zookeeper
@@ -142,7 +142,7 @@ application:
         terms-of-service-url: http://www.infinity.org
         contact-name: Louis
         contact-url: http://www.infinity.org
-        contact-email: louis@pm6422.club
+        contact-email: louis@luixtech.com
         license: 1.0
         license-url: http://www.apache.org/licenses/LICENSE-2.0.html
         host:
