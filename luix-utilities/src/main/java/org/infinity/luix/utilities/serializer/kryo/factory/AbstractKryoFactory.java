@@ -47,6 +47,9 @@ public abstract class AbstractKryoFactory {
      * @param serializer serializer
      */
     public void registerClass(Class<?> clazz, Serializer<?> serializer) {
+        if (CUSTOM_CLASS_SERIALIZERS.containsKey(clazz)) {
+            return;
+        }
         Validate.validState(!created, "Please register class serializer before creating kryo instance!");
         CUSTOM_CLASS_SERIALIZERS.put(clazz, serializer);
     }

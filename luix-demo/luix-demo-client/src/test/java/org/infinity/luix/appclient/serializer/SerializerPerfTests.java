@@ -4,11 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.junit.ContiPerfRule;
 import org.infinity.luix.appclient.serializer.service.AppServiceImpl;
-import org.infinity.luix.spring.enhancement.kryo.serializer.*;
 import org.infinity.luix.democommon.domain.App;
+import org.infinity.luix.spring.enhancement.kryo.serializer.*;
 import org.infinity.luix.utilities.serializer.Serializer;
 import org.infinity.luix.utilities.serializer.kryo.KryoUtils;
 import org.infinity.luix.utilities.serviceloader.ServiceLoader;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.data.domain.*;
@@ -25,16 +26,20 @@ import static org.infinity.luix.utilities.serializer.Serializer.SERIALIZER_NAME_
 public class SerializerPerfTests {
 
     @Rule
-    public        ContiPerfRule i                  = new ContiPerfRule();
-    private final Serializer    kryoSerializer     = ServiceLoader.forClass(Serializer.class).load(SERIALIZER_NAME_KRYO);
-    private final Serializer    hessian2Serializer = ServiceLoader.forClass(Serializer.class).load(SERIALIZER_NAME_HESSIAN2);
+    public         ContiPerfRule i = new ContiPerfRule();
+    private static Serializer    kryoSerializer;
+    private static Serializer    hessian2Serializer;
 
-    static {
+    @BeforeClass
+    public static void setUp() {
         KryoUtils.registerClass(Sort.class, new SortSerializer());
         KryoUtils.registerClass(PageRequest.class, new PageRequestSerializer());
         KryoUtils.registerClass(Pageable.class, new PageableSerializer());
         KryoUtils.registerClass(PageImpl.class, new PageImplSerializer());
         KryoUtils.registerClass(Page.class, new PageSerializer());
+
+        kryoSerializer = ServiceLoader.forClass(Serializer.class).load(SERIALIZER_NAME_KRYO);
+        hessian2Serializer = ServiceLoader.forClass(Serializer.class).load(SERIALIZER_NAME_HESSIAN2);
     }
 
     @Test

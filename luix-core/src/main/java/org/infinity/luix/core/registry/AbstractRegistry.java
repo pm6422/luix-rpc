@@ -3,13 +3,10 @@ package org.infinity.luix.core.registry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.luix.core.registry.listener.ClientListener;
 import org.infinity.luix.core.registry.listener.ProviderListener;
-import org.infinity.luix.core.switcher.impl.SwitcherHolder;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.utilities.annotation.EventMarker;
 import org.infinity.luix.utilities.annotation.EventPublisher;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
 import org.infinity.luix.utilities.concurrent.NotThreadSafe;
@@ -66,33 +63,11 @@ public abstract class AbstractRegistry implements Registry {
     public AbstractRegistry(Url registryUrl) {
         Validate.notNull(registryUrl, "Registry url must NOT be null!");
         this.registryUrl = registryUrl;
-        registerSwitcherListener();
     }
 
     @Override
     public String getType() {
         return registryUrl.getProtocol();
-    }
-
-    /**
-     * Register a heartbeat switcher to perceive provider state change
-     */
-    @EventMarker
-    private void registerSwitcherListener() {
-        SwitcherHolder.getInstance().initSwitcher(SwitcherHolder.SERVICE_ACTIVE, false);
-
-        // Register anonymous inner class of AbstractRegistry as a listener
-        SwitcherHolder.getInstance().registerListener(SwitcherHolder.SERVICE_ACTIVE, (name, switchOn) -> {
-            if (StringUtils.isNotEmpty(name) && switchOn != null) {
-                if (switchOn) {
-                    // switch on
-                    activate(null);
-                } else {
-                    // switch off
-                    deactivate(null);
-                }
-            }
-        });
     }
 
     /**

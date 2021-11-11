@@ -15,8 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SwitcherHolder {
 
     private static final SwitcherHolder                      INSTANCE       = new SwitcherHolder();
-    @Deprecated
-    public static final  String                              SERVICE_ACTIVE = "serviceActive";
     private final        Map<String, Switcher>               switcherMap    = new ConcurrentHashMap<>();
     private final        Map<String, List<SwitcherListener>> listenerMap    = new ConcurrentHashMap<>();
 
