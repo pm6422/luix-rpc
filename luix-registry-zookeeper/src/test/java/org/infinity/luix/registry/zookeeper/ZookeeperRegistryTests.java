@@ -252,16 +252,16 @@ public class ZookeeperRegistryTests {
      * 模拟ZookeeperRegistry.doActivate()和ZookeeperRegistry.reregisterProviders()
      */
     @Test
-    public void testCollectionElementChange() {
+    public void testUrlEquals() {
         Set<Url> set1 = new HashSet<>();
-        // add a element to set
+        // add a url to set
         set1.add(providerUrl1);
         assertTrue(set1.contains(providerUrl1));
 
-        // then modify the element
+        // add option to url
         providerUrl1.addOption(Url.PARAM_ACTIVATED_TIME, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
 
-        // the set does not contain the element any more
-        assertFalse(set1.contains(providerUrl1));
+        // protocol, host, port, path, form, version not changed
+        assertTrue(set1.contains(providerUrl1));
     }
 }
