@@ -43,7 +43,7 @@ public class UniversalInvocationTests extends ZkBaseTest {
     }
 
     @Test
-    public void testGenericCallByRegistry() throws InterruptedException {
+    public void testUniversalCallByRegistry() throws InterruptedException {
         registerProvider();
 
         ConsumerStub<?> consumerStub = createConsumerStub(TestService.class.getName());
