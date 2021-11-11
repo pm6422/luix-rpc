@@ -1,5 +1,6 @@
 package org.infinity.luix.demoserver.testcases;
 
+import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.client.stub.ConsumerStub;
 import org.infinity.luix.core.config.impl.ApplicationConfig;
@@ -42,7 +43,7 @@ public class RefreshUrlTests extends ZkBaseTest {
     }
 
     @Test
-    public void testRefreshProvider() {
+    public void testOverrideProviderOptions() {
         RegistryConfig registryConfig = new RegistryConfig();
         registryConfig.setName("zookeeper");
         registryConfig.setHost("localhost");
@@ -56,11 +57,8 @@ public class RefreshUrlTests extends ZkBaseTest {
         List<Url> providerUrls = ZookeeperUtils.readUrls(zkClient, providerStub.getUrl().getPath(), StatusDir.ACTIVE);
         assertEquals("100", providerUrls.get(0).getOption(REQUEST_TIMEOUT));
 
-        // Unregister
-        providerStub.unregister(registryConfig.getRegistryUrl());
-
         // Register twice
-        registerProvider(registryConfig, providerStub, 200);
+        providerStub.reregister(ImmutableMap.of(REQUEST_TIMEOUT, "200"));
 
         providerUrls = ZookeeperUtils.readUrls(zkClient, providerStub.getUrl().getPath(), StatusDir.ACTIVE);
         assertEquals("200", providerUrls.get(0).getOption(REQUEST_TIMEOUT));
@@ -70,8 +68,6 @@ public class RefreshUrlTests extends ZkBaseTest {
         providerStub.setInterfaceClass(RefreshUrlService.class);
         providerStub.setInterfaceName(RefreshUrlService.class.getName());
         providerStub.setInstance(new RefreshUrlServiceImpl());
-        providerStub.setForm(RefreshUrlTests.class.getSimpleName());
-        providerStub.setVersion("1.0.0");
         providerStub.setRequestTimeout(requestTimeout);
         providerStub.init();
 
@@ -91,7 +87,7 @@ public class RefreshUrlTests extends ZkBaseTest {
         providerStub.register(applicationConfig, protocolConfig, registryConfig);
 
         // Activate provider
-        SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVE, true);
+        providerStub.activate();
     }
 
     @Test
