@@ -73,7 +73,7 @@ public class ServiceCallTests extends ZkBaseTest {
         providerStub.register(applicationConfig, protocolConfig, registryConfig);
 
         // Activate provider
-        SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVE, true);
+        providerStub.activate();
     }
 
     private TestService subscribeProvider() {
