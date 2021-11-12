@@ -32,6 +32,8 @@ public class ConsumeMessageTask implements ApplicationRunner {
             try {
                 AsyncTask asyncTask = InMemoryAsyncTaskQueue.poll();
                 if (asyncTask == null) {
+                    // Sleep for a while in order to decrease CPU occupation, otherwise the CPU occupation will reach to 100%
+                    Thread.sleep(100L);
                     continue;
                 }
                 // Get message from distributed queue
