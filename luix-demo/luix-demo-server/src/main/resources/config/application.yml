@@ -46,7 +46,7 @@ management: # Management http server configuration, used by ManagementServerProp
                 request:
                     autotime:
                         enabled: true
-info: # These configuration can be exported to Environment, accessing URL /management/info can get these properties
+info: # These configurations can be exported to Environment, accessing URL /management/info can get these properties
     artifact:
         id: @project.artifactId@
         version: @project.version@
