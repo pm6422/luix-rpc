@@ -86,6 +86,7 @@ public class SystemController {
     @Secured(Authority.DEVELOPER)
     public void redirectToArthasConsole(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String arthasUrl = NetworkUtils.getRequestUrl(request, arthasPort);
+        log.info("Redirect to arthas console: {}", arthasUrl);
         response.sendRedirect(arthasUrl);
     }
 
