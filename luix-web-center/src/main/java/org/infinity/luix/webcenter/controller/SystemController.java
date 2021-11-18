@@ -7,6 +7,8 @@ import org.infinity.luix.utilities.network.AddressUtils;
 import org.infinity.luix.webcenter.config.ApplicationProperties;
 import org.infinity.luix.webcenter.domain.Authority;
 import org.infinity.luix.webcenter.dto.ProfileInfoDTO;
+import org.infinity.luix.webcenter.utils.NetworkUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,6 +30,8 @@ import java.util.List;
 @Slf4j
 public class SystemController {
 
+    @Value("${arthas.httpPort}")
+    private int                   arthasPort;
     @Resource
     private Environment           env;
     @Resource
@@ -79,8 +84,9 @@ public class SystemController {
     @ApiOperation("redirect to arthas web console")
     @GetMapping("/api/system/arthas-console")
     @Secured(Authority.DEVELOPER)
-    public void redirectToArthasConsole(HttpServletResponse response) throws IOException {
-        response.sendRedirect(applicationProperties.getArthas().getConsoleUrl());
+    public void redirectToArthasConsole(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String arthasUrl = NetworkUtils.getRequestUrl(request, arthasPort);
+        response.sendRedirect(arthasUrl);
     }
 
     @ApiOperation("reset database")
