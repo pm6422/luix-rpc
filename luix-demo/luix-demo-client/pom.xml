@@ -18,7 +18,7 @@
         *************************************************************************************
     -->
     <properties>
-        <app.rpc.port>2${app.server.port}</app.rpc.port>
+        <app.rpc.port>1${app.server.port}</app.rpc.port>
         <app.server.port>6020</app.server.port>
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
