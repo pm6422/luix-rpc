@@ -20,7 +20,7 @@
     <properties>
         <app.rpc.port>1${app.server.port}</app.rpc.port>
         <app.server.port>6030</app.server.port>
-        <arthas.console.port>2${app.server.port}</arthas.console.port>
+        <arthas.console.port>6031</arthas.console.port>
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
