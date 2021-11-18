@@ -49,6 +49,11 @@ public class AsyncConfiguration implements AsyncConfigurer, WebMvcConfigurer {
         return new SimpleAsyncUncaughtExceptionHandler();
     }
 
+    /**
+     * 暂时搞不清楚作用
+     *
+     * @return
+     */
     @Bean
     public ThreadPoolTaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();

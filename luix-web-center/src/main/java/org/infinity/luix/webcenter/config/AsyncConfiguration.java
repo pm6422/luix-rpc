@@ -5,6 +5,7 @@ import org.infinity.luix.webcenter.async.ExceptionHandlingAsyncTaskExecutor;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
 import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
+import org.springframework.boot.autoconfigure.task.TaskSchedulingProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.AsyncTaskExecutor;
@@ -12,6 +13,7 @@ import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -25,7 +27,9 @@ import java.util.concurrent.Executor;
 public class AsyncConfiguration implements AsyncConfigurer, WebMvcConfigurer {
 
     @Resource
-    private TaskExecutionProperties taskExecutionProperties;
+    private TaskExecutionProperties  taskExecutionProperties;
+    @Resource
+    private TaskSchedulingProperties taskSchedulingProperties;
 
     @Override
     @Bean(name = "asyncTaskExecutor")
@@ -45,18 +49,23 @@ public class AsyncConfiguration implements AsyncConfigurer, WebMvcConfigurer {
         return new SimpleAsyncUncaughtExceptionHandler();
     }
 
+    /**
+     * 暂时搞不清楚作用
+     *
+     * @return
+     */
+    @Bean
+    public ThreadPoolTaskScheduler taskScheduler() {
+        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+        taskScheduler.setPoolSize(taskSchedulingProperties.getPool().getSize());
+        taskScheduler.setRemoveOnCancelPolicy(true);
+        taskScheduler.setErrorHandler(t -> log.error("Unexpected error occurred while executing scheduled task!", t));
+        taskScheduler.setThreadNamePrefix(taskSchedulingProperties.getThreadNamePrefix());
+        return taskScheduler;
+    }
+
     @Override
     public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
         configurer.setTaskExecutor((AsyncTaskExecutor) getAsyncExecutor());
     }
-
-//    @Bean
-//    public ThreadPoolTaskScheduler taskScheduler() {
-//        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
-//        taskScheduler.setPoolSize(10);
-//        taskScheduler.setRemoveOnCancelPolicy(true);
-//        taskScheduler.setErrorHandler(t -> log.error("Unexpected error occurred in scheduled task.", t));
-//        taskScheduler.setBeanName(applicationProperties.getCache().getCachePrefix() + "thread");
-//        return taskScheduler;
-//    }
 }
