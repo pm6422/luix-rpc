@@ -41,7 +41,8 @@ public class SystemController {
     @ApiOperation("get profile")
     @GetMapping("/open-api/systems/profile-info")
     public ResponseEntity<ProfileInfoDTO> getProfileInfo() {
-        ProfileInfoDTO profileInfoDTO = new ProfileInfoDTO(env.getActiveProfiles(), applicationProperties.getSwagger().isEnabled(), getRibbonEnv());
+        ProfileInfoDTO profileInfoDTO = new ProfileInfoDTO(env.getActiveProfiles(),
+                applicationProperties.getSwagger().isEnabled(), getRibbonEnv());
         return ResponseEntity.ok(profileInfoDTO);
     }
 
