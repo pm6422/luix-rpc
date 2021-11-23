@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.annotation.Resource;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,11 +47,8 @@ public class ExceptionTranslatorAdvice {
     public static final String SYS_EXCEPTION_CODE         = "ES7001";
     public static final String CONCURRENCY_EXCEPTION_CODE = "ES7002";
 
-    private final MessageCreator messageCreator;
-
-    public ExceptionTranslatorAdvice(MessageCreator messageCreator) {
-        this.messageCreator = messageCreator;
-    }
+    @Resource
+    private MessageCreator messageCreator;
 
     /**
      * JSR 303 bean validation exception handler
