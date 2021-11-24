@@ -6517,7 +6517,7 @@ dd.project-people {
 }
 
 .faq-question:hover {
-    color: #179d82;
+    color: #6578a2;
 }
 
 .faq-answer {
@@ -8448,7 +8448,7 @@ body.landing-page {
 }
 
 .landing-page a.navy-link:hover {
-    color: #179d82;
+    color: #6578a2;
 }
 
 .landing-page section p {
@@ -8547,7 +8547,7 @@ body.landing-page {
 
 .landing-page .navbar-default .navbar-brand:hover,
 .landing-page .navbar-default .navbar-brand:focus {
-    background: #179d82;
+    background: #6578a2;
     color: #fff;
 }
 
@@ -8820,7 +8820,7 @@ body.landing-page {
 }
 
 .landing-page .social-icon a:hover {
-    background: #179d82;
+    background: #6578a2;
 }
 
 .landing-page .img-small {
@@ -8960,8 +8960,8 @@ body.landing-page {
 .landing-page .btn-primary:active,
 .landing-page .btn-primary.active,
 .landing-page .open .dropdown-toggle.btn-primary {
-    background-color: #179d82;
-    border-color: #179d82;
+    background-color: #6578a2;
+    border-color: #6578a2;
     color: #FFFFFF;
 }
 
