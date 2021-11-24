@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class SystemController {
 
-    private String luixDemoServerUrl = "pm6422.club:6010";
-    private String luixDemoClientUrl = "pm6422.club:6020";
-    private String luixWebCenterUrl  = "pm6422.club:6030";
+    private String luixDemoServerUrl = "http://pm6422.club:6010";
+    private String luixDemoClientUrl = "http://pm6422.club:6020";
+    private String luixWebCenterUrl  = "http://pm6422.club:6030";
 
     @PutMapping("/api/system/luix-demo-server-url")
     public void setLuixDemoServerUrl(@RequestParam(value = "url") String url) {
