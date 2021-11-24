@@ -2,7 +2,7 @@ package org.infinity.luix.portal.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,7 +14,7 @@ public class SystemController {
     private String luixDemoClientUrl = "http://pm6422.club:6020";
     private String luixWebCenterUrl  = "http://pm6422.club:6030";
 
-    @PutMapping("/api/system/luix-demo-server-url")
+    @PostMapping("/api/system/luix-demo-server-url")
     public void setLuixDemoServerUrl(@RequestParam(value = "url") String url) {
         this.luixDemoServerUrl = url;
     }
@@ -24,7 +24,7 @@ public class SystemController {
         return this.luixDemoServerUrl;
     }
 
-    @PutMapping("/api/system/luix-demo-client-url")
+    @PostMapping("/api/system/luix-demo-client-url")
     public void setLuixDemoClientUrl(@RequestParam(value = "url") String url) {
         this.luixDemoClientUrl = url;
     }
@@ -34,7 +34,7 @@ public class SystemController {
         return this.luixDemoClientUrl;
     }
 
-    @PutMapping("/api/system/luix-web-center-url")
+    @PostMapping("/api/system/luix-web-center-url")
     public void setLuixWebCenterUrl(@RequestParam(value = "url") String url) {
         this.luixWebCenterUrl = url;
     }
