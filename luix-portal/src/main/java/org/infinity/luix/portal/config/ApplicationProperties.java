@@ -18,8 +18,36 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @Getter
 public class ApplicationProperties {
-    private final Http   http   = new Http();
-    private final Ribbon ribbon = new Ribbon();
+    private final Swagger swagger = new Swagger();
+    private final Http    http    = new Http();
+    private final Ribbon  ribbon  = new Ribbon();
+
+    @Data
+    public static class Swagger {
+        private       boolean enabled;
+        private       String  version;
+        private       String  termsOfServiceUrl;
+        private       String  contactName;
+        private       String  contactUrl;
+        private       String  contactEmail;
+        private       String  license;
+        private       String  licenseUrl;
+        private       String  host;
+        private final Api     api     = new Api();
+        private final OpenApi openApi = new OpenApi();
+
+        @Data
+        public static class Api {
+            private String title;
+            private String description;
+        }
+
+        @Data
+        public static class OpenApi {
+            private String title;
+            private String description;
+        }
+    }
 
     @Data
     public static class Http {

@@ -48,6 +48,14 @@ logging:
 # Application specific properties
 # ===================================================================
 application:
+    swagger:
+        enabled: true
+        api:
+            title: @project.name@ API
+            description: @project.name@接口文档
+        version: @project.version@
+        contact-name: 刘尧
+        contact-email: liuyao@xforceplus.com
     http:
         cache: # Used by the CachingHttpHeadersFilter
             expired-after: 31
