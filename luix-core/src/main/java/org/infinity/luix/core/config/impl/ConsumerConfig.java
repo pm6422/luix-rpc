@@ -45,7 +45,7 @@ public class ConsumerConfig extends ServiceConfig {
         checkIntegrity();
         checkValidity();
         initRateLimiter();
-        log.info("Infinity RPC consumer configuration: {}", this);
+        log.info("Luix consumer configuration: {}", this);
     }
 
     @Override

@@ -77,7 +77,7 @@ public class ApplicationConfig implements Configurable, Serializable {
         checkValidity();
         // Set debug mode
         DebugModeHolder.setDebugMode(debugMode);
-        log.info("Infinity RPC application configuration: {}", this);
+        log.info("Luix application configuration: {}", this);
     }
 
     @Override

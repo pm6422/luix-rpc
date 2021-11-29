@@ -17,7 +17,7 @@ public class ProviderConfig extends ServiceConfig {
     private             boolean autoExpose = true;
 
     public void init() {
-        log.info("Infinity RPC provider configuration: {}", this);
+        log.info("Luix provider configuration: {}", this);
     }
 
     @Override

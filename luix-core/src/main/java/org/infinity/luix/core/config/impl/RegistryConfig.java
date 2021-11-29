@@ -66,7 +66,7 @@ public class RegistryConfig implements Configurable {
         checkIntegrity();
         checkValidity();
         registryUrl = createRegistryUrl();
-        log.info("Infinity RPC registry configuration: {}", this);
+        log.info("Luix registry configuration: {}", this);
     }
 
     @Override

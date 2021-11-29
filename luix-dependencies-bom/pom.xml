@@ -12,7 +12,7 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
     <name>luix-dependencies-bom</name>
-    <description>Infinity RPC dependencies BOM</description>
+    <description>Luix dependencies BOM</description>
     <url>https://infinity.org</url>
     <properties>
         <activation_version>1.2.0</activation_version>

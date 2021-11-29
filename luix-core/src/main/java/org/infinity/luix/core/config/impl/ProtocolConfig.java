@@ -102,7 +102,7 @@ public class ProtocolConfig implements Configurable {
         checkValidity();
         initHost();
         SerializerHolder.init();
-        log.info("Infinity RPC protocol configuration: {}", this);
+        log.info("Luix protocol configuration: {}", this);
     }
 
     @Override

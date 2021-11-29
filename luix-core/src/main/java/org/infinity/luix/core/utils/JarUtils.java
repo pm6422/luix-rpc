@@ -12,7 +12,7 @@ public abstract class JarUtils {
     public static final String VERSION = getJarVersion();
 
     /**
-     * Read infinity RPC jar version
+     * Read luix jar version
      *
      * @return version
      */
