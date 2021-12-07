@@ -50,4 +50,16 @@ public class SystemController {
     public String getLuixWebCenterUrl() {
         return this.luixWebCenterUrl;
     }
+
+    @ApiOperation("reset web center database")
+    @GetMapping("/api/system/reset-web-center-database")
+    public String resetWebCenterDatabase() {
+        return this.luixWebCenterUrl + "/open-api/systems/reset-database";
+    }
+
+    @ApiOperation("reset demo server database")
+    @GetMapping("/api/system/reset-demo-server-database")
+    public String resetDemoServerDatabase() {
+        return this.luixDemoServerUrl + "/open-api/systems/reset-database";
+    }
 }

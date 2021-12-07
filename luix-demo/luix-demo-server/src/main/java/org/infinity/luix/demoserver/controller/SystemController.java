@@ -1,10 +1,12 @@
 package org.infinity.luix.demoserver.controller;
 
+import io.changock.runner.core.ChangockBase;
 import io.swagger.annotations.ApiOperation;
 import org.infinity.luix.demoserver.config.ApplicationProperties;
 import org.infinity.luix.demoserver.dto.ProfileInfoDTO;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +26,10 @@ public class SystemController {
     private ApplicationProperties applicationProperties;
     @Resource
     private ApplicationContext    applicationContext;
+    @Resource
+    private ChangockBase          changockBase;
+    @Resource
+    private MongoTemplate         mongoTemplate;
 
     @ApiOperation("get profile")
     @GetMapping("/open-api/systems/profile-info")
@@ -54,5 +60,13 @@ public class SystemController {
     @GetMapping("/api/systems/bean")
     public ResponseEntity<Object> getBean(@RequestParam(value = "name") String name) {
         return ResponseEntity.ok(applicationContext.getBean(name));
+    }
+
+    @ApiOperation("reset database")
+    @GetMapping("/open-api/systems/reset-database")
+    public String resetDatabase() {
+        mongoTemplate.getDb().drop();
+        changockBase.execute();
+        return "Reset database successfully.";
     }
 }
