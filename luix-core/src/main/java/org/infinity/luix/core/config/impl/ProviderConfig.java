@@ -1,8 +1,10 @@
 package org.infinity.luix.core.config.impl;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j
 public class ProviderConfig extends ServiceConfig {

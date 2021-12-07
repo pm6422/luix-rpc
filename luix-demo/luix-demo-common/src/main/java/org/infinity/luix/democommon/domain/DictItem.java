@@ -2,6 +2,7 @@ package org.infinity.luix.democommon.domain;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.infinity.luix.democommon.domain.base.AbstractAuditableDomain;
@@ -16,6 +17,7 @@ import java.io.Serializable;
 /**
  * Spring Data MongoDB collection for the DictItem entity.
  */
+@EqualsAndHashCode(callSuper = true)
 @Document(collection = "DictItem")
 @Data
 @ToString(callSuper = true)

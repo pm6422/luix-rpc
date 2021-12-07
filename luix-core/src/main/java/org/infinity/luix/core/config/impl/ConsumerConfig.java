@@ -1,6 +1,7 @@
 package org.infinity.luix.core.config.impl;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.client.ratelimit.RateLimiter;
 
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 
 import static org.infinity.luix.core.constant.ConsumerConstants.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j
 public class ConsumerConfig extends ServiceConfig {
