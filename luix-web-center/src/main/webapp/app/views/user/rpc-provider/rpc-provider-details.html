@@ -128,7 +128,7 @@
                                                 <option value="">Select...</option>
                                             </select>
                                             <span class="input-group-btn">
-                                                <button type="button" class="btn btn-primary" ng-disabled="!vm.entity.active || invocationForm.$invalid || vm.selectedMethodSignature.indexOf('void') == -1 && !vm.args" ng-click="vm.invoke()">
+                                                <button type="button" class="btn btn-primary" ng-disabled="invocationForm.$invalid || vm.selectedMethodSignature.indexOf('void') == -1 && !vm.args" ng-click="vm.invoke()">
                                                     <span>Invoke</span>
                                                 </button>
                                             </span>

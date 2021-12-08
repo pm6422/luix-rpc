@@ -412,7 +412,12 @@ public class ProviderStub<T> {
         boolean defaultThrowExceptionStack = ProtocolConstants.TRANS_EXCEPTION_STACK_VAL_DEFAULT;
         try {
             // Invoke real method of provider
-            Object result = method.invoke(BUILD_IN_METHODS.contains(request.getMethodName()) ? this : instance, request.getMethodArguments());
+            Object result = null;
+            if (BUILD_IN_METHODS.contains(request.getMethodName())) {
+                result = method.invoke(this, request.getMethodArguments());
+            } else if (activated.get()) {
+                result = method.invoke(instance, request.getMethodArguments());
+            }
             response.setResult(result);
         } catch (Exception e) {
             // If exception occurs
