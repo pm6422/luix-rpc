@@ -1795,7 +1795,7 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     vm.argsHidden = true;
     vm.checkProgress = 0;
     if(vm.entity.active) {
-        vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url});
+        queryMethods();
     }
     vm.options = RpcProviderService.queryOptions({providerUrl: vm.entity.url});
 
@@ -1833,6 +1833,10 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     function loadTasks() {
         vm.tasks = RpcScheduledTaskService.query({registryIdentity: $rootScope.selectedRegistryIdentity,
             interfaceName: vm.entity.interfaceName, form: vm.entity.form, version: vm.entity.version});
+    }
+
+    function queryMethods() {
+        vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url});
     }
 
     function selectMethod() {
@@ -1901,6 +1905,7 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
         RpcProviderService.activate({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: entity.url},
             function (response) {
                 vm.entity.active = true;
+                queryMethods();
             });
     }
 
