@@ -1923,6 +1923,22 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     }
 
     function saveOptions() {
+        angular.forEach(vm.options, function (val, key) {
+            if(val.type == 'Integer') {
+                if(val.intValue != null && val.intValue >= 0) {
+                    val.value = '' + val.intValue;
+                } else if(val.intValue == null) {
+                    val.value = '';
+                }
+            } else if(val.type == 'Boolean') {
+                if(val.booleanValue != null && val.booleanValue) {
+                    val.value = '' + val.booleanValue;
+                } else if(val.booleanValue == null) {
+                    val.value = '';
+                }
+            }
+        });
+
         RpcProviderService.saveOptions({registryIdentity: $rootScope.selectedRegistryIdentity, url: entity.url, options: vm.options},
             function () {
                 var tab;

@@ -22,20 +22,8 @@ public class OptionMetaDTO extends OptionMeta {
         return (StringUtils.isEmpty(value) || "true".equals(value) || "false".equals(value)) ? null : Integer.parseInt(value);
     }
 
-    public void setIntValue(Integer intValue) {
-        if (intValue != null) {
-            value = intValue.toString();
-        }
-    }
-
     public Boolean getBooleanValue() {
         return StringUtils.isEmpty(value) ? null : "true".equals(value);
-    }
-
-    public void setBooleanValue(Boolean booleanValue) {
-        if (booleanValue != null) {
-            value = "" + booleanValue;
-        }
     }
 
     public static OptionMetaDTO of(OptionMeta optionMeta) {

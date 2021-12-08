@@ -189,7 +189,7 @@ public class RpcProviderController {
         for (OptionMetaDTO next : optionsDTO.getOptions()) {
             if (StringUtils.isEmpty(next.getValue()) || next.getDefaultValue().equals(next.getValue())) {
                 providerUrl.getOptions().remove(next.getName());
-            } else {
+            } else if(next.getType().equals("Integer")){
                 providerUrl.addOption(next.getName(), next.getValue());
             }
         }
