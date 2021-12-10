@@ -2,7 +2,7 @@ package org.infinity.luix.democlient;
 
 import com.dtflys.forest.springboot.annotation.ForestScan;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.spring.boot.EnableRpc;
+import org.infinity.luix.spring.boot.EnableLuixRpc;
 import org.infinity.luix.spring.enhancement.kryo.serializer.*;
 import org.infinity.luix.utilities.serializer.kryo.KryoUtils;
 import org.springframework.boot.SpringApplication;
@@ -17,7 +17,7 @@ import javax.annotation.PostConstruct;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class, MongoAutoConfiguration.class})
 @Slf4j
-@EnableRpc
+@EnableLuixRpc
 @ForestScan(basePackages = "org.infinity.luix.democlient.restservice")
 public class LuixDemoClientLauncher {
 

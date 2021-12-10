@@ -1,6 +1,6 @@
 package org.infinity.luix.demoserver;
 
-import org.infinity.luix.spring.boot.EnableRpc;
+import org.infinity.luix.spring.boot.EnableLuixRpc;
 import org.infinity.luix.spring.enhancement.kryo.serializer.*;
 import org.infinity.luix.utilities.serializer.kryo.KryoUtils;
 import org.springframework.boot.SpringApplication;
@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 
 import javax.annotation.PostConstruct;
 
-@EnableRpc
+@EnableLuixRpc
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class LuixDemoServerLauncher {
     public static ConfigurableApplicationContext applicationContext;

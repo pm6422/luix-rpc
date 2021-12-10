@@ -49,7 +49,7 @@ public class RpcServiceScanRegistrar implements ImportBeanDefinitionRegistrar {
      * @return packages to be scanned
      */
     private Set<String> getScanBasePackages(AnnotationMetadata metadata) {
-        AnnotationAttributes attributes = AnnotationAttributes.fromMap(metadata.getAnnotationAttributes(EnableRpc.class.getName()));
+        AnnotationAttributes attributes = AnnotationAttributes.fromMap(metadata.getAnnotationAttributes(EnableLuixRpc.class.getName()));
         String[] scanBasePackages = Objects.requireNonNull(attributes).getStringArray("scanBasePackages");
         // Keep order
         Set<String> packagesToScan = new LinkedHashSet<>(Arrays.asList(scanBasePackages));

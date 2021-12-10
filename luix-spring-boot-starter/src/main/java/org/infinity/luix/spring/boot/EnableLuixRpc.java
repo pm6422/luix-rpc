@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Import(RpcServiceScanRegistrar.class)
-public @interface EnableRpc {
+public @interface EnableLuixRpc {
 
     String[] scanBasePackages() default {};
 }

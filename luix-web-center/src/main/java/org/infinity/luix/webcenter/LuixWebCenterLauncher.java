@@ -1,13 +1,13 @@
 package org.infinity.luix.webcenter;
 
-import org.infinity.luix.spring.boot.EnableRpc;
+import org.infinity.luix.spring.boot.EnableLuixRpc;
 import org.infinity.luix.webcenter.config.ApplicationProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication
-@EnableRpc
+@EnableLuixRpc
 @EnableConfigurationProperties({ApplicationProperties.class})
 public class LuixWebCenterLauncher {
     /**
