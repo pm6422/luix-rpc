@@ -12,8 +12,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 
 import javax.annotation.PostConstruct;
 
-@EnableLuixRpc
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
+@EnableLuixRpc
 public class LuixDemoServerLauncher {
     public static ConfigurableApplicationContext applicationContext;
 
