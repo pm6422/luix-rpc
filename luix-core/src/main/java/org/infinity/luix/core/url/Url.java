@@ -29,7 +29,7 @@ public final class Url implements Serializable {
      * URL Pattern
      * <scheme>://<host>:<port>/<path>?<optionKey>=<optionValue>
      * e.g.
-     * infinity://172.25.11.79:26010/org.infinity.luix.service.AppService?healthChecker=false&requestTimeout=1000
+     * infinity://172.25.11.79:16010/org.infinity.luix.service.AppService?healthChecker=false&requestTimeout=1000
      *
      * <scheme>=infinity|direct
      */

@@ -58,7 +58,7 @@ public abstract class ZookeeperUtils {
      *
      * @param zkClient      zk client
      * @param statusDirPath status directory path, e.g. /infinity/default/org.infinity.app.common.service.AppService/active
-     * @param fileNames     address file names list, e.g. 172.25.11.111:26010,172.25.11.222:26010
+     * @param fileNames     address file names list, e.g. 172.25.11.111:16010,172.25.11.222:16010
      * @return provider urls
      */
     public static List<Url> readUrls(ZkClient zkClient, String statusDirPath, List<String> fileNames) {

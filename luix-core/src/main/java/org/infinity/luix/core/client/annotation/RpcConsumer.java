@@ -119,7 +119,7 @@ public @interface RpcConsumer {
      * Addresses of RPC provider used to connect RPC provider directly without third party registry
      * Multiple addresses are separated by comma
      *
-     * @return direct urls, e.g. 127.0.0.1:26010,192.168.120.111:26010
+     * @return direct urls, e.g. 127.0.0.1:16010,192.168.120.111:16010
      */
     String providerAddresses() default "";
 }
