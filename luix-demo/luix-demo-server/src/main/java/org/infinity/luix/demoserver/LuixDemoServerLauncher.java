@@ -24,7 +24,16 @@ public class LuixDemoServerLauncher {
      * @param args program arguments
      */
     public static void main(String[] args) {
+        fixM1CpuIssue();
         applicationContext = SpringApplication.run(LuixDemoServerLauncher.class, args);
+    }
+
+    private static void fixM1CpuIssue() {
+        if ("aarch64".equals(System.getProperty("os.arch"))) {
+            // Resolve flapdoodle embed db compatibility issue on M1 CPU
+            // Refer: https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo/issues/337
+            System.setProperty("os.arch", "x86_64");
+        }
     }
 
     @PostConstruct
