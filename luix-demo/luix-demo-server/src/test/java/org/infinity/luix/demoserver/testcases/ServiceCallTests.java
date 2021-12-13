@@ -5,7 +5,6 @@ import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.infinity.luix.core.config.impl.ProtocolConfig;
 import org.infinity.luix.core.config.impl.RegistryConfig;
 import org.infinity.luix.core.server.stub.ProviderStub;
-import org.infinity.luix.core.switcher.impl.SwitcherHolder;
 import org.infinity.luix.demoserver.service.TestService;
 import org.infinity.luix.demoserver.service.impl.TestServiceImpl;
 import org.infinity.luix.demoserver.testcases.base.ZkBaseTest;
