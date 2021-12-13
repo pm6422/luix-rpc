@@ -50,7 +50,7 @@
                             </div>
                             <div class="text-center">
                                 <p>
-                                {{vm.metrics.gauges['jvm.memory.pools.PS-Eden-Space.used'].value / 1000000 | number:0}}M / {{vm.metrics.gauges['jvm.memory.pools.PS-Eden-Space.max'].value / 1000000 | number:0}}M
+                                {{vm.edenSpaceUsed / 1000000 | number:0}}M / {{vm.edenSpaceMax / 1000000 | number:0}}M
                                 </p>
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                             </div>
                             <div class="text-center">
                                 <p>
-                                {{vm.metrics.gauges['jvm.memory.pools.PS-Survivor-Space.used'].value / 1000000 | number:0}}M / {{vm.metrics.gauges['jvm.memory.pools.PS-Survivor-Space.max'].value / 1000000 | number:0}}M
+                                {{vm.survivorSpaceUsed / 1000000 | number:0}}M / {{vm.survivorSpaceMax / 1000000 | number:0}}M
                                 </p>
                             </div>
                         </div>
@@ -72,7 +72,7 @@
                             </div>
                             <div class="text-center">
                                 <p>
-                                {{vm.metrics.gauges['jvm.memory.pools.PS-Old-Gen.used'].value / 1000000 | number:0}}M / {{vm.metrics.gauges['jvm.memory.pools.PS-Old-Gen.max'].value / 1000000 | number:0}}M
+                                {{vm.oldGenUsed / 1000000 | number:0}}M / {{vm.oldGenMax / 1000000 | number:0}}M
                                 </p>
                             </div>
                         </div>

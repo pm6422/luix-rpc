@@ -596,66 +596,66 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
         }
     ];
 
-    var edenSpaceUsed = vm.metrics.gauges['jvm.memory.pools.PS-Eden-Space.used'] ?
+    vm.edenSpaceUsed = vm.metrics.gauges['jvm.memory.pools.PS-Eden-Space.used'] ?
         vm.metrics.gauges['jvm.memory.pools.PS-Eden-Space.used'].value :
         vm.metrics.gauges['jvm.memory.pools.Eden-Space.used'].value;
 
-    var edenSpaceMax = vm.metrics.gauges['jvm.memory.pools.PS-Eden-Space.max'] ?
+    vm.edenSpaceMax = vm.metrics.gauges['jvm.memory.pools.PS-Eden-Space.max'] ?
         vm.metrics.gauges['jvm.memory.pools.PS-Eden-Space.max'].value :
         vm.metrics.gauges['jvm.memory.pools.Eden-Space.max'].value;
     vm.edenSpaceMemory = [
         {
-            value: edenSpaceUsed / 1000000,
+            value: vm.edenSpaceUsed / 1000000,
             color: '#8d7fbf',
             highlight: '#4424bc',
             label: '已使用'
         },
         {
-            value: (edenSpaceMax - edenSpaceUsed) / 1000000,
+            value: (vm.edenSpaceMax - vm.edenSpaceUsed) / 1000000,
             color: '#dedede',
             highlight: '#4424bc',
             label: '未使用'
         }
     ];
 
-    var survivorSpaceUsed = vm.metrics.gauges['jvm.memory.pools.PS-Survivor-Space.used'] ?
+    vm.survivorSpaceUsed = vm.metrics.gauges['jvm.memory.pools.PS-Survivor-Space.used'] ?
         vm.metrics.gauges['jvm.memory.pools.PS-Survivor-Space.used'].value :
         vm.metrics.gauges['jvm.memory.pools.Survivor-Space.used'].value;
 
-    var survivorSpaceMax = vm.metrics.gauges['jvm.memory.pools.PS-Survivor-Space.max'] ?
+    vm.survivorSpaceMax = vm.metrics.gauges['jvm.memory.pools.PS-Survivor-Space.max'] ?
         vm.metrics.gauges['jvm.memory.pools.PS-Survivor-Space.max'].value :
         vm.metrics.gauges['jvm.memory.pools.Survivor-Space.max'].value;
     vm.survivorSpaceMemory = [
         {
-            value: survivorSpaceUsed / 1000000,
+            value: vm.survivorSpaceUsed / 1000000,
             color: '#8d7fbf',
             highlight: '#4424bc',
             label: '已使用'
         },
         {
-            value: (survivorSpaceMax - survivorSpaceUsed) / 1000000,
+            value: (vm.survivorSpaceMax - vm.survivorSpaceUsed) / 1000000,
             color: '#dedede',
             highlight: '#4424bc',
             label: '未使用'
         }
     ];
 
-    var oldGenUsed = vm.metrics.gauges['jvm.memory.pools.PS-Old-Gen.used'] ?
+    vm.oldGenUsed = vm.metrics.gauges['jvm.memory.pools.PS-Old-Gen.used'] ?
         vm.metrics.gauges['jvm.memory.pools.PS-Old-Gen.used'].value :
         vm.metrics.gauges['jvm.memory.pools.Tenured-Gen.used'].value;
 
-    var oldGenMax = vm.metrics.gauges['jvm.memory.pools.PS-Old-Gen.max'] ?
+    vm.oldGenMax = vm.metrics.gauges['jvm.memory.pools.PS-Old-Gen.max'] ?
         vm.metrics.gauges['jvm.memory.pools.PS-Old-Gen.max'].value :
         vm.metrics.gauges['jvm.memory.pools.Tenured-Gen.max'].value;
     vm.oldSpaceMemory = [
         {
-            value: oldGenUsed / 1000000,
+            value: vm.oldGenUsed / 1000000,
             color: '#8d7fbf',
             highlight: '#4424bc',
             label: '已使用'
         },
         {
-            value: (oldGenMax - oldGenUsed) / 1000000,
+            value: (vm.oldGenMax - vm.oldGenUsed) / 1000000,
             color: '#dedede',
             highlight: '#4424bc',
             label: '未使用'
