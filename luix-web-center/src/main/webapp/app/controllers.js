@@ -552,6 +552,23 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
     vm.refreshThreadDumpData = refreshThreadDumpData;
     vm.servicesStats = {};
     vm.updatingMetrics = false;
+
+    vm.markSweepCount = vm.metrics.gauges['jvm.garbage.PS-MarkSweep.count'] ?
+        vm.metrics.gauges['jvm.garbage.PS-MarkSweep.count'].value :
+        vm.metrics.gauges['jvm.garbage.Copy.count'].value;
+
+    vm.markSweepTime = vm.metrics.gauges['jvm.garbage.PS-MarkSweep.time'] ?
+        vm.metrics.gauges['jvm.garbage.PS-MarkSweep.time'].value :
+        vm.metrics.gauges['jvm.garbage.Copy.time'].value;
+
+    vm.scavengeCount = vm.metrics.gauges['jvm.garbage.PS-Scavenge.count'] ?
+        vm.metrics.gauges['jvm.garbage.PS-Scavenge.count'].value :
+        vm.metrics.gauges['jvm.garbage.MarkSweepCompact.count'].value;
+
+    vm.scavengeTime = vm.metrics.gauges['jvm.garbage.PS-Scavenge.time'] ?
+        vm.metrics.gauges['jvm.garbage.PS-Scavenge.time'].value :
+        vm.metrics.gauges['jvm.garbage.MarkSweepCompact.time'].value;
+
     /**
      * Options for Doughnut chart
      */

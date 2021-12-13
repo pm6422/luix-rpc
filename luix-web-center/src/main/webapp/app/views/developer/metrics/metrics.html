@@ -108,10 +108,10 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>{{vm.metrics.gauges['jvm.garbage.PS-MarkSweep.count'].value}}</td>
-                                        <td>{{vm.metrics.gauges['jvm.garbage.PS-MarkSweep.time'].value}}</td>
-                                        <td>{{vm.metrics.gauges['jvm.garbage.PS-Scavenge.count'].value}}</td>
-                                        <td>{{vm.metrics.gauges['jvm.garbage.PS-Scavenge.time'].value}}</td>
+                                        <td>{{vm.markSweepCount}}</td>
+                                        <td>{{vm.markSweepTime}}</td>
+                                        <td>{{vm.scavengeCount}}</td>
+                                        <td>{{vm.scavengeTime}}</td>
                                     </tr>
                                 </tbody>
                             </table>
