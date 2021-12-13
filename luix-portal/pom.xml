@@ -20,6 +20,7 @@
     <properties>
         <app.server.port>80</app.server.port>
         <java.version>1.8</java.version>
+        <lombok.version>1.18.20</lombok.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
@@ -94,7 +95,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.20</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
