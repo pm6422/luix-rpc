@@ -40,7 +40,7 @@
         <grizzly_version>2.1.4</grizzly_version>
         <grpc.version>1.22.1</grpc.version>
         <gson_version>2.8.5</gson_version>
-        <guava_version>20.0</guava_version>
+        <guava_version>30.0-jre</guava_version>
         <hessian_lite_version>3.2.6</hessian_lite_version>
         <hessian_version>4.0.65</hessian_version>
         <hibernate_validator_version>6.1.7.Final</hibernate_validator_version>
