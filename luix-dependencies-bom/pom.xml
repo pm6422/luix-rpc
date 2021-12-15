@@ -62,7 +62,6 @@
         <kryo_serializers_version>0.45</kryo_serializers_version>
         <kryo_version>5.1.1</kryo_version>
         <log4j2_version>2.16.0</log4j2_version>
-        <log4j_version>1.2.16</log4j_version>
         <logback_version>1.2.3</logback_version>
         <lombok_version>1.18.20</lombok_version>
         <maven_flatten_pluggin_version>1.1.0</maven_flatten_pluggin_version>
@@ -488,11 +487,6 @@
                 <groupId>javax.xml.bind</groupId>
                 <artifactId>jaxb-api</artifactId>
                 <version>${jaxb_version}</version>
-            </dependency>
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j_version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.avro</groupId>
