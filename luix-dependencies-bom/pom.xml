@@ -44,7 +44,7 @@
         <hessian_lite_version>3.2.6</hessian_lite_version>
         <hessian_version>4.0.65</hessian_version>
         <hibernate_validator_version>6.1.7.Final</hibernate_validator_version>
-        <httpclient_version>4.5.3</httpclient_version>
+        <httpclient_version>4.5.13</httpclient_version>
         <httpcore_version>4.4.6</httpcore_version>
         <jackson_datatype_problem_version>0.23.0</jackson_datatype_problem_version>
         <jackson_version>2.11.0</jackson_version>
