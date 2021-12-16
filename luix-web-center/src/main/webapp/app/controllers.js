@@ -589,13 +589,13 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
             value: vm.metrics.gauges['jvm.memory.total.used'].value / 1000000,
             color: '#8d7fbf',
             highlight: '#4424bc',
-            label: '已使用'
+            label: 'Used'
         },
         {
             value: (vm.metrics.gauges['jvm.memory.total.max'].value - vm.metrics.gauges['jvm.memory.total.used'].value) / 1000000,
             color: '#dedede',
             highlight: '#4424bc',
-            label: '未使用'
+            label: 'Unused'
         }
     ];
 
@@ -604,13 +604,13 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
             value: vm.metrics.gauges['jvm.memory.heap.used'].value / 1000000,
             color: '#8d7fbf',
             highlight: '#4424bc',
-            label: '已使用'
+            label: 'Used'
         },
         {
             value: (vm.metrics.gauges['jvm.memory.heap.max'].value - vm.metrics.gauges['jvm.memory.heap.used'].value) / 1000000,
             color: '#dedede',
             highlight: '#4424bc',
-            label: '未使用'
+            label: 'Unused'
         }
     ];
 
@@ -626,13 +626,13 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
             value: vm.edenSpaceUsed / 1000000,
             color: '#8d7fbf',
             highlight: '#4424bc',
-            label: '已使用'
+            label: 'Used'
         },
         {
             value: (vm.edenSpaceMax - vm.edenSpaceUsed) / 1000000,
             color: '#dedede',
             highlight: '#4424bc',
-            label: '未使用'
+            label: 'Unused'
         }
     ];
 
@@ -648,13 +648,13 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
             value: vm.survivorSpaceUsed / 1000000,
             color: '#8d7fbf',
             highlight: '#4424bc',
-            label: '已使用'
+            label: 'Used'
         },
         {
             value: (vm.survivorSpaceMax - vm.survivorSpaceUsed) / 1000000,
             color: '#dedede',
             highlight: '#4424bc',
-            label: '未使用'
+            label: 'Unused'
         }
     ];
 
@@ -670,13 +670,13 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
             value: vm.oldGenUsed / 1000000,
             color: '#8d7fbf',
             highlight: '#4424bc',
-            label: '已使用'
+            label: 'Used'
         },
         {
             value: (vm.oldGenMax - vm.oldGenUsed) / 1000000,
             color: '#dedede',
             highlight: '#4424bc',
-            label: '未使用'
+            label: 'Unused'
         }
     ];
 
@@ -685,13 +685,13 @@ function MetricsController($state, $scope, $uibModal, MetricsService, metrics) {
             value: vm.metrics.gauges['jvm.memory.non-heap.used'].value / 1000000,
             color: '#8d7fbf',
             highlight: '#4424bc',
-            label: '已使用'
+            label: 'Used'
         },
         {
             value: (vm.metrics.gauges['jvm.memory.non-heap.committed'].value - vm.metrics.gauges['jvm.memory.non-heap.used'].value) / 1000000,
             color: '#dedede',
             highlight: '#4424bc',
-            label: '未使用'
+            label: 'Unused'
         }
     ];
 
