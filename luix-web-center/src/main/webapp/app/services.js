@@ -39,6 +39,7 @@ angular
     .factory('OAuth2RefreshTokenService', OAuth2RefreshTokenService)
     .factory('OAuth2ApprovalService', OAuth2ApprovalService)
     .factory('AdminMenuService', AdminMenuService)
+    .factory('RpcRegistryService', RpcRegistryService)
     .factory('RpcApplicationService', RpcApplicationService)
     .factory('RpcServerService', RpcServerService)
     .factory('RpcServiceService', RpcServiceService)
@@ -1027,6 +1028,7 @@ function AuthServerService($http, $localStorage) {
     function logout() {
         $http.post('api/accounts/logout').then(function () {
             delete $localStorage.authenticationToken;
+            delete $localStorage.selectedRegistryIdentity;
         });
     }
 }
@@ -1328,6 +1330,17 @@ function AdminMenuService($resource) {
     return service;
 }
 /**
+ * RpcRegistryService
+ */
+function RpcRegistryService($rootScope, $localStorage) {
+    var service = {
+        'getSelectedRegistryIdentity': function(){
+             return $rootScope.selectedRegistryIdentity ? $rootScope.selectedRegistryIdentity : $localStorage.selectedRegistryIdentity;
+        }
+    };
+    return service;
+}
+/**
  * RpcApplicationService
  */
 function RpcApplicationService($resource) {
@@ -1343,7 +1356,6 @@ function RpcApplicationService($resource) {
     });
     return service;
 }
-
 /**
  * RpcServerService
  */

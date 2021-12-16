@@ -21,8 +21,8 @@
             <div class="col-lg-6">
                 <dl class="dl-horizontal">
                     <dt>Status:</dt>
-                    <dd ng-if="vm.entity.active"><span class="label label-primary">Active</span></dd>
-                    <dd ng-if="!vm.entity.active"><span class="label label-danger">Inactive</span></dd>
+                    <dd ng-show="vm.entity.active"><span class="label label-primary">Active</span></dd>
+                    <dd ng-show="!vm.entity.active"><span class="label label-danger">Inactive</span></dd>
                 </dl>
             </div>
         </div>

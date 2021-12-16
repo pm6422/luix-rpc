@@ -74,7 +74,7 @@ angular
  * Contains several global data used in different view
  *
  */
-function MainController($http, $rootScope, $scope, $state, AuthenticationService, PrincipalService, AuthorityAdminMenuService, AuthServerService, AlertUtils, APP_NAME, COMPANY_NAME) {
+function MainController($http, $rootScope, $scope, $state, AuthenticationService, PrincipalService, AuthorityAdminMenuService, AuthServerService, AlertUtils, APP_NAME, COMPANY_NAME, $localStorage) {
     var main = this;
     main.account = null;
     main.isAuthenticated = null;
@@ -129,6 +129,7 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
             main.registries = response.data;
             if(main.registries) {
                 $rootScope.selectedRegistryIdentity = main.registries[0].identity;
+                $localStorage.selectedRegistryIdentity = $rootScope.selectedRegistryIdentity;
             }
         });
     }
@@ -1553,17 +1554,17 @@ function ControlController($state, $http, AlertUtils) {
 /**
  * RpcApplicationListController
  */
-function RpcApplicationListController($state, $rootScope, RpcApplicationService) {
+function RpcApplicationListController($state, $rootScope, RpcApplicationService, RpcRegistryService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.entities = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity});
+    vm.entities = RpcApplicationService.query({registryIdentity: RpcRegistryService.getSelectedRegistryIdentity()});
 }
 /**
  * RpcServerListController
  */
-function RpcServerListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcServerService) {
+function RpcServerListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcServerService, RpcRegistryService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -1587,7 +1588,7 @@ function RpcServerListController($state, $rootScope, AlertUtils, ParseLinksUtils
         RpcServerService.query({
             page: pagingParams.page - 1,
             size: vm.itemsPerPage,
-            registryIdentity: $rootScope.selectedRegistryIdentity,
+            registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(),
             address: vm.criteria.address,
             sort: sort()
         }, function (result, headers) {
@@ -1641,13 +1642,16 @@ function RpcServerDetailsController($state, $stateParams, RpcServerService, enti
     vm.refresh = refresh;
 
     function refresh() {
-        vm.entity = RpcServerService.get({extension: $stateParams.id});
+        RpcServerService.get({extension: $stateParams.id},
+            function (response) {
+                vm.entity = response;
+            });
     }
 }
 /**
  * RpcServiceListController
  */
-function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcServiceService) {
+function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcServiceService, RpcRegistryService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -1673,7 +1677,7 @@ function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtil
         RpcServiceService.query({
             page: pagingParams.page - 1,
             size: vm.itemsPerPage,
-            registryIdentity: $rootScope.selectedRegistryIdentity,
+            registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(),
             interfaceName: vm.criteria.interfaceName,
             sort: sort()
         }, function (result, headers) {
@@ -1714,14 +1718,14 @@ function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtil
     }
 
     function deactivate(entity) {
-        RpcServiceService.deactivate({registryIdentity: $rootScope.selectedRegistryIdentity, interfaceName: entity.interfaceName},
+        RpcServiceService.deactivate({registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(), interfaceName: entity.interfaceName},
             function (response) {
                 vm.loadAll();
             });
     }
 
     function activate(entity) {
-        RpcServiceService.activate({registryIdentity: $rootScope.selectedRegistryIdentity, interfaceName: entity.interfaceName},
+        RpcServiceService.activate({registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(), interfaceName: entity.interfaceName},
             function (response) {
                 vm.loadAll();
             });
@@ -1730,12 +1734,12 @@ function RpcServiceListController($state, $rootScope, AlertUtils, ParseLinksUtil
 /**
  * RpcProviderListController
  */
-function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcProviderService, RpcApplicationService) {
+function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcProviderService, RpcApplicationService, RpcRegistryService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.applications = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity, extension: 'names'});
+    vm.applications = RpcApplicationService.query({registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(), extension: 'names'});
     vm.links = null;
     vm.loadAll = loadAll;
     vm.loadPage = loadPage;
@@ -1755,7 +1759,7 @@ function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUti
         RpcProviderService.query({
             page: pagingParams.page - 1,
             size: vm.itemsPerPage,
-            registryIdentity: $rootScope.selectedRegistryIdentity,
+            registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(),
             application: vm.criteria.application,
             interfaceName: vm.criteria.interfaceName,
             address: vm.criteria.address,
@@ -1802,7 +1806,7 @@ function RpcProviderListController($state, $rootScope, AlertUtils, ParseLinksUti
 /**
  * RpcProviderDetailsController
  */
-function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, AlertUtils, entity, RpcServiceService, RpcProviderService, RpcScheduledTaskService) {
+function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, AlertUtils, entity, RpcServiceService, RpcProviderService, RpcScheduledTaskService, RpcRegistryService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -1840,7 +1844,7 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
 
     vm.loadTasks();
 
-    RpcServiceService.query({registryIdentity: $rootScope.selectedRegistryIdentity, interfaceName: vm.entity.interfaceName},
+    RpcServiceService.query({registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(), interfaceName: vm.entity.interfaceName},
         function (response) {
             if(_.size(response) > 0) {
                 vm.entity.consuming = response[0].consuming;
@@ -1848,12 +1852,12 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
         });
 
     function loadTasks() {
-        vm.tasks = RpcScheduledTaskService.query({registryIdentity: $rootScope.selectedRegistryIdentity,
+        vm.tasks = RpcScheduledTaskService.query({registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(),
             interfaceName: vm.entity.interfaceName, form: vm.entity.form, version: vm.entity.version});
     }
 
     function queryMethods() {
-        vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url});
+        vm.methods = RpcProviderService.queryMethods({registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(), providerUrl: vm.entity.url});
     }
 
     function selectMethod() {
@@ -1879,7 +1883,7 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
 
     function invoke() {
         if(vm.selectedMethod) {
-            vm.selectedMethod.registryIdentity = $rootScope.selectedRegistryIdentity;
+            vm.selectedMethod.registryIdentity = RpcRegistryService.getSelectedRegistryIdentity();
             vm.selectedMethod.providerUrl = vm.entity.url;
             vm.selectedMethod.args = [];
             angular.forEach(vm.args, function (val, key) {
@@ -1898,7 +1902,7 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
         vm.healthMessage = '';
         vm.healthSuccess = false;
         vm.healthFailure = false;
-        setTimeout(function(){ RpcProviderService.checkHealth({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.entity.url},
+        setTimeout(function(){ RpcProviderService.checkHealth({registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(), providerUrl: vm.entity.url},
             function (response) {
                 if('OK' == response.data) {
                     vm.checkProgress = 100;
@@ -1912,14 +1916,14 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
     }
 
     function deactivate(entity) {
-        RpcProviderService.deactivate({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: entity.url},
+        RpcProviderService.deactivate({registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(), providerUrl: entity.url},
             function (response) {
                 vm.entity.active = false;
             });
     }
 
     function activate(entity) {
-        RpcProviderService.activate({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: entity.url},
+        RpcProviderService.activate({registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(), providerUrl: entity.url},
             function (response) {
                 vm.entity.active = true;
                 queryMethods();
@@ -1956,7 +1960,7 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
             }
         });
 
-        RpcProviderService.saveOptions({registryIdentity: $rootScope.selectedRegistryIdentity, url: entity.url, options: vm.options},
+        RpcProviderService.saveOptions({registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(), url: entity.url, options: vm.options},
             function () {
                 var tab;
                 if(vm.tabInvocation) {
@@ -1997,7 +2001,7 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
 /**
  * RpcScheduledTaskDialogController
  */
-function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uibModalInstance, $filter, RpcScheduledTaskService, RpcProviderService, entity) {
+function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uibModalInstance, $filter, RpcScheduledTaskService, RpcProviderService, RpcRegistryService, entity) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -2022,7 +2026,7 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
         RpcProviderService.get({extension: $stateParams.id},
             function (response) {
                 vm.provider = response;
-                vm.methods = RpcProviderService.queryMethods({registryIdentity: $rootScope.selectedRegistryIdentity, providerUrl: vm.provider.url});
+                vm.methods = RpcProviderService.queryMethods({registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(), providerUrl: vm.provider.url});
             });
     }
 
@@ -2056,7 +2060,7 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
             RpcScheduledTaskService.update(vm.entity, onSaveSuccess, onSaveError);
         } else {
             if(vm.selectedMethod) {
-                vm.entity.registryIdentity = $rootScope.selectedRegistryIdentity;
+                vm.entity.registryIdentity = RpcRegistryService.getSelectedRegistryIdentity();
                 vm.entity.interfaceName = vm.provider.interfaceName;
                 vm.entity.form = vm.provider.form;
                 vm.entity.version = vm.provider.version;
@@ -2084,7 +2088,7 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
 /**
  * RpcScheduledTaskListController
  */
-function RpcScheduledTaskListController($rootScope, $state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcScheduledTaskService) {
+function RpcScheduledTaskListController($rootScope, $state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcScheduledTaskService, RpcRegistryService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -2111,7 +2115,7 @@ function RpcScheduledTaskListController($rootScope, $state, AlertUtils, ParseLin
             page: pagingParams.page - 1,
             size: vm.itemsPerPage,
             sort: sort(),
-            registryIdentity: $rootScope.selectedRegistryIdentity,
+            registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(),
             name: vm.criteria.name,
             interfaceName: vm.criteria.interfaceName
         }, function (result, headers) {
@@ -2183,7 +2187,7 @@ function RpcScheduledTaskListController($rootScope, $state, AlertUtils, ParseLin
 /**
  * RpcScheduledTaskHistoryListController
  */
-function RpcScheduledTaskHistoryListController($rootScope, $state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcScheduledTaskHistoryService) {
+function RpcScheduledTaskHistoryListController($rootScope, $state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcScheduledTaskHistoryService, RpcRegistryService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
@@ -2208,7 +2212,7 @@ function RpcScheduledTaskHistoryListController($rootScope, $state, AlertUtils, P
             page: pagingParams.page - 1,
             size: vm.itemsPerPage,
             sort: sort(),
-            registryIdentity: $rootScope.selectedRegistryIdentity,
+            registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(),
             name: vm.criteria.name
         }, function (result, headers) {
             vm.links = ParseLinksUtils.parse(headers('link'));
@@ -2270,12 +2274,12 @@ function RpcScheduledTaskHistoryDetailsController($state, $stateParams, entity) 
 /**
  * RpcConsumerListController
  */
-function RpcConsumerListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcConsumerService, RpcApplicationService) {
+function RpcConsumerListController($state, $rootScope, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, RpcConsumerService, RpcApplicationService, RpcRegistryService) {
     var vm = this;
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.applications = RpcApplicationService.query({registryIdentity: $rootScope.selectedRegistryIdentity, extension: 'names'});
+    vm.applications = RpcApplicationService.query({registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(), extension: 'names'});
     vm.links = null;
     vm.loadAll = loadAll;
     vm.loadPage = loadPage;
@@ -2295,7 +2299,7 @@ function RpcConsumerListController($state, $rootScope, AlertUtils, ParseLinksUti
         RpcConsumerService.query({
             page: pagingParams.page - 1,
             size: vm.itemsPerPage,
-            registryIdentity: $rootScope.selectedRegistryIdentity,
+            registryIdentity: RpcRegistryService.getSelectedRegistryIdentity(),
             application: vm.criteria.application,
             interfaceName: vm.criteria.interfaceName,
             address: vm.criteria.address,
