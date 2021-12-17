@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,8 +66,13 @@ public class SystemController {
     @ApiOperation("reset database")
     @GetMapping("/open-api/systems/reset-database")
     public String resetDatabase() {
+        reset();
+        return "Reset database successfully.";
+    }
+
+    @Scheduled(cron = "0 0/5 * * * ?")
+    public void reset() {
         mongoTemplate.getDb().drop();
         changockBase.execute();
-        return "Reset database successfully.";
     }
 }

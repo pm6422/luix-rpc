@@ -35,8 +35,8 @@ public class RunnableTask implements Runnable {
 
     private final ApplicationContext             applicationContext;
     private final ScheduledTaskHistoryRepository scheduledTaskHistoryRepository;
-    private final ScheduledTaskLockRepository scheduledTaskLockRepository;
-    private final ScheduledTask               scheduledTask;
+    private final ScheduledTaskLockRepository    scheduledTaskLockRepository;
+    private final ScheduledTask                  scheduledTask;
 
     @Override
     public void run() {
