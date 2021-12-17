@@ -189,7 +189,7 @@ public class RpcProviderController {
         for (OptionMetaDTO next : optionsDTO.getOptions()) {
             if (StringUtils.isEmpty(next.getValue()) || next.getDefaultValue().equals(next.getValue())) {
                 providerUrl.getOptions().remove(next.getName());
-            } else if(next.getType().equals("Integer")){
+            } else if (next.getType().equals("Integer")) {
                 providerUrl.addOption(next.getName(), next.getValue());
             }
         }
@@ -213,7 +213,8 @@ public class RpcProviderController {
         ConsumerStub<?> consumerStub = ConsumerStubFactory.create(infinityProperties.getApplication(),
                 rpcRegistryService.findRegistryConfig(registryIdentity),
                 infinityProperties.getAvailableProtocol(),
-                providerUrl.getPath(), SERIALIZER_NAME_HESSIAN2, providerUrl.getForm(), providerUrl.getVersion(), FAULT_TOLERANCE_VAL_BROADCAST);
+                providerUrl.getPath(), SERIALIZER_NAME_HESSIAN2, providerUrl.getForm(), providerUrl.getVersion(),
+                60 * 1000, FAULT_TOLERANCE_VAL_BROADCAST);
 
         Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);

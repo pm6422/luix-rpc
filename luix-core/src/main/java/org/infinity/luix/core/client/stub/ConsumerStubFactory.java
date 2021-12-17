@@ -104,6 +104,20 @@ public abstract class ConsumerStubFactory {
     public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
                                          RegistryConfig registryConfig,
                                          ProtocolConfig protocolConfig,
+                                         String interfaceName,
+                                         String serializer,
+                                         String form,
+                                         String version,
+                                         Integer requestTimeout,
+                                         String faultTolerance) {
+        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), null, interfaceName,
+                null, serializer, form, version, null, faultTolerance, null, null,
+                requestTimeout, null, null);
+    }
+
+    public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
+                                         RegistryConfig registryConfig,
+                                         ProtocolConfig protocolConfig,
                                          String providerAddresses,
                                          String interfaceName,
                                          String serializer,

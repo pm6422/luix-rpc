@@ -87,6 +87,7 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
     public boolean cancel() {
         Exception exception = new RpcFrameworkException("Processed request in " + (System.currentTimeMillis() - createdTime)
                 + "ms with address " + serverUrl.getAddress() + " and " + request);
+        log.error(exception.getMessage());
         return cancel(exception);
     }
 

@@ -5,18 +5,18 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.luix.core.client.ratelimit.RateLimiter;
 import org.infinity.luix.core.client.request.Requestable;
+import org.infinity.luix.core.client.request.impl.RpcRequest;
+import org.infinity.luix.core.client.stub.ConsumerStub;
 import org.infinity.luix.core.constant.ConsumerConstants;
 import org.infinity.luix.core.constant.ProtocolConstants;
 import org.infinity.luix.core.constant.ServiceConstants;
+import org.infinity.luix.core.exception.ExceptionUtils;
+import org.infinity.luix.core.exception.RpcAbstractException;
+import org.infinity.luix.core.exception.impl.RpcInvocationException;
 import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.server.response.impl.RpcResponse;
 import org.infinity.luix.core.utils.MethodParameterUtils;
 import org.infinity.luix.core.utils.RpcConfigValidator;
-import org.infinity.luix.core.client.request.impl.RpcRequest;
-import org.infinity.luix.core.client.stub.ConsumerStub;
-import org.infinity.luix.core.exception.ExceptionUtils;
-import org.infinity.luix.core.exception.RpcAbstractException;
-import org.infinity.luix.core.exception.impl.RpcInvocationException;
 import org.infinity.luix.utilities.serializer.DeserializableResult;
 
 import java.lang.reflect.Method;
@@ -78,7 +78,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         Responseable response;
         try {
             response = consumerStub.getInvokerInstance().invoke(request);
-            return response.getResult();
+            return response == null ? null : response.getResult();
         } catch (Exception e) {
             return handleError(request, e);
         } finally {

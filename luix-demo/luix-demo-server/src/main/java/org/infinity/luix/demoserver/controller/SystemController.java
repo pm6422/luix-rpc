@@ -66,13 +66,12 @@ public class SystemController {
     @ApiOperation("reset database")
     @GetMapping("/open-api/systems/reset-database")
     public String resetDatabase() {
-        reset();
+        mongoTemplate.getDb().drop();
+        changockBase.execute();
         return "Reset database successfully.";
     }
 
     @Scheduled(cron = "0 0/5 * * * ?")
     public void reset() {
-        mongoTemplate.getDb().drop();
-        changockBase.execute();
     }
 }
