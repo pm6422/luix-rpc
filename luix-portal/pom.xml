@@ -273,13 +273,13 @@
     -->
     <profiles>
         <profile>
-            <id>test</id>
+            <id>demo</id>
             <activation>
                 <!-- default Spring profiles -->
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <spring.profiles.active>test</spring.profiles.active>
+                <spring.profiles.active>demo</spring.profiles.active>
             </properties>
         </profile>
         <profile>

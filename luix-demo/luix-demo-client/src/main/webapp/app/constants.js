@@ -10,6 +10,6 @@
         .constant('PAGINATION_CONSTANTS', {
             'itemsPerPage': 10
          })
-        //        .constant('ENV', 'test')
+        //        .constant('ENV', 'demo')
         .constant('DEBUG_INFO_ENABLED', true);
 })();
