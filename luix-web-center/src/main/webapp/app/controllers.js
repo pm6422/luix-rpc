@@ -1973,10 +1973,12 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
                     tab = 'configure';
                 }
 
-                $state.transitionTo($state.$current, {
-                    id: $stateParams.id,
-                    tab: tab
-                }, {reload: true});
+                setTimeout(function(){
+                    $state.transitionTo($state.$current, {
+                        id: $stateParams.id,
+                        tab: tab
+                    }, {reload: true});
+                }, 200);
             });
     }
 
