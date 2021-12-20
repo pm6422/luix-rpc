@@ -1978,7 +1978,7 @@ function RpcProviderDetailsController($state, $stateParams, $rootScope, $http, A
                         id: $stateParams.id,
                         tab: tab
                     }, {reload: true});
-                }, 200);
+                }, 500);
             });
     }
 
