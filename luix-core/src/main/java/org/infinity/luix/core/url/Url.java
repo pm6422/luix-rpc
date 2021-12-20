@@ -440,7 +440,7 @@ public final class Url implements Serializable {
     }
 
     /**
-     * Get method level parameter value
+     * Get method level option value
      *
      * @param methodName       method name
      * @param methodParameters method parameter class name list string. e.g, java.util.List,java.lang.Long
@@ -448,25 +448,15 @@ public final class Url implements Serializable {
      * @param defaultValue     parameter default value
      * @return value
      */
-    public Integer getMethodParameter(String methodName, String methodParameters, String name, int defaultValue) {
-        String key = METHOD_CONFIG_PREFIX + getMethodSignature(methodName, methodParameters) + "." + name;
-        Number n = getNumOptions().get(key);
-        if (n != null) {
-            return n.intValue();
-        }
-        String value = getMethodParameter(methodName, methodParameters, name);
-        if (StringUtils.isEmpty(value)) {
-            return defaultValue;
-        }
-        int i = Integer.parseInt(value);
-        getNumOptions().put(key, i);
-        return i;
+    public Integer getMethodLevelOption(String methodName, String methodParameters, String name, int defaultValue) {
+        String value = getMethodLevelOption(methodName, methodParameters, name);
+        return StringUtils.isNotEmpty(value) ? Integer.valueOf(value) : defaultValue;
     }
 
-    public String getMethodParameter(String methodName, String methodParameters, String name) {
+    public String getMethodLevelOption(String methodName, String methodParameters, String name) {
         String key = METHOD_CONFIG_PREFIX + getMethodSignature(methodName, methodParameters) + "." + name;
         String value = getOption(key);
-        return StringUtils.isEmpty(value) ? getOption(name) : value;
+        return StringUtils.isNotEmpty(value) ? value : getOption(name);
     }
 
     @Override

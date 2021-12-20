@@ -94,11 +94,11 @@ public class NettyChannel implements Channel {
     private int getTimeout(Requestable request) {
         int timeout;
         // Get method level parameter value
-        timeout = nettyClient.getProviderUrl().getMethodParameter(
+        timeout = nettyClient.getProviderUrl().getMethodLevelOption(
                 request.getMethodName(),
                 request.getMethodParameters(),
                 REQUEST_TIMEOUT, REQUEST_TIMEOUT_VAL_DEFAULT);
-        if (REQUEST_TIMEOUT_VAL_DEFAULT != timeout) {
+        if (REQUEST_TIMEOUT_VAL_DEFAULT != timeout && timeout != 0) {
             return timeout;
         }
 

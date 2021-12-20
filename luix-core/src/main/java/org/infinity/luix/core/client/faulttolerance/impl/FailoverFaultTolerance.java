@@ -32,7 +32,7 @@ public class FailoverFaultTolerance extends AbstractFaultTolerance {
         } else {
             // Get method level parameter value
             retryCount = allActiveSenders.get(0).getProviderUrl()
-                    .getMethodParameter(request.getMethodName(), request.getMethodParameters(),
+                    .getMethodLevelOption(request.getMethodName(), request.getMethodParameters(),
                             ServiceConstants.RETRY_COUNT, ServiceConstants.RETRY_COUNT_VAL_DEFAULT);
         }
 
