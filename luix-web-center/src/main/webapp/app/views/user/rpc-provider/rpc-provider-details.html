@@ -107,7 +107,7 @@
                             </div>
                             <div class="col-sm-12 m-b-md">
                                 <div class="btn-group pull-right">
-                                    <button class="btn btn-primary btn-sm" ng-click="vm.saveOptions()" has-authority-directive="ROLE_ADMIN">Save</button>
+                                    <button class="btn btn-primary btn-sm" ng-click="vm.saveOptions()" has-authority-directive="ROLE_ADMIN" ng-disabled="!vm.entity.active">Save</button>
                                 </div>
                             </div>
                         </uib-tab>
