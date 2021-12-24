@@ -255,6 +255,7 @@
                             <SLEEP_TIME>1</SLEEP_TIME>
                             <START_CLASS>${start-class}</START_CLASS>
                             <EMBEDDED_MONGO_ARTIFACTS>/app/embedmongo</EMBEDDED_MONGO_ARTIFACTS>
+                            <WORKDIR>/app</WORKDIR>
                         </environment>
                         <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
                         <user>1000</user>
