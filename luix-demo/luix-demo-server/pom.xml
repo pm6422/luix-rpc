@@ -225,7 +225,7 @@
                 <version>3.1.4</version>
                 <configuration>
                     <from>
-                        <image>openjdk:8-jdk-alpine</image>
+                        <image>eclipse-temurin:8-jre-focal</image>
                         <platforms>
                             <platform>
                                 <architecture>amd64</architecture>
