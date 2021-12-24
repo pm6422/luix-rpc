@@ -28,18 +28,17 @@ public class PrintAppInfoApplicationRunner implements ApplicationRunner {
         String appBanner = StreamUtils.copyToString(new ClassPathResource("config/banner-app.txt").getInputStream(),
                 Charset.defaultCharset());
         log.info(appBanner, env.getProperty("spring.application.name"),
-                StringUtils.isEmpty(env.getProperty("server.ssl.key-store")) ? "http" : "https",
+                "http",
                 "127.0.0.1",
                 env.getProperty("server.port"),
                 StringUtils.defaultString(env.getProperty("server.servlet.context-path")),
-                StringUtils.isEmpty(env.getProperty("server.ssl.key-store")) ? "http" : "https",
+                "http",
                 AddressUtils.getIntranetIp(),
                 env.getProperty("server.port"),
                 StringUtils.defaultString(env.getProperty("server.servlet.context-path")),
                 org.springframework.util.StringUtils.arrayToCommaDelimitedString(env.getActiveProfiles()),
                 env.getProperty("PID"),
                 Charset.defaultCharset(),
-                env.getProperty("logging.level.root"),
-                env.getProperty("LOG_PATH") + "-" + DateFormatUtils.ISO_8601_EXTENDED_DATE_FORMAT.format(new Date()) + ".log");
+                env.getProperty("logging.level.root"));
     }
 }
