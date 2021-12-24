@@ -257,7 +257,8 @@
                             <EMBEDDED_MONGO_ARTIFACTS>/app/embedmongo</EMBEDDED_MONGO_ARTIFACTS>
                         </environment>
                         <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-                        <user>root</user>
+                        <user>1000</user>
+                        <workingDirectory>/app</workingDirectory>
                     </container>
                     <extraDirectories>
                         <paths>src/main/docker/jib</paths>
