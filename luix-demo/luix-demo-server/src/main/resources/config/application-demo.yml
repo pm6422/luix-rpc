@@ -11,7 +11,7 @@ spring:
     mongodb:
         embedded:
             storage:
-                database-dir: /tmp
+                database-dir: /tmp/embed-mongo
 infinity:
     registry:
         host: localhost
