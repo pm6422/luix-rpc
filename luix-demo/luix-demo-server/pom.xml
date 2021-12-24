@@ -242,6 +242,7 @@
                         </auth>
                     </to>
                     <container>
+                        <user>431</user>
                         <entrypoint>
                             <shell>bash</shell>
                             <option>-c</option>
@@ -267,19 +268,6 @@
                             </permission>
                         </permissions>
                     </extraDirectories>
-                    <pluginExtensions>
-                        <pluginExtension>
-                            <implementation>com.google.cloud.tools.jib.maven.extension.ownership.JibOwnershipExtension</implementation>
-                            <configuration implementation="com.google.cloud.tools.jib.maven.extension.ownership.Configuration">
-                                <rules>
-                                    <rule>
-                                        <glob>/app/**</glob>
-                                        <ownership>755</ownership>
-                                    </rule>
-                                </rules>
-                            </configuration>
-                        </pluginExtension>
-                    </pluginExtensions>
                 </configuration>
                 <executions>
                     <execution>
