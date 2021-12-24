@@ -210,11 +210,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>com.google.cloud.tools</groupId>
-            <artifactId>jib-ownership-extension-maven</artifactId>
-            <version>0.1.0</version>
-        </dependency>
     </dependencies>
     <!--
         *************************************************************************************
@@ -228,6 +223,13 @@
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.1.4</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-ownership-extension-maven</artifactId>
+                        <version>0.1.0</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <from>
                         <image>eclipse-temurin:8-jre-focal</image>
