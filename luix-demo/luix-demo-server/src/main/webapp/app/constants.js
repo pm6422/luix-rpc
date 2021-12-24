@@ -5,7 +5,7 @@
     angular
         .module('smartcloudserviceApp')
         .constant('APP_NAME', 'luix-demo-server')
-        .constant('VERSION', '1.0.0.RELEASE')
+        .constant('VERSION', '1.0.0')
         .constant('COMPANY_NAME', 'Infinity Organization')
         .constant('PAGINATION_CONSTANTS', {
             'itemsPerPage': 10
