@@ -38,8 +38,6 @@ server:
                 name: ${spring.application.name}
 logging:
     config: classpath:config/logback-spring.xml
-    file:
-        path: ${user.home}${file.separator}Log${file.separator}${spring.application.name}${file.separator}${spring.application.name}
     level:
         root: INFO
 # ===================================================================
