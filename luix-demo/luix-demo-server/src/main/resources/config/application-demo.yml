@@ -7,11 +7,6 @@
 # ===================================================================
 mongock:
     enabled: true
-spring:
-    mongodb:
-        embedded:
-            storage:
-                database-dir: /tmp/embed-mongo
 infinity:
     registry:
         host: localhost
