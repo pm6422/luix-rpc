@@ -223,15 +223,6 @@
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.1.4</version>
-                <executions>
-                    <execution>
-                        <id>build-image</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
                     <from>
                         <image>eclipse-temurin:8-jre-focal</image>
@@ -277,6 +268,15 @@
                         </permissions>
                     </extraDirectories>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>build-image</id>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>com.github.ekryd.sortpom</groupId>

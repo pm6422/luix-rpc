@@ -396,6 +396,15 @@
                         </permissions>
                     </extraDirectories>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>build-image</id>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>com.github.ekryd.sortpom</groupId>
