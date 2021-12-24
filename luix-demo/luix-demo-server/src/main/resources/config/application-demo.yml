@@ -9,7 +9,7 @@ mongock:
     enabled: true
 infinity:
     registry:
-        host: localhost
+        host: zookeeper
         port: 2181
     protocol:
         port: @app.rpc.port@
