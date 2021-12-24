@@ -10,7 +10,7 @@
     <groupId>org.infinity</groupId>
     <artifactId>luix-web-center</artifactId>
     <version>${revision}</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <!--
         *************************************************************************************
@@ -30,6 +30,7 @@
         <revision>1.0.0.RELEASE</revision>
         <run.addResources>false</run.addResources>
         <spring.boot.version>2.3.0.RELEASE</spring.boot.version>
+        <start-class>org.infinity.luix.webcenter.LuixWebCenterLauncher</start-class>
     </properties>
     <!--
         *************************************************************************************
@@ -433,8 +434,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring.boot.version}</version>
                 <configuration>
-                    <!-- Executable war cannot be unzipped -->
-                    <executable>false</executable>
+                    <mainClass>${start-class}</mainClass>
                     <fork>true</fork>
                     <!--
                     Enable the line below to have remote debugging of your application on port 5005

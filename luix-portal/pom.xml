@@ -10,7 +10,7 @@
     <groupId>org.infinity</groupId>
     <artifactId>luix-portal</artifactId>
     <version>${revision}</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <!--
         *************************************************************************************
@@ -28,6 +28,7 @@
         <run.addResources>false</run.addResources>
         <spring.boot.version>2.3.0.RELEASE</spring.boot.version>
         <springfox.version>2.7.0</springfox.version>
+        <start-class>org.infinity.luix.portal.LuixPortalLauncher</start-class>
     </properties>
     <!--
     *************************************************************************************
@@ -208,8 +209,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <!-- Executable war cannot be unzipped -->
-                    <executable>false</executable>
+                    <mainClass>${start-class}</mainClass>
                     <fork>true</fork>
                     <!--
                     Enable the line below to have remote debugging of your application on port 5005
