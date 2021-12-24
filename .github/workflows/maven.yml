@@ -23,4 +23,5 @@ jobs:
         distribution: 'adopt'
         cache: maven
     - name: Publish docker image to Docker Hub
-      run: mvn compile jib:build
+#      run: mvn compile jib:build
+      run: mvn package
