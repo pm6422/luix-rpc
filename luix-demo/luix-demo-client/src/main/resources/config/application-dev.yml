@@ -1,19 +1,16 @@
 # ===================================================================
-# Spring Boot configuration for the "demo" profile.
+# Spring Boot configuration for the "dev" profile.
 #
 # This configuration overrides the application.yml file.
-# ===================================================================
-
-# ===================================================================
-# Standard Spring Boot properties.
 # Full reference is available at:
 # https://docs.spring.io/spring-boot/docs/2.3.0.RELEASE/reference/html/appendix-application-properties.html
 # ===================================================================
+mongock:
+    enabled: true
 infinity:
     registry:
-        host: 172.17.0.2
+        host: localhost
         port: 2181
-#        providerAddresses: 127.0.0.1:16010
     protocol:
         port: @app.rpc.port@
 # ===================================================================
