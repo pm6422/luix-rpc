@@ -16,7 +16,6 @@ import javax.annotation.Resource;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
@@ -50,8 +49,6 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     @Override
     public void customize(WebServerFactory server) {
         setMimeMappings(server);
-        // When running in an IDE or with ./mvnw spring-boot:run, set location of the static web assets.
-        setLocationForStaticAssets(server);
     }
 
     private void setMimeMappings(WebServerFactory server) {
@@ -63,18 +60,6 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
             mappings.add("json", MediaType.TEXT_HTML_VALUE + ";charset=" + StandardCharsets.UTF_8.name().toLowerCase());
             ConfigurableServletWebServerFactory servletWebServer = (ConfigurableServletWebServerFactory) server;
             servletWebServer.setMimeMappings(mappings);
-        }
-    }
-
-    private void setLocationForStaticAssets(WebServerFactory server) {
-        if (server instanceof ConfigurableServletWebServerFactory) {
-            ConfigurableServletWebServerFactory servletWebServer = (ConfigurableServletWebServerFactory) server;
-            File root;
-            String prefixPath = resolvePathPrefix();
-            root = new File(prefixPath + "src/main/webapp/");
-            if (root.exists() && root.isDirectory()) {
-                servletWebServer.setDocumentRoot(root);
-            }
         }
     }
 
