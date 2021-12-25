@@ -429,11 +429,29 @@
     -->
     <profiles>
         <profile>
-            <id>demo</id>
+            <id>dev</id>
             <activation>
                 <!-- default Spring profiles -->
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>de.flapdoodle.embed</groupId>
+                    <artifactId>de.flapdoodle.embed.mongo</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.slf4j</groupId>
+                            <artifactId>slf4j-api</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>demo</id>
             <properties>
                 <spring.profiles.active>demo</spring.profiles.active>
             </properties>
