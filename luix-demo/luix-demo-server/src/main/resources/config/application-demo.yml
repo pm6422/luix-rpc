@@ -1,5 +1,5 @@
 # ===================================================================
-# Spring Boot configuration for the "test" profile.
+# Spring Boot configuration for the "demo" profile.
 #
 # This configuration overrides the application.yml file.
 # Full reference is available at:
