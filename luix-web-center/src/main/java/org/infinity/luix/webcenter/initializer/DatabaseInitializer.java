@@ -160,7 +160,7 @@ public class DatabaseInitializer {
         rpcScheduledTask1.setMethodSignature("updateStatus(void)");
         rpcScheduledTask1.setFixedInterval(7L);
         rpcScheduledTask1.setFixedIntervalUnit(UNIT_MINUTES);
-        rpcScheduledTask1.setEnabled(true);
+        rpcScheduledTask1.setEnabled(false);
         mongoTemplate.save(rpcScheduledTask1);
 
         RpcScheduledTask rpcScheduledTask2 = new RpcScheduledTask();
@@ -171,7 +171,7 @@ public class DatabaseInitializer {
         rpcScheduledTask2.setMethodSignature("updateStatus(void)");
         rpcScheduledTask2.setFixedInterval(5L);
         rpcScheduledTask2.setFixedIntervalUnit(UNIT_MINUTES);
-        rpcScheduledTask2.setEnabled(true);
+        rpcScheduledTask2.setEnabled(false);
         mongoTemplate.save(rpcScheduledTask2);
 
         RpcScheduledTask rpcScheduledTask3 = new RpcScheduledTask();
@@ -182,7 +182,7 @@ public class DatabaseInitializer {
         rpcScheduledTask3.setMethodSignature("updateStatus(void)");
         rpcScheduledTask3.setFixedInterval(2L);
         rpcScheduledTask3.setFixedIntervalUnit(UNIT_MINUTES);
-        rpcScheduledTask3.setEnabled(true);
+        rpcScheduledTask3.setEnabled(false);
         mongoTemplate.save(rpcScheduledTask3);
     }
 }
