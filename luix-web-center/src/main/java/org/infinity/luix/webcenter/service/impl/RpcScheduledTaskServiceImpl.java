@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.client.proxy.Proxy;
+import org.infinity.luix.core.config.impl.RegistryConfig;
 import org.infinity.luix.spring.boot.config.InfinityProperties;
 import org.infinity.luix.utilities.destory.ShutdownHook;
 import org.infinity.luix.utilities.id.IdGenerator;
@@ -12,8 +13,7 @@ import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.infinity.luix.webcenter.repository.RpcScheduledTaskHistoryRepository;
 import org.infinity.luix.webcenter.repository.RpcScheduledTaskLockRepository;
 import org.infinity.luix.webcenter.repository.RpcScheduledTaskRepository;
-import org.infinity.luix.webcenter.service.RpcRegistryService;
-import org.infinity.luix.webcenter.service.RpcScheduledTaskService;
+import org.infinity.luix.webcenter.service.*;
 import org.infinity.luix.webcenter.task.schedule.CancelableScheduledTaskRegistrar;
 import org.infinity.luix.webcenter.task.schedule.RunnableTask;
 import org.springframework.boot.ApplicationArguments;
@@ -58,6 +58,44 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
     private              MongoTemplate                     mongoTemplate;
 
     @Override
+    public void initializeData() {
+        RegistryConfig registryConfig = infinityProperties.getRegistries().values().stream().findFirst().get();
+
+        RpcScheduledTask rpcScheduledTask1 = new RpcScheduledTask();
+        rpcScheduledTask1.setName("T" + IdGenerator.generateShortId());
+        rpcScheduledTask1.setRegistryIdentity(registryConfig.getRegistryUrl().toString());
+        rpcScheduledTask1.setInterfaceName(RpcApplicationService.class.getName());
+        rpcScheduledTask1.setMethodName("updateStatus");
+        rpcScheduledTask1.setMethodSignature("updateStatus(void)");
+        rpcScheduledTask1.setFixedInterval(7L);
+        rpcScheduledTask1.setFixedIntervalUnit(UNIT_MINUTES);
+        rpcScheduledTask1.setEnabled(true);
+        rpcScheduledTaskRepository.save(rpcScheduledTask1);
+
+        RpcScheduledTask rpcScheduledTask2 = new RpcScheduledTask();
+        rpcScheduledTask2.setName("T" + IdGenerator.generateShortId());
+        rpcScheduledTask2.setRegistryIdentity(registryConfig.getRegistryUrl().toString());
+        rpcScheduledTask2.setInterfaceName(RpcServerService.class.getName());
+        rpcScheduledTask2.setMethodName("updateStatus");
+        rpcScheduledTask2.setMethodSignature("updateStatus(void)");
+        rpcScheduledTask2.setFixedInterval(5L);
+        rpcScheduledTask2.setFixedIntervalUnit(UNIT_MINUTES);
+        rpcScheduledTask2.setEnabled(true);
+        rpcScheduledTaskRepository.save(rpcScheduledTask2);
+
+        RpcScheduledTask rpcScheduledTask3 = new RpcScheduledTask();
+        rpcScheduledTask3.setName("T" + IdGenerator.generateShortId());
+        rpcScheduledTask3.setRegistryIdentity(registryConfig.getRegistryUrl().toString());
+        rpcScheduledTask3.setInterfaceName(RpcServiceService.class.getName());
+        rpcScheduledTask3.setMethodName("updateStatus");
+        rpcScheduledTask3.setMethodSignature("updateStatus(void)");
+        rpcScheduledTask3.setFixedInterval(2L);
+        rpcScheduledTask3.setFixedIntervalUnit(UNIT_MINUTES);
+        rpcScheduledTask3.setEnabled(true);
+        rpcScheduledTaskRepository.save(rpcScheduledTask3);
+    }
+
+    @Override
     @Order
     public void run(ApplicationArguments args) throws Exception {
         EXECUTOR_SERVICE.schedule(this::loadAll, 10L, TimeUnit.SECONDS);
@@ -70,6 +108,7 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
     }
 
     private void loadAll() {
+        initializeData();
         // Timed task with normal state in initial load database
         List<RpcScheduledTask> enabledScheduledTasks = rpcScheduledTaskRepository.findByEnabledIsTrue();
         if (CollectionUtils.isEmpty(enabledScheduledTasks)) {

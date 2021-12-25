@@ -179,7 +179,7 @@ public final class Url implements Serializable {
     public static Url registryUrl(String protocol, String host, Integer port) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
         options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_REGISTRY);
-        return of(protocol, host, port, Registry.class.getName(), options);
+        return of(protocol, host, port, StringUtils.uncapitalize(Registry.class.getSimpleName()), options);
     }
 
 

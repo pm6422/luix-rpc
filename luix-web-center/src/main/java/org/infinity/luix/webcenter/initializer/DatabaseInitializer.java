@@ -3,11 +3,7 @@ package org.infinity.luix.webcenter.initializer;
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
-import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.webcenter.domain.*;
-import org.infinity.luix.webcenter.service.RpcApplicationService;
-import org.infinity.luix.webcenter.service.RpcServerService;
-import org.infinity.luix.webcenter.service.RpcServiceService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,8 +12,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
-
-import static org.infinity.luix.webcenter.domain.RpcScheduledTask.UNIT_MINUTES;
 
 /**
  * Creates the initial database
@@ -148,41 +142,5 @@ public class DatabaseInitializer {
                 new SimpleGrantedAuthority(Authority.ADMIN), new SimpleGrantedAuthority(Authority.USER),
                 new SimpleGrantedAuthority(Authority.ANONYMOUS)));
         mongoTemplate.save(oAuth2ClientDetails);
-    }
-
-    @ChangeSet(order = "06", author = "Louis", id = "addScheduledTasks", runAlways = true)
-    public void addScheduledTasks(MongockTemplate mongoTemplate) {
-        RpcScheduledTask rpcScheduledTask1 = new RpcScheduledTask();
-        rpcScheduledTask1.setName("T" + IdGenerator.generateShortId());
-        rpcScheduledTask1.setRegistryIdentity("zookeeper://localhost:2181/registry");
-        rpcScheduledTask1.setInterfaceName(RpcApplicationService.class.getName());
-        rpcScheduledTask1.setMethodName("updateStatus");
-        rpcScheduledTask1.setMethodSignature("updateStatus(void)");
-        rpcScheduledTask1.setFixedInterval(7L);
-        rpcScheduledTask1.setFixedIntervalUnit(UNIT_MINUTES);
-        rpcScheduledTask1.setEnabled(false);
-        mongoTemplate.save(rpcScheduledTask1);
-
-        RpcScheduledTask rpcScheduledTask2 = new RpcScheduledTask();
-        rpcScheduledTask2.setName("T" + IdGenerator.generateShortId());
-        rpcScheduledTask2.setRegistryIdentity("zookeeper://localhost:2181/registry");
-        rpcScheduledTask2.setInterfaceName(RpcServerService.class.getName());
-        rpcScheduledTask2.setMethodName("updateStatus");
-        rpcScheduledTask2.setMethodSignature("updateStatus(void)");
-        rpcScheduledTask2.setFixedInterval(5L);
-        rpcScheduledTask2.setFixedIntervalUnit(UNIT_MINUTES);
-        rpcScheduledTask2.setEnabled(false);
-        mongoTemplate.save(rpcScheduledTask2);
-
-        RpcScheduledTask rpcScheduledTask3 = new RpcScheduledTask();
-        rpcScheduledTask3.setName("T" + IdGenerator.generateShortId());
-        rpcScheduledTask3.setRegistryIdentity("zookeeper://localhost:2181/registry");
-        rpcScheduledTask3.setInterfaceName(RpcServiceService.class.getName());
-        rpcScheduledTask3.setMethodName("updateStatus");
-        rpcScheduledTask3.setMethodSignature("updateStatus(void)");
-        rpcScheduledTask3.setFixedInterval(2L);
-        rpcScheduledTask3.setFixedIntervalUnit(UNIT_MINUTES);
-        rpcScheduledTask3.setEnabled(false);
-        mongoTemplate.save(rpcScheduledTask3);
     }
 }
