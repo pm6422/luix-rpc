@@ -58,6 +58,31 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
     private              MongoTemplate                     mongoTemplate;
 
     @Override
+    @Order
+    public void run(ApplicationArguments args) throws Exception {
+        EXECUTOR_SERVICE.schedule(this::loadAll, 10L, TimeUnit.SECONDS);
+        // Destroy the thread pools when the system exits
+        ShutdownHook.add(() -> {
+            if (!EXECUTOR_SERVICE.isShutdown()) {
+                EXECUTOR_SERVICE.shutdown();
+            }
+        });
+    }
+
+    private void loadAll() {
+        initializeData();
+        // Timed task with normal state in initial load database
+        List<RpcScheduledTask> enabledScheduledTasks = rpcScheduledTaskRepository.findByEnabledIsTrue();
+        if (CollectionUtils.isEmpty(enabledScheduledTasks)) {
+            log.info("No scheduled tasks to execute!");
+            return;
+        }
+
+        enabledScheduledTasks.forEach(this::addTask);
+        log.info("Loaded all scheduled tasks");
+    }
+
+    @Override
     public void initializeData() {
         RegistryConfig registryConfig = infinityProperties.getRegistries().values().stream().findFirst().get();
 
@@ -93,31 +118,6 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
         rpcScheduledTask3.setFixedIntervalUnit(UNIT_MINUTES);
         rpcScheduledTask3.setEnabled(true);
         rpcScheduledTaskRepository.save(rpcScheduledTask3);
-    }
-
-    @Override
-    @Order
-    public void run(ApplicationArguments args) throws Exception {
-        EXECUTOR_SERVICE.schedule(this::loadAll, 10L, TimeUnit.SECONDS);
-        // Destroy the thread pools when the system exits
-        ShutdownHook.add(() -> {
-            if (!EXECUTOR_SERVICE.isShutdown()) {
-                EXECUTOR_SERVICE.shutdown();
-            }
-        });
-    }
-
-    private void loadAll() {
-        initializeData();
-        // Timed task with normal state in initial load database
-        List<RpcScheduledTask> enabledScheduledTasks = rpcScheduledTaskRepository.findByEnabledIsTrue();
-        if (CollectionUtils.isEmpty(enabledScheduledTasks)) {
-            log.info("No scheduled tasks to execute!");
-            return;
-        }
-
-        enabledScheduledTasks.forEach(this::addTask);
-        log.info("Loaded all scheduled tasks");
     }
 
     @Override
