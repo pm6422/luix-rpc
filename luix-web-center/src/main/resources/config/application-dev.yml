@@ -5,11 +5,21 @@
 # Full reference is available at:
 # https://docs.spring.io/spring-boot/docs/2.3.0.RELEASE/reference/html/appendix-application-properties.html
 # ===================================================================
+spring:
+    devtools:
+        restart:
+            enabled: true # enable on test environment
+        livereload:
+            enabled: false # we use gulp + BrowserSync for livereload
+    thymeleaf:
+        cache: false
+mongock:
+    enabled: true
 infinity:
-    registry:
-        host: 172.17.0.2
-        port: 2181
-#        providerAddresses: 127.0.0.1:16010
+    registries:
+        0:
+            host: localhost
+            port: 2181
     protocol:
         port: @app.rpc.port@
 # ===================================================================
