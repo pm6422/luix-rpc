@@ -11,7 +11,7 @@ import org.infinity.luix.core.config.impl.RegistryConfig;
 import org.infinity.luix.core.server.annotation.RpcProvider;
 import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.spring.boot.config.InfinityProperties;
+import org.infinity.luix.spring.boot.config.LuixProperties;
 import org.infinity.luix.webcenter.domain.RpcApplication;
 import org.infinity.luix.webcenter.repository.RpcApplicationRepository;
 import org.infinity.luix.webcenter.service.RpcApplicationService;
@@ -42,9 +42,9 @@ import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 @RpcProvider
 public class RpcApplicationServiceImpl implements RpcApplicationService {
     @Resource
-    private InfinityProperties       infinityProperties;
+    private LuixProperties     luixProperties;
     @Resource
-    private ApplicationContext       applicationContext;
+    private ApplicationContext applicationContext;
     @Resource
     private MongoTemplate            mongoTemplate;
     @Resource
@@ -108,10 +108,10 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
     public RpcApplication loadApplication(Url registryUrl, Url url) {
         RpcRegistryService rpcRegistryService = applicationContext.getBean(RpcRegistryService.class);
         RegistryConfig registryConfig = rpcRegistryService.findRegistryConfig(registryUrl.getIdentity());
-        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
+        Proxy proxyFactory = Proxy.getInstance(luixProperties.getConsumer().getProxyFactory());
 
-        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(infinityProperties.getApplication(), registryConfig,
-                infinityProperties.getAvailableProtocol(), url.getAddress(), BuildInService.class.getName(),
+        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixProperties.getApplication(), registryConfig,
+                luixProperties.getAvailableProtocol(), url.getAddress(), BuildInService.class.getName(),
                 10000, 2);
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         // Send a remote request to get ApplicationConfig

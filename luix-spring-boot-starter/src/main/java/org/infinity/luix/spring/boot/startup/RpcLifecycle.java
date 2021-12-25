@@ -15,7 +15,7 @@ import org.infinity.luix.core.server.stub.MethodConfig;
 import org.infinity.luix.core.server.stub.ProviderStub;
 import org.infinity.luix.core.server.stub.ProviderStubHolder;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.spring.boot.config.InfinityProperties;
+import org.infinity.luix.spring.boot.config.LuixProperties;
 import org.infinity.luix.utilities.destory.ShutdownHook;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -76,18 +76,18 @@ public class RpcLifecycle {
      * Start the RPC server
      *
      * @param beanFactory        bean factory
-     * @param infinityProperties RPC configuration properties
+     * @param luixProperties RPC configuration properties
      */
-    public void start(DefaultListableBeanFactory beanFactory, InfinityProperties infinityProperties) {
+    public void start(DefaultListableBeanFactory beanFactory, LuixProperties luixProperties) {
         if (!started.compareAndSet(false, true)) {
             // already started
             return;
         }
         log.info("Starting the RPC server");
         registerShutdownHook();
-        registerBuildInProviderStubs(beanFactory, infinityProperties);
-        publish(infinityProperties);
-        subscribe(infinityProperties);
+        registerBuildInProviderStubs(beanFactory, luixProperties);
+        publish(luixProperties);
+        subscribe(luixProperties);
         log.info("Started the RPC server");
     }
 
@@ -103,16 +103,16 @@ public class RpcLifecycle {
      * Register build-in provider stubs
      *
      * @param beanFactory        bean factory
-     * @param infinityProperties RPC configuration properties
+     * @param luixProperties RPC configuration properties
      */
     private void registerBuildInProviderStubs(DefaultListableBeanFactory beanFactory,
-                                              InfinityProperties infinityProperties) {
+                                              LuixProperties luixProperties) {
         String beanName = buildProviderStubBeanName(BuildInService.class.getName());
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProviderStub.class);
         builder.addPropertyValue(BEAN_NAME, beanName);
         builder.addPropertyValue(INTERFACE_CLASS, BuildInService.class);
         builder.addPropertyValue(INTERFACE_NAME, BuildInService.class.getName());
-        builder.addPropertyValue(PROTOCOL, infinityProperties.getProtocol().getName());
+        builder.addPropertyValue(PROTOCOL, luixProperties.getProtocol().getName());
         builder.addPropertyReference("instance", StringUtils.uncapitalize(BuildInService.class.getSimpleName()));
 
         beanFactory.registerBeanDefinition(beanName, builder.getBeanDefinition());
@@ -123,20 +123,20 @@ public class RpcLifecycle {
     /**
      * Publish RPC providers to registries
      *
-     * @param infinityProperties RPC configuration properties
+     * @param luixProperties RPC configuration properties
      */
-    private void publish(InfinityProperties infinityProperties) {
-        infinityProperties.getRegistryList().forEach(registryConfig -> {
+    private void publish(LuixProperties luixProperties) {
+        luixProperties.getRegistryList().forEach(registryConfig -> {
             if (!registryConfig.getName().equals(REGISTRY_VAL_NONE)) {
                 // Non-direct registry
 
                 // Publish providers
-                publishProviders(infinityProperties, registryConfig);
+                publishProviders(luixProperties, registryConfig);
             }
         });
     }
 
-    private void publishProviders(InfinityProperties infinityProperties, RegistryConfig registryConfig) {
+    private void publishProviders(LuixProperties luixProperties, RegistryConfig registryConfig) {
         Map<String, ProviderStub<?>> providerStubs = ProviderStubHolder.getInstance().getMap();
         if (MapUtils.isEmpty(providerStubs)) {
             log.info("No RPC service providers found to register to registry [{}]", registryConfig.getName());
@@ -154,10 +154,10 @@ public class RpcLifecycle {
             }
 
             // Register providers
-            providerStub.register(infinityProperties.getApplication(), infinityProperties.getAvailableProtocol(), registryConfig);
+            providerStub.register(luixProperties.getApplication(), luixProperties.getAvailableProtocol(), registryConfig);
         });
 
-        if (infinityProperties.getProvider().isAutoExpose()) {
+        if (luixProperties.getProvider().isAutoExpose()) {
             // Activate RPC service providers
 //            SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVE, true);
             providerStubs.forEach((name, providerStub) -> {
@@ -180,32 +180,32 @@ public class RpcLifecycle {
     /**
      * Subscribe provider from registries
      *
-     * @param infinityProperties RPC configuration properties
+     * @param luixProperties RPC configuration properties
      */
-    private void subscribe(InfinityProperties infinityProperties) {
+    private void subscribe(LuixProperties luixProperties) {
         Map<String, ConsumerStub<?>> consumerStubs = ConsumerStubHolder.getInstance().get();
         if (MapUtils.isEmpty(consumerStubs)) {
             log.info("No RPC consumers found on the registries");
             return;
         }
         consumerStubs.forEach((name, consumerStub) ->
-                consumerStub.subscribeProviders(infinityProperties.getApplication(),
-                        infinityProperties.getAvailableProtocol(),
-                        infinityProperties.getRegistryList()));
+                consumerStub.subscribeProviders(luixProperties.getApplication(),
+                        luixProperties.getAvailableProtocol(),
+                        luixProperties.getRegistryList()));
     }
 
     /**
      * Stop the RPC server
      *
-     * @param infinityProperties RPC configuration properties
+     * @param luixProperties RPC configuration properties
      */
-    public void destroy(InfinityProperties infinityProperties) {
+    public void destroy(LuixProperties luixProperties) {
         if (!started.compareAndSet(true, false) || !stopped.compareAndSet(false, true)) {
             // not yet started or already stopped
             return;
         }
 
-        infinityProperties.getRegistryList().forEach(registryConfig -> {
+        luixProperties.getRegistryList().forEach(registryConfig -> {
             //unregisterApplication(registryUrls);
             unregisterProviders(registryConfig.getRegistryUrl());
         });

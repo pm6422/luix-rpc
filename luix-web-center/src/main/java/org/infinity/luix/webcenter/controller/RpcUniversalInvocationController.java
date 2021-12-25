@@ -10,7 +10,7 @@ import org.infinity.luix.webcenter.service.RpcRegistryService;
 import org.infinity.luix.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.luix.core.client.proxy.Proxy;
 import org.infinity.luix.core.client.stub.ConsumerStub;
-import org.infinity.luix.spring.boot.config.InfinityProperties;
+import org.infinity.luix.spring.boot.config.LuixProperties;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +31,7 @@ import java.nio.charset.Charset;
 public class RpcUniversalInvocationController {
 
     @Resource
-    private InfinityProperties infinityProperties;
+    private LuixProperties     luixProperties;
     @Resource
     private RpcRegistryService rpcRegistryService;
 
@@ -41,7 +41,7 @@ public class RpcUniversalInvocationController {
                          @Valid @RequestBody MethodInvocation methodInvocation) throws JsonProcessingException {
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(methodInvocation.getRegistryIdentity(),
                 methodInvocation.getProviderUrl(), methodInvocation.getInterfaceName(), methodInvocation.getAttributes());
-        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
+        Proxy proxyFactory = Proxy.getInstance(luixProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Object result = invocationHandler.invoke(methodInvocation.getMethodName(), methodInvocation.getMethodParamTypes(), methodInvocation.getArgs());
         return new ObjectMapper().writeValueAsString(result);
@@ -54,7 +54,7 @@ public class RpcUniversalInvocationController {
         MethodInvocation methodInvocation = new ObjectMapper().readValue(input, MethodInvocation.class);
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(methodInvocation.getRegistryIdentity(),
                 methodInvocation.getProviderUrl(), methodInvocation.getInterfaceName(), methodInvocation.getAttributes());
-        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
+        Proxy proxyFactory = Proxy.getInstance(luixProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Object result = invocationHandler.invoke(methodInvocation.getMethodName(), methodInvocation.getMethodParamTypes(), methodInvocation.getArgs());
         return new ObjectMapper().writeValueAsString(result);

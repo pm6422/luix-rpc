@@ -40,8 +40,8 @@ import static org.infinity.luix.core.constant.ProtocolConstants.SERIALIZER;
 import static org.infinity.luix.core.constant.ProviderConstants.HEALTH_CHECKER;
 import static org.infinity.luix.core.constant.ServiceConstants.*;
 import static org.infinity.luix.core.server.stub.ProviderStub.buildProviderStubBeanName;
-import static org.infinity.luix.spring.boot.config.InfinityProperties.readProtocolConfig;
-import static org.infinity.luix.spring.boot.config.InfinityProperties.readProviderConfig;
+import static org.infinity.luix.spring.boot.config.LuixProperties.readProtocolConfig;
+import static org.infinity.luix.spring.boot.config.LuixProperties.readProviderConfig;
 import static org.infinity.luix.spring.boot.utils.AnnotationBeanDefinitionUtils.addPropertyReference;
 import static org.infinity.luix.spring.boot.utils.AnnotationBeanDefinitionUtils.addPropertyValue;
 

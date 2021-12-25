@@ -9,7 +9,7 @@ import org.infinity.luix.demoserver.service.AsyncTaskTestService;
 import org.infinity.luix.demoserver.task.polling.queue.InMemoryAsyncTaskQueue;
 import org.infinity.luix.demoserver.task.polling.queue.Message;
 import org.infinity.luix.demoserver.utils.TraceIdUtils;
-import org.infinity.luix.spring.boot.config.InfinityProperties;
+import org.infinity.luix.spring.boot.config.LuixProperties;
 import org.infinity.luix.utilities.id.IdGenerator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ import static org.infinity.luix.core.constant.ApplicationConstants.APP;
 @Slf4j
 public class TestController {
     @Resource
-    private InfinityProperties   infinityProperties;
+    private LuixProperties       luixProperties;
     @Resource
     private AsyncTaskTestService asyncTaskTestService;
 
@@ -36,15 +36,15 @@ public class TestController {
     @GetMapping("/api/tests/register-provider")
     public void registerProvider() {
         Url providerUrl = Url.of(
-                infinityProperties.getAvailableProtocol().getName(),
+                luixProperties.getAvailableProtocol().getName(),
                 "192.168.0.1",
-                infinityProperties.getAvailableProtocol().getPort(),
+                luixProperties.getAvailableProtocol().getPort(),
                 AppService.class.getName());
 
         // Assign values to parameters
-        providerUrl.addOption(APP, infinityProperties.getApplication().getName());
+        providerUrl.addOption(APP, luixProperties.getApplication().getName());
 
-        infinityProperties.getRegistryList().forEach(registryConfig -> registryConfig.getRegistryImpl().register(providerUrl));
+        luixProperties.getRegistryList().forEach(registryConfig -> registryConfig.getRegistryImpl().register(providerUrl));
     }
 
     @ApiOperation("blocking response")

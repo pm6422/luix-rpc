@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 import java.util.*;
 
 import static org.infinity.luix.core.constant.RegistryConstants.REGISTRY_VAL_NONE;
-import static org.infinity.luix.spring.boot.config.InfinityProperties.PREFIX;
+import static org.infinity.luix.spring.boot.config.LuixProperties.PREFIX;
 import static org.infinity.luix.spring.boot.utils.PropertySourcesUtils.readProperties;
 
 /**
@@ -28,8 +28,8 @@ import static org.infinity.luix.spring.boot.utils.PropertySourcesUtils.readPrope
 @ConfigurationProperties(prefix = PREFIX)
 @Data
 @Validated
-public class InfinityProperties implements InitializingBean {
-    public static final String                      PREFIX      = "infinity";
+public class LuixProperties implements InitializingBean {
+    public static final String                      PREFIX      = "luix";
     @NotNull
     private             ApplicationConfig           application = new ApplicationConfig();
     /**

@@ -1,4 +1,4 @@
-# infinity-rpc
+# luix
 
 
 ## Tech points

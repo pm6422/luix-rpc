@@ -10,7 +10,7 @@ import org.infinity.luix.core.server.annotation.RpcProvider;
 import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.server.buildin.ServerInfo;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.spring.boot.config.InfinityProperties;
+import org.infinity.luix.spring.boot.config.LuixProperties;
 import org.infinity.luix.webcenter.domain.RpcServer;
 import org.infinity.luix.webcenter.repository.RpcServerRepository;
 import org.infinity.luix.webcenter.service.RpcConsumerService;
@@ -36,11 +36,11 @@ import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 @RpcProvider
 public class RpcServerServiceImpl implements RpcServerService {
 
-    private static final int                 PAGE_SIZE = 100;
+    private static final int                PAGE_SIZE = 100;
     @Resource
-    private              InfinityProperties  infinityProperties;
+    private              LuixProperties     luixProperties;
     @Resource
-    private              ApplicationContext  applicationContext;
+    private              ApplicationContext applicationContext;
     @Resource
     private              MongoTemplate       mongoTemplate;
     @Resource
@@ -114,10 +114,10 @@ public class RpcServerServiceImpl implements RpcServerService {
     public RpcServer loadServer(String registryIdentity, String address) {
         RpcRegistryService rpcRegistryService = applicationContext.getBean(RpcRegistryService.class);
         RegistryConfig registryConfig = rpcRegistryService.findRegistryConfig(registryIdentity);
-        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
+        Proxy proxyFactory = Proxy.getInstance(luixProperties.getConsumer().getProxyFactory());
 
-        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(infinityProperties.getApplication(), registryConfig,
-                infinityProperties.getAvailableProtocol(), address, BuildInService.class.getName(),
+        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixProperties.getApplication(), registryConfig,
+                luixProperties.getAvailableProtocol(), address, BuildInService.class.getName(),
                 10000, 2);
 
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);

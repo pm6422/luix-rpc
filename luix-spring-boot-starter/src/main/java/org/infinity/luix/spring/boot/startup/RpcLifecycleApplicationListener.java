@@ -1,7 +1,7 @@
 package org.infinity.luix.spring.boot.startup;
 
 import org.apache.commons.lang3.Validate;
-import org.infinity.luix.spring.boot.config.InfinityProperties;
+import org.infinity.luix.spring.boot.config.LuixProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -22,8 +22,8 @@ import javax.annotation.Resource;
 public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListener implements Ordered, BeanFactoryAware {
 
     @Resource
-    private       InfinityProperties         infinityProperties;
-    private final RpcLifecycle               rpcLifecycle;
+    private       LuixProperties luixProperties;
+    private final RpcLifecycle   rpcLifecycle;
     /**
      * {@link DefaultListableBeanFactory} can register bean definition
      */
@@ -42,7 +42,7 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
 
     @PostConstruct
     public void init() {
-        Validate.notNull(infinityProperties, "Infinity properties must NOT be null!");
+        Validate.notNull(luixProperties, "Infinity properties must NOT be null!");
     }
 
     @Override
@@ -56,11 +56,11 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
     }
 
     private void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        rpcLifecycle.start(beanFactory, infinityProperties);
+        rpcLifecycle.start(beanFactory, luixProperties);
     }
 
     private void onContextClosedEvent(ContextClosedEvent event) {
-        rpcLifecycle.destroy(infinityProperties);
+        rpcLifecycle.destroy(luixProperties);
     }
 
     @Override

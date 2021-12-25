@@ -13,7 +13,7 @@ import org.infinity.luix.core.config.impl.RegistryConfig;
 import org.infinity.luix.core.registry.Registry;
 import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.spring.boot.config.InfinityProperties;
+import org.infinity.luix.spring.boot.config.LuixProperties;
 import org.infinity.luix.webcenter.dto.RpcRegistryDTO;
 import org.infinity.luix.webcenter.service.RpcRegistryService;
 import org.springframework.boot.ApplicationArguments;
@@ -37,11 +37,11 @@ import static org.infinity.luix.utilities.serializer.Serializer.SERIALIZER_NAME_
 @Slf4j
 public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRunner {
     private static final Map<String, RegistryConfig> REGISTRY_CONFIG_MAP = new ConcurrentHashMap<>();
-    private static final List<RpcRegistryDTO>        REGISTRIES          = new ArrayList<>();
+    private static final List<RpcRegistryDTO> REGISTRIES          = new ArrayList<>();
     @Resource
-    private              InfinityProperties          infinityProperties;
+    private              LuixProperties       luixProperties;
     @Resource
-    private              ProviderProcessable         providerProcessService;
+    private              ProviderProcessable  providerProcessService;
     @Resource
     private              ConsumerProcessable         consumerProcessService;
 
@@ -53,20 +53,20 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
      */
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        if (CollectionUtils.isEmpty(infinityProperties.getRegistryList())) {
+        if (CollectionUtils.isEmpty(luixProperties.getRegistryList())) {
             log.warn("No registries found!");
             return;
         }
         try {
-            infinityProperties.getRegistryList().forEach(registryConfig -> {
+            luixProperties.getRegistryList().forEach(registryConfig -> {
                 REGISTRY_CONFIG_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig);
                 REGISTRIES.add(new RpcRegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
                 registryConfig.getRegistryImpl().getAllProviderPaths().forEach(interfaceName -> {
                     // First discover all consumers
                     registryConfig.getRegistryImpl().subscribeConsumerListener(interfaceName, consumerProcessService);
                     // Then discover all providers
-                    ConsumerStubFactory.create(infinityProperties.getApplication(), registryConfig,
-                            infinityProperties.getAvailableProtocol(), interfaceName, providerProcessService);
+                    ConsumerStubFactory.create(luixProperties.getApplication(), registryConfig,
+                            luixProperties.getAvailableProtocol(), interfaceName, providerProcessService);
 
                 });
                 log.info("Found registry: [{}]", registryConfig.getRegistryUrl().getIdentity());
@@ -136,8 +136,8 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
 
         // Default hessian 2 serializer
         String serializer = defaultIfEmpty(attributes.get(SERIALIZER), SERIALIZER_NAME_HESSIAN2);
-        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(infinityProperties.getApplication(),
-                findRegistryConfig(registryIdentity), infinityProperties.getAvailableProtocol(), providerAddress,
+        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixProperties.getApplication(),
+                findRegistryConfig(registryIdentity), luixProperties.getAvailableProtocol(), providerAddress,
                 resolvedInterfaceName, serializer, form, version, requestTimeout, retryCount, faultTolerance);
 
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);

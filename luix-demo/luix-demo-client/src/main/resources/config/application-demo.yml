@@ -5,7 +5,7 @@
 # Full reference is available at:
 # https://docs.spring.io/spring-boot/docs/2.3.0.RELEASE/reference/html/appendix-application-properties.html
 # ===================================================================
-infinity:
+luix:
     registry:
         host: 172.17.0.2
         port: 2181

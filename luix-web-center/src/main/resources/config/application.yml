@@ -117,7 +117,7 @@ mongock:
     track-ignored: true
     change-logs-scan-package:
         - ${app.package}.initializer
-infinity:
+luix:
     application:
         name: ${spring.application.name}
         description: RPC Web Center

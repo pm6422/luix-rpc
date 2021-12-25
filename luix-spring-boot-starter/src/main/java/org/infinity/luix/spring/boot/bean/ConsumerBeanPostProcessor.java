@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.client.annotation.RpcConsumer;
 import org.infinity.luix.core.client.stub.ConsumerStub;
-import org.infinity.luix.spring.boot.config.InfinityProperties;
+import org.infinity.luix.spring.boot.config.LuixProperties;
 import org.infinity.luix.spring.boot.utils.AnnotationUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -32,7 +32,6 @@ import static org.infinity.luix.core.client.stub.ConsumerStub.buildConsumerStubB
 import static org.infinity.luix.core.constant.ConsumerConstants.*;
 import static org.infinity.luix.core.constant.ProtocolConstants.PROTOCOL;
 import static org.infinity.luix.core.constant.ProtocolConstants.SERIALIZER;
-import static org.infinity.luix.core.constant.ServiceConstants.*;
 import static org.infinity.luix.spring.boot.utils.AnnotationBeanDefinitionUtils.addPropertyValue;
 import static org.infinity.luix.spring.boot.utils.ProxyUtils.getTargetClass;
 
@@ -226,48 +225,48 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
     private AbstractBeanDefinition buildConsumerStubDefinition(String beanName,
                                                                Class<?> interfaceClass,
                                                                RpcConsumer annotation) {
-        // Create and load infinityProperties bean
-        InfinityProperties infinityProperties = beanFactory.getBean(InfinityProperties.class);
+        // Create and load luixProperties bean
+        LuixProperties luixProperties = beanFactory.getBean(LuixProperties.class);
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ConsumerStub.class);
 
         addPropertyValue(builder, BEAN_NAME, beanName);
         addPropertyValue(builder, INTERFACE_CLASS, interfaceClass);
         addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName());
 
-        String protocol = defaultIfEmpty(annotation.protocol(), infinityProperties.getProtocol().getName());
+        String protocol = defaultIfEmpty(annotation.protocol(), luixProperties.getProtocol().getName());
         addPropertyValue(builder, PROTOCOL, protocol);
 
-        String serializer = defaultIfEmpty(annotation.serializer(), infinityProperties.getProtocol().getSerializer());
+        String serializer = defaultIfEmpty(annotation.serializer(), luixProperties.getProtocol().getSerializer());
         addPropertyValue(builder, SERIALIZER, serializer);
 
-        String form = defaultIfEmpty(annotation.form(), infinityProperties.getConsumer().getForm());
+        String form = defaultIfEmpty(annotation.form(), luixProperties.getConsumer().getForm());
         addPropertyValue(builder, FORM, form);
 
-        String version = defaultIfEmpty(annotation.version(), infinityProperties.getConsumer().getVersion());
+        String version = defaultIfEmpty(annotation.version(), luixProperties.getConsumer().getVersion());
         addPropertyValue(builder, VERSION, version);
 
-        String invoker = defaultIfEmpty(annotation.invoker(), infinityProperties.getConsumer().getInvoker());
+        String invoker = defaultIfEmpty(annotation.invoker(), luixProperties.getConsumer().getInvoker());
         addPropertyValue(builder, INVOKER, invoker);
 
-        String faultTolerance = defaultIfEmpty(annotation.faultTolerance(), infinityProperties.getConsumer().getFaultTolerance());
+        String faultTolerance = defaultIfEmpty(annotation.faultTolerance(), luixProperties.getConsumer().getFaultTolerance());
         addPropertyValue(builder, FAULT_TOLERANCE, faultTolerance);
 
-        String loadBalancer = defaultIfEmpty(annotation.loadBalancer(), infinityProperties.getConsumer().getLoadBalancer());
+        String loadBalancer = defaultIfEmpty(annotation.loadBalancer(), luixProperties.getConsumer().getLoadBalancer());
         addPropertyValue(builder, LOAD_BALANCER, loadBalancer);
 
-        String proxyFactory = defaultIfEmpty(annotation.proxyFactory(), infinityProperties.getConsumer().getProxyFactory());
+        String proxyFactory = defaultIfEmpty(annotation.proxyFactory(), luixProperties.getConsumer().getProxyFactory());
         addPropertyValue(builder, PROXY, proxyFactory);
 
         Integer requestTimeout = StringUtils.isEmpty(annotation.requestTimeout())
-                ? infinityProperties.getConsumer().getRequestTimeout() : Integer.valueOf(annotation.requestTimeout());
+                ? luixProperties.getConsumer().getRequestTimeout() : Integer.valueOf(annotation.requestTimeout());
         addPropertyValue(builder, REQUEST_TIMEOUT, requestTimeout);
 
         Integer retryCount = StringUtils.isEmpty(annotation.retryCount())
-                ? infinityProperties.getConsumer().getRetryCount() : Integer.valueOf(annotation.retryCount());
+                ? luixProperties.getConsumer().getRetryCount() : Integer.valueOf(annotation.retryCount());
         addPropertyValue(builder, RETRY_COUNT, retryCount);
 
-        addPropertyValue(builder, LIMIT_RATE, infinityProperties.getConsumer().isLimitRate());
-        addPropertyValue(builder, MAX_PAYLOAD, infinityProperties.getConsumer().getMaxPayload());
+        addPropertyValue(builder, LIMIT_RATE, luixProperties.getConsumer().isLimitRate());
+        addPropertyValue(builder, MAX_PAYLOAD, luixProperties.getConsumer().getMaxPayload());
         addPropertyValue(builder, PROVIDER_ADDRESSES, annotation.providerAddresses());
 
         return builder.getBeanDefinition();

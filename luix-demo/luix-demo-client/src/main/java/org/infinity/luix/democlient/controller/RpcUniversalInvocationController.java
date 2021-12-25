@@ -11,7 +11,7 @@ import org.infinity.luix.core.client.stub.ConsumerStub;
 import org.infinity.luix.core.client.stub.ConsumerStubFactory;
 import org.infinity.luix.core.client.stub.ConsumerStubHolder;
 import org.infinity.luix.democlient.dto.MethodInvocation;
-import org.infinity.luix.spring.boot.config.InfinityProperties;
+import org.infinity.luix.spring.boot.config.LuixProperties;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -37,7 +37,7 @@ import static org.infinity.luix.utilities.serializer.Serializer.SERIALIZER_NAME_
 public class RpcUniversalInvocationController {
 
     @Resource
-    private InfinityProperties infinityProperties;
+    private LuixProperties luixProperties;
 
     @ApiOperation("discover address invocation")
     @PostMapping("/api/rpc/universal-invocation")
@@ -45,7 +45,7 @@ public class RpcUniversalInvocationController {
         String input = StreamUtils.copyToString(file.getInputStream(), Charset.defaultCharset());
         MethodInvocation methodInvocation = new ObjectMapper().readValue(input, MethodInvocation.class);
         ConsumerStub<?> consumerStub = getConsumerStub(methodInvocation);
-        Proxy proxyFactory = Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory());
+        Proxy proxyFactory = Proxy.getInstance(luixProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler universalInvocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Object result = universalInvocationHandler.invoke(methodInvocation.getMethodName(), methodInvocation.getMethodParamTypes(), methodInvocation.getArgs());
         return new ObjectMapper().writeValueAsString(result);
@@ -71,8 +71,8 @@ public class RpcUniversalInvocationController {
         if (data.getAttributes().containsKey(RETRY_COUNT)) {
             retryCount = Integer.parseInt(data.getAttributes().get(RETRY_COUNT));
         }
-        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(infinityProperties.getApplication(), infinityProperties.getRegistry(),
-                infinityProperties.getAvailableProtocol(), data.getInterfaceName(),
+        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixProperties.getApplication(), luixProperties.getRegistry(),
+                luixProperties.getAvailableProtocol(), data.getInterfaceName(),
                 defaultIfEmpty(data.getAttributes().get(SERIALIZER), SERIALIZER_NAME_HESSIAN2),
                 data.getAttributes().get(FORM), data.getAttributes().get(VERSION), requestTimeout, retryCount);
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);

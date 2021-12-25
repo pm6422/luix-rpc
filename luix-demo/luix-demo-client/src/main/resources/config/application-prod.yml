@@ -9,7 +9,7 @@ spring:
     data:
         mongodb:
             uri: mongodb://admin:79Gfs87J3YhS23YH@192.168.1.101:36020/${spring.application.name}
-infinity:
+luix:
     registry:
         host: localhost
         port: 2181

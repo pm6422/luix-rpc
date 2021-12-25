@@ -15,7 +15,7 @@ spring:
         cache: false
 mongock:
     enabled: true
-infinity:
+luix:
     registries:
         0:
             host: localhost

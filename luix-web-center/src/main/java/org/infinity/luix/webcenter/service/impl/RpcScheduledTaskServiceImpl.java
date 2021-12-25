@@ -5,7 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.client.proxy.Proxy;
 import org.infinity.luix.core.config.impl.RegistryConfig;
-import org.infinity.luix.spring.boot.config.InfinityProperties;
+import org.infinity.luix.spring.boot.config.LuixProperties;
 import org.infinity.luix.utilities.destory.ShutdownHook;
 import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.webcenter.domain.RpcScheduledTask;
@@ -51,11 +51,11 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
     @Resource
     private              RpcRegistryService                rpcRegistryService;
     @Resource
-    private              CancelableScheduledTaskRegistrar  cancelableScheduledTaskRegistrar;
+    private CancelableScheduledTaskRegistrar cancelableScheduledTaskRegistrar;
     @Resource
-    private              InfinityProperties                infinityProperties;
+    private LuixProperties                   luixProperties;
     @Resource
-    private              MongoTemplate                     mongoTemplate;
+    private MongoTemplate                    mongoTemplate;
 
     @Override
     @Order
@@ -84,7 +84,7 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
 
     @Override
     public void initializeData() {
-        RegistryConfig registryConfig = infinityProperties.getRegistries().values().stream().findFirst().get();
+        RegistryConfig registryConfig = luixProperties.getRegistries().values().stream().findFirst().get();
 
         RpcScheduledTask rpcScheduledTask1 = new RpcScheduledTask();
         rpcScheduledTask1.setName("T" + IdGenerator.generateShortId());
@@ -207,7 +207,7 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
                 .rpcScheduledTaskLockRepository(rpcScheduledTaskLockRepository)
                 .rpcScheduledTask(scheduledTask)
                 .rpcRegistryService(rpcRegistryService)
-                .proxyFactory(Proxy.getInstance(infinityProperties.getConsumer().getProxyFactory()))
+                .proxyFactory(Proxy.getInstance(luixProperties.getConsumer().getProxyFactory()))
                 .name(scheduledTask.getName())
                 .registryIdentity(scheduledTask.getRegistryIdentity())
                 .interfaceName(scheduledTask.getInterfaceName())
