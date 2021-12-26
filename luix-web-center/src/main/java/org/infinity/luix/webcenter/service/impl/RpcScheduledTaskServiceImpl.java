@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.client.proxy.Proxy;
-import org.infinity.luix.core.config.impl.RegistryConfig;
 import org.infinity.luix.spring.boot.config.LuixProperties;
 import org.infinity.luix.utilities.destory.ShutdownHook;
 import org.infinity.luix.utilities.id.IdGenerator;
@@ -51,11 +50,11 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
     @Resource
     private              RpcRegistryService                rpcRegistryService;
     @Resource
-    private CancelableScheduledTaskRegistrar cancelableScheduledTaskRegistrar;
+    private              CancelableScheduledTaskRegistrar  cancelableScheduledTaskRegistrar;
     @Resource
-    private LuixProperties                   luixProperties;
+    private              LuixProperties                    luixProperties;
     @Resource
-    private MongoTemplate                    mongoTemplate;
+    private              MongoTemplate                     mongoTemplate;
 
     @Override
     @Order
@@ -70,7 +69,8 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
     }
 
     private void loadAll() {
-        initializeData();
+        luixProperties.getRegistries().values().forEach(r -> initializeData(r.getRegistryUrl().toString()));
+
         // Timed task with normal state in initial load database
         List<RpcScheduledTask> enabledScheduledTasks = rpcScheduledTaskRepository.findByEnabledIsTrue();
         if (CollectionUtils.isEmpty(enabledScheduledTasks)) {
@@ -82,13 +82,10 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
         log.info("Loaded all scheduled tasks");
     }
 
-    @Override
-    public void initializeData() {
-        RegistryConfig registryConfig = luixProperties.getRegistries().values().stream().findFirst().get();
-
+    private void initializeData(String registryUrl) {
         RpcScheduledTask rpcScheduledTask1 = new RpcScheduledTask();
         rpcScheduledTask1.setName("T" + IdGenerator.generateShortId());
-        rpcScheduledTask1.setRegistryIdentity(registryConfig.getRegistryUrl().toString());
+        rpcScheduledTask1.setRegistryIdentity(registryUrl);
         rpcScheduledTask1.setInterfaceName(RpcApplicationService.class.getName());
         rpcScheduledTask1.setMethodName("updateStatus");
         rpcScheduledTask1.setMethodSignature("updateStatus(void)");
@@ -99,7 +96,7 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
 
         RpcScheduledTask rpcScheduledTask2 = new RpcScheduledTask();
         rpcScheduledTask2.setName("T" + IdGenerator.generateShortId());
-        rpcScheduledTask2.setRegistryIdentity(registryConfig.getRegistryUrl().toString());
+        rpcScheduledTask2.setRegistryIdentity(registryUrl);
         rpcScheduledTask2.setInterfaceName(RpcServerService.class.getName());
         rpcScheduledTask2.setMethodName("updateStatus");
         rpcScheduledTask2.setMethodSignature("updateStatus(void)");
@@ -110,7 +107,7 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
 
         RpcScheduledTask rpcScheduledTask3 = new RpcScheduledTask();
         rpcScheduledTask3.setName("T" + IdGenerator.generateShortId());
-        rpcScheduledTask3.setRegistryIdentity(registryConfig.getRegistryUrl().toString());
+        rpcScheduledTask3.setRegistryIdentity(registryUrl);
         rpcScheduledTask3.setInterfaceName(RpcServiceService.class.getName());
         rpcScheduledTask3.setMethodName("updateStatus");
         rpcScheduledTask3.setMethodSignature("updateStatus(void)");
