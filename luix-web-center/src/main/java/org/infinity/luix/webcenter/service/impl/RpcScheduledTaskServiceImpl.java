@@ -83,38 +83,23 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
     }
 
     private void initializeData(String registryUrl) {
-        RpcScheduledTask rpcScheduledTask1 = new RpcScheduledTask();
-        rpcScheduledTask1.setName("T" + IdGenerator.generateShortId());
-        rpcScheduledTask1.setRegistryIdentity(registryUrl);
-        rpcScheduledTask1.setInterfaceName(RpcApplicationService.class.getName());
-        rpcScheduledTask1.setMethodName("updateStatus");
-        rpcScheduledTask1.setMethodSignature("updateStatus(void)");
-        rpcScheduledTask1.setFixedInterval(7L);
-        rpcScheduledTask1.setFixedIntervalUnit(UNIT_MINUTES);
-        rpcScheduledTask1.setEnabled(true);
-        rpcScheduledTaskRepository.save(rpcScheduledTask1);
+        saveUpdateStatusTask(registryUrl, RpcApplicationService.class.getName(), 7L);
+        saveUpdateStatusTask(registryUrl, RpcServerService.class.getName(), 5L);
+        saveUpdateStatusTask(registryUrl, RpcServiceService.class.getName(), 2L);
+    }
 
-        RpcScheduledTask rpcScheduledTask2 = new RpcScheduledTask();
-        rpcScheduledTask2.setName("T" + IdGenerator.generateShortId());
-        rpcScheduledTask2.setRegistryIdentity(registryUrl);
-        rpcScheduledTask2.setInterfaceName(RpcServerService.class.getName());
-        rpcScheduledTask2.setMethodName("updateStatus");
-        rpcScheduledTask2.setMethodSignature("updateStatus(void)");
-        rpcScheduledTask2.setFixedInterval(5L);
-        rpcScheduledTask2.setFixedIntervalUnit(UNIT_MINUTES);
-        rpcScheduledTask2.setEnabled(true);
-        rpcScheduledTaskRepository.save(rpcScheduledTask2);
+    private void saveUpdateStatusTask(String registryUrl, String interfaceName, Long interval) {
+        RpcScheduledTask rpcScheduledTask = new RpcScheduledTask();
+        rpcScheduledTask.setName("T" + IdGenerator.generateShortId());
+        rpcScheduledTask.setRegistryIdentity(registryUrl);
+        rpcScheduledTask.setInterfaceName(interfaceName);
+        rpcScheduledTask.setMethodName("updateStatus");
+        rpcScheduledTask.setMethodSignature("updateStatus(void)");
+        rpcScheduledTask.setFixedInterval(interval);
+        rpcScheduledTask.setFixedIntervalUnit(UNIT_MINUTES);
+        rpcScheduledTask.setEnabled(true);
 
-        RpcScheduledTask rpcScheduledTask3 = new RpcScheduledTask();
-        rpcScheduledTask3.setName("T" + IdGenerator.generateShortId());
-        rpcScheduledTask3.setRegistryIdentity(registryUrl);
-        rpcScheduledTask3.setInterfaceName(RpcServiceService.class.getName());
-        rpcScheduledTask3.setMethodName("updateStatus");
-        rpcScheduledTask3.setMethodSignature("updateStatus(void)");
-        rpcScheduledTask3.setFixedInterval(2L);
-        rpcScheduledTask3.setFixedIntervalUnit(UNIT_MINUTES);
-        rpcScheduledTask3.setEnabled(true);
-        rpcScheduledTaskRepository.save(rpcScheduledTask3);
+        rpcScheduledTaskRepository.save(rpcScheduledTask);
     }
 
     @Override
