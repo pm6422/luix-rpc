@@ -472,6 +472,13 @@
                                 <resource>
                                     <directory>src/main/webapp</directory>
                                 </resource>
+                                <resource>
+                                    <filtering>true</filtering>
+                                    <directory>src/main/resources/templates</directory>
+                                    <includes>
+                                        <include>constants.js</include>
+                                    </includes>
+                                </resource>
                             </resources>
                         </configuration>
                     </execution>
