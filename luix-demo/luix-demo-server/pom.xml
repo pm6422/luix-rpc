@@ -271,9 +271,9 @@
                 <executions>
                     <execution>
                         <id>build-image</id>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
+<!--                        <goals>-->
+<!--                            <goal>build</goal>-->
+<!--                        </goals>-->
                         <phase>package</phase>
                     </execution>
                 </executions>
