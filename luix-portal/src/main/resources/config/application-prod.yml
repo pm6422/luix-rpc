@@ -5,12 +5,7 @@
 # Full reference is available at:
 # https://docs.spring.io/spring-boot/docs/2.3.0.RELEASE/reference/html/appendix-application-properties.html
 # ===================================================================
-spring:
-    devtools:
-        restart:
-            enabled: true # disable on prod environment
-        livereload:
-            enabled: false # we use gulp + BrowserSync for livereload
+
 # ===================================================================
 # Application specific properties
 # ===================================================================

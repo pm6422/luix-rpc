@@ -228,29 +228,16 @@
                 <version>${maven-resources-plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>default-resources</id>
+                        <id>copy-resources</id>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <phase>validate</phase>
                         <configuration>
-                            <outputDirectory>target/classes</outputDirectory>
+                            <outputDirectory>target/classes/static</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/resources/</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>**/*.xml</include>
-                                        <include>**/*.yml</include>
-                                    </includes>
-                                </resource>
-                                <resource>
-                                    <directory>src/main/resources/</directory>
-                                    <filtering>false</filtering>
-                                    <excludes>
-                                        <exclude>**/*.xml</exclude>
-                                        <exclude>**/*.yml</exclude>
-                                    </excludes>
+                                    <directory>src/main/webapp</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -323,7 +310,7 @@
         <profile>
             <id>dev</id>
             <activation>
-                <!-- default Spring profiles -->
+                <!-- default spring profile -->
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
