@@ -1,7 +1,7 @@
 package org.infinity.luix.democlient.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.democlient.filter.CachingHttpHeadersFilter;
+import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;
 import org.springframework.boot.web.server.MimeMappings;
 import org.springframework.boot.web.server.WebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
@@ -9,57 +9,66 @@ import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.Profiles;
 import org.springframework.http.MediaType;
 
 import javax.annotation.Resource;
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.EnumSet;
+import java.util.Arrays;
 
 import static java.net.URLDecoder.decode;
+import static org.infinity.luix.democlient.config.ApplicationConstants.SPRING_PROFILE_DEV;
 
 /**
  * Web application configuration
  */
 @Configuration
 @Slf4j
-public class WebConfigurer implements ServletContextInitializer, WebServerFactoryCustomizer<WebServerFactory> {
+public class WebConfigurer implements ServletContextInitializer, WebServerFactoryCustomizer<UndertowServletWebServerFactory> {
+
     @Resource
-    private Environment           env;
-    @Resource
-    private ApplicationProperties applicationProperties;
+    private Environment env;
 
     @Override
     public void onStartup(ServletContext servletContext) {
-        EnumSet<DispatcherType> types = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC);
-        if (env.acceptsProfiles(Profiles.of(ApplicationConstants.SPRING_PROFILE_PROD))) {
-            initCachingHttpHeadersFilter(servletContext, types);
-        }
-        log.info("Configured web application");
     }
 
     /**
      * Customize the Servlet engine: Mime types, the document root, the cache.
      */
     @Override
-    public void customize(WebServerFactory server) {
-        setMimeMappings(server);
+    public void customize(UndertowServletWebServerFactory factory) {
+        setMimeMappings(factory);
+        if (Arrays.asList(env.getActiveProfiles()).contains(SPRING_PROFILE_DEV)) {
+            // When running in an IDE or with ./mvnw spring-boot:run, set location of the static web assets.
+            setLocationForStaticAssets(factory);
+        }
     }
 
-    private void setMimeMappings(WebServerFactory server) {
-        if (server instanceof ConfigurableServletWebServerFactory) {
+    private void setMimeMappings(WebServerFactory factory) {
+        if (factory instanceof ConfigurableServletWebServerFactory) {
             MimeMappings mappings = new MimeMappings(MimeMappings.DEFAULT);
             // IE issue, see https://github.com/jhipster/generator-jhipster/pull/711
             mappings.add("html", MediaType.TEXT_HTML_VALUE + ";charset=" + StandardCharsets.UTF_8.name().toLowerCase());
             // CloudFoundry issue, see https://github.com/cloudfoundry/gorouter/issues/64
             mappings.add("json", MediaType.TEXT_HTML_VALUE + ";charset=" + StandardCharsets.UTF_8.name().toLowerCase());
-            ConfigurableServletWebServerFactory servletWebServer = (ConfigurableServletWebServerFactory) server;
+            ConfigurableServletWebServerFactory servletWebServer = (ConfigurableServletWebServerFactory) factory;
             servletWebServer.setMimeMappings(mappings);
+        }
+    }
+
+    private void setLocationForStaticAssets(WebServerFactory factory) {
+        if (factory instanceof ConfigurableServletWebServerFactory) {
+            ConfigurableServletWebServerFactory servletWebServer = (ConfigurableServletWebServerFactory) factory;
+            File root;
+            String prefixPath = resolvePathPrefix();
+            root = new File(prefixPath + "src/main/webapp/");
+            if (root.exists() && root.isDirectory()) {
+                servletWebServer.setDocumentRoot(root);
+            }
         }
     }
 
@@ -81,18 +90,5 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
             return "";
         }
         return extractedPath.substring(0, extractionEndIndex);
-    }
-
-    /**
-     * Initializes the caching HTTP Headers Filter.
-     */
-    private void initCachingHttpHeadersFilter(ServletContext servletContext, EnumSet<DispatcherType> types) {
-        FilterRegistration.Dynamic cachingHttpHeadersFilter = servletContext.addFilter("cachingHttpHeadersFilter",
-                new CachingHttpHeadersFilter(applicationProperties));
-        cachingHttpHeadersFilter.addMappingForUrlPatterns(types, true, "/i18n/*");
-        cachingHttpHeadersFilter.addMappingForUrlPatterns(types, true, "/content/*");
-        cachingHttpHeadersFilter.addMappingForUrlPatterns(types, true, "/app/*");
-        cachingHttpHeadersFilter.setAsyncSupported(true);
-        log.debug("Registered caching HTTP headers filter");
     }
 }
