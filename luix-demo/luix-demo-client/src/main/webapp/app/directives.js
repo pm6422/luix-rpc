@@ -41,16 +41,16 @@ angular
 /**
  * pageRibbonDirective
  */
-function pageRibbonDirective($rootScope, ProfileService) {
+function pageRibbonDirective($rootScope, SystemService) {
     return {
         replace: true,
         restrict: 'AE',
-        template: '<div class="ribbon hidden"><a href="" >{{ribbonEnv}}</a></div>',
+        template: '<div class="ribbon hidden"><a href="" >{{ribbonProfile}}</a></div>',
         link: function (scope, element) {
-            ProfileService.getProfileInfo().then(function (response) {
-                if (response.ribbonEnv) {
-                    scope.ribbonEnv = response.ribbonEnv.toUpperCase();
-                    element.addClass(response.ribbonEnv);
+            SystemService.getSystemInfo().then(function (response) {
+                if (response.ribbonProfile) {
+                    scope.ribbonProfile = response.ribbonProfile.toUpperCase();
+                    element.addClass(response.ribbonProfile);
                     element.removeClass('hidden');
                 }
             });
@@ -291,7 +291,7 @@ function sortDirective() {
 /**
  * sortByDirective
  */
-function sortByDirective($rootScope, ProfileService) {
+function sortByDirective() {
     return {
         restrict: 'A',
         scope: false,
