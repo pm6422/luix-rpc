@@ -134,7 +134,10 @@ function NavbarController($rootScope, $scope, $translate, $state, ProfileService
     vm.isNavbarCollapsed = true;
     vm.changeLanguage = changeLanguage;
 
-    ProfileService.getProfileInfo().then(function (response) {
+    SystemService.getSystemInfo().then(function (response) {
+        vm.appId = response.appId;
+        vm.appVersion = response.appVersion;
+        $rootScope.companyName = response.companyName;
         vm.inProduction = response.inProduction;
         vm.swaggerEnabled = response.swaggerDisabled;
     });

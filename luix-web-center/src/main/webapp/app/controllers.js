@@ -245,9 +245,12 @@ function NavbarController($rootScope, $scope, $translate, $state, Authentication
     vm.isAuthenticated = PrincipalService.isAuthenticated;
     vm.changeLanguage = changeLanguage;
 
-    ProfileService.getProfileInfo().then(function (response) {
+    SystemService.getSystemInfo().then(function (response) {
+        vm.appId = response.appId;
+        vm.appVersion = response.appVersion;
+        $rootScope.companyName = response.companyName;
         vm.inProduction = response.inProduction;
-        vm.swaggerEnabled = response.swaggerEnabled;
+        vm.swaggerEnabled = response.swaggerDisabled;
     });
 
     vm.logout = logout;
