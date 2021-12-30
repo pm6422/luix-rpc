@@ -3,10 +3,12 @@ package org.infinity.luix.webcenter.controller;
 import io.changock.runner.core.ChangockBase;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.infinity.luix.utilities.network.AddressUtils;
 import org.infinity.luix.webcenter.config.ApplicationProperties;
 import org.infinity.luix.webcenter.domain.Authority;
-import org.infinity.luix.webcenter.dto.ProfileInfoDTO;
+import org.infinity.luix.webcenter.dto.SystemDTO;
 import org.infinity.luix.webcenter.utils.NetworkUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -22,9 +24,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @Slf4j
@@ -42,30 +45,29 @@ public class SystemController {
     private ChangockBase          changockBase;
     @Resource
     private MongoTemplate         mongoTemplate;
+    @Value("${app.id}")
+    private String                appId;
+    @Value("${app.version}")
+    private String                appVersion;
 
-    @ApiOperation("get profile")
-    @GetMapping("/open-api/systems/profile-info")
-    public ResponseEntity<ProfileInfoDTO> getProfileInfo() {
-        ProfileInfoDTO profileInfoDTO = new ProfileInfoDTO(env.getActiveProfiles(),
-                applicationProperties.getSwagger().isEnabled(), getRibbonEnv());
-        return ResponseEntity.ok(profileInfoDTO);
+    @ApiOperation("get system info")
+    @GetMapping("/open-api/systems/info")
+    public ResponseEntity<SystemDTO> getSystemInfo() {
+        SystemDTO systemDTO = new SystemDTO(appId, appVersion, getRibbonProfile(),
+                applicationProperties.getSwagger().isEnabled(), env.getActiveProfiles());
+        return ResponseEntity.ok(systemDTO);
     }
 
-    private String getRibbonEnv() {
-        String[] activeProfiles = env.getActiveProfiles();
+    private String getRibbonProfile() {
         String[] displayOnActiveProfiles = applicationProperties.getRibbon().getDisplayOnActiveProfiles();
-        if (displayOnActiveProfiles == null) {
+        if (ArrayUtils.isEmpty(displayOnActiveProfiles)) {
             return null;
         }
 
-        List<String> ribbonProfiles = new ArrayList<>(Arrays.asList(displayOnActiveProfiles));
-        List<String> springBootProfiles = Arrays.asList(activeProfiles);
-        ribbonProfiles.retainAll(springBootProfiles);
+        List<String> ribbonProfiles = Stream.of(displayOnActiveProfiles).collect(Collectors.toList());
+        ribbonProfiles.retainAll(Arrays.asList(env.getActiveProfiles()));
 
-        if (ribbonProfiles.size() > 0) {
-            return ribbonProfiles.get(0);
-        }
-        return null;
+        return CollectionUtils.isNotEmpty(ribbonProfiles) ? ribbonProfiles.get(0) : null;
     }
 
     @ApiOperation("get bean")
