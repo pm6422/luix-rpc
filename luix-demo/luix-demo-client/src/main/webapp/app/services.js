@@ -10,7 +10,7 @@ angular
     .factory('AlertUtils', AlertUtils)
     .factory('DateUtils', DateUtils)
     .factory('DataUtils', DataUtils)
-    .factory('ProfileService', ProfileService)
+    .factory('SystemService', SystemService)
     .factory('MetricsService', MetricsService)
     .factory('HealthService', HealthService)
     .factory('ConfigurationService', ConfigurationService)
@@ -423,21 +423,19 @@ function DataUtils($window) {
 }
 
 /**
- * ProfileService
+ * SystemService
  */
-function ProfileService($q, $http, $localStorage) {
+function SystemService($q, $http, $localStorage) {
     var dataPromise;
 
     return {
-        getProfileInfo: getProfileInfo
+        getSystemInfo: getSystemInfo
     };
 
-    function getProfileInfo() {
+    function getSystemInfo() {
         if (angular.isUndefined(dataPromise)) {
-            dataPromise = $http.get('open-api/systems/profile-info').then(function (result) {
-                if (result.data.activeProfiles) {
-                    return result.data;
-                }
+            dataPromise = $http.get('open-api/systems/info').then(function (result) {
+                return result.data;
             });
         }
         return dataPromise;
