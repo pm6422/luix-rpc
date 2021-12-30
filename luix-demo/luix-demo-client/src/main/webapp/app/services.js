@@ -22,14 +22,13 @@ angular
 /**
  * StateHandler
  */
-function StateHandler($rootScope, $state, $sessionStorage, $window, AlertUtils, APP_NAME, VERSION) {
+function StateHandler($rootScope, $state, $sessionStorage, $window, AlertUtils, APP_NAME) {
     return {
         initialize: initialize
     };
 
     function initialize() {
         $rootScope.APP_NAME = APP_NAME;
-        $rootScope.VERSION = VERSION;
 
         var stateChangeStart = $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams, fromState) {
             $rootScope.toState = toState;
