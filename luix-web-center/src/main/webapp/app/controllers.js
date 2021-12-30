@@ -74,7 +74,7 @@ angular
  * Contains several global data used in different view
  *
  */
-function MainController($http, $rootScope, $scope, $state, AuthenticationService, PrincipalService, AuthorityAdminMenuService, AuthServerService, AlertUtils, APP_NAME, COMPANY_NAME, $localStorage) {
+function MainController($http, $rootScope, $scope, $state, AuthenticationService, PrincipalService, AuthorityAdminMenuService, AuthServerService, AlertUtils, APP_NAME, $localStorage) {
     var main = this;
     main.account = null;
     main.isAuthenticated = null;
@@ -83,7 +83,6 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
     $rootScope.selectedRegistryIdentity = null;
     main.selectedLink = null;
     main.selectLink = selectLink;
-    $rootScope.companyName = COMPANY_NAME;
 
     loadRegistries();
 
@@ -238,7 +237,7 @@ function LoginController($rootScope, $state, AuthenticationService) {
 /**
  * NavbarController
  */
-function NavbarController($rootScope, $scope, $translate, $state, AuthenticationService, PrincipalService, ProfileService) {
+function NavbarController($rootScope, $scope, $translate, $state, AuthenticationService, PrincipalService, SystemService) {
     var vm = this;
 
     vm.isNavbarCollapsed = true;
