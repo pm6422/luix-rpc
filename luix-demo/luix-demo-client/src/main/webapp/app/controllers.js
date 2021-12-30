@@ -138,7 +138,7 @@ function NavbarController($rootScope, $scope, $translate, $state, SystemService)
         vm.appVersion = response.appVersion;
         $rootScope.companyName = response.companyName;
         vm.inProduction = response.inProduction;
-        vm.swaggerEnabled = response.swaggerDisabled;
+        vm.swaggerEnabled = response.swaggerEnabled;
     });
 
     vm.toggleNavbar = toggleNavbar;
