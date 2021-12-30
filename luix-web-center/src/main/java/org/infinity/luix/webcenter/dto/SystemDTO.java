@@ -26,6 +26,9 @@ public class SystemDTO implements Serializable {
     @ApiModelProperty(value = "应用版本")
     private String appVersion;
 
+    @ApiModelProperty(value = "公司名称")
+    private String companyName;
+
     @ApiModelProperty(value = "主要Profile")
     private String mainProfile;
 
@@ -38,12 +41,13 @@ public class SystemDTO implements Serializable {
     @ApiModelProperty(value = "是否为生产环境")
     private Boolean inProduction;
 
-    public SystemDTO(String appId, String appVersion, String ribbonProfile,
+    public SystemDTO(String appId, String appVersion, String companyName, String ribbonProfile,
                      boolean swaggerEnabled, String[] activeProfiles) {
         Validate.notEmpty(activeProfiles, "Please specify profiles!");
 
         this.appId = appId;
         this.appVersion = appVersion;
+        this.companyName = companyName;
 
         List<String> availableProfiles = Stream.of(ApplicationConstants.AVAILABLE_PROFILES).collect(Collectors.toList());
         availableProfiles.retainAll(Arrays.asList(activeProfiles));
