@@ -32,11 +32,13 @@ public class SystemController {
     private String                appId;
     @Value("${app.version}")
     private String                appVersion;
+    @Value("${app.companyName}")
+    private String                companyName;
 
     @ApiOperation("get system info")
     @GetMapping("/open-api/systems/info")
     public ResponseEntity<SystemDTO> getSystemInfo() {
-        SystemDTO systemDTO = new SystemDTO(appId, appVersion, getRibbonProfile(),
+        SystemDTO systemDTO = new SystemDTO(appId, appVersion, companyName, getRibbonProfile(),
                 applicationProperties.getSwagger().isEnabled(), env.getActiveProfiles());
         return ResponseEntity.ok(systemDTO);
     }
