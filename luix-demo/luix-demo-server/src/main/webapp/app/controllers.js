@@ -36,14 +36,13 @@ angular
  * Contains several global data used in different view
  *
  */
-function MainController($http, $rootScope, $scope, $state, AdminMenuService, AlertUtils, APP_NAME, COMPANY_NAME) {
+function MainController($http, $rootScope, $scope, $state, AdminMenuService, AlertUtils, APP_NAME) {
     var main = this;
     main.account = null;
     main.isAuthenticated = null;
     main.links = [];
     main.selectedLink = null;
     main.selectLink = selectLink;
-    $rootScope.companyName = COMPANY_NAME;
 
     function selectLink($item, $model, $label, $event) {
         $state.go(main.selectedLink.url);
@@ -87,13 +86,16 @@ function ErrorPageController($state, $stateParams, $scope, JSONFormatterConfig) 
 /**
  * NavbarController
  */
-function NavbarController($rootScope, $scope, $translate, $state, ProfileService) {
+function NavbarController($rootScope, $scope, $translate, $state, SystemService) {
     var vm = this;
 
     vm.isNavbarCollapsed = true;
     vm.changeLanguage = changeLanguage;
 
-    ProfileService.getProfileInfo().then(function (response) {
+    SystemService.getSystemInfo().then(function (response) {
+        vm.appId = response.appId;
+        vm.appVersion = response.appVersion;
+        $rootScope.companyName = response.companyName;
         vm.inProduction = response.inProduction;
         vm.swaggerEnabled = response.swaggerDisabled;
     });
