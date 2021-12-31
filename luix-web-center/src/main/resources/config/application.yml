@@ -119,7 +119,7 @@ mongock:
     enabled: false
     track-ignored: true
     change-logs-scan-package:
-        - ${app.package}.initializer
+        - ${app.package}.config.dbmigrations
     mongo-db:
         read-concern: local
         write-concern:

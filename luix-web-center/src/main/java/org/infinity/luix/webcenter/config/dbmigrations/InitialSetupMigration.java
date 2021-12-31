@@ -1,4 +1,4 @@
-package org.infinity.luix.webcenter.initializer;
+package org.infinity.luix.webcenter.config.dbmigrations;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * Creates the initial database
  */
 @ChangeLog(order = "01")
-public class DatabaseInitializer {
+public class InitialSetupMigration {
 
     private static final String APP_NAME = "rpc-web-center";
 
