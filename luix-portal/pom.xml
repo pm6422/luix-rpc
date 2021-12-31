@@ -26,7 +26,6 @@
         <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
         <revision>1.0.0</revision>
         <run.addResources>false</run.addResources>
-        <spring.boot.version>2.3.0.RELEASE</spring.boot.version>
         <springfox.version>2.7.0</springfox.version>
         <start-class>org.infinity.luix.portal.LuixPortalLauncher</start-class>
     </properties>
@@ -191,15 +190,15 @@
                         </permissions>
                     </extraDirectories>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>build-image</id>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
+                <!--                <executions>-->
+                <!--                    <execution>-->
+                <!--                        <id>build-image</id>-->
+                <!--                        <goals>-->
+                <!--                            <goal>build</goal>-->
+                <!--                        </goals>-->
+                <!--                        <phase>package</phase>-->
+                <!--                    </execution>-->
+                <!--                </executions>-->
             </plugin>
             <plugin>
                 <groupId>com.github.ekryd.sortpom</groupId>
@@ -225,7 +224,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>${maven-resources-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>copy-resources</id>
@@ -280,7 +278,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven-assembly-plugin.version}</version>
                 <configuration>
                     <descriptors>
                         <descriptor>src/main/assembly/assembly.xml</descriptor>

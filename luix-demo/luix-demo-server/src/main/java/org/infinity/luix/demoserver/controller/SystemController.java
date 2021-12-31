@@ -1,6 +1,6 @@
 package org.infinity.luix.demoserver.controller;
 
-import io.changock.runner.core.ChangockBase;
+import com.github.cloudyrock.mongock.runner.core.executor.MongockRunnerBase;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -32,7 +32,7 @@ public class SystemController {
     @Resource
     private ApplicationContext    applicationContext;
     @Resource
-    private ChangockBase          changockBase;
+    private MongockRunnerBase     mongockRunnerBase;
     @Resource
     private MongoTemplate         mongoTemplate;
     @Value("${app.id}")
@@ -78,6 +78,6 @@ public class SystemController {
     @Scheduled(cron = "0 0/5 * * * ?")
     public void reset() {
         mongoTemplate.getDb().drop();
-        changockBase.execute();
+        mongockRunnerBase.execute();
     }
 }

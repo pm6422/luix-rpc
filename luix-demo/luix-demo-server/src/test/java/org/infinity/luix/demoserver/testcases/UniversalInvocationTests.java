@@ -8,14 +8,13 @@ import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.infinity.luix.core.config.impl.ProtocolConfig;
 import org.infinity.luix.core.config.impl.RegistryConfig;
 import org.infinity.luix.core.server.stub.ProviderStub;
-import org.infinity.luix.core.switcher.impl.SwitcherHolder;
+import org.infinity.luix.demoserver.service.App;
 import org.infinity.luix.demoserver.service.TestService;
 import org.infinity.luix.demoserver.service.impl.TestServiceImpl;
 import org.infinity.luix.demoserver.testcases.base.ZkBaseTest;
-import org.infinity.luix.demoserver.service.App;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,21 +22,21 @@ import java.util.List;
 import java.util.Map;
 
 import static org.infinity.luix.core.constant.ConsumerConstants.PROXY_VAL_JDK;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UniversalInvocationTests extends ZkBaseTest {
 
     private static final int PROVIDER_PORT = 2001;
     private static final int CLIENT_PORT   = 2002;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         startZookeeper();
         initZkClient();
         cleanup();
     }
 
-    @After
+    @AfterAll
     public void tearDown() {
         cleanup();
     }

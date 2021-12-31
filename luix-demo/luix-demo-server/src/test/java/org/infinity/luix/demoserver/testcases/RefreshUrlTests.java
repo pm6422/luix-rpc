@@ -14,15 +14,15 @@ import org.infinity.luix.demoserver.service.impl.RefreshUrlServiceImpl;
 import org.infinity.luix.demoserver.testcases.base.ZkBaseTest;
 import org.infinity.luix.registry.zookeeper.StatusDir;
 import org.infinity.luix.registry.zookeeper.utils.ZookeeperUtils;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.infinity.luix.core.constant.ServiceConstants.REQUEST_TIMEOUT;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 public class RefreshUrlTests extends ZkBaseTest {
@@ -30,14 +30,14 @@ public class RefreshUrlTests extends ZkBaseTest {
     private static final int PROVIDER_PORT = 2001;
     private static final int CLIENT_PORT   = 2002;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         startZookeeper();
         initZkClient();
         cleanup();
     }
 
-    @After
+    @AfterAll
     public void tearDown() {
         cleanup();
     }
