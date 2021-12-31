@@ -87,10 +87,6 @@
         <snakeyaml_version>1.26</snakeyaml_version>
         <sofa_registry_version>5.2.0</sofa_registry_version>
         <!-- Common libs -->
-        <spring_boot_version>2.5.5</spring_boot_version>
-        <spring_data_mongodb_version>3.2.5</spring_data_mongodb_version>
-        <spring_security_oauth2_version>2.3.6.RELEASE</spring_security_oauth2_version>
-        <spring_version>5.3.10</spring_version>
         <springfox_version>2.7.0</springfox_version>
         <swagger_version>1.5.13</swagger_version>
         <test_container_version>1.11.2</test_container_version>
@@ -693,39 +689,6 @@
                 <version>${slf4j_version}</version>
             </dependency>
             <!-- Common libs -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>${spring_version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${spring_version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-autoconfigure</artifactId>
-                <version>${spring_boot_version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-commons</artifactId>
-                <version>${spring_boot_version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-mongodb</artifactId>
-                <version>${spring_data_mongodb_version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security.oauth</groupId>
-                <artifactId>spring-security-oauth2</artifactId>
-                <version>${spring_security_oauth2_version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers</artifactId>
