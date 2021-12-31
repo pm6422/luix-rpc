@@ -36,11 +36,11 @@ import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 @RpcProvider
 public class RpcServerServiceImpl implements RpcServerService {
 
-    private static final int                PAGE_SIZE = 100;
+    private static final int                 PAGE_SIZE = 100;
     @Resource
-    private              LuixProperties     luixProperties;
+    private              LuixProperties      luixProperties;
     @Resource
-    private              ApplicationContext applicationContext;
+    private              ApplicationContext  applicationContext;
     @Resource
     private              MongoTemplate       mongoTemplate;
     @Resource
@@ -123,6 +123,10 @@ public class RpcServerServiceImpl implements RpcServerService {
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         // Send a remote request to get ApplicationConfig
         ServerInfo serverInfo = (ServerInfo) invocationHandler.invoke(METHOD_GET_SERVER_INFO);
+
+        if (serverInfo == null) {
+            return null;
+        }
 
         RpcServer rpcServer = new RpcServer();
         BeanUtils.copyProperties(serverInfo, rpcServer);
