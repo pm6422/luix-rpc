@@ -28,8 +28,8 @@
         <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
         <revision>1.0.0</revision>
         <run.addResources>false</run.addResources>
-        <start-class>org.infinity.luix.democlient.LuixDemoClientLauncher</start-class>
         <skipJib>true</skipJib>
+        <start-class>org.infinity.luix.democlient.LuixDemoClientLauncher</start-class>
     </properties>
     <!--
         *************************************************************************************
