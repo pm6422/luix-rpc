@@ -29,6 +29,7 @@
         <revision>1.0.0</revision>
         <run.addResources>false</run.addResources>
         <start-class>org.infinity.luix.democlient.LuixDemoClientLauncher</start-class>
+        <skipJib>true</skipJib>
     </properties>
     <!--
         *************************************************************************************
@@ -267,6 +268,7 @@
                             </permission>
                         </permissions>
                     </extraDirectories>
+                    <skip>${skipJib}</skip>
                 </configuration>
                 <executions>
                     <execution>

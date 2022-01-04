@@ -28,6 +28,7 @@
         <run.addResources>false</run.addResources>
         <springfox.version>2.7.0</springfox.version>
         <start-class>org.infinity.luix.portal.LuixPortalLauncher</start-class>
+        <skipJib>true</skipJib>
     </properties>
     <!--
     *************************************************************************************
@@ -189,6 +190,7 @@
                             </permission>
                         </permissions>
                     </extraDirectories>
+                    <skip>${skipJib}</skip>
                 </configuration>
                 <executions>
                     <execution>
