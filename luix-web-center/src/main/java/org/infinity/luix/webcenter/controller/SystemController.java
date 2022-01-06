@@ -10,6 +10,7 @@ import org.infinity.luix.webcenter.config.ApplicationProperties;
 import org.infinity.luix.webcenter.domain.Authority;
 import org.infinity.luix.webcenter.dto.SystemDTO;
 import org.infinity.luix.webcenter.utils.NetworkUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
@@ -41,8 +42,8 @@ public class SystemController {
     private ApplicationProperties applicationProperties;
     @Resource
     private ApplicationContext    applicationContext;
-    @Resource
-    private MongockRunnerBase     mongockRunnerBase;
+    @Autowired(required = false)
+    private MongockRunnerBase<?>  mongockRunnerBase;
     @Resource
     private MongoTemplate         mongoTemplate;
     @Value("${app.id}")

@@ -6,6 +6,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.infinity.luix.demoserver.config.ApplicationProperties;
 import org.infinity.luix.demoserver.dto.SystemDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
@@ -31,8 +32,8 @@ public class SystemController {
     private ApplicationProperties applicationProperties;
     @Resource
     private ApplicationContext    applicationContext;
-    @Resource
-    private MongockRunnerBase     mongockRunnerBase;
+    @Autowired(required = false)
+    private MongockRunnerBase<?>  mongockRunnerBase;
     @Resource
     private MongoTemplate         mongoTemplate;
     @Value("${app.id}")
