@@ -50,7 +50,7 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
         if (event instanceof ContextRefreshedEvent) {
             onContextRefreshedEvent((ContextRefreshedEvent) event);
         } else if (event instanceof ContextClosedEvent) {
-            // ContextClosedEvent will be triggered while encountering startup error but no any exception thrown
+            // ContextClosedEvent will be triggered while encountering startup error but no any thrown exception
             onContextClosedEvent((ContextClosedEvent) event);
         }
     }

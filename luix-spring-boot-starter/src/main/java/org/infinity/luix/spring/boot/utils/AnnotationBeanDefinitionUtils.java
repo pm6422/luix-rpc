@@ -21,13 +21,16 @@ import java.util.stream.Collectors;
 public abstract class AnnotationBeanDefinitionUtils {
     private static final ValidatorFactory VALIDATOR_FACTORY = Validation.buildDefaultValidatorFactory();
 
-    public static void copyPropertiesToBeanDefinitionBuilder(Annotation ann, BeanDefinitionBuilder builder, String... excludedProperties) {
-        Set<String> excluded = (excludedProperties.length == 0 ? Collections.emptySet() : new HashSet<>(Arrays.asList(excludedProperties)));
-        Method[] annotationProperties = ann.annotationType().getDeclaredMethods();
+    public static void copyPropertiesToBeanDefinitionBuilder(Annotation annotation, BeanDefinitionBuilder builder,
+                                                             String... excludedProperties) {
+        Set<String> excluded = (excludedProperties.length == 0
+                ? Collections.emptySet()
+                : new HashSet<>(Arrays.asList(excludedProperties)));
+        Method[] annotationProperties = annotation.annotationType().getDeclaredMethods();
         for (Method annotationProperty : annotationProperties) {
             String propertyName = annotationProperty.getName();
             if (!excluded.contains(propertyName)) {
-                Object value = ReflectionUtils.invokeMethod(annotationProperty, ann);
+                Object value = ReflectionUtils.invokeMethod(annotationProperty, annotation);
                 addPropertyValue(builder, propertyName, value);
             }
         }
@@ -61,7 +64,8 @@ public abstract class AnnotationBeanDefinitionUtils {
      * @param propertyName property name
      * @param instanceName provider instance name
      */
-    public static void addPropertyReference(BeanDefinitionBuilder builder, String propertyName, String instanceName, Environment env) {
+    public static void addPropertyReference(BeanDefinitionBuilder builder, String propertyName,
+                                            String instanceName, Environment env) {
         builder.addPropertyReference(propertyName, env.resolvePlaceholders(instanceName));
     }
 }

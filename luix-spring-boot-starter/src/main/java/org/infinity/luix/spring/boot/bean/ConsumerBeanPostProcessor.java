@@ -108,15 +108,12 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
      */
     private void injectConsumerToField(Object bean, Class<?> beanClass) {
         Field[] fields = beanClass.getDeclaredFields();
-        for (Field field : fields) {
-            if (!isConsumerAnnotatedField(field)) {
-                continue;
-            }
+        Arrays.stream(fields).filter(this::isConsumerAnnotatedField).forEach(field -> {
             try {
                 RpcConsumer rpcConsumerAnnotation = field.getAnnotation(RpcConsumer.class);
                 if (rpcConsumerAnnotation == null) {
                     // No @Consumer annotated field found
-                    continue;
+                    return;
                 }
                 AnnotationAttributes attributes = getConsumerAnnotationAttributes(field);
                 // Register consumer stub instance to spring context
@@ -130,7 +127,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
                 throw new BeanInitializationException("Failed to inject RPC consumer proxy to field [" + field.getName()
                         + "] of " + bean.getClass().getName(), t);
             }
-        }
+        });
     }
 
     /**
@@ -142,10 +139,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
      */
     private void injectConsumerToMethodParam(Object bean, Class<?> beanClass) {
         Method[] methods = beanClass.getMethods();
-        for (Method method : methods) {
-            if (!isConsumerAnnotatedMethod(method)) {
-                continue;
-            }
+        Arrays.stream(methods).filter(this::isConsumerAnnotatedMethod).forEach(method -> {
             try {
                 // The Java compiler generates the bridge method, in order to be compatible with the byte code
                 // under previous JDK version of JDK 1.5, for the generic erasure occasion
@@ -153,7 +147,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
                 RpcConsumer rpcConsumerAnnotation = bridgedMethod.getAnnotation(RpcConsumer.class);
                 if (rpcConsumerAnnotation == null) {
                     // No @Consumer annotated method found
-                    continue;
+                    return;
                 }
 
                 AnnotationAttributes attributes = getConsumerAnnotationAttributes(bridgedMethod);
@@ -165,7 +159,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
                 throw new BeanInitializationException("Failed to inject RPC consumer proxy to parameter of method ["
                         + method.getName() + "] of " + bean.getClass().getName(), t);
             }
-        }
+        });
     }
 
     private boolean isConsumerAnnotatedField(Field field) {
@@ -202,7 +196,8 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
         // Build the consumer stub bean name
         String consumerStubBeanName = buildConsumerStubBeanName(resolvedConsumerInterfaceClass.getName(), attributes);
         if (!existsConsumerStub(consumerStubBeanName)) {
-            AbstractBeanDefinition stubBeanDefinition = buildConsumerStubDefinition(consumerStubBeanName, consumerInterfaceClass, rpcConsumerAnnotation);
+            AbstractBeanDefinition stubBeanDefinition =
+                    buildConsumerStubDefinition(consumerStubBeanName, consumerInterfaceClass, rpcConsumerAnnotation);
             beanFactory.registerBeanDefinition(consumerStubBeanName, stubBeanDefinition);
             log.info("Registered RPC consumer stub [{}] to spring context", consumerStubBeanName);
         }

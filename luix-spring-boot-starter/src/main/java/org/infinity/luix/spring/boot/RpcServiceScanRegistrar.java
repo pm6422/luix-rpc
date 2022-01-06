@@ -22,9 +22,6 @@ import java.util.*;
 @Slf4j
 public class RpcServiceScanRegistrar implements ImportBeanDefinitionRegistrar {
 
-    public RpcServiceScanRegistrar() {
-    }
-
     /**
      * Register service providers and consumers bean definitions
      *
@@ -39,7 +36,6 @@ public class RpcServiceScanRegistrar implements ImportBeanDefinitionRegistrar {
         registerRpcLifecycleApplicationListener(registry);
         registerProviderBeanDefinitionRegistryPostProcessor(registry, scanBasePackages);
         registerConsumerBeanPostProcessor(registry, scanBasePackages);
-//        registerConsumerAnnotationBeanPostProcessor(registry);
     }
 
     /**
@@ -118,15 +114,4 @@ public class RpcServiceScanRegistrar implements ImportBeanDefinitionRegistrar {
         AbstractBeanDefinition beanDefinition = builder.getBeanDefinition();
         BeanDefinitionReaderUtils.registerWithGeneratedName(beanDefinition, registry);
     }
-
-    //    /**
-//     * Registers {@link ConsumerAnnotationBeanPostProcessor} into {@link BeanFactory}
-//     *
-//     * @param registry {@link BeanDefinitionRegistry}
-//     */
-//    private void registerConsumerAnnotationBeanPostProcessor(BeanDefinitionRegistry registry) {
-//        registerInfrastructureBean(registry, ConsumerAnnotationBeanPostProcessor.BEAN_NAME, ConsumerAnnotationBeanPostProcessor.class);
-//    }
-
-
 }

@@ -75,7 +75,7 @@ public class RpcLifecycle {
     /**
      * Start the RPC server
      *
-     * @param beanFactory        bean factory
+     * @param beanFactory    bean factory
      * @param luixProperties RPC configuration properties
      */
     public void start(DefaultListableBeanFactory beanFactory, LuixProperties luixProperties) {
@@ -102,7 +102,7 @@ public class RpcLifecycle {
     /**
      * Register build-in provider stubs
      *
-     * @param beanFactory        bean factory
+     * @param beanFactory    bean factory
      * @param luixProperties RPC configuration properties
      */
     private void registerBuildInProviderStubs(DefaultListableBeanFactory beanFactory,
@@ -144,13 +144,13 @@ public class RpcLifecycle {
         }
         providerStubs.forEach((name, providerStub) -> {
             // Set method level configuration
-            Arrays.stream(getTargetClass(providerStub.getInstance()).getMethods()).forEach(method -> {
-                setMethodConfig(providerStub, method);
-            });
+            Arrays.stream(getTargetClass(providerStub.getInstance()).getMethods()).forEach(method ->
+                    setMethodConfig(providerStub, method)
+            );
             if (providerStub.getInterfaceClass() != null) {
-                Arrays.stream(providerStub.getInterfaceClass().getMethods()).forEach(method -> {
-                    setMethodConfig(providerStub, method);
-                });
+                Arrays.stream(providerStub.getInterfaceClass().getMethods()).forEach(method ->
+                        setMethodConfig(providerStub, method)
+                );
             }
 
             // Register providers
@@ -159,10 +159,9 @@ public class RpcLifecycle {
 
         if (luixProperties.getProvider().isAutoExpose()) {
             // Activate RPC service providers
-//            SwitcherHolder.getInstance().setValue(SwitcherHolder.SERVICE_ACTIVE, true);
-            providerStubs.forEach((name, providerStub) -> {
-                providerStub.activate();
-            });
+            providerStubs.forEach((name, providerStub) ->
+                    providerStub.activate()
+            );
         }
     }
 
@@ -205,10 +204,9 @@ public class RpcLifecycle {
             return;
         }
 
-        luixProperties.getRegistryList().forEach(registryConfig -> {
-            //unregisterApplication(registryUrls);
-            unregisterProviders(registryConfig.getRegistryUrl());
-        });
+        luixProperties.getRegistryList().forEach(registryConfig ->
+                unregisterProviders(registryConfig.getRegistryUrl())
+        );
     }
 
     /**

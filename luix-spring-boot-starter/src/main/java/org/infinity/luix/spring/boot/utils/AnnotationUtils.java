@@ -173,7 +173,7 @@ public abstract class AnnotationUtils {
     /**
      * Get the {@link Annotation} attributes
      *
-     * @param annotationAttributes the attributes of specified {@link Annotation}, e.g {@link AnnotationAttributes}
+     * @param annotationAttributes the attributes of specified {@link Annotation}, e.g, {@link AnnotationAttributes}
      * @param propertyResolver     {@link PropertyResolver} instance, e.g {@link Environment}
      * @param ignoreAttributeNames the attribute names of annotation should be ignored
      * @return non-null
@@ -200,7 +200,6 @@ public abstract class AnnotationUtils {
                 for (int i = 0; i < values.length; i++) {
                     values[i] = resolvePlaceholders(values[i], propertyResolver);
                 }
-                attributeValue = values;
             }
             actualAttributes.put(attributeName, attributeValue);
         }
@@ -244,7 +243,7 @@ public abstract class AnnotationUtils {
      * Resolve the interface name from {@link AnnotationAttributes} or defaultInterfaceClass
      *
      * @param attributes               {@link AnnotationAttributes} instance, e.g {@link RpcConsumer @Consumer} or {@link RpcProvider @Provider}
-     * @param instanceOrInterfaceClass provider instance class, e.g AppServiceImpl or consumer interface class, e.g AppService
+     * @param instanceOrInterfaceClass provider instance class, e.g, AppServiceImpl or consumer interface class, e.g, AppService
      * @return the interface name if found
      */
     public static String resolveInterfaceName(AnnotationAttributes attributes, Class<?> instanceOrInterfaceClass) {
@@ -256,7 +255,7 @@ public abstract class AnnotationUtils {
      * {@link AnnotationAttributes annotation attributes} and annotated {@link Class class}.
      *
      * @param attributes               {@link AnnotationAttributes annotation attributes}
-     * @param instanceOrInterfaceClass provider instance class, e.g AppServiceImpl or consumer interface class, e.g AppService
+     * @param instanceOrInterfaceClass provider instance class, e.g, AppServiceImpl or consumer interface class, e.g, AppService
      * @return the {@link Class class} of provider interface
      */
     public static Class<?> resolveInterfaceClass(AnnotationAttributes attributes, Class<?> instanceOrInterfaceClass) {

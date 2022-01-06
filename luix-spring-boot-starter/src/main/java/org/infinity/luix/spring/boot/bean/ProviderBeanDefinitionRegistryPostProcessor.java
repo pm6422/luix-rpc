@@ -51,12 +51,14 @@ import static org.infinity.luix.spring.boot.utils.AnnotationBeanDefinitionUtils.
  * <p>
  * BeanFactoryPostProcessor: Factory hook that allows for custom modification of an application context's
  * bean definitions and the bean property values of the context's underlying bean factory.
- * BeanDefinitionRegistryPostProcessor: It the sub-interface of {@link org.springframework.beans.factory.config.BeanFactoryPostProcessor},
- * it can register the beanDefinition to beanFactory before {@link org.springframework.beans.factory.config.BeanFactoryPostProcessor} takes effect
+ * BeanDefinitionRegistryPostProcessor: It's the sub-interface of
+ * {@link org.springframework.beans.factory.config.BeanFactoryPostProcessor},
+ * it can register the beanDefinition to beanFactory before
+ * {@link org.springframework.beans.factory.config.BeanFactoryPostProcessor} takes effect
  */
 @Slf4j
-public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentAware, BeanFactoryAware, ResourceLoaderAware,
-        BeanClassLoaderAware, BeanDefinitionRegistryPostProcessor {
+public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentAware, BeanFactoryAware,
+        ResourceLoaderAware, BeanClassLoaderAware, BeanDefinitionRegistryPostProcessor {
 
     private final Set<String>                scanBasePackages;
     private       ConfigurableEnvironment    env;
@@ -174,7 +176,8 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
      */
     private ClassPathBeanDefinitionRegistryScanner createProviderScanner(BeanDefinitionRegistry registry,
                                                                          BeanNameGenerator beanNameGenerator) {
-        ClassPathBeanDefinitionRegistryScanner scanner = new ClassPathBeanDefinitionRegistryScanner(registry, env, resourceLoader);
+        ClassPathBeanDefinitionRegistryScanner scanner =
+                new ClassPathBeanDefinitionRegistryScanner(registry, env, resourceLoader);
         scanner.setBeanNameGenerator(beanNameGenerator);
         scanner.addIncludeFilter(new AnnotationTypeFilter(RpcProvider.class));
         return scanner;
@@ -247,7 +250,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
                                           ClassPathBeanDefinitionRegistryScanner providerScanner) {
         Class<?> providerInstanceClass = resolveProviderClass(providerBeanDefinitionHolder);
         RpcProvider rpcProviderAnnotation = findProviderAnnotation(providerInstanceClass);
-        Class<?> providerInterfaceClass = resolveProviderInterface(rpcProviderAnnotation, providerInstanceClass);
+        Class<?> providerInterfaceClass = resolveProviderInterface(providerInstanceClass);
 
         String providerStubBeanName = buildProviderStubBeanName(providerInterfaceClass.getName(),
                 rpcProviderAnnotation.form(), rpcProviderAnnotation.version());
@@ -286,11 +289,10 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentA
     /**
      * Get provider interface class
      *
-     * @param rpcProviderAnnotation {@link RpcProvider} annotation
      * @param providerInstanceClass provider instance class, e.g AppServiceImpl
      * @return provider interface
      */
-    private Class<?> resolveProviderInterface(RpcProvider rpcProviderAnnotation, Class<?> providerInstanceClass) {
+    private Class<?> resolveProviderInterface(Class<?> providerInstanceClass) {
         AnnotationAttributes annotationAttributes = AnnotationUtils
                 .getAnnotationAttributes(providerInstanceClass, RpcProvider.class, env, false, true);
         return AnnotationUtils.resolveInterfaceClass(annotationAttributes, providerInstanceClass);
