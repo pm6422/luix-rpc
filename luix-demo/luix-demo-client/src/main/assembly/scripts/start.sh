@@ -7,7 +7,7 @@ cd `dirname $0`
 #------------------------------------------------------------------------------------------------------------
 appDir=../lib
 appName="${project.build.finalName}.${project.packaging}"
-serverPort=${app.server.port}
+serverPort=6020
 profiles="${spring.profiles.active}"
 appStartLog="../start.log"
 appStartedIndicatorText="Application is running"
@@ -50,9 +50,9 @@ function clearStartLog() {
 # Run the application
 #------------------------------------------------------------------------------------------------------------
 function runApp() {
-    JAVA_CMD="nohup java -jar $appDir/$appName --logging.level.root=INFO --spring.profiles.active=$profiles --server.port=$serverPort >> $appStartLog 2>&1 &"
+    JAVA_CMD="sudo nohup java -jar $appDir/$appName --logging.level.root=INFO --spring.profiles.active=$profiles --server.port=$serverPort >> $appStartLog 2>&1 &"
     echo "Command: $JAVA_CMD"
-    nohup java $JAVA_MEM_OPTS -jar $appDir/$appName --logging.level.root=INFO --spring.profiles.active=$profiles --server.port=$serverPort >> $appStartLog 2>&1 &
+    sudo nohup java $JAVA_MEM_OPTS -jar $appDir/$appName --logging.level.root=INFO --spring.profiles.active=$profiles --server.port=$serverPort >> $appStartLog 2>&1 &
 }
 
 #------------------------------------------------------------------------------------------------------------

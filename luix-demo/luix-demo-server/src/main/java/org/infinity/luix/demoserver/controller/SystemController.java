@@ -8,6 +8,7 @@ import org.infinity.luix.demoserver.config.ApplicationProperties;
 import org.infinity.luix.demoserver.dto.SystemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -42,11 +43,15 @@ public class SystemController {
     private String                appVersion;
     @Value("${app.companyName}")
     private String                companyName;
+    @Autowired(required = false)
+    private BuildProperties       buildProperties;
 
     @ApiOperation("get system info")
     @GetMapping("/open-api/systems/info")
     public ResponseEntity<SystemDTO> getSystemInfo() {
-        SystemDTO systemDTO = new SystemDTO(appId, appVersion, companyName, getRibbonProfile(),
+        String id = buildProperties != null ? buildProperties.getArtifact() : appId;
+        String version = buildProperties != null ? buildProperties.getVersion() : appVersion;
+        SystemDTO systemDTO = new SystemDTO(id, version, companyName, getRibbonProfile(),
                 applicationProperties.getSwagger().isEnabled(), env.getActiveProfiles());
         return ResponseEntity.ok(systemDTO);
     }

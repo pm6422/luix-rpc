@@ -7,9 +7,9 @@
 # https://docs.spring.io/spring-boot/docs/2.5.5/reference/html/application-properties.html#application-properties
 # ===================================================================
 app:
-    id: @project.artifactId@
-    name: @project.name@
-    version: @project.version@
+    id: luix-demo-server
+    name: luix-demo-server
+    version: 1.0.0
     package: org.infinity.luix.demoserver
     companyName: Infinity Organization
 management: # Management http server configuration, used by ManagementServerProperties
@@ -56,10 +56,8 @@ spring:
     application:
         name: ${app.id}
     profiles:
-        # The commented value for `active` can be replaced with valid spring profiles to load.
-        # Otherwise, it will be filled in by maven when building the WAR file
-        # Either way, it can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
-        active: @spring.profiles.active@
+        # It can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
+        active: dev
     main:
         allow-bean-definition-overriding: true
     messages:
@@ -92,7 +90,7 @@ spring:
             propagate-transient-marker: true # disable serialize transient fields
 server:
     # It can be overridden by `--server.port` value passed in the commandline or `-Dserver.port` set in `JAVA_OPTS`
-    port: @app.server.port@
+    port: 6010
     servlet:
         session:
             cookie:
@@ -125,7 +123,7 @@ luix:
         connectTimeout: 1000
         sessionTimeout: 60000
     protocol:
-        port: @app.rpc.port@
+        port: 1${server.port}
 #        serializer: hessian2
 # ===================================================================
 # Application specific properties

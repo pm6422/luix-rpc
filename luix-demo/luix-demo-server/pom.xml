@@ -18,8 +18,6 @@
         *************************************************************************************
     -->
     <properties>
-        <app.rpc.port>1${app.server.port}</app.rpc.port>
-        <app.server.port>6010</app.server.port>
         <java.version>1.8</java.version>
         <lombok.version>1.18.20</lombok.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -253,7 +251,7 @@
                             <arg>/entrypoint.sh</arg>
                         </entrypoint>
                         <ports>
-                            <port>${app.server.port}</port>
+                            <port>6010</port>
                         </ports>
                         <environment>
                             <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
@@ -382,6 +380,7 @@
                     <execution>
                         <goals>
                             <goal>repackage</goal>
+                            <goal>build-info</goal>
                         </goals>
                     </execution>
                 </executions>
