@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Aspect for logging execution arguments and result of the method.
@@ -70,7 +69,7 @@ public class AopLoggingAspect {
         HttpServletRequest request = servletRequestAttributes != null ? servletRequestAttributes.getRequest() : null;
         HttpServletResponse response = servletRequestAttributes != null ? servletRequestAttributes.getResponse() : null;
         // Get traceId from http request
-        TraceIdUtils.setTraceId(Objects.requireNonNull(request));
+        TraceIdUtils.setTraceId(request);
         beforeRun(joinPoint);
         Object result = joinPoint.proceed();
         // Set traceId to http response
