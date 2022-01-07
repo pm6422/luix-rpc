@@ -231,7 +231,7 @@
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
-                        <phase>package</phase>
+                        <phase>validate</phase>
                         <configuration>
                             <outputDirectory>target/classes/static</outputDirectory>
                             <resources>
