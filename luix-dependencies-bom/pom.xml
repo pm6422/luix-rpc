@@ -16,8 +16,6 @@
     <url>https://infinity.org</url>
     <properties>
         <activation_version>1.2.0</activation_version>
-        <!-- Alibaba -->
-        <alibaba_spring_context_support_version>1.0.6</alibaba_spring_context_support_version>
         <apollo_client_version>1.6.0</apollo_client_version>
         <avro_version>1.8.2</avro_version>
         <commons_collections4_version>4.2</commons_collections4_version>
@@ -34,7 +32,7 @@
         <etcd_launcher_version>0.3.0</etcd_launcher_version>
         <!-- Eureka -->
         <eureka_version>1.9.12</eureka_version>
-        <fastjson_version>1.2.67</fastjson_version>
+        <fastjson_version>1.2.78</fastjson_version>
         <forest_spring_boot_starter_version>1.5.0</forest_spring_boot_starter_version>
         <fst_version>2.48-jdk-6</fst_version>
         <grizzly_version>2.1.4</grizzly_version>
@@ -85,7 +83,6 @@
         <!-- Log libs -->
         <slf4j_version>1.7.30</slf4j_version>
         <snakeyaml_version>1.26</snakeyaml_version>
-        <sofa_registry_version>5.2.0</sofa_registry_version>
         <!-- Common libs -->
         <springfox_version>2.7.0</springfox_version>
         <swagger_version>1.5.13</swagger_version>
@@ -137,24 +134,6 @@
                 <groupId>com.alibaba.nacos</groupId>
                 <artifactId>nacos-client</artifactId>
                 <version>${nacos_version}</version>
-            </dependency>
-            <!-- Alibaba -->
-            <dependency>
-                <groupId>com.alibaba.spring</groupId>
-                <artifactId>spring-context-support</artifactId>
-                <version>${alibaba_spring_context_support_version}</version>
-            </dependency>
-            <!-- for dubbo-registry-sofa -->
-            <dependency>
-                <groupId>com.alipay.sofa</groupId>
-                <artifactId>registry-client-all</artifactId>
-                <version>${sofa_registry_version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alipay.sofa</groupId>
-                <artifactId>registry-test</artifactId>
-                <version>${sofa_registry_version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.caucho</groupId>
