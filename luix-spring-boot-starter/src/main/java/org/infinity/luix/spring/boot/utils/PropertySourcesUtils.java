@@ -81,7 +81,8 @@ public abstract class PropertySourcesUtils {
         }
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             try {
-                FieldUtils.writeField(configClz.getDeclaredField(entry.getKey()), config, entry.getValue(), true);
+                Object convertedVal = ObjectConverter.convert(entry.getValue(), configClz.getDeclaredField(entry.getKey()).getType());
+                FieldUtils.writeField(configClz.getDeclaredField(entry.getKey()), config, convertedVal, true);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new RpcConfigException("Failed to set configuration property: " + entry.getKey());
             }
