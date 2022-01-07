@@ -7,7 +7,6 @@ import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.infinity.luix.core.config.impl.ProtocolConfig;
 import org.infinity.luix.core.config.impl.RegistryConfig;
 import org.infinity.luix.core.server.stub.ProviderStub;
-import org.infinity.luix.core.switcher.impl.SwitcherHolder;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.demoserver.service.RefreshUrlService;
 import org.infinity.luix.demoserver.service.impl.RefreshUrlServiceImpl;
@@ -72,7 +71,7 @@ public class RefreshUrlTests extends ZkBaseTest {
         providerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
-        applicationConfig.setName("server");
+        applicationConfig.setId("server");
         applicationConfig.setDescription("Description");
         applicationConfig.setTeam("Team");
         applicationConfig.setOwnerMail("test@126.com");
@@ -105,7 +104,7 @@ public class RefreshUrlTests extends ZkBaseTest {
         consumerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
-        applicationConfig.setName("client");
+        applicationConfig.setId("client");
         applicationConfig.setDescription("Description");
         applicationConfig.setTeam("Team");
         applicationConfig.setOwnerMail("test@126.com");

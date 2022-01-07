@@ -126,7 +126,7 @@ mongock:
             journal: false
 luix:
     application:
-        name: ${spring.application.name}
+        id: ${spring.application.name}
         description: RPC Web Center
         team: Infinity Team
         mailSuffixes: '@luixtech.com'

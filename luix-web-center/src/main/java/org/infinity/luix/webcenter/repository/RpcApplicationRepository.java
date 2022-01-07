@@ -15,7 +15,7 @@ public interface RpcApplicationRepository extends MongoRepository<RpcApplication
 
     long countByActive(boolean active);
 
-    Optional<RpcApplication> findByRegistryIdentityAndName(String registryIdentity, String application);
+    Optional<RpcApplication> findByRegistryIdentityAndId(String registryIdentity, String application);
 
     List<RpcApplication> findByRegistryIdentity(String registryIdentity);
 }

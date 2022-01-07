@@ -18,11 +18,10 @@ public class ApplicationConfig implements Configurable, Serializable {
     private static final long         serialVersionUID = -7916757272373849145L;
     public static final  String       PREFIX           = "application";
     /**
-     * Application name
-     * Keep unique
+     * Application ID (Keep unique for all applications under the same registry)
      */
     @NotEmpty
-    private              String       name;
+    private              String       id;
     /**
      * Application description
      */

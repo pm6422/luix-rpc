@@ -42,7 +42,7 @@ public class RpcApplicationController {
             @ApiParam(value = "registry url identity", required = true, defaultValue = ApplicationConstants.DEFAULT_REG)
             @RequestParam(value = "registryIdentity") String registryIdentity) {
         List<String> results = rpcApplicationRepository.findByRegistryIdentity(registryIdentity)
-                .stream().map(RpcApplication::getName).collect(Collectors.toList());
+                .stream().map(RpcApplication::getId).collect(Collectors.toList());
         return ResponseEntity.ok(results);
     }
 
@@ -58,11 +58,11 @@ public class RpcApplicationController {
         Page<RpcApplication> results = rpcApplicationService.find(pageable, registryIdentity, name, active);
         if (!results.isEmpty()) {
             results.getContent().forEach(domain -> {
-                if (rpcProviderService.existsApplication(registryIdentity, domain.getName(), true)) {
+                if (rpcProviderService.existsApplication(registryIdentity, domain.getId(), true)) {
                     domain.setProviding(true);
                     domain.setActive(true);
                 }
-                if (rpcConsumerService.existsApplication(registryIdentity, domain.getName(), true)) {
+                if (rpcConsumerService.existsApplication(registryIdentity, domain.getId(), true)) {
                     domain.setConsuming(true);
                     domain.setActive(true);
                 }

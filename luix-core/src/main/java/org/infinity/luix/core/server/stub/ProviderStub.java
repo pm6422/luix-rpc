@@ -338,7 +338,7 @@ public class ProviderStub<T> {
     private Url createProviderUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
         Url url = Url.providerUrl(defaultIfEmpty(protocol, ProtocolConstants.PROTOCOL_VAL_DEFAULT), protocolConfig.getHost(),
                 protocolConfig.getPort(), interfaceName, form, version);
-        url.addOption(ApplicationConstants.APP, applicationConfig.getName());
+        url.addOption(ApplicationConstants.APP, applicationConfig.getId());
         url.addOption(ProtocolConstants.SERIALIZER, serializer);
         url.addOption(ProviderConstants.HEALTH_CHECKER, healthChecker);
         url.addOption(ServiceConstants.REQUEST_TIMEOUT, requestTimeout);

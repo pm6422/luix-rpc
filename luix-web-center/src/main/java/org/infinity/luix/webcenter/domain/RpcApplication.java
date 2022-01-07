@@ -26,7 +26,7 @@ public class RpcApplication extends ApplicationConfig implements Serializable {
     public static final  String FIELD_CONSUMING  = "consuming";
 
     @Id
-    private String  id;
+    private String  tid;
     private String  registryIdentity;
     private boolean active;
     @Transient

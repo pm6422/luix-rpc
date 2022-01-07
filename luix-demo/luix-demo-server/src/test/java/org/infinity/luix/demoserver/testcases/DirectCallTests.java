@@ -51,7 +51,7 @@ public class DirectCallTests extends ZkBaseTest {
         providerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
-        applicationConfig.setName("server");
+        applicationConfig.setId("server");
         applicationConfig.setDescription("Description");
         applicationConfig.setTeam("Team");
         applicationConfig.setOwnerMail("test@126.com");
@@ -87,7 +87,7 @@ public class DirectCallTests extends ZkBaseTest {
         consumerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
-        applicationConfig.setName("client");
+        applicationConfig.setId("client");
         applicationConfig.setDescription("Description");
         applicationConfig.setTeam("Team");
         applicationConfig.setOwnerMail("test@126.com");

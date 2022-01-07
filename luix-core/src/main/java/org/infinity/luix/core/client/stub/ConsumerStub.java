@@ -257,7 +257,7 @@ public class ConsumerStub<T> {
     private Url createConsumerUrl(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig) {
         url = Url.consumerUrl(defaultIfEmpty(protocol, ProtocolConstants.PROTOCOL_VAL_DEFAULT),
                 protocolConfig.getHost(), protocolConfig.getPort(), interfaceName, form, version);
-        url.addOption(ApplicationConstants.APP, applicationConfig.getName());
+        url.addOption(ApplicationConstants.APP, applicationConfig.getId());
         url.addOption(ProtocolConstants.SERIALIZER, serializer);
         url.addOption(ServiceConstants.REQUEST_TIMEOUT, requestTimeout);
         url.addOption(ServiceConstants.RETRY_COUNT, retryCount);

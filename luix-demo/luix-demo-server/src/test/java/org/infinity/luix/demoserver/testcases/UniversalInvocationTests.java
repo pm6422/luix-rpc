@@ -67,7 +67,7 @@ public class UniversalInvocationTests extends ZkBaseTest {
         providerStub.init();
 
         ApplicationConfig applicationConfig = new ApplicationConfig();
-        applicationConfig.setName("server");
+        applicationConfig.setId("server");
         applicationConfig.setDescription("Description");
         applicationConfig.setTeam("Team");
         applicationConfig.setOwnerMail("test@126.com");
@@ -93,7 +93,7 @@ public class UniversalInvocationTests extends ZkBaseTest {
 
     private ConsumerStub<?> createConsumerStub(String interfaceName) {
         ApplicationConfig applicationConfig = new ApplicationConfig();
-        applicationConfig.setName("client");
+        applicationConfig.setId("client");
         applicationConfig.setDescription("Description");
         applicationConfig.setTeam("Team");
         applicationConfig.setOwnerMail("test@126.com");

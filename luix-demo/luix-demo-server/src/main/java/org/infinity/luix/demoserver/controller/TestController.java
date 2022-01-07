@@ -42,7 +42,7 @@ public class TestController {
                 AppService.class.getName());
 
         // Assign values to parameters
-        providerUrl.addOption(APP, luixProperties.getApplication().getName());
+        providerUrl.addOption(APP, luixProperties.getApplication().getId());
 
         luixProperties.getRegistryList().forEach(registryConfig -> registryConfig.getRegistryImpl().register(providerUrl));
     }

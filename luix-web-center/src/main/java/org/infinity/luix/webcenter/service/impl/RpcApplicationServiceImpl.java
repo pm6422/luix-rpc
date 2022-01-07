@@ -61,11 +61,11 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
             return;
         }
         applications.forEach(domain -> {
-            if (rpcProviderService.existsApplication(domain.getRegistryIdentity(), domain.getName(), true)) {
+            if (rpcProviderService.existsApplication(domain.getRegistryIdentity(), domain.getId(), true)) {
                 domain.setProviding(true);
                 domain.setActive(true);
             }
-            if (rpcConsumerService.existsApplication(domain.getRegistryIdentity(), domain.getName(), true)) {
+            if (rpcConsumerService.existsApplication(domain.getRegistryIdentity(), domain.getId(), true)) {
                 domain.setConsuming(true);
                 domain.setActive(true);
             }
@@ -95,7 +95,7 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
         if (!rpcProviderService.existsApplication(registryIdentity, name, true)
                 && !rpcConsumerService.existsApplication(registryIdentity, name, true)) {
             Optional<RpcApplication> application = rpcApplicationRepository
-                    .findByRegistryIdentityAndName(registryIdentity, name);
+                    .findByRegistryIdentityAndId(registryIdentity, name);
             if (!application.isPresent()) {
                 return;
             }
@@ -119,8 +119,8 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
 
         RpcApplication rpcApplication = new RpcApplication();
         BeanUtils.copyProperties(applicationConfig, rpcApplication);
-        String id = generateMd5Id(rpcApplication.getName(), registryUrl.getIdentity());
-        rpcApplication.setId(id);
+        String id = generateMd5Id(rpcApplication.getId(), registryUrl.getIdentity());
+        rpcApplication.setTid(id);
         rpcApplication.setRegistryIdentity(registryUrl.getIdentity());
         rpcApplication.setActive(true);
         rpcApplication.setCreatedTime(Instant.now());
