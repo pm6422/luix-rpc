@@ -124,7 +124,8 @@ luix:
         name: zookeeper
         connectTimeout: 1000
         sessionTimeout: 60000
-#    protocol:
+    protocol:
+        port: @app.rpc.port@
 #        serializer: hessian2
 # ===================================================================
 # Application specific properties

@@ -137,6 +137,8 @@ luix:
             name: zookeeper
             connectTimeout: 1000
             sessionTimeout: 60000
+    protocol:
+        port: @app.rpc.port@
 # ===================================================================
 # Application specific properties
 # ===================================================================

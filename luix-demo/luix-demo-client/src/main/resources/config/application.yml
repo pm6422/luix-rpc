@@ -119,7 +119,8 @@ luix:
 #        name: none
         connectTimeout: 1000
         sessionTimeout: 60000
-#    protocol:
+    protocol:
+        port: @app.rpc.port@
 #        serializer: hessian2
 forest: # Refer to http://forest.dtflyx.com/docs/config/spring_boot_config
     backend: okhttp3
