@@ -73,7 +73,7 @@
         <netty_version>3.2.5.Final</netty_version>
         <portlet_version>2.0</portlet_version>
         <problem_spring_web_version>0.25.2</problem_spring_web_version>
-        <protobuf-java_version>3.6.0</protobuf-java_version>
+        <protobuf-java_version>3.16.1</protobuf-java_version>
         <protostuff_version>1.5.9</protostuff_version>
         <rest_assured_version>2.9.0</rest_assured_version>
         <resteasy_version>4.5.7.Final</resteasy_version>
