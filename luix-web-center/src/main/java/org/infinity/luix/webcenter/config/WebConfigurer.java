@@ -1,5 +1,8 @@
 package org.infinity.luix.webcenter.config;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.servlet.InstrumentedFilter;
+import com.codahale.metrics.servlets.MetricsServlet;
 import io.undertow.server.DefaultByteBufferPool;
 import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -14,12 +17,16 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 
 import javax.annotation.Resource;
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletRegistration;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.EnumSet;
 
 import static java.net.URLDecoder.decode;
 import static org.infinity.luix.webcenter.config.ApplicationConstants.SPRING_PROFILE_DEV;
@@ -32,10 +39,14 @@ import static org.infinity.luix.webcenter.config.ApplicationConstants.SPRING_PRO
 public class WebConfigurer implements ServletContextInitializer, WebServerFactoryCustomizer<UndertowServletWebServerFactory> {
 
     @Resource
-    private Environment env;
+    private Environment    env;
+    @Resource
+    private MetricRegistry metricRegistry;
 
     @Override
     public void onStartup(ServletContext servletContext) {
+        EnumSet<DispatcherType> types = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC);
+        initMetrics(servletContext, types);
     }
 
     /**
@@ -101,5 +112,29 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
             return "";
         }
         return extractedPath.substring(0, extractionEndIndex);
+    }
+
+    /**
+     * Initializes Metrics.
+     */
+    private void initMetrics(ServletContext servletContext, EnumSet<DispatcherType> disps) {
+        servletContext.setAttribute(InstrumentedFilter.REGISTRY_ATTRIBUTE, metricRegistry);
+        servletContext.setAttribute(MetricsServlet.METRICS_REGISTRY, metricRegistry);
+        log.info("Initialized metrics registry");
+
+        FilterRegistration.Dynamic metricsFilter = servletContext.addFilter("webappMetricsFilter",
+                new InstrumentedFilter());
+        metricsFilter.addMappingForUrlPatterns(disps, true, "/*");
+        metricsFilter.setAsyncSupported(true);
+        log.info("Registered metrics filter");
+
+        ServletRegistration.Dynamic metricsAdminServlet = servletContext.addServlet("metricsServlet",
+                new MetricsServlet());
+        // Visit the following address to get more metrics info
+        // http://localhost:9010/api/metrics?access_token=7d305527-d4cc-4555-9de4-77fdd345d3a5
+        metricsAdminServlet.addMapping("/api/metrics/*");
+        metricsAdminServlet.setAsyncSupported(true);
+        metricsAdminServlet.setLoadOnStartup(2);
+        log.info("Registered metrics servlet");
     }
 }
