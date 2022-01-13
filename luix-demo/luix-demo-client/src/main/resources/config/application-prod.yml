@@ -5,10 +5,6 @@
 # Full reference is available at:
 # https://docs.spring.io/spring-boot/docs/2.5.5/reference/html/application-properties.html#application-properties
 # ===================================================================
-spring:
-    data:
-        mongodb:
-            uri: mongodb://admin:79Gfs87J3YhS23YH@192.168.1.101:36020/${spring.application.name}
 luix:
     registry:
         host: localhost
