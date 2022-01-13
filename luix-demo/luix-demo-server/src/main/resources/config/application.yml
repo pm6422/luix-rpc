@@ -115,8 +115,8 @@ luix:
         id: ${spring.application.name}
         description: RPC Demo Server
         team: Infinity Team
-        mailSuffixes: '@luixtech.com'
-        ownerMail: louis@luixtech.com
+        emailSuffixes: '@luixtech.com'
+        ownerEmail: louis@luixtech.com
         env: ${spring.profiles.active}
     registry:
         name: zookeeper

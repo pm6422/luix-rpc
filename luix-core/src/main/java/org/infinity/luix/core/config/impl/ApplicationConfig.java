@@ -33,15 +33,15 @@ public class ApplicationConfig implements Configurable, Serializable {
     @NotEmpty
     private              String       team;
     /**
-     * Owner mail whose suffix must be one of {@link #mailSuffixes}
+     * Owner mail whose suffix must be one of {@link #emailSuffixes}
      */
     @NotEmpty
-    private              String       ownerMail;
+    private              String       ownerEmail;
     /**
      * Valid mail suffix, generally speaking, it refers to the enterprise mailbox. e.g. @baidu.com, @baidu.cn
      */
     @NotEmpty
-    private              List<String> mailSuffixes;
+    private              List<String> emailSuffixes;
     /**
      * Environment variable, e.g. dev, test or prod
      */
@@ -85,7 +85,7 @@ public class ApplicationConfig implements Configurable, Serializable {
 
     @Override
     public void checkValidity() {
-        mailSuffixes.stream().filter(suffix -> ownerMail.endsWith(suffix)).findAny()
-                .orElseThrow(() -> new RpcConfigException("Please specify a valid ownerMail!"));
+        emailSuffixes.stream().filter(suffix -> ownerEmail.endsWith(suffix)).findAny()
+                .orElseThrow(() -> new RpcConfigException("Please specify a valid ownerEmail!"));
     }
 }
