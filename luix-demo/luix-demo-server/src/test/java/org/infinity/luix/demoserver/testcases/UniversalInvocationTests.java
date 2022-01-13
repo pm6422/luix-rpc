@@ -70,8 +70,8 @@ public class UniversalInvocationTests extends ZkBaseTest {
         applicationConfig.setId("server");
         applicationConfig.setDescription("Description");
         applicationConfig.setTeam("Team");
-        applicationConfig.setOwnerMail("test@126.com");
-        applicationConfig.setMailSuffixes(Arrays.asList("126.com"));
+        applicationConfig.setOwnerEmail("test@126.com");
+        applicationConfig.setEmailSuffixes(Arrays.asList("126.com"));
         applicationConfig.setEnv("test");
         applicationConfig.init();
 
@@ -96,8 +96,8 @@ public class UniversalInvocationTests extends ZkBaseTest {
         applicationConfig.setId("client");
         applicationConfig.setDescription("Description");
         applicationConfig.setTeam("Team");
-        applicationConfig.setOwnerMail("test@126.com");
-        applicationConfig.setMailSuffixes(Arrays.asList("126.com"));
+        applicationConfig.setOwnerEmail("test@126.com");
+        applicationConfig.setEmailSuffixes(Arrays.asList("126.com"));
         applicationConfig.setEnv("test");
         applicationConfig.init();
 
