@@ -100,7 +100,7 @@ server:
 logging:
     config: classpath:config/logback-spring.xml
     level:
-        root: INFO
+        root: DEBUG
 mongock:
     enabled: false
     track-ignored: true
