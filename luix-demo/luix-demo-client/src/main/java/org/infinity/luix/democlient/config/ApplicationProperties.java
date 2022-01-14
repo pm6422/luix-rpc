@@ -26,6 +26,7 @@ public class ApplicationProperties {
     private final ElapsedTimeLogging elapsedTimeLogging = new ElapsedTimeLogging();
     private final Ribbon             ribbon             = new Ribbon();
     private final HttpClient         httpClient         = new HttpClient();
+    private final Url                url                = new Url();
 
     @Data
     public static class Http {
@@ -89,5 +90,10 @@ public class ApplicationProperties {
     public static class HttpClient {
         private int readTimeout;
         private int retryCount;
+    }
+
+    @Data
+    public static class Url {
+        private String appServiceProviderUrl;
     }
 }

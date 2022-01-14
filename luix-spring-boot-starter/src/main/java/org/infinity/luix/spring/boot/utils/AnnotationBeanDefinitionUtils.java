@@ -36,6 +36,10 @@ public abstract class AnnotationBeanDefinitionUtils {
         }
     }
 
+    public static void addPropertyValue(BeanDefinitionBuilder builder, String propertyName, String propertyValue, Environment env) {
+        addPropertyValue(builder, propertyName, env.resolvePlaceholders(propertyValue));
+    }
+
     public static void addPropertyValue(BeanDefinitionBuilder builder, String propertyName, Object propertyValue) {
         validatePropertyValue(builder.getBeanDefinition().getBeanClass(), propertyName, propertyValue);
         builder.addPropertyValue(propertyName, propertyValue);
