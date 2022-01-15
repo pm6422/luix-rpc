@@ -1,6 +1,7 @@
 package org.infinity.luix.spring.boot;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.spring.boot.bean.ConsumerBeanPostProcessor;
 import org.infinity.luix.spring.boot.bean.ProviderBeanDefinitionRegistryPostProcessor;
 import org.infinity.luix.spring.boot.bean.registry.AnnotatedBeanDefinitionRegistry;
@@ -17,7 +18,11 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class RpcServiceScanRegistrar implements ImportBeanDefinitionRegistrar {
@@ -31,7 +36,7 @@ public class RpcServiceScanRegistrar implements ImportBeanDefinitionRegistrar {
     @Override
     public void registerBeanDefinitions(@NonNull AnnotationMetadata importingClassMetadata,
                                         @NonNull BeanDefinitionRegistry registry) {
-        Set<String> scanBasePackages = getScanBasePackages(importingClassMetadata);
+        List<String> scanBasePackages = getScanBasePackages(importingClassMetadata);
         registerRpcAutoConfiguration(registry);
         registerRpcLifecycleApplicationListener(registry);
         registerProviderBeanDefinitionRegistryPostProcessor(registry, scanBasePackages);
@@ -44,18 +49,18 @@ public class RpcServiceScanRegistrar implements ImportBeanDefinitionRegistrar {
      * @param metadata annotation metadata
      * @return packages to be scanned
      */
-    private Set<String> getScanBasePackages(AnnotationMetadata metadata) {
+    private List<String> getScanBasePackages(AnnotationMetadata metadata) {
         AnnotationAttributes attributes = AnnotationAttributes.fromMap(metadata.getAnnotationAttributes(EnableLuixRpc.class.getName()));
         String[] scanBasePackages = Objects.requireNonNull(attributes).getStringArray("scanBasePackages");
-        // Keep order
-        Set<String> packagesToScan = new LinkedHashSet<>(Arrays.asList(scanBasePackages));
-        if (packagesToScan.isEmpty()) {
+        // Remove duplicated packages
+        List<String> packagesToScan = Arrays.stream(scanBasePackages).distinct().collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(packagesToScan)) {
             String packageName = ClassUtils.getPackageName(metadata.getClassName());
-            log.debug("Default scan base package: [{}]", packageName);
-            Assert.hasText(packageName, "Consumer and provider scan base packages must not be empty!");
-            return Collections.singleton(packageName);
+            log.debug("Default RPC provider and consumer scan base package: [{}]", packageName);
+            Assert.hasText(packageName, "RPC provider and consumer scan base package must not be null!");
+            return Collections.singletonList(packageName);
         } else {
-            log.debug("User defined scan base packages: [{}]", packagesToScan);
+            log.debug("User defined RPC provider and consumer scan base packages: [{}]", packagesToScan);
         }
         return packagesToScan;
     }
@@ -85,7 +90,7 @@ public class RpcServiceScanRegistrar implements ImportBeanDefinitionRegistrar {
      * @param scanBasePackages packages to be scanned
      */
     private void registerProviderBeanDefinitionRegistryPostProcessor(BeanDefinitionRegistry registry,
-                                                                     Set<String> scanBasePackages) {
+                                                                     List<String> scanBasePackages) {
         registerBeanDefinition(registry, ProviderBeanDefinitionRegistryPostProcessor.class, scanBasePackages);
     }
 
@@ -95,7 +100,7 @@ public class RpcServiceScanRegistrar implements ImportBeanDefinitionRegistrar {
      * @param registry         current bean definition registry
      * @param scanBasePackages packages to be scanned
      */
-    private void registerConsumerBeanPostProcessor(BeanDefinitionRegistry registry, Set<String> scanBasePackages) {
+    private void registerConsumerBeanPostProcessor(BeanDefinitionRegistry registry, List<String> scanBasePackages) {
         registerBeanDefinition(registry, ConsumerBeanPostProcessor.class, scanBasePackages);
     }
 
@@ -105,7 +110,7 @@ public class RpcServiceScanRegistrar implements ImportBeanDefinitionRegistrar {
      * @param beanType         class to be registered
      */
     private void registerBeanDefinition(BeanDefinitionRegistry registry, Class<?> beanType,
-                                        Set<String> scanBasePackages) {
+                                        List<String> scanBasePackages) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(beanType);
         if (scanBasePackages != null) {
             builder.addConstructorArgValue(scanBasePackages);
