@@ -29,6 +29,7 @@ import static org.infinity.luix.spring.boot.utils.PropertySourcesUtils.readPrope
 @Data
 @Validated
 public class LuixProperties implements InitializingBean {
+
     public static final String                      PREFIX      = "luix";
     @NotNull
     private             ApplicationConfig           application = new ApplicationConfig();
