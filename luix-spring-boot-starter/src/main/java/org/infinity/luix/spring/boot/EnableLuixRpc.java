@@ -12,5 +12,11 @@ import java.lang.annotation.Target;
 @Import(RpcServiceScanRegistrar.class)
 public @interface EnableLuixRpc {
 
+    /**
+     * Base packages to scan for annotated {@link org.infinity.luix.core.server.annotation.RpcProvider}
+     * and {@link org.infinity.luix.core.client.annotation.RpcConsumer} classes.
+     *
+     * @return the base packages to scan
+     */
     String[] scanBasePackages() default {};
 }
