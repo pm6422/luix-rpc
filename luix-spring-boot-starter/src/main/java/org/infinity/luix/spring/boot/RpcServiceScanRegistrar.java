@@ -7,6 +7,7 @@ import org.infinity.luix.spring.boot.bean.ProviderBeanDefinitionRegistryPostProc
 import org.infinity.luix.spring.boot.bean.registry.AnnotatedBeanDefinitionRegistry;
 import org.infinity.luix.spring.boot.startup.RpcLifecycleApplicationListener;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
@@ -24,6 +25,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Bean definition registrar used to register {@link ProviderBeanDefinitionRegistryPostProcessor},
+ * {@link ConsumerBeanPostProcessor} and common RPC auto configurations {@link RpcAutoConfiguration}
+ */
 @Slf4j
 public class RpcServiceScanRegistrar implements ImportBeanDefinitionRegistrar {
 

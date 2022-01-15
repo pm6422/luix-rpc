@@ -42,7 +42,7 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
 
     @PostConstruct
     public void init() {
-        Validate.notNull(luixProperties, "Luix properties must NOT be null!");
+        Validate.notNull(luixProperties, "luixProperties must NOT be null!");
     }
 
     @Override
