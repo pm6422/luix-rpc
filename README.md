@@ -1,15 +1,132 @@
-# luix
+# LUI️✘
 
+LUI️✘ is pronounced [ˈluːɪks], which is a RPC(Remote Procedure Call) and service governance framework, it can make calls between services more simple.
 
-## Tech points
-* 动态代理实现consumer客户端
-* 客户端consumer依赖自动扫描发现
+## Prerequisite
 
+Before you can build this project, you must install JDK 8 on your machine:
 
-## Resolved  issues
-##### spring-boot-devtool导致field.getAnnotation(Consumer.class)为null的问题
-未引入spring-boot-devtool时field.getAnnotations()[0] instanceof Consumer为true，field.getAnnotations()[0]类型就是Consumer。
-但是引入spring-boot-devtool时field.getAnnotations()[0] instanceof Consumer为false。
-原因是field.getAnnotations()[0].getClass().getClassLoader()获得的结果为org.springframework.boot.devtools.restart.classloader.RestartClassLoader。
-但是Consumer.class.getClassLoader()获得的结果为AppClassLoader。
+You can install JDK by [SDK Man](https://sdkman.io/install).
 
+```
+sdk install java 8.0.312-zulu
+```
+
+## Build
+
+Run the following command to build the project:
+
+```
+./mvnw clean install -DskipTests
+```
+
+## Run
+
+### Run Luix Demo Server
+```
+java -jar luix-demo/luix-demo-server/target/*.jar
+```
+
+Then navigate to [http://localhost:6010](http://localhost:6010) in your browser.
+
+### Run Luix Demo Client
+
+```
+java -jar luix-demo/luix-demo-client/target/*.jar
+```
+
+Then navigate to [http://localhost:6020](http://localhost:6020) in your browser.
+
+### Run Luix Web Center
+
+```
+java -jar luix-web-center/target/*.jar
+```
+
+Then navigate to [http://localhost:6030](http://localhost:6030) in your browser.
+
+## Testing
+
+To launch your application's tests, run:
+
+```
+./mvnw verify
+```
+
+### Code quality
+
+Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
+
+```
+docker-compose -f src/main/docker/sonar.yml up -d
+```
+
+Note: we have turned off authentication in [src/main/docker/sonar.yml](src/main/docker/sonar.yml) for out of the box experience while trying out SonarQube, for real use cases turn it back on.
+
+You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner) or by using the maven plugin.
+
+Then, run a Sonar analysis:
+
+```
+./mvnw -Pprod clean verify sonar:sonar
+```
+
+If you need to re-run the Sonar phase, please be sure to specify at least the `initialize` phase since Sonar properties are loaded from the sonar-project.properties file.
+
+```
+./mvnw initialize sonar:sonar
+```
+
+For more information, refer to the [Code quality page][].
+
+## Using Docker to simplify development (optional)
+
+You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
+
+For example, to start a mongodb database in a docker container, run:
+
+```
+docker-compose -f src/main/docker/mongodb.yml up -d
+```
+
+To stop it and remove the container, run:
+
+```
+docker-compose -f src/main/docker/mongodb.yml down
+```
+
+You can also fully dockerize your application and all the services that it depends on.
+To achieve this, first build a docker image of your app by running:
+
+```
+./mvnw -Pprod verify jib:dockerBuild
+```
+
+Then run:
+
+```
+docker-compose -f src/main/docker/app.yml up -d
+```
+
+For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
+
+## Continuous Integration (optional)
+
+To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
+
+[jhipster homepage and latest documentation]: https://www.jhipster.tech
+[jhipster 7.4.0 archive]: https://www.jhipster.tech/documentation-archive/v7.4.0
+[using jhipster in development]: https://www.jhipster.tech/documentation-archive/v7.4.0/development/
+[using docker and docker-compose]: https://www.jhipster.tech/documentation-archive/v7.4.0/docker-compose
+[using jhipster in production]: https://www.jhipster.tech/documentation-archive/v7.4.0/production/
+[running tests page]: https://www.jhipster.tech/documentation-archive/v7.4.0/running-tests/
+[code quality page]: https://www.jhipster.tech/documentation-archive/v7.4.0/code-quality/
+[setting up continuous integration]: https://www.jhipster.tech/documentation-archive/v7.4.0/setting-up-ci/
+[node.js]: https://nodejs.org/
+[npm]: https://www.npmjs.com/
+[webpack]: https://webpack.github.io/
+[browsersync]: https://www.browsersync.io/
+[jest]: https://facebook.github.io/jest/
+[leaflet]: https://leafletjs.com/
+[definitelytyped]: https://definitelytyped.org/
+[angular cli]: https://cli.angular.io/
