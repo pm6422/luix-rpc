@@ -40,14 +40,14 @@ To build the final jar and optimize the luix application for production, run:
 
 ## Run
 
-### Run Luix Demo Server
+Run Luix Demo Server
 ```
 java -jar luix-demo/luix-demo-server/target/*.jar
 ```
 
 Then navigate to [http://localhost:6010](http://localhost:6010) in your browser.
 
-### Run Luix Demo Client
+Run Luix Demo Client
 
 ```
 java -jar luix-demo/luix-demo-client/target/*.jar
@@ -55,7 +55,7 @@ java -jar luix-demo/luix-demo-client/target/*.jar
 
 Then navigate to [http://localhost:6020](http://localhost:6020) in your browser.
 
-### Run Luix Web Center
+Run Luix Web Center
 
 ```
 java -jar luix-web-center/target/*.jar
@@ -99,7 +99,7 @@ For more information, refer to the [Code quality page][].
 
 ## Using Docker to simplify development (optional)
 
-You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
+You can use Docker to improve your LUI️✘ development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
 
 For example, to start a mongodb database in a docker container, run:
 
