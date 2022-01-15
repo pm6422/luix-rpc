@@ -2,6 +2,12 @@
 
 LUI️✘ is pronounced [ˈluːɪks], which is a RPC(Remote Procedure Call) and service governance framework, it can make calls between services more simple.
 
+## Official Website
+Please visit our website for more details.
+
+[http://www.luixtech.com](www.luixtech.com)
+
+
 ## Prerequisite
 
 Before you can build this project, you must install JDK 8 on your machine:
@@ -12,12 +18,24 @@ You can install JDK by [SDK Man](https://sdkman.io/install).
 sdk install java 8.0.312-zulu
 ```
 
+Docker is optional, unit testing program can start mongo, zookeeper instance by Docker.
+
+[Docker Installation Docs](https://docs.docker.com/engine/install)
+
 ## Build
 
 Run the following command to build the project:
 
 ```
-./mvnw clean install -DskipTests
+./mvnw clean verify
+```
+
+### Building for production
+
+To build the final jar and optimize the luix application for production, run:
+
+```
+./mvnw -Pprod clean verify
 ```
 
 ## Run
