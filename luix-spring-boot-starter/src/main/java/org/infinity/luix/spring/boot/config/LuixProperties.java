@@ -20,8 +20,8 @@ import static org.infinity.luix.spring.boot.utils.PropertySourcesUtils.readPrope
 
 /**
  * - Application
- * - Protocol
  * - Registry
+ * - Protocol
  * - Global provider config
  * - Global consumer config
  */
