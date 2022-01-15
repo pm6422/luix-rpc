@@ -19,11 +19,11 @@ import static org.infinity.luix.spring.boot.config.LuixProperties.PREFIX;
 import static org.infinity.luix.spring.boot.utils.PropertySourcesUtils.readProperties;
 
 /**
- * - Application
- * - Registry
- * - Protocol
- * - Global provider config
- * - Global consumer config
+ * - Application configuration
+ * - Registry configuration
+ * - Protocol configuration
+ * - Global provider configuration
+ * - Global consumer configuration
  */
 @ConfigurationProperties(prefix = PREFIX)
 @Data
