@@ -47,6 +47,7 @@ import static org.infinity.luix.spring.boot.utils.ProxyUtils.getTargetClass;
  */
 @Slf4j
 public class ConsumerBeanPostProcessor implements BeanPostProcessor, EnvironmentAware, BeanFactoryAware {
+
     private final String[]                   scanBasePackages;
     private       Environment                env;
     /**
