@@ -8,7 +8,9 @@
 spring:
     data:
         mongodb:
-            uri: mongodb://luix-demo-server:33G7fs8F2J1gpq88@pm6422.club:40000/${spring.application.name}
+            uri: mongodb://localhost:27017/${spring.application.name}
+mongock:
+    enabled: false
 luix:
     registry:
         host: localhost
