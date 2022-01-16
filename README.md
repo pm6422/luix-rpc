@@ -8,7 +8,7 @@ Please visit our website for more details.
 [http://www.luixtech.com](www.luixtech.com)
 
 
-## Prerequisite
+## Requirements
 
 Before you can build this project, you must install JDK 8 on your machine:
 
