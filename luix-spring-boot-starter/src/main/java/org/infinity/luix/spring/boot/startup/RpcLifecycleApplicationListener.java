@@ -22,8 +22,8 @@ import javax.annotation.Resource;
 public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListener implements Ordered, BeanFactoryAware {
 
     @Resource
-    private       LuixProperties luixProperties;
-    private final RpcLifecycle   rpcLifecycle;
+    private       LuixProperties             luixProperties;
+    private final RpcLifecycle               rpcLifecycle;
     /**
      * {@link DefaultListableBeanFactory} can register bean definition
      */
