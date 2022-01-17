@@ -5,7 +5,7 @@ LUI️✘ is pronounced [ˈluːɪks], which is a RPC(Remote Procedure Call) and 
 ## Official Website
 Please visit our website for more details.
 
-[http://www.luixtech.com](www.luixtech.com)
+[http://www.luixtech.com](http://www.luixtech.com)
 
 
 ## Requirements
