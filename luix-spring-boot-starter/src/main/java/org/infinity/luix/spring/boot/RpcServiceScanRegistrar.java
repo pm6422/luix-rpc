@@ -2,6 +2,7 @@ package org.infinity.luix.spring.boot;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.spring.boot.bean.ConsumerBeanPostProcessor;
 import org.infinity.luix.spring.boot.bean.ProviderBeanDefinitionRegistryPostProcessor;
 import org.infinity.luix.spring.boot.bean.registry.AnnotatedBeanDefinitionRegistry;
@@ -58,13 +59,19 @@ public class RpcServiceScanRegistrar implements ImportBeanDefinitionRegistrar {
         AnnotationAttributes attributes = AnnotationAttributes.fromMap(metadata.getAnnotationAttributes(EnableLuixRpc.class.getName()));
         String[] scanBasePackages = Objects.requireNonNull(attributes).getStringArray("scanBasePackages");
         // Remove duplicated packages
-        List<String> packagesToScan = Arrays.stream(scanBasePackages).distinct().collect(Collectors.toList());
+        List<String> packagesToScan = Arrays
+                .stream(scanBasePackages)
+                .map(StringUtils::trim)
+                .filter(StringUtils::isNotEmpty)
+                .distinct()
+                .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(packagesToScan)) {
             String packageName = ClassUtils.getPackageName(metadata.getClassName());
             log.debug("Default RPC provider and consumer scan base package: [{}]", packageName);
-            Assert.hasText(packageName, "RPC provider and consumer scan base package must not be null!");
+            Assert.hasText(packageName, "No RPC provider and consumer scan base package!");
             return Collections.singletonList(packageName);
         } else {
+            Assert.notEmpty(packagesToScan, "User defined RPC provider and consumer scan base packages must NOT be empty!");
             log.debug("User defined RPC provider and consumer scan base packages: [{}]", packagesToScan);
         }
         return packagesToScan;

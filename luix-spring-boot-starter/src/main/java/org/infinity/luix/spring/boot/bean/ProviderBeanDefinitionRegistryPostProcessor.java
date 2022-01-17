@@ -30,6 +30,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -60,7 +61,7 @@ import static org.infinity.luix.spring.boot.utils.AnnotationBeanDefinitionUtils.
 public class ProviderBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor,
         EnvironmentAware, BeanFactoryAware, ResourceLoaderAware, BeanClassLoaderAware {
 
-    private final Set<String>                scanBasePackages;
+    private final List<String>               scanBasePackages;
     private       ConfigurableEnvironment    env;
     private       ResourceLoader             resourceLoader;
     private       ClassLoader                classLoader;
@@ -69,7 +70,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements BeanDefiniti
      */
     private       DefaultListableBeanFactory beanFactory;
 
-    public ProviderBeanDefinitionRegistryPostProcessor(Set<String> scanBasePackages) {
+    public ProviderBeanDefinitionRegistryPostProcessor(List<String> scanBasePackages) {
         this.scanBasePackages = scanBasePackages;
     }
 
@@ -117,11 +118,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements BeanDefiniti
      * @param registry current bean definition registry
      */
     private void registerProviderBeans(BeanDefinitionRegistry registry) {
-        Set<String> resolvedScanBasePackages = resolvePackagePlaceholders();
-        if (CollectionUtils.isEmpty(resolvedScanBasePackages)) {
-            log.warn("No package to be scanned for registering providers!");
-            return;
-        }
+        List<String> resolvedScanBasePackages = resolvePackagePlaceholders();
         doRegisterProviderBeans(registry, resolvedScanBasePackages);
     }
 
@@ -130,12 +127,11 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements BeanDefiniti
      *
      * @return replaced packages
      */
-    private Set<String> resolvePackagePlaceholders() {
+    private List<String> resolvePackagePlaceholders() {
         return scanBasePackages
                 .stream()
-                .filter(StringUtils::isNotEmpty)
-                .map(x -> env.resolvePlaceholders(x.trim()))
-                .collect(Collectors.toSet());
+                .map(x -> env.resolvePlaceholders(x))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -144,7 +140,7 @@ public class ProviderBeanDefinitionRegistryPostProcessor implements BeanDefiniti
      * @param registry                 current bean definition registry
      * @param resolvedScanBasePackages provider packages to be scanned
      */
-    private void doRegisterProviderBeans(BeanDefinitionRegistry registry, Set<String> resolvedScanBasePackages) {
+    private void doRegisterProviderBeans(BeanDefinitionRegistry registry, List<String> resolvedScanBasePackages) {
         BeanNameGenerator beanNameGenerator = DefaultBeanNameGenerator.create();
         ClassPathBeanDefinitionRegistryScanner providerScanner = createProviderScanner(registry, beanNameGenerator);
 

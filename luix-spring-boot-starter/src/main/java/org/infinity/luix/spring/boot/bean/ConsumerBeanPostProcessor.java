@@ -26,6 +26,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.luix.core.client.stub.ConsumerStub.buildConsumerStubBeanName;
@@ -48,15 +49,14 @@ import static org.infinity.luix.spring.boot.utils.ProxyUtils.getTargetClass;
 @Slf4j
 public class ConsumerBeanPostProcessor implements BeanPostProcessor, EnvironmentAware, BeanFactoryAware {
 
-    private final String[]                   scanBasePackages;
+    private final List<String>               scanBasePackages;
     private       Environment                env;
     /**
      * {@link DefaultListableBeanFactory} can register bean definition
      */
     private       DefaultListableBeanFactory beanFactory;
 
-    public ConsumerBeanPostProcessor(String[] scanBasePackages) {
-        Assert.notEmpty(scanBasePackages, "Consumer scan packages must NOT be empty!");
+    public ConsumerBeanPostProcessor(List<String> scanBasePackages) {
         this.scanBasePackages = scanBasePackages;
     }
 
@@ -97,7 +97,10 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
     }
 
     private boolean matchScanPackages(Class<?> clazz) {
-        return Arrays.stream(scanBasePackages).anyMatch(pkg -> clazz.getName().startsWith(pkg));
+        return scanBasePackages
+                .stream()
+                .map(x -> env.resolvePlaceholders(x))
+                .anyMatch(pkg -> clazz.getName().startsWith(pkg));
     }
 
     /**
