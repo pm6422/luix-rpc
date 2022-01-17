@@ -20,4 +20,4 @@ jobs:
         cache: maven
     - name: Publish docker image to Docker Hub
 #      run: mvn compile jib:build
-      run: mvn package -DskipTests -DskipJib=false
+      run: ./mvnw package -DskipTests -DskipJib=false
