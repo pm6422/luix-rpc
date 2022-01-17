@@ -2,6 +2,7 @@ package org.infinity.luix.portal.config;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ import java.util.Date;
  * Springfox Swagger configuration.
  * <p>
  * Warning! When having a lot of REST endpoints, Springfox can become a
- * performance issue. In that case, you can use a specific Spring profile for
+ * performance issue. In that case, you can use a specific switch {@link ConditionalOnProperty} for
  * this class, so that only front-end developers have access to the Swagger
  * view.
  * <p>
