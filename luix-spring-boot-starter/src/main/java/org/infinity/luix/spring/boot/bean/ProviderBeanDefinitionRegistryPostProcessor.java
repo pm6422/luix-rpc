@@ -57,8 +57,8 @@ import static org.infinity.luix.spring.boot.utils.AnnotationBeanDefinitionUtils.
  * {@link org.springframework.beans.factory.config.BeanFactoryPostProcessor} takes effect
  */
 @Slf4j
-public class ProviderBeanDefinitionRegistryPostProcessor implements EnvironmentAware, BeanFactoryAware,
-        ResourceLoaderAware, BeanClassLoaderAware, BeanDefinitionRegistryPostProcessor {
+public class ProviderBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor,
+        EnvironmentAware, BeanFactoryAware, ResourceLoaderAware, BeanClassLoaderAware {
 
     private final Set<String>                scanBasePackages;
     private       ConfigurableEnvironment    env;
