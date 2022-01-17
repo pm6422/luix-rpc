@@ -83,12 +83,12 @@ public class RpcLifecycle {
             // already started
             return;
         }
-        log.info("Starting the RPC server");
+        log.info("Starting the Luix RPC server");
         registerShutdownHook();
         registerBuildInProviderStubs(beanFactory, luixProperties);
         publish(luixProperties);
         subscribe(luixProperties);
-        log.info("Started the RPC server");
+        log.info("Started the Luix RPC server");
     }
 
 
