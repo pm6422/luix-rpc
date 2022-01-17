@@ -17,11 +17,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
-        <!--        <dependency>-->
-        <!--            <groupId>de.vandermeer</groupId>-->
-        <!--            <artifactId>skb-interfaces</artifactId>-->
-        <!--            <version>0.0.2</version>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>luix-core</artifactId>
