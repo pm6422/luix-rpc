@@ -18,11 +18,17 @@ public class TraceIdUtils {
     public static final String TRACE_ID = "traceId";
 
     public static void setTraceId(HttpServletRequest request) {
+        if (request == null) {
+            return;
+        }
         String traceId = Optional.ofNullable(request.getHeader(TRACE_ID)).orElse(generateTraceId());
         MDC.put(TRACE_ID, traceId);
     }
 
     public static void setTraceId(HttpServletResponse response) {
+        if (response == null) {
+            return;
+        }
         Optional.ofNullable(response).ifPresent(resp -> resp.setHeader(TRACE_ID, MDC.get(TRACE_ID)));
     }
 

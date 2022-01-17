@@ -26,6 +26,9 @@ public class TraceIdUtils {
     }
 
     public static void setTraceId(HttpServletResponse response) {
+        if (response == null) {
+            return;
+        }
         Optional.ofNullable(response).ifPresent(resp -> resp.setHeader(TRACE_ID, MDC.get(TRACE_ID)));
     }
 
