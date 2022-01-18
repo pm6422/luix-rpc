@@ -8,4 +8,4 @@ services:
     ports:
       - 127.0.0.1:27017:27017
     # volumes:
-    #   - ~/volumes/luix/luix-demo-server/mongodb/:/data/db/
+    #   - ~/volumes/mongodb/luix/:/data/db/
