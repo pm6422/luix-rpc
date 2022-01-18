@@ -18,7 +18,7 @@ You can install JDK by [SDK Man](https://sdkman.io/install).
 sdk install java 8.0.312-zulu
 ```
 
-Docker is optional, unit testing program can start mongo, zookeeper instance by Docker.
+Docker is optional, unit testing programs can start dockerized mongo, zookeeper instance.
 
 [Docker Installation Docs](https://docs.docker.com/engine/install)
 
