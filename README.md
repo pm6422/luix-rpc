@@ -32,7 +32,7 @@ Run the following command to build the project:
 
 ### Building for production
 
-To build the final jar and optimize the luix application for production, run:
+To build the final jar for production, run:
 
 ```
 ./mvnw -Pprod clean verify
@@ -79,7 +79,7 @@ Sonar is used to analyse code quality. You can start a local Sonar server (acces
 docker-compose -f docker/sonar.yml up -d
 ```
 
-Note: we have turned off authentication in [src/main/docker/sonar.yml](src/main/docker/sonar.yml) for out of the box experience while trying out SonarQube, for real use cases turn it back on.
+Note: we have turned off authentication in [docker/sonar.yml](docker/sonar.yml) for out of the box experience while trying out SonarQube, for real use cases turn it back on.
 
 You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner) or by using the maven plugin.
 
@@ -114,23 +114,17 @@ docker-compose -f docker/mongodb.yml down
 ```
 
 You can also fully dockerize your application and all the services that it depends on.
-To achieve this, first build a docker image of your app by running:
+To achieve this, first build docker images of all your applications by running:
 
 ```
-./mvnw -Pprod package -DskipTests -DskipJib=false
+./mvnw package -DskipTests -DskipJib=false
 ```
 
 Then run:
 
 ```
-docker-compose -f src/main/docker/app.yml up -d
+docker-compose -f docker/app.yml up -d
 ```
-
-For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
-
-## Continuous Integration (optional)
-
-To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
 
 [jhipster homepage and latest documentation]: https://www.jhipster.tech
 [jhipster 7.4.0 archive]: https://www.jhipster.tech/documentation-archive/v7.4.0
