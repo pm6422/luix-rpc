@@ -114,7 +114,7 @@ arthas:
     appName: ${spring.application.name}
     httpPort: 2${server.port}
 mongock:
-    enabled: false
+    enabled: true
     track-ignored: true
     change-logs-scan-package:
         - ${app.package}.config.dbmigrations

@@ -102,7 +102,7 @@ logging:
     level:
         root: DEBUG
 mongock:
-    enabled: false
+    enabled: true
     track-ignored: true
     change-logs-scan-package:
         - ${app.package}.config.dbmigrations

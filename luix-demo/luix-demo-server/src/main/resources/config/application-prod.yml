@@ -9,8 +9,6 @@ spring:
     data:
         mongodb:
             uri: mongodb://localhost:27017/${spring.application.name}
-mongock:
-    enabled: false
 luix:
     registry:
         host: localhost
