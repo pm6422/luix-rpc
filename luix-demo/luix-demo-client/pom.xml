@@ -234,6 +234,11 @@
                     </from>
                     <to>
                         <image>pm6422/${project.artifactId}:${project.version}</image>
+                        <!--https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin#using-specific-credentials-->
+                        <auth>
+                            <username>pm6422</username>
+                            <password>64226422</password>
+                        </auth>
                     </to>
                     <container>
                         <entrypoint>
