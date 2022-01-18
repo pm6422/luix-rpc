@@ -7,7 +7,7 @@ services:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
-      - SPRING_DATA_MONGODB_URI=mongodb://luix-demo-server-mongodb:27017
+      - SPRING_DATA_MONGODB_URI=mongodb://localhost:27017
       - SPRING_DATA_MONGODB_DATABASE=luix-demo-server
       - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
     # If you want to expose these ports outside your dev PC,
