@@ -181,7 +181,7 @@
                         <user>1000</user>
                     </container>
                     <extraDirectories>
-                        <paths>src/main/docker/jib</paths>
+                        <paths>src/main/jib</paths>
                         <permissions>
                             <permission>
                                 <file>/entrypoint.sh</file>
