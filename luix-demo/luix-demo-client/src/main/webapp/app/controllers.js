@@ -8,7 +8,6 @@ angular
     .controller('LeftSidebarController', LeftSidebarController)
     .controller('ErrorPageController', ErrorPageController)
     .controller('NavbarController', NavbarController)
-    .controller('FooterController', FooterController)
     .controller('MetricsController', MetricsController)
     .controller('MetricsDialogController', MetricsDialogController)
     .controller('HealthController', HealthController)
@@ -33,7 +32,7 @@ angular
  * Contains several global data used in different view
  *
  */
-function MainController($http, $rootScope, $scope, $state, AdminMenuService, AlertUtils, APP_NAME) {
+function MainController($http, $rootScope, $scope, $state) {
     var main = this;
     main.account = null;
     main.isAuthenticated = null;
@@ -118,7 +117,7 @@ function LeftSidebarController($scope, $state, $element, $timeout, APP_NAME, Adm
 /**
  * ErrorPageController
  */
-function ErrorPageController($state, $stateParams, $scope, JSONFormatterConfig) {
+function ErrorPageController($state, $stateParams) {
     var vm = this;
 
     vm.errorMessage = $stateParams.errorMessage;
@@ -127,20 +126,11 @@ function ErrorPageController($state, $stateParams, $scope, JSONFormatterConfig) 
 /**
  * NavbarController
  */
-function NavbarController($rootScope, $scope, $translate, $state, SystemService) {
+function NavbarController($rootScope, $scope, $translate, $state) {
     var vm = this;
 
     vm.isNavbarCollapsed = true;
     vm.changeLanguage = changeLanguage;
-
-    SystemService.getSystemInfo().then(function (response) {
-        vm.appId = response.appId;
-        vm.appVersion = response.appVersion;
-        $rootScope.companyName = response.companyName;
-        vm.inProduction = response.inProduction;
-        vm.swaggerEnabled = response.swaggerEnabled;
-    });
-
     vm.toggleNavbar = toggleNavbar;
     vm.collapseNavbar = collapseNavbar;
     vm.$state = $state;
@@ -159,13 +149,6 @@ function NavbarController($rootScope, $scope, $translate, $state, SystemService)
     function collapseNavbar() {
         vm.isNavbarCollapsed = true;
     }
-}
-
-/**
- * FooterController
- */
-function FooterController($http) {
-    var vm = this;
 }
 
 /**

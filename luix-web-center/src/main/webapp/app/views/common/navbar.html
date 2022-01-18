@@ -16,8 +16,8 @@
                 </div>
             </div>
             <a class="navbar-brand p-h-m text-muted" href="#">&nbsp;&nbsp;&nbsp;
-                <span class="text-navy"><strong>{{vm.appId}}</strong></span>
-                <span class="navbar-version">v{{vm.appVersion}}</span>
+                <span class="text-navy"><strong>{{APP_NAME}}</strong></span>
+                <span class="navbar-version">v{{VERSION}}</span>
             </a>
         </div>
         <div class="navbar-form-custom" has-authority-directive="ROLE_USER">
@@ -77,7 +77,7 @@
                     <span class="text-navy">Developer tools</span>
                 </a>
                 <ul uib-dropdown-menu class="animated fadeInDown m-t-xs">
-                    <li ng-show="vm.swaggerEnabled" ui-sref-active="active">
+                    <li ng-show="{{ENABLE_SWAGGER}}" ui-sref-active="active">
                         <a ui-sref="api">
                             <span class="fas fa-book"></span>&nbsp;
                             <span>API</span>
