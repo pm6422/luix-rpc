@@ -114,7 +114,7 @@ docker-compose -f docker/mongodb.yml down
 ```
 
 You can also fully dockerize your application and all the services that it depends on.
-To achieve this, first build docker images of all your applications by running:
+To achieve this, first build docker images of all your applications by running and push them to docker registry:
 
 ```
 ./mvnw package -DskipTests -DskipJib=false
