@@ -231,7 +231,6 @@
                         <image>eclipse-temurin:8-jre-focal</image>
                         <platforms>
                             <platform>
-                                <architecture>amd64</architecture>
                                 <os>linux</os>
                             </platform>
                         </platforms>
