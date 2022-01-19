@@ -9,7 +9,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 public class DuplicationException extends RuntimeException {
 
-    private static final long                serialVersionUID = 4161299998151198599L;
+    private static final long                serialVersionUID = 0L;
     private final        Map<String, Object> fieldMap;
 
     public DuplicationException(Map<String, Object> fieldMap) {
