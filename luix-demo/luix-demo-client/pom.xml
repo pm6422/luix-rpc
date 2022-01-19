@@ -27,7 +27,6 @@
         <revision>1.0.0</revision>
         <run.addResources>false</run.addResources>
         <skipJib>true</skipJib>
-        <jibArch>amd64</jibArch>
         <start-class>org.infinity.luix.democlient.LuixDemoClientLauncher</start-class>
     </properties>
     <!--
@@ -228,13 +227,17 @@
                         <image>eclipse-temurin:8-jre-focal</image>
                         <platforms>
                             <platform>
-                                <architecture>${jibArch}</architecture>
+                                <architecture>amd64</architecture>
+                                <os>linux</os>
+                            </platform>
+                            <platform>
+                                <architecture>arm64</architecture>
                                 <os>linux</os>
                             </platform>
                         </platforms>
                     </from>
                     <to>
-                        <image>pm6422/${project.artifactId}:${project.version}-${jibArch}</image>
+                        <image>pm6422/${project.artifactId}:${project.version}</image>
                         <!--https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin#using-specific-credentials-->
                         <auth>
                             <username>pm6422</username>
