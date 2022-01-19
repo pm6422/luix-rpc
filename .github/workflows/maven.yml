@@ -18,6 +18,9 @@ jobs:
         java-version: '8'
         distribution: 'adopt'
         cache: maven
-    - name: Publish docker image to Docker Hub
+    - name: Publish x86 docker image to Docker Hub
 #      run: mvn compile jib:build
-      run: ./mvnw package -DskipTests -DskipJib=false && ./mvnw package -DskipTests -DskipJib=false -DjibArch=arm64
+      run: ./mvnw package -DskipTests -DskipJib=false
+    - name: Publish Arm docker image to Docker Hub
+  #    run: mvn compile jib:build
+      run: ./mvnw package -DskipTests -DskipJib=false -DjibArch=arm64
