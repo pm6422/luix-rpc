@@ -18,6 +18,8 @@ You can install JDK by [SDK Man](https://sdkman.io/install).
 sdk install java 8.0.312-zulu
 ```
 
+Java compatability: JDK 8 - 17
+
 Docker is optional, unit testing programs can start dockerized mongo, zookeeper instance.
 
 [Docker Installation Docs](https://docs.docker.com/engine/install)
