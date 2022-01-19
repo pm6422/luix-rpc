@@ -21,6 +21,3 @@ jobs:
     - name: Publish docker image to Docker Hub
 #      run: mvn compile jib:build
       run: ./mvnw package -DskipTests -DskipJib=false
-#    - name: Publish Arm docker image to Docker Hub
-  #    run: mvn compile jib:build
-#      run: ./mvnw package -DskipTests -DskipJib=false -DjibArch=arm64
