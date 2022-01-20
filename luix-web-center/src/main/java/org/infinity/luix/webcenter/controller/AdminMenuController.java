@@ -10,19 +10,17 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.webcenter.component.HttpHeaderCreator;
 import org.infinity.luix.webcenter.domain.AdminMenu;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
+import org.infinity.luix.webcenter.exception.DuplicationException;
 import org.infinity.luix.webcenter.repository.AdminMenuRepository;
 import org.infinity.luix.webcenter.service.AdminMenuService;
 import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
-import org.infinity.luix.webcenter.domain.Authority;
-import org.infinity.luix.webcenter.exception.DuplicationException;
-import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,7 +47,6 @@ public class AdminMenuController {
 
     @ApiOperation("create menu")
     @PostMapping("/api/admin-menus")
-    @Secured({Authority.ADMIN})
     public ResponseEntity<Void> create(
             @ApiParam(value = "menu", required = true) @Valid @RequestBody AdminMenu entity) {
         log.debug("REST request to create admin menu: {}", entity);
@@ -65,7 +62,6 @@ public class AdminMenuController {
 
     @ApiOperation("find admin menu list")
     @GetMapping("/api/admin-menus")
-    @Secured({Authority.ADMIN})
     public ResponseEntity<List<AdminMenu>> find(Pageable pageable,
                                                 @ApiParam(value = "application name") @RequestParam(value = "appName", required = false) String appName) {
         Page<AdminMenu> adminMenus = adminMenuService.find(pageable, appName);
@@ -75,7 +71,6 @@ public class AdminMenuController {
 
     @ApiOperation("find admin menu by ID")
     @GetMapping("/api/admin-menus/{id}")
-    @Secured({Authority.ADMIN})
     public ResponseEntity<AdminMenu> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
         AdminMenu domain = adminMenuRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(domain);
@@ -83,7 +78,6 @@ public class AdminMenuController {
 
     @ApiOperation("update menu")
     @PutMapping("/api/admin-menus")
-    @Secured({Authority.ADMIN})
     public ResponseEntity<Void> update(
             @ApiParam(value = "new admin menu", required = true) @Valid @RequestBody AdminMenu domain) {
         log.debug("REST request to update admin menu: {}", domain);
@@ -94,7 +88,6 @@ public class AdminMenuController {
 
     @ApiOperation("delete admin menu by ID")
     @DeleteMapping("/api/admin-menus/{id}")
-    @Secured({Authority.ADMIN})
     public ResponseEntity<Void> delete(@ApiParam(value = "ID", required = true) @PathVariable String id) {
         log.debug("REST request to delete admin menu: {}", id);
         AdminMenu adminMenu = adminMenuRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
@@ -104,7 +97,6 @@ public class AdminMenuController {
 
     @ApiOperation("find parent menu list")
     @GetMapping("/api/admin-menus/parents")
-    @Secured({Authority.ADMIN})
     public ResponseEntity<List<AdminMenu>> findParents(
             @ApiParam(value = "application name", required = true) @RequestParam(value = "appName") String appName,
             @ApiParam(value = "menu level", required = true) @RequestParam(value = "level") Integer level) {
@@ -114,7 +106,6 @@ public class AdminMenuController {
 
     @ApiOperation("increase the order of management menus according to ID")
     @PutMapping("/api/admin-menus/move-up/{id}")
-    @Secured({Authority.ADMIN})
     public void moveUp(@ApiParam(value = "ID", required = true) @PathVariable String id) {
         adminMenuService.moveUp(id);
     }
@@ -122,14 +113,12 @@ public class AdminMenuController {
     @ApiOperation("decrease the order of management menus according to ID")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "成功操作")})
     @PutMapping("/api/admin-menus/move-down/{id}")
-    @Secured({Authority.ADMIN})
     public void moveDown(@ApiParam(value = "ID", required = true) @PathVariable String id) {
         adminMenuService.moveDown(id);
     }
 
     @ApiOperation("copy menu")
     @GetMapping("/api/admin-menus/copy")
-    @Secured({Authority.ADMIN})
     public void copyMenus(@ApiParam(value = "source application name", required = true, defaultValue = "Passport") @RequestParam(value = "sourceAppName") String sourceAppName,
                           @ApiParam(value = "destination application name", required = true) @RequestParam(value = "targetAppName") String targetAppName) {
         List<AdminMenu> sourceMenus = adminMenuRepository.findByAppName(sourceAppName);
@@ -142,7 +131,6 @@ public class AdminMenuController {
 
     @ApiOperation(value = "import menus", notes = "input file format: AppName, name, label, level, url, sequence for each row, separated by tab, and carriage return and line feed between rows")
     @PostMapping(value = "/api/admin-menus/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Secured({Authority.ADMIN})
     public void importData(@ApiParam(value = "file", required = true) @RequestPart MultipartFile file) throws IOException {
         List<String> lines = IOUtils.readLines(file.getInputStream(), StandardCharsets.UTF_8);
         List<AdminMenu> list = new ArrayList<>();

@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.cors.CorsConfiguration;
 
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,6 +33,7 @@ public class ApplicationProperties {
     private final UserEventAudit     userEventAudit     = new UserEventAudit();
     private final Account            account            = new Account();
     private final Ribbon             ribbon             = new Ribbon();
+    private final Security           security           = new Security();
 
     @Data
     public static class Http {
@@ -124,5 +128,53 @@ public class ApplicationProperties {
     @Data
     public static class Ribbon {
         private String[] displayOnActiveProfiles;
+    }
+
+    @Data
+    public static class Security {
+        private String              contentSecurityPolicy;
+        private ClientAuthorization clientAuthorization = new ClientAuthorization();
+        private Authentication      authentication      = new Authentication();
+        private RememberMe          rememberMe          = new RememberMe();
+        private OAuth2              oauth2              = new OAuth2();
+
+        @Data
+        public static class ClientAuthorization {
+            private String accessTokenUri;
+            private String tokenServiceId;
+            private String clientId;
+            private String clientSecret;
+        }
+
+        @Data
+        public static class Authentication {
+            private Jwt jwt = new Jwt();
+
+            @Data
+            public static class Jwt {
+                private String secret;
+                private String base64Secret;
+                private long   tokenValidityInSeconds              = 1800; // 30 minutes
+                private long   tokenValidityInSecondsForRememberMe = 2592000; // 30 days
+            }
+        }
+
+        @Data
+        public static class RememberMe {
+            @NotNull
+            private String key;
+        }
+
+        public static class OAuth2 {
+            private List<String> audience = new ArrayList<>();
+
+            public List<String> getAudience() {
+                return Collections.unmodifiableList(audience);
+            }
+
+            public void setAudience(@NotNull List<String> audience) {
+                this.audience.addAll(audience);
+            }
+        }
     }
 }

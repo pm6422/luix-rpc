@@ -62,7 +62,7 @@ public class MailServiceImpl implements MailService {
     @Async
     @Override
     public void sendEmailFromTemplate(User user, String templateName, String titleKey, String baseUrl) {
-        Locale locale = Locale.SIMPLIFIED_CHINESE;
+        Locale locale = Locale.ENGLISH;
         Context context = new Context(locale);
         context.setVariable(USER, user);
         context.setVariable(BASE_URL, baseUrl);

@@ -5,13 +5,11 @@ import io.swagger.annotations.ApiParam;
 import org.infinity.luix.webcenter.domain.PersistentAuditEvent;
 import org.infinity.luix.webcenter.repository.PersistenceAuditEventRepository;
 import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
-import org.infinity.luix.webcenter.domain.Authority;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,7 +37,6 @@ public class UserAuditEventController {
      */
     @ApiOperation("find user audit list")
     @GetMapping("/api/user-audit-events")
-    @Secured(Authority.DEVELOPER)
     public ResponseEntity<List<PersistentAuditEvent>> getUserAuditEvents(Pageable pageable,
                                                                          @ApiParam(value = "start date，e.g：2020-10-01") @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
                                                                          @ApiParam(value = "end date，e.g：2020-10-02") @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {

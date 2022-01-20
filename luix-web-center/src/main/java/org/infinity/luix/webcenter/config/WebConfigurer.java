@@ -6,15 +6,20 @@ import com.codahale.metrics.servlets.MetricsServlet;
 import io.undertow.server.DefaultByteBufferPool;
 import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;
 import org.springframework.boot.web.server.MimeMappings;
 import org.springframework.boot.web.server.WebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import javax.annotation.Resource;
 import javax.servlet.DispatcherType;
@@ -39,9 +44,11 @@ import static org.infinity.luix.webcenter.config.ApplicationConstants.SPRING_PRO
 public class WebConfigurer implements ServletContextInitializer, WebServerFactoryCustomizer<UndertowServletWebServerFactory> {
 
     @Resource
-    private Environment    env;
+    private Environment           env;
     @Resource
-    private MetricRegistry metricRegistry;
+    private ApplicationProperties applicationProperties;
+    @Resource
+    private MetricRegistry        metricRegistry;
 
     @Override
     public void onStartup(ServletContext servletContext) {
@@ -136,5 +143,22 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         metricsAdminServlet.setAsyncSupported(true);
         metricsAdminServlet.setLoadOnStartup(2);
         log.info("Registered metrics servlet");
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = applicationProperties.getCors();
+        if (CollectionUtils.isNotEmpty(config.getAllowedOrigins()) ||
+                CollectionUtils.isNotEmpty(config.getAllowedOriginPatterns())) {
+            source.registerCorsConfiguration("/api/**", config);
+            source.registerCorsConfiguration("/management/**", config);
+            source.registerCorsConfiguration("/v2/api-docs", config);
+            source.registerCorsConfiguration("/v3/api-docs", config);
+            source.registerCorsConfiguration("/swagger-resources", config);
+            source.registerCorsConfiguration("/swagger-ui/**", config);
+            log.debug("Registered CORS filter");
+        }
+        return new CorsFilter(source);
     }
 }

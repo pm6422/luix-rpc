@@ -13,3 +13,12 @@ luix:
 # ===================================================================
 # Application specific properties
 # ===================================================================
+application:
+    security:
+        authentication:
+            jwt:
+                # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
+                base64-secret: MDYxOTIyZjM2NTMxNGMxYmMwYzk2NTE2MDU5MzZiMmViYzY4ODNmMzEwZWM1YWYwYTMyM2ZkYTI1NzVlNWMzYzEyYzczMmRkMWMxZWIzYzc0NWJkYjI5MmJhMzQwMTNhMTM3NmVhZGU2NWU1NzQxMTkwMDdjMDFlMzVmNGE1ODI=
+                # Token is valid 24 hours
+                token-validity-in-seconds: 86400
+                token-validity-in-seconds-for-remember-me: 2592000

@@ -753,7 +753,7 @@ function TrackerService($rootScope, $window, $cookies, $http, $q, AuthServerServ
         var url = '//' + loc.host + loc.pathname + 'websocket/tracker';
         var authToken = AuthServerService.getToken();
         if (authToken) {
-            url += '?access_token=' + authToken.access_token;
+            url += '?access_token=' + authToken;
         }
         var socket = new SockJS(url);
         stompClient = Stomp.over(socket);
@@ -925,7 +925,7 @@ function PrincipalService($q, $http, AccountService, TrackerService) {
         // retrieve the identity data from the server, update the identity object, and then resolve.
 //      AccountService.get({}, getAccountThen, getAccountCatch);
         $http.get('open-api/accounts/user').then(function (response) {
-            if (response.data.userName) {
+            if (response.data && response.data.userName) {
                 getAccountThen(response);
             } else {
                 getAccountCatch();
@@ -981,28 +981,22 @@ function AuthServerService($http, $localStorage) {
     }
 
     function login(credentials, successCallback, errorCallback) {
-        $http.get('open-api/oauth2-client/internal-client').then(function (response) {
-            var data = 'username=' + encodeURIComponent(credentials.userName)
-                + '&password=' + encodeURIComponent(credentials.password)
-                + '&grant_type=password'
-                + '&client_id=' + response.data.first
-                + '&client_secret=' + response.data.second;
-
-            return $http.post('oauth/token', data, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json'
+        return $http.post('open-api/accounts/authenticate',
+            {
+                username: encodeURIComponent(credentials.userName),
+                password: encodeURIComponent(credentials.password)
+            },
+            {
+                transformResponse: function(data) {
+                    return data;
                 }
-            }).success(function (data) {
-                var expiredAt = new Date();
-                expiredAt.setSeconds(expiredAt.getSeconds() + data.expires_in);
-                data.expires_at = expiredAt.getTime();
+            })
+            .success(function (data) {
                 $localStorage.authenticationToken = data;
                 successCallback(data);
             }).error(function (data) {
                 errorCallback(data);
             });
-        });
     }
 
     function logout() {
@@ -1093,7 +1087,6 @@ function AuthenticationService($rootScope, $state, $sessionStorage, $q, $locatio
                 });
             },
             function (data) {
-                that.logout();
                 errorCallback(data);
             });
     }

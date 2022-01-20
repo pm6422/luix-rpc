@@ -75,7 +75,6 @@ public class AuthorityAdminMenuController {
 
     @ApiOperation("find menu list associated with current user")
     @GetMapping("/api/authority-admin-menus/user-links")
-    @Secured({Authority.USER})
     public ResponseEntity<List<AdminMenu>> findUserAuthorityLinks(
             @ApiParam(value = "application name", required = true) @RequestParam(value = "appName") String appName) {
         List<AdminMenu> results = adminMenuService.getUserAuthorityLinks(appName);
@@ -84,7 +83,6 @@ public class AuthorityAdminMenuController {
 
     @ApiOperation("find menu tree associated with current user")
     @GetMapping("/api/authority-admin-menus/user-menus")
-    @Secured({Authority.USER})
     public ResponseEntity<List<AdminMenuTreeDTO>> findUserAuthorityMenus(
             @ApiParam(value = "application name", required = true) @RequestParam(value = "appName") String appName) {
         List<AdminMenuTreeDTO> results = adminMenuService.getUserAuthorityMenus(appName);

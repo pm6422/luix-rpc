@@ -4,14 +4,8 @@ import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 import org.infinity.luix.webcenter.domain.*;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Creates the initial database
@@ -118,29 +112,5 @@ public class InitialSetupMigration {
         mongoTemplate.save(new UserAuthority(developerRoleUser.getId(), Authority.USER));
         mongoTemplate.save(new UserAuthority(developerRoleUser.getId(), Authority.ADMIN));
         mongoTemplate.save(new UserAuthority(developerRoleUser.getId(), Authority.DEVELOPER));
-    }
-
-    @ChangeSet(order = "05", author = "Louis", id = "addOAuth2ClientDetails", runAlways = true)
-    public void addOAuth2ClientDetails(MongockTemplate mongoTemplate) {
-        MongoOAuth2ClientDetails oAuth2ClientDetails = new MongoOAuth2ClientDetails();
-        oAuth2ClientDetails.setClientId(MongoOAuth2ClientDetails.INTERNAL_CLIENT_ID);
-        oAuth2ClientDetails.setRawClientSecret(MongoOAuth2ClientDetails.INTERNAL_RAW_CLIENT_SECRET);
-        oAuth2ClientDetails.setClientSecret(
-                new BCryptPasswordEncoder().encode(MongoOAuth2ClientDetails.INTERNAL_RAW_CLIENT_SECRET));
-        oAuth2ClientDetails.setScope(Arrays.asList("read", "write"));
-        // It will auto approve if autoApproveScopes exactly match the scopes.
-        oAuth2ClientDetails.setAutoApproveScopes(Collections.singletonList("read"));
-        oAuth2ClientDetails.setAuthorizedGrantTypes(
-                Arrays.asList("password", "authorization_code", "refresh_token", "client_credentials"));
-        // Note: localhost and 127.0.0.1 must be saved twice.
-        oAuth2ClientDetails.setRegisteredRedirectUri(
-                new HashSet<>(Arrays.asList("http://127.0.0.1:9020/login", "http://localhost:9020/login")));
-        oAuth2ClientDetails.setAccessTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7));
-        oAuth2ClientDetails.setRefreshTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7));
-        // 这个authority还不知道其作用
-        oAuth2ClientDetails.setAuthorities(Arrays.asList(new SimpleGrantedAuthority(Authority.DEVELOPER),
-                new SimpleGrantedAuthority(Authority.ADMIN), new SimpleGrantedAuthority(Authority.USER),
-                new SimpleGrantedAuthority(Authority.ANONYMOUS)));
-        mongoTemplate.save(oAuth2ClientDetails);
     }
 }

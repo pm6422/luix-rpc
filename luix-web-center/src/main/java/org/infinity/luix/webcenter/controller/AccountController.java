@@ -1,25 +1,20 @@
 package org.infinity.luix.webcenter.controller;
 
-import com.google.common.collect.ImmutableMap;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.infinity.luix.webcenter.component.HttpHeaderCreator;
-import org.infinity.luix.webcenter.config.oauth2.SecurityUser;
-import org.infinity.luix.webcenter.domain.Authority;
-import org.infinity.luix.webcenter.domain.User;
-import org.infinity.luix.webcenter.domain.UserAuthority;
-import org.infinity.luix.webcenter.domain.UserProfilePhoto;
-import org.infinity.luix.webcenter.dto.ManagedUserDTO;
-import org.infinity.luix.webcenter.dto.ResetKeyAndPasswordDTO;
-import org.infinity.luix.webcenter.dto.UserNameAndPasswordDTO;
+import org.infinity.luix.webcenter.domain.*;
+import org.infinity.luix.webcenter.dto.*;
 import org.infinity.luix.webcenter.event.LogoutEvent;
 import org.infinity.luix.webcenter.exception.DataNotFoundException;
-import org.infinity.luix.webcenter.exception.NoAuthorityException;
 import org.infinity.luix.webcenter.repository.UserAuthorityRepository;
 import org.infinity.luix.webcenter.repository.UserProfilePhotoRepository;
+import org.infinity.luix.webcenter.security.jwt.JWTFilter;
+import org.infinity.luix.webcenter.security.jwt.TokenProvider;
 import org.infinity.luix.webcenter.service.AuthorityService;
 import org.infinity.luix.webcenter.service.MailService;
 import org.infinity.luix.webcenter.service.UserProfilePhotoService;
@@ -32,11 +27,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -45,12 +39,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import static org.infinity.luix.webcenter.utils.NetworkUtils.getRequestUrl;
@@ -61,95 +53,65 @@ import static org.infinity.luix.webcenter.utils.NetworkUtils.getRequestUrl;
 @RestController
 @Slf4j
 public class AccountController {
-    private static final FastDateFormat             DATETIME_FORMAT = FastDateFormat.getInstance("yyyyMMdd-HHmmss");
+    private static final FastDateFormat               DATETIME_FORMAT = FastDateFormat.getInstance("yyyyMMdd-HHmmss");
+    private static final String                       ANONYMOUS_USER  = "anonymousUser";
     @Resource
-    private              UserService                userService;
+    private              UserService                  userService;
     @Resource
-    private              UserAuthorityRepository    userAuthorityRepository;
+    private              UserAuthorityRepository      userAuthorityRepository;
     @Resource
-    private              UserProfilePhotoRepository userProfilePhotoRepository;
+    private              UserProfilePhotoRepository   userProfilePhotoRepository;
     @Resource
-    private              UserProfilePhotoService    userProfilePhotoService;
+    private              UserProfilePhotoService      userProfilePhotoService;
     @Resource
-    private              AuthorityService           authorityService;
+    private              AuthorityService             authorityService;
     @Resource
-    private              MailService                mailService;
+    private              MailService                  mailService;
     @Resource
-    private              TokenStore                 tokenStore;
+    private              ApplicationEventPublisher    applicationEventPublisher;
     @Resource
-    private              ApplicationEventPublisher  applicationEventPublisher;
+    private              HttpHeaderCreator            httpHeaderCreator;
     @Resource
-    private              HttpHeaderCreator          httpHeaderCreator;
+    private              TokenProvider                tokenProvider;
+    @Resource
+    private              AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    @ApiOperation(value = "retrieve access token", notes = "successful login returns the current access token")
-    @GetMapping("/api/accounts/access-token")
-    public ResponseEntity<String> getAccessToken(HttpServletRequest request) {
-        String token = request.getHeader("authorization");
-        if (StringUtils.isEmpty(token) || !token.toLowerCase().startsWith(OAuth2AccessToken.BEARER_TYPE.toLowerCase())) {
-            return ResponseEntity.ok(StringUtils.EMPTY);
-        }
-        return ResponseEntity.ok(StringUtils.substringAfter(token.toLowerCase(), OAuth2AccessToken.BEARER_TYPE.toLowerCase()).trim());
+    @ApiOperation("authenticate login")
+    @PostMapping("/open-api/accounts/authenticate")
+    public ResponseEntity<String> authorize(@Valid @RequestBody LoginDTO loginDTO) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                loginDTO.getUsername(),
+                loginDTO.getPassword()
+        );
+
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = tokenProvider.createToken(authentication, loginDTO.isRememberMe());
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+        return new ResponseEntity<>(jwt, httpHeaders, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "retrieve the currently logged in user name", notes = "successful login returns the current user name")
-    @GetMapping("/api/accounts/authenticate")
-    public ResponseEntity<String> isAuthenticated(HttpServletRequest request) {
-        log.debug("REST request to check if the current user is authenticated");
-        return ResponseEntity.ok(request.getRemoteUser());
-    }
-
-    /**
-     * Used for SSO client calls, theoretically it will not return null,
-     * because an error will occur if you are not logged in,
-     * and the current user will be returned to the current user successfully.
-     *
-     * @param user user
-     * @return principal
-     */
-    @ApiOperation(value = "retrieve the currently logged in user name")
-    @GetMapping("/api/accounts/principal")
-    public ResponseEntity<Principal> getPrincipal(Principal user) {
-        log.debug("REST request to get current user if the user is authenticated");
-        return ResponseEntity.ok(user);
+    @ApiOperation("logout")
+    @PostMapping("/api/accounts/logout")
+    public void logout() {
+        applicationEventPublisher.publishEvent(new LogoutEvent(this));
     }
 
     @ApiOperation("retrieve current user")
-    @GetMapping("/api/accounts/user")
-    @Secured({Authority.USER})
-    public ResponseEntity<User> getCurrentUser() {
-        User user = userService.findOneByUserName(SecurityUtils.getCurrentUserName());
-        List<UserAuthority> userAuthorities = Optional.ofNullable(userAuthorityRepository.findByUserId(user.getId()))
-                .orElseThrow(() -> new NoAuthorityException(SecurityUtils.getCurrentUserName()));
-        Set<String> authorities = userAuthorities.stream().map(UserAuthority::getAuthorityName).collect(Collectors.toSet());
-        user.setAuthorities(authorities);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-User-Signed-In", "true");
-        return ResponseEntity.ok().headers(headers).body(user);
-    }
-
-    @ApiOperation("retrieve the bound user based on the access token")
     @GetMapping("/open-api/accounts/user")
-    public Callable<ResponseEntity<Object>> getTokenUser(HttpServletRequest request) {
-        return () -> doGetTokenUser(request.getHeader("authorization"));
-    }
-
-    private ResponseEntity<Object> doGetTokenUser(String token) {
-        if (token != null && token.toLowerCase().startsWith(OAuth2AccessToken.BEARER_TYPE.toLowerCase())) {
-            OAuth2Authentication oAuth2Authentication = tokenStore.readAuthentication(StringUtils
-                    .substringAfter(token.toLowerCase(), OAuth2AccessToken.BEARER_TYPE.toLowerCase()).trim());
-            if (oAuth2Authentication != null) {
-                User user = userService.findOneByUserName(oAuth2Authentication.getUserAuthentication().getName());
-                Set<String> authorities = oAuth2Authentication.getUserAuthentication().getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-                if (user != null) {
-                    user.setAuthorities(authorities);
-                    return ResponseEntity.ok(user);
-                }
-            }
+    public ResponseEntity<User> getCurrentUser() {
+        String currentUserName = SecurityUtils.getCurrentUserName();
+        if (StringUtils.isEmpty(currentUserName) || ANONYMOUS_USER.equals(currentUserName)) {
+            return null;
         }
-        // UserInfoTokenServices.loadAuthentication里会判断是否返回结果里包含error字段值，如果返回null会有空指针异常
-        // 这个也许是客户端的一个BUG，升级后观察是否已经修复
-        return ResponseEntity.ok(ImmutableMap.of("error", true));
+        User user = userService.findOneByUserName(currentUserName);
+        List<UserAuthority> userAuthorities = userAuthorityRepository.findByUserId(user.getId());
+        if (CollectionUtils.isNotEmpty(userAuthorities)) {
+            Set<String> authorities = userAuthorities.stream().map(UserAuthority::getAuthorityName).collect(Collectors.toSet());
+            user.setAuthorities(authorities);
+        }
+        return ResponseEntity.ok().body(user);
     }
 
     @ApiOperation("register a new user and send an activation email")
@@ -172,7 +134,6 @@ public class AccountController {
 
     @ApiOperation("retrieve a list of permission values")
     @GetMapping("/api/accounts/authority-names")
-    @Secured({Authority.USER})
     public ResponseEntity<List<String>> getAuthorityNames(
             @ApiParam(allowableValues = "false,true,null") @RequestParam(value = "enabled", required = false) Boolean enabled) {
         List<String> authorities = authorityService.find(enabled).stream().map(Authority::getName).collect(Collectors.toList());
@@ -181,7 +142,6 @@ public class AccountController {
 
     @ApiOperation("update current user")
     @PutMapping("/api/accounts/user")
-    @Secured({Authority.USER})
     public ResponseEntity<Void> updateCurrentAccount(@ApiParam(value = "new user", required = true) @Valid @RequestBody User domain) {
         // For security reason
         User currentUser = userService.findOneByUserName(SecurityUtils.getCurrentUserName());
@@ -193,7 +153,6 @@ public class AccountController {
 
     @ApiOperation("modify the password of the current user")
     @PutMapping("/api/accounts/password")
-    @Secured({Authority.USER})
     public ResponseEntity<Void> changePassword(@ApiParam(value = "new password", required = true) @RequestBody @Valid UserNameAndPasswordDTO dto) {
         // For security reason
         dto.setUserName(SecurityUtils.getCurrentUserName());
@@ -221,7 +180,6 @@ public class AccountController {
 
     @ApiOperation("upload current user profile picture")
     @PostMapping("/api/accounts/profile-photo/upload")
-    @Secured({Authority.USER})
     public void uploadProfilePhoto(@ApiParam(value = "file Description", required = true) @RequestPart String description,
                                    @ApiParam(value = "user profile picture", required = true) @RequestPart MultipartFile file) throws IOException {
         log.debug("Upload profile with file name {} and description {}", file.getOriginalFilename(), description);
@@ -231,7 +189,6 @@ public class AccountController {
 
     @ApiOperation("download user profile picture")
     @GetMapping("/api/accounts/profile-photo/download")
-    @Secured({Authority.USER})
     public ResponseEntity<org.springframework.core.io.Resource> downloadProfilePhoto() {
         SecurityUser currentUser = SecurityUtils.getCurrentUser();
         Optional<UserProfilePhoto> existingPhoto = userProfilePhotoRepository.findByUserId(currentUser.getUserId());
@@ -253,7 +210,6 @@ public class AccountController {
 
     @ApiOperation("retrieve the current user avatar")
     @GetMapping("/api/accounts/profile-photo")
-    @Secured({Authority.USER})
     public ModelAndView getProfilePhoto() {
         // @RestController下使用return forwardUrl不好使
         String forwardUrl = "forward:".concat(UserController.GET_PROFILE_PHOTO_URL).concat(SecurityUtils.getCurrentUserName());

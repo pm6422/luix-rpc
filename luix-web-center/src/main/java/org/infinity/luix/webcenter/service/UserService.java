@@ -1,7 +1,7 @@
 package org.infinity.luix.webcenter.service;
 
-import org.infinity.luix.webcenter.dto.UserNameAndPasswordDTO;
 import org.infinity.luix.webcenter.domain.User;
+import org.infinity.luix.webcenter.dto.UserNameAndPasswordDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

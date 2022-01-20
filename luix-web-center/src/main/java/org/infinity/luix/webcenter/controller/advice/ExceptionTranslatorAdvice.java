@@ -15,6 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -23,9 +26,12 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
@@ -131,6 +137,36 @@ public class ExceptionTranslatorAdvice {
     public ResponseEntity<ErrorDTO> processNoAuthorityException(NoAuthorityException ex) {
         log.warn("No authority: ", ex);
         ErrorDTO error = ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(messageCreator.getMessage(NO_AUTH_CODE, ex.getUserName())).build();
+        // Http status: 400
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorDTO> processInternalAuthenticationServiceException(InternalAuthenticationServiceException ex) {
+        log.warn(ex.getMessage());
+        ErrorDTO error = ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(messageCreator.getMessage(NO_AUTH_CODE, ex.getMessage())).build();
+        // Http status: 400
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorDTO> processBadCredentialsException(BadCredentialsException ex) {
+        log.warn(ex.getMessage());
+        ErrorDTO error = ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(messageCreator.getMessage(NO_AUTH_CODE, ex.getMessage())).build();
+        // Http status: 400
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(InsufficientAuthenticationException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorDTO> processInsufficientAuthenticationException(InsufficientAuthenticationException ex) {
+        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = servletRequestAttributes != null ? servletRequestAttributes.getRequest() : null;
+        String msg = request != null ? ex.getMessage() + ": " + request.getRequestURI() : ex.getMessage();
+        log.warn(msg);
+        ErrorDTO error = ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(messageCreator.getMessage(NO_AUTH_CODE, msg)).build();
         // Http status: 400
         return ResponseEntity.badRequest().body(error);
     }

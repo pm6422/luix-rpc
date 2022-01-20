@@ -111,7 +111,7 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
 
             var authToken = AuthServerService.getToken();
             if (authToken) {
-                main.account.profilePhotoUrl = '/api/accounts/profile-photo?access_token=' + authToken.access_token;
+                main.account.profilePhotoUrl = '/api/accounts/profile-photo?access_token=' + authToken;
             }
 
             main.isAuthenticated = PrincipalService.isAuthenticated;
@@ -224,7 +224,7 @@ function LoginController($rootScope, $state, AuthenticationService) {
                 $state.go('dashboard');
             },
             function (data) {
-                vm.errorMsg = data.error_description;
+                // vm.errorMsg = data.error_description;
                 vm.isSaving = false;
             });
     }
@@ -291,7 +291,7 @@ function ProfileController($state, PrincipalService, AccountService, AuthServerS
 
     var authToken = AuthServerService.getToken();
     if (authToken) {
-        vm.profilePhotoUrl = '/api/accounts/profile-photo?access_token=' + authToken.access_token;
+        vm.profilePhotoUrl = '/api/accounts/profile-photo' + '?access_token=' + authToken;
     }
 
     /**
@@ -380,7 +380,6 @@ function RegisterController($state, $timeout, AuthenticationService, RegisterSer
                     $state.go('login');
                 },
                 function (response) {
-                    AuthenticationService.logout();
                     vm.isSaving = false;
                     vm.passwordNotMatch = false;
                 });
@@ -1484,7 +1483,7 @@ function ArthasController(AuthServerService) {
 
     var authToken = AuthServerService.getToken();
     if (authToken) {
-        vm.url = 'api/system/arthas-console?access_token=' + authToken.access_token;
+        vm.url = 'api/system/arthas-console?access_token=' + authToken;
     }
 }
 
@@ -2622,7 +2621,7 @@ function UserDetailsController($state, $stateParams, entity, AuthServerService) 
 
     var authToken = AuthServerService.getToken();
     if (authToken) {
-        vm.entity.profilePhotoUrl = '/api/users/profile-photo/' + vm.entity.userName + '?access_token=' + authToken.access_token;
+        vm.entity.profilePhotoUrl = '/api/users/profile-photo/' + vm.entity.userName + '?access_token=' + authToken;
     }
 }
 

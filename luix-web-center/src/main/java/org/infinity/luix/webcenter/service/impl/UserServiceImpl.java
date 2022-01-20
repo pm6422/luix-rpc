@@ -8,8 +8,8 @@ import org.infinity.luix.webcenter.domain.Authority;
 import org.infinity.luix.webcenter.domain.User;
 import org.infinity.luix.webcenter.domain.UserAuthority;
 import org.infinity.luix.webcenter.dto.UserNameAndPasswordDTO;
-import org.infinity.luix.webcenter.exception.DuplicationException;
 import org.infinity.luix.webcenter.exception.DataNotFoundException;
+import org.infinity.luix.webcenter.exception.DuplicationException;
 import org.infinity.luix.webcenter.repository.UserAuthorityRepository;
 import org.infinity.luix.webcenter.repository.UserRepository;
 import org.infinity.luix.webcenter.service.UserService;
@@ -36,9 +36,9 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserAuthorityRepository userAuthorityRepository;
     @Resource
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder         passwordEncoder;
     @Resource
-    private MessageCreator  messageCreator;
+    private MessageCreator          messageCreator;
 
     // private void removeUserToken(User user) {
     // String clientId =

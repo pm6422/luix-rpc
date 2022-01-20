@@ -67,8 +67,8 @@ function authInterceptor ($rootScope, $q, $location, $localStorage, $sessionStor
         config.headers = config.headers || {};
         var token = $localStorage.authenticationToken || $sessionStorage.authenticationToken;
         
-        if (token && token.expires_at && token.expires_at > new Date().getTime()) {
-            config.headers.Authorization = 'Bearer ' + token.access_token;
+        if (token) {
+            config.headers.Authorization = 'Bearer ' + token;
         }
         
         return config;

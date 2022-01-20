@@ -1,4 +1,4 @@
-package org.infinity.luix.webcenter.config.oauth2;
+package org.infinity.luix.webcenter.domain;
 
 import org.springframework.security.core.GrantedAuthority;
 

@@ -1,7 +1,7 @@
 package org.infinity.luix.webcenter.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.webcenter.config.oauth2.SecurityUser;
+import org.infinity.luix.webcenter.domain.SecurityUser;
 import org.infinity.luix.webcenter.domain.User;
 import org.infinity.luix.webcenter.exception.UserDisabledException;
 import org.infinity.luix.webcenter.exception.UserNotActivatedException;

@@ -1,4 +1,4 @@
-package org.infinity.luix.webcenter.component;
+package org.infinity.luix.webcenter.security;
 
 import org.infinity.luix.webcenter.domain.Authority;
 import org.infinity.luix.webcenter.utils.SecurityUtils;

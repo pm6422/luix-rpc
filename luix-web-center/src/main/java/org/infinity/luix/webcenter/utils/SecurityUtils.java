@@ -1,7 +1,7 @@
 package org.infinity.luix.webcenter.utils;
 
-import org.infinity.luix.webcenter.config.oauth2.SecurityUser;
 import org.infinity.luix.webcenter.domain.Authority;
+import org.infinity.luix.webcenter.domain.SecurityUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
