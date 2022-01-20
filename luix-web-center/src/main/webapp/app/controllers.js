@@ -60,8 +60,6 @@ angular
     .controller('OAuth2RefreshTokenDetailsController', OAuth2RefreshTokenDetailsController)
     .controller('OAuth2ApprovalListController', OAuth2ApprovalListController)
     .controller('OAuth2ApprovalDetailsController', OAuth2ApprovalDetailsController)
-    .controller('AdminMenuListController', AdminMenuListController)
-    .controller('AdminMenuDialogController', AdminMenuDialogController)
     .controller('UserListController', UserListController)
     .controller('UserDialogController', UserDialogController)
     .controller('UserDetailsController', UserDetailsController);
