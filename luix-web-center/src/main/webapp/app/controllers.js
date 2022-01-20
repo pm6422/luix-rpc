@@ -4,7 +4,6 @@
 angular
     .module('smartcloudserviceApp')
     .controller('MainController', MainController)
-    .controller('LeftSidebarController', LeftSidebarController)
     .controller('DashboardController', DashboardController)
     .controller('ErrorPageController', ErrorPageController)
     .controller('LoginController', LoginController)
@@ -63,7 +62,6 @@ angular
     .controller('OAuth2ApprovalDetailsController', OAuth2ApprovalDetailsController)
     .controller('AdminMenuListController', AdminMenuListController)
     .controller('AdminMenuDialogController', AdminMenuDialogController)
-    .controller('AuthorityAdminMenuController', AuthorityAdminMenuController)
     .controller('UserListController', UserListController)
     .controller('UserDialogController', UserDialogController)
     .controller('UserDetailsController', UserDetailsController);
@@ -73,7 +71,7 @@ angular
  * Contains several global data used in different view
  *
  */
-function MainController($http, $rootScope, $scope, $state, AuthenticationService, PrincipalService, AuthorityAdminMenuService, AuthServerService, AlertUtils, APP_NAME, $localStorage) {
+function MainController($http, $rootScope, $scope, $state, AuthenticationService, PrincipalService, AuthServerService, AlertUtils, APP_NAME, $localStorage) {
     var main = this;
     main.account = null;
     main.isAuthenticated = null;
@@ -97,9 +95,9 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
     });
 
     function loadLinks() {
-        if (PrincipalService.isAuthenticated() == true) {
-            main.links = AuthorityAdminMenuService.queryUserLinks({appName: APP_NAME});
-        }
+        // if (PrincipalService.isAuthenticated() == true) {
+        //     main.links = AuthorityAdminMenuService.queryUserLinks({appName: APP_NAME});
+        // }
     }
 
     function getAccount() {
@@ -134,34 +132,6 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
 
     function selectLink($item, $model, $label, $event) {
         $state.go(main.selectedLink.url);
-    }
-}
-/**
- * LeftSidebarController
- */
-function LeftSidebarController($scope, $state, $element, $timeout, APP_NAME, AuthorityAdminMenuService, PrincipalService) {
-    var vm = this;
-
-    vm.init = init;
-    vm.groups = [];
-
-    $scope.$watch(PrincipalService.isAuthenticated, function () {
-        vm.init();
-    });
-
-    function init() {
-        if (PrincipalService.isAuthenticated() == true) {
-            AuthorityAdminMenuService.queryUserMenus({appName: APP_NAME}, function (response) {
-                if (response) {
-                    vm.groups = response;
-                    // Call the metsiMenu plugin and plug it to sidebar navigation
-                    $timeout(function () {
-                        $element.metisMenu();
-                    });
-                }
-            }, function (errorResponse) {
-            });
-        }
     }
 }
 /**
@@ -2913,73 +2883,6 @@ function AdminMenuDialogController($state, $stateParams, $uibModalInstance, Admi
 
     function cancel() {
         $uibModalInstance.dismiss('cancel');
-    }
-}
-
-/**
- * AuthorityAdminMenuController
- */
-function AuthorityAdminMenuController($state, AuthorityAdminMenuService, AppAuthorityService, AppService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.parentPageTitle = $state.$current.parent.data.pageTitle;
-    vm.apps = AppService.query();
-    vm.authorities = [];
-    vm.allMenus = [];
-    vm.isSaving = false;
-    vm.searchAuthorities = searchAuthorities;
-    vm.searchMenus = searchMenus;
-    vm.save = save;
-
-    function searchAuthorities() {
-        if (vm.criteria && vm.criteria.appName) {
-            vm.authorities = AppAuthorityService.query({appName: vm.criteria.appName});
-        }
-        else {
-            vm.authorities = [];
-        }
-    }
-
-    function searchMenus() {
-        vm.allMenus = [];
-        if (vm.criteria.authorityName) {
-            AuthorityAdminMenuService.query({
-                appName: vm.criteria.appName,
-                authorityName: vm.criteria.authorityName
-            }, function (response) {
-                vm.allMenus = response;
-            });
-        }
-    }
-
-    function save() {
-        vm.isSaving = true;
-        if (vm.criteria.appName && vm.criteria.authorityName) {
-            var adminMenuIds = getAllCheckIds(vm.allMenus, []);
-            AuthorityAdminMenuService.update({
-                    appName: vm.criteria.appName,
-                    authorityName: vm.criteria.authorityName,
-                    adminMenuIds: adminMenuIds
-                },
-                function (response) {
-                    vm.isSaving = false;
-                }, function (errorResponse) {
-                    vm.isSaving = false;
-                });
-        }
-    }
-
-    function getAllCheckIds(allMenus, adminMenuIds) {
-        for (var i = 0; i < allMenus.length; i++) {
-            if (allMenus[i].checked) {
-                adminMenuIds.push(allMenus[i].id);
-            }
-            if (allMenus[i].children) {
-                getAllCheckIds(allMenus[i].children, adminMenuIds);
-            }
-        }
-        return adminMenuIds;
     }
 }
 

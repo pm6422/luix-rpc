@@ -1471,24 +1471,6 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                 });
             }]
         })
-        .state('admin-menu-authority.authority-admin-menu', {
-            url: '/authority-admin-menu',
-            views: {
-                'content@': {
-                    templateUrl: 'app/views/admin/authority-admin-menu/authority-admin-menu.html',
-                    controller: 'AuthorityAdminMenuController',
-                    controllerAs: 'vm'
-                }
-            },
-            data: {
-                pageTitle: '权限管理菜单'
-            },
-            criteria: ['$stateParams', function ($stateParams) {
-                return {
-                    authorityName: ''
-                };
-            }]
-        })
         .state('security', {
             abstract: true,
             parent: 'admin',

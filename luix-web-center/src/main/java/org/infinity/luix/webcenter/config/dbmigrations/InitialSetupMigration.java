@@ -15,23 +15,12 @@ public class InitialSetupMigration {
 
     private static final String APP_NAME = "rpc-web-center";
 
-    @ChangeSet(order = "01", author = "Louis", id = "addApps", runAlways = true)
-    public void addApps(MongockTemplate mongoTemplate) {
-        App app = new App(APP_NAME, true);
-        mongoTemplate.save(app);
-    }
-
     @ChangeSet(order = "02", author = "Louis", id = "addAuthorities", runAlways = true)
     public void addAuthorities(MongockTemplate mongoTemplate) {
         mongoTemplate.save(new Authority(Authority.USER, true));
         mongoTemplate.save(new Authority(Authority.ADMIN, true));
         mongoTemplate.save(new Authority(Authority.DEVELOPER, true));
         mongoTemplate.save(new Authority(Authority.ANONYMOUS, true));
-
-        mongoTemplate.save(new AppAuthority(APP_NAME, Authority.USER));
-        mongoTemplate.save(new AppAuthority(APP_NAME, Authority.ADMIN));
-        mongoTemplate.save(new AppAuthority(APP_NAME, Authority.DEVELOPER));
-        mongoTemplate.save(new AppAuthority(APP_NAME, Authority.ANONYMOUS));
     }
 
     @ChangeSet(order = "03", author = "Louis", id = "addUserAndAuthorities", runAlways = true)
