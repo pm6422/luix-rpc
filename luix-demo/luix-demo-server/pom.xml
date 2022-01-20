@@ -27,7 +27,6 @@
         <revision>1.0.0</revision>
         <run.addResources>false</run.addResources>
         <skipJib>true</skipJib>
-        <jibArch>amd64</jibArch>
         <start-class>org.infinity.luix.demoserver.LuixDemoServerLauncher</start-class>
     </properties>
     <!--
