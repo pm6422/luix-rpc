@@ -950,25 +950,15 @@ function PrincipalService($q, $http, AccountService, TrackerService) {
 /**
  * AuthServerService
  */
-function AuthServerService($http, $localStorage) {
+function AuthServerService($http, $localStorage, $sessionStorage) {
     return {
         getToken: getToken,
-        getAccessToken: getAccessToken,
-        getRefreshToken: getRefreshToken,
         login: login,
         logout: logout
     };
 
     function getToken() {
-        return $localStorage.authenticationToken;
-    }
-
-    function getAccessToken() {
-        return $localStorage.authenticationToken != null ? $localStorage.authenticationToken.access_token : null;
-    }
-
-    function getRefreshToken() {
-        return $localStorage.authenticationToken != null ? $localStorage.authenticationToken.refresh_token : null;
+        return $localStorage.authenticationToken || $sessionStorage.authenticationToken;
     }
 
     function login(credentials, successCallback, errorCallback) {
@@ -976,7 +966,7 @@ function AuthServerService($http, $localStorage) {
             {
                 username: encodeURIComponent(credentials.userName),
                 password: encodeURIComponent(credentials.password),
-                rememberMe: true
+                rememberMe: credentials.rememberMe
             },
             {
                 transformResponse: function(data) {
@@ -984,7 +974,14 @@ function AuthServerService($http, $localStorage) {
                 }
             })
             .success(function (data) {
-                $localStorage.authenticationToken = data;
+                if (credentials.rememberMe) {
+                    $localStorage.authenticationToken = data;
+                    delete $sessionStorage.authenticationToken;
+                } else {
+                    $sessionStorage.authenticationToken = data;
+                    delete $localStorage.authenticationToken;
+                }
+
                 successCallback(data);
             }).error(function (data) {
                 errorCallback(data);
@@ -994,6 +991,7 @@ function AuthServerService($http, $localStorage) {
     function logout() {
         $http.post('api/accounts/logout').then(function () {
             delete $localStorage.authenticationToken;
+            delete $sessionStorage.authenticationToken;
             delete $localStorage.selectedRegistryIdentity;
         });
     }
