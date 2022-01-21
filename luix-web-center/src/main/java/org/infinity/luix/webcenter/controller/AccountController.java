@@ -92,12 +92,6 @@ public class AccountController {
         return new ResponseEntity<>(jwt, httpHeaders, HttpStatus.OK);
     }
 
-    @ApiOperation("logout")
-    @PostMapping("/api/accounts/logout")
-    public void logout() {
-        applicationEventPublisher.publishEvent(new LogoutEvent(this));
-    }
-
     @ApiOperation("retrieve current user")
     @GetMapping("/open-api/accounts/user")
     public ResponseEntity<User> getCurrentUser() {
@@ -112,6 +106,12 @@ public class AccountController {
             user.setAuthorities(authorities);
         }
         return ResponseEntity.ok().body(user);
+    }
+
+    @ApiOperation("logout")
+    @PostMapping("/api/accounts/logout")
+    public void logout() {
+        applicationEventPublisher.publishEvent(new LogoutEvent(this));
     }
 
     @ApiOperation("register a new user and send an activation email")
