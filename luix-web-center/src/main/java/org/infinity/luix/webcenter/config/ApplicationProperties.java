@@ -152,7 +152,7 @@ public class ApplicationProperties {
 
             @Data
             public static class Jwt {
-                private String secret;
+                @NotNull
                 private String base64Secret;
                 private long   tokenValidityInSeconds              = 1800; // 30 minutes
                 private long   tokenValidityInSecondsForRememberMe = 2592000; // 30 days

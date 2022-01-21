@@ -1,6 +1,6 @@
 package org.infinity.luix.webcenter.config;
 
-import org.infinity.luix.webcenter.security.jwt.JWTConfigurer;
+import org.infinity.luix.webcenter.security.jwt.JwtFilterConfigurer;
 import org.infinity.luix.webcenter.security.jwt.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -106,7 +106,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // @formatter:on
     }
 
-    private JWTConfigurer securityConfigurerAdapter() {
-        return new JWTConfigurer(tokenProvider);
+    private JwtFilterConfigurer securityConfigurerAdapter() {
+        return new JwtFilterConfigurer(tokenProvider);
     }
 }

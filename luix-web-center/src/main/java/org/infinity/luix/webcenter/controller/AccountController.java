@@ -13,7 +13,7 @@ import org.infinity.luix.webcenter.event.LogoutEvent;
 import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.infinity.luix.webcenter.repository.UserAuthorityRepository;
 import org.infinity.luix.webcenter.repository.UserProfilePhotoRepository;
-import org.infinity.luix.webcenter.security.jwt.JWTFilter;
+import org.infinity.luix.webcenter.security.jwt.JwtFilter;
 import org.infinity.luix.webcenter.security.jwt.TokenProvider;
 import org.infinity.luix.webcenter.service.AuthorityService;
 import org.infinity.luix.webcenter.service.MailService;
@@ -88,7 +88,7 @@ public class AccountController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.createToken(authentication, loginDTO.isRememberMe());
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
         return new ResponseEntity<>(jwt, httpHeaders, HttpStatus.OK);
     }
 

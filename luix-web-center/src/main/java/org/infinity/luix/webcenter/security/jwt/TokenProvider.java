@@ -5,6 +5,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.webcenter.config.ApplicationProperties;
 import org.infinity.luix.webcenter.service.SecurityMetersService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,9 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,25 +33,14 @@ public class TokenProvider {
     private final        SecurityMetersService securityMetersService;
 
     public TokenProvider(ApplicationProperties applicationProperties, SecurityMetersService securityMetersService) {
-        byte[] keyBytes;
-        String secret = applicationProperties.getSecurity().getAuthentication().getJwt().getBase64Secret();
-        if (!ObjectUtils.isEmpty(secret)) {
-            log.debug("Using a Base64-encoded JWT secret key");
-            keyBytes = Decoders.BASE64.decode(secret);
-        } else {
-            log.warn(
-                    "Warning: the JWT key used is not Base64-encoded. " +
-                            "We recommend using the `jhipster.security.authentication.jwt.base64-secret` key for optimum security."
-            );
-            secret = applicationProperties.getSecurity().getAuthentication().getJwt().getSecret();
-            keyBytes = secret.getBytes(StandardCharsets.UTF_8);
-        }
+        byte[] keyBytes = Decoders.BASE64.decode(applicationProperties.getSecurity().getAuthentication().getJwt().getBase64Secret());
         key = Keys.hmacShaKeyFor(keyBytes);
         jwtParser = Jwts.parserBuilder().setSigningKey(key).build();
-        this.tokenValidityInMilliseconds = 1000 * applicationProperties.getSecurity().getAuthentication().getJwt().getTokenValidityInSeconds();
+        this.tokenValidityInMilliseconds = 1000 * applicationProperties.getSecurity().getAuthentication().getJwt()
+                .getTokenValidityInSeconds();
         this.tokenValidityInMillisecondsForRememberMe =
-                1000 * applicationProperties.getSecurity().getAuthentication().getJwt().getTokenValidityInSecondsForRememberMe();
-
+                1000 * applicationProperties.getSecurity().getAuthentication().getJwt()
+                        .getTokenValidityInSecondsForRememberMe();
         this.securityMetersService = securityMetersService;
     }
 
@@ -81,44 +69,36 @@ public class TokenProvider {
 
     public Authentication getAuthentication(String token) {
         Claims claims = jwtParser.parseClaimsJws(token).getBody();
-
         Collection<? extends GrantedAuthority> authorities = Arrays
                 .stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                .filter(auth -> !auth.trim().isEmpty())
+                .filter(auth -> StringUtils.isNotEmpty(auth.trim()))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-        User principal = new User(claims.getSubject(), "", authorities);
-
+        User principal = new User(claims.getSubject(), StringUtils.EMPTY, authorities);
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
     public boolean validateToken(String authToken) {
         try {
             jwtParser.parseClaimsJws(authToken);
-
             return true;
         } catch (ExpiredJwtException e) {
             this.securityMetersService.trackTokenExpired();
-
-            log.trace("Invalid JWT token.", e);
+            log.warn("Invalid JWT token.", e);
         } catch (UnsupportedJwtException e) {
             this.securityMetersService.trackTokenUnsupported();
-
-            log.trace("Invalid JWT token.", e);
+            log.warn("Invalid JWT token.", e);
         } catch (MalformedJwtException e) {
             this.securityMetersService.trackTokenMalformed();
-
-            log.trace("Invalid JWT token.", e);
+            log.warn("Invalid JWT token.", e);
         } catch (SignatureException e) {
             this.securityMetersService.trackTokenInvalidSignature();
-
-            log.trace("Invalid JWT token.", e);
+            log.warn("Invalid JWT token.", e);
         } catch (IllegalArgumentException e) {
             // TODO: should we let it bubble (no catch), to avoid defensive programming and follow the fail-fast principle?
             log.error("Token validation error {}", e.getMessage());
         }
-
         return false;
     }
 }
