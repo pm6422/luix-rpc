@@ -1,7 +1,6 @@
 package org.infinity.luix.webcenter.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.webcenter.domain.SecurityUser;
 import org.infinity.luix.webcenter.domain.User;
 import org.infinity.luix.webcenter.exception.UserDisabledException;
 import org.infinity.luix.webcenter.exception.UserNotActivatedException;
@@ -52,7 +51,7 @@ public class SpringSecurityUserDetailsServiceImpl implements org.springframework
         List<GrantedAuthority> grantedAuthorities = userAuthorityRepository.findByUserId(userFromDatabase.getId())
                 .stream().map(userAuthority -> new SimpleGrantedAuthority(userAuthority.getAuthorityName()))
                 .collect(Collectors.toList());
-        return new SecurityUser(userFromDatabase.getId(), userFromDatabase.getUserName(),
+        return new org.springframework.security.core.userdetails.User(userFromDatabase.getUserName(),
                 userFromDatabase.getPasswordHash(), grantedAuthorities);
     }
 }

@@ -1,8 +1,6 @@
 package org.infinity.luix.webcenter.utils;
 
-import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.webcenter.domain.Authority;
-import org.infinity.luix.webcenter.domain.SecurityUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -34,25 +32,6 @@ public abstract class SecurityUtils {
             }
         }
         return userName;
-    }
-
-    /**
-     * Return the current user, or throws an exception, if the user is not authenticated yet.
-     *
-     * @return the current user
-     */
-    public static SecurityUser getCurrentUser() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        if (authentication != null) {
-            if (authentication.getPrincipal() instanceof SecurityUser) {
-                return (SecurityUser) authentication.getPrincipal();
-            } else if (authentication.getPrincipal() instanceof String) {
-                return new SecurityUser("", (String) authentication.getPrincipal(), "",
-                        authentication.getAuthorities());
-            }
-        }
-        throw new IllegalStateException("User not found!");
     }
 
     /**

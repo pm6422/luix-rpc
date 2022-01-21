@@ -190,8 +190,9 @@ public class AccountController {
     @ApiOperation("download user profile picture")
     @GetMapping("/api/accounts/profile-photo/download")
     public ResponseEntity<org.springframework.core.io.Resource> downloadProfilePhoto() {
-        SecurityUser currentUser = SecurityUtils.getCurrentUser();
-        Optional<UserProfilePhoto> existingPhoto = userProfilePhotoRepository.findByUserId(currentUser.getUserId());
+        String currentUserName = SecurityUtils.getCurrentUserName();
+        User user = userService.findOneByUserName(currentUserName);
+        Optional<UserProfilePhoto> existingPhoto = userProfilePhotoRepository.findByUserId(user.getId());
         if (!existingPhoto.isPresent()) {
             return ResponseEntity.ok().body(null);
         }
