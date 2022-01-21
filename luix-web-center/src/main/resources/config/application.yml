@@ -185,3 +185,10 @@ application:
         display-on-active-profiles: dev,test,demo
     security:
         content-security-policy: "frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com;"
+        authentication:
+            jwt:
+                # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
+                base64-secret: Epc4yo1VAtS10s7LzRis2NyTynSWAlggB9/iAdKHhkwI8JvgqV+gW3p+HFOVKiKuVYj37YgLaVKo0T+Fxlwynw==
+                # Token is valid 24 hours
+                token-validity-in-seconds: 86400
+                token-validity-in-seconds-for-remember-me: 2592000
