@@ -325,10 +325,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.session</groupId>
-            <artifactId>spring-session-data-mongodb</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.zalando</groupId>
             <artifactId>jackson-datatype-problem</artifactId>
             <exclusions>

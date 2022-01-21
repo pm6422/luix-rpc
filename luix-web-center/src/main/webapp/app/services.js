@@ -16,7 +16,6 @@ angular
     .factory('MetricsService', MetricsService)
     .factory('HealthService', HealthService)
     .factory('ConfigurationService', ConfigurationService)
-    .factory('HttpSessionService', HttpSessionService)
     .factory('DictService', DictService)
     .factory('DictItemService', DictItemService)
     .factory('AuditsService', AuditsService)
@@ -674,14 +673,6 @@ function ConfigurationService($filter, $http, APP_NAME) {
     }
 }
 
-function HttpSessionService($resource) {
-    var service = $resource('api/http-sessions/:id', {}, {
-        'query': {method: 'GET', isArray: true},
-        'del': {method: 'DELETE'}
-    });
-    return service;
-}
-
 function DictService($resource) {
     var service = $resource('api/dicts/:id', {}, {
         'query': {method: 'GET', isArray: true},
@@ -984,7 +975,8 @@ function AuthServerService($http, $localStorage) {
         return $http.post('open-api/accounts/authenticate',
             {
                 username: encodeURIComponent(credentials.userName),
-                password: encodeURIComponent(credentials.password)
+                password: encodeURIComponent(credentials.password),
+                rememberMe: true
             },
             {
                 transformResponse: function(data) {

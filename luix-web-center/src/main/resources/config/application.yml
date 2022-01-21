@@ -82,10 +82,6 @@ spring:
             enabled: true
             max-file-size: 30MB
             max-request-size: 30MB
-    session: # used by MongoIndexedSessionRepository
-        store-type: MONGODB
-        mongodb:
-            collection-name: HttpSession
     mail: # specific mail property, used by MailProperties
         host: smtp.exmail.qq.com
         username: test@luixtech.com
@@ -104,6 +100,7 @@ server:
         session:
             cookie:
                 name: ${spring.application.name}
+                http-only: true
             timeout: 1D # Session timeout in 1 day, Note: this parameter can control the login expiration
             # and this statement can effect spring session, used by SessionProperties
 logging:

@@ -24,7 +24,6 @@ angular
     .controller('BeanDialogController', BeanDialogController)
     .controller('MappingsController', MappingsController)
     .controller('HttpTraceController', HttpTraceController)
-    .controller('HttpSessionController', HttpSessionController)
     .controller('AuditsController', AuditsController)
     .controller('TrackerController', TrackerController)
     .controller('LoggerController', LoggerController)
@@ -964,86 +963,6 @@ function HttpTraceController($state, $http) {
     function refresh() {
         $http.get('management/httptrace').then(function (response) {
             vm.items = response.data.traces;
-        });
-    }
-}
-
-/**
- * HttpSessionController
- */
-function HttpSessionController($state, AlertUtils, ParseLinksUtils, PAGINATION_CONSTANTS, pagingParams, criteria, HttpSessionService) {
-    var vm = this;
-
-    vm.pageTitle = $state.current.data.pageTitle;
-    vm.links = null;
-    vm.loadAll = loadAll;
-    vm.loadPage = loadPage;
-    vm.checkPressEnter = checkPressEnter;
-    vm.page = 1;
-    vm.totalItems = null;
-    vm.entities = [];
-    vm.predicate = pagingParams.predicate;
-    vm.reverse = pagingParams.ascending;
-    vm.itemsPerPage = PAGINATION_CONSTANTS.itemsPerPage;
-    vm.transition = transition;
-    vm.criteria = criteria;
-    vm.del = del;
-
-    vm.loadAll();
-
-    function loadAll() {
-        HttpSessionService.query({
-            page: pagingParams.page - 1,
-            size: vm.itemsPerPage,
-            sort: sort(),
-            principal: vm.criteria.principal
-        }, function (result, headers) {
-            vm.links = ParseLinksUtils.parse(headers('link'));
-            vm.totalItems = headers('X-Total-Count');
-            vm.page = pagingParams.page;
-            vm.entities = result;
-        });
-    }
-
-    function sort() {
-        var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
-        if (vm.predicate !== 'principal') {
-            // default sort column
-            result.push('principal,asc');
-        }
-        return result;
-    }
-
-    function loadPage(page) {
-        vm.page = page;
-        vm.transition();
-    }
-
-    function transition() {
-        $state.transitionTo($state.$current, {
-            page: vm.page,
-            sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
-            principal: vm.criteria.principal
-        });
-    }
-
-    function checkPressEnter($event) {
-        //按下enter键重新查询数据
-        if ($event.keyCode == 13) {
-            vm.transition();
-        }
-    }
-
-    function del(id) {
-        AlertUtils.createDeleteConfirmation('The data may be referenced by other data, and there may be some problems after deletion, are you sure to delete?', function (isConfirm) {
-            if (isConfirm) {
-                HttpSessionService.del({id: id},
-                    function () {
-                        vm.loadAll();
-                    },
-                    function () {
-                    });
-            }
         });
     }
 }
