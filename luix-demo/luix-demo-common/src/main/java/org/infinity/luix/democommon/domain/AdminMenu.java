@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.infinity.luix.democommon.domain.base.AbstractAuditableDomain;
 import org.infinity.luix.democommon.dto.AdminMenuTreeDTO;
-import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -74,8 +74,7 @@ public class AdminMenu extends AbstractAuditableDomain implements Serializable {
 
     public AdminMenuTreeDTO toTreeDTO() {
         AdminMenuTreeDTO dto = new AdminMenuTreeDTO();
-        BeanCopier beanCopier = BeanCopier.create(AdminMenu.class, AdminMenuTreeDTO.class, false);
-        beanCopier.copy(this, dto, null);
+        BeanUtils.copyProperties(this, dto);
         return dto;
     }
 }
