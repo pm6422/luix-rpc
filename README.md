@@ -133,6 +133,11 @@ If you want to get the application metric values, then run:
 docker-compose -f docker/monitoring.yml up -d
 ```
 
+If you want to start Consul registry, then run:
+```
+docker-compose -f docker/consul.yml up -d
+```
+
 [jhipster homepage and latest documentation]: https://www.jhipster.tech
 [jhipster 7.4.0 archive]: https://www.jhipster.tech/documentation-archive/v7.4.0
 [using jhipster in development]: https://www.jhipster.tech/documentation-archive/v7.4.0/development/
