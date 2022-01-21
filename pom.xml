@@ -11,6 +11,7 @@
         <module>luix-core</module>
         <module>luix-transport-netty4</module>
         <module>luix-registry-zookeeper</module>
+        <module>luix-registry-consul</module>
         <module>luix-spring-boot-starter</module>
         <module>luix-spring-enhancement</module>
         <module>luix-web-center</module>

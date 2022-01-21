@@ -163,6 +163,23 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.11.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.11.2</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.11.2</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
@@ -292,23 +309,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-api</artifactId>
-            <version>0.11.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-impl</artifactId>
-            <version>0.11.2</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-jackson</artifactId>
-            <version>0.11.2</version>
-            <scope>runtime</scope>
         </dependency>
         <!-- security -->
         <dependency>
@@ -443,33 +443,33 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <configuration>
-                    <rules>
-                        <requireMavenVersion>
-                            <message>You are running an older version of Maven. Application requires at least Maven
-                                ${maven.version}</message>
-                            <version>[${maven.version},)</version>
-                        </requireMavenVersion>
-                        <requireJavaVersion>
-                            <!-- Until it supports JDK 8 -->
-                            <message>You are running an incompatible version of Java. Application requires JDK
-                                ${java.version}</message>
-                            <version>[1.8,1.9)</version>
-                        </requireJavaVersion>
-                    </rules>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>enforce-versions</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-enforcer-plugin</artifactId>-->
+            <!--                <configuration>-->
+            <!--                    <rules>-->
+            <!--                        <requireMavenVersion>-->
+            <!--                            <message>You are running an older version of Maven. Application requires at least Maven-->
+            <!--                                ${maven.version}</message>-->
+            <!--                            <version>[${maven.version},)</version>-->
+            <!--                        </requireMavenVersion>-->
+            <!--                        <requireJavaVersion>-->
+            <!--                            &lt;!&ndash; Until it supports JDK 8 &ndash;&gt;-->
+            <!--                            <message>You are running an incompatible version of Java. Application requires JDK-->
+            <!--                                ${java.version}</message>-->
+            <!--                            <version>[1.8,1.9)</version>-->
+            <!--                        </requireJavaVersion>-->
+            <!--                    </rules>-->
+            <!--                </configuration>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>enforce-versions</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>enforce</goal>-->
+            <!--                        </goals>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>

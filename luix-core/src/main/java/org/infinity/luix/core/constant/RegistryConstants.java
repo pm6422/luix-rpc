@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 public interface RegistryConstants {
     String REGISTRY                    = "registry";
+    String REGISTRY_VAL_CONSUL         = "consul";
     String REGISTRY_VAL_ZOOKEEPER      = "zookeeper";
     String REGISTRY_VAL_NONE           = "none";
     String CONNECT_TIMEOUT             = "connectTimeout";

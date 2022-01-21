@@ -80,6 +80,7 @@ public final class Url implements Serializable {
     public static final String PARAM_WEIGHT               = "weights";
     public static final String PARAM_WEIGHT_DEFAULT_VALUE = "";
     public static final String PARAM_ACTIVATED_TIME       = "activatedTime";
+    public static final String PARAM_FROM                 = "form";
 
     /**
      * Prevent instantiation of it outside the class
