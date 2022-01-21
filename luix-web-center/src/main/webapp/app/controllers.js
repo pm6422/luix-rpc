@@ -52,7 +52,7 @@ angular
  * Contains several global data used in different view
  *
  */
-function MainController($http, $rootScope, $scope, $state, AuthenticationService, PrincipalService, AuthServerService, AlertUtils, APP_NAME, $localStorage) {
+function MainController($http, $rootScope, $scope, $state, AuthenticationService, PrincipalService, AuthServerService, AlertUtils, APP_NAME, $sessionStorage) {
     var main = this;
     main.account = null;
     main.isAuthenticated = null;
@@ -64,7 +64,7 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
 
     loadRegistries();
 
-    // Authenticate user whether has logged in
+    // Authenticate user whether it has logged in
     AuthenticationService.authorize(false, getAccount);
 
     $scope.$on('authenticationSuccess', function () {
@@ -106,7 +106,7 @@ function MainController($http, $rootScope, $scope, $state, AuthenticationService
             main.registries = response.data;
             if(main.registries) {
                 $rootScope.selectedRegistryIdentity = main.registries[0].identity;
-                $localStorage.selectedRegistryIdentity = $rootScope.selectedRegistryIdentity;
+                $sessionStorage.selectedRegistryIdentity = $rootScope.selectedRegistryIdentity;
             }
         });
     }

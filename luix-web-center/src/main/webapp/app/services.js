@@ -992,7 +992,7 @@ function AuthServerService($http, $localStorage, $sessionStorage) {
         $http.post('api/accounts/logout').then(function () {
             delete $localStorage.authenticationToken;
             delete $sessionStorage.authenticationToken;
-            delete $localStorage.selectedRegistryIdentity;
+            delete $sessionStorage.selectedRegistryIdentity;
         });
     }
 }
@@ -1295,10 +1295,10 @@ function AdminMenuService($resource) {
 /**
  * RpcRegistryService
  */
-function RpcRegistryService($rootScope, $localStorage) {
+function RpcRegistryService($rootScope, $sessionStorage) {
     var service = {
         'getSelectedRegistryIdentity': function(){
-             return $rootScope.selectedRegistryIdentity ? $rootScope.selectedRegistryIdentity : $localStorage.selectedRegistryIdentity;
+             return $rootScope.selectedRegistryIdentity ? $rootScope.selectedRegistryIdentity : $sessionStorage.selectedRegistryIdentity;
         }
     };
     return service;
