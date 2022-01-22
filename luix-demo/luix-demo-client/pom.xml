@@ -77,6 +77,14 @@
                     <groupId>com.google.code.findbugs</groupId>
                     <artifactId>jsr305</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>joda-time</groupId>
+                    <artifactId>joda-time</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.scala-lang</groupId>
+                    <artifactId>scala-library</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -130,6 +138,12 @@
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.osgi</groupId>
+                    <artifactId>org.osgi.core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -304,33 +318,42 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.maven.plugins</groupId>-->
-            <!--                <artifactId>maven-enforcer-plugin</artifactId>-->
-            <!--                <configuration>-->
-            <!--                    <rules>-->
-            <!--                        <requireMavenVersion>-->
-            <!--                            <message>You are running an older version of Maven. Application requires at least Maven-->
-            <!--                                ${maven.version}</message>-->
-            <!--                            <version>[${maven.version},)</version>-->
-            <!--                        </requireMavenVersion>-->
-            <!--                        <requireJavaVersion>-->
-            <!--                            &lt;!&ndash; Until it supports JDK 8 &ndash;&gt;-->
-            <!--                            <message>You are running an incompatible version of Java. Application requires JDK-->
-            <!--                                ${java.version}</message>-->
-            <!--                            <version>[1.8,1.9)</version>-->
-            <!--                        </requireJavaVersion>-->
-            <!--                    </rules>-->
-            <!--                </configuration>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <id>enforce-versions</id>-->
-            <!--                        <goals>-->
-            <!--                            <goal>enforce</goal>-->
-            <!--                        </goals>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <configuration>
+                    <rules>
+                        <requireMavenVersion>
+                            <message>You are running an older version of Maven. Application requires at least Maven ${maven.version}</message>
+                            <version>[${maven.version},)</version>
+                        </requireMavenVersion>
+                        <requireJavaVersion>
+                            <message>You are running an incompatible version of Java. Application only supports JDK 8 to 17.</message>
+                            <version>[8,9),[9,10),[10,11),[11,12),[12,13),[13,14),[14,15),[15,16),[16,17),[17,18)</version>
+                        </requireJavaVersion>
+                    </rules>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>enforce-dependencyConvergence</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <DependencyConvergence/>
+                            </rules>
+                            <fail>false</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>

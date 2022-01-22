@@ -82,20 +82,20 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
 
     @Override
     protected void doActivate(Url url) {
-        if (url == null) {
+//        if (url == null) {
             heartbeatManager.setHeartbeatOpen(true);
-        } else {
-            throw new UnsupportedOperationException("Command consul registry not support available by urls yet");
-        }
+//        } else {
+//            throw new UnsupportedOperationException("Command consul registry not support available by urls yet");
+//        }
     }
 
     @Override
     protected void doDeactivate(Url url) {
-        if (url == null) {
+//        if (url == null) {
             heartbeatManager.setHeartbeatOpen(false);
-        } else {
-            throw new UnsupportedOperationException("Command consul registry not support unavailable by urls yet");
-        }
+//        } else {
+//            throw new UnsupportedOperationException("Command consul registry not support unavailable by urls yet");
+//        }
     }
 
     @Override
@@ -198,7 +198,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
      */
     private ConsulResponse<List<ConsulService>> lookupConsulService(String serviceName, Long lastConsulIndexId) {
         ConsulResponse<List<ConsulService>> response = client.lookupHealthService(
-                ConsulUtils.convertGroupToServiceName(serviceName),
+                ConsulUtils.buildServiceFormName(serviceName),
                 lastConsulIndexId);
         return response;
     }
@@ -213,7 +213,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
         String service = ConsulUtils.getUrlClusterInfo(url);
         ConcurrentHashMap<Url, ProviderListener> map = serviceListeners.get(service);
         if (map == null) {
-            serviceListeners.putIfAbsent(service, new ConcurrentHashMap<Url, ProviderListener>());
+            serviceListeners.putIfAbsent(service, new ConcurrentHashMap<>());
             map = serviceListeners.get(service);
         }
         synchronized (map) {

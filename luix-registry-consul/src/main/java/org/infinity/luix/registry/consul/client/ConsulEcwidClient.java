@@ -95,7 +95,7 @@ public class ConsulEcwidClient extends AbstractConsulClient {
 
     @Override
     public String lookupCommand(String group) {
-        Response<GetValue> response = client.getKVValue(CONSUL_MOTAN_COMMAND + ConsulUtils.convertGroupToServiceName(group));
+        Response<GetValue> response = client.getKVValue(CONSUL_MOTAN_COMMAND + ConsulUtils.buildServiceFormName(group));
         GetValue value = response.getValue();
         String command = "";
         if (value == null) {

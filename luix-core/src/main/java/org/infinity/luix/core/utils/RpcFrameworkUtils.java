@@ -53,9 +53,9 @@ public class RpcFrameworkUtils {
             return false;
         }
 
-        if (!StringUtils.equals(source.getOption(SERIALIZER), target.getOption(SERIALIZER))) {
-            return false;
-        }
+//        if (!StringUtils.equals(source.getOption(SERIALIZER), target.getOption(SERIALIZER))) {
+//            return false;
+//        }
 
         if (!StringUtils.equals(source.getOption(MAX_CONTENT_LENGTH), target.getOption(MAX_CONTENT_LENGTH))) {
             return false;
