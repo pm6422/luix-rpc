@@ -1,4 +1,4 @@
-package org.infinity.luix.demoserver.service;
+package org.infinity.luix.registry.zookeeper.service;
 
 import lombok.Data;
 

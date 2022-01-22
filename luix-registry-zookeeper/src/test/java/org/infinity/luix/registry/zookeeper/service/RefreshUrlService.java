@@ -1,8 +1,8 @@
-package org.infinity.luix.demoserver.service;
+package org.infinity.luix.registry.zookeeper.service;
 
 import java.util.List;
 
-public interface TestService {
+public interface RefreshUrlService {
     String hello(String name);
 
     void save(App app);

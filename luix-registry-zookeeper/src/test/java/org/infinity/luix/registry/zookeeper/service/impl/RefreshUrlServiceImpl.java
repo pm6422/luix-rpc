@@ -1,8 +1,9 @@
-package org.infinity.luix.demoserver.service.impl;
+package org.infinity.luix.registry.zookeeper.service.impl;
 
 
-import org.infinity.luix.demoserver.service.RefreshUrlService;
-import org.infinity.luix.demoserver.service.App;
+
+import org.infinity.luix.registry.zookeeper.service.App;
+import org.infinity.luix.registry.zookeeper.service.RefreshUrlService;
 
 import java.util.ArrayList;
 import java.util.Collections;
