@@ -64,7 +64,7 @@ public class RpcScheduledTask extends AbstractAuditableDomain implements Seriali
      */
     private Integer  retryCount;
     /**
-     * Request timeout
+     * Request timeout in milliseconds
      */
     private Integer  requestTimeout;
     /**
