@@ -60,8 +60,6 @@ public class ConsulUtils {
         return service;
     }
 
-
-
     /**
      * 判断两个list中的url是否一致。 如果任意一个list为空，则返回false； 此方法并未做严格互相判等
      *
