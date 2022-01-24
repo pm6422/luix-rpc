@@ -108,11 +108,12 @@ public class ConsulEcwidClient extends AbstractConsulClient {
 
     private NewService convertService(ConsulService service) {
         NewService newService = new NewService();
-        newService.setAddress(service.getAddress());
         newService.setId(service.getId());
         newService.setName(service.getName());
+        newService.setAddress(service.getAddress());
         newService.setPort(service.getPort());
         newService.setTags(service.getTags());
+
         NewService.Check check = new NewService.Check();
         check.setTtl(service.getTtl() + "s");
         newService.setCheck(check);
