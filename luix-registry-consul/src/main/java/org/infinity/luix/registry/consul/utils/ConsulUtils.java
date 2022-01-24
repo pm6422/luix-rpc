@@ -47,17 +47,20 @@ public class ConsulUtils {
      */
     public static ConsulService buildService(Url url) {
         ConsulService service = new ConsulService();
-        service.setAddress(url.getHost());
         service.setId(ConsulUtils.convertConsulSerivceId(url));
         service.setName(ConsulUtils.buildServiceFormName(url.getForm()));
+        service.setAddress(url.getHost());
         service.setPort(url.getPort());
         service.setTtl(TTL);
+        service.setTags(buildTags(url));
+        return service;
+    }
 
+    private static List<String> buildTags(Url url) {
         List<String> tags = new ArrayList<>();
         tags.add(CONSUL_TAG_MOTAN_PROTOCOL + url.getProtocol());
         tags.add(CONSUL_TAG_MOTAN_URL + UrlUtils.urlEncode(url.toFullStr()));
-        service.setTags(tags);
-        return service;
+        return tags;
     }
 
     /**
