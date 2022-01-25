@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public abstract class AddressUtils {
     public static final  String      LOCALHOST          = "127.0.0.1";
     public static final  String      ANY_HOST           = "0.0.0.0";
-    public static final  String      INFINITY_IP_PREFIX = "INFINITY_IP_PREFIX";
+    public static final  String      INFINITY_IP_PREFIX = "LUIX_IP_PREFIX";
     private static final Pattern     ADDRESS_PATTERN    = Pattern.compile("^\\d{1,3}(\\.\\d{1,3}){3}:\\d{1,5}$");
     private static final Pattern     IP_PATTERN         = Pattern.compile("\\d{1,3}(\\.\\d{1,3}){3,5}$");
     private static final String      COMMA_SEPARATOR    = ",";
