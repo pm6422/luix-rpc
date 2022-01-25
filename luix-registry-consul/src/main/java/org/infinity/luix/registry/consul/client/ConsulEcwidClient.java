@@ -47,7 +47,7 @@ public class ConsulEcwidClient extends AbstractConsulClient {
 
     @Override
     public void registerService(ConsulService service) {
-        NewService newService = convertService(service);
+        NewService newService = service.toNewService();
         client.agentServiceRegister(newService);
     }
 
@@ -59,29 +59,28 @@ public class ConsulEcwidClient extends AbstractConsulClient {
     @Override
     public ConsulResponse<List<ConsulService>> lookupHealthService(String serviceName, long lastConsulIndex) {
         QueryParams queryParams = new QueryParams(CONSUL_BLOCK_TIME_SECONDS, lastConsulIndex);
-        Response<List<HealthService>> orgResponse = client.getHealthServices(
-                serviceName, true, queryParams);
+        Response<List<HealthService>> orgResponse = client.getHealthServices(serviceName, true, queryParams);
         ConsulResponse<List<ConsulService>> newResponse = null;
         if (orgResponse != null && orgResponse.getValue() != null
                 && !orgResponse.getValue().isEmpty()) {
-            List<HealthService> HealthServices = orgResponse.getValue();
-            List<ConsulService> ConsulServices = new ArrayList<>(HealthServices.size());
+            List<HealthService> healthServices = orgResponse.getValue();
+            List<ConsulService> consulServices = new ArrayList<>(healthServices.size());
 
-            for (HealthService orgService : HealthServices) {
+            for (HealthService healthService : healthServices) {
                 try {
-                    ConsulService newService = convertToConsulService(orgService);
-                    ConsulServices.add(newService);
+                    ConsulService newService = ConsulService.of(healthService);
+                    consulServices.add(newService);
                 } catch (Exception e) {
                     String servcieid = "null";
-                    if (orgService.getService() != null) {
-                        servcieid = orgService.getService().getId();
+                    if (healthService.getService() != null) {
+                        servcieid = healthService.getService().getId();
                     }
                     log.error("convert consul service fail. org consulservice:" + servcieid, e);
                 }
             }
-            if (!ConsulServices.isEmpty()) {
+            if (!consulServices.isEmpty()) {
                 newResponse = new ConsulResponse<>();
-                newResponse.setValue(ConsulServices);
+                newResponse.setValue(consulServices);
                 newResponse.setConsulIndex(orgResponse.getConsulIndex());
                 newResponse.setConsulLastContact(orgResponse
                         .getConsulLastContact());
@@ -104,31 +103,6 @@ public class ConsulEcwidClient extends AbstractConsulClient {
             command = value.getDecodedValue();
         }
         return command;
-    }
-
-    private NewService convertService(ConsulService service) {
-        NewService newService = new NewService();
-        newService.setId(service.getId());
-        newService.setName(service.getName());
-        newService.setAddress(service.getAddress());
-        newService.setPort(service.getPort());
-        newService.setTags(service.getTags());
-
-        NewService.Check check = new NewService.Check();
-        check.setTtl(service.getTtl() + "s");
-        newService.setCheck(check);
-        return newService;
-    }
-
-    private ConsulService convertToConsulService(HealthService healthService) {
-        ConsulService service = new ConsulService();
-        Service org = healthService.getService();
-        service.setAddress(org.getAddress());
-        service.setId(org.getId());
-        service.setName(org.getService());
-        service.setPort(org.getPort());
-        service.setTags(org.getTags());
-        return service;
     }
 
     @Override

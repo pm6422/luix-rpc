@@ -1,6 +1,7 @@
 package org.infinity.luix.registry.consul;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.core.registry.CommandFailbackAbstractRegistry;
 import org.infinity.luix.core.registry.listener.CommandListener;
 import org.infinity.luix.core.registry.listener.ProviderListener;
@@ -27,16 +28,14 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     /**
      * consul服务查询默认间隔时间。单位毫秒
      */
-    public static int DEFAULT_LOOKUP_INTERVAL = 30000;
-
-    private AbstractConsulClient   client;
-    private ConsulHeartbeatManager heartbeatManager;
-    private int                    lookupInterval;
-
+    public static int                                                             DEFAULT_LOOKUP_INTERVAL = 30000;
+    private       AbstractConsulClient                                            client;
+    private       ConsulHeartbeatManager                                          heartbeatManager;
+    private       int                                                             lookupInterval;
     // service local cache. key: group, value: <service interface name, url list>
-    private ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>> serviceCache = new ConcurrentHashMap<>();
+    private       ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>> serviceCache            = new ConcurrentHashMap<>();
     // command local cache. key: group, value: command content
-    private ConcurrentHashMap<String, String>                               commandCache = new ConcurrentHashMap<>();
+    private       ConcurrentHashMap<String, String>                               commandCache            = new ConcurrentHashMap<>();
 
     // record lookup service thread, insure each group start only one thread, <group, lastConsulIndexId>
     private ConcurrentHashMap<String, Long>   lookupGroupServices = new ConcurrentHashMap<>();
@@ -60,7 +59,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
 //        lookupInterval = super.registryUrl.getIntOption(URLParamType.registrySessionTimeout.getName(), DEFAULT_LOOKUP_INTERVAL);
         lookupInterval = DEFAULT_LOOKUP_INTERVAL;
 
-        ArrayBlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<Runnable>(20000);
+        ArrayBlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(20000);
         notifyExecutor = new ThreadPoolExecutor(10, 30, 30 * 1000, TimeUnit.MILLISECONDS, workQueue);
         ShutdownHook.add(this);
         log.info("ConsulRegistry init finish.");
@@ -68,14 +67,14 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
 
     @Override
     protected void doRegister(Url url) {
-        ConsulService service = ConsulUtils.buildService(url);
+        ConsulService service = ConsulService.of(url);
         client.registerService(service);
         heartbeatManager.addHeartbeatServcieId(service.getId());
     }
 
     @Override
     protected void doUnregister(Url url) {
-        ConsulService service = ConsulUtils.buildService(url);
+        ConsulService service = ConsulService.of(url);
         client.unregisterService(service.getId());
         heartbeatManager.removeHeartbeatServiceId(service.getId());
     }
@@ -83,7 +82,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     @Override
     protected void doActivate(Url url) {
 //        if (url == null) {
-            heartbeatManager.setHeartbeatOpen(true);
+        heartbeatManager.setHeartbeatOpen(true);
 //        } else {
 //            throw new UnsupportedOperationException("Command consul registry not support available by urls yet");
 //        }
@@ -92,7 +91,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     @Override
     protected void doDeactivate(Url url) {
 //        if (url == null) {
-            heartbeatManager.setHeartbeatOpen(false);
+        heartbeatManager.setHeartbeatOpen(false);
 //        } else {
 //            throw new UnsupportedOperationException("Command consul registry not support unavailable by urls yet");
 //        }
@@ -121,20 +120,19 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     }
 
     private ConcurrentHashMap<String, List<Url>> lookupServiceUpdate(String group) {
-        ConcurrentHashMap<String, List<Url>> groupUrls = new ConcurrentHashMap<String, List<Url>>();
+        ConcurrentHashMap<String, List<Url>> groupUrls = new ConcurrentHashMap<>();
         Long lastConsulIndexId = lookupGroupServices.get(group) == null ? 0L : lookupGroupServices.get(group);
         ConsulResponse<List<ConsulService>> response = lookupConsulService(group, lastConsulIndexId);
         if (response != null) {
             List<ConsulService> services = response.getValue();
-            if (services != null && !services.isEmpty()
-                    && response.getConsulIndex() > lastConsulIndexId) {
+            if (services != null && CollectionUtils.isNotEmpty(services) && response.getConsulIndex() > lastConsulIndexId) {
                 for (ConsulService service : services) {
                     try {
                         Url url = ConsulUtils.buildUrl(service);
                         String cluster = ConsulUtils.getUrlClusterInfo(url);
                         List<Url> urlList = groupUrls.get(cluster);
                         if (urlList == null) {
-                            urlList = new ArrayList<Url>();
+                            urlList = new ArrayList<>();
                             groupUrls.put(cluster, urlList);
                         }
                         urlList.add(url);

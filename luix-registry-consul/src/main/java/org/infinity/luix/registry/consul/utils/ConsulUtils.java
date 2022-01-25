@@ -5,12 +5,13 @@ import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.UrlUtils;
 import org.infinity.luix.registry.consul.ConsulService;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.infinity.luix.core.constant.RpcConstants.NODE_TYPE_SERVICE;
+import static org.infinity.luix.registry.consul.ConsulService.CONSUL_TAG_MOTAN_PROTOCOL;
+import static org.infinity.luix.registry.consul.ConsulService.CONSUL_TAG_MOTAN_URL;
 
 public class ConsulUtils {
 
@@ -18,16 +19,6 @@ public class ConsulUtils {
      * Service form prefix name on consul registry
      */
     private static final String CONSUL_SERVICE_FORM_PREFIX = "luix";
-    /**
-     * service 最长存活周期（Time To Live），单位秒。 每个service会注册一个ttl类型的check，在最长TTL秒不发送心跳
-     * 就会将service变为不可用状态。
-     */
-    public static        int    TTL                        = 30;
-    /**
-     * motan协议在consul tag中的前缀
-     */
-    public static final  String CONSUL_TAG_MOTAN_PROTOCOL  = "protocol_";
-    public static final  String CONSUL_TAG_MOTAN_URL       = "URL_";
 
     public static String buildServiceFormName(String form) {
         return StringUtils.isNotEmpty(form) ? CONSUL_SERVICE_FORM_PREFIX + "-" + form : CONSUL_SERVICE_FORM_PREFIX;
@@ -37,30 +28,6 @@ public class ConsulUtils {
         return CONSUL_SERVICE_FORM_PREFIX.equals(serviceName)
                 ? StringUtils.EMPTY
                 : serviceName.substring(CONSUL_SERVICE_FORM_PREFIX.length() + 1);
-    }
-
-    /**
-     * 根据服务的url生成consul对应的service
-     *
-     * @param url
-     * @return
-     */
-    public static ConsulService buildService(Url url) {
-        ConsulService service = new ConsulService();
-        service.setId(ConsulUtils.convertConsulSerivceId(url));
-        service.setName(ConsulUtils.buildServiceFormName(url.getForm()));
-        service.setAddress(url.getHost());
-        service.setPort(url.getPort());
-        service.setTtl(TTL);
-        service.setTags(buildTags(url));
-        return service;
-    }
-
-    private static List<String> buildTags(Url url) {
-        List<String> tags = new ArrayList<>();
-        tags.add(CONSUL_TAG_MOTAN_PROTOCOL + url.getProtocol());
-        tags.add(CONSUL_TAG_MOTAN_URL + UrlUtils.urlEncode(url.toFullStr()));
-        return tags;
     }
 
     /**

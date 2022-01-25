@@ -6,7 +6,8 @@ import org.infinity.luix.utilities.collection.ConcurrentHashSet;
 
 import java.util.concurrent.*;
 
-import static org.infinity.luix.registry.consul.utils.ConsulUtils.TTL;
+import static org.infinity.luix.registry.consul.ConsulService.TTL;
+
 
 /**
  * consul 心跳管理类。 rpc服务把需要设置passing状态的serviceid注册到此类，
