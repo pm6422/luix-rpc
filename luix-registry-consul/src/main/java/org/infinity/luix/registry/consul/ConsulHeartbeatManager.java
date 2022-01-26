@@ -17,13 +17,13 @@ import static org.infinity.luix.registry.consul.ConsulService.TTL;
 @Slf4j
 public class ConsulHeartbeatManager {
     /**
-     * 连续检测开关变更的最大次数，超过这个次数就发送一次心跳
-     */
-    public static    int                       MAX_SWITCHER_CHECK_TIMES       = 10;
-    /**
      * 心跳周期，取ttl的2/3
      */
     public static    int                       HEARTBEAT_CIRCLE               = (TTL * 1000 * 2) / 3;
+    /**
+     * 连续检测开关变更的最大次数，超过这个次数就发送一次心跳
+     */
+    public static    int                       MAX_SWITCHER_CHECK_TIMES       = 10;
     /**
      * 检测开关变更的频率，连续检测MAX_SWITCHER_CHECK_TIMES次必须发送一次心跳。
      */
@@ -56,9 +56,11 @@ public class ConsulHeartbeatManager {
                     // TODO 改为开关listener方式。
                     try {
                         boolean switcherStatus = isHeartbeatOpen();
-                        if (isSwitcherChange(switcherStatus)) { // 心跳开关状态变更
+                        // 心跳开关状态变更
+                        if (isSwitcherChange(switcherStatus)) {
                             processHeartbeat(switcherStatus);
-                        } else {// 心跳开关状态未变更
+                        } else {
+                            // 心跳开关状态未变更
                             if (switcherStatus) {// 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
                                 switcherCheckTimes++;
                                 if (switcherCheckTimes >= MAX_SWITCHER_CHECK_TIMES) {
@@ -71,8 +73,7 @@ public class ConsulHeartbeatManager {
                     } catch (Exception e) {
                         log.error("consul heartbeat executor err:", e);
                     }
-                }, SWITCHER_CHECK_CIRCLE,
-                SWITCHER_CHECK_CIRCLE, TimeUnit.MILLISECONDS);
+                }, SWITCHER_CHECK_CIRCLE, SWITCHER_CHECK_CIRCLE, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -125,7 +126,11 @@ public class ConsulHeartbeatManager {
         serviceIds.remove(serviceId);
     }
 
-    // 检查心跳开关是否打开
+    /**
+     * 检查心跳开关是否打开
+     *
+     * @return
+     */
     private boolean isHeartbeatOpen() {
         return currentHeartBeatSwitcherStatus;
     }
