@@ -4,13 +4,10 @@ public class ConsulResponse<T> {
     /**
      * consul返回的具体结果
      */
-    private T value;
-
-    private Long consulIndex;
-
+    private T       value;
+    private Long    consulIndex;
     private Boolean consulKnownLeader;
-
-    private Long consulLastContact;
+    private Long    consulLastContact;
 
     public T getValue() {
         return value;

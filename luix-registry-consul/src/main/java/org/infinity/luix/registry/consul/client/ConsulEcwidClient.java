@@ -7,6 +7,7 @@ import com.ecwid.consul.v1.agent.model.NewService;
 import com.ecwid.consul.v1.health.model.HealthService;
 import com.ecwid.consul.v1.kv.model.GetValue;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.registry.consul.ConsulResponse;
 import org.infinity.luix.registry.consul.ConsulService;
 import org.infinity.luix.registry.consul.utils.ConsulUtils;
@@ -56,38 +57,32 @@ public class ConsulEcwidClient extends AbstractConsulClient {
 
     @Override
     public ConsulResponse<List<ConsulService>> lookupHealthService(String serviceName, long lastConsulIndex) {
+        ConsulResponse<List<ConsulService>> consulResponse = null;
         QueryParams queryParams = new QueryParams(CONSUL_BLOCK_TIME_SECONDS, lastConsulIndex);
-        Response<List<HealthService>> orgResponse = client.getHealthServices(serviceName, true, queryParams);
-        ConsulResponse<List<ConsulService>> newResponse = null;
-        if (orgResponse != null && orgResponse.getValue() != null
-                && !orgResponse.getValue().isEmpty()) {
-            List<HealthService> healthServices = orgResponse.getValue();
+        Response<List<HealthService>> consulHealthResults = client.getHealthServices(serviceName, true, queryParams);
+        if (consulHealthResults != null && CollectionUtils.isNotEmpty(consulHealthResults.getValue())) {
+            List<HealthService> healthServices = consulHealthResults.getValue();
             List<ConsulService> consulServices = new ArrayList<>(healthServices.size());
 
             for (HealthService healthService : healthServices) {
                 try {
-                    ConsulService newService = ConsulService.of(healthService);
-                    consulServices.add(newService);
+                    consulServices.add(ConsulService.of(healthService));
                 } catch (Exception e) {
-                    String servcieid = "null";
-                    if (healthService.getService() != null) {
-                        servcieid = healthService.getService().getId();
-                    }
-                    log.error("convert consul service fail. org consulservice:" + servcieid, e);
+                    String serviceId = healthService.getService() != null ? healthService.getService().getId() : null;
+                    log.error("Failed to convert consul service with ID: [" + serviceId + "]", e);
                 }
             }
-            if (!consulServices.isEmpty()) {
-                newResponse = new ConsulResponse<>();
-                newResponse.setValue(consulServices);
-                newResponse.setConsulIndex(orgResponse.getConsulIndex());
-                newResponse.setConsulLastContact(orgResponse
-                        .getConsulLastContact());
-                newResponse.setConsulKnownLeader(orgResponse
-                        .isConsulKnownLeader());
+
+            if (CollectionUtils.isNotEmpty(consulServices)) {
+                consulResponse = new ConsulResponse<>();
+                consulResponse.setValue(consulServices);
+                consulResponse.setConsulIndex(consulHealthResults.getConsulIndex());
+                consulResponse.setConsulLastContact(consulHealthResults.getConsulLastContact());
+                consulResponse.setConsulKnownLeader(consulHealthResults.isConsulKnownLeader());
             }
         }
 
-        return newResponse;
+        return consulResponse;
     }
 
     @Override
