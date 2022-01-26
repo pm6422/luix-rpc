@@ -5,7 +5,6 @@ import com.ecwid.consul.v1.QueryParams;
 import com.ecwid.consul.v1.Response;
 import com.ecwid.consul.v1.agent.model.NewService;
 import com.ecwid.consul.v1.health.model.HealthService;
-import com.ecwid.consul.v1.health.model.HealthService.Service;
 import com.ecwid.consul.v1.kv.model.GetValue;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.registry.consul.ConsulResponse;
@@ -17,22 +16,19 @@ import java.util.List;
 
 @Slf4j
 public class ConsulEcwidClient extends AbstractConsulClient {
-
     /**
-     * consul block 查询时 block的最长时间,单位，分钟
+     * consul block查询时block的最长时间,单位(分钟)
      */
-    public static int CONSUL_BLOCK_TIME_MINUTES = 9;
-
+    public static       int          CONSUL_BLOCK_TIME_MINUTES = 9;
     /**
-     * consul block 查询时 block的最长时间,单位，秒
+     * consul block查询时block的最长时间,单位(秒)
      */
-    public static       long   CONSUL_BLOCK_TIME_SECONDS = CONSUL_BLOCK_TIME_MINUTES * 60;
+    public static       long         CONSUL_BLOCK_TIME_SECONDS = CONSUL_BLOCK_TIME_MINUTES * 60;
     /**
      * motan rpc 在consul中存储command的目录
      */
-    public static final String CONSUL_MOTAN_COMMAND      = "motan/command/";
-
-    public static ConsulClient client;
+    public static final String       CONSUL_MOTAN_COMMAND      = "motan/command/";
+    public static       ConsulClient client;
 
     public ConsulEcwidClient(String host, int port) {
         super(host, port);
@@ -41,8 +37,8 @@ public class ConsulEcwidClient extends AbstractConsulClient {
     }
 
     @Override
-    public void checkPass(String serviceid) {
-        client.agentCheckPass("service:" + serviceid);
+    public void checkPass(String serviceId) {
+        client.agentCheckPass("service:" + serviceId);
     }
 
     @Override
@@ -52,8 +48,8 @@ public class ConsulEcwidClient extends AbstractConsulClient {
     }
 
     @Override
-    public void unregisterService(String serviceid) {
-        client.agentServiceDeregister(serviceid);
+    public void unregisterService(String serviceId) {
+        client.agentServiceDeregister(serviceId);
     }
 
     @Override
@@ -106,7 +102,7 @@ public class ConsulEcwidClient extends AbstractConsulClient {
     }
 
     @Override
-    public void checkFail(String serviceid) {
-        client.agentCheckFail("service:" + serviceid);
+    public void checkFail(String serviceId) {
+        client.agentCheckFail("service:" + serviceId);
     }
 }
