@@ -51,7 +51,6 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     public ConsulRegistry(Url url, AbstractConsulClient client) {
         super(url);
         this.client = client;
-
         heartbeatManager = new ConsulHeartbeatManager(client);
         heartbeatManager.start();
 //        lookupInterval = super.registryUrl.getIntOption(URLParamType.registrySessionTimeout.getName(), DEFAULT_LOOKUP_INTERVAL);
