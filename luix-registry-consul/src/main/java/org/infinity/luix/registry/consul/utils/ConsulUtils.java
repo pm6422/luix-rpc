@@ -38,10 +38,7 @@ public class ConsulUtils {
      * @return
      */
     public static boolean isSame(List<Url> urls1, List<Url> urls2) {
-        if (urls1 == null || urls2 == null) {
-            return false;
-        }
-        if (urls1.size() != urls2.size()) {
+        if (urls1 == null || urls2 == null || urls1.size() != urls2.size()) {
             return false;
         }
         return urls1.containsAll(urls2);
@@ -84,12 +81,12 @@ public class ConsulUtils {
     }
 
     /**
-     * 根据motan的url生成consul的serivce id。 serviceid 包括ip＋port＋rpc服务的接口类名
+     * 根据motan的url生成consul的serivce id。 service id包括ip＋port＋rpc服务的接口类名
      *
      * @param url
      * @return
      */
-    public static String convertConsulSerivceId(Url url) {
+    public static String convertConsulServiceId(Url url) {
         if (url == null) {
             return null;
         }

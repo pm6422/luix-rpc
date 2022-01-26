@@ -56,7 +56,7 @@ public class ConsulService {
 
     public static ConsulService of(Url url) {
         ConsulService service = new ConsulService();
-        service.setId(ConsulUtils.convertConsulSerivceId(url));
+        service.setId(ConsulUtils.convertConsulServiceId(url));
         service.setName(ConsulUtils.buildServiceFormName(url.getForm()));
         service.setAddress(url.getHost());
         service.setPort(url.getPort());

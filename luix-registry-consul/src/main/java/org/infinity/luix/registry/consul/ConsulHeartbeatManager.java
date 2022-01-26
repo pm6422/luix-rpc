@@ -8,7 +8,6 @@ import java.util.concurrent.*;
 
 import static org.infinity.luix.registry.consul.ConsulService.TTL;
 
-
 /**
  * consul 心跳管理类。 rpc服务把需要设置passing状态的serviceid注册到此类，
  * 此类会定时对注册的serviceid设置passing状态（实际是对servcieid对应对checkid设置passing状态），
@@ -163,9 +162,7 @@ public class ConsulHeartbeatManager {
             } catch (Exception e) {
                 log.error("consul heartbeat-set check pass error!serviceid:" + serviceid, e);
             }
-
         }
-
     }
 
     public void setClient(AbstractConsulClient client) {
