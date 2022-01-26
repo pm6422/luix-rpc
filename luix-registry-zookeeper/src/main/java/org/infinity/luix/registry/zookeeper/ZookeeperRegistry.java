@@ -34,7 +34,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import static org.infinity.luix.registry.zookeeper.utils.ZookeeperUtils.*;
 
 /**
- * Zookeeper registry implementation used to subscribe, unsubscribe, register or unregister data.
+ * Zookeeper registry implementation used to subscribe, unsubscribe, register or deregister data.
  * Zookeeper has three vital listeners:
  * - IZkStateListener: It will be triggered when a new zk session created.
  * - IZkDataListener: It will be triggered when the file data has been changed.
@@ -49,7 +49,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      */
     private final Lock                                                            listenerLock                    = new ReentrantLock();
     /**
-     * Used to resolve concurrency problems for register or unregister providers
+     * Used to resolve concurrency problems for register or deregister providers
      */
     private final Lock                                                            providerLock                    = new ReentrantLock();
     private final Set<Url>                                                        activeProviderUrls              = new ConcurrentHashSet<>();
@@ -299,18 +299,18 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
-     * Unregister specified url info from zookeeper
+     * Deregister specified url info from zookeeper
      *
      * @param providerUrl provider url
      */
     @Override
-    protected void doUnregister(Url providerUrl) {
+    protected void doDeregister(Url providerUrl) {
         providerLock.lock();
         try {
             removeNode(providerUrl, StatusDir.ACTIVE);
             removeNode(providerUrl, StatusDir.INACTIVE);
         } catch (Throwable e) {
-            String msg = String.format("Failed to unregister [%s] from zookeeper [%s] with the error: %s",
+            String msg = String.format("Failed to deregister [%s] from zookeeper [%s] with the error: %s",
                     providerUrl, getRegistryUrl(), e.getMessage());
             throw new RpcFrameworkException(msg, e);
         } finally {

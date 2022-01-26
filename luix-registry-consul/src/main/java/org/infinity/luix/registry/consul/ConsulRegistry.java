@@ -71,9 +71,9 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     }
 
     @Override
-    protected void doUnregister(Url url) {
+    protected void doDeregister(Url url) {
         ConsulService service = ConsulService.of(url);
-        client.unregisterService(service.getId());
+        client.deregisterService(service.getId());
         heartbeatManager.removeHeartbeatServiceId(service.getId());
     }
 

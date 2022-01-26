@@ -41,7 +41,7 @@ public abstract class AbstractConsulClient {
      *
      * @param serviceId
      */
-    public abstract void unregisterService(String serviceId);
+    public abstract void deregisterService(String serviceId);
 
     /**
      * 获取最新的可用服务列表。

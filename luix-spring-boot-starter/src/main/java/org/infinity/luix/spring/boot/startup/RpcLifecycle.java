@@ -205,22 +205,22 @@ public class RpcLifecycle {
         }
 
         luixProperties.getRegistryList().forEach(registryConfig ->
-                unregisterProviders(registryConfig.getRegistryUrl())
+                deregisterProviders(registryConfig.getRegistryUrl())
         );
     }
 
     /**
-     * Unregister RPC providers from registry
+     * Deregister RPC providers from registry
      */
-    private void unregisterProviders(Url... registryUrls) {
+    private void deregisterProviders(Url... registryUrls) {
         for (Url registryUrl : registryUrls) {
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             if (registry == null || CollectionUtils.isEmpty(registry.getRegisteredProviderUrls())) {
                 log.warn("No registry found!");
                 return;
             }
-            registry.getRegisteredProviderUrls().forEach(registry::unregister);
-            log.debug("Unregistered all the RPC providers from registry [{}]", registryUrl.getProtocol());
+            registry.getRegisteredProviderUrls().forEach(registry::deregister);
+            log.debug("Deregistered all the RPC providers from registry [{}]", registryUrl.getProtocol());
         }
     }
 }

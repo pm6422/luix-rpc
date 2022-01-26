@@ -32,7 +32,7 @@ public class NoRegistry extends AbstractRegistry implements Cleanable {
     }
 
     @Override
-    protected void doUnregister(Url url) {
+    protected void doDeregister(Url url) {
         // Do nothing
     }
 

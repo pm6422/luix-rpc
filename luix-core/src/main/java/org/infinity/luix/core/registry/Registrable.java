@@ -21,7 +21,7 @@ public interface Registrable {
      *
      * @param providerUrl provider url
      */
-    void unregister(Url providerUrl);
+    void deregister(Url providerUrl);
 
     /**
      * Register the url to 'active' node of registry

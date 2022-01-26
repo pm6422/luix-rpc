@@ -52,7 +52,7 @@ public class ConsulEcwidClient extends AbstractConsulClient {
     }
 
     @Override
-    public void unregisterService(String serviceId) {
+    public void deregisterService(String serviceId) {
         consulClient.agentServiceDeregister(serviceId);
     }
 

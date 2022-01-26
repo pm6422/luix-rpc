@@ -21,9 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public abstract class FailbackAbstractRegistry extends AbstractRegistry {
 
-    private final Set<Url>                                    failedRegisteredUrl                = new ConcurrentHashSet<>();
-    private final Set<Url>                                    failedUnregisteredUrl              = new ConcurrentHashSet<>();
-    private final Map<Url, ConcurrentHashSet<ClientListener>> failedSubscriptionPerConsumerUrl   = new ConcurrentHashMap<>();
+    private final Set<Url>                                    failedRegisteredUrl              = new ConcurrentHashSet<>();
+    private final Set<Url>                                    failedDeregisteredUrl            = new ConcurrentHashSet<>();
+    private final Map<Url, ConcurrentHashSet<ClientListener>> failedSubscriptionPerConsumerUrl = new ConcurrentHashMap<>();
     private final Map<Url, ConcurrentHashSet<ClientListener>> failedUnsubscriptionPerConsumerUrl = new ConcurrentHashMap<>();
 
     public FailbackAbstractRegistry(Url registryUrl) {
@@ -70,20 +70,20 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     }
 
     private void doRetryFailedUnregistration() {
-        if (CollectionUtils.isEmpty(failedUnregisteredUrl)) {
+        if (CollectionUtils.isEmpty(failedDeregisteredUrl)) {
             return;
         }
-        Iterator<Url> iterator = failedUnregisteredUrl.iterator();
+        Iterator<Url> iterator = failedDeregisteredUrl.iterator();
         while (iterator.hasNext()) {
             Url url = iterator.next();
             try {
-                super.unregister(url);
+                super.deregister(url);
             } catch (Exception e) {
-                log.warn(MessageFormat.format("Failed to retry to unregister [{0}] by [{1}] and it will be retry later!", url, getRegistryClassName()), e);
+                log.warn(MessageFormat.format("Failed to retry to deregister [{0}] by [{1}] and it will be retry later!", url, getRegistryClassName()), e);
             }
             iterator.remove();
         }
-        log.info("Retried to unregister urls by {}", getRegistryClassName());
+        log.info("Retried to deregister urls by {}", getRegistryClassName());
     }
 
     private void doRetryFailedSubscription() {
@@ -155,7 +155,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     public void register(Url providerUrl) {
         Validate.notNull(providerUrl, "Provider url must NOT be null!");
         failedRegisteredUrl.remove(providerUrl);
-        failedUnregisteredUrl.remove(providerUrl);
+        failedDeregisteredUrl.remove(providerUrl);
 
         try {
             super.register(providerUrl);
@@ -168,22 +168,22 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     }
 
     /**
-     * Unregister the url from registry
+     * Deregister the url from registry
      *
      * @param providerUrl provider url
      */
     @Override
-    public void unregister(Url providerUrl) {
+    public void deregister(Url providerUrl) {
         Validate.notNull(providerUrl, "Provider url must NOT be null!");
         failedRegisteredUrl.remove(providerUrl);
-        failedUnregisteredUrl.remove(providerUrl);
+        failedDeregisteredUrl.remove(providerUrl);
 
         try {
-            super.unregister(providerUrl);
+            super.deregister(providerUrl);
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
-            failedUnregisteredUrl.add(providerUrl);
-            throw new RpcFrameworkException(MessageFormat.format("Failed to unregister provider [{0}] from registry [{1}] by using [{2}]",
+            failedDeregisteredUrl.add(providerUrl);
+            throw new RpcFrameworkException(MessageFormat.format("Failed to deregister provider [{0}] from registry [{1}] by using [{2}]",
                     providerUrl, registryUrl, getRegistryClassName()), e);
         }
     }
