@@ -2,6 +2,7 @@ package org.infinity.luix.registry.consul;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.infinity.luix.core.registry.CommandFailbackAbstractRegistry;
 import org.infinity.luix.core.registry.listener.CommandListener;
 import org.infinity.luix.core.registry.listener.ProviderListener;
@@ -116,10 +117,10 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
         return serviceUrls;
     }
 
-    private ConcurrentHashMap<String, List<Url>> lookupServiceUpdate(String group) {
+    private ConcurrentHashMap<String, List<Url>> lookupServiceUpdate(String form) {
         ConcurrentHashMap<String, List<Url>> groupUrls = new ConcurrentHashMap<>();
-        Long lastConsulIndexId = lookupGroupServices.get(group) == null ? 0L : lookupGroupServices.get(group);
-        ConsulResponse<List<ConsulService>> response = lookupConsulService(group, lastConsulIndexId);
+        Long lastConsulIndexId = lookupGroupServices.get(form) == null ? 0L : lookupGroupServices.get(form);
+        ConsulResponse<List<ConsulService>> response = lookupConsulService(form, lastConsulIndexId);
         if (response != null) {
             List<ConsulService> services = response.getValue();
             if (CollectionUtils.isNotEmpty(services) && response.getConsulIndex() > lastConsulIndexId) {
@@ -133,10 +134,10 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
                         log.error("convert consul service to url fail! service:" + service, e);
                     }
                 }
-                lookupGroupServices.put(group, response.getConsulIndex());
+                lookupGroupServices.put(form, response.getConsulIndex());
                 return groupUrls;
             } else {
-                log.info(group + " no need update, lastIndex:" + lastConsulIndexId);
+                log.info(form + " no need update, lastIndex:" + lastConsulIndexId);
             }
         }
         return groupUrls;
@@ -147,19 +148,19 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
      * update local cache when service list changed,
      * if need notify, notify service
      *
-     * @param group
+     * @param form
      * @param groupUrls
      * @param needNotify
      */
-    private void updateServiceCache(String group, ConcurrentHashMap<String, List<Url>> groupUrls, boolean needNotify) {
-        if (groupUrls != null && !groupUrls.isEmpty()) {
-            ConcurrentHashMap<String, List<Url>> groupMap = serviceCache.putIfAbsent(group, groupUrls);
+    private void updateServiceCache(String form, ConcurrentHashMap<String, List<Url>> groupUrls, boolean needNotify) {
+        if (MapUtils.isNotEmpty(groupUrls)) {
+            ConcurrentHashMap<String, List<Url>> groupMap = serviceCache.putIfAbsent(form, groupUrls);
             for (Map.Entry<String, List<Url>> entry : groupUrls.entrySet()) {
                 boolean change = true;
                 if (groupMap != null) {
                     List<Url> oldUrls = groupMap.get(entry.getKey());
                     List<Url> newUrls = entry.getValue();
-                    if (newUrls == null || newUrls.isEmpty() || ConsulUtils.isSame(entry.getValue(), oldUrls)) {
+                    if (CollectionUtils.isEmpty(newUrls) || ConsulUtils.isSame(entry.getValue(), oldUrls)) {
                         change = false;
                     } else {
                         groupMap.put(entry.getKey(), newUrls);
@@ -167,7 +168,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
                 }
                 if (change && needNotify) {
                     notifyExecutor.execute(new NotifyService(entry.getKey(), entry.getValue()));
-                    log.info("motan service notify-service: " + entry.getKey());
+                    log.info("service notify-service: " + entry.getKey());
                     StringBuilder sb = new StringBuilder();
                     for (Url url : entry.getValue()) {
                         sb.append(url.getUri()).append(";");
