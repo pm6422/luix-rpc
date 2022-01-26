@@ -97,16 +97,16 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     @Override
     protected List<Url> discoverActiveProviders(Url consumerUrl) {
         String service = ConsulUtils.getUrlClusterInfo(consumerUrl);
-        String group = consumerUrl.getForm();
+        String form = consumerUrl.getForm();
         List<Url> serviceUrls = new ArrayList<>();
-        ConcurrentHashMap<String, List<Url>> serviceMap = serviceCache.get(group);
+        ConcurrentHashMap<String, List<Url>> serviceMap = serviceCache.get(form);
         if (serviceMap == null) {
-            synchronized (group.intern()) {
-                serviceMap = serviceCache.get(group);
+            synchronized (form.intern()) {
+                serviceMap = serviceCache.get(form);
                 if (serviceMap == null) {
-                    ConcurrentHashMap<String, List<Url>> groupUrls = lookupServiceUpdate(group);
-                    updateServiceCache(group, groupUrls, false);
-                    serviceMap = serviceCache.get(group);
+                    ConcurrentHashMap<String, List<Url>> groupUrls = lookupServiceUpdate(form);
+                    updateServiceCache(form, groupUrls, false);
+                    serviceMap = serviceCache.get(form);
                 }
             }
         }
