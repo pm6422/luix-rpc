@@ -142,12 +142,12 @@ public class ConsulHeartbeatManager {
     }
 
     class HeartbeatJob implements Runnable {
-        private String  serviceid;
+        private String  serviceId;
         private boolean isPass;
 
-        public HeartbeatJob(String serviceid, boolean isPass) {
+        public HeartbeatJob(String serviceId, boolean isPass) {
             super();
-            this.serviceid = serviceid;
+            this.serviceId = serviceId;
             this.isPass = isPass;
         }
 
@@ -155,12 +155,12 @@ public class ConsulHeartbeatManager {
         public void run() {
             try {
                 if (isPass) {
-                    client.checkPass(serviceid);
+                    client.checkPass(serviceId);
                 } else {
-                    client.checkFail(serviceid);
+                    client.checkFail(serviceId);
                 }
             } catch (Exception e) {
-                log.error("consul heartbeat-set check pass error!serviceid:" + serviceid, e);
+                log.error("consul heartbeat-set check pass error! serviceId:" + serviceId, e);
             }
         }
     }
