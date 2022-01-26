@@ -13,17 +13,14 @@ import org.infinity.luix.registry.consul.utils.ConsulUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class ConsulEcwidClient extends AbstractConsulClient {
     /**
-     * consul block查询时block的最长时间,单位(分钟)
-     */
-    public static       int          CONSUL_BLOCK_TIME_MINUTES = 9;
-    /**
      * consul block查询时block的最长时间,单位(秒)
      */
-    public static       long         CONSUL_BLOCK_TIME_SECONDS = CONSUL_BLOCK_TIME_MINUTES * 60;
+    public static       long         CONSUL_BLOCK_TIME_SECONDS = TimeUnit.MINUTES.toSeconds(9);
     /**
      * motan rpc 在consul中存储command的目录
      */
@@ -33,12 +30,17 @@ public class ConsulEcwidClient extends AbstractConsulClient {
     public ConsulEcwidClient(String host, int port) {
         super(host, port);
         client = new ConsulClient(host, port);
-        log.info("ConsulEcwidClient init finish. client host:" + host + ", port:" + port);
+        log.info("Initialized consul client with host: [{}] and port: [{}]", host, port);
     }
 
     @Override
     public void checkPass(String serviceId) {
         client.agentCheckPass("service:" + serviceId);
+    }
+
+    @Override
+    public void checkFail(String serviceId) {
+        client.agentCheckFail("service:" + serviceId);
     }
 
     @Override
@@ -99,10 +101,5 @@ public class ConsulEcwidClient extends AbstractConsulClient {
             command = value.getDecodedValue();
         }
         return command;
-    }
-
-    @Override
-    public void checkFail(String serviceId) {
-        client.agentCheckFail("service:" + serviceId);
     }
 }

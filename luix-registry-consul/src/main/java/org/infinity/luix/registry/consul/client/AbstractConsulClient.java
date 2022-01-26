@@ -18,16 +18,16 @@ public abstract class AbstractConsulClient {
     /**
      * 对指定checkid设置为pass状态
      *
-     * @param serviceid
+     * @param serviceId
      */
-    public abstract void checkPass(String serviceid);
+    public abstract void checkPass(String serviceId);
 
     /**
      * 设置checkid为不可用状态。
      *
-     * @param serviceid
+     * @param serviceId
      */
-    public abstract void checkFail(String serviceid);
+    public abstract void checkFail(String serviceId);
 
     /**
      * 注册一个consul service
@@ -37,11 +37,11 @@ public abstract class AbstractConsulClient {
     public abstract void registerService(ConsulService service);
 
     /**
-     * 根据serviceid注销service
+     * 根据serviceId注销service
      *
-     * @param serviceid
+     * @param serviceId
      */
-    public abstract void unregisterService(String serviceid);
+    public abstract void unregisterService(String serviceId);
 
     /**
      * 获取最新的可用服务列表。
@@ -52,6 +52,9 @@ public abstract class AbstractConsulClient {
      */
     public abstract ConsulResponse<List<ConsulService>> lookupHealthService(String serviceName, long lastConsulIndex);
 
+    /**
+     * @param group
+     * @return
+     */
     public abstract String lookupCommand(String group);
-
 }
