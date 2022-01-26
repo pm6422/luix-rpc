@@ -59,7 +59,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
         ArrayBlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(20000);
         notifyExecutor = new ThreadPoolExecutor(10, 30, 30 * 1000, TimeUnit.MILLISECONDS, workQueue);
         ShutdownHook.add(this);
-        log.info("ConsulRegistry init finish.");
+        log.info("Initialized consul registry");
     }
 
     @Override
