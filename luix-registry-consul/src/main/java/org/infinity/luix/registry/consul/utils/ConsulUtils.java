@@ -60,10 +60,10 @@ public class ConsulUtils {
         }
 
         if (url == null) {
-            Map<String, String> params = new HashMap<>();
-            String group = extractFromName(service.getName());
-            params.put(Url.PARAM_FROM, group);
+            Map<String, String> params = new HashMap<>(2);
+            params.put(Url.PARAM_FROM, extractFromName(service.getName()));
             params.put(Url.PARAM_TYPE, NODE_TYPE_SERVICE);
+
             String protocol = ConsulUtils.getProtocolFromTag(service.getTags().get(0));
             url = Url.of(protocol, service.getAddress(), service.getPort(),
                     ConsulUtils.getPathFromServiceId(service.getId()), params);
@@ -72,7 +72,7 @@ public class ConsulUtils {
     }
 
     /**
-     * 根据url获取cluster信息，cluster 信息包括协议和path（rpc服务中的接口类）。
+     * 根据url获取cluster信息，cluster 信息包括协议和path(rpc服务中的接口类)
      *
      * @param url
      * @return
@@ -88,14 +88,11 @@ public class ConsulUtils {
      * @return
      */
     public static String convertConsulServiceId(Url url) {
-        if (url == null) {
-            return null;
-        }
-        return convertServiceId(url.getHost(), url.getPort(), url.getPath());
+        return url == null ? null : url.getHost() + ":" + url.getPort() + "-" + url.getPath();
     }
 
     /**
-     * 从consul 的serviceid中获取rpc服务的接口类名（url的path）
+     * 从consul 的serviceId中获取rpc服务的接口类名（url的path）
      *
      * @param serviceId
      * @return
@@ -105,7 +102,7 @@ public class ConsulUtils {
     }
 
     /**
-     * 从consul的tag获取motan的protocol
+     * 从consul的tag获取protocol
      *
      * @param tag
      * @return
@@ -113,10 +110,4 @@ public class ConsulUtils {
     public static String getProtocolFromTag(String tag) {
         return tag.substring(CONSUL_TAG_PROTOCOL.length());
     }
-
-
-    public static String convertServiceId(String host, int port, String path) {
-        return host + ":" + port + "-" + path;
-    }
-
 }
