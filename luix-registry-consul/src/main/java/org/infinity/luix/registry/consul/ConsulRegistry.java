@@ -29,24 +29,24 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
      * consul服务查询默认间隔时间。单位毫秒
      */
     public static int                                                                 DEFAULT_LOOKUP_INTERVAL = 30000;
-    private       AbstractConsulClient                                                client;
-    private       ConsulHeartbeatManager                                              heartbeatManager;
-    private       int                                                                 lookupInterval;
+    private final AbstractConsulClient                                                client;
+    private final ConsulHeartbeatManager                                              heartbeatManager;
+    private final int                                                                 lookupInterval;
     // service local cache. key: group, value: <service interface name, url list>
-    private       ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache            = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache            = new ConcurrentHashMap<>();
     // command local cache. key: group, value: command content
-    private       ConcurrentHashMap<String, String>                                   commandCache            = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, String>                                   commandCache            = new ConcurrentHashMap<>();
     // record lookup service thread, insure each group start only one thread, <group, lastConsulIndexId>
-    private       ConcurrentHashMap<String, Long>                                     lookupGroupServices     = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Long>                                     lookupGroupServices     = new ConcurrentHashMap<>();
     // record lookup command thread, <group, command>
     // TODO: 2016/6/17 change value to consul index
-    private       ConcurrentHashMap<String, String>                                   lookupGroupCommands     = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, String>                                   lookupGroupCommands     = new ConcurrentHashMap<>();
     // TODO: 2016/6/17 clientUrl support multiple listener
     // record subscribers service callback listeners, listener was called when corresponding service changes
-    private       ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners        = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners        = new ConcurrentHashMap<>();
     // record subscribers command callback listeners, listener was called when corresponding command changes
-    private       ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners        = new ConcurrentHashMap<>();
-    private       ThreadPoolExecutor                                                  notifyExecutor;
+    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners        = new ConcurrentHashMap<>();
+    private final ThreadPoolExecutor                                                  notifyExecutor;
 
     public ConsulRegistry(Url url, AbstractConsulClient client) {
         super(url);
@@ -98,7 +98,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     protected List<Url> discoverActiveProviders(Url consumerUrl) {
         String service = ConsulUtils.getUrlClusterInfo(consumerUrl);
         String group = consumerUrl.getForm();
-        List<Url> serviceUrls = new ArrayList<Url>();
+        List<Url> serviceUrls = new ArrayList<>();
         ConcurrentHashMap<String, List<Url>> serviceMap = serviceCache.get(group);
         if (serviceMap == null) {
             synchronized (group.intern()) {
@@ -127,11 +127,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
                     try {
                         Url url = ConsulUtils.buildUrl(service);
                         String cluster = ConsulUtils.getUrlClusterInfo(url);
-                        List<Url> urlList = groupUrls.get(cluster);
-                        if (urlList == null) {
-                            urlList = new ArrayList<>();
-                            groupUrls.put(cluster, urlList);
-                        }
+                        List<Url> urlList = groupUrls.computeIfAbsent(cluster, k -> new ArrayList<>());
                         urlList.add(url);
                     } catch (Exception e) {
                         log.error("convert consul service to url fail! service:" + service, e);
@@ -157,10 +153,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
      */
     private void updateServiceCache(String group, ConcurrentHashMap<String, List<Url>> groupUrls, boolean needNotify) {
         if (groupUrls != null && !groupUrls.isEmpty()) {
-            ConcurrentHashMap<String, List<Url>> groupMap = serviceCache.get(group);
-            if (groupMap == null) {
-                serviceCache.put(group, groupUrls);
-            }
+            ConcurrentHashMap<String, List<Url>> groupMap = serviceCache.putIfAbsent(group, groupUrls);
             for (Map.Entry<String, List<Url>> entry : groupUrls.entrySet()) {
                 boolean change = true;
                 if (groupMap != null) {
@@ -179,7 +172,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
                     for (Url url : entry.getValue()) {
                         sb.append(url.getUri()).append(";");
                     }
-                    log.info("consul notify urls:" + sb.toString());
+                    log.info("consul notify urls:" + sb);
                 }
             }
         }
@@ -192,10 +185,9 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
      * @return ConsulResponse or null
      */
     private ConsulResponse<List<ConsulService>> lookupConsulService(String serviceName, Long lastConsulIndexId) {
-        ConsulResponse<List<ConsulService>> response = client.lookupHealthService(
+        return client.lookupHealthService(
                 ConsulUtils.buildServiceFormName(serviceName),
                 lastConsulIndexId);
-        return response;
     }
 
     @Override
@@ -345,8 +337,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     }
 
     private class NotifyService implements Runnable {
-        private String    service;
-        private List<Url> urls;
+        private final String    service;
+        private final List<Url> urls;
 
         public NotifyService(String service, List<Url> urls) {
             this.service = service;
@@ -370,8 +362,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     }
 
     private class NotifyCommand implements Runnable {
-        private String group;
-        private String command;
+        private final String group;
+        private final String command;
 
         public NotifyCommand(String group, String command) {
             this.group = group;
@@ -391,7 +383,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     }
 
     private class ServiceLookupThread extends Thread {
-        private String group;
+        private final String group;
 
         public ServiceLookupThread(String group) {
             this.group = group;
@@ -417,7 +409,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     }
 
     private class CommandLookupThread extends Thread {
-        private String group;
+        private final String group;
 
         public CommandLookupThread(String group) {
             this.group = group;
