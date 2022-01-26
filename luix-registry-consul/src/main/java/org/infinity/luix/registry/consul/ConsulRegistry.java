@@ -67,7 +67,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     protected void doRegister(Url url) {
         ConsulService service = ConsulService.of(url);
         client.registerService(service);
-        heartbeatManager.addHeartbeatServcieId(service.getId());
+        heartbeatManager.addHeartbeatServiceId(service.getId());
     }
 
     @Override

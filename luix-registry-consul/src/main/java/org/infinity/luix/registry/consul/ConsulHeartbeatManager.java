@@ -87,7 +87,7 @@ public class ConsulHeartbeatManager {
         if (switcherStatus != lastHeartBeatSwitcherStatus) {
             ret = true;
             lastHeartBeatSwitcherStatus = switcherStatus;
-            log.info("heartbeat switcher change to " + switcherStatus);
+            log.info("Consul heartbeat switcher change to [{}]", switcherStatus);
         }
         return ret;
     }
@@ -97,7 +97,7 @@ public class ConsulHeartbeatManager {
             try {
                 jobExecutor.execute(new HeartbeatJob(serviceId, isPass));
             } catch (RejectedExecutionException ree) {
-                log.error("execute heartbeat job fail! serviceId:" + serviceId + " is rejected");
+                log.error("Failed to execute heartbeat job with serviceId: [{}]", serviceId);
             }
         }
     }
@@ -105,7 +105,7 @@ public class ConsulHeartbeatManager {
     public void close() {
         heartbeatThreadPool.shutdown();
         jobExecutor.shutdown();
-        log.info("Consul heartbeatManager closed.");
+        log.info("Closed consul heartbeatManager.");
     }
 
     /**
@@ -113,7 +113,7 @@ public class ConsulHeartbeatManager {
      *
      * @param serviceId
      */
-    public void addHeartbeatServcieId(String serviceId) {
+    public void addHeartbeatServiceId(String serviceId) {
         serviceIds.add(serviceId);
     }
 
