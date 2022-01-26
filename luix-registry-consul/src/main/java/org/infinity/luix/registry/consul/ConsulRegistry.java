@@ -123,7 +123,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
         ConsulResponse<List<ConsulService>> response = lookupConsulService(group, lastConsulIndexId);
         if (response != null) {
             List<ConsulService> services = response.getValue();
-            if (services != null && CollectionUtils.isNotEmpty(services) && response.getConsulIndex() > lastConsulIndexId) {
+            if (CollectionUtils.isNotEmpty(services) && response.getConsulIndex() > lastConsulIndexId) {
                 for (ConsulService service : services) {
                     try {
                         Url url = ConsulUtils.buildUrl(service);

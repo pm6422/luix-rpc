@@ -8,6 +8,7 @@ import com.ecwid.consul.v1.health.model.HealthService;
 import com.ecwid.consul.v1.kv.model.GetValue;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.registry.consul.ConsulResponse;
 import org.infinity.luix.registry.consul.ConsulService;
 import org.infinity.luix.registry.consul.utils.ConsulUtils;
@@ -26,40 +27,40 @@ public class ConsulEcwidClient extends AbstractConsulClient {
      * motan rpc 在consul中存储command的目录
      */
     public static final String       CONSUL_MOTAN_COMMAND      = "motan/command/";
-    public static       ConsulClient client;
+    public static       ConsulClient consulClient;
 
     public ConsulEcwidClient(String host, int port) {
         super(host, port);
-        client = new ConsulClient(host, port);
+        consulClient = new ConsulClient(host, port);
         log.info("Initialized consul client with host: [{}] and port: [{}]", host, port);
     }
 
     @Override
     public void checkPass(String serviceId) {
-        client.agentCheckPass("service:" + serviceId);
+        consulClient.agentCheckPass("service:" + serviceId);
     }
 
     @Override
     public void checkFail(String serviceId) {
-        client.agentCheckFail("service:" + serviceId);
+        consulClient.agentCheckFail("service:" + serviceId);
     }
 
     @Override
     public void registerService(ConsulService service) {
         NewService newService = service.toNewService();
-        client.agentServiceRegister(newService);
+        consulClient.agentServiceRegister(newService);
     }
 
     @Override
     public void unregisterService(String serviceId) {
-        client.agentServiceDeregister(serviceId);
+        consulClient.agentServiceDeregister(serviceId);
     }
 
     @Override
     public ConsulResponse<List<ConsulService>> lookupHealthService(String serviceName, long lastConsulIndex) {
-        ConsulResponse<List<ConsulService>> consulResponse = null;
+        ConsulResponse<List<ConsulService>> consulResponse = new ConsulResponse<>();
         QueryParams queryParams = new QueryParams(CONSUL_BLOCK_TIME_SECONDS, lastConsulIndex);
-        Response<List<HealthService>> consulHealthResults = client.getHealthServices(serviceName, true, queryParams);
+        Response<List<HealthService>> consulHealthResults = consulClient.getHealthServices(serviceName, true, queryParams);
         if (consulHealthResults != null && CollectionUtils.isNotEmpty(consulHealthResults.getValue())) {
             List<HealthService> healthServices = consulHealthResults.getValue();
             List<ConsulService> consulServices = new ArrayList<>(healthServices.size());
@@ -74,24 +75,22 @@ public class ConsulEcwidClient extends AbstractConsulClient {
             }
 
             if (CollectionUtils.isNotEmpty(consulServices)) {
-                consulResponse = new ConsulResponse<>();
                 consulResponse.setValue(consulServices);
                 consulResponse.setConsulIndex(consulHealthResults.getConsulIndex());
                 consulResponse.setConsulLastContact(consulHealthResults.getConsulLastContact());
                 consulResponse.setConsulKnownLeader(consulHealthResults.isConsulKnownLeader());
             }
         }
-
         return consulResponse;
     }
 
     @Override
     public String lookupCommand(String group) {
-        Response<GetValue> response = client.getKVValue(CONSUL_MOTAN_COMMAND + ConsulUtils.buildServiceFormName(group));
-        GetValue value = response.getValue();
-        String command = "";
+        String key = CONSUL_MOTAN_COMMAND + ConsulUtils.buildServiceFormName(group);
+        GetValue value = consulClient.getKVValue(key).getValue();
+        String command = StringUtils.EMPTY;
         if (value == null) {
-            log.info("no command in group: " + group);
+            log.warn("No command found with group: [{}]", group);
         } else if (value.getValue() != null) {
             command = value.getDecodedValue();
         }
