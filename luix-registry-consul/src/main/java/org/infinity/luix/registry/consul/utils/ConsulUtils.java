@@ -58,6 +58,7 @@ public class ConsulUtils {
                 url = Url.valueOf(UrlUtils.urlDecode(encodeUrl));
             }
         }
+
         if (url == null) {
             Map<String, String> params = new HashMap<>();
             String group = extractFromName(service.getName());
