@@ -29,10 +29,10 @@ public class ConsulHeartbeatManager {
      */
     public static    int                       SWITCHER_CHECK_CIRCLE          = HEARTBEAT_CIRCLE / MAX_SWITCHER_CHECK_TIMES;
     private          AbstractConsulClient      client;
+    private final    ScheduledExecutorService  heartbeatThreadPool;
+    private final    ThreadPoolExecutor        jobExecutor;
     // 所有需要进行心跳的serviceId.
     private final    ConcurrentHashSet<String> serviceIds                     = new ConcurrentHashSet<>();
-    private final    ThreadPoolExecutor        jobExecutor;
-    private final    ScheduledExecutorService  heartbeatExecutor;
     // 上一次心跳开关的状态
     private          boolean                   lastHeartBeatSwitcherStatus    = false;
     private volatile boolean                   currentHeartBeatSwitcherStatus = false;
@@ -41,13 +41,13 @@ public class ConsulHeartbeatManager {
 
     public ConsulHeartbeatManager(AbstractConsulClient client) {
         this.client = client;
-        heartbeatExecutor = Executors.newSingleThreadScheduledExecutor();
+        heartbeatThreadPool = Executors.newSingleThreadScheduledExecutor();
         ArrayBlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(10000);
         jobExecutor = new ThreadPoolExecutor(5, 30, 30 * 1000, TimeUnit.MILLISECONDS, workQueue);
     }
 
     public void start() {
-        heartbeatExecutor.scheduleAtFixedRate(
+        heartbeatThreadPool.scheduleAtFixedRate(
                 () -> {
                     // 由于consul的check set pass会导致consul
                     // server的写磁盘操作，过于频繁的心跳会导致consul
@@ -102,7 +102,7 @@ public class ConsulHeartbeatManager {
     }
 
     public void close() {
-        heartbeatExecutor.shutdown();
+        heartbeatThreadPool.shutdown();
         jobExecutor.shutdown();
         log.info("Consul heartbeatManager closed.");
     }
