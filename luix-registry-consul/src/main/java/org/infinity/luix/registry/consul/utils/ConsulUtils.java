@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.infinity.luix.core.constant.RpcConstants.NODE_TYPE_SERVICE;
-import static org.infinity.luix.registry.consul.ConsulService.CONSUL_TAG_MOTAN_PROTOCOL;
-import static org.infinity.luix.registry.consul.ConsulService.CONSUL_TAG_MOTAN_URL;
+import static org.infinity.luix.registry.consul.ConsulService.CONSUL_TAG_PROTOCOL;
+import static org.infinity.luix.registry.consul.ConsulService.CONSUL_TAG_URL;
 
 public class ConsulUtils {
 
@@ -56,7 +56,7 @@ public class ConsulUtils {
     public static Url buildUrl(ConsulService service) {
         Url url = null;
         for (String tag : service.getTags()) {
-            if (tag.startsWith(CONSUL_TAG_MOTAN_URL)) {
+            if (tag.startsWith(CONSUL_TAG_URL)) {
                 String encodeUrl = tag.substring(tag.indexOf("_") + 1);
                 url = Url.valueOf(UrlUtils.urlDecode(encodeUrl));
             }
@@ -113,7 +113,7 @@ public class ConsulUtils {
      * @return
      */
     public static String getProtocolFromTag(String tag) {
-        return tag.substring(CONSUL_TAG_MOTAN_PROTOCOL.length());
+        return tag.substring(CONSUL_TAG_PROTOCOL.length());
     }
 
 

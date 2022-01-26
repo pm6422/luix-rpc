@@ -28,27 +28,25 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     /**
      * consul服务查询默认间隔时间。单位毫秒
      */
-    public static int                                                             DEFAULT_LOOKUP_INTERVAL = 30000;
-    private       AbstractConsulClient                                            client;
-    private       ConsulHeartbeatManager                                          heartbeatManager;
-    private       int                                                             lookupInterval;
+    public static int                                                                 DEFAULT_LOOKUP_INTERVAL = 30000;
+    private       AbstractConsulClient                                                client;
+    private       ConsulHeartbeatManager                                              heartbeatManager;
+    private       int                                                                 lookupInterval;
     // service local cache. key: group, value: <service interface name, url list>
-    private       ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>> serviceCache            = new ConcurrentHashMap<>();
+    private       ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache            = new ConcurrentHashMap<>();
     // command local cache. key: group, value: command content
-    private       ConcurrentHashMap<String, String>                               commandCache            = new ConcurrentHashMap<>();
-
+    private       ConcurrentHashMap<String, String>                                   commandCache            = new ConcurrentHashMap<>();
     // record lookup service thread, insure each group start only one thread, <group, lastConsulIndexId>
-    private ConcurrentHashMap<String, Long>   lookupGroupServices = new ConcurrentHashMap<>();
+    private       ConcurrentHashMap<String, Long>                                     lookupGroupServices     = new ConcurrentHashMap<>();
     // record lookup command thread, <group, command>
     // TODO: 2016/6/17 change value to consul index
-    private ConcurrentHashMap<String, String> lookupGroupCommands = new ConcurrentHashMap<>();
-
+    private       ConcurrentHashMap<String, String>                                   lookupGroupCommands     = new ConcurrentHashMap<>();
     // TODO: 2016/6/17 clientUrl support multiple listener
     // record subscribers service callback listeners, listener was called when corresponding service changes
-    private ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners = new ConcurrentHashMap<>();
+    private       ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners        = new ConcurrentHashMap<>();
     // record subscribers command callback listeners, listener was called when corresponding command changes
-    private ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners = new ConcurrentHashMap<>();
-    private ThreadPoolExecutor                                                  notifyExecutor;
+    private       ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners        = new ConcurrentHashMap<>();
+    private       ThreadPoolExecutor                                                  notifyExecutor;
 
     public ConsulRegistry(Url url, AbstractConsulClient client) {
         super(url);

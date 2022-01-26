@@ -12,24 +12,22 @@ import java.util.List;
 
 @Data
 public class ConsulService {
-
     /**
      * service 最长存活周期（Time To Live），单位秒。 每个service会注册一个ttl类型的check，在最长TTL秒不发送心跳
      * 就会将service变为不可用状态。
      */
-    public static int          TTL = 30;
+    public static       int          TTL                 = 30;
     /**
      * motan协议在consul tag中的前缀
      */
-    public static final  String CONSUL_TAG_MOTAN_PROTOCOL  = "protocol_";
-    public static final  String CONSUL_TAG_MOTAN_URL       = "URL_";
-
-    private        String       id;
-    private        String       name;
-    private        String       address;
-    private        Integer      port;
-    private        long         ttl;
-    private        List<String> tags;
+    public static final String       CONSUL_TAG_PROTOCOL = "protocol_";
+    public static final String       CONSUL_TAG_URL      = "URL_";
+    private             String       id;
+    private             String       name;
+    private             String       address;
+    private             Integer      port;
+    private             long         ttl;
+    private             List<String> tags;
 
     public NewService toNewService() {
         NewService newService = new NewService();
@@ -69,8 +67,8 @@ public class ConsulService {
 
     private static List<String> buildTags(Url url) {
         List<String> tags = new ArrayList<>();
-        tags.add(CONSUL_TAG_MOTAN_PROTOCOL + url.getProtocol());
-        tags.add(CONSUL_TAG_MOTAN_URL + UrlUtils.urlEncode(url.toFullStr()));
+        tags.add(CONSUL_TAG_PROTOCOL + url.getProtocol());
+        tags.add(CONSUL_TAG_URL + UrlUtils.urlEncode(url.toFullStr()));
         return tags;
     }
 }
