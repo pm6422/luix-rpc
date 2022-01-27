@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 
 /**
- * The ID generator based on the current timestamp plus an offset value
+ * The ID generator algorithm is based on the current timestamp plus an offset value
  *
  * <pre>
  *  Currently the ID value equals to currentTimeMillis * (2^20) + offset.incrementAndGet(),
