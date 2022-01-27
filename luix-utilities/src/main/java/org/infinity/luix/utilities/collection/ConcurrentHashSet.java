@@ -10,11 +10,9 @@ import java.util.concurrent.ConcurrentMap;
 
 public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E>, Serializable {
 
-    private static final long serialVersionUID = -8672117787651310382L;
-
-    private static final Object PRESENT = new Object();
-
-    private final ConcurrentMap<E, Object> map;
+    private static final long                     serialVersionUID = -8672117787651310382L;
+    private static final Object                   PRESENT          = new Object();
+    private final        ConcurrentMap<E, Object> map;
 
     public ConcurrentHashSet() {
         map = new ConcurrentHashMap<>();
