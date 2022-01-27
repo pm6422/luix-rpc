@@ -82,35 +82,6 @@ public class RepetitionTests {
     }
 
     /**
-     * Can guarantee unique on multi-threads environment
-     *
-     * @throws InterruptedException
-     */
-    @Test
-    public void multiThreadUniqueTestForTimestampId() throws InterruptedException {
-        // Thread-safe container
-        Set<Long> set = new ConcurrentHashSet<>();
-        int maxTimes = 10000 * 10;
-
-        // Multi-threads
-        ExecutorService threadPool = Executors.newFixedThreadPool(8);
-
-        IntStream.range(0, maxTimes).forEach(i -> {
-            threadPool.execute(() -> {
-                long requestId = IdGenerator.generateTimestampId();
-                System.out.println(requestId);
-                set.add(requestId);
-            });
-        });
-
-        threadPool.shutdown();
-        if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
-            // equals
-            assertThat(maxTimes).isEqualTo(set.size());
-        }
-    }
-
-    /**
      * Can guarantee unique by using short id generator on multi-threads environment
      *
      * @throws InterruptedException

@@ -99,7 +99,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E>, Seri
     }
 
     /**
-     * Removes all of the elements from this set. The set will be empty after this call returns.
+     * Removes all the elements from this set. The set will be empty after this call returns.
      */
     @Override
     public void clear() {
