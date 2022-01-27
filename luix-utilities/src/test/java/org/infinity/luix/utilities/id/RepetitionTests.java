@@ -2,8 +2,6 @@ package org.infinity.luix.utilities.id;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
-import org.infinity.luix.utilities.id.IdGenerator;
-import org.infinity.luix.utilities.id.SnowFlakeIdGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,6 +18,7 @@ import java.util.stream.IntStream;
 @Slf4j
 public class RepetitionTests {
     private static final SnowFlakeIdGenerator SNOW_FLAKE_ID_GENERATOR = new SnowFlakeIdGenerator(1L, false, false);
+
     /**
      * single thread test
      *
