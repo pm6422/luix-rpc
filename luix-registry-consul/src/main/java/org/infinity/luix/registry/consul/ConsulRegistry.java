@@ -208,7 +208,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     }
 
     /**
-     * if new group registed, start a new lookup thread
+     * if new group registered, start a new lookup thread
      * each group start a lookup thread to discover service
      *
      * @param url
