@@ -33,6 +33,15 @@ public abstract class IdGenerator {
     }
 
     /**
+     * Generate a thread-safe digit format ID
+     *
+     * @return 18 bits length，e.g：317297928250941551
+     */
+    public static long generateSnowFlakeId() {
+        return SNOW_FLAKE_ID_GENERATOR.nextId();
+    }
+
+    /**
      * Generate a thread-safe digit format ID, it can be used in a low concurrency environment
      *
      * @return 12 bits length，e.g：306554419571
