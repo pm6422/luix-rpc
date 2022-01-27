@@ -24,12 +24,12 @@ public class SerializerPerfTests {
     private final AdminMenu menu = new AdminMenu("M12383213", "应用", 1,
             "https://www.baidu.com", 1, "7233434321223");
 
-    @Test
-    @PerfTest(invocations = 10000, threads = 16, rampUp = 100, warmUp = 10)
-    public void kryoPerf() throws IOException {
-        byte[] serialized = kryoSerializer.serialize(menu);
-        kryoSerializer.deserialize(serialized, AdminMenu.class);
-    }
+//    @Test
+//    @PerfTest(invocations = 10000, threads = 16, rampUp = 100, warmUp = 10)
+//    public void kryoPerf() throws IOException {
+//        byte[] serialized = kryoSerializer.serialize(menu);
+//        kryoSerializer.deserialize(serialized, AdminMenu.class);
+//    }
 
     @Test
     @PerfTest(invocations = 10000, threads = 16, rampUp = 100, warmUp = 10)

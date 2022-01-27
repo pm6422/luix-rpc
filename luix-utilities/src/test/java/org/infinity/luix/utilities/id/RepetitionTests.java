@@ -2,8 +2,7 @@ package org.infinity.luix.utilities.id;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +10,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 重复性测试
@@ -42,7 +43,7 @@ public class RepetitionTests {
 
         threadPool.shutdown();
         if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
-            Assert.assertEquals(maxTimes, set.size());
+            assertThat(maxTimes).isEqualTo(set.size());
         }
     }
 
@@ -76,7 +77,7 @@ public class RepetitionTests {
         threadPool.shutdown();
         if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
             // equals
-            Assert.assertEquals(maxTimes, set.size());
+            assertThat(maxTimes).isEqualTo(set.size());
         }
     }
 
@@ -105,7 +106,7 @@ public class RepetitionTests {
         threadPool.shutdown();
         if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
             // equals
-            Assert.assertEquals(maxTimes, set.size());
+            assertThat(maxTimes).isEqualTo(set.size());
         }
     }
 
@@ -133,7 +134,7 @@ public class RepetitionTests {
         threadPool.shutdown();
         if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
             // equals
-            Assert.assertEquals(maxTimes, set.size());
+            assertThat(maxTimes).isEqualTo(set.size());
         }
     }
 

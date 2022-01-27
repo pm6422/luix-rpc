@@ -2,8 +2,6 @@ package org.infinity.luix.utilities.id;
 
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.junit.ContiPerfRule;
-import org.infinity.luix.utilities.id.IdGenerator;
-import org.infinity.luix.utilities.id.SnowFlakeIdGenerator;
 import org.junit.Rule;
 import org.junit.Test;
 

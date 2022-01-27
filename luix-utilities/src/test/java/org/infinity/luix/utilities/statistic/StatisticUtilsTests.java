@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.utilities.statistic.access.AccessStatisticResult;
 import org.infinity.luix.utilities.statistic.access.StatisticType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ConcurrentMap;
 
