@@ -28,4 +28,5 @@ scrape_configs:
     static_configs:
       - targets:
           # On MacOS, replace localhost by host.docker.internal
-          - localhost:6010
+#          - localhost:8080
+          - host.docker.internal:8080
