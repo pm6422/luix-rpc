@@ -24,13 +24,12 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class TokenProvider {
-
-    private static final String                AUTHORITIES_KEY = "auth";
-    private final        Key                   key;
-    private final        JwtParser             jwtParser;
-    private final        long                  tokenValidityInMilliseconds;
-    private final long                      tokenValidityInMillisecondsForRememberMe;
-    private final SecurityErrorMeterService securityErrorMeterService;
+    private static final String                    AUTHORITIES_KEY = "auth";
+    private final        Key                       key;
+    private final        JwtParser                 jwtParser;
+    private final        long                      tokenValidityInMilliseconds;
+    private final        long                      tokenValidityInMillisecondsForRememberMe;
+    private final        SecurityErrorMeterService securityErrorMeterService;
 
     public TokenProvider(ApplicationProperties applicationProperties, SecurityErrorMeterService securityErrorMeterService) {
         byte[] keyBytes = Decoders.BASE64.decode(applicationProperties.getSecurity().getAuthentication().getJwt().getBase64Secret());
