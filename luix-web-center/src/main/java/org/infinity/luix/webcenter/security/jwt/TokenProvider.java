@@ -7,7 +7,7 @@ import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.webcenter.config.ApplicationProperties;
-import org.infinity.luix.webcenter.service.SecurityMetersService;
+import org.infinity.luix.webcenter.service.SecurityErrorMeterService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,10 +29,10 @@ public class TokenProvider {
     private final        Key                   key;
     private final        JwtParser             jwtParser;
     private final        long                  tokenValidityInMilliseconds;
-    private final        long                  tokenValidityInMillisecondsForRememberMe;
-    private final        SecurityMetersService securityMetersService;
+    private final long                      tokenValidityInMillisecondsForRememberMe;
+    private final SecurityErrorMeterService securityErrorMeterService;
 
-    public TokenProvider(ApplicationProperties applicationProperties, SecurityMetersService securityMetersService) {
+    public TokenProvider(ApplicationProperties applicationProperties, SecurityErrorMeterService securityErrorMeterService) {
         byte[] keyBytes = Decoders.BASE64.decode(applicationProperties.getSecurity().getAuthentication().getJwt().getBase64Secret());
         key = Keys.hmacShaKeyFor(keyBytes);
         jwtParser = Jwts.parserBuilder().setSigningKey(key).build();
@@ -41,7 +41,7 @@ public class TokenProvider {
         this.tokenValidityInMillisecondsForRememberMe =
                 1000 * applicationProperties.getSecurity().getAuthentication().getJwt()
                         .getTokenValidityInSecondsForRememberMe();
-        this.securityMetersService = securityMetersService;
+        this.securityErrorMeterService = securityErrorMeterService;
     }
 
     public String createToken(Authentication authentication, boolean rememberMe) {
@@ -84,16 +84,16 @@ public class TokenProvider {
             jwtParser.parseClaimsJws(authToken);
             return true;
         } catch (ExpiredJwtException e) {
-            this.securityMetersService.trackTokenExpired();
+            this.securityErrorMeterService.trackTokenExpired();
             log.warn("Invalid JWT token.", e);
         } catch (UnsupportedJwtException e) {
-            this.securityMetersService.trackTokenUnsupported();
+            this.securityErrorMeterService.trackTokenUnsupported();
             log.warn("Invalid JWT token.", e);
         } catch (MalformedJwtException e) {
-            this.securityMetersService.trackTokenMalformed();
+            this.securityErrorMeterService.trackTokenMalformed();
             log.warn("Invalid JWT token.", e);
         } catch (SignatureException e) {
-            this.securityMetersService.trackTokenInvalidSignature();
+            this.securityErrorMeterService.trackTokenInvalidSignature();
             log.warn("Invalid JWT token.", e);
         } catch (IllegalArgumentException e) {
             // TODO: should we let it bubble (no catch), to avoid defensive programming and follow the fail-fast principle?

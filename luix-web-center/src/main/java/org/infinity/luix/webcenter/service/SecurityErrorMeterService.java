@@ -1,6 +1,6 @@
 package org.infinity.luix.webcenter.service;
 
-public interface SecurityMetersService {
+public interface SecurityErrorMeterService {
 
     void trackTokenInvalidSignature();
 
