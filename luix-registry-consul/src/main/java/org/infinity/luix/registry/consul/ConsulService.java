@@ -17,27 +17,35 @@ public class ConsulService {
      * Each service will register a TTL type check. If the heartbeat is not sent within the maximum TTL seconds,
      * the service will become unavailable.
      */
-    public static       int    TTL                 = 30;
+    public static       int          TTL                 = 30;
     /**
      * Tag prefix for RPC protocol.
      */
-    public static final String TAG_PREFIX_PROTOCOL = "protocol_";
+    public static final String       TAG_PREFIX_PROTOCOL = "protocol_";
     /**
      * Tag prefix for RPC URL.
      */
-    public static final String TAG_PREFIX_URL      = "URL_";
+    public static final String       TAG_PREFIX_URL      = "URL_";
     /**
      * Consul service name.
      */
-    private             String name;
+    private             String       name;
     /**
      * Consul service instance name.
      */
-    private             String instanceName;
-
-    private String       address;
-    private Integer      port;
-    private List<String> tags;
+    private             String       instanceName;
+    /**
+     * Consul server host.
+     */
+    private             String       address;
+    /**
+     * Consul server port.
+     */
+    private             Integer      port;
+    /**
+     * Consul service tags.
+     */
+    private             List<String> tags;
 
     public NewService toNewService() {
         NewService newService = new NewService();
