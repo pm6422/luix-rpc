@@ -19,11 +19,11 @@ public class ConsulUtils {
     /**
      * Active RPC provider service name on consul registry
      */
-    private static final String CONSUL_PROVIDING_SERVICES_PREFIX  = "luix-providing-services";
+    private static final String CONSUL_PROVIDING_SERVICES_PREFIX  = "luix-providing";
     /**
      * Active RPC consumer service name on consul registry
      */
-    private static final String CONSUL_CONSUMING_SERVICES_PREFIX  = "luix-consuming-services";
+    private static final String CONSUL_CONSUMING_SERVICES_PREFIX  = "luix-consuming";
     /**
      *
      */
