@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.infinity.luix.core.constant.RpcConstants.NODE_TYPE_SERVICE;
 import static org.infinity.luix.registry.consul.ConsulService.CONSUL_TAG_PROTOCOL;
 import static org.infinity.luix.registry.consul.ConsulService.CONSUL_TAG_URL;
@@ -19,9 +20,20 @@ public class ConsulUtils {
      * Service form prefix name on consul registry
      */
     private static final String CONSUL_SERVICE_FORM_PREFIX = "luix";
+    private static final String DELIMITER                  = "-";
+
+    /**
+     * 根据url生成consul的service ID。 service id包括ip＋port＋rpc服务的接口类名
+     *
+     * @param url
+     * @return
+     */
+    public static String buildServiceId(Url url) {
+        return url == null ? null : url.getHost() + ":" + url.getPort() + DELIMITER + url.getPath();
+    }
 
     public static String buildServiceFormName(String form) {
-        return StringUtils.isNotEmpty(form) ? CONSUL_SERVICE_FORM_PREFIX + "-" + form : CONSUL_SERVICE_FORM_PREFIX;
+        return isNotEmpty(form) ? CONSUL_SERVICE_FORM_PREFIX + DELIMITER + form : CONSUL_SERVICE_FORM_PREFIX;
     }
 
     public static String extractFromName(String serviceName) {
@@ -78,17 +90,7 @@ public class ConsulUtils {
      * @return
      */
     public static String getUrlClusterInfo(Url url) {
-        return url.getProtocol() + "-" + url.getPath();
-    }
-
-    /**
-     * 根据motan的url生成consul的serivce id。 service id包括ip＋port＋rpc服务的接口类名
-     *
-     * @param url
-     * @return
-     */
-    public static String convertConsulServiceId(Url url) {
-        return url == null ? null : url.getHost() + ":" + url.getPort() + "-" + url.getPath();
+        return url.getProtocol() + DELIMITER + url.getPath();
     }
 
     /**
@@ -98,7 +100,7 @@ public class ConsulUtils {
      * @return
      */
     public static String getPathFromServiceId(String serviceId) {
-        return serviceId.substring(serviceId.indexOf("-") + 1);
+        return serviceId.substring(serviceId.indexOf(DELIMITER) + 1);
     }
 
     /**
