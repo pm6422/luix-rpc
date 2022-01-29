@@ -1,5 +1,6 @@
 package org.infinity.luix.registry.consul;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -8,27 +9,41 @@ import static org.infinity.luix.registry.consul.ConsulService.TTL;
 
 public class LuixConsulClientTest {
 
+    private static LuixConsulClient    consulClient;
+    private static ConsulHealthChecker consulHealthChecker;
+
+    @BeforeAll
+    public static void setup() {
+        consulClient = new LuixConsulClient("localhost", 8500);
+        consulHealthChecker = new ConsulHealthChecker(consulClient);
+        consulHealthChecker.start();
+    }
+
     @Test
     public void registerService() throws InterruptedException {
-        LuixConsulClient consulClient = new LuixConsulClient("localhost", 8500);
-        ConsulHealthChecker consulHealthChecker = new ConsulHealthChecker(consulClient);
-        consulHealthChecker.start();
-        ConsulService service = createConsulService();
-        consulClient.registerService(service);
-
-        consulHealthChecker.addCheckServiceId(service.getId());
+        ConsulService service1 = createConsulService("org.infinity.luix.democommon.service.MailService");
+        ConsulService service2 = createConsulService("org.infinity.luix.democommon.service.AppService");
+        consulClient.registerService(service1);
+        consulClient.registerService(service2);
+        consulHealthChecker.addCheckServiceId(service1.getId());
+        consulHealthChecker.addCheckServiceId(service2.getId());
         consulHealthChecker.setHeartbeatOpen(true);
         Thread.sleep(100_000L);
     }
 
-    private static ConsulService createConsulService() {
+    @Test
+    public void closeClient() {
+        consulHealthChecker.close();
+    }
+
+    private static ConsulService createConsulService(String serviceName) {
         ConsulService service = new ConsulService();
-        service.setId("172.25.8.133:16010-org.infinity.luix.democommon.service.AppService");
+        service.setId(serviceName + "@172.25.8.133:16010");
         service.setName("luix");
         service.setAddress("localhost");
         service.setPort(8500);
         service.setTtl(TTL);
-        service.setTags(Arrays.asList("protocol_luix", "URL_luix%3A%2F%2F172.25.8.133%3A16010%2Forg.infinity.luix.democommon.service.AppService%3Fapp%3Dluix-demo-server%26form%3Df2%26retryCount%3D1%26serializer%3Dhessian2%26type%3Dprovider"));
+        service.setTags(Arrays.asList("protocol_luix"));
         return service;
     }
 }
