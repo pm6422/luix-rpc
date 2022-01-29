@@ -38,8 +38,8 @@ public class LuixConsulClientTest {
 
     private static ConsulService createConsulService(String serviceName) {
         ConsulService service = new ConsulService();
-        service.setId(serviceName + "@172.25.8.133:16010");
         service.setName("luix");
+        service.setId(serviceName + "@172.25.8.133:16010");
         service.setAddress("localhost");
         service.setPort(8500);
         service.setTtl(TTL);

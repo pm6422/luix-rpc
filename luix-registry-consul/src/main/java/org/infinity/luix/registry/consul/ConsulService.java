@@ -31,8 +31,8 @@ public class ConsulService {
 
     public NewService toNewService() {
         NewService newService = new NewService();
-        newService.setId(id);
         newService.setName(name);
+        newService.setId(id);
         newService.setAddress(address);
         newService.setPort(port);
 
