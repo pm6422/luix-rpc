@@ -297,13 +297,6 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
     }
 
-    @Override
-    public void destroy() {
-        notifyExecutor.shutdown();
-        checkConsulHealthManager.close();
-        log.info("Destroyed consul registry");
-    }
-
     private String lookupCommandUpdate(String group) {
         String command = consulClient.lookupCommand(group);
         lookupGroupCommands.put(group, command);
@@ -432,5 +425,12 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                 }
             }
         }
+    }
+
+    @Override
+    public void destroy() {
+        notifyExecutor.shutdown();
+        checkConsulHealthManager.close();
+        log.info("Destroyed consul registry");
     }
 }
