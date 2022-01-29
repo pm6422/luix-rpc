@@ -66,14 +66,14 @@ public class ConsulService {
     }
 
     public static ConsulService of(HealthService healthService) {
-        ConsulService service = new ConsulService();
+        ConsulService consulService = new ConsulService();
         HealthService.Service consulHealthService = healthService.getService();
-        service.setAddress(consulHealthService.getAddress());
-        service.setInstanceName(consulHealthService.getId());
-        service.setName(consulHealthService.getService());
-        service.setPort(consulHealthService.getPort());
-        service.setTags(consulHealthService.getTags());
-        return service;
+        consulService.setAddress(consulHealthService.getAddress());
+        consulService.setInstanceName(consulHealthService.getId());
+        consulService.setName(consulHealthService.getService());
+        consulService.setPort(consulHealthService.getPort());
+        consulService.setTags(consulHealthService.getTags());
+        return consulService;
     }
 
     public static ConsulService of(Url url) {
