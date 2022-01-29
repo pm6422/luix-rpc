@@ -102,7 +102,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
     @Override
     protected List<Url> discoverActiveProviders(Url consumerUrl) {
-        String service = ConsulUtils.getProtocolPlusInterfaceName(consumerUrl);
+        String service = ConsulUtils.getProtocolPlusPath(consumerUrl);
         String form = consumerUrl.getForm();
         List<Url> serviceUrls = new ArrayList<>();
         ConcurrentHashMap<String, List<Url>> serviceMap = serviceCache.get(form);
@@ -132,7 +132,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                 for (ConsulService service : services) {
                     try {
                         Url url = ConsulUtils.buildUrl(service);
-                        String cluster = ConsulUtils.getProtocolPlusInterfaceName(url);
+                        String cluster = ConsulUtils.getProtocolPlusPath(url);
                         List<Url> urlList = groupUrls.computeIfAbsent(cluster, k -> new ArrayList<>());
                         urlList.add(url);
                     } catch (Exception e) {
@@ -201,7 +201,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     private void addServiceListener(Url url, ProviderListener serviceListener) {
-        String service = ConsulUtils.getProtocolPlusInterfaceName(url);
+        String service = ConsulUtils.getProtocolPlusPath(url);
         ConcurrentHashMap<Url, ProviderListener> map = serviceListeners.get(service);
         if (map == null) {
             serviceListeners.putIfAbsent(service, new ConcurrentHashMap<>());
@@ -232,7 +232,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
     @Override
     protected void unsubscribeProviderListener(Url consumerUrl, ProviderListener listener) {
-        ConcurrentHashMap<Url, ProviderListener> listeners = serviceListeners.get(ConsulUtils.getProtocolPlusInterfaceName(consumerUrl));
+        ConcurrentHashMap<Url, ProviderListener> listeners = serviceListeners.get(ConsulUtils.getProtocolPlusPath(consumerUrl));
         if (listeners != null) {
             synchronized (listeners) {
                 listeners.remove(consumerUrl);

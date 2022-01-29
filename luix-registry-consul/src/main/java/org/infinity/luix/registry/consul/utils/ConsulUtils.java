@@ -89,18 +89,18 @@ public class ConsulUtils {
      * @param url url
      * @return RPC protocol plus interface name string
      */
-    public static String getProtocolPlusInterfaceName(Url url) {
+    public static String getProtocolPlusPath(Url url) {
         return url.getProtocol() + CONSUL_SERVICE_INSTANCE_DELIMITER + url.getPath();
     }
 
     /**
      * 从consul 的serviceId中获取rpc服务的接口类名（url的path）
      *
-     * @param serviceId
+     * @param serviceInstanceId
      * @return
      */
-    public static String getPathFromServiceId(String serviceId) {
-        return serviceId.substring(serviceId.indexOf(CONSUL_SERVICE_INSTANCE_DELIMITER) + 1);
+    public static String getPathFromServiceInstanceId(String serviceInstanceId) {
+        return serviceInstanceId.substring(0, serviceInstanceId.indexOf(CONSUL_SERVICE_INSTANCE_DELIMITER));
     }
 
     /**
@@ -139,7 +139,7 @@ public class ConsulUtils {
 
             String protocol = ConsulUtils.getProtocolFromTag(service.getTags().get(0));
             url = Url.of(protocol, service.getAddress(), service.getPort(),
-                    ConsulUtils.getPathFromServiceId(service.getInstanceId()), params);
+                    ConsulUtils.getPathFromServiceInstanceId(service.getInstanceId()), params);
         }
         return url;
     }
