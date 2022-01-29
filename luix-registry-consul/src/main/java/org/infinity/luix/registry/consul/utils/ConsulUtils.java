@@ -55,10 +55,20 @@ public class ConsulUtils {
      * @param serviceName consul service name
      * @return form name
      */
-    public static String getFormName(String serviceName) {
+    public static String getFormFromServiceName(String serviceName) {
         return CONSUL_PROVIDING_SERVICES_PREFIX.equals(serviceName)
                 ? StringUtils.EMPTY
                 : serviceName.substring(CONSUL_PROVIDING_SERVICES_PREFIX.length() + 1);
+    }
+
+    /**
+     * 从consul的tag获取protocol
+     *
+     * @param tag
+     * @return
+     */
+    public static String getProtocolFromTag(String tag) {
+        return tag.substring(TAG_PREFIX_PROTOCOL.length());
     }
 
     /**
@@ -102,7 +112,7 @@ public class ConsulUtils {
 
         if (url == null) {
             Map<String, String> params = new HashMap<>(2);
-            params.put(Url.PARAM_FROM, getFormName(service.getName()));
+            params.put(Url.PARAM_FROM, getFormFromServiceName(service.getName()));
             params.put(Url.PARAM_TYPE, NODE_TYPE_SERVICE);
 
             String protocol = ConsulUtils.getProtocolFromTag(service.getTags().get(0));
@@ -132,13 +142,5 @@ public class ConsulUtils {
         return serviceId.substring(serviceId.indexOf(CONSUL_SERVICE_INSTANCE_DELIMITER) + 1);
     }
 
-    /**
-     * 从consul的tag获取protocol
-     *
-     * @param tag
-     * @return
-     */
-    public static String getProtocolFromTag(String tag) {
-        return tag.substring(TAG_PREFIX_PROTOCOL.length());
-    }
+
 }
