@@ -18,35 +18,61 @@ public class ConsulHealthChecker {
     /**
      * 心跳周期，取ttl的2/3
      */
-    public static    int                       HEARTBEAT_CIRCLE               = (TTL * 1000 * 2) / 3;
+    private static   int                       HEARTBEAT_CIRCLE                 = (TTL * 1000 * 2) / 3;
     /**
      * 连续检测开关变更的最大次数，超过这个次数就发送一次心跳
      */
-    public static    int                       MAX_SWITCHER_CHECK_TIMES       = 10;
+    private static   int                       MAX_SWITCHER_CHECK_TIMES         = 10;
     /**
      * 检测开关变更的频率，连续检测MAX_SWITCHER_CHECK_TIMES次必须发送一次心跳。
      */
-    public static    int                       SWITCHER_CHECK_CIRCLE          = HEARTBEAT_CIRCLE / MAX_SWITCHER_CHECK_TIMES;
+    private static   int                       SWITCHER_CHECK_CIRCLE            = HEARTBEAT_CIRCLE / MAX_SWITCHER_CHECK_TIMES;
+    /**
+     * Luix consul client
+     */
     private final    LuixConsulClient          consulClient;
-    private final    ScheduledExecutorService  heartbeatThreadPool;
-    private final    ThreadPoolExecutor        jobExecutor;
-    // 所有需要进行心跳的serviceId.
-    private final    ConcurrentHashSet<String> checkingServiceInstanceIds     = new ConcurrentHashSet<>();
-    // 上一次心跳开关的状态
-    private          boolean                   lastHeartBeatSwitcherStatus    = false;
-    private volatile boolean                   currentHeartBeatSwitcherStatus = false;
-    // 开关检查次数。
-    private          int                       switcherCheckTimes             = 0;
+    /**
+     * Check health scheduling thread pool
+     */
+    private final    ScheduledExecutorService  checkHealthSchedulingThreadPool;
+    /**
+     * Check health execution thread pool
+     */
+    private final    ThreadPoolExecutor        checkHealthThreadPool;
+    /**
+     * Service instance IDs that need to be health checked.
+     */
+    private final    ConcurrentHashSet<String> checkingServiceInstanceIds       = new ConcurrentHashSet<>();
+    /**
+     * Previous check health switcher status
+     */
+    private          boolean                   prevCheckHealthSwitcherStatus    = false;
+    /**
+     * Current check health switcher status
+     */
+    private volatile boolean                   currentCheckHealthSwitcherStatus = false;
+    /**
+     * Switcher check times
+     */
+    private          int                       switcherCheckTimes               = 0;
 
     public ConsulHealthChecker(LuixConsulClient consulClient) {
         this.consulClient = consulClient;
-        heartbeatThreadPool = Executors.newSingleThreadScheduledExecutor();
-        ArrayBlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(10000);
-        jobExecutor = new ThreadPoolExecutor(5, 30, 30 * 1000, TimeUnit.MILLISECONDS, workQueue);
+        checkHealthSchedulingThreadPool = Executors.newSingleThreadScheduledExecutor();
+        checkHealthThreadPool = createCheckHealthThreadPool();
+    }
+
+    private ThreadPoolExecutor createCheckHealthThreadPool() {
+        return new ThreadPoolExecutor(5, 30, 30 * 1_000,
+                TimeUnit.MILLISECONDS, createWorkQueue());
+    }
+
+    private BlockingQueue<Runnable> createWorkQueue() {
+        return new ArrayBlockingQueue<>(10_000);
     }
 
     public void start() {
-        heartbeatThreadPool.scheduleAtFixedRate(
+        checkHealthSchedulingThreadPool.scheduleAtFixedRate(
                 () -> {
                     // 由于consul的check set pass会导致consul
                     // server的写磁盘操作，过于频繁的心跳会导致consul
@@ -57,13 +83,13 @@ public class ConsulHealthChecker {
                         boolean switcherStatus = isHeartbeatOpen();
                         // 心跳开关状态变更
                         if (isSwitcherChange(switcherStatus)) {
-                            processHeartbeat(switcherStatus);
+                            checkHealth(switcherStatus);
                         } else {
                             // 心跳开关状态未变更
                             if (switcherStatus) {// 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
                                 switcherCheckTimes++;
                                 if (switcherCheckTimes >= MAX_SWITCHER_CHECK_TIMES) {
-                                    processHeartbeat(true);
+                                    checkHealth(true);
                                     switcherCheckTimes = 0;
                                 }
                             }
@@ -83,32 +109,32 @@ public class ConsulHealthChecker {
      */
     private boolean isSwitcherChange(boolean switcherStatus) {
         boolean ret = false;
-        if (switcherStatus != lastHeartBeatSwitcherStatus) {
+        if (switcherStatus != prevCheckHealthSwitcherStatus) {
             ret = true;
-            lastHeartBeatSwitcherStatus = switcherStatus;
+            prevCheckHealthSwitcherStatus = switcherStatus;
             log.info("Consul heartbeat switcher change to [{}]", switcherStatus);
         }
         return ret;
     }
 
-    protected void processHeartbeat(boolean isPass) {
-        for (String serviceId : checkingServiceInstanceIds) {
+    protected void checkHealth(boolean isPass) {
+        for (String serviceInstanceId : checkingServiceInstanceIds) {
             try {
-                jobExecutor.execute(new HeartbeatJob(serviceId, isPass));
+                checkHealthThreadPool.execute(new HeartbeatJob(serviceInstanceId, isPass));
             } catch (RejectedExecutionException ree) {
-                log.error("Failed to execute heartbeat job with serviceId: [{}]", serviceId);
+                log.error("Failed to execute check health job with consul service instance ID: [{}]", serviceInstanceId);
             }
         }
     }
 
     public void close() {
-        heartbeatThreadPool.shutdown();
-        jobExecutor.shutdown();
-        log.info("Closed check consul heart manager");
+        checkHealthSchedulingThreadPool.shutdown();
+        checkHealthThreadPool.shutdown();
+        log.info("Closed consul check health manager");
     }
 
     /**
-     * Add consul service instance ID, add the serviceId will keep the heartbeat 'passing' status by a timer.
+     * Add consul service instance ID, add the service instance ID will keep the heartbeat 'passing' status by a timer.
      *
      * @param serviceInstanceId service instance ID
      */
@@ -117,12 +143,12 @@ public class ConsulHealthChecker {
     }
 
     /**
-     * 移除serviceId，对应的serviceId不会在进行心跳。
+     * Remove consul service instance ID, remove the service instance ID will not keep the heartbeat 'passing' status by a timer.
      *
-     * @param serviceId
+     * @param serviceInstanceId service instance ID
      */
-    public void removeHeartbeatServiceId(String serviceId) {
-        checkingServiceInstanceIds.remove(serviceId);
+    public void removeCheckingServiceInstanceId(String serviceInstanceId) {
+        checkingServiceInstanceIds.remove(serviceInstanceId);
     }
 
     /**
@@ -131,11 +157,11 @@ public class ConsulHealthChecker {
      * @return
      */
     private boolean isHeartbeatOpen() {
-        return currentHeartBeatSwitcherStatus;
+        return currentCheckHealthSwitcherStatus;
     }
 
     public void setHeartbeatOpen(boolean open) {
-        currentHeartBeatSwitcherStatus = open;
+        currentCheckHealthSwitcherStatus = open;
     }
 
     class HeartbeatJob implements Runnable {

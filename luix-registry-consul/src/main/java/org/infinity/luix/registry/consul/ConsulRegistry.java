@@ -58,10 +58,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     private ThreadPoolExecutor createNotificationThreadPool() {
-        final ThreadPoolExecutor notificationThreadPool;
-        notificationThreadPool = new ThreadPoolExecutor(10, 30, 30 * 1000,
+        return new ThreadPoolExecutor(10, 30, 30 * 1_000,
                 TimeUnit.MILLISECONDS, createWorkQueue());
-        return notificationThreadPool;
     }
 
     private BlockingQueue<Runnable> createWorkQueue() {
@@ -79,7 +77,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     protected void doDeregister(Url url) {
         ConsulService service = ConsulService.of(url);
         consulClient.deregisterService(service.getInstanceId());
-        consulHealthChecker.removeHeartbeatServiceId(service.getInstanceId());
+        consulHealthChecker.removeCheckingServiceInstanceId(service.getInstanceId());
     }
 
     @Override
