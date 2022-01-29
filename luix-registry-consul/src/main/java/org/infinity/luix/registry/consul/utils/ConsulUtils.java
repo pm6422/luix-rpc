@@ -133,10 +133,10 @@ public class ConsulUtils {
     }
 
     /**
-     * 判断两个list中的url是否一致。 如果任意一个list为空，则返回false； 此方法并未做严格互相判等
+     * Determine whether two lists of URLs are consistent
      *
-     * @param urls1
-     * @param urls2
+     * @param urls1 URL list 1
+     * @param urls2 URL list 2
      * @return
      */
     public static boolean isSame(List<Url> urls1, List<Url> urls2) {
