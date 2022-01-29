@@ -178,8 +178,10 @@ public class ConsulHealthChecker {
         public void run() {
             try {
                 if (isPass) {
+                    // 设置一个本地检查项的状态为passing
                     consulClient.checkPass(serviceInstanceId);
                 } else {
+                    // 设置一个本地检查项的状态为critical
                     consulClient.checkFail(serviceInstanceId);
                 }
             } catch (Exception e) {
