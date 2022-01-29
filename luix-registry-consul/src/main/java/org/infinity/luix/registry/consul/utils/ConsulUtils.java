@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.infinity.luix.core.constant.RpcConstants.NODE_TYPE_SERVICE;
 import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_PROTOCOL;
 import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_URL;
 
@@ -111,16 +110,20 @@ public class ConsulUtils {
      */
     public static Url buildUrl(ConsulService consulService) {
         Url url = null;
+        // Get URL from consul service tags
         for (String tag : consulService.getTags()) {
             if (tag.startsWith(TAG_PREFIX_URL)) {
                 String encodedUrl = tag.substring(tag.indexOf(CONSUL_TAG_DELIMITER) + 1);
                 url = Url.valueOf(UrlUtils.urlDecode(encodedUrl));
+                break;
             }
         }
+
         if (url == null) {
+            // Get URL from consul service instance ID
             Map<String, String> params = new HashMap<>(2);
             params.put(Url.PARAM_FROM, getFormFromServiceName(consulService.getName()));
-            params.put(Url.PARAM_TYPE, NODE_TYPE_SERVICE);
+            params.put(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
 
             String protocol = ConsulUtils.getProtocolFromTag(consulService.getTags().get(0));
             url = Url.of(protocol, consulService.getAddress(), consulService.getPort(),
