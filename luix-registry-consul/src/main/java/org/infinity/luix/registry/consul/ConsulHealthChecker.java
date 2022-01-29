@@ -122,15 +122,15 @@ public class ConsulHealthChecker {
     /**
      * 判断心跳开关状态是否改变，如果心跳开关改变则更新lastHeartBeatSwitcherStatus为最新状态
      *
-     * @param switcherStatus
+     * @param currentCheckHealthSwitcherStatus
      * @return
      */
-    private boolean isSwitcherChange(boolean switcherStatus) {
+    private boolean isSwitcherChange(boolean currentCheckHealthSwitcherStatus) {
         boolean ret = false;
-        if (switcherStatus != prevCheckHealthSwitcherStatus) {
+        if (currentCheckHealthSwitcherStatus != prevCheckHealthSwitcherStatus) {
             ret = true;
-            prevCheckHealthSwitcherStatus = switcherStatus;
-            log.info("Consul heartbeat switcher change to [{}]", switcherStatus);
+            prevCheckHealthSwitcherStatus = currentCheckHealthSwitcherStatus;
+            log.info("Changed consul check health switcher value to [{}]", currentCheckHealthSwitcherStatus);
         }
         return ret;
     }
