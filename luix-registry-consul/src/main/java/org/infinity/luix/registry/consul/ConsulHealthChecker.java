@@ -31,9 +31,9 @@ public class ConsulHealthChecker {
     private final    ScheduledExecutorService  heartbeatThreadPool;
     private final    ThreadPoolExecutor        jobExecutor;
     // 所有需要进行心跳的serviceId.
-    private final    ConcurrentHashSet<String> serviceIds                     = new ConcurrentHashSet<>();
+    private final    ConcurrentHashSet<String> checkingServiceInstanceIds  = new ConcurrentHashSet<>();
     // 上一次心跳开关的状态
-    private          boolean                   lastHeartBeatSwitcherStatus    = false;
+    private          boolean                   lastHeartBeatSwitcherStatus = false;
     private volatile boolean                   currentHeartBeatSwitcherStatus = false;
     // 开关检查次数。
     private          int                       switcherCheckTimes             = 0;
@@ -92,7 +92,7 @@ public class ConsulHealthChecker {
     }
 
     protected void processHeartbeat(boolean isPass) {
-        for (String serviceId : serviceIds) {
+        for (String serviceId : checkingServiceInstanceIds) {
             try {
                 jobExecutor.execute(new HeartbeatJob(serviceId, isPass));
             } catch (RejectedExecutionException ree) {
@@ -110,10 +110,10 @@ public class ConsulHealthChecker {
     /**
      * 添加consul serviceId，添加后的serviceId会通过定时设置passing状态保持心跳。
      *
-     * @param serviceId
+     * @param serviceInstanceId
      */
-    public void addCheckServiceId(String serviceId) {
-        serviceIds.add(serviceId);
+    public void addCheckServiceId(String serviceInstanceId) {
+        checkingServiceInstanceIds.add(serviceInstanceId);
     }
 
     /**
@@ -122,7 +122,7 @@ public class ConsulHealthChecker {
      * @param serviceId
      */
     public void removeHeartbeatServiceId(String serviceId) {
-        serviceIds.remove(serviceId);
+        checkingServiceInstanceIds.remove(serviceId);
     }
 
     /**
