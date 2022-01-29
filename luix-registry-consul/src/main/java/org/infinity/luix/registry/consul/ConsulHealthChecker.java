@@ -120,10 +120,10 @@ public class ConsulHealthChecker {
     }
 
     /**
-     * 判断心跳开关状态是否改变，如果心跳开关改变则更新lastHeartBeatSwitcherStatus为最新状态
+     * Determine whether the check health switcher status is changed.
      *
-     * @param currentCheckHealthSwitcherStatus
-     * @return
+     * @param currentCheckHealthSwitcherStatus current check health switcher status
+     * @return true if check health switcher status changed, false otherwise
      */
     private boolean isSwitcherChange(boolean currentCheckHealthSwitcherStatus) {
         boolean ret = false;
@@ -138,7 +138,7 @@ public class ConsulHealthChecker {
     protected void checkHealth(boolean isPass) {
         for (String serviceInstanceId : checkingServiceInstanceIds) {
             try {
-                checkHealthThreadPool.execute(new HeartbeatJob(serviceInstanceId, isPass));
+                checkHealthThreadPool.execute(new CheckHealthJob(serviceInstanceId, isPass));
             } catch (RejectedExecutionException ree) {
                 log.error("Failed to execute check health job with consul service instance ID: [{}]", serviceInstanceId);
             }
@@ -164,26 +164,26 @@ public class ConsulHealthChecker {
         currentCheckHealthSwitcherStatus = open;
     }
 
-    class HeartbeatJob implements Runnable {
-        private final String  serviceId;
+    class CheckHealthJob implements Runnable {
+        private final String  serviceInstanceId;
         private final boolean isPass;
 
-        public HeartbeatJob(String serviceId, boolean isPass) {
+        public CheckHealthJob(String serviceInstanceId, boolean passStatus) {
             super();
-            this.serviceId = serviceId;
-            this.isPass = isPass;
+            this.serviceInstanceId = serviceInstanceId;
+            this.isPass = passStatus;
         }
 
         @Override
         public void run() {
             try {
                 if (isPass) {
-                    consulClient.checkPass(serviceId);
+                    consulClient.checkPass(serviceInstanceId);
                 } else {
-                    consulClient.checkFail(serviceId);
+                    consulClient.checkFail(serviceInstanceId);
                 }
             } catch (Exception e) {
-                log.error("consul heartbeat-set check pass error! serviceId:" + serviceId, e);
+                log.error("consul heartbeat-set check pass error! serviceId:" + serviceInstanceId, e);
             }
         }
     }

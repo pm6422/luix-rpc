@@ -26,6 +26,9 @@ public class LuixConsulClientTest {
         consulHealthChecker.addCheckingServiceInstanceId(service1.getInstanceId());
         consulHealthChecker.addCheckingServiceInstanceId(service2.getInstanceId());
         consulHealthChecker.setHeartbeatOpen(true);
+
+        consulClient.checkPass(service1.getInstanceId());
+        consulClient.checkFail(service1.getInstanceId());
         Thread.sleep(100_000L);
     }
 
