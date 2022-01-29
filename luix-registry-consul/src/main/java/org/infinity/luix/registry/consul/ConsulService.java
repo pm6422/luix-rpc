@@ -53,9 +53,9 @@ public class ConsulService {
         newService.setName(name);
         // Consul service instance name
         newService.setId(instanceName);
-        // Consul server host
+        // RPC service host
         newService.setAddress(address);
-        // Consul server port
+        // RPC service port
         newService.setPort(port);
 
         NewService.Check check = new NewService.Check();
