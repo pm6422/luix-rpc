@@ -19,7 +19,7 @@ import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.annotation.EventPublisher;
 import org.infinity.luix.utilities.annotation.EventSubscriber;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
-import org.infinity.luix.utilities.destory.Cleanable;
+import org.infinity.luix.utilities.destory.Destroyable;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.text.MessageFormat;
@@ -42,7 +42,7 @@ import static org.infinity.luix.registry.zookeeper.utils.ZookeeperUtils.*;
  */
 @Slf4j
 @ThreadSafe
-public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implements Cleanable {
+public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implements Destroyable {
     private final ZkClient                                                        zkClient;
     /**
      * Used to resolve concurrency problems for subscribe or unsubscribe service listeners
@@ -580,7 +580,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * Do cleanup stuff
      */
     @Override
-    public void cleanup() {
+    public void destroy() {
         this.zkClient.close();
     }
 }

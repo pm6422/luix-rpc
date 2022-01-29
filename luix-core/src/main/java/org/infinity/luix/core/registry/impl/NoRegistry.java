@@ -8,7 +8,7 @@ import org.infinity.luix.core.registry.listener.ProviderListener;
 import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.concurrent.ThreadSafe;
-import org.infinity.luix.utilities.destory.Cleanable;
+import org.infinity.luix.utilities.destory.Destroyable;
 import org.infinity.luix.utilities.network.AddressUtils;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import static org.infinity.luix.core.constant.ConsumerConstants.PROVIDER_ADDRESS
 
 @Slf4j
 @ThreadSafe
-public class NoRegistry extends AbstractRegistry implements Cleanable {
+public class NoRegistry extends AbstractRegistry implements Destroyable {
     private final List<Pair<String, Integer>> providerHostAndPortList;
 
     public NoRegistry(Url registryUrl) {
@@ -111,7 +111,7 @@ public class NoRegistry extends AbstractRegistry implements Cleanable {
     }
 
     @Override
-    public void cleanup() {
+    public void destroy() {
         // Do nothing
     }
 }

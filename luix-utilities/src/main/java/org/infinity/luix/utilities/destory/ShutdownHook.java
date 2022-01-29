@@ -34,18 +34,18 @@ public class ShutdownHook extends Thread {
     private ShutdownHook() {
     }
 
-    public static synchronized void add(Cleanable cleanable, int priority) {
-        RESOURCES.add(new CleanableObject(cleanable, priority));
-        log.info("Added the cleanup method of class [{}] to {}", cleanable.getClass().getSimpleName(), ShutdownHook.class.getSimpleName());
+    public static synchronized void add(Destroyable destroyable, int priority) {
+        RESOURCES.add(new CleanableObject(destroyable, priority));
+        log.info("Added the cleanup method of class [{}] to {}", destroyable.getClass().getSimpleName(), ShutdownHook.class.getSimpleName());
     }
 
     /**
      * Only global resources are allowed to add to it.
      *
-     * @param cleanable cleanable
+     * @param destroyable cleanable
      */
-    public static void add(Cleanable cleanable) {
-        add(cleanable, DEFAULT_PRIORITY);
+    public static void add(Destroyable destroyable) {
+        add(destroyable, DEFAULT_PRIORITY);
     }
 
     /**
@@ -83,19 +83,19 @@ public class ShutdownHook extends Thread {
         Collections.sort(RESOURCES);
         for (CleanableObject resource : RESOURCES) {
             try {
-                resource.cleanable.cleanup();
+                resource.destroyable.destroy();
             } catch (Exception e) {
-                log.error("Failed to cleanup " + resource.cleanable.getClass().getSimpleName(), e);
+                log.error("Failed to cleanup " + resource.destroyable.getClass().getSimpleName(), e);
             }
-            log.info("Cleaned up the {}", resource.cleanable.getClass().getSimpleName());
+            log.info("Cleaned up the {}", resource.destroyable.getClass().getSimpleName());
         }
         RESOURCES.clear();
     }
 
     @AllArgsConstructor
     private static class CleanableObject implements Comparable<CleanableObject> {
-        private final Cleanable cleanable;
-        private final int       priority;
+        private final Destroyable destroyable;
+        private final int         priority;
 
         /**
          * Lower values have higher priority

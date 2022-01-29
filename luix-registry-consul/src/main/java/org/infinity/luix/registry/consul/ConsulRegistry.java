@@ -9,7 +9,7 @@ import org.infinity.luix.core.registry.listener.ProviderListener;
 import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.registry.consul.utils.ConsulUtils;
-import org.infinity.luix.utilities.destory.Cleanable;
+import org.infinity.luix.utilities.destory.Destroyable;
 import org.infinity.luix.utilities.destory.ShutdownHook;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -20,7 +20,7 @@ import java.util.concurrent.*;
 
 @Slf4j
 @ThreadSafe
-public class ConsulRegistry extends CommandFailbackAbstractRegistry implements Cleanable {
+public class ConsulRegistry extends CommandFailbackAbstractRegistry implements Destroyable {
 
     /**
      * consul服务查询默认间隔时间。单位毫秒
@@ -298,7 +298,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     }
 
     @Override
-    public void cleanup() {
+    public void destroy() {
         notifyExecutor.shutdown();
         checkConsulHealthManager.close();
         log.info("Destroyed consul registry");
