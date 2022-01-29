@@ -56,8 +56,8 @@ public class ConsulService {
 
     public static ConsulService of(Url url) {
         ConsulService service = new ConsulService();
-        service.setId(ConsulUtils.buildServiceId(url));
-        service.setName(ConsulUtils.buildServiceFormName(url.getForm()));
+        service.setId(ConsulUtils.buildServiceInstanceId(url));
+        service.setName(ConsulUtils.buildServiceName(url.getForm()));
         service.setAddress(url.getHost());
         service.setPort(url.getPort());
         service.setTtl(TTL);

@@ -77,7 +77,7 @@ public class LuixConsulClient {
     }
 
     public String lookupCommand(String group) {
-        String key = CONSUL_LUIX_COMMAND + ConsulUtils.buildServiceFormName(group);
+        String key = CONSUL_LUIX_COMMAND + ConsulUtils.buildServiceName(group);
         GetValue value = consulClient.getKVValue(key).getValue();
         String command = StringUtils.EMPTY;
         if (value == null) {

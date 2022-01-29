@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.infinity.luix.core.constant.RpcConstants.NODE_TYPE_SERVICE;
 import static org.infinity.luix.registry.consul.ConsulService.CONSUL_TAG_PROTOCOL;
 import static org.infinity.luix.registry.consul.ConsulService.CONSUL_TAG_URL;
@@ -17,29 +17,54 @@ import static org.infinity.luix.registry.consul.ConsulService.CONSUL_TAG_URL;
 public class ConsulUtils {
 
     /**
-     * Service form prefix name on consul registry
+     * Active RPC provider service name on consul registry
      */
-    private static final String CONSUL_SERVICE_FORM_PREFIX = "luix";
-    private static final String DELIMITER                  = "-";
+    private static final String CONSUL_PROVIDING_SERVICES_PREFIX  = "luix-providing-services";
+    /**
+     * Active RPC consumer service name on consul registry
+     */
+    private static final String CONSUL_CONSUMING_SERVICES_PREFIX  = "luix-consuming-services";
+    /**
+     *
+     */
+    private static final String CONSUL_SERVICE_INSTANCE_DELIMITER = "@";
+    /**
+     *
+     */
+    private static final String FORM_DELIMITER                    = ":";
 
     /**
-     * 根据url生成consul的service ID。 service id包括ip＋port＋rpc服务的接口类名
+     * Build consul service name for RPC provider
      *
-     * @param url
-     * @return
+     * @param form service provider form
+     * @return consul service name
      */
-    public static String buildServiceId(Url url) {
-        return url == null ? null : url.getHost() + ":" + url.getPort() + DELIMITER + url.getPath();
+    public static String buildServiceName(String form) {
+        return isEmpty(form)
+                ? CONSUL_PROVIDING_SERVICES_PREFIX
+                : CONSUL_PROVIDING_SERVICES_PREFIX + FORM_DELIMITER + form;
     }
 
-    public static String buildServiceFormName(String form) {
-        return isNotEmpty(form) ? CONSUL_SERVICE_FORM_PREFIX + DELIMITER + form : CONSUL_SERVICE_FORM_PREFIX;
-    }
-
-    public static String extractFromName(String serviceName) {
-        return CONSUL_SERVICE_FORM_PREFIX.equals(serviceName)
+    /**
+     * Extract form name from service name string
+     *
+     * @param serviceName consul service name
+     * @return form name
+     */
+    public static String getFormName(String serviceName) {
+        return CONSUL_PROVIDING_SERVICES_PREFIX.equals(serviceName)
                 ? StringUtils.EMPTY
-                : serviceName.substring(CONSUL_SERVICE_FORM_PREFIX.length() + 1);
+                : serviceName.substring(CONSUL_PROVIDING_SERVICES_PREFIX.length() + 1);
+    }
+
+    /**
+     * Build consul service instance ID
+     *
+     * @param url url
+     * @return consul service instance ID
+     */
+    public static String buildServiceInstanceId(Url url) {
+        return url == null ? null : url.getPath() + CONSUL_SERVICE_INSTANCE_DELIMITER + url.getHost() + ":" + url.getPort();
     }
 
     /**
@@ -73,7 +98,7 @@ public class ConsulUtils {
 
         if (url == null) {
             Map<String, String> params = new HashMap<>(2);
-            params.put(Url.PARAM_FROM, extractFromName(service.getName()));
+            params.put(Url.PARAM_FROM, getFormName(service.getName()));
             params.put(Url.PARAM_TYPE, NODE_TYPE_SERVICE);
 
             String protocol = ConsulUtils.getProtocolFromTag(service.getTags().get(0));
@@ -90,7 +115,7 @@ public class ConsulUtils {
      * @return
      */
     public static String getUrlClusterInfo(Url url) {
-        return url.getProtocol() + DELIMITER + url.getPath();
+        return url.getProtocol() + CONSUL_SERVICE_INSTANCE_DELIMITER + url.getPath();
     }
 
     /**
@@ -100,7 +125,7 @@ public class ConsulUtils {
      * @return
      */
     public static String getPathFromServiceId(String serviceId) {
-        return serviceId.substring(serviceId.indexOf(DELIMITER) + 1);
+        return serviceId.substring(serviceId.indexOf(CONSUL_SERVICE_INSTANCE_DELIMITER) + 1);
     }
 
     /**

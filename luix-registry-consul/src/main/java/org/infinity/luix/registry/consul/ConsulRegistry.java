@@ -191,7 +191,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * @return ConsulResponse or null
      */
     private ConsulResponse<List<ConsulService>> lookupConsulService(String serviceName, Long lastConsulIndexId) {
-        return consulClient.lookupHealthService(ConsulUtils.buildServiceFormName(serviceName), lastConsulIndexId);
+        return consulClient.lookupHealthService(ConsulUtils.buildServiceName(serviceName), lastConsulIndexId);
     }
 
     @Override
