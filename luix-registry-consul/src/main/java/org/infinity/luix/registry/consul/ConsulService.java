@@ -35,11 +35,11 @@ public class ConsulService {
      */
     private             String       instanceName;
     /**
-     * Consul server host.
+     * RPC service host.
      */
     private             String       address;
     /**
-     * Consul server port.
+     * RPC service port.
      */
     private             Integer      port;
     /**
