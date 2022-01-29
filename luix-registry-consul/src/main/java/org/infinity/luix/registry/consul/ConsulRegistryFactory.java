@@ -4,8 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.registry.AbstractRegistryFactory;
 import org.infinity.luix.core.registry.Registry;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.registry.consul.client.AbstractConsulClient;
-import org.infinity.luix.registry.consul.client.ConsulEcwidClient;
+import org.infinity.luix.registry.consul.client.LuixConsulClient;
 import org.infinity.luix.utilities.serviceloader.annotation.SpiName;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
@@ -28,7 +27,7 @@ public class ConsulRegistryFactory extends AbstractRegistryFactory {
     public Registry createRegistry(Url registryUrl) {
         String host = defaultIfBlank(registryUrl.getHost(), DEFAULT_HOST);
         int port = registryUrl.getPort() > 0 ? registryUrl.getPort() : DEFAULT_PORT;
-        AbstractConsulClient client = new ConsulEcwidClient(host, port);
+        LuixConsulClient client = new LuixConsulClient(host, port);
         return new ConsulRegistry(registryUrl, client);
     }
 }

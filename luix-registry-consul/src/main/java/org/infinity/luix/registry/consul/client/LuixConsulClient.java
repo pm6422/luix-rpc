@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class ConsulEcwidClient extends AbstractConsulClient {
+public class LuixConsulClient {
     /**
      * consul block查询时block的最长时间,单位(秒)
      */
@@ -29,34 +29,28 @@ public class ConsulEcwidClient extends AbstractConsulClient {
     public static final String       CONSUL_MOTAN_COMMAND      = "motan/command/";
     public static       ConsulClient consulClient;
 
-    public ConsulEcwidClient(String host, int port) {
-        super(host, port);
+    public LuixConsulClient(String host, int port) {
         consulClient = new ConsulClient(host, port);
         log.info("Initialized consul client with host: [{}] and port: [{}]", host, port);
     }
 
-    @Override
     public void checkPass(String serviceId) {
         consulClient.agentCheckPass("service:" + serviceId);
     }
 
-    @Override
     public void checkFail(String serviceId) {
         consulClient.agentCheckFail("service:" + serviceId);
     }
 
-    @Override
     public void registerService(ConsulService service) {
         NewService newService = service.toNewService();
         consulClient.agentServiceRegister(newService);
     }
 
-    @Override
     public void deregisterService(String serviceId) {
         consulClient.agentServiceDeregister(serviceId);
     }
 
-    @Override
     public ConsulResponse<List<ConsulService>> lookupHealthService(String serviceName, long lastConsulIndex) {
         ConsulResponse<List<ConsulService>> consulResponse = new ConsulResponse<>();
         QueryParams queryParams = new QueryParams(CONSUL_BLOCK_TIME_SECONDS, lastConsulIndex);
@@ -84,7 +78,6 @@ public class ConsulEcwidClient extends AbstractConsulClient {
         return consulResponse;
     }
 
-    @Override
     public String lookupCommand(String group) {
         String key = CONSUL_MOTAN_COMMAND + ConsulUtils.buildServiceFormName(group);
         GetValue value = consulClient.getKVValue(key).getValue();

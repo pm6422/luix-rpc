@@ -8,7 +8,7 @@ import org.infinity.luix.core.registry.listener.CommandListener;
 import org.infinity.luix.core.registry.listener.ProviderListener;
 import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.registry.consul.client.AbstractConsulClient;
+import org.infinity.luix.registry.consul.client.LuixConsulClient;
 import org.infinity.luix.registry.consul.utils.ConsulUtils;
 import org.infinity.luix.utilities.destory.Cleanable;
 import org.infinity.luix.utilities.destory.ShutdownHook;
@@ -29,9 +29,9 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     /**
      * consul服务查询默认间隔时间。单位毫秒
      */
-    public static int                                                                 DEFAULT_LOOKUP_INTERVAL = 30000;
-    private final AbstractConsulClient                                                client;
-    private final ConsulHeartbeatManager                                              heartbeatManager;
+    public static int                    DEFAULT_LOOKUP_INTERVAL = 30000;
+    private final LuixConsulClient       client;
+    private final ConsulHeartbeatManager heartbeatManager;
     private final int                                                                 lookupInterval;
     // service local cache. key: group, value: <service interface name, url list>
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache            = new ConcurrentHashMap<>();
@@ -49,7 +49,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     private final ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners        = new ConcurrentHashMap<>();
     private final ThreadPoolExecutor                                                  notifyExecutor;
 
-    public ConsulRegistry(Url url, AbstractConsulClient client) {
+    public ConsulRegistry(Url url, LuixConsulClient client) {
         super(url);
         this.client = client;
         heartbeatManager = new ConsulHeartbeatManager(client);
