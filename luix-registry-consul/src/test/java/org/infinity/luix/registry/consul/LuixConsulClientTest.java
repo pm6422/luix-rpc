@@ -23,8 +23,8 @@ public class LuixConsulClientTest {
         ConsulService service2 = createConsulService("org.infinity.luix.democommon.service.AppService", "127.0.0.1", 6020);
         consulClient.registerService(service1);
         consulClient.registerService(service2);
-        consulHealthChecker.addCheckServiceId(service1.getInstanceName());
-        consulHealthChecker.addCheckServiceId(service2.getInstanceName());
+        consulHealthChecker.addCheckServiceId(service1.getInstanceId());
+        consulHealthChecker.addCheckServiceId(service2.getInstanceId());
         consulHealthChecker.setHeartbeatOpen(true);
         Thread.sleep(100_000L);
     }
@@ -37,7 +37,7 @@ public class LuixConsulClientTest {
     private static ConsulService createConsulService(String serviceName, String host, int port) {
         ConsulService service = new ConsulService();
         service.setName("luix-providing");
-        service.setInstanceName(serviceName + "@" + host + ":" + port);
+        service.setInstanceId(serviceName + "@" + host + ":" + port);
         service.setAddress(host);
         service.setPort(port);
         service.setTags(Arrays.asList("protocol_luix"));

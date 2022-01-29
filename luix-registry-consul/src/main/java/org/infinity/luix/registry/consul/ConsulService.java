@@ -31,9 +31,9 @@ public class ConsulService {
      */
     private             String       name;
     /**
-     * Consul service instance name.
+     * Consul service instance ID.
      */
-    private             String       instanceName;
+    private             String       instanceId;
     /**
      * RPC service host.
      */
@@ -51,8 +51,8 @@ public class ConsulService {
         NewService newService = new NewService();
         // Consul service name
         newService.setName(name);
-        // Consul service instance name
-        newService.setId(instanceName);
+        // Consul service instance ID
+        newService.setId(instanceId);
         // RPC service host
         newService.setAddress(address);
         // RPC service port
@@ -68,7 +68,7 @@ public class ConsulService {
     public static ConsulService of(HealthService healthService) {
         ConsulService consulService = new ConsulService();
         consulService.setName(healthService.getService().getService());
-        consulService.setInstanceName(healthService.getService().getId());
+        consulService.setInstanceId(healthService.getService().getId());
         consulService.setAddress(healthService.getService().getAddress());
         consulService.setPort(healthService.getService().getPort());
         consulService.setTags(healthService.getService().getTags());
@@ -78,7 +78,7 @@ public class ConsulService {
     public static ConsulService of(Url url) {
         ConsulService consulService = new ConsulService();
         consulService.setName(ConsulUtils.buildServiceName(url.getForm()));
-        consulService.setInstanceName(ConsulUtils.buildServiceInstanceName(url));
+        consulService.setInstanceId(ConsulUtils.buildServiceInstanceName(url));
         consulService.setAddress(url.getHost());
         consulService.setPort(url.getPort());
         consulService.setTags(buildTags(url));

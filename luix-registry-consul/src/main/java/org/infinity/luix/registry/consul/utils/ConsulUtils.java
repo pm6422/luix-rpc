@@ -103,7 +103,7 @@ public class ConsulUtils {
 
             String protocol = ConsulUtils.getProtocolFromTag(service.getTags().get(0));
             url = Url.of(protocol, service.getAddress(), service.getPort(),
-                    ConsulUtils.getPathFromServiceId(service.getInstanceName()), params);
+                    ConsulUtils.getPathFromServiceId(service.getInstanceId()), params);
         }
         return url;
     }
