@@ -21,11 +21,11 @@ public class ConsulService {
     /**
      * Tag prefix for RPC protocol.
      */
-    public static final String       TAG_PREFIX_PROTOCOL = "PROTOCOL_";
+    public static final String       TAG_PREFIX_PROTOCOL = "PROTOCOL:";
     /**
      * Tag prefix for RPC URL.
      */
-    public static final String       TAG_PREFIX_URL      = "URL_";
+    public static final String       TAG_PREFIX_URL      = "URL:";
     /**
      * Consul service name.
      */
