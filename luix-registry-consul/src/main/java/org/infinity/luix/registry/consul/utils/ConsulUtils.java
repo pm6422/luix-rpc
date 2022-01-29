@@ -31,7 +31,7 @@ public class ConsulUtils {
     /**
      *
      */
-    public static final String CONSUL_TAG_DELIMITER              = ":";
+    public static final  String CONSUL_TAG_DELIMITER              = ":";
     /**
      *
      */
@@ -50,6 +50,16 @@ public class ConsulUtils {
     }
 
     /**
+     * Build consul service instance name
+     *
+     * @param url url
+     * @return consul service instance name
+     */
+    public static String buildServiceInstanceName(Url url) {
+        return url == null ? null : url.getPath() + CONSUL_SERVICE_INSTANCE_DELIMITER + url.getHost() + ":" + url.getPort();
+    }
+
+    /**
      * Extract form name from service name string
      *
      * @param serviceName consul service name
@@ -62,23 +72,13 @@ public class ConsulUtils {
     }
 
     /**
-     * 从consul的tag获取protocol
+     * Extract RPC service protocol from consul service tag
      *
-     * @param tag
-     * @return
+     * @param consulServiceTag consul service tag
+     * @return RPC service protocol
      */
-    public static String getProtocolFromTag(String tag) {
-        return tag.substring(TAG_PREFIX_PROTOCOL.length());
-    }
-
-    /**
-     * Build consul service instance name
-     *
-     * @param url url
-     * @return consul service instance name
-     */
-    public static String buildServiceInstanceName(Url url) {
-        return url == null ? null : url.getPath() + CONSUL_SERVICE_INSTANCE_DELIMITER + url.getHost() + ":" + url.getPort();
+    public static String getProtocolFromTag(String consulServiceTag) {
+        return consulServiceTag.substring(TAG_PREFIX_PROTOCOL.length());
     }
 
     /**
