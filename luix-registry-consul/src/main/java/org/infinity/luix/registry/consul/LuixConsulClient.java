@@ -9,8 +9,6 @@ import com.ecwid.consul.v1.kv.model.GetValue;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.luix.registry.consul.ConsulResponse;
-import org.infinity.luix.registry.consul.ConsulService;
 import org.infinity.luix.registry.consul.utils.ConsulUtils;
 
 import java.util.ArrayList;
