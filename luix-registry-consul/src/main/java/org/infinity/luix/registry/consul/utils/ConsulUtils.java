@@ -104,20 +104,6 @@ public class ConsulUtils {
     }
 
     /**
-     * 判断两个list中的url是否一致。 如果任意一个list为空，则返回false； 此方法并未做严格互相判等
-     *
-     * @param urls1
-     * @param urls2
-     * @return
-     */
-    public static boolean isSame(List<Url> urls1, List<Url> urls2) {
-        if (urls1 == null || urls2 == null || urls1.size() != urls2.size()) {
-            return false;
-        }
-        return urls1.containsAll(urls2);
-    }
-
-    /**
      * 根据service生成motan使用的
      *
      * @param service
@@ -131,7 +117,6 @@ public class ConsulUtils {
                 url = Url.valueOf(UrlUtils.urlDecode(encodedUrl));
             }
         }
-
         if (url == null) {
             Map<String, String> params = new HashMap<>(2);
             params.put(Url.PARAM_FROM, getFormFromServiceName(service.getName()));
@@ -142,5 +127,19 @@ public class ConsulUtils {
                     ConsulUtils.getPathFromServiceInstanceId(service.getInstanceId()), params);
         }
         return url;
+    }
+
+    /**
+     * 判断两个list中的url是否一致。 如果任意一个list为空，则返回false； 此方法并未做严格互相判等
+     *
+     * @param urls1
+     * @param urls2
+     * @return
+     */
+    public static boolean isSame(List<Url> urls1, List<Url> urls2) {
+        if (urls1 == null || urls2 == null || urls1.size() != urls2.size()) {
+            return false;
+        }
+        return urls1.containsAll(urls2);
     }
 }
