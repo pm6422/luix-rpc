@@ -58,12 +58,12 @@ public class ConsulUtils {
     }
 
     /**
-     * Build consul service instance ID
+     * Build consul service instance name
      *
      * @param url url
-     * @return consul service instance ID
+     * @return consul service instance name
      */
-    public static String buildServiceInstanceId(Url url) {
+    public static String buildServiceInstanceName(Url url) {
         return url == null ? null : url.getPath() + CONSUL_SERVICE_INSTANCE_DELIMITER + url.getHost() + ":" + url.getPort();
     }
 

@@ -42,7 +42,6 @@ public class LuixConsulClientTest {
         service.setInstanceName(serviceName + "@172.25.8.133:16010");
         service.setAddress("localhost");
         service.setPort(8500);
-        service.setTtl(TTL);
         service.setTags(Arrays.asList("protocol_luix"));
         return service;
     }

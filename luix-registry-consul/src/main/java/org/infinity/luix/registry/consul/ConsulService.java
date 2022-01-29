@@ -21,7 +21,7 @@ public class ConsulService {
     /**
      * Tag prefix for RPC protocol.
      */
-    public static final String       TAG_PREFIX_PROTOCOL = "protocol_";
+    public static final String       TAG_PREFIX_PROTOCOL = "PROTOCOL_";
     /**
      * Tag prefix for RPC URL.
      */
@@ -67,27 +67,26 @@ public class ConsulService {
 
     public static ConsulService of(HealthService healthService) {
         ConsulService consulService = new ConsulService();
-        HealthService.Service consulHealthService = healthService.getService();
-        consulService.setAddress(consulHealthService.getAddress());
-        consulService.setInstanceName(consulHealthService.getId());
-        consulService.setName(consulHealthService.getService());
-        consulService.setPort(consulHealthService.getPort());
-        consulService.setTags(consulHealthService.getTags());
+        consulService.setName(healthService.getService().getService());
+        consulService.setInstanceName(healthService.getService().getId());
+        consulService.setAddress(healthService.getService().getAddress());
+        consulService.setPort(healthService.getService().getPort());
+        consulService.setTags(healthService.getService().getTags());
         return consulService;
     }
 
     public static ConsulService of(Url url) {
-        ConsulService service = new ConsulService();
-        service.setInstanceName(ConsulUtils.buildServiceInstanceId(url));
-        service.setName(ConsulUtils.buildServiceName(url.getForm()));
-        service.setAddress(url.getHost());
-        service.setPort(url.getPort());
-        service.setTags(buildTags(url));
-        return service;
+        ConsulService consulService = new ConsulService();
+        consulService.setName(ConsulUtils.buildServiceName(url.getForm()));
+        consulService.setInstanceName(ConsulUtils.buildServiceInstanceName(url));
+        consulService.setAddress(url.getHost());
+        consulService.setPort(url.getPort());
+        consulService.setTags(buildTags(url));
+        return consulService;
     }
 
     private static List<String> buildTags(Url url) {
-        List<String> tags = new ArrayList<>();
+        List<String> tags = new ArrayList<>(2);
         tags.add(TAG_PREFIX_PROTOCOL + url.getProtocol());
         tags.add(TAG_PREFIX_URL + UrlUtils.urlEncode(url.toFullStr()));
         return tags;
