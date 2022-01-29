@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.registry.AbstractRegistryFactory;
 import org.infinity.luix.core.registry.Registry;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.registry.consul.client.LuixConsulClient;
 import org.infinity.luix.utilities.serviceloader.annotation.SpiName;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;

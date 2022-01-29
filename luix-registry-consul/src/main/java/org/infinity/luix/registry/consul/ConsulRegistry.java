@@ -8,7 +8,6 @@ import org.infinity.luix.core.registry.listener.CommandListener;
 import org.infinity.luix.core.registry.listener.ProviderListener;
 import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.registry.consul.client.LuixConsulClient;
 import org.infinity.luix.registry.consul.utils.ConsulUtils;
 import org.infinity.luix.utilities.destory.Cleanable;
 import org.infinity.luix.utilities.destory.ShutdownHook;

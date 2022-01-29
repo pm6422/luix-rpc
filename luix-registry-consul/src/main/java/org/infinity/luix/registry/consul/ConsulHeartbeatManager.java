@@ -1,7 +1,6 @@
 package org.infinity.luix.registry.consul;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.registry.consul.client.LuixConsulClient;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
 
 import java.util.concurrent.*;

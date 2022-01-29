@@ -1,4 +1,4 @@
-package org.infinity.luix.registry.consul.client;
+package org.infinity.luix.registry.consul;
 
 import com.ecwid.consul.v1.ConsulClient;
 import com.ecwid.consul.v1.QueryParams;
