@@ -10,6 +10,8 @@ import org.infinity.luix.registry.consul.utils.ConsulUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_TAG_DELIMITER;
+
 @Data
 public class ConsulService {
     /**
@@ -21,11 +23,11 @@ public class ConsulService {
     /**
      * Tag prefix for RPC protocol.
      */
-    public static final String       TAG_PREFIX_PROTOCOL = "PROTOCOL_";
+    public static final String       TAG_PREFIX_PROTOCOL = "PROTOCOL";
     /**
      * Tag prefix for RPC URL.
      */
-    public static final String       TAG_PREFIX_URL      = "URL_";
+    public static final String       TAG_PREFIX_URL      = "URL";
     /**
      * Consul service name.
      */
@@ -87,8 +89,8 @@ public class ConsulService {
 
     private static List<String> buildTags(Url url) {
         List<String> tags = new ArrayList<>(2);
-        tags.add(TAG_PREFIX_PROTOCOL + url.getProtocol());
-        tags.add(TAG_PREFIX_URL + UrlUtils.urlEncode(url.toFullStr()));
+        tags.add(TAG_PREFIX_PROTOCOL + CONSUL_TAG_DELIMITER + url.getProtocol());
+        tags.add(TAG_PREFIX_URL + CONSUL_TAG_DELIMITER + UrlUtils.urlEncode(url.toFullStr()));
         return tags;
     }
 }

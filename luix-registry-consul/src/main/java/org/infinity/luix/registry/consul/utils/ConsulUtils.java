@@ -31,6 +31,10 @@ public class ConsulUtils {
     /**
      *
      */
+    public static final String CONSUL_TAG_DELIMITER              = ":";
+    /**
+     *
+     */
     private static final String FORM_DELIMITER                    = ":";
 
     /**
@@ -91,8 +95,8 @@ public class ConsulUtils {
         Url url = null;
         for (String tag : service.getTags()) {
             if (tag.startsWith(TAG_PREFIX_URL)) {
-                String encodeUrl = tag.substring(tag.indexOf("_") + 1);
-                url = Url.valueOf(UrlUtils.urlDecode(encodeUrl));
+                String encodedUrl = tag.substring(tag.indexOf(CONSUL_TAG_DELIMITER) + 1);
+                url = Url.valueOf(UrlUtils.urlDecode(encodedUrl));
             }
         }
 
