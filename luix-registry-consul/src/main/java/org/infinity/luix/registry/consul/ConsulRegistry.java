@@ -26,9 +26,9 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * consul服务查询默认间隔时间。单位毫秒
      */
     public static int                                                                 DEFAULT_LOOKUP_INTERVAL = 30000;
-    private final LuixConsulClient    consulClient;
-    private final ConsulHealthChecker consulHealthChecker;
-    private final int                 lookupInterval;
+    private final LuixConsulClient                                                    consulClient;
+    private final ConsulHealthChecker                                                 consulHealthChecker;
+    private final int                                                                 lookupInterval;
     // service local cache. key: group, value: <service interface name, url list>
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache            = new ConcurrentHashMap<>();
     // command local cache. key: group, value: command content
@@ -43,7 +43,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     private final ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners        = new ConcurrentHashMap<>();
     // record subscribers command callback listeners, listener was called when corresponding command changes
     private final ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners        = new ConcurrentHashMap<>();
-    private final ThreadPoolExecutor                                                  notifyExecutor;
+    private final ThreadPoolExecutor                                                  notificationThreadPool;
 
     public ConsulRegistry(Url url, LuixConsulClient consulClient) {
         super(url);
@@ -52,14 +52,20 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         consulHealthChecker.start();
 //        lookupInterval = super.registryUrl.getIntOption(URLParamType.registrySessionTimeout.getName(), DEFAULT_LOOKUP_INTERVAL);
         lookupInterval = DEFAULT_LOOKUP_INTERVAL;
-
-        notifyExecutor = new ThreadPoolExecutor(10, 30, 30 * 1000, TimeUnit.MILLISECONDS, createWorkQueue());
+        notificationThreadPool = createNotificationThreadPool();
         ShutdownHook.add(this);
         log.info("Initialized consul registry");
     }
 
+    private ThreadPoolExecutor createNotificationThreadPool() {
+        final ThreadPoolExecutor notificationThreadPool;
+        notificationThreadPool = new ThreadPoolExecutor(10, 30, 30 * 1000,
+                TimeUnit.MILLISECONDS, createWorkQueue());
+        return notificationThreadPool;
+    }
+
     private BlockingQueue<Runnable> createWorkQueue() {
-        return new ArrayBlockingQueue<>(20000);
+        return new ArrayBlockingQueue<>(20_000);
     }
 
     @Override
@@ -166,7 +172,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                     }
                 }
                 if (change && needNotify) {
-                    notifyExecutor.execute(new NotifyService(entry.getKey(), entry.getValue()));
+                    notificationThreadPool.execute(new NotifyService(entry.getKey(), entry.getValue()));
                     log.info("service notify-service: " + entry.getKey());
                     StringBuilder sb = new StringBuilder();
                     for (Url url : entry.getValue()) {
@@ -317,7 +323,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         if (!command.equals(oldCommand)) {
             commandCache.put(group, command);
             if (needNotify) {
-                notifyExecutor.execute(new NotifyCommand(group, command));
+                notificationThreadPool.execute(new NotifyCommand(group, command));
                 log.info(String.format("command data change: group=%s, command=%s: ", group, command));
             }
         } else {
@@ -429,7 +435,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
     @Override
     public void destroy() {
-        notifyExecutor.shutdown();
+        notificationThreadPool.shutdown();
         consulHealthChecker.close();
         log.info("Destroyed consul registry");
     }
