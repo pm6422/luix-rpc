@@ -84,6 +84,26 @@ public class ConsulUtils {
     }
 
     /**
+     * Get RPC protocol plus interface name string
+     *
+     * @param url url
+     * @return RPC protocol plus interface name string
+     */
+    public static String getProtocolPlusInterfaceName(Url url) {
+        return url.getProtocol() + CONSUL_SERVICE_INSTANCE_DELIMITER + url.getPath();
+    }
+
+    /**
+     * 从consul 的serviceId中获取rpc服务的接口类名（url的path）
+     *
+     * @param serviceId
+     * @return
+     */
+    public static String getPathFromServiceId(String serviceId) {
+        return serviceId.substring(serviceId.indexOf(CONSUL_SERVICE_INSTANCE_DELIMITER) + 1);
+    }
+
+    /**
      * 判断两个list中的url是否一致。 如果任意一个list为空，则返回false； 此方法并未做严格互相判等
      *
      * @param urls1
@@ -123,26 +143,4 @@ public class ConsulUtils {
         }
         return url;
     }
-
-    /**
-     * 根据url获取cluster信息，cluster 信息包括协议和path(rpc服务中的接口类)
-     *
-     * @param url
-     * @return
-     */
-    public static String getUrlClusterInfo(Url url) {
-        return url.getProtocol() + CONSUL_SERVICE_INSTANCE_DELIMITER + url.getPath();
-    }
-
-    /**
-     * 从consul 的serviceId中获取rpc服务的接口类名（url的path）
-     *
-     * @param serviceId
-     * @return
-     */
-    public static String getPathFromServiceId(String serviceId) {
-        return serviceId.substring(serviceId.indexOf(CONSUL_SERVICE_INSTANCE_DELIMITER) + 1);
-    }
-
-
 }
