@@ -94,24 +94,24 @@ public class ConsulUtils {
     }
 
     /**
-     * 从consul 的serviceId中获取rpc服务的接口类名（url的path）
+     * Get path from consul service instance ID
      *
-     * @param serviceInstanceId
-     * @return
+     * @param serviceInstanceId consul service instance ID
+     * @return path
      */
     public static String getPathFromServiceInstanceId(String serviceInstanceId) {
         return serviceInstanceId.substring(0, serviceInstanceId.indexOf(CONSUL_SERVICE_INSTANCE_DELIMITER));
     }
 
     /**
-     * 根据service生成motan使用的
+     * Build URL from consul service
      *
-     * @param service
-     * @return
+     * @param consulService consul service
+     * @return URL
      */
-    public static Url buildUrl(ConsulService service) {
+    public static Url buildUrl(ConsulService consulService) {
         Url url = null;
-        for (String tag : service.getTags()) {
+        for (String tag : consulService.getTags()) {
             if (tag.startsWith(TAG_PREFIX_URL)) {
                 String encodedUrl = tag.substring(tag.indexOf(CONSUL_TAG_DELIMITER) + 1);
                 url = Url.valueOf(UrlUtils.urlDecode(encodedUrl));
@@ -119,12 +119,12 @@ public class ConsulUtils {
         }
         if (url == null) {
             Map<String, String> params = new HashMap<>(2);
-            params.put(Url.PARAM_FROM, getFormFromServiceName(service.getName()));
+            params.put(Url.PARAM_FROM, getFormFromServiceName(consulService.getName()));
             params.put(Url.PARAM_TYPE, NODE_TYPE_SERVICE);
 
-            String protocol = ConsulUtils.getProtocolFromTag(service.getTags().get(0));
-            url = Url.of(protocol, service.getAddress(), service.getPort(),
-                    ConsulUtils.getPathFromServiceInstanceId(service.getInstanceId()), params);
+            String protocol = ConsulUtils.getProtocolFromTag(consulService.getTags().get(0));
+            url = Url.of(protocol, consulService.getAddress(), consulService.getPort(),
+                    ConsulUtils.getPathFromServiceInstanceId(consulService.getInstanceId()), params);
         }
         return url;
     }
