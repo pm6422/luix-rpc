@@ -14,7 +14,7 @@ import static org.infinity.luix.registry.consul.ConsulService.TTL;
  * 开关开启后会进行心跳，开关关闭则停止心跳。
  */
 @Slf4j
-public class ConsulHeartbeatManager {
+public class CheckConsulHealthManager {
     /**
      * 心跳周期，取ttl的2/3
      */
@@ -26,9 +26,9 @@ public class ConsulHeartbeatManager {
     /**
      * 检测开关变更的频率，连续检测MAX_SWITCHER_CHECK_TIMES次必须发送一次心跳。
      */
-    public static int                      SWITCHER_CHECK_CIRCLE          = HEARTBEAT_CIRCLE / MAX_SWITCHER_CHECK_TIMES;
-    private       LuixConsulClient         client;
-    private final ScheduledExecutorService heartbeatThreadPool;
+    public static    int                       SWITCHER_CHECK_CIRCLE          = HEARTBEAT_CIRCLE / MAX_SWITCHER_CHECK_TIMES;
+    private final    LuixConsulClient          consulClient;
+    private final    ScheduledExecutorService  heartbeatThreadPool;
     private final    ThreadPoolExecutor        jobExecutor;
     // 所有需要进行心跳的serviceId.
     private final    ConcurrentHashSet<String> serviceIds                     = new ConcurrentHashSet<>();
@@ -38,8 +38,8 @@ public class ConsulHeartbeatManager {
     // 开关检查次数。
     private          int                       switcherCheckTimes             = 0;
 
-    public ConsulHeartbeatManager(LuixConsulClient client) {
-        this.client = client;
+    public CheckConsulHealthManager(LuixConsulClient consulClient) {
+        this.consulClient = consulClient;
         heartbeatThreadPool = Executors.newSingleThreadScheduledExecutor();
         ArrayBlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(10000);
         jobExecutor = new ThreadPoolExecutor(5, 30, 30 * 1000, TimeUnit.MILLISECONDS, workQueue);
@@ -152,17 +152,13 @@ public class ConsulHeartbeatManager {
         public void run() {
             try {
                 if (isPass) {
-                    client.checkPass(serviceId);
+                    consulClient.checkPass(serviceId);
                 } else {
-                    client.checkFail(serviceId);
+                    consulClient.checkFail(serviceId);
                 }
             } catch (Exception e) {
                 log.error("consul heartbeat-set check pass error! serviceId:" + serviceId, e);
             }
         }
-    }
-
-    public void setClient(LuixConsulClient client) {
-        this.client = client;
     }
 }

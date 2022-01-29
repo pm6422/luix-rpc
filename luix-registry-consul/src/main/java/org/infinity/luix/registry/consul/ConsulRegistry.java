@@ -28,9 +28,9 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     /**
      * consul服务查询默认间隔时间。单位毫秒
      */
-    public static int                    DEFAULT_LOOKUP_INTERVAL = 30000;
-    private final LuixConsulClient       client;
-    private final ConsulHeartbeatManager heartbeatManager;
+    public static int                                                                 DEFAULT_LOOKUP_INTERVAL = 30000;
+    private final LuixConsulClient                                                    consulClient;
+    private final CheckConsulHealthManager                                            heartbeatManager;
     private final int                                                                 lookupInterval;
     // service local cache. key: group, value: <service interface name, url list>
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache            = new ConcurrentHashMap<>();
@@ -48,10 +48,10 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     private final ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners        = new ConcurrentHashMap<>();
     private final ThreadPoolExecutor                                                  notifyExecutor;
 
-    public ConsulRegistry(Url url, LuixConsulClient client) {
+    public ConsulRegistry(Url url, LuixConsulClient consulClient) {
         super(url);
-        this.client = client;
-        heartbeatManager = new ConsulHeartbeatManager(client);
+        this.consulClient = consulClient;
+        heartbeatManager = new CheckConsulHealthManager(consulClient);
         heartbeatManager.start();
 //        lookupInterval = super.registryUrl.getIntOption(URLParamType.registrySessionTimeout.getName(), DEFAULT_LOOKUP_INTERVAL);
         lookupInterval = DEFAULT_LOOKUP_INTERVAL;
@@ -65,14 +65,14 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     @Override
     protected void doRegister(Url url) {
         ConsulService service = ConsulService.of(url);
-        client.registerService(service);
+        consulClient.registerService(service);
         heartbeatManager.addHeartbeatServiceId(service.getId());
     }
 
     @Override
     protected void doDeregister(Url url) {
         ConsulService service = ConsulService.of(url);
-        client.deregisterService(service.getId());
+        consulClient.deregisterService(service.getId());
         heartbeatManager.removeHeartbeatServiceId(service.getId());
     }
 
@@ -185,7 +185,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
      * @return ConsulResponse or null
      */
     private ConsulResponse<List<ConsulService>> lookupConsulService(String serviceName, Long lastConsulIndexId) {
-        return client.lookupHealthService(ConsulUtils.buildServiceFormName(serviceName), lastConsulIndexId);
+        return consulClient.lookupHealthService(ConsulUtils.buildServiceFormName(serviceName), lastConsulIndexId);
     }
 
     @Override
@@ -303,7 +303,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     }
 
     private String lookupCommandUpdate(String group) {
-        String command = client.lookupCommand(group);
+        String command = consulClient.lookupCommand(group);
         lookupGroupCommands.put(group, command);
         return command;
     }
