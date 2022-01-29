@@ -11,8 +11,8 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.infinity.luix.core.constant.RpcConstants.NODE_TYPE_SERVICE;
-import static org.infinity.luix.registry.consul.ConsulService.CONSUL_TAG_PROTOCOL;
-import static org.infinity.luix.registry.consul.ConsulService.CONSUL_TAG_URL;
+import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_PROTOCOL;
+import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_URL;
 
 public class ConsulUtils {
 
@@ -90,7 +90,7 @@ public class ConsulUtils {
     public static Url buildUrl(ConsulService service) {
         Url url = null;
         for (String tag : service.getTags()) {
-            if (tag.startsWith(CONSUL_TAG_URL)) {
+            if (tag.startsWith(TAG_PREFIX_URL)) {
                 String encodeUrl = tag.substring(tag.indexOf("_") + 1);
                 url = Url.valueOf(UrlUtils.urlDecode(encodeUrl));
             }
@@ -103,7 +103,7 @@ public class ConsulUtils {
 
             String protocol = ConsulUtils.getProtocolFromTag(service.getTags().get(0));
             url = Url.of(protocol, service.getAddress(), service.getPort(),
-                    ConsulUtils.getPathFromServiceId(service.getId()), params);
+                    ConsulUtils.getPathFromServiceId(service.getInstanceName()), params);
         }
         return url;
     }
@@ -135,6 +135,6 @@ public class ConsulUtils {
      * @return
      */
     public static String getProtocolFromTag(String tag) {
-        return tag.substring(CONSUL_TAG_PROTOCOL.length());
+        return tag.substring(TAG_PREFIX_PROTOCOL.length());
     }
 }

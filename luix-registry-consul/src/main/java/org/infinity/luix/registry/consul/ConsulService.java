@@ -13,31 +13,45 @@ import java.util.List;
 @Data
 public class ConsulService {
     /**
-     * service 最长存活周期（Time To Live），单位秒。 每个service会注册一个ttl类型的check，在最长TTL秒不发送心跳
-     * 就会将service变为不可用状态。
+     * Time to live for consul service, unit is second.
+     * Each service will register a TTL type check. If the heartbeat is not sent within the maximum TTL seconds,
+     * the service will become unavailable.
      */
-    public static       int          TTL                 = 30;
+    public static       int    TTL                 = 30;
     /**
-     * motan协议在consul tag中的前缀
+     * Tag prefix for RPC protocol.
      */
-    public static final String       CONSUL_TAG_PROTOCOL = "protocol_";
-    public static final String       CONSUL_TAG_URL      = "URL_";
-    private             String       id;
-    private             String       name;
-    private             String       address;
-    private             Integer      port;
-    private             long         ttl;
-    private             List<String> tags;
+    public static final String TAG_PREFIX_PROTOCOL = "protocol_";
+    /**
+     * Tag prefix for RPC URL.
+     */
+    public static final String TAG_PREFIX_URL      = "URL_";
+    /**
+     * Consul service name.
+     */
+    private             String name;
+    /**
+     * Consul service instance name.
+     */
+    private             String instanceName;
+
+    private String       address;
+    private Integer      port;
+    private List<String> tags;
 
     public NewService toNewService() {
         NewService newService = new NewService();
+        // Consul service name
         newService.setName(name);
-        newService.setId(id);
+        // Consul service instance name
+        newService.setId(instanceName);
+        // Consul server host
         newService.setAddress(address);
+        // Consul server port
         newService.setPort(port);
 
         NewService.Check check = new NewService.Check();
-        check.setTtl(ttl + "s");
+        check.setTtl(TTL + "s");
         newService.setCheck(check);
         newService.setTags(tags);
         return newService;
@@ -47,7 +61,7 @@ public class ConsulService {
         ConsulService service = new ConsulService();
         HealthService.Service consulHealthService = healthService.getService();
         service.setAddress(consulHealthService.getAddress());
-        service.setId(consulHealthService.getId());
+        service.setInstanceName(consulHealthService.getId());
         service.setName(consulHealthService.getService());
         service.setPort(consulHealthService.getPort());
         service.setTags(consulHealthService.getTags());
@@ -56,19 +70,18 @@ public class ConsulService {
 
     public static ConsulService of(Url url) {
         ConsulService service = new ConsulService();
-        service.setId(ConsulUtils.buildServiceInstanceId(url));
+        service.setInstanceName(ConsulUtils.buildServiceInstanceId(url));
         service.setName(ConsulUtils.buildServiceName(url.getForm()));
         service.setAddress(url.getHost());
         service.setPort(url.getPort());
-        service.setTtl(TTL);
         service.setTags(buildTags(url));
         return service;
     }
 
     private static List<String> buildTags(Url url) {
         List<String> tags = new ArrayList<>();
-        tags.add(CONSUL_TAG_PROTOCOL + url.getProtocol());
-        tags.add(CONSUL_TAG_URL + UrlUtils.urlEncode(url.toFullStr()));
+        tags.add(TAG_PREFIX_PROTOCOL + url.getProtocol());
+        tags.add(TAG_PREFIX_URL + UrlUtils.urlEncode(url.toFullStr()));
         return tags;
     }
 }
