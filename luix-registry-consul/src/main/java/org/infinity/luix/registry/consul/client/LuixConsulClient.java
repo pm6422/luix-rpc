@@ -26,7 +26,7 @@ public class LuixConsulClient {
     /**
      * motan rpc 在consul中存储command的目录
      */
-    public static final String       CONSUL_MOTAN_COMMAND      = "motan/command/";
+    public static final String       CONSUL_LUIX_COMMAND       = "luix/command/";
     public static       ConsulClient consulClient;
 
     public LuixConsulClient(String host, int port) {
@@ -79,7 +79,7 @@ public class LuixConsulClient {
     }
 
     public String lookupCommand(String group) {
-        String key = CONSUL_MOTAN_COMMAND + ConsulUtils.buildServiceFormName(group);
+        String key = CONSUL_LUIX_COMMAND + ConsulUtils.buildServiceFormName(group);
         GetValue value = consulClient.getKVValue(key).getValue();
         String command = StringUtils.EMPTY;
         if (value == null) {
