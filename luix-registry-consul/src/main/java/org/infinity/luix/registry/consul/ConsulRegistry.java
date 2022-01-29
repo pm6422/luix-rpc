@@ -72,7 +72,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     protected void doRegister(Url url) {
         ConsulService service = ConsulService.of(url);
         consulClient.registerService(service);
-        consulHealthChecker.addHeartbeatServiceId(service.getId());
+        consulHealthChecker.addCheckServiceId(service.getId());
     }
 
     @Override

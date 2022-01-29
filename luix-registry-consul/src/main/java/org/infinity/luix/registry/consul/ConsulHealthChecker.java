@@ -112,7 +112,7 @@ public class ConsulHealthChecker {
      *
      * @param serviceId
      */
-    public void addHeartbeatServiceId(String serviceId) {
+    public void addCheckServiceId(String serviceId) {
         serviceIds.add(serviceId);
     }
 
