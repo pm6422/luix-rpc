@@ -104,7 +104,7 @@ public class CheckConsulHealthManager {
     public void close() {
         heartbeatThreadPool.shutdown();
         jobExecutor.shutdown();
-        log.info("Closed consul heartbeatManager.");
+        log.info("Closed check consul heart manager");
     }
 
     /**

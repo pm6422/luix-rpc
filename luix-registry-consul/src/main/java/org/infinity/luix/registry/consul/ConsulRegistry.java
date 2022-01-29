@@ -16,10 +16,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 @Slf4j
 @ThreadSafe
@@ -30,7 +27,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
      */
     public static int                                                                 DEFAULT_LOOKUP_INTERVAL = 30000;
     private final LuixConsulClient                                                    consulClient;
-    private final CheckConsulHealthManager                                            heartbeatManager;
+    private final CheckConsulHealthManager                                            checkConsulHealthManager;
     private final int                                                                 lookupInterval;
     // service local cache. key: group, value: <service interface name, url list>
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache            = new ConcurrentHashMap<>();
@@ -51,35 +48,38 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     public ConsulRegistry(Url url, LuixConsulClient consulClient) {
         super(url);
         this.consulClient = consulClient;
-        heartbeatManager = new CheckConsulHealthManager(consulClient);
-        heartbeatManager.start();
+        checkConsulHealthManager = new CheckConsulHealthManager(consulClient);
+        checkConsulHealthManager.start();
 //        lookupInterval = super.registryUrl.getIntOption(URLParamType.registrySessionTimeout.getName(), DEFAULT_LOOKUP_INTERVAL);
         lookupInterval = DEFAULT_LOOKUP_INTERVAL;
 
-        ArrayBlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(20000);
-        notifyExecutor = new ThreadPoolExecutor(10, 30, 30 * 1000, TimeUnit.MILLISECONDS, workQueue);
+        notifyExecutor = new ThreadPoolExecutor(10, 30, 30 * 1000, TimeUnit.MILLISECONDS, createWorkQueue());
         ShutdownHook.add(this);
         log.info("Initialized consul registry");
+    }
+
+    private BlockingQueue<Runnable> createWorkQueue() {
+        return new ArrayBlockingQueue<>(20000);
     }
 
     @Override
     protected void doRegister(Url url) {
         ConsulService service = ConsulService.of(url);
         consulClient.registerService(service);
-        heartbeatManager.addHeartbeatServiceId(service.getId());
+        checkConsulHealthManager.addHeartbeatServiceId(service.getId());
     }
 
     @Override
     protected void doDeregister(Url url) {
         ConsulService service = ConsulService.of(url);
         consulClient.deregisterService(service.getId());
-        heartbeatManager.removeHeartbeatServiceId(service.getId());
+        checkConsulHealthManager.removeHeartbeatServiceId(service.getId());
     }
 
     @Override
     protected void doActivate(Url url) {
 //        if (url == null) {
-        heartbeatManager.setHeartbeatOpen(true);
+        checkConsulHealthManager.setHeartbeatOpen(true);
 //        } else {
 //            throw new UnsupportedOperationException("Command consul registry not support available by urls yet");
 //        }
@@ -88,7 +88,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
     @Override
     protected void doDeactivate(Url url) {
 //        if (url == null) {
-        heartbeatManager.setHeartbeatOpen(false);
+        checkConsulHealthManager.setHeartbeatOpen(false);
 //        } else {
 //            throw new UnsupportedOperationException("Command consul registry not support unavailable by urls yet");
 //        }
@@ -299,7 +299,9 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements C
 
     @Override
     public void cleanup() {
-        heartbeatManager.close();
+        notifyExecutor.shutdown();
+        checkConsulHealthManager.close();
+        log.info("Destroyed consul registry");
     }
 
     private String lookupCommandUpdate(String group) {
