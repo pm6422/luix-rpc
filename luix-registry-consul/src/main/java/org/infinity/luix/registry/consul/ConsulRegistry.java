@@ -26,9 +26,9 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * consul服务查询默认间隔时间。单位毫秒
      */
     public static int                                                                 DEFAULT_LOOKUP_INTERVAL = 30000;
-    private final LuixConsulClient                                                    consulClient;
-    private final CheckConsulHealthManager                                            checkConsulHealthManager;
-    private final int                                                                 lookupInterval;
+    private final LuixConsulClient    consulClient;
+    private final ConsulHealthChecker consulHealthChecker;
+    private final int                 lookupInterval;
     // service local cache. key: group, value: <service interface name, url list>
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache            = new ConcurrentHashMap<>();
     // command local cache. key: group, value: command content
@@ -48,8 +48,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     public ConsulRegistry(Url url, LuixConsulClient consulClient) {
         super(url);
         this.consulClient = consulClient;
-        checkConsulHealthManager = new CheckConsulHealthManager(consulClient);
-        checkConsulHealthManager.start();
+        consulHealthChecker = new ConsulHealthChecker(consulClient);
+        consulHealthChecker.start();
 //        lookupInterval = super.registryUrl.getIntOption(URLParamType.registrySessionTimeout.getName(), DEFAULT_LOOKUP_INTERVAL);
         lookupInterval = DEFAULT_LOOKUP_INTERVAL;
 
@@ -66,20 +66,20 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     protected void doRegister(Url url) {
         ConsulService service = ConsulService.of(url);
         consulClient.registerService(service);
-        checkConsulHealthManager.addHeartbeatServiceId(service.getId());
+        consulHealthChecker.addHeartbeatServiceId(service.getId());
     }
 
     @Override
     protected void doDeregister(Url url) {
         ConsulService service = ConsulService.of(url);
         consulClient.deregisterService(service.getId());
-        checkConsulHealthManager.removeHeartbeatServiceId(service.getId());
+        consulHealthChecker.removeHeartbeatServiceId(service.getId());
     }
 
     @Override
     protected void doActivate(Url url) {
 //        if (url == null) {
-        checkConsulHealthManager.setHeartbeatOpen(true);
+        consulHealthChecker.setHeartbeatOpen(true);
 //        } else {
 //            throw new UnsupportedOperationException("Command consul registry not support available by urls yet");
 //        }
@@ -88,7 +88,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     @Override
     protected void doDeactivate(Url url) {
 //        if (url == null) {
-        checkConsulHealthManager.setHeartbeatOpen(false);
+        consulHealthChecker.setHeartbeatOpen(false);
 //        } else {
 //            throw new UnsupportedOperationException("Command consul registry not support unavailable by urls yet");
 //        }
@@ -430,7 +430,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     @Override
     public void destroy() {
         notifyExecutor.shutdown();
-        checkConsulHealthManager.close();
+        consulHealthChecker.close();
         log.info("Destroyed consul registry");
     }
 }

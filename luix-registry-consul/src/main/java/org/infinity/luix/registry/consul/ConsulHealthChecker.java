@@ -14,7 +14,7 @@ import static org.infinity.luix.registry.consul.ConsulService.TTL;
  * 开关开启后会进行心跳，开关关闭则停止心跳。
  */
 @Slf4j
-public class CheckConsulHealthManager {
+public class ConsulHealthChecker {
     /**
      * 心跳周期，取ttl的2/3
      */
@@ -38,7 +38,7 @@ public class CheckConsulHealthManager {
     // 开关检查次数。
     private          int                       switcherCheckTimes             = 0;
 
-    public CheckConsulHealthManager(LuixConsulClient consulClient) {
+    public ConsulHealthChecker(LuixConsulClient consulClient) {
         this.consulClient = consulClient;
         heartbeatThreadPool = Executors.newSingleThreadScheduledExecutor();
         ArrayBlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(10000);
