@@ -102,6 +102,24 @@ public class ConsulHealthChecker {
     }
 
     /**
+     * Add consul service instance ID, add the service instance ID will keep the heartbeat 'passing' status by a timer.
+     *
+     * @param serviceInstanceId service instance ID
+     */
+    public void addCheckingServiceInstanceId(String serviceInstanceId) {
+        checkingServiceInstanceIds.add(serviceInstanceId);
+    }
+
+    /**
+     * Remove consul service instance ID, remove the service instance ID will not keep the heartbeat 'passing' status by a timer.
+     *
+     * @param serviceInstanceId service instance ID
+     */
+    public void removeCheckingServiceInstanceId(String serviceInstanceId) {
+        checkingServiceInstanceIds.remove(serviceInstanceId);
+    }
+
+    /**
      * 判断心跳开关状态是否改变，如果心跳开关改变则更新lastHeartBeatSwitcherStatus为最新状态
      *
      * @param switcherStatus
@@ -131,24 +149,6 @@ public class ConsulHealthChecker {
         checkHealthSchedulingThreadPool.shutdown();
         checkHealthThreadPool.shutdown();
         log.info("Closed consul check health manager");
-    }
-
-    /**
-     * Add consul service instance ID, add the service instance ID will keep the heartbeat 'passing' status by a timer.
-     *
-     * @param serviceInstanceId service instance ID
-     */
-    public void addCheckingServiceInstanceId(String serviceInstanceId) {
-        checkingServiceInstanceIds.add(serviceInstanceId);
-    }
-
-    /**
-     * Remove consul service instance ID, remove the service instance ID will not keep the heartbeat 'passing' status by a timer.
-     *
-     * @param serviceInstanceId service instance ID
-     */
-    public void removeCheckingServiceInstanceId(String serviceInstanceId) {
-        checkingServiceInstanceIds.remove(serviceInstanceId);
     }
 
     /**
