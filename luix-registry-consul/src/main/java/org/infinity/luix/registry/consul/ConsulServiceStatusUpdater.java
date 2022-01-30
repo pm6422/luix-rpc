@@ -164,6 +164,6 @@ public class ConsulServiceStatusUpdater {
     public void close() {
         statusUpdateThreadPool.shutdown();
         executionThreadPool.shutdown();
-        log.info("Closed consul service instance health checker");
+        log.info("Closed consul service instance status updater");
     }
 }
