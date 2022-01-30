@@ -45,9 +45,9 @@ public class ConsulServiceStatusUpdater {
      */
     private final        LuixConsulClient          consulClient;
     /**
-     * Consul service instance status update scheduler thread pool
+     * Consul service instance status update executor service
      */
-    private final        ScheduledExecutorService  statusUpdateThreadPool;
+    private final        ScheduledExecutorService  statusUpdateExecutorService;
     /**
      * Consul service instance status update execution thread pool
      */
@@ -63,7 +63,7 @@ public class ConsulServiceStatusUpdater {
 
     public ConsulServiceStatusUpdater(LuixConsulClient consulClient) {
         this.consulClient = consulClient;
-        statusUpdateThreadPool = Executors.newSingleThreadScheduledExecutor();
+        statusUpdateExecutorService = Executors.newSingleThreadScheduledExecutor();
         executionThreadPool = createExecutionThreadPool();
     }
 
@@ -147,7 +147,7 @@ public class ConsulServiceStatusUpdater {
      * and send a heartbeat to the consumer server after continuous detection for many times.
      */
     public void start() {
-        statusUpdateThreadPool.scheduleAtFixedRate(
+        statusUpdateExecutorService.scheduleAtFixedRate(
                 () -> {
                     if (STATUS_PASSING.equals(currentStatus)) {
                         checkTimes++;
@@ -161,7 +161,7 @@ public class ConsulServiceStatusUpdater {
     }
 
     public void close() {
-        statusUpdateThreadPool.shutdown();
+        statusUpdateExecutorService.shutdown();
         executionThreadPool.shutdown();
         log.info("Closed consul service instance status updater");
     }
