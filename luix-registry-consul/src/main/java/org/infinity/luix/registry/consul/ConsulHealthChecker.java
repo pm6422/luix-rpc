@@ -23,7 +23,7 @@ public class ConsulHealthChecker {
     /**
      * 检测开关变更的频率，连续检测MAX_SWITCHER_CHECK_TIMES次必须发送一次心跳。
      */
-    private static final int                       CHECK_INTERVAL             = HEARTBEAT_CIRCLE / MAX_CHECK_TIMES;
+    private static final int                       CHECK_SCHEDULE_INTERVAL    = HEARTBEAT_CIRCLE / MAX_CHECK_TIMES;
     /**
      * Luix consul client
      */
@@ -86,13 +86,31 @@ public class ConsulHealthChecker {
         checkingServiceInstanceIds.remove(serviceInstanceId);
     }
 
-    public void setServiceInstanceStatus(boolean checkStatus) {
-        currentStatus = checkStatus;
+    public void setServiceInstanceStatus(boolean status) {
+        currentStatus = status;
         if (currentStatus != prevStatus) {
             prevStatus = currentStatus;
             doSetServiceInstanceStatus(currentStatus);
             log.info("Changed consul service instance status to [{}]", currentStatus);
         }
+    }
+
+    /**
+     * Set the status of service instance to 'passing' by sending a REST request to consul server
+     *
+     * @param serviceInstanceId service instance ID
+     */
+    public void activateServiceInstance(String serviceInstanceId) {
+        consulClient.checkPass(serviceInstanceId);
+    }
+
+    /**
+     * Set the status of service instance to 'critical' by sending a REST request to consul server
+     *
+     * @param serviceInstanceId service instance ID
+     */
+    public void deactivateServiceInstance(String serviceInstanceId) {
+        consulClient.checkFail(serviceInstanceId);
     }
 
     /**
@@ -116,7 +134,7 @@ public class ConsulHealthChecker {
                             checkTimes = 0;
                         }
                     }
-                }, CHECK_INTERVAL, CHECK_INTERVAL, TimeUnit.MILLISECONDS);
+                }, CHECK_SCHEDULE_INTERVAL, CHECK_SCHEDULE_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
     protected void doSetServiceInstanceStatus(boolean checkPass) {
@@ -149,14 +167,12 @@ public class ConsulHealthChecker {
         public void run() {
             try {
                 if (checkPass) {
-                    // Set the status of service instance to 'passing' by sending a REST request to consul server
-                    consulClient.checkPass(serviceInstanceId);
+                    activateServiceInstance(serviceInstanceId);
                 } else {
-                    // Set the status of service instance to 'critical' by sending a REST request to consul server
-                    consulClient.checkFail(serviceInstanceId);
+                    deactivateServiceInstance(serviceInstanceId);
                 }
             } catch (Exception e) {
-                log.error("Failed to set the status of consul service instance with ID: [" + serviceInstanceId + "]");
+                log.error("Failed to set the status of consul service instance with ID: [" + serviceInstanceId + "]", e);
             }
         }
     }
