@@ -1,6 +1,7 @@
 package org.infinity.luix.registry.consul;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
 
 import java.util.concurrent.*;
@@ -81,7 +82,7 @@ public class ConsulServiceStatusUpdater {
      *
      * @param serviceInstanceId service instance ID
      */
-    public void addInstanceId(String serviceInstanceId) {
+    private void addInstanceId(String serviceInstanceId) {
         checkingServiceInstanceIds.add(serviceInstanceId);
     }
 
@@ -90,7 +91,7 @@ public class ConsulServiceStatusUpdater {
      *
      * @param serviceInstanceId service instance ID
      */
-    public void removeInstanceId(String serviceInstanceId) {
+    private void removeInstanceId(String serviceInstanceId) {
         checkingServiceInstanceIds.remove(serviceInstanceId);
     }
 
@@ -125,6 +126,10 @@ public class ConsulServiceStatusUpdater {
      * @param serviceInstanceId service instance ID
      */
     public void activate(String serviceInstanceId) {
+        addInstanceId(serviceInstanceId);
+        if (CollectionUtils.isNotEmpty(checkingServiceInstanceIds)) {
+            updateStatus(STATUS_PASSING);
+        }
         consulClient.activate(serviceInstanceId);
     }
 
@@ -134,6 +139,10 @@ public class ConsulServiceStatusUpdater {
      * @param serviceInstanceId service instance ID
      */
     public void deactivate(String serviceInstanceId) {
+        removeInstanceId(serviceInstanceId);
+        if (CollectionUtils.isEmpty(checkingServiceInstanceIds)) {
+            updateStatus(STATUS_FAILING);
+        }
         consulClient.deactivate(serviceInstanceId);
     }
 

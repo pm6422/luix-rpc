@@ -88,9 +88,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
             consulServiceStatusUpdater.updateStatus(STATUS_PASSING);
         } else {
             // Activate specified service instance
-            String instanceId = ConsulUtils.buildServiceInstanceId(url);
-            consulServiceStatusUpdater.addInstanceId(instanceId);
-            consulServiceStatusUpdater.activate(instanceId);
+            consulServiceStatusUpdater.activate(ConsulUtils.buildServiceInstanceId(url));
         }
     }
 
@@ -101,9 +99,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
             consulServiceStatusUpdater.updateStatus(STATUS_FAILING);
         } else {
             // Deactivate specified service instance
-            String instanceId = ConsulUtils.buildServiceInstanceId(url);
-            consulServiceStatusUpdater.removeInstanceId(instanceId);
-            consulServiceStatusUpdater.deactivate(instanceId);
+            consulServiceStatusUpdater.deactivate(ConsulUtils.buildServiceInstanceId(url));
         }
     }
 
