@@ -29,7 +29,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     /**
      * consul服务查询默认间隔时间。单位毫秒
      */
-    public static int                                                                 DEFAULT_LOOKUP_INTERVAL = 30000;
+    public static int                                                                 DEFAULT_LOOKUP_INTERVAL = 30_000;
     private final LuixConsulClient                                                    consulClient;
     private final ConsulServiceStatusUpdater                                          consulServiceStatusUpdater;
     private final int                                                                 lookupInterval;
