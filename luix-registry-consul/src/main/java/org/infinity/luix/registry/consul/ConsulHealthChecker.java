@@ -46,7 +46,7 @@ public class ConsulHealthChecker {
     /**
      * Previous check health switcher status
      */
-    private              boolean                   prevCheckHealthSwitcherStatus    = false;
+    private              boolean                   prevCheckStatus                  = false;
     /**
      * Current check health switcher status
      */
@@ -90,17 +90,17 @@ public class ConsulHealthChecker {
     }
 
     /**
-     * Determine whether the check health switcher status is changed.
+     * Determine whether the check status is changed.
      *
-     * @param currentCheckHealthSwitcherStatus current check health switcher status
-     * @return true if check health switcher status changed, false otherwise
+     * @param currentCheckStatus current check status
+     * @return true if check status changed, false otherwise
      */
-    private boolean isSwitcherStatusChange(boolean currentCheckHealthSwitcherStatus) {
+    private boolean isCheckStatusChanged(boolean currentCheckStatus) {
         boolean result = false;
-        if (currentCheckHealthSwitcherStatus != prevCheckHealthSwitcherStatus) {
+        if (currentCheckStatus != prevCheckStatus) {
             result = true;
-            prevCheckHealthSwitcherStatus = currentCheckHealthSwitcherStatus;
-            log.info("Changed consul check health switcher value to [{}]", currentCheckHealthSwitcherStatus);
+            prevCheckStatus = currentCheckStatus;
+            log.info("Changed consul check health switcher value to [{}]", currentCheckStatus);
         }
         return result;
     }
@@ -118,7 +118,7 @@ public class ConsulHealthChecker {
                     // 就将心跳改为以较小周期检测心跳开关是否变动，连续检测多次后给consul server发送一次心跳。
                     // TODO 改为开关listener方式。
                     boolean switcherStatus = currentCheckHealthSwitcherStatus;
-                    if (isSwitcherStatusChange(switcherStatus)) {
+                    if (isCheckStatusChanged(switcherStatus)) {
                         // 心跳开关状态已变更
                         setServiceInstanceStatus(switcherStatus);
                     } else {
