@@ -23,12 +23,12 @@ public class LuixConsulClientTest {
         ConsulService service2 = createConsulService("org.infinity.luix.democommon.service.AppService", "127.0.0.1", 6020);
         consulClient.registerService(service1);
         consulClient.registerService(service2);
-        consulHealthChecker.addCheckingServiceInstanceId(service1.getInstanceId());
-        consulHealthChecker.addCheckingServiceInstanceId(service2.getInstanceId());
-        consulHealthChecker.setCheckHealthSwitcherStatus(true);
+//        consulHealthChecker.addCheckingServiceInstanceId(service1.getInstanceId());
+//        consulHealthChecker.addCheckingServiceInstanceId(service2.getInstanceId());
+//        consulHealthChecker.setCheckHealthSwitcherStatus(true);
 
-        consulClient.checkPass(service1.getInstanceId());
         consulClient.checkFail(service1.getInstanceId());
+        consulClient.checkFail(service2.getInstanceId());
         Thread.sleep(100_000L);
     }
 

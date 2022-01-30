@@ -119,12 +119,13 @@ public class ConsulHealthChecker {
                     // TODO 改为开关listener方式。
                     try {
                         boolean switcherStatus = currentCheckHealthSwitcherStatus;
-                        // 心跳开关状态变更
                         if (isSwitcherStatusChange(switcherStatus)) {
+                            // 心跳开关状态已变更
                             checkHealth(switcherStatus);
                         } else {
                             // 心跳开关状态未变更
-                            if (switcherStatus) {// 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
+                            if (switcherStatus) {
+                                // 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
                                 switcherCheckTimes++;
                                 if (switcherCheckTimes >= MAX_SWITCHER_CHECK_TIMES) {
                                     checkHealth(true);
@@ -139,12 +140,12 @@ public class ConsulHealthChecker {
                 }, SWITCHER_CHECK_CIRCLE, SWITCHER_CHECK_CIRCLE, TimeUnit.MILLISECONDS);
     }
 
-    protected void checkHealth(boolean isPass) {
-        for (String serviceInstanceId : checkingServiceInstanceIds) {
+    protected void checkHealth(boolean checkPass) {
+        for (String instanceId : checkingServiceInstanceIds) {
             try {
-                checkHealthThreadPool.execute(new CheckHealthJob(serviceInstanceId, isPass));
+                checkHealthThreadPool.execute(new CheckHealthJob(instanceId, checkPass));
             } catch (RejectedExecutionException ree) {
-                log.error("Failed to execute check health job with consul service instance ID: [{}]", serviceInstanceId);
+                log.error("Failed to execute health checking job with consul service instance ID: [{}]", instanceId);
             }
         }
     }
@@ -157,18 +158,18 @@ public class ConsulHealthChecker {
 
     class CheckHealthJob implements Runnable {
         private final String  serviceInstanceId;
-        private final boolean isPass;
+        private final boolean checkPass;
 
-        public CheckHealthJob(String serviceInstanceId, boolean passStatus) {
+        public CheckHealthJob(String serviceInstanceId, boolean checkPass) {
             super();
             this.serviceInstanceId = serviceInstanceId;
-            this.isPass = passStatus;
+            this.checkPass = checkPass;
         }
 
         @Override
         public void run() {
             try {
-                if (isPass) {
+                if (checkPass) {
                     // 设置一个本地检查项的状态为passing
                     consulClient.checkPass(serviceInstanceId);
                 } else {
