@@ -3,6 +3,7 @@ package org.infinity.luix.registry.consul;
 import com.ecwid.consul.v1.ConsulClient;
 import com.ecwid.consul.v1.QueryParams;
 import com.ecwid.consul.v1.Response;
+import com.ecwid.consul.v1.health.HealthServicesRequest;
 import com.ecwid.consul.v1.health.model.HealthService;
 import com.ecwid.consul.v1.kv.model.GetValue;
 import lombok.extern.slf4j.Slf4j;
@@ -55,9 +56,11 @@ public class LuixConsulClient {
     }
 
     public Response<List<ConsulService>> queryActiveServiceInstances(String serviceName, long lastConsulIndex) {
-        QueryParams queryParams = new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, lastConsulIndex);
-        Response<List<HealthService>> response = consulClient.getHealthServices(serviceName, true, queryParams);
-
+        HealthServicesRequest request = HealthServicesRequest.newBuilder()
+                .setQueryParams(new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, lastConsulIndex))
+                .setPassing(true)
+                .build();
+        Response<List<HealthService>> response = consulClient.getHealthServices(serviceName, request);
         List<ConsulService> activeServiceInstances = new ArrayList<>();
         if (response != null && CollectionUtils.isNotEmpty(response.getValue())) {
             for (HealthService activeServiceInstance : response.getValue()) {
