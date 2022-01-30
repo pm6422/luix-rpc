@@ -18,43 +18,43 @@ public class ConsulHealthChecker {
     /**
      * 心跳周期，取ttl的2/3
      */
-    private static   int                       HEARTBEAT_CIRCLE                 = (TTL * 1000 * 2) / 3;
+    private static final int                       HEARTBEAT_CIRCLE                 = (TTL * 1000 * 2) / 3;
     /**
      * 连续检测开关变更的最大次数，超过这个次数就发送一次心跳
      */
-    private static   int                       MAX_SWITCHER_CHECK_TIMES         = 10;
+    private static final int                       MAX_SWITCHER_CHECK_TIMES         = 10;
     /**
      * 检测开关变更的频率，连续检测MAX_SWITCHER_CHECK_TIMES次必须发送一次心跳。
      */
-    private static   int                       SWITCHER_CHECK_CIRCLE            = HEARTBEAT_CIRCLE / MAX_SWITCHER_CHECK_TIMES;
+    private static final int                       SWITCHER_CHECK_CIRCLE            = HEARTBEAT_CIRCLE / MAX_SWITCHER_CHECK_TIMES;
     /**
      * Luix consul client
      */
-    private final    LuixConsulClient          consulClient;
+    private final        LuixConsulClient          consulClient;
     /**
      * Check health scheduling thread pool
      */
-    private final    ScheduledExecutorService  checkHealthSchedulingThreadPool;
+    private final        ScheduledExecutorService  checkHealthSchedulingThreadPool;
     /**
      * Check health execution thread pool
      */
-    private final    ThreadPoolExecutor        checkHealthThreadPool;
+    private final        ThreadPoolExecutor        checkHealthThreadPool;
     /**
      * Service instance IDs that need to be health checked.
      */
-    private final    ConcurrentHashSet<String> checkingServiceInstanceIds       = new ConcurrentHashSet<>();
+    private final        ConcurrentHashSet<String> checkingServiceInstanceIds       = new ConcurrentHashSet<>();
     /**
      * Previous check health switcher status
      */
-    private          boolean                   prevCheckHealthSwitcherStatus    = false;
+    private              boolean                   prevCheckHealthSwitcherStatus    = false;
     /**
      * Current check health switcher status
      */
-    private volatile boolean                   currentCheckHealthSwitcherStatus = false;
+    private volatile     boolean                   currentCheckHealthSwitcherStatus = false;
     /**
      * Switcher check times
      */
-    private          int                       switcherCheckTimes               = 0;
+    private              int                       switcherCheckTimes               = 0;
 
     public ConsulHealthChecker(LuixConsulClient consulClient) {
         this.consulClient = consulClient;
@@ -117,30 +117,26 @@ public class ConsulHealthChecker {
                     // 性能问题，只能将心跳方式改为较长的周期进行一次探测。又因为想在关闭心跳开关后尽快感知
                     // 就将心跳改为以较小周期检测心跳开关是否变动，连续检测多次后给consul server发送一次心跳。
                     // TODO 改为开关listener方式。
-                    try {
-                        boolean switcherStatus = currentCheckHealthSwitcherStatus;
-                        if (isSwitcherStatusChange(switcherStatus)) {
-                            // 心跳开关状态已变更
-                            checkHealth(switcherStatus);
-                        } else {
-                            // 心跳开关状态未变更
-                            if (switcherStatus) {
-                                // 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
-                                switcherCheckTimes++;
-                                if (switcherCheckTimes >= MAX_SWITCHER_CHECK_TIMES) {
-                                    checkHealth(true);
-                                    switcherCheckTimes = 0;
-                                }
+                    boolean switcherStatus = currentCheckHealthSwitcherStatus;
+                    if (isSwitcherStatusChange(switcherStatus)) {
+                        // 心跳开关状态已变更
+                        setServiceInstanceStatus(switcherStatus);
+                    } else {
+                        // 心跳开关状态未变更
+                        if (switcherStatus) {
+                            // 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
+                            switcherCheckTimes++;
+                            if (switcherCheckTimes >= MAX_SWITCHER_CHECK_TIMES) {
+                                // Set the status of consul service instance to 'passing'
+                                setServiceInstanceStatus(true);
+                                switcherCheckTimes = 0;
                             }
                         }
-
-                    } catch (Exception e) {
-                        log.error("consul heartbeat executor err:", e);
                     }
                 }, SWITCHER_CHECK_CIRCLE, SWITCHER_CHECK_CIRCLE, TimeUnit.MILLISECONDS);
     }
 
-    protected void checkHealth(boolean checkPass) {
+    protected void setServiceInstanceStatus(boolean checkPass) {
         for (String instanceId : checkingServiceInstanceIds) {
             try {
                 checkHealthThreadPool.execute(new CheckHealthJob(instanceId, checkPass));
@@ -153,7 +149,7 @@ public class ConsulHealthChecker {
     public void close() {
         checkHealthSchedulingThreadPool.shutdown();
         checkHealthThreadPool.shutdown();
-        log.info("Closed consul check health manager");
+        log.info("Closed consul service instance health checker");
     }
 
     class CheckHealthJob implements Runnable {
@@ -170,14 +166,14 @@ public class ConsulHealthChecker {
         public void run() {
             try {
                 if (checkPass) {
-                    // 设置一个本地检查项的状态为passing
+                    // Set the status of service instance to 'passing' by sending a REST request to consul server
                     consulClient.checkPass(serviceInstanceId);
                 } else {
-                    // 设置一个本地检查项的状态为critical
+                    // Set the status of service instance to 'critical' by sending a REST request to consul server
                     consulClient.checkFail(serviceInstanceId);
                 }
             } catch (Exception e) {
-                log.error("Failed to set consul checker with consul service instance ID: [" + serviceInstanceId + "]");
+                log.error("Failed to set the status of consul service instance with ID: [" + serviceInstanceId + "]");
             }
         }
     }
