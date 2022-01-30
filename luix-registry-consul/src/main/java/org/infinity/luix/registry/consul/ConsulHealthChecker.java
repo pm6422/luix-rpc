@@ -43,15 +43,15 @@ public class ConsulHealthChecker {
     /**
      * Previous check health switcher status
      */
-    private              boolean                   prevCheckStatus            = false;
+    private              boolean                   prevStatus                 = false;
     /**
      * Current check health switcher status
      */
-    private volatile     boolean                   currentCheckStatus         = false;
+    private volatile     boolean                   currentStatus              = false;
     /**
      * Switcher check times
      */
-    private              int                       switcherCheckTimes         = 0;
+    private              int                       checkTimes                 = 0;
 
     public ConsulHealthChecker(LuixConsulClient consulClient) {
         this.consulClient = consulClient;
@@ -86,12 +86,12 @@ public class ConsulHealthChecker {
         checkingServiceInstanceIds.remove(serviceInstanceId);
     }
 
-    public void setCheckStatus(boolean checkStatus) {
-        currentCheckStatus = checkStatus;
-        if (currentCheckStatus != prevCheckStatus) {
-            prevCheckStatus = currentCheckStatus;
-            setServiceInstanceStatus(currentCheckStatus);
-            log.info("Changed consul check health switcher value to [{}]", currentCheckStatus);
+    public void setServiceInstanceStatus(boolean checkStatus) {
+        currentStatus = checkStatus;
+        if (currentStatus != prevStatus) {
+            prevStatus = currentStatus;
+            doSetServiceInstanceStatus(currentStatus);
+            log.info("Changed consul service instance status to [{}]", currentStatus);
         }
     }
 
@@ -107,24 +107,24 @@ public class ConsulHealthChecker {
     public void start() {
         checkHealthSchedulingThreadPool.scheduleAtFixedRate(
                 () -> {
-                    if (currentCheckStatus) {
+                    if (currentStatus) {
                         // 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
-                        switcherCheckTimes++;
-                        if (switcherCheckTimes >= MAX_CHECK_TIMES) {
+                        checkTimes++;
+                        if (checkTimes >= MAX_CHECK_TIMES) {
                             // Periodically set status of consul service instance to 'passing' for the registered service instance ID
-                            setServiceInstanceStatus(true);
-                            switcherCheckTimes = 0;
+                            doSetServiceInstanceStatus(true);
+                            checkTimes = 0;
                         }
                     }
                 }, CHECK_INTERVAL, CHECK_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
-    protected void setServiceInstanceStatus(boolean checkPass) {
+    protected void doSetServiceInstanceStatus(boolean checkPass) {
         for (String instanceId : checkingServiceInstanceIds) {
             try {
                 checkHealthThreadPool.execute(new CheckHealthJob(instanceId, checkPass));
             } catch (RejectedExecutionException ree) {
-                log.error("Failed to execute health checking job with consul service instance ID: [{}]", instanceId);
+                log.error("Failed to execute health checking job with consul service instance ID: [" + instanceId + "]", ree);
             }
         }
     }
