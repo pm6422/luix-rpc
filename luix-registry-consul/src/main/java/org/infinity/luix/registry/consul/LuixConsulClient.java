@@ -20,11 +20,14 @@ public class LuixConsulClient {
     /**
      * consul block查询时block的最长时间,单位(秒)
      */
-    public static       long         CONSUL_BLOCK_TIME_SECONDS = TimeUnit.MINUTES.toSeconds(9);
+    public static       long         CONSUL_BLOCK_TIME_SECONDS      = TimeUnit.MINUTES.toSeconds(9);
     /**
-     * motan rpc 在consul中存储command的目录
+     * command的目录
      */
-    public static final String       CONSUL_LUIX_COMMAND       = "luix/command/";
+    public static final String       CONSUL_LUIX_COMMAND_KEY_PREFIX = "luix/command/";
+    /**
+     * Consul client instance
+     */
     public static       ConsulClient consulClient;
 
     public LuixConsulClient(String host, int port) {
@@ -77,7 +80,7 @@ public class LuixConsulClient {
     }
 
     public String lookupCommand(String group) {
-        String key = CONSUL_LUIX_COMMAND + ConsulUtils.buildServiceName(group);
+        String key = CONSUL_LUIX_COMMAND_KEY_PREFIX + ConsulUtils.buildServiceName(group);
         GetValue value = consulClient.getKVValue(key).getValue();
         String command = StringUtils.EMPTY;
         if (value == null) {
