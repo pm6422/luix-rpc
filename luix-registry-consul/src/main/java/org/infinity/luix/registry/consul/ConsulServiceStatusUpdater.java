@@ -45,13 +45,13 @@ public class ConsulServiceStatusUpdater {
      */
     private final        LuixConsulClient          consulClient;
     /**
-     * Check health scheduling thread pool
+     * Consul service instance status update scheduler thread pool
      */
-    private final        ScheduledExecutorService  checkHealthSchedulingThreadPool;
+    private final        ScheduledExecutorService  statusUpdateThreadPool;
     /**
-     * Check health execution thread pool
+     * Consul service instance status update execution thread pool
      */
-    private final        ThreadPoolExecutor        checkHealthThreadPool;
+    private final        ThreadPoolExecutor        executionThreadPool;
     /**
      * Service instance IDs that need to be health checked.
      */
@@ -63,11 +63,11 @@ public class ConsulServiceStatusUpdater {
 
     public ConsulServiceStatusUpdater(LuixConsulClient consulClient) {
         this.consulClient = consulClient;
-        checkHealthSchedulingThreadPool = Executors.newSingleThreadScheduledExecutor();
-        checkHealthThreadPool = createCheckHealthThreadPool();
+        statusUpdateThreadPool = Executors.newSingleThreadScheduledExecutor();
+        executionThreadPool = createExecutionThreadPool();
     }
 
-    private ThreadPoolExecutor createCheckHealthThreadPool() {
+    private ThreadPoolExecutor createExecutionThreadPool() {
         return new ThreadPoolExecutor(5, 30, 30 * 1_000,
                 TimeUnit.MILLISECONDS, createWorkQueue());
     }
@@ -77,7 +77,7 @@ public class ConsulServiceStatusUpdater {
     }
 
     /**
-     * Add consul service instance ID, add the service instance ID will keep the heartbeat 'passing' status by a timer.
+     * Add consul service instance ID
      *
      * @param serviceInstanceId service instance ID
      */
@@ -86,7 +86,7 @@ public class ConsulServiceStatusUpdater {
     }
 
     /**
-     * Remove consul service instance ID, remove the service instance ID will not keep the heartbeat 'passing' status by a timer.
+     * Remove consul service instance ID
      *
      * @param serviceInstanceId service instance ID
      */
@@ -98,8 +98,18 @@ public class ConsulServiceStatusUpdater {
         currentStatus = status;
         if (!currentStatus.equals(prevStatus)) {
             prevStatus = currentStatus;
-            doSetServiceInstanceStatus(currentStatus);
+            doUpdateStatus(currentStatus);
             log.info("Changed consul service instance status to [{}]", currentStatus);
+        }
+    }
+
+    private void doUpdateStatus(String status) {
+        for (String instanceId : checkingServiceInstanceIds) {
+            try {
+                executionThreadPool.execute(new CheckHealthJob(instanceId, status));
+            } catch (RejectedExecutionException ree) {
+                log.error("Failed to execute health checking job with consul service instance ID: [" + instanceId + "]", ree);
+            }
         }
     }
 
@@ -131,33 +141,23 @@ public class ConsulServiceStatusUpdater {
      * and send a heartbeat to the consumer server after continuous detection for many times.
      */
     public void start() {
-        checkHealthSchedulingThreadPool.scheduleAtFixedRate(
+        statusUpdateThreadPool.scheduleAtFixedRate(
                 () -> {
                     if (STATUS_PASSING.equals(currentStatus)) {
                         // 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
                         checkTimes++;
                         if (checkTimes >= MAX_CHECK_TIMES) {
                             // Periodically set status of consul service instance to 'passing' for the registered service instance ID
-                            doSetServiceInstanceStatus(STATUS_PASSING);
+                            doUpdateStatus(STATUS_PASSING);
                             checkTimes = 0;
                         }
                     }
                 }, CHECK_SCHEDULE_INTERVAL, CHECK_SCHEDULE_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
-    protected void doSetServiceInstanceStatus(String status) {
-        for (String instanceId : checkingServiceInstanceIds) {
-            try {
-                checkHealthThreadPool.execute(new CheckHealthJob(instanceId, status));
-            } catch (RejectedExecutionException ree) {
-                log.error("Failed to execute health checking job with consul service instance ID: [" + instanceId + "]", ree);
-            }
-        }
-    }
-
     public void close() {
-        checkHealthSchedulingThreadPool.shutdown();
-        checkHealthThreadPool.shutdown();
+        statusUpdateThreadPool.shutdown();
+        executionThreadPool.shutdown();
         log.info("Closed consul service instance health checker");
     }
 
