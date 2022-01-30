@@ -54,7 +54,7 @@ public class LuixConsulClient {
         consulClient.agentCheckFail(SERVICE_INSTANCE_ID_PREFIX + serviceInstanceId);
     }
 
-    public ConsulResponse<List<ConsulService>> lookupHealthService(String serviceName, long lastConsulIndex) {
+    public ConsulResponse<List<ConsulService>> queryActiveServices(String serviceName, long lastConsulIndex) {
         ConsulResponse<List<ConsulService>> consulResponse = new ConsulResponse<>();
         QueryParams queryParams = new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, lastConsulIndex);
         Response<List<HealthService>> consulHealthResults = consulClient.getHealthServices(serviceName, true, queryParams);
@@ -81,12 +81,12 @@ public class LuixConsulClient {
         return consulResponse;
     }
 
-    public String lookupCommand(String form) {
+    public String queryCommand(String form) {
         String key = CONSUL_LUIX_COMMAND_KEY_PREFIX + ConsulUtils.buildServiceName(form);
         GetValue value = consulClient.getKVValue(key).getValue();
         String command = StringUtils.EMPTY;
         if (value == null) {
-            log.warn("No command found with group: [{}]", form);
+            log.warn("No command found with form: [{}]", form);
         } else if (value.getValue() != null) {
             command = value.getDecodedValue();
         }

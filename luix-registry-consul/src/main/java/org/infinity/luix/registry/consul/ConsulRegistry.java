@@ -198,7 +198,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * @return ConsulResponse or null
      */
     private ConsulResponse<List<ConsulService>> lookupConsulService(String serviceName, Long lastConsulIndexId) {
-        return consulClient.lookupHealthService(ConsulUtils.buildServiceName(serviceName), lastConsulIndexId);
+        return consulClient.queryActiveServices(ConsulUtils.buildServiceName(serviceName), lastConsulIndexId);
     }
 
     @Override
@@ -311,7 +311,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     private String lookupCommandUpdate(String group) {
-        String command = consulClient.lookupCommand(group);
+        String command = consulClient.queryCommand(group);
         lookupGroupCommands.put(group, command);
         return command;
     }
