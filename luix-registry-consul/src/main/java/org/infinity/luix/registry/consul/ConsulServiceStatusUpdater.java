@@ -69,7 +69,7 @@ public class ConsulServiceStatusUpdater {
 
     private ThreadPoolExecutor createExecutionThreadPool() {
         return new ThreadPoolExecutor(5, 30, 30 * 1_000,
-                TimeUnit.MILLISECONDS, createWorkQueue());
+                TimeUnit.MILLISECONDS, createWorkQueue(), new ThreadPoolExecutor.AbortPolicy());
     }
 
     private BlockingQueue<Runnable> createWorkQueue() {
