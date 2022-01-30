@@ -83,7 +83,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     @Override
     protected void doActivate(Url url) {
 //        if (url == null) {
-        consulHealthChecker.setCheckHealthSwitcherStatus(true);
+        consulHealthChecker.setCheckStatus(true);
 //        } else {
 //            throw new UnsupportedOperationException("Command consul registry not support available by urls yet");
 //        }
@@ -92,7 +92,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     @Override
     protected void doDeactivate(Url url) {
 //        if (url == null) {
-        consulHealthChecker.setCheckHealthSwitcherStatus(false);
+        consulHealthChecker.setCheckStatus(false);
 //        } else {
 //            throw new UnsupportedOperationException("Command consul registry not support unavailable by urls yet");
 //        }

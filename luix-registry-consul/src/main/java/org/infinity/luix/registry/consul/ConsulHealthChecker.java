@@ -46,15 +46,15 @@ public class ConsulHealthChecker {
     /**
      * Previous check health switcher status
      */
-    private              boolean                   prevCheckStatus                  = false;
+    private              boolean prevCheckStatus    = false;
     /**
      * Current check health switcher status
      */
-    private volatile     boolean                   currentCheckHealthSwitcherStatus = false;
+    private volatile     boolean currentCheckStatus = false;
     /**
      * Switcher check times
      */
-    private              int                       switcherCheckTimes               = 0;
+    private              int     switcherCheckTimes = 0;
 
     public ConsulHealthChecker(LuixConsulClient consulClient) {
         this.consulClient = consulClient;
@@ -105,8 +105,8 @@ public class ConsulHealthChecker {
         return result;
     }
 
-    public void setCheckHealthSwitcherStatus(boolean checkHealthSwitcherStatus) {
-        currentCheckHealthSwitcherStatus = checkHealthSwitcherStatus;
+    public void setCheckStatus(boolean checkStatus) {
+        currentCheckStatus = checkStatus;
     }
 
     public void start() {
@@ -117,7 +117,7 @@ public class ConsulHealthChecker {
                     // 性能问题，只能将心跳方式改为较长的周期进行一次探测。又因为想在关闭心跳开关后尽快感知
                     // 就将心跳改为以较小周期检测心跳开关是否变动，连续检测多次后给consul server发送一次心跳。
                     // TODO 改为开关listener方式。
-                    boolean switcherStatus = currentCheckHealthSwitcherStatus;
+                    boolean switcherStatus = currentCheckStatus;
                     if (isCheckStatusChanged(switcherStatus)) {
                         // 心跳开关状态已变更
                         setServiceInstanceStatus(switcherStatus);
