@@ -105,6 +105,10 @@ public class ConsulHealthChecker {
         return result;
     }
 
+    public void setCheckHealthSwitcherStatus(boolean checkHealthSwitcherStatus) {
+        currentCheckHealthSwitcherStatus = checkHealthSwitcherStatus;
+    }
+
     public void start() {
         checkHealthSchedulingThreadPool.scheduleAtFixedRate(
                 () -> {
@@ -114,7 +118,7 @@ public class ConsulHealthChecker {
                     // 就将心跳改为以较小周期检测心跳开关是否变动，连续检测多次后给consul server发送一次心跳。
                     // TODO 改为开关listener方式。
                     try {
-                        boolean switcherStatus = isHeartbeatOpen();
+                        boolean switcherStatus = currentCheckHealthSwitcherStatus;
                         // 心跳开关状态变更
                         if (isSwitcherStatusChange(switcherStatus)) {
                             checkHealth(switcherStatus);
@@ -151,19 +155,6 @@ public class ConsulHealthChecker {
         log.info("Closed consul check health manager");
     }
 
-    /**
-     * 检查心跳开关是否打开
-     *
-     * @return
-     */
-    private boolean isHeartbeatOpen() {
-        return currentCheckHealthSwitcherStatus;
-    }
-
-    public void setHeartbeatOpen(boolean open) {
-        currentCheckHealthSwitcherStatus = open;
-    }
-
     class CheckHealthJob implements Runnable {
         private final String  serviceInstanceId;
         private final boolean isPass;
@@ -185,7 +176,7 @@ public class ConsulHealthChecker {
                     consulClient.checkFail(serviceInstanceId);
                 }
             } catch (Exception e) {
-                log.error("consul heartbeat-set check pass error! serviceId:" + serviceInstanceId, e);
+                log.error("Failed to set consul checker with consul service instance ID: [" + serviceInstanceId + "]");
             }
         }
     }
