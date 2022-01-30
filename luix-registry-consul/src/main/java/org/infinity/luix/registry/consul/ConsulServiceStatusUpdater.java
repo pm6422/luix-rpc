@@ -106,7 +106,13 @@ public class ConsulServiceStatusUpdater {
     private void doUpdateStatus(String status) {
         for (String instanceId : checkingServiceInstanceIds) {
             try {
-                executionThreadPool.execute(new CheckHealthJob(instanceId, status));
+                executionThreadPool.execute(() -> {
+                    if (STATUS_PASSING.equals(status)) {
+                        activate(instanceId);
+                    } else {
+                        deactivate(instanceId);
+                    }
+                });
             } catch (RejectedExecutionException ree) {
                 log.error("Failed to execute health checking job with consul service instance ID: [" + instanceId + "]", ree);
             }
@@ -159,29 +165,5 @@ public class ConsulServiceStatusUpdater {
         statusUpdateThreadPool.shutdown();
         executionThreadPool.shutdown();
         log.info("Closed consul service instance health checker");
-    }
-
-    class CheckHealthJob implements Runnable {
-        private final String serviceInstanceId;
-        private final String status;
-
-        public CheckHealthJob(String serviceInstanceId, String status) {
-            super();
-            this.serviceInstanceId = serviceInstanceId;
-            this.status = status;
-        }
-
-        @Override
-        public void run() {
-            try {
-                if (STATUS_PASSING.equals(status)) {
-                    activate(serviceInstanceId);
-                } else {
-                    deactivate(serviceInstanceId);
-                }
-            } catch (Exception e) {
-                log.error("Failed to set the status of consul service instance with ID: [" + serviceInstanceId + "]", e);
-            }
-        }
     }
 }
