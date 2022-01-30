@@ -9,7 +9,7 @@ import static org.infinity.luix.registry.consul.ConsulService.TTL;
 
 /**
  * consul 心跳管理类。 rpc服务把需要设置passing状态的serviceId注册到此类，
- * 此类会定时对注册的serviceId设置passing状态（实际是对serviceId对应对checkid设置passing状态），
+ * 此类会定时对注册的serviceId设置passing状态（实际是对serviceId对应对checkId设置passing状态），
  * 从而完成servivce的心跳。
  * 开关开启后会进行心跳，开关关闭则停止心跳。
  */
@@ -71,36 +71,6 @@ public class ConsulHealthChecker {
         return new ArrayBlockingQueue<>(10_000);
     }
 
-    public void start() {
-        checkHealthSchedulingThreadPool.scheduleAtFixedRate(
-                () -> {
-                    // 由于consul的check set pass会导致consul
-                    // server的写磁盘操作，过于频繁的心跳会导致consul
-                    // 性能问题，只能将心跳方式改为较长的周期进行一次探测。又因为想在关闭心跳开关后尽快感知
-                    // 就将心跳改为以较小周期检测心跳开关是否变动，连续检测多次后给consul server发送一次心跳。
-                    // TODO 改为开关listener方式。
-                    try {
-                        boolean switcherStatus = isHeartbeatOpen();
-                        // 心跳开关状态变更
-                        if (isSwitcherChange(switcherStatus)) {
-                            checkHealth(switcherStatus);
-                        } else {
-                            // 心跳开关状态未变更
-                            if (switcherStatus) {// 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
-                                switcherCheckTimes++;
-                                if (switcherCheckTimes >= MAX_SWITCHER_CHECK_TIMES) {
-                                    checkHealth(true);
-                                    switcherCheckTimes = 0;
-                                }
-                            }
-                        }
-
-                    } catch (Exception e) {
-                        log.error("consul heartbeat executor err:", e);
-                    }
-                }, SWITCHER_CHECK_CIRCLE, SWITCHER_CHECK_CIRCLE, TimeUnit.MILLISECONDS);
-    }
-
     /**
      * Add consul service instance ID, add the service instance ID will keep the heartbeat 'passing' status by a timer.
      *
@@ -125,14 +95,44 @@ public class ConsulHealthChecker {
      * @param currentCheckHealthSwitcherStatus current check health switcher status
      * @return true if check health switcher status changed, false otherwise
      */
-    private boolean isSwitcherChange(boolean currentCheckHealthSwitcherStatus) {
-        boolean ret = false;
+    private boolean isSwitcherStatusChange(boolean currentCheckHealthSwitcherStatus) {
+        boolean result = false;
         if (currentCheckHealthSwitcherStatus != prevCheckHealthSwitcherStatus) {
-            ret = true;
+            result = true;
             prevCheckHealthSwitcherStatus = currentCheckHealthSwitcherStatus;
             log.info("Changed consul check health switcher value to [{}]", currentCheckHealthSwitcherStatus);
         }
-        return ret;
+        return result;
+    }
+
+    public void start() {
+        checkHealthSchedulingThreadPool.scheduleAtFixedRate(
+                () -> {
+                    // 由于consul的check set pass会导致consul
+                    // server的写磁盘操作，过于频繁的心跳会导致consul
+                    // 性能问题，只能将心跳方式改为较长的周期进行一次探测。又因为想在关闭心跳开关后尽快感知
+                    // 就将心跳改为以较小周期检测心跳开关是否变动，连续检测多次后给consul server发送一次心跳。
+                    // TODO 改为开关listener方式。
+                    try {
+                        boolean switcherStatus = isHeartbeatOpen();
+                        // 心跳开关状态变更
+                        if (isSwitcherStatusChange(switcherStatus)) {
+                            checkHealth(switcherStatus);
+                        } else {
+                            // 心跳开关状态未变更
+                            if (switcherStatus) {// 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
+                                switcherCheckTimes++;
+                                if (switcherCheckTimes >= MAX_SWITCHER_CHECK_TIMES) {
+                                    checkHealth(true);
+                                    switcherCheckTimes = 0;
+                                }
+                            }
+                        }
+
+                    } catch (Exception e) {
+                        log.error("consul heartbeat executor err:", e);
+                    }
+                }, SWITCHER_CHECK_CIRCLE, SWITCHER_CHECK_CIRCLE, TimeUnit.MILLISECONDS);
     }
 
     protected void checkHealth(boolean isPass) {
