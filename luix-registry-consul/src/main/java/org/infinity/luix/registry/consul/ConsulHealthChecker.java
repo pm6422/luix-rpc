@@ -86,49 +86,34 @@ public class ConsulHealthChecker {
         checkingServiceInstanceIds.remove(serviceInstanceId);
     }
 
-    /**
-     * Determine whether the check status is changed.
-     *
-     * @param currentCheckStatus current check status
-     * @return true if check status changed, false otherwise
-     */
-    private boolean isCheckStatusChanged(boolean currentCheckStatus) {
-        boolean result = false;
-        if (currentCheckStatus != prevCheckStatus) {
-            result = true;
-            prevCheckStatus = currentCheckStatus;
-            log.info("Changed consul check health switcher value to [{}]", currentCheckStatus);
-        }
-        return result;
-    }
-
     public void setCheckStatus(boolean checkStatus) {
         currentCheckStatus = checkStatus;
+        if (currentCheckStatus != prevCheckStatus) {
+            prevCheckStatus = currentCheckStatus;
+            setServiceInstanceStatus(currentCheckStatus);
+            log.info("Changed consul check health switcher value to [{}]", currentCheckStatus);
+        }
     }
 
+    /**
+     * Each consul service instance will be registered a TTL type check. We can prolong the TTL lifecycle by a timer.
+     * Set check pass to consul can cause disk writing operation of consul server,
+     * too frequent heartbeat will cause performance problems of the consul server.
+     * The heartbeat mode can only be changed to a longer cycle for one detection.
+     * Because we want to sense the heartbeat as soon as possible after turning off the heartbeat switch,
+     * change the heartbeat to detect whether the heartbeat switch changes in a small cycle,
+     * and send a heartbeat to the consumer server after continuous detection for many times.
+     */
     public void start() {
         checkHealthSchedulingThreadPool.scheduleAtFixedRate(
                 () -> {
-                    // Each consul service instance will be registered a TTL type check. We can prolong the TTL lifecycle by a timer.
-                    // Set check pass to consul can cause disk writing operation of consul server,
-                    // too frequent heartbeat will cause performance problems of the consul server.
-                    // The heartbeat mode can only be changed to a longer cycle for one detection.
-                    // Because we want to sense the heartbeat as soon as possible after turning off the heartbeat switch,
-                    // change the heartbeat to detect whether the heartbeat switch changes in a small cycle,
-                    // and send a heartbeat to the consumer server after continuous detection for many times.
-                    if (isCheckStatusChanged(currentCheckStatus)) {
-                        // 心跳开关状态已变更
-                        setServiceInstanceStatus(currentCheckStatus);
-                    } else {
-                        // 心跳开关状态未变更
-                        if (currentCheckStatus) {
-                            // 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
-                            switcherCheckTimes++;
-                            if (switcherCheckTimes >= MAX_CHECK_TIMES) {
-                                // Periodically set status of consul service instance to 'passing' for the registered service instance ID
-                                setServiceInstanceStatus(true);
-                                switcherCheckTimes = 0;
-                            }
+                    if (currentCheckStatus) {
+                        // 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
+                        switcherCheckTimes++;
+                        if (switcherCheckTimes >= MAX_CHECK_TIMES) {
+                            // Periodically set status of consul service instance to 'passing' for the registered service instance ID
+                            setServiceInstanceStatus(true);
+                            switcherCheckTimes = 0;
                         }
                     }
                 }, CHECK_INTERVAL, CHECK_INTERVAL, TimeUnit.MILLISECONDS);
