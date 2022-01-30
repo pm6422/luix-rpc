@@ -70,32 +70,38 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     protected void doRegister(Url providerUrl) {
         ConsulService service = ConsulService.of(providerUrl);
         consulClient.registerService(service);
-        consulHealthChecker.addCheckingServiceInstanceId(service.getInstanceId());
     }
 
     @Override
     protected void doDeregister(Url url) {
         ConsulService service = ConsulService.of(url);
         consulClient.deregisterService(service.getInstanceId());
-        consulHealthChecker.removeCheckingServiceInstanceId(service.getInstanceId());
     }
 
     @Override
     protected void doActivate(Url url) {
-//        if (url == null) {
-        consulHealthChecker.setServiceInstanceStatus(true);
-//        } else {
-//            throw new UnsupportedOperationException("Command consul registry not support available by urls yet");
-//        }
+        if (url == null) {
+            // Activate all service instances
+            consulHealthChecker.setServiceInstanceStatus(true);
+        } else {
+            // Activate specified service instance
+            String instanceId = ConsulUtils.buildServiceInstanceId(url);
+            consulHealthChecker.addCheckingServiceInstanceId(instanceId);
+            consulHealthChecker.activateServiceInstance(instanceId);
+        }
     }
 
     @Override
     protected void doDeactivate(Url url) {
-//        if (url == null) {
-        consulHealthChecker.setServiceInstanceStatus(false);
-//        } else {
-//            throw new UnsupportedOperationException("Command consul registry not support unavailable by urls yet");
-//        }
+        if (url == null) {
+            // Deactivate all service instances
+            consulHealthChecker.setServiceInstanceStatus(false);
+        } else {
+            // Deactivate specified service instance
+            String instanceId = ConsulUtils.buildServiceInstanceId(url);
+            consulHealthChecker.removeCheckingServiceInstanceId(instanceId);
+            consulHealthChecker.deactivateServiceInstance(instanceId);
+        }
     }
 
     @Override

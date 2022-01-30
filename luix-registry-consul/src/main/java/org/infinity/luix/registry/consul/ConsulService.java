@@ -80,7 +80,7 @@ public class ConsulService {
     public static ConsulService of(Url url) {
         ConsulService consulService = new ConsulService();
         consulService.setName(ConsulUtils.buildServiceName(url.getForm()));
-        consulService.setInstanceId(ConsulUtils.buildServiceInstanceName(url));
+        consulService.setInstanceId(ConsulUtils.buildServiceInstanceId(url));
         consulService.setAddress(url.getHost());
         consulService.setPort(url.getPort());
         consulService.setTags(buildTags(url));
