@@ -17,7 +17,7 @@ public class ConsulService {
     /**
      * Time to live for consul service, unit is second.
      * Each consul service instance will be registered a TTL type check.
-     * If the heartbeat is not sent within the maximum TTL seconds, the service will become 'critical'.
+     * If the heartbeat is not sent within the maximum TTL seconds, the service will become 'failing'.
      */
     public static       int          TTL                 = 30;
     /**

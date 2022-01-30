@@ -105,7 +105,7 @@ public class ConsulHealthChecker {
     }
 
     /**
-     * Set the status of service instance to 'critical' by sending a REST request to consul server
+     * Set the status of service instance to 'failing' by sending a REST request to consul server
      *
      * @param serviceInstanceId service instance ID
      */
