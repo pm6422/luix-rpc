@@ -1,5 +1,6 @@
 package org.infinity.luix.registry.consul;
 
+import com.ecwid.consul.v1.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -29,9 +30,9 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * consul服务查询默认间隔时间。单位毫秒
      */
     public static int                                                                 DEFAULT_LOOKUP_INTERVAL = 30000;
-    private final LuixConsulClient           consulClient;
-    private final ConsulServiceStatusUpdater consulServiceStatusUpdater;
-    private final int                        lookupInterval;
+    private final LuixConsulClient                                                    consulClient;
+    private final ConsulServiceStatusUpdater                                          consulServiceStatusUpdater;
+    private final int                                                                 lookupInterval;
     // service local cache. key: group, value: <service interface name, url list>
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache            = new ConcurrentHashMap<>();
     // command local cache. key: group, value: command content
@@ -128,7 +129,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     private ConcurrentHashMap<String, List<Url>> lookupServiceUpdate(String form) {
         ConcurrentHashMap<String, List<Url>> groupUrls = new ConcurrentHashMap<>();
         Long lastConsulIndexId = lookupGroupServices.get(form) == null ? 0L : lookupGroupServices.get(form);
-        ConsulResponse<List<ConsulService>> response = lookupConsulService(form, lastConsulIndexId);
+        Response<List<ConsulService>> response = queryActiveServiceInstances(form, lastConsulIndexId);
         if (response != null) {
             List<ConsulService> services = response.getValue();
             if (CollectionUtils.isNotEmpty(services) && response.getConsulIndex() > lastConsulIndexId) {
@@ -187,14 +188,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         }
     }
 
-    /**
-     * directly fetch consul service data.
-     *
-     * @param serviceName
-     * @return ConsulResponse or null
-     */
-    private ConsulResponse<List<ConsulService>> lookupConsulService(String serviceName, Long lastConsulIndexId) {
-        return consulClient.queryActiveServices(ConsulUtils.buildServiceName(serviceName), lastConsulIndexId);
+    private Response<List<ConsulService>> queryActiveServiceInstances(String serviceName, Long lastConsulIndexId) {
+        return consulClient.queryActiveServiceInstances(ConsulUtils.buildServiceName(serviceName), lastConsulIndexId);
     }
 
     @Override

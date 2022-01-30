@@ -54,12 +54,12 @@ public class LuixConsulClient {
         consulClient.agentCheckFail(SERVICE_INSTANCE_ID_PREFIX + serviceInstanceId);
     }
 
-    public ConsulResponse<List<ConsulService>> queryActiveServices(String serviceName, long lastConsulIndex) {
-        ConsulResponse<List<ConsulService>> consulResponse = new ConsulResponse<>();
+    public Response<List<ConsulService>> queryActiveServiceInstances(String serviceName, long lastConsulIndex) {
         QueryParams queryParams = new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, lastConsulIndex);
         Response<List<HealthService>> response = consulClient.getHealthServices(serviceName, true, queryParams);
+
+        List<ConsulService> activeServiceInstances = new ArrayList<>();
         if (response != null && CollectionUtils.isNotEmpty(response.getValue())) {
-            List<ConsulService> activeServiceInstances = new ArrayList<>(response.getValue().size());
             for (HealthService activeServiceInstance : response.getValue()) {
                 try {
                     activeServiceInstances.add(ConsulService.of(activeServiceInstance));
@@ -70,14 +70,9 @@ public class LuixConsulClient {
                     log.error("Failed to convert to consul service with ID: [" + serviceInstanceId + "]", e);
                 }
             }
-            if (CollectionUtils.isNotEmpty(activeServiceInstances)) {
-                consulResponse.setValue(activeServiceInstances);
-                consulResponse.setConsulIndex(response.getConsulIndex());
-                consulResponse.setConsulLastContact(response.getConsulLastContact());
-                consulResponse.setConsulKnownLeader(response.isConsulKnownLeader());
-            }
         }
-        return consulResponse;
+        return new Response<>(activeServiceInstances, response.getConsulIndex(),
+                response.isConsulKnownLeader(), response.getConsulLastContact());
     }
 
     public String queryCommand(String form) {
