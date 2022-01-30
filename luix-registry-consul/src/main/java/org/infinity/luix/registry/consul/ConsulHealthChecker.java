@@ -8,25 +8,23 @@ import java.util.concurrent.*;
 import static org.infinity.luix.registry.consul.ConsulService.TTL;
 
 /**
- * consul 心跳管理类。 rpc服务把需要设置passing状态的serviceId注册到此类，
- * 此类会定时对注册的serviceId设置passing状态（实际是对serviceId对应对checkId设置passing状态），
- * 从而完成servivce的心跳。
- * 开关开启后会进行心跳，开关关闭则停止心跳。
+
+ * When the switch is turned on, the heartbeat will occur, and when the switch is turned off, the heartbeat will stop.
  */
 @Slf4j
 public class ConsulHealthChecker {
     /**
      * 心跳周期，取ttl的2/3
      */
-    private static final int                       HEARTBEAT_CIRCLE                 = (TTL * 1000 * 2) / 3;
+    private static final int                       HEARTBEAT_CIRCLE           = (TTL * 1000 * 2) / 3;
     /**
      * 连续检测开关变更的最大次数，超过这个次数就发送一次心跳
      */
-    private static final int                       MAX_SWITCHER_CHECK_TIMES         = 10;
+    private static final int                       MAX_SWITCHER_CHECK_TIMES   = 10;
     /**
      * 检测开关变更的频率，连续检测MAX_SWITCHER_CHECK_TIMES次必须发送一次心跳。
      */
-    private static final int                       SWITCHER_CHECK_CIRCLE            = HEARTBEAT_CIRCLE / MAX_SWITCHER_CHECK_TIMES;
+    private static final int                       SWITCHER_CHECK_CIRCLE      = HEARTBEAT_CIRCLE / MAX_SWITCHER_CHECK_TIMES;
     /**
      * Luix consul client
      */
@@ -42,19 +40,19 @@ public class ConsulHealthChecker {
     /**
      * Service instance IDs that need to be health checked.
      */
-    private final        ConcurrentHashSet<String> checkingServiceInstanceIds       = new ConcurrentHashSet<>();
+    private final        ConcurrentHashSet<String> checkingServiceInstanceIds = new ConcurrentHashSet<>();
     /**
      * Previous check health switcher status
      */
-    private              boolean prevCheckStatus    = false;
+    private              boolean                   prevCheckStatus            = false;
     /**
      * Current check health switcher status
      */
-    private volatile     boolean currentCheckStatus = false;
+    private volatile     boolean                   currentCheckStatus         = false;
     /**
      * Switcher check times
      */
-    private              int     switcherCheckTimes = 0;
+    private              int                       switcherCheckTimes         = 0;
 
     public ConsulHealthChecker(LuixConsulClient consulClient) {
         this.consulClient = consulClient;
@@ -112,22 +110,23 @@ public class ConsulHealthChecker {
     public void start() {
         checkHealthSchedulingThreadPool.scheduleAtFixedRate(
                 () -> {
-                    // 由于consul的check set pass会导致consul
-                    // server的写磁盘操作，过于频繁的心跳会导致consul
-                    // 性能问题，只能将心跳方式改为较长的周期进行一次探测。又因为想在关闭心跳开关后尽快感知
-                    // 就将心跳改为以较小周期检测心跳开关是否变动，连续检测多次后给consul server发送一次心跳。
-                    // TODO 改为开关listener方式。
-                    boolean switcherStatus = currentCheckStatus;
-                    if (isCheckStatusChanged(switcherStatus)) {
+                    // Each consul service instance will be registered a TTL type check. We can prolong the TTL lifecycle by a timer.
+                    // Set check pass to consul can cause disk writing operation of consul server,
+                    // too frequent heartbeat will cause performance problems of the consul server.
+                    // The heartbeat mode can only be changed to a longer cycle for one detection.
+                    // Because we want to sense the heartbeat as soon as possible after turning off the heartbeat switch,
+                    // change the heartbeat to detect whether the heartbeat switch changes in a small cycle,
+                    // and send a heartbeat to the consumer server after continuous detection for many times.
+                    if (isCheckStatusChanged(currentCheckStatus)) {
                         // 心跳开关状态已变更
-                        setServiceInstanceStatus(switcherStatus);
+                        setServiceInstanceStatus(currentCheckStatus);
                     } else {
                         // 心跳开关状态未变更
-                        if (switcherStatus) {
+                        if (currentCheckStatus) {
                             // 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
                             switcherCheckTimes++;
                             if (switcherCheckTimes >= MAX_SWITCHER_CHECK_TIMES) {
-                                // Set the status of consul service instance to 'passing'
+                                // Periodically set status of consul service instance to 'passing' for the registered service instance ID
                                 setServiceInstanceStatus(true);
                                 switcherCheckTimes = 0;
                             }
