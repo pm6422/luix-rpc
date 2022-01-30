@@ -21,9 +21,9 @@ public class ConsulServiceStatusUpdater {
      */
     private static final int                       MAX_CHECK_TIMES            = 10;
     /**
-     * 检测开关变更的频率，连续检测MAX_SWITCHER_CHECK_TIMES次必须发送一次心跳。
+     * 检测开关变更的频率，连续检测MAX_SWITCHER_CHECK_TIMES次必须发送一次心跳
      */
-    private static final int                       CHECK_SCHEDULE_INTERVAL    = HEARTBEAT_CIRCLE / MAX_CHECK_TIMES;
+    private static final int                       SCHEDULE_INTERVAL          = HEARTBEAT_CIRCLE / MAX_CHECK_TIMES;
     /**
      * Consul service instance 'passing' status
      */
@@ -150,7 +150,6 @@ public class ConsulServiceStatusUpdater {
         statusUpdateThreadPool.scheduleAtFixedRate(
                 () -> {
                     if (STATUS_PASSING.equals(currentStatus)) {
-                        // 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
                         checkTimes++;
                         if (checkTimes >= MAX_CHECK_TIMES) {
                             // Periodically set status of consul service instance to 'passing' for the registered service instance ID
@@ -158,7 +157,7 @@ public class ConsulServiceStatusUpdater {
                             checkTimes = 0;
                         }
                     }
-                }, CHECK_SCHEDULE_INTERVAL, CHECK_SCHEDULE_INTERVAL, TimeUnit.MILLISECONDS);
+                }, SCHEDULE_INTERVAL, SCHEDULE_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
     public void close() {
