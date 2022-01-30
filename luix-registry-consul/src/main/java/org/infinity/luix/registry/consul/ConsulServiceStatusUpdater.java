@@ -11,7 +11,7 @@ import static org.infinity.luix.registry.consul.ConsulService.TTL;
  * When the switch is turned on, the heartbeat will occur, and when the switch is turned off, the heartbeat will stop.
  */
 @Slf4j
-public class ConsulHealthChecker {
+public class ConsulServiceStatusUpdater {
     /**
      * 心跳周期，取ttl的2/3
      */
@@ -24,6 +24,22 @@ public class ConsulHealthChecker {
      * 检测开关变更的频率，连续检测MAX_SWITCHER_CHECK_TIMES次必须发送一次心跳。
      */
     private static final int                       CHECK_SCHEDULE_INTERVAL    = HEARTBEAT_CIRCLE / MAX_CHECK_TIMES;
+    /**
+     * Consul service instance 'passing' status
+     */
+    public static final  String                    STATUS_PASSING             = "passing";
+    /**
+     * Consul service instance 'failing' status
+     */
+    public static final  String                    STATUS_FAILING             = "failing";
+    /**
+     * Status of previous consul service instances
+     */
+    private              String                    prevStatus                 = STATUS_FAILING;
+    /**
+     * Status of current consul service instances
+     */
+    private volatile     String                    currentStatus              = STATUS_FAILING;
     /**
      * Luix consul client
      */
@@ -41,19 +57,11 @@ public class ConsulHealthChecker {
      */
     private final        ConcurrentHashSet<String> checkingServiceInstanceIds = new ConcurrentHashSet<>();
     /**
-     * Previous check health switcher status
-     */
-    private              boolean                   prevStatus                 = false;
-    /**
-     * Current check health switcher status
-     */
-    private volatile     boolean                   currentStatus              = false;
-    /**
      * Switcher check times
      */
     private              int                       checkTimes                 = 0;
 
-    public ConsulHealthChecker(LuixConsulClient consulClient) {
+    public ConsulServiceStatusUpdater(LuixConsulClient consulClient) {
         this.consulClient = consulClient;
         checkHealthSchedulingThreadPool = Executors.newSingleThreadScheduledExecutor();
         checkHealthThreadPool = createCheckHealthThreadPool();
@@ -73,7 +81,7 @@ public class ConsulHealthChecker {
      *
      * @param serviceInstanceId service instance ID
      */
-    public void addCheckingServiceInstanceId(String serviceInstanceId) {
+    public void addInstanceId(String serviceInstanceId) {
         checkingServiceInstanceIds.add(serviceInstanceId);
     }
 
@@ -82,13 +90,13 @@ public class ConsulHealthChecker {
      *
      * @param serviceInstanceId service instance ID
      */
-    public void removeCheckingServiceInstanceId(String serviceInstanceId) {
+    public void removeInstanceId(String serviceInstanceId) {
         checkingServiceInstanceIds.remove(serviceInstanceId);
     }
 
-    public void setServiceInstanceStatus(boolean status) {
+    public void updateStatus(String status) {
         currentStatus = status;
-        if (currentStatus != prevStatus) {
+        if (!currentStatus.equals(prevStatus)) {
             prevStatus = currentStatus;
             doSetServiceInstanceStatus(currentStatus);
             log.info("Changed consul service instance status to [{}]", currentStatus);
@@ -100,7 +108,7 @@ public class ConsulHealthChecker {
      *
      * @param serviceInstanceId service instance ID
      */
-    public void activateServiceInstance(String serviceInstanceId) {
+    public void activate(String serviceInstanceId) {
         consulClient.checkPass(serviceInstanceId);
     }
 
@@ -109,7 +117,7 @@ public class ConsulHealthChecker {
      *
      * @param serviceInstanceId service instance ID
      */
-    public void deactivateServiceInstance(String serviceInstanceId) {
+    public void deactivate(String serviceInstanceId) {
         consulClient.checkFail(serviceInstanceId);
     }
 
@@ -125,22 +133,22 @@ public class ConsulHealthChecker {
     public void start() {
         checkHealthSchedulingThreadPool.scheduleAtFixedRate(
                 () -> {
-                    if (currentStatus) {
+                    if (STATUS_PASSING.equals(currentStatus)) {
                         // 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
                         checkTimes++;
                         if (checkTimes >= MAX_CHECK_TIMES) {
                             // Periodically set status of consul service instance to 'passing' for the registered service instance ID
-                            doSetServiceInstanceStatus(true);
+                            doSetServiceInstanceStatus(STATUS_PASSING);
                             checkTimes = 0;
                         }
                     }
                 }, CHECK_SCHEDULE_INTERVAL, CHECK_SCHEDULE_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
-    protected void doSetServiceInstanceStatus(boolean checkPass) {
+    protected void doSetServiceInstanceStatus(String status) {
         for (String instanceId : checkingServiceInstanceIds) {
             try {
-                checkHealthThreadPool.execute(new CheckHealthJob(instanceId, checkPass));
+                checkHealthThreadPool.execute(new CheckHealthJob(instanceId, status));
             } catch (RejectedExecutionException ree) {
                 log.error("Failed to execute health checking job with consul service instance ID: [" + instanceId + "]", ree);
             }
@@ -154,22 +162,22 @@ public class ConsulHealthChecker {
     }
 
     class CheckHealthJob implements Runnable {
-        private final String  serviceInstanceId;
-        private final boolean checkPass;
+        private final String serviceInstanceId;
+        private final String status;
 
-        public CheckHealthJob(String serviceInstanceId, boolean checkPass) {
+        public CheckHealthJob(String serviceInstanceId, String status) {
             super();
             this.serviceInstanceId = serviceInstanceId;
-            this.checkPass = checkPass;
+            this.status = status;
         }
 
         @Override
         public void run() {
             try {
-                if (checkPass) {
-                    activateServiceInstance(serviceInstanceId);
+                if (STATUS_PASSING.equals(status)) {
+                    activate(serviceInstanceId);
                 } else {
-                    deactivateServiceInstance(serviceInstanceId);
+                    deactivate(serviceInstanceId);
                 }
             } catch (Exception e) {
                 log.error("Failed to set the status of consul service instance with ID: [" + serviceInstanceId + "]", e);

@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
+import static org.infinity.luix.registry.consul.ConsulServiceStatusUpdater.STATUS_FAILING;
+import static org.infinity.luix.registry.consul.ConsulServiceStatusUpdater.STATUS_PASSING;
+
 @Slf4j
 @ThreadSafe
 public class ConsulRegistry extends CommandFailbackAbstractRegistry implements Destroyable {
@@ -26,9 +29,9 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * consul服务查询默认间隔时间。单位毫秒
      */
     public static int                                                                 DEFAULT_LOOKUP_INTERVAL = 30000;
-    private final LuixConsulClient                                                    consulClient;
-    private final ConsulHealthChecker                                                 consulHealthChecker;
-    private final int                                                                 lookupInterval;
+    private final LuixConsulClient           consulClient;
+    private final ConsulServiceStatusUpdater consulServiceStatusUpdater;
+    private final int                        lookupInterval;
     // service local cache. key: group, value: <service interface name, url list>
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache            = new ConcurrentHashMap<>();
     // command local cache. key: group, value: command content
@@ -48,8 +51,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     public ConsulRegistry(Url url, LuixConsulClient consulClient) {
         super(url);
         this.consulClient = consulClient;
-        consulHealthChecker = new ConsulHealthChecker(consulClient);
-        consulHealthChecker.start();
+        consulServiceStatusUpdater = new ConsulServiceStatusUpdater(consulClient);
+        consulServiceStatusUpdater.start();
 //        lookupInterval = super.registryUrl.getIntOption(URLParamType.registrySessionTimeout.getName(), DEFAULT_LOOKUP_INTERVAL);
         lookupInterval = DEFAULT_LOOKUP_INTERVAL;
         notificationThreadPool = createNotificationThreadPool();
@@ -82,12 +85,12 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     protected void doActivate(Url url) {
         if (url == null) {
             // Activate all service instances
-            consulHealthChecker.setServiceInstanceStatus(true);
+            consulServiceStatusUpdater.updateStatus(STATUS_PASSING);
         } else {
             // Activate specified service instance
             String instanceId = ConsulUtils.buildServiceInstanceId(url);
-            consulHealthChecker.addCheckingServiceInstanceId(instanceId);
-            consulHealthChecker.activateServiceInstance(instanceId);
+            consulServiceStatusUpdater.addInstanceId(instanceId);
+            consulServiceStatusUpdater.activate(instanceId);
         }
     }
 
@@ -95,12 +98,12 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     protected void doDeactivate(Url url) {
         if (url == null) {
             // Deactivate all service instances
-            consulHealthChecker.setServiceInstanceStatus(false);
+            consulServiceStatusUpdater.updateStatus(STATUS_FAILING);
         } else {
             // Deactivate specified service instance
             String instanceId = ConsulUtils.buildServiceInstanceId(url);
-            consulHealthChecker.removeCheckingServiceInstanceId(instanceId);
-            consulHealthChecker.deactivateServiceInstance(instanceId);
+            consulServiceStatusUpdater.removeInstanceId(instanceId);
+            consulServiceStatusUpdater.deactivate(instanceId);
         }
     }
 
@@ -440,7 +443,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     @Override
     public void destroy() {
         notificationThreadPool.shutdown();
-        consulHealthChecker.close();
+        consulServiceStatusUpdater.close();
         log.info("Destroyed consul registry");
     }
 }

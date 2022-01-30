@@ -7,14 +7,14 @@ import java.util.Arrays;
 
 public class LuixConsulClientTest {
 
-    private static LuixConsulClient    consulClient;
-    private static ConsulHealthChecker consulHealthChecker;
+    private static LuixConsulClient           consulClient;
+    private static ConsulServiceStatusUpdater consulServiceStatusUpdater;
 
     @BeforeAll
     public static void setup() {
         consulClient = new LuixConsulClient("localhost", 8500);
-        consulHealthChecker = new ConsulHealthChecker(consulClient);
-        consulHealthChecker.start();
+        consulServiceStatusUpdater = new ConsulServiceStatusUpdater(consulClient);
+        consulServiceStatusUpdater.start();
     }
 
     @Test
@@ -34,7 +34,7 @@ public class LuixConsulClientTest {
 
     @Test
     public void closeClient() {
-        consulHealthChecker.close();
+        consulServiceStatusUpdater.close();
     }
 
     private static ConsulService createConsulService(String serviceName, String host, int port) {
