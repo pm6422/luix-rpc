@@ -125,7 +125,7 @@ public class ConsulServiceStatusUpdater {
      * @param serviceInstanceId service instance ID
      */
     public void activate(String serviceInstanceId) {
-        consulClient.checkPass(serviceInstanceId);
+        consulClient.activate(serviceInstanceId);
     }
 
     /**
@@ -134,7 +134,7 @@ public class ConsulServiceStatusUpdater {
      * @param serviceInstanceId service instance ID
      */
     public void deactivate(String serviceInstanceId) {
-        consulClient.checkFail(serviceInstanceId);
+        consulClient.deactivate(serviceInstanceId);
     }
 
     /**

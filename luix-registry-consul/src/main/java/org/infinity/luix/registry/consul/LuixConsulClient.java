@@ -3,7 +3,6 @@ package org.infinity.luix.registry.consul;
 import com.ecwid.consul.v1.ConsulClient;
 import com.ecwid.consul.v1.QueryParams;
 import com.ecwid.consul.v1.Response;
-import com.ecwid.consul.v1.agent.model.NewService;
 import com.ecwid.consul.v1.health.model.HealthService;
 import com.ecwid.consul.v1.kv.model.GetValue;
 import lombok.extern.slf4j.Slf4j;
@@ -18,43 +17,46 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class LuixConsulClient {
     /**
-     * consul block查询时block的最长时间,单位(秒)
+     * Consul query timeout in seconds
      */
-    public static       long         CONSUL_BLOCK_TIME_SECONDS      = TimeUnit.MINUTES.toSeconds(9);
+    public static        long         CONSUL_QUERY_TIMEOUT_SECONDS   = TimeUnit.MINUTES.toSeconds(9);
     /**
-     * command的目录
+     * Command key prefix
      */
-    public static final String       CONSUL_LUIX_COMMAND_KEY_PREFIX = "luix/command/";
+    public static final  String       CONSUL_LUIX_COMMAND_KEY_PREFIX = "luix/command/";
+    /**
+     * Service instance ID prefix
+     */
+    private static final String       SERVICE_INSTANCE_ID_PREFIX     = "service:";
     /**
      * Consul client instance
      */
-    public static       ConsulClient consulClient;
+    public static        ConsulClient consulClient;
 
     public LuixConsulClient(String host, int port) {
         consulClient = new ConsulClient(host, port);
         log.info("Initialized consul client with host: [{}] and port: [{}]", host, port);
     }
 
-    public void checkPass(String serviceId) {
-        consulClient.agentCheckPass("service:" + serviceId);
-    }
-
-    public void checkFail(String serviceId) {
-        consulClient.agentCheckFail("service:" + serviceId);
-    }
-
     public void registerService(ConsulService service) {
-        NewService newService = service.toNewService();
-        consulClient.agentServiceRegister(newService);
+        consulClient.agentServiceRegister(service.toNewService());
     }
 
-    public void deregisterService(String serviceId) {
-        consulClient.agentServiceDeregister(serviceId);
+    public void deregisterService(String serviceInstanceId) {
+        consulClient.agentServiceDeregister(serviceInstanceId);
+    }
+
+    public void activate(String serviceInstanceId) {
+        consulClient.agentCheckPass(SERVICE_INSTANCE_ID_PREFIX + serviceInstanceId);
+    }
+
+    public void deactivate(String serviceInstanceId) {
+        consulClient.agentCheckFail(SERVICE_INSTANCE_ID_PREFIX + serviceInstanceId);
     }
 
     public ConsulResponse<List<ConsulService>> lookupHealthService(String serviceName, long lastConsulIndex) {
         ConsulResponse<List<ConsulService>> consulResponse = new ConsulResponse<>();
-        QueryParams queryParams = new QueryParams(CONSUL_BLOCK_TIME_SECONDS, lastConsulIndex);
+        QueryParams queryParams = new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, lastConsulIndex);
         Response<List<HealthService>> consulHealthResults = consulClient.getHealthServices(serviceName, true, queryParams);
         if (consulHealthResults != null && CollectionUtils.isNotEmpty(consulHealthResults.getValue())) {
             List<HealthService> healthServices = consulHealthResults.getValue();
@@ -79,12 +81,12 @@ public class LuixConsulClient {
         return consulResponse;
     }
 
-    public String lookupCommand(String group) {
-        String key = CONSUL_LUIX_COMMAND_KEY_PREFIX + ConsulUtils.buildServiceName(group);
+    public String lookupCommand(String form) {
+        String key = CONSUL_LUIX_COMMAND_KEY_PREFIX + ConsulUtils.buildServiceName(form);
         GetValue value = consulClient.getKVValue(key).getValue();
         String command = StringUtils.EMPTY;
         if (value == null) {
-            log.warn("No command found with group: [{}]", group);
+            log.warn("No command found with group: [{}]", form);
         } else if (value.getValue() != null) {
             command = value.getDecodedValue();
         }
