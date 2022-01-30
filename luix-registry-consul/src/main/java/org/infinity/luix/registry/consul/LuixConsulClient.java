@@ -61,8 +61,11 @@ public class LuixConsulClient {
                 .setPassing(true)
                 .build();
         Response<List<HealthService>> response = consulClient.getHealthServices(serviceName, request);
+        if (response == null) {
+            return null;
+        }
         List<ConsulService> activeServiceInstances = new ArrayList<>();
-        if (response != null && CollectionUtils.isNotEmpty(response.getValue())) {
+        if (CollectionUtils.isNotEmpty(response.getValue())) {
             for (HealthService activeServiceInstance : response.getValue()) {
                 try {
                     activeServiceInstances.add(ConsulService.of(activeServiceInstance));
