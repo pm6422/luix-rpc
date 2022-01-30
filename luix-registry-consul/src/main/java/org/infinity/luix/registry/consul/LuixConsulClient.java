@@ -57,25 +57,24 @@ public class LuixConsulClient {
     public ConsulResponse<List<ConsulService>> queryActiveServices(String serviceName, long lastConsulIndex) {
         ConsulResponse<List<ConsulService>> consulResponse = new ConsulResponse<>();
         QueryParams queryParams = new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, lastConsulIndex);
-        Response<List<HealthService>> consulHealthResults = consulClient.getHealthServices(serviceName, true, queryParams);
-        if (consulHealthResults != null && CollectionUtils.isNotEmpty(consulHealthResults.getValue())) {
-            List<HealthService> healthServices = consulHealthResults.getValue();
-            List<ConsulService> consulServices = new ArrayList<>(healthServices.size());
-
-            for (HealthService healthService : healthServices) {
+        Response<List<HealthService>> response = consulClient.getHealthServices(serviceName, true, queryParams);
+        if (response != null && CollectionUtils.isNotEmpty(response.getValue())) {
+            List<ConsulService> activeServiceInstances = new ArrayList<>(response.getValue().size());
+            for (HealthService activeServiceInstance : response.getValue()) {
                 try {
-                    consulServices.add(ConsulService.of(healthService));
+                    activeServiceInstances.add(ConsulService.of(activeServiceInstance));
                 } catch (Exception e) {
-                    String serviceId = healthService.getService() != null ? healthService.getService().getId() : null;
-                    log.error("Failed to convert consul service with ID: [" + serviceId + "]", e);
+                    String serviceInstanceId = activeServiceInstance.getService() != null
+                            ? activeServiceInstance.getService().getId()
+                            : null;
+                    log.error("Failed to convert to consul service with ID: [" + serviceInstanceId + "]", e);
                 }
             }
-
-            if (CollectionUtils.isNotEmpty(consulServices)) {
-                consulResponse.setValue(consulServices);
-                consulResponse.setConsulIndex(consulHealthResults.getConsulIndex());
-                consulResponse.setConsulLastContact(consulHealthResults.getConsulLastContact());
-                consulResponse.setConsulKnownLeader(consulHealthResults.isConsulKnownLeader());
+            if (CollectionUtils.isNotEmpty(activeServiceInstances)) {
+                consulResponse.setValue(activeServiceInstances);
+                consulResponse.setConsulIndex(response.getConsulIndex());
+                consulResponse.setConsulLastContact(response.getConsulLastContact());
+                consulResponse.setConsulKnownLeader(response.isConsulKnownLeader());
             }
         }
         return consulResponse;
