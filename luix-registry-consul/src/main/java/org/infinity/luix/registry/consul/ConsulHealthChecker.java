@@ -8,7 +8,6 @@ import java.util.concurrent.*;
 import static org.infinity.luix.registry.consul.ConsulService.TTL;
 
 /**
-
  * When the switch is turned on, the heartbeat will occur, and when the switch is turned off, the heartbeat will stop.
  */
 @Slf4j
@@ -20,11 +19,11 @@ public class ConsulHealthChecker {
     /**
      * 连续检测开关变更的最大次数，超过这个次数就发送一次心跳
      */
-    private static final int                       MAX_SWITCHER_CHECK_TIMES   = 10;
+    private static final int                       MAX_CHECK_TIMES            = 10;
     /**
      * 检测开关变更的频率，连续检测MAX_SWITCHER_CHECK_TIMES次必须发送一次心跳。
      */
-    private static final int                       SWITCHER_CHECK_CIRCLE      = HEARTBEAT_CIRCLE / MAX_SWITCHER_CHECK_TIMES;
+    private static final int                       CHECK_INTERVAL             = HEARTBEAT_CIRCLE / MAX_CHECK_TIMES;
     /**
      * Luix consul client
      */
@@ -125,14 +124,14 @@ public class ConsulHealthChecker {
                         if (currentCheckStatus) {
                             // 开关为开启状态，则连续检测超过MAX_SWITCHER_CHECK_TIMES次发送一次心跳
                             switcherCheckTimes++;
-                            if (switcherCheckTimes >= MAX_SWITCHER_CHECK_TIMES) {
+                            if (switcherCheckTimes >= MAX_CHECK_TIMES) {
                                 // Periodically set status of consul service instance to 'passing' for the registered service instance ID
                                 setServiceInstanceStatus(true);
                                 switcherCheckTimes = 0;
                             }
                         }
                     }
-                }, SWITCHER_CHECK_CIRCLE, SWITCHER_CHECK_CIRCLE, TimeUnit.MILLISECONDS);
+                }, CHECK_INTERVAL, CHECK_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
     protected void setServiceInstanceStatus(boolean checkPass) {
