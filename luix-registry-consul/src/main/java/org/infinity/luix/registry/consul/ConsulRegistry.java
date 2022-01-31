@@ -64,10 +64,15 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * Value: command string
      */
     private final ConcurrentHashMap<String, String>                                   form2Command     = new ConcurrentHashMap<>();
-    // TODO: 2016/6/17 clientUrl support multiple listener
-    // record subscribers service callback listeners, listener was called when corresponding service changes
+    /**
+     * Key: form plus path
+     * Value: url to providerListener map
+     */
     private final ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners = new ConcurrentHashMap<>();
-    // record subscribers command callback listeners, listener was called when corresponding command changes
+    /**
+     * Key: form plus path
+     * Value: url to commandListener map
+     */
     private final ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners = new ConcurrentHashMap<>();
 
     public ConsulRegistry(Url url, LuixConsulClient consulClient) {
@@ -214,22 +219,21 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         startListenerThreadIfNewService(consumerUrl);
     }
 
-    private void addServiceListener(Url url, ProviderListener serviceListener) {
-        String service = ConsulUtils.getProtocolPlusPath(url);
-        ConcurrentHashMap<Url, ProviderListener> map = serviceListeners.get(service);
+    private void addServiceListener(Url url, ProviderListener providerListener) {
+        String protocolPlusPath = ConsulUtils.getProtocolPlusPath(url);
+        ConcurrentHashMap<Url, ProviderListener> map = serviceListeners.get(protocolPlusPath);
         if (map == null) {
-            serviceListeners.putIfAbsent(service, new ConcurrentHashMap<>());
-            map = serviceListeners.get(service);
+            serviceListeners.putIfAbsent(protocolPlusPath, new ConcurrentHashMap<>());
+            map = serviceListeners.get(protocolPlusPath);
         }
         synchronized (map) {
-            map.put(url, serviceListener);
+            map.put(url, providerListener);
         }
     }
 
     /**
      * if new group registered, start a new lookup thread
      * each group start a lookup thread to discover service
-     *
      */
     private void startListenerThreadIfNewService(Url url) {
         String group = url.getForm();
