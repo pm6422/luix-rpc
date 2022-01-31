@@ -140,7 +140,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                 form2Urls = urlCache.get(form);
                 if (form2Urls == null) {
                     ConcurrentHashMap<String, List<Url>> path2Urls = doDiscoverActiveProviders(form);
-                    updateServiceCache(form, path2Urls, false);
+                    updateProviderUrlsCache(form, path2Urls, false);
                     form2Urls = urlCache.get(form);
                 }
             }
@@ -182,10 +182,10 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * update local cache when service list changed,
      * if need notify, notify service
      */
-    private void updateServiceCache(String form, ConcurrentHashMap<String, List<Url>> urlsPerPath, boolean needNotify) {
-        if (MapUtils.isNotEmpty(urlsPerPath)) {
-            ConcurrentHashMap<String, List<Url>> groupMap = urlCache.putIfAbsent(form, urlsPerPath);
-            for (Map.Entry<String, List<Url>> entry : urlsPerPath.entrySet()) {
+    private void updateProviderUrlsCache(String form, ConcurrentHashMap<String, List<Url>> path2Urls, boolean needNotify) {
+        if (MapUtils.isNotEmpty(path2Urls)) {
+            ConcurrentHashMap<String, List<Url>> groupMap = urlCache.putIfAbsent(form, path2Urls);
+            for (Map.Entry<String, List<Url>> entry : path2Urls.entrySet()) {
                 boolean change = true;
                 if (groupMap != null) {
                     List<Url> oldUrls = groupMap.get(entry.getKey());
@@ -408,7 +408,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                 try {
                     sleep(discoverInterval);
                     ConcurrentHashMap<String, List<Url>> urlsPerPath = doDiscoverActiveProviders(form);
-                    updateServiceCache(form, urlsPerPath, true);
+                    updateProviderUrlsCache(form, urlsPerPath, true);
                 } catch (Throwable e) {
                     log.error("group lookup thread fail!", e);
                     try {
