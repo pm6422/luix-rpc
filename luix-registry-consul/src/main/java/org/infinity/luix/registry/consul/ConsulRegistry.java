@@ -76,12 +76,12 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      */
     private final ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners = new ConcurrentHashMap<>();
 
-    public ConsulRegistry(Url url, LuixConsulClient consulClient) {
-        super(url);
+    public ConsulRegistry(Url registryUrl, LuixConsulClient consulClient) {
+        super(registryUrl);
         this.consulClient = consulClient;
         consulStatusUpdater = new ConsulStatusUpdater(consulClient);
         consulStatusUpdater.start();
-        discoverInterval = registryUrl.getIntOption(DISCOVERY_INTERVAL, DISCOVERY_INTERVAL_VAL_DEFAULT);
+        discoverInterval = this.registryUrl.getIntOption(DISCOVERY_INTERVAL, DISCOVERY_INTERVAL_VAL_DEFAULT);
         notificationThreadPool = createNotificationThreadPool();
         ShutdownHook.add(this);
         log.info("Initialized consul registry");
@@ -109,24 +109,24 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     @Override
-    protected void doActivate(Url url) {
-        if (url == null) {
+    protected void doActivate(Url providerUrl) {
+        if (providerUrl == null) {
             // Activate all service instances
             consulStatusUpdater.updateStatus(true);
         } else {
             // Activate specified service instance
-            consulStatusUpdater.activate(ConsulUtils.buildServiceInstanceId(url));
+            consulStatusUpdater.activate(ConsulUtils.buildServiceInstanceId(providerUrl));
         }
     }
 
     @Override
-    protected void doDeactivate(Url url) {
-        if (url == null) {
+    protected void doDeactivate(Url providerUrl) {
+        if (providerUrl == null) {
             // Deactivate all service instances
             consulStatusUpdater.updateStatus(false);
         } else {
             // Deactivate specified service instance
-            consulStatusUpdater.deactivate(ConsulUtils.buildServiceInstanceId(url));
+            consulStatusUpdater.deactivate(ConsulUtils.buildServiceInstanceId(providerUrl));
         }
     }
 
