@@ -385,16 +385,16 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
         @Override
         public void run() {
-            log.info("start group lookup thread. lookup interval: " + discoverInterval + "ms, group: " + form);
+            log.info("Start discover providers thread with interval: " + discoverInterval + "ms and form: " + form);
             while (true) {
                 try {
                     sleep(discoverInterval);
                     ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls = doDiscoverActiveProviders(form);
                     updateProviderUrlsCache(form, protocolPlusPath2Urls, true);
                 } catch (Throwable e) {
-                    log.error("group lookup thread fail!", e);
+                    log.error("Failed to discover providers!", e);
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(2_000);
                     } catch (InterruptedException ignored) {
                     }
                 }
