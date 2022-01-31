@@ -16,7 +16,7 @@ import static org.infinity.luix.registry.consul.ConsulService.TTL;
 @Slf4j
 public class ConsulStatusUpdater {
     /**
-     * 心跳周期，取ttl的2/3
+     * 心跳周期，取TTL的2/3
      */
     private static final int                       HEARTBEAT_CIRCLE    = (TTL * 1000 * 2) / 3;
     /**
@@ -24,7 +24,7 @@ public class ConsulStatusUpdater {
      */
     private static final int                       MAX_CHECK_TIMES     = 10;
     /**
-     * 检测开关变更的频率，连续检测MAX_SWITCHER_CHECK_TIMES次必须发送一次心跳
+     * 连续检测MAX_CHECK_TIMES次必须发送一次心跳
      */
     private static final int                       SCHEDULE_INTERVAL   = HEARTBEAT_CIRCLE / MAX_CHECK_TIMES;
     /**
