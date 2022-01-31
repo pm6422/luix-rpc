@@ -102,7 +102,7 @@ public class ConsulStatusUpdater {
                     }
                 });
             } catch (RejectedExecutionException e) {
-                log.error("Failed to execute health checking job with consul service instance ID: [" + instanceId + "]", e);
+                log.error("Failed to execute health checking task with consul service instance ID: [" + instanceId + "]", e);
             }
         }
     }
