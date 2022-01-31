@@ -89,7 +89,7 @@ public class ConsulUtils {
      * @return RPC protocol plus interface name string
      */
     public static String getProtocolPlusPath(Url url) {
-        return url.getProtocol() + CONSUL_SERVICE_INSTANCE_DELIMITER + url.getPath();
+        return url.getProtocol() + FORM_DELIMITER + url.getPath();
     }
 
     /**

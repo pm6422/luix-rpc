@@ -42,20 +42,33 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * Provider service notification thread pool
      */
     private final ThreadPoolExecutor                                                  notificationThreadPool;
-    // service local cache. key: group, value: <service interface name, url list>
-    private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache        = new ConcurrentHashMap<>();
-    // command local cache. key: group, value: command content
-    private final ConcurrentHashMap<String, String>                                   commandCache        = new ConcurrentHashMap<>();
-    // record lookup service thread, insure each group start only one thread, <group, lastConsulIndexId>
-    private final ConcurrentHashMap<String, Long>                                     lookupGroupServices = new ConcurrentHashMap<>();
-    // record lookup command thread, <group, command>
-    // TODO: 2016/6/17 change value to consul index
-    private final ConcurrentHashMap<String, String>                                   lookupGroupCommands = new ConcurrentHashMap<>();
+    /**
+     * Cache used to store provider urls
+     * Key: form
+     * Value: urls per form
+     */
+    private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     urlCache         = new ConcurrentHashMap<>();
+    /**
+     * Cache used to store commands
+     * Key: form
+     * Value: command string
+     */
+    private final ConcurrentHashMap<String, String>                                   commandCache     = new ConcurrentHashMap<>();
+    /**
+     * Key: form
+     * Value: lastConsulIndexId
+     */
+    private final ConcurrentHashMap<String, Long>                                     form2ConsulIndex = new ConcurrentHashMap<>();
+    /**
+     * Key: form
+     * Value: command string
+     */
+    private final ConcurrentHashMap<String, String>                                   form2Command     = new ConcurrentHashMap<>();
     // TODO: 2016/6/17 clientUrl support multiple listener
     // record subscribers service callback listeners, listener was called when corresponding service changes
-    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners    = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners = new ConcurrentHashMap<>();
     // record subscribers command callback listeners, listener was called when corresponding command changes
-    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners    = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners = new ConcurrentHashMap<>();
 
     public ConsulRegistry(Url url, LuixConsulClient consulClient) {
         super(url);
@@ -113,29 +126,29 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
     @Override
     protected List<Url> discoverActiveProviders(Url consumerUrl) {
-        String service = ConsulUtils.getProtocolPlusPath(consumerUrl);
+        String protocolPlusPath = ConsulUtils.getProtocolPlusPath(consumerUrl);
         String form = consumerUrl.getForm();
         List<Url> serviceUrls = new ArrayList<>();
-        ConcurrentHashMap<String, List<Url>> serviceMap = serviceCache.get(form);
+        ConcurrentHashMap<String, List<Url>> serviceMap = urlCache.get(form);
         if (serviceMap == null) {
             synchronized (form.intern()) {
-                serviceMap = serviceCache.get(form);
+                serviceMap = urlCache.get(form);
                 if (serviceMap == null) {
-                    ConcurrentHashMap<String, List<Url>> groupUrls = lookupServiceUpdate(form);
-                    updateServiceCache(form, groupUrls, false);
-                    serviceMap = serviceCache.get(form);
+                    ConcurrentHashMap<String, List<Url>> urlsPerPath = doDiscoverActiveProviders(form);
+                    updateServiceCache(form, urlsPerPath, false);
+                    serviceMap = urlCache.get(form);
                 }
             }
         }
         if (serviceMap != null) {
-            serviceUrls = serviceMap.get(service);
+            serviceUrls = serviceMap.get(protocolPlusPath);
         }
         return serviceUrls;
     }
 
-    private ConcurrentHashMap<String, List<Url>> lookupServiceUpdate(String form) {
+    private ConcurrentHashMap<String, List<Url>> doDiscoverActiveProviders(String form) {
         ConcurrentHashMap<String, List<Url>> urlsPerPath = new ConcurrentHashMap<>();
-        Long lastConsulIndexId = lookupGroupServices.get(form) == null ? 0L : lookupGroupServices.get(form);
+        Long lastConsulIndexId = form2ConsulIndex.get(form) == null ? 0L : form2ConsulIndex.get(form);
         Response<List<ConsulService>> response = queryActiveServiceInstances(form, lastConsulIndexId);
         if (response != null) {
             List<ConsulService> activeServiceInstances = response.getValue();
@@ -150,7 +163,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                         log.error("Failed to build url from consul service instance: " + activeServiceInstance, e);
                     }
                 }
-                lookupGroupServices.put(form, response.getConsulIndex());
+                form2ConsulIndex.put(form, response.getConsulIndex());
                 return urlsPerPath;
             } else {
                 log.info("No consul index update");
@@ -165,13 +178,13 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * if need notify, notify service
      *
      * @param form
-     * @param groupUrls
+     * @param urlsPerPath
      * @param needNotify
      */
-    private void updateServiceCache(String form, ConcurrentHashMap<String, List<Url>> groupUrls, boolean needNotify) {
-        if (MapUtils.isNotEmpty(groupUrls)) {
-            ConcurrentHashMap<String, List<Url>> groupMap = serviceCache.putIfAbsent(form, groupUrls);
-            for (Map.Entry<String, List<Url>> entry : groupUrls.entrySet()) {
+    private void updateServiceCache(String form, ConcurrentHashMap<String, List<Url>> urlsPerPath, boolean needNotify) {
+        if (MapUtils.isNotEmpty(urlsPerPath)) {
+            ConcurrentHashMap<String, List<Url>> groupMap = urlCache.putIfAbsent(form, urlsPerPath);
+            for (Map.Entry<String, List<Url>> entry : urlsPerPath.entrySet()) {
                 boolean change = true;
                 if (groupMap != null) {
                     List<Url> oldUrls = groupMap.get(entry.getKey());
@@ -225,8 +238,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      */
     private void startListenerThreadIfNewService(Url url) {
         String group = url.getForm();
-        if (!lookupGroupServices.containsKey(group)) {
-            Long value = lookupGroupServices.putIfAbsent(group, 0L);
+        if (!form2ConsulIndex.containsKey(group)) {
+            Long value = form2ConsulIndex.putIfAbsent(group, 0L);
             if (value == null) {
                 ServiceLookupThread lookupThread = new ServiceLookupThread(group);
                 lookupThread.setDaemon(true);
@@ -265,8 +278,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
     private void startListenerThreadIfNewCommand(Url url) {
         String group = url.getForm();
-        if (!lookupGroupCommands.containsKey(group)) {
-            String command = lookupGroupCommands.putIfAbsent(group, "");
+        if (!form2Command.containsKey(group)) {
+            String command = form2Command.putIfAbsent(group, "");
             if (command == null) {
                 CommandLookupThread lookupThread = new CommandLookupThread(group);
                 lookupThread.setDaemon(true);
@@ -310,7 +323,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
     private String lookupCommandUpdate(String group) {
         String command = consulClient.queryCommand(group);
-        lookupGroupCommands.put(group, command);
+        form2Command.put(group, command);
         return command;
     }
 
@@ -399,8 +412,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
             while (true) {
                 try {
                     sleep(discoverInterval);
-                    ConcurrentHashMap<String, List<Url>> groupUrls = lookupServiceUpdate(form);
-                    updateServiceCache(form, groupUrls, true);
+                    ConcurrentHashMap<String, List<Url>> urlsPerPath = doDiscoverActiveProviders(form);
+                    updateServiceCache(form, urlsPerPath, true);
                 } catch (Throwable e) {
                     log.error("group lookup thread fail!", e);
                     try {
