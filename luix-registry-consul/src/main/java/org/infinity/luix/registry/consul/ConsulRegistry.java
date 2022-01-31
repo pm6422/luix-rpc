@@ -236,10 +236,11 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
     @Override
     protected void unsubscribeProviderListener(Url consumerUrl, ProviderListener listener) {
-        ConcurrentHashMap<Url, ProviderListener> listeners = serviceListeners.get(ConsulUtils.getProtocolPlusPath(consumerUrl));
-        if (listeners != null) {
-            synchronized (listeners) {
-                listeners.remove(consumerUrl);
+        ConcurrentHashMap<Url, ProviderListener> url2ProviderListeners =
+                serviceListeners.get(ConsulUtils.getProtocolPlusPath(consumerUrl));
+        if (url2ProviderListeners != null) {
+            synchronized (url2ProviderListeners) {
+                url2ProviderListeners.remove(consumerUrl);
             }
         }
     }
