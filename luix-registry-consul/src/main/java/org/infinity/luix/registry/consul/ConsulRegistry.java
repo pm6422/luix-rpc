@@ -45,7 +45,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     /**
      * Cache used to store provider urls
      * Key: form
-     * Value: urls per form
+     * Value: form to urls map
      */
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     urlCache         = new ConcurrentHashMap<>();
     /**
@@ -133,26 +133,26 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     protected List<Url> discoverActiveProviders(Url consumerUrl) {
         String protocolPlusPath = ConsulUtils.getProtocolPlusPath(consumerUrl);
         String form = consumerUrl.getForm();
-        List<Url> serviceUrls = new ArrayList<>();
-        ConcurrentHashMap<String, List<Url>> serviceMap = urlCache.get(form);
-        if (serviceMap == null) {
+        List<Url> providerUrls = new ArrayList<>();
+        ConcurrentHashMap<String, List<Url>> form2Urls = urlCache.get(form);
+        if (form2Urls == null) {
             synchronized (form.intern()) {
-                serviceMap = urlCache.get(form);
-                if (serviceMap == null) {
-                    ConcurrentHashMap<String, List<Url>> urlsPerPath = doDiscoverActiveProviders(form);
-                    updateServiceCache(form, urlsPerPath, false);
-                    serviceMap = urlCache.get(form);
+                form2Urls = urlCache.get(form);
+                if (form2Urls == null) {
+                    ConcurrentHashMap<String, List<Url>> path2Urls = doDiscoverActiveProviders(form);
+                    updateServiceCache(form, path2Urls, false);
+                    form2Urls = urlCache.get(form);
                 }
             }
         }
-        if (serviceMap != null) {
-            serviceUrls = serviceMap.get(protocolPlusPath);
+        if (form2Urls != null) {
+            providerUrls = form2Urls.get(protocolPlusPath);
         }
-        return serviceUrls;
+        return providerUrls;
     }
 
     private ConcurrentHashMap<String, List<Url>> doDiscoverActiveProviders(String form) {
-        ConcurrentHashMap<String, List<Url>> urlsPerPath = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, List<Url>> path2Urls = new ConcurrentHashMap<>();
         Long lastConsulIndexId = form2ConsulIndex.get(form) == null ? 0L : form2ConsulIndex.get(form);
         Response<List<ConsulService>> response = queryActiveServiceInstances(form, lastConsulIndexId);
         if (response != null) {
@@ -162,19 +162,19 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                     try {
                         Url url = ConsulUtils.buildUrl(activeServiceInstance);
                         String protocolPlusPath = ConsulUtils.getProtocolPlusPath(url);
-                        List<Url> urls = urlsPerPath.computeIfAbsent(protocolPlusPath, k -> new ArrayList<>());
+                        List<Url> urls = path2Urls.computeIfAbsent(protocolPlusPath, k -> new ArrayList<>());
                         urls.add(url);
                     } catch (Exception e) {
                         log.error("Failed to build url from consul service instance: " + activeServiceInstance, e);
                     }
                 }
                 form2ConsulIndex.put(form, response.getConsulIndex());
-                return urlsPerPath;
+                return path2Urls;
             } else {
                 log.info("No consul index update");
             }
         }
-        return urlsPerPath;
+        return path2Urls;
     }
 
     /**
