@@ -223,18 +223,13 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         }
     }
 
-    /**
-     * if new group registered, start a new lookup thread
-     * each group start a lookup thread to discover service
-     */
     private void startListenerThreadIfNewService(Url url) {
-        String group = url.getForm();
-        if (!form2ConsulIndex.containsKey(group)) {
-            Long value = form2ConsulIndex.putIfAbsent(group, 0L);
-            if (value == null) {
-                ServiceLookupThread lookupThread = new ServiceLookupThread(group);
-                lookupThread.setDaemon(true);
-                lookupThread.start();
+        if (!form2ConsulIndex.containsKey(url.getForm())) {
+            Long consulIndex = form2ConsulIndex.putIfAbsent(url.getForm(), 0L);
+            if (consulIndex == null) {
+                DiscoverProviderThread discoverProviderThread = new DiscoverProviderThread(url.getForm());
+                discoverProviderThread.setDaemon(true);
+                discoverProviderThread.start();
             }
         }
     }
@@ -381,10 +376,10 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         }
     }
 
-    private class ServiceLookupThread extends Thread {
+    private class DiscoverProviderThread extends Thread {
         private final String form;
 
-        public ServiceLookupThread(String form) {
+        public DiscoverProviderThread(String form) {
             this.form = form;
         }
 
