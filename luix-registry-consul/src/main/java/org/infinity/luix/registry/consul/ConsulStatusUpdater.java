@@ -12,7 +12,7 @@ import static org.infinity.luix.registry.consul.ConsulService.TTL;
  * When the switch is turned on, the heartbeat will occur, and when the switch is turned off, the heartbeat will stop.
  */
 @Slf4j
-public class ConsulServiceStatusUpdater {
+public class ConsulStatusUpdater {
     /**
      * 心跳周期，取ttl的2/3
      */
@@ -62,7 +62,7 @@ public class ConsulServiceStatusUpdater {
      */
     private              int                       checkTimes                 = 0;
 
-    public ConsulServiceStatusUpdater(LuixConsulClient consulClient) {
+    public ConsulStatusUpdater(LuixConsulClient consulClient) {
         this.consulClient = consulClient;
         statusUpdateExecutorService = Executors.newSingleThreadScheduledExecutor();
         executionThreadPool = createExecutionThreadPool();

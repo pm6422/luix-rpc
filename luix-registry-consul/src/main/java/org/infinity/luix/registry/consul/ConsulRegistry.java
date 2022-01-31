@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
-import static org.infinity.luix.registry.consul.ConsulServiceStatusUpdater.STATUS_FAILING;
-import static org.infinity.luix.registry.consul.ConsulServiceStatusUpdater.STATUS_PASSING;
+import static org.infinity.luix.registry.consul.ConsulStatusUpdater.STATUS_FAILING;
+import static org.infinity.luix.registry.consul.ConsulStatusUpdater.STATUS_PASSING;
 
 @Slf4j
 @ThreadSafe
@@ -30,9 +30,9 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * consul服务查询默认间隔时间。单位毫秒
      */
     public static int                                                                 DEFAULT_LOOKUP_INTERVAL = 30_000;
-    private final LuixConsulClient                                                    consulClient;
-    private final ConsulServiceStatusUpdater                                          consulServiceStatusUpdater;
-    private final int                                                                 lookupInterval;
+    private final LuixConsulClient    consulClient;
+    private final ConsulStatusUpdater consulStatusUpdater;
+    private final int                 lookupInterval;
     // service local cache. key: group, value: <service interface name, url list>
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache            = new ConcurrentHashMap<>();
     // command local cache. key: group, value: command content
@@ -52,8 +52,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     public ConsulRegistry(Url url, LuixConsulClient consulClient) {
         super(url);
         this.consulClient = consulClient;
-        consulServiceStatusUpdater = new ConsulServiceStatusUpdater(consulClient);
-        consulServiceStatusUpdater.start();
+        consulStatusUpdater = new ConsulStatusUpdater(consulClient);
+        consulStatusUpdater.start();
 //        lookupInterval = super.registryUrl.getIntOption(URLParamType.registrySessionTimeout.getName(), DEFAULT_LOOKUP_INTERVAL);
         lookupInterval = DEFAULT_LOOKUP_INTERVAL;
         notificationThreadPool = createNotificationThreadPool();
@@ -86,10 +86,10 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     protected void doActivate(Url url) {
         if (url == null) {
             // Activate all service instances
-            consulServiceStatusUpdater.updateStatus(STATUS_PASSING);
+            consulStatusUpdater.updateStatus(STATUS_PASSING);
         } else {
             // Activate specified service instance
-            consulServiceStatusUpdater.activate(ConsulUtils.buildServiceInstanceId(url));
+            consulStatusUpdater.activate(ConsulUtils.buildServiceInstanceId(url));
         }
     }
 
@@ -97,10 +97,10 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     protected void doDeactivate(Url url) {
         if (url == null) {
             // Deactivate all service instances
-            consulServiceStatusUpdater.updateStatus(STATUS_FAILING);
+            consulStatusUpdater.updateStatus(STATUS_FAILING);
         } else {
             // Deactivate specified service instance
-            consulServiceStatusUpdater.deactivate(ConsulUtils.buildServiceInstanceId(url));
+            consulStatusUpdater.deactivate(ConsulUtils.buildServiceInstanceId(url));
         }
     }
 
@@ -434,7 +434,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     @Override
     public void destroy() {
         notificationThreadPool.shutdown();
-        consulServiceStatusUpdater.close();
+        consulStatusUpdater.close();
         log.info("Destroyed consul registry");
     }
 }
