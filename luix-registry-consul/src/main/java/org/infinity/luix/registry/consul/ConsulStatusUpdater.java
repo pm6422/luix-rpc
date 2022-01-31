@@ -154,11 +154,11 @@ public class ConsulStatusUpdater {
      * and send a heartbeat to the consumer server after continuous detection for many times.
      */
     public void start() {
+        // Periodically set status of consul service instance to 'passing' for the registered service instance ID
         statusUpdateExecutorService.scheduleAtFixedRate(
                 () -> {
                     if (this.active.get()) {
                         if (checkTimes.incrementAndGet() >= MAX_CHECK_TIMES) {
-                            // Periodically set status of consul service instance to 'passing' for the registered service instance ID
                             doUpdateStatus(true);
                             checkTimes.set(0);
                         }
