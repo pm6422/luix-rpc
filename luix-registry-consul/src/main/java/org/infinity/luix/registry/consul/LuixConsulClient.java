@@ -50,6 +50,7 @@ public class LuixConsulClient {
 
     public void deregisterService(String serviceInstanceId) {
         consulClient.agentServiceDeregister(serviceInstanceId);
+        log.debug("Deregistered service instance with ID: [{}]", serviceInstanceId);
     }
 
     public void activate(String serviceInstanceId) {
