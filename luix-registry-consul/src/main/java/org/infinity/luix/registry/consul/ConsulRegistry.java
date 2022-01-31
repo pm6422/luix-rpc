@@ -4,6 +4,7 @@ import com.ecwid.consul.v1.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.registry.CommandFailbackAbstractRegistry;
 import org.infinity.luix.core.registry.listener.CommandListener;
 import org.infinity.luix.core.registry.listener.ProviderListener;
@@ -266,7 +267,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     private void startListenerThreadIfNewCommand(Url url) {
         String group = url.getForm();
         if (!form2Command.containsKey(group)) {
-            String command = form2Command.putIfAbsent(group, "");
+            String command = form2Command.putIfAbsent(group, StringUtils.EMPTY);
             if (command == null) {
                 CommandLookupThread lookupThread = new CommandLookupThread(group);
                 lookupThread.setDaemon(true);
