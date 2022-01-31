@@ -18,7 +18,7 @@ public class ConsulUtils {
     /**
      * Active RPC provider service name on consul registry
      */
-    public static final String CONSUL_PROVIDING_SERVICES_PREFIX  = "luix-providing";
+    public static final  String CONSUL_PROVIDING_SERVICES_PREFIX  = "luix-providing";
     /**
      * Active RPC consumer service name on consul registry
      */
@@ -26,7 +26,7 @@ public class ConsulUtils {
     /**
      *
      */
-    public static final String CONSUL_SERVICE_INSTANCE_DELIMITER = "@";
+    public static final  String CONSUL_SERVICE_INSTANCE_DELIMITER = "@";
     /**
      *
      */
@@ -40,12 +40,24 @@ public class ConsulUtils {
      * Build consul service name for RPC provider
      *
      * @param form service provider form
-     * @return consul service name
+     * @return consul provider service name
      */
-    public static String buildServiceName(String form) {
+    public static String buildProviderServiceName(String form) {
         return isEmpty(form)
                 ? CONSUL_PROVIDING_SERVICES_PREFIX
                 : CONSUL_PROVIDING_SERVICES_PREFIX + FORM_DELIMITER + form;
+    }
+
+    /**
+     * Build consul service name for RPC consumer
+     *
+     * @param form service consumer form
+     * @return consul consumer service name
+     */
+    public static String buildConsumerServiceName(String form) {
+        return isEmpty(form)
+                ? CONSUL_CONSUMING_SERVICES_PREFIX
+                : CONSUL_CONSUMING_SERVICES_PREFIX + FORM_DELIMITER + form;
     }
 
     /**

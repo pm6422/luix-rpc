@@ -85,7 +85,7 @@ public class LuixConsulClient {
         if (CollectionUtils.isNotEmpty(response.getValue())) {
             for (HealthService activeServiceInstance : response.getValue()) {
                 try {
-                    activeServiceInstances.add(ConsulService.of(activeServiceInstance));
+                    activeServiceInstances.add(ConsulService.byProviderUrl(activeServiceInstance));
                 } catch (Exception e) {
                     String serviceInstanceId = activeServiceInstance.getService() != null
                             ? activeServiceInstance.getService().getId()
@@ -99,7 +99,7 @@ public class LuixConsulClient {
     }
 
     public String queryCommand(String form) {
-        String key = CONSUL_LUIX_COMMAND_KEY_PREFIX + ConsulUtils.buildServiceName(form);
+        String key = CONSUL_LUIX_COMMAND_KEY_PREFIX + ConsulUtils.buildProviderServiceName(form);
         GetValue value = consulClient.getKVValue(key).getValue();
         String command = StringUtils.EMPTY;
         if (value == null) {

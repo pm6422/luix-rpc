@@ -67,7 +67,7 @@ public class ConsulService {
         return newService;
     }
 
-    public static ConsulService of(HealthService healthService) {
+    public static ConsulService byProviderUrl(HealthService healthService) {
         ConsulService consulService = new ConsulService();
         consulService.setName(healthService.getService().getService());
         consulService.setInstanceId(healthService.getService().getId());
@@ -77,9 +77,19 @@ public class ConsulService {
         return consulService;
     }
 
-    public static ConsulService of(Url url) {
+    public static ConsulService byProviderUrl(Url url) {
         ConsulService consulService = new ConsulService();
-        consulService.setName(ConsulUtils.buildServiceName(url.getForm()));
+        consulService.setName(ConsulUtils.buildProviderServiceName(url.getForm()));
+        consulService.setInstanceId(ConsulUtils.buildServiceInstanceId(url));
+        consulService.setAddress(url.getHost());
+        consulService.setPort(url.getPort());
+        consulService.setTags(buildTags(url));
+        return consulService;
+    }
+
+    public static ConsulService byConsumerUrl(Url url) {
+        ConsulService consulService = new ConsulService();
+        consulService.setName(ConsulUtils.buildConsumerServiceName(url.getForm()));
         consulService.setInstanceId(ConsulUtils.buildServiceInstanceId(url));
         consulService.setAddress(url.getHost());
         consulService.setPort(url.getPort());

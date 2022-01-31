@@ -98,13 +98,13 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
     @Override
     protected void doRegister(Url providerUrl) {
-        ConsulService service = ConsulService.of(providerUrl);
+        ConsulService service = ConsulService.byProviderUrl(providerUrl);
         consulClient.registerService(service);
     }
 
     @Override
     protected void doDeregister(Url providerUrl) {
-        ConsulService service = ConsulService.of(providerUrl);
+        ConsulService service = ConsulService.byProviderUrl(providerUrl);
         consulClient.deregisterService(service.getInstanceId());
     }
 
@@ -156,7 +156,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls = new ConcurrentHashMap<>();
         Long lastConsulIndexId = form2ConsulIndex.get(form) == null ? 0L : form2ConsulIndex.get(form);
         Response<List<ConsulService>> response = consulClient
-                .queryActiveServiceInstances(ConsulUtils.buildServiceName(form), lastConsulIndexId);
+                .queryActiveServiceInstances(ConsulUtils.buildProviderServiceName(form), lastConsulIndexId);
         if (response != null) {
             List<ConsulService> activeServiceInstances = response.getValue();
             if (CollectionUtils.isNotEmpty(activeServiceInstances) && response.getConsulIndex() > lastConsulIndexId) {
@@ -208,6 +208,11 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
     @Override
     protected void subscribeProviderListener(Url consumerUrl, ProviderListener listener) {
+        ConsulService service = ConsulService.byConsumerUrl(consumerUrl);
+        consulClient.registerService(service);
+        // Activate specified service instance
+        consulStatusUpdater.activate(ConsulUtils.buildServiceInstanceId(consumerUrl));
+
         addServiceListener(consumerUrl, listener);
         startListenerThreadIfNewService(consumerUrl);
     }
