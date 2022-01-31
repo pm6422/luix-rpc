@@ -152,7 +152,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     private ConcurrentHashMap<String, List<Url>> doDiscoverActiveProviders(String form) {
-        ConcurrentHashMap<String, List<Url>> path2Urls = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls = new ConcurrentHashMap<>();
         Long lastConsulIndexId = form2ConsulIndex.get(form) == null ? 0L : form2ConsulIndex.get(form);
         Response<List<ConsulService>> response = consulClient
                 .queryActiveServiceInstances(ConsulUtils.buildServiceName(form), lastConsulIndexId);
@@ -163,19 +163,19 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                     try {
                         Url url = ConsulUtils.buildUrl(activeServiceInstance);
                         String protocolPlusPath = ConsulUtils.getProtocolPlusPath(url);
-                        List<Url> urls = path2Urls.computeIfAbsent(protocolPlusPath, k -> new ArrayList<>());
+                        List<Url> urls = protocolPlusPath2Urls.computeIfAbsent(protocolPlusPath, k -> new ArrayList<>());
                         urls.add(url);
                     } catch (Exception e) {
                         log.error("Failed to build url from consul service instance: " + activeServiceInstance, e);
                     }
                 }
                 form2ConsulIndex.put(form, response.getConsulIndex());
-                return path2Urls;
+                return protocolPlusPath2Urls;
             } else {
                 log.info("No consul index update");
             }
         }
-        return path2Urls;
+        return protocolPlusPath2Urls;
     }
 
     /**
