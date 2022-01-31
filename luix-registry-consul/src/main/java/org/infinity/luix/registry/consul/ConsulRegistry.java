@@ -172,7 +172,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                 form2ConsulIndex.put(form, response.getConsulIndex());
                 return protocolPlusPath2Urls;
             } else {
-                log.info("No consul index update");
+                log.info("No active service found for form: [{}]", form);
             }
         }
         return protocolPlusPath2Urls;
