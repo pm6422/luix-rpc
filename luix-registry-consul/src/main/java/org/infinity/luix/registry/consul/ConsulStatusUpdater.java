@@ -6,6 +6,7 @@ import org.infinity.luix.utilities.collection.ConcurrentHashSet;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.infinity.luix.registry.consul.ConsulService.TTL;
 
@@ -27,10 +28,6 @@ public class ConsulStatusUpdater {
      */
     private static final int                       SCHEDULE_INTERVAL   = HEARTBEAT_CIRCLE / MAX_CHECK_TIMES;
     /**
-     * Status of current consul service instances
-     */
-    private              AtomicBoolean             active              = new AtomicBoolean(false);
-    /**
      * Luix consul client
      */
     private final        LuixConsulClient          consulClient;
@@ -47,9 +44,13 @@ public class ConsulStatusUpdater {
      */
     private final        ConcurrentHashSet<String> checkingInstanceIds = new ConcurrentHashSet<>();
     /**
+     * Status of current consul service instances
+     */
+    private              AtomicBoolean             active              = new AtomicBoolean(false);
+    /**
      * Check times
      */
-    private              int                       checkTimes          = 0;
+    private              AtomicInteger             checkTimes          = new AtomicInteger(0);
 
     public ConsulStatusUpdater(LuixConsulClient consulClient) {
         this.consulClient = consulClient;
@@ -156,11 +157,10 @@ public class ConsulStatusUpdater {
         statusUpdateExecutorService.scheduleAtFixedRate(
                 () -> {
                     if (this.active.get()) {
-                        checkTimes++;
-                        if (checkTimes >= MAX_CHECK_TIMES) {
+                        if (checkTimes.incrementAndGet() >= MAX_CHECK_TIMES) {
                             // Periodically set status of consul service instance to 'passing' for the registered service instance ID
                             doUpdateStatus(true);
-                            checkTimes = 0;
+                            checkTimes.set(0);
                         }
                     }
                 }, SCHEDULE_INTERVAL, SCHEDULE_INTERVAL, TimeUnit.MILLISECONDS);
