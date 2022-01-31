@@ -44,7 +44,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     private final ThreadPoolExecutor                                                  notificationThreadPool;
     /**
      * Cache used to store provider urls
-     * Key: form
+     * Key: protocol plus path
      * Value: form to urls map
      */
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     urlCache         = new ConcurrentHashMap<>();
@@ -134,19 +134,19 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         String protocolPlusPath = ConsulUtils.getProtocolPlusPath(consumerUrl);
         String form = consumerUrl.getForm();
         List<Url> providerUrls = new ArrayList<>();
-        ConcurrentHashMap<String, List<Url>> form2Urls = urlCache.get(form);
-        if (form2Urls == null) {
+        ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls = urlCache.get(form);
+        if (protocolPlusPath2Urls == null) {
             synchronized (form.intern()) {
-                form2Urls = urlCache.get(form);
-                if (form2Urls == null) {
+                protocolPlusPath2Urls = urlCache.get(form);
+                if (protocolPlusPath2Urls == null) {
                     ConcurrentHashMap<String, List<Url>> path2Urls = doDiscoverActiveProviders(form);
                     updateProviderUrlsCache(form, path2Urls, false);
-                    form2Urls = urlCache.get(form);
+                    protocolPlusPath2Urls = urlCache.get(form);
                 }
             }
         }
-        if (form2Urls != null) {
-            providerUrls = form2Urls.get(protocolPlusPath);
+        if (protocolPlusPath2Urls != null) {
+            providerUrls = protocolPlusPath2Urls.get(protocolPlusPath);
         }
         return providerUrls;
     }
