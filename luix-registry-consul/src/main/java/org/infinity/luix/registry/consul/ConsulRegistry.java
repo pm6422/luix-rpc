@@ -19,9 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
-import static org.infinity.luix.registry.consul.ConsulStatusUpdater.STATUS_FAILING;
-import static org.infinity.luix.registry.consul.ConsulStatusUpdater.STATUS_PASSING;
-
 @Slf4j
 @ThreadSafe
 public class ConsulRegistry extends CommandFailbackAbstractRegistry implements Destroyable {
@@ -30,9 +27,9 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * consul服务查询默认间隔时间。单位毫秒
      */
     public static int                                                                 DEFAULT_LOOKUP_INTERVAL = 30_000;
-    private final LuixConsulClient    consulClient;
-    private final ConsulStatusUpdater consulStatusUpdater;
-    private final int                 lookupInterval;
+    private final LuixConsulClient                                                    consulClient;
+    private final ConsulStatusUpdater                                                 consulStatusUpdater;
+    private final int                                                                 lookupInterval;
     // service local cache. key: group, value: <service interface name, url list>
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache            = new ConcurrentHashMap<>();
     // command local cache. key: group, value: command content
@@ -86,7 +83,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     protected void doActivate(Url url) {
         if (url == null) {
             // Activate all service instances
-            consulStatusUpdater.updateStatus(STATUS_PASSING);
+            consulStatusUpdater.updateStatus(true);
         } else {
             // Activate specified service instance
             consulStatusUpdater.activate(ConsulUtils.buildServiceInstanceId(url));
@@ -97,7 +94,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     protected void doDeactivate(Url url) {
         if (url == null) {
             // Deactivate all service instances
-            consulStatusUpdater.updateStatus(STATUS_FAILING);
+            consulStatusUpdater.updateStatus(false);
         } else {
             // Deactivate specified service instance
             consulStatusUpdater.deactivate(ConsulUtils.buildServiceInstanceId(url));

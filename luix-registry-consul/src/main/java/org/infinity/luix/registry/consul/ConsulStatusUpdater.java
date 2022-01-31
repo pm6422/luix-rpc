@@ -5,6 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
 
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.infinity.luix.registry.consul.ConsulService.TTL;
 
@@ -26,21 +27,9 @@ public class ConsulStatusUpdater {
      */
     private static final int                       SCHEDULE_INTERVAL          = HEARTBEAT_CIRCLE / MAX_CHECK_TIMES;
     /**
-     * Consul service instance 'passing' status
-     */
-    public static final  String                    STATUS_PASSING             = "passing";
-    /**
-     * Consul service instance 'failing' status
-     */
-    public static final  String                    STATUS_FAILING             = "failing";
-    /**
-     * Status of previous consul service instances
-     */
-    private              String                    prevStatus                 = STATUS_FAILING;
-    /**
      * Status of current consul service instances
      */
-    private volatile     String                    currentStatus              = STATUS_FAILING;
+    private              AtomicBoolean             active                     = new AtomicBoolean(false);
     /**
      * Luix consul client
      */
@@ -95,20 +84,18 @@ public class ConsulStatusUpdater {
         checkingServiceInstanceIds.remove(serviceInstanceId);
     }
 
-    public void updateStatus(String status) {
-        currentStatus = status;
-        if (!currentStatus.equals(prevStatus)) {
-            prevStatus = currentStatus;
-            doUpdateStatus(currentStatus);
-            log.info("Changed consul service instance status to [{}]", currentStatus);
+    public void updateStatus(boolean active) {
+        if (this.active.compareAndSet(!active, active)) {
+            doUpdateStatus(active);
+            log.info("Changed consul service instance status to [{}]", active);
         }
     }
 
-    private void doUpdateStatus(String status) {
+    private void doUpdateStatus(boolean active) {
         for (String instanceId : checkingServiceInstanceIds) {
             try {
                 executionThreadPool.execute(() -> {
-                    if (STATUS_PASSING.equals(status)) {
+                    if (active) {
                         activate(instanceId);
                     } else {
                         deactivate(instanceId);
@@ -128,7 +115,7 @@ public class ConsulStatusUpdater {
     public void activate(String serviceInstanceId) {
         addInstanceId(serviceInstanceId);
         if (CollectionUtils.isNotEmpty(checkingServiceInstanceIds)) {
-            updateStatus(STATUS_PASSING);
+            updateStatus(true);
         }
         consulClient.activate(serviceInstanceId);
     }
@@ -141,7 +128,7 @@ public class ConsulStatusUpdater {
     public void deactivate(String serviceInstanceId) {
         removeInstanceId(serviceInstanceId);
         if (CollectionUtils.isEmpty(checkingServiceInstanceIds)) {
-            updateStatus(STATUS_FAILING);
+            updateStatus(false);
         }
         consulClient.deactivate(serviceInstanceId);
     }
@@ -158,11 +145,11 @@ public class ConsulStatusUpdater {
     public void start() {
         statusUpdateExecutorService.scheduleAtFixedRate(
                 () -> {
-                    if (STATUS_PASSING.equals(currentStatus)) {
+                    if (this.active.get()) {
                         checkTimes++;
                         if (checkTimes >= MAX_CHECK_TIMES) {
                             // Periodically set status of consul service instance to 'passing' for the registered service instance ID
-                            doUpdateStatus(STATUS_PASSING);
+                            doUpdateStatus(true);
                             checkTimes = 0;
                         }
                     }
