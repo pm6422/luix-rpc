@@ -335,24 +335,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         }
     }
 
-    @Override
-    public List<String> discoverActiveProviderAddress(String providerPath) {
-        List<String> addrFiles = new ArrayList<>();
-        try {
-            List<String> providerDirectories = getChildrenNames(zkClient, FULL_PATH_PROVIDER);
-            if (CollectionUtils.isEmpty(providerDirectories)) {
-                return addrFiles;
-            }
-            String statusDirPath = getStatusDirPath(providerPath, StatusDir.ACTIVE);
-            addrFiles.addAll(getChildrenNames(zkClient, statusDirPath));
-            return addrFiles;
-        } catch (Throwable e) {
-            String msg = String.format("Failed to discover providers from registry [%s] with the error: %s",
-                    getRegistryUrl(), e.getMessage());
-            throw new RpcFrameworkException(msg, e);
-        }
-    }
-
     /**
      * Read command json content of specified url
      *

@@ -308,11 +308,6 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     @Override
-    public List<String> discoverActiveProviderAddress(String providerPath) {
-        return null;
-    }
-
-    @Override
     public void subscribeConsumerListener(String interfaceName, ConsumerProcessable consumerProcessor) {
 
     }

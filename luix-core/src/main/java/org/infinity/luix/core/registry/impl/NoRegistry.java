@@ -96,11 +96,6 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
-    public List<String> discoverActiveProviderAddress(String providerPath) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public List<String> getAllProviderPaths() {
         throw new UnsupportedOperationException();
     }
