@@ -211,7 +211,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         ConsulService service = ConsulService.byConsumerUrl(consumerUrl);
         consulClient.registerService(service);
         // Activate specified service instance
-        consulStatusUpdater.activate(ConsulUtils.buildServiceInstanceId(consumerUrl));
+        consulStatusUpdater.activate(service.getInstanceId());
 
         addServiceListener(consumerUrl, listener);
         startListenerThreadIfNewService(consumerUrl);

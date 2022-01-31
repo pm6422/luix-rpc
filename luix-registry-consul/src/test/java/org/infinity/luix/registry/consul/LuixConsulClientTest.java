@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_PROVIDING_SERVICES_PREFIX;
+
 public class LuixConsulClientTest {
 
     private static LuixConsulClient    consulClient;
@@ -20,15 +22,10 @@ public class LuixConsulClientTest {
     @Test
     public void registerService() throws InterruptedException {
         ConsulService service1 = createConsulService("org.infinity.luix.democommon.service.MailService", "127.0.0.1", 6010);
-        ConsulService service2 = createConsulService("org.infinity.luix.democommon.service.AppService", "127.0.0.1", 6020);
+//        ConsulService service2 = createConsulService("org.infinity.luix.democommon.service.AppService", "127.0.0.1", 6020);
         consulClient.registerService(service1);
-        consulClient.registerService(service2);
-//        consulHealthChecker.addCheckingServiceInstanceId(service1.getInstanceId());
-//        consulHealthChecker.addCheckingServiceInstanceId(service2.getInstanceId());
-//        consulHealthChecker.setCheckHealthSwitcherStatus(true);
-
-        consulClient.deactivate(service1.getInstanceId());
-        consulClient.deactivate(service2.getInstanceId());
+//        consulClient.registerService(service2);
+        consulClient.activate(service1.getInstanceId());
         Thread.sleep(100_000L);
     }
 
@@ -39,7 +36,7 @@ public class LuixConsulClientTest {
 
     private static ConsulService createConsulService(String serviceName, String host, int port) {
         ConsulService service = new ConsulService();
-        service.setName("luix-providing");
+        service.setName(CONSUL_PROVIDING_SERVICES_PREFIX);
         service.setInstanceId(serviceName + "@" + host + ":" + port);
         service.setAddress(host);
         service.setPort(port);
