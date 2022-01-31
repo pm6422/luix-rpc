@@ -84,6 +84,11 @@ public class ConsulStatusUpdater {
         checkingInstanceIds.remove(serviceInstanceId);
     }
 
+    /**
+     * Update consul service instance status
+     *
+     * @param active consul service instance status
+     */
     public void updateStatus(boolean active) {
         if (this.active.compareAndSet(!active, active)) {
             doUpdateStatus(active);
@@ -91,6 +96,11 @@ public class ConsulStatusUpdater {
         }
     }
 
+    /**
+     * Set all status of service instance to 'passing' or 'critical' by sending a REST request to consul server
+     *
+     * @param active consul service instance status
+     */
     private void doUpdateStatus(boolean active) {
         for (String instanceId : checkingInstanceIds) {
             try {
@@ -156,6 +166,9 @@ public class ConsulStatusUpdater {
                 }, SCHEDULE_INTERVAL, SCHEDULE_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Stop the scheduled task
+     */
     public void close() {
         statusUpdateExecutorService.shutdown();
         executionThreadPool.shutdown();
