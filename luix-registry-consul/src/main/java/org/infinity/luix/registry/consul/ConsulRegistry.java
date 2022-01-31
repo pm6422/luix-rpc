@@ -19,31 +19,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
+import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL;
+import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL_VAL_DEFAULT;
+
 @Slf4j
 @ThreadSafe
 public class ConsulRegistry extends CommandFailbackAbstractRegistry implements Destroyable {
 
-    /**
-     * consul服务查询默认间隔时间。单位毫秒
-     */
-    public static int                                                                 DEFAULT_LOOKUP_INTERVAL = 30_000;
     private final LuixConsulClient                                                    consulClient;
     private final ConsulStatusUpdater                                                 consulStatusUpdater;
-    private final int                                                                 lookupInterval;
+    private final int                                                                 discoverInterval;
     // service local cache. key: group, value: <service interface name, url list>
-    private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache            = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache        = new ConcurrentHashMap<>();
     // command local cache. key: group, value: command content
-    private final ConcurrentHashMap<String, String>                                   commandCache            = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, String>                                   commandCache        = new ConcurrentHashMap<>();
     // record lookup service thread, insure each group start only one thread, <group, lastConsulIndexId>
-    private final ConcurrentHashMap<String, Long>                                     lookupGroupServices     = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Long>                                     lookupGroupServices = new ConcurrentHashMap<>();
     // record lookup command thread, <group, command>
     // TODO: 2016/6/17 change value to consul index
-    private final ConcurrentHashMap<String, String>                                   lookupGroupCommands     = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, String>                                   lookupGroupCommands = new ConcurrentHashMap<>();
     // TODO: 2016/6/17 clientUrl support multiple listener
     // record subscribers service callback listeners, listener was called when corresponding service changes
-    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners        = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners    = new ConcurrentHashMap<>();
     // record subscribers command callback listeners, listener was called when corresponding command changes
-    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners        = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners    = new ConcurrentHashMap<>();
     private final ThreadPoolExecutor                                                  notificationThreadPool;
 
     public ConsulRegistry(Url url, LuixConsulClient consulClient) {
@@ -51,8 +50,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         this.consulClient = consulClient;
         consulStatusUpdater = new ConsulStatusUpdater(consulClient);
         consulStatusUpdater.start();
-//        lookupInterval = super.registryUrl.getIntOption(URLParamType.registrySessionTimeout.getName(), DEFAULT_LOOKUP_INTERVAL);
-        lookupInterval = DEFAULT_LOOKUP_INTERVAL;
+        discoverInterval = registryUrl.getIntOption(DISCOVERY_INTERVAL, DISCOVERY_INTERVAL_VAL_DEFAULT);
         notificationThreadPool = createNotificationThreadPool();
         ShutdownHook.add(this);
         log.info("Initialized consul registry");
@@ -124,29 +122,29 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     private ConcurrentHashMap<String, List<Url>> lookupServiceUpdate(String form) {
-        ConcurrentHashMap<String, List<Url>> groupUrls = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, List<Url>> urlsPerPath = new ConcurrentHashMap<>();
         Long lastConsulIndexId = lookupGroupServices.get(form) == null ? 0L : lookupGroupServices.get(form);
         Response<List<ConsulService>> response = queryActiveServiceInstances(form, lastConsulIndexId);
         if (response != null) {
-            List<ConsulService> services = response.getValue();
-            if (CollectionUtils.isNotEmpty(services) && response.getConsulIndex() > lastConsulIndexId) {
-                for (ConsulService service : services) {
+            List<ConsulService> activeServiceInstances = response.getValue();
+            if (CollectionUtils.isNotEmpty(activeServiceInstances) && response.getConsulIndex() > lastConsulIndexId) {
+                for (ConsulService activeServiceInstance : activeServiceInstances) {
                     try {
-                        Url url = ConsulUtils.buildUrl(service);
-                        String cluster = ConsulUtils.getProtocolPlusPath(url);
-                        List<Url> urlList = groupUrls.computeIfAbsent(cluster, k -> new ArrayList<>());
-                        urlList.add(url);
+                        Url url = ConsulUtils.buildUrl(activeServiceInstance);
+                        String protocolPlusPath = ConsulUtils.getProtocolPlusPath(url);
+                        List<Url> urls = urlsPerPath.computeIfAbsent(protocolPlusPath, k -> new ArrayList<>());
+                        urls.add(url);
                     } catch (Exception e) {
-                        log.error("convert consul service to url fail! service:" + service, e);
+                        log.error("Failed to build url from consul service instance: " + activeServiceInstance, e);
                     }
                 }
                 lookupGroupServices.put(form, response.getConsulIndex());
-                return groupUrls;
+                return urlsPerPath;
             } else {
-                log.info(form + " no need update, lastIndex:" + lastConsulIndexId);
+                log.info("No consul index update");
             }
         }
-        return groupUrls;
+        return urlsPerPath;
     }
 
     /**
@@ -377,20 +375,20 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     private class ServiceLookupThread extends Thread {
-        private final String group;
+        private final String form;
 
-        public ServiceLookupThread(String group) {
-            this.group = group;
+        public ServiceLookupThread(String form) {
+            this.form = form;
         }
 
         @Override
         public void run() {
-            log.info("start group lookup thread. lookup interval: " + lookupInterval + "ms, group: " + group);
+            log.info("start group lookup thread. lookup interval: " + discoverInterval + "ms, group: " + form);
             while (true) {
                 try {
-                    sleep(lookupInterval);
-                    ConcurrentHashMap<String, List<Url>> groupUrls = lookupServiceUpdate(group);
-                    updateServiceCache(group, groupUrls, true);
+                    sleep(discoverInterval);
+                    ConcurrentHashMap<String, List<Url>> groupUrls = lookupServiceUpdate(form);
+                    updateServiceCache(form, groupUrls, true);
                 } catch (Throwable e) {
                     log.error("group lookup thread fail!", e);
                     try {
@@ -411,10 +409,10 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
         @Override
         public void run() {
-            log.info("start command lookup thread. lookup interval: " + lookupInterval + "ms, group: " + group);
+            log.info("start command lookup thread. lookup interval: " + discoverInterval + "ms, group: " + group);
             while (true) {
                 try {
-                    sleep(lookupInterval);
+                    sleep(discoverInterval);
                     String command = lookupCommandUpdate(group);
                     updateCommandCache(group, command, true);
                 } catch (Throwable e) {

@@ -58,6 +58,10 @@ public class RegistryConfig implements Configurable {
      */
     private              Integer retryInterval;
     /**
+     * Service discovery interval in milliseconds
+     */
+    private              Integer discoveryInterval;
+    /**
      * Registry url
      */
     private              Url     registryUrl;
@@ -103,6 +107,7 @@ public class RegistryConfig implements Configurable {
         registryUrl.addOption(SESSION_TIMEOUT, sessionTimeout == null ? null : sessionTimeout.toString());
         registryUrl.addOption(CONNECT_TIMEOUT, connectTimeout == null ? null : connectTimeout.toString());
         registryUrl.addOption(RETRY_INTERVAL, retryInterval == null ? null : retryInterval.toString());
+        registryUrl.addOption(DISCOVERY_INTERVAL, discoveryInterval == null ? null : discoveryInterval.toString());
         return registryUrl;
     }
 
