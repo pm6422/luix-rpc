@@ -172,15 +172,15 @@ public final class Url implements Serializable {
     /**
      * Create a register url
      *
-     * @param protocol registry name
-     * @param host     registry host
-     * @param port     registry port
+     * @param name registry name
+     * @param host registry host
+     * @param port registry port
      * @return registry url
      */
-    public static Url registryUrl(String protocol, String host, Integer port) {
+    public static Url registryUrl(String name, String host, Integer port) {
         Map<String, String> options = new ConcurrentHashMap<>(16);
         options.put(Url.PARAM_TYPE, Url.PARAM_TYPE_REGISTRY);
-        return of(protocol, host, port, StringUtils.uncapitalize(Registry.class.getSimpleName()), options);
+        return of(name, host, port, StringUtils.uncapitalize(Registry.class.getSimpleName()), options);
     }
 
 
