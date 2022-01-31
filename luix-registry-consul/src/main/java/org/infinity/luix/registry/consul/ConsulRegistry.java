@@ -176,10 +176,6 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * update service cache of the group.
      * update local cache when service list changed,
      * if need notify, notify service
-     *
-     * @param form
-     * @param urlsPerPath
-     * @param needNotify
      */
     private void updateServiceCache(String form, ConcurrentHashMap<String, List<Url>> urlsPerPath, boolean needNotify) {
         if (MapUtils.isNotEmpty(urlsPerPath)) {
@@ -234,7 +230,6 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * if new group registered, start a new lookup thread
      * each group start a lookup thread to discover service
      *
-     * @param url
      */
     private void startListenerThreadIfNewService(Url url) {
         String group = url.getForm();
@@ -331,10 +326,6 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * update command cache of the group.
      * update local cache when command changed,
      * if need notify, notify command
-     *
-     * @param group
-     * @param command
-     * @param needNotify
      */
     private void updateCommandCache(String group, String command, boolean needNotify) {
         String oldCommand = commandCache.get(group);
