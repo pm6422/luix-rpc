@@ -154,7 +154,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     private ConcurrentHashMap<String, List<Url>> doDiscoverActiveProviders(String form) {
         ConcurrentHashMap<String, List<Url>> path2Urls = new ConcurrentHashMap<>();
         Long lastConsulIndexId = form2ConsulIndex.get(form) == null ? 0L : form2ConsulIndex.get(form);
-        Response<List<ConsulService>> response = queryActiveServiceInstances(form, lastConsulIndexId);
+        Response<List<ConsulService>> response = consulClient
+                .queryActiveServiceInstances(ConsulUtils.buildServiceName(form), lastConsulIndexId);
         if (response != null) {
             List<ConsulService> activeServiceInstances = response.getValue();
             if (CollectionUtils.isNotEmpty(activeServiceInstances) && response.getConsulIndex() > lastConsulIndexId) {
@@ -207,10 +208,6 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                 }
             }
         }
-    }
-
-    private Response<List<ConsulService>> queryActiveServiceInstances(String serviceName, Long lastConsulIndexId) {
-        return consulClient.queryActiveServiceInstances(ConsulUtils.buildServiceName(serviceName), lastConsulIndexId);
     }
 
     @Override
