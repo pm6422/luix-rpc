@@ -1,46 +1,33 @@
 package org.infinity.luix.registry.consul;
 
+import org.infinity.luix.core.url.Url;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-
-import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_PROVIDING_SERVICES_PREFIX;
+import static org.infinity.luix.core.constant.ProtocolConstants.PROTOCOL_VAL_LUIX;
 
 public class LuixConsulClientTest {
 
-    private static LuixConsulClient    consulClient;
-    private static ConsulStatusUpdater consulStatusUpdater;
+    private static ConsulRegistry consulRegistry;
+    private static Url            provider1;
 
     @BeforeAll
     public static void setup() {
-        consulClient = new LuixConsulClient("localhost", 8500);
-        consulStatusUpdater = new ConsulStatusUpdater(consulClient);
-        consulStatusUpdater.start();
+        Url registryUrl = Url.registryUrl(PROTOCOL_VAL_LUIX, "localhost", 8500);
+        LuixConsulClient consulClient = new LuixConsulClient("localhost", 8500);
+        consulRegistry = new ConsulRegistry(registryUrl, consulClient);
+        provider1 = Url.providerUrl(PROTOCOL_VAL_LUIX, "127.0.0.1", 6010, "org.infinity.luix.democommon.service.MailService");
     }
 
     @Test
     public void registerService() throws InterruptedException {
-        ConsulService service1 = createConsulService("org.infinity.luix.democommon.service.MailService", "127.0.0.1", 6010);
-//        ConsulService service2 = createConsulService("org.infinity.luix.democommon.service.AppService", "127.0.0.1", 6020);
-        consulClient.registerService(service1);
-//        consulClient.registerService(service2);
-        consulClient.activate(service1.getInstanceId());
+        consulRegistry.doRegister(provider1);
+        consulRegistry.doActivate(provider1);
         Thread.sleep(100_000L);
     }
 
     @Test
-    public void closeClient() {
-        consulStatusUpdater.close();
-    }
-
-    private static ConsulService createConsulService(String serviceName, String host, int port) {
-        ConsulService service = new ConsulService();
-        service.setName(CONSUL_PROVIDING_SERVICES_PREFIX);
-        service.setInstanceId(serviceName + "@" + host + ":" + port);
-        service.setAddress(host);
-        service.setPort(port);
-        service.setTags(Arrays.asList("protocol_luix"));
-        return service;
+    public void deregisterService() {
+        consulRegistry.doDeregister(provider1);
     }
 }
