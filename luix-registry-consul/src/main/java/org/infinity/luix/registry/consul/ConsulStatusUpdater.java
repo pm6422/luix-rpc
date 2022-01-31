@@ -47,7 +47,7 @@ public class ConsulStatusUpdater {
      */
     private final        ConcurrentHashSet<String> checkingInstanceIds = new ConcurrentHashSet<>();
     /**
-     * Switcher check times
+     * Check times
      */
     private              int                       checkTimes          = 0;
 
