@@ -17,19 +17,19 @@ public class ConsulStatusUpdater {
     /**
      * 心跳周期，取ttl的2/3
      */
-    private static final int                       HEARTBEAT_CIRCLE           = (TTL * 1000 * 2) / 3;
+    private static final int                       HEARTBEAT_CIRCLE    = (TTL * 1000 * 2) / 3;
     /**
      * 连续检测开关变更的最大次数，超过这个次数就发送一次心跳
      */
-    private static final int                       MAX_CHECK_TIMES            = 10;
+    private static final int                       MAX_CHECK_TIMES     = 10;
     /**
      * 检测开关变更的频率，连续检测MAX_SWITCHER_CHECK_TIMES次必须发送一次心跳
      */
-    private static final int                       SCHEDULE_INTERVAL          = HEARTBEAT_CIRCLE / MAX_CHECK_TIMES;
+    private static final int                       SCHEDULE_INTERVAL   = HEARTBEAT_CIRCLE / MAX_CHECK_TIMES;
     /**
      * Status of current consul service instances
      */
-    private              AtomicBoolean             active                     = new AtomicBoolean(false);
+    private              AtomicBoolean             active              = new AtomicBoolean(false);
     /**
      * Luix consul client
      */
@@ -45,11 +45,11 @@ public class ConsulStatusUpdater {
     /**
      * Service instance IDs that need to be health checked.
      */
-    private final        ConcurrentHashSet<String> checkingServiceInstanceIds = new ConcurrentHashSet<>();
+    private final        ConcurrentHashSet<String> checkingInstanceIds = new ConcurrentHashSet<>();
     /**
      * Switcher check times
      */
-    private              int                       checkTimes                 = 0;
+    private              int                       checkTimes          = 0;
 
     public ConsulStatusUpdater(LuixConsulClient consulClient) {
         this.consulClient = consulClient;
@@ -72,7 +72,7 @@ public class ConsulStatusUpdater {
      * @param serviceInstanceId service instance ID
      */
     private void addInstanceId(String serviceInstanceId) {
-        checkingServiceInstanceIds.add(serviceInstanceId);
+        checkingInstanceIds.add(serviceInstanceId);
     }
 
     /**
@@ -81,7 +81,7 @@ public class ConsulStatusUpdater {
      * @param serviceInstanceId service instance ID
      */
     private void removeInstanceId(String serviceInstanceId) {
-        checkingServiceInstanceIds.remove(serviceInstanceId);
+        checkingInstanceIds.remove(serviceInstanceId);
     }
 
     public void updateStatus(boolean active) {
@@ -92,7 +92,7 @@ public class ConsulStatusUpdater {
     }
 
     private void doUpdateStatus(boolean active) {
-        for (String instanceId : checkingServiceInstanceIds) {
+        for (String instanceId : checkingInstanceIds) {
             try {
                 executionThreadPool.execute(() -> {
                     if (active) {
@@ -114,7 +114,7 @@ public class ConsulStatusUpdater {
      */
     public void activate(String serviceInstanceId) {
         addInstanceId(serviceInstanceId);
-        if (CollectionUtils.isNotEmpty(checkingServiceInstanceIds)) {
+        if (CollectionUtils.isNotEmpty(checkingInstanceIds)) {
             updateStatus(true);
         }
         consulClient.activate(serviceInstanceId);
@@ -127,7 +127,7 @@ public class ConsulStatusUpdater {
      */
     public void deactivate(String serviceInstanceId) {
         removeInstanceId(serviceInstanceId);
-        if (CollectionUtils.isEmpty(checkingServiceInstanceIds)) {
+        if (CollectionUtils.isEmpty(checkingInstanceIds)) {
             updateStatus(false);
         }
         consulClient.deactivate(serviceInstanceId);
