@@ -26,9 +26,22 @@ import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERV
 @ThreadSafe
 public class ConsulRegistry extends CommandFailbackAbstractRegistry implements Destroyable {
 
+    /**
+     * Consul client
+     */
     private final LuixConsulClient                                                    consulClient;
+    /**
+     * Consul service instance status updater
+     */
     private final ConsulStatusUpdater                                                 consulStatusUpdater;
+    /**
+     * Service discovery interval in milliseconds
+     */
     private final int                                                                 discoverInterval;
+    /**
+     * Provider service notification thread pool
+     */
+    private final ThreadPoolExecutor                                                  notificationThreadPool;
     // service local cache. key: group, value: <service interface name, url list>
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     serviceCache        = new ConcurrentHashMap<>();
     // command local cache. key: group, value: command content
@@ -43,7 +56,6 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     private final ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners    = new ConcurrentHashMap<>();
     // record subscribers command callback listeners, listener was called when corresponding command changes
     private final ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners    = new ConcurrentHashMap<>();
-    private final ThreadPoolExecutor                                                  notificationThreadPool;
 
     public ConsulRegistry(Url url, LuixConsulClient consulClient) {
         super(url);
@@ -58,7 +70,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
     private ThreadPoolExecutor createNotificationThreadPool() {
         return new ThreadPoolExecutor(10, 30, 30 * 1_000,
-                TimeUnit.MILLISECONDS, createWorkQueue());
+                TimeUnit.MILLISECONDS, createWorkQueue(), new ThreadPoolExecutor.AbortPolicy());
     }
 
     private BlockingQueue<Runnable> createWorkQueue() {
@@ -72,8 +84,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     @Override
-    protected void doDeregister(Url url) {
-        ConsulService service = ConsulService.of(url);
+    protected void doDeregister(Url providerUrl) {
+        ConsulService service = ConsulService.of(providerUrl);
         consulClient.deregisterService(service.getInstanceId());
     }
 
