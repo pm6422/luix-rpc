@@ -65,12 +65,12 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      */
     private final ConcurrentHashMap<String, String>                                   form2Command     = new ConcurrentHashMap<>();
     /**
-     * Key: form plus path
+     * Key: protocol plus path
      * Value: url to providerListener map
      */
     private final ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners = new ConcurrentHashMap<>();
     /**
-     * Key: form plus path
+     * Key: protocol plus path
      * Value: url to commandListener map
      */
     private final ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners = new ConcurrentHashMap<>();
@@ -285,14 +285,6 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     @Override
-    protected String readCommand(Url consumerUrl) {
-        String group = consumerUrl.getForm();
-        String command = lookupCommandUpdate(group);
-        updateCommandCache(group, command, false);
-        return command;
-    }
-
-    @Override
     public List<String> getAllProviderPaths() {
         return null;
     }
@@ -300,6 +292,14 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     @Override
     public void subscribeConsumerListener(String interfaceName, ConsumerProcessable consumerProcessor) {
 
+    }
+
+    @Override
+    protected String readCommand(Url consumerUrl) {
+        String group = consumerUrl.getForm();
+        String command = lookupCommandUpdate(group);
+        updateCommandCache(group, command, false);
+        return command;
     }
 
     private String lookupCommandUpdate(String group) {
