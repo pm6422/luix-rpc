@@ -44,8 +44,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     private final ThreadPoolExecutor                                                  notificationThreadPool;
     /**
      * Cache used to store provider urls
-     * Key: protocol plus path
-     * Value: form to urls map
+     * Key:  form
+     * Value: protocol plus path to urls map
      */
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     urlCache         = new ConcurrentHashMap<>();
     /**
@@ -139,8 +139,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
             synchronized (form.intern()) {
                 protocolPlusPath2Urls = urlCache.get(form);
                 if (protocolPlusPath2Urls == null) {
-                    ConcurrentHashMap<String, List<Url>> path2Urls = doDiscoverActiveProviders(form);
-                    updateProviderUrlsCache(form, path2Urls, false);
+                    ConcurrentHashMap<String, List<Url>> protocolPlusPath2UrlsMap = doDiscoverActiveProviders(form);
+                    updateProviderUrlsCache(form, protocolPlusPath2UrlsMap, false);
                     protocolPlusPath2Urls = urlCache.get(form);
                 }
             }
@@ -178,23 +178,18 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         return protocolPlusPath2Urls;
     }
 
-    /**
-     * update service cache of the group.
-     * update local cache when service list changed,
-     * if need notify, notify service
-     */
-    private void updateProviderUrlsCache(String form, ConcurrentHashMap<String, List<Url>> path2Urls, boolean needNotify) {
-        if (MapUtils.isNotEmpty(path2Urls)) {
-            ConcurrentHashMap<String, List<Url>> groupMap = urlCache.putIfAbsent(form, path2Urls);
-            for (Map.Entry<String, List<Url>> entry : path2Urls.entrySet()) {
+    private void updateProviderUrlsCache(String form, ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls, boolean needNotify) {
+        if (MapUtils.isNotEmpty(protocolPlusPath2Urls)) {
+            ConcurrentHashMap<String, List<Url>> protocolPlusPath2UrlsCopy = urlCache.putIfAbsent(form, protocolPlusPath2Urls);
+            for (Map.Entry<String, List<Url>> entry : protocolPlusPath2Urls.entrySet()) {
                 boolean change = true;
-                if (groupMap != null) {
-                    List<Url> oldUrls = groupMap.get(entry.getKey());
+                if (protocolPlusPath2UrlsCopy != null) {
+                    List<Url> oldUrls = protocolPlusPath2UrlsCopy.get(entry.getKey());
                     List<Url> newUrls = entry.getValue();
                     if (CollectionUtils.isEmpty(newUrls) || ConsulUtils.isSame(entry.getValue(), oldUrls)) {
                         change = false;
                     } else {
-                        groupMap.put(entry.getKey(), newUrls);
+                        protocolPlusPath2UrlsCopy.put(entry.getKey(), newUrls);
                     }
                 }
                 if (change && needNotify) {
@@ -399,8 +394,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
             while (true) {
                 try {
                     sleep(discoverInterval);
-                    ConcurrentHashMap<String, List<Url>> urlsPerPath = doDiscoverActiveProviders(form);
-                    updateProviderUrlsCache(form, urlsPerPath, true);
+                    ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls = doDiscoverActiveProviders(form);
+                    updateProviderUrlsCache(form, protocolPlusPath2Urls, true);
                 } catch (Throwable e) {
                     log.error("group lookup thread fail!", e);
                     try {
