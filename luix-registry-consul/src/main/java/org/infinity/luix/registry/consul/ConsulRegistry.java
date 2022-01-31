@@ -356,17 +356,17 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     private class NotifyCommand implements Runnable {
-        private final String group;
+        private final String form;
         private final String command;
 
-        public NotifyCommand(String group, String command) {
-            this.group = group;
+        public NotifyCommand(String form, String command) {
+            this.form = form;
             this.command = command;
         }
 
         @Override
         public void run() {
-            ConcurrentHashMap<Url, CommandListener> listeners = commandListeners.get(group);
+            ConcurrentHashMap<Url, CommandListener> listeners = commandListeners.get(form);
             synchronized (listeners) {
                 for (Map.Entry<Url, CommandListener> entry : listeners.entrySet()) {
                     CommandListener commandListener = entry.getValue();
