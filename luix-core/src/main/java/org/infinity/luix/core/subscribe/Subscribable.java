@@ -32,4 +32,11 @@ public interface Subscribable {
      * @param listener    client listener
      */
     void unsubscribe(Url consumerUrl, ClientListener listener);
+
+    /**
+     * Unbind a listener from a client
+     *
+     * @param consumerUrl consumer url
+     */
+    void unsubscribe(Url consumerUrl);
 }

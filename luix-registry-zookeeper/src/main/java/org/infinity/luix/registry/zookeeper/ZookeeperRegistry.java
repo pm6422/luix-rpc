@@ -511,7 +511,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     @Override
-    public void mark(Url consumerUrl) {
+    public void subscribe(Url consumerUrl) {
         createConsumingNode(consumerUrl);
     }
 
@@ -528,7 +528,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     @Override
-    public void unmark(Url consumerUrl) {
+    public void unsubscribe(Url consumerUrl) {
         try {
             // Remove dirty data
             removeNode(consumerUrl, StatusDir.CONSUMING);

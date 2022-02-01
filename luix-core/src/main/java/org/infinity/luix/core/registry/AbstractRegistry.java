@@ -153,7 +153,7 @@ public abstract class AbstractRegistry implements Registry {
         Validate.notNull(listener, "Client listener must NOT be null!");
 
         doSubscribe(consumerUrl, listener);
-        mark(consumerUrl);
+        subscribe(consumerUrl);
         log.info("Subscribed the url [{}] to listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
     }
 
@@ -169,8 +169,12 @@ public abstract class AbstractRegistry implements Registry {
         Validate.notNull(listener, "Client listener must NOT be null!");
 
         doUnsubscribe(consumerUrl, listener);
-        unmark(consumerUrl);
         log.info("Unsubscribed the url [{}] from listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
+    }
+
+    @Override
+    public void unsubscribe(Url consumerUrl) {
+        this.unsubscribe(consumerUrl);
     }
 
     /**

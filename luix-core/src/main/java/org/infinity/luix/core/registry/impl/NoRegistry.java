@@ -96,12 +96,12 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
-    public void mark(Url consumerUrl) {
+    public void subscribe(Url consumerUrl) {
 
     }
 
     @Override
-    public void unmark(Url consumerUrl) {
+    public void unsubscribe(Url consumerUrl) {
 
     }
 

@@ -42,14 +42,14 @@ public interface Registrable {
      *
      * @param consumerUrl consumer url
      */
-    void mark(Url consumerUrl);
+    void subscribe(Url consumerUrl);
 
     /**
      * Deregister the consumer url from registry
      *
      * @param consumerUrl consumer url
      */
-    void unmark(Url consumerUrl);
+    void unsubscribe(Url consumerUrl);
 
     /**
      * Get the registered provider urls

@@ -287,7 +287,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     @Override
-    public void mark(Url consumerUrl) {
+    public void subscribe(Url consumerUrl) {
         ConsulService service = ConsulService.byConsumerUrl(consumerUrl);
         consulClient.registerService(service);
         // Activate specified service instance
@@ -295,7 +295,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     @Override
-    public void unmark(Url consumerUrl) {
+    public void unsubscribe(Url consumerUrl) {
         ConsulService service = ConsulService.byConsumerUrl(consumerUrl);
         consulClient.deregisterService(service.getInstanceId());
     }
