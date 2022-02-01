@@ -11,14 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.infinity.luix.core.url.Url;
 import org.infinity.luix.registry.consul.utils.ConsulUtils;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_PROVIDING_SERVICES_PREFIX;
-import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_SERVICE_INSTANCE_DELIMITER;
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.*;
 
 @Slf4j
 public class LuixConsulClient {
@@ -73,6 +73,18 @@ public class LuixConsulClient {
         return paths;
     }
 
+    public List<Url> getConsumerUrls(String interfaceName) {
+        Response<Map<String, Service>> response = consulClient.getAgentServices();
+        if (response == null || MapUtils.isEmpty(response.getValue())) {
+            return Collections.emptyList();
+        }
+        List<Url> urls = response.getValue().entrySet().stream()
+                .filter(entry -> entry.getValue().getService().startsWith(CONSUL_CONSUMING_SERVICES_PREFIX) &&
+                        entry.getValue().getId().startsWith(interfaceName))
+                .map(entry -> ConsulUtils.buildUrl(ConsulService.of(entry.getValue()))).collect(Collectors.toList());
+        return urls;
+    }
+
     public Response<List<ConsulService>> queryActiveServiceInstances(String serviceName, long lastConsulIndex) {
         HealthServicesRequest request = HealthServicesRequest.newBuilder()
                 .setQueryParams(new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, lastConsulIndex))
@@ -86,7 +98,7 @@ public class LuixConsulClient {
         if (CollectionUtils.isNotEmpty(response.getValue())) {
             for (HealthService activeServiceInstance : response.getValue()) {
                 try {
-                    activeServiceInstances.add(ConsulService.byProviderUrl(activeServiceInstance));
+                    activeServiceInstances.add(ConsulService.of(activeServiceInstance));
                 } catch (Exception e) {
                     String serviceInstanceId = activeServiceInstance.getService() != null
                             ? activeServiceInstance.getService().getId()

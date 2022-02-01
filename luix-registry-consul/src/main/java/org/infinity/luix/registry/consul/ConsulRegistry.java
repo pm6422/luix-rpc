@@ -307,7 +307,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
     @Override
     public void subscribeConsumerListener(String interfaceName, ConsumerProcessable consumerProcessor) {
-
+        List<Url> consumerUrls = consulClient.getConsumerUrls(interfaceName);
+        consumerProcessor.process(getRegistryUrl(), interfaceName, consumerUrls);
     }
 
     @Override

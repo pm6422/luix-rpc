@@ -1,6 +1,7 @@
 package org.infinity.luix.registry.consul;
 
 import com.ecwid.consul.v1.agent.model.NewService;
+import com.ecwid.consul.v1.agent.model.Service;
 import com.ecwid.consul.v1.health.model.HealthService;
 import lombok.Data;
 import org.infinity.luix.core.url.Url;
@@ -67,7 +68,17 @@ public class ConsulService {
         return newService;
     }
 
-    public static ConsulService byProviderUrl(HealthService healthService) {
+    public static ConsulService of(Service service) {
+        ConsulService consulService = new ConsulService();
+        consulService.setName(service.getService());
+        consulService.setInstanceId(service.getId());
+        consulService.setAddress(service.getAddress());
+        consulService.setPort(service.getPort());
+        consulService.setTags(service.getTags());
+        return consulService;
+    }
+
+    public static ConsulService of(HealthService healthService) {
         ConsulService consulService = new ConsulService();
         consulService.setName(healthService.getService().getService());
         consulService.setInstanceId(healthService.getService().getId());
