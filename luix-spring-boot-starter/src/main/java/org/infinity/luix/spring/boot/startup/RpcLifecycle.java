@@ -205,11 +205,11 @@ public class RpcLifecycle {
         }
 
         luixProperties.getRegistryList().forEach(registryConfig ->
-                deregisterProviders(registryConfig.getRegistryUrl())
+                unsubscribeConsumers(registryConfig.getRegistryUrl())
         );
 
         luixProperties.getRegistryList().forEach(registryConfig ->
-                unsubscribeConsumers(registryConfig.getRegistryUrl())
+                deregisterProviders(registryConfig.getRegistryUrl())
         );
 
         // Notes: debug breakpoint here does not work and log.info() does not work
@@ -230,7 +230,7 @@ public class RpcLifecycle {
                 return;
             }
             registry.getRegisteredProviderUrls().forEach(registry::deregister);
-            log.debug("Deregistered all the RPC providers from registry [{}]", registryUrl.getProtocol());
+            System.out.println("Deregistered all the RPC providers from registry [" + registryUrl.getProtocol() + "]");
         }
     }
 
@@ -249,7 +249,7 @@ public class RpcLifecycle {
             ConsumerStubHolder.getInstance().get().forEach((name, consumerStub) -> {
                 registry.unsubscribe(consumerStub.getUrl());
             });
-            log.debug("Unsubscribed all the RPC consumers from registry [{}]", registryUrl.getProtocol());
+            System.out.println("Unsubscribed all the RPC consumers from registry [" + registryUrl.getProtocol() + "]");
         }
     }
 }
