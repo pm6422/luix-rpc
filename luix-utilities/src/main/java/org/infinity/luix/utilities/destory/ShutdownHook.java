@@ -86,9 +86,9 @@ public class ShutdownHook extends Thread {
                 resource.destroyable.destroy();
             } catch (Exception e) {
                 System.out.println("Failed to cleaned up the " + resource.destroyable.getClass().getSimpleName()
-                        + "by ShutdownHook with exception: " + e.getMessage());
+                        + " by ShutdownHook with exception: " + e.getMessage());
             }
-            System.out.println("Cleaned up the " + resource.destroyable.getClass().getSimpleName() + "by ShutdownHook");
+            System.out.println("Cleaned up the " + resource.destroyable.getClass().getSimpleName() + " by ShutdownHook");
         }
         RESOURCES.clear();
     }
