@@ -368,25 +368,12 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     protected void subscribeProviderListener(Url consumerUrl, ProviderListener providerListener) {
         listenerLock.lock();
         try {
-            createConsumingNode(consumerUrl);
             doSubscribeProviderListener(consumerUrl, providerListener);
         } catch (Throwable e) {
             String msg = String.format("Failed to subscribe provider listeners for url [%s]", consumerUrl);
             throw new RpcFrameworkException(msg, e);
         } finally {
             listenerLock.unlock();
-        }
-    }
-
-    private void createConsumingNode(Url consumerUrl) {
-        try {
-            // Remove dirty data
-            removeNode(consumerUrl, StatusDir.CONSUMING);
-            // Create consumer url data under 'consuming' node
-            createNode(consumerUrl, StatusDir.CONSUMING);
-        } catch (Exception e) {
-            log.warn(MessageFormat.format("Failed to remove or create the node for the path [{0}]",
-                    getProviderFilePath(consumerUrl, StatusDir.CONSUMING)), e);
         }
     }
 
@@ -520,6 +507,34 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             throw new RpcFrameworkException(msg, e);
         } finally {
             listenerLock.unlock();
+        }
+    }
+
+    @Override
+    public void mark(Url consumerUrl) {
+        createConsumingNode(consumerUrl);
+    }
+
+    private void createConsumingNode(Url consumerUrl) {
+        try {
+            // Remove dirty data
+            removeNode(consumerUrl, StatusDir.CONSUMING);
+            // Create consumer url data under 'consuming' node
+            createNode(consumerUrl, StatusDir.CONSUMING);
+        } catch (Exception e) {
+            log.warn(MessageFormat.format("Failed to remove or create the node for the path [{0}]",
+                    getProviderFilePath(consumerUrl, StatusDir.CONSUMING)), e);
+        }
+    }
+
+    @Override
+    public void unmark(Url consumerUrl) {
+        try {
+            // Remove dirty data
+            removeNode(consumerUrl, StatusDir.CONSUMING);
+        } catch (Exception e) {
+            log.warn(MessageFormat.format("Failed to remove the node for the path [{0}]",
+                    getProviderFilePath(consumerUrl, StatusDir.CONSUMING)), e);
         }
     }
 

@@ -208,11 +208,6 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
     @Override
     protected void subscribeProviderListener(Url consumerUrl, ProviderListener listener) {
-        ConsulService service = ConsulService.byConsumerUrl(consumerUrl);
-        consulClient.registerService(service);
-        // Activate specified service instance
-        consulStatusUpdater.activate(service.getInstanceId());
-
         addServiceListener(consumerUrl, listener);
         startListenerThreadIfNewService(consumerUrl);
     }
@@ -289,6 +284,20 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                 listeners.remove(consumerUrl);
             }
         }
+    }
+
+    @Override
+    public void mark(Url consumerUrl) {
+        ConsulService service = ConsulService.byConsumerUrl(consumerUrl);
+        consulClient.registerService(service);
+        // Activate specified service instance
+        consulStatusUpdater.activate(service.getInstanceId());
+    }
+
+    @Override
+    public void unmark(Url consumerUrl) {
+        ConsulService service = ConsulService.byConsumerUrl(consumerUrl);
+        consulClient.deregisterService(service.getInstanceId());
     }
 
     @Override

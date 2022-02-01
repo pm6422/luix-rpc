@@ -96,6 +96,16 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
+    public void mark(Url consumerUrl) {
+
+    }
+
+    @Override
+    public void unmark(Url consumerUrl) {
+
+    }
+
+    @Override
     public List<String> getAllProviderPaths() {
         throw new UnsupportedOperationException();
     }

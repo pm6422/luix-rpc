@@ -38,6 +38,20 @@ public interface Registrable {
     void deactivate(Url providerUrl);
 
     /**
+     * Register and activate the consumer url to registry
+     *
+     * @param consumerUrl consumer url
+     */
+    void mark(Url consumerUrl);
+
+    /**
+     * Deregister the consumer url from registry
+     *
+     * @param consumerUrl consumer url
+     */
+    void unmark(Url consumerUrl);
+
+    /**
      * Get the registered provider urls
      *
      * @return provider urls
