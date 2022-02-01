@@ -226,7 +226,7 @@ public class RpcLifecycle {
         for (Url registryUrl : registryUrls) {
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             if (registry == null || CollectionUtils.isEmpty(registry.getRegisteredProviderUrls())) {
-                log.warn("No registry found!");
+                System.out.println("No registry found!");
                 return;
             }
             registry.getRegisteredProviderUrls().forEach(registry::deregister);
@@ -243,7 +243,7 @@ public class RpcLifecycle {
         for (Url registryUrl : registryUrls) {
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             if (registry == null || CollectionUtils.isEmpty(registry.getRegisteredProviderUrls())) {
-                log.warn("No registry found!");
+                System.out.println("No registry found!");
                 return;
             }
             ConsumerStubHolder.getInstance().get().forEach((name, consumerStub) -> {
