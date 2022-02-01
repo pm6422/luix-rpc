@@ -126,7 +126,7 @@ luix:
         env: ${spring.profiles.active}
     registries:
         0:
-            name: zookeeper
+            name: consul
             connectTimeout: 1000
             sessionTimeout: 60000
     protocol:
