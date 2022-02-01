@@ -10,7 +10,6 @@ import java.util.List;
 
 /**
  * A utility used to clean up the resources
- *
  */
 @Slf4j
 @ThreadSafe
@@ -53,6 +52,7 @@ public class ShutdownHook extends Thread {
      */
     public static void register() {
         Runtime.getRuntime().addShutdownHook(INSTANCE);
+        log.info("Registered the {} to system runtime", ShutdownHook.class.getSimpleName());
     }
 
     public static void runNow(boolean sync) {
@@ -85,9 +85,10 @@ public class ShutdownHook extends Thread {
             try {
                 resource.destroyable.destroy();
             } catch (Exception e) {
-                log.error("Failed to cleanup " + resource.destroyable.getClass().getSimpleName(), e);
+                System.out.println("Failed to cleaned up the " + resource.destroyable.getClass().getSimpleName()
+                        + "by ShutdownHook with exception: " + e.getMessage());
             }
-            log.info("Cleaned up the {}", resource.destroyable.getClass().getSimpleName());
+            System.out.println("Cleaned up the " + resource.destroyable.getClass().getSimpleName() + "by ShutdownHook");
         }
         RESOURCES.clear();
     }
