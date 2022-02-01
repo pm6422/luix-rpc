@@ -207,6 +207,8 @@ public class RpcLifecycle {
         luixProperties.getRegistryList().forEach(registryConfig ->
                 deregisterProviders(registryConfig.getRegistryUrl())
         );
+        // Notes: debug breakpoint here does not work and log.info() does not work
+        System.out.println("Stopped the RPC server");
     }
 
     /**
