@@ -131,6 +131,7 @@ luix:
             sessionTimeout: 60000
     protocol:
         port: 1${server.port}
+        serializer: hessian2
 # ===================================================================
 # Application specific properties
 # ===================================================================
