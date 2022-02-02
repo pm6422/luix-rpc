@@ -23,6 +23,7 @@ import java.util.concurrent.*;
 
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL;
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL_VAL_DEFAULT;
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_PROVIDING_SERVICES_PREFIX;
 
 @Slf4j
 @ThreadSafe
@@ -157,7 +158,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls = new ConcurrentHashMap<>();
         Long lastConsulIndexId = form2ConsulIndex.get(form) == null ? 0L : form2ConsulIndex.get(form);
         Response<List<ConsulService>> response = consulClient
-                .queryActiveServiceInstances(ConsulUtils.buildProviderServiceName(form), lastConsulIndexId);
+                .queryActiveServiceInstances(CONSUL_PROVIDING_SERVICES_PREFIX, lastConsulIndexId);
         if (response != null) {
             List<ConsulService> activeServiceInstances = response.getValue();
             if (CollectionUtils.isNotEmpty(activeServiceInstances) && response.getConsulIndex() > lastConsulIndexId) {

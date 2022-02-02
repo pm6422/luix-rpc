@@ -117,7 +117,7 @@ public class LuixConsulClient {
     }
 
     public String queryCommand(String form) {
-        String key = CONSUL_LUIX_COMMAND_KEY_PREFIX + ConsulUtils.buildProviderServiceName(form);
+        String key = CONSUL_LUIX_COMMAND_KEY_PREFIX + CONSUL_PROVIDING_SERVICES_PREFIX + "/" + form;
         GetValue value = consulClient.getKVValue(key).getValue();
         String command = StringUtils.EMPTY;
         if (value == null) {

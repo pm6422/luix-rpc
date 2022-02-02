@@ -11,7 +11,7 @@ import org.infinity.luix.registry.consul.utils.ConsulUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_TAG_DELIMITER;
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.*;
 
 @Data
 public class ConsulService {
@@ -90,7 +90,7 @@ public class ConsulService {
 
     public static ConsulService byProviderUrl(Url url) {
         ConsulService consulService = new ConsulService();
-        consulService.setName(ConsulUtils.buildProviderServiceName(url.getForm()));
+        consulService.setName(CONSUL_PROVIDING_SERVICES_PREFIX);
         consulService.setInstanceId(ConsulUtils.buildServiceInstanceId(url));
         consulService.setAddress(url.getHost());
         consulService.setPort(url.getPort());
@@ -100,7 +100,7 @@ public class ConsulService {
 
     public static ConsulService byConsumerUrl(Url url) {
         ConsulService consulService = new ConsulService();
-        consulService.setName(ConsulUtils.buildConsumerServiceName(url.getForm()));
+        consulService.setName(CONSUL_CONSUMING_SERVICES_PREFIX);
         consulService.setInstanceId(ConsulUtils.buildServiceInstanceId(url));
         consulService.setAddress(url.getHost());
         consulService.setPort(url.getPort());
