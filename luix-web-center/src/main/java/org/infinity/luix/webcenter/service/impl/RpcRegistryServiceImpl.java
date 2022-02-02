@@ -14,7 +14,6 @@ import org.infinity.luix.core.registry.Registry;
 import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.spring.boot.config.LuixProperties;
-import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.webcenter.dto.RpcRegistryDTO;
 import org.infinity.luix.webcenter.service.RpcRegistryService;
 import org.springframework.boot.ApplicationArguments;
@@ -69,7 +68,12 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                         // generate consumer stub for each provider
                         ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixProperties.getApplication(), registryConfig,
                                 luixProperties.getAvailableProtocol(), url.getPath(), url.getForm(), providerProcessService);
-                        ConsumerStubHolder.getInstance().add("Stub" + IdGenerator.generateShortId(), consumerStub);
+
+                        Map<String, Object> attributes = new HashMap<>(2);
+                        attributes.put(FORM, url.getForm());
+                        attributes.put(VERSION, url.getVersion());
+                        String stubBeanName = ConsumerStub.buildConsumerStubBeanName(url.getPath(), attributes);
+                        ConsumerStubHolder.getInstance().add(stubBeanName, consumerStub);
                     } catch (Exception e) {
                         log.error("Failed to create consumer stub for interface {}", url.getPath(), e);
                     }
