@@ -74,10 +74,9 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                         log.error("Failed to create consumer stub for interface {}", interfaceName, e);
                     }
                 });
-                log.info("Found registry: [{}]", registryConfig.getRegistryUrl().getIdentity());
             });
         } catch (Exception e) {
-            log.error("Failed to get provider or consumer", e);
+            log.error("Failed to create consumer stub!", e);
         }
     }
 
