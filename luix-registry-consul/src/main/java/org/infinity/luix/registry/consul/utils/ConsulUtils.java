@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.infinity.luix.core.url.Url.PARAM_FROM;
 import static org.infinity.luix.core.url.Url.PARAM_TYPE;
 import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_PROTOCOL;
 import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_URL;
@@ -19,15 +20,15 @@ public class ConsulUtils {
     /**
      * Active RPC provider service name on consul registry
      */
-    public static final String CONSUL_PROVIDING_SERVICES_PREFIX  = "luix-providing";
+    public static final  String CONSUL_PROVIDING_SERVICES_PREFIX  = "luix-providing";
     /**
      * Active RPC consumer service name on consul registry
      */
-    public static final String CONSUL_CONSUMING_SERVICES_PREFIX  = "luix-consuming";
+    public static final  String CONSUL_CONSUMING_SERVICES_PREFIX  = "luix-consuming";
     /**
      *
      */
-    public static final String CONSUL_SERVICE_INSTANCE_DELIMITER = "@";
+    public static final  String CONSUL_SERVICE_INSTANCE_DELIMITER = "@";
     /**
      *
      */
@@ -68,10 +69,17 @@ public class ConsulUtils {
      * @return consul service instance ID
      */
     public static String buildServiceInstanceId(Url url) {
-        return url == null
-                ? null
-                : url.getPath() + CONSUL_SERVICE_INSTANCE_DELIMITER + url.getHost() + ":" + url.getPort()
-                + CONSUL_SERVICE_INSTANCE_DELIMITER + url.getOption(PARAM_TYPE);
+        StringBuilder sb = new StringBuilder(StringUtils.EMPTY);
+        if (url != null) {
+            sb.append(url.getPath()).append(CONSUL_SERVICE_INSTANCE_DELIMITER)
+                    .append(url.getHost()).append(FORM_DELIMITER).append(url.getPort())
+                    .append(CONSUL_SERVICE_INSTANCE_DELIMITER).append(url.getOption(PARAM_TYPE));
+
+            if (StringUtils.isNotEmpty(url.getOption(PARAM_FROM))) {
+                sb.append(CONSUL_SERVICE_INSTANCE_DELIMITER).append(url.getOption(PARAM_FROM));
+            }
+        }
+        return sb.toString();
     }
 
     /**
