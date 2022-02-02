@@ -77,6 +77,7 @@
                         <p>提供一系列强大的服务治理工具，包含应用管理、服务器监控、服务提供者管理和服务消费者管理和监控等功能</p>
                         <p>
                             <a id="luix-web-center-btn" class="btn btn-lg btn-primary" role="button">Web Center在线示例</a>
+                            <a id="luix-registry-btn" class="btn btn-lg btn-primary" role="button">注册中心在线示例</a>
                         </p>
                     </div>
                 </div>
@@ -804,6 +805,12 @@
 
     $('#luix-web-center-btn').click(function () {
         $.get("api/system/luix-web-center-url", function(result){
+            window.location.href = result;
+        });
+    });
+
+    $('#luix-registry-btn').click(function () {
+        $.get("api/system/luix-registry-url", function(result){
             window.location.href = result;
         });
     });

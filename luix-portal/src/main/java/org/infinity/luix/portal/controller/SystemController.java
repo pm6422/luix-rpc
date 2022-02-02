@@ -14,6 +14,7 @@ public class SystemController {
     private String luixDemoServerUrl = "http://pm6422.club:6010";
     private String luixDemoClientUrl = "http://pm6422.club:6020";
     private String luixWebCenterUrl  = "http://pm6422.club:6030";
+    private String luixRegistryUrl   = "http://pm6422.club:8500";
 
     @ApiOperation("set luix demo server url")
     @PostMapping("/api/system/luix-demo-server-url")
@@ -49,6 +50,18 @@ public class SystemController {
     @GetMapping("/api/system/luix-web-center-url")
     public String getLuixWebCenterUrl() {
         return this.luixWebCenterUrl;
+    }
+
+    @ApiOperation("set luix registry url")
+    @PostMapping("/api/system/luix-registry-url")
+    public void setLuixRegistryUrl(@RequestParam(value = "url") String url) {
+        this.luixRegistryUrl = url;
+    }
+
+    @ApiOperation("get luix registry url")
+    @GetMapping("/api/system/luix-registry-url")
+    public String getLuixRegistryUrl() {
+        return this.luixRegistryUrl;
     }
 
     @ApiOperation("reset web center database")
