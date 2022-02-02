@@ -18,7 +18,7 @@
         *************************************************************************************
     -->
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
         <lombok.version>1.18.20</lombok.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -72,12 +72,6 @@
         <dependency>
             <groupId>com.github.cloudyrock.mongock</groupId>
             <artifactId>mongock-spring-v5</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.reflections</groupId>
-                    <artifactId>reflections</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.cloudyrock.mongock</groupId>
@@ -120,6 +114,20 @@
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.osgi</groupId>
+                    <artifactId>org.osgi.core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging-processor</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -308,33 +316,42 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.maven.plugins</groupId>-->
-            <!--                <artifactId>maven-enforcer-plugin</artifactId>-->
-            <!--                <configuration>-->
-            <!--                    <rules>-->
-            <!--                        <requireMavenVersion>-->
-            <!--                            <message>You are running an older version of Maven. Application requires at least Maven-->
-            <!--                                ${maven.version}</message>-->
-            <!--                            <version>[${maven.version},)</version>-->
-            <!--                        </requireMavenVersion>-->
-            <!--                        <requireJavaVersion>-->
-            <!--                            &lt;!&ndash; Until it supports JDK 8 &ndash;&gt;-->
-            <!--                            <message>You are running an incompatible version of Java. Application requires JDK-->
-            <!--                                ${java.version}</message>-->
-            <!--                            <version>[1.8,1.9)</version>-->
-            <!--                        </requireJavaVersion>-->
-            <!--                    </rules>-->
-            <!--                </configuration>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <id>enforce-versions</id>-->
-            <!--                        <goals>-->
-            <!--                            <goal>enforce</goal>-->
-            <!--                        </goals>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <configuration>
+                    <rules>
+                        <requireMavenVersion>
+                            <message>You are running an older version of Maven. Application requires at least Maven ${maven.version}</message>
+                            <version>[${maven.version},)</version>
+                        </requireMavenVersion>
+                        <requireJavaVersion>
+                            <message>You are running an incompatible version of Java. Application only supports JDK 8 to 17.</message>
+                            <version>[8,9),[9,10),[10,11),[11,12),[12,13),[13,14),[14,15),[15,16),[16,17),[17,18)</version>
+                        </requireJavaVersion>
+                    </rules>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>enforce-dependencyConvergence</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <DependencyConvergence/>
+                            </rules>
+                            <fail>false</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -428,6 +445,14 @@
                             <groupId>org.slf4j</groupId>
                             <artifactId>slf4j-api</artifactId>
                         </exclusion>
+                        <exclusion>
+                            <groupId>net.java.dev.jna</groupId>
+                            <artifactId>jna</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>net.java.dev.jna</groupId>
+                            <artifactId>jna-platform</artifactId>
+                        </exclusion>
                     </exclusions>
                 </dependency>
             </dependencies>
@@ -446,6 +471,14 @@
                         <exclusion>
                             <groupId>org.slf4j</groupId>
                             <artifactId>slf4j-api</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>net.java.dev.jna</groupId>
+                            <artifactId>jna</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>net.java.dev.jna</groupId>
+                            <artifactId>jna-platform</artifactId>
                         </exclusion>
                     </exclusions>
                 </dependency>

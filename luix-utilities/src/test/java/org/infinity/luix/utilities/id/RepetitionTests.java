@@ -2,10 +2,7 @@ package org.infinity.luix.utilities.id;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
-import org.infinity.luix.utilities.id.IdGenerator;
-import org.infinity.luix.utilities.id.SnowFlakeIdGenerator;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,12 +11,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * 重复性测试
  */
 @Slf4j
 public class RepetitionTests {
     private static final SnowFlakeIdGenerator SNOW_FLAKE_ID_GENERATOR = new SnowFlakeIdGenerator(1L, false, false);
+
     /**
      * single thread test
      *
@@ -43,7 +43,7 @@ public class RepetitionTests {
 
         threadPool.shutdown();
         if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
-            Assert.assertEquals(maxTimes, set.size());
+            assertThat(maxTimes).isEqualTo(set.size());
         }
     }
 
@@ -77,36 +77,7 @@ public class RepetitionTests {
         threadPool.shutdown();
         if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
             // equals
-            Assert.assertEquals(maxTimes, set.size());
-        }
-    }
-
-    /**
-     * Can guarantee unique on multi-threads environment
-     *
-     * @throws InterruptedException
-     */
-    @Test
-    public void multiThreadUniqueTestForTimestampId() throws InterruptedException {
-        // Thread-safe container
-        Set<Long> set = new ConcurrentHashSet<>();
-        int maxTimes = 10000 * 10;
-
-        // Multi-threads
-        ExecutorService threadPool = Executors.newFixedThreadPool(8);
-
-        IntStream.range(0, maxTimes).forEach(i -> {
-            threadPool.execute(() -> {
-                long requestId = IdGenerator.generateTimestampId();
-                System.out.println(requestId);
-                set.add(requestId);
-            });
-        });
-
-        threadPool.shutdown();
-        if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
-            // equals
-            Assert.assertEquals(maxTimes, set.size());
+            assertThat(maxTimes).isEqualTo(set.size());
         }
     }
 
@@ -134,7 +105,7 @@ public class RepetitionTests {
         threadPool.shutdown();
         if (threadPool.awaitTermination(1, TimeUnit.HOURS)) {
             // equals
-            Assert.assertEquals(maxTimes, set.size());
+            assertThat(maxTimes).isEqualTo(set.size());
         }
     }
 

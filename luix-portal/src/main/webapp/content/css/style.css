@@ -8618,11 +8618,11 @@ body.landing-page {
 }
 
 .landing-page .header-back.one {
-    background: url('../img/landing/header_one.jpg') 50% 0 no-repeat;
+    background: url('../img/landing/header1.jpg') 50% 0 no-repeat;
 }
 
 .landing-page .header-back.two {
-    background: url('../img/landing/bg4.jpg') 50% 0 no-repeat;
+    background: url('../img/landing/header2.jpg') 50% 0 no-repeat;
 }
 
 .landing-page .carousel {

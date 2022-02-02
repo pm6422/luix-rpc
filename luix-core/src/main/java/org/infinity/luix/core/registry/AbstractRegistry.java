@@ -85,16 +85,16 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Unregister the provider url from registry
+     * Deregister the provider url from registry
      *
      * @param providerUrl provider url
      */
     @Override
-    public void unregister(Url providerUrl) {
+    public void deregister(Url providerUrl) {
         Validate.notNull(providerUrl, "Provider url must NOT be null!");
-        doUnregister(removeUnnecessaryParams(providerUrl.copy()));
-        log.info("Unregistered the url [{}] from registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
-        // Removed it from the container after unregistered
+        doDeregister(removeUnnecessaryParams(providerUrl.copy()));
+        log.info("Deregistered the url [{}] from registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
+        // Removed it from the container after deregistered
         registeredProviderUrls.remove(providerUrl);
     }
 
@@ -153,6 +153,7 @@ public abstract class AbstractRegistry implements Registry {
         Validate.notNull(listener, "Client listener must NOT be null!");
 
         doSubscribe(consumerUrl, listener);
+        subscribe(consumerUrl);
         log.info("Subscribed the url [{}] to listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
     }
 
@@ -169,6 +170,11 @@ public abstract class AbstractRegistry implements Registry {
 
         doUnsubscribe(consumerUrl, listener);
         log.info("Unsubscribed the url [{}] from listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
+    }
+
+    @Override
+    public void unsubscribe(Url consumerUrl) {
+        this.unsubscribe(consumerUrl);
     }
 
     /**
@@ -269,7 +275,7 @@ public abstract class AbstractRegistry implements Registry {
 
     protected abstract void doRegister(Url url);
 
-    protected abstract void doUnregister(Url url);
+    protected abstract void doDeregister(Url url);
 
     protected abstract void doActivate(Url url);
 

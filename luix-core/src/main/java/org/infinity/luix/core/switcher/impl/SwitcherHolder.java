@@ -89,14 +89,14 @@ public class SwitcherHolder {
         }
     }
 
-    public void unregisterListener(String name, SwitcherListener listener) {
+    public void deregisterListener(String name, SwitcherListener listener) {
         List<SwitcherListener> listeners = listenerMap.get(name);
         if (CollectionUtils.isNotEmpty(listeners)) {
             listeners.remove(listener);
         }
     }
 
-    public void unregisterListeners(String name) {
+    public void deregisterListeners(String name) {
         List<SwitcherListener> listeners = listenerMap.get(name);
         if (CollectionUtils.isNotEmpty(listeners)) {
             // Clear all the listeners

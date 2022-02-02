@@ -19,14 +19,11 @@ import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.annotation.EventPublisher;
 import org.infinity.luix.utilities.annotation.EventSubscriber;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
-import org.infinity.luix.utilities.destory.Cleanable;
+import org.infinity.luix.utilities.destory.Destroyable;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -34,7 +31,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import static org.infinity.luix.registry.zookeeper.utils.ZookeeperUtils.*;
 
 /**
- * Zookeeper registry implementation used to subscribe, unsubscribe, register or unregister data.
+ * Zookeeper registry implementation used to subscribe, unsubscribe, register or deregister data.
  * Zookeeper has three vital listeners:
  * - IZkStateListener: It will be triggered when a new zk session created.
  * - IZkDataListener: It will be triggered when the file data has been changed.
@@ -42,14 +39,14 @@ import static org.infinity.luix.registry.zookeeper.utils.ZookeeperUtils.*;
  */
 @Slf4j
 @ThreadSafe
-public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implements Cleanable {
+public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implements Destroyable {
     private final ZkClient                                                        zkClient;
     /**
      * Used to resolve concurrency problems for subscribe or unsubscribe service listeners
      */
     private final Lock                                                            listenerLock                    = new ReentrantLock();
     /**
-     * Used to resolve concurrency problems for register or unregister providers
+     * Used to resolve concurrency problems for register or deregister providers
      */
     private final Lock                                                            providerLock                    = new ReentrantLock();
     private final Set<Url>                                                        activeProviderUrls              = new ConcurrentHashSet<>();
@@ -299,18 +296,18 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
-     * Unregister specified url info from zookeeper
+     * Deregister specified url info from zookeeper
      *
      * @param providerUrl provider url
      */
     @Override
-    protected void doUnregister(Url providerUrl) {
+    protected void doDeregister(Url providerUrl) {
         providerLock.lock();
         try {
             removeNode(providerUrl, StatusDir.ACTIVE);
             removeNode(providerUrl, StatusDir.INACTIVE);
         } catch (Throwable e) {
-            String msg = String.format("Failed to unregister [%s] from zookeeper [%s] with the error: %s",
+            String msg = String.format("Failed to deregister [%s] from zookeeper [%s] with the error: %s",
                     providerUrl, getRegistryUrl(), e.getMessage());
             throw new RpcFrameworkException(msg, e);
         } finally {
@@ -331,24 +328,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         } catch (Throwable e) {
             String msg = String.format("Failed to discover provider [%s] from registry [%s] with the error: %s",
                     consumerUrl, getRegistryUrl(), e.getMessage());
-            throw new RpcFrameworkException(msg, e);
-        }
-    }
-
-    @Override
-    public List<String> discoverActiveProviderAddress(String providerPath) {
-        List<String> addrFiles = new ArrayList<>();
-        try {
-            List<String> providerDirectories = getChildrenNames(zkClient, FULL_PATH_PROVIDER);
-            if (CollectionUtils.isEmpty(providerDirectories)) {
-                return addrFiles;
-            }
-            String statusDirPath = getStatusDirPath(providerPath, StatusDir.ACTIVE);
-            addrFiles.addAll(getChildrenNames(zkClient, statusDirPath));
-            return addrFiles;
-        } catch (Throwable e) {
-            String msg = String.format("Failed to discover providers from registry [%s] with the error: %s",
-                    getRegistryUrl(), e.getMessage());
             throw new RpcFrameworkException(msg, e);
         }
     }
@@ -386,25 +365,12 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     protected void subscribeProviderListener(Url consumerUrl, ProviderListener providerListener) {
         listenerLock.lock();
         try {
-            createConsumingNode(consumerUrl);
             doSubscribeProviderListener(consumerUrl, providerListener);
         } catch (Throwable e) {
             String msg = String.format("Failed to subscribe provider listeners for url [%s]", consumerUrl);
             throw new RpcFrameworkException(msg, e);
         } finally {
             listenerLock.unlock();
-        }
-    }
-
-    private void createConsumingNode(Url consumerUrl) {
-        try {
-            // Remove dirty data
-            removeNode(consumerUrl, StatusDir.CONSUMING);
-            // Create consumer url data under 'consuming' node
-            createNode(consumerUrl, StatusDir.CONSUMING);
-        } catch (Exception e) {
-            log.warn(MessageFormat.format("Failed to remove or create the node for the path [{0}]",
-                    getProviderFilePath(consumerUrl, StatusDir.CONSUMING)), e);
         }
     }
 
@@ -542,8 +508,38 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     @Override
-    public List<String> getAllProviderPaths() {
-        return getChildrenNames(zkClient, FULL_PATH_PROVIDER);
+    public void subscribe(Url consumerUrl) {
+        createConsumingNode(consumerUrl);
+    }
+
+    private void createConsumingNode(Url consumerUrl) {
+        try {
+            // Remove dirty data
+            removeNode(consumerUrl, StatusDir.CONSUMING);
+            // Create consumer url data under 'consuming' node
+            createNode(consumerUrl, StatusDir.CONSUMING);
+        } catch (Exception e) {
+            log.warn(MessageFormat.format("Failed to remove or create the node for the path [{0}]",
+                    getProviderFilePath(consumerUrl, StatusDir.CONSUMING)), e);
+        }
+    }
+
+    @Override
+    public void unsubscribe(Url consumerUrl) {
+        try {
+            // Remove dirty data
+            removeNode(consumerUrl, StatusDir.CONSUMING);
+        } catch (Exception e) {
+            log.warn(MessageFormat.format("Failed to remove the node for the path [{0}]",
+                    getProviderFilePath(consumerUrl, StatusDir.CONSUMING)), e);
+        }
+    }
+
+    @Override
+    public List<Url> getAllProviderUrls() {
+//        return new HashSet<>(getChildrenNames(zkClient, FULL_PATH_PROVIDER));
+        // todo: get all provider urls
+        return null;
     }
 
     @Override
@@ -580,7 +576,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      * Do cleanup stuff
      */
     @Override
-    public void cleanup() {
+    public void destroy() {
         this.zkClient.close();
     }
 }

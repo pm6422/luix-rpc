@@ -5,6 +5,7 @@ import org.springframework.boot.actuate.trace.http.HttpTrace;
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
@@ -16,11 +17,8 @@ import java.util.stream.Collectors;
 @Repository
 public class CustomTraceRepository implements HttpTraceRepository {
 
-    private final PersistenceHttpTraceRepository persistenceHttpTraceRepository;
-
-    public CustomTraceRepository(PersistenceHttpTraceRepository persistenceHttpTraceRepository) {
-        this.persistenceHttpTraceRepository = persistenceHttpTraceRepository;
-    }
+    @Resource
+    private PersistenceHttpTraceRepository persistenceHttpTraceRepository;
 
     @Override
     public List<HttpTrace> findAll() {

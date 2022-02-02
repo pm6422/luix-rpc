@@ -31,13 +31,5 @@ public interface Registry extends Registrable, Subscribable {
      */
     Url getRegistryUrl();
 
-    /**
-     * Discover
-     *
-     * @param providerPath provider path
-     * @return address list
-     */
-    List<String> discoverActiveProviderAddress(String providerPath);
-
     void subscribeConsumerListener(String interfaceName, ConsumerProcessable consumerProcessor);
 }

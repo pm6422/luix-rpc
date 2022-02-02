@@ -22,14 +22,11 @@ final class ShortIdGenerator {
     private final static long datacenterIdShift  = sequenceBits + workerIdBits;
     // 时间毫秒左移22位
     private final static long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
-
-    private final static long sequenceMask = -1L ^ (-1L << sequenceBits);
-
-    private static long lastTimestamp = -1L;
-
-    private       long sequence     = 0L;
-    private final long workerId     = 0L;
-    private final long datacenterId = 0L;
+    private final static long sequenceMask       = -1L ^ (-1L << sequenceBits);
+    private static       long lastTimestamp      = -1L;
+    private              long sequence           = 0L;
+    private final        long workerId           = 0L;
+    private final        long datacenterId       = 0L;
 
     /**
      * @return 12 bits length，like：306554419571
@@ -37,7 +34,7 @@ final class ShortIdGenerator {
     protected synchronized long nextId() {
         long timestamp = timeGen();
         if (timestamp < lastTimestamp) {
-            throw new RuntimeException("Clock moved backwards.  Refusing to generate id for "
+            throw new RuntimeException("Clock moved backwards. Refusing to generate id for "
                     + (lastTimestamp - timestamp) + " milliseconds");
         }
 

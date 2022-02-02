@@ -205,22 +205,51 @@ public class RpcLifecycle {
         }
 
         luixProperties.getRegistryList().forEach(registryConfig ->
-                unregisterProviders(registryConfig.getRegistryUrl())
+                unsubscribeConsumers(registryConfig.getRegistryUrl())
         );
+
+        luixProperties.getRegistryList().forEach(registryConfig ->
+                deregisterProviders(registryConfig.getRegistryUrl())
+        );
+
+        // Notes: debug breakpoint here does not work and log.info() does not work
+        System.out.println("Stopped the RPC server");
     }
 
+
     /**
-     * Unregister RPC providers from registry
+     * Deregister RPC providers from registry
+     *
+     * @param registryUrls registry urls
      */
-    private void unregisterProviders(Url... registryUrls) {
+    private void deregisterProviders(Url... registryUrls) {
         for (Url registryUrl : registryUrls) {
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             if (registry == null || CollectionUtils.isEmpty(registry.getRegisteredProviderUrls())) {
-                log.warn("No registry found!");
+                System.out.println("No registry found!");
                 return;
             }
-            registry.getRegisteredProviderUrls().forEach(registry::unregister);
-            log.debug("Unregistered all the RPC providers from registry [{}]", registryUrl.getProtocol());
+            registry.getRegisteredProviderUrls().forEach(registry::deregister);
+            System.out.println("Deregistered all the RPC providers from registry [" + registryUrl.getProtocol() + "]");
+        }
+    }
+
+    /**
+     * Unsubscribe RPC consumers from registry
+     *
+     * @param registryUrls registry urls
+     */
+    private void unsubscribeConsumers(Url... registryUrls) {
+        for (Url registryUrl : registryUrls) {
+            Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
+            if (registry == null || CollectionUtils.isEmpty(registry.getRegisteredProviderUrls())) {
+                System.out.println("No registry found!");
+                return;
+            }
+            ConsumerStubHolder.getInstance().get().forEach((name, consumerStub) -> {
+                registry.unsubscribe(consumerStub.getUrl());
+            });
+            System.out.println("Unsubscribed all the RPC consumers from registry [" + registryUrl.getProtocol() + "]");
         }
     }
 }

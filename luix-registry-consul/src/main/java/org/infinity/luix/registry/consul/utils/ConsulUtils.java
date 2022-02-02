@@ -1,165 +1,170 @@
 package org.infinity.luix.registry.consul.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.UrlUtils;
 import org.infinity.luix.registry.consul.ConsulService;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.infinity.luix.core.constant.RpcConstants.NODE_TYPE_SERVICE;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.infinity.luix.core.url.Url.PARAM_FROM;
+import static org.infinity.luix.core.url.Url.PARAM_TYPE;
+import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_PROTOCOL;
+import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_URL;
 
 public class ConsulUtils {
 
     /**
-     * service 最长存活周期（Time To Live），单位秒。 每个service会注册一个ttl类型的check，在最长TTL秒不发送心跳
-     * 就会将service变为不可用状态。
+     * Active RPC provider service name on consul registry
      */
-    public static int TTL = 30;
-
+    public static final  String CONSUL_PROVIDING_SERVICES_PREFIX  = "luix-providing";
     /**
-     * motan协议在consul tag中的前缀
+     * Active RPC consumer service name on consul registry
      */
-    public static final String CONSUL_TAG_MOTAN_PROTOCOL = "protocol_";
-    public static final String CONSUL_TAG_MOTAN_URL      = "URL_";
+    public static final  String CONSUL_CONSUMING_SERVICES_PREFIX  = "luix-consuming";
     /**
-     * motan rpc 在consul service中的前缀
-     */
-    public static final String CONSUL_SERVICE_MOTAN_PRE  = "motanrpc_";
-
-    /**
-     * 判断两个list中的url是否一致。 如果任意一个list为空，则返回false； 此方法并未做严格互相判等
      *
-     * @param urls1
-     * @param urls2
-     * @return
      */
-    public static boolean isSame(List<Url> urls1, List<Url> urls2) {
-        if (urls1 == null || urls2 == null) {
-            return false;
-        }
-        if (urls1.size() != urls2.size()) {
-            return false;
-        }
-        return urls1.containsAll(urls2);
+    public static final  String CONSUL_SERVICE_INSTANCE_DELIMITER = "@";
+    /**
+     *
+     */
+    public static final  String CONSUL_TAG_DELIMITER              = ":";
+    /**
+     *
+     */
+    private static final String FORM_DELIMITER                    = ":";
+
+    /**
+     * Build consul service name for RPC provider
+     *
+     * @param form service provider form
+     * @return consul provider service name
+     */
+    public static String buildProviderServiceName(String form) {
+        return isEmpty(form)
+                ? CONSUL_PROVIDING_SERVICES_PREFIX
+                : CONSUL_PROVIDING_SERVICES_PREFIX + FORM_DELIMITER + form;
     }
 
     /**
-     * 根据服务的url生成consul对应的service
+     * Build consul service name for RPC consumer
      *
-     * @param url
-     * @return
+     * @param form service consumer form
+     * @return consul consumer service name
      */
-    public static ConsulService buildService(Url url) {
-        ConsulService service = new ConsulService();
-        service.setAddress(url.getHost());
-        service.setId(ConsulUtils.convertConsulSerivceId(url));
-        service.setName(ConsulUtils.convertGroupToServiceName(url.getForm()));
-        service.setPort(url.getPort());
-        service.setTtl(TTL);
-
-        List<String> tags = new ArrayList<>();
-        tags.add(CONSUL_TAG_MOTAN_PROTOCOL + url.getProtocol());
-        tags.add(CONSUL_TAG_MOTAN_URL + UrlUtils.urlEncode(url.toFullStr()));
-        service.setTags(tags);
-
-        return service;
+    public static String buildConsumerServiceName(String form) {
+        return isEmpty(form)
+                ? CONSUL_CONSUMING_SERVICES_PREFIX
+                : CONSUL_CONSUMING_SERVICES_PREFIX + FORM_DELIMITER + form;
     }
 
     /**
-     * 根据service生成motan使用的
+     * Build consul service instance ID
      *
-     * @param service
-     * @return
+     * @param url url
+     * @return consul service instance ID
      */
-    public static Url buildUrl(ConsulService service) {
-        Url url = null;
-        for (String tag : service.getTags()) {
-            if (tag.startsWith(CONSUL_TAG_MOTAN_URL)) {
-                String encodeUrl = tag.substring(tag.indexOf("_") + 1);
-                url = Url.valueOf(UrlUtils.urlDecode(encodeUrl));
+    public static String buildServiceInstanceId(Url url) {
+        StringBuilder sb = new StringBuilder(StringUtils.EMPTY);
+        if (url != null) {
+            sb.append(url.getPath()).append(CONSUL_SERVICE_INSTANCE_DELIMITER)
+                    .append(url.getHost()).append(FORM_DELIMITER).append(url.getPort())
+                    .append(CONSUL_SERVICE_INSTANCE_DELIMITER).append(url.getOption(PARAM_TYPE));
+
+            if (StringUtils.isNotEmpty(url.getOption(PARAM_FROM))) {
+                sb.append(CONSUL_SERVICE_INSTANCE_DELIMITER).append(url.getOption(PARAM_FROM));
             }
         }
+        return sb.toString();
+    }
+
+    /**
+     * Extract form name from service name string
+     *
+     * @param serviceName consul service name
+     * @return form name
+     */
+    public static String getFormFromServiceName(String serviceName) {
+        return CONSUL_PROVIDING_SERVICES_PREFIX.equals(serviceName)
+                ? StringUtils.EMPTY
+                : serviceName.substring(CONSUL_PROVIDING_SERVICES_PREFIX.length() + 1);
+    }
+
+    /**
+     * Extract RPC service protocol from consul service tag
+     *
+     * @param consulServiceTag consul service tag
+     * @return RPC service protocol
+     */
+    public static String getProtocolFromTag(String consulServiceTag) {
+        return consulServiceTag.substring(TAG_PREFIX_PROTOCOL.length());
+    }
+
+    /**
+     * Get RPC protocol plus interface name string
+     *
+     * @param url url
+     * @return RPC protocol plus interface name string
+     */
+    public static String getProtocolPlusPath(Url url) {
+        return url.getProtocol() + FORM_DELIMITER + url.getPath();
+    }
+
+    /**
+     * Get path from consul service instance ID
+     *
+     * @param serviceInstanceId consul service instance ID
+     * @return path
+     */
+    public static String getPathFromServiceInstanceId(String serviceInstanceId) {
+        return serviceInstanceId.substring(0, serviceInstanceId.indexOf(CONSUL_SERVICE_INSTANCE_DELIMITER));
+    }
+
+    /**
+     * Build URL from consul service
+     *
+     * @param consulService consul service
+     * @return URL
+     */
+    public static Url buildUrl(ConsulService consulService) {
+        Url url = null;
+        // Get URL from consul service tags
+        for (String tag : consulService.getTags()) {
+            if (tag.startsWith(TAG_PREFIX_URL)) {
+                String encodedUrl = tag.substring(tag.indexOf(CONSUL_TAG_DELIMITER) + 1);
+                url = Url.valueOf(UrlUtils.urlDecode(encodedUrl));
+                break;
+            }
+        }
+
         if (url == null) {
-            Map<String, String> params = new HashMap<>();
-            String group = service.getName().substring(CONSUL_SERVICE_MOTAN_PRE.length());
-            params.put(Url.PARAM_FROM, group);
-            params.put(Url.PARAM_TYPE, NODE_TYPE_SERVICE);
-            String protocol = ConsulUtils.getProtocolFromTag(service.getTags().get(0));
-            url = Url.of(protocol, service.getAddress(), service.getPort(),
-                    ConsulUtils.getPathFromServiceId(service.getId()), params);
+            // Get URL from consul service instance ID
+            Map<String, String> params = new HashMap<>(2);
+            params.put(Url.PARAM_FROM, getFormFromServiceName(consulService.getName()));
+            params.put(PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
+
+            String protocol = ConsulUtils.getProtocolFromTag(consulService.getTags().get(0));
+            url = Url.of(protocol, consulService.getAddress(), consulService.getPort(),
+                    ConsulUtils.getPathFromServiceInstanceId(consulService.getInstanceId()), params);
         }
         return url;
     }
 
     /**
-     * 根据url获取cluster信息，cluster 信息包括协议和path（rpc服务中的接口类）。
+     * Determine whether two lists of URLs are consistent
      *
-     * @param url
+     * @param urls1 URL list 1
+     * @param urls2 URL list 2
      * @return
      */
-    public static String getUrlClusterInfo(Url url) {
-        return url.getProtocol() + "-" + url.getPath();
-    }
-
-    /**
-     * 有motan的group生成consul的serivce name
-     *
-     * @param group
-     * @return
-     */
-    public static String convertGroupToServiceName(String group) {
-        return CONSUL_SERVICE_MOTAN_PRE + group;
-    }
-
-    /**
-     * 从consul的service name中获取motan的group
-     *
-     * @param group
-     * @return
-     */
-    public static String getGroupFromServiceName(String group) {
-        return group.substring(CONSUL_SERVICE_MOTAN_PRE.length());
-    }
-
-    /**
-     * 根据motan的url生成consul的serivce id。 serviceid 包括ip＋port＋rpc服务的接口类名
-     *
-     * @param url
-     * @return
-     */
-    public static String convertConsulSerivceId(Url url) {
-        if (url == null) {
-            return null;
+    public static boolean isSame(List<Url> urls1, List<Url> urls2) {
+        if (urls1 == null || urls2 == null || urls1.size() != urls2.size()) {
+            return false;
         }
-        return convertServiceId(url.getHost(), url.getPort(), url.getPath());
+        return urls1.containsAll(urls2);
     }
-
-    /**
-     * 从consul 的serviceid中获取rpc服务的接口类名（url的path）
-     *
-     * @param serviceId
-     * @return
-     */
-    public static String getPathFromServiceId(String serviceId) {
-        return serviceId.substring(serviceId.indexOf("-") + 1);
-    }
-
-    /**
-     * 从consul的tag获取motan的protocol
-     *
-     * @param tag
-     * @return
-     */
-    public static String getProtocolFromTag(String tag) {
-        return tag.substring(CONSUL_TAG_MOTAN_PROTOCOL.length());
-    }
-
-
-    public static String convertServiceId(String host, int port, String path) {
-        return host + ":" + port + "-" + path;
-    }
-
 }

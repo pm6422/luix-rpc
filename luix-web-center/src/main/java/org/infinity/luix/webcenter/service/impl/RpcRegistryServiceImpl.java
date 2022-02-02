@@ -14,6 +14,7 @@ import org.infinity.luix.core.registry.Registry;
 import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.spring.boot.config.LuixProperties;
+import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.webcenter.dto.RpcRegistryDTO;
 import org.infinity.luix.webcenter.service.RpcRegistryService;
 import org.springframework.boot.ApplicationArguments;
@@ -37,11 +38,11 @@ import static org.infinity.luix.utilities.serializer.Serializer.SERIALIZER_NAME_
 @Slf4j
 public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRunner {
     private static final Map<String, RegistryConfig> REGISTRY_CONFIG_MAP = new ConcurrentHashMap<>();
-    private static final List<RpcRegistryDTO> REGISTRIES          = new ArrayList<>();
+    private static final List<RpcRegistryDTO>        REGISTRIES          = new ArrayList<>();
     @Resource
-    private              LuixProperties       luixProperties;
+    private              LuixProperties              luixProperties;
     @Resource
-    private              ProviderProcessable  providerProcessService;
+    private              ProviderProcessable         providerProcessService;
     @Resource
     private              ConsumerProcessable         consumerProcessService;
 
@@ -61,18 +62,21 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
             luixProperties.getRegistryList().forEach(registryConfig -> {
                 REGISTRY_CONFIG_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig);
                 REGISTRIES.add(new RpcRegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
-                registryConfig.getRegistryImpl().getAllProviderPaths().forEach(interfaceName -> {
-                    // First discover all consumers
-                    registryConfig.getRegistryImpl().subscribeConsumerListener(interfaceName, consumerProcessService);
-                    // Then discover all providers
-                    ConsumerStubFactory.create(luixProperties.getApplication(), registryConfig,
-                            luixProperties.getAvailableProtocol(), interfaceName, providerProcessService);
-
+                registryConfig.getRegistryImpl().getAllProviderUrls().forEach(url -> {
+                    try {
+                        // register providers discovery listener
+                        registryConfig.getRegistryImpl().subscribeConsumerListener(url.getPath(), consumerProcessService);
+                        // generate consumer stub for each provider
+                        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixProperties.getApplication(), registryConfig,
+                                luixProperties.getAvailableProtocol(), url.getPath(), url.getForm(), providerProcessService);
+                        ConsumerStubHolder.getInstance().add("Stub" + IdGenerator.generateShortId(), consumerStub);
+                    } catch (Exception e) {
+                        log.error("Failed to create consumer stub for interface {}", url.getPath(), e);
+                    }
                 });
-                log.info("Found registry: [{}]", registryConfig.getRegistryUrl().getIdentity());
             });
         } catch (Exception e) {
-            log.error("Failed to get provider or consumer", e);
+            log.error("Failed to create consumer stub!", e);
         }
     }
 
@@ -121,7 +125,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                         retryCount = entry.getValue() != null ? Integer.parseInt(entry.getValue()) : null;
                         attributesMap.put(entry.getKey(), retryCount);
                     }
-                    if(FAULT_TOLERANCE.equals(entry.getKey())) {
+                    if (FAULT_TOLERANCE.equals(entry.getKey())) {
                         faultTolerance = entry.getValue();
                         attributesMap.put(entry.getKey(), faultTolerance);
                     }

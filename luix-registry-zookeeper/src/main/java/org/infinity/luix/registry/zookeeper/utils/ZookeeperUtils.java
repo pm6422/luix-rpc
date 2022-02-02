@@ -17,13 +17,13 @@ import static org.apache.commons.io.IOUtils.DIR_SEPARATOR_UNIX;
 @Slf4j
 public abstract class ZookeeperUtils {
 
-    public static final String NAMESPACE                = "/infinity";
-    public static final String DIR_PROVIDER             = "/provider";
-    public static final String DIR_COMMAND              = "/command";
-    public static final String FULL_PATH_PROVIDER       = NAMESPACE + DIR_PROVIDER;
-    public static final String FULL_PATH_COMMAND        = NAMESPACE + DIR_COMMAND;
-    public static final String PROVIDER_STATUS_DIR_PATH = "/infinity/provider/%s/%s";
-    public static final String PROVIDER_FILE_PATH       = "/infinity/provider/%s/%s/%s";
+    public static final String NAMESPACE               = "/luix";
+    public static final String DIR_SERVICE             = "/service";
+    public static final String DIR_COMMAND             = "/command";
+    public static final String FULL_PATH_PROVIDER      = NAMESPACE + DIR_SERVICE;
+    public static final String FULL_PATH_COMMAND       = NAMESPACE + DIR_COMMAND;
+    public static final String SERVICE_STATUS_DIR_PATH = "/luix/service/%s/%s";
+    public static final String SERVICE_FILE_PATH       = "/luix/service/%s/%s/%s";
 
     /**
      * Get the full path of provider address file
@@ -34,9 +34,9 @@ public abstract class ZookeeperUtils {
      */
     public static String getProviderFilePath(Url url, StatusDir statusDir) {
         if (StringUtils.isEmpty(url.getForm())) {
-            return String.format(PROVIDER_FILE_PATH, url.getPath(), statusDir.getValue(), url.getAddress());
+            return String.format(SERVICE_FILE_PATH, url.getPath(), statusDir.getValue(), url.getAddress());
         }
-        return String.format(PROVIDER_FILE_PATH, url.getPath(), statusDir.getValue(), url.getAddress() + ":" + url.getForm());
+        return String.format(SERVICE_FILE_PATH, url.getPath(), statusDir.getValue(), url.getAddress() + ":" + url.getForm());
     }
 
     /**
@@ -89,7 +89,7 @@ public abstract class ZookeeperUtils {
      * @return full path of provider status directory
      */
     public static String getStatusDirPath(String path, StatusDir statusDir) {
-        return String.format(PROVIDER_STATUS_DIR_PATH, path, statusDir.getValue());
+        return String.format(SERVICE_STATUS_DIR_PATH, path, statusDir.getValue());
     }
 
 

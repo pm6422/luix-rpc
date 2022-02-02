@@ -5,7 +5,7 @@ global:
   # scrape_timeout is set to the global default (10s).
 
   # Attach these labels to any time series or alerts when communicating with
-  # external systems (federation, remote storage, Alertmanager).
+  # external systems (federation, remote storage, Alert manager).
   external_labels:
     monitor: 'luix'
 
@@ -27,5 +27,10 @@ scrape_configs:
     metrics_path: /management/prometheus
     static_configs:
       - targets:
-          # On MacOS, replace localhost by host.docker.internal
-          - localhost:6010
+        # On MacOS, replace localhost by host.docker.internal
+        # - localhost:8080
+          - host.docker.internal:8080
+          - host.docker.internal:6010
+          - host.docker.internal:6020
+          - host.docker.internal:6030
+          - host.docker.internal:6040

@@ -1,7 +1,6 @@
 package org.infinity.luix.utilities.id;
 
-import org.infinity.luix.utilities.id.SnowFlakeIdGenerator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SnowFlakeIdGeneratorTests {
 

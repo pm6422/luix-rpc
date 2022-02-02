@@ -2,8 +2,10 @@ package org.infinity.luix.core.server.buildin;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class ServerInfo {
+public class ServerInfo implements Serializable {
     private String osName;
     private String osVersion;
     private String timeZone;

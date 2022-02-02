@@ -24,7 +24,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>luix-registry-zookeeper</artifactId>
+            <artifactId>luix-registry-consul</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -8,7 +8,6 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.infinity.luix.core.registry.listener.ClientListener;
 import org.infinity.luix.core.registry.listener.CommandListener;
 import org.infinity.luix.core.registry.listener.ProviderListener;
-import org.infinity.luix.core.switcher.impl.SwitcherHolder;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.registry.zookeeper.service.TestDummyService;
 import org.infinity.luix.registry.zookeeper.utils.ZookeeperUtils;
@@ -94,7 +93,7 @@ public class ZookeeperRegistryTests {
         activateAddrFiles = zkClient.getChildren(activePath);
         assertFalse(activateAddrFiles.contains(node));
 
-        registry.doUnregister(providerUrl1);
+        registry.doDeregister(providerUrl1);
         deactivateAddrFiles = zkClient.getChildren(inactivePath);
         assertFalse(deactivateAddrFiles.contains(node));
         activateAddrFiles = zkClient.getChildren(activePath);
