@@ -13,7 +13,6 @@ import org.infinity.luix.utilities.network.AddressUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.infinity.luix.core.constant.ConsumerConstants.PROVIDER_ADDRESSES;
 
@@ -107,7 +106,7 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
-    public Set<String> getAllProviderPaths() {
+    public List<Url> getAllProviderUrls() {
         throw new UnsupportedOperationException();
     }
 

@@ -61,6 +61,6 @@ public interface Registrable {
     /**
      * Get all provider paths
      */
-    Set<String> getAllProviderPaths();
+    List<Url> getAllProviderUrls();
 
 }

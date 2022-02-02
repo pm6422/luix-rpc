@@ -536,8 +536,10 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     @Override
-    public Set<String> getAllProviderPaths() {
-        return new HashSet<>(getChildrenNames(zkClient, FULL_PATH_PROVIDER));
+    public List<Url> getAllProviderUrls() {
+//        return new HashSet<>(getChildrenNames(zkClient, FULL_PATH_PROVIDER));
+        // todo: get all provider urls
+        return null;
     }
 
     @Override

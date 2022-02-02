@@ -302,8 +302,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     @Override
-    public Set<String> getAllProviderPaths() {
-        return consulClient.getAllProviderPaths();
+    public List<Url> getAllProviderUrls() {
+        return consulClient.getAllProviderUrls();
     }
 
     @Override

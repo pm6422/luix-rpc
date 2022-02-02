@@ -14,11 +14,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.registry.consul.utils.ConsulUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static org.infinity.luix.registry.consul.utils.ConsulUtils.*;
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_CONSUMING_SERVICES_PREFIX;
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_PROVIDING_SERVICES_PREFIX;
 
 @Slf4j
 public class LuixConsulClient {
@@ -61,16 +65,16 @@ public class LuixConsulClient {
         consulClient.agentCheckFail(SERVICE_INSTANCE_ID_PREFIX + serviceInstanceId);
     }
 
-    public Set<String> getAllProviderPaths() {
+    public List<Url> getAllProviderUrls() {
         Response<Map<String, Service>> response = consulClient.getAgentServices();
         if (response == null || MapUtils.isEmpty(response.getValue())) {
-            return Collections.emptySet();
+            return Collections.emptyList();
         }
-        Set<String> paths = response.getValue().entrySet().stream()
+        List<Url> urls = response.getValue().entrySet().stream()
                 .filter(entry -> entry.getValue().getService().startsWith(CONSUL_PROVIDING_SERVICES_PREFIX))
-                .map(entry -> entry.getKey().substring(0, entry.getKey().indexOf(CONSUL_SERVICE_INSTANCE_DELIMITER)))
-                .collect(Collectors.toSet());
-        return paths;
+                .map(entry -> ConsulUtils.buildUrl(ConsulService.of(entry.getValue())))
+                .collect(Collectors.toList());
+        return urls;
     }
 
     public List<Url> getConsumerUrls(String interfaceName) {

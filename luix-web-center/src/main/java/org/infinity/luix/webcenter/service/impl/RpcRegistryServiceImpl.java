@@ -62,16 +62,16 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
             luixProperties.getRegistryList().forEach(registryConfig -> {
                 REGISTRY_CONFIG_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig);
                 REGISTRIES.add(new RpcRegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
-                registryConfig.getRegistryImpl().getAllProviderPaths().forEach(interfaceName -> {
+                registryConfig.getRegistryImpl().getAllProviderUrls().forEach(url -> {
                     try {
                         // register providers discovery listener
-                        registryConfig.getRegistryImpl().subscribeConsumerListener(interfaceName, consumerProcessService);
+                        registryConfig.getRegistryImpl().subscribeConsumerListener(url.getPath(), consumerProcessService);
                         // generate consumer stub for each provider
                         ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixProperties.getApplication(), registryConfig,
-                                luixProperties.getAvailableProtocol(), interfaceName, providerProcessService);
+                                luixProperties.getAvailableProtocol(), url.getPath(), url.getForm(), providerProcessService);
                         ConsumerStubHolder.getInstance().add("Stub" + IdGenerator.generateShortId(), consumerStub);
                     } catch (Exception e) {
-                        log.error("Failed to create consumer stub for interface {}", interfaceName, e);
+                        log.error("Failed to create consumer stub for interface {}", url.getPath(), e);
                     }
                 });
             });

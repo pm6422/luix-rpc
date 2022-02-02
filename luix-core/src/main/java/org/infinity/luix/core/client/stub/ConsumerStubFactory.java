@@ -54,11 +54,11 @@ public abstract class ConsumerStubFactory {
     public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
                                          RegistryConfig registryConfig,
                                          ProtocolConfig protocolConfig,
-                                         String providerAddresses,
                                          String interfaceName,
+                                         String form,
                                          ProviderProcessable providerProcessor) {
-        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), providerAddresses, interfaceName,
-                null, null, null, null, null, null, null, null,
+        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), null, interfaceName,
+                null, null, form, null, null, null, null, null,
                 null, null, providerProcessor);
     }
 
