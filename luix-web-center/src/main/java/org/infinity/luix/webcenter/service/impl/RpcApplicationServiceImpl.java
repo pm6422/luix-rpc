@@ -42,9 +42,9 @@ import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 @RpcProvider
 public class RpcApplicationServiceImpl implements RpcApplicationService {
     @Resource
-    private LuixProperties     luixProperties;
+    private LuixProperties           luixProperties;
     @Resource
-    private ApplicationContext applicationContext;
+    private ApplicationContext       applicationContext;
     @Resource
     private MongoTemplate            mongoTemplate;
     @Resource
