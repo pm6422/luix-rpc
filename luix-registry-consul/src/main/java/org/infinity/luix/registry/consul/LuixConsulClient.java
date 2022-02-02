@@ -117,7 +117,7 @@ public class LuixConsulClient {
         GetValue value = consulClient.getKVValue(key).getValue();
         String command = StringUtils.EMPTY;
         if (value == null) {
-            log.warn("No command found with form: [{}]", form);
+            log.debug("No command found with form: [{}]", form);
         } else if (value.getValue() != null) {
             command = value.getDecodedValue();
         }
