@@ -119,7 +119,7 @@ You can also fully dockerize your application and all the services that it depen
 To achieve this, first build docker images of all your applications by running and push them to docker registry:
 
 ```
-./mvnw package -DskipTests -DskipJib=false
+./mvnw package -DskipTests -DskipJibBuild=false
 ```
 
 Then run:

@@ -26,7 +26,7 @@
         <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
         <revision>1.0.0</revision>
         <run.addResources>false</run.addResources>
-        <skipJib>true</skipJib>
+        <skipJibBuild>true</skipJibBuild>
         <start-class>org.infinity.luix.democlient.LuixDemoClientLauncher</start-class>
     </properties>
     <!--
@@ -258,7 +258,7 @@
                             </permission>
                         </permissions>
                     </extraDirectories>
-                    <skip>${skipJib}</skip>
+                    <skip>${skipJibBuild}</skip>
                 </configuration>
                 <executions>
                     <execution>
