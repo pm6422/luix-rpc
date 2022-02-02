@@ -120,20 +120,6 @@ luix:
     protocol:
         port: 1${server.port}
         serializer: hessian2
-forest: # Refer to http://forest.dtflyx.com/docs/config/spring_boot_config
-    backend: okhttp3
-    timeout: 3000 # 请求超时时间，单位为毫秒，默认值为3000
-    connect-timeout: 3000 # 连接超时时间，单位为毫秒，默认值为2000
-    retry-count: 1 # 请求失败后重试次数，默认为0
-    ssl-protocol: SSLv3 # 单向验证的HTTPS的默认SSL协议，默认为SSLv3
-    logEnabled: true # 打开或关闭日志，默认为true
-    log-request: true # 打开/关闭Forest请求日志，默认为true
-    log-response-status: true # 打开/关闭Forest响应状态日志，默认为true
-    log-response-content: true # 打开/关闭Forest响应内容日志，默认为false
-    variables:
-        rpcDemoServerAddress: http://127.0.0.1:6010
-    interceptors: # 可配置多个拦截器
-      org.infinity.luix.democlient.component.TraceInterceptor
 # ===================================================================
 # Application specific properties
 # ===================================================================
