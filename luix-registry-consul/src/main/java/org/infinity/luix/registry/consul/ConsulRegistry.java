@@ -18,6 +18,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.*;
 
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL;
@@ -301,8 +302,8 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     @Override
-    public List<String> getAllProviderPaths() {
-        return new ArrayList<>(consulClient.getAllProviderPaths());
+    public Set<String> getAllProviderPaths() {
+        return consulClient.getAllProviderPaths();
     }
 
     @Override

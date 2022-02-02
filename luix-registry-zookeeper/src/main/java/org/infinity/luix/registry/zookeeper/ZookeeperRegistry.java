@@ -23,10 +23,7 @@ import org.infinity.luix.utilities.destory.Destroyable;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -539,8 +536,8 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     @Override
-    public List<String> getAllProviderPaths() {
-        return getChildrenNames(zkClient, FULL_PATH_PROVIDER);
+    public Set<String> getAllProviderPaths() {
+        return new HashSet<>(getChildrenNames(zkClient, FULL_PATH_PROVIDER));
     }
 
     @Override
