@@ -37,11 +37,11 @@ import static org.infinity.luix.utilities.serializer.Serializer.SERIALIZER_NAME_
 @Slf4j
 public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRunner {
     private static final Map<String, RegistryConfig> REGISTRY_CONFIG_MAP = new ConcurrentHashMap<>();
-    private static final List<RpcRegistryDTO> REGISTRIES          = new ArrayList<>();
+    private static final List<RpcRegistryDTO>        REGISTRIES          = new ArrayList<>();
     @Resource
-    private              LuixProperties       luixProperties;
+    private              LuixProperties              luixProperties;
     @Resource
-    private              ProviderProcessable  providerProcessService;
+    private              ProviderProcessable         providerProcessService;
     @Resource
     private              ConsumerProcessable         consumerProcessService;
 
@@ -63,11 +63,14 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                 REGISTRIES.add(new RpcRegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
                 registryConfig.getRegistryImpl().getAllProviderPaths().forEach(interfaceName -> {
                     // First discover all consumers
-                    registryConfig.getRegistryImpl().subscribeConsumerListener(interfaceName, consumerProcessService);
-                    // Then discover all providers
-                    ConsumerStubFactory.create(luixProperties.getApplication(), registryConfig,
-                            luixProperties.getAvailableProtocol(), interfaceName, providerProcessService);
-
+                    try {
+                        registryConfig.getRegistryImpl().subscribeConsumerListener(interfaceName, consumerProcessService);
+                        // Then discover all providers
+                        ConsumerStubFactory.create(luixProperties.getApplication(), registryConfig,
+                                luixProperties.getAvailableProtocol(), interfaceName, providerProcessService);
+                    } catch (Exception e) {
+                        log.error("Failed to create consumer stub for interface {}", interfaceName, e);
+                    }
                 });
                 log.info("Found registry: [{}]", registryConfig.getRegistryUrl().getIdentity());
             });
@@ -121,7 +124,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                         retryCount = entry.getValue() != null ? Integer.parseInt(entry.getValue()) : null;
                         attributesMap.put(entry.getKey(), retryCount);
                     }
-                    if(FAULT_TOLERANCE.equals(entry.getKey())) {
+                    if (FAULT_TOLERANCE.equals(entry.getKey())) {
                         faultTolerance = entry.getValue();
                         attributesMap.put(entry.getKey(), faultTolerance);
                     }

@@ -78,9 +78,10 @@ public class LuixConsulClient {
         if (response == null || MapUtils.isEmpty(response.getValue())) {
             return Collections.emptyList();
         }
+
         List<Url> urls = response.getValue().entrySet().stream()
                 .filter(entry -> entry.getValue().getService().startsWith(CONSUL_CONSUMING_SERVICES_PREFIX) &&
-                        entry.getValue().getId().startsWith(interfaceName))
+                        entry.getKey().startsWith(interfaceName))
                 .map(entry -> ConsulUtils.buildUrl(ConsulService.of(entry.getValue()))).collect(Collectors.toList());
         return urls;
     }
