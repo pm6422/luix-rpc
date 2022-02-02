@@ -16,8 +16,8 @@ public interface ProtocolConstants {
     String       CODEC_VAL_V2                       = "v2";
     String       CODEC_VAL_DEFAULT                  = CODEC_VAL_V2;
     String       SERIALIZER                         = "serializer";
-    String       SERIALIZER_VAL_DEFAULT             = SERIALIZER_NAME_KRYO;
-    int          SERIALIZER_ID_DEFAULT              = SERIALIZER_ID_KRYO;
+    String       SERIALIZER_VAL_DEFAULT             = SERIALIZER_NAME_HESSIAN2;
+    int          SERIALIZER_ID_DEFAULT              = SERIALIZER_ID_HESSIAN2;
     List<String> SERIALIZERS                        = Arrays.asList(SERIALIZER_NAME_KRYO, SERIALIZER_NAME_HESSIAN2);
     String       NETWORK_TRANSMISSION               = "transmission";
     String       NETWORK_TRANSMISSION_VAL_NETTY     = "netty";

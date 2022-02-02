@@ -17,7 +17,11 @@ public class OptionMetaDTO extends OptionMeta {
     private String value;
 
     public Integer getIntValue() {
-        return (StringUtils.isEmpty(value) || "true".equals(value) || "false".equals(value)) ? null : Integer.parseInt(value);
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     public Boolean getBooleanValue() {

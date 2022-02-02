@@ -46,9 +46,9 @@ import static org.infinity.luix.webcenter.utils.HttpHeaderUtils.generatePageHead
 public class RpcProviderController {
 
     @Resource
-    private LuixProperties     luixProperties;
+    private LuixProperties        luixProperties;
     @Resource
-    private RpcRegistryService rpcRegistryService;
+    private RpcRegistryService    rpcRegistryService;
     @Resource
     private RpcProviderService    rpcProviderService;
     @Resource
