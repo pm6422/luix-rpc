@@ -153,7 +153,6 @@ public abstract class AbstractRegistry implements Registry {
         Validate.notNull(listener, "Client listener must NOT be null!");
 
         doSubscribe(consumerUrl, listener);
-        subscribe(consumerUrl);
         log.info("Subscribed the url [{}] to listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
     }
 

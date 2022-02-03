@@ -187,10 +187,13 @@ public class RpcLifecycle {
             log.info("No RPC consumers found on the registries");
             return;
         }
-        consumerStubs.forEach((name, consumerStub) ->
-                consumerStub.subscribeProviders(luixProperties.getApplication(),
-                        luixProperties.getAvailableProtocol(),
-                        luixProperties.getRegistryList()));
+        consumerStubs.forEach((name, consumerStub) -> {
+            // Register and active consumer services
+            consumerStub.subscribe(luixProperties.getRegistryList());
+            // Bind provider services discovery listener to consumer services
+            consumerStub.subscribeProviders(luixProperties.getApplication(), luixProperties.getAvailableProtocol(),
+                    luixProperties.getRegistryList());
+        });
     }
 
     /**

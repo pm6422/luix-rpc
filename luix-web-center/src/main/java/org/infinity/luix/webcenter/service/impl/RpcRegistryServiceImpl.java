@@ -61,11 +61,10 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
             luixProperties.getRegistryList().forEach(registryConfig -> {
                 REGISTRY_CONFIG_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig);
                 REGISTRIES.add(new RpcRegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
-                registryConfig.getRegistryImpl().getAllProviderUrls().forEach(url -> {
+                List<Url> allProviderUrls = registryConfig.getRegistryImpl().getAllProviderUrls();
+                allProviderUrls.forEach(url -> {
                     try {
-                        // register providers discovery listener
-                        registryConfig.getRegistryImpl().subscribeConsumerListener(url.getPath(), consumerProcessService);
-                        // generate consumer stub for each provider
+                        // Generate consumer stub for each provider
                         ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixProperties.getApplication(), registryConfig,
                                 luixProperties.getAvailableProtocol(), url.getPath(), url.getForm(), providerProcessService);
 
@@ -74,8 +73,19 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                         attributes.put(VERSION, url.getVersion());
                         String stubBeanName = ConsumerStub.buildConsumerStubBeanName(url.getPath(), attributes);
                         ConsumerStubHolder.getInstance().add(stubBeanName, consumerStub);
+
+                        // Register and active consumer services
+                        consumerStub.subscribe(registryConfig);
                     } catch (Exception e) {
                         log.error("Failed to create consumer stub for interface {}", url.getPath(), e);
+                    }
+                });
+                allProviderUrls.forEach(url -> {
+                    try {
+                        // register providers discovery listener
+                        registryConfig.getRegistryImpl().subscribeConsumerListener(url.getPath(), consumerProcessService);
+                    } catch (Exception e) {
+                        log.error("Failed to bind consumer listener for interface {}", url.getPath(), e);
                     }
                 });
             });

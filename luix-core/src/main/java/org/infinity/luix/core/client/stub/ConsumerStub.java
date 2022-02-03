@@ -16,6 +16,8 @@ import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.infinity.luix.core.config.impl.ProtocolConfig;
 import org.infinity.luix.core.config.impl.RegistryConfig;
 import org.infinity.luix.core.constant.*;
+import org.infinity.luix.core.registry.Registry;
+import org.infinity.luix.core.registry.RegistryFactory;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.name.ConsumerStubBeanNameBuilder;
 import org.infinity.luix.utilities.network.AddressUtils;
@@ -211,7 +213,7 @@ public class ConsumerStub<T> {
     }
 
     /**
-     * Subscribe the RPC providers from multiple registries
+     * Bind provider services discovery listener to consumer services
      *
      * @param applicationConfig application configuration
      * @param protocolConfig    protocol configuration
@@ -246,6 +248,33 @@ public class ConsumerStub<T> {
         // Direct registry
         notifyDirectProviderUrls(registryUrls, providerProcessor);
     }
+
+    /**
+     * Bind provider services discovery listener to consumer services
+     *
+     * @param registry registry
+     */
+    public void subscribe(RegistryConfig registry) {
+        subscribe(Collections.singletonList(registry));
+    }
+
+    /**
+     * Bind provider services discovery listener to consumer services
+     *
+     * @param registries registries
+     */
+    public void subscribe(Collection<RegistryConfig> registries) {
+        List<Url> registryUrls = registries
+                .stream()
+                .map(RegistryConfig::getRegistryUrl)
+                .collect(Collectors.toList());
+
+        for (Url registryUrl : registryUrls) {
+            Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
+            registry.subscribe(url);
+        }
+    }
+
 
     /**
      * Merge high priority properties to consumer stub and generate consumer url
