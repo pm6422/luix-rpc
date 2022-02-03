@@ -126,7 +126,7 @@ public class CommandProviderListener implements ProviderListener, CommandListene
             Map<String, Integer> weights = new HashMap<>();
             providerUrlList = discoverServiceWithCommand(this.consumerUrl, weights, rpcCommandCache);
         } else {
-            log.info("Discovering the active provider urls based on group param of url when RPC command is null");
+//            log.info("Discovering the active provider urls based on group param of url when RPC command is null");
             providerUrlList = new ArrayList<>(discoverActiveProvidersByGroup(this.consumerUrl));
         }
 
@@ -371,7 +371,7 @@ public class CommandProviderListener implements ProviderListener, CommandListene
             providerUrls = registry.discoverActiveProviders(consumerUrl);
             activeProviderUrlsPerForm.put(group, providerUrls);
         }
-        log.info("Discovered url by param group of url [{}]", consumerUrl);
+//        log.info("Discovered url by param group of url [{}]", consumerUrl);
         return providerUrls;
     }
 
