@@ -38,20 +38,6 @@ public interface Registrable {
     void deactivate(Url providerUrl);
 
     /**
-     * Register and activate the consumer url to registry
-     *
-     * @param consumerUrl consumer url
-     */
-    void subscribe(Url consumerUrl);
-
-    /**
-     * Deregister the consumer url from registry
-     *
-     * @param consumerUrl consumer url
-     */
-    void unsubscribe(Url consumerUrl);
-
-    /**
      * Get the registered provider urls
      *
      * @return provider urls
@@ -59,7 +45,7 @@ public interface Registrable {
     Set<Url> getRegisteredProviderUrls();
 
     /**
-     * Get all provider paths
+     * Get all provider urls
      */
     List<Url> getAllProviderUrls();
 

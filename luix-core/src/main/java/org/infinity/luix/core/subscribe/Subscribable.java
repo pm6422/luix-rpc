@@ -18,6 +18,20 @@ public interface Subscribable {
     List<Url> discover(Url consumerUrl);
 
     /**
+     * Register and activate the consumer url to registry
+     *
+     * @param consumerUrl consumer url
+     */
+    void subscribe(Url consumerUrl);
+
+    /**
+     * Deregister the consumer url from registry
+     *
+     * @param consumerUrl consumer url
+     */
+    void unsubscribe(Url consumerUrl);
+
+    /**
      * Bind a listener to a client
      *
      * @param consumerUrl consumer url
@@ -33,10 +47,4 @@ public interface Subscribable {
      */
     void unsubscribe(Url consumerUrl, ClientListener listener);
 
-    /**
-     * Unbind a listener from a client
-     *
-     * @param consumerUrl consumer url
-     */
-    void unsubscribe(Url consumerUrl);
 }

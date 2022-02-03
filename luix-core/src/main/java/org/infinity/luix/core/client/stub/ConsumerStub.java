@@ -213,7 +213,7 @@ public class ConsumerStub<T> {
     }
 
     /**
-     * Bind provider services discovery listener to consumer services
+     * Bind providers discovery listener to the consumer
      *
      * @param applicationConfig application configuration
      * @param protocolConfig    protocol configuration
@@ -250,7 +250,7 @@ public class ConsumerStub<T> {
     }
 
     /**
-     * Bind provider services discovery listener to consumer services
+     * Register and active RPC consumer services to registries
      *
      * @param registry registry
      */
@@ -259,7 +259,7 @@ public class ConsumerStub<T> {
     }
 
     /**
-     * Bind provider services discovery listener to consumer services
+     * Register and active RPC consumer services to registries
      *
      * @param registries registries
      */
@@ -271,7 +271,7 @@ public class ConsumerStub<T> {
 
         for (Url registryUrl : registryUrls) {
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
-            registry.subscribe(url);
+            registry.subscribe(Objects.requireNonNull(url));
         }
     }
 

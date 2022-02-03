@@ -18,7 +18,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.*;
 
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL;
@@ -100,13 +99,13 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
 
     @Override
     protected void doRegister(Url providerUrl) {
-        ConsulService service = ConsulService.byProviderUrl(providerUrl);
+        ConsulService service = ConsulService.byUrl(providerUrl);
         consulClient.registerService(service);
     }
 
     @Override
     protected void doDeregister(Url providerUrl) {
-        ConsulService service = ConsulService.byProviderUrl(providerUrl);
+        ConsulService service = ConsulService.byUrl(providerUrl);
         consulClient.deregisterService(service.getInstanceId());
     }
 
@@ -130,6 +129,20 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
             // Deactivate specified service instance
             consulStatusUpdater.deactivate(ConsulUtils.buildServiceInstanceId(providerUrl));
         }
+    }
+
+    @Override
+    public void subscribe(Url consumerUrl) {
+        ConsulService service = ConsulService.byUrl(consumerUrl);
+        consulClient.registerService(service);
+        // Activate specified service instance
+        consulStatusUpdater.activate(service.getInstanceId());
+    }
+
+    @Override
+    public void unsubscribe(Url consumerUrl) {
+        ConsulService service = ConsulService.byUrl(consumerUrl);
+        consulClient.deregisterService(service.getInstanceId());
     }
 
     @Override
@@ -286,20 +299,6 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                 listeners.remove(consumerUrl);
             }
         }
-    }
-
-    @Override
-    public void subscribe(Url consumerUrl) {
-        ConsulService service = ConsulService.byConsumerUrl(consumerUrl);
-        consulClient.registerService(service);
-        // Activate specified service instance
-        consulStatusUpdater.activate(service.getInstanceId());
-    }
-
-    @Override
-    public void unsubscribe(Url consumerUrl) {
-        ConsulService service = ConsulService.byConsumerUrl(consumerUrl);
-        consulClient.deregisterService(service.getInstanceId());
     }
 
     @Override

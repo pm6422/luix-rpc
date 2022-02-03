@@ -191,7 +191,7 @@ public class RpcLifecycle {
             // Bind provider services discovery listener to consumer services
             consumerStub.subscribeProviders(luixProperties.getApplication(), luixProperties.getAvailableProtocol(),
                     luixProperties.getRegistryList());
-            // Register and active consumer services
+            // Register and active RPC consumer services to registries
             consumerStub.subscribe(luixProperties.getRegistryList());
         });
     }

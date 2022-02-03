@@ -4,6 +4,7 @@ import com.ecwid.consul.v1.agent.model.NewService;
 import com.ecwid.consul.v1.agent.model.Service;
 import com.ecwid.consul.v1.health.model.HealthService;
 import lombok.Data;
+import org.infinity.luix.core.exception.impl.RpcConfigException;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.UrlUtils;
 import org.infinity.luix.registry.consul.utils.ConsulUtils;
@@ -11,6 +12,8 @@ import org.infinity.luix.registry.consul.utils.ConsulUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.infinity.luix.core.url.Url.PARAM_TYPE_CONSUMER;
+import static org.infinity.luix.core.url.Url.PARAM_TYPE_PROVIDER;
 import static org.infinity.luix.registry.consul.utils.ConsulUtils.*;
 
 @Data
@@ -88,19 +91,17 @@ public class ConsulService {
         return consulService;
     }
 
-    public static ConsulService byProviderUrl(Url url) {
+    public static ConsulService byUrl(Url url) {
         ConsulService consulService = new ConsulService();
-        consulService.setName(CONSUL_PROVIDING_SERVICES_PREFIX);
-        consulService.setInstanceId(ConsulUtils.buildServiceInstanceId(url));
-        consulService.setAddress(url.getHost());
-        consulService.setPort(url.getPort());
-        consulService.setTags(buildTags(url));
-        return consulService;
-    }
 
-    public static ConsulService byConsumerUrl(Url url) {
-        ConsulService consulService = new ConsulService();
-        consulService.setName(CONSUL_CONSUMING_SERVICES_PREFIX);
+        if (PARAM_TYPE_PROVIDER.equals(url.getOption(Url.PARAM_TYPE))) {
+            consulService.setName(CONSUL_PROVIDING_SERVICES_PREFIX);
+        } else if (PARAM_TYPE_CONSUMER.equals(url.getOption(Url.PARAM_TYPE))) {
+            consulService.setName(CONSUL_CONSUMING_SERVICES_PREFIX);
+        } else {
+            throw new RpcConfigException("Invalid url type: " + url.getOption(Url.PARAM_TYPE));
+        }
+
         consulService.setInstanceId(ConsulUtils.buildServiceInstanceId(url));
         consulService.setAddress(url.getHost());
         consulService.setPort(url.getPort());
