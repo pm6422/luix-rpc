@@ -7,15 +7,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.luix.core.client.annotation.RpcConsumer;
 import org.infinity.luix.core.client.invoker.ServiceInvoker;
-import org.infinity.luix.core.listener.client.ProviderDiscoveryListener;
-import org.infinity.luix.core.listener.client.ProviderNotifyListener;
-import org.infinity.luix.core.listener.client.ProviderProcessable;
 import org.infinity.luix.core.client.proxy.Proxy;
 import org.infinity.luix.core.client.proxy.impl.JdkProxy;
 import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.infinity.luix.core.config.impl.ProtocolConfig;
 import org.infinity.luix.core.config.impl.RegistryConfig;
 import org.infinity.luix.core.constant.*;
+import org.infinity.luix.core.listener.client.ProviderNotifyListener;
+import org.infinity.luix.core.listener.client.ProviderProcessable;
+import org.infinity.luix.core.registry.Registry;
+import org.infinity.luix.core.registry.RegistryFactory;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.name.ConsumerStubBeanNameBuilder;
 import org.infinity.luix.utilities.network.AddressUtils;
@@ -252,8 +253,14 @@ public class ConsumerStub<T> {
         if (StringUtils.isEmpty(providerAddresses)) {
             // Non-direct registry
             // Pass service provider invoker to listener, listener will update service invoker after provider urls changed
-            ProviderDiscoveryListener listener = ProviderDiscoveryListener.of(invokerInstance, interfaceName, form, url, providerProcessor);
-            listener.subscribe(registryUrls);
+            ProviderNotifyListener listener = ProviderNotifyListener.of(invokerInstance, url.getProtocol(),
+                    interfaceName, form, providerProcessor);
+            for (Url registryUrl : registryUrls) {
+                Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
+                // Subscribe this client listener to all the registries,
+                // So when providers change event occurs, it can invoke onNotify() method.
+                registry.subscribe(url, listener);
+            }
             return;
         }
 
