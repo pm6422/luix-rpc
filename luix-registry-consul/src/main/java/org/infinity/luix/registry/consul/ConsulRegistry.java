@@ -49,7 +49,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * Key:  form
      * Value: protocol plus path to urls map
      */
-    private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     urlCache                   = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     providerUrlCache           = new ConcurrentHashMap<>();
     /**
      * Cache used to store commands
      * Key: form
@@ -145,14 +145,14 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         String protocolPlusPath = ConsulUtils.getProtocolPlusPath(consumerUrl);
         String form = consumerUrl.getForm();
         List<Url> providerUrls = new ArrayList<>();
-        ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls = urlCache.get(form);
+        ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls = providerUrlCache.get(form);
         if (protocolPlusPath2Urls == null) {
             synchronized (form.intern()) {
-                protocolPlusPath2Urls = urlCache.get(form);
+                protocolPlusPath2Urls = providerUrlCache.get(form);
                 if (protocolPlusPath2Urls == null) {
                     ConcurrentHashMap<String, List<Url>> protocolPlusPath2UrlsMap = doDiscoverActiveProviders(form);
                     updateProviderUrlsCache(form, protocolPlusPath2UrlsMap, false);
-                    protocolPlusPath2Urls = urlCache.get(form);
+                    protocolPlusPath2Urls = providerUrlCache.get(form);
                 }
             }
         }
@@ -189,26 +189,23 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         return protocolPlusPath2Urls;
     }
 
-    private void updateProviderUrlsCache(String form, ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls, boolean needNotify) {
-        if (MapUtils.isNotEmpty(protocolPlusPath2Urls)) {
-            ConcurrentHashMap<String, List<Url>> protocolPlusPath2UrlsCopy = urlCache.putIfAbsent(form, protocolPlusPath2Urls);
-            for (Map.Entry<String, List<Url>> entry : protocolPlusPath2Urls.entrySet()) {
-                boolean change = true;
-                if (protocolPlusPath2UrlsCopy != null) {
-                    List<Url> oldUrls = protocolPlusPath2UrlsCopy.get(entry.getKey());
+    private void updateProviderUrlsCache(String form, ConcurrentHashMap<String, List<Url>> newProtocolPlusPath2Urls, boolean needNotify) {
+        if (MapUtils.isNotEmpty(newProtocolPlusPath2Urls)) {
+            ConcurrentHashMap<String, List<Url>> oldProtocolPlusPath2Urls = providerUrlCache.putIfAbsent(form, newProtocolPlusPath2Urls);
+            for (Map.Entry<String, List<Url>> entry : newProtocolPlusPath2Urls.entrySet()) {
+                boolean changed = true;
+                if (oldProtocolPlusPath2Urls != null) {
+                    List<Url> oldUrls = oldProtocolPlusPath2Urls.get(entry.getKey());
                     List<Url> newUrls = entry.getValue();
-                    if (CollectionUtils.isEmpty(newUrls) || ConsulUtils.isSame(entry.getValue(), oldUrls)) {
-                        change = false;
+                    if (ConsulUtils.isSame(newUrls, oldUrls)) {
+                        changed = false;
+                        log.trace("No provider changes detected for key: {}", entry.getKey());
                     } else {
-                        protocolPlusPath2UrlsCopy.put(entry.getKey(), newUrls);
+                        oldProtocolPlusPath2Urls.put(entry.getKey(), newUrls);
+                        log.info("Detected provider changes with previous: {} and current: {}", oldUrls, newUrls);
                     }
                 }
-                if (change && needNotify) {
-                    StringBuilder sb = new StringBuilder();
-                    for (Url url : entry.getValue()) {
-                        sb.append(url.getUri()).append(";");
-                    }
-                    log.info("Found changed provider: {}", sb);
+                if (changed && needNotify) {
                     notificationThreadPool.execute(new NotifyService(entry.getKey(), entry.getValue()));
                 }
             }
@@ -408,7 +405,6 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                 try {
                     sleep(discoverInterval);
                     ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls = doDiscoverActiveProviders(form);
-                    log.info("Discovered providers result: {}", protocolPlusPath2Urls);
                     updateProviderUrlsCache(form, protocolPlusPath2Urls, true);
                 } catch (Throwable e) {
                     log.error("Failed to discover providers!", e);

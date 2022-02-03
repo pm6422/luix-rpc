@@ -98,7 +98,7 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
         rpcScheduledTask.setFixedInterval(interval);
         rpcScheduledTask.setFixedIntervalUnit(UNIT_MINUTES);
         rpcScheduledTask.setRequestTimeout(1500);
-        rpcScheduledTask.setEnabled(true);
+        rpcScheduledTask.setEnabled(false);
 
         rpcScheduledTaskRepository.save(rpcScheduledTask);
     }

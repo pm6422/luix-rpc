@@ -162,8 +162,13 @@ public class ConsulUtils {
      * @return
      */
     public static boolean isSame(List<Url> urls1, List<Url> urls2) {
-        if (urls1 == null || urls2 == null || urls1.size() != urls2.size()) {
+        if (urls1 == null && urls2 != null
+                || urls1 != null && urls2 == null
+                || urls1 != null && urls2 != null && urls1.size() != urls2.size()) {
             return false;
+        }
+        if (urls1 == null || urls2 == null) {
+            return true;
         }
         return urls1.containsAll(urls2);
     }
