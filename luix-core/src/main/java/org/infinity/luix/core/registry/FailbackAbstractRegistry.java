@@ -5,10 +5,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.luix.core.constant.RegistryConstants;
-import org.infinity.luix.core.registry.listener.ClientListener;
-import org.infinity.luix.core.url.Url;
-import org.infinity.luix.core.thread.ScheduledThreadPool;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
+import org.infinity.luix.core.registry.listener.ClientListener;
+import org.infinity.luix.core.thread.ScheduledThreadPool;
+import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
 
 import java.text.MessageFormat;
@@ -21,9 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public abstract class FailbackAbstractRegistry extends AbstractRegistry {
 
-    private final Set<Url>                                    failedRegisteredUrl              = new ConcurrentHashSet<>();
-    private final Set<Url>                                    failedDeregisteredUrl            = new ConcurrentHashSet<>();
-    private final Map<Url, ConcurrentHashSet<ClientListener>> failedSubscriptionPerConsumerUrl = new ConcurrentHashMap<>();
+    private final Set<Url>                                    failedRegisteredUrl                = new ConcurrentHashSet<>();
+    private final Set<Url>                                    failedDeregisteredUrl              = new ConcurrentHashSet<>();
+    private final Map<Url, ConcurrentHashSet<ClientListener>> failedSubscriptionPerConsumerUrl   = new ConcurrentHashMap<>();
     private final Map<Url, ConcurrentHashSet<ClientListener>> failedUnsubscriptionPerConsumerUrl = new ConcurrentHashMap<>();
 
     public FailbackAbstractRegistry(Url registryUrl) {
@@ -47,9 +47,9 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      */
     private void doRetry() {
         doRetryFailedRegistration();
-        doRetryFailedUnregistration();
+        doRetryFailedDeregistration();
         doRetryFailedSubscription();
-        doRetryFailedUnsubscription();
+        doRetryFailedDesubscription();
     }
 
     private void doRetryFailedRegistration() {
@@ -69,7 +69,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         log.info("Retried to register urls by {}", getRegistryClassName());
     }
 
-    private void doRetryFailedUnregistration() {
+    private void doRetryFailedDeregistration() {
         if (CollectionUtils.isEmpty(failedDeregisteredUrl)) {
             return;
         }
@@ -116,7 +116,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         log.info("Retried to subscribe listener to urls by {}", getRegistryClassName());
     }
 
-    private void doRetryFailedUnsubscription() {
+    private void doRetryFailedDesubscription() {
         if (MapUtils.isEmpty(failedUnsubscriptionPerConsumerUrl)) {
             return;
         }
