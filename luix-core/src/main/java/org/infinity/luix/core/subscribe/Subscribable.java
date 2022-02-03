@@ -38,6 +38,6 @@ public interface Subscribable {
      * @param interfaceName
      * @param consumerProcessor
      */
-    void subscribeConsumerListener(String interfaceName, ConsumerProcessable consumerProcessor);
+    void subscribeConsumerChangeProcessor(String interfaceName, ConsumerProcessable consumerProcessor);
 
 }

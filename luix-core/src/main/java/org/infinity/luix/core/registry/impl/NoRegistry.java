@@ -101,7 +101,7 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
-    public void subscribeConsumerListener(String interfaceName, ConsumerProcessable consumerProcessor) {
+    public void subscribeConsumerChangeProcessor(String interfaceName, ConsumerProcessable consumerProcessor) {
 
     }
 

@@ -552,7 +552,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     @Override
-    public void subscribeConsumerListener(String interfaceName, ConsumerProcessable consumerProcessor) {
+    public void subscribeConsumerChangeProcessor(String interfaceName, ConsumerProcessable consumerProcessor) {
         listenerLock.lock();
         try {
             IZkChildListener zkChildListener = zkChildListenerPerInterfaceName.get(interfaceName);

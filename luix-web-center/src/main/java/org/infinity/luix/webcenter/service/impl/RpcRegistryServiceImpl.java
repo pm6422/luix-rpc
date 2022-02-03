@@ -78,7 +78,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                         consumerStub.registerAndActivate(luixProperties.getApplication(),
                                 luixProperties.getAvailableProtocol(), registryConfig);
                         // register providers discovery listener
-                        registryConfig.getRegistryImpl().subscribeConsumerListener(url.getPath(), consumerProcessService);
+                        registryConfig.getRegistryImpl().subscribeConsumerChangeProcessor(url.getPath(), consumerProcessService);
                     } catch (Exception e) {
                         log.error("Failed to create consumer stub for interface {}", url.getPath(), e);
                     }
