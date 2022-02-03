@@ -5,7 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.infinity.luix.core.client.listener.ProviderProcessable;
+import org.infinity.luix.core.listener.client.ProviderProcessable;
 import org.infinity.luix.core.client.stub.ConsumerStub;
 import org.infinity.luix.core.client.stub.ConsumerStubFactory;
 import org.infinity.luix.core.client.stub.ConsumerStubHolder;

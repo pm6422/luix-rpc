@@ -1,6 +1,6 @@
 package org.infinity.luix.core.client.stub;
 
-import org.infinity.luix.core.client.listener.ProviderProcessable;
+import org.infinity.luix.core.listener.client.ProviderProcessable;
 import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.infinity.luix.core.config.impl.ConsumerConfig;
 import org.infinity.luix.core.config.impl.ProtocolConfig;

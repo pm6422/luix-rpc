@@ -1,4 +1,4 @@
-package org.infinity.luix.core.client.listener;
+package org.infinity.luix.core.listener.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.url.Url;
