@@ -2,7 +2,6 @@ package org.infinity.luix.registry.zookeeper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.IZkChildListener;
-import org.I0Itec.zkclient.IZkDataListener;
 import org.I0Itec.zkclient.IZkStateListener;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.collections4.CollectionUtils;
@@ -11,8 +10,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.zookeeper.Watcher;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
-import org.infinity.luix.core.registry.CommandFailbackAbstractRegistry;
-import org.infinity.luix.core.registry.listener.CommandListener;
+import org.infinity.luix.core.registry.AbstractRegistry;
 import org.infinity.luix.core.registry.listener.ProviderListener;
 import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
@@ -39,7 +37,7 @@ import static org.infinity.luix.registry.zookeeper.utils.ZookeeperUtils.*;
  */
 @Slf4j
 @ThreadSafe
-public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implements Destroyable {
+public class ZookeeperRegistry extends AbstractRegistry implements Destroyable {
     private final ZkClient                                                        zkClient;
     /**
      * Used to resolve concurrency problems for subscribe or unsubscribe service listeners
@@ -51,7 +49,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     private final Lock                                                            providerLock                    = new ReentrantLock();
     private final Set<Url>                                                        activeProviderUrls              = new ConcurrentHashSet<>();
     private final Map<Url, ConcurrentHashMap<ProviderListener, IZkChildListener>> providerListenersPerConsumerUrl = new ConcurrentHashMap<>();
-    private final Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>>   commandListenersPerConsumerUrl  = new ConcurrentHashMap<>();
     private final Map<String, IZkChildListener>                                   zkChildListenerPerInterfaceName = new ConcurrentHashMap<>();
 
     public ZookeeperRegistry(ZkClient zkClient, Url registryUrl) {
@@ -92,15 +89,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
      */
     Map<Url, ConcurrentHashMap<ProviderListener, IZkChildListener>> getProviderListenersPerConsumerUrl() {
         return providerListenersPerConsumerUrl;
-    }
-
-    /**
-     * Default access modifier for unit test
-     *
-     * @return command listeners
-     */
-    Map<Url, ConcurrentHashMap<CommandListener, IZkDataListener>> getCommandListenersPerConsumerUrl() {
-        return commandListenersPerConsumerUrl;
     }
 
     /**
@@ -153,18 +141,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
                     }
                 }
                 log.info("Re-registered the provider listeners after a new zookeeper session");
-            }
-            if (MapUtils.isNotEmpty(commandListenersPerConsumerUrl)) {
-                for (Map.Entry<Url, ConcurrentHashMap<CommandListener, IZkDataListener>> entry : commandListenersPerConsumerUrl.entrySet()) {
-                    Url url = entry.getKey();
-                    ConcurrentHashMap<CommandListener, IZkDataListener> dataChangeListeners = commandListenersPerConsumerUrl.get(url);
-                    if (MapUtils.isNotEmpty(dataChangeListeners)) {
-                        for (Map.Entry<CommandListener, IZkDataListener> e : dataChangeListeners.entrySet()) {
-                            subscribeCommandListener(url, e.getKey());
-                        }
-                    }
-                }
-                log.info("Re-registered the command listeners after a new zookeeper session");
             }
         } finally {
             listenerLock.unlock();
@@ -363,28 +339,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     /**
-     * Read command json content of specified url
-     *
-     * @param consumerUrl consumer url
-     * @return command json string
-     */
-    @Override
-    protected String readCommand(Url consumerUrl) {
-        try {
-            String commandPath = FULL_PATH_COMMAND;
-            String command = "";
-            if (zkClient.exists(commandPath)) {
-                command = zkClient.readData(commandPath);
-            }
-            return command;
-        } catch (Throwable e) {
-            String msg = String.format("Failed to discover command [%s] from zookeeper [%s]",
-                    consumerUrl, getRegistryUrl());
-            throw new RpcFrameworkException(msg, e);
-        }
-    }
-
-    /**
      * Monitor the specified zookeeper node linked to url whether the child nodes have been changed,
      * and it will invoke custom service listener if child nodes change.
      *
@@ -455,82 +409,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             }
         } catch (Throwable e) {
             String msg = String.format("Failed to unsubscribe provider listeners for url [%s]", consumerUrl);
-            throw new RpcFrameworkException(msg, e);
-        } finally {
-            listenerLock.unlock();
-        }
-    }
-
-    /**
-     * Monitor the specified zookeeper node linked to url whether the data have been changed,
-     * and it will invoke custom command listener if data change.
-     *
-     * @param consumerUrl     consumer url to identify the zookeeper path
-     * @param commandListener command listener
-     */
-    @Override
-    @EventSubscriber("providerDataChangeEvent")
-    protected void subscribeCommandListener(Url consumerUrl, final CommandListener commandListener) {
-        listenerLock.lock();
-        try {
-            Map<CommandListener, IZkDataListener> dataChangeListeners = commandListenersPerConsumerUrl.get(consumerUrl);
-            if (dataChangeListeners == null) {
-                commandListenersPerConsumerUrl.putIfAbsent(consumerUrl, new ConcurrentHashMap<>(16));
-                dataChangeListeners = commandListenersPerConsumerUrl.get(consumerUrl);
-            }
-            IZkDataListener zkDataListener = dataChangeListeners.get(commandListener);
-            if (zkDataListener == null) {
-                // Trigger user customized listener if data changes
-                zkDataListener = new IZkDataListener() {
-                    @Override
-                    @EventPublisher("providerDataChangeEvent")
-                    public void handleDataChange(String dataPath, Object data) {
-                        commandListener.onNotify(consumerUrl, (String) data);
-                        log.info("Command data changed with current value {} under path [{}]", data.toString(), dataPath);
-                    }
-
-                    @Override
-                    @EventPublisher("providerDataChangeEvent")
-                    public void handleDataDeleted(String dataPath) {
-                        commandListener.onNotify(consumerUrl, null);
-                        log.info("Command data deleted under path [{}]", dataPath);
-                    }
-                };
-                dataChangeListeners.putIfAbsent(commandListener, zkDataListener);
-            }
-
-            String commandPath = FULL_PATH_COMMAND;
-            // Bind the path with zookeeper data change listener, any the data changes under the path will trigger the zkDataListener
-            zkClient.subscribeDataChanges(commandPath, zkDataListener);
-            log.info("Subscribed the command listener for the path [{}]", commandPath);
-        } catch (Throwable e) {
-            String msg = String.format("Failed to subscribe command listeners for url [%s]", consumerUrl);
-            throw new RpcFrameworkException(msg, e);
-        } finally {
-            listenerLock.unlock();
-        }
-    }
-
-    /**
-     * Unsubscribe the command listener from the specified zookeeper node
-     *
-     * @param consumerUrl     consumer url to identify the zookeeper path
-     * @param commandListener command listener
-     */
-    @Override
-    protected void unsubscribeCommandListener(Url consumerUrl, CommandListener commandListener) {
-        listenerLock.lock();
-        try {
-            Map<CommandListener, IZkDataListener> dataChangeListeners = commandListenersPerConsumerUrl.get(consumerUrl);
-            if (dataChangeListeners != null) {
-                IZkDataListener zkDataListener = dataChangeListeners.get(commandListener);
-                if (zkDataListener != null) {
-                    zkClient.unsubscribeDataChanges(FULL_PATH_COMMAND, zkDataListener);
-                    dataChangeListeners.remove(commandListener);
-                }
-            }
-        } catch (Throwable e) {
-            String msg = String.format("Failed to unsubscribe command listeners for url [%s]", consumerUrl);
             throw new RpcFrameworkException(msg, e);
         } finally {
             listenerLock.unlock();

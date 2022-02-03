@@ -5,7 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.luix.core.exception.impl.RpcConfigException;
-import org.infinity.luix.core.registry.listener.ClientListener;
+import org.infinity.luix.core.registry.listener.ConsumerListener;
 import org.infinity.luix.core.registry.listener.ProviderListener;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.annotation.EventPublisher;
@@ -184,7 +184,7 @@ public abstract class AbstractRegistry implements Registry {
      * @param listener    listener
      */
     @Override
-    public void subscribe(Url consumerUrl, ClientListener listener) {
+    public void subscribe(Url consumerUrl, ConsumerListener listener) {
         Validate.notNull(consumerUrl, "Client url must NOT be null!");
         Validate.notNull(listener, "Client listener must NOT be null!");
 
@@ -199,7 +199,7 @@ public abstract class AbstractRegistry implements Registry {
      * @param listener    listener
      */
     @Override
-    public void unsubscribe(Url consumerUrl, ClientListener listener) {
+    public void unsubscribe(Url consumerUrl, ConsumerListener listener) {
         Validate.notNull(consumerUrl, "Client url must NOT be null!");
         Validate.notNull(listener, "Client listener must NOT be null!");
 
@@ -264,7 +264,7 @@ public abstract class AbstractRegistry implements Registry {
      * @param consumerUrl  consumer url
      * @param listener     listener
      */
-    protected void notify(List<Url> providerUrls, Url consumerUrl, ClientListener listener) {
+    protected void notify(List<Url> providerUrls, Url consumerUrl, ConsumerListener listener) {
         if (listener == null || CollectionUtils.isEmpty(providerUrls)) {
             return;
         }
@@ -313,13 +313,52 @@ public abstract class AbstractRegistry implements Registry {
 
     protected abstract List<Url> discoverActiveProviders(Url consumerUrl);
 
-    protected abstract void doSubscribe(Url url, ClientListener listener);
+    /**
+     * It contains the functionality of method subscribeServiceListener and subscribeCommandListener
+     * And execute the listener
+     *
+     * @param consumerUrl consumer url
+     * @param listener    client listener
+     */
+    protected void doSubscribe(Url consumerUrl, ConsumerListener listener) {
+        Url consumerUrlCopy = consumerUrl.copy();
+        // Discover active providers
+        List<Url> providerUrls = doDiscover(consumerUrlCopy);
+        if (CollectionUtils.isNotEmpty(providerUrls)) {
+            // Notify discovered providers to client side
+            this.notify(providerUrls, consumerUrlCopy, listener);
+        }
+        log.info("Subscribed the listener for the url [{}]", consumerUrl);
+    }
 
-    protected abstract void doUnsubscribe(Url url, ClientListener listener);
+    /**
+     * Unsubscribe the service and command listener
+     *
+     * @param consumerUrl consumer url
+     * @param listener    client listener
+     */
+    protected void doUnsubscribe(Url consumerUrl, ConsumerListener listener) {
+        log.info("Unsubscribed the listener for the url [{}]", consumerUrl);
+    }
 
     protected abstract void subscribeProviderListener(Url consumerUrl, ProviderListener listener);
 
     protected abstract void unsubscribeProviderListener(Url consumerUrl, ProviderListener listener);
 
-    protected abstract List<Url> doDiscover(Url url);
+    /**
+     * Discover the provider or command url
+     *
+     * @param consumerUrl consumer url
+     * @return provider urls
+     */
+    protected List<Url> doDiscover(Url consumerUrl) {
+        Url urlCopy = consumerUrl.copy();
+        List<Url> providerUrls = discoverActiveProviders(urlCopy);
+        if (CollectionUtils.isNotEmpty(providerUrls)) {
+            log.info("Discovered the provider urls [{}] for url [{}]", providerUrls, consumerUrl);
+        } else {
+            log.warn("No RPC service providers found on registry for consumer url [{}]!", consumerUrl);
+        }
+        return providerUrls;
+    }
 }

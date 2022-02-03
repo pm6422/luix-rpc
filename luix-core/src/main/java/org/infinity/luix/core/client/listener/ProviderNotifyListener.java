@@ -2,7 +2,7 @@ package org.infinity.luix.core.client.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.luix.core.registry.listener.ClientListener;
+import org.infinity.luix.core.registry.listener.ConsumerListener;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.client.invoker.ServiceInvoker;
 import org.infinity.luix.core.client.sender.Sendable;
@@ -25,7 +25,7 @@ import static org.infinity.luix.core.constant.ProtocolConstants.PROTOCOL_VAL_DEF
  */
 @Slf4j
 @ThreadSafe
-public class ProviderNotifyListener implements ClientListener {
+public class ProviderNotifyListener implements ConsumerListener {
     protected     ServiceInvoker           serviceInvoker;
     protected     Protocol                 protocol;
     /**

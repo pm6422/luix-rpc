@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Client listener used to handle the subscribed event
  */
-public interface ClientListener {
+public interface ConsumerListener {
 
     void onNotify(Url registryUrl, List<Url> providerUrls);
 

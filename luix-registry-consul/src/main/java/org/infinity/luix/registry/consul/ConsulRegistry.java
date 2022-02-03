@@ -4,9 +4,7 @@ import com.ecwid.consul.v1.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.infinity.luix.core.registry.CommandFailbackAbstractRegistry;
-import org.infinity.luix.core.registry.listener.CommandListener;
+import org.infinity.luix.core.registry.AbstractRegistry;
 import org.infinity.luix.core.registry.listener.ProviderListener;
 import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
@@ -26,7 +24,7 @@ import static org.infinity.luix.registry.consul.utils.ConsulUtils.buildProviderS
 
 @Slf4j
 @ThreadSafe
-public class ConsulRegistry extends CommandFailbackAbstractRegistry implements Destroyable {
+public class ConsulRegistry extends AbstractRegistry implements Destroyable {
 
     /**
      * Consul client
@@ -51,31 +49,15 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      */
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     providerUrlCache           = new ConcurrentHashMap<>();
     /**
-     * Cache used to store commands
-     * Key: form
-     * Value: command string
-     */
-    private final ConcurrentHashMap<String, String>                                   commandCache               = new ConcurrentHashMap<>();
-    /**
      * Key: form
      * Value: lastConsulIndexId
      */
     private final ConcurrentHashMap<String, Long>                                     form2ConsulIndex           = new ConcurrentHashMap<>();
     /**
-     * Key: form
-     * Value: command string
-     */
-    private final ConcurrentHashMap<String, String>                                   form2Command               = new ConcurrentHashMap<>();
-    /**
      * Key: protocol plus path
      * Value: url to providerListener map
      */
     private final ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners           = new ConcurrentHashMap<>();
-    /**
-     * Key: protocol plus path
-     * Value: url to commandListener map
-     */
-    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners           = new ConcurrentHashMap<>();
     /**
      * Key: consumer path
      * Value: consumerUrls
@@ -266,79 +248,10 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                 }, 0, 2, TimeUnit.SECONDS);
     }
 
-    @Override
-    protected void subscribeCommandListener(Url consumerUrl, CommandListener listener) {
-        addCommandListener(consumerUrl, listener);
-        startListenerThreadIfNewCommand(consumerUrl);
-    }
-
-    private void addCommandListener(Url url, CommandListener commandListener) {
-        String group = url.getForm();
-        ConcurrentHashMap<Url, CommandListener> map = commandListeners.get(group);
-        if (map == null) {
-            commandListeners.putIfAbsent(group, new ConcurrentHashMap<>());
-            map = commandListeners.get(group);
-        }
-        synchronized (map) {
-            map.put(url, commandListener);
-        }
-    }
-
-    private void startListenerThreadIfNewCommand(Url url) {
-        String group = url.getForm();
-        if (!form2Command.containsKey(group)) {
-            String command = form2Command.putIfAbsent(group, StringUtils.EMPTY);
-            if (command == null) {
-                CommandLookupThread lookupThread = new CommandLookupThread(group);
-                lookupThread.setDaemon(true);
-                lookupThread.start();
-            }
-        }
-    }
-
-    @Override
-    protected void unsubscribeCommandListener(Url consumerUrl, CommandListener listener) {
-        ConcurrentHashMap<Url, CommandListener> listeners = commandListeners.get(consumerUrl.getForm());
-        if (listeners != null) {
-            synchronized (listeners) {
-                listeners.remove(consumerUrl);
-            }
-        }
-    }
 
     @Override
     public List<Url> getAllProviderUrls() {
         return consulClient.getAllProviderUrls();
-    }
-
-    @Override
-    protected String readCommand(Url consumerUrl) {
-        String group = consumerUrl.getForm();
-        String command = lookupCommandUpdate(group);
-        updateCommandCache(group, command, false);
-        return command;
-    }
-
-    private String lookupCommandUpdate(String group) {
-        String command = consulClient.queryCommand(group);
-        form2Command.put(group, command);
-        return command;
-    }
-
-    /**
-     * update command cache of the group.
-     * update local cache when command changed,
-     * if need notify, notify command
-     */
-    private void updateCommandCache(String group, String command, boolean needNotify) {
-        String oldCommand = commandCache.get(group);
-        if (!command.equals(oldCommand)) {
-            commandCache.put(group, command);
-            if (needNotify) {
-                notificationThreadPool.execute(new NotifyCommand(group, command));
-                log.info(String.format("command data change: group=%s, command=%s: ", group, command));
-            }
-        }
     }
 
     protected Url getUrl() {
@@ -370,27 +283,6 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         }
     }
 
-    private class NotifyCommand implements Runnable {
-        private final String form;
-        private final String command;
-
-        public NotifyCommand(String form, String command) {
-            this.form = form;
-            this.command = command;
-        }
-
-        @Override
-        public void run() {
-            ConcurrentHashMap<Url, CommandListener> listeners = commandListeners.get(form);
-            synchronized (listeners) {
-                for (Map.Entry<Url, CommandListener> entry : listeners.entrySet()) {
-                    CommandListener commandListener = entry.getValue();
-                    commandListener.onNotify(entry.getKey(), command);
-                }
-            }
-        }
-    }
-
     private class DiscoverProviderThread extends Thread {
         private final String form;
 
@@ -410,32 +302,6 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                     log.error("Failed to discover providers!", e);
                     try {
                         Thread.sleep(2_000);
-                    } catch (InterruptedException ignored) {
-                    }
-                }
-            }
-        }
-    }
-
-    private class CommandLookupThread extends Thread {
-        private final String group;
-
-        public CommandLookupThread(String group) {
-            this.group = group;
-        }
-
-        @Override
-        public void run() {
-            log.info("start command lookup thread. lookup interval: " + discoverInterval + "ms, group: " + group);
-            while (true) {
-                try {
-                    sleep(discoverInterval);
-                    String command = lookupCommandUpdate(group);
-                    updateCommandCache(group, command, true);
-                } catch (Throwable e) {
-                    log.error("group lookup thread fail!", e);
-                    try {
-                        Thread.sleep(2000);
                     } catch (InterruptedException ignored) {
                     }
                 }

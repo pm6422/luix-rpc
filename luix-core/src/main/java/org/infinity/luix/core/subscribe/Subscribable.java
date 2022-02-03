@@ -1,6 +1,6 @@
 package org.infinity.luix.core.subscribe;
 
-import org.infinity.luix.core.registry.listener.ClientListener;
+import org.infinity.luix.core.registry.listener.ConsumerListener;
 import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
 
@@ -24,7 +24,7 @@ public interface Subscribable {
      * @param consumerUrl consumer url
      * @param listener    client listener
      */
-    void subscribe(Url consumerUrl, ClientListener listener);
+    void subscribe(Url consumerUrl, ConsumerListener listener);
 
     /**
      * Unbind a listener from a client
@@ -32,7 +32,7 @@ public interface Subscribable {
      * @param consumerUrl consumer url
      * @param listener    client listener
      */
-    void unsubscribe(Url consumerUrl, ClientListener listener);
+    void unsubscribe(Url consumerUrl, ConsumerListener listener);
 
     /**
      * Subscribe consumer changes processor
