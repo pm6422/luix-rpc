@@ -86,7 +86,7 @@ public class RpcLifecycle {
         log.info("Starting the Luix RPC server");
         registerShutdownHook();
         registerBuildInProviderStubs(beanFactory, luixProperties);
-        publish(luixProperties);
+        register(luixProperties);
         subscribe(luixProperties);
         log.info("Started the Luix RPC server");
     }
@@ -121,22 +121,24 @@ public class RpcLifecycle {
     }
 
     /**
-     * Publish RPC providers to registries
+     * Register RPC providers and consumers to registries
      *
      * @param luixProperties RPC configuration properties
      */
-    private void publish(LuixProperties luixProperties) {
+    private void register(LuixProperties luixProperties) {
         luixProperties.getRegistryList().forEach(registryConfig -> {
             if (!registryConfig.getName().equals(REGISTRY_VAL_NONE)) {
                 // Non-direct registry
 
-                // Publish providers
-                publishProviders(luixProperties, registryConfig);
+                // Register providers
+                registerProviders(luixProperties, registryConfig);
+                // Register consumers
+                registerConsumer(luixProperties, registryConfig);
             }
         });
     }
 
-    private void publishProviders(LuixProperties luixProperties, RegistryConfig registryConfig) {
+    private void registerProviders(LuixProperties luixProperties, RegistryConfig registryConfig) {
         Map<String, ProviderStub<?>> providerStubs = ProviderStubHolder.getInstance().getMap();
         if (MapUtils.isEmpty(providerStubs)) {
             log.info("No RPC service providers found to register to registry [{}]", registryConfig.getName());
@@ -153,7 +155,7 @@ public class RpcLifecycle {
                 );
             }
 
-            // Register providers
+            // Register provider to registry
             providerStub.register(luixProperties.getApplication(), luixProperties.getAvailableProtocol(), registryConfig);
         });
 
@@ -163,6 +165,19 @@ public class RpcLifecycle {
                     providerStub.activate()
             );
         }
+    }
+
+    private void registerConsumer(LuixProperties luixProperties, RegistryConfig registryConfig) {
+        Map<String, ConsumerStub<?>> consumerStubs = ConsumerStubHolder.getInstance().getMap();
+        if (MapUtils.isEmpty(consumerStubs)) {
+            log.info("No RPC service consumers found to register to registry [{}]", registryConfig.getName());
+            return;
+        }
+        consumerStubs.forEach((name, consumerStub) -> {
+            // Register and activate consumer to registry
+            consumerStub.registerAndActivate(luixProperties.getApplication(), luixProperties.getAvailableProtocol(),
+                    registryConfig);
+        });
     }
 
     private void setMethodConfig(ProviderStub<?> providerStub, Method method) {
@@ -182,7 +197,7 @@ public class RpcLifecycle {
      * @param luixProperties RPC configuration properties
      */
     private void subscribe(LuixProperties luixProperties) {
-        Map<String, ConsumerStub<?>> consumerStubs = ConsumerStubHolder.getInstance().get();
+        Map<String, ConsumerStub<?>> consumerStubs = ConsumerStubHolder.getInstance().getMap();
         if (MapUtils.isEmpty(consumerStubs)) {
             log.info("No RPC consumers found on the registries");
             return;
@@ -191,8 +206,6 @@ public class RpcLifecycle {
             // Bind provider services discovery listener to consumer services
             consumerStub.subscribeProviders(luixProperties.getApplication(), luixProperties.getAvailableProtocol(),
                     luixProperties.getRegistryList());
-            // Register and active RPC consumer services to registries
-            consumerStub.subscribe(luixProperties.getRegistryList());
         });
     }
 
@@ -208,7 +221,7 @@ public class RpcLifecycle {
         }
 
         luixProperties.getRegistryList().forEach(registryConfig ->
-                unsubscribeConsumers(registryConfig.getRegistryUrl())
+                deregisterConsumers(registryConfig.getRegistryUrl())
         );
 
         luixProperties.getRegistryList().forEach(registryConfig ->
@@ -238,21 +251,19 @@ public class RpcLifecycle {
     }
 
     /**
-     * Unsubscribe RPC consumers from registry
+     * Deregister RPC consumers from registry
      *
      * @param registryUrls registry urls
      */
-    private void unsubscribeConsumers(Url... registryUrls) {
+    private void deregisterConsumers(Url... registryUrls) {
         for (Url registryUrl : registryUrls) {
             Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
             if (registry == null || CollectionUtils.isEmpty(registry.getRegisteredProviderUrls())) {
                 System.out.println("No registry found!");
                 return;
             }
-            ConsumerStubHolder.getInstance().get().forEach((name, consumerStub) -> {
-                registry.unsubscribe(consumerStub.getUrl());
-            });
-            System.out.println("Unsubscribed all the RPC consumers from registry [" + registryUrl.getProtocol() + "]");
+            registry.getRegisteredConsumerUrls().forEach(registry::deregister);
+            System.out.println("Deregistered all the RPC consumers from registry [" + registryUrl.getProtocol() + "]");
         }
     }
 }

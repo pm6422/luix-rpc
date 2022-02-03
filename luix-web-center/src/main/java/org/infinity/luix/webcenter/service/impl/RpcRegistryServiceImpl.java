@@ -75,17 +75,12 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                         ConsumerStubHolder.getInstance().add(stubBeanName, consumerStub);
 
                         // Register and active consumer services
-                        consumerStub.subscribe(registryConfig);
-                    } catch (Exception e) {
-                        log.error("Failed to create consumer stub for interface {}", url.getPath(), e);
-                    }
-                });
-                allProviderUrls.forEach(url -> {
-                    try {
+                        consumerStub.registerAndActivate(luixProperties.getApplication(),
+                                luixProperties.getAvailableProtocol(), registryConfig);
                         // register providers discovery listener
                         registryConfig.getRegistryImpl().subscribeConsumerListener(url.getPath(), consumerProcessService);
                     } catch (Exception e) {
-                        log.error("Failed to bind consumer listener for interface {}", url.getPath(), e);
+                        log.error("Failed to create consumer stub for interface {}", url.getPath(), e);
                     }
                 });
             });
@@ -148,8 +143,8 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
         }
 
         String beanName = ConsumerStub.buildConsumerStubBeanName(resolvedInterfaceName, attributesMap);
-        if (ConsumerStubHolder.getInstance().get().containsKey(beanName)) {
-            return ConsumerStubHolder.getInstance().get().get(beanName);
+        if (ConsumerStubHolder.getInstance().getMap().containsKey(beanName)) {
+            return ConsumerStubHolder.getInstance().getMap().get(beanName);
         }
 
         // Default hessian 2 serializer

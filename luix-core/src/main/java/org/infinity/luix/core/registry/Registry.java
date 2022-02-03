@@ -30,11 +30,4 @@ public interface Registry extends Registrable, Subscribable {
      * @return registry url
      */
     Url getRegistryUrl();
-
-    /**
-     *
-     * @param interfaceName
-     * @param consumerProcessor
-     */
-    void subscribeConsumerListener(String interfaceName, ConsumerProcessable consumerProcessor);
 }

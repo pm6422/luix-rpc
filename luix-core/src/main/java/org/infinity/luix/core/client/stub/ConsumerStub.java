@@ -16,8 +16,6 @@ import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.infinity.luix.core.config.impl.ProtocolConfig;
 import org.infinity.luix.core.config.impl.RegistryConfig;
 import org.infinity.luix.core.constant.*;
-import org.infinity.luix.core.registry.Registry;
-import org.infinity.luix.core.registry.RegistryFactory;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.name.ConsumerStubBeanNameBuilder;
 import org.infinity.luix.utilities.network.AddressUtils;
@@ -98,11 +96,6 @@ public class ConsumerStub<T> {
      * Observe that there is no problem and repeat this process to complete the upgrade.
      */
     private           String         version;
-//    /**
-//     * 多注册中心，所以不能使用单个
-//     * Registry
-//     */
-//    private String   registry;
     /**
      * Service provider invoker name used to create {@link #invokerInstance}
      */
@@ -159,7 +152,7 @@ public class ConsumerStub<T> {
     private           String         providerAddresses;
     /**
      * The consumer url used to exposed to registry only for consumers discovery management,
-     * but it have nothing to do with the service calling.
+     * but it has nothing to do with the service calling.
      */
     private           Url            url;
 
@@ -176,11 +169,28 @@ public class ConsumerStub<T> {
     }
 
     /**
+     * Register and activate the consumer to registry
+     *
+     * @param applicationConfig application configuration
+     * @param protocolConfig    protocol configuration
+     * @param registryConfig    registry configuration
+     */
+    public void registerAndActivate(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
+                                    RegistryConfig registryConfig) {
+        if (url == null) {
+            // Create consumer url
+            url = this.createConsumerUrl(applicationConfig, protocolConfig);
+        }
+        registryConfig.getRegistryImpl().register(url);
+        registryConfig.getRegistryImpl().activate(url);
+    }
+
+    /**
      * Subscribe the RPC providers from registry
      *
      * @param applicationConfig application configuration
      * @param protocolConfig    protocol configuration
-     * @param registry          registry
+     * @param registry          registry configuration
      */
     public void subscribeProviders(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig, RegistryConfig registry) {
         subscribeProviders(applicationConfig, protocolConfig, Collections.singleton(registry), null);
@@ -191,7 +201,7 @@ public class ConsumerStub<T> {
      *
      * @param applicationConfig application configuration
      * @param protocolConfig    protocol configuration
-     * @param registry          registry
+     * @param registry          registry configuration
      * @param providerProcessor provider processor
      */
     public void subscribeProviders(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
@@ -227,8 +237,10 @@ public class ConsumerStub<T> {
                 .map(RegistryConfig::getRegistryUrl)
                 .collect(Collectors.toList());
 
-        // Create consumer url
-        url = this.createConsumerUrl(applicationConfig, protocolConfig);
+        if (url == null) {
+            // Create consumer url
+            url = this.createConsumerUrl(applicationConfig, protocolConfig);
+        }
 
         // Initialize service invoker before consumer initialization
         invokerInstance = ServiceInvoker.getInstance(defaultIfEmpty(invoker, ConsumerConstants.INVOKER_VAL_DEFAULT));
@@ -248,33 +260,6 @@ public class ConsumerStub<T> {
         // Direct registry
         notifyDirectProviderUrls(registryUrls, providerProcessor);
     }
-
-    /**
-     * Register and active RPC consumer services to registries
-     *
-     * @param registry registry
-     */
-    public void subscribe(RegistryConfig registry) {
-        subscribe(Collections.singletonList(registry));
-    }
-
-    /**
-     * Register and active RPC consumer services to registries
-     *
-     * @param registries registries
-     */
-    public void subscribe(Collection<RegistryConfig> registries) {
-        List<Url> registryUrls = registries
-                .stream()
-                .map(RegistryConfig::getRegistryUrl)
-                .collect(Collectors.toList());
-
-        for (Url registryUrl : registryUrls) {
-            Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
-            registry.subscribe(Objects.requireNonNull(url));
-        }
-    }
-
 
     /**
      * Merge high priority properties to consumer stub and generate consumer url

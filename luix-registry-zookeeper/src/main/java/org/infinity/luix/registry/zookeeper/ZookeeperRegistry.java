@@ -174,106 +174,131 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     /**
      * Register specified url info to zookeeper
      *
-     * @param providerUrl provider url
+     * @param url provider or consumer url
      */
     @Override
-    protected void doRegister(Url providerUrl) {
-        providerLock.lock();
-        try {
-            // Remove old node in order to avoid using dirty data
-            removeNode(providerUrl, StatusDir.ACTIVE);
-            removeNode(providerUrl, StatusDir.INACTIVE);
-            // Create data under 'inactive' node
-            createNode(providerUrl, StatusDir.INACTIVE);
-        } catch (Throwable e) {
-            String msg = String.format("Failed to register [%s] to zookeeper [%s] with the error: %s",
-                    providerUrl, getRegistryUrl(), e.getMessage());
-            throw new RpcFrameworkException(msg, e);
-        } finally {
-            providerLock.unlock();
+    protected void doRegister(Url url) {
+        if (url.isProvider()) {
+            providerLock.lock();
+            try {
+                // Remove old node in order to avoid using dirty data
+                removeNode(url, StatusDir.ACTIVE);
+                removeNode(url, StatusDir.INACTIVE);
+                // Create data under 'inactive' node
+                createNode(url, StatusDir.INACTIVE);
+            } catch (Throwable e) {
+                String msg = String.format("Failed to register [%s] to zookeeper [%s] with the error: %s",
+                        url, getRegistryUrl(), e.getMessage());
+                throw new RpcFrameworkException(msg, e);
+            } finally {
+                providerLock.unlock();
+            }
+        } else {
+            createConsumingNode(url);
+        }
+    }
+
+    /**
+     * Deregister specified url info from zookeeper
+     *
+     * @param url provider or consumer url
+     */
+    @Override
+    protected void doDeregister(Url url) {
+        if (url.isProvider()) {
+            providerLock.lock();
+            try {
+                removeNode(url, StatusDir.ACTIVE);
+                removeNode(url, StatusDir.INACTIVE);
+            } catch (Throwable e) {
+                String msg = String.format("Failed to deregister [%s] from zookeeper [%s] with the error: %s",
+                        url, getRegistryUrl(), e.getMessage());
+                throw new RpcFrameworkException(msg, e);
+            } finally {
+                providerLock.unlock();
+            }
+        } else {
+            try {
+                // Remove dirty data
+                removeNode(url, StatusDir.CONSUMING);
+            } catch (Exception e) {
+                log.warn(MessageFormat.format("Failed to remove the node for the path [{0}]",
+                        getProviderFilePath(url, StatusDir.CONSUMING)), e);
+            }
         }
     }
 
     /**
      * Register specified url info to zookeeper 'active' node
      *
-     * @param providerUrl provider url
+     * @param url provider or consumer url
      */
     @Override
-    protected void doActivate(Url providerUrl) {
-        providerLock.lock();
-        try {
-            if (providerUrl == null) {
-                // Register all provider urls to 'active' node if parameter url is null
-                // Do NOT save Url.PARAM_ACTIVATED_TIME to activeProviderUrls
-                activeProviderUrls.addAll(super.getRegisteredProviderUrls());
+    protected void doActivate(Url url) {
+        if (url.isProvider()) {
+            providerLock.lock();
+            try {
+                if (url == null) {
+                    // Register all provider urls to 'active' node if parameter url is null
+                    // Do NOT save Url.PARAM_ACTIVATED_TIME to activeProviderUrls
+                    activeProviderUrls.addAll(super.getRegisteredProviderUrls());
 
-                for (Url u : super.getRegisteredProviderUrls()) {
-                    Url copy = u.copy();
+                    for (Url u : super.getRegisteredProviderUrls()) {
+                        Url copy = u.copy();
+                        // Remove the dirty data node
+                        removeNode(copy, StatusDir.ACTIVE);
+                        removeNode(copy, StatusDir.INACTIVE);
+                        // Create data under 'active' node
+                        createNode(copy, StatusDir.ACTIVE);
+                    }
+                } else {
+                    // Do NOT save Url.PARAM_ACTIVATED_TIME to activeProviderUrls
+                    activeProviderUrls.add(url);
+
+                    Url copy = url.copy();
                     // Remove the dirty data node
                     removeNode(copy, StatusDir.ACTIVE);
                     removeNode(copy, StatusDir.INACTIVE);
                     // Create data under 'active' node
                     createNode(copy, StatusDir.ACTIVE);
                 }
-            } else {
-                // Do NOT save Url.PARAM_ACTIVATED_TIME to activeProviderUrls
-                activeProviderUrls.add(providerUrl);
-
-                Url copy = providerUrl.copy();
-                // Remove the dirty data node
-                removeNode(copy, StatusDir.ACTIVE);
-                removeNode(copy, StatusDir.INACTIVE);
-                // Create data under 'active' node
-                createNode(copy, StatusDir.ACTIVE);
+            } finally {
+                providerLock.unlock();
             }
-        } finally {
-            providerLock.unlock();
         }
     }
 
     /**
      * Register specified url info to zookeeper inactive node
      *
-     * @param providerUrl url
+     * @param url provider or consumer url
      */
     @Override
-    protected void doDeactivate(Url providerUrl) {
-        providerLock.lock();
-        try {
-            if (providerUrl == null) {
-                // Register all provider urls to 'inactive' node if parameter url is null
-                activeProviderUrls.removeAll(getRegisteredProviderUrls());
-                for (Url u : getRegisteredProviderUrls()) {
+    protected void doDeactivate(Url url) {
+        if (url.isProvider()) {
+            providerLock.lock();
+            try {
+                if (url == null) {
+                    // Register all provider urls to 'inactive' node if parameter url is null
+                    activeProviderUrls.removeAll(getRegisteredProviderUrls());
+                    for (Url u : getRegisteredProviderUrls()) {
+                        // Remove the dirty data node
+                        removeNode(u, StatusDir.ACTIVE);
+                        removeNode(u, StatusDir.INACTIVE);
+                        // Create data under 'inactive' node
+                        createNode(u, StatusDir.INACTIVE);
+                    }
+                } else {
+                    activeProviderUrls.remove(url);
                     // Remove the dirty data node
-                    removeNode(u, StatusDir.ACTIVE);
-                    removeNode(u, StatusDir.INACTIVE);
+                    removeNode(url, StatusDir.ACTIVE);
+                    removeNode(url, StatusDir.INACTIVE);
                     // Create data under 'inactive' node
-                    createNode(u, StatusDir.INACTIVE);
+                    createNode(url, StatusDir.INACTIVE);
                 }
-            } else {
-                activeProviderUrls.remove(providerUrl);
-                // Remove the dirty data node
-                removeNode(providerUrl, StatusDir.ACTIVE);
-                removeNode(providerUrl, StatusDir.INACTIVE);
-                // Create data under 'inactive' node
-                createNode(providerUrl, StatusDir.INACTIVE);
+            } finally {
+                providerLock.unlock();
             }
-        } finally {
-            providerLock.unlock();
-        }
-    }
-
-    /**
-     * Delete specified provider file
-     *
-     * @param url       url
-     * @param statusDir status directory
-     */
-    private void removeNode(Url url, StatusDir statusDir) {
-        String filePath = getProviderFilePath(url, statusDir);
-        if (zkClient.exists(filePath)) {
-            zkClient.delete(filePath);
         }
     }
 
@@ -295,23 +320,28 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         zkClient.createEphemeral(getProviderFilePath(url, statusDir), url.toFullStr());
     }
 
-    /**
-     * Deregister specified url info from zookeeper
-     *
-     * @param providerUrl provider url
-     */
-    @Override
-    protected void doDeregister(Url providerUrl) {
-        providerLock.lock();
+    private void createConsumingNode(Url consumerUrl) {
         try {
-            removeNode(providerUrl, StatusDir.ACTIVE);
-            removeNode(providerUrl, StatusDir.INACTIVE);
-        } catch (Throwable e) {
-            String msg = String.format("Failed to deregister [%s] from zookeeper [%s] with the error: %s",
-                    providerUrl, getRegistryUrl(), e.getMessage());
-            throw new RpcFrameworkException(msg, e);
-        } finally {
-            providerLock.unlock();
+            // Remove dirty data
+            removeNode(consumerUrl, StatusDir.CONSUMING);
+            // Create consumer url data under 'consuming' node
+            createNode(consumerUrl, StatusDir.CONSUMING);
+        } catch (Exception e) {
+            log.warn(MessageFormat.format("Failed to remove or create the node for the path [{0}]",
+                    getProviderFilePath(consumerUrl, StatusDir.CONSUMING)), e);
+        }
+    }
+
+    /**
+     * Delete specified provider file
+     *
+     * @param url       url
+     * @param statusDir status directory
+     */
+    private void removeNode(Url url, StatusDir statusDir) {
+        String filePath = getProviderFilePath(url, statusDir);
+        if (zkClient.exists(filePath)) {
+            zkClient.delete(filePath);
         }
     }
 
@@ -504,34 +534,6 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
             throw new RpcFrameworkException(msg, e);
         } finally {
             listenerLock.unlock();
-        }
-    }
-
-    @Override
-    public void subscribe(Url consumerUrl) {
-        createConsumingNode(consumerUrl);
-    }
-
-    private void createConsumingNode(Url consumerUrl) {
-        try {
-            // Remove dirty data
-            removeNode(consumerUrl, StatusDir.CONSUMING);
-            // Create consumer url data under 'consuming' node
-            createNode(consumerUrl, StatusDir.CONSUMING);
-        } catch (Exception e) {
-            log.warn(MessageFormat.format("Failed to remove or create the node for the path [{0}]",
-                    getProviderFilePath(consumerUrl, StatusDir.CONSUMING)), e);
-        }
-    }
-
-    @Override
-    public void unsubscribe(Url consumerUrl) {
-        try {
-            // Remove dirty data
-            removeNode(consumerUrl, StatusDir.CONSUMING);
-        } catch (Exception e) {
-            log.warn(MessageFormat.format("Failed to remove the node for the path [{0}]",
-                    getProviderFilePath(consumerUrl, StatusDir.CONSUMING)), e);
         }
     }
 

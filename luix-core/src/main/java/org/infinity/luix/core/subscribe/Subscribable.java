@@ -1,6 +1,7 @@
 package org.infinity.luix.core.subscribe;
 
 import org.infinity.luix.core.registry.listener.ClientListener;
+import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
 
 import java.util.List;
@@ -18,20 +19,6 @@ public interface Subscribable {
     List<Url> discover(Url consumerUrl);
 
     /**
-     * Register and activate the consumer url to registry
-     *
-     * @param consumerUrl consumer url
-     */
-    void subscribe(Url consumerUrl);
-
-    /**
-     * Deregister the consumer url from registry
-     *
-     * @param consumerUrl consumer url
-     */
-    void unsubscribe(Url consumerUrl);
-
-    /**
      * Bind a listener to a client
      *
      * @param consumerUrl consumer url
@@ -46,5 +33,11 @@ public interface Subscribable {
      * @param listener    client listener
      */
     void unsubscribe(Url consumerUrl, ClientListener listener);
+
+    /**
+     * @param interfaceName
+     * @param consumerProcessor
+     */
+    void subscribeConsumerListener(String interfaceName, ConsumerProcessable consumerProcessor);
 
 }

@@ -213,6 +213,14 @@ public final class Url implements Serializable {
         return of(protocol, host, port, path, options);
     }
 
+    public boolean isProvider() {
+        return PARAM_TYPE_PROVIDER.equals(this.getOption(Url.PARAM_TYPE));
+    }
+
+    public boolean isConsumer() {
+        return PARAM_TYPE_CONSUMER.equals(this.getOption(Url.PARAM_TYPE));
+    }
+
     public void addOption(String name, String value) {
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(value)) {
             return;

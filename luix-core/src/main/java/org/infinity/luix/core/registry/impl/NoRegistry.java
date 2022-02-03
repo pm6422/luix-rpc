@@ -96,16 +96,6 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
-    public void subscribe(Url consumerUrl) {
-
-    }
-
-    @Override
-    public void unsubscribe(Url consumerUrl) {
-
-    }
-
-    @Override
     public List<Url> getAllProviderUrls() {
         throw new UnsupportedOperationException();
     }

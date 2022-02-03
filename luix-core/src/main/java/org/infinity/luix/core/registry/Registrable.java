@@ -45,6 +45,13 @@ public interface Registrable {
     Set<Url> getRegisteredProviderUrls();
 
     /**
+     * Get the registered consumer urls
+     *
+     * @return provider urls
+     */
+    Set<Url> getRegisteredConsumerUrls();
+
+    /**
      * Get all provider urls
      */
     List<Url> getAllProviderUrls();

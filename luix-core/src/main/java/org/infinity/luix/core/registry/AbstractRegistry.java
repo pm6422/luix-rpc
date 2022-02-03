@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
+import org.infinity.luix.core.exception.impl.RpcConfigException;
 import org.infinity.luix.core.registry.listener.ClientListener;
 import org.infinity.luix.core.registry.listener.ProviderListener;
 import org.infinity.luix.core.url.Url;
@@ -36,15 +37,29 @@ public abstract class AbstractRegistry implements Registry {
      */
     private final Set<Url>                         registeredProviderUrls            = new ConcurrentHashSet<>();
     /**
+     * Registered consumer urls cache
+     */
+    private final Set<Url>                         registeredConsumerUrls            = new ConcurrentHashSet<>();
+    /**
      * Provider urls cache grouped by 'type' parameter value of {@link Url}
      */
     private final Map<Url, Map<String, List<Url>>> providerUrlsPerTypePerConsumerUrl = new ConcurrentHashMap<>();
 
+    /**
+     * Get registry instance class name
+     *
+     * @return registry instance class name
+     */
     @Override
     public String getRegistryClassName() {
         return registryClassName;
     }
 
+    /**
+     * Get registry url
+     *
+     * @return registry url
+     */
     @Override
     public Url getRegistryUrl() {
         return registryUrl;
@@ -60,6 +75,16 @@ public abstract class AbstractRegistry implements Registry {
         return registeredProviderUrls;
     }
 
+    /**
+     * Get the registered consumer urls cache
+     *
+     * @return consumer urls
+     */
+    @Override
+    public Set<Url> getRegisteredConsumerUrls() {
+        return registeredConsumerUrls;
+    }
+
     public AbstractRegistry(Url registryUrl) {
         Validate.notNull(registryUrl, "Registry url must NOT be null!");
         this.registryUrl = registryUrl;
@@ -71,59 +96,70 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Register a provider url to registry
+     * Register a provider or consumer url to registry
      *
-     * @param providerUrl provider url
+     * @param url provider or consumer url
      */
     @Override
-    public void register(Url providerUrl) {
-        Validate.notNull(providerUrl, "Provider url must NOT be null!");
-        doRegister(removeUnnecessaryParams(providerUrl.copy()));
-        log.info("Registered the provider url [{}] to registry [{}]", providerUrl, registryUrl.getIdentity());
+    public void register(Url url) {
+        Validate.notNull(url, "Url must NOT be null!");
+        doRegister(removeUnnecessaryParams(url.copy()));
+        log.info("Registered the url [{}] to registry [{}]", url, registryUrl.getIdentity());
         // Added it to the cache after registered
-        registeredProviderUrls.add(providerUrl);
-    }
-
-    /**
-     * Deregister the provider url from registry
-     *
-     * @param providerUrl provider url
-     */
-    @Override
-    public void deregister(Url providerUrl) {
-        Validate.notNull(providerUrl, "Provider url must NOT be null!");
-        doDeregister(removeUnnecessaryParams(providerUrl.copy()));
-        log.info("Deregistered the url [{}] from registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
-        // Removed it from the container after deregistered
-        registeredProviderUrls.remove(providerUrl);
-    }
-
-    /**
-     * Register the url to 'active' node of registry
-     *
-     * @param providerUrl provider url
-     */
-    @Override
-    public void activate(Url providerUrl) {
-        if (providerUrl != null) {
-            doActivate(removeUnnecessaryParams(providerUrl.copy()));
-            log.info("Activated the url [{}] on registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
+        if (url.isProvider()) {
+            registeredProviderUrls.add(url);
+        } else if (url.isConsumer()) {
+            registeredConsumerUrls.add(url);
         } else {
-            // Move all the provider urls to 'active' node
+            throw new RpcConfigException("Url must be provider or consumer!");
+        }
+    }
+
+    /**
+     * Deregister the provider or consumer url from registry
+     *
+     * @param url provider or consumer url
+     */
+    @Override
+    public void deregister(Url url) {
+        Validate.notNull(url, "Url must NOT be null!");
+        doDeregister(removeUnnecessaryParams(url.copy()));
+        log.info("Deregistered the url [{}] from registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+        // Removed it from the container after de-registered
+        if (url.isProvider()) {
+            registeredProviderUrls.remove(url);
+        } else if (url.isConsumer()) {
+            registeredConsumerUrls.remove(url);
+        } else {
+            throw new RpcConfigException("Url must be provider or consumer!");
+        }
+    }
+
+    /**
+     * Activate the url from registry
+     *
+     * @param url provider or consumer url
+     */
+    @Override
+    public void activate(Url url) {
+        if (url != null) {
+            doActivate(removeUnnecessaryParams(url.copy()));
+            log.info("Activated the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+        } else {
             doActivate(null);
         }
     }
 
     /**
-     * Register the url to 'inactive' node of registry
+     * Deactivate the url from registry
      *
-     * @param providerUrl provider url
+     * @param url provider or consumer url
      */
     @Override
-    public void deactivate(Url providerUrl) {
-        if (providerUrl != null) {
-            doDeactivate(removeUnnecessaryParams(providerUrl.copy()));
-            log.info("Deactivated the url [{}] on registry [{}] by using [{}]", providerUrl, registryUrl.getIdentity(), registryClassName);
+    public void deactivate(Url url) {
+        if (url != null) {
+            doDeactivate(removeUnnecessaryParams(url.copy()));
+            log.info("Deactivated the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
         } else {
             doDeactivate(null);
         }
@@ -169,11 +205,6 @@ public abstract class AbstractRegistry implements Registry {
 
         doUnsubscribe(consumerUrl, listener);
         log.info("Unsubscribed the url [{}] from listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
-    }
-
-    @Override
-    public void unsubscribe(Url consumerUrl) {
-        this.unsubscribe(consumerUrl);
     }
 
     /**
