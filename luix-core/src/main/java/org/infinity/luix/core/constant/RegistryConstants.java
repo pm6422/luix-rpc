@@ -14,5 +14,5 @@ public interface RegistryConstants {
     String RETRY_INTERVAL                 = "retryInterval";
     int    RETRY_INTERVAL_VAL_DEFAULT     = Math.toIntExact(TimeUnit.SECONDS.toMillis(30));
     String DISCOVERY_INTERVAL             = "serviceDiscoveryInterval";
-    int    DISCOVERY_INTERVAL_VAL_DEFAULT = Math.toIntExact(TimeUnit.SECONDS.toMillis(30));
+    int    DISCOVERY_INTERVAL_VAL_DEFAULT = Math.toIntExact(TimeUnit.SECONDS.toMillis(5));
 }

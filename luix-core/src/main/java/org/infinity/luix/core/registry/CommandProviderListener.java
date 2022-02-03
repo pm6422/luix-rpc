@@ -116,8 +116,10 @@ public class CommandProviderListener implements ProviderListener, CommandListene
     @EventReceiver("providersChangeEvent")
     @Override
     public void onNotify(Url consumerUrl, Url registryUrl, List<Url> providerUrls) {
-        String group = consumerUrl.getForm();
-        activeProviderUrlsPerForm.put(group, providerUrls);
+        log.info("Receive providers change event, consumerUrl [{}], registryUrl [{}], providerUrls [{}]",
+                consumerUrl.toFullStr(), registryUrl.toFullStr(), providerUrls);
+        String form = consumerUrl.getForm();
+        activeProviderUrlsPerForm.put(form, providerUrls);
 
         List<Url> providerUrlList;
         if (rpcCommandCache != null) {

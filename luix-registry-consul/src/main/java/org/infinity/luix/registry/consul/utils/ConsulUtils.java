@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.infinity.luix.core.url.Url.PARAM_FROM;
 import static org.infinity.luix.core.url.Url.PARAM_TYPE;
 import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_PROTOCOL;
@@ -36,6 +37,30 @@ public class ConsulUtils {
      *
      */
     private static final String FORM_DELIMITER                    = ":";
+
+    /**
+     * Build consul service name for RPC provider
+     *
+     * @param form service provider form
+     * @return consul provider service name
+     */
+    public static String buildProviderServiceName(String form) {
+        return isEmpty(form)
+                ? CONSUL_PROVIDING_SERVICES_PREFIX
+                : CONSUL_PROVIDING_SERVICES_PREFIX + FORM_DELIMITER + form;
+    }
+
+    /**
+     * Build consul service name for RPC consumer
+     *
+     * @param form service consumer form
+     * @return consul consumer service name
+     */
+    public static String buildConsumerServiceName(String form) {
+        return isEmpty(form)
+                ? CONSUL_CONSUMING_SERVICES_PREFIX
+                : CONSUL_CONSUMING_SERVICES_PREFIX + FORM_DELIMITER + form;
+    }
 
     /**
      * Build consul service instance ID

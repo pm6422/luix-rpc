@@ -552,33 +552,34 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
     }
 
     @Override
-    public void subscribeConsumerChangeProcessor(String interfaceName, ConsumerProcessable consumerProcessor) {
+    public void subscribeAllConsumerChanges(ConsumerProcessable consumerProcessor) {
         listenerLock.lock();
-        try {
-            IZkChildListener zkChildListener = zkChildListenerPerInterfaceName.get(interfaceName);
-            if (zkChildListener == null) {
-                // Child files change listener under specified directory
-                zkChildListener = (dirName, currentChildren) -> {
-                    @EventPublisher("consumersChangeEvent")
-                    List<String> fileNames = ListUtils.emptyIfNull(currentChildren);
-                    consumerProcessor.process(getRegistryUrl(), interfaceName, readUrls(zkClient, dirName, fileNames));
-                    log.info("Consumer files [{}] changed under path [{}]", String.join(",", fileNames), dirName);
-                };
-                zkChildListenerPerInterfaceName.putIfAbsent(interfaceName, zkChildListener);
-            }
-            String consumingDirPath = getStatusDirPath(interfaceName, StatusDir.CONSUMING);
-            // Bind the path with zookeeper child change listener, any the child list changes under the path will trigger the zkChildListener
-            zkClient.subscribeChildChanges(consumingDirPath, zkChildListener);
-            log.info("Subscribed the service listener for the path [{}]", consumingDirPath);
+        getRegisteredConsumerUrls().forEach(url -> {
+            try {
+                IZkChildListener zkChildListener = zkChildListenerPerInterfaceName.get(url.getPath());
+                if (zkChildListener == null) {
+                    // Child files change listener under specified directory
+                    zkChildListener = (dirName, currentChildren) -> {
+                        @EventPublisher("consumersChangeEvent")
+                        List<String> fileNames = ListUtils.emptyIfNull(currentChildren);
+                        consumerProcessor.process(getRegistryUrl(), url.getPath(), readUrls(zkClient, dirName, fileNames));
+                        log.info("Consumer files [{}] changed under path [{}]", String.join(",", fileNames), dirName);
+                    };
+                    zkChildListenerPerInterfaceName.putIfAbsent(url.getPath(), zkChildListener);
+                }
+                String consumingDirPath = getStatusDirPath(url.getPath(), StatusDir.CONSUMING);
+                // Bind the path with zookeeper child change listener, any the child list changes under the path will trigger the zkChildListener
+                zkClient.subscribeChildChanges(consumingDirPath, zkChildListener);
+                log.info("Subscribed the service listener for the path [{}]", consumingDirPath);
 
-            List<String> fileNames = ListUtils.emptyIfNull(getChildrenNames(zkClient, consumingDirPath));
-            consumerProcessor.process(getRegistryUrl(), interfaceName, readUrls(zkClient, consumingDirPath, fileNames));
-        } catch (Throwable e) {
-            String msg = String.format("Failed to subscribe consumer listeners for the path [%s]", interfaceName);
-            throw new RpcFrameworkException(msg, e);
-        } finally {
-            listenerLock.unlock();
-        }
+                List<String> fileNames = ListUtils.emptyIfNull(getChildrenNames(zkClient, consumingDirPath));
+                consumerProcessor.process(getRegistryUrl(), url.getPath(), readUrls(zkClient, consumingDirPath, fileNames));
+            } catch (Throwable e) {
+                String msg = String.format("Failed to subscribe consumer listeners for the path [%s]", url.getPath());
+                throw new RpcFrameworkException(msg, e);
+            }
+        });
+        listenerLock.unlock();
     }
 
     /**

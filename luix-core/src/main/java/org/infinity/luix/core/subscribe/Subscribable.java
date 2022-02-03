@@ -35,9 +35,10 @@ public interface Subscribable {
     void unsubscribe(Url consumerUrl, ClientListener listener);
 
     /**
-     * @param interfaceName
-     * @param consumerProcessor
+     * Subscribe consumer changes processor
+     *
+     * @param consumerProcessor consumer changes processor
      */
-    void subscribeConsumerChangeProcessor(String interfaceName, ConsumerProcessable consumerProcessor);
+    void subscribeAllConsumerChanges(ConsumerProcessable consumerProcessor);
 
 }

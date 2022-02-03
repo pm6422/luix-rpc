@@ -22,7 +22,7 @@ import java.util.concurrent.*;
 
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL;
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL_VAL_DEFAULT;
-import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_PROVIDING_SERVICES_PREFIX;
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.buildProviderServiceName;
 
 @Slf4j
 @ThreadSafe
@@ -49,33 +49,42 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
      * Key:  form
      * Value: protocol plus path to urls map
      */
-    private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     urlCache         = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     urlCache                   = new ConcurrentHashMap<>();
     /**
      * Cache used to store commands
      * Key: form
      * Value: command string
      */
-    private final ConcurrentHashMap<String, String>                                   commandCache     = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, String>                                   commandCache               = new ConcurrentHashMap<>();
     /**
      * Key: form
      * Value: lastConsulIndexId
      */
-    private final ConcurrentHashMap<String, Long>                                     form2ConsulIndex = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Long>                                     form2ConsulIndex           = new ConcurrentHashMap<>();
     /**
      * Key: form
      * Value: command string
      */
-    private final ConcurrentHashMap<String, String>                                   form2Command     = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, String>                                   form2Command               = new ConcurrentHashMap<>();
     /**
      * Key: protocol plus path
      * Value: url to providerListener map
      */
-    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners           = new ConcurrentHashMap<>();
     /**
      * Key: protocol plus path
      * Value: url to commandListener map
      */
-    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, CommandListener>>  commandListeners           = new ConcurrentHashMap<>();
+    /**
+     * Key: consumer path
+     * Value: consumerUrls
+     */
+    private final ConcurrentHashMap<String, List<Url>>                                path2ConsumerUrls          = new ConcurrentHashMap<>();
+    /**
+     *
+     */
+    private final ScheduledExecutorService                                            consumerChangesMonitorPool = Executors.newSingleThreadScheduledExecutor();
 
     public ConsulRegistry(Url registryUrl, LuixConsulClient consulClient) {
         super(registryUrl);
@@ -157,7 +166,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
         ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls = new ConcurrentHashMap<>();
         Long lastConsulIndexId = form2ConsulIndex.get(form) == null ? 0L : form2ConsulIndex.get(form);
         Response<List<ConsulService>> response = consulClient
-                .queryActiveServiceInstances(CONSUL_PROVIDING_SERVICES_PREFIX, lastConsulIndexId);
+                .queryActiveServiceInstances(buildProviderServiceName(form), lastConsulIndexId);
         if (response != null) {
             List<ConsulService> activeServiceInstances = response.getValue();
             if (CollectionUtils.isNotEmpty(activeServiceInstances) && response.getConsulIndex() > lastConsulIndexId) {
@@ -195,13 +204,12 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                     }
                 }
                 if (change && needNotify) {
-                    notificationThreadPool.execute(new NotifyService(entry.getKey(), entry.getValue()));
-                    log.info("service notify-service: " + entry.getKey());
                     StringBuilder sb = new StringBuilder();
                     for (Url url : entry.getValue()) {
                         sb.append(url.getUri()).append(";");
                     }
-                    log.info("consul notify urls:" + sb);
+                    log.info("Found changed provider: {}", sb);
+                    notificationThreadPool.execute(new NotifyService(entry.getKey(), entry.getValue()));
                 }
             }
         }
@@ -248,9 +256,17 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     @Override
-    public void subscribeConsumerChangeProcessor(String interfaceName, ConsumerProcessable consumerProcessor) {
-        List<Url> consumerUrls = consulClient.getConsumerUrls(interfaceName);
-        consumerProcessor.process(getRegistryUrl(), interfaceName, consumerUrls);
+    public void subscribeAllConsumerChanges(ConsumerProcessable consumerProcessor) {
+        consumerChangesMonitorPool.scheduleAtFixedRate(
+                () -> {
+                    getRegisteredConsumerUrls().forEach(url -> {
+                        List<Url> consumerUrls = consulClient.getConsumerUrls(url.getPath());
+                        if (!consumerUrls.equals(path2ConsumerUrls.get(url.getPath()))) {
+                            consumerProcessor.process(getRegistryUrl(), url.getPath(), consumerUrls);
+                            path2ConsumerUrls.put(url.getPath(), consumerUrls);
+                        }
+                    });
+                }, 0, 2, TimeUnit.SECONDS);
     }
 
     @Override
@@ -325,8 +341,6 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                 notificationThreadPool.execute(new NotifyCommand(group, command));
                 log.info(String.format("command data change: group=%s, command=%s: ", group, command));
             }
-        } else {
-            log.info(String.format("command data not change: group=%s, command=%s: ", group, command));
         }
     }
 
@@ -335,17 +349,17 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
     }
 
     private class NotifyService implements Runnable {
-        private final String    service;
+        private final String    protocolPlusPath;
         private final List<Url> urls;
 
-        public NotifyService(String service, List<Url> urls) {
-            this.service = service;
+        public NotifyService(String protocolPlusPath, List<Url> urls) {
+            this.protocolPlusPath = protocolPlusPath;
             this.urls = urls;
         }
 
         @Override
         public void run() {
-            ConcurrentHashMap<Url, ProviderListener> listeners = serviceListeners.get(service);
+            ConcurrentHashMap<Url, ProviderListener> listeners = serviceListeners.get(protocolPlusPath);
             if (listeners != null) {
                 synchronized (listeners) {
                     for (Map.Entry<Url, ProviderListener> entry : listeners.entrySet()) {
@@ -354,7 +368,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                     }
                 }
             } else {
-                log.debug("need not notify service:" + service);
+                log.debug("Can NOT found the listeners with key: {}" + protocolPlusPath);
             }
         }
     }
@@ -394,6 +408,7 @@ public class ConsulRegistry extends CommandFailbackAbstractRegistry implements D
                 try {
                     sleep(discoverInterval);
                     ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls = doDiscoverActiveProviders(form);
+                    log.info("Discovered providers result: {}", protocolPlusPath2Urls);
                     updateProviderUrlsCache(form, protocolPlusPath2Urls, true);
                 } catch (Throwable e) {
                     log.error("Failed to discover providers!", e);
