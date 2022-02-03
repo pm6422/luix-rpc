@@ -7,6 +7,7 @@ import org.apache.commons.lang3.Validate;
 import org.infinity.luix.core.exception.impl.RpcConfigException;
 import org.infinity.luix.core.listener.client.ConsumerListener;
 import org.infinity.luix.core.listener.server.ProviderListener;
+import org.infinity.luix.core.listener.server.impl.CommandProviderListener;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.annotation.EventPublisher;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
@@ -43,7 +44,8 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * Provider urls cache grouped by 'type' parameter value of {@link Url}
      */
-    private final Map<Url, Map<String, List<Url>>> providerUrlsPerTypePerConsumerUrl = new ConcurrentHashMap<>();
+    private final Map<Url, Map<String, List<Url>>>  providerUrlsPerTypePerConsumerUrl    = new ConcurrentHashMap<>();
+    private final Map<Url, CommandProviderListener> commandServiceListenerPerConsumerUrl = new ConcurrentHashMap<>();
 
     /**
      * Get registry instance class name
@@ -83,6 +85,10 @@ public abstract class AbstractRegistry implements Registry {
     @Override
     public Set<Url> getRegisteredConsumerUrls() {
         return registeredConsumerUrls;
+    }
+
+    public Map<Url, CommandProviderListener> getCommandServiceListenerPerConsumerUrl() {
+        return commandServiceListenerPerConsumerUrl;
     }
 
     public AbstractRegistry(Url registryUrl) {
@@ -311,7 +317,7 @@ public abstract class AbstractRegistry implements Registry {
 
     protected abstract void doDeactivate(Url url);
 
-    protected abstract List<Url> discoverActiveProviders(Url consumerUrl);
+    public abstract List<Url> discoverActiveProviders(Url consumerUrl);
 
     /**
      * It contains the functionality of method subscribeServiceListener and subscribeCommandListener
@@ -322,6 +328,14 @@ public abstract class AbstractRegistry implements Registry {
      */
     protected void doSubscribe(Url consumerUrl, ConsumerListener listener) {
         Url consumerUrlCopy = consumerUrl.copy();
+        // Create a new command service listener or get it from cache
+        CommandProviderListener commandServiceListener = getCommandServiceListener(consumerUrlCopy);
+        // Add client listener to command service listener, and use command service listener to manage listener
+        commandServiceListener.addNotifyListener(listener);
+
+        // Trigger onNotify method of commandServiceListener if child change event happens
+        subscribeProviderListener(consumerUrlCopy, commandServiceListener);
+
         // Discover active providers
         List<Url> providerUrls = doDiscover(consumerUrlCopy);
         if (CollectionUtils.isNotEmpty(providerUrls)) {
@@ -332,12 +346,38 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
+     * Get or put command service listener from or to cache
+     *
+     * @param consumerUrl consumer url
+     * @return command service listener
+     */
+    private CommandProviderListener getCommandServiceListener(Url consumerUrl) {
+        CommandProviderListener listener = commandServiceListenerPerConsumerUrl.get(consumerUrl);
+        if (listener == null) {
+            // Pass the specified registry instance to CommandServiceListener, e.g, ZookeeperRegistry
+            listener = new CommandProviderListener(consumerUrl, this);
+            CommandProviderListener commandServiceListener = commandServiceListenerPerConsumerUrl.putIfAbsent(consumerUrl, listener);
+            if (commandServiceListener != null) {
+                // Key exists in map, return old data
+                listener = commandServiceListener;
+            }
+        }
+        return listener;
+    }
+
+    /**
      * Unsubscribe the service and command listener
      *
      * @param consumerUrl consumer url
      * @param listener    client listener
      */
     protected void doUnsubscribe(Url consumerUrl, ConsumerListener listener) {
+        Url urlCopy = consumerUrl.copy();
+        CommandProviderListener commandServiceListener = commandServiceListenerPerConsumerUrl.get(urlCopy);
+        // Remove notify listener from command service listener
+        commandServiceListener.removeNotifyListener(listener);
+        // Unsubscribe service listener
+        unsubscribeProviderListener(urlCopy, commandServiceListener);
         log.info("Unsubscribed the listener for the url [{}]", consumerUrl);
     }
 

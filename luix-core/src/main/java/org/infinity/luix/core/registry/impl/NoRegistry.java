@@ -91,7 +91,7 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
-    protected List<Url> discoverActiveProviders(Url consumerUrl) {
+    public List<Url> discoverActiveProviders(Url consumerUrl) {
         return doDiscover(consumerUrl);
     }
 

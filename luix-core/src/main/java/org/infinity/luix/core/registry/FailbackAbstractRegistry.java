@@ -7,6 +7,7 @@ import org.apache.commons.lang3.Validate;
 import org.infinity.luix.core.constant.RegistryConstants;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.listener.client.ConsumerListener;
+import org.infinity.luix.core.listener.server.impl.CommandProviderListener;
 import org.infinity.luix.core.thread.ScheduledThreadPool;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
@@ -21,10 +22,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public abstract class FailbackAbstractRegistry extends AbstractRegistry {
 
-    private final Set<Url>                                      failedRegisteredUrl                = new ConcurrentHashSet<>();
-    private final Set<Url>                                      failedDeregisteredUrl              = new ConcurrentHashSet<>();
-    private final Map<Url, ConcurrentHashSet<ConsumerListener>> failedSubscriptionPerConsumerUrl   = new ConcurrentHashMap<>();
-    private final Map<Url, ConcurrentHashSet<ConsumerListener>> failedUnsubscriptionPerConsumerUrl = new ConcurrentHashMap<>();
+    private final Set<Url>                                      failedRegisteredUrl                  = new ConcurrentHashSet<>();
+    private final Set<Url>                                      failedDeregisteredUrl                = new ConcurrentHashSet<>();
+    private final Map<Url, ConcurrentHashSet<ConsumerListener>> failedSubscriptionPerConsumerUrl     = new ConcurrentHashMap<>();
+    private final Map<Url, ConcurrentHashSet<ConsumerListener>> failedUnsubscriptionPerConsumerUrl   = new ConcurrentHashMap<>();
 
     public FailbackAbstractRegistry(Url registryUrl) {
         super(registryUrl);

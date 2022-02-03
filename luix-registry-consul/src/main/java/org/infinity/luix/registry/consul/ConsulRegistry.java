@@ -123,7 +123,7 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
-    protected List<Url> discoverActiveProviders(Url consumerUrl) {
+    public List<Url> discoverActiveProviders(Url consumerUrl) {
         String protocolPlusPath = ConsulUtils.getProtocolPlusPath(consumerUrl);
         String form = consumerUrl.getForm();
         List<Url> providerUrls = new ArrayList<>();

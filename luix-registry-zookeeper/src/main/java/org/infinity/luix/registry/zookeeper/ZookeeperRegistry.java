@@ -328,7 +328,7 @@ public class ZookeeperRegistry extends AbstractRegistry implements Destroyable {
      * @return provider urls
      */
     @Override
-    protected List<Url> discoverActiveProviders(Url consumerUrl) {
+    public List<Url> discoverActiveProviders(Url consumerUrl) {
         try {
             return readUrls(zkClient, consumerUrl.getPath(), StatusDir.ACTIVE);
         } catch (Throwable e) {
