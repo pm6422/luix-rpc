@@ -188,11 +188,11 @@ public class RpcLifecycle {
             return;
         }
         consumerStubs.forEach((name, consumerStub) -> {
-            // Register and active consumer services
-            consumerStub.subscribe(luixProperties.getRegistryList());
             // Bind provider services discovery listener to consumer services
             consumerStub.subscribeProviders(luixProperties.getApplication(), luixProperties.getAvailableProtocol(),
                     luixProperties.getRegistryList());
+            // Register and active consumer services
+            consumerStub.subscribe(luixProperties.getRegistryList());
         });
     }
 
