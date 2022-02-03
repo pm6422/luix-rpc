@@ -544,6 +544,7 @@ public class ZookeeperRegistry extends CommandFailbackAbstractRegistry implement
         List<Url> urls = new ArrayList<>();
         paths.forEach(path -> {
             urls.addAll(readUrls(zkClient, path, StatusDir.ACTIVE));
+            urls.addAll(readUrls(zkClient, path, StatusDir.INACTIVE));
         });
         return urls;
     }
