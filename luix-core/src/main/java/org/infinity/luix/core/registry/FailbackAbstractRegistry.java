@@ -149,42 +149,42 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     /**
      * Register the url to registry
      *
-     * @param providerUrl provider url
+     * @param url provider or consumer url
      */
     @Override
-    public void register(Url providerUrl) {
-        Validate.notNull(providerUrl, "Provider url must NOT be null!");
-        failedRegisteredUrl.remove(providerUrl);
-        failedDeregisteredUrl.remove(providerUrl);
+    public void register(Url url) {
+        Validate.notNull(url, "Url must NOT be null!");
+        failedRegisteredUrl.remove(url);
+        failedDeregisteredUrl.remove(url);
 
         try {
-            super.register(providerUrl);
+            super.register(url);
         } catch (Exception e) {
             // In some extreme cases, it can cause register failure
-            failedRegisteredUrl.add(providerUrl);
-            throw new RpcFrameworkException(MessageFormat.format("Failed to register provider [{0}] to registry [{1}] by using [{2}]",
-                    providerUrl, registryUrl, getRegistryClassName()), e);
+            failedRegisteredUrl.add(url);
+            throw new RpcFrameworkException(MessageFormat.format("Failed to register [{0}] to registry [{1}] by using [{2}]",
+                    url, registryUrl, getRegistryClassName()), e);
         }
     }
 
     /**
      * Deregister the url from registry
      *
-     * @param providerUrl provider url
+     * @param url provider or consumer url
      */
     @Override
-    public void deregister(Url providerUrl) {
-        Validate.notNull(providerUrl, "Provider url must NOT be null!");
-        failedRegisteredUrl.remove(providerUrl);
-        failedDeregisteredUrl.remove(providerUrl);
+    public void deregister(Url url) {
+        Validate.notNull(url, "Url must NOT be null!");
+        failedRegisteredUrl.remove(url);
+        failedDeregisteredUrl.remove(url);
 
         try {
-            super.deregister(providerUrl);
+            super.deregister(url);
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
-            failedDeregisteredUrl.add(providerUrl);
-            throw new RpcFrameworkException(MessageFormat.format("Failed to deregister provider [{0}] from registry [{1}] by using [{2}]",
-                    providerUrl, registryUrl, getRegistryClassName()), e);
+            failedDeregisteredUrl.add(url);
+            throw new RpcFrameworkException(MessageFormat.format("Failed to deregister [{0}] from registry [{1}] by using [{2}]",
+                    url, registryUrl, getRegistryClassName()), e);
         }
     }
 
