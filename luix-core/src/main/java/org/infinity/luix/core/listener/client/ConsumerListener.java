@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package org.infinity.luix.core.registry.listener;
+package org.infinity.luix.core.listener.client;
 
 import org.infinity.luix.core.url.Url;
 

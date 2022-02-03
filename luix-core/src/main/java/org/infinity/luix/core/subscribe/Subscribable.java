@@ -1,6 +1,6 @@
 package org.infinity.luix.core.subscribe;
 
-import org.infinity.luix.core.registry.listener.ConsumerListener;
+import org.infinity.luix.core.listener.client.ConsumerListener;
 import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
 

@@ -11,7 +11,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.zookeeper.Watcher;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.registry.AbstractRegistry;
-import org.infinity.luix.core.registry.listener.ProviderListener;
+import org.infinity.luix.core.listener.server.ProviderListener;
 import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.annotation.EventPublisher;
