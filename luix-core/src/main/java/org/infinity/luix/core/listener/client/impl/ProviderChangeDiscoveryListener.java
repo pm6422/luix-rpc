@@ -22,7 +22,7 @@ import static org.infinity.luix.core.constant.ProtocolConstants.PROTOCOL_VAL_DEF
 /**
  * todo: see ClusterSupport
  * Listener used to subscribe providers change event,
- * method {@link ProviderChangeDiscoveryListener#onNotify(Url, List)} will be invoked if providers change event occurs.
+ * method {@link ProviderChangeDiscoveryListener#onNotify(Url, Url, List)} will be invoked if providers change event occurs.
  */
 @Slf4j
 @ThreadSafe
