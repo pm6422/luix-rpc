@@ -117,10 +117,10 @@ public class ProviderChangeListener implements ConsumerListener {
     /**
      * Remove the inactive registry
      *
-     * @param inactiveRegistryUrl inactive registry url
+     * @param registryUrl inactive registry url
      */
-    private synchronized void removeInactiveRegistry(Url inactiveRegistryUrl) {
-        sendersPerRegistryUrl.remove(inactiveRegistryUrl);
+    private synchronized void removeInactiveRegistry(Url registryUrl) {
+        sendersPerRegistryUrl.remove(registryUrl);
         refreshSenders();
     }
 
