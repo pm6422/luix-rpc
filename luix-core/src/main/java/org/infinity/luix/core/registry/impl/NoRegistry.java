@@ -5,7 +5,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.luix.core.listener.client.ConsumerListener;
 import org.infinity.luix.core.listener.server.ProviderListener;
 import org.infinity.luix.core.registry.AbstractRegistry;
-import org.infinity.luix.core.server.listener.ConsumerProcessable;
+import org.infinity.luix.core.listener.server.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.concurrent.ThreadSafe;
 import org.infinity.luix.utilities.destory.Destroyable;

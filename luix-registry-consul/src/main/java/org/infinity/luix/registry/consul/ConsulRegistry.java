@@ -6,7 +6,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.infinity.luix.core.registry.AbstractRegistry;
 import org.infinity.luix.core.listener.server.ProviderListener;
-import org.infinity.luix.core.server.listener.ConsumerProcessable;
+import org.infinity.luix.core.listener.server.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.registry.consul.utils.ConsulUtils;
 import org.infinity.luix.utilities.destory.Destroyable;
@@ -16,6 +16,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.*;
 
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL;
@@ -275,6 +276,8 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
                     for (Map.Entry<Url, ProviderListener> entry : listeners.entrySet()) {
                         ProviderListener serviceListener = entry.getValue();
                         serviceListener.onNotify(getUrl(), entry.getKey(), urls);
+                        // Notify all consumers
+                        Optional.ofNullable(consumersListener).ifPresent(l -> l.onNotify(getUrl(), entry.getKey(), urls));
                     }
                 }
             } else {

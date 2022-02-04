@@ -7,7 +7,6 @@ import org.apache.commons.lang3.Validate;
 import org.infinity.luix.core.constant.RegistryConstants;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.listener.client.ConsumerListener;
-import org.infinity.luix.core.listener.server.impl.CommandProviderListener;
 import org.infinity.luix.core.thread.ScheduledThreadPool;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
@@ -22,10 +21,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public abstract class FailbackAbstractRegistry extends AbstractRegistry {
 
-    private final Set<Url>                                      failedRegisteredUrl                  = new ConcurrentHashSet<>();
-    private final Set<Url>                                      failedDeregisteredUrl                = new ConcurrentHashSet<>();
-    private final Map<Url, ConcurrentHashSet<ConsumerListener>> failedSubscriptionPerConsumerUrl     = new ConcurrentHashMap<>();
-    private final Map<Url, ConcurrentHashSet<ConsumerListener>> failedUnsubscriptionPerConsumerUrl   = new ConcurrentHashMap<>();
+    private final Set<Url>                                      failedRegisteredUrl                = new ConcurrentHashSet<>();
+    private final Set<Url>                                      failedDeregisteredUrl              = new ConcurrentHashSet<>();
+    private final Map<Url, ConcurrentHashSet<ConsumerListener>> failedSubscriptionPerConsumerUrl   = new ConcurrentHashMap<>();
+    private final Map<Url, ConcurrentHashSet<ConsumerListener>> failedUnsubscriptionPerConsumerUrl = new ConcurrentHashMap<>();
 
     public FailbackAbstractRegistry(Url registryUrl) {
         super(registryUrl);
@@ -184,8 +183,9 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
             failedDeregisteredUrl.add(url);
-            throw new RpcFrameworkException(MessageFormat.format("Failed to deregister [{0}] from registry [{1}] by using [{2}]",
-                    url, registryUrl, getRegistryClassName()), e);
+            throw new RpcFrameworkException(
+                    MessageFormat.format("Failed to deregister [{0}] from registry [{1}] by using [{2}]",
+                            url, registryUrl, getRegistryClassName()), e);
         }
     }
 
@@ -214,9 +214,13 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
                 // Notify if the cached provider urls not empty
                 listener.onNotify(registryUrl, consumerUrl, cachedProviderUrls);
             }
+            Optional.ofNullable(consumersListener).ifPresent(l -> l.onNotify(registryUrl, consumerUrl, cachedProviderUrls));
+
             addToFailedMap(failedSubscriptionPerConsumerUrl, consumerUrl, listener);
-            throw new RpcFrameworkException(MessageFormat.format("Failed to subscribe the listener [{0}] to the client [{1}] on registry [{2}] by using [{3}]",
-                    listener, consumerUrl, registryUrl, getRegistryClassName()), e);
+            throw new RpcFrameworkException(
+                    MessageFormat.format("Failed to subscribe the listener [{0}] to the client [{1}] " +
+                                    "on registry [{2}] by using [{3}]",
+                            listener, consumerUrl, registryUrl, getRegistryClassName()), e);
         }
     }
 
@@ -237,8 +241,10 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             super.unsubscribe(consumerUrl, listener);
         } catch (Exception e) {
             addToFailedMap(failedUnsubscriptionPerConsumerUrl, consumerUrl, listener);
-            throw new RpcFrameworkException(MessageFormat.format("Failed to unsubscribe the listener [{0}] from the client [{1}] on registry [{2}] by using [{3}]",
-                    listener, consumerUrl, registryUrl, getRegistryClassName()), e);
+            throw new RpcFrameworkException(
+                    MessageFormat.format("Failed to unsubscribe the listener [{0}] from the client [{1}] " +
+                                    "on registry [{2}] by using [{3}]",
+                            listener, consumerUrl, registryUrl, getRegistryClassName()), e);
         }
     }
 
@@ -258,7 +264,8 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         try {
             return super.discover(consumerUrl);
         } catch (Exception e) {
-            log.warn(MessageFormat.format("Failed to discover provider urls with consumer url {0} on registry [{1}]!", consumerUrl, registryUrl), e);
+            log.warn(MessageFormat.format("Failed to discover provider urls with consumer url {0} " +
+                    "on registry [{1}]!", consumerUrl, registryUrl), e);
             return Collections.EMPTY_LIST;
         }
     }

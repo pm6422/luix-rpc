@@ -12,7 +12,7 @@ import org.apache.zookeeper.Watcher;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.registry.AbstractRegistry;
 import org.infinity.luix.core.listener.server.ProviderListener;
-import org.infinity.luix.core.server.listener.ConsumerProcessable;
+import org.infinity.luix.core.listener.server.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.annotation.EventPublisher;
 import org.infinity.luix.utilities.annotation.EventSubscriber;
@@ -379,7 +379,10 @@ public class ZookeeperRegistry extends AbstractRegistry implements Destroyable {
             zkChildListener = (dirName, currentChildren) -> {
                 @EventPublisher("providersChangeEvent")
                 List<String> fileNames = ListUtils.emptyIfNull(currentChildren);
-                providerListener.onNotify(getRegistryUrl(), consumerUrl, readUrls(zkClient, dirName, fileNames));
+                List<Url> providerUrls = readUrls(zkClient, dirName, fileNames);
+                providerListener.onNotify(getRegistryUrl(), consumerUrl, providerUrls);
+                // Notify all consumers
+                Optional.ofNullable(consumersListener).ifPresent(l -> l.onNotify(getRegistryUrl(), consumerUrl, providerUrls));
                 log.info("Provider files [{}] changed under path [{}]", String.join(",", fileNames), dirName);
             };
             childChangeListeners.putIfAbsent(providerListener, zkChildListener);

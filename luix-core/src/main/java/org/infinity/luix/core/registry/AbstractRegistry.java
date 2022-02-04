@@ -6,6 +6,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.luix.core.exception.impl.RpcConfigException;
 import org.infinity.luix.core.listener.client.ConsumerListener;
+import org.infinity.luix.core.listener.client.ConsumersListener;
 import org.infinity.luix.core.listener.server.ProviderListener;
 import org.infinity.luix.core.listener.server.impl.CommandProviderListener;
 import org.infinity.luix.core.url.Url;
@@ -46,6 +47,7 @@ public abstract class AbstractRegistry implements Registry {
      */
     private final Map<Url, Map<String, List<Url>>>  providerUrlsPerTypePerConsumerUrl    = new ConcurrentHashMap<>();
     private final Map<Url, CommandProviderListener> commandServiceListenerPerConsumerUrl = new ConcurrentHashMap<>();
+    protected     ConsumersListener                 consumersListener;
 
     /**
      * Get registry instance class name
@@ -214,6 +216,26 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
+     * Subscribe all consumers events to specified listener
+     *
+     * @param listener consumers listener
+     */
+    @Override
+    public void subscribe(ConsumersListener listener) {
+        this.consumersListener = listener;
+    }
+
+    /**
+     * Unsubscribe all consumers events from specified listener
+     *
+     * @param listener consumers listener
+     */
+    @Override
+    public void unsubscribe(ConsumersListener listener) {
+        this.consumersListener = null;
+    }
+
+    /**
      * todo: check usage
      * Get all the provider urls based on the consumer url
      *
@@ -266,11 +288,11 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * Group urls by url type parameter, and put it in local cache, then execute the listener
      *
-     * @param providerUrls provider urls
-     * @param consumerUrl  consumer url
      * @param listener     listener
+     * @param consumerUrl  consumer url
+     * @param providerUrls provider urls
      */
-    protected void notify(List<Url> providerUrls, Url consumerUrl, ConsumerListener listener) {
+    protected void notify(ConsumerListener listener, Url consumerUrl, List<Url> providerUrls) {
         if (listener == null || CollectionUtils.isEmpty(providerUrls)) {
             return;
         }
@@ -289,8 +311,11 @@ public abstract class AbstractRegistry implements Registry {
         for (Map.Entry<String, List<Url>> entry : providerUrlsPerType.entrySet()) {
             @EventPublisher("providersDiscoveryEvent")
             List<Url> providerUrlList = entry.getValue();
+            // Notify specified consumer
             listener.onNotify(registryUrl, consumerUrl, providerUrlList);
         }
+        // Notify all consumers
+        Optional.ofNullable(consumersListener).ifPresent(l -> l.onNotify(registryUrl, consumerUrl, providerUrls));
     }
 
     /**
@@ -340,7 +365,7 @@ public abstract class AbstractRegistry implements Registry {
         List<Url> providerUrls = doDiscover(consumerUrlCopy);
         if (CollectionUtils.isNotEmpty(providerUrls)) {
             // Notify discovered providers to client side
-            this.notify(providerUrls, consumerUrlCopy, listener);
+            this.notify(listener, consumerUrlCopy, providerUrls);
         }
         log.info("Subscribed the listener for the url [{}]", consumerUrl);
     }

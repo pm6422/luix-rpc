@@ -1,10 +1,7 @@
 package org.infinity.luix.core.registry;
 
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.subscribe.Subscribable;
-
-import java.util.List;
 
 /**
  * Registry interface

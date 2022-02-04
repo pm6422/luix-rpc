@@ -5,7 +5,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.core.client.invoker.ServiceInvoker;
 import org.infinity.luix.core.client.sender.Sendable;
 import org.infinity.luix.core.listener.client.ConsumerListener;
-import org.infinity.luix.core.listener.client.ProviderProcessable;
 import org.infinity.luix.core.protocol.Protocol;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.annotation.EventReceiver;
@@ -31,30 +30,26 @@ public class ProviderChangeDiscoveryListener implements ConsumerListener {
     protected     Protocol                 protocol;
     protected     String                   interfaceName;
     protected     String                   form;
-    protected     ProviderProcessable      providerProcessor;
     private final Map<Url, List<Sendable>> sendersPerRegistryUrl = new ConcurrentHashMap<>();
 
     /**
      * Pass service provider invoker to listener, listener will update service invoker after provider urls changed
      *
-     * @param serviceInvoker    service invoker
-     * @param protocolName      protocol name
-     * @param interfaceName     interface class name of the consumer
-     * @param form              form
-     * @param providerProcessor provider processor
+     * @param serviceInvoker service invoker
+     * @param protocolName   protocol name
+     * @param interfaceName  interface class name of the consumer
+     * @param form           form
      * @return listener listener
      */
     public static ProviderChangeDiscoveryListener of(ServiceInvoker serviceInvoker,
                                                      String protocolName,
                                                      String interfaceName,
-                                                     String form,
-                                                     ProviderProcessable providerProcessor) {
+                                                     String form) {
         ProviderChangeDiscoveryListener listener = new ProviderChangeDiscoveryListener();
         listener.serviceInvoker = serviceInvoker;
         listener.protocol = Protocol.getInstance(defaultIfEmpty(protocolName, PROTOCOL_VAL_DEFAULT));
         listener.interfaceName = interfaceName;
         listener.form = form;
-        listener.providerProcessor = providerProcessor;
         return listener;
     }
 
@@ -68,9 +63,6 @@ public class ProviderChangeDiscoveryListener implements ConsumerListener {
     @Override
     @EventReceiver("providersDiscoveryEvent")
     public synchronized void onNotify(Url registryUrl, Url consumerUrl, List<Url> providerUrls) {
-        if (providerProcessor != null) {
-            providerProcessor.process(registryUrl, interfaceName, providerUrls);
-        }
         if (CollectionUtils.isEmpty(providerUrls)) {
             log.warn("No active providers found on registry [{}]", registryUrl.getUri());
             removeInactiveRegistry(registryUrl);

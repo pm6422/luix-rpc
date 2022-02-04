@@ -71,13 +71,13 @@ public class CommandProviderListener implements ProviderListener {
     /**
      * Service listener event
      *
-     * @param consumerUrl  consumer url
      * @param registryUrl  registry url
+     * @param consumerUrl  consumer url
      * @param providerUrls provider urls
      */
     @EventReceiver("providersChangeEvent")
     @Override
-    public void onNotify(Url consumerUrl, Url registryUrl, List<Url> providerUrls) {
+    public void onNotify(Url registryUrl, Url consumerUrl, List<Url> providerUrls) {
 //        log.info("Receive providers change event, consumerUrl [{}], registryUrl [{}], providerUrls [{}]",
 //                consumerUrl.toFullStr(), registryUrl.toFullStr(), providerUrls);
         String form = consumerUrl.getForm();

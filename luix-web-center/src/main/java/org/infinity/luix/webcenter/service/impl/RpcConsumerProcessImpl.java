@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.webcenter.domain.RpcServer;
 import org.infinity.luix.core.server.buildin.BuildInService;
-import org.infinity.luix.core.server.listener.ConsumerProcessable;
+import org.infinity.luix.core.listener.server.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.webcenter.domain.RpcApplication;
 import org.infinity.luix.webcenter.domain.RpcConsumer;

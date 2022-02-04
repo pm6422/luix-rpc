@@ -5,13 +5,13 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.infinity.luix.core.listener.client.ProviderProcessable;
 import org.infinity.luix.core.client.stub.ConsumerStub;
 import org.infinity.luix.core.client.stub.ConsumerStubFactory;
 import org.infinity.luix.core.client.stub.ConsumerStubHolder;
 import org.infinity.luix.core.config.impl.RegistryConfig;
+import org.infinity.luix.core.listener.client.ConsumersListener;
+import org.infinity.luix.core.listener.server.ConsumerProcessable;
 import org.infinity.luix.core.registry.Registry;
-import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.spring.boot.config.LuixProperties;
 import org.infinity.luix.webcenter.dto.RpcRegistryDTO;
@@ -41,9 +41,9 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
     @Resource
     private              LuixProperties              luixProperties;
     @Resource
-    private              ProviderProcessable         providerProcessService;
-    @Resource
     private              ConsumerProcessable         consumerProcessService;
+    @Resource
+    private              ConsumersListener           consumersListener;
 
     /**
      * {@link org.springframework.beans.factory.InitializingBean#afterPropertiesSet()} execute too earlier
@@ -61,12 +61,15 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
             luixProperties.getRegistryList().forEach(registryConfig -> {
                 REGISTRY_CONFIG_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig);
                 REGISTRIES.add(new RpcRegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
+
+                registryConfig.getRegistryImpl().subscribe(consumersListener);
+
                 List<Url> allProviderUrls = registryConfig.getRegistryImpl().getAllProviderUrls();
                 allProviderUrls.forEach(url -> {
                     try {
                         // Generate consumer stub for each provider
                         ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixProperties.getApplication(), registryConfig,
-                                luixProperties.getAvailableProtocol(), url.getPath(), url.getForm(), providerProcessService);
+                                luixProperties.getAvailableProtocol(), url.getPath(), url.getForm());
 
                         Map<String, Object> attributes = new HashMap<>(2);
                         attributes.put(FORM, url.getForm());

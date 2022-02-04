@@ -115,7 +115,7 @@ public class ZookeeperRegistryTests {
     @Test
     @EventMarker
     public void testSubscribeServiceListener() throws Exception {
-        ProviderListener providerListener = (refUrl, registryUrl, urls) -> {
+        ProviderListener providerListener = (registryUrl, refUrl, urls) -> {
             if (CollectionUtils.isNotEmpty(urls)) {
                 assertTrue(urls.contains(providerUrl1));
             }

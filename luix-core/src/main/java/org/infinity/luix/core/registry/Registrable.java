@@ -53,6 +53,8 @@ public interface Registrable {
 
     /**
      * Get all provider urls
+     *
+     * @return provider urls
      */
     List<Url> getAllProviderUrls();
 

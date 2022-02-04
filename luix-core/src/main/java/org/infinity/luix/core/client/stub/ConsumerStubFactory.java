@@ -1,10 +1,10 @@
 package org.infinity.luix.core.client.stub;
 
-import org.infinity.luix.core.listener.client.ProviderProcessable;
 import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.infinity.luix.core.config.impl.ConsumerConfig;
 import org.infinity.luix.core.config.impl.ProtocolConfig;
 import org.infinity.luix.core.config.impl.RegistryConfig;
+import org.infinity.luix.core.listener.client.ConsumersListener;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
@@ -22,10 +22,10 @@ public abstract class ConsumerStubFactory {
     public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
                                          RegistryConfig registryConfig,
                                          ProtocolConfig protocolConfig,
-                                         String providerAddresses,
-                                         String interfaceName) {
-        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), providerAddresses, interfaceName,
-                null, null, null, null, null, null, null, null,
+                                         String interfaceName,
+                                         String form) {
+        return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), null, interfaceName,
+                null, null, form, null, null, null, null, null,
                 null, null, null);
     }
 
@@ -45,10 +45,10 @@ public abstract class ConsumerStubFactory {
                                          RegistryConfig registryConfig,
                                          ProtocolConfig protocolConfig,
                                          String interfaceName,
-                                         ProviderProcessable providerProcessor) {
+                                         ConsumersListener consumersListener) {
         return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), null, interfaceName,
                 null, null, null, null, null, null, null, null,
-                null, null, providerProcessor);
+                null, null, consumersListener);
     }
 
     public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
@@ -56,10 +56,10 @@ public abstract class ConsumerStubFactory {
                                          ProtocolConfig protocolConfig,
                                          String interfaceName,
                                          String form,
-                                         ProviderProcessable providerProcessor) {
+                                         ConsumersListener consumersListener) {
         return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), null, interfaceName,
                 null, null, form, null, null, null, null, null,
-                null, null, providerProcessor);
+                null, null, consumersListener);
     }
 
     public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
@@ -155,10 +155,10 @@ public abstract class ConsumerStubFactory {
                                          String version,
                                          Integer requestTimeout,
                                          Integer retryCount,
-                                         ProviderProcessable providerProcessor) {
+                                         ConsumersListener consumersListener) {
         return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), providerAddresses, interfaceName,
                 null, null, form, version, null, null, null, null,
-                requestTimeout, retryCount, providerProcessor);
+                requestTimeout, retryCount, consumersListener);
     }
 
     public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
@@ -171,10 +171,10 @@ public abstract class ConsumerStubFactory {
                                          String version,
                                          Integer requestTimeout,
                                          Integer retryCount,
-                                         ProviderProcessable providerProcessor) {
+                                         ConsumersListener consumersListener) {
         return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), providerAddresses, interfaceName,
                 null, serializer, form, version, null, null, null, null,
-                requestTimeout, retryCount, providerProcessor);
+                requestTimeout, retryCount, consumersListener);
     }
 
     public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
@@ -188,10 +188,10 @@ public abstract class ConsumerStubFactory {
                                          String version,
                                          Integer requestTimeout,
                                          Integer retryCount,
-                                         ProviderProcessable providerProcessor) {
+                                         ConsumersListener consumersListener) {
         return create(applicationConfig, registryConfig, protocolConfig, consumerConfig, providerAddresses, interfaceName,
                 null, serializer, form, version, null, null, null, null,
-                requestTimeout, retryCount, providerProcessor);
+                requestTimeout, retryCount, consumersListener);
     }
 
     public static ConsumerStub<?> create(ApplicationConfig applicationConfig,
@@ -210,7 +210,7 @@ public abstract class ConsumerStubFactory {
                                          String proxyFactory,
                                          Integer requestTimeout,
                                          Integer retryCount,
-                                         ProviderProcessable providerProcessor) {
+                                         ConsumersListener consumersListener) {
         ConsumerStub<?> consumerStub = new ConsumerStub<>();
         consumerStub.setProviderAddresses(providerAddresses);
         consumerStub.setInterfaceName(interfaceName);
@@ -228,7 +228,7 @@ public abstract class ConsumerStubFactory {
         consumerStub.setMaxPayload(consumerConfig.getMaxPayload());
 
         // Must NOT call init()
-        consumerStub.subscribeProviders(applicationConfig, protocolConfig, registryConfig, providerProcessor);
+        consumerStub.subscribeProviders(applicationConfig, protocolConfig, registryConfig, consumersListener);
         return consumerStub;
     }
 }

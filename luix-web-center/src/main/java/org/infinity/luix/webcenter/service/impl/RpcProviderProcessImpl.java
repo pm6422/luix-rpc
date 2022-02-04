@@ -2,12 +2,12 @@ package org.infinity.luix.webcenter.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.luix.webcenter.domain.RpcServer;
-import org.infinity.luix.core.listener.client.ProviderProcessable;
+import org.infinity.luix.core.listener.client.ConsumersListener;
 import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.webcenter.domain.RpcApplication;
 import org.infinity.luix.webcenter.domain.RpcProvider;
+import org.infinity.luix.webcenter.domain.RpcServer;
 import org.infinity.luix.webcenter.domain.RpcService;
 import org.infinity.luix.webcenter.repository.RpcApplicationRepository;
 import org.infinity.luix.webcenter.repository.RpcProviderRepository;
@@ -26,7 +26,7 @@ import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 
 @Service
 @Slf4j
-public class RpcProviderProcessImpl implements ProviderProcessable {
+public class RpcProviderProcessImpl implements ConsumersListener {
 
     @Resource
     private RpcProviderRepository    rpcProviderRepository;
@@ -44,7 +44,7 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
     private RpcApplicationService    rpcApplicationService;
 
     @Override
-    public void process(Url registryUrl, String interfaceName, List<Url> providerUrls) {
+    public void onNotify(Url registryUrl, Url consumerUrl, List<Url> providerUrls) {
         if (CollectionUtils.isNotEmpty(providerUrls)) {
             log.info("Discovered active providers {}", providerUrls);
             for (Url providerUrl : providerUrls) {
@@ -65,10 +65,10 @@ public class RpcProviderProcessImpl implements ProviderProcessable {
                 insertApplication(registryUrl, providerUrl, rpcProvider);
             }
         } else {
-            log.info("Discovered offline providers of [{}]", interfaceName);
+            log.info("Discovered offline providers of [{}]", consumerUrl.getPath());
 
             // Update providers to inactive
-            List<RpcProvider> list = rpcProviderRepository.findByInterfaceName(interfaceName);
+            List<RpcProvider> list = rpcProviderRepository.findByInterfaceName(consumerUrl.getPath());
             if (CollectionUtils.isEmpty(list)) {
                 return;
             }
