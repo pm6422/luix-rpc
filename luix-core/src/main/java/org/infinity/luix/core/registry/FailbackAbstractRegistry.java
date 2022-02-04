@@ -212,7 +212,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             List<Url> cachedProviderUrls = super.getCachedProviderUrls(consumerUrl);
             if (CollectionUtils.isNotEmpty(cachedProviderUrls)) {
                 // Notify if the cached provider urls not empty
-                listener.onNotify(registryUrl, cachedProviderUrls);
+                listener.onNotify(registryUrl, consumerUrl, cachedProviderUrls);
             }
             addToFailedMap(failedSubscriptionPerConsumerUrl, consumerUrl, listener);
             throw new RpcFrameworkException(MessageFormat.format("Failed to subscribe the listener [{0}] to the client [{1}] on registry [{2}] by using [{3}]",

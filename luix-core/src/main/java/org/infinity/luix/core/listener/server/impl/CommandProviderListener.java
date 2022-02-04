@@ -88,7 +88,7 @@ public class CommandProviderListener implements ProviderListener {
         providerUrlList = new ArrayList<>(discoverActiveProvidersByGroup(this.consumerUrl));
 
         for (ConsumerListener consumerListener : consumerListeners) {
-            consumerListener.onNotify(registry.getRegistryUrl(), providerUrlList);
+            consumerListener.onNotify(registry.getRegistryUrl(), consumerUrl, providerUrlList);
             log.debug("Invoked event: {}", consumerListener);
         }
     }

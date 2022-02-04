@@ -302,7 +302,7 @@ public class ConsumerStub<T> {
             directRegistryUrl.setProtocol(RegistryConstants.REGISTRY_VAL_NONE);
             // 如果有directUrls，直接使用这些directUrls进行初始化，不用到注册中心discover
             // Directly notify the provider urls
-            listener.onNotify(directRegistryUrl, directProviderUrls);
+            listener.onNotify(directRegistryUrl, this.url, directProviderUrls);
             log.info("Notified registries [{}] with direct provider urls {}", directRegistryUrl, directProviderUrls);
         }
     }

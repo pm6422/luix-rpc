@@ -289,7 +289,7 @@ public abstract class AbstractRegistry implements Registry {
         for (Map.Entry<String, List<Url>> entry : providerUrlsPerType.entrySet()) {
             @EventPublisher("providersDiscoveryEvent")
             List<Url> providerUrlList = entry.getValue();
-            listener.onNotify(registryUrl, providerUrlList);
+            listener.onNotify(registryUrl, consumerUrl, providerUrlList);
         }
     }
 

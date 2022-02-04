@@ -2,9 +2,9 @@ package org.infinity.luix.core.registry.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.infinity.luix.core.registry.AbstractRegistry;
 import org.infinity.luix.core.listener.client.ConsumerListener;
 import org.infinity.luix.core.listener.server.ProviderListener;
+import org.infinity.luix.core.registry.AbstractRegistry;
 import org.infinity.luix.core.server.listener.ConsumerProcessable;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.concurrent.ThreadSafe;
@@ -50,14 +50,14 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     protected synchronized void doSubscribe(Url consumerUrl, ConsumerListener listener) {
         List<Url> providerUrls = doDiscover(consumerUrl);
         // Notify
-        listener.onNotify(registryUrl, providerUrls);
+        listener.onNotify(registryUrl, consumerUrl, providerUrls);
     }
 
     @Override
     protected synchronized void doUnsubscribe(Url consumerUrl, ConsumerListener listener) {
         List<Url> providerUrls = doDiscover(consumerUrl);
         // Notify
-        listener.onNotify(registryUrl, providerUrls);
+        listener.onNotify(registryUrl, consumerUrl, providerUrls);
     }
 
     @Override

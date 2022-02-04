@@ -144,7 +144,7 @@ public class ZookeeperRegistryTests {
         // Add provider url to zookeeper active node, so provider list changes will trigger the IZkChildListener
         registry.doActivate(providerUrl1);
 
-        ConsumerListener consumerListener = (registryUrl, providerUrls) -> {
+        ConsumerListener consumerListener = (registryUrl, consumerUrl, providerUrls) -> {
             if (CollectionUtils.isNotEmpty(providerUrls)) {
                 assertTrue(providerUrls.contains(providerUrl1));
             }

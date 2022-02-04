@@ -65,11 +65,12 @@ public class ProviderChangeDiscoveryListener implements ConsumerListener {
      * Monitor the providers change event, e.g. child change event for zookeeper
      *
      * @param registryUrl  registry url
+     * @param consumerUrl  consumer url
      * @param providerUrls provider urls
      */
     @Override
     @EventReceiver("providersDiscoveryEvent")
-    public synchronized void onNotify(Url registryUrl, List<Url> providerUrls) {
+    public synchronized void onNotify(Url registryUrl, Url consumerUrl, List<Url> providerUrls) {
         if (providerProcessor != null) {
             providerProcessor.process(registryUrl, interfaceName, providerUrls);
         }

@@ -26,6 +26,13 @@ import java.util.List;
  */
 public interface ConsumerListener {
 
-    void onNotify(Url registryUrl, List<Url> providerUrls);
+    /**
+     * Called when the consumer is subscribed.
+     *
+     * @param registryUrl  registry url
+     * @param consumerUrl  consumer url
+     * @param providerUrls provider urls
+     */
+    void onNotify(Url registryUrl, Url consumerUrl, List<Url> providerUrls);
 
 }
