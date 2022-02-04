@@ -274,7 +274,7 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
                 synchronized (listeners) {
                     for (Map.Entry<Url, ProviderListener> entry : listeners.entrySet()) {
                         ProviderListener serviceListener = entry.getValue();
-                        serviceListener.onNotify(entry.getKey(), getUrl(), urls);
+                        serviceListener.onNotify(getUrl(), entry.getKey(), urls);
                     }
                 }
             } else {

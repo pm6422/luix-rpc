@@ -379,7 +379,7 @@ public class ZookeeperRegistry extends AbstractRegistry implements Destroyable {
             zkChildListener = (dirName, currentChildren) -> {
                 @EventPublisher("providersChangeEvent")
                 List<String> fileNames = ListUtils.emptyIfNull(currentChildren);
-                providerListener.onNotify(consumerUrl, getRegistryUrl(), readUrls(zkClient, dirName, fileNames));
+                providerListener.onNotify(getRegistryUrl(), consumerUrl, readUrls(zkClient, dirName, fileNames));
                 log.info("Provider files [{}] changed under path [{}]", String.join(",", fileNames), dirName);
             };
             childChangeListeners.putIfAbsent(providerListener, zkChildListener);

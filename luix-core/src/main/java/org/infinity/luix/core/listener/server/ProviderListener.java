@@ -9,5 +9,5 @@ import java.util.List;
  */
 public interface ProviderListener {
 
-    void onNotify(Url consumerUrl, Url registryUrl, List<Url> providerUrls);
+    void onNotify(Url registryUrl, Url consumerUrl, List<Url> providerUrls);
 }
