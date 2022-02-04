@@ -56,7 +56,7 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
     private final ConcurrentHashMap<String, Long>                                     form2ConsulIndex           = new ConcurrentHashMap<>();
     /**
      * Key: protocol plus path
-     * Value: url to providerListener map
+     * Value: consumer url to providerListener map
      */
     private final ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners           = new ConcurrentHashMap<>();
     /**
@@ -261,11 +261,11 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
 
     private class NotifyService implements Runnable {
         private final String    protocolPlusPath;
-        private final List<Url> urls;
+        private final List<Url> providerUrls;
 
-        public NotifyService(String protocolPlusPath, List<Url> urls) {
+        public NotifyService(String protocolPlusPath, List<Url> providerUrls) {
             this.protocolPlusPath = protocolPlusPath;
-            this.urls = urls;
+            this.providerUrls = providerUrls;
         }
 
         @Override
@@ -275,9 +275,9 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
                 synchronized (listeners) {
                     for (Map.Entry<Url, ProviderListener> entry : listeners.entrySet()) {
                         ProviderListener serviceListener = entry.getValue();
-                        serviceListener.onNotify(getUrl(), entry.getKey(), urls);
+                        serviceListener.onNotify(getUrl(), entry.getKey(), providerUrls);
                         // Notify all consumers
-                        Optional.ofNullable(consumersListener).ifPresent(l -> l.onNotify(getUrl(), entry.getKey(), urls));
+                        Optional.ofNullable(consumersListener).ifPresent(l -> l.onNotify(getUrl(), entry.getKey(), providerUrls));
                     }
                 }
             } else {
