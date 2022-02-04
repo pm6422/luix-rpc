@@ -22,7 +22,7 @@ import java.util.List;
 
 
 /**
- * Client listener used to handle the subscribed event
+ * Listener used to handle the subscribed event by consumer.
  */
 public interface ConsumerListener {
 
