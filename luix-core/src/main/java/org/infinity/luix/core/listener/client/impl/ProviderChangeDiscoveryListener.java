@@ -38,20 +38,20 @@ public class ProviderChangeDiscoveryListener implements ConsumerListener {
      * Pass service provider invoker to listener, listener will update service invoker after provider urls changed
      *
      * @param serviceInvoker    service invoker
-     * @param protocol          protocol
+     * @param protocolName      protocol name
      * @param interfaceName     interface class name of the consumer
      * @param form              form
      * @param providerProcessor provider processor
      * @return listener listener
      */
     public static ProviderChangeDiscoveryListener of(ServiceInvoker serviceInvoker,
-                                                     String protocol,
+                                                     String protocolName,
                                                      String interfaceName,
                                                      String form,
                                                      ProviderProcessable providerProcessor) {
         ProviderChangeDiscoveryListener listener = new ProviderChangeDiscoveryListener();
         listener.serviceInvoker = serviceInvoker;
-        listener.protocol = Protocol.getInstance(defaultIfEmpty(protocol, PROTOCOL_VAL_DEFAULT));
+        listener.protocol = Protocol.getInstance(defaultIfEmpty(protocolName, PROTOCOL_VAL_DEFAULT));
         listener.interfaceName = interfaceName;
         listener.form = form;
         listener.providerProcessor = providerProcessor;
