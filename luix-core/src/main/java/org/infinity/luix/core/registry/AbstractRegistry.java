@@ -28,19 +28,19 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * The registry subclass name
      */
-    private final String                           registryClassName                 = this.getClass().getSimpleName();
+    private final String                            registryClassName                    = this.getClass().getSimpleName();
     /**
      * Registry url
      */
-    protected     Url                              registryUrl;
+    protected     Url                               registryUrl;
     /**
      * Registered provider urls cache
      */
-    private final Set<Url>                         registeredProviderUrls            = new ConcurrentHashSet<>();
+    private final Set<Url>                          registeredProviderUrls               = new ConcurrentHashSet<>();
     /**
      * Registered consumer urls cache
      */
-    private final Set<Url>                         registeredConsumerUrls            = new ConcurrentHashSet<>();
+    private final Set<Url>                          registeredConsumerUrls               = new ConcurrentHashSet<>();
     /**
      * Provider urls cache grouped by 'type' parameter value of {@link Url}
      */
@@ -191,8 +191,8 @@ public abstract class AbstractRegistry implements Registry {
      */
     @Override
     public void subscribe(Url consumerUrl, ConsumerListener listener) {
-        Validate.notNull(consumerUrl, "Client url must NOT be null!");
-        Validate.notNull(listener, "Client listener must NOT be null!");
+        Validate.notNull(consumerUrl, "Consumer url must NOT be null!");
+        Validate.notNull(listener, "Consumer listener must NOT be null!");
 
         doSubscribe(consumerUrl, listener);
         log.info("Subscribed the url [{}] to listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
@@ -206,8 +206,8 @@ public abstract class AbstractRegistry implements Registry {
      */
     @Override
     public void unsubscribe(Url consumerUrl, ConsumerListener listener) {
-        Validate.notNull(consumerUrl, "Client url must NOT be null!");
-        Validate.notNull(listener, "Client listener must NOT be null!");
+        Validate.notNull(consumerUrl, "Consumer url must NOT be null!");
+        Validate.notNull(listener, "Consumer listener must NOT be null!");
 
         doUnsubscribe(consumerUrl, listener);
         log.info("Unsubscribed the url [{}] from listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
