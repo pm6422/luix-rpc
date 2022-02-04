@@ -34,9 +34,6 @@ public class ProviderChangeDiscoveryListener implements ConsumerListener {
     protected     ProviderProcessable      providerProcessor;
     private final Map<Url, List<Sendable>> sendersPerRegistryUrl = new ConcurrentHashMap<>();
 
-    protected ProviderChangeDiscoveryListener() {
-    }
-
     /**
      * Pass service provider invoker to listener, listener will update service invoker after provider urls changed
      *
