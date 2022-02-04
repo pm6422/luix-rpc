@@ -192,7 +192,7 @@ public class RpcLifecycle {
     }
 
     /**
-     * Subscribe provider from registries
+     * Subscribe provider from registries by consumer
      *
      * @param luixProperties RPC configuration properties
      */
