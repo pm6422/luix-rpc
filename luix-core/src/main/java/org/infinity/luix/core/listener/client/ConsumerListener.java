@@ -27,7 +27,7 @@ import java.util.List;
 public interface ConsumerListener {
 
     /**
-     * Called when the consumer is subscribed.
+     * Called by the event which is subscribed.
      *
      * @param registryUrl  registry url
      * @param consumerUrl  consumer url
