@@ -89,10 +89,6 @@ public abstract class AbstractRegistry implements Registry {
         return registeredConsumerUrls;
     }
 
-    public Map<Url, CommandProviderListener> getCommandServiceListenerPerConsumerUrl() {
-        return commandServiceListenerPerConsumerUrl;
-    }
-
     public AbstractRegistry(Url registryUrl) {
         Validate.notNull(registryUrl, "Registry url must NOT be null!");
         this.registryUrl = registryUrl;
