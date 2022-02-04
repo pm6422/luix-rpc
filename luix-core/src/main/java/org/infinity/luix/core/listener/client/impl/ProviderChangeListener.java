@@ -2,12 +2,12 @@ package org.infinity.luix.core.listener.client.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.luix.core.listener.client.ConsumerListener;
-import org.infinity.luix.core.listener.client.ProviderProcessable;
-import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.client.invoker.ServiceInvoker;
 import org.infinity.luix.core.client.sender.Sendable;
+import org.infinity.luix.core.listener.client.ConsumerListener;
+import org.infinity.luix.core.listener.client.ProviderProcessable;
 import org.infinity.luix.core.protocol.Protocol;
+import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.annotation.EventReceiver;
 import org.infinity.luix.utilities.concurrent.ThreadSafe;
 
@@ -29,13 +29,7 @@ import static org.infinity.luix.core.constant.ProtocolConstants.PROTOCOL_VAL_DEF
 public class ProviderChangeListener implements ConsumerListener {
     protected     ServiceInvoker           serviceInvoker;
     protected     Protocol                 protocol;
-    /**
-     * The interface class name of the consumer
-     */
     protected     String                   interfaceName;
-    /**
-     * Form
-     */
     protected     String                   form;
     protected     ProviderProcessable      providerProcessor;
     private final Map<Url, List<Sendable>> sendersPerRegistryUrl = new ConcurrentHashMap<>();
