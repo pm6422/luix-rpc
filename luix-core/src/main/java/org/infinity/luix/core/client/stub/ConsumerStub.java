@@ -13,7 +13,7 @@ import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.infinity.luix.core.config.impl.ProtocolConfig;
 import org.infinity.luix.core.config.impl.RegistryConfig;
 import org.infinity.luix.core.constant.*;
-import org.infinity.luix.core.listener.client.impl.ProviderChangeListener;
+import org.infinity.luix.core.listener.client.impl.ProviderChangeDiscoveryListener;
 import org.infinity.luix.core.listener.client.ProviderProcessable;
 import org.infinity.luix.core.registry.Registry;
 import org.infinity.luix.core.registry.RegistryFactory;
@@ -253,7 +253,7 @@ public class ConsumerStub<T> {
         if (StringUtils.isEmpty(providerAddresses)) {
             // Non-direct registry
             // Pass service provider invoker to listener, listener will update service invoker after provider urls changed
-            ProviderChangeListener listener = ProviderChangeListener.of(invokerInstance, url.getProtocol(),
+            ProviderChangeDiscoveryListener listener = ProviderChangeDiscoveryListener.of(invokerInstance, url.getProtocol(),
                     interfaceName, form, providerProcessor);
             for (Url registryUrl : registryUrls) {
                 Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
@@ -292,7 +292,8 @@ public class ConsumerStub<T> {
     private void notifyDirectProviderUrls(List<Url> globalRegistryUrls,
                                           ProviderProcessable providerProcessor) {
         // Pass provider service invoker to listener, listener will update service invoker after provider urls changed
-        ProviderChangeListener listener = ProviderChangeListener.of(invokerInstance, protocol, interfaceName, form, providerProcessor);
+        ProviderChangeDiscoveryListener listener = ProviderChangeDiscoveryListener
+                .of(invokerInstance, protocol, interfaceName, form, providerProcessor);
 
         for (Url globalRegistryUrl : globalRegistryUrls) {
             List<Url> directProviderUrls = createDirectProviderUrls();

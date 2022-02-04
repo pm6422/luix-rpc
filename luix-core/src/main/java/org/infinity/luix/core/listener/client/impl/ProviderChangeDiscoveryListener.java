@@ -22,11 +22,11 @@ import static org.infinity.luix.core.constant.ProtocolConstants.PROTOCOL_VAL_DEF
 /**
  * todo: see ClusterSupport
  * Listener used to subscribe providers change event,
- * method {@link ProviderChangeListener#onNotify(Url, List)} will be invoked if providers change event occurs.
+ * method {@link ProviderChangeDiscoveryListener#onNotify(Url, List)} will be invoked if providers change event occurs.
  */
 @Slf4j
 @ThreadSafe
-public class ProviderChangeListener implements ConsumerListener {
+public class ProviderChangeDiscoveryListener implements ConsumerListener {
     protected     ServiceInvoker           serviceInvoker;
     protected     Protocol                 protocol;
     protected     String                   interfaceName;
@@ -34,7 +34,7 @@ public class ProviderChangeListener implements ConsumerListener {
     protected     ProviderProcessable      providerProcessor;
     private final Map<Url, List<Sendable>> sendersPerRegistryUrl = new ConcurrentHashMap<>();
 
-    protected ProviderChangeListener() {
+    protected ProviderChangeDiscoveryListener() {
     }
 
     /**
@@ -47,12 +47,12 @@ public class ProviderChangeListener implements ConsumerListener {
      * @param providerProcessor provider processor
      * @return listener listener
      */
-    public static ProviderChangeListener of(ServiceInvoker serviceInvoker,
-                                            String protocol,
-                                            String interfaceName,
-                                            String form,
-                                            ProviderProcessable providerProcessor) {
-        ProviderChangeListener listener = new ProviderChangeListener();
+    public static ProviderChangeDiscoveryListener of(ServiceInvoker serviceInvoker,
+                                                     String protocol,
+                                                     String interfaceName,
+                                                     String form,
+                                                     ProviderProcessable providerProcessor) {
+        ProviderChangeDiscoveryListener listener = new ProviderChangeDiscoveryListener();
         listener.serviceInvoker = serviceInvoker;
         listener.protocol = Protocol.getInstance(defaultIfEmpty(protocol, PROTOCOL_VAL_DEFAULT));
         listener.interfaceName = interfaceName;
@@ -130,7 +130,7 @@ public class ProviderChangeListener implements ConsumerListener {
 
     @Override
     public String toString() {
-        return ProviderChangeListener.class.getSimpleName()
+        return ProviderChangeDiscoveryListener.class.getSimpleName()
                 .concat(":").concat(interfaceName)
                 .concat(":").concat(defaultString(form));
     }
