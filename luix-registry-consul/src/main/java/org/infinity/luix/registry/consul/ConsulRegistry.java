@@ -21,7 +21,7 @@ import java.util.concurrent.*;
 
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL;
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL_VAL_DEFAULT;
-import static org.infinity.luix.registry.consul.utils.ConsulUtils.buildProviderServiceName;
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_PROVIDING_SERVICES_PREFIX;
 
 @Slf4j
 @ThreadSafe
@@ -46,14 +46,9 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
     /**
      * Cache used to store provider urls
      * Key:  form
-     * Value: protocol plus path to urls map
+     * Value: protocol plus path to providers urls
      */
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     providerUrlCache           = new ConcurrentHashMap<>();
-    /**
-     * Key: form
-     * Value: lastConsulIndexId
-     */
-    private final ConcurrentHashMap<String, Long>                                     form2ConsulIndex           = new ConcurrentHashMap<>();
     /**
      * Key: protocol plus path
      * Value: consumer url to providerListener map
@@ -68,6 +63,7 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
      *
      */
     private final ScheduledExecutorService                                            consumerChangesMonitorPool = Executors.newSingleThreadScheduledExecutor();
+    private       DiscoverProviderThread                                              discoverProviderThread;
 
     public ConsulRegistry(Url registryUrl, LuixConsulClient consulClient) {
         super(registryUrl);
@@ -147,12 +143,11 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
 
     private ConcurrentHashMap<String, List<Url>> doDiscoverActiveProviders(String form) {
         ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls = new ConcurrentHashMap<>();
-        Long lastConsulIndexId = form2ConsulIndex.get(form) == null ? 0L : form2ConsulIndex.get(form);
         Response<List<ConsulService>> response = consulClient
-                .queryActiveServiceInstances(buildProviderServiceName(form), lastConsulIndexId);
+                .queryActiveServiceInstances(CONSUL_PROVIDING_SERVICES_PREFIX, 0);
         if (response != null) {
             List<ConsulService> activeServiceInstances = response.getValue();
-            if (CollectionUtils.isNotEmpty(activeServiceInstances) && response.getConsulIndex() > lastConsulIndexId) {
+            if (CollectionUtils.isNotEmpty(activeServiceInstances)) {
                 for (ConsulService activeServiceInstance : activeServiceInstances) {
                     try {
                         Url url = ConsulUtils.buildUrl(activeServiceInstance);
@@ -163,7 +158,6 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
                         log.error("Failed to build url from consul service instance: " + activeServiceInstance, e);
                     }
                 }
-                form2ConsulIndex.put(form, response.getConsulIndex());
                 return protocolPlusPath2Urls;
             } else {
                 log.info("No active service found for form: [{}]", form);
@@ -214,13 +208,10 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
     }
 
     private void startListenerThreadIfNewService(Url url) {
-        if (!form2ConsulIndex.containsKey(url.getForm())) {
-            Long consulIndex = form2ConsulIndex.putIfAbsent(url.getForm(), 0L);
-            if (consulIndex == null) {
-                DiscoverProviderThread discoverProviderThread = new DiscoverProviderThread(url.getForm());
-                discoverProviderThread.setDaemon(true);
-                discoverProviderThread.start();
-            }
+        if (discoverProviderThread == null) {
+            discoverProviderThread = new DiscoverProviderThread(url.getForm());
+            discoverProviderThread.setDaemon(true);
+            discoverProviderThread.start();
         }
     }
 
