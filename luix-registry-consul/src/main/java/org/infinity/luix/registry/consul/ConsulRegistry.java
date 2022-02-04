@@ -4,9 +4,9 @@ import com.ecwid.consul.v1.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.infinity.luix.core.registry.AbstractRegistry;
-import org.infinity.luix.core.listener.server.ProviderListener;
 import org.infinity.luix.core.listener.server.ConsumerProcessable;
+import org.infinity.luix.core.listener.server.ProviderListener;
+import org.infinity.luix.core.registry.AbstractRegistry;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.registry.consul.utils.ConsulUtils;
 import org.infinity.luix.utilities.destory.Destroyable;
@@ -201,15 +201,15 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
         startListenerThreadIfNewService(consumerUrl);
     }
 
-    private void addServiceListener(Url url, ProviderListener providerListener) {
-        String protocolPlusPath = ConsulUtils.getProtocolPlusPath(url);
+    private void addServiceListener(Url consumerUrl, ProviderListener providerListener) {
+        String protocolPlusPath = ConsulUtils.getProtocolPlusPath(consumerUrl);
         ConcurrentHashMap<Url, ProviderListener> map = serviceListeners.get(protocolPlusPath);
         if (map == null) {
             serviceListeners.putIfAbsent(protocolPlusPath, new ConcurrentHashMap<>());
             map = serviceListeners.get(protocolPlusPath);
         }
         synchronized (map) {
-            map.put(url, providerListener);
+            map.put(consumerUrl, providerListener);
         }
     }
 
@@ -241,7 +241,7 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
                 () -> {
                     getRegisteredConsumerUrls().forEach(url -> {
                         List<Url> consumerUrls = consulClient.getConsumerUrls(url.getPath());
-                        if (!consumerUrls.equals(path2ConsumerUrls.get(url.getPath()))) {
+                        if (!ConsulUtils.isSame(consumerUrls, path2ConsumerUrls.get(url.getPath()))) {
                             consumerProcessor.process(getRegistryUrl(), url.getPath(), consumerUrls);
                             path2ConsumerUrls.put(url.getPath(), consumerUrls);
                         }
