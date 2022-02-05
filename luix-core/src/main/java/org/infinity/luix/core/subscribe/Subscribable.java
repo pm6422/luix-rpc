@@ -12,6 +12,13 @@ import java.util.List;
  */
 public interface Subscribable {
     /**
+     * Discover all the provider urls, including 'inactive' urls
+     *
+     * @return provider urls
+     */
+    List<Url> discover();
+
+    /**
      * Discover all the provider urls of the consumer, including 'inactive' urls
      *
      * @param consumerUrl        consumer url
