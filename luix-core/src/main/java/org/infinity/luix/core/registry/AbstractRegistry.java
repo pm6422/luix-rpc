@@ -346,7 +346,13 @@ public abstract class AbstractRegistry implements Registry {
      * @param listener    client listener
      */
     protected void doUnsubscribe(Url consumerUrl, ConsumerListener listener) {
-        path2Listeners.computeIfAbsent(consumerUrl.getPath(), k -> new ConcurrentHashSet<>()).remove(listener);
+        ConcurrentHashSet<ConsumerListener> listeners = path2Listeners.get(consumerUrl.getPath());
+        if (listeners != null) {
+            listeners.remove(listener);
+            if(listeners.isEmpty()) {
+                path2Listeners.remove(consumerUrl.getPath());
+            }
+        }
 
         // Unsubscribe service listener
         unsubscribeListener(consumerUrl, listener);
