@@ -133,6 +133,11 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     }
 
     @Override
+    public List<Url> getAllProviderUrls() {
+        return consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME);
+    }
+
+    @Override
     public void subscribeAllConsumerChanges(ConsumerProcessable consumerProcessor) {
         consumerChangesMonitorPool.scheduleAtFixedRate(
                 () -> getRegisteredConsumerUrls().forEach(url -> {
@@ -142,12 +147,6 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
                         path2ConsumerUrls.put(url.getPath(), consumerUrls);
                     }
                 }), 0, 2, TimeUnit.SECONDS);
-    }
-
-
-    @Override
-    public List<Url> getAllProviderUrls() {
-        return consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME);
     }
 
     private class DiscoverProviderThread extends Thread {
