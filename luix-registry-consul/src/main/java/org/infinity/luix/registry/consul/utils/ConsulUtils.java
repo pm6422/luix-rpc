@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.UrlUtils;
 
-import static org.infinity.luix.core.constant.ServiceConstants.FORM;
 import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_URL;
 
 @Slf4j
@@ -15,23 +14,19 @@ public class ConsulUtils {
     /**
      * Active RPC provider service name on consul registry
      */
-    public static final  String CONSUL_PROVIDING_SERVICE_NAME     = "luix-provider";
+    public static final String CONSUL_PROVIDING_SERVICE_NAME     = "luix-provider";
     /**
      * Active RPC consumer service name on consul registry
      */
-    public static final  String CONSUL_CONSUMING_SERVICE_NAME     = "luix-consumer";
+    public static final String CONSUL_CONSUMING_SERVICE_NAME     = "luix-consumer";
     /**
      *
      */
-    public static final  String CONSUL_SERVICE_INSTANCE_DELIMITER = "@";
+    public static final String CONSUL_SERVICE_INSTANCE_DELIMITER = "@";
     /**
      *
      */
-    public static final  String CONSUL_TAG_DELIMITER              = ":";
-    /**
-     *
-     */
-    private static final String FORM_DELIMITER                    = ":";
+    public static final String SEMICOLON                         = ":";
 
     /**
      * Build consul service instance ID
@@ -43,12 +38,20 @@ public class ConsulUtils {
         StringBuilder sb = new StringBuilder(StringUtils.EMPTY);
         if (url != null) {
             sb.append(url.getPath()).append(CONSUL_SERVICE_INSTANCE_DELIMITER)
-                    .append(url.getHost()).append(FORM_DELIMITER).append(url.getPort())
+                    .append(url.getHost()).append(SEMICOLON).append(url.getPort())
                     .append(CONSUL_SERVICE_INSTANCE_DELIMITER).append(url.getType());
 
-            if (StringUtils.isNotEmpty(url.getOption(FORM))) {
-                sb.append(CONSUL_SERVICE_INSTANCE_DELIMITER).append(url.getOption(FORM));
+            if (StringUtils.isNotEmpty(url.getForm())) {
+                sb.append(CONSUL_SERVICE_INSTANCE_DELIMITER).append(url.getForm());
+            } else {
+                sb.append(CONSUL_SERVICE_INSTANCE_DELIMITER).append(StringUtils.EMPTY);
             }
+            if (StringUtils.isNotEmpty(url.getVersion())) {
+                sb.append(CONSUL_SERVICE_INSTANCE_DELIMITER).append(url.getVersion());
+            } else {
+                sb.append(CONSUL_SERVICE_INSTANCE_DELIMITER).append(StringUtils.EMPTY);
+            }
+
         }
         return sb.toString();
     }
@@ -64,7 +67,7 @@ public class ConsulUtils {
         // Get URL from consul service tags
         for (String tag : healthService.getService().getTags()) {
             if (tag.startsWith(TAG_PREFIX_URL)) {
-                String encodedUrl = tag.substring(tag.indexOf(CONSUL_TAG_DELIMITER) + 1);
+                String encodedUrl = tag.substring(tag.indexOf(SEMICOLON) + 1);
                 url = Url.valueOf(UrlUtils.urlDecode(encodedUrl));
                 break;
             }

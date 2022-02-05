@@ -113,7 +113,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
         List<Url> providerUrls;
         if (consumerUrl != null) {
             providerUrls = consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME,
-                    TAG_PREFIX_PATH + CONSUL_TAG_DELIMITER + consumerUrl.getPath());
+                    TAG_PREFIX_PATH + SEMICOLON + consumerUrl.getPath());
         } else {
             providerUrls = consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME);
         }

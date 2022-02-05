@@ -1,8 +1,6 @@
 package org.infinity.luix.registry.consul;
 
 import com.ecwid.consul.v1.agent.model.NewService;
-import com.ecwid.consul.v1.agent.model.Service;
-import com.ecwid.consul.v1.health.model.HealthService;
 import lombok.Data;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.UrlUtils;
@@ -20,15 +18,15 @@ public class ConsulService {
      * Each consul service instance will be registered a TTL type check.
      * If the heartbeat is not sent within the maximum TTL seconds, the service will become 'failing'.
      */
-    public static       int          TTL                 = 30;
+    public static       int          TTL             = 30;
     /**
      * Tag prefix for RPC URL.
      */
-    public static final String       TAG_PREFIX_URL      = "URL";
+    public static final String       TAG_PREFIX_URL  = "URL";
     /**
      * Tag prefix for RPC path.
      */
-    public static final String       TAG_PREFIX_PATH     = "PATH";
+    public static final String       TAG_PREFIX_PATH = "PATH";
     /**
      * Consul service name.
      */
@@ -68,26 +66,6 @@ public class ConsulService {
         return newService;
     }
 
-    public static ConsulService of(Service service) {
-        ConsulService consulService = new ConsulService();
-        consulService.setName(service.getService());
-        consulService.setInstanceId(service.getId());
-        consulService.setAddress(service.getAddress());
-        consulService.setPort(service.getPort());
-        consulService.setTags(service.getTags());
-        return consulService;
-    }
-
-    public static ConsulService of(HealthService healthService) {
-        ConsulService consulService = new ConsulService();
-        consulService.setName(healthService.getService().getService());
-        consulService.setInstanceId(healthService.getService().getId());
-        consulService.setAddress(healthService.getService().getAddress());
-        consulService.setPort(healthService.getService().getPort());
-        consulService.setTags(healthService.getService().getTags());
-        return consulService;
-    }
-
     public static ConsulService byUrl(Url url) {
         ConsulService consulService = new ConsulService();
         if (url.isProvider()) {
@@ -104,8 +82,8 @@ public class ConsulService {
 
     private static List<String> buildTags(Url url) {
         List<String> tags = new ArrayList<>(2);
-        tags.add(TAG_PREFIX_URL + CONSUL_TAG_DELIMITER + UrlUtils.urlEncode(url.toFullStr()));
-        tags.add(TAG_PREFIX_PATH + CONSUL_TAG_DELIMITER + url.getPath());
+        tags.add(TAG_PREFIX_URL + SEMICOLON + UrlUtils.urlEncode(url.toFullStr()));
+        tags.add(TAG_PREFIX_PATH + SEMICOLON + url.getPath());
         return tags;
     }
 }
