@@ -34,7 +34,7 @@ public class ConsulHttpClient {
 
     public ConsulHttpClient(String host, int port) {
         consulClient = new ConsulClient(host, port);
-        log.info("Initialized consul client with host: [{}] and port: [{}]", host, port);
+        log.info("Created consul client with host: [{}] and port: [{}]", host, port);
     }
 
     public void registerService(ConsulService service) {
