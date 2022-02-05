@@ -24,7 +24,7 @@ import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_CONSUMI
 import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_PROVIDING_SERVICES_PREFIX;
 
 @Slf4j
-public class LuixConsulClient {
+public class ConsulHttpClient {
     /**
      * Consul query timeout in seconds
      */
@@ -38,7 +38,7 @@ public class LuixConsulClient {
      */
     public static        ConsulClient consulClient;
 
-    public LuixConsulClient(String host, int port) {
+    public ConsulHttpClient(String host, int port) {
         consulClient = new ConsulClient(host, port);
         log.info("Initialized consul client with host: [{}] and port: [{}]", host, port);
     }
@@ -49,7 +49,6 @@ public class LuixConsulClient {
 
     public void deregisterService(String serviceInstanceId) {
         consulClient.agentServiceDeregister(serviceInstanceId);
-        log.debug("Deregistered service instance with ID: [{}]", serviceInstanceId);
     }
 
     public void activate(String serviceInstanceId) {

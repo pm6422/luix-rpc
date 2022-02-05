@@ -34,11 +34,11 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     /**
      * Consul client
      */
-    private final LuixConsulClient                     consulClient;
+    private final ConsulHttpClient    consulClient;
     /**
      * Consul service instance status updater
      */
-    private final ConsulStatusUpdater                  consulStatusUpdater;
+    private final ConsulStatusUpdater consulStatusUpdater;
     /**
      * Key: consumer path
      * Value: consumerUrls
@@ -49,7 +49,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
      */
     private final ScheduledExecutorService             consumerChangesMonitorPool = Executors.newSingleThreadScheduledExecutor();
 
-    public ConsulRegistry(Url registryUrl, LuixConsulClient consulClient) {
+    public ConsulRegistry(Url registryUrl, ConsulHttpClient consulClient) {
         super(registryUrl);
         this.consulClient = consulClient;
         consulStatusUpdater = new ConsulStatusUpdater(consulClient);

@@ -26,7 +26,7 @@ public class ConsulRegistryFactory extends AbstractRegistryFactory {
     public Registry createRegistry(Url registryUrl) {
         String host = defaultIfBlank(registryUrl.getHost(), DEFAULT_HOST);
         int port = registryUrl.getPort() > 0 ? registryUrl.getPort() : DEFAULT_PORT;
-        LuixConsulClient consulClient = new LuixConsulClient(host, port);
+        ConsulHttpClient consulClient = new ConsulHttpClient(host, port);
         return new ConsulRegistry(registryUrl, consulClient);
     }
 }

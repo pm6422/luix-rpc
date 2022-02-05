@@ -26,15 +26,15 @@ public class ConsulStatusUpdater {
     /**
      * 连续检测MAX_CHECK_TIMES次必须发送一次心跳
      */
-    private static final int                       SCHEDULE_INTERVAL   = HEARTBEAT_CIRCLE / MAX_CHECK_TIMES;
+    private static final int                      SCHEDULE_INTERVAL   = HEARTBEAT_CIRCLE / MAX_CHECK_TIMES;
     /**
      * Luix consul client
      */
-    private final        LuixConsulClient          consulClient;
+    private final        ConsulHttpClient         consulClient;
     /**
      * Consul service instance status update executor service
      */
-    private final        ScheduledExecutorService  statusUpdateExecutorService;
+    private final        ScheduledExecutorService statusUpdateExecutorService;
     /**
      * Consul service instance status update execution thread pool
      */
@@ -52,7 +52,7 @@ public class ConsulStatusUpdater {
      */
     private              AtomicInteger             checkTimes          = new AtomicInteger(0);
 
-    public ConsulStatusUpdater(LuixConsulClient consulClient) {
+    public ConsulStatusUpdater(ConsulHttpClient consulClient) {
         this.consulClient = consulClient;
         statusUpdateExecutorService = Executors.newSingleThreadScheduledExecutor();
         executionThreadPool = createExecutionThreadPool();
