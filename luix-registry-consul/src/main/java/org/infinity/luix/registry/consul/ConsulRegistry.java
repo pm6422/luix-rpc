@@ -153,7 +153,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
             log.info("Discovered provider changes of path: {} with previous: {} and current: {}",
                     path, oldProviderUrls, newProviderUrls);
             if (needNotify) {
-                updateAndNotify(path, newProviderUrls == null ? Collections.emptyList() : newProviderUrls);
+                updateAndNotify(path, newProviderUrls);
             }
         }
     }
@@ -197,9 +197,8 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
                     Map<String, List<Url>> currentPath2ProviderUrls = doDiscoverActiveProviders(null)
                             .stream()
                             .collect(Collectors.groupingBy(Url::getPath));
-                    path2ProviderUrls.keySet()
-                            .forEach(path -> compareResults(path, currentPath2ProviderUrls.get(path), true));
-                    CollectionUtils.subtract(currentPath2ProviderUrls.keySet(), path2ProviderUrls.keySet())
+
+                    CollectionUtils.union(currentPath2ProviderUrls.keySet(), path2ProviderUrls.keySet())
                             .forEach(path -> compareResults(path, currentPath2ProviderUrls.get(path), true));
 
                 } catch (Throwable e) {

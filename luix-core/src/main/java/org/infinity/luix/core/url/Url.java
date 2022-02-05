@@ -1,6 +1,7 @@
 package org.infinity.luix.core.url;
 
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -133,7 +134,7 @@ public final class Url implements Serializable {
 
     /**
      * The consumer url used to expose to registry only for consumers discovery management,
-     * but it have nothing to do with the service calling.
+     * but it has nothing to do with the service calling.
      *
      * @param protocol protocol
      * @param host     host
@@ -147,7 +148,7 @@ public final class Url implements Serializable {
 
     /**
      * The consumer url used to expose to registry only for consumers discovery management,
-     * but it have nothing to do with the service calling.
+     * but it has nothing to do with the service calling.
      *
      * @param protocol protocol
      * @param host     host
@@ -188,15 +189,15 @@ public final class Url implements Serializable {
      *
      * @param urls1 URL list 1
      * @param urls2 URL list 2
-     * @return
+     * @return true if consistent, false otherwise
      */
     public static boolean isSame(List<Url> urls1, List<Url> urls2) {
-        if (urls1 == null && urls2 != null
-                || urls1 != null && urls2 == null
+        if (CollectionUtils.isEmpty(urls1) && CollectionUtils.isNotEmpty(urls2)
+                || CollectionUtils.isNotEmpty(urls1) && CollectionUtils.isEmpty(urls2)
                 || urls1 != null && urls2 != null && urls1.size() != urls2.size()) {
             return false;
         }
-        if (urls1 == null || urls2 == null) {
+        if (CollectionUtils.isEmpty(urls1) && CollectionUtils.isEmpty(urls2)) {
             return true;
         }
         return urls1.containsAll(urls2);
@@ -324,7 +325,7 @@ public final class Url implements Serializable {
             return protocol + PROTOCOL_SEPARATOR + host + ":" + port + DIR_SEPARATOR_UNIX + PARAM_TYPE_REGISTRY;
         }
 
-        StringBuffer identity = new StringBuffer(protocol);
+        StringBuilder identity = new StringBuilder(protocol);
         identity.append(PROTOCOL_SEPARATOR)
                 .append(host).append(":").append(port)
                 .append(DIR_SEPARATOR_UNIX).append(getOption(PARAM_TYPE, PARAM_TYPE_PROVIDER))
@@ -447,7 +448,7 @@ public final class Url implements Serializable {
         if (StringUtils.isEmpty(getForm()) && StringUtils.isEmpty(getVersion())) {
             return getUri();
         }
-        StringBuffer sb = new StringBuffer(getUri());
+        StringBuilder sb = new StringBuilder(getUri());
         boolean hasForm = false;
         if (StringUtils.isNotEmpty(getForm())) {
             sb.append("?form=").append(getForm());
@@ -481,7 +482,7 @@ public final class Url implements Serializable {
      */
     public Integer getMethodLevelOption(String methodName, String methodParameters, String name, int defaultValue) {
         String value = getMethodLevelOption(methodName, methodParameters, name);
-        return StringUtils.isNotEmpty(value) ? Integer.valueOf(value) : defaultValue;
+        return StringUtils.isNotEmpty(value) ? Integer.parseInt(value) : defaultValue;
     }
 
     public String getMethodLevelOption(String methodName, String methodParameters, String name) {

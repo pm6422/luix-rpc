@@ -322,7 +322,11 @@ public abstract class AbstractRegistry implements Registry {
     protected void updateAndNotify(String path, List<Url> providerUrls) {
         notificationThreadPool.execute(() -> {
             synchronized (path.intern()) {
-                path2ProviderUrls.put(path, providerUrls);
+                if (CollectionUtils.isEmpty(providerUrls)) {
+                    path2ProviderUrls.remove(path);
+                } else {
+                    path2ProviderUrls.put(path, providerUrls);
+                }
 
                 if (CollectionUtils.isNotEmpty(path2Listeners.get(path))) {
                     // Notify to specified consumers
