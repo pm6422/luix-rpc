@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_PATH;
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.SEMICOLON;
+
 @Slf4j
 public class ConsulHttpClient {
     /**
@@ -65,7 +68,7 @@ public class ConsulHttpClient {
         HealthServicesRequest.Builder queryBuilder = HealthServicesRequest.newBuilder()
                 .setQueryParams(new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, 0));
         if (StringUtils.isNotEmpty(path)) {
-            queryBuilder.setTag(path);
+            queryBuilder.setTag(TAG_PREFIX_PATH + SEMICOLON + path);
         }
         if (active != null) {
             queryBuilder.setPassing(active);

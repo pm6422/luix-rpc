@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL;
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL_VAL_DEFAULT;
-import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_PATH;
-import static org.infinity.luix.registry.consul.utils.ConsulUtils.*;
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_CONSUMING_SERVICE_NAME;
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_PROVIDING_SERVICE_NAME;
 
 @Slf4j
 @ThreadSafe
@@ -112,8 +112,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     private List<Url> doDiscoverActiveProviders(Url consumerUrl) {
         List<Url> providerUrls;
         if (consumerUrl != null) {
-            providerUrls = consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME,
-                    TAG_PREFIX_PATH + SEMICOLON + consumerUrl.getPath());
+            providerUrls = consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME, consumerUrl.getPath());
         } else {
             providerUrls = consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME);
         }
