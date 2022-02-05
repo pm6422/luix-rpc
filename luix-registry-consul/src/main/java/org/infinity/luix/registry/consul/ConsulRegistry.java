@@ -101,20 +101,10 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
             synchronized (consumerUrl.getPath().intern()) {
                 providerUrls = path2ProviderUrls.get(consumerUrl.getPath());
                 if (providerUrls == null) {
-                    providerUrls = doDiscoverActiveProviders(consumerUrl);
+                    providerUrls = consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME, consumerUrl.getPath());
                     compareResults(consumerUrl.getPath(), providerUrls, false);
                 }
             }
-        }
-        return providerUrls;
-    }
-
-    private List<Url> doDiscoverActiveProviders(Url consumerUrl) {
-        List<Url> providerUrls;
-        if (consumerUrl != null) {
-            providerUrls = consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME, consumerUrl.getPath());
-        } else {
-            providerUrls = consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME);
         }
         return providerUrls;
     }
@@ -176,9 +166,10 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
             while (true) {
                 try {
                     sleep(discoverInterval);
-                    Map<String, List<Url>> currentPath2ProviderUrls = doDiscoverActiveProviders(null)
-                            .stream()
-                            .collect(Collectors.groupingBy(Url::getPath));
+                    Map<String, List<Url>> currentPath2ProviderUrls =
+                            consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME)
+                                    .stream()
+                                    .collect(Collectors.groupingBy(Url::getPath));
 
                     CollectionUtils.union(currentPath2ProviderUrls.keySet(), path2ProviderUrls.keySet())
                             .forEach(path -> compareResults(path, currentPath2ProviderUrls.get(path), true));
