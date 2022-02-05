@@ -6,7 +6,6 @@ import com.ecwid.consul.v1.Response;
 import com.ecwid.consul.v1.agent.model.Service;
 import com.ecwid.consul.v1.health.HealthServicesRequest;
 import com.ecwid.consul.v1.health.model.HealthService;
-import com.ecwid.consul.v1.kv.model.GetValue;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -90,11 +89,24 @@ public class LuixConsulClient {
         return urls;
     }
 
-    public Response<List<ConsulService>> queryActiveServiceInstances(String serviceName, long lastConsulIndex) {
-        HealthServicesRequest request = HealthServicesRequest.newBuilder()
-                .setQueryParams(new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, lastConsulIndex))
-                .setPassing(true)
-                .build();
+    public Response<List<ConsulService>> queryActiveServiceInstances(String serviceName) {
+        return this.queryActiveServiceInstances(serviceName, null);
+    }
+
+    public Response<List<ConsulService>> queryActiveServiceInstances(String serviceName, String tag) {
+        HealthServicesRequest request;
+        if (StringUtils.isEmpty(tag)) {
+            request = HealthServicesRequest.newBuilder()
+                    .setQueryParams(new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, 0))
+                    .setPassing(true)
+                    .build();
+        } else {
+            request = HealthServicesRequest.newBuilder()
+                    .setQueryParams(new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, 0))
+                    .setPassing(true)
+                    .setTag(tag)
+                    .build();
+        }
         Response<List<HealthService>> response = consulClient.getHealthServices(serviceName, request);
         if (response == null) {
             return null;
@@ -114,17 +126,5 @@ public class LuixConsulClient {
         }
         return new Response<>(activeServiceInstances, response.getConsulIndex(),
                 response.isConsulKnownLeader(), response.getConsulLastContact());
-    }
-
-    public String queryCommand(String form) {
-        String key = CONSUL_LUIX_COMMAND_KEY_PREFIX + CONSUL_PROVIDING_SERVICES_PREFIX + "/" + form;
-        GetValue value = consulClient.getKVValue(key).getValue();
-        String command = StringUtils.EMPTY;
-        if (value == null) {
-            log.debug("No command found with form: [{}]", form);
-        } else if (value.getValue() != null) {
-            command = value.getDecodedValue();
-        }
-        return command;
     }
 }

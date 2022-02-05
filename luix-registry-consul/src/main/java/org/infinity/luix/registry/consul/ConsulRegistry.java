@@ -3,10 +3,9 @@ package org.infinity.luix.registry.consul;
 import com.ecwid.consul.v1.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
+import org.infinity.luix.core.listener.client.ConsumerListener;
 import org.infinity.luix.core.listener.server.ConsumerProcessable;
-import org.infinity.luix.core.listener.server.ProviderListener;
-import org.infinity.luix.core.registry.AbstractRegistry;
+import org.infinity.luix.core.registry.FailbackAbstractRegistry;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.registry.consul.utils.ConsulUtils;
 import org.infinity.luix.utilities.destory.Destroyable;
@@ -14,56 +13,46 @@ import org.infinity.luix.utilities.destory.ShutdownHook;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL;
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL_VAL_DEFAULT;
+import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_PATH;
 import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_PROVIDING_SERVICES_PREFIX;
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_TAG_DELIMITER;
 
 @Slf4j
 @ThreadSafe
-public class ConsulRegistry extends AbstractRegistry implements Destroyable {
+public class ConsulRegistry extends FailbackAbstractRegistry implements Destroyable {
 
     /**
      * Consul client
      */
-    private final LuixConsulClient                                                    consulClient;
+    private final LuixConsulClient                     consulClient;
     /**
      * Consul service instance status updater
      */
-    private final ConsulStatusUpdater                                                 consulStatusUpdater;
+    private final ConsulStatusUpdater                  consulStatusUpdater;
     /**
      * Service discovery interval in milliseconds
      */
-    private final int                                                                 discoverInterval;
-    /**
-     * Provider service notification thread pool
-     */
-    private final ThreadPoolExecutor                                                  notificationThreadPool;
-    /**
-     * Cache used to store provider urls
-     * Key:  form
-     * Value: protocol plus path to providers urls
-     */
-    private final ConcurrentHashMap<String, ConcurrentHashMap<String, List<Url>>>     providerUrlCache           = new ConcurrentHashMap<>();
-    /**
-     * Key: protocol plus path
-     * Value: consumer url to providerListener map
-     */
-    private final ConcurrentHashMap<String, ConcurrentHashMap<Url, ProviderListener>> serviceListeners           = new ConcurrentHashMap<>();
+    private final int                                  discoverInterval;
     /**
      * Key: consumer path
      * Value: consumerUrls
      */
-    private final ConcurrentHashMap<String, List<Url>>                                path2ConsumerUrls          = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, List<Url>> path2ConsumerUrls          = new ConcurrentHashMap<>();
     /**
      *
      */
-    private final ScheduledExecutorService                                            consumerChangesMonitorPool = Executors.newSingleThreadScheduledExecutor();
-    private       DiscoverProviderThread                                              discoverProviderThread;
+    private final ScheduledExecutorService             consumerChangesMonitorPool = Executors.newSingleThreadScheduledExecutor();
 
     public ConsulRegistry(Url registryUrl, LuixConsulClient consulClient) {
         super(registryUrl);
@@ -71,18 +60,11 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
         consulStatusUpdater = new ConsulStatusUpdater(consulClient);
         consulStatusUpdater.start();
         discoverInterval = this.registryUrl.getIntOption(DISCOVERY_INTERVAL, DISCOVERY_INTERVAL_VAL_DEFAULT);
-        notificationThreadPool = createNotificationThreadPool();
+        DiscoverProviderThread discoverProviderThread = new DiscoverProviderThread();
+        discoverProviderThread.setDaemon(true);
+        discoverProviderThread.start();
         ShutdownHook.add(this);
         log.info("Initialized consul registry");
-    }
-
-    private ThreadPoolExecutor createNotificationThreadPool() {
-        return new ThreadPoolExecutor(10, 30, 30 * 1_000,
-                TimeUnit.MILLISECONDS, createWorkQueue(), new ThreadPoolExecutor.AbortPolicy());
-    }
-
-    private BlockingQueue<Runnable> createWorkQueue() {
-        return new ArrayBlockingQueue<>(20_000);
     }
 
     @Override
@@ -104,7 +86,7 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
             consulStatusUpdater.updateStatus(true);
         } else {
             // Activate specified service instance
-            consulStatusUpdater.activate(ConsulUtils.buildServiceInstanceId(url));
+            consulStatusUpdater.activate(ConsulUtils.buildInstanceId(url));
         }
     }
 
@@ -115,129 +97,87 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
             consulStatusUpdater.updateStatus(false);
         } else {
             // Deactivate specified service instance
-            consulStatusUpdater.deactivate(ConsulUtils.buildServiceInstanceId(url));
+            consulStatusUpdater.deactivate(ConsulUtils.buildInstanceId(url));
         }
     }
 
     @Override
-    public List<Url> discoverActiveProviders(Url consumerUrl) {
-        String protocolPlusPath = ConsulUtils.getProtocolPlusPath(consumerUrl);
-        String form = consumerUrl.getForm();
-        List<Url> providerUrls = new ArrayList<>();
-        ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls = providerUrlCache.get(form);
-        if (protocolPlusPath2Urls == null) {
-            synchronized (form.intern()) {
-                protocolPlusPath2Urls = providerUrlCache.get(form);
-                if (protocolPlusPath2Urls == null) {
-                    ConcurrentHashMap<String, List<Url>> protocolPlusPath2UrlsMap = doDiscoverActiveProviders(form);
-                    updateProviderUrlsCache(form, protocolPlusPath2UrlsMap, false);
-                    protocolPlusPath2Urls = providerUrlCache.get(form);
+    public List<Url> discoverProviders(Url consumerUrl) {
+        List<Url> providerUrls = path2ProviderUrls.get(consumerUrl.getPath());
+        if (providerUrls == null) {
+            // todo: learn how to use the multiple threads
+            synchronized (consumerUrl.getPath().intern()) {
+                providerUrls = path2ProviderUrls.get(consumerUrl.getPath());
+                if (providerUrls == null) {
+                    providerUrls = doDiscoverActiveProviders(consumerUrl);
+                    compareResults(consumerUrl.getPath(), providerUrls, false);
                 }
             }
-        }
-        if (protocolPlusPath2Urls != null) {
-            providerUrls = protocolPlusPath2Urls.get(protocolPlusPath);
         }
         return providerUrls;
     }
 
-    private ConcurrentHashMap<String, List<Url>> doDiscoverActiveProviders(String form) {
-        ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls = new ConcurrentHashMap<>();
-        Response<List<ConsulService>> response = consulClient
-                .queryActiveServiceInstances(CONSUL_PROVIDING_SERVICES_PREFIX, 0);
+    private List<Url> doDiscoverActiveProviders(Url consumerUrl) {
+        List<Url> providerUrls = new ArrayList<>();
+        Response<List<ConsulService>> response;
+        if (consumerUrl != null) {
+            response = consulClient
+                    .queryActiveServiceInstances(CONSUL_PROVIDING_SERVICES_PREFIX,
+                            TAG_PREFIX_PATH + CONSUL_TAG_DELIMITER + consumerUrl.getPath());
+        } else {
+            response = consulClient
+                    .queryActiveServiceInstances(CONSUL_PROVIDING_SERVICES_PREFIX);
+        }
         if (response != null) {
             List<ConsulService> activeServiceInstances = response.getValue();
             if (CollectionUtils.isNotEmpty(activeServiceInstances)) {
                 for (ConsulService activeServiceInstance : activeServiceInstances) {
-                    try {
-                        Url url = ConsulUtils.buildUrl(activeServiceInstance);
-                        String protocolPlusPath = ConsulUtils.getProtocolPlusPath(url);
-                        List<Url> urls = protocolPlusPath2Urls.computeIfAbsent(protocolPlusPath, k -> new ArrayList<>());
-                        urls.add(url);
-                    } catch (Exception e) {
-                        log.error("Failed to build url from consul service instance: " + activeServiceInstance, e);
-                    }
+                    providerUrls.add(ConsulUtils.buildUrl(activeServiceInstance));
                 }
-                return protocolPlusPath2Urls;
             } else {
-                log.info("No active service found for form: [{}]", form);
+                if (consumerUrl != null) {
+                    log.info("No active providers found on consul registry for consumer url: [{}]", consumerUrl);
+                } else {
+                    log.info("No active providers found on consul registry");
+                }
             }
         }
-        return protocolPlusPath2Urls;
+        return providerUrls;
     }
 
-    private void updateProviderUrlsCache(String form, ConcurrentHashMap<String, List<Url>> newProtocolPlusPath2Urls, boolean needNotify) {
-        if (MapUtils.isNotEmpty(newProtocolPlusPath2Urls)) {
-            ConcurrentHashMap<String, List<Url>> oldProtocolPlusPath2Urls = providerUrlCache.putIfAbsent(form, newProtocolPlusPath2Urls);
-            for (Map.Entry<String, List<Url>> entry : newProtocolPlusPath2Urls.entrySet()) {
-                boolean changed = true;
-                if (oldProtocolPlusPath2Urls != null) {
-                    List<Url> oldUrls = oldProtocolPlusPath2Urls.get(entry.getKey());
-                    List<Url> newUrls = entry.getValue();
-                    if (ConsulUtils.isSame(newUrls, oldUrls)) {
-                        changed = false;
-                        log.trace("No provider changes detected for key: {}", entry.getKey());
-                    } else {
-                        oldProtocolPlusPath2Urls.put(entry.getKey(), newUrls);
-                        log.info("Detected provider changes with previous: {} and current: {}", oldUrls, newUrls);
-                    }
-                }
-                if (changed && needNotify) {
-                    notificationThreadPool.execute(new NotifyService(entry.getKey(), entry.getValue()));
-                }
+    private void compareResults(String path, List<Url> newProviderUrls, boolean needNotify) {
+        List<Url> oldProviderUrls = path2ProviderUrls.get(path);
+        if (Url.isSame(newProviderUrls, oldProviderUrls)) {
+            log.trace("No provider changes discovered for path: {}", path);
+        } else {
+            log.info("Discovered provider changes of path: {} with previous: {} and current: {}",
+                    path, oldProviderUrls, newProviderUrls);
+            if (needNotify) {
+                updateAndNotify(path, newProviderUrls == null ? Collections.emptyList() : newProviderUrls);
             }
         }
     }
 
     @Override
-    protected void subscribeProviderListener(Url consumerUrl, ProviderListener listener) {
-        addServiceListener(consumerUrl, listener);
-        startListenerThreadIfNewService(consumerUrl);
-    }
-
-    private void addServiceListener(Url consumerUrl, ProviderListener providerListener) {
-        String protocolPlusPath = ConsulUtils.getProtocolPlusPath(consumerUrl);
-        ConcurrentHashMap<Url, ProviderListener> map = serviceListeners.get(protocolPlusPath);
-        if (map == null) {
-            serviceListeners.putIfAbsent(protocolPlusPath, new ConcurrentHashMap<>());
-            map = serviceListeners.get(protocolPlusPath);
-        }
-        synchronized (map) {
-            map.put(consumerUrl, providerListener);
-        }
-    }
-
-    private void startListenerThreadIfNewService(Url url) {
-        if (discoverProviderThread == null) {
-            discoverProviderThread = new DiscoverProviderThread(url.getForm());
-            discoverProviderThread.setDaemon(true);
-            discoverProviderThread.start();
-        }
+    protected void subscribeListener(Url consumerUrl, ConsumerListener listener) {
+        // Leave blank intentionally
     }
 
     @Override
-    protected void unsubscribeProviderListener(Url consumerUrl, ProviderListener listener) {
-        ConcurrentHashMap<Url, ProviderListener> url2ProviderListeners =
-                serviceListeners.get(ConsulUtils.getProtocolPlusPath(consumerUrl));
-        if (url2ProviderListeners != null) {
-            synchronized (url2ProviderListeners) {
-                url2ProviderListeners.remove(consumerUrl);
-            }
-        }
+    protected void unsubscribeListener(Url consumerUrl, ConsumerListener listener) {
+        // Leave blank intentionally
     }
 
     @Override
     public void subscribeAllConsumerChanges(ConsumerProcessable consumerProcessor) {
         consumerChangesMonitorPool.scheduleAtFixedRate(
-                () -> {
-                    getRegisteredConsumerUrls().forEach(url -> {
-                        List<Url> consumerUrls = consulClient.getConsumerUrls(url.getPath());
-                        if (!ConsulUtils.isSame(consumerUrls, path2ConsumerUrls.get(url.getPath()))) {
-                            consumerProcessor.process(getRegistryUrl(), url.getPath(), consumerUrls);
-                            path2ConsumerUrls.put(url.getPath(), consumerUrls);
-                        }
-                    });
-                }, 0, 2, TimeUnit.SECONDS);
+                () -> getRegisteredConsumerUrls().forEach(url -> {
+                    List<Url> consumerUrls = consulClient.getConsumerUrls(url.getPath());
+                    if (!Url.isSame(consumerUrls, path2ConsumerUrls.get(url.getPath()))) {
+                        consumerProcessor.process(getRegistryUrl(), url.getPath(), consumerUrls);
+                        path2ConsumerUrls.put(url.getPath(), consumerUrls);
+                    }
+                }), 0, 2, TimeUnit.SECONDS);
     }
 
 
@@ -246,52 +186,22 @@ public class ConsulRegistry extends AbstractRegistry implements Destroyable {
         return consulClient.getAllProviderUrls();
     }
 
-    protected Url getUrl() {
-        return super.registryUrl;
-    }
-
-    private class NotifyService implements Runnable {
-        private final String    protocolPlusPath;
-        private final List<Url> providerUrls;
-
-        public NotifyService(String protocolPlusPath, List<Url> providerUrls) {
-            this.protocolPlusPath = protocolPlusPath;
-            this.providerUrls = providerUrls;
-        }
-
-        @Override
-        public void run() {
-            ConcurrentHashMap<Url, ProviderListener> listeners = serviceListeners.get(protocolPlusPath);
-            if (listeners != null) {
-                synchronized (listeners) {
-                    for (Map.Entry<Url, ProviderListener> entry : listeners.entrySet()) {
-                        ProviderListener serviceListener = entry.getValue();
-                        serviceListener.onNotify(getUrl(), entry.getKey(), providerUrls);
-                        // Notify all consumers
-                        Optional.ofNullable(consumersListener).ifPresent(l -> l.onNotify(getUrl(), entry.getKey(), providerUrls));
-                    }
-                }
-            } else {
-                log.debug("Can NOT found the listeners with key: {}" + protocolPlusPath);
-            }
-        }
-    }
-
     private class DiscoverProviderThread extends Thread {
-        private final String form;
-
-        public DiscoverProviderThread(String form) {
-            this.form = form;
-        }
 
         @Override
         public void run() {
-            log.info("Start discover providers thread with interval: " + discoverInterval + "ms and form: " + form);
+            log.info("Start discover providers thread with interval: " + discoverInterval + "ms");
             while (true) {
                 try {
                     sleep(discoverInterval);
-                    ConcurrentHashMap<String, List<Url>> protocolPlusPath2Urls = doDiscoverActiveProviders(form);
-                    updateProviderUrlsCache(form, protocolPlusPath2Urls, true);
+                    Map<String, List<Url>> currentPath2ProviderUrls = doDiscoverActiveProviders(null)
+                            .stream()
+                            .collect(Collectors.groupingBy(Url::getPath));
+                    path2ProviderUrls.keySet()
+                            .forEach(path -> compareResults(path, currentPath2ProviderUrls.get(path), true));
+                    CollectionUtils.subtract(currentPath2ProviderUrls.keySet(), path2ProviderUrls.keySet())
+                            .forEach(path -> compareResults(path, currentPath2ProviderUrls.get(path), true));
+
                 } catch (Throwable e) {
                     log.error("Failed to discover providers!", e);
                     try {

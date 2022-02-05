@@ -22,17 +22,17 @@ import java.util.List;
 
 
 /**
- * Listener used to handle the subscribed event to all consumers.
+ * Listener used to handle the subscribed event for all consumers.
  */
 public interface ConsumersListener {
 
     /**
      * Called by the event which is subscribed.
      *
-     * @param registryUrl  registry url
-     * @param consumerUrl  consumer url
-     * @param providerUrls provider urls
+     * @param registryUrl   registry url
+     * @param interfaceName interface name
+     * @param providerUrls  provider urls
      */
-    void onNotify(Url registryUrl, Url consumerUrl, List<Url> providerUrls);
+    void onNotify(Url registryUrl, String interfaceName, List<Url> providerUrls);
 
 }

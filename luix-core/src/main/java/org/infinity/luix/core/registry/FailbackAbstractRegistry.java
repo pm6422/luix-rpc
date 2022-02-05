@@ -21,10 +21,24 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public abstract class FailbackAbstractRegistry extends AbstractRegistry {
 
-    private final Set<Url>                                      failedRegisteredUrl                = new ConcurrentHashSet<>();
-    private final Set<Url>                                      failedDeregisteredUrl              = new ConcurrentHashSet<>();
-    private final Map<Url, ConcurrentHashSet<ConsumerListener>> failedSubscriptionPerConsumerUrl   = new ConcurrentHashMap<>();
-    private final Map<Url, ConcurrentHashSet<ConsumerListener>> failedUnsubscriptionPerConsumerUrl = new ConcurrentHashMap<>();
+    /**
+     * Registration failure provider or consumer urls.
+     */
+    private final Set<Url>                                      registerFailedUrls                     = new ConcurrentHashSet<>();
+    /**
+     * De-registration failure provider or consumer urls.
+     */
+    private final Set<Url>                                      deregisterFailedUrls                   = new ConcurrentHashSet<>();
+    /**
+     * Key: consumer url.
+     * Value: subscription failure listeners.
+     */
+    private final Map<Url, ConcurrentHashSet<ConsumerListener>> consumerUrl2SubscribeFailedListeners   = new ConcurrentHashMap<>();
+    /**
+     * Key: consumer url.
+     * Value: unsubscription failure listeners.
+     */
+    private final Map<Url, ConcurrentHashSet<ConsumerListener>> consumerUrl2UnsubscribeFailedListeners = new ConcurrentHashMap<>();
 
     public FailbackAbstractRegistry(Url registryUrl) {
         super(registryUrl);
@@ -39,24 +53,19 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     private void scheduleRetry(Url registryUrl) {
         long retryInterval = registryUrl.getIntOption(RegistryConstants.RETRY_INTERVAL, RegistryConstants.RETRY_INTERVAL_VAL_DEFAULT);
         // Retry to connect registry at retry interval
-        ScheduledThreadPool.schedulePeriodicalTask(ScheduledThreadPool.RETRY_THREAD_POOL, retryInterval, this::doRetry);
-    }
-
-    /**
-     * Retry registration for failed record
-     */
-    private void doRetry() {
-        doRetryFailedRegistration();
-        doRetryFailedDeregistration();
-        doRetryFailedSubscription();
-        doRetryFailedDesubscription();
+        ScheduledThreadPool.schedulePeriodicalTask(ScheduledThreadPool.RETRY_THREAD_POOL, retryInterval, () -> {
+            doRetryFailedRegistration();
+            doRetryFailedDeregistration();
+            doRetryFailedSubscription();
+            doRetryFailedUnsubscription();
+        });
     }
 
     private void doRetryFailedRegistration() {
-        if (CollectionUtils.isEmpty(failedRegisteredUrl)) {
+        if (CollectionUtils.isEmpty(registerFailedUrls)) {
             return;
         }
-        Iterator<Url> iterator = failedRegisteredUrl.iterator();
+        Iterator<Url> iterator = registerFailedUrls.iterator();
         while (iterator.hasNext()) {
             Url url = iterator.next();
             try {
@@ -70,10 +79,10 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     }
 
     private void doRetryFailedDeregistration() {
-        if (CollectionUtils.isEmpty(failedDeregisteredUrl)) {
+        if (CollectionUtils.isEmpty(deregisterFailedUrls)) {
             return;
         }
-        Iterator<Url> iterator = failedDeregisteredUrl.iterator();
+        Iterator<Url> iterator = deregisterFailedUrls.iterator();
         while (iterator.hasNext()) {
             Url url = iterator.next();
             try {
@@ -87,19 +96,19 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     }
 
     private void doRetryFailedSubscription() {
-        if (MapUtils.isEmpty(failedSubscriptionPerConsumerUrl)) {
+        if (MapUtils.isEmpty(consumerUrl2SubscribeFailedListeners)) {
             return;
         }
         // Do the clean empty value task
-        for (Map.Entry<Url, ConcurrentHashSet<ConsumerListener>> entry : failedSubscriptionPerConsumerUrl.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<ConsumerListener>> entry : consumerUrl2SubscribeFailedListeners.entrySet()) {
             if (CollectionUtils.isEmpty(entry.getValue())) {
-                failedSubscriptionPerConsumerUrl.remove(entry.getKey());
+                consumerUrl2SubscribeFailedListeners.remove(entry.getKey());
             }
         }
-        if (MapUtils.isEmpty(failedSubscriptionPerConsumerUrl)) {
+        if (MapUtils.isEmpty(consumerUrl2SubscribeFailedListeners)) {
             return;
         }
-        for (Map.Entry<Url, ConcurrentHashSet<ConsumerListener>> entry : failedSubscriptionPerConsumerUrl.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<ConsumerListener>> entry : consumerUrl2SubscribeFailedListeners.entrySet()) {
             Url url = entry.getKey();
             Iterator<ConsumerListener> iterator = entry.getValue().iterator();
             while (iterator.hasNext()) {
@@ -116,20 +125,20 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         log.info("Retried to subscribe listener to urls by {}", getRegistryClassName());
     }
 
-    private void doRetryFailedDesubscription() {
-        if (MapUtils.isEmpty(failedUnsubscriptionPerConsumerUrl)) {
+    private void doRetryFailedUnsubscription() {
+        if (MapUtils.isEmpty(consumerUrl2UnsubscribeFailedListeners)) {
             return;
         }
         // Do the clean empty value task
-        for (Map.Entry<Url, ConcurrentHashSet<ConsumerListener>> entry : failedUnsubscriptionPerConsumerUrl.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<ConsumerListener>> entry : consumerUrl2UnsubscribeFailedListeners.entrySet()) {
             if (CollectionUtils.isEmpty(entry.getValue())) {
-                failedUnsubscriptionPerConsumerUrl.remove(entry.getKey());
+                consumerUrl2UnsubscribeFailedListeners.remove(entry.getKey());
             }
         }
-        if (MapUtils.isEmpty(failedUnsubscriptionPerConsumerUrl)) {
+        if (MapUtils.isEmpty(consumerUrl2UnsubscribeFailedListeners)) {
             return;
         }
-        for (Map.Entry<Url, ConcurrentHashSet<ConsumerListener>> entry : failedUnsubscriptionPerConsumerUrl.entrySet()) {
+        for (Map.Entry<Url, ConcurrentHashSet<ConsumerListener>> entry : consumerUrl2UnsubscribeFailedListeners.entrySet()) {
             Url url = entry.getKey();
             Iterator<ConsumerListener> iterator = entry.getValue().iterator();
             while (iterator.hasNext()) {
@@ -154,14 +163,14 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     @Override
     public void register(Url url) {
         Validate.notNull(url, "Url must NOT be null!");
-        failedRegisteredUrl.remove(url);
-        failedDeregisteredUrl.remove(url);
+        registerFailedUrls.remove(url);
+        deregisterFailedUrls.remove(url);
 
         try {
             super.register(url);
         } catch (Exception e) {
             // In some extreme cases, it can cause register failure
-            failedRegisteredUrl.add(url);
+            registerFailedUrls.add(url);
             throw new RpcFrameworkException(MessageFormat.format("Failed to register [{0}] to registry [{1}] by using [{2}]",
                     url, registryUrl, getRegistryClassName()), e);
         }
@@ -175,14 +184,14 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     @Override
     public void deregister(Url url) {
         Validate.notNull(url, "Url must NOT be null!");
-        failedRegisteredUrl.remove(url);
-        failedDeregisteredUrl.remove(url);
+        registerFailedUrls.remove(url);
+        deregisterFailedUrls.remove(url);
 
         try {
             super.deregister(url);
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
-            failedDeregisteredUrl.add(url);
+            deregisterFailedUrls.add(url);
             throw new RpcFrameworkException(
                     MessageFormat.format("Failed to deregister [{0}] from registry [{1}] by using [{2}]",
                             url, registryUrl, getRegistryClassName()), e);
@@ -198,8 +207,8 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      */
     @Override
     public void subscribe(Url consumerUrl, ConsumerListener listener) {
-        Validate.notNull(consumerUrl, "Client url must NOT be null!");
-        Validate.notNull(listener, "Client listener must NOT be null!");
+        Validate.notNull(consumerUrl, "Consumer url must NOT be null!");
+        Validate.notNull(listener, "Consumer listener must NOT be null!");
 
         // Remove failed listener from the local cache before subscribe
         removeFailedListener(consumerUrl, listener);
@@ -209,14 +218,15 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
         } catch (Exception e) {
             log.warn("Exception occurred!", e);
             // Add the failed listener to the local cache if exception occurred in order to retry later
-            List<Url> cachedProviderUrls = super.getCachedProviderUrls(consumerUrl);
+            List<Url> cachedProviderUrls = super.discover(consumerUrl, true);
             if (CollectionUtils.isNotEmpty(cachedProviderUrls)) {
                 // Notify if the cached provider urls not empty
-                listener.onNotify(registryUrl, consumerUrl, cachedProviderUrls);
+                listener.onNotify(registryUrl, consumerUrl.getPath(), cachedProviderUrls);
             }
-            Optional.ofNullable(consumersListener).ifPresent(l -> l.onNotify(registryUrl, consumerUrl, cachedProviderUrls));
+            Optional.ofNullable(consumersListener).ifPresent(l ->
+                    l.onNotify(registryUrl, consumerUrl.getPath(), cachedProviderUrls));
 
-            addToFailedMap(failedSubscriptionPerConsumerUrl, consumerUrl, listener);
+            addToFailedMap(consumerUrl2SubscribeFailedListeners, consumerUrl, listener);
             throw new RpcFrameworkException(
                     MessageFormat.format("Failed to subscribe the listener [{0}] to the client [{1}] " +
                                     "on registry [{2}] by using [{3}]",
@@ -232,41 +242,19 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
      */
     @Override
     public void unsubscribe(Url consumerUrl, ConsumerListener listener) {
-        Validate.notNull(consumerUrl, "Client url must NOT be null!");
-        Validate.notNull(listener, "Client listener must NOT be null!");
+        Validate.notNull(consumerUrl, "Consumer url must NOT be null!");
+        Validate.notNull(listener, "Consumer listener must NOT be null!");
 
         removeFailedListener(consumerUrl, listener);
 
         try {
             super.unsubscribe(consumerUrl, listener);
         } catch (Exception e) {
-            addToFailedMap(failedUnsubscriptionPerConsumerUrl, consumerUrl, listener);
+            addToFailedMap(consumerUrl2UnsubscribeFailedListeners, consumerUrl, listener);
             throw new RpcFrameworkException(
                     MessageFormat.format("Failed to unsubscribe the listener [{0}] from the client [{1}] " +
                                     "on registry [{2}] by using [{3}]",
                             listener, consumerUrl, registryUrl, getRegistryClassName()), e);
-        }
-    }
-
-    /**
-     * Get all the provider urls based on the consumer url
-     *
-     * @param consumerUrl consumer url
-     * @return provider urls
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<Url> discover(Url consumerUrl) {
-        if (consumerUrl == null) {
-            log.warn("Url must NOT be null!");
-            return Collections.EMPTY_LIST;
-        }
-        try {
-            return super.discover(consumerUrl);
-        } catch (Exception e) {
-            log.warn(MessageFormat.format("Failed to discover provider urls with consumer url {0} " +
-                    "on registry [{1}]!", consumerUrl, registryUrl), e);
-            return Collections.EMPTY_LIST;
         }
     }
 
@@ -280,11 +268,11 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     }
 
     private void removeFailedListener(Url consumerUrl, ConsumerListener listener) {
-        Set<ConsumerListener> listeners = failedSubscriptionPerConsumerUrl.get(consumerUrl);
+        Set<ConsumerListener> listeners = consumerUrl2SubscribeFailedListeners.get(consumerUrl);
         if (CollectionUtils.isNotEmpty(listeners)) {
             listeners.remove(listener);
         }
-        listeners = failedUnsubscriptionPerConsumerUrl.get(consumerUrl);
+        listeners = consumerUrl2UnsubscribeFailedListeners.get(consumerUrl);
         if (CollectionUtils.isNotEmpty(listeners)) {
             listeners.remove(listener);
         }

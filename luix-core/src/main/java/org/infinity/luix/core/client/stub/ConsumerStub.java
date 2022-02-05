@@ -253,8 +253,7 @@ public class ConsumerStub<T> {
         if (StringUtils.isEmpty(providerAddresses)) {
             // Non-direct registry
             // Pass service provider invoker to listener, listener will update service invoker after provider urls changed
-            ProviderChangeDiscoveryListener listener = ProviderChangeDiscoveryListener.of(invokerInstance, url.getProtocol(),
-                    interfaceName, form);
+            ProviderChangeDiscoveryListener listener = ProviderChangeDiscoveryListener.of(this.url, invokerInstance);
             for (Url registryUrl : registryUrls) {
                 Registry registry = RegistryFactory.getInstance(registryUrl.getProtocol()).getRegistry(registryUrl);
                 // Subscribe this client listener to all the registries,
@@ -292,8 +291,7 @@ public class ConsumerStub<T> {
     private void notifyDirectProviderUrls(List<Url> globalRegistryUrls,
                                           ConsumersListener consumersListener) {
         // Pass provider service invoker to listener, listener will update service invoker after provider urls changed
-        ProviderChangeDiscoveryListener listener = ProviderChangeDiscoveryListener
-                .of(invokerInstance, protocol, interfaceName, form);
+        ProviderChangeDiscoveryListener listener = ProviderChangeDiscoveryListener.of(this.url, this.invokerInstance);
 
         for (Url globalRegistryUrl : globalRegistryUrls) {
             List<Url> directProviderUrls = createDirectProviderUrls();
@@ -302,11 +300,12 @@ public class ConsumerStub<T> {
             directRegistryUrl.setProtocol(RegistryConstants.REGISTRY_VAL_NONE);
             // 如果有directUrls，直接使用这些directUrls进行初始化，不用到注册中心discover
             // Directly notify the provider urls
-            listener.onNotify(directRegistryUrl, this.url, directProviderUrls);
+            listener.onNotify(directRegistryUrl, this.url.getPath(), directProviderUrls);
             log.info("Notified registries [{}] with direct provider urls {}", directRegistryUrl, directProviderUrls);
 
             // Notify all consumers
-            Optional.ofNullable(consumersListener).ifPresent(l -> l.onNotify(directRegistryUrl, this.url, directProviderUrls));
+            Optional.ofNullable(consumersListener).ifPresent(l ->
+                    l.onNotify(directRegistryUrl, this.url.getPath(), directProviderUrls));
         }
     }
 

@@ -21,48 +21,41 @@ import static org.infinity.luix.core.constant.ProtocolConstants.PROTOCOL_VAL_DEF
 /**
  * todo: see ClusterSupport
  * Listener used to subscribe providers change event,
- * method {@link ProviderChangeDiscoveryListener#onNotify(Url, Url, List)} will be invoked if providers change event occurs.
+ * method {@link ProviderChangeDiscoveryListener#onNotify(Url, String, List)} will be invoked if providers change event occurs.
  */
 @Slf4j
 @ThreadSafe
 public class ProviderChangeDiscoveryListener implements ConsumerListener {
-    protected     ServiceInvoker           serviceInvoker;
-    protected     Protocol                 protocol;
-    protected     String                   interfaceName;
-    protected     String                   form;
+    private       Url                      consumerUrl;
+    private       ServiceInvoker           serviceInvoker;
+    private       Protocol                 protocol;
     private final Map<Url, List<Sendable>> sendersPerRegistryUrl = new ConcurrentHashMap<>();
 
     /**
      * Pass service provider invoker to listener, listener will update service invoker after provider urls changed
      *
      * @param serviceInvoker service invoker
-     * @param protocolName   protocol name
-     * @param interfaceName  interface class name of the consumer
-     * @param form           form
+     * @param consumerUrl    consumer url
      * @return listener listener
      */
-    public static ProviderChangeDiscoveryListener of(ServiceInvoker serviceInvoker,
-                                                     String protocolName,
-                                                     String interfaceName,
-                                                     String form) {
+    public static ProviderChangeDiscoveryListener of(Url consumerUrl, ServiceInvoker serviceInvoker) {
         ProviderChangeDiscoveryListener listener = new ProviderChangeDiscoveryListener();
+        listener.consumerUrl = consumerUrl;
         listener.serviceInvoker = serviceInvoker;
-        listener.protocol = Protocol.getInstance(defaultIfEmpty(protocolName, PROTOCOL_VAL_DEFAULT));
-        listener.interfaceName = interfaceName;
-        listener.form = form;
+        listener.protocol = Protocol.getInstance(defaultIfEmpty(consumerUrl.getProtocol(), PROTOCOL_VAL_DEFAULT));
         return listener;
     }
 
     /**
      * Monitor the providers change event, e.g. child change event for zookeeper
      *
-     * @param registryUrl  registry url
-     * @param consumerUrl  consumer url
-     * @param providerUrls provider urls
+     * @param registryUrl   registry url
+     * @param interfaceName interface name
+     * @param providerUrls  provider urls
      */
     @Override
     @EventReceiver("providersDiscoveryEvent")
-    public synchronized void onNotify(Url registryUrl, Url consumerUrl, List<Url> providerUrls) {
+    public synchronized void onNotify(Url registryUrl, String interfaceName, List<Url> providerUrls) {
         if (CollectionUtils.isEmpty(providerUrls)) {
             log.warn("No active providers found on registry [{}]", registryUrl.getUri());
             removeInactiveRegistry(registryUrl);
@@ -71,13 +64,13 @@ public class ProviderChangeDiscoveryListener implements ConsumerListener {
 
         List<Sendable> newSenders = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
-            if (!providerUrl.getForm().equals(defaultString(form))) {
+            if (!providerUrl.getForm().equals(consumerUrl.getForm())) {
                 continue;
             }
             // Find provider invoker associated with the provider url
             Sendable invoker = findInvokerByProviderUrl(registryUrl, providerUrl);
             if (invoker == null) {
-                invoker = protocol.createRequestSender(interfaceName, providerUrl.copy());
+                invoker = protocol.createRequestSender(consumerUrl.getPath(), providerUrl.copy());
             }
             newSenders.add(invoker);
         }
@@ -121,7 +114,18 @@ public class ProviderChangeDiscoveryListener implements ConsumerListener {
     @Override
     public String toString() {
         return ProviderChangeDiscoveryListener.class.getSimpleName()
-                .concat(":").concat(interfaceName)
-                .concat(":").concat(defaultString(form));
+                .concat(":").concat(consumerUrl.getPath())
+                .concat(":").concat(defaultString(consumerUrl.getForm()));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getClass().getName(), this.consumerUrl.getIdentity());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return Objects.equals(this.getClass().getName(), o.getClass().getName())
+                && Objects.equals(this.consumerUrl.getIdentity(), ((ProviderChangeDiscoveryListener) o).consumerUrl.getIdentity());
     }
 }

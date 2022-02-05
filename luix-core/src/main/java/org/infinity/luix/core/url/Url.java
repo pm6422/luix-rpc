@@ -9,6 +9,7 @@ import org.infinity.luix.core.registry.Registry;
 
 import java.io.Serializable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -80,7 +81,6 @@ public final class Url implements Serializable {
     public static final String PARAM_WEIGHT               = "weights";
     public static final String PARAM_WEIGHT_DEFAULT_VALUE = "";
     public static final String PARAM_ACTIVATED_TIME       = "activatedTime";
-    public static final String PARAM_FROM                 = "form";
 
     /**
      * Prevent instantiation of it outside the class
@@ -183,6 +183,24 @@ public final class Url implements Serializable {
         return of(name, host, port, StringUtils.uncapitalize(Registry.class.getSimpleName()), options);
     }
 
+    /**
+     * Determine whether two lists of URLs are consistent
+     *
+     * @param urls1 URL list 1
+     * @param urls2 URL list 2
+     * @return
+     */
+    public static boolean isSame(List<Url> urls1, List<Url> urls2) {
+        if (urls1 == null && urls2 != null
+                || urls1 != null && urls2 == null
+                || urls1 != null && urls2 != null && urls1.size() != urls2.size()) {
+            return false;
+        }
+        if (urls1 == null || urls2 == null) {
+            return true;
+        }
+        return urls1.containsAll(urls2);
+    }
 
     /**
      * Composition of host + port
@@ -402,6 +420,10 @@ public final class Url implements Serializable {
         return builder.toString();
     }
 
+    public String getType() {
+        return StringUtils.defaultString(getOption(PARAM_TYPE));
+    }
+
     public String getForm() {
         return StringUtils.defaultString(getOption(FORM));
     }
@@ -470,7 +492,7 @@ public final class Url implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(protocol, host, port, path, getForm(), getVersion());
+        return Objects.hash(protocol, host, port, path, getType(), getForm(), getVersion());
     }
 
     @Override
@@ -486,6 +508,7 @@ public final class Url implements Serializable {
                 && Objects.equals(host, url.host)
                 && Objects.equals(port, url.port)
                 && Objects.equals(path, url.path)
+                && Objects.equals(getType(), url.getType())
                 && Objects.equals(getForm(), url.getForm())
                 && Objects.equals(getVersion(), url.getVersion());
     }

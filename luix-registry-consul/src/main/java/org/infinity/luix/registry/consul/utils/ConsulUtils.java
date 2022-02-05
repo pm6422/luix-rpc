@@ -5,13 +5,7 @@ import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.UrlUtils;
 import org.infinity.luix.registry.consul.ConsulService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.infinity.luix.core.url.Url.PARAM_FROM;
-import static org.infinity.luix.core.url.Url.PARAM_TYPE;
-import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_PROTOCOL;
+import static org.infinity.luix.core.constant.ServiceConstants.FORM;
 import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_URL;
 
 public class ConsulUtils {
@@ -43,60 +37,18 @@ public class ConsulUtils {
      * @param url url
      * @return consul service instance ID
      */
-    public static String buildServiceInstanceId(Url url) {
+    public static String buildInstanceId(Url url) {
         StringBuilder sb = new StringBuilder(StringUtils.EMPTY);
         if (url != null) {
             sb.append(url.getPath()).append(CONSUL_SERVICE_INSTANCE_DELIMITER)
                     .append(url.getHost()).append(FORM_DELIMITER).append(url.getPort())
-                    .append(CONSUL_SERVICE_INSTANCE_DELIMITER).append(url.getOption(PARAM_TYPE));
+                    .append(CONSUL_SERVICE_INSTANCE_DELIMITER).append(url.getType());
 
-            if (StringUtils.isNotEmpty(url.getOption(PARAM_FROM))) {
-                sb.append(CONSUL_SERVICE_INSTANCE_DELIMITER).append(url.getOption(PARAM_FROM));
+            if (StringUtils.isNotEmpty(url.getOption(FORM))) {
+                sb.append(CONSUL_SERVICE_INSTANCE_DELIMITER).append(url.getOption(FORM));
             }
         }
         return sb.toString();
-    }
-
-    /**
-     * Extract form name from service name string
-     *
-     * @param serviceName consul service name
-     * @return form name
-     */
-    public static String getFormFromServiceName(String serviceName) {
-        return CONSUL_PROVIDING_SERVICES_PREFIX.equals(serviceName)
-                ? StringUtils.EMPTY
-                : serviceName.substring(CONSUL_PROVIDING_SERVICES_PREFIX.length() + 1);
-    }
-
-    /**
-     * Extract RPC service protocol from consul service tag
-     *
-     * @param consulServiceTag consul service tag
-     * @return RPC service protocol
-     */
-    public static String getProtocolFromTag(String consulServiceTag) {
-        return consulServiceTag.substring(TAG_PREFIX_PROTOCOL.length());
-    }
-
-    /**
-     * Get RPC protocol plus interface name string
-     *
-     * @param url url
-     * @return RPC protocol plus interface name string
-     */
-    public static String getProtocolPlusPath(Url url) {
-        return url.getProtocol() + FORM_DELIMITER + url.getPath();
-    }
-
-    /**
-     * Get path from consul service instance ID
-     *
-     * @param serviceInstanceId consul service instance ID
-     * @return path
-     */
-    public static String getPathFromServiceInstanceId(String serviceInstanceId) {
-        return serviceInstanceId.substring(0, serviceInstanceId.indexOf(CONSUL_SERVICE_INSTANCE_DELIMITER));
     }
 
     /**
@@ -115,36 +67,6 @@ public class ConsulUtils {
                 break;
             }
         }
-
-        if (url == null) {
-            // Get URL from consul service instance ID
-            Map<String, String> params = new HashMap<>(2);
-            params.put(Url.PARAM_FROM, getFormFromServiceName(consulService.getName()));
-            params.put(PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
-
-            String protocol = ConsulUtils.getProtocolFromTag(consulService.getTags().get(0));
-            url = Url.of(protocol, consulService.getAddress(), consulService.getPort(),
-                    ConsulUtils.getPathFromServiceInstanceId(consulService.getInstanceId()), params);
-        }
         return url;
-    }
-
-    /**
-     * Determine whether two lists of URLs are consistent
-     *
-     * @param urls1 URL list 1
-     * @param urls2 URL list 2
-     * @return
-     */
-    public static boolean isSame(List<Url> urls1, List<Url> urls2) {
-        if (urls1 == null && urls2 != null
-                || urls1 != null && urls2 == null
-                || urls1 != null && urls2 != null && urls1.size() != urls2.size()) {
-            return false;
-        }
-        if (urls1 == null || urls2 == null) {
-            return true;
-        }
-        return urls1.containsAll(urls2);
     }
 }

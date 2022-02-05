@@ -2,20 +2,16 @@ package org.infinity.luix.core.registry;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.luix.core.exception.impl.RpcConfigException;
 import org.infinity.luix.core.listener.client.ConsumerListener;
 import org.infinity.luix.core.listener.client.ConsumersListener;
-import org.infinity.luix.core.listener.server.ProviderListener;
-import org.infinity.luix.core.listener.server.impl.CommandProviderListener;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.utilities.annotation.EventPublisher;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
 import org.infinity.luix.utilities.concurrent.NotThreadSafe;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import static org.infinity.luix.core.constant.ProtocolConstants.CODEC;
@@ -29,25 +25,53 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * The registry subclass name
      */
-    private final String                            registryClassName                    = this.getClass().getSimpleName();
+    private final   String                                           registryClassName      = this.getClass().getSimpleName();
     /**
      * Registry url
      */
-    protected     Url                               registryUrl;
+    protected       Url                                              registryUrl;
     /**
      * Registered provider urls cache
      */
-    private final Set<Url>                          registeredProviderUrls               = new ConcurrentHashSet<>();
+    private final   Set<Url>                                         registeredProviderUrls = new ConcurrentHashSet<>();
     /**
      * Registered consumer urls cache
      */
-    private final Set<Url>                          registeredConsumerUrls               = new ConcurrentHashSet<>();
+    private final   Set<Url>                                         registeredConsumerUrls = new ConcurrentHashSet<>();
     /**
-     * Provider urls cache grouped by 'type' parameter value of {@link Url}
+     * Key: path
+     * Value: provider urls
      */
-    private final Map<Url, Map<String, List<Url>>>  providerUrlsPerTypePerConsumerUrl    = new ConcurrentHashMap<>();
-    private final Map<Url, CommandProviderListener> commandServiceListenerPerConsumerUrl = new ConcurrentHashMap<>();
-    protected     ConsumersListener                 consumersListener;
+    protected final Map<String, List<Url>>                           path2ProviderUrls      = new ConcurrentHashMap<>();
+    /**
+     * One consumer can subscribe multiple listeners
+     * Key: path
+     * Value: consumer listeners
+     */
+    protected final Map<String, ConcurrentHashSet<ConsumerListener>> path2Listeners         = new ConcurrentHashMap<>();
+    /**
+     * Provider changes notification thread pool
+     */
+    protected final ThreadPoolExecutor                               notificationThreadPool;
+    /**
+     * Listener used to handle the subscribed event for all consumers
+     */
+    protected       ConsumersListener                                consumersListener;
+
+    public AbstractRegistry(Url registryUrl) {
+        Validate.notNull(registryUrl, "Registry url must NOT be null!");
+        this.registryUrl = registryUrl;
+        this.notificationThreadPool = createNotificationThreadPool();
+    }
+
+    private ThreadPoolExecutor createNotificationThreadPool() {
+        return new ThreadPoolExecutor(10, 30, 30 * 1_000,
+                TimeUnit.MILLISECONDS, createWorkQueue(), new ThreadPoolExecutor.AbortPolicy());
+    }
+
+    private BlockingQueue<Runnable> createWorkQueue() {
+        return new ArrayBlockingQueue<>(20_000);
+    }
 
     /**
      * Get registry instance class name
@@ -87,11 +111,6 @@ public abstract class AbstractRegistry implements Registry {
     @Override
     public Set<Url> getRegisteredConsumerUrls() {
         return registeredConsumerUrls;
-    }
-
-    public AbstractRegistry(Url registryUrl) {
-        Validate.notNull(registryUrl, "Registry url must NOT be null!");
-        this.registryUrl = registryUrl;
     }
 
     @Override
@@ -182,7 +201,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Subscribe the consumer url to specified listener
+     * Subscribe the listener to specified consumer url
      *
      * @param consumerUrl consumer url
      * @param listener    listener
@@ -197,7 +216,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Unsubscribe the url from specified listener
+     * Unsubscribe the listener from specified consumer url
      *
      * @param consumerUrl provider url
      * @param listener    listener
@@ -232,102 +251,102 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * todo: check usage
-     * Get all the provider urls based on the consumer url
+     * Get provider urls from cache or registry based on the consumer url
      *
-     * @param consumerUrl consumer url
+     * @param consumerUrl        consumer url
+     * @param onlyFetchFromCache if true, only fetch from cache
      * @return provider urls
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public List<Url> discover(Url consumerUrl) {
-        if (consumerUrl == null) {
-            log.warn("Url must NOT be null!");
-            return Collections.EMPTY_LIST;
-        }
-        List<Url> results = new ArrayList<>();
-        Map<String, List<Url>> urlsPerType = providerUrlsPerTypePerConsumerUrl.get(consumerUrl);
-        if (MapUtils.isNotEmpty(urlsPerType)) {
-            // Get all the provider urls from cache no matter what the type is
-            results = urlsPerType.values()
-                    .stream()
-                    .flatMap(Collection::stream)
-                    .collect(Collectors.toList());
+    public List<Url> discover(Url consumerUrl, boolean onlyFetchFromCache) {
+        Validate.notNull(consumerUrl, "Consumer url must NOT be null!");
+
+        List<Url> cachedProviderUrls = path2ProviderUrls.get(consumerUrl.getPath());
+        if (CollectionUtils.isNotEmpty(cachedProviderUrls)) {
+            // Get all the provider urls from cache
+            return cachedProviderUrls.stream().map(Url::copy).collect(Collectors.toList());
+        } else if (onlyFetchFromCache) {
+            return Collections.emptyList();
         } else {
-            // Read the provider urls from registry if local cache does not exist
-            List<Url> discoveredUrls = doDiscover(consumerUrl);
-            if (CollectionUtils.isNotEmpty(discoveredUrls)) {
-                // Make a url copy and add to results
-                results = discoveredUrls.stream().map(Url::copy).collect(Collectors.toList());
+            // Discover the provider urls from registry if local cache does not exist
+            List<Url> providerUrls = doDiscover(consumerUrl);
+            if (CollectionUtils.isNotEmpty(providerUrls)) {
+                // Make a copy and add to results
+                return providerUrls.stream().map(Url::copy).collect(Collectors.toList());
             }
+            return Collections.emptyList();
         }
-        return results;
     }
 
     /**
-     * Get provider urls from cache
+     * Discover the provider urls from registry
      *
      * @param consumerUrl consumer url
      * @return provider urls
      */
-    protected List<Url> getCachedProviderUrls(Url consumerUrl) {
-        Map<String, List<Url>> urls = providerUrlsPerTypePerConsumerUrl.get(consumerUrl);
-        if (MapUtils.isEmpty(urls)) {
-            return Collections.emptyList();
+    protected List<Url> doDiscover(Url consumerUrl) {
+        List<Url> providerUrls = discoverProviders(consumerUrl);
+        if (CollectionUtils.isNotEmpty(providerUrls)) {
+            log.info("Discovered the provider urls [{}] for consumer url [{}]", providerUrls, consumerUrl);
+        } else {
+            log.info("No providers found for consumer url [{}]!", consumerUrl);
         }
-        return urls.values()
-                .stream()
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+        return providerUrls;
     }
 
     /**
-     * Group urls by url type parameter, and put it in local cache, then execute the listener
+     * Subscribe the listener to specified consumer url
      *
-     * @param listener     listener
-     * @param consumerUrl  consumer url
+     * @param consumerUrl consumer url
+     * @param listener    client listener
+     */
+    protected void doSubscribe(Url consumerUrl, ConsumerListener listener) {
+        path2Listeners.computeIfAbsent(consumerUrl.getPath(), k -> new ConcurrentHashSet<>()).add(listener);
+
+        subscribeListener(consumerUrl, listener);
+
+        // Discover active providers at subscribe time
+        List<Url> providerUrls = doDiscover(consumerUrl);
+        if (CollectionUtils.isNotEmpty(providerUrls)) {
+            updateAndNotify(consumerUrl.getPath(), providerUrls);
+        }
+        log.info("Subscribed the listener for the consumer url [{}]", consumerUrl);
+    }
+
+    /**
+     * Notify the discovered provider urls to consumers
+     *
+     * @param path         interface name
      * @param providerUrls provider urls
      */
-    protected void notify(ConsumerListener listener, Url consumerUrl, List<Url> providerUrls) {
-        if (listener == null || CollectionUtils.isEmpty(providerUrls)) {
-            return;
-        }
-        // Group urls by type parameter value of url
-        Map<String, List<Url>> providerUrlsPerType = groupUrlsByType(providerUrls);
+    protected void updateAndNotify(String path, List<Url> providerUrls) {
+        notificationThreadPool.execute(() -> {
+            synchronized (path.intern()) {
+                path2ProviderUrls.put(path, providerUrls);
 
-        Map<String, List<Url>> cachedProviderUrlsPerType = providerUrlsPerTypePerConsumerUrl.get(consumerUrl);
-        if (cachedProviderUrlsPerType == null) {
-            cachedProviderUrlsPerType = new ConcurrentHashMap<>();
-            providerUrlsPerTypePerConsumerUrl.putIfAbsent(consumerUrl, cachedProviderUrlsPerType);
-        }
+                if (CollectionUtils.isNotEmpty(path2Listeners.get(path))) {
+                    // Notify to specified consumers
+                    path2Listeners.get(path).forEach(listener -> listener.onNotify(registryUrl, path, providerUrls));
+                }
 
-        // Update urls cache
-        cachedProviderUrlsPerType.putAll(providerUrlsPerType);
-
-        for (Map.Entry<String, List<Url>> entry : providerUrlsPerType.entrySet()) {
-            @EventPublisher("providersDiscoveryEvent")
-            List<Url> providerUrlList = entry.getValue();
-            // Notify specified consumer
-            listener.onNotify(registryUrl, consumerUrl, providerUrlList);
-        }
-        // Notify all consumers
-        Optional.ofNullable(consumersListener).ifPresent(l -> l.onNotify(registryUrl, consumerUrl, providerUrls));
+                // Notify to all consumers
+                Optional.ofNullable(consumersListener).ifPresent(l -> l.onNotify(registryUrl, path, providerUrls));
+            }
+        });
     }
 
     /**
-     * Group urls by type parameter value of url
+     * Unsubscribe the listener from specified consumer url
      *
-     * @param urls urls
-     * @return grouped url per url parameter type
+     * @param consumerUrl consumer url
+     * @param listener    client listener
      */
-    private Map<String, List<Url>> groupUrlsByType(List<Url> urls) {
-        Map<String, List<Url>> urlsPerType = new HashMap<>();
-        for (Url url : urls) {
-            String type = url.getOption(Url.PARAM_TYPE, Url.PARAM_TYPE_PROVIDER);
-            List<Url> urlList = urlsPerType.computeIfAbsent(type, k -> new ArrayList<>());
-            urlList.add(url);
-        }
-        return urlsPerType;
+    protected void doUnsubscribe(Url consumerUrl, ConsumerListener listener) {
+        path2Listeners.computeIfAbsent(consumerUrl.getPath(), k -> new ConcurrentHashSet<>()).remove(listener);
+
+        // Unsubscribe service listener
+        unsubscribeListener(consumerUrl, listener);
+        log.info("Unsubscribed the listener for the consumer url [{}]", consumerUrl);
     }
 
     protected abstract void doRegister(Url url);
@@ -338,88 +357,9 @@ public abstract class AbstractRegistry implements Registry {
 
     protected abstract void doDeactivate(Url url);
 
-    public abstract List<Url> discoverActiveProviders(Url consumerUrl);
+    protected abstract List<Url> discoverProviders(Url consumerUrl);
 
-    /**
-     * It contains the functionality of method subscribeServiceListener and subscribeCommandListener
-     * And execute the listener
-     *
-     * @param consumerUrl consumer url
-     * @param listener    client listener
-     */
-    protected void doSubscribe(Url consumerUrl, ConsumerListener listener) {
-        Url consumerUrlCopy = consumerUrl.copy();
-        // Create a new command service listener or get it from cache
-        CommandProviderListener commandServiceListener = getCommandServiceListener(consumerUrlCopy);
-        // Add client listener to command service listener, and use command service listener to manage listener
-        commandServiceListener.addNotifyListener(listener);
+    protected abstract void subscribeListener(Url consumerUrl, ConsumerListener listener);
 
-        // Trigger onNotify method of commandServiceListener if child change event happens
-        subscribeProviderListener(consumerUrlCopy, commandServiceListener);
-
-        // Discover active providers
-        List<Url> providerUrls = doDiscover(consumerUrlCopy);
-        if (CollectionUtils.isNotEmpty(providerUrls)) {
-            // Notify discovered providers to client side
-            this.notify(listener, consumerUrlCopy, providerUrls);
-        }
-        log.info("Subscribed the listener for the url [{}]", consumerUrl);
-    }
-
-    /**
-     * Get or put command service listener from or to cache
-     *
-     * @param consumerUrl consumer url
-     * @return command service listener
-     */
-    private CommandProviderListener getCommandServiceListener(Url consumerUrl) {
-        CommandProviderListener listener = commandServiceListenerPerConsumerUrl.get(consumerUrl);
-        if (listener == null) {
-            // Pass the specified registry instance to CommandServiceListener, e.g, ZookeeperRegistry
-            listener = new CommandProviderListener(consumerUrl, this);
-            CommandProviderListener commandServiceListener = commandServiceListenerPerConsumerUrl.putIfAbsent(consumerUrl, listener);
-            if (commandServiceListener != null) {
-                // Key exists in map, return old data
-                listener = commandServiceListener;
-            }
-        }
-        return listener;
-    }
-
-    /**
-     * Unsubscribe the service and command listener
-     *
-     * @param consumerUrl consumer url
-     * @param listener    client listener
-     */
-    protected void doUnsubscribe(Url consumerUrl, ConsumerListener listener) {
-        Url urlCopy = consumerUrl.copy();
-        CommandProviderListener commandServiceListener = commandServiceListenerPerConsumerUrl.get(urlCopy);
-        // Remove notify listener from command service listener
-        commandServiceListener.removeNotifyListener(listener);
-        // Unsubscribe service listener
-        unsubscribeProviderListener(urlCopy, commandServiceListener);
-        log.info("Unsubscribed the listener for the url [{}]", consumerUrl);
-    }
-
-    protected abstract void subscribeProviderListener(Url consumerUrl, ProviderListener listener);
-
-    protected abstract void unsubscribeProviderListener(Url consumerUrl, ProviderListener listener);
-
-    /**
-     * Discover the provider or command url
-     *
-     * @param consumerUrl consumer url
-     * @return provider urls
-     */
-    protected List<Url> doDiscover(Url consumerUrl) {
-        Url urlCopy = consumerUrl.copy();
-        List<Url> providerUrls = discoverActiveProviders(urlCopy);
-        if (CollectionUtils.isNotEmpty(providerUrls)) {
-            log.info("Discovered the provider urls [{}] for url [{}]", providerUrls, consumerUrl);
-        } else {
-            log.warn("No RPC service providers found on registry for consumer url [{}]!", consumerUrl);
-        }
-        return providerUrls;
-    }
+    protected abstract void unsubscribeListener(Url consumerUrl, ConsumerListener listener);
 }

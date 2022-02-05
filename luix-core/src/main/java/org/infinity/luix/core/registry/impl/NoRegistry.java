@@ -3,9 +3,8 @@ package org.infinity.luix.core.registry.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.luix.core.listener.client.ConsumerListener;
-import org.infinity.luix.core.listener.server.ProviderListener;
-import org.infinity.luix.core.registry.AbstractRegistry;
 import org.infinity.luix.core.listener.server.ConsumerProcessable;
+import org.infinity.luix.core.registry.AbstractRegistry;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.concurrent.ThreadSafe;
 import org.infinity.luix.utilities.destory.Destroyable;
@@ -50,23 +49,23 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     protected synchronized void doSubscribe(Url consumerUrl, ConsumerListener listener) {
         List<Url> providerUrls = doDiscover(consumerUrl);
         // Notify
-        listener.onNotify(registryUrl, consumerUrl, providerUrls);
+        listener.onNotify(registryUrl, consumerUrl.getPath(), providerUrls);
     }
 
     @Override
     protected synchronized void doUnsubscribe(Url consumerUrl, ConsumerListener listener) {
         List<Url> providerUrls = doDiscover(consumerUrl);
         // Notify
-        listener.onNotify(registryUrl, consumerUrl, providerUrls);
+        listener.onNotify(registryUrl, consumerUrl.getPath(), providerUrls);
     }
 
     @Override
-    protected void subscribeProviderListener(Url consumerUrl, ProviderListener listener) {
+    protected void subscribeListener(Url consumerUrl, ConsumerListener listener) {
         // Do nothing
     }
 
     @Override
-    protected void unsubscribeProviderListener(Url consumerUrl, ProviderListener listener) {
+    protected void unsubscribeListener(Url consumerUrl, ConsumerListener listener) {
         // Do nothing
     }
 
@@ -91,7 +90,7 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
-    public List<Url> discoverActiveProviders(Url consumerUrl) {
+    public List<Url> discoverProviders(Url consumerUrl) {
         return doDiscover(consumerUrl);
     }
 
@@ -102,7 +101,7 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
 
     @Override
     public void subscribeAllConsumerChanges(ConsumerProcessable consumerProcessor) {
-
+        // Do nothing
     }
 
     @Override

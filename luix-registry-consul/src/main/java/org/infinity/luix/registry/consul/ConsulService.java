@@ -22,13 +22,13 @@ public class ConsulService {
      */
     public static       int          TTL                 = 30;
     /**
-     * Tag prefix for RPC protocol.
-     */
-    public static final String       TAG_PREFIX_PROTOCOL = "PROTOCOL";
-    /**
      * Tag prefix for RPC URL.
      */
     public static final String       TAG_PREFIX_URL      = "URL";
+    /**
+     * Tag prefix for RPC path.
+     */
+    public static final String       TAG_PREFIX_PATH     = "PATH";
     /**
      * Consul service name.
      */
@@ -95,7 +95,7 @@ public class ConsulService {
         } else {
             consulService.setName(CONSUL_CONSUMING_SERVICES_PREFIX);
         }
-        consulService.setInstanceId(ConsulUtils.buildServiceInstanceId(url));
+        consulService.setInstanceId(ConsulUtils.buildInstanceId(url));
         consulService.setAddress(url.getHost());
         consulService.setPort(url.getPort());
         consulService.setTags(buildTags(url));
@@ -104,8 +104,8 @@ public class ConsulService {
 
     private static List<String> buildTags(Url url) {
         List<String> tags = new ArrayList<>(2);
-        tags.add(TAG_PREFIX_PROTOCOL + CONSUL_TAG_DELIMITER + url.getProtocol());
         tags.add(TAG_PREFIX_URL + CONSUL_TAG_DELIMITER + UrlUtils.urlEncode(url.toFullStr()));
+        tags.add(TAG_PREFIX_PATH + CONSUL_TAG_DELIMITER + url.getPath());
         return tags;
     }
 }

@@ -14,10 +14,11 @@ public interface Subscribable {
     /**
      * Discover all the provider urls of the consumer, including 'inactive' urls
      *
-     * @param consumerUrl consumer url
+     * @param consumerUrl        consumer url
+     * @param onlyFetchFromCache if true, only fetch from cache
      * @return provider urls
      */
-    List<Url> discover(Url consumerUrl);
+    List<Url> discover(Url consumerUrl, boolean onlyFetchFromCache);
 
     /**
      * Bind a listener to a consumer

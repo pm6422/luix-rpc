@@ -44,7 +44,7 @@ public class RpcProviderProcessImpl implements ConsumersListener {
     private RpcApplicationService    rpcApplicationService;
 
     @Override
-    public void onNotify(Url registryUrl, Url consumerUrl, List<Url> providerUrls) {
+    public void onNotify(Url registryUrl, String interfaceName, List<Url> providerUrls) {
         if (CollectionUtils.isNotEmpty(providerUrls)) {
             log.info("Discovered active providers {}", providerUrls);
             for (Url providerUrl : providerUrls) {
@@ -65,10 +65,10 @@ public class RpcProviderProcessImpl implements ConsumersListener {
                 insertApplication(registryUrl, providerUrl, rpcProvider);
             }
         } else {
-            log.info("Discovered offline providers of [{}]", consumerUrl.getPath());
+            log.info("Discovered offline providers of [{}]", interfaceName);
 
             // Update providers to inactive
-            List<RpcProvider> list = rpcProviderRepository.findByInterfaceName(consumerUrl.getPath());
+            List<RpcProvider> list = rpcProviderRepository.findByInterfaceName(interfaceName);
             if (CollectionUtils.isEmpty(list)) {
                 return;
             }
