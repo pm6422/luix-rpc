@@ -3,12 +3,10 @@ package org.infinity.luix.registry.consul;
 import com.ecwid.consul.v1.ConsulClient;
 import com.ecwid.consul.v1.QueryParams;
 import com.ecwid.consul.v1.Response;
-import com.ecwid.consul.v1.agent.model.Service;
 import com.ecwid.consul.v1.health.HealthServicesRequest;
 import com.ecwid.consul.v1.health.model.HealthService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.registry.consul.utils.ConsulUtils;
@@ -16,12 +14,8 @@ import org.infinity.luix.registry.consul.utils.ConsulUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_CONSUMING_SERVICES_PREFIX;
-import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_PROVIDING_SERVICES_PREFIX;
 
 @Slf4j
 public class ConsulHttpClient {
@@ -59,67 +53,33 @@ public class ConsulHttpClient {
         consulClient.agentCheckFail(SERVICE_INSTANCE_ID_PREFIX + serviceInstanceId);
     }
 
-    public List<Url> getAllProviderUrls() {
-        Response<Map<String, Service>> response = consulClient.getAgentServices();
-        if (response == null || MapUtils.isEmpty(response.getValue())) {
-            return Collections.emptyList();
-        }
-        List<Url> urls = response.getValue().entrySet().stream()
-                .filter(entry -> entry.getValue().getService().startsWith(CONSUL_PROVIDING_SERVICES_PREFIX))
-                .map(entry -> ConsulUtils.buildUrl(ConsulService.of(entry.getValue())))
-                .collect(Collectors.toList());
-        return urls;
+    public List<Url> find(String serviceName) {
+        return find(serviceName, null, null);
     }
 
-    public List<Url> getConsumerUrls(String interfaceName) {
-        Response<Map<String, Service>> response = consulClient.getAgentServices();
-        if (response == null || MapUtils.isEmpty(response.getValue())) {
-            return Collections.emptyList();
-        }
-
-        List<Url> urls = response.getValue().entrySet().stream()
-                .filter(entry -> entry.getValue().getService().startsWith(CONSUL_CONSUMING_SERVICES_PREFIX) &&
-                        entry.getKey().startsWith(interfaceName))
-                .map(entry -> ConsulUtils.buildUrl(ConsulService.of(entry.getValue()))).collect(Collectors.toList());
-        return urls;
+    public List<Url> find(String serviceName, String path) {
+        return find(serviceName, path, null);
     }
 
-    public Response<List<ConsulService>> queryActiveServiceInstances(String serviceName) {
-        return this.queryActiveServiceInstances(serviceName, null);
-    }
-
-    public Response<List<ConsulService>> queryActiveServiceInstances(String serviceName, String path) {
-        HealthServicesRequest request;
-        if (StringUtils.isEmpty(path)) {
-            request = HealthServicesRequest.newBuilder()
-                    .setQueryParams(new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, 0))
-                    .setPassing(true)
-                    .build();
-        } else {
-            request = HealthServicesRequest.newBuilder()
-                    .setQueryParams(new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, 0))
-                    .setPassing(true)
-                    .setTag(path)
-                    .build();
+    public List<Url> find(String serviceName, String path, Boolean active) {
+        HealthServicesRequest.Builder queryBuilder = HealthServicesRequest.newBuilder()
+                .setQueryParams(new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, 0));
+        if (StringUtils.isNotEmpty(path)) {
+            queryBuilder.setTag(path);
         }
-        Response<List<HealthService>> response = consulClient.getHealthServices(serviceName, request);
+        if (active != null) {
+            queryBuilder.setPassing(active);
+        }
+        Response<List<HealthService>> response = consulClient.getHealthServices(serviceName, queryBuilder.build());
         if (response == null) {
-            return null;
+            return Collections.emptyList();
         }
-        List<ConsulService> activeServiceInstances = new ArrayList<>();
+        List<Url> providerUrls = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(response.getValue())) {
-            for (HealthService activeServiceInstance : response.getValue()) {
-                try {
-                    activeServiceInstances.add(ConsulService.of(activeServiceInstance));
-                } catch (Exception e) {
-                    String serviceInstanceId = activeServiceInstance.getService() != null
-                            ? activeServiceInstance.getService().getId()
-                            : null;
-                    log.error("Failed to convert to consul service with ID: [" + serviceInstanceId + "]", e);
-                }
+            for (HealthService serviceInstance : response.getValue()) {
+                Optional.ofNullable(ConsulUtils.buildUrl(serviceInstance)).ifPresent(providerUrls::add);
             }
         }
-        return new Response<>(activeServiceInstances, response.getConsulIndex(),
-                response.isConsulKnownLeader(), response.getConsulLastContact());
+        return providerUrls;
     }
 }

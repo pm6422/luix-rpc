@@ -1,6 +1,5 @@
 package org.infinity.luix.registry.consul;
 
-import com.ecwid.consul.v1.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.core.listener.client.ConsumerListener;
@@ -12,7 +11,6 @@ import org.infinity.luix.utilities.destory.Destroyable;
 import org.infinity.luix.utilities.destory.ShutdownHook;
 
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,8 +22,7 @@ import java.util.stream.Collectors;
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL;
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL_VAL_DEFAULT;
 import static org.infinity.luix.registry.consul.ConsulService.TAG_PREFIX_PATH;
-import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_PROVIDING_SERVICES_PREFIX;
-import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_TAG_DELIMITER;
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.*;
 
 @Slf4j
 @ThreadSafe
@@ -34,11 +31,11 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     /**
      * Consul client
      */
-    private final ConsulHttpClient    consulClient;
+    private final ConsulHttpClient                     consulHttpClient;
     /**
      * Consul service instance status updater
      */
-    private final ConsulStatusUpdater consulStatusUpdater;
+    private final ConsulStatusUpdater                  consulStatusUpdater;
     /**
      * Key: consumer path
      * Value: consumerUrls
@@ -49,10 +46,10 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
      */
     private final ScheduledExecutorService             consumerChangesMonitorPool = Executors.newSingleThreadScheduledExecutor();
 
-    public ConsulRegistry(Url registryUrl, ConsulHttpClient consulClient) {
+    public ConsulRegistry(Url registryUrl, ConsulHttpClient consulHttpClient) {
         super(registryUrl);
-        this.consulClient = consulClient;
-        consulStatusUpdater = new ConsulStatusUpdater(consulClient);
+        this.consulHttpClient = consulHttpClient;
+        consulStatusUpdater = new ConsulStatusUpdater(consulHttpClient);
         consulStatusUpdater.start();
         DiscoverProviderThread discoverProviderThread = new DiscoverProviderThread(
                 this.registryUrl.getIntOption(DISCOVERY_INTERVAL, DISCOVERY_INTERVAL_VAL_DEFAULT));
@@ -65,13 +62,13 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     @Override
     protected void doRegister(Url url) {
         ConsulService service = ConsulService.byUrl(url);
-        consulClient.registerService(service);
+        consulHttpClient.registerService(service);
     }
 
     @Override
     protected void doDeregister(Url url) {
         ConsulService service = ConsulService.byUrl(url);
-        consulClient.deregisterService(service.getInstanceId());
+        consulHttpClient.deregisterService(service.getInstanceId());
     }
 
     @Override
@@ -113,29 +110,12 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     }
 
     private List<Url> doDiscoverActiveProviders(Url consumerUrl) {
-        List<Url> providerUrls = new ArrayList<>();
-        Response<List<ConsulService>> response;
+        List<Url> providerUrls;
         if (consumerUrl != null) {
-            response = consulClient
-                    .queryActiveServiceInstances(CONSUL_PROVIDING_SERVICES_PREFIX,
-                            TAG_PREFIX_PATH + CONSUL_TAG_DELIMITER + consumerUrl.getPath());
+            providerUrls = consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME,
+                    TAG_PREFIX_PATH + CONSUL_TAG_DELIMITER + consumerUrl.getPath());
         } else {
-            response = consulClient
-                    .queryActiveServiceInstances(CONSUL_PROVIDING_SERVICES_PREFIX);
-        }
-        if (response != null) {
-            List<ConsulService> activeServiceInstances = response.getValue();
-            if (CollectionUtils.isNotEmpty(activeServiceInstances)) {
-                for (ConsulService activeServiceInstance : activeServiceInstances) {
-                    providerUrls.add(ConsulUtils.buildUrl(activeServiceInstance));
-                }
-            } else {
-                if (consumerUrl != null) {
-                    log.info("No active providers found on consul registry for consumer url: [{}]", consumerUrl);
-                } else {
-                    log.info("No active providers found on consul registry");
-                }
-            }
+            providerUrls = consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME);
         }
         return providerUrls;
     }
@@ -167,7 +147,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     public void subscribeAllConsumerChanges(ConsumerProcessable consumerProcessor) {
         consumerChangesMonitorPool.scheduleAtFixedRate(
                 () -> getRegisteredConsumerUrls().forEach(url -> {
-                    List<Url> consumerUrls = consulClient.getConsumerUrls(url.getPath());
+                    List<Url> consumerUrls = consulHttpClient.find(CONSUL_CONSUMING_SERVICE_NAME, url.getPath());
                     if (!Url.isSame(consumerUrls, path2ConsumerUrls.get(url.getPath()))) {
                         consumerProcessor.process(getRegistryUrl(), url.getPath(), consumerUrls);
                         path2ConsumerUrls.put(url.getPath(), consumerUrls);
@@ -178,7 +158,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
 
     @Override
     public List<Url> getAllProviderUrls() {
-        return consulClient.getAllProviderUrls();
+        return consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME);
     }
 
     private class DiscoverProviderThread extends Thread {

@@ -91,9 +91,9 @@ public class ConsulService {
     public static ConsulService byUrl(Url url) {
         ConsulService consulService = new ConsulService();
         if (url.isProvider()) {
-            consulService.setName(CONSUL_PROVIDING_SERVICES_PREFIX);
+            consulService.setName(CONSUL_PROVIDING_SERVICE_NAME);
         } else {
-            consulService.setName(CONSUL_CONSUMING_SERVICES_PREFIX);
+            consulService.setName(CONSUL_CONSUMING_SERVICE_NAME);
         }
         consulService.setInstanceId(ConsulUtils.buildInstanceId(url));
         consulService.setAddress(url.getHost());
