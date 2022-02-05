@@ -223,7 +223,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
                 // Notify if the cached provider urls not empty
                 listener.onNotify(registryUrl, consumerUrl.getPath(), cachedProviderUrls);
             }
-            Optional.ofNullable(consumersListener).ifPresent(l ->
+            Optional.ofNullable(globalProviderDiscoveryListener).ifPresent(l ->
                     l.onNotify(registryUrl, consumerUrl.getPath(), cachedProviderUrls));
 
             addToFailedMap(consumerUrl2SubscribeFailedListeners, consumerUrl, listener);

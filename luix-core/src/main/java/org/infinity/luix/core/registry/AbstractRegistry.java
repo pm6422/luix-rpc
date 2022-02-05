@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.luix.core.exception.impl.RpcConfigException;
-import org.infinity.luix.core.listener.client.ProviderDiscoveryListener;
 import org.infinity.luix.core.listener.client.GlobalProviderDiscoveryListener;
+import org.infinity.luix.core.listener.client.ProviderDiscoveryListener;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
 import org.infinity.luix.utilities.concurrent.NotThreadSafe;
@@ -25,38 +25,38 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * The registry subclass name
      */
-    private final   String                                           registryClassName      = this.getClass().getSimpleName();
+    private final   String                                                    registryClassName      = this.getClass().getSimpleName();
     /**
      * Registry url
      */
-    protected       Url                                              registryUrl;
+    protected       Url                                                       registryUrl;
     /**
      * Registered provider urls cache
      */
-    private final   Set<Url>                                         registeredProviderUrls = new ConcurrentHashSet<>();
+    private final   Set<Url>                                                  registeredProviderUrls = new ConcurrentHashSet<>();
     /**
      * Registered consumer urls cache
      */
-    private final   Set<Url>                                         registeredConsumerUrls = new ConcurrentHashSet<>();
+    private final   Set<Url>                                                  registeredConsumerUrls = new ConcurrentHashSet<>();
     /**
      * Key: path
      * Value: provider urls
      */
-    protected final Map<String, List<Url>>                                    path2ProviderUrls = new ConcurrentHashMap<>();
+    protected final Map<String, List<Url>>                                    path2ProviderUrls      = new ConcurrentHashMap<>();
     /**
      * One consumer can subscribe multiple listeners
      * Key: path
      * Value: consumer listeners
      */
-    protected final Map<String, ConcurrentHashSet<ProviderDiscoveryListener>> path2Listeners    = new ConcurrentHashMap<>();
+    protected final Map<String, ConcurrentHashSet<ProviderDiscoveryListener>> path2Listeners         = new ConcurrentHashMap<>();
     /**
      * Provider changes notification thread pool
      */
-    protected final ThreadPoolExecutor              notificationThreadPool;
+    protected final ThreadPoolExecutor                                        notificationThreadPool;
     /**
      * Listener used to handle the subscribed event for all consumers
      */
-    protected       GlobalProviderDiscoveryListener consumersListener;
+    protected       GlobalProviderDiscoveryListener                           globalProviderDiscoveryListener;
 
     public AbstractRegistry(Url registryUrl) {
         Validate.notNull(registryUrl, "Registry url must NOT be null!");
@@ -237,7 +237,7 @@ public abstract class AbstractRegistry implements Registry {
      */
     @Override
     public void subscribe(GlobalProviderDiscoveryListener listener) {
-        this.consumersListener = listener;
+        this.globalProviderDiscoveryListener = listener;
     }
 
     /**
@@ -247,7 +247,7 @@ public abstract class AbstractRegistry implements Registry {
      */
     @Override
     public void unsubscribe(GlobalProviderDiscoveryListener listener) {
-        this.consumersListener = null;
+        this.globalProviderDiscoveryListener = null;
     }
 
     /**
@@ -334,7 +334,7 @@ public abstract class AbstractRegistry implements Registry {
                 }
 
                 // Notify to all consumers
-                Optional.ofNullable(consumersListener).ifPresent(l -> l.onNotify(registryUrl, path, providerUrls));
+                Optional.ofNullable(globalProviderDiscoveryListener).ifPresent(l -> l.onNotify(registryUrl, path, providerUrls));
             }
         });
     }
@@ -349,7 +349,7 @@ public abstract class AbstractRegistry implements Registry {
         ConcurrentHashSet<ProviderDiscoveryListener> listeners = path2Listeners.get(consumerUrl.getPath());
         if (listeners != null) {
             listeners.remove(listener);
-            if(listeners.isEmpty()) {
+            if (listeners.isEmpty()) {
                 path2Listeners.remove(consumerUrl.getPath());
             }
         }
