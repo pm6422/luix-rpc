@@ -37,7 +37,7 @@ public interface Subscribable {
     void unsubscribe(Url consumerUrl, ProviderDiscoveryListener listener);
 
     /**
-     * Bind a listener for all consumers
+     * Bind a global listener for all consumers
      *
      * @param listener consumer listener
      */
@@ -51,10 +51,10 @@ public interface Subscribable {
     void unsubscribe(GlobalProviderDiscoveryListener listener);
 
     /**
-     * Subscribe consumer changes processor
+     * Bind a global listener for all consumers
      *
-     * @param consumerProcessor consumer changes processor
+     * @param listener consumer listener
      */
-    void subscribeAllConsumerChanges(GlobalConsumerDiscoveryListener consumerProcessor);
+    void subscribe(GlobalConsumerDiscoveryListener listener);
 
 }

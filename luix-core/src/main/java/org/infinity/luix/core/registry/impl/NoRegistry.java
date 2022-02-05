@@ -100,7 +100,7 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
-    public void subscribeAllConsumerChanges(GlobalConsumerDiscoveryListener consumerProcessor) {
+    public void subscribe(GlobalConsumerDiscoveryListener listener) {
         // Do nothing
     }
 

@@ -41,9 +41,9 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
     @Resource
     private LuixProperties                  luixProperties;
     @Resource
-    private GlobalConsumerDiscoveryListener consumerProcessService;
+    private GlobalConsumerDiscoveryListener globalConsumerDiscoveryListener;
     @Resource
-    private GlobalProviderDiscoveryListener consumersListener;
+    private GlobalProviderDiscoveryListener globalProviderDiscoveryListener;
 
     /**
      * {@link org.springframework.beans.factory.InitializingBean#afterPropertiesSet()} execute too earlier
@@ -62,7 +62,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                 REGISTRY_CONFIG_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig);
                 REGISTRIES.add(new RpcRegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
 
-                registryConfig.getRegistryImpl().subscribe(consumersListener);
+                registryConfig.getRegistryImpl().subscribe(globalProviderDiscoveryListener);
 
                 List<Url> allProviderUrls = registryConfig.getRegistryImpl().getAllProviderUrls();
                 allProviderUrls.forEach(url -> {
@@ -86,7 +86,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                 });
 
                 // Register consumer changes processor
-                registryConfig.getRegistryImpl().subscribeAllConsumerChanges(consumerProcessService);
+                registryConfig.getRegistryImpl().subscribe(globalConsumerDiscoveryListener);
             });
         } catch (Exception e) {
             log.error("Failed to create consumer stub!", e);

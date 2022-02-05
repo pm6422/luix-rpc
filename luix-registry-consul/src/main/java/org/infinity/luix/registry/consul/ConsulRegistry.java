@@ -138,7 +138,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     }
 
     @Override
-    public void subscribeAllConsumerChanges(GlobalConsumerDiscoveryListener globalConsumerDiscoveryListener) {
+    public void subscribe(GlobalConsumerDiscoveryListener listener) {
         consumerChangesMonitorPool.scheduleAtFixedRate(
                 () -> {
                     Map<String, List<Url>> currentPath2ConsumerUrls =
@@ -151,7 +151,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
                                 List<Url> oldConsumerUrls = path2ConsumerUrls.get(path);
                                 List<Url> newConsumerUrls = currentPath2ConsumerUrls.get(path);
                                 if (!Url.isSame(newConsumerUrls, oldConsumerUrls)) {
-                                    globalConsumerDiscoveryListener.onNotify(getRegistryUrl(), path, newConsumerUrls);
+                                    listener.onNotify(getRegistryUrl(), path, newConsumerUrls);
                                     path2ConsumerUrls.put(path, newConsumerUrls);
                                 }
                             });
