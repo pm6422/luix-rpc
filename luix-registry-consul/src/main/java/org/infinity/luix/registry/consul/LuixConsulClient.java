@@ -28,15 +28,11 @@ public class LuixConsulClient {
     /**
      * Consul query timeout in seconds
      */
-    public static        long         CONSUL_QUERY_TIMEOUT_SECONDS   = TimeUnit.MINUTES.toSeconds(9);
-    /**
-     * Command key prefix
-     */
-    public static final  String       CONSUL_LUIX_COMMAND_KEY_PREFIX = "luix/command/";
+    public static        long         CONSUL_QUERY_TIMEOUT_SECONDS = TimeUnit.MINUTES.toSeconds(9);
     /**
      * Service instance ID prefix
      */
-    private static final String       SERVICE_INSTANCE_ID_PREFIX     = "service:";
+    private static final String       SERVICE_INSTANCE_ID_PREFIX   = "service:";
     /**
      * Consul client instance
      */
@@ -93,9 +89,9 @@ public class LuixConsulClient {
         return this.queryActiveServiceInstances(serviceName, null);
     }
 
-    public Response<List<ConsulService>> queryActiveServiceInstances(String serviceName, String tag) {
+    public Response<List<ConsulService>> queryActiveServiceInstances(String serviceName, String path) {
         HealthServicesRequest request;
-        if (StringUtils.isEmpty(tag)) {
+        if (StringUtils.isEmpty(path)) {
             request = HealthServicesRequest.newBuilder()
                     .setQueryParams(new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, 0))
                     .setPassing(true)
@@ -104,7 +100,7 @@ public class LuixConsulClient {
             request = HealthServicesRequest.newBuilder()
                     .setQueryParams(new QueryParams(CONSUL_QUERY_TIMEOUT_SECONDS, 0))
                     .setPassing(true)
-                    .setTag(tag)
+                    .setTag(path)
                     .build();
         }
         Response<List<HealthService>> response = consulClient.getHealthServices(serviceName, request);
