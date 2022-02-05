@@ -2,8 +2,8 @@ package org.infinity.luix.core.registry.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.infinity.luix.core.listener.client.ProviderDiscoveryListener;
-import org.infinity.luix.core.listener.client.GlobalConsumerDiscoveryListener;
+import org.infinity.luix.core.listener.ProviderDiscoveryListener;
+import org.infinity.luix.core.listener.GlobalConsumerDiscoveryListener;
 import org.infinity.luix.core.registry.AbstractRegistry;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.concurrent.ThreadSafe;

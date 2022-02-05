@@ -1,10 +1,10 @@
-package org.infinity.luix.core.listener.client.impl;
+package org.infinity.luix.core.listener.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.core.client.invoker.ServiceInvoker;
 import org.infinity.luix.core.client.sender.Sendable;
-import org.infinity.luix.core.listener.client.ProviderDiscoveryListener;
+import org.infinity.luix.core.listener.ProviderDiscoveryListener;
 import org.infinity.luix.core.protocol.Protocol;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.annotation.EventReceiver;

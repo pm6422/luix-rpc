@@ -1,4 +1,4 @@
-package org.infinity.luix.core.listener.client;
+package org.infinity.luix.core.listener;
 
 import org.infinity.luix.core.url.Url;
 

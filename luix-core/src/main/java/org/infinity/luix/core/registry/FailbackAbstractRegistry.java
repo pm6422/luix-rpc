@@ -6,7 +6,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
 import org.infinity.luix.core.constant.RegistryConstants;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
-import org.infinity.luix.core.listener.client.ProviderDiscoveryListener;
+import org.infinity.luix.core.listener.ProviderDiscoveryListener;
 import org.infinity.luix.core.thread.ScheduledThreadPool;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;

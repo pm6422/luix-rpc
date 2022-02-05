@@ -4,7 +4,7 @@ import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.infinity.luix.core.config.impl.ConsumerConfig;
 import org.infinity.luix.core.config.impl.ProtocolConfig;
 import org.infinity.luix.core.config.impl.RegistryConfig;
-import org.infinity.luix.core.listener.client.GlobalProviderDiscoveryListener;
+import org.infinity.luix.core.listener.GlobalProviderDiscoveryListener;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 

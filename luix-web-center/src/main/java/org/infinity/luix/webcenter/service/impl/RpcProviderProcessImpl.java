@@ -2,7 +2,7 @@ package org.infinity.luix.webcenter.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.luix.core.listener.client.GlobalProviderDiscoveryListener;
+import org.infinity.luix.core.listener.GlobalProviderDiscoveryListener;
 import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.webcenter.domain.RpcApplication;

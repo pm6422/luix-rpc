@@ -1,8 +1,8 @@
 package org.infinity.luix.core.subscribe;
 
-import org.infinity.luix.core.listener.client.GlobalConsumerDiscoveryListener;
-import org.infinity.luix.core.listener.client.GlobalProviderDiscoveryListener;
-import org.infinity.luix.core.listener.client.ProviderDiscoveryListener;
+import org.infinity.luix.core.listener.GlobalConsumerDiscoveryListener;
+import org.infinity.luix.core.listener.GlobalProviderDiscoveryListener;
+import org.infinity.luix.core.listener.ProviderDiscoveryListener;
 import org.infinity.luix.core.url.Url;
 
 import java.util.List;

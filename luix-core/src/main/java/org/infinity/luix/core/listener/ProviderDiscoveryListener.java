@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package org.infinity.luix.core.listener.client;
+package org.infinity.luix.core.listener;
 
 import org.infinity.luix.core.url.Url;
 
@@ -22,9 +22,9 @@ import java.util.List;
 
 
 /**
- * Listener used to handle the subscribed event for all consumers.
+ * Listener used to handle the subscribed event to one consumer.
  */
-public interface GlobalProviderDiscoveryListener {
+public interface ProviderDiscoveryListener {
 
     /**
      * Called by the event which is subscribed.
