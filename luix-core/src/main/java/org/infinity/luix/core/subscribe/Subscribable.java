@@ -1,8 +1,8 @@
 package org.infinity.luix.core.subscribe;
 
-import org.infinity.luix.core.listener.client.ProviderDiscoveryListener;
-import org.infinity.luix.core.listener.client.GlobalProviderDiscoveryListener;
 import org.infinity.luix.core.listener.client.GlobalConsumerDiscoveryListener;
+import org.infinity.luix.core.listener.client.GlobalProviderDiscoveryListener;
+import org.infinity.luix.core.listener.client.ProviderDiscoveryListener;
 import org.infinity.luix.core.url.Url;
 
 import java.util.List;
@@ -21,39 +21,39 @@ public interface Subscribable {
     List<Url> discover(Url consumerUrl, boolean onlyFetchFromCache);
 
     /**
-     * Bind a listener to a consumer
+     * Bind a listener to a subscriber
      *
      * @param consumerUrl consumer url
-     * @param listener    consumer listener
+     * @param listener    listener
      */
     void subscribe(Url consumerUrl, ProviderDiscoveryListener listener);
 
     /**
-     * Unbind a listener from a consumer
+     * Unbind a listener from a subscriber
      *
      * @param consumerUrl consumer url
-     * @param listener    consumer listener
+     * @param listener    listener
      */
     void unsubscribe(Url consumerUrl, ProviderDiscoveryListener listener);
 
     /**
-     * Bind a global listener for all consumers
+     * Bind a global listener for all subscribers
      *
-     * @param listener consumer listener
+     * @param listener listener
      */
     void subscribe(GlobalProviderDiscoveryListener listener);
 
     /**
-     * Unbind a listener for all consumers
+     * Unbind a listener for all subscribers
      *
-     * @param listener consumer listener
+     * @param listener listener
      */
     void unsubscribe(GlobalProviderDiscoveryListener listener);
 
     /**
-     * Bind a global listener for all consumers
+     * Bind a global listener for all subscribers
      *
-     * @param listener consumer listener
+     * @param listener listener
      */
     void subscribe(GlobalConsumerDiscoveryListener listener);
 
