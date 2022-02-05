@@ -140,13 +140,22 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     @Override
     public void subscribeAllConsumerChanges(ConsumerProcessable consumerProcessor) {
         consumerChangesMonitorPool.scheduleAtFixedRate(
-                () -> getRegisteredConsumerUrls().forEach(url -> {
-                    List<Url> consumerUrls = consulHttpClient.find(CONSUL_CONSUMING_SERVICE_NAME, url.getPath());
-                    if (!Url.isSame(consumerUrls, path2ConsumerUrls.get(url.getPath()))) {
-                        consumerProcessor.process(getRegistryUrl(), url.getPath(), consumerUrls);
-                        path2ConsumerUrls.put(url.getPath(), consumerUrls);
-                    }
-                }), 0, 2, TimeUnit.SECONDS);
+                () -> {
+                    Map<String, List<Url>> currentPath2ConsumerUrls =
+                            consulHttpClient.find(CONSUL_CONSUMING_SERVICE_NAME)
+                                    .stream()
+                                    .collect(Collectors.groupingBy(Url::getPath));
+
+                    CollectionUtils.union(currentPath2ConsumerUrls.keySet(), path2ConsumerUrls.keySet())
+                            .forEach(path -> {
+                                List<Url> oldConsumerUrls = path2ConsumerUrls.get(path);
+                                List<Url> newConsumerUrls = currentPath2ConsumerUrls.get(path);
+                                if (!Url.isSame(newConsumerUrls, oldConsumerUrls)) {
+                                    consumerProcessor.process(getRegistryUrl(), path, newConsumerUrls);
+                                    path2ConsumerUrls.put(path, newConsumerUrls);
+                                }
+                            });
+                }, 0, 2, TimeUnit.SECONDS);
     }
 
     private class DiscoverProviderThread extends Thread {
