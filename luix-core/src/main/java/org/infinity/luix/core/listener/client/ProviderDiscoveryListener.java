@@ -22,9 +22,9 @@ import java.util.List;
 
 
 /**
- * Listener used to handle the subscribed event for all consumers.
+ * Listener used to handle the subscribed event to one consumer.
  */
-public interface ConsumersListener {
+public interface ProviderDiscoveryListener {
 
     /**
      * Called by the event which is subscribed.

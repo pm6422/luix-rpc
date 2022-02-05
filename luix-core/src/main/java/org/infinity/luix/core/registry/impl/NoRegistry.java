@@ -2,8 +2,8 @@ package org.infinity.luix.core.registry.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.infinity.luix.core.listener.client.ConsumerListener;
-import org.infinity.luix.core.listener.server.ConsumerProcessable;
+import org.infinity.luix.core.listener.client.ProviderDiscoveryListener;
+import org.infinity.luix.core.listener.client.GlobalConsumerDiscoveryListener;
 import org.infinity.luix.core.registry.AbstractRegistry;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.concurrent.ThreadSafe;
@@ -46,26 +46,26 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
-    protected synchronized void doSubscribe(Url consumerUrl, ConsumerListener listener) {
+    protected synchronized void doSubscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
         List<Url> providerUrls = doDiscover(consumerUrl);
         // Notify
         listener.onNotify(registryUrl, consumerUrl.getPath(), providerUrls);
     }
 
     @Override
-    protected synchronized void doUnsubscribe(Url consumerUrl, ConsumerListener listener) {
+    protected synchronized void doUnsubscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
         List<Url> providerUrls = doDiscover(consumerUrl);
         // Notify
         listener.onNotify(registryUrl, consumerUrl.getPath(), providerUrls);
     }
 
     @Override
-    protected void subscribeListener(Url consumerUrl, ConsumerListener listener) {
+    protected void subscribeListener(Url consumerUrl, ProviderDiscoveryListener listener) {
         // Do nothing
     }
 
     @Override
-    protected void unsubscribeListener(Url consumerUrl, ConsumerListener listener) {
+    protected void unsubscribeListener(Url consumerUrl, ProviderDiscoveryListener listener) {
         // Do nothing
     }
 
@@ -100,7 +100,7 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
-    public void subscribeAllConsumerChanges(ConsumerProcessable consumerProcessor) {
+    public void subscribeAllConsumerChanges(GlobalConsumerDiscoveryListener consumerProcessor) {
         // Do nothing
     }
 

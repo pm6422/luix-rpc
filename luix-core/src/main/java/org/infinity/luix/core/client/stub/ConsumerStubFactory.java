@@ -4,7 +4,7 @@ import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.infinity.luix.core.config.impl.ConsumerConfig;
 import org.infinity.luix.core.config.impl.ProtocolConfig;
 import org.infinity.luix.core.config.impl.RegistryConfig;
-import org.infinity.luix.core.listener.client.ConsumersListener;
+import org.infinity.luix.core.listener.client.GlobalProviderDiscoveryListener;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
@@ -45,7 +45,7 @@ public abstract class ConsumerStubFactory {
                                          RegistryConfig registryConfig,
                                          ProtocolConfig protocolConfig,
                                          String interfaceName,
-                                         ConsumersListener consumersListener) {
+                                         GlobalProviderDiscoveryListener consumersListener) {
         return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), null, interfaceName,
                 null, null, null, null, null, null, null, null,
                 null, null, consumersListener);
@@ -56,7 +56,7 @@ public abstract class ConsumerStubFactory {
                                          ProtocolConfig protocolConfig,
                                          String interfaceName,
                                          String form,
-                                         ConsumersListener consumersListener) {
+                                         GlobalProviderDiscoveryListener consumersListener) {
         return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), null, interfaceName,
                 null, null, form, null, null, null, null, null,
                 null, null, consumersListener);
@@ -155,7 +155,7 @@ public abstract class ConsumerStubFactory {
                                          String version,
                                          Integer requestTimeout,
                                          Integer retryCount,
-                                         ConsumersListener consumersListener) {
+                                         GlobalProviderDiscoveryListener consumersListener) {
         return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), providerAddresses, interfaceName,
                 null, null, form, version, null, null, null, null,
                 requestTimeout, retryCount, consumersListener);
@@ -171,7 +171,7 @@ public abstract class ConsumerStubFactory {
                                          String version,
                                          Integer requestTimeout,
                                          Integer retryCount,
-                                         ConsumersListener consumersListener) {
+                                         GlobalProviderDiscoveryListener consumersListener) {
         return create(applicationConfig, registryConfig, protocolConfig, new ConsumerConfig(), providerAddresses, interfaceName,
                 null, serializer, form, version, null, null, null, null,
                 requestTimeout, retryCount, consumersListener);
@@ -188,7 +188,7 @@ public abstract class ConsumerStubFactory {
                                          String version,
                                          Integer requestTimeout,
                                          Integer retryCount,
-                                         ConsumersListener consumersListener) {
+                                         GlobalProviderDiscoveryListener consumersListener) {
         return create(applicationConfig, registryConfig, protocolConfig, consumerConfig, providerAddresses, interfaceName,
                 null, serializer, form, version, null, null, null, null,
                 requestTimeout, retryCount, consumersListener);
@@ -210,7 +210,7 @@ public abstract class ConsumerStubFactory {
                                          String proxyFactory,
                                          Integer requestTimeout,
                                          Integer retryCount,
-                                         ConsumersListener consumersListener) {
+                                         GlobalProviderDiscoveryListener consumersListener) {
         ConsumerStub<?> consumerStub = new ConsumerStub<>();
         consumerStub.setProviderAddresses(providerAddresses);
         consumerStub.setInterfaceName(interfaceName);

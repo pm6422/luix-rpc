@@ -13,7 +13,7 @@ import org.infinity.luix.core.config.impl.ApplicationConfig;
 import org.infinity.luix.core.config.impl.ProtocolConfig;
 import org.infinity.luix.core.config.impl.RegistryConfig;
 import org.infinity.luix.core.constant.*;
-import org.infinity.luix.core.listener.client.ConsumersListener;
+import org.infinity.luix.core.listener.client.GlobalProviderDiscoveryListener;
 import org.infinity.luix.core.listener.client.impl.ProviderChangeDiscoveryListener;
 import org.infinity.luix.core.registry.Registry;
 import org.infinity.luix.core.registry.RegistryFactory;
@@ -206,7 +206,7 @@ public class ConsumerStub<T> {
      * @param consumersListener provider processor
      */
     public void subscribeProviders(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
-                                   RegistryConfig registry, ConsumersListener consumersListener) {
+                                   RegistryConfig registry, GlobalProviderDiscoveryListener consumersListener) {
         subscribeProviders(applicationConfig, protocolConfig, Collections.singleton(registry), consumersListener);
     }
 
@@ -232,7 +232,7 @@ public class ConsumerStub<T> {
      * @param consumersListener provider processor
      */
     public void subscribeProviders(ApplicationConfig applicationConfig, ProtocolConfig protocolConfig,
-                                   Collection<RegistryConfig> registries, ConsumersListener consumersListener) {
+                                   Collection<RegistryConfig> registries, GlobalProviderDiscoveryListener consumersListener) {
         List<Url> registryUrls = registries
                 .stream()
                 .map(RegistryConfig::getRegistryUrl)
@@ -289,7 +289,7 @@ public class ConsumerStub<T> {
     }
 
     private void notifyDirectProviderUrls(List<Url> globalRegistryUrls,
-                                          ConsumersListener consumersListener) {
+                                          GlobalProviderDiscoveryListener consumersListener) {
         // Pass provider service invoker to listener, listener will update service invoker after provider urls changed
         ProviderChangeDiscoveryListener listener = ProviderChangeDiscoveryListener.of(this.url, this.invokerInstance);
 

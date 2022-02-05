@@ -2,8 +2,8 @@ package org.infinity.luix.registry.consul;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.luix.core.listener.client.ConsumerListener;
-import org.infinity.luix.core.listener.server.ConsumerProcessable;
+import org.infinity.luix.core.listener.client.ProviderDiscoveryListener;
+import org.infinity.luix.core.listener.client.GlobalConsumerDiscoveryListener;
 import org.infinity.luix.core.registry.FailbackAbstractRegistry;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.registry.consul.utils.ConsulUtils;
@@ -123,12 +123,12 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     }
 
     @Override
-    protected void subscribeListener(Url consumerUrl, ConsumerListener listener) {
+    protected void subscribeListener(Url consumerUrl, ProviderDiscoveryListener listener) {
         // Leave blank intentionally
     }
 
     @Override
-    protected void unsubscribeListener(Url consumerUrl, ConsumerListener listener) {
+    protected void unsubscribeListener(Url consumerUrl, ProviderDiscoveryListener listener) {
         // Leave blank intentionally
     }
 
@@ -138,7 +138,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     }
 
     @Override
-    public void subscribeAllConsumerChanges(ConsumerProcessable consumerProcessor) {
+    public void subscribeAllConsumerChanges(GlobalConsumerDiscoveryListener consumerProcessor) {
         consumerChangesMonitorPool.scheduleAtFixedRate(
                 () -> {
                     Map<String, List<Url>> currentPath2ConsumerUrls =
@@ -151,7 +151,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
                                 List<Url> oldConsumerUrls = path2ConsumerUrls.get(path);
                                 List<Url> newConsumerUrls = currentPath2ConsumerUrls.get(path);
                                 if (!Url.isSame(newConsumerUrls, oldConsumerUrls)) {
-                                    consumerProcessor.process(getRegistryUrl(), path, newConsumerUrls);
+                                    consumerProcessor.onNotify(getRegistryUrl(), path, newConsumerUrls);
                                     path2ConsumerUrls.put(path, newConsumerUrls);
                                 }
                             });

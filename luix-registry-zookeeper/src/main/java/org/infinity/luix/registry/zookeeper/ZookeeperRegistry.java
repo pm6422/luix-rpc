@@ -10,7 +10,7 @@
 //import org.apache.commons.lang3.Validate;
 //import org.apache.zookeeper.Watcher;
 //import org.infinity.luix.core.exception.impl.RpcFrameworkException;
-//import org.infinity.luix.core.listener.server.ConsumerProcessable;
+//import org.infinity.luix.core.listener.client.ConsumerProcessable;
 //import org.infinity.luix.core.listener.server.ProviderListener;
 //import org.infinity.luix.core.registry.FailbackAbstractRegistry;
 //import org.infinity.luix.core.url.Url;

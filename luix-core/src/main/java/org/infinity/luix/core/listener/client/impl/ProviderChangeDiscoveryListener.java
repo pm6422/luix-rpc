@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.core.client.invoker.ServiceInvoker;
 import org.infinity.luix.core.client.sender.Sendable;
-import org.infinity.luix.core.listener.client.ConsumerListener;
+import org.infinity.luix.core.listener.client.ProviderDiscoveryListener;
 import org.infinity.luix.core.protocol.Protocol;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.annotation.EventReceiver;
@@ -25,7 +25,7 @@ import static org.infinity.luix.core.constant.ProtocolConstants.PROTOCOL_VAL_DEF
  */
 @Slf4j
 @ThreadSafe
-public class ProviderChangeDiscoveryListener implements ConsumerListener {
+public class ProviderChangeDiscoveryListener implements ProviderDiscoveryListener {
     private       Url                      consumerUrl;
     private       ServiceInvoker           serviceInvoker;
     private       Protocol                 protocol;

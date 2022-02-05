@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.webcenter.domain.RpcServer;
 import org.infinity.luix.core.server.buildin.BuildInService;
-import org.infinity.luix.core.listener.server.ConsumerProcessable;
+import org.infinity.luix.core.listener.client.GlobalConsumerDiscoveryListener;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.webcenter.domain.RpcApplication;
 import org.infinity.luix.webcenter.domain.RpcConsumer;
@@ -26,7 +26,7 @@ import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 
 @Service
 @Slf4j
-public class RpcConsumerProcessImpl implements ConsumerProcessable {
+public class RpcGlobalConsumerProcessImpl implements GlobalConsumerDiscoveryListener {
 
     @Resource
     private RpcConsumerRepository    rpcConsumerRepository;
@@ -44,7 +44,7 @@ public class RpcConsumerProcessImpl implements ConsumerProcessable {
     private RpcApplicationService    rpcApplicationService;
 
     @Override
-    public void process(Url registryUrl, String interfaceName, List<Url> consumerUrls) {
+    public void onNotify(Url registryUrl, String interfaceName, List<Url> consumerUrls) {
         if (CollectionUtils.isNotEmpty(consumerUrls)) {
             log.info("Discovered active consumers {}", consumerUrls);
             for (Url consumerUrl : consumerUrls) {

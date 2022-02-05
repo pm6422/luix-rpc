@@ -9,8 +9,8 @@ import org.infinity.luix.core.client.stub.ConsumerStub;
 import org.infinity.luix.core.client.stub.ConsumerStubFactory;
 import org.infinity.luix.core.client.stub.ConsumerStubHolder;
 import org.infinity.luix.core.config.impl.RegistryConfig;
-import org.infinity.luix.core.listener.client.ConsumersListener;
-import org.infinity.luix.core.listener.server.ConsumerProcessable;
+import org.infinity.luix.core.listener.client.GlobalProviderDiscoveryListener;
+import org.infinity.luix.core.listener.client.GlobalConsumerDiscoveryListener;
 import org.infinity.luix.core.registry.Registry;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.spring.boot.config.LuixProperties;
@@ -39,11 +39,11 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
     private static final Map<String, RegistryConfig> REGISTRY_CONFIG_MAP = new ConcurrentHashMap<>();
     private static final List<RpcRegistryDTO>        REGISTRIES          = new ArrayList<>();
     @Resource
-    private              LuixProperties              luixProperties;
+    private LuixProperties                  luixProperties;
     @Resource
-    private              ConsumerProcessable         consumerProcessService;
+    private GlobalConsumerDiscoveryListener consumerProcessService;
     @Resource
-    private              ConsumersListener           consumersListener;
+    private GlobalProviderDiscoveryListener consumersListener;
 
     /**
      * {@link org.springframework.beans.factory.InitializingBean#afterPropertiesSet()} execute too earlier

@@ -2,7 +2,7 @@ package org.infinity.luix.webcenter.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.luix.core.listener.client.ConsumersListener;
+import org.infinity.luix.core.listener.client.GlobalProviderDiscoveryListener;
 import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.webcenter.domain.RpcApplication;
@@ -26,7 +26,7 @@ import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 
 @Service
 @Slf4j
-public class RpcProviderProcessImpl implements ConsumersListener {
+public class RpcProviderProcessImpl implements GlobalProviderDiscoveryListener {
 
     @Resource
     private RpcProviderRepository    rpcProviderRepository;

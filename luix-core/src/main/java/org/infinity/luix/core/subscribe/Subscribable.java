@@ -1,8 +1,8 @@
 package org.infinity.luix.core.subscribe;
 
-import org.infinity.luix.core.listener.client.ConsumerListener;
-import org.infinity.luix.core.listener.client.ConsumersListener;
-import org.infinity.luix.core.listener.server.ConsumerProcessable;
+import org.infinity.luix.core.listener.client.ProviderDiscoveryListener;
+import org.infinity.luix.core.listener.client.GlobalProviderDiscoveryListener;
+import org.infinity.luix.core.listener.client.GlobalConsumerDiscoveryListener;
 import org.infinity.luix.core.url.Url;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public interface Subscribable {
      * @param consumerUrl consumer url
      * @param listener    consumer listener
      */
-    void subscribe(Url consumerUrl, ConsumerListener listener);
+    void subscribe(Url consumerUrl, ProviderDiscoveryListener listener);
 
     /**
      * Unbind a listener from a consumer
@@ -34,27 +34,27 @@ public interface Subscribable {
      * @param consumerUrl consumer url
      * @param listener    consumer listener
      */
-    void unsubscribe(Url consumerUrl, ConsumerListener listener);
+    void unsubscribe(Url consumerUrl, ProviderDiscoveryListener listener);
 
     /**
      * Bind a listener for all consumers
      *
      * @param listener consumer listener
      */
-    void subscribe(ConsumersListener listener);
+    void subscribe(GlobalProviderDiscoveryListener listener);
 
     /**
      * Unbind a listener for all consumers
      *
      * @param listener consumer listener
      */
-    void unsubscribe(ConsumersListener listener);
+    void unsubscribe(GlobalProviderDiscoveryListener listener);
 
     /**
      * Subscribe consumer changes processor
      *
      * @param consumerProcessor consumer changes processor
      */
-    void subscribeAllConsumerChanges(ConsumerProcessable consumerProcessor);
+    void subscribeAllConsumerChanges(GlobalConsumerDiscoveryListener consumerProcessor);
 
 }
