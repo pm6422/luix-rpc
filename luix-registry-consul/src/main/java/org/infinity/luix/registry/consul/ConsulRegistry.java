@@ -13,7 +13,6 @@ import org.infinity.luix.utilities.destory.ShutdownHook;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,16 +40,12 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
      */
     private final ConsulStatusUpdater                  consulStatusUpdater;
     /**
-     * Service discovery interval in milliseconds
-     */
-    private final int                                  discoverInterval;
-    /**
      * Key: consumer path
      * Value: consumerUrls
      */
     private final ConcurrentHashMap<String, List<Url>> path2ConsumerUrls          = new ConcurrentHashMap<>();
     /**
-     *
+     * Consumer changes discovery thread pool
      */
     private final ScheduledExecutorService             consumerChangesMonitorPool = Executors.newSingleThreadScheduledExecutor();
 
@@ -59,8 +54,8 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
         this.consulClient = consulClient;
         consulStatusUpdater = new ConsulStatusUpdater(consulClient);
         consulStatusUpdater.start();
-        discoverInterval = this.registryUrl.getIntOption(DISCOVERY_INTERVAL, DISCOVERY_INTERVAL_VAL_DEFAULT);
-        DiscoverProviderThread discoverProviderThread = new DiscoverProviderThread();
+        DiscoverProviderThread discoverProviderThread = new DiscoverProviderThread(
+                this.registryUrl.getIntOption(DISCOVERY_INTERVAL, DISCOVERY_INTERVAL_VAL_DEFAULT));
         discoverProviderThread.setDaemon(true);
         discoverProviderThread.start();
         ShutdownHook.add(this);
@@ -187,10 +182,18 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     }
 
     private class DiscoverProviderThread extends Thread {
+        /**
+         * Service discovery interval in milliseconds
+         */
+        private final int discoverInterval;
+
+        public DiscoverProviderThread(int discoverInterval) {
+            this.discoverInterval = discoverInterval;
+        }
 
         @Override
         public void run() {
-            log.info("Start discover providers thread with interval: " + discoverInterval + "ms");
+            log.info("Started discover provider changes thread with interval: " + discoverInterval + "ms");
             while (true) {
                 try {
                     sleep(discoverInterval);
@@ -200,12 +203,12 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
 
                     CollectionUtils.union(currentPath2ProviderUrls.keySet(), path2ProviderUrls.keySet())
                             .forEach(path -> compareResults(path, currentPath2ProviderUrls.get(path), true));
-
                 } catch (Throwable e) {
                     log.error("Failed to discover providers!", e);
                     try {
                         Thread.sleep(2_000);
                     } catch (InterruptedException ignored) {
+                        // Leave blank intentionally
                     }
                 }
             }
