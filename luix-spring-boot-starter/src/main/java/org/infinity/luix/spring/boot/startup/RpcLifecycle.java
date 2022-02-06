@@ -9,7 +9,7 @@ import org.infinity.luix.core.client.stub.ConsumerStubHolder;
 import org.infinity.luix.core.common.RpcMethod;
 import org.infinity.luix.core.config.impl.RegistryConfig;
 import org.infinity.luix.core.registry.Registry;
-import org.infinity.luix.core.registry.RegistryFactory;
+import org.infinity.luix.core.registry.factory.RegistryFactory;
 import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.server.stub.MethodConfig;
 import org.infinity.luix.core.server.stub.ProviderStub;

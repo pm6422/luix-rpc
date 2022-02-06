@@ -1,6 +1,7 @@
-package org.infinity.luix.core.registry;
+package org.infinity.luix.core.registry.factory;
 
 
+import org.infinity.luix.core.registry.Registry;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.serviceloader.ServiceLoader;
 import org.infinity.luix.utilities.serviceloader.annotation.Spi;

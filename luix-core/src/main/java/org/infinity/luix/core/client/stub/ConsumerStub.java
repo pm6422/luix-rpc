@@ -16,7 +16,7 @@ import org.infinity.luix.core.constant.*;
 import org.infinity.luix.core.listener.GlobalProviderDiscoveryListener;
 import org.infinity.luix.core.listener.impl.ProviderChangeDiscoveryListener;
 import org.infinity.luix.core.registry.Registry;
-import org.infinity.luix.core.registry.RegistryFactory;
+import org.infinity.luix.core.registry.factory.RegistryFactory;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.name.ConsumerStubBeanNameBuilder;
 import org.infinity.luix.utilities.network.AddressUtils;

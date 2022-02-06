@@ -19,7 +19,7 @@ import org.infinity.luix.core.exception.impl.RpcConfigException;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.core.protocol.Protocol;
 import org.infinity.luix.core.registry.Registry;
-import org.infinity.luix.core.registry.RegistryFactory;
+import org.infinity.luix.core.registry.factory.RegistryFactory;
 import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.server.response.impl.RpcResponse;
 import org.infinity.luix.core.url.Url;

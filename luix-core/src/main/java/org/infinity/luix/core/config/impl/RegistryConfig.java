@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.config.Configurable;
 import org.infinity.luix.core.exception.impl.RpcConfigException;
 import org.infinity.luix.core.registry.Registry;
-import org.infinity.luix.core.registry.RegistryFactory;
+import org.infinity.luix.core.registry.factory.RegistryFactory;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.utils.RpcConfigValidator;
 

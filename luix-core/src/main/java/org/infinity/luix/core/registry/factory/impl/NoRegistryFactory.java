@@ -1,8 +1,9 @@
-package org.infinity.luix.core.registry.impl;
+package org.infinity.luix.core.registry.factory.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.core.registry.AbstractRegistryFactory;
+import org.infinity.luix.core.registry.factory.AbstractRegistryFactory;
 import org.infinity.luix.core.registry.Registry;
+import org.infinity.luix.core.registry.impl.NoRegistry;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.serviceloader.annotation.SpiName;
 

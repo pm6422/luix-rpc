@@ -2,7 +2,7 @@
 //
 //import lombok.extern.slf4j.Slf4j;
 //import org.I0Itec.zkclient.ZkClient;
-//import org.infinity.luix.core.registry.AbstractRegistryFactory;
+//import org.infinity.luix.core.registry.factory.AbstractRegistryFactory;
 //import org.infinity.luix.core.registry.Registry;
 //import org.infinity.luix.core.url.Url;
 //import org.infinity.luix.utilities.serviceloader.annotation.SpiName;

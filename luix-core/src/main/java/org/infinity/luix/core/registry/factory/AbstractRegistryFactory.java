@@ -1,6 +1,8 @@
-package org.infinity.luix.core.registry;
+package org.infinity.luix.core.registry.factory;
 
 import lombok.extern.slf4j.Slf4j;
+import org.infinity.luix.core.registry.Registry;
+import org.infinity.luix.core.registry.factory.RegistryFactory;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
 import org.infinity.luix.utilities.concurrent.NotThreadSafe;
