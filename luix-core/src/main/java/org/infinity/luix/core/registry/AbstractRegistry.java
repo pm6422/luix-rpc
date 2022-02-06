@@ -226,18 +226,6 @@ public abstract class AbstractRegistry implements Registry {
         Validate.notNull(consumerUrl, "Consumer url must NOT be null!");
         Validate.notNull(listener, "Listener must NOT be null!");
 
-        doUnsubscribe(consumerUrl, listener);
-        log.info("Unsubscribed the listener [{}] to url [{}] on registry [{}]", listener, consumerUrl,
-                registryUrl.getIdentity());
-    }
-
-    /**
-     * Unsubscribe the listener from specified consumer
-     *
-     * @param consumerUrl consumer url
-     * @param listener    client listener
-     */
-    protected void doUnsubscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
         ConcurrentHashSet<ProviderDiscoveryListener> listeners = path2Listeners.get(consumerUrl.getPath());
         if (listeners != null) {
             listeners.remove(listener);
@@ -248,7 +236,8 @@ public abstract class AbstractRegistry implements Registry {
 
         // Unsubscribe service listener
         unsubscribeListener(consumerUrl, listener);
-        log.info("Unsubscribed the listener for the consumer url [{}]", consumerUrl);
+        log.info("Unsubscribed the listener [{}] to url [{}] on registry [{}]", listener, consumerUrl,
+                registryUrl.getIdentity());
     }
 
     /**

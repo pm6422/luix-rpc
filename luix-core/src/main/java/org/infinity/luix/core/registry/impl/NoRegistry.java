@@ -53,7 +53,7 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
-    protected synchronized void doUnsubscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
+    public synchronized void unsubscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
         List<Url> providerUrls = doDiscover(consumerUrl);
         // Notify
         listener.onNotify(registryUrl, consumerUrl.getPath(), providerUrls);
@@ -66,6 +66,16 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
 
     @Override
     protected void unsubscribeListener(Url consumerUrl, ProviderDiscoveryListener listener) {
+        // Do nothing
+    }
+
+    @Override
+    public void subscribe(GlobalConsumerDiscoveryListener listener) {
+        // Do nothing
+    }
+
+    @Override
+    public void unsubscribe(GlobalConsumerDiscoveryListener listener) {
         // Do nothing
     }
 
@@ -97,16 +107,6 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     @Override
     public List<Url> discoverAll() {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void subscribe(GlobalConsumerDiscoveryListener listener) {
-        // Do nothing
-    }
-
-    @Override
-    public void unsubscribe(GlobalConsumerDiscoveryListener listener) {
-        // Do nothing
     }
 
     @Override
