@@ -306,7 +306,7 @@ public abstract class AbstractRegistry implements Registry {
         subscribeListener(consumerUrl, listener);
 
         // Discover active providers at subscribe time
-        List<Url> providerUrls = doDiscover(consumerUrl);
+        List<Url> providerUrls = discover(consumerUrl, false);
         if (CollectionUtils.isNotEmpty(providerUrls)) {
             updateAndNotify(consumerUrl.getPath(), providerUrls);
         }

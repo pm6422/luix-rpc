@@ -101,7 +101,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
             synchronized (consumerUrl.getPath().intern()) {
                 providerUrls = path2ProviderUrls.get(consumerUrl.getPath());
                 if (providerUrls == null) {
-                    providerUrls = consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME, consumerUrl.getPath());
+                    providerUrls = consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME, consumerUrl.getPath(), true);
                     compareChanges(consumerUrl.getPath(), providerUrls, false);
                 }
             }
