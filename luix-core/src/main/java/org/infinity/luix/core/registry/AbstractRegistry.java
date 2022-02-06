@@ -188,7 +188,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Subscribe the listener to specified consumer url
+     * Subscribe event listener to the specified consumer url
      *
      * @param consumerUrl consumer url
      * @param listener    listener
@@ -196,10 +196,11 @@ public abstract class AbstractRegistry implements Registry {
     @Override
     public void subscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
         Validate.notNull(consumerUrl, "Consumer url must NOT be null!");
-        Validate.notNull(listener, "Consumer listener must NOT be null!");
+        Validate.notNull(listener, "Listener must NOT be null!");
 
         doSubscribe(consumerUrl, listener);
-        log.info("Subscribed the url [{}] to listener [{}] on registry [{}]", consumerUrl, registryUrl.getIdentity(), listener);
+        log.info("Subscribed the listener [{}] to url [{}] on registry [{}]", listener, consumerUrl,
+                registryUrl.getIdentity());
     }
 
     /**
@@ -211,10 +212,11 @@ public abstract class AbstractRegistry implements Registry {
     @Override
     public void unsubscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
         Validate.notNull(consumerUrl, "Consumer url must NOT be null!");
-        Validate.notNull(listener, "Consumer listener must NOT be null!");
+        Validate.notNull(listener, "Listener must NOT be null!");
 
         doUnsubscribe(consumerUrl, listener);
-        log.info("Unsubscribed the url [{}] from listener [{}]", registryUrl.getIdentity(), listener);
+        log.info("Unsubscribed the listener [{}] to url [{}] on registry [{}]", listener, consumerUrl,
+                registryUrl.getIdentity());
     }
 
     /**
