@@ -60,16 +60,6 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
-    protected void subscribeListener(Url consumerUrl, ProviderDiscoveryListener listener) {
-        // Do nothing
-    }
-
-    @Override
-    protected void unsubscribeListener(Url consumerUrl, ProviderDiscoveryListener listener) {
-        // Do nothing
-    }
-
-    @Override
     public void subscribe(GlobalConsumerDiscoveryListener listener) {
         // Do nothing
     }

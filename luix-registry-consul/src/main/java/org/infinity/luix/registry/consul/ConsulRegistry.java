@@ -123,16 +123,6 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     }
 
     @Override
-    protected void subscribeListener(Url consumerUrl, ProviderDiscoveryListener listener) {
-        // Leave blank intentionally
-    }
-
-    @Override
-    protected void unsubscribeListener(Url consumerUrl, ProviderDiscoveryListener listener) {
-        // Leave blank intentionally
-    }
-
-    @Override
     public List<Url> discoverAll() {
         return consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME);
     }

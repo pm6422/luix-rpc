@@ -201,17 +201,14 @@ public abstract class AbstractRegistry implements Registry {
         Validate.notNull(consumerUrl, "Consumer url must NOT be null!");
         Validate.notNull(listener, "Listener must NOT be null!");
 
+        // Save the listener to cache
         path2Listeners.computeIfAbsent(consumerUrl.getPath(), k -> new ConcurrentHashSet<>()).add(listener);
-
-        // Subscribe listener
-        subscribeListener(consumerUrl, listener);
 
         // Discover active providers at subscribe time
         List<Url> providerUrls = discoverActive(consumerUrl, false);
         if (CollectionUtils.isNotEmpty(providerUrls)) {
             updateAndNotify(consumerUrl.getPath(), providerUrls);
         }
-
         log.info("Subscribed the listener [{}] to url [{}] on registry [{}]", listener, consumerUrl,
                 registryUrl.getIdentity());
     }
@@ -227,6 +224,7 @@ public abstract class AbstractRegistry implements Registry {
         Validate.notNull(consumerUrl, "Consumer url must NOT be null!");
         Validate.notNull(listener, "Listener must NOT be null!");
 
+        // Remove the listener from cache
         ConcurrentHashSet<ProviderDiscoveryListener> listeners = path2Listeners.get(consumerUrl.getPath());
         if (listeners != null) {
             listeners.remove(listener);
@@ -234,9 +232,6 @@ public abstract class AbstractRegistry implements Registry {
                 path2Listeners.remove(consumerUrl.getPath());
             }
         }
-
-        // Unsubscribe listener
-        unsubscribeListener(consumerUrl, listener);
         log.info("Unsubscribed the listener [{}] to url [{}] on registry [{}]", listener, consumerUrl,
                 registryUrl.getIdentity());
     }
@@ -341,7 +336,4 @@ public abstract class AbstractRegistry implements Registry {
 
     protected abstract List<Url> discoverProviders(Url consumerUrl);
 
-    protected abstract void subscribeListener(Url consumerUrl, ProviderDiscoveryListener listener);
-
-    protected abstract void unsubscribeListener(Url consumerUrl, ProviderDiscoveryListener listener);
 }
