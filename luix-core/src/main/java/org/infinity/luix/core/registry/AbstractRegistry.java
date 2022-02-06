@@ -258,7 +258,7 @@ public abstract class AbstractRegistry implements Registry {
      * @return provider urls
      */
     @Override
-    public List<Url> discover(Url consumerUrl, boolean onlyFetchFromCache) {
+    public List<Url> discoverActive(Url consumerUrl, boolean onlyFetchFromCache) {
         Validate.notNull(consumerUrl, "Consumer url must NOT be null!");
 
         List<Url> cachedProviderUrls = path2ProviderUrls.get(consumerUrl.getPath());
@@ -306,7 +306,7 @@ public abstract class AbstractRegistry implements Registry {
         subscribeListener(consumerUrl, listener);
 
         // Discover active providers at subscribe time
-        List<Url> providerUrls = discover(consumerUrl, false);
+        List<Url> providerUrls = discoverActive(consumerUrl, false);
         if (CollectionUtils.isNotEmpty(providerUrls)) {
             updateAndNotify(consumerUrl.getPath(), providerUrls);
         }
