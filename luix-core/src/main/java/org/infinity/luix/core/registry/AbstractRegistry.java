@@ -299,14 +299,13 @@ public abstract class AbstractRegistry implements Registry {
                     path2ProviderUrls.put(path, providerUrls);
                 }
 
-                List<Url> copy = providerUrls.stream().map(Url::copy).collect(Collectors.toList());
                 if (CollectionUtils.isNotEmpty(path2Listeners.get(path))) {
                     // Notify to specified consumers
-                    path2Listeners.get(path).forEach(listener -> listener.onNotify(registryUrl, path, copy));
+                    path2Listeners.get(path).forEach(listener -> listener.onNotify(registryUrl, path, providerUrls));
                 }
 
                 // Notify to all consumers
-                Optional.ofNullable(globalProviderDiscoveryListener).ifPresent(l -> l.onNotify(registryUrl, path, copy));
+                Optional.ofNullable(globalProviderDiscoveryListener).ifPresent(l -> l.onNotify(registryUrl, path, providerUrls));
             }
         });
     }
