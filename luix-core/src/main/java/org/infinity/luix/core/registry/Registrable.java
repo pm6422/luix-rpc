@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * The interface class defines the actions of provider
+ * The interface class defines a series of actions of registration
  */
 public interface Registrable {
     /**

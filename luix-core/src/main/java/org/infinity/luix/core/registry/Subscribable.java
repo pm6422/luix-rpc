@@ -8,7 +8,7 @@ import org.infinity.luix.core.url.Url;
 import java.util.List;
 
 /**
- * The interface class defines the actions of consumer
+ * The interface class defines a series of actions of subscription
  */
 public interface Subscribable {
     /**
