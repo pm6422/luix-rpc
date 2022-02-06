@@ -97,16 +97,14 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
         return consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME, consumerUrl.getPath(), true);
     }
 
-    private void compareChanges(String path, List<Url> newProviderUrls, boolean needNotify) {
+    private void compareChanges(String path, List<Url> newProviderUrls) {
         List<Url> oldProviderUrls = path2ProviderUrls.get(path);
         if (Url.isSame(newProviderUrls, oldProviderUrls)) {
             log.trace("No provider changes discovered for path: {}", path);
         } else {
             log.info("Discovered provider changes of path: {} with previous: {} and current: {}",
                     path, oldProviderUrls, newProviderUrls);
-            if (needNotify) {
-                updateAndNotify(path, newProviderUrls);
-            }
+            updateAndNotify(path, newProviderUrls);
         }
     }
 
@@ -163,7 +161,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
                                     .collect(Collectors.groupingBy(Url::getPath));
 
                     CollectionUtils.union(currentPath2ProviderUrls.keySet(), path2ProviderUrls.keySet())
-                            .forEach(path -> compareChanges(path, currentPath2ProviderUrls.get(path), true));
+                            .forEach(path -> compareChanges(path, currentPath2ProviderUrls.get(path)));
                 } catch (Throwable e) {
                     log.error("Failed to discover providers!", e);
                     try {
