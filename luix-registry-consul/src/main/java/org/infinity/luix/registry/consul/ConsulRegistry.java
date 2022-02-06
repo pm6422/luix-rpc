@@ -133,7 +133,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     }
 
     @Override
-    public List<Url> discover() {
+    public List<Url> discoverAll() {
         return consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME);
     }
 
@@ -156,6 +156,11 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
                                 }
                             });
                 }, 0, 2, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void unsubscribe(GlobalConsumerDiscoveryListener listener){
+        consumerChangesMonitorPool.shutdown();
     }
 
     private class DiscoverProviderThread extends Thread {

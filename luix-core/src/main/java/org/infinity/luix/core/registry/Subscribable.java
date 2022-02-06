@@ -16,7 +16,7 @@ public interface Subscribable {
      *
      * @return provider urls
      */
-    List<Url> discover();
+    List<Url> discoverAll();
 
     /**
      * Discover 'active' the provider urls of the specified consumer, including 'inactive' urls
@@ -63,5 +63,12 @@ public interface Subscribable {
      * @param listener listener
      */
     void subscribe(GlobalConsumerDiscoveryListener listener);
+
+    /**
+     * Unbind a global listener for all subscribers
+     *
+     * @param listener listener
+     */
+    void unsubscribe(GlobalConsumerDiscoveryListener listener);
 
 }

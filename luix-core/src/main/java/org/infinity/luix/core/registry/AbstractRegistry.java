@@ -251,7 +251,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Get provider urls from cache or registry based on the consumer url
+     * Discover 'active' the provider urls of the specified consumer, including 'inactive' urls
      *
      * @param consumerUrl        consumer url
      * @param onlyFetchFromCache if true, only fetch from cache

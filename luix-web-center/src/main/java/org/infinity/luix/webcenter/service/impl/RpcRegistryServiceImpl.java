@@ -64,7 +64,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
 
                 registryConfig.getRegistryImpl().subscribe(globalProviderDiscoveryListener);
 
-                List<Url> allProviderUrls = registryConfig.getRegistryImpl().discover();
+                List<Url> allProviderUrls = registryConfig.getRegistryImpl().discoverAll();
                 allProviderUrls.forEach(url -> {
                     try {
                         // Generate consumer stub for each provider
