@@ -69,6 +69,11 @@ public abstract class AbstractRegistry implements Registry {
         return new ArrayBlockingQueue<>(20_000);
     }
 
+    @Override
+    public String getName() {
+        return registryUrl.getProtocol();
+    }
+
     /**
      * Get registry url
      *
@@ -97,11 +102,6 @@ public abstract class AbstractRegistry implements Registry {
     @Override
     public Set<Url> getRegisteredConsumerUrls() {
         return registeredConsumerUrls;
-    }
-
-    @Override
-    public String getType() {
-        return registryUrl.getProtocol();
     }
 
     /**

@@ -60,7 +60,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
         try {
             luixProperties.getRegistryList().forEach(registryConfig -> {
                 REGISTRY_CONFIG_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig);
-                REGISTRIES.add(new RpcRegistryDTO(registryConfig.getRegistryImpl().getType(), registryConfig.getRegistryUrl().getIdentity()));
+                REGISTRIES.add(new RpcRegistryDTO(registryConfig.getRegistryImpl().getName(), registryConfig.getRegistryUrl().getIdentity()));
 
                 registryConfig.getRegistryImpl().subscribe(globalProviderDiscoveryListener);
 
