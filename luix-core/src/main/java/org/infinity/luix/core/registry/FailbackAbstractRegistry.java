@@ -24,7 +24,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     /**
      * Registration failure provider or consumer urls.
      */
-    private final Set<Url>                                      registerFailedUrls                     = new ConcurrentHashSet<>();
+    private final Set<Url>                                               registerFailedUrls                     = new ConcurrentHashSet<>();
     /**
      * De-registration failure provider or consumer urls.
      */

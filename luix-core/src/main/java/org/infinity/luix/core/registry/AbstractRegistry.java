@@ -92,7 +92,7 @@ public abstract class AbstractRegistry implements Registry {
      */
     @Override
     public Set<Url> getRegisteredProviderUrls() {
-        return registeredProviderUrls;
+        return this.registeredProviderUrls;
     }
 
     /**
@@ -102,7 +102,7 @@ public abstract class AbstractRegistry implements Registry {
      */
     @Override
     public Set<Url> getRegisteredConsumerUrls() {
-        return registeredConsumerUrls;
+        return this.registeredConsumerUrls;
     }
 
     /**
@@ -113,7 +113,7 @@ public abstract class AbstractRegistry implements Registry {
     @Override
     public void register(Url url) {
         Validate.notNull(url, "Url must NOT be null!");
-        doRegister(removeUnnecessaryParams(url.copy()));
+        doRegister(removeUnnecessaryOptions(url.copy()));
         log.info("Registered the url [{}] to registry [{}]", url, registryUrl.getIdentity());
         // Added it to the cache after registered
         if (url.isProvider()) {
@@ -133,9 +133,8 @@ public abstract class AbstractRegistry implements Registry {
     @Override
     public void deregister(Url url) {
         Validate.notNull(url, "Url must NOT be null!");
-        doDeregister(removeUnnecessaryParams(url.copy()));
-        log.info("Deregistered the url [{}] from registry [{}] by using [{}]", url, registryUrl.getIdentity(),
-                this.getClass().getSimpleName());
+        doDeregister(removeUnnecessaryOptions(url.copy()));
+        log.info("Deregistered the url [{}] from registry [{}]", url, registryUrl.getIdentity());
         // Removed it from the container after de-registered
         if (url.isProvider()) {
             registeredProviderUrls.remove(url);
@@ -147,44 +146,42 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Activate the url from registry
+     * Change the status of provider or consumer url to 'active'
      *
      * @param url provider or consumer url
      */
     @Override
     public void activate(Url url) {
         if (url != null) {
-            doActivate(removeUnnecessaryParams(url.copy()));
-            log.info("Activated the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(),
-                    this.getClass().getSimpleName());
+            doActivate(removeUnnecessaryOptions(url.copy()));
+            log.info("Activated the url [{}] on registry [{}]", url, registryUrl.getIdentity());
         } else {
             doActivate(null);
         }
     }
 
     /**
-     * Deactivate the url from registry
+     * Change the status of provider or consumer url to 'inactive'
      *
      * @param url provider or consumer url
      */
     @Override
     public void deactivate(Url url) {
         if (url != null) {
-            doDeactivate(removeUnnecessaryParams(url.copy()));
-            log.info("Deactivated the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(),
-                    this.getClass().getSimpleName());
+            doDeactivate(removeUnnecessaryOptions(url.copy()));
+            log.info("Deactivated the url [{}] on registry [{}]", url, registryUrl.getIdentity());
         } else {
             doDeactivate(null);
         }
     }
 
     /**
-     * Remove the unnecessary url param to register to registry in order to not to be seen by consumer
+     * Remove the unnecessary url option to register to registry in order to become invisible by consumer
      *
      * @param url url
      */
-    private Url removeUnnecessaryParams(Url url) {
-        // codec parameter can not be registered to registry,
+    private Url removeUnnecessaryOptions(Url url) {
+        // codec option can not be registered to registry,
         // because client side may could not request successfully if client side does not have the codec.
         url.getOptions().remove(CODEC);
         return url;
@@ -202,8 +199,7 @@ public abstract class AbstractRegistry implements Registry {
         Validate.notNull(listener, "Consumer listener must NOT be null!");
 
         doSubscribe(consumerUrl, listener);
-        log.info("Subscribed the url [{}] to listener [{}] by using [{}]", registryUrl.getIdentity(), listener,
-                this.getClass().getSimpleName());
+        log.info("Subscribed the url [{}] to listener [{}] on registry [{}]", consumerUrl, registryUrl.getIdentity(), listener);
     }
 
     /**
@@ -218,8 +214,7 @@ public abstract class AbstractRegistry implements Registry {
         Validate.notNull(listener, "Consumer listener must NOT be null!");
 
         doUnsubscribe(consumerUrl, listener);
-        log.info("Unsubscribed the url [{}] from listener [{}] by using [{}]", registryUrl.getIdentity(), listener,
-                this.getClass().getSimpleName());
+        log.info("Unsubscribed the url [{}] from listener [{}]", registryUrl.getIdentity(), listener);
     }
 
     /**
