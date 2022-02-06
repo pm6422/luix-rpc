@@ -11,7 +11,10 @@ import org.infinity.luix.utilities.collection.ConcurrentHashSet;
 import org.infinity.luix.utilities.concurrent.NotThreadSafe;
 
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.infinity.luix.core.constant.ProtocolConstants.CODEC;
@@ -188,7 +191,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Subscribe event listener to the specified consumer url
+     * Subscribe listener to the specified consumer
      *
      * @param consumerUrl consumer url
      * @param listener    listener
@@ -204,9 +207,9 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Unsubscribe the listener from specified consumer url
+     * Unsubscribe the listener from specified consumer
      *
-     * @param consumerUrl provider url
+     * @param consumerUrl consumer url
      * @param listener    listener
      */
     @Override
@@ -220,7 +223,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Subscribe all consumers events to specified listener
+     * Subscribe a global listener to all consumers
      *
      * @param listener consumers listener
      */
@@ -230,7 +233,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Unsubscribe all consumers events from specified listener
+     * Unsubscribe the global listener from all consumers
      *
      * @param listener consumers listener
      */
