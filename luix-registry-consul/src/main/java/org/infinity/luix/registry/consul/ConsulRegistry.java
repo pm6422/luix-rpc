@@ -2,7 +2,6 @@ package org.infinity.luix.registry.consul;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.luix.core.listener.ProviderDiscoveryListener;
 import org.infinity.luix.core.listener.GlobalConsumerDiscoveryListener;
 import org.infinity.luix.core.registry.FailbackAbstractRegistry;
 import org.infinity.luix.core.url.Url;
@@ -95,18 +94,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
 
     @Override
     public List<Url> doDiscoverActive(Url consumerUrl) {
-        List<Url> providerUrls = path2ProviderUrls.get(consumerUrl.getPath());
-        if (providerUrls == null) {
-            // todo: learn how to use the multiple threads
-            synchronized (consumerUrl.getPath().intern()) {
-                providerUrls = path2ProviderUrls.get(consumerUrl.getPath());
-                if (providerUrls == null) {
-                    providerUrls = consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME, consumerUrl.getPath(), true);
-                    compareChanges(consumerUrl.getPath(), providerUrls, false);
-                }
-            }
-        }
-        return providerUrls;
+        return consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME, consumerUrl.getPath(), true);
     }
 
     private void compareChanges(String path, List<Url> newProviderUrls, boolean needNotify) {
@@ -149,7 +137,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     }
 
     @Override
-    public void unsubscribe(GlobalConsumerDiscoveryListener listener){
+    public void unsubscribe(GlobalConsumerDiscoveryListener listener) {
         consumerChangesMonitorPool.shutdown();
     }
 
