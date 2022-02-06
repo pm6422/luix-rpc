@@ -200,7 +200,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
 
     @Override
     public void destroy() {
-        notificationThreadPool.shutdown();
+        notifyProviderChangeThreadPool.shutdown();
         consulStatusUpdater.close();
         log.info("Destroyed consul registry");
     }

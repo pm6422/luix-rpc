@@ -42,13 +42,13 @@ public abstract class AbstractRegistry implements Registry {
     /**
      * One consumer can subscribe multiple listeners
      * Key: path
-     * Value: consumer listeners
+     * Value: listeners
      */
     protected final Map<String, ConcurrentHashSet<ProviderDiscoveryListener>> path2Listeners         = new ConcurrentHashMap<>();
     /**
      * Provider changes notification thread pool
      */
-    protected final ThreadPoolExecutor                                        notificationThreadPool;
+    protected final ThreadPoolExecutor                                        notifyProviderChangeThreadPool;
     /**
      * Listener used to handle the subscribed event for all consumers
      */
@@ -57,18 +57,19 @@ public abstract class AbstractRegistry implements Registry {
     public AbstractRegistry(Url registryUrl) {
         Validate.notNull(registryUrl, "Registry url must NOT be null!");
         this.registryUrl = registryUrl;
-        this.notificationThreadPool = createNotificationThreadPool();
+        this.notifyProviderChangeThreadPool = createNotifyProviderChangeThreadPool();
     }
 
-    private ThreadPoolExecutor createNotificationThreadPool() {
-        return new ThreadPoolExecutor(10, 30, 30 * 1_000,
-                TimeUnit.MILLISECONDS, createWorkQueue(), new ThreadPoolExecutor.AbortPolicy());
+    private ThreadPoolExecutor createNotifyProviderChangeThreadPool() {
+        return new ThreadPoolExecutor(10, 30, TimeUnit.SECONDS.toMillis(30),
+                TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(20_000), new ThreadPoolExecutor.AbortPolicy());
     }
 
-    private BlockingQueue<Runnable> createWorkQueue() {
-        return new ArrayBlockingQueue<>(20_000);
-    }
-
+    /**
+     * Get registry type name
+     *
+     * @return registry type name
+     */
     @Override
     public String getName() {
         return registryUrl.getProtocol();
@@ -311,7 +312,7 @@ public abstract class AbstractRegistry implements Registry {
      * @param providerUrls provider urls
      */
     protected void updateAndNotify(String path, List<Url> providerUrls) {
-        notificationThreadPool.execute(() -> {
+        notifyProviderChangeThreadPool.execute(() -> {
             synchronized (path.intern()) {
                 if (CollectionUtils.isEmpty(providerUrls)) {
                     path2ProviderUrls.remove(path);
