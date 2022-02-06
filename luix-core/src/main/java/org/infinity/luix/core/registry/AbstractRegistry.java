@@ -257,7 +257,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Discover 'active' the provider urls of the specified consumer, including 'inactive' urls
+     * Discover 'active' the provider of the specified consumer, including 'inactive' urls
      *
      * @param consumerUrl        consumer url
      * @param onlyFetchFromCache if true, only fetch from cache
@@ -275,29 +275,13 @@ public abstract class AbstractRegistry implements Registry {
             return Collections.emptyList();
         } else {
             // Discover the provider urls from registry if local cache does not exist
-            List<Url> providerUrls = doDiscover(consumerUrl);
+            List<Url> providerUrls = doDiscoverActive(consumerUrl);
             if (CollectionUtils.isNotEmpty(providerUrls)) {
                 // Make a copy and add to results
                 return providerUrls.stream().map(Url::copy).collect(Collectors.toList());
             }
             return Collections.emptyList();
         }
-    }
-
-    /**
-     * Discover the provider urls from registry
-     *
-     * @param consumerUrl consumer url
-     * @return provider urls
-     */
-    protected List<Url> doDiscover(Url consumerUrl) {
-        List<Url> providerUrls = discoverProviders(consumerUrl);
-        if (CollectionUtils.isNotEmpty(providerUrls)) {
-            log.info("Discovered the provider urls [{}] for consumer url [{}]", providerUrls, consumerUrl);
-        } else {
-            log.info("No providers found for consumer url [{}]!", consumerUrl);
-        }
-        return providerUrls;
     }
 
     /**
@@ -334,6 +318,5 @@ public abstract class AbstractRegistry implements Registry {
 
     protected abstract void doDeactivate(Url url);
 
-    protected abstract List<Url> discoverProviders(Url consumerUrl);
-
+    protected abstract List<Url> doDiscoverActive(Url consumerUrl);
 }

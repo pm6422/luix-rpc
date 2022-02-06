@@ -94,7 +94,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     }
 
     @Override
-    public List<Url> discoverProviders(Url consumerUrl) {
+    public List<Url> doDiscoverActive(Url consumerUrl) {
         List<Url> providerUrls = path2ProviderUrls.get(consumerUrl.getPath());
         if (providerUrls == null) {
             // todo: learn how to use the multiple threads

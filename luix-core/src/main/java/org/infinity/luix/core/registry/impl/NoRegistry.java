@@ -47,14 +47,14 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
 
     @Override
     public synchronized void subscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
-        List<Url> providerUrls = doDiscover(consumerUrl);
+        List<Url> providerUrls = doDiscoverActive(consumerUrl);
         // Notify
         listener.onNotify(registryUrl, consumerUrl.getPath(), providerUrls);
     }
 
     @Override
     public synchronized void unsubscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
-        List<Url> providerUrls = doDiscover(consumerUrl);
+        List<Url> providerUrls = doDiscoverActive(consumerUrl);
         // Notify
         listener.onNotify(registryUrl, consumerUrl.getPath(), providerUrls);
     }
@@ -76,7 +76,7 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
      * @return provider urls
      */
     @Override
-    protected List<Url> doDiscover(Url consumerUrl) {
+    protected List<Url> doDiscoverActive(Url consumerUrl) {
         List<Url> providerUrls = new ArrayList<>(providerHostAndPortList.size());
         for (Pair<String, Integer> directProviderUrl : providerHostAndPortList) {
             Url consumerUrlCopy = consumerUrl.copy();
@@ -87,11 +87,6 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
             providerUrls.add(consumerUrlCopy);
         }
         return providerUrls;
-    }
-
-    @Override
-    public List<Url> discoverProviders(Url consumerUrl) {
-        return doDiscover(consumerUrl);
     }
 
     @Override
