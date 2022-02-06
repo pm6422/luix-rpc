@@ -203,6 +203,7 @@ public abstract class AbstractRegistry implements Registry {
 
         path2Listeners.computeIfAbsent(consumerUrl.getPath(), k -> new ConcurrentHashSet<>()).add(listener);
 
+        // Subscribe listener
         subscribeListener(consumerUrl, listener);
 
         // Discover active providers at subscribe time
@@ -234,7 +235,7 @@ public abstract class AbstractRegistry implements Registry {
             }
         }
 
-        // Unsubscribe service listener
+        // Unsubscribe listener
         unsubscribeListener(consumerUrl, listener);
         log.info("Unsubscribed the listener [{}] to url [{}] on registry [{}]", listener, consumerUrl,
                 registryUrl.getIdentity());
