@@ -1,4 +1,4 @@
-package org.infinity.luix.core.subscribe;
+package org.infinity.luix.core.registry;
 
 import org.infinity.luix.core.listener.GlobalConsumerDiscoveryListener;
 import org.infinity.luix.core.listener.GlobalProviderDiscoveryListener;

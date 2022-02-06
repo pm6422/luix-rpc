@@ -1,7 +1,6 @@
 package org.infinity.luix.core.registry;
 
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.core.subscribe.Subscribable;
 
 /**
  * Registry interface
