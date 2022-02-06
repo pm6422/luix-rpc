@@ -10,32 +10,32 @@ import java.util.Set;
  */
 public interface Registrable {
     /**
-     * Register a provider url to registry
+     * Register a provider or consumer url to registry
      *
-     * @param providerUrl provider url
+     * @param url provider url
      */
-    void register(Url providerUrl);
+    void register(Url url);
 
     /**
-     * Unregister provider url from registry
+     * Deregister provider or consumer url from registry
      *
-     * @param providerUrl provider url
+     * @param url provider or consumer url
      */
-    void deregister(Url providerUrl);
+    void deregister(Url url);
 
     /**
-     * Register the url to 'active' node of registry
+     * Change the status of provider or consumer url to 'active'
      *
-     * @param providerUrl provider url
+     * @param url provider or consumer url
      */
-    void activate(Url providerUrl);
+    void activate(Url url);
 
     /**
-     * Register the url to 'inactive' node of registry
+     * Change the status of provider or consumer url to 'inactive'
      *
-     * @param providerUrl provider url
+     * @param url provider or consumer url
      */
-    void deactivate(Url providerUrl);
+    void deactivate(Url url);
 
     /**
      * Get the registered provider urls
