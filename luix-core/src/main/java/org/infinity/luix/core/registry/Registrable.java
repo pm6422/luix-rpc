@@ -2,13 +2,19 @@ package org.infinity.luix.core.registry;
 
 import org.infinity.luix.core.url.Url;
 
-import java.util.List;
 import java.util.Set;
 
 /**
  * The interface class defines a series of actions of registration
  */
 public interface Registrable {
+    /**
+     * Get registry url
+     *
+     * @return registry url
+     */
+    Url getRegistryUrl();
+
     /**
      * Register a provider or consumer url to registry
      *

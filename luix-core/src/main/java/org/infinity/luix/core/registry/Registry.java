@@ -12,11 +12,4 @@ public interface Registry extends Registrable, Subscribable {
      * @return registry type
      */
     String getType();
-
-    /**
-     * Get registry url
-     *
-     * @return registry url
-     */
-    Url getRegistryUrl();
 }
