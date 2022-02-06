@@ -207,6 +207,25 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
+     * Subscribe the listener to specified consumer url
+     *
+     * @param consumerUrl consumer url
+     * @param listener    client listener
+     */
+    protected void doSubscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
+        path2Listeners.computeIfAbsent(consumerUrl.getPath(), k -> new ConcurrentHashSet<>()).add(listener);
+
+        subscribeListener(consumerUrl, listener);
+
+        // Discover active providers at subscribe time
+        List<Url> providerUrls = discoverActive(consumerUrl, false);
+        if (CollectionUtils.isNotEmpty(providerUrls)) {
+            updateAndNotify(consumerUrl.getPath(), providerUrls);
+        }
+        log.info("Subscribed the listener for the consumer url [{}]", consumerUrl);
+    }
+
+    /**
      * Unsubscribe the listener from specified consumer
      *
      * @param consumerUrl consumer url
@@ -220,6 +239,26 @@ public abstract class AbstractRegistry implements Registry {
         doUnsubscribe(consumerUrl, listener);
         log.info("Unsubscribed the listener [{}] to url [{}] on registry [{}]", listener, consumerUrl,
                 registryUrl.getIdentity());
+    }
+
+    /**
+     * Unsubscribe the listener from specified consumer url
+     *
+     * @param consumerUrl consumer url
+     * @param listener    client listener
+     */
+    protected void doUnsubscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
+        ConcurrentHashSet<ProviderDiscoveryListener> listeners = path2Listeners.get(consumerUrl.getPath());
+        if (listeners != null) {
+            listeners.remove(listener);
+            if (listeners.isEmpty()) {
+                path2Listeners.remove(consumerUrl.getPath());
+            }
+        }
+
+        // Unsubscribe service listener
+        unsubscribeListener(consumerUrl, listener);
+        log.info("Unsubscribed the listener for the consumer url [{}]", consumerUrl);
     }
 
     /**
@@ -287,25 +326,6 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Subscribe the listener to specified consumer url
-     *
-     * @param consumerUrl consumer url
-     * @param listener    client listener
-     */
-    protected void doSubscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
-        path2Listeners.computeIfAbsent(consumerUrl.getPath(), k -> new ConcurrentHashSet<>()).add(listener);
-
-        subscribeListener(consumerUrl, listener);
-
-        // Discover active providers at subscribe time
-        List<Url> providerUrls = discoverActive(consumerUrl, false);
-        if (CollectionUtils.isNotEmpty(providerUrls)) {
-            updateAndNotify(consumerUrl.getPath(), providerUrls);
-        }
-        log.info("Subscribed the listener for the consumer url [{}]", consumerUrl);
-    }
-
-    /**
      * Notify the discovered provider urls to consumers
      *
      * @param path         interface name
@@ -329,26 +349,6 @@ public abstract class AbstractRegistry implements Registry {
                 Optional.ofNullable(globalProviderDiscoveryListener).ifPresent(l -> l.onNotify(registryUrl, path, providerUrls));
             }
         });
-    }
-
-    /**
-     * Unsubscribe the listener from specified consumer url
-     *
-     * @param consumerUrl consumer url
-     * @param listener    client listener
-     */
-    protected void doUnsubscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
-        ConcurrentHashSet<ProviderDiscoveryListener> listeners = path2Listeners.get(consumerUrl.getPath());
-        if (listeners != null) {
-            listeners.remove(listener);
-            if (listeners.isEmpty()) {
-                path2Listeners.remove(consumerUrl.getPath());
-            }
-        }
-
-        // Unsubscribe service listener
-        unsubscribeListener(consumerUrl, listener);
-        log.info("Unsubscribed the listener for the consumer url [{}]", consumerUrl);
     }
 
     protected abstract void doRegister(Url url);
