@@ -207,10 +207,10 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Subscribe the listener to specified consumer url
+     * Subscribe the listener to specified consumer
      *
      * @param consumerUrl consumer url
-     * @param listener    client listener
+     * @param listener    listener
      */
     protected void doSubscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
         path2Listeners.computeIfAbsent(consumerUrl.getPath(), k -> new ConcurrentHashSet<>()).add(listener);
@@ -242,7 +242,7 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     * Unsubscribe the listener from specified consumer url
+     * Unsubscribe the listener from specified consumer
      *
      * @param consumerUrl consumer url
      * @param listener    client listener
