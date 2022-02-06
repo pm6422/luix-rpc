@@ -71,11 +71,12 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             try {
                 super.register(url);
             } catch (Exception e) {
-                log.warn(MessageFormat.format("Failed to retry to register [{0}] by [{1}] and it will be retry later!", url, getRegistryClassName()), e);
+                log.warn(MessageFormat.format("Failed to retry to register [{0}] by [{1}] and it will be retry later!",
+                        url, this.getClass().getSimpleName()), e);
             }
             iterator.remove();
         }
-        log.info("Retried to register urls by {}", getRegistryClassName());
+        log.info("Retried to register urls by {}", this.getClass().getSimpleName());
     }
 
     private void doRetryFailedDeregistration() {
@@ -88,11 +89,12 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             try {
                 super.deregister(url);
             } catch (Exception e) {
-                log.warn(MessageFormat.format("Failed to retry to deregister [{0}] by [{1}] and it will be retry later!", url, getRegistryClassName()), e);
+                log.warn(MessageFormat.format("Failed to retry to deregister [{0}] by [{1}] and it will be retry later!",
+                        url, this.getClass().getSimpleName()), e);
             }
             iterator.remove();
         }
-        log.info("Retried to deregister urls by {}", getRegistryClassName());
+        log.info("Retried to deregister urls by {}", this.getClass().getSimpleName());
     }
 
     private void doRetryFailedSubscription() {
@@ -117,12 +119,12 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
                     super.subscribe(url, listener);
                 } catch (Exception e) {
                     log.warn(MessageFormat.format("Failed to retry to subscribe listener [{0}] to url [{1}] by [{2}] " +
-                            "and it will be retry later!", listener.getClass().getSimpleName(), url, getRegistryClassName()), e);
+                            "and it will be retry later!", listener.getClass().getSimpleName(), url, this.getClass().getSimpleName()), e);
                 }
                 iterator.remove();
             }
         }
-        log.info("Retried to subscribe listener to urls by {}", getRegistryClassName());
+        log.info("Retried to subscribe listener to urls by {}", this.getClass().getSimpleName());
     }
 
     private void doRetryFailedUnsubscription() {
@@ -147,12 +149,12 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
                     super.unsubscribe(url, listener);
                 } catch (Exception e) {
                     log.warn(MessageFormat.format("Failed to retry to unsubscribe listener [{0}] to url [{1}] by [{2}] " +
-                            "and it will be retry later!", listener.getClass().getSimpleName(), url, getRegistryClassName()), e);
+                            "and it will be retry later!", listener.getClass().getSimpleName(), url, this.getClass().getSimpleName()), e);
                 }
                 iterator.remove();
             }
         }
-        log.info("Retried to unsubscribe listener to urls by {}", getRegistryClassName());
+        log.info("Retried to unsubscribe listener to urls by {}", this.getClass().getSimpleName());
     }
 
     /**
@@ -172,7 +174,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             // In some extreme cases, it can cause register failure
             registerFailedUrls.add(url);
             throw new RpcFrameworkException(MessageFormat.format("Failed to register [{0}] to registry [{1}] by using [{2}]",
-                    url, registryUrl, getRegistryClassName()), e);
+                    url, registryUrl, this.getClass().getSimpleName()), e);
         }
     }
 
@@ -194,7 +196,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             deregisterFailedUrls.add(url);
             throw new RpcFrameworkException(
                     MessageFormat.format("Failed to deregister [{0}] from registry [{1}] by using [{2}]",
-                            url, registryUrl, getRegistryClassName()), e);
+                            url, registryUrl, this.getClass().getSimpleName()), e);
         }
     }
 
@@ -230,7 +232,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             throw new RpcFrameworkException(
                     MessageFormat.format("Failed to subscribe the listener [{0}] to the client [{1}] " +
                                     "on registry [{2}] by using [{3}]",
-                            listener, consumerUrl, registryUrl, getRegistryClassName()), e);
+                            listener, consumerUrl, registryUrl, this.getClass().getSimpleName()), e);
         }
     }
 
@@ -254,7 +256,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             throw new RpcFrameworkException(
                     MessageFormat.format("Failed to unsubscribe the listener [{0}] from the client [{1}] " +
                                     "on registry [{2}] by using [{3}]",
-                            listener, consumerUrl, registryUrl, getRegistryClassName()), e);
+                            listener, consumerUrl, registryUrl, this.getClass().getSimpleName()), e);
         }
     }
 

@@ -14,13 +14,6 @@ public interface Registry extends Registrable, Subscribable {
     String getType();
 
     /**
-     * Get registry subclass name
-     *
-     * @return registry subclass name
-     */
-    String getRegistryClassName();
-
-    /**
      * Get registry url
      *
      * @return registry url

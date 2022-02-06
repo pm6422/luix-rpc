@@ -23,10 +23,6 @@ import static org.infinity.luix.core.constant.ProtocolConstants.CODEC;
 @NotThreadSafe
 public abstract class AbstractRegistry implements Registry {
     /**
-     * The registry subclass name
-     */
-    private final   String                                                    registryClassName      = this.getClass().getSimpleName();
-    /**
      * Registry url
      */
     protected       Url                                                       registryUrl;
@@ -71,16 +67,6 @@ public abstract class AbstractRegistry implements Registry {
 
     private BlockingQueue<Runnable> createWorkQueue() {
         return new ArrayBlockingQueue<>(20_000);
-    }
-
-    /**
-     * Get registry instance class name
-     *
-     * @return registry instance class name
-     */
-    @Override
-    public String getRegistryClassName() {
-        return registryClassName;
     }
 
     /**
@@ -147,7 +133,8 @@ public abstract class AbstractRegistry implements Registry {
     public void deregister(Url url) {
         Validate.notNull(url, "Url must NOT be null!");
         doDeregister(removeUnnecessaryParams(url.copy()));
-        log.info("Deregistered the url [{}] from registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+        log.info("Deregistered the url [{}] from registry [{}] by using [{}]", url, registryUrl.getIdentity(),
+                this.getClass().getSimpleName());
         // Removed it from the container after de-registered
         if (url.isProvider()) {
             registeredProviderUrls.remove(url);
@@ -167,7 +154,8 @@ public abstract class AbstractRegistry implements Registry {
     public void activate(Url url) {
         if (url != null) {
             doActivate(removeUnnecessaryParams(url.copy()));
-            log.info("Activated the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+            log.info("Activated the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(),
+                    this.getClass().getSimpleName());
         } else {
             doActivate(null);
         }
@@ -182,7 +170,8 @@ public abstract class AbstractRegistry implements Registry {
     public void deactivate(Url url) {
         if (url != null) {
             doDeactivate(removeUnnecessaryParams(url.copy()));
-            log.info("Deactivated the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(), registryClassName);
+            log.info("Deactivated the url [{}] on registry [{}] by using [{}]", url, registryUrl.getIdentity(),
+                    this.getClass().getSimpleName());
         } else {
             doDeactivate(null);
         }
@@ -212,7 +201,8 @@ public abstract class AbstractRegistry implements Registry {
         Validate.notNull(listener, "Consumer listener must NOT be null!");
 
         doSubscribe(consumerUrl, listener);
-        log.info("Subscribed the url [{}] to listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
+        log.info("Subscribed the url [{}] to listener [{}] by using [{}]", registryUrl.getIdentity(), listener,
+                this.getClass().getSimpleName());
     }
 
     /**
@@ -227,7 +217,8 @@ public abstract class AbstractRegistry implements Registry {
         Validate.notNull(listener, "Consumer listener must NOT be null!");
 
         doUnsubscribe(consumerUrl, listener);
-        log.info("Unsubscribed the url [{}] from listener [{}] by using [{}]", registryUrl.getIdentity(), listener, registryClassName);
+        log.info("Unsubscribed the url [{}] from listener [{}] by using [{}]", registryUrl.getIdentity(), listener,
+                this.getClass().getSimpleName());
     }
 
     /**
