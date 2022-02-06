@@ -46,7 +46,7 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
-    protected synchronized void doSubscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
+    public synchronized void subscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
         List<Url> providerUrls = doDiscover(consumerUrl);
         // Notify
         listener.onNotify(registryUrl, consumerUrl.getPath(), providerUrls);

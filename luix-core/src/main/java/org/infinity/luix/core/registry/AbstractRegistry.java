@@ -201,18 +201,6 @@ public abstract class AbstractRegistry implements Registry {
         Validate.notNull(consumerUrl, "Consumer url must NOT be null!");
         Validate.notNull(listener, "Listener must NOT be null!");
 
-        doSubscribe(consumerUrl, listener);
-        log.info("Subscribed the listener [{}] to url [{}] on registry [{}]", listener, consumerUrl,
-                registryUrl.getIdentity());
-    }
-
-    /**
-     * Subscribe the listener to specified consumer
-     *
-     * @param consumerUrl consumer url
-     * @param listener    listener
-     */
-    protected void doSubscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
         path2Listeners.computeIfAbsent(consumerUrl.getPath(), k -> new ConcurrentHashSet<>()).add(listener);
 
         subscribeListener(consumerUrl, listener);
@@ -222,7 +210,9 @@ public abstract class AbstractRegistry implements Registry {
         if (CollectionUtils.isNotEmpty(providerUrls)) {
             updateAndNotify(consumerUrl.getPath(), providerUrls);
         }
-        log.info("Subscribed the listener for the consumer url [{}]", consumerUrl);
+
+        log.info("Subscribed the listener [{}] to url [{}] on registry [{}]", listener, consumerUrl,
+                registryUrl.getIdentity());
     }
 
     /**
