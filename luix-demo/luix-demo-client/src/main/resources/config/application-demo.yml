@@ -15,4 +15,4 @@ luix:
 # ===================================================================
 application:
     url:
-        appServiceProviderUrl: 172.17.0.5:16010
+        appServiceProviderUrl: 172.17.0.4:16010
