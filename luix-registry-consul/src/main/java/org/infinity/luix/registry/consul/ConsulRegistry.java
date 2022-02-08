@@ -97,17 +97,6 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
         return consulHttpClient.find(CONSUL_PROVIDER_SERVICE_NAME, consumerUrl.getPath(), true);
     }
 
-    private void compareChanges(String path, List<Url> newProviderUrls) {
-        List<Url> oldProviderUrls = path2ProviderUrls.get(path);
-        if (Url.isSame(newProviderUrls, oldProviderUrls)) {
-            log.trace("No provider changes discovered for path: {}", path);
-        } else {
-            log.info("Discovered provider changes of path: {} with previous: {} and current: {}",
-                    path, oldProviderUrls, newProviderUrls);
-            updateAndNotify(path, newProviderUrls);
-        }
-    }
-
     @Override
     public List<Url> discoverAll() {
         return consulHttpClient.find(CONSUL_PROVIDER_SERVICE_NAME);
@@ -161,7 +150,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
                                     .collect(Collectors.groupingBy(Url::getPath));
 
                     CollectionUtils.union(currentPath2ProviderUrls.keySet(), path2ProviderUrls.keySet())
-                            .forEach(path -> compareChanges(path, currentPath2ProviderUrls.get(path)));
+                            .forEach(path -> compareAndUpdateChanges(path, currentPath2ProviderUrls.get(path)));
                 } catch (Throwable e) {
                     log.error("Failed to discover providers!", e);
                     try {
@@ -170,6 +159,17 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
                         // Leave blank intentionally
                     }
                 }
+            }
+        }
+
+        private void compareAndUpdateChanges(String path, List<Url> newProviderUrls) {
+            List<Url> oldProviderUrls = path2ProviderUrls.get(path);
+            if (Url.isSame(newProviderUrls, oldProviderUrls)) {
+                log.trace("No provider changes discovered for path: {}", path);
+            } else {
+                log.info("Discovered provider changes of path: {} with previous: {} and current: {}",
+                        path, oldProviderUrls, newProviderUrls);
+                updateAndNotify(path, newProviderUrls);
             }
         }
     }
