@@ -46,118 +46,6 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     }
 
     /**
-     * Schedule the retry registration and subscription process periodically
-     *
-     * @param registryUrl registry url
-     */
-    private void scheduleRetry(Url registryUrl) {
-        long retryInterval = registryUrl.getIntOption(RegistryConstants.RETRY_INTERVAL, RegistryConstants.RETRY_INTERVAL_VAL_DEFAULT);
-        // Retry to connect registry at retry interval
-        ScheduledThreadPool.schedulePeriodicalTask(ScheduledThreadPool.RETRY_THREAD_POOL, retryInterval, () -> {
-            doRetryFailedRegistration();
-            doRetryFailedDeregistration();
-            doRetryFailedSubscription();
-            doRetryFailedUnsubscription();
-        });
-    }
-
-    private void doRetryFailedRegistration() {
-        if (CollectionUtils.isEmpty(registerFailedUrls)) {
-            return;
-        }
-        Iterator<Url> iterator = registerFailedUrls.iterator();
-        while (iterator.hasNext()) {
-            Url url = iterator.next();
-            try {
-                super.register(url);
-            } catch (Exception e) {
-                log.warn(MessageFormat.format("Failed to retry to register [{0}] by [{1}] and it will be retry later!",
-                        url, this.getClass().getSimpleName()), e);
-            }
-            iterator.remove();
-        }
-        log.info("Retried to register urls by {}", this.getClass().getSimpleName());
-    }
-
-    private void doRetryFailedDeregistration() {
-        if (CollectionUtils.isEmpty(deregisterFailedUrls)) {
-            return;
-        }
-        Iterator<Url> iterator = deregisterFailedUrls.iterator();
-        while (iterator.hasNext()) {
-            Url url = iterator.next();
-            try {
-                super.deregister(url);
-            } catch (Exception e) {
-                log.warn(MessageFormat.format("Failed to retry to deregister [{0}] by [{1}] and it will be retry later!",
-                        url, this.getClass().getSimpleName()), e);
-            }
-            iterator.remove();
-        }
-        log.info("Retried to deregister urls by {}", this.getClass().getSimpleName());
-    }
-
-    private void doRetryFailedSubscription() {
-        if (MapUtils.isEmpty(consumerUrl2SubscribeFailedListeners)) {
-            return;
-        }
-        // Do the clean empty value task
-        for (Map.Entry<Url, ConcurrentHashSet<ProviderDiscoveryListener>> entry : consumerUrl2SubscribeFailedListeners.entrySet()) {
-            if (CollectionUtils.isEmpty(entry.getValue())) {
-                consumerUrl2SubscribeFailedListeners.remove(entry.getKey());
-            }
-        }
-        if (MapUtils.isEmpty(consumerUrl2SubscribeFailedListeners)) {
-            return;
-        }
-        for (Map.Entry<Url, ConcurrentHashSet<ProviderDiscoveryListener>> entry : consumerUrl2SubscribeFailedListeners.entrySet()) {
-            Url url = entry.getKey();
-            Iterator<ProviderDiscoveryListener> iterator = entry.getValue().iterator();
-            while (iterator.hasNext()) {
-                ProviderDiscoveryListener listener = iterator.next();
-                try {
-                    super.subscribe(url, listener);
-                } catch (Exception e) {
-                    log.warn(MessageFormat.format("Failed to retry to subscribe listener [{0}] to url [{1}] by [{2}] " +
-                            "and it will be retry later!", listener.getClass().getSimpleName(), url, this.getClass().getSimpleName()), e);
-                }
-                iterator.remove();
-            }
-        }
-        log.info("Retried to subscribe listener to urls by {}", this.getClass().getSimpleName());
-    }
-
-    private void doRetryFailedUnsubscription() {
-        if (MapUtils.isEmpty(consumerUrl2UnsubscribeFailedListeners)) {
-            return;
-        }
-        // Do the clean empty value task
-        for (Map.Entry<Url, ConcurrentHashSet<ProviderDiscoveryListener>> entry : consumerUrl2UnsubscribeFailedListeners.entrySet()) {
-            if (CollectionUtils.isEmpty(entry.getValue())) {
-                consumerUrl2UnsubscribeFailedListeners.remove(entry.getKey());
-            }
-        }
-        if (MapUtils.isEmpty(consumerUrl2UnsubscribeFailedListeners)) {
-            return;
-        }
-        for (Map.Entry<Url, ConcurrentHashSet<ProviderDiscoveryListener>> entry : consumerUrl2UnsubscribeFailedListeners.entrySet()) {
-            Url url = entry.getKey();
-            Iterator<ProviderDiscoveryListener> iterator = entry.getValue().iterator();
-            while (iterator.hasNext()) {
-                ProviderDiscoveryListener listener = iterator.next();
-                try {
-                    super.unsubscribe(url, listener);
-                } catch (Exception e) {
-                    log.warn(MessageFormat.format("Failed to retry to unsubscribe listener [{0}] to url [{1}] by [{2}] " +
-                            "and it will be retry later!", listener.getClass().getSimpleName(), url, this.getClass().getSimpleName()), e);
-                }
-                iterator.remove();
-            }
-        }
-        log.info("Retried to unsubscribe listener to urls by {}", this.getClass().getSimpleName());
-    }
-
-    /**
      * Register the url to registry
      *
      * @param url provider or consumer url
@@ -165,14 +53,12 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     @Override
     public void register(Url url) {
         Validate.notNull(url, "Url must NOT be null!");
-        registerFailedUrls.remove(url);
-        deregisterFailedUrls.remove(url);
 
         try {
             super.register(url);
+            registerFailedUrls.remove(url);
         } catch (Exception e) {
             // In some extreme cases, it can cause register failure
-            registerFailedUrls.add(url);
             throw new RpcFrameworkException(MessageFormat.format("Failed to register [{0}] to registry [{1}] by using [{2}]",
                     url, registryUrl, this.getClass().getSimpleName()), e);
         }
@@ -186,14 +72,12 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     @Override
     public void deregister(Url url) {
         Validate.notNull(url, "Url must NOT be null!");
-        registerFailedUrls.remove(url);
-        deregisterFailedUrls.remove(url);
 
         try {
             super.deregister(url);
+            deregisterFailedUrls.remove(url);
         } catch (Exception e) {
             // In extreme cases, it can cause register failure
-            deregisterFailedUrls.add(url);
             throw new RpcFrameworkException(
                     MessageFormat.format("Failed to deregister [{0}] from registry [{1}] by using [{2}]",
                             url, registryUrl, this.getClass().getSimpleName()), e);
@@ -258,6 +142,118 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
                                     "on registry [{2}] by using [{3}]",
                             listener, consumerUrl, registryUrl, this.getClass().getSimpleName()), e);
         }
+    }
+
+    /**
+     * Schedule the retry registration and subscription process periodically
+     *
+     * @param registryUrl registry url
+     */
+    private void scheduleRetry(Url registryUrl) {
+        long retryInterval = registryUrl.getIntOption(RegistryConstants.RETRY_INTERVAL, RegistryConstants.RETRY_INTERVAL_VAL_DEFAULT);
+        // Retry to connect registry at retry interval
+        ScheduledThreadPool.schedulePeriodicalTask(ScheduledThreadPool.RETRY_THREAD_POOL, retryInterval, () -> {
+            doRetryFailedRegistration();
+            doRetryFailedDeregistration();
+            doRetryFailedSubscription();
+            doRetryFailedUnsubscription();
+        });
+    }
+
+    private void doRetryFailedRegistration() {
+        if (CollectionUtils.isEmpty(registerFailedUrls)) {
+            return;
+        }
+        Iterator<Url> iterator = registerFailedUrls.iterator();
+        while (iterator.hasNext()) {
+            Url url = iterator.next();
+            try {
+                super.register(url);
+                iterator.remove();
+            } catch (Exception e) {
+                log.warn(MessageFormat.format("Failed to retry to register [{0}] by [{1}] and it will retry later!",
+                        url, this.getClass().getSimpleName()), e);
+            }
+        }
+        log.info("Retried to register failed urls by {}", this.getClass().getSimpleName());
+    }
+
+    private void doRetryFailedDeregistration() {
+        if (CollectionUtils.isEmpty(deregisterFailedUrls)) {
+            return;
+        }
+        Iterator<Url> iterator = deregisterFailedUrls.iterator();
+        while (iterator.hasNext()) {
+            Url url = iterator.next();
+            try {
+                super.deregister(url);
+                iterator.remove();
+            } catch (Exception e) {
+                log.warn(MessageFormat.format("Failed to retry to deregister [{0}] by [{1}] and it will retry later!",
+                        url, this.getClass().getSimpleName()), e);
+            }
+        }
+        log.info("Retried to deregister failed urls by {}", this.getClass().getSimpleName());
+    }
+
+    private void doRetryFailedSubscription() {
+        if (MapUtils.isEmpty(consumerUrl2SubscribeFailedListeners)) {
+            return;
+        }
+        // Do the clean empty value task
+        for (Map.Entry<Url, ConcurrentHashSet<ProviderDiscoveryListener>> entry : consumerUrl2SubscribeFailedListeners.entrySet()) {
+            if (CollectionUtils.isEmpty(entry.getValue())) {
+                consumerUrl2SubscribeFailedListeners.remove(entry.getKey());
+            }
+        }
+        if (MapUtils.isEmpty(consumerUrl2SubscribeFailedListeners)) {
+            return;
+        }
+        for (Map.Entry<Url, ConcurrentHashSet<ProviderDiscoveryListener>> entry : consumerUrl2SubscribeFailedListeners.entrySet()) {
+            Url url = entry.getKey();
+            Iterator<ProviderDiscoveryListener> iterator = entry.getValue().iterator();
+            while (iterator.hasNext()) {
+                ProviderDiscoveryListener listener = iterator.next();
+                try {
+                    super.subscribe(url, listener);
+                } catch (Exception e) {
+                    log.warn(MessageFormat.format("Failed to retry to subscribe listener [{0}] to url [{1}] by [{2}] " +
+                            "and it will be retry later!", listener.getClass().getSimpleName(), url, this.getClass().getSimpleName()), e);
+                }
+                iterator.remove();
+            }
+        }
+        log.info("Retried to subscribe listener to urls by {}", this.getClass().getSimpleName());
+    }
+
+    private void doRetryFailedUnsubscription() {
+        if (MapUtils.isEmpty(consumerUrl2UnsubscribeFailedListeners)) {
+            return;
+        }
+        // Do the clean empty value task
+        for (Map.Entry<Url, ConcurrentHashSet<ProviderDiscoveryListener>> entry : consumerUrl2UnsubscribeFailedListeners.entrySet()) {
+            if (CollectionUtils.isEmpty(entry.getValue())) {
+                consumerUrl2UnsubscribeFailedListeners.remove(entry.getKey());
+            }
+        }
+        if (MapUtils.isEmpty(consumerUrl2UnsubscribeFailedListeners)) {
+            return;
+        }
+        for (Map.Entry<Url, ConcurrentHashSet<ProviderDiscoveryListener>> entry : consumerUrl2UnsubscribeFailedListeners.entrySet()) {
+            Url url = entry.getKey();
+            Iterator<ProviderDiscoveryListener> iterator = entry.getValue().iterator();
+            while (iterator.hasNext()) {
+                ProviderDiscoveryListener listener = iterator.next();
+                try {
+                    super.unsubscribe(url, listener);
+                } catch (Exception e) {
+                    log.warn(MessageFormat.format("Failed to retry to unsubscribe listener [{0}] to url [{1}] by [{2}] " +
+                            "and it will be retry later!", listener.getClass().getSimpleName(), url, this.getClass().getSimpleName()), e);
+                }
+                iterator.remove();
+            }
+        }
+        log.info("Retried to unsubscribe listener to urls by {}", this.getClass().getSimpleName());
     }
 
     private void addToFailedMap(Map<Url, ConcurrentHashSet<ProviderDiscoveryListener>> failedMap, Url consumerUrl, ProviderDiscoveryListener listener) {
