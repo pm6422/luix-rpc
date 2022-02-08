@@ -163,13 +163,15 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
         }
 
         private void compareAndUpdateChanges(String path, List<Url> newProviderUrls) {
-            List<Url> oldProviderUrls = path2ProviderUrls.get(path);
-            if (Url.isSame(newProviderUrls, oldProviderUrls)) {
-                log.trace("No provider changes discovered for path: {}", path);
-            } else {
-                log.info("Discovered provider changes of path: {} with previous: {} and current: {}",
-                        path, oldProviderUrls, newProviderUrls);
-                updateAndNotify(path, newProviderUrls);
+            synchronized (path.intern()) {
+                List<Url> oldProviderUrls = path2ProviderUrls.get(path);
+                if (Url.isSame(newProviderUrls, oldProviderUrls)) {
+                    log.trace("No provider changes discovered for path: {}", path);
+                } else {
+                    log.info("Discovered provider changes of path: {} with previous: {} and current: {}",
+                            path, oldProviderUrls, newProviderUrls);
+                    updateAndNotify(path, newProviderUrls);
+                }
             }
         }
     }
