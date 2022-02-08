@@ -78,6 +78,7 @@
                         <p>
                             <a id="luix-web-center-btn" class="btn btn-lg btn-primary" role="button">Web Center在线示例</a>
                             <a id="luix-registry-btn" class="btn btn-lg btn-primary" role="button">注册中心在线示例</a>
+                            <a id="monitor-btn" class="btn btn-lg btn-primary" role="button">监控在线示例</a>
                         </p>
                     </div>
                 </div>
@@ -811,6 +812,12 @@
 
     $('#luix-registry-btn').click(function () {
         $.get("api/system/luix-registry-url", function(result){
+            window.location.href = result;
+        });
+    });
+
+    $('#monitor-btn').click(function () {
+        $.get("api/system/monitor-url", function(result){
             window.location.href = result;
         });
     });
