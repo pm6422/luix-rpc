@@ -113,11 +113,13 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
 
                     CollectionUtils.union(currentPath2ConsumerUrls.keySet(), path2ConsumerUrls.keySet())
                             .forEach(path -> {
-                                List<Url> oldConsumerUrls = path2ConsumerUrls.get(path);
-                                List<Url> newConsumerUrls = currentPath2ConsumerUrls.get(path);
-                                if (!Url.isSame(newConsumerUrls, oldConsumerUrls)) {
-                                    listener.onNotify(getRegistryUrl(), path, newConsumerUrls);
-                                    path2ConsumerUrls.put(path, newConsumerUrls);
+                                synchronized (path.intern()) {
+                                    List<Url> oldConsumerUrls = path2ConsumerUrls.get(path);
+                                    List<Url> newConsumerUrls = currentPath2ConsumerUrls.get(path);
+                                    if (!Url.isSame(newConsumerUrls, oldConsumerUrls)) {
+                                        listener.onNotify(getRegistryUrl(), path, newConsumerUrls);
+                                        path2ConsumerUrls.put(path, newConsumerUrls);
+                                    }
                                 }
                             });
                 }, 0, 2, TimeUnit.SECONDS);
