@@ -98,7 +98,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     }
 
     @Override
-    public List<Url> discoverAll() {
+    public List<Url> discoverProviders() {
         return consulHttpClient.find(CONSUL_PROVIDER_SERVICE_NAME);
     }
 

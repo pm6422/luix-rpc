@@ -90,7 +90,7 @@ public class NoRegistry extends AbstractRegistry implements Destroyable {
     }
 
     @Override
-    public List<Url> discoverAll() {
+    public List<Url> discoverProviders() {
         throw new UnsupportedOperationException();
     }
 

@@ -16,7 +16,7 @@ public interface Subscribable {
      *
      * @return provider urls
      */
-    List<Url> discoverAll();
+    List<Url> discoverProviders();
 
     /**
      * Discover 'active' the provider urls of the specified consumer, including 'inactive' urls
