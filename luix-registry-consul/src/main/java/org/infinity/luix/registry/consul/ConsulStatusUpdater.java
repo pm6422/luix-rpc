@@ -60,11 +60,7 @@ public class ConsulStatusUpdater {
 
     private ThreadPoolExecutor createExecutionThreadPool() {
         return new ThreadPoolExecutor(5, 30, 30 * 1_000,
-                TimeUnit.MILLISECONDS, createWorkQueue(), new ThreadPoolExecutor.AbortPolicy());
-    }
-
-    private BlockingQueue<Runnable> createWorkQueue() {
-        return new ArrayBlockingQueue<>(10_000);
+                TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(10_000), new ThreadPoolExecutor.AbortPolicy());
     }
 
     /**
