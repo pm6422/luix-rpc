@@ -213,14 +213,14 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
                 ProviderDiscoveryListener listener = iterator.next();
                 try {
                     super.subscribe(url, listener);
+                    iterator.remove();
                 } catch (Exception e) {
                     log.warn(MessageFormat.format("Failed to retry to subscribe listener [{0}] to url [{1}] by [{2}] " +
-                            "and it will be retry later!", listener.getClass().getSimpleName(), url, this.getClass().getSimpleName()), e);
+                            "and it will retry later!", listener.getClass().getSimpleName(), url, this.getClass().getSimpleName()), e);
                 }
-                iterator.remove();
             }
         }
-        log.info("Retried to subscribe listener to urls by {}", this.getClass().getSimpleName());
+        log.info("Retried to subscribe listener by {}", this.getClass().getSimpleName());
     }
 
     private void doRetryFailedUnsubscription() {
@@ -243,14 +243,14 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
                 ProviderDiscoveryListener listener = iterator.next();
                 try {
                     super.unsubscribe(url, listener);
+                    iterator.remove();
                 } catch (Exception e) {
                     log.warn(MessageFormat.format("Failed to retry to unsubscribe listener [{0}] to url [{1}] by [{2}] " +
-                            "and it will be retry later!", listener.getClass().getSimpleName(), url, this.getClass().getSimpleName()), e);
+                            "and it will retry later!", listener.getClass().getSimpleName(), url, this.getClass().getSimpleName()), e);
                 }
-                iterator.remove();
             }
         }
-        log.info("Retried to unsubscribe listener to urls by {}", this.getClass().getSimpleName());
+        log.info("Retried to unsubscribe listener by {}", this.getClass().getSimpleName());
     }
 
     private void removeFailedListener(Url consumerUrl, ProviderDiscoveryListener listener) {
