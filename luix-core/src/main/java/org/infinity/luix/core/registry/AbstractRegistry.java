@@ -117,7 +117,6 @@ public abstract class AbstractRegistry implements Registry {
     public void register(Url url) {
         Validate.notNull(url, "Url must NOT be null!");
         doRegister(removeUnnecessaryOptions(url.copy()));
-        log.info("Registered the url [{}] to registry [{}]", url, registryUrl.getIdentity());
         // Added it to the cache after registered
         if (url.isProvider()) {
             registeredProviderUrls.add(url);
@@ -126,6 +125,7 @@ public abstract class AbstractRegistry implements Registry {
         } else {
             throw new RpcConfigException("Url must be provider or consumer!");
         }
+        log.info("Registered the url [{}] to registry [{}]", url, registryUrl.getIdentity());
     }
 
     /**
@@ -137,7 +137,6 @@ public abstract class AbstractRegistry implements Registry {
     public void deregister(Url url) {
         Validate.notNull(url, "Url must NOT be null!");
         doDeregister(removeUnnecessaryOptions(url.copy()));
-        log.info("Deregistered the url [{}] from registry [{}]", url, registryUrl.getIdentity());
         // Removed it from the container after de-registered
         if (url.isProvider()) {
             registeredProviderUrls.remove(url);
@@ -146,6 +145,7 @@ public abstract class AbstractRegistry implements Registry {
         } else {
             throw new RpcConfigException("Url must be provider or consumer!");
         }
+        log.info("De-registered the url [{}] from registry [{}]", url, registryUrl.getIdentity());
     }
 
     /**
@@ -155,12 +155,9 @@ public abstract class AbstractRegistry implements Registry {
      */
     @Override
     public void activate(Url url) {
-        if (url != null) {
-            doActivate(removeUnnecessaryOptions(url.copy()));
-            log.info("Activated the url [{}] on registry [{}]", url, registryUrl.getIdentity());
-        } else {
-            doActivate(null);
-        }
+        Validate.notNull(url, "Url must NOT be null!");
+        doActivate(removeUnnecessaryOptions(url.copy()));
+        log.info("Activated the url [{}] on registry [{}]", url, registryUrl.getIdentity());
     }
 
     /**
@@ -170,12 +167,9 @@ public abstract class AbstractRegistry implements Registry {
      */
     @Override
     public void deactivate(Url url) {
-        if (url != null) {
-            doDeactivate(removeUnnecessaryOptions(url.copy()));
-            log.info("Deactivated the url [{}] on registry [{}]", url, registryUrl.getIdentity());
-        } else {
-            doDeactivate(null);
-        }
+        Validate.notNull(url, "Url must NOT be null!");
+        doDeactivate(removeUnnecessaryOptions(url.copy()));
+        log.info("Deactivated the url [{}] on registry [{}]", url, registryUrl.getIdentity());
     }
 
     /**
