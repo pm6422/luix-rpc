@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL;
 import static org.infinity.luix.core.constant.RegistryConstants.DISCOVERY_INTERVAL_VAL_DEFAULT;
-import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_CONSUMING_SERVICE_NAME;
-import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_PROVIDING_SERVICE_NAME;
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_CONSUMER_SERVICE_NAME;
+import static org.infinity.luix.registry.consul.utils.ConsulUtils.CONSUL_PROVIDER_SERVICE_NAME;
 
 @Slf4j
 @ThreadSafe
@@ -94,7 +94,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
 
     @Override
     public List<Url> doDiscoverActive(Url consumerUrl) {
-        return consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME, consumerUrl.getPath(), true);
+        return consulHttpClient.find(CONSUL_PROVIDER_SERVICE_NAME, consumerUrl.getPath(), true);
     }
 
     private void compareChanges(String path, List<Url> newProviderUrls) {
@@ -110,7 +110,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
 
     @Override
     public List<Url> discoverAll() {
-        return consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME);
+        return consulHttpClient.find(CONSUL_PROVIDER_SERVICE_NAME);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
         consumerChangesMonitorPool.scheduleAtFixedRate(
                 () -> {
                     Map<String, List<Url>> currentPath2ConsumerUrls =
-                            consulHttpClient.find(CONSUL_CONSUMING_SERVICE_NAME)
+                            consulHttpClient.find(CONSUL_CONSUMER_SERVICE_NAME)
                                     .stream()
                                     .collect(Collectors.groupingBy(Url::getPath));
 
@@ -156,7 +156,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
                 try {
                     sleep(discoverInterval);
                     Map<String, List<Url>> currentPath2ProviderUrls =
-                            consulHttpClient.find(CONSUL_PROVIDING_SERVICE_NAME)
+                            consulHttpClient.find(CONSUL_PROVIDER_SERVICE_NAME)
                                     .stream()
                                     .collect(Collectors.groupingBy(Url::getPath));
 

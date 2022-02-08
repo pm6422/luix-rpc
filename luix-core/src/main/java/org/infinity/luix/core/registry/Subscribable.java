@@ -25,7 +25,7 @@ public interface Subscribable {
      * @param onlyFetchFromCache if true, only fetch from cache
      * @return provider urls
      */
-    List<Url> discoverActive(Url consumerUrl, boolean onlyFetchFromCache);
+    List<Url> discoverProviders(Url consumerUrl, boolean onlyFetchFromCache);
 
     /**
      * Bind a listener to a subscriber

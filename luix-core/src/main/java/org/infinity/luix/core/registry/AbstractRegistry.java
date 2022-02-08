@@ -38,6 +38,7 @@ public abstract class AbstractRegistry implements Registry {
      */
     private final   Set<Url>                                                  registeredConsumerUrls = new ConcurrentHashSet<>();
     /**
+     * Active provider urls cache
      * Key: path
      * Value: provider urls
      */
@@ -198,8 +199,8 @@ public abstract class AbstractRegistry implements Registry {
         // Save the listener to cache
         path2Listeners.computeIfAbsent(consumerUrl.getPath(), k -> new ConcurrentHashSet<>()).add(listener);
 
-        // Discover active providers at subscribe time
-        List<Url> providerUrls = discoverActive(consumerUrl, false);
+        // Discover active providers after subscription
+        List<Url> providerUrls = discoverProviders(consumerUrl, false);
         if (CollectionUtils.isNotEmpty(providerUrls)) {
             updateAndNotify(consumerUrl.getPath(), providerUrls);
         }
@@ -258,24 +259,22 @@ public abstract class AbstractRegistry implements Registry {
      * @return provider urls
      */
     @Override
-    public List<Url> discoverActive(Url consumerUrl, boolean onlyFetchFromCache) {
+    public List<Url> discoverProviders(Url consumerUrl, boolean onlyFetchFromCache) {
         Validate.notNull(consumerUrl, "Consumer url must NOT be null!");
 
         List<Url> cachedProviderUrls = path2ProviderUrls.get(consumerUrl.getPath());
         if (CollectionUtils.isNotEmpty(cachedProviderUrls)) {
             // Get all the provider urls from cache
             return cachedProviderUrls.stream().map(Url::copy).collect(Collectors.toList());
-        } else if (onlyFetchFromCache) {
-            return Collections.emptyList();
-        } else {
+        } else if (!onlyFetchFromCache) {
             // Discover the provider urls from registry if local cache does not exist
             List<Url> providerUrls = doDiscoverActive(consumerUrl);
             if (CollectionUtils.isNotEmpty(providerUrls)) {
                 // Make a copy and add to results
                 return providerUrls.stream().map(Url::copy).collect(Collectors.toList());
             }
-            return Collections.emptyList();
         }
+        return Collections.emptyList();
     }
 
     /**
