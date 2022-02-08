@@ -94,15 +94,13 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     @Override
     public void subscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
         Validate.notNull(consumerUrl, "Consumer url must NOT be null!");
-        Validate.notNull(listener, "Consumer listener must NOT be null!");
+        Validate.notNull(listener, "Listener must NOT be null!");
 
         // Remove failed listener from the local cache before subscribe
         removeFailedListener(consumerUrl, listener);
-
         try {
             super.subscribe(consumerUrl, listener);
         } catch (Exception e) {
-            log.warn("Exception occurred!", e);
             // Add the failed listener to the local cache if exception occurred in order to retry later
             List<Url> cachedProviderUrls = super.discoverProviders(consumerUrl, true);
             if (CollectionUtils.isNotEmpty(cachedProviderUrls)) {
@@ -112,7 +110,7 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             Optional.ofNullable(globalProviderDiscoveryListener).ifPresent(l ->
                     l.onNotify(registryUrl, consumerUrl.getPath(), cachedProviderUrls));
 
-            addToFailedMap(consumerUrl2SubscribeFailedListeners, consumerUrl, listener);
+            consumerUrl2SubscribeFailedListeners.computeIfAbsent(consumerUrl, k -> new ConcurrentHashSet<>()).add(listener);
             throw new RpcFrameworkException(
                     MessageFormat.format("Failed to subscribe the listener [{0}] to the client [{1}] " +
                                     "on registry [{2}] by using [{3}]",
@@ -129,14 +127,13 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
     @Override
     public void unsubscribe(Url consumerUrl, ProviderDiscoveryListener listener) {
         Validate.notNull(consumerUrl, "Consumer url must NOT be null!");
-        Validate.notNull(listener, "Consumer listener must NOT be null!");
+        Validate.notNull(listener, "Listener must NOT be null!");
 
         removeFailedListener(consumerUrl, listener);
-
         try {
             super.unsubscribe(consumerUrl, listener);
         } catch (Exception e) {
-            addToFailedMap(consumerUrl2UnsubscribeFailedListeners, consumerUrl, listener);
+            consumerUrl2UnsubscribeFailedListeners.computeIfAbsent(consumerUrl, k -> new ConcurrentHashSet<>()).add(listener);
             throw new RpcFrameworkException(
                     MessageFormat.format("Failed to unsubscribe the listener [{0}] from the client [{1}] " +
                                     "on registry [{2}] by using [{3}]",
@@ -254,15 +251,6 @@ public abstract class FailbackAbstractRegistry extends AbstractRegistry {
             }
         }
         log.info("Retried to unsubscribe listener to urls by {}", this.getClass().getSimpleName());
-    }
-
-    private void addToFailedMap(Map<Url, ConcurrentHashSet<ProviderDiscoveryListener>> failedMap, Url consumerUrl, ProviderDiscoveryListener listener) {
-        Set<ProviderDiscoveryListener> listeners = failedMap.get(consumerUrl);
-        if (listeners == null) {
-            failedMap.putIfAbsent(consumerUrl, new ConcurrentHashSet<>());
-            listeners = failedMap.get(consumerUrl);
-        }
-        listeners.add(listener);
     }
 
     private void removeFailedListener(Url consumerUrl, ProviderDiscoveryListener listener) {
