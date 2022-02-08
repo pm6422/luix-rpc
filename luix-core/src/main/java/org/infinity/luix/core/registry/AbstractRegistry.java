@@ -8,7 +8,7 @@ import org.infinity.luix.core.listener.GlobalProviderDiscoveryListener;
 import org.infinity.luix.core.listener.ProviderDiscoveryListener;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.collection.ConcurrentHashSet;
-import org.infinity.luix.utilities.concurrent.NotThreadSafe;
+import org.infinity.luix.utilities.concurrent.ThreadSafe;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -23,7 +23,7 @@ import static org.infinity.luix.core.constant.ProtocolConstants.CODEC;
  * Abstract registry
  */
 @Slf4j
-@NotThreadSafe
+@ThreadSafe
 public abstract class AbstractRegistry implements Registry {
     /**
      * Registry url
@@ -286,6 +286,7 @@ public abstract class AbstractRegistry implements Registry {
     protected void updateAndNotify(String path, List<Url> providerUrls) {
         notifyProviderChangeThreadPool.execute(() -> {
             synchronized (path.intern()) {
+                // TODO: learn how to handle multiple threads
                 if (CollectionUtils.isEmpty(providerUrls)) {
                     path2ProviderUrls.remove(path);
                 } else {
@@ -293,11 +294,11 @@ public abstract class AbstractRegistry implements Registry {
                 }
 
                 if (CollectionUtils.isNotEmpty(path2Listeners.get(path))) {
-                    // Notify to specified consumers
-                    path2Listeners.get(path).forEach(listener -> listener.onNotify(registryUrl, path, providerUrls));
+                    // Notify to specified consumer listener
+                    path2Listeners.get(path).forEach(l -> l.onNotify(registryUrl, path, providerUrls));
                 }
 
-                // Notify to all consumers
+                // Notify to global listener
                 Optional.ofNullable(globalProviderDiscoveryListener).ifPresent(l -> l.onNotify(registryUrl, path, providerUrls));
             }
         });
