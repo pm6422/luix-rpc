@@ -41,8 +41,8 @@ application:
     swagger:
         enabled: true
         api:
-            title: @project.name@ API
-            description: @project.name@接口文档
+            title: Luix Portal API
+            description: Luix Portal接口文档
         version: ${app.version}
         contact-name: Louis
         contact-email: louis@luixtech.com
