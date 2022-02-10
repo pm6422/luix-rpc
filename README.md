@@ -128,7 +128,7 @@ Then run:
 docker-compose -f docker/app.yml up -d
 ```
 
-If you want to get the application metric values, then run:
+If you want to start Prometheus and Grafana monitor services then run:
 ```
 docker-compose -f docker/monitoring.yml up -d
 ```
