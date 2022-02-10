@@ -5,6 +5,16 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.infinity.luix.webcenter.service.SecurityErrorMeterService;
 import org.springframework.stereotype.Service;
 
+/**
+ * Generate the metrics data below:
+ * <p>
+ * # HELP security_authentication_invalid_tokens_errors_total Indicates validation error count of the tokens presented by the clients.
+ * # TYPE security_authentication_invalid_tokens_errors_total counter
+ * security_authentication_invalid_tokens_errors_total{application="luix-web-center",cause="malformed",} 3.0
+ * security_authentication_invalid_tokens_errors_total{application="luix-web-center",cause="expired",} 0.0
+ * security_authentication_invalid_tokens_errors_total{application="luix-web-center",cause="unsupported",} 0.0
+ * security_authentication_invalid_tokens_errors_total{application="luix-web-center",cause="invalid-signature",} 0.0
+ */
 @Service
 public class SecurityErrorMeterServiceImpl implements SecurityErrorMeterService {
 
