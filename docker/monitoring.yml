@@ -27,3 +27,11 @@ services:
       - 127.0.0.1:3000:3000
     # On MacOS, remove next line
 #    network_mode: 'host' # to test locally running service
+#  alertmanager:
+#    image: prom/alertmanager:v0.20.0
+#    volumes:
+#      - ./alertmanager/:/etc/alertmanager/
+#    command:
+#      - '--config.file=/etc/alertmanager/alertmanager.yml'
+#    # If you want to expose these ports outside your dev PC,
+#    # remove the "
