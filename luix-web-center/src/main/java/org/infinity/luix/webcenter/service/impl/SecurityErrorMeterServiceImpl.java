@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SecurityErrorMeterServiceImpl implements SecurityErrorMeterService {
 
-    protected static final String  INVALID_TOKENS_METER_NAME            = "security.authentication.invalid-tokens";
+    protected static final String  INVALID_TOKENS_METER_NAME            = "security_authentication_invalid_tokens";
     private static final   String  INVALID_TOKENS_METER_BASE_UNIT       = "errors";
     private static final   String  INVALID_TOKENS_METER_DESCRIPTION     = "Indicates validation error count of the tokens presented by the clients.";
     private static final   String  INVALID_TOKENS_METER_CAUSE_DIMENSION = "cause";
