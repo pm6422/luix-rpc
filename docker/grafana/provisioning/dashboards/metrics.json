@@ -37,8 +37,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 4701,
   "graphTooltip": 1,
-  "id": 3,
-  "iteration": 1644316265916,
+  "iteration": 1644477787579,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -380,97 +379,74 @@
       "type": "stat"
     },
     {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
       "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "index": 0,
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
-        "h": 8,
-        "w": 8,
+        "h": 3,
+        "w": 4,
         "x": 16,
         "y": 1
       },
-      "hiddenSeries": false,
-      "id": 143,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": true,
-        "show": true,
-        "total": true,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
+      "id": 171,
       "options": {
-        "alertThreshold": true
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
       },
-      "percentage": false,
       "pluginVersion": "8.2.4",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
       "targets": [
         {
           "exemplar": true,
-          "expr": "irate(logback_events_total{instance=\"$instance\", application=\"$application\", level=\"error\"}[5m])",
+          "expr": "kube_deployment_status_replicas{deployment=~\"$application.*\" ,namespace=\"$namespace\"}",
           "interval": "",
-          "legendFormat": "error",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Logback Error",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:691",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:692",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
+      "title": "Pods Count",
+      "type": "stat"
     },
     {
       "aliasColors": {},
@@ -661,6 +637,99 @@
         },
         {
           "$$hashKey": "object:295",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 4
+      },
+      "hiddenSeries": false,
+      "id": 143,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": true,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.2.4",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "irate(logback_events_total{instance=\"$instance\", application=\"$application\", level=\"error\"}[5m])",
+          "interval": "",
+          "legendFormat": "error",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Logback Error",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:691",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:692",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -3885,7 +3954,7 @@
             "h": 4,
             "w": 4,
             "x": 0,
-            "y": 21
+            "y": 68
           },
           "id": 155,
           "options": {
@@ -3928,7 +3997,7 @@
             "h": 8,
             "w": 20,
             "x": 4,
-            "y": 21
+            "y": 68
           },
           "hiddenSeries": false,
           "id": 161,
@@ -4063,7 +4132,7 @@
             "h": 4,
             "w": 4,
             "x": 0,
-            "y": 25
+            "y": 72
           },
           "id": 159,
           "options": {
@@ -4106,7 +4175,7 @@
             "h": 6,
             "w": 8,
             "x": 0,
-            "y": 29
+            "y": 76
           },
           "hiddenSeries": false,
           "id": 163,
@@ -4198,7 +4267,7 @@
             "h": 6,
             "w": 8,
             "x": 8,
-            "y": 29
+            "y": 76
           },
           "hiddenSeries": false,
           "id": 165,
@@ -4290,7 +4359,7 @@
             "h": 6,
             "w": 8,
             "x": 16,
-            "y": 29
+            "y": 76
           },
           "hiddenSeries": false,
           "id": 167,
@@ -4385,8 +4454,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "luix-web-center",
-          "value": "luix-web-center"
+          "text": "luix-demo-server",
+          "value": "luix-demo-server"
         },
         "datasource": "Prometheus",
         "definition": "",
@@ -4416,8 +4485,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "host.docker.internal:6030",
-          "value": "host.docker.internal:6030"
+          "text": "host.docker.internal:6010",
+          "value": "host.docker.internal:6010"
         },
         "datasource": "Prometheus",
         "definition": "",
@@ -4570,5 +4639,5 @@
   "timezone": "browser",
   "title": "Application Metrics",
   "uid": "MPjWkoanz",
-  "version": 35
+  "version": 1
 }
