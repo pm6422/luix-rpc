@@ -32,7 +32,7 @@
       }
     ]
   },
-  "description": "Dashboard for Micrometer instrumented applications (Java, Spring Boot, Micronaut)",
+  "description": "Dashboard for Micrometer instrumented applications (Java, Spring Boot)",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "gnetId": 4701,
@@ -4568,7 +4568,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "Micrometer",
+  "title": "Application Metrics",
   "uid": "MPjWkoanz",
   "version": 35
 }

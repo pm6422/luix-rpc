@@ -132,6 +132,8 @@ If you want to start Prometheus and Grafana monitor services then run:
 ```
 docker-compose -f docker/monitoring.yml up -d
 ```
+Then navigate to http://localhost:3000 in your browser to access Grafana. Grafana username: admin, password: admin
+
 
 If you want to start Consul registry, then run:
 ```
