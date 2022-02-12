@@ -1,11 +1,11 @@
-package org.infinity.luix.utilities.statistic;
+package org.infinity.luix.metrics.statistic;
 
 import com.codahale.metrics.MetricRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.luix.utilities.statistic.access.AccessStatisticItem;
-import org.infinity.luix.utilities.statistic.access.AccessStatisticResult;
-import org.infinity.luix.utilities.statistic.access.StatisticType;
+import org.infinity.luix.metrics.statistic.access.AccessStatisticItem;
+import org.infinity.luix.metrics.statistic.access.AccessStatisticResult;
+import org.infinity.luix.metrics.statistic.access.StatisticType;
 
 import java.text.DecimalFormat;
 import java.util.Map;
@@ -19,8 +19,8 @@ public abstract class StatisticUtils {
      */
     public static final  int                                        ACCESS_STATISTIC_INTERVAL = 30;
     public static        String                                     DELIMITER                 = "\\|";
-    public static final  String                                     ELAPSED_TIME_HISTOGRAM    = MetricRegistry.name(AccessStatisticItem.class, "elapsedTime");
-    private static final ConcurrentMap<String, AccessStatisticItem> ACCESS_STATISTICS         = new ConcurrentHashMap<>();
+    public static final  String                                     ELAPSED_TIME_HISTOGRAM = MetricRegistry.name(AccessStatisticItem.class, "elapsedTime");
+    private static final ConcurrentMap<String, AccessStatisticItem> ACCESS_STATISTICS      = new ConcurrentHashMap<>();
 
     public static String getMemoryStatistic() {
         Runtime runtime = Runtime.getRuntime();

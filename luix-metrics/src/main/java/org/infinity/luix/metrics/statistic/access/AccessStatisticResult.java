@@ -1,4 +1,4 @@
-package org.infinity.luix.utilities.statistic.access;
+package org.infinity.luix.metrics.statistic.access;
 
 public class AccessStatisticResult {
     public int    totalCount          = 0;

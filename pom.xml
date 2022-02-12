@@ -9,6 +9,7 @@
         <module>luix-dependencies-bom</module>
         <module>luix-utilities</module>
         <module>luix-core</module>
+        <module>luix-metrics</module>
         <module>luix-transport-netty4</module>
         <module>luix-registry-consul</module>
         <module>luix-spring-boot-starter</module>
