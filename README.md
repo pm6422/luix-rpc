@@ -121,7 +121,7 @@ docker-compose -f docker/consul.yml up -d
 ```
 
 You can also fully dockerize your application and all the services that it depends on.
-To achieve this, first build docker images of all your applications by running and push them to docker registry:
+To achieve this, first build docker images of all your applications then push them to docker registry:
 
 ```
 ./mvnw package -DskipTests -DskipJibBuild=false
