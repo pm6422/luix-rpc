@@ -115,6 +115,11 @@ To stop it and remove the container, run:
 docker-compose -f docker/mongodb.yml down
 ```
 
+To start local Consul registry, run:
+```
+docker-compose -f docker/consul.yml up -d
+```
+
 You can also fully dockerize your application and all the services that it depends on.
 To achieve this, first build docker images of all your applications by running and push them to docker registry:
 
@@ -128,17 +133,11 @@ Then run:
 docker-compose -f docker/app.yml up -d
 ```
 
-If you want to start Prometheus and Grafana monitor services then run:
+To start local Prometheus and Grafana services, run:
 ```
 docker-compose -f docker/monitoring.yml up -d
 ```
 Then navigate to http://localhost:3000 in your browser to access Grafana. Grafana username: admin, password: admin
-
-
-If you want to start Consul registry, then run:
-```
-docker-compose -f docker/consul.yml up -d
-```
 
 [jhipster homepage and latest documentation]: https://www.jhipster.tech
 [jhipster 7.4.0 archive]: https://www.jhipster.tech/documentation-archive/v7.4.0
