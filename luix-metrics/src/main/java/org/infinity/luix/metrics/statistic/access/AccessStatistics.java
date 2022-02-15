@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 import static org.infinity.luix.metrics.statistic.MetricsUtils.ELAPSED_TIME_HISTOGRAM;
 import static org.infinity.luix.metrics.statistic.MetricsUtils.SCHEDULED_STATISTIC_INTERVAL;
 
-public class AccessMetrics {
+public class AccessStatistics {
     private static final int          INTERVAL_SECONDS = SCHEDULED_STATISTIC_INTERVAL * 2;
     private final        String       name;
     private final        AtomicLong[] accessCounter;
@@ -22,7 +22,7 @@ public class AccessMetrics {
     private volatile     int          currentIndex;
     private final        Histogram    histogram;
 
-    public AccessMetrics(String name, long now) {
+    public AccessStatistics(String name, long now) {
         this.name = name;
         this.accessCounter = initAtomicIntegerArray();
         this.slowExecutionCounter = initAtomicIntegerArray();
@@ -45,15 +45,8 @@ public class AccessMetrics {
         return (int) ((now / 1_000) % INTERVAL_SECONDS);
     }
 
-    /**
-     * @param now                    current time in milliseconds
-     * @param elapsedTime            elapsed time in milliseconds
-     * @param bizProcessingTime      business processing time in milliseconds
-     * @param slowExecutionThreshold slow execution threshold in milliseconds
-     * @param statisticType          statistic type
-     */
-    public void save(long now, long elapsedTime, long bizProcessingTime,
-                     int slowExecutionThreshold, StatisticType statisticType) {
+    public void log(long now, long elapsedTime, long bizProcessingTime,
+                    int slowExecutionThreshold, StatisticsType statisticsType) {
         int index = getIndex(now);
         if (currentIndex != index) {
             synchronized (this) {
@@ -71,9 +64,9 @@ public class AccessMetrics {
         }
         processingTimes[currentIndex].addAndGet(elapsedTime);
         bizProcessingTimes[currentIndex].addAndGet(bizProcessingTime);
-        if (statisticType == StatisticType.BIZ_EXCEPTION) {
+        if (statisticsType == StatisticsType.BIZ_EXCEPTION) {
             bizExceptionCounter[currentIndex].incrementAndGet();
-        } else if (statisticType == StatisticType.OTHER_EXCEPTION) {
+        } else if (statisticsType == StatisticsType.OTHER_EXCEPTION) {
             otherExceptionCounter[currentIndex].incrementAndGet();
         }
         histogram.update(elapsedTime);
