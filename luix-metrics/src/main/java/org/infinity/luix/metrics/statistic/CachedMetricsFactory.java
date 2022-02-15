@@ -17,33 +17,28 @@ public abstract class CachedMetricsFactory {
     }
 
     /**
-     * Get {@link MetricRegistry} instance associated with the name
-     *
-     * @param name name of {@link MetricRegistry}
-     * @return {@link MetricRegistry} instance
-     */
-    public static MetricRegistry getRegistryInstance(String name) {
-        MetricRegistry instance = METRIC_REGISTRIES.get(name);
-        if (instance == null) {
-            METRIC_REGISTRIES.putIfAbsent(name, new MetricRegistry());
-            instance = METRIC_REGISTRIES.get(name);
-        }
-        return instance;
-    }
-
-    /**
      * Get {@link MetricRegistry} instance associated with the multiple names
      *
      * @param name  the first element of the name
      * @param names the remaining elements of the name
      * @return {@link MetricRegistry} instance
      */
-    public static MetricRegistry getRegistryInstance(String name, String... names) {
+    public static MetricRegistry getMetricsRegistry(String name, String... names) {
         // Concatenates elements to form a dotted name
         String key = MetricRegistry.name(name, names);
-        MetricRegistry instance = METRIC_REGISTRIES.get(key);
+        return getMetricsRegistry(key);
+    }
+
+    /**
+     * Get {@link MetricRegistry} instance associated with the name
+     *
+     * @param name name of {@link MetricRegistry}
+     * @return {@link MetricRegistry} instance
+     */
+    public static MetricRegistry getMetricsRegistry(String name) {
+        MetricRegistry instance = METRIC_REGISTRIES.get(name);
         if (instance == null) {
-            METRIC_REGISTRIES.putIfAbsent(key, new MetricRegistry());
+            METRIC_REGISTRIES.putIfAbsent(name, new MetricRegistry());
             instance = METRIC_REGISTRIES.get(name);
         }
         return instance;
@@ -56,7 +51,7 @@ public abstract class CachedMetricsFactory {
      * @param names names
      * @return {@link MetricRegistry} instance
      */
-    public static MetricRegistry getRegistryInstance(Class<?> clazz, String... names) {
+    public static MetricRegistry getMetricsRegistry(Class<?> clazz, String... names) {
         // Concatenates elements to form a dotted name
         String key = MetricRegistry.name(clazz, names);
         MetricRegistry instance = METRIC_REGISTRIES.get(key);

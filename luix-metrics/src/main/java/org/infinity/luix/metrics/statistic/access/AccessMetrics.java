@@ -35,7 +35,7 @@ public class AccessMetrics {
         this.otherExceptionCounter = initAtomicIntegerArray();
 
         this.currentIndex = getIndex(now);
-        this.histogram = CachedMetricsFactory.getRegistryInstance(name).histogram(ELAPSED_TIME_HISTOGRAM);
+        this.histogram = CachedMetricsFactory.getMetricsRegistry(name).histogram(ELAPSED_TIME_HISTOGRAM);
     }
 
     private AtomicLong[] initAtomicIntegerArray() {
@@ -82,7 +82,7 @@ public class AccessMetrics {
         histogram.update(elapsedTime);
         String[] names = name.split("\\|");
         String appName = names[1] + "|" + names[2];
-        CachedMetricsFactory.getRegistryInstance(appName).histogram(ELAPSED_TIME_HISTOGRAM).update(elapsedTime);
+        CachedMetricsFactory.getMetricsRegistry(appName).histogram(ELAPSED_TIME_HISTOGRAM).update(elapsedTime);
     }
 
     private void reset(int index) {
