@@ -100,11 +100,11 @@ public class AccessMetrics {
         }
     }
 
-    public AccessStatisticResult getStatisticResult(long now, int interval) {
+    public AccessResult getStatisticResult(long now, int interval) {
         // 当前这秒还没完全结束，因此数据不全，统计从上一秒开始，往前推移interval
         int startIndex = getIndex(Instant.ofEpochMilli(now).minusSeconds(1).toEpochMilli());
 
-        AccessStatisticResult result = new AccessStatisticResult();
+        AccessResult result = new AccessResult();
         for (int i = 0; i < interval; i++) {
             int currentIndex = (startIndex - i + INTERVAL_SECONDS) % INTERVAL_SECONDS;
 

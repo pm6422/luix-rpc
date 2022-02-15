@@ -3,7 +3,7 @@ package org.infinity.luix.metrics.statistic;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.metrics.statistic.access.AccessStatisticResult;
+import org.infinity.luix.metrics.statistic.access.AccessResult;
 import org.infinity.luix.metrics.statistic.access.StatisticType;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +24,7 @@ public class MetricsUtilsTests {
 
         // It must sleep for a while
         Thread.sleep(1000L);
-        ConcurrentMap<String, AccessStatisticResult> totalAccessStatistic = MetricsUtils.getTotalAccessStatistic();
+        ConcurrentMap<String, AccessResult> totalAccessStatistic = MetricsUtils.getTotalAccessStatistic();
         log.info(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(totalAccessStatistic));
     }
 }

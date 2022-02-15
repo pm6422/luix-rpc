@@ -4,7 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.metrics.statistic.access.AccessMetrics;
-import org.infinity.luix.metrics.statistic.access.AccessStatisticResult;
+import org.infinity.luix.metrics.statistic.access.AccessResult;
 import org.infinity.luix.metrics.statistic.access.StatisticType;
 
 import java.text.DecimalFormat;
@@ -63,11 +63,11 @@ public abstract class MetricsUtils {
         return item;
     }
 
-    public static ConcurrentMap<String, AccessStatisticResult> getTotalAccessStatistic() {
-        ConcurrentMap<String, AccessStatisticResult> totalResults = new ConcurrentHashMap<>();
+    public static ConcurrentMap<String, AccessResult> getTotalAccessStatistic() {
+        ConcurrentMap<String, AccessResult> totalResults = new ConcurrentHashMap<>();
         for (Map.Entry<String, AccessMetrics> entry : ACCESS_STATISTICS.entrySet()) {
             AccessMetrics item = entry.getValue();
-            AccessStatisticResult result = item.getStatisticResult(System.currentTimeMillis(), SCHEDULED_STATISTIC_INTERVAL);
+            AccessResult result = item.getStatisticResult(System.currentTimeMillis(), SCHEDULED_STATISTIC_INTERVAL);
 
             String key = entry.getKey();
             String[] keys = key.split(DELIMITER);
@@ -77,9 +77,9 @@ public abstract class MetricsUtils {
             String application = keys[1];
             String module = keys[2];
             key = application + "|" + module;
-            AccessStatisticResult appResult = totalResults.get(key);
+            AccessResult appResult = totalResults.get(key);
             if (appResult == null) {
-                totalResults.putIfAbsent(key, new AccessStatisticResult());
+                totalResults.putIfAbsent(key, new AccessResult());
                 appResult = totalResults.get(key);
             }
 
