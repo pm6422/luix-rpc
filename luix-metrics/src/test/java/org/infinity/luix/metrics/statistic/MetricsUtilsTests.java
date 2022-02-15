@@ -10,21 +10,21 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
-public class StatisticUtilsTests {
+public class MetricsUtilsTests {
 
     @Test
     public void test() throws InterruptedException, JsonProcessingException {
-        StatisticUtils.logAccess("requestProcess", "rpc-demo-client", "rpc-demo-client",
+        MetricsUtils.logAccess("requestProcess", "rpc-demo-client", "rpc-demo-client",
                 System.currentTimeMillis(), 7, 2, 200, StatisticType.NORMAL);
-        StatisticUtils.logAccess("requestProcess", "rpc-demo-client", "rpc-demo-client",
+        MetricsUtils.logAccess("requestProcess", "rpc-demo-client", "rpc-demo-client",
                 System.currentTimeMillis(), 250, 210, 200, StatisticType.NORMAL);
 
-        StatisticUtils.logAccess("responseProcess", "rpc-demo-server", "rpc-demo-server",
+        MetricsUtils.logAccess("responseProcess", "rpc-demo-server", "rpc-demo-server",
                 System.currentTimeMillis(), 80, 70, 200, StatisticType.BIZ_EXCEPTION);
 
         // It must sleep for a while
         Thread.sleep(1000L);
-        ConcurrentMap<String, AccessStatisticResult> totalAccessStatistic = StatisticUtils.getTotalAccessStatistic();
+        ConcurrentMap<String, AccessStatisticResult> totalAccessStatistic = MetricsUtils.getTotalAccessStatistic();
         log.info(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(totalAccessStatistic));
     }
 }

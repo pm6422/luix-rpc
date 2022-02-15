@@ -3,7 +3,7 @@ package org.infinity.luix.metrics.statistic;
 import com.codahale.metrics.MetricRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.luix.metrics.statistic.access.AccessStatisticItem;
+import org.infinity.luix.metrics.statistic.access.AccessMetrics;
 import org.infinity.luix.metrics.statistic.access.AccessStatisticResult;
 import org.infinity.luix.metrics.statistic.access.StatisticType;
 
@@ -13,14 +13,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
-public abstract class StatisticUtils {
+public abstract class MetricsUtils {
     /**
      * Access statistic interval in seconds
      */
-    public static final  int                                        ACCESS_STATISTIC_INTERVAL = 30;
-    public static        String                                     DELIMITER                 = "\\|";
-    public static final  String                                     ELAPSED_TIME_HISTOGRAM = MetricRegistry.name(AccessStatisticItem.class, "elapsedTime");
-    private static final ConcurrentMap<String, AccessStatisticItem> ACCESS_STATISTICS      = new ConcurrentHashMap<>();
+    public static final  int                                  SCHEDULED_STATISTIC_INTERVAL = 30;
+    public static        String                               DELIMITER                    = "\\|";
+    public static final  String                               ELAPSED_TIME_HISTOGRAM       = MetricRegistry.name(AccessMetrics.class, "elapsedTime");
+    private static final ConcurrentMap<String, AccessMetrics> ACCESS_STATISTICS            = new ConcurrentHashMap<>();
 
     public static String getMemoryStatistic() {
         Runtime runtime = Runtime.getRuntime();
@@ -47,17 +47,17 @@ public abstract class StatisticUtils {
             return;
         }
         try {
-            AccessStatisticItem item = getStatisticItem(name + "|" + application + "|" + module, currentTimeMillis);
-            item.statistic(currentTimeMillis, elapsedTimeMillis, bizProcessTime, slowThreshold, statisticType);
+            AccessMetrics item = getStatisticItem(name + "|" + application + "|" + module, currentTimeMillis);
+            item.save(currentTimeMillis, elapsedTimeMillis, bizProcessTime, slowThreshold, statisticType);
         } catch (Exception e) {
             log.error("Failed to log access!", e);
         }
     }
 
-    private static AccessStatisticItem getStatisticItem(String name, long currentTimeMillis) {
-        AccessStatisticItem item = ACCESS_STATISTICS.get(name);
+    private static AccessMetrics getStatisticItem(String name, long currentTimeMillis) {
+        AccessMetrics item = ACCESS_STATISTICS.get(name);
         if (item == null) {
-            ACCESS_STATISTICS.put(name, new AccessStatisticItem(name, currentTimeMillis));
+            ACCESS_STATISTICS.put(name, new AccessMetrics(name, currentTimeMillis));
             item = ACCESS_STATISTICS.get(name);
         }
         return item;
@@ -65,9 +65,9 @@ public abstract class StatisticUtils {
 
     public static ConcurrentMap<String, AccessStatisticResult> getTotalAccessStatistic() {
         ConcurrentMap<String, AccessStatisticResult> totalResults = new ConcurrentHashMap<>();
-        for (Map.Entry<String, AccessStatisticItem> entry : ACCESS_STATISTICS.entrySet()) {
-            AccessStatisticItem item = entry.getValue();
-            AccessStatisticResult result = item.getStatisticResult(System.currentTimeMillis(), ACCESS_STATISTIC_INTERVAL);
+        for (Map.Entry<String, AccessMetrics> entry : ACCESS_STATISTICS.entrySet()) {
+            AccessMetrics item = entry.getValue();
+            AccessStatisticResult result = item.getStatisticResult(System.currentTimeMillis(), SCHEDULED_STATISTIC_INTERVAL);
 
             String key = entry.getKey();
             String[] keys = key.split(DELIMITER);
@@ -82,12 +82,13 @@ public abstract class StatisticUtils {
                 totalResults.putIfAbsent(key, new AccessStatisticResult());
                 appResult = totalResults.get(key);
             }
-            appResult.totalCount += result.totalCount;
-            appResult.bizExceptionCount += result.bizExceptionCount;
-            appResult.slowCount += result.slowCount;
-            appResult.costTime += result.costTime;
-            appResult.bizTime += result.bizTime;
-            appResult.otherExceptionCount += result.otherExceptionCount;
+
+            appResult.setProcessingTime(appResult.getProcessingTime() + result.getProcessingTime());
+            appResult.setBizProcessingTime(appResult.getBizProcessingTime() + result.getBizProcessingTime());
+            appResult.setAccessCount(appResult.getAccessCount() + result.getAccessCount());
+            appResult.setSlowExecutionCount(appResult.getSlowExecutionCount() + result.getSlowExecutionCount());
+            appResult.setBizExceptionCount(appResult.getBizExceptionCount() + result.getBizExceptionCount());
+            appResult.setOtherExceptionCount(appResult.getOtherExceptionCount() + result.getOtherExceptionCount());
         }
         return totalResults;
     }

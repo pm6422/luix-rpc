@@ -9,11 +9,11 @@ import java.util.concurrent.ConcurrentMap;
 
 public abstract class CachedMetricsFactory {
     private static final MetricRegistry                        DEFAULT_METRIC_REGISTRY = new MetricRegistry();
-    private static final String                                METRIC_REGISTRY_DEFAULT = "default";
+    private static final String                                DEFAULT_REGISTRY_KEY    = "default";
     private static final ConcurrentMap<String, MetricRegistry> METRIC_REGISTRIES       = new ConcurrentHashMap<>();
 
     static {
-        METRIC_REGISTRIES.put(METRIC_REGISTRY_DEFAULT, DEFAULT_METRIC_REGISTRY);
+        METRIC_REGISTRIES.put(DEFAULT_REGISTRY_KEY, DEFAULT_METRIC_REGISTRY);
     }
 
     /**
@@ -77,7 +77,7 @@ public abstract class CachedMetricsFactory {
     /**
      * Get all {@link MetricRegistry} instances
      */
-    public static Map<String, MetricRegistry> allRegistries() {
+    public static Map<String, MetricRegistry> getAllRegistries() {
         return Collections.unmodifiableMap(METRIC_REGISTRIES);
     }
 }

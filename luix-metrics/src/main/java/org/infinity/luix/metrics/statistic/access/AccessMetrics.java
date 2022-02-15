@@ -1,0 +1,129 @@
+package org.infinity.luix.metrics.statistic.access;
+
+import com.codahale.metrics.Histogram;
+import org.infinity.luix.metrics.statistic.CachedMetricsFactory;
+
+import java.time.Instant;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.IntStream;
+
+import static org.infinity.luix.metrics.statistic.MetricsUtils.ELAPSED_TIME_HISTOGRAM;
+import static org.infinity.luix.metrics.statistic.MetricsUtils.SCHEDULED_STATISTIC_INTERVAL;
+
+public class AccessMetrics {
+    private static final int          INTERVAL_SECONDS = SCHEDULED_STATISTIC_INTERVAL * 2;
+    private final        String       name;
+    private final        AtomicLong[] accessCounter;
+    private final        AtomicLong[] slowExecutionCounter;
+    /**
+     * Processing time in milliseconds
+     */
+    private final        AtomicLong[] processingTimes;
+    private final        AtomicLong[] bizProcessingTimes;
+    private final        AtomicLong[] bizExceptionCounter;
+    private final        AtomicLong[] otherExceptionCounter;
+    private volatile     int          currentIndex;
+    private final        Histogram    histogram;
+
+    public AccessMetrics(String name, long now) {
+        this.name = name;
+        this.accessCounter = initAtomicIntegerArray();
+        this.slowExecutionCounter = initAtomicIntegerArray();
+        this.processingTimes = initAtomicIntegerArray();
+        this.bizProcessingTimes = initAtomicIntegerArray();
+        this.bizExceptionCounter = initAtomicIntegerArray();
+        this.otherExceptionCounter = initAtomicIntegerArray();
+
+        this.currentIndex = getIndex(now);
+        this.histogram = CachedMetricsFactory.getRegistryInstance(name).histogram(ELAPSED_TIME_HISTOGRAM);
+    }
+
+    private AtomicLong[] initAtomicIntegerArray() {
+        return IntStream.range(0, INTERVAL_SECONDS)
+                .mapToObj(i -> new AtomicLong(0L))
+                .toArray(AtomicLong[]::new);
+    }
+
+    private int getIndex(long now) {
+        return (int) ((now / 1_000) % INTERVAL_SECONDS);
+    }
+
+    /**
+     * @param now                    current time in milliseconds
+     * @param elapsedTime            elapsed time in milliseconds
+     * @param bizProcessingTime      business processing time in milliseconds
+     * @param slowExecutionThreshold slow execution threshold in milliseconds
+     * @param statisticType          statistic type
+     */
+    public void save(long now, long elapsedTime, long bizProcessingTime,
+                     int slowExecutionThreshold, StatisticType statisticType) {
+        int index = getIndex(now);
+        if (currentIndex != index) {
+            synchronized (this) {
+                if (currentIndex != index) {
+                    // 这一秒的第一条统计，把对应的存储位的数据置0
+                    reset(index);
+                    currentIndex = index;
+                }
+            }
+        }
+
+        accessCounter[currentIndex].incrementAndGet();
+        if (elapsedTime >= slowExecutionThreshold) {
+            slowExecutionCounter[currentIndex].incrementAndGet();
+        }
+        processingTimes[currentIndex].addAndGet(elapsedTime);
+        bizProcessingTimes[currentIndex].addAndGet(bizProcessingTime);
+        if (statisticType == StatisticType.BIZ_EXCEPTION) {
+            bizExceptionCounter[currentIndex].incrementAndGet();
+        } else if (statisticType == StatisticType.OTHER_EXCEPTION) {
+            otherExceptionCounter[currentIndex].incrementAndGet();
+        }
+        histogram.update(elapsedTime);
+        String[] names = name.split("\\|");
+        String appName = names[1] + "|" + names[2];
+        CachedMetricsFactory.getRegistryInstance(appName).histogram(ELAPSED_TIME_HISTOGRAM).update(elapsedTime);
+    }
+
+    private void reset(int index) {
+        accessCounter[index].set(0);
+        slowExecutionCounter[index].set(0);
+        processingTimes[index].set(0);
+        bizProcessingTimes[index].set(0);
+        bizExceptionCounter[index].set(0);
+        otherExceptionCounter[index].set(0);
+    }
+
+    public AccessStatisticResult getStatisticResult(long now, int interval) {
+        // 当前这秒还没完全结束，因此数据不全，统计从上一秒开始，往前推移interval
+        int startIndex = getIndex(Instant.ofEpochMilli(now).minusSeconds(1).toEpochMilli());
+
+        AccessStatisticResult result = new AccessStatisticResult();
+        for (int i = 0; i < interval; i++) {
+            int currentIndex = (startIndex - i + INTERVAL_SECONDS) % INTERVAL_SECONDS;
+
+            result.setAccessCount(result.getAccessCount() + accessCounter[currentIndex].get());
+            result.setSlowExecutionCount(result.getSlowExecutionCount() + slowExecutionCounter[currentIndex].get());
+            result.setProcessingTime(result.getProcessingTime() + processingTimes[currentIndex].get());
+            result.setBizProcessingTime(result.getBizProcessingTime() + bizProcessingTimes[currentIndex].get());
+            result.setBizExceptionCount(result.getBizExceptionCount() + bizExceptionCounter[currentIndex].get());
+            result.setOtherExceptionCount(result.getOtherExceptionCount() + otherExceptionCounter[currentIndex].get());
+
+            if (accessCounter[currentIndex].get() > result.getMaxCount()) {
+                result.setMaxCount(accessCounter[currentIndex].get());
+            } else if (accessCounter[currentIndex].get() < result.getMinCount() || result.getMinCount() == -1) {
+                result.setMinCount(accessCounter[currentIndex].get());
+            }
+        }
+        return result;
+    }
+
+    public void clearStatistic(long now, int interval) {
+        // 当前这秒还没完全结束，因此数据不全，统计从上一秒开始，往前推移interval
+        int startIndex = getIndex(Instant.ofEpochMilli(now).minusSeconds(1).toEpochMilli());
+        for (int i = 0; i < interval; i++) {
+            int currentIndex = (startIndex - i + INTERVAL_SECONDS) % INTERVAL_SECONDS;
+            reset(currentIndex);
+        }
+    }
+}

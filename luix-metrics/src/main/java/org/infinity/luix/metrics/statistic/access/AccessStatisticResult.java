@@ -1,14 +1,15 @@
 package org.infinity.luix.metrics.statistic.access;
 
+import lombok.Data;
+
+@Data
 public class AccessStatisticResult {
-    public int    totalCount          = 0;
-    public int    maxCount            = -1;
-    public int    minCount            = -1;
-    public int    slowCount           = 0;
-    public int    bizExceptionCount   = 0;
-    public int    otherExceptionCount = 0;
-    public double costTime            = 0;
-    public double bizTime             = 0;
-    public long   slowThreshold       = 200;
-    public long[] intervalCounts      = new long[5];
+    private double processingTime      = 0;
+    private double bizProcessingTime   = 0;
+    private long   accessCount         = 0;
+    private long   maxCount            = -1;
+    private long   minCount            = -1;
+    private long   slowExecutionCount  = 0;
+    private long   bizExceptionCount   = 0;
+    private long   otherExceptionCount = 0;
 }
