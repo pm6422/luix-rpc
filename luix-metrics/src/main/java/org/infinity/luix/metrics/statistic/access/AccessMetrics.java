@@ -15,9 +15,6 @@ public class AccessMetrics {
     private final        String       name;
     private final        AtomicLong[] accessCounter;
     private final        AtomicLong[] slowExecutionCounter;
-    /**
-     * Processing time in milliseconds
-     */
     private final        AtomicLong[] processingTimes;
     private final        AtomicLong[] bizProcessingTimes;
     private final        AtomicLong[] bizExceptionCounter;
@@ -94,6 +91,15 @@ public class AccessMetrics {
         otherExceptionCounter[index].set(0);
     }
 
+    public void clear(long now, int interval) {
+        // 当前这秒还没完全结束，因此数据不全，统计从上一秒开始，往前推移interval
+        int startIndex = getIndex(Instant.ofEpochMilli(now).minusSeconds(1).toEpochMilli());
+        for (int i = 0; i < interval; i++) {
+            int currentIndex = (startIndex - i + INTERVAL_SECONDS) % INTERVAL_SECONDS;
+            reset(currentIndex);
+        }
+    }
+
     public AccessStatisticResult getStatisticResult(long now, int interval) {
         // 当前这秒还没完全结束，因此数据不全，统计从上一秒开始，往前推移interval
         int startIndex = getIndex(Instant.ofEpochMilli(now).minusSeconds(1).toEpochMilli());
@@ -116,14 +122,5 @@ public class AccessMetrics {
             }
         }
         return result;
-    }
-
-    public void clearStatistic(long now, int interval) {
-        // 当前这秒还没完全结束，因此数据不全，统计从上一秒开始，往前推移interval
-        int startIndex = getIndex(Instant.ofEpochMilli(now).minusSeconds(1).toEpochMilli());
-        for (int i = 0; i < interval; i++) {
-            int currentIndex = (startIndex - i + INTERVAL_SECONDS) % INTERVAL_SECONDS;
-            reset(currentIndex);
-        }
     }
 }
