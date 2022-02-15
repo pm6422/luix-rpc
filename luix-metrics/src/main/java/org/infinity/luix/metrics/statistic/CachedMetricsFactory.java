@@ -30,6 +30,19 @@ public abstract class CachedMetricsFactory {
     }
 
     /**
+     * Get {@link MetricRegistry} instance associated with the class and names
+     *
+     * @param clazz class
+     * @param names names
+     * @return {@link MetricRegistry} instance
+     */
+    public static MetricRegistry getMetricsRegistry(Class<?> clazz, String... names) {
+        // Concatenates elements to form a dotted name
+        String key = MetricRegistry.name(clazz, names);
+        return getMetricsRegistry(key);
+    }
+
+    /**
      * Get {@link MetricRegistry} instance associated with the name
      *
      * @param name name of {@link MetricRegistry}
@@ -45,25 +58,9 @@ public abstract class CachedMetricsFactory {
     }
 
     /**
-     * Get {@link MetricRegistry} instance associated with the class and names
-     *
-     * @param clazz class
-     * @param names names
-     * @return {@link MetricRegistry} instance
-     */
-    public static MetricRegistry getMetricsRegistry(Class<?> clazz, String... names) {
-        // Concatenates elements to form a dotted name
-        String key = MetricRegistry.name(clazz, names);
-        MetricRegistry instance = METRIC_REGISTRIES.get(key);
-        if (instance == null) {
-            METRIC_REGISTRIES.putIfAbsent(key, new MetricRegistry());
-            instance = METRIC_REGISTRIES.get(key);
-        }
-        return instance;
-    }
-
-    /**
      * Get default {@link MetricRegistry} instance
+     *
+     * @return default {@link MetricRegistry} instance
      */
     public static MetricRegistry getDefaultMetricRegistry() {
         return DEFAULT_METRIC_REGISTRY;
@@ -71,6 +68,8 @@ public abstract class CachedMetricsFactory {
 
     /**
      * Get all {@link MetricRegistry} instances
+     *
+     * @return all {@link MetricRegistry} instances
      */
     public static Map<String, MetricRegistry> getAllRegistries() {
         return Collections.unmodifiableMap(METRIC_REGISTRIES);
