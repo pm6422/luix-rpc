@@ -3,8 +3,8 @@ package org.infinity.luix.metrics.statistic;
 import com.codahale.metrics.MetricRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.infinity.luix.metrics.statistic.access.AccessStatistics;
 import org.infinity.luix.metrics.statistic.access.AccessResult;
+import org.infinity.luix.metrics.statistic.access.AccessStatistics;
 import org.infinity.luix.metrics.statistic.access.StatisticsType;
 
 import java.text.DecimalFormat;
@@ -17,10 +17,10 @@ public abstract class MetricsUtils {
     /**
      * Access statistic interval in seconds
      */
-    public static final  int                                  SCHEDULED_STATISTIC_INTERVAL = 30;
-    public static        String                                  DELIMITER              = "\\|";
-    public static final  String                                  ELAPSED_TIME_HISTOGRAM = MetricRegistry.name(AccessStatistics.class, "elapsedTime");
-    private static final ConcurrentMap<String, AccessStatistics> ACCESS_STATISTICS      = new ConcurrentHashMap<>();
+    public static final  int                                     SCHEDULED_STATISTIC_INTERVAL = 30;
+    public static        String                                  DELIMITER                    = "\\|";
+    public static final  String                                  ELAPSED_TIME_HISTOGRAM       = MetricRegistry.name(AccessStatistics.class, "elapsedTime");
+    private static final ConcurrentMap<String, AccessStatistics> ACCESS_STATISTICS            = new ConcurrentHashMap<>();
 
     public static String getMemoryStatistic() {
         Runtime runtime = Runtime.getRuntime();
@@ -41,23 +41,23 @@ public abstract class MetricsUtils {
     }
 
     public static void logAccess(String name, String application, String module,
-                                 long currentTimeMillis, long elapsedTimeMillis, long bizProcessTime, int slowThreshold,
-                                 StatisticsType statisticsType) {
+                                 long now, long processingTime, long bizProcessingTime,
+                                 int slowExecutionThreshold, StatisticsType statisticsType) {
         if (StringUtils.isEmpty(name)) {
             return;
         }
         try {
-            AccessStatistics item = getStatisticItem(name + "|" + application + "|" + module, currentTimeMillis);
-            item.log(currentTimeMillis, elapsedTimeMillis, bizProcessTime, slowThreshold, statisticsType);
+            AccessStatistics item = getStatisticItem(name + "|" + application + "|" + module, now);
+            item.log(now, processingTime, bizProcessingTime, slowExecutionThreshold, statisticsType);
         } catch (Exception e) {
             log.error("Failed to log access!", e);
         }
     }
 
-    private static AccessStatistics getStatisticItem(String name, long currentTimeMillis) {
+    private static AccessStatistics getStatisticItem(String name, long now) {
         AccessStatistics item = ACCESS_STATISTICS.get(name);
         if (item == null) {
-            ACCESS_STATISTICS.put(name, new AccessStatistics(name, currentTimeMillis));
+            ACCESS_STATISTICS.put(name, new AccessStatistics(name, now));
             item = ACCESS_STATISTICS.get(name);
         }
         return item;
