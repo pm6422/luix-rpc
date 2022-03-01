@@ -11,6 +11,48 @@ app:
     name: luix-portal
     version: 1.0.0
     package: org.infinity.luix.portal
+management: # Management http server configuration, used by ManagementServerProperties
+    endpoints:
+        web:
+            base-path: /management
+            exposure: # Refer to https://docs.spring.io/spring-boot/docs/2.5.5/reference/html/application-properties.html#application-properties.actuator
+                include: ['configprops', 'env', 'health', 'beans', 'mappings', 'httptrace', 'shutdown', 'auditevents', 'scheduledtasks', 'loggers', 'prometheus', 'threaddump']
+    endpoint:
+        health: # used by HealthEndpointProperties, Note: it will show health details if it has the access token by Ajax
+            enabled: true
+            show-details: WHEN_AUTHORIZED
+        httptrace:
+            enabled: true
+        shutdown:
+            enabled: true # explicitly enable
+    health:
+        mail:
+            enabled: true
+        mongo:
+            enabled: true
+    metrics:
+        export:
+            prometheus: # Prometheus is the default metrics backend
+                enabled: true
+                step: 60
+        enable:
+            http: true
+            jvm: true
+            logback: true
+            process: true
+            system: true
+        distribution:
+            percentiles-histogram:
+                all: true
+            percentiles:
+                all: 0, 0.5, 0.75, 0.95, 0.99, 1.0
+        tags:
+            application: ${spring.application.name}
+        web:
+            server:
+                request:
+                    autotime:
+                        enabled: true
 spring:
     application:
         name: ${app.id}
