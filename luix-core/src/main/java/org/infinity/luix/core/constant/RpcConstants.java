@@ -6,7 +6,6 @@ public class RpcConstants {
     public static final String  SEPERATOR_ACCESS_LOG        = "|";
     public static final String  COMMA_SEPARATOR             = ",";
     public static final Pattern COMMA_SPLIT_PATTERN         = Pattern.compile("\\s*[,]+\\s*");
-    public static final String  PROTOCOL_SEPARATOR          = "://";
     public static final String  REGISTRY_SEPARATOR          = "|";
     public static final Pattern REGISTRY_SPLIT_PATTERN      = Pattern.compile("\\s*[|;]+\\s*");
     public static final String  SEMICOLON_SEPARATOR         = ";";
@@ -44,6 +43,7 @@ public class RpcConstants {
     public static final String  APPLICATION_STATISTIC       = "statisitic";
     public static final String  REQUEST_REMOTE_ADDR         = "requestRemoteAddress";
     public static final String  CONTENT_LENGTH              = "Content-Length";
+    public static final int     SLOW_EXE_THRESHOLD          = 200;
 
     /**
      * netty channel constants start

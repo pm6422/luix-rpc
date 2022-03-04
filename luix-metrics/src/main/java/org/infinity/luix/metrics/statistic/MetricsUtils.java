@@ -40,15 +40,14 @@ public abstract class MetricsUtils {
                 percentageFormat.format(usedPercentage) + "%) used";
     }
 
-    public static void logAccess(String name, String application, String module,
-                                 long now, long processingTime, long bizProcessingTime,
+    public static void logAccess(String name, long currentTimestamp, long processingTime, long bizProcessingTime,
                                  int slowExecutionThreshold, StatisticsType statisticsType) {
         if (StringUtils.isEmpty(name)) {
             return;
         }
         try {
-            AccessStatistics item = getStatisticItem(name + "|" + application + "|" + module, now);
-            item.log(now, processingTime, bizProcessingTime, slowExecutionThreshold, statisticsType);
+            AccessStatistics item = getStatisticItem(name, currentTimestamp);
+            item.log(currentTimestamp, processingTime, bizProcessingTime, slowExecutionThreshold, statisticsType);
         } catch (Exception e) {
             log.error("Failed to log access!", e);
         }

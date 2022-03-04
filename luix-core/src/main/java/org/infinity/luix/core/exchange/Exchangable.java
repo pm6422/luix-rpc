@@ -12,6 +12,13 @@ public interface Exchangable extends Traceable {
     long getRequestId();
 
     /**
+     * Get protocol
+     *
+     * @return protocol
+     */
+    String getProtocol();
+
+    /**
      * Get protocol version
      *
      * @return protocol version

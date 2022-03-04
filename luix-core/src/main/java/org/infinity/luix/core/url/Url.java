@@ -36,7 +36,7 @@ public final class Url implements Serializable {
      * <scheme>=infinity|direct
      */
     private static final String              URL_PATTERN          = "{0}://{1}:{2}/{3}?{4}";
-    private static final String              PROTOCOL_SEPARATOR   = "://";
+    public static final String              PROTOCOL_SEPARATOR   = "://";
     /**
      * RPC protocol
      */

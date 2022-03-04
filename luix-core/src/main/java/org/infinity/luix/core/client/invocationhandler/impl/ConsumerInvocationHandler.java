@@ -2,13 +2,13 @@ package org.infinity.luix.core.client.invocationhandler.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
-import org.infinity.luix.core.client.proxy.impl.JdkProxy;
-import org.infinity.luix.core.server.response.FutureResponse;
-import org.infinity.luix.core.utils.MethodParameterUtils;
 import org.infinity.luix.core.client.invocationhandler.AbstractConsumerInvocationHandler;
 import org.infinity.luix.core.client.invocationhandler.UniversalInvocationHandler;
+import org.infinity.luix.core.client.proxy.impl.JdkProxy;
 import org.infinity.luix.core.client.request.impl.RpcRequest;
 import org.infinity.luix.core.client.stub.ConsumerStub;
+import org.infinity.luix.core.server.response.FutureResponse;
+import org.infinity.luix.core.utils.MethodParameterUtils;
 import org.infinity.luix.utilities.id.IdGenerator;
 
 import java.lang.reflect.InvocationHandler;
@@ -42,6 +42,7 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
 
         // Create a new RpcRequest for each request
         RpcRequest request = new RpcRequest(IdGenerator.generateTimestampId(),
+                consumerStub.getProtocol(),
                 consumerStub.getInterfaceName(),
                 method.getName(),
                 MethodParameterUtils.getMethodParameters(method),
@@ -58,6 +59,7 @@ public class ConsumerInvocationHandler<T> extends AbstractConsumerInvocationHand
     public Object invoke(String methodName, String[] methodParamTypes, Object[] args) {
         // Create a new RpcRequest for each request
         RpcRequest request = new RpcRequest(IdGenerator.generateTimestampId(),
+                consumerStub.getProtocol(),
                 consumerStub.getInterfaceName(),
                 methodName,
                 ArrayUtils.isEmpty(methodParamTypes) ? MethodParameterUtils.VOID : String.join(MethodParameterUtils.PARAM_TYPE_STR_DELIMITER, methodParamTypes),

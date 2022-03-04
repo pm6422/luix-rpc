@@ -13,6 +13,7 @@ import org.infinity.luix.core.url.Url;
 import static org.apache.commons.io.IOUtils.DIR_SEPARATOR_UNIX;
 import static org.infinity.luix.core.constant.ProtocolConstants.*;
 import static org.infinity.luix.core.constant.ProviderConstants.HEALTH_CHECKER;
+import static org.infinity.luix.core.url.Url.PROTOCOL_SEPARATOR;
 
 public class RpcFrameworkUtils {
     /**
@@ -22,8 +23,21 @@ public class RpcFrameworkUtils {
      * @return provider key with format 'protocol://host:port/interface/form/version'
      */
     public static String getProviderKey(Url providerUrl) {
-        return providerUrl.getProtocol() + RpcConstants.PROTOCOL_SEPARATOR + providerUrl.getAddress() + DIR_SEPARATOR_UNIX
+        return providerUrl.getProtocol() + PROTOCOL_SEPARATOR + providerUrl.getAddress() + DIR_SEPARATOR_UNIX
                 + providerUrl.getPath() + DIR_SEPARATOR_UNIX + providerUrl.getForm() + DIR_SEPARATOR_UNIX + providerUrl.getVersion();
+    }
+
+    public static String getMethodKey(String protocol, String interfaceName, String methodName, String form, String version) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(protocol).append(PROTOCOL_SEPARATOR);
+        if (StringUtils.isNotEmpty(form)) {
+            sb.append(form).append(DIR_SEPARATOR_UNIX);
+        }
+        if (StringUtils.isNotEmpty(version)) {
+            sb.append(version).append(DIR_SEPARATOR_UNIX);
+        }
+        sb.append(interfaceName).append(".").append(methodName).append("()");
+        return sb.toString();
     }
 
     /**

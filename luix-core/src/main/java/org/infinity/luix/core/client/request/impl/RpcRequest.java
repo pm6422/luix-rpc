@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RpcRequest implements Requestable, Serializable {
     private static final long                serialVersionUID = -6259178379027752471L;
     protected            long                requestId;
+    protected            String              protocol;
     /**
      * todo: check usage
      */
@@ -48,8 +49,10 @@ public class RpcRequest implements Requestable, Serializable {
      */
     protected            int                 serializerId;
 
-    public RpcRequest(long requestId, String interfaceName, String methodName, String methodParameters, boolean async) {
+    public RpcRequest(long requestId, String protocol, String interfaceName,
+                      String methodName, String methodParameters, boolean async) {
         this.requestId = requestId;
+        this.protocol = protocol;
         this.interfaceName = interfaceName;
         this.methodName = methodName;
         this.methodParameters = methodParameters;

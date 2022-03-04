@@ -8,8 +8,6 @@ import org.infinity.luix.core.client.request.Requestable;
 import org.infinity.luix.core.client.request.impl.RpcRequest;
 import org.infinity.luix.core.client.stub.ConsumerStub;
 import org.infinity.luix.core.constant.ConsumerConstants;
-import org.infinity.luix.core.constant.ProtocolConstants;
-import org.infinity.luix.core.constant.ServiceConstants;
 import org.infinity.luix.core.exception.ExceptionUtils;
 import org.infinity.luix.core.exception.RpcAbstractException;
 import org.infinity.luix.core.exception.impl.RpcInvocationException;
@@ -17,9 +15,17 @@ import org.infinity.luix.core.server.response.Responseable;
 import org.infinity.luix.core.server.response.impl.RpcResponse;
 import org.infinity.luix.core.utils.MethodParameterUtils;
 import org.infinity.luix.core.utils.RpcConfigValidator;
+import org.infinity.luix.metrics.statistic.MetricsUtils;
 import org.infinity.luix.utilities.serializer.DeserializableResult;
 
 import java.lang.reflect.Method;
+
+import static org.infinity.luix.core.constant.ProtocolConstants.*;
+import static org.infinity.luix.core.constant.RpcConstants.SLOW_EXE_THRESHOLD;
+import static org.infinity.luix.core.constant.ServiceConstants.*;
+import static org.infinity.luix.core.utils.RpcFrameworkUtils.getMethodKey;
+import static org.infinity.luix.metrics.statistic.access.StatisticsType.BIZ_EXCEPTION;
+import static org.infinity.luix.metrics.statistic.access.StatisticsType.NORMAL;
 
 /**
  * @param <T>: The interface class of the consumer
@@ -45,12 +51,12 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         request.setMethodArguments(args);
 
         // Set some options
-        request.addOption(ProtocolConstants.SERIALIZER, consumerStub.getSerializer());
-        request.addOption(ServiceConstants.FORM, consumerStub.getForm());
-        request.addOption(ServiceConstants.VERSION, consumerStub.getVersion());
-        request.addOption(ServiceConstants.REQUEST_TIMEOUT, consumerStub.getRequestTimeout());
-        request.addOption(ServiceConstants.RETRY_COUNT, consumerStub.getRetryCount());
-        request.addOption(ServiceConstants.MAX_PAYLOAD, consumerStub.getMaxPayload());
+        request.addOption(SERIALIZER, consumerStub.getSerializer());
+        request.addOption(FORM, consumerStub.getForm());
+        request.addOption(VERSION, consumerStub.getVersion());
+        request.addOption(REQUEST_TIMEOUT, consumerStub.getRequestTimeout());
+        request.addOption(RETRY_COUNT, consumerStub.getRetryCount());
+        request.addOption(MAX_PAYLOAD, consumerStub.getMaxPayload());
         Object result = sendRequest(request);
         result = processResult(result);
         return result;
@@ -75,15 +81,27 @@ public abstract class AbstractConsumerInvocationHandler<T> {
      * @return result of method execution
      */
     protected Object sendRequest(Requestable request) {
-        Responseable response;
+        Responseable response = null;
+        long start = System.currentTimeMillis();
         try {
             response = consumerStub.getInvokerInstance().invoke(request);
             return response == null ? null : response.getResult();
         } catch (Exception e) {
             return handleError(request, e);
         } finally {
+            String metricsName = getMethodKey(request.getProtocol(), request.getInterfaceName(),
+                    request.getMethodName(), request.getOption(FORM), request.getOption(VERSION));
+            long end = System.currentTimeMillis();
+            if (response != null) {
+                MetricsUtils.logAccess(metricsName, System.currentTimeMillis(),
+                        end - start, response.getElapsedTime(), SLOW_EXE_THRESHOLD, NORMAL);
+            } else {
+                MetricsUtils.logAccess(metricsName, System.currentTimeMillis(),
+                        end - start, end - start, SLOW_EXE_THRESHOLD, BIZ_EXCEPTION);
+            }
         }
     }
+
 
     /**
      * Limit rate on client side
@@ -120,7 +138,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
             throw (RuntimeException) cause;
         }
 
-        boolean throwException = consumerStub.getUrl().getBooleanOption(ProtocolConstants.THROW_EXCEPTION, ProtocolConstants.THROW_EXCEPTION_VAL_DEFAULT);
+        boolean throwException = consumerStub.getUrl().getBooleanOption(THROW_EXCEPTION, THROW_EXCEPTION_VAL_DEFAULT);
         if (throwException) {
             // Covert to runtime exception
             throw (RpcAbstractException) cause;
