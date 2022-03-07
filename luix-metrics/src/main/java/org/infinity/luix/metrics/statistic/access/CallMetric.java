@@ -3,7 +3,7 @@ package org.infinity.luix.metrics.statistic.access;
 import lombok.Data;
 
 @Data
-public class AccessResult {
+public class CallMetric {
     private double processingTime      = 0;
     private double bizProcessingTime   = 0;
     private long   accessCount         = 0;

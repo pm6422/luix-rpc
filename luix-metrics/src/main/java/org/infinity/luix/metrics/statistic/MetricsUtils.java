@@ -2,10 +2,10 @@ package org.infinity.luix.metrics.statistic;
 
 import com.codahale.metrics.MetricRegistry;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.infinity.luix.metrics.statistic.access.AccessResult;
-import org.infinity.luix.metrics.statistic.access.AccessStatistics;
-import org.infinity.luix.metrics.statistic.access.StatisticsType;
+import org.apache.commons.lang3.Validate;
+import org.infinity.luix.metrics.statistic.access.CallMetric;
+import org.infinity.luix.metrics.statistic.access.Metric;
+import org.infinity.luix.metrics.statistic.access.ResponseType;
 
 import java.text.DecimalFormat;
 import java.util.Map;
@@ -17,10 +17,11 @@ public abstract class MetricsUtils {
     /**
      * Access statistic interval in seconds
      */
-    public static final  int                                     SCHEDULED_STATISTIC_INTERVAL = 30;
-    public static        String                                  DELIMITER                    = "\\|";
-    public static final  String                                  ELAPSED_TIME_HISTOGRAM       = MetricRegistry.name(AccessStatistics.class, "elapsedTime");
-    private static final ConcurrentMap<String, AccessStatistics> ACCESS_STATISTICS            = new ConcurrentHashMap<>();
+    public static final  int                           SCHEDULED_STATISTIC_INTERVAL     = 30;
+    public static        String                        DELIMITER                        = "\\|";
+    public static final  String                        PROCESSING_TIME_METRICS_REGISTRY = "defaultProcessingTime";
+    public static final  String                        PROCESSING_TIME_HISTOGRAM        = MetricRegistry.name(Metric.class, "processingTime");
+    private static final ConcurrentMap<String, Metric> METRICS_CACHE                    = new ConcurrentHashMap<>();
 
     public static String getMemoryStatistic() {
         Runtime runtime = Runtime.getRuntime();
@@ -40,55 +41,33 @@ public abstract class MetricsUtils {
                 percentageFormat.format(usedPercentage) + "%) used";
     }
 
-    public static void logAccess(String name, long currentTimestamp, long processingTime, long bizProcessingTime,
-                                 int slowExecutionThreshold, StatisticsType statisticsType) {
-        if (StringUtils.isEmpty(name)) {
-            return;
-        }
-        try {
-            AccessStatistics item = getStatisticItem(name, currentTimestamp);
-            item.log(currentTimestamp, processingTime, bizProcessingTime, slowExecutionThreshold, statisticsType);
-        } catch (Exception e) {
-            log.error("Failed to log access!", e);
-        }
+    public static void trackCall(String name, long timestamp, long processingTime, long bizProcessingTime,
+                                 int slowThreshold, ResponseType responseType) {
+        Validate.notNull(name, "name cannot be null");
+        Metric metric = getMetric(name, timestamp);
+        metric.track(timestamp, processingTime, bizProcessingTime, slowThreshold, responseType);
     }
 
-    private static AccessStatistics getStatisticItem(String name, long now) {
-        AccessStatistics item = ACCESS_STATISTICS.get(name);
-        if (item == null) {
-            ACCESS_STATISTICS.put(name, new AccessStatistics(name, now));
-            item = ACCESS_STATISTICS.get(name);
-        }
-        return item;
+    private static Metric getMetric(String name, long timestamp) {
+        METRICS_CACHE.putIfAbsent(name, new Metric(name, timestamp));
+        return METRICS_CACHE.get(name);
     }
 
-    public static ConcurrentMap<String, AccessResult> getTotalAccessStatistic() {
-        ConcurrentMap<String, AccessResult> totalResults = new ConcurrentHashMap<>();
-        for (Map.Entry<String, AccessStatistics> entry : ACCESS_STATISTICS.entrySet()) {
-            AccessStatistics item = entry.getValue();
-            AccessResult result = item.getStatisticResult(System.currentTimeMillis(), SCHEDULED_STATISTIC_INTERVAL);
+    public static ConcurrentMap<String, CallMetric> getAllCallMetrics() {
+        ConcurrentMap<String, CallMetric> callMetrics = new ConcurrentHashMap<>();
+        for (Map.Entry<String, Metric> entry : METRICS_CACHE.entrySet()) {
+            Metric metric = entry.getValue();
+            CallMetric callMetric = metric.getCallMetric(System.currentTimeMillis(), SCHEDULED_STATISTIC_INTERVAL);
+            callMetrics.putIfAbsent(entry.getKey(), new CallMetric());
 
-            String key = entry.getKey();
-            String[] keys = key.split(DELIMITER);
-            if (keys.length != 3) {
-                continue;
-            }
-            String application = keys[1];
-            String module = keys[2];
-            key = application + "|" + module;
-            AccessResult appResult = totalResults.get(key);
-            if (appResult == null) {
-                totalResults.putIfAbsent(key, new AccessResult());
-                appResult = totalResults.get(key);
-            }
-
-            appResult.setProcessingTime(appResult.getProcessingTime() + result.getProcessingTime());
-            appResult.setBizProcessingTime(appResult.getBizProcessingTime() + result.getBizProcessingTime());
-            appResult.setAccessCount(appResult.getAccessCount() + result.getAccessCount());
-            appResult.setSlowExecutionCount(appResult.getSlowExecutionCount() + result.getSlowExecutionCount());
-            appResult.setBizExceptionCount(appResult.getBizExceptionCount() + result.getBizExceptionCount());
-            appResult.setOtherExceptionCount(appResult.getOtherExceptionCount() + result.getOtherExceptionCount());
+            CallMetric appResult = callMetrics.get(entry.getKey());
+            appResult.setProcessingTime(appResult.getProcessingTime() + callMetric.getProcessingTime());
+            appResult.setBizProcessingTime(appResult.getBizProcessingTime() + callMetric.getBizProcessingTime());
+            appResult.setAccessCount(appResult.getAccessCount() + callMetric.getAccessCount());
+            appResult.setSlowExecutionCount(appResult.getSlowExecutionCount() + callMetric.getSlowExecutionCount());
+            appResult.setBizExceptionCount(appResult.getBizExceptionCount() + callMetric.getBizExceptionCount());
+            appResult.setOtherExceptionCount(appResult.getOtherExceptionCount() + callMetric.getOtherExceptionCount());
         }
-        return totalResults;
+        return callMetrics;
     }
 }

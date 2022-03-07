@@ -23,6 +23,7 @@ import java.util.concurrent.Executor;
 public class RpcResponse implements Responseable, Callbackable, Serializable {
     private static final long                serialVersionUID = 882479213033600079L;
     protected            long                requestId;
+    protected            String              protocol;
     protected            byte                protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
     protected            String              group;
     protected            String              version;

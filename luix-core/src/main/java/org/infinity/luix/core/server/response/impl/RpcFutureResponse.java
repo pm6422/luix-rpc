@@ -7,14 +7,14 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.core.client.request.Requestable;
-import org.infinity.luix.core.exchange.TraceableContext;
-import org.infinity.luix.core.server.response.FutureResponse;
-import org.infinity.luix.core.url.Url;
 import org.infinity.luix.core.exception.impl.RpcFrameworkException;
+import org.infinity.luix.core.exchange.TraceableContext;
 import org.infinity.luix.core.exchange.constants.FutureState;
 import org.infinity.luix.core.protocol.constants.ProtocolVersion;
 import org.infinity.luix.core.server.response.FutureListener;
+import org.infinity.luix.core.server.response.FutureResponse;
 import org.infinity.luix.core.server.response.Responseable;
+import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.serializer.DeserializableResult;
 
 import java.io.IOException;
@@ -37,6 +37,7 @@ public class RpcFutureResponse implements FutureResponse, Serializable {
     protected            Object               resultObject;
     protected            Exception            exception;
     protected            long                 createdTime      = System.currentTimeMillis();
+    protected            String               protocol;
     protected            byte                 protocolVersion  = ProtocolVersion.VERSION_1.getVersion();
     protected            String               group;
     protected            String               version;

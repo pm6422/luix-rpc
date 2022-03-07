@@ -24,8 +24,8 @@ import static org.infinity.luix.core.constant.ProtocolConstants.*;
 import static org.infinity.luix.core.constant.RpcConstants.SLOW_EXE_THRESHOLD;
 import static org.infinity.luix.core.constant.ServiceConstants.*;
 import static org.infinity.luix.core.utils.RpcFrameworkUtils.getMethodKey;
-import static org.infinity.luix.metrics.statistic.access.StatisticsType.BIZ_EXCEPTION;
-import static org.infinity.luix.metrics.statistic.access.StatisticsType.NORMAL;
+import static org.infinity.luix.metrics.statistic.access.ResponseType.BIZ_EXCEPTION;
+import static org.infinity.luix.metrics.statistic.access.ResponseType.NORMAL;
 
 /**
  * @param <T>: The interface class of the consumer
@@ -93,10 +93,10 @@ public abstract class AbstractConsumerInvocationHandler<T> {
                     request.getMethodName(), request.getOption(FORM), request.getOption(VERSION));
             long end = System.currentTimeMillis();
             if (response != null) {
-                MetricsUtils.logAccess(metricsName, System.currentTimeMillis(),
+                MetricsUtils.trackCall(metricsName, System.currentTimeMillis(),
                         end - start, response.getElapsedTime(), SLOW_EXE_THRESHOLD, NORMAL);
             } else {
-                MetricsUtils.logAccess(metricsName, System.currentTimeMillis(),
+                MetricsUtils.trackCall(metricsName, System.currentTimeMillis(),
                         end - start, end - start, SLOW_EXE_THRESHOLD, BIZ_EXCEPTION);
             }
         }
