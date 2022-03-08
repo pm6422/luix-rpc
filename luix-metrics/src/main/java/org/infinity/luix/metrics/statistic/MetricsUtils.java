@@ -10,18 +10,17 @@ import org.infinity.luix.metrics.statistic.access.ResponseType;
 import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
 public abstract class MetricsUtils {
     /**
      * Access statistic interval in seconds
      */
-    public static final  int                           SCHEDULED_STATISTIC_INTERVAL     = 30;
-    public static        String                        DELIMITER                        = "\\|";
-    public static final  String                        PROCESSING_TIME_METRICS_REGISTRY = "defaultProcessingTime";
-    public static final  String                        PROCESSING_TIME_HISTOGRAM        = MetricRegistry.name(Metric.class, "processingTime");
-    private static final ConcurrentMap<String, Metric> METRICS_CACHE                    = new ConcurrentHashMap<>();
+    public static final  int                               SCHEDULED_STATISTIC_INTERVAL     = 30;
+    public static        String                            DELIMITER                        = "\\|";
+    public static final  String                            PROCESSING_TIME_METRICS_REGISTRY = "defaultProcessingTime";
+    public static final  String                            PROCESSING_TIME_HISTOGRAM        = MetricRegistry.name(Metric.class, "processingTime");
+    private static final ConcurrentHashMap<String, Metric> METRICS_CACHE                    = new ConcurrentHashMap<>();
 
     public static String getMemoryStatistic() {
         Runtime runtime = Runtime.getRuntime();
@@ -57,21 +56,22 @@ public abstract class MetricsUtils {
         return metric;
     }
 
-    public static ConcurrentMap<String, CallMetric> getAllCallMetrics() {
-        ConcurrentMap<String, CallMetric> callMetrics = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, CallMetric> getAllCallMetrics() {
+        ConcurrentHashMap<String, CallMetric> callMetrics = new ConcurrentHashMap<>();
         for (Map.Entry<String, Metric> entry : METRICS_CACHE.entrySet()) {
-            Metric metric = entry.getValue();
-            CallMetric callMetric = metric.getCallMetric(System.currentTimeMillis(), SCHEDULED_STATISTIC_INTERVAL);
-            callMetrics.putIfAbsent(entry.getKey(), new CallMetric());
-
-            CallMetric appResult = callMetrics.get(entry.getKey());
-            appResult.setProcessingTime(appResult.getProcessingTime() + callMetric.getProcessingTime());
-            appResult.setBizProcessingTime(appResult.getBizProcessingTime() + callMetric.getBizProcessingTime());
-            appResult.setAccessCount(appResult.getAccessCount() + callMetric.getAccessCount());
-            appResult.setSlowExecutionCount(appResult.getSlowExecutionCount() + callMetric.getSlowExecutionCount());
-            appResult.setBizExceptionCount(appResult.getBizExceptionCount() + callMetric.getBizExceptionCount());
-            appResult.setOtherExceptionCount(appResult.getOtherExceptionCount() + callMetric.getOtherExceptionCount());
+            CallMetric callMetric = getCallMetric(callMetrics, entry.getKey());
+            CallMetric currentCallMetric = entry.getValue().getCallMetric(System.currentTimeMillis(), SCHEDULED_STATISTIC_INTERVAL);
+            callMetric.increment(currentCallMetric);
         }
         return callMetrics;
+    }
+
+    private static CallMetric getCallMetric(Map<String, CallMetric> callMetrics, String key) {
+        CallMetric callMetric = callMetrics.get(key);
+        if (callMetric == null) {
+            callMetrics.putIfAbsent(key, new CallMetric());
+            callMetric = callMetrics.get(key);
+        }
+        return callMetric;
     }
 }
