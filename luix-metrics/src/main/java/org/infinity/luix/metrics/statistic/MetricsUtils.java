@@ -49,8 +49,12 @@ public abstract class MetricsUtils {
     }
 
     private static Metric getMetric(String name, long timestamp) {
-        METRICS_CACHE.putIfAbsent(name, new Metric(name, timestamp));
-        return METRICS_CACHE.get(name);
+        Metric metric = METRICS_CACHE.get(name);
+        if (metric == null) {
+            METRICS_CACHE.putIfAbsent(name, new Metric(name, timestamp));
+            metric = METRICS_CACHE.get(name);
+        }
+        return metric;
     }
 
     public static ConcurrentMap<String, CallMetric> getAllCallMetrics() {
