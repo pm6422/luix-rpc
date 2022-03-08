@@ -955,9 +955,197 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 24,
+        "w": 12,
         "x": 0,
         "y": 14
+      },
+      "hiddenSeries": false,
+      "id": 186,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": true,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.2.4",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "irate(luix_biz_exception_total{instance=\"$instance\", application=\"$application\"}[5m])",
+          "interval": "",
+          "legendFormat": "{{method}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Business Exception Count",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:78",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:79",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 14
+      },
+      "hiddenSeries": false,
+      "id": 187,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": true,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.2.4",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "irate(luix_other_exception_total{instance=\"$instance\", application=\"$application\"}[5m])",
+          "interval": "",
+          "legendFormat": "{{method}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Other Exception Count",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:78",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:79",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 20
       },
       "hiddenSeries": false,
       "id": 181,
@@ -1046,7 +1234,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 26
       },
       "id": 126,
       "panels": [],
@@ -1065,7 +1253,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 21
+        "y": 27
       },
       "hiddenSeries": false,
       "id": 111,
@@ -1160,7 +1348,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 21
+        "y": 27
       },
       "hiddenSeries": false,
       "id": 149,
@@ -1252,7 +1440,7 @@
         "h": 7,
         "w": 6,
         "x": 12,
-        "y": 21
+        "y": 27
       },
       "hiddenSeries": false,
       "id": 113,
@@ -1358,7 +1546,7 @@
         "h": 7,
         "w": 6,
         "x": 18,
-        "y": 21
+        "y": 27
       },
       "hiddenSeries": false,
       "id": 112,
@@ -1453,7 +1641,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 34
       },
       "hiddenSeries": false,
       "id": 145,
@@ -1546,7 +1734,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 40
       },
       "hiddenSeries": false,
       "id": 151,
@@ -1635,7 +1823,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 46
       },
       "id": 127,
       "panels": [],
@@ -1665,7 +1853,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 41
+        "y": 47
       },
       "hiddenSeries": false,
       "id": 24,
@@ -1792,7 +1980,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 41
+        "y": 47
       },
       "hiddenSeries": false,
       "id": 25,
@@ -1920,7 +2108,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 41
+        "y": 47
       },
       "hiddenSeries": false,
       "id": 26,
@@ -2083,7 +2271,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 48
+        "y": 54
       },
       "id": 128,
       "panels": [],
@@ -2113,7 +2301,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 49
+        "y": 55
       },
       "hiddenSeries": false,
       "id": 106,
@@ -2242,7 +2430,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 49
+        "y": 55
       },
       "hiddenSeries": false,
       "id": 93,
@@ -2367,7 +2555,7 @@
         "h": 7,
         "w": 6,
         "x": 12,
-        "y": 49
+        "y": 55
       },
       "hiddenSeries": false,
       "id": 32,
@@ -2502,7 +2690,7 @@
         "h": 7,
         "w": 6,
         "x": 18,
-        "y": 49
+        "y": 55
       },
       "hiddenSeries": false,
       "id": 124,
@@ -2612,7 +2800,7 @@
         "h": 7,
         "w": 18,
         "x": 0,
-        "y": 56
+        "y": 62
       },
       "height": "",
       "hiddenSeries": false,
@@ -2739,7 +2927,7 @@
         "h": 7,
         "w": 6,
         "x": 18,
-        "y": 56
+        "y": 62
       },
       "hiddenSeries": false,
       "id": 61,
@@ -2863,7 +3051,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 63
+        "y": 69
       },
       "id": 129,
       "panels": [],
@@ -2893,7 +3081,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 64
+        "y": 70
       },
       "hiddenSeries": false,
       "id": 3,
@@ -3017,7 +3205,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 71
+        "y": 77
       },
       "id": 130,
       "panels": [
@@ -3172,7 +3360,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 72
+        "y": 78
       },
       "id": 131,
       "panels": [
@@ -3485,7 +3673,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 73
+        "y": 79
       },
       "id": 132,
       "panels": [
@@ -3726,7 +3914,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 74
+        "y": 80
       },
       "id": 133,
       "panels": [
@@ -4206,7 +4394,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 75
+        "y": 81
       },
       "id": 157,
       "panels": [
