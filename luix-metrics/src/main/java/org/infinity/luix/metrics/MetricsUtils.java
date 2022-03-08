@@ -1,9 +1,8 @@
-package org.infinity.luix.metrics.statistic;
+package org.infinity.luix.metrics;
 
 import io.micrometer.core.instrument.Metrics;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
-import org.infinity.luix.metrics.statistic.access.ResponseType;
 
 import java.text.DecimalFormat;
 import java.util.concurrent.TimeUnit;
@@ -11,13 +10,13 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public abstract class MetricsUtils {
 
-    private static final String LUIX_CALL_COUNT            = "luix_call_count";
-    private static final String LUIX_SLOW_CALL_COUNT       = "luix_slow_call_count";
-    private static final String LUIX_BIZ_EXCEPTION_COUNT   = "luix_biz_exception_count";
-    private static final String LUIX_OTHER_EXCEPTION_COUNT = "luix_other_exception_count";
-    private static final String LUIX_PROCESSING_TIME       = "luix_processing_time";
-    private static final String LUIX_BIZ_PROCESSING_TIME   = "luix_biz_processing_time";
-    private static final String METHOD                     = "method";
+    private static final String LUIX_CALL                = "luix_call";
+    private static final String LUIX_SLOW_CALL           = "luix_slow_call";
+    private static final String LUIX_BIZ_EXCEPTION       = "luix_biz_exception";
+    private static final String LUIX_OTHER_EXCEPTION     = "luix_other_exception";
+    private static final String LUIX_PROCESSING_TIME     = "luix_processing_time";
+    private static final String LUIX_BIZ_PROCESSING_TIME = "luix_biz_processing_time";
+    private static final String METHOD                   = "method";
 
     public static String getMemoryStatistic() {
         Runtime runtime = Runtime.getRuntime();
@@ -43,14 +42,14 @@ public abstract class MetricsUtils {
 
         Metrics.timer(LUIX_PROCESSING_TIME, METHOD, name).record(processingTime, TimeUnit.MILLISECONDS);
         Metrics.timer(LUIX_BIZ_PROCESSING_TIME, METHOD, name).record(bizProcessingTime, TimeUnit.MILLISECONDS);
-        Metrics.counter(LUIX_CALL_COUNT, METHOD, name).increment();
+        Metrics.counter(LUIX_CALL, METHOD, name).increment();
         if (processingTime >= slowThreshold) {
-            Metrics.counter(LUIX_SLOW_CALL_COUNT, METHOD, name).increment();
+            Metrics.counter(LUIX_SLOW_CALL, METHOD, name).increment();
         }
         if (responseType == ResponseType.BIZ_EXCEPTION) {
-            Metrics.counter(LUIX_BIZ_EXCEPTION_COUNT, METHOD, name).increment();
+            Metrics.counter(LUIX_BIZ_EXCEPTION, METHOD, name).increment();
         } else if (responseType == ResponseType.OTHER_EXCEPTION) {
-            Metrics.counter(LUIX_OTHER_EXCEPTION_COUNT, METHOD, name).increment();
+            Metrics.counter(LUIX_OTHER_EXCEPTION, METHOD, name).increment();
         }
     }
 }

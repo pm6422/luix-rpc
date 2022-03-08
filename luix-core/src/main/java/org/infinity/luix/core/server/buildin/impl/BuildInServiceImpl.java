@@ -10,7 +10,7 @@ import java.util.Date;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
-import static org.infinity.luix.metrics.statistic.MetricsUtils.getMemoryStatistic;
+import static org.infinity.luix.metrics.MetricsUtils.getMemoryStatistic;
 
 public class BuildInServiceImpl implements BuildInService {
     @Override

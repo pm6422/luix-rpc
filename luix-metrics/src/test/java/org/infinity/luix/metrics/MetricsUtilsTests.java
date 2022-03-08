@@ -1,7 +1,6 @@
-package org.infinity.luix.metrics.statistic;
+package org.infinity.luix.metrics;
 
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.metrics.statistic.access.ResponseType;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
