@@ -1,6 +1,5 @@
 package org.infinity.luix.metrics.statistic;
 
-import com.codahale.metrics.MetricRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
 import org.infinity.luix.metrics.statistic.access.CallMetric;
@@ -19,7 +18,6 @@ public abstract class MetricsUtils {
     public static final  int                               SCHEDULED_STATISTIC_INTERVAL     = 30;
     public static        String                            DELIMITER                        = "\\|";
     public static final  String                            PROCESSING_TIME_METRICS_REGISTRY = "defaultProcessingTime";
-    public static final  String                            PROCESSING_TIME_HISTOGRAM        = MetricRegistry.name(Metric.class, "processingTime");
     private static final ConcurrentHashMap<String, Metric> METRICS_CACHE                    = new ConcurrentHashMap<>();
 
     public static String getMemoryStatistic() {

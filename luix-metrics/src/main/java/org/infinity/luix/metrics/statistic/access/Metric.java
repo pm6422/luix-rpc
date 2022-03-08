@@ -1,37 +1,38 @@
 package org.infinity.luix.metrics.statistic.access;
 
-import com.codahale.metrics.Histogram;
+import com.codahale.metrics.MetricRegistry;
 import org.infinity.luix.metrics.statistic.CachedMetricsFactory;
 
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.IntStream;
 
-import static org.infinity.luix.metrics.statistic.MetricsUtils.*;
+import static org.infinity.luix.metrics.statistic.MetricsUtils.PROCESSING_TIME_METRICS_REGISTRY;
+import static org.infinity.luix.metrics.statistic.MetricsUtils.SCHEDULED_STATISTIC_INTERVAL;
 
 public class Metric {
-    private static final int          INTERVAL_SECONDS = SCHEDULED_STATISTIC_INTERVAL * 2;
-    private final        String       name;
-    private final        AtomicLong[] callCounters;
-    private final        AtomicLong[] slowExecutionCounters;
-    private final        AtomicLong[] processingTimeCounters;
-    private final        AtomicLong[] bizProcessingTimeCounters;
-    private final        AtomicLong[] bizExceptionCounters;
-    private final        AtomicLong[] otherExceptionCounters;
-    private volatile     int          currentIndex;
-    private final        Histogram    histogram;
+    private static final int    INTERVAL_SECONDS          = SCHEDULED_STATISTIC_INTERVAL * 2;
+    public static final  String PROCESSING_TIME_HISTOGRAM = MetricRegistry.name(Metric.class, "processingTime");
+
+    private final    String       name;
+    private final    AtomicLong[] processingTimers;
+    private final    AtomicLong[] bizProcessingTimers;
+    private final    AtomicLong[] callCounters;
+    private final    AtomicLong[] slowExecutionCounters;
+    private final    AtomicLong[] bizExceptionCounters;
+    private final    AtomicLong[] otherExceptionCounters;
+    private volatile int          currentIndex;
 
     public Metric(String name, long timestamp) {
         this.name = name;
+        this.processingTimers = initAtomicLongArray();
+        this.bizProcessingTimers = initAtomicLongArray();
         this.callCounters = initAtomicLongArray();
         this.slowExecutionCounters = initAtomicLongArray();
-        this.processingTimeCounters = initAtomicLongArray();
-        this.bizProcessingTimeCounters = initAtomicLongArray();
         this.bizExceptionCounters = initAtomicLongArray();
         this.otherExceptionCounters = initAtomicLongArray();
 
         this.currentIndex = getIndex(timestamp);
-        this.histogram = CachedMetricsFactory.getMetricsRegistry(name).histogram(PROCESSING_TIME_HISTOGRAM);
     }
 
     private AtomicLong[] initAtomicLongArray() {
@@ -56,20 +57,20 @@ public class Metric {
             }
         }
 
+        processingTimers[currentIndex].addAndGet(processingTime);
+        bizProcessingTimers[currentIndex].addAndGet(bizProcessingTime);
+
         callCounters[currentIndex].incrementAndGet();
         if (processingTime >= slowThreshold) {
             slowExecutionCounters[currentIndex].incrementAndGet();
         }
-        processingTimeCounters[currentIndex].addAndGet(processingTime);
-        bizProcessingTimeCounters[currentIndex].addAndGet(bizProcessingTime);
         if (responseType == ResponseType.BIZ_EXCEPTION) {
             bizExceptionCounters[currentIndex].incrementAndGet();
         } else if (responseType == ResponseType.OTHER_EXCEPTION) {
             otherExceptionCounters[currentIndex].incrementAndGet();
         }
 
-        histogram.update(processingTime);
-
+        // Add to processing time histogram
         CachedMetricsFactory
                 .getMetricsRegistry(PROCESSING_TIME_METRICS_REGISTRY)
                 .histogram(PROCESSING_TIME_HISTOGRAM)
@@ -77,17 +78,17 @@ public class Metric {
     }
 
     private void reset(int index) {
+        processingTimers[index].set(0);
+        bizProcessingTimers[index].set(0);
         callCounters[index].set(0);
         slowExecutionCounters[index].set(0);
-        processingTimeCounters[index].set(0);
-        bizProcessingTimeCounters[index].set(0);
         bizExceptionCounters[index].set(0);
         otherExceptionCounters[index].set(0);
     }
 
-    public void clear(long now, int interval) {
+    public void clear(long timestamp, int interval) {
         // 当前这秒还没完全结束，因此数据不全，统计从上一秒开始，往前推移interval
-        int startIndex = getIndex(Instant.ofEpochMilli(now).minusSeconds(1).toEpochMilli());
+        int startIndex = getIndex(Instant.ofEpochMilli(timestamp).minusSeconds(1).toEpochMilli());
         for (int i = 0; i < interval; i++) {
             int currentIndex = (startIndex - i + INTERVAL_SECONDS) % INTERVAL_SECONDS;
             reset(currentIndex);
@@ -98,23 +99,23 @@ public class Metric {
         // 当前这秒还没完全结束，因此数据不全，统计从上一秒开始，往前推移interval
         int startIndex = getIndex(Instant.ofEpochMilli(timestamp).minusSeconds(1).toEpochMilli());
 
-        CallMetric result = new CallMetric();
+        CallMetric callMetric = new CallMetric();
         for (int i = 0; i < interval; i++) {
             int currentIndex = (startIndex - i + INTERVAL_SECONDS) % INTERVAL_SECONDS;
 
-            result.setAccessCount(result.getAccessCount() + callCounters[currentIndex].get());
-            result.setSlowExecutionCount(result.getSlowExecutionCount() + slowExecutionCounters[currentIndex].get());
-            result.setProcessingTime(result.getProcessingTime() + processingTimeCounters[currentIndex].get());
-            result.setBizProcessingTime(result.getBizProcessingTime() + bizProcessingTimeCounters[currentIndex].get());
-            result.setBizExceptionCount(result.getBizExceptionCount() + bizExceptionCounters[currentIndex].get());
-            result.setOtherExceptionCount(result.getOtherExceptionCount() + otherExceptionCounters[currentIndex].get());
+            callMetric.setProcessingTime(callMetric.getProcessingTime() + processingTimers[currentIndex].get());
+            callMetric.setBizProcessingTime(callMetric.getBizProcessingTime() + bizProcessingTimers[currentIndex].get());
+            callMetric.setCallCount(callMetric.getCallCount() + callCounters[currentIndex].get());
+            callMetric.setSlowExecutionCount(callMetric.getSlowExecutionCount() + slowExecutionCounters[currentIndex].get());
+            callMetric.setBizExceptionCount(callMetric.getBizExceptionCount() + bizExceptionCounters[currentIndex].get());
+            callMetric.setOtherExceptionCount(callMetric.getOtherExceptionCount() + otherExceptionCounters[currentIndex].get());
 
-            if (callCounters[currentIndex].get() > result.getMaxCount()) {
-                result.setMaxCount(callCounters[currentIndex].get());
-            } else if (callCounters[currentIndex].get() < result.getMinCount() || result.getMinCount() == -1) {
-                result.setMinCount(callCounters[currentIndex].get());
+            if (callCounters[currentIndex].get() > callMetric.getMaxCallCount()) {
+                callMetric.setMaxCallCount(callCounters[currentIndex].get());
+            } else if (callCounters[currentIndex].get() < callMetric.getMinCallCount() || callMetric.getMinCallCount() == -1) {
+                callMetric.setMinCallCount(callCounters[currentIndex].get());
             }
         }
-        return result;
+        return callMetric;
     }
 }
