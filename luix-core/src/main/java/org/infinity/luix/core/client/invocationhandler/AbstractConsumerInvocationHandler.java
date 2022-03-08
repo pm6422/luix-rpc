@@ -82,6 +82,7 @@ public abstract class AbstractConsumerInvocationHandler<T> {
      */
     protected Object sendRequest(Requestable request) {
         Responseable response = null;
+        // todo: add filters
         long start = System.currentTimeMillis();
         try {
             response = consumerStub.getInvokerInstance().invoke(request);
