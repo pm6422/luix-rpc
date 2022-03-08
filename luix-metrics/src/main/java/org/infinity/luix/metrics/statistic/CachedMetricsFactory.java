@@ -49,8 +49,12 @@ public abstract class CachedMetricsFactory {
      * @return {@link MetricRegistry} instance
      */
     public static MetricRegistry getMetricsRegistry(String name) {
-        METRIC_REGISTRIES.putIfAbsent(name, new MetricRegistry());
-        return METRIC_REGISTRIES.get(name);
+        MetricRegistry instance = METRIC_REGISTRIES.get(name);
+        if (instance == null) {
+            METRIC_REGISTRIES.putIfAbsent(name, new MetricRegistry());
+            instance = METRIC_REGISTRIES.get(name);
+        }
+        return instance;
     }
 
     /**
