@@ -13,12 +13,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public abstract class MetricsUtils {
     /**
-     * Access statistic interval in seconds
+     * Call interval in seconds
      */
-    public static final  int                               SCHEDULED_STATISTIC_INTERVAL     = 30;
-    public static        String                            DELIMITER                        = "\\|";
-    public static final  String                            PROCESSING_TIME_METRICS_REGISTRY = "defaultProcessingTime";
-    private static final ConcurrentHashMap<String, Metric> METRICS_CACHE                    = new ConcurrentHashMap<>();
+    public static final  int                               SCHEDULED_STATISTIC_INTERVAL = 30;
+    private static final ConcurrentHashMap<String, Metric> METRICS_CACHE                = new ConcurrentHashMap<>();
 
     public static String getMemoryStatistic() {
         Runtime runtime = Runtime.getRuntime();

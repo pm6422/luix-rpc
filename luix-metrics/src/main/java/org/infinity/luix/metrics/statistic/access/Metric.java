@@ -7,12 +7,12 @@ import java.time.Instant;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.IntStream;
 
-import static org.infinity.luix.metrics.statistic.MetricsUtils.PROCESSING_TIME_METRICS_REGISTRY;
 import static org.infinity.luix.metrics.statistic.MetricsUtils.SCHEDULED_STATISTIC_INTERVAL;
 
 public class Metric {
-    private static final int    INTERVAL_SECONDS          = SCHEDULED_STATISTIC_INTERVAL * 2;
-    public static final  String PROCESSING_TIME_HISTOGRAM = MetricRegistry.name(Metric.class, "processingTime");
+    private static final int    INTERVAL_SECONDS                 = SCHEDULED_STATISTIC_INTERVAL * 2;
+    public static final  String PROCESSING_TIME_METRICS_REGISTRY = "defaultProcessingTime";
+    public static final  String PROCESSING_TIME_HISTOGRAM        = MetricRegistry.name(Metric.class, "processingTime");
 
     private final    String       name;
     private final    AtomicLong[] processingTimers;
