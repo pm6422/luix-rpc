@@ -1,22 +1,23 @@
 package org.infinity.luix.metrics.statistic;
 
+import io.micrometer.core.instrument.Metrics;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
-import org.infinity.luix.metrics.statistic.access.CallMetric;
-import org.infinity.luix.metrics.statistic.access.Metric;
 import org.infinity.luix.metrics.statistic.access.ResponseType;
 
 import java.text.DecimalFormat;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public abstract class MetricsUtils {
-    /**
-     * Call interval in seconds
-     */
-    public static final  int                               SCHEDULED_STATISTIC_INTERVAL = 30;
-    private static final ConcurrentHashMap<String, Metric> METRICS_CACHE                = new ConcurrentHashMap<>();
+
+    private static final String LUIX_CALL_COUNT            = "luix_call_count";
+    private static final String LUIX_SLOW_CALL_COUNT       = "luix_slow_call_count";
+    private static final String LUIX_BIZ_EXCEPTION_COUNT   = "luix_biz_exception_count";
+    private static final String LUIX_OTHER_EXCEPTION_COUNT = "luix_other_exception_count";
+    private static final String LUIX_PROCESSING_TIME       = "luix_processing_time";
+    private static final String LUIX_BIZ_PROCESSING_TIME   = "luix_biz_processing_time";
+    private static final String METHOD                     = "method";
 
     public static String getMemoryStatistic() {
         Runtime runtime = Runtime.getRuntime();
@@ -36,38 +37,20 @@ public abstract class MetricsUtils {
                 percentageFormat.format(usedPercentage) + "%) used";
     }
 
-    public static void trackCall(String name, long timestamp, long processingTime, long bizProcessingTime,
+    public static void trackCall(String name, long processingTime, long bizProcessingTime,
                                  int slowThreshold, ResponseType responseType) {
         Validate.notNull(name, "name cannot be null");
-        Metric metric = getMetric(name, timestamp);
-        metric.track(timestamp, processingTime, bizProcessingTime, slowThreshold, responseType);
-    }
 
-    private static Metric getMetric(String name, long timestamp) {
-        Metric metric = METRICS_CACHE.get(name);
-        if (metric == null) {
-            METRICS_CACHE.putIfAbsent(name, new Metric(name, timestamp));
-            metric = METRICS_CACHE.get(name);
+        Metrics.timer(LUIX_PROCESSING_TIME, METHOD, name).record(processingTime, TimeUnit.MILLISECONDS);
+        Metrics.timer(LUIX_BIZ_PROCESSING_TIME, METHOD, name).record(bizProcessingTime, TimeUnit.MILLISECONDS);
+        Metrics.counter(LUIX_CALL_COUNT, METHOD, name).increment();
+        if (processingTime >= slowThreshold) {
+            Metrics.counter(LUIX_SLOW_CALL_COUNT, METHOD, name).increment();
         }
-        return metric;
-    }
-
-    public static ConcurrentHashMap<String, CallMetric> getAllCallMetrics() {
-        ConcurrentHashMap<String, CallMetric> callMetrics = new ConcurrentHashMap<>();
-        for (Map.Entry<String, Metric> entry : METRICS_CACHE.entrySet()) {
-            CallMetric callMetric = getCallMetric(callMetrics, entry.getKey());
-            CallMetric currentCallMetric = entry.getValue().getCallMetric(System.currentTimeMillis(), SCHEDULED_STATISTIC_INTERVAL);
-            callMetric.increment(currentCallMetric);
+        if (responseType == ResponseType.BIZ_EXCEPTION) {
+            Metrics.counter(LUIX_BIZ_EXCEPTION_COUNT, METHOD, name).increment();
+        } else if (responseType == ResponseType.OTHER_EXCEPTION) {
+            Metrics.counter(LUIX_OTHER_EXCEPTION_COUNT, METHOD, name).increment();
         }
-        return callMetrics;
-    }
-
-    private static CallMetric getCallMetric(Map<String, CallMetric> callMetrics, String key) {
-        CallMetric callMetric = callMetrics.get(key);
-        if (callMetric == null) {
-            callMetrics.putIfAbsent(key, new CallMetric());
-            callMetric = callMetrics.get(key);
-        }
-        return callMetric;
     }
 }

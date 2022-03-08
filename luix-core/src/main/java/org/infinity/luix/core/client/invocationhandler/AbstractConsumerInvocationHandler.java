@@ -93,11 +93,11 @@ public abstract class AbstractConsumerInvocationHandler<T> {
                     request.getMethodName(), request.getOption(FORM), request.getOption(VERSION));
             long end = System.currentTimeMillis();
             if (response != null) {
-                MetricsUtils.trackCall(metricsName, System.currentTimeMillis(),
-                        end - start, response.getElapsedTime(), SLOW_EXE_THRESHOLD, NORMAL);
+                MetricsUtils.trackCall(metricsName, end - start,
+                        response.getElapsedTime(), SLOW_EXE_THRESHOLD, NORMAL);
             } else {
-                MetricsUtils.trackCall(metricsName, System.currentTimeMillis(),
-                        end - start, end - start, SLOW_EXE_THRESHOLD, BIZ_EXCEPTION);
+                MetricsUtils.trackCall(metricsName, end - start,
+                        end - start, SLOW_EXE_THRESHOLD, BIZ_EXCEPTION);
             }
         }
     }
