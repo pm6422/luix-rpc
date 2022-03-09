@@ -16,6 +16,7 @@ public abstract class MetricsUtils {
     private static final String LUIX_OTHER_EXCEPTION     = "luix_other_exception";
     private static final String LUIX_PROCESSING_TIME     = "luix_processing_time";
     private static final String LUIX_BIZ_PROCESSING_TIME = "luix_biz_processing_time";
+    private static final String REQUEST_ID               = "requestId";
     private static final String METHOD                   = "method";
     private static final String THRESHOLD                = "threshold";
 
@@ -37,7 +38,7 @@ public abstract class MetricsUtils {
                 percentageFormat.format(usedPercentage) + "%) used";
     }
 
-    public static void trackCall(String name, long processingTime, long bizProcessingTime,
+    public static void trackCall(String name, long requestId, long processingTime, long bizProcessingTime,
                                  int slowThreshold, ResponseType responseType) {
         Validate.notNull(name, "name cannot be null");
 
@@ -46,11 +47,14 @@ public abstract class MetricsUtils {
         Metrics.counter(LUIX_CALL, METHOD, name).increment();
         if (processingTime >= slowThreshold) {
             Metrics.counter(LUIX_SLOW_CALL, METHOD, name, THRESHOLD, String.valueOf(slowThreshold)).increment();
+            log.warn("Found slow RPC call for {} with request ID: {} and processing time: {}ms", name, requestId, processingTime);
         }
         if (responseType == ResponseType.BIZ_EXCEPTION) {
-            Metrics.counter(LUIX_BIZ_EXCEPTION, METHOD, name).increment();
+            Metrics.counter(LUIX_BIZ_EXCEPTION, METHOD, name, REQUEST_ID, String.valueOf(requestId)).increment();
+            log.warn("Found RPC business exception for {} with request ID: {}", name, requestId);
         } else if (responseType == ResponseType.OTHER_EXCEPTION) {
-            Metrics.counter(LUIX_OTHER_EXCEPTION, METHOD, name).increment();
+            Metrics.counter(LUIX_OTHER_EXCEPTION, METHOD, name, REQUEST_ID, String.valueOf(requestId)).increment();
+            log.warn("Found RPC other exception for {} with request ID: {}", name, requestId);
         }
     }
 }

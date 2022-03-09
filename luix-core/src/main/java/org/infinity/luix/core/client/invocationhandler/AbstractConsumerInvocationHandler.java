@@ -90,14 +90,14 @@ public abstract class AbstractConsumerInvocationHandler<T> {
         } catch (Exception e) {
             return handleError(request, e);
         } finally {
-            String metricsName = getMethodKey(request.getProtocol(), request.getInterfaceName(),
+            String methodKey = getMethodKey(request.getProtocol(), request.getInterfaceName(),
                     request.getMethodName(), request.getOption(FORM), request.getOption(VERSION));
             long end = System.currentTimeMillis();
             if (response != null) {
-                MetricsUtils.trackCall(metricsName, end - start,
+                MetricsUtils.trackCall(methodKey, request.getRequestId(), end - start,
                         response.getElapsedTime(), SLOW_EXE_THRESHOLD, NORMAL);
             } else {
-                MetricsUtils.trackCall(metricsName, end - start,
+                MetricsUtils.trackCall(methodKey, request.getRequestId(), end - start,
                         end - start, SLOW_EXE_THRESHOLD, BIZ_EXCEPTION);
             }
         }

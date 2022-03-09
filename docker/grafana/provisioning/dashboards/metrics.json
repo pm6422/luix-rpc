@@ -37,7 +37,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 4701,
   "graphTooltip": 1,
-  "iteration": 1646792851219,
+  "iteration": 1646796527170,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -1057,13 +1057,13 @@
       "legend": {
         "alignAsTable": false,
         "avg": false,
-        "current": true,
+        "current": false,
         "max": false,
         "min": false,
         "rightSide": false,
         "show": true,
-        "total": true,
-        "values": true
+        "total": false,
+        "values": false
       },
       "lines": true,
       "linewidth": 1,
@@ -1085,7 +1085,7 @@
           "exemplar": true,
           "expr": "irate(luix_biz_exception_total{instance=\"$instance\", application=\"$application\"}[5m])",
           "interval": "",
-          "legendFormat": "{{method}}",
+          "legendFormat": "{{method}} with requestID: {{requestId}}",
           "refId": "A"
         }
       ],
@@ -1093,7 +1093,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Business Exception Count",
+      "title": "Business Exceptions",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1151,13 +1151,13 @@
       "legend": {
         "alignAsTable": false,
         "avg": false,
-        "current": true,
+        "current": false,
         "max": false,
         "min": false,
         "rightSide": false,
         "show": true,
-        "total": true,
-        "values": true
+        "total": false,
+        "values": false
       },
       "lines": true,
       "linewidth": 1,
@@ -1179,7 +1179,7 @@
           "exemplar": true,
           "expr": "irate(luix_other_exception_total{instance=\"$instance\", application=\"$application\"}[5m])",
           "interval": "",
-          "legendFormat": "{{method}}",
+          "legendFormat": "{{method}} with requestID: {{requestId}}",
           "refId": "A"
         }
       ],
@@ -1187,7 +1187,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Other Exception Count",
+      "title": "Other Exceptions",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -5122,5 +5122,5 @@
   "timezone": "browser",
   "title": "Application Metrics",
   "uid": "MPjWkoanz",
-  "version": 2
+  "version": 1
 }
