@@ -17,6 +17,7 @@ public abstract class MetricsUtils {
     private static final String LUIX_PROCESSING_TIME     = "luix_processing_time";
     private static final String LUIX_BIZ_PROCESSING_TIME = "luix_biz_processing_time";
     private static final String METHOD                   = "method";
+    private static final String THRESHOLD                = "threshold";
 
     public static String getMemoryStatistic() {
         Runtime runtime = Runtime.getRuntime();
@@ -44,7 +45,7 @@ public abstract class MetricsUtils {
         Metrics.timer(LUIX_BIZ_PROCESSING_TIME, METHOD, name).record(bizProcessingTime, TimeUnit.MILLISECONDS);
         Metrics.counter(LUIX_CALL, METHOD, name).increment();
         if (processingTime >= slowThreshold) {
-            Metrics.counter(LUIX_SLOW_CALL, METHOD, name).increment();
+            Metrics.counter(LUIX_SLOW_CALL, METHOD, name, THRESHOLD, String.valueOf(slowThreshold)).increment();
         }
         if (responseType == ResponseType.BIZ_EXCEPTION) {
             Metrics.counter(LUIX_BIZ_EXCEPTION, METHOD, name).increment();

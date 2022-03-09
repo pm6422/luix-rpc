@@ -37,7 +37,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 4701,
   "graphTooltip": 1,
-  "iteration": 1646731100396,
+  "iteration": 1646792851219,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -897,7 +897,7 @@
           "exemplar": true,
           "expr": "irate(luix_slow_call_total{instance=\"$instance\", application=\"$application\"}[5m])",
           "interval": "",
-          "legendFormat": "{{method}}",
+          "legendFormat": "{{method}} >= {{threshold}}ms",
           "refId": "A"
         }
       ],
@@ -5122,5 +5122,5 @@
   "timezone": "browser",
   "title": "Application Metrics",
   "uid": "MPjWkoanz",
-  "version": 1
+  "version": 2
 }
