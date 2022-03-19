@@ -111,8 +111,18 @@ public class RunnableTask implements Runnable {
     }
 
     private void executeTask() {
+        ConsumerStub<?> consumerStub = getConsumerStub(rpcRegistryService, registryIdentity,
+                interfaceName, form, version, requestTimeout, retryCount, faultTolerance);
+        UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
+        invocationHandler.invoke(rpcScheduledTask.getMethodName(), rpcScheduledTask.getMethodParamTypes(), null);
+    }
+
+    public static ConsumerStub<?> getConsumerStub(RpcRegistryService rpcRegistryService,
+                                                  String registryIdentity, String interfaceName,
+                                                  String form, String version,
+                                                  Integer requestTimeout, Integer retryCount, String faultTolerance) {
         // Select one of node to execute
-        Map<String, String> attributes = new HashMap<>();
+        Map<String, String> attributes = new HashMap<>(3);
         attributes.put(FORM, form);
         attributes.put(VERSION, version);
         if (requestTimeout != null) {
@@ -124,10 +134,6 @@ public class RunnableTask implements Runnable {
         if (StringUtils.isNotEmpty(faultTolerance)) {
             attributes.put(FAULT_TOLERANCE, faultTolerance);
         }
-
-        ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(registryIdentity,
-                null, interfaceName, attributes);
-        UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
-        invocationHandler.invoke(rpcScheduledTask.getMethodName(), rpcScheduledTask.getMethodParamTypes(), null);
+        return rpcRegistryService.getConsumerStub(registryIdentity, null, interfaceName, attributes);
     }
 }
