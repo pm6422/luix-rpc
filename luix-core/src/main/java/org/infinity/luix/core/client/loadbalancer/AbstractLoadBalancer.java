@@ -68,7 +68,8 @@ public abstract class AbstractLoadBalancer implements LoadBalancer {
     @Override
     public List<Sendable> selectAllActiveSenders(Requestable request) {
         if (CollectionUtils.isEmpty(this.requestSenders)) {
-            throw new RpcInvocationException("No active RPC request sender, " +
+            throw new RpcInvocationException("No active RPC request sender for "
+                    + request.getInterfaceName() + "." + request.getMethodName() + "(), " +
                     "please check the status of associated service provider!");
         }
         // Make a copy for thread safe purpose

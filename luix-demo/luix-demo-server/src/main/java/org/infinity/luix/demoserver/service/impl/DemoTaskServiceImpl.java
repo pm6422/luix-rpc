@@ -11,6 +11,6 @@ import java.util.Map;
 public class DemoTaskServiceImpl implements TaskExecutable {
     @Override
     public void executeTask(Map<?, ?> arguments) {
-        log.info("Perform timing task with arguments: {}", arguments);
+        log.info("Perform scheduled task with arguments: {}", arguments);
     }
 }

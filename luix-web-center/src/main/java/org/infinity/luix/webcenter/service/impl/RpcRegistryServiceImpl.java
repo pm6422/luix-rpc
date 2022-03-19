@@ -148,6 +148,7 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
 
         String beanName = ConsumerStub.buildConsumerStubBeanName(resolvedInterfaceName, attributesMap);
         if (ConsumerStubHolder.getInstance().getMap().containsKey(beanName)) {
+            // Return existing consumer stub
             return ConsumerStubHolder.getInstance().getMap().get(beanName);
         }
 

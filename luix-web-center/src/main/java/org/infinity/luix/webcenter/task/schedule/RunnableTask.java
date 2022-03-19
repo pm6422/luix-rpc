@@ -1,7 +1,5 @@
 package org.infinity.luix.webcenter.task.schedule;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -90,7 +88,7 @@ public class RunnableTask implements Runnable {
         } catch (Exception ex) {
             scheduledTaskHistory.setSuccess(false);
             scheduledTaskHistory.setReason(ex.getMessage());
-            log.error(String.format("Failed to execute timing task %s.%s(%s)", interfaceName,
+            log.error(String.format("Failed to execute scheduled task %s.%s(%s)", interfaceName,
                     rpcScheduledTask.getMethodName(), rpcScheduledTask.getArgumentsJson()), ex);
         } finally {
             stopWatch.stop();
@@ -112,7 +110,7 @@ public class RunnableTask implements Runnable {
         }
     }
 
-    private void executeTask() throws JsonProcessingException {
+    private void executeTask() {
         // Select one of node to execute
         Map<String, String> attributes = new HashMap<>();
         attributes.put(FORM, form);
@@ -129,7 +127,6 @@ public class RunnableTask implements Runnable {
 
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(registryIdentity,
                 null, interfaceName, attributes);
-
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         invocationHandler.invoke(rpcScheduledTask.getMethodName(), rpcScheduledTask.getMethodParamTypes(), null);
     }
