@@ -58,14 +58,17 @@ public class ConsumerStubBeanNameBuilder {
         // Required
         append(beanNameBuilder, interfaceClassName);
         // Optional
-        if (MapUtils.isNotEmpty(attributes)) {
+        if (MapUtils.isNotEmpty(attributes) &&
+                attributes.values().stream().anyMatch(v -> v != null && StringUtils.isNotEmpty(v.toString()))) {
             beanNameBuilder.append('(');
             Iterator<Map.Entry<String, Object>> iterator = attributes.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<String, Object> entry = iterator.next();
-                beanNameBuilder.append(entry.getKey()).append('=').append(entry.getValue());
-                if (iterator.hasNext()) {
-                    beanNameBuilder.append(',');
+                if (entry.getValue() != null && StringUtils.isNotEmpty(entry.getValue().toString())) {
+                    beanNameBuilder.append(entry.getKey()).append('=').append(entry.getValue());
+                    if (iterator.hasNext()) {
+                        beanNameBuilder.append(',');
+                    }
                 }
             }
             beanNameBuilder.append(')');
