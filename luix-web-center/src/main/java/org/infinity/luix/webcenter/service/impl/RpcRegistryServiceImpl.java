@@ -9,8 +9,8 @@ import org.infinity.luix.core.client.stub.ConsumerStub;
 import org.infinity.luix.core.client.stub.ConsumerStubFactory;
 import org.infinity.luix.core.client.stub.ConsumerStubHolder;
 import org.infinity.luix.core.config.impl.RegistryConfig;
-import org.infinity.luix.core.listener.GlobalProviderDiscoveryListener;
 import org.infinity.luix.core.listener.GlobalConsumerDiscoveryListener;
+import org.infinity.luix.core.listener.GlobalProviderDiscoveryListener;
 import org.infinity.luix.core.registry.Registry;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.spring.boot.config.LuixProperties;
@@ -36,14 +36,14 @@ import static org.infinity.luix.utilities.serializer.Serializer.SERIALIZER_NAME_
 @Service
 @Slf4j
 public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRunner {
-    private static final Map<String, RegistryConfig> REGISTRY_CONFIG_MAP = new ConcurrentHashMap<>();
-    private static final List<RpcRegistryDTO>        REGISTRIES          = new ArrayList<>();
+    private static final Map<String, RegistryConfig>     REGISTRY_CONFIG_MAP = new ConcurrentHashMap<>();
+    private static final List<RpcRegistryDTO>            REGISTRIES          = new ArrayList<>();
     @Resource
-    private LuixProperties                  luixProperties;
+    private              LuixProperties                  luixProperties;
     @Resource
-    private GlobalConsumerDiscoveryListener globalConsumerDiscoveryListener;
+    private              GlobalConsumerDiscoveryListener globalConsumerDiscoveryListener;
     @Resource
-    private GlobalProviderDiscoveryListener globalProviderDiscoveryListener;
+    private              GlobalProviderDiscoveryListener globalProviderDiscoveryListener;
 
     /**
      * {@link org.springframework.beans.factory.InitializingBean#afterPropertiesSet()} execute too earlier
@@ -67,14 +67,17 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                 List<Url> allProviderUrls = registryConfig.getRegistryImpl().discoverProviders();
                 allProviderUrls.forEach(url -> {
                     try {
-                        // Generate consumer stub for each provider
-                        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixProperties.getApplication(), registryConfig,
-                                luixProperties.getAvailableProtocol(), url.getPath(), url.getForm());
-
                         Map<String, Object> attributes = new HashMap<>(2);
                         attributes.put(FORM, url.getForm());
                         attributes.put(VERSION, url.getVersion());
                         String stubBeanName = ConsumerStub.buildConsumerStubBeanName(url.getPath(), attributes);
+                        if (!ConsumerStubHolder.getInstance().getMap().containsKey(stubBeanName)) {
+                            return;
+                        }
+                        // Generate consumer stub for each provider
+                        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixProperties.getApplication(), registryConfig,
+                                luixProperties.getAvailableProtocol(), url.getPath(), url.getForm());
+
                         ConsumerStubHolder.getInstance().add(stubBeanName, consumerStub);
 
                         // Register and active consumer services
