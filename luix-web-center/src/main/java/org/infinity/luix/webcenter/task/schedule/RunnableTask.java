@@ -123,12 +123,8 @@ public class RunnableTask implements Runnable {
                                                   Integer requestTimeout, Integer retryCount, String faultTolerance) {
         // Select one of node to execute
         Map<String, String> attributes = new HashMap<>(3);
-        if (StringUtils.isNotEmpty(form)) {
-            attributes.put(FORM, form);
-        }
-        if (StringUtils.isNotEmpty(version)) {
-            attributes.put(VERSION, version);
-        }
+        attributes.put(FORM, form);
+        attributes.put(VERSION, version);
         if (requestTimeout != null) {
             attributes.put(REQUEST_TIMEOUT, requestTimeout.toString());
         }

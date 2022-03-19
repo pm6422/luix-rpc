@@ -61,18 +61,18 @@ public class ProviderChangeDiscoveryListener implements ProviderDiscoveryListene
             removeInactiveRegistry(registryUrl);
             return;
         }
-
+        log.info("Discovered active providers {} on registry [{}]", providerUrls, registryUrl.getUri());
         List<Sendable> newSenders = new ArrayList<>();
         for (Url providerUrl : providerUrls) {
             if (!providerUrl.getForm().equals(consumerUrl.getForm())) {
                 continue;
             }
             // Find provider invoker associated with the provider url
-            Sendable invoker = findInvokerByProviderUrl(registryUrl, providerUrl);
-            if (invoker == null) {
-                invoker = protocol.createRequestSender(consumerUrl.getPath(), providerUrl.copy());
+            Sendable sender = findInvokerByProviderUrl(registryUrl, providerUrl);
+            if (sender == null) {
+                sender = protocol.createRequestSender(consumerUrl.getPath(), providerUrl.copy());
             }
-            newSenders.add(invoker);
+            newSenders.add(sender);
         }
 
         if (CollectionUtils.isEmpty(newSenders)) {
