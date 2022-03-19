@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.luix.core.constant.ConsumerConstants.FAULT_TOLERANCE;
@@ -162,6 +163,15 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                 resolvedInterfaceName, serializer, form, version, requestTimeout, retryCount, faultTolerance);
 
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);
+
+        if (StringUtils.isEmpty(providerUrlStr)) {
+            // Non-direct address invocation needs to take time to discover addresses
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                log.error("Sleep interrupted!", e);
+            }
+        }
         return consumerStub;
     }
 
