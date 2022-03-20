@@ -28,8 +28,8 @@ public class AppService2Impl implements AppService {
     }
 
     @Override
-    public Optional<App> findById(String id) {
-        return appRepository.findById(id);
+    public App findById(String id) {
+        return appRepository.findById(id).orElse(null);
     }
 
     @Override

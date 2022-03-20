@@ -73,7 +73,7 @@ public class AuthorityController {
     @DeleteMapping("/api/authorities/{name}")
     public ResponseEntity<Void> delete(@ApiParam(value = "authority name", required = true) @PathVariable String name) {
         log.debug("REST request to delete authority: {}", name);
-        authorityService.findById(name).orElseThrow(() -> new DataNotFoundException(name));
+//        authorityService.findById(name).orElseThrow(() -> new DataNotFoundException(name));
         authorityService.deleteById(name);
         return ResponseEntity.ok()
                 .headers(httpHeaderCreator.createSuccessHeader("SM1003", name)).build();

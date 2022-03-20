@@ -21,8 +21,8 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public Optional<App> findById(String id) {
-        return Optional.empty();
+    public App findById(String id) {
+        return null;
     }
 
     @Override

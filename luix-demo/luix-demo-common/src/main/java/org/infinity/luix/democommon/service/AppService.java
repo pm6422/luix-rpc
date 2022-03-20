@@ -11,7 +11,9 @@ public interface AppService {
 
     Page<App> findAll(Pageable pageable);
 
-    Optional<App> findById(String id);
+//    Optional<App> findById(String id);
+
+    App findById(String id);
 
     FutureResponse insert(App domain);
 
