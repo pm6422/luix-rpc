@@ -137,7 +137,7 @@ To start local Prometheus and Grafana services, run:
 ```
 docker-compose -f docker/monitoring.yml up -d
 ```
-Then navigate to http://localhost:3000 in your browser to access Grafana. Grafana username: admin, password: admin
+Then navigate to http://localhost:3000 in your browser to access Grafana with username: admin and password: admin
 
 [jhipster homepage and latest documentation]: https://www.jhipster.tech
 [jhipster 7.4.0 archive]: https://www.jhipster.tech/documentation-archive/v7.4.0
