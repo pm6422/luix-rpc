@@ -51,7 +51,7 @@ public class AppController {
     @ApiOperation("find application by name")
     @GetMapping("/api/apps/{name}")
     public ResponseEntity<App> findById(@ApiParam(value = "application name", required = true) @PathVariable String name) {
-        App app = appService.findById(name).orElseThrow(() -> new DataNotFoundException(name));
+        App app = appService.findById(name);
         return ResponseEntity.ok(app);
     }
 
@@ -68,7 +68,7 @@ public class AppController {
     @DeleteMapping("/api/apps/{name}")
     public ResponseEntity<Void> delete(@ApiParam(value = "application name", required = true) @PathVariable String name) {
         log.debug("REST request to delete app: {}", name);
-        appService.findById(name).orElseThrow(() -> new DataNotFoundException(name));
+//        appService.findById(name).orElseThrow(() -> new DataNotFoundException(name));
         appService.deleteById(name);
         return ResponseEntity.ok()
                 .headers(httpHeaderCreator.createSuccessHeader("SM1003", name)).build();
