@@ -2,8 +2,8 @@ package org.infinity.luix.demoserver.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.demoserver.async.ExceptionHandlingAsyncTaskExecutor;
+import org.infinity.luix.demoserver.async.ExceptionHandlingAsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
-import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
 import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingProperties;
 import org.springframework.context.annotation.Bean;
@@ -46,7 +46,7 @@ public class AsyncConfiguration implements AsyncConfigurer, WebMvcConfigurer {
 
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return new SimpleAsyncUncaughtExceptionHandler();
+        return new ExceptionHandlingAsyncUncaughtExceptionHandler();
     }
 
     /**
