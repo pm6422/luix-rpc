@@ -4,7 +4,7 @@ package org.infinity.luix.transport.netty4.client;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.core.exchange.client.SharedObjectFactory;
 import org.infinity.luix.utilities.threadpool.NamedThreadFactory;
-import org.infinity.luix.utilities.threadpool.NetworkThreadExecutor;
+import org.infinity.luix.utilities.threadpool.NetworkThreadPoolExecutor;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 public class NettyChannelFactory implements SharedObjectFactory<NettyChannel> {
-    private static final ExecutorService rebuildExecutorService = new NetworkThreadExecutor(5, 30, 10L, TimeUnit.SECONDS, 100,
+    private static final ExecutorService rebuildExecutorService = new NetworkThreadPoolExecutor(5, 30, 10L, TimeUnit.SECONDS, 100,
             new NamedThreadFactory("RebuildExecutorService", true),
             new ThreadPoolExecutor.CallerRunsPolicy());
     private              NettyClient     nettyClient;

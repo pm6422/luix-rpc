@@ -7,7 +7,7 @@ import org.infinity.luix.core.exchange.Channel;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.utilities.lang.MathUtils;
 import org.infinity.luix.utilities.threadpool.NamedThreadFactory;
-import org.infinity.luix.utilities.threadpool.NetworkThreadExecutor;
+import org.infinity.luix.utilities.threadpool.NetworkThreadPoolExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public abstract class AbstractPooledClient extends AbstractClient {
     /**
      * Network thread pool
      */
-    private static final ThreadPoolExecutor           NETWORK_THREAD_POOL = new NetworkThreadExecutor(1, 300,
+    private static final ThreadPoolExecutor           NETWORK_THREAD_POOL = new NetworkThreadPoolExecutor(1, 300,
             20000, new NamedThreadFactory(AbstractPooledClient.class.getSimpleName(), true));
     /**
      * Object factory used to build channel

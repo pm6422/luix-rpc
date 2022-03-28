@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <pre>
  * The idea comes from codes of tomcat {@link org.apache.catalina.core.StandardThreadExecutor}
  *
- * {@link NetworkThreadExecutor}
+ * {@link NetworkThreadPoolExecutor}
  * Execution strategy：运行线程直到maximumPoolSize后才将新任务加入workQueue中，如果workQueue满了就reject。
  * 当突然有个流量高峰的时候，能够快速的达到最大线程数，尽量把任务处理完，处理不完才入队列。
  * Applicable scenario：Scenarios where business processing requires remote resources
@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Applicable scenario：CPU intensive applications (e.g. All operations performed inside runnable are In-JVM, memory copy, or compute. etc.)
  * </pre>
  */
-public class NetworkThreadExecutor extends ThreadPoolExecutor {
+public class NetworkThreadPoolExecutor extends ThreadPoolExecutor {
     public static final int           DEFAULT_CORE_POOL_SIZE  = 20;
     public static final int           DEFAULT_MAX_POOL_SIZE   = 200;
     /**
@@ -35,37 +35,37 @@ public class NetworkThreadExecutor extends ThreadPoolExecutor {
      */
     private final       int           maxSubmittedTasksCount;
 
-    public NetworkThreadExecutor() {
+    public NetworkThreadPoolExecutor() {
         this(DEFAULT_CORE_POOL_SIZE, DEFAULT_MAX_POOL_SIZE);
     }
 
-    public NetworkThreadExecutor(int corePoolSize, int maximumPoolSize) {
+    public NetworkThreadPoolExecutor(int corePoolSize, int maximumPoolSize) {
         this(corePoolSize, maximumPoolSize, maximumPoolSize);
     }
 
-    public NetworkThreadExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit) {
+    public NetworkThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit) {
         this(corePoolSize, maximumPoolSize, keepAliveTime, unit, maximumPoolSize);
     }
 
-    public NetworkThreadExecutor(int corePoolSize, int maximumPoolSize, int queueCapacity) {
+    public NetworkThreadPoolExecutor(int corePoolSize, int maximumPoolSize, int queueCapacity) {
         this(corePoolSize, maximumPoolSize, queueCapacity, Executors.defaultThreadFactory());
     }
 
-    public NetworkThreadExecutor(int corePoolSize, int maximumPoolSize, int queueCapacity, ThreadFactory threadFactory) {
+    public NetworkThreadPoolExecutor(int corePoolSize, int maximumPoolSize, int queueCapacity, ThreadFactory threadFactory) {
         this(corePoolSize, maximumPoolSize, DEFAULT_KEEP_ALIVE_TIME, TimeUnit.MILLISECONDS, queueCapacity, threadFactory);
     }
 
-    public NetworkThreadExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, int queueCapacity) {
+    public NetworkThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, int queueCapacity) {
         this(corePoolSize, maximumPoolSize, keepAliveTime, unit, queueCapacity, Executors.defaultThreadFactory());
     }
 
-    public NetworkThreadExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
-                                 int queueCapacity, ThreadFactory threadFactory) {
+    public NetworkThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
+                                     int queueCapacity, ThreadFactory threadFactory) {
         this(corePoolSize, maximumPoolSize, keepAliveTime, unit, queueCapacity, threadFactory, new AbortPolicy());
     }
 
-    public NetworkThreadExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
-                                 int queueCapacity, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
+    public NetworkThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
+                                     int queueCapacity, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, new ExecutorQueue(), threadFactory, handler);
         ((ExecutorQueue) getQueue()).setStandardThreadExecutor(this);
 
@@ -114,14 +114,14 @@ public class NetworkThreadExecutor extends ThreadPoolExecutor {
  * </pre>
  */
 class ExecutorQueue extends LinkedTransferQueue<Runnable> {
-    private static final long                  serialVersionUID = 1693153562045930859L;
-    private              NetworkThreadExecutor threadPoolExecutor;
+    private static final long                      serialVersionUID = 1693153562045930859L;
+    private              NetworkThreadPoolExecutor threadPoolExecutor;
 
     public ExecutorQueue() {
         super();
     }
 
-    public void setStandardThreadExecutor(NetworkThreadExecutor threadPoolExecutor) {
+    public void setStandardThreadExecutor(NetworkThreadPoolExecutor threadPoolExecutor) {
         this.threadPoolExecutor = threadPoolExecutor;
     }
 
