@@ -10,6 +10,7 @@ import org.infinity.luix.core.config.impl.RegistryConfig;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.infinity.luix.core.constant.ConsumerConstants.PROVIDER_ADDRESSES;
 import static org.infinity.luix.core.constant.ServiceConstants.REQUEST_TIMEOUT;
 import static org.infinity.luix.core.constant.ServiceConstants.RETRY_COUNT;
 
@@ -49,8 +50,10 @@ public interface BuildInService {
                                               Integer requestTimeout,
                                               Integer retryCount) {
         Map<String, Object> attributes = new HashMap<>(2);
+        attributes.put(PROVIDER_ADDRESSES, providerAddresses);
         attributes.put(REQUEST_TIMEOUT, requestTimeout);
         attributes.put(RETRY_COUNT, retryCount);
+
         String stubBeanName = ConsumerStub.buildConsumerStubBeanName(BuildInService.class.getName(), attributes);
 
         if (!ConsumerStubHolder.getInstance().getMap().containsKey(stubBeanName)) {
