@@ -58,7 +58,7 @@ public class RpcGlobalConsumerProcessImpl implements GlobalConsumerDiscoveryList
                 insertService(registryUrl, rpcConsumer);
 
                 // Insert application
-                insertApplication(registryUrl, consumerUrl, rpcConsumer);
+                rpcApplicationService.insert(registryUrl, consumerUrl, rpcConsumer.getApplication());
             }
         } else {
             log.info("Discovered offline consumers of [{}]", interfaceName);
@@ -99,9 +99,5 @@ public class RpcGlobalConsumerProcessImpl implements GlobalConsumerDiscoveryList
                 log.warn("Ignore the duplicated index issue!");
             }
         }
-    }
-
-    private void insertApplication(Url registryUrl, Url consumerUrl, RpcConsumer rpcConsumer) {
-        rpcApplicationService.insert(registryUrl, consumerUrl, rpcConsumer.getApplication());
     }
 }

@@ -58,7 +58,7 @@ public class RpcProviderProcessImpl implements GlobalProviderDiscoveryListener {
                 insertService(registryUrl, rpcProvider);
 
                 // Insert application
-                insertApplication(registryUrl, providerUrl, rpcProvider);
+                rpcApplicationService.insert(registryUrl, providerUrl, rpcProvider.getApplication());
             }
         } else {
             log.info("Discovered offline providers of [{}]", interfaceName);
@@ -99,9 +99,5 @@ public class RpcProviderProcessImpl implements GlobalProviderDiscoveryListener {
                 log.warn("Ignore the duplicated index issue!");
             }
         }
-    }
-
-    private void insertApplication(Url registryUrl, Url providerUrl, RpcProvider rpcProvider) {
-        rpcApplicationService.insert(registryUrl, providerUrl, rpcProvider.getApplication());
     }
 }
