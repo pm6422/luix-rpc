@@ -1,6 +1,8 @@
 package org.infinity.luix.webcenter.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.luix.core.client.proxy.Proxy;
@@ -18,6 +20,8 @@ import org.infinity.luix.webcenter.service.RpcConsumerService;
 import org.infinity.luix.webcenter.service.RpcProviderService;
 import org.infinity.luix.webcenter.service.RpcRegistryService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,8 +32,12 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import javax.annotation.Resource;
 import java.time.Instant;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import static org.infinity.luix.core.server.buildin.BuildInService.METHOD_GET_APPLICATION_INFO;
@@ -39,19 +47,48 @@ import static org.infinity.luix.webcenter.domain.RpcProvider.FIELD_REGISTRY_IDEN
 import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 
 @RpcProvider
-public class RpcApplicationServiceImpl implements RpcApplicationService {
+@Slf4j
+public class RpcApplicationServiceImpl implements RpcApplicationService, ApplicationRunner {
     @Resource
-    private LuixProperties           luixProperties;
+    private              LuixProperties                            luixProperties;
     @Resource
-    private ApplicationContext       applicationContext;
+    private              ApplicationContext                        applicationContext;
     @Resource
-    private MongoTemplate            mongoTemplate;
+    private              MongoTemplate                             mongoTemplate;
     @Resource
-    private RpcApplicationRepository rpcApplicationRepository;
+    private              RpcApplicationRepository                  rpcApplicationRepository;
     @Resource
-    private RpcProviderService       rpcProviderService;
+    private              RpcProviderService                        rpcProviderService;
     @Resource
-    private RpcConsumerService       rpcConsumerService;
+    private              RpcConsumerService                        rpcConsumerService;
+    private static final ConcurrentHashMap<String, RpcApplication> DISCOVERED_RPC_APPLICATIONS = new ConcurrentHashMap<>();
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        new Thread(this::execute).start();
+    }
+
+    private void execute() {
+        while (true) {
+            try {
+                if (MapUtils.isEmpty(DISCOVERED_RPC_APPLICATIONS)) {
+                    // Sleep for a while in order to decrease CPU occupation, otherwise the CPU occupation will reach to 100%
+                    TimeUnit.SECONDS.sleep(10L);
+                }
+                Iterator<Map.Entry<String, RpcApplication>> iterator = DISCOVERED_RPC_APPLICATIONS.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry<String, RpcApplication> next = iterator.next();
+                    String id = generateMd5Id(next.getValue().getId(), next.getValue().getRegistryIdentity());
+                    if (!rpcApplicationRepository.existsById(id)) {
+                        rpcApplicationRepository.insert(next.getValue());
+                    }
+                    iterator.remove();
+                }
+            } catch (Exception e) {
+                log.error("Failed to insert RPC application!", e);
+            }
+        }
+    }
 
     @Override
     public void updateStatus() {
@@ -87,6 +124,14 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
         long totalCount = mongoTemplate.count(query, RpcApplication.class);
         query.with(pageable);
         return new PageImpl<>(mongoTemplate.find(query, RpcApplication.class), pageable, totalCount);
+    }
+
+    @Override
+    public void insert(Url registryUrl, Url url, String id) {
+        if (DISCOVERED_RPC_APPLICATIONS.containsKey(id)) {
+            return;
+        }
+        DISCOVERED_RPC_APPLICATIONS.put(id, loadApplication(registryUrl, url));
     }
 
     @Override

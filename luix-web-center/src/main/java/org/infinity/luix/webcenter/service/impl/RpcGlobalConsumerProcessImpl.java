@@ -2,14 +2,12 @@ package org.infinity.luix.webcenter.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.infinity.luix.webcenter.domain.RpcServer;
-import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.listener.GlobalConsumerDiscoveryListener;
+import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.webcenter.domain.RpcApplication;
 import org.infinity.luix.webcenter.domain.RpcConsumer;
+import org.infinity.luix.webcenter.domain.RpcServer;
 import org.infinity.luix.webcenter.domain.RpcService;
-import org.infinity.luix.webcenter.repository.RpcApplicationRepository;
 import org.infinity.luix.webcenter.repository.RpcConsumerRepository;
 import org.infinity.luix.webcenter.repository.RpcServerRepository;
 import org.infinity.luix.webcenter.repository.RpcServiceRepository;
@@ -29,19 +27,17 @@ import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 public class RpcGlobalConsumerProcessImpl implements GlobalConsumerDiscoveryListener {
 
     @Resource
-    private RpcConsumerRepository    rpcConsumerRepository;
+    private RpcConsumerRepository rpcConsumerRepository;
     @Resource
-    private RpcServerRepository      rpcServerRepository;
+    private RpcServerRepository   rpcServerRepository;
     @Resource
-    private RpcServiceRepository     rpcServiceRepository;
+    private RpcServiceRepository  rpcServiceRepository;
     @Resource
-    private RpcApplicationRepository rpcApplicationRepository;
+    private RpcServerService      rpcServerService;
     @Resource
-    private RpcServerService         rpcServerService;
+    private RpcServiceService     rpcServiceService;
     @Resource
-    private RpcServiceService        rpcServiceService;
-    @Resource
-    private RpcApplicationService    rpcApplicationService;
+    private RpcApplicationService rpcApplicationService;
 
     @Override
     public void onNotify(Url registryUrl, String interfaceName, List<Url> consumerUrls) {
@@ -106,13 +102,6 @@ public class RpcGlobalConsumerProcessImpl implements GlobalConsumerDiscoveryList
     }
 
     private void insertApplication(Url registryUrl, Url consumerUrl, RpcConsumer rpcConsumer) {
-        if (!rpcApplicationRepository.existsById(generateMd5Id(rpcConsumer.getApplication(), registryUrl.getIdentity()))) {
-            RpcApplication rpcApplication = rpcApplicationService.loadApplication(registryUrl, consumerUrl);
-            try {
-                rpcApplicationRepository.insert(rpcApplication);
-            } catch (DuplicateKeyException ex) {
-                log.warn("Ignore the duplicated index issue!");
-            }
-        }
+        rpcApplicationService.insert(registryUrl, consumerUrl, rpcConsumer.getApplication());
     }
 }

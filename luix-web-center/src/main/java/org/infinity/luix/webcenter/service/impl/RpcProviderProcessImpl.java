@@ -5,11 +5,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.core.listener.GlobalProviderDiscoveryListener;
 import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.url.Url;
-import org.infinity.luix.webcenter.domain.RpcApplication;
 import org.infinity.luix.webcenter.domain.RpcProvider;
 import org.infinity.luix.webcenter.domain.RpcServer;
 import org.infinity.luix.webcenter.domain.RpcService;
-import org.infinity.luix.webcenter.repository.RpcApplicationRepository;
 import org.infinity.luix.webcenter.repository.RpcProviderRepository;
 import org.infinity.luix.webcenter.repository.RpcServerRepository;
 import org.infinity.luix.webcenter.repository.RpcServiceRepository;
@@ -29,19 +27,17 @@ import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 public class RpcProviderProcessImpl implements GlobalProviderDiscoveryListener {
 
     @Resource
-    private RpcProviderRepository    rpcProviderRepository;
+    private RpcProviderRepository rpcProviderRepository;
     @Resource
-    private RpcServerRepository      rpcServerRepository;
+    private RpcServerRepository   rpcServerRepository;
     @Resource
-    private RpcServiceRepository     rpcServiceRepository;
+    private RpcServiceRepository  rpcServiceRepository;
     @Resource
-    private RpcApplicationRepository rpcApplicationRepository;
+    private RpcServerService      rpcServerService;
     @Resource
-    private RpcServerService         rpcServerService;
+    private RpcServiceService     rpcServiceService;
     @Resource
-    private RpcServiceService        rpcServiceService;
-    @Resource
-    private RpcApplicationService    rpcApplicationService;
+    private RpcApplicationService rpcApplicationService;
 
     @Override
     public void onNotify(Url registryUrl, String interfaceName, List<Url> providerUrls) {
@@ -106,13 +102,6 @@ public class RpcProviderProcessImpl implements GlobalProviderDiscoveryListener {
     }
 
     private void insertApplication(Url registryUrl, Url providerUrl, RpcProvider rpcProvider) {
-        if (!rpcApplicationRepository.existsById(generateMd5Id(rpcProvider.getApplication(), registryUrl.getIdentity()))) {
-            RpcApplication rpcApplication = rpcApplicationService.loadApplication(registryUrl, providerUrl);
-            try {
-                rpcApplicationRepository.insert(rpcApplication);
-            } catch (DuplicateKeyException ex) {
-                log.warn("Ignore the duplicated index issue!");
-            }
-        }
+        rpcApplicationService.insert(registryUrl, providerUrl, rpcProvider.getApplication());
     }
 }
