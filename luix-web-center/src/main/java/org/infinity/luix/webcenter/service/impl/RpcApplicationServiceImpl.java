@@ -49,6 +49,7 @@ import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 @RpcProvider
 @Slf4j
 public class RpcApplicationServiceImpl implements RpcApplicationService, ApplicationRunner {
+    private static final ConcurrentHashMap<String, RpcApplication> DISCOVERED_RPC_APPLICATIONS = new ConcurrentHashMap<>();
     @Resource
     private              LuixProperties                            luixProperties;
     @Resource
@@ -61,7 +62,6 @@ public class RpcApplicationServiceImpl implements RpcApplicationService, Applica
     private              RpcProviderService                        rpcProviderService;
     @Resource
     private              RpcConsumerService                        rpcConsumerService;
-    private static final ConcurrentHashMap<String, RpcApplication> DISCOVERED_RPC_APPLICATIONS = new ConcurrentHashMap<>();
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
