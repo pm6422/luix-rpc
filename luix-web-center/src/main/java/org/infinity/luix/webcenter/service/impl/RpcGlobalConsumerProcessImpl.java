@@ -6,20 +6,16 @@ import org.infinity.luix.core.listener.GlobalConsumerDiscoveryListener;
 import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.webcenter.domain.RpcConsumer;
-import org.infinity.luix.webcenter.domain.RpcService;
 import org.infinity.luix.webcenter.repository.RpcConsumerRepository;
 import org.infinity.luix.webcenter.repository.RpcServerRepository;
 import org.infinity.luix.webcenter.repository.RpcServiceRepository;
 import org.infinity.luix.webcenter.service.RpcApplicationService;
 import org.infinity.luix.webcenter.service.RpcServerService;
 import org.infinity.luix.webcenter.service.RpcServiceService;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-
-import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 
 @Service
 @Slf4j
@@ -54,7 +50,7 @@ public class RpcGlobalConsumerProcessImpl implements GlobalConsumerDiscoveryList
                 rpcServerService.insert(registryUrl, consumerUrl, rpcConsumer.getAddress());
 
                 // Insert service
-                insertService(registryUrl, rpcConsumer);
+                rpcServiceService.insert(registryUrl, rpcConsumer.getInterfaceName());
 
                 // Insert application
                 rpcApplicationService.insert(registryUrl, consumerUrl, rpcConsumer.getApplication());
@@ -75,17 +71,6 @@ public class RpcGlobalConsumerProcessImpl implements GlobalConsumerDiscoveryList
 
             // Update application to inactive
             rpcApplicationService.inactivate(list.get(0).getRegistryIdentity(), list.get(0).getApplication());
-        }
-    }
-
-    private synchronized void insertService(Url registryUrl, RpcConsumer rpcConsumer) {
-        if (!rpcServiceRepository.existsById(generateMd5Id(rpcConsumer.getInterfaceName(), registryUrl.getIdentity()))) {
-            RpcService rpcService = RpcService.of(rpcConsumer.getInterfaceName(), registryUrl);
-            try {
-                rpcServiceRepository.insert(rpcService);
-            } catch (DuplicateKeyException ex) {
-                log.warn("Ignore the duplicated index issue!");
-            }
         }
     }
 }

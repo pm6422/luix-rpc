@@ -1,12 +1,17 @@
 package org.infinity.luix.webcenter.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.server.annotation.RpcProvider;
+import org.infinity.luix.core.url.Url;
 import org.infinity.luix.webcenter.domain.RpcService;
 import org.infinity.luix.webcenter.repository.RpcServiceRepository;
 import org.infinity.luix.webcenter.service.RpcConsumerService;
 import org.infinity.luix.webcenter.service.RpcProviderService;
 import org.infinity.luix.webcenter.service.RpcServiceService;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -16,23 +21,55 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import javax.annotation.Resource;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import static org.infinity.luix.webcenter.domain.RpcService.FIELD_INTERFACE_NAME;
-import static org.infinity.luix.webcenter.domain.RpcService.FIELD_REGISTRY_IDENTITY;
+import static org.infinity.luix.webcenter.domain.RpcService.*;
 
 @RpcProvider
-public class RpcServiceServiceImpl implements RpcServiceService {
+@Slf4j
+public class RpcServiceServiceImpl implements RpcServiceService, ApplicationRunner {
 
-    private static final int                  PAGE_SIZE = 100;
+    private static final ConcurrentHashMap<String, RpcService> DISCOVERED_RPC_SERVICES = new ConcurrentHashMap<>();
+    private static final int                                   PAGE_SIZE               = 100;
     @Resource
-    private              MongoTemplate        mongoTemplate;
+    private              MongoTemplate                         mongoTemplate;
     @Resource
-    private              RpcServiceRepository rpcServiceRepository;
+    private              RpcServiceRepository                  rpcServiceRepository;
     @Resource
-    private              RpcProviderService   rpcProviderService;
+    private              RpcProviderService                    rpcProviderService;
     @Resource
-    private              RpcConsumerService   rpcConsumerService;
+    private              RpcConsumerService                    rpcConsumerService;
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        new Thread(this::execute).start();
+    }
+
+    private void execute() {
+        while (true) {
+            try {
+                if (MapUtils.isEmpty(DISCOVERED_RPC_SERVICES)) {
+                    // Sleep for a while in order to decrease CPU occupation, otherwise the CPU occupation will reach to 100%
+                    TimeUnit.SECONDS.sleep(10L);
+                }
+                Iterator<Map.Entry<String, RpcService>> iterator = DISCOVERED_RPC_SERVICES.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry<String, RpcService> next = iterator.next();
+                    String id = generateMd5Id(next.getValue().getInterfaceName(), next.getValue().getRegistryIdentity());
+                    if (!rpcServiceRepository.existsById(id)) {
+                        rpcServiceRepository.insert(next.getValue());
+                    }
+                    iterator.remove();
+                }
+            } catch (Exception e) {
+                log.error("Failed to insert RPC service!", e);
+            }
+        }
+    }
 
     @Override
     public void updateStatus() {
@@ -74,6 +111,14 @@ public class RpcServiceServiceImpl implements RpcServiceService {
         long totalCount = mongoTemplate.count(query, RpcService.class);
         query.with(pageable);
         return new PageImpl<>(mongoTemplate.find(query, RpcService.class), pageable, totalCount);
+    }
+
+    @Override
+    public void insert(Url registryUrl, String interfaceName) {
+        if (DISCOVERED_RPC_SERVICES.containsKey(interfaceName)) {
+            return;
+        }
+        DISCOVERED_RPC_SERVICES.put(interfaceName, RpcService.of(interfaceName, registryUrl));
     }
 
     @Override
