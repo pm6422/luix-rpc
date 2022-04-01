@@ -6,7 +6,6 @@ import org.infinity.luix.core.listener.GlobalConsumerDiscoveryListener;
 import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.webcenter.domain.RpcConsumer;
-import org.infinity.luix.webcenter.domain.RpcServer;
 import org.infinity.luix.webcenter.domain.RpcService;
 import org.infinity.luix.webcenter.repository.RpcConsumerRepository;
 import org.infinity.luix.webcenter.repository.RpcServerRepository;
@@ -52,7 +51,7 @@ public class RpcGlobalConsumerProcessImpl implements GlobalConsumerDiscoveryList
                 rpcConsumerRepository.save(rpcConsumer);
 
                 // Insert server
-                insertServer(registryUrl, consumerUrl, rpcConsumer);
+                rpcServerService.insert(registryUrl, consumerUrl, rpcConsumer.getAddress());
 
                 // Insert service
                 insertService(registryUrl, rpcConsumer);
@@ -76,17 +75,6 @@ public class RpcGlobalConsumerProcessImpl implements GlobalConsumerDiscoveryList
 
             // Update application to inactive
             rpcApplicationService.inactivate(list.get(0).getRegistryIdentity(), list.get(0).getApplication());
-        }
-    }
-
-    private void insertServer(Url registryUrl, Url consumerUrl, RpcConsumer rpcConsumer) {
-        if (!rpcServerRepository.existsById(generateMd5Id(rpcConsumer.getAddress(), registryUrl.getIdentity()))) {
-            RpcServer rpcServer = rpcServerService.loadServer(registryUrl, consumerUrl);
-            try {
-                rpcServerRepository.insert(rpcServer);
-            } catch (DuplicateKeyException ex) {
-                log.warn("Ignore the duplicated index issue!");
-            }
         }
     }
 

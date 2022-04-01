@@ -12,7 +12,7 @@ public interface RpcApplicationService {
 
     Page<RpcApplication> find(Pageable pageable, String registryIdentity, String name, Boolean active);
 
-    void insert(Url registryUrl, Url consumerUrl, String id);
+    void insert(Url registryUrl, Url url, String id);
 
     void inactivate(String registryIdentity, String name);
 

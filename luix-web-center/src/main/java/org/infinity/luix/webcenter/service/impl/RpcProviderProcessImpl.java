@@ -6,7 +6,6 @@ import org.infinity.luix.core.listener.GlobalProviderDiscoveryListener;
 import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.webcenter.domain.RpcProvider;
-import org.infinity.luix.webcenter.domain.RpcServer;
 import org.infinity.luix.webcenter.domain.RpcService;
 import org.infinity.luix.webcenter.repository.RpcProviderRepository;
 import org.infinity.luix.webcenter.repository.RpcServerRepository;
@@ -52,7 +51,7 @@ public class RpcProviderProcessImpl implements GlobalProviderDiscoveryListener {
                 rpcProviderRepository.save(rpcProvider);
 
                 // Insert server
-                insertServer(registryUrl, providerUrl, rpcProvider);
+                rpcServerService.insert(registryUrl, providerUrl, rpcProvider.getAddress());
 
                 // Insert service
                 insertService(registryUrl, rpcProvider);
@@ -76,17 +75,6 @@ public class RpcProviderProcessImpl implements GlobalProviderDiscoveryListener {
 
             // Update application to inactive
             rpcApplicationService.inactivate(list.get(0).getApplication(), list.get(0).getRegistryIdentity());
-        }
-    }
-
-    private void insertServer(Url registryUrl, Url providerUrl, RpcProvider rpcProvider) {
-        if (!rpcServerRepository.existsById(generateMd5Id(rpcProvider.getAddress(), registryUrl.getIdentity()))) {
-            RpcServer rpcServer = rpcServerService.loadServer(registryUrl, providerUrl);
-            try {
-                rpcServerRepository.insert(rpcServer);
-            } catch (DuplicateKeyException ex) {
-                log.warn("Ignore the duplicated index issue!");
-            }
         }
     }
 
