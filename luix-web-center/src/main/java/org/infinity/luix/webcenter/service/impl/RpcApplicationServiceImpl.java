@@ -151,7 +151,7 @@ public class RpcApplicationServiceImpl implements RpcApplicationService, Applica
         Proxy proxyFactory = Proxy.getInstance(luixProperties.getConsumer().getProxyFactory());
 
         ConsumerStub<?> consumerStub = BuildInService.createConsumerStub(luixProperties.getApplication(), registryConfig,
-                luixProperties.getAvailableProtocol(), url.getAddress(), 20000, 2);
+                luixProperties.getAvailableProtocol(), url.getAddress(), 50000, 2);
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         // Send a remote request to get ApplicationConfig
         ApplicationConfig applicationConfig = (ApplicationConfig) invocationHandler.invoke(METHOD_GET_APPLICATION_INFO);
