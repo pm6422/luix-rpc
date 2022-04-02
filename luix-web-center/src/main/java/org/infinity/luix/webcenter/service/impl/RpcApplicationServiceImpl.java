@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.luix.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.luix.core.client.proxy.Proxy;
 import org.infinity.luix.core.client.stub.ConsumerStub;
@@ -37,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -49,23 +52,24 @@ import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 @RpcProvider
 @Slf4j
 public class RpcApplicationServiceImpl implements RpcApplicationService, ApplicationRunner {
-    private static final ConcurrentHashMap<String, RpcApplication> DISCOVERED_RPC_APPLICATIONS = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Pair<String, String>> DISCOVERED_RPC_APPLICATIONS = new ConcurrentHashMap<>();
+    private static final ScheduledExecutorService                        EXECUTOR                    = Executors.newScheduledThreadPool(1);
     @Resource
-    private              LuixProperties                            luixProperties;
+    private              LuixProperties                                  luixProperties;
     @Resource
-    private              ApplicationContext                        applicationContext;
+    private              ApplicationContext                              applicationContext;
     @Resource
-    private              MongoTemplate                             mongoTemplate;
+    private              MongoTemplate                                   mongoTemplate;
     @Resource
-    private              RpcApplicationRepository                  rpcApplicationRepository;
+    private              RpcApplicationRepository                        rpcApplicationRepository;
     @Resource
-    private              RpcProviderService                        rpcProviderService;
+    private              RpcProviderService                              rpcProviderService;
     @Resource
-    private              RpcConsumerService                        rpcConsumerService;
+    private              RpcConsumerService                              rpcConsumerService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        new Thread(this::execute).start();
+        EXECUTOR.scheduleAtFixedRate(this::execute, 30, 10, TimeUnit.SECONDS);
     }
 
     private void execute() {
@@ -75,12 +79,13 @@ public class RpcApplicationServiceImpl implements RpcApplicationService, Applica
                     // Sleep for a while in order to decrease CPU occupation, otherwise the CPU occupation will reach to 100%
                     TimeUnit.SECONDS.sleep(10L);
                 }
-                Iterator<Map.Entry<String, RpcApplication>> iterator = DISCOVERED_RPC_APPLICATIONS.entrySet().iterator();
+                Iterator<Map.Entry<String, Pair<String, String>>> iterator = DISCOVERED_RPC_APPLICATIONS.entrySet().iterator();
                 while (iterator.hasNext()) {
-                    Map.Entry<String, RpcApplication> next = iterator.next();
-                    String id = generateMd5Id(next.getValue().getId(), next.getValue().getRegistryIdentity());
+                    Map.Entry<String, Pair<String, String>> next = iterator.next();
+                    RpcApplication rpcApplication = loadApplication(Url.valueOf(next.getValue().getLeft()), Url.valueOf(next.getValue().getRight()));
+                    String id = generateMd5Id(rpcApplication.getId(), rpcApplication.getRegistryIdentity());
                     if (!rpcApplicationRepository.existsById(id)) {
-                        rpcApplicationRepository.insert(next.getValue());
+                        rpcApplicationRepository.insert(rpcApplication);
                     }
                     iterator.remove();
                 }
@@ -128,10 +133,7 @@ public class RpcApplicationServiceImpl implements RpcApplicationService, Applica
 
     @Override
     public void insert(Url registryUrl, Url url, String id) {
-        if (DISCOVERED_RPC_APPLICATIONS.containsKey(id)) {
-            return;
-        }
-        DISCOVERED_RPC_APPLICATIONS.put(id, loadApplication(registryUrl, url));
+        DISCOVERED_RPC_APPLICATIONS.putIfAbsent(id, Pair.of(registryUrl.toFullStr(), url.toFullStr()));
     }
 
     @Override
@@ -155,7 +157,7 @@ public class RpcApplicationServiceImpl implements RpcApplicationService, Applica
         Proxy proxyFactory = Proxy.getInstance(luixProperties.getConsumer().getProxyFactory());
 
         ConsumerStub<?> consumerStub = BuildInService.createConsumerStub(luixProperties.getApplication(), registryConfig,
-                luixProperties.getAvailableProtocol(), url.getAddress(), 10000, 2);
+                luixProperties.getAvailableProtocol(), url.getAddress(), 20000, 2);
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         // Send a remote request to get ApplicationConfig
         ApplicationConfig applicationConfig = (ApplicationConfig) invocationHandler.invoke(METHOD_GET_APPLICATION_INFO);

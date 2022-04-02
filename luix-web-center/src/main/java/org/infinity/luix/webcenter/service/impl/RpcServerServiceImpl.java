@@ -3,6 +3,7 @@ package org.infinity.luix.webcenter.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.luix.core.client.invocationhandler.UniversalInvocationHandler;
 import org.infinity.luix.core.client.proxy.Proxy;
 import org.infinity.luix.core.client.stub.ConsumerStub;
@@ -12,7 +13,6 @@ import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.server.buildin.ServerInfo;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.spring.boot.config.LuixProperties;
-import org.infinity.luix.webcenter.domain.RpcApplication;
 import org.infinity.luix.webcenter.domain.RpcServer;
 import org.infinity.luix.webcenter.repository.RpcServerRepository;
 import org.infinity.luix.webcenter.service.RpcConsumerService;
@@ -35,6 +35,8 @@ import javax.annotation.Resource;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -45,24 +47,25 @@ import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 @Slf4j
 public class RpcServerServiceImpl implements RpcServerService, ApplicationRunner {
 
-    private static final int                                  PAGE_SIZE              = 100;
-    private static final ConcurrentHashMap<String, RpcServer> DISCOVERED_RPC_SERVERS = new ConcurrentHashMap<>();
+    private static final int                                             PAGE_SIZE              = 100;
+    private static final ConcurrentHashMap<String, Pair<String, String>> DISCOVERED_RPC_SERVERS = new ConcurrentHashMap<>();
+    private static final ScheduledExecutorService                        EXECUTOR               = Executors.newScheduledThreadPool(1);
     @Resource
-    private              LuixProperties                       luixProperties;
+    private              LuixProperties                                  luixProperties;
     @Resource
-    private              ApplicationContext                   applicationContext;
+    private              ApplicationContext                              applicationContext;
     @Resource
-    private              MongoTemplate                        mongoTemplate;
+    private              MongoTemplate                                   mongoTemplate;
     @Resource
-    private              RpcServerRepository                  rpcServerRepository;
+    private              RpcServerRepository                             rpcServerRepository;
     @Resource
-    private              RpcProviderService                   rpcProviderService;
+    private              RpcProviderService                              rpcProviderService;
     @Resource
-    private              RpcConsumerService                   rpcConsumerService;
+    private              RpcConsumerService                              rpcConsumerService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        new Thread(this::execute).start();
+        EXECUTOR.scheduleAtFixedRate(this::execute, 40, 13, TimeUnit.SECONDS);
     }
 
     private void execute() {
@@ -72,12 +75,13 @@ public class RpcServerServiceImpl implements RpcServerService, ApplicationRunner
                     // Sleep for a while in order to decrease CPU occupation, otherwise the CPU occupation will reach to 100%
                     TimeUnit.SECONDS.sleep(10L);
                 }
-                Iterator<Map.Entry<String, RpcServer>> iterator = DISCOVERED_RPC_SERVERS.entrySet().iterator();
+                Iterator<Map.Entry<String, Pair<String, String>>> iterator = DISCOVERED_RPC_SERVERS.entrySet().iterator();
                 while (iterator.hasNext()) {
-                    Map.Entry<String, RpcServer> next = iterator.next();
-                    String id = generateMd5Id(next.getValue().getAddress(), next.getValue().getRegistryIdentity());
+                    Map.Entry<String, Pair<String, String>> next = iterator.next();
+                    RpcServer rpcServer = loadServer(Url.valueOf(next.getValue().getLeft()), Url.valueOf(next.getValue().getRight()));
+                    String id = generateMd5Id(rpcServer.getAddress(), rpcServer.getRegistryIdentity());
                     if (!rpcServerRepository.existsById(id)) {
-                        rpcServerRepository.insert(next.getValue());
+                        rpcServerRepository.insert(rpcServer);
                     }
                     iterator.remove();
                 }
@@ -131,10 +135,7 @@ public class RpcServerServiceImpl implements RpcServerService, ApplicationRunner
 
     @Override
     public void insert(Url registryUrl, Url url, String address) {
-        if (DISCOVERED_RPC_SERVERS.containsKey(address)) {
-            return;
-        }
-        DISCOVERED_RPC_SERVERS.put(address, loadServer(registryUrl, url));
+        DISCOVERED_RPC_SERVERS.putIfAbsent(address, Pair.of(registryUrl.toFullStr(), url.toFullStr()));
     }
 
     @Override
@@ -162,7 +163,7 @@ public class RpcServerServiceImpl implements RpcServerService, ApplicationRunner
         Proxy proxyFactory = Proxy.getInstance(luixProperties.getConsumer().getProxyFactory());
 
         ConsumerStub<?> consumerStub = BuildInService.createConsumerStub(luixProperties.getApplication(), registryConfig,
-                luixProperties.getAvailableProtocol(), address, 10000, 2);
+                luixProperties.getAvailableProtocol(), address, 20000, 2);
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         // Send a remote request to get ApplicationConfig
         ServerInfo serverInfo = (ServerInfo) invocationHandler.invoke(METHOD_GET_SERVER_INFO);
