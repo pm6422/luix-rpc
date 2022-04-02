@@ -20,8 +20,6 @@ import org.infinity.luix.webcenter.service.RpcProviderService;
 import org.infinity.luix.webcenter.service.RpcRegistryService;
 import org.infinity.luix.webcenter.service.RpcServerService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -35,9 +33,6 @@ import javax.annotation.Resource;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import static org.infinity.luix.core.server.buildin.BuildInService.METHOD_GET_SERVER_INFO;
@@ -45,11 +40,10 @@ import static org.infinity.luix.webcenter.domain.RpcService.generateMd5Id;
 
 @RpcProvider
 @Slf4j
-public class RpcServerServiceImpl implements RpcServerService, ApplicationRunner {
+public class RpcServerServiceImpl implements RpcServerService {
 
     private static final int                                             PAGE_SIZE              = 100;
     private static final ConcurrentHashMap<String, Pair<String, String>> DISCOVERED_RPC_SERVERS = new ConcurrentHashMap<>();
-    private static final ScheduledExecutorService                        EXECUTOR               = Executors.newScheduledThreadPool(1);
     @Resource
     private              LuixProperties                                  luixProperties;
     @Resource
@@ -64,11 +58,7 @@ public class RpcServerServiceImpl implements RpcServerService, ApplicationRunner
     private              RpcConsumerService                              rpcConsumerService;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
-        EXECUTOR.scheduleAtFixedRate(this::execute, 30, 10, TimeUnit.SECONDS);
-    }
-
-    private void execute() {
+    public void loadAll() {
         if (MapUtils.isEmpty(DISCOVERED_RPC_SERVERS)) {
             // Sleep for a while in order to decrease CPU occupation, otherwise the CPU occupation will reach to 100%
             return;

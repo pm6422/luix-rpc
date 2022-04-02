@@ -86,6 +86,9 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
         saveUpdateStatusTask(registryUrl, RpcApplicationService.class.getName(), 7L);
         saveUpdateStatusTask(registryUrl, RpcServerService.class.getName(), 5L);
         saveUpdateStatusTask(registryUrl, RpcServiceService.class.getName(), 2L);
+
+        saveLoadAllTask(registryUrl, RpcApplicationService.class.getName(), 10L, 30L);
+        saveLoadAllTask(registryUrl, RpcServerService.class.getName(), 10L, 30L);
     }
 
     private void saveUpdateStatusTask(String registryUrl, String interfaceName, Long interval) {
@@ -97,6 +100,23 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
         rpcScheduledTask.setMethodSignature("updateStatus(void)");
         rpcScheduledTask.setFixedInterval(interval);
         rpcScheduledTask.setFixedIntervalUnit(UNIT_MINUTES);
+        rpcScheduledTask.setRequestTimeout(1500);
+        rpcScheduledTask.setEnabled(true);
+
+        rpcScheduledTaskRepository.save(rpcScheduledTask);
+    }
+
+    private void saveLoadAllTask(String registryUrl, String interfaceName, Long interval, Long initialDelay) {
+        RpcScheduledTask rpcScheduledTask = new RpcScheduledTask();
+        rpcScheduledTask.setName("T" + IdGenerator.generateShortId());
+        rpcScheduledTask.setRegistryIdentity(registryUrl);
+        rpcScheduledTask.setInterfaceName(interfaceName);
+        rpcScheduledTask.setMethodName("loadAll");
+        rpcScheduledTask.setMethodSignature("loadAll(void)");
+        rpcScheduledTask.setFixedInterval(interval);
+        rpcScheduledTask.setFixedIntervalUnit(UNIT_SECONDS);
+        rpcScheduledTask.setInitialDelay(initialDelay);
+        rpcScheduledTask.setInitialDelayUnit(UNIT_SECONDS);
         rpcScheduledTask.setRequestTimeout(1500);
         rpcScheduledTask.setEnabled(true);
 
@@ -212,13 +232,15 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
     }
 
     private long calculateMilliSeconds(RpcScheduledTask scheduledTask) {
-        long oneMinute = 60_000;
-        if (UNIT_MINUTES.equals(scheduledTask.getFixedIntervalUnit())) {
-            return oneMinute * scheduledTask.getFixedInterval();
+        long oneSecond = 1_000;
+        if (UNIT_SECONDS.equals(scheduledTask.getFixedIntervalUnit())) {
+            return oneSecond * scheduledTask.getFixedInterval();
+        } else if (UNIT_MINUTES.equals(scheduledTask.getFixedIntervalUnit())) {
+            return oneSecond * 60 * scheduledTask.getFixedInterval();
         } else if (UNIT_HOURS.equals(scheduledTask.getFixedIntervalUnit())) {
-            return oneMinute * 60 * scheduledTask.getFixedInterval();
+            return oneSecond * 60 * 60 * scheduledTask.getFixedInterval();
         } else if (UNIT_DAYS.equals(scheduledTask.getFixedIntervalUnit())) {
-            return oneMinute * 60 * 24 * scheduledTask.getFixedInterval();
+            return oneSecond * 60 * 60 * 24 * scheduledTask.getFixedInterval();
         }
         throw new IllegalStateException("Illegal fixed interval time unit!");
     }

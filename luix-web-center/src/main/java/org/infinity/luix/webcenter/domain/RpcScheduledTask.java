@@ -28,7 +28,7 @@ public class RpcScheduledTask extends AbstractAuditableDomain implements Seriali
     public static final  String       UNIT_MINUTES                  = "MINUTES";
     public static final  String       UNIT_HOURS                    = "HOURS";
     public static final  String       UNIT_DAYS                     = "DAYS";
-    public static final  List<String> AVAILABLE_FIXED_INTERVAL_UNIT = Arrays.asList(UNIT_MINUTES, UNIT_HOURS, UNIT_DAYS);
+    public static final  List<String> AVAILABLE_FIXED_INTERVAL_UNIT = Arrays.asList(UNIT_SECONDS, UNIT_MINUTES, UNIT_HOURS, UNIT_DAYS);
     public static final  List<String> AVAILABLE_INITIAL_DELAY_UNIT  = Arrays.asList(UNIT_SECONDS, UNIT_MINUTES, UNIT_HOURS);
     public static final  String       FIELD_REGISTRY_IDENTITY       = "registryIdentity";
     public static final  String       FIELD_NAME                    = "name";

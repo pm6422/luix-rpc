@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface RpcServerService {
 
+    void loadAll();
+
     void updateStatus();
 
     boolean exists(String registryIdentity, String address);
