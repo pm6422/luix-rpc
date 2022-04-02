@@ -98,11 +98,18 @@ public class RpcApplicationServiceImpl implements RpcApplicationService, Applica
         applications.forEach(domain -> {
             if (rpcProviderService.existsApplication(domain.getRegistryIdentity(), domain.getId(), true)) {
                 domain.setProviding(true);
-                domain.setActive(true);
+            } else {
+                domain.setProviding(false);
             }
             if (rpcConsumerService.existsApplication(domain.getRegistryIdentity(), domain.getId(), true)) {
                 domain.setConsuming(true);
+            } else {
+                domain.setConsuming(false);
+            }
+            if (domain.isProviding() || domain.isConsuming()) {
                 domain.setActive(true);
+            } else {
+                domain.setActive(false);
             }
         });
         rpcApplicationRepository.saveAll(applications);

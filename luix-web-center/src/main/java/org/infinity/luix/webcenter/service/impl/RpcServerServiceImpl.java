@@ -98,11 +98,18 @@ public class RpcServerServiceImpl implements RpcServerService, ApplicationRunner
             servers.getContent().forEach(domain -> {
                 if (rpcProviderService.existsAddress(domain.getRegistryIdentity(), domain.getAddress(), true)) {
                     domain.setProviding(true);
-                    domain.setActive(true);
+                } else {
+                    domain.setProviding(false);
                 }
                 if (rpcConsumerService.existsAddress(domain.getRegistryIdentity(), domain.getAddress(), true)) {
                     domain.setConsuming(true);
+                } else {
+                    domain.setConsuming(false);
+                }
+                if (domain.isProviding() || domain.isConsuming()) {
                     domain.setActive(true);
+                } else {
+                    domain.setActive(false);
                 }
             });
             rpcServerRepository.saveAll(servers);
