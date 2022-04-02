@@ -24,10 +24,6 @@ public class RpcProviderProcessImpl implements GlobalProviderDiscoveryListener {
     @Resource
     private RpcProviderRepository rpcProviderRepository;
     @Resource
-    private RpcServerRepository   rpcServerRepository;
-    @Resource
-    private RpcServiceRepository  rpcServiceRepository;
-    @Resource
     private RpcServerService      rpcServerService;
     @Resource
     private RpcServiceService     rpcServiceService;
@@ -56,7 +52,7 @@ public class RpcProviderProcessImpl implements GlobalProviderDiscoveryListener {
                 rpcApplicationService.insert(registryUrl, providerUrl, rpcProvider.getApplication());
             }
         } else {
-            log.info("Discovered offline providers of [{}]", interfaceName);
+            log.info("Discovered inactive providers of [{}]", interfaceName);
 
             // Update providers to inactive
             List<RpcProvider> list = rpcProviderRepository.findByInterfaceName(interfaceName);
