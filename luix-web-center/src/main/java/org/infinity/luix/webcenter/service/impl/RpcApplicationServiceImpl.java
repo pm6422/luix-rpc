@@ -73,25 +73,19 @@ public class RpcApplicationServiceImpl implements RpcApplicationService, Applica
     }
 
     private void execute() {
-        while (true) {
-            try {
-                if (MapUtils.isEmpty(DISCOVERED_RPC_APPLICATIONS)) {
-                    // Sleep for a while in order to decrease CPU occupation, otherwise the CPU occupation will reach to 100%
-                    TimeUnit.SECONDS.sleep(10L);
-                }
-                Iterator<Map.Entry<String, Pair<String, String>>> iterator = DISCOVERED_RPC_APPLICATIONS.entrySet().iterator();
-                while (iterator.hasNext()) {
-                    Map.Entry<String, Pair<String, String>> next = iterator.next();
-                    RpcApplication rpcApplication = loadApplication(Url.valueOf(next.getValue().getLeft()), Url.valueOf(next.getValue().getRight()));
-                    String id = generateMd5Id(rpcApplication.getId(), rpcApplication.getRegistryIdentity());
-                    if (!rpcApplicationRepository.existsById(id)) {
-                        rpcApplicationRepository.insert(rpcApplication);
-                    }
-                    iterator.remove();
-                }
-            } catch (Exception e) {
-                log.error("Failed to insert RPC application!", e);
+        if (MapUtils.isEmpty(DISCOVERED_RPC_APPLICATIONS)) {
+            // Sleep for a while in order to decrease CPU occupation, otherwise the CPU occupation will reach to 100%
+            return;
+        }
+        Iterator<Map.Entry<String, Pair<String, String>>> iterator = DISCOVERED_RPC_APPLICATIONS.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Pair<String, String>> next = iterator.next();
+            RpcApplication rpcApplication = loadApplication(Url.valueOf(next.getValue().getLeft()), Url.valueOf(next.getValue().getRight()));
+            String id = generateMd5Id(rpcApplication.getId(), rpcApplication.getRegistryIdentity());
+            if (!rpcApplicationRepository.existsById(id)) {
+                rpcApplicationRepository.insert(rpcApplication);
             }
+            iterator.remove();
         }
     }
 
