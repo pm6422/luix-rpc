@@ -157,14 +157,10 @@ public class RpcServerServiceImpl implements RpcServerService, ApplicationRunner
         Proxy proxyFactory = Proxy.getInstance(luixProperties.getConsumer().getProxyFactory());
 
         ConsumerStub<?> consumerStub = BuildInService.createConsumerStub(luixProperties.getApplication(), registryConfig,
-                luixProperties.getAvailableProtocol(), address, 50000, 2);
+                luixProperties.getAvailableProtocol(), address, 60_000, 2);
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         // Send a remote request to get ApplicationConfig
         ServerInfo serverInfo = (ServerInfo) invocationHandler.invoke(METHOD_GET_SERVER_INFO);
-
-        if (serverInfo == null) {
-            return null;
-        }
 
         RpcServer rpcServer = new RpcServer();
         BeanUtils.copyProperties(serverInfo, rpcServer);
