@@ -212,7 +212,7 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
     }
 
     private long calculateMilliSeconds(RpcScheduledTask scheduledTask) {
-        long oneMinute = 60000;
+        long oneMinute = 60_000;
         if (UNIT_MINUTES.equals(scheduledTask.getFixedIntervalUnit())) {
             return oneMinute * scheduledTask.getFixedInterval();
         } else if (UNIT_HOURS.equals(scheduledTask.getFixedIntervalUnit())) {
@@ -220,6 +220,6 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
         } else if (UNIT_DAYS.equals(scheduledTask.getFixedIntervalUnit())) {
             return oneMinute * 60 * 24 * scheduledTask.getFixedInterval();
         }
-        throw new IllegalStateException("Found incorrect time unit!");
+        throw new IllegalStateException("Illegal fixed interval time unit!");
     }
 }

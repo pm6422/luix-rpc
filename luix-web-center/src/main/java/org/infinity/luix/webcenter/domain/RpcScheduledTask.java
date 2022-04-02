@@ -24,10 +24,12 @@ import java.util.List;
 @NoArgsConstructor
 public class RpcScheduledTask extends AbstractAuditableDomain implements Serializable {
     private static final long         serialVersionUID              = 8878535528271740314L;
+    public static final  String       UNIT_SECONDS                  = "SECONDS";
     public static final  String       UNIT_MINUTES                  = "MINUTES";
     public static final  String       UNIT_HOURS                    = "HOURS";
     public static final  String       UNIT_DAYS                     = "DAYS";
     public static final  List<String> AVAILABLE_FIXED_INTERVAL_UNIT = Arrays.asList(UNIT_MINUTES, UNIT_HOURS, UNIT_DAYS);
+    public static final  List<String> AVAILABLE_INITIAL_DELAY_UNIT  = Arrays.asList(UNIT_SECONDS, UNIT_MINUTES, UNIT_HOURS);
     public static final  String       FIELD_REGISTRY_IDENTITY       = "registryIdentity";
     public static final  String       FIELD_NAME                    = "name";
     public static final  String       FIELD_INTERFACE_NAME          = "interfaceName";
@@ -106,6 +108,16 @@ public class RpcScheduledTask extends AbstractAuditableDomain implements Seriali
      * Time unit of fixed rate interval, e.g. MINUTES, HOURS, DAYS
      */
     private String   fixedIntervalUnit;
+    /**
+     * The time to delay first execution
+     */
+    @Positive
+    private Long     initialDelay;
+    /**
+     * o
+     * Time unit of initialDelay, e.g. SECONDS, MINUTES, HOURS
+     */
+    private String   initialDelayUnit;
     /**
      * Start time
      */

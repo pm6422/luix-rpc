@@ -1588,7 +1588,8 @@ function RpcScheduledTaskDialogController($rootScope, $state, $stateParams, $uib
 
     vm.pageTitle = $state.current.data.pageTitle;
     vm.mode = $state.current.data.mode;
-    vm.timeUnits = RpcScheduledTaskService.query({extension: 'time-units'});
+    vm.fixedIntervalTimeUnits = RpcScheduledTaskService.query({extension: 'fixed-interval-time-units'});
+    vm.initialDelayUnits = RpcScheduledTaskService.query({extension: 'initial-delay-units'});
     vm.faultTolerances = RpcScheduledTaskService.query({extension: 'fault-tolerances'});
     vm.entity = entity;
     vm.argsHidden = true;

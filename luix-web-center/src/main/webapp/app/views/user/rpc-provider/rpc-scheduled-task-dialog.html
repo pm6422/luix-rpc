@@ -83,7 +83,7 @@
                 <div class="col-md-2"><input type="number" min=1 class="form-control" ng-model="vm.entity.fixedInterval"></div>
                 <div class="col-md-2">
                     <select name="fixedIntervalUnit" class="form-control col-md-2" ng-model="vm.entity.fixedIntervalUnit"
-                            ng-options="item for item in vm.timeUnits" required>
+                            ng-options="item for item in vm.fixedIntervalTimeUnits" required>
                         <option value="">Select...</option>
                     </select>
                 </div>
@@ -111,6 +111,18 @@
                     <p class="help-block" ng-show="editForm.retryCount.$error.min" translate-value-max="50">
                         Min value: 0
                     </p>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Initial delay</label>
+            <div class="row">
+                <div class="col-md-2"><input type="number" min=1 class="form-control" ng-model="vm.entity.initialDelay"></div>
+                <div class="col-md-2">
+                    <select name="initialDelayUnit" class="form-control col-md-2" ng-model="vm.entity.initialDelayUnit"
+                            ng-options="item for item in vm.initialDelayUnits" required>
+                        <option value="">Select...</option>
+                    </select>
                 </div>
             </div>
         </div>

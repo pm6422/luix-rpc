@@ -24,13 +24,14 @@ import java.util.Map;
 import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
 import static org.infinity.luix.core.constant.ConsumerConstants.FAULT_TOLERANCE;
 import static org.infinity.luix.core.constant.ServiceConstants.*;
+import static org.infinity.luix.webcenter.domain.RpcScheduledTask.*;
 
 @Slf4j
 @Builder
 public class RunnableTask implements Runnable {
 
-    private static final int SECOND = 1000;
-    private static final int MINUTE = 60000;
+    private static final int SECOND = 1_000;
+    private static final int MINUTE = 60_000;
 
     private final RpcScheduledTaskHistoryRepository rpcScheduledTaskHistoryRepository;
     private final RpcScheduledTaskLockRepository    rpcScheduledTaskLockRepository;
@@ -49,6 +50,10 @@ public class RunnableTask implements Runnable {
 
     @Override
     public void run() {
+        if (rpcScheduledTask.getStartTime() == null && rpcScheduledTask.getInitialDelay() != null) {
+            Instant delayInstant = rpcScheduledTask.getCreatedTime().plusMillis(calculateMilliSeconds(rpcScheduledTask));
+            rpcScheduledTask.setStartTime(delayInstant);
+        }
         Instant now = Instant.now();
         if (rpcScheduledTask.getStartTime() != null && now.isBefore(rpcScheduledTask.getStartTime())) {
             log.debug("It's not time to start yet for scheduled task: [{}]", rpcScheduledTask.getName());
@@ -117,10 +122,10 @@ public class RunnableTask implements Runnable {
         invocationHandler.invoke(rpcScheduledTask.getMethodName(), rpcScheduledTask.getMethodParamTypes(), null);
     }
 
-    public static ConsumerStub<?> getConsumerStub(RpcRegistryService rpcRegistryService,
-                                                  String registryIdentity, String interfaceName,
-                                                  String form, String version,
-                                                  Integer requestTimeout, Integer retryCount, String faultTolerance) {
+    private static ConsumerStub<?> getConsumerStub(RpcRegistryService rpcRegistryService,
+                                                   String registryIdentity, String interfaceName,
+                                                   String form, String version,
+                                                   Integer requestTimeout, Integer retryCount, String faultTolerance) {
         // Select one of node to execute
         Map<String, String> attributes = new HashMap<>(3);
         attributes.put(FORM, form);
@@ -135,5 +140,17 @@ public class RunnableTask implements Runnable {
             attributes.put(FAULT_TOLERANCE, faultTolerance);
         }
         return rpcRegistryService.getConsumerStub(registryIdentity, null, interfaceName, attributes);
+    }
+
+    private long calculateMilliSeconds(RpcScheduledTask scheduledTask) {
+        long oneSecond = 1_000;
+        if (UNIT_SECONDS.equals(scheduledTask.getInitialDelayUnit())) {
+            return oneSecond * scheduledTask.getInitialDelay();
+        } else if (UNIT_MINUTES.equals(scheduledTask.getInitialDelayUnit())) {
+            return oneSecond * 60 * scheduledTask.getInitialDelay();
+        } else if (UNIT_HOURS.equals(scheduledTask.getInitialDelayUnit())) {
+            return oneSecond * 60 * 60 * scheduledTask.getInitialDelay();
+        }
+        throw new IllegalStateException("Illegal initial delay time unit!");
     }
 }

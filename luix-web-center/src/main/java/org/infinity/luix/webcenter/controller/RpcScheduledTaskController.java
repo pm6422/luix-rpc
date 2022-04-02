@@ -134,9 +134,15 @@ public class RpcScheduledTaskController {
     }
 
     @ApiOperation("get available time units of fixed rate interval")
-    @GetMapping("/api/rpc-scheduled-tasks/time-units")
-    public ResponseEntity<List<String>> getTimeUnits() {
+    @GetMapping("/api/rpc-scheduled-tasks/fixed-interval-time-units")
+    public ResponseEntity<List<String>> getFixedIntervalTimeUnits() {
         return ResponseEntity.ok().body(RpcScheduledTask.AVAILABLE_FIXED_INTERVAL_UNIT);
+    }
+
+    @ApiOperation("get available time units of initial delay")
+    @GetMapping("/api/rpc-scheduled-tasks/initial-delay-units")
+    public ResponseEntity<List<String>> getInitialDelayUnits() {
+        return ResponseEntity.ok().body(RpcScheduledTask.AVAILABLE_INITIAL_DELAY_UNIT);
     }
 
     @ApiOperation("get available fault tolerances")
