@@ -5,12 +5,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.webcenter.config.ApplicationConstants;
+import org.infinity.luix.webcenter.domain.RpcApplication;
 import org.infinity.luix.webcenter.repository.RpcApplicationRepository;
 import org.infinity.luix.webcenter.service.RpcApplicationService;
 import org.infinity.luix.webcenter.service.RpcConsumerService;
 import org.infinity.luix.webcenter.service.RpcProviderService;
 import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
-import org.infinity.luix.webcenter.domain.RpcApplication;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -60,11 +60,18 @@ public class RpcApplicationController {
             results.getContent().forEach(domain -> {
                 if (rpcProviderService.existsApplication(registryIdentity, domain.getId(), true)) {
                     domain.setProviding(true);
-                    domain.setActive(true);
+                } else {
+                    domain.setProviding(false);
                 }
                 if (rpcConsumerService.existsApplication(registryIdentity, domain.getId(), true)) {
                     domain.setConsuming(true);
+                } else {
+                    domain.setConsuming(false);
+                }
+                if (domain.isProviding() || domain.isConsuming()) {
                     domain.setActive(true);
+                } else {
+                    domain.setActive(false);
                 }
             });
         }

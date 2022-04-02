@@ -6,12 +6,12 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.webcenter.config.ApplicationConstants;
 import org.infinity.luix.webcenter.domain.RpcServer;
+import org.infinity.luix.webcenter.exception.DataNotFoundException;
+import org.infinity.luix.webcenter.repository.RpcServerRepository;
 import org.infinity.luix.webcenter.service.RpcConsumerService;
 import org.infinity.luix.webcenter.service.RpcProviderService;
 import org.infinity.luix.webcenter.service.RpcServerService;
 import org.infinity.luix.webcenter.utils.HttpHeaderUtils;
-import org.infinity.luix.webcenter.exception.DataNotFoundException;
-import org.infinity.luix.webcenter.repository.RpcServerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -60,11 +60,18 @@ public class RpcServerController {
             results.getContent().forEach(domain -> {
                 if (rpcProviderService.existsAddress(registryIdentity, domain.getAddress(), true)) {
                     domain.setProviding(true);
-                    domain.setActive(true);
+                } else {
+                    domain.setProviding(false);
                 }
                 if (rpcConsumerService.existsAddress(registryIdentity, domain.getAddress(), true)) {
                     domain.setConsuming(true);
+                } else {
+                    domain.setConsuming(false);
+                }
+                if (domain.isProviding() || domain.isConsuming()) {
                     domain.setActive(true);
+                } else {
+                    domain.setActive(false);
                 }
             });
         }
