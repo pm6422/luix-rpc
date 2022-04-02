@@ -65,7 +65,7 @@ public class RpcServerServiceImpl implements RpcServerService, ApplicationRunner
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        EXECUTOR.scheduleAtFixedRate(this::execute, 40, 13, TimeUnit.SECONDS);
+        EXECUTOR.scheduleAtFixedRate(this::execute, 30, 10, TimeUnit.SECONDS);
     }
 
     private void execute() {
