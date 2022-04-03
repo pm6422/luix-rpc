@@ -130,7 +130,7 @@ public class RpcServerServiceImpl implements RpcServerService {
     }
 
     @Override
-    public void inactivate(String registryIdentity, String address) {
+    public void deactivate(String registryIdentity, String address) {
         if (!rpcProviderService.existsService(registryIdentity, address, true)
                 && !rpcConsumerService.existsService(registryIdentity, address, true)) {
             RpcServer rpcServer = rpcServerRepository.findByRegistryIdentityAndAddress(registryIdentity, address);

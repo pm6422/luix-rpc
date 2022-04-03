@@ -122,7 +122,7 @@ public class RpcServiceServiceImpl implements RpcServiceService, ApplicationRunn
     }
 
     @Override
-    public void inactivate(String registryIdentity, String interfaceName) {
+    public void deactivate(String registryIdentity, String interfaceName) {
         if (!rpcProviderService.existsService(registryIdentity, interfaceName, true)
                 && !rpcConsumerService.existsService(registryIdentity, interfaceName, true)) {
             RpcService rpcService = rpcServiceRepository

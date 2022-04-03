@@ -15,7 +15,7 @@ public interface RpcApplicationService {
 
     void insert(Url registryUrl, Url url, String id);
 
-    void inactivate(String registryIdentity, String name);
+    void deactivate(String registryIdentity, String name);
 
     RpcApplication loadApplication(Url registryUrl, Url url);
 }

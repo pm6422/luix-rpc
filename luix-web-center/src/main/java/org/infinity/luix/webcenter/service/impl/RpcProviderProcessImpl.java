@@ -59,12 +59,9 @@ public class RpcProviderProcessImpl implements GlobalProviderDiscoveryListener {
             }
             list.forEach(provider -> provider.setActive(false));
             rpcProviderRepository.saveAll(list);
-
-            // Update service to inactive
-            rpcServiceService.inactivate(list.get(0).getRegistryIdentity(), list.get(0).getInterfaceName());
-
-            // Update application to inactive
-            rpcApplicationService.inactivate(list.get(0).getRegistryIdentity(), list.get(0).getApplication());
+            rpcServerService.deactivate(list.get(0).getRegistryIdentity(), list.get(0).getAddress());
+            rpcServiceService.deactivate(list.get(0).getRegistryIdentity(), list.get(0).getInterfaceName());
+            rpcApplicationService.deactivate(list.get(0).getRegistryIdentity(), list.get(0).getApplication());
         }
     }
 }

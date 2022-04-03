@@ -128,7 +128,7 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
     }
 
     @Override
-    public void inactivate(String registryIdentity, String name) {
+    public void deactivate(String registryIdentity, String name) {
         if (!rpcProviderService.existsApplication(registryIdentity, name, true)
                 && !rpcConsumerService.existsApplication(registryIdentity, name, true)) {
             Optional<RpcApplication> application = rpcApplicationRepository

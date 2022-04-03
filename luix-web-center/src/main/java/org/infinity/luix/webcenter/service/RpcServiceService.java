@@ -15,5 +15,5 @@ public interface RpcServiceService {
 
     void insert(Url registryUrl, String interfaceName);
 
-    void inactivate(String registryIdentity, String interfaceName);
+    void deactivate(String registryIdentity, String interfaceName);
 }
