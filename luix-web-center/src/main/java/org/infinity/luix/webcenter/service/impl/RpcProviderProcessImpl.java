@@ -31,12 +31,12 @@ public class RpcProviderProcessImpl implements GlobalProviderDiscoveryListener {
     @Override
     public void onNotify(Url registryUrl, String interfaceName, List<Url> providerUrls) {
         if (CollectionUtils.isNotEmpty(providerUrls)) {
-            log.info("Discovered active providers {}", providerUrls);
             for (Url providerUrl : providerUrls) {
                 RpcProvider rpcProvider = RpcProvider.of(providerUrl, registryUrl);
                 if (BuildInService.class.getName().equals(rpcProvider.getInterfaceName())) {
                     continue;
                 }
+                log.info("Discovered active providers: {}", providerUrl);
                 // Insert or update provider
                 rpcProviderRepository.save(rpcProvider);
 
@@ -50,13 +50,13 @@ public class RpcProviderProcessImpl implements GlobalProviderDiscoveryListener {
                 rpcApplicationService.insert(registryUrl, providerUrl, rpcProvider.getApplication());
             }
         } else {
-            log.info("Discovered inactive providers of [{}]", interfaceName);
-
             // Update providers to inactive
             List<RpcProvider> list = rpcProviderRepository.findByInterfaceName(interfaceName);
             if (CollectionUtils.isEmpty(list)) {
                 return;
             }
+            log.info("Discovered inactive providers of [{}]", interfaceName);
+
             list.forEach(provider -> provider.setActive(false));
             rpcProviderRepository.saveAll(list);
             rpcServerService.deactivate(list.get(0).getRegistryIdentity(), list.get(0).getAddress());

@@ -7,8 +7,6 @@ import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.webcenter.domain.RpcConsumer;
 import org.infinity.luix.webcenter.repository.RpcConsumerRepository;
-import org.infinity.luix.webcenter.repository.RpcServerRepository;
-import org.infinity.luix.webcenter.repository.RpcServiceRepository;
 import org.infinity.luix.webcenter.service.RpcApplicationService;
 import org.infinity.luix.webcenter.service.RpcServerService;
 import org.infinity.luix.webcenter.service.RpcServiceService;
@@ -24,10 +22,6 @@ public class RpcGlobalConsumerProcessImpl implements GlobalConsumerDiscoveryList
     @Resource
     private RpcConsumerRepository rpcConsumerRepository;
     @Resource
-    private RpcServerRepository   rpcServerRepository;
-    @Resource
-    private RpcServiceRepository  rpcServiceRepository;
-    @Resource
     private RpcServerService      rpcServerService;
     @Resource
     private RpcServiceService     rpcServiceService;
@@ -37,12 +31,12 @@ public class RpcGlobalConsumerProcessImpl implements GlobalConsumerDiscoveryList
     @Override
     public void onNotify(Url registryUrl, String interfaceName, List<Url> consumerUrls) {
         if (CollectionUtils.isNotEmpty(consumerUrls)) {
-            log.info("Discovered active consumers {}", consumerUrls);
             for (Url consumerUrl : consumerUrls) {
                 RpcConsumer rpcConsumer = RpcConsumer.of(consumerUrl, registryUrl);
                 if (BuildInService.class.getName().equals(rpcConsumer.getInterfaceName())) {
                     continue;
                 }
+                log.info("Discovered active consumers: {}", consumerUrl);
                 // Insert or update consumer
                 rpcConsumerRepository.save(rpcConsumer);
 
@@ -56,13 +50,13 @@ public class RpcGlobalConsumerProcessImpl implements GlobalConsumerDiscoveryList
                 rpcApplicationService.insert(registryUrl, consumerUrl, rpcConsumer.getApplication());
             }
         } else {
-            log.info("Discovered offline consumers of [{}]", interfaceName);
-
             // Update consumers to inactive
             List<RpcConsumer> list = rpcConsumerRepository.findByInterfaceName(interfaceName);
             if (CollectionUtils.isEmpty(list)) {
                 return;
             }
+            log.info("Discovered inactive consumers of [{}]", interfaceName);
+
             list.forEach(provider -> provider.setActive(false));
             rpcConsumerRepository.saveAll(list);
             rpcServerService.deactivate(list.get(0).getRegistryIdentity(), list.get(0).getAddress());
