@@ -99,13 +99,13 @@ public class RunnableTask implements Runnable {
             stopWatch.stop();
             long elapsed = stopWatch.getTotalTimeMillis();
             if (elapsed < SECOND) {
-                log.info("Executed scheduled task {}.{}({}) with {}ms",
+                log.info("Executed scheduled task {}.{}({}) in {}ms",
                         interfaceName, rpcScheduledTask.getMethodName(), rpcScheduledTask.getArgumentsJson(), elapsed);
             } else if (elapsed < MINUTE) {
-                log.info("Executed scheduled task {}.{}({}) with {}s",
+                log.info("Executed scheduled task {}.{}({}) in {}s",
                         interfaceName, rpcScheduledTask.getMethodName(), rpcScheduledTask.getArgumentsJson(), elapsed / 1000);
             } else {
-                log.info("Executed scheduled task {}.{}({}) with {}m",
+                log.info("Executed scheduled task {}.{}({}) in {}m",
                         interfaceName, rpcScheduledTask.getMethodName(), rpcScheduledTask.getArgumentsJson(), elapsed / (1000 * 60));
             }
 
