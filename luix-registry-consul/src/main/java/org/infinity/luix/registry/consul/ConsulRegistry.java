@@ -104,25 +104,34 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
 
     @Override
     public void subscribe(GlobalConsumerDiscoveryListener listener) {
-        consumerChangesMonitorPool.scheduleAtFixedRate(
-                () -> {
-                    Map<String, List<Url>> currentPath2ConsumerUrls =
-                            consulHttpClient.find(CONSUL_CONSUMER_SERVICE_NAME)
-                                    .stream()
-                                    .collect(Collectors.groupingBy(Url::getPath));
+        consumerChangesMonitorPool.scheduleAtFixedRate(() -> this.discoverConsumerChanges(listener), 0, 2, TimeUnit.SECONDS);
+    }
 
-                    CollectionUtils.union(currentPath2ConsumerUrls.keySet(), path2ConsumerUrls.keySet())
-                            .forEach(path -> {
-                                synchronized (path.intern()) {
-                                    List<Url> oldConsumerUrls = path2ConsumerUrls.get(path);
-                                    List<Url> newConsumerUrls = currentPath2ConsumerUrls.get(path);
-                                    if (!Url.isSame(newConsumerUrls, oldConsumerUrls)) {
-                                        listener.onNotify(getRegistryUrl(), path, newConsumerUrls);
-                                        path2ConsumerUrls.put(path, newConsumerUrls);
-                                    }
+    private void discoverConsumerChanges(GlobalConsumerDiscoveryListener listener) {
+        try {
+            Map<String, List<Url>> currentPath2ConsumerUrls =
+                    consulHttpClient.find(CONSUL_CONSUMER_SERVICE_NAME)
+                            .stream()
+                            .collect(Collectors.groupingBy(Url::getPath));
+
+            CollectionUtils.union(currentPath2ConsumerUrls.keySet(), path2ConsumerUrls.keySet())
+                    .forEach(path -> {
+                        synchronized (path.intern()) {
+                            List<Url> oldConsumerUrls = path2ConsumerUrls.get(path);
+                            List<Url> newConsumerUrls = currentPath2ConsumerUrls.get(path);
+                            if (!Url.isSame(newConsumerUrls, oldConsumerUrls)) {
+                                listener.onNotify(getRegistryUrl(), path, newConsumerUrls);
+                                if (CollectionUtils.isNotEmpty(newConsumerUrls)) {
+                                    path2ConsumerUrls.put(path, newConsumerUrls);
+                                } else {
+                                    path2ConsumerUrls.remove(path);
                                 }
-                            });
-                }, 0, 2, TimeUnit.SECONDS);
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("Failed to discover consumer changes", e);
+        }
     }
 
     @Override
