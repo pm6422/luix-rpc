@@ -83,8 +83,8 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
     }
 
     private void initializeData(String registryUrl) {
-        saveUpdateStatusTask(registryUrl, RpcApplicationService.class.getName(), 5L);
-        saveUpdateStatusTask(registryUrl, RpcServerService.class.getName(), 5L);
+        saveUpdateStatusTask(registryUrl, RpcApplicationService.class.getName(), 2L);
+        saveUpdateStatusTask(registryUrl, RpcServerService.class.getName(), 2L);
         saveUpdateStatusTask(registryUrl, RpcServiceService.class.getName(), 3L);
 
         saveLoadAllTask(registryUrl, RpcApplicationService.class.getName(), 10L, 10L);
