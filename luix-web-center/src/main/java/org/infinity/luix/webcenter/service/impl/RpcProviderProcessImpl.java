@@ -7,8 +7,6 @@ import org.infinity.luix.core.server.buildin.BuildInService;
 import org.infinity.luix.core.url.Url;
 import org.infinity.luix.webcenter.domain.RpcProvider;
 import org.infinity.luix.webcenter.repository.RpcProviderRepository;
-import org.infinity.luix.webcenter.repository.RpcServerRepository;
-import org.infinity.luix.webcenter.repository.RpcServiceRepository;
 import org.infinity.luix.webcenter.service.RpcApplicationService;
 import org.infinity.luix.webcenter.service.RpcServerService;
 import org.infinity.luix.webcenter.service.RpcServiceService;
@@ -63,10 +61,10 @@ public class RpcProviderProcessImpl implements GlobalProviderDiscoveryListener {
             rpcProviderRepository.saveAll(list);
 
             // Update service to inactive
-            rpcServiceService.inactivate(list.get(0).getInterfaceName(), list.get(0).getRegistryIdentity());
+            rpcServiceService.inactivate(list.get(0).getRegistryIdentity(), list.get(0).getInterfaceName());
 
             // Update application to inactive
-            rpcApplicationService.inactivate(list.get(0).getApplication(), list.get(0).getRegistryIdentity());
+            rpcApplicationService.inactivate(list.get(0).getRegistryIdentity(), list.get(0).getApplication());
         }
     }
 }
