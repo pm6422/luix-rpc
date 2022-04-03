@@ -59,9 +59,6 @@ public class RpcGlobalConsumerProcessImpl implements GlobalConsumerDiscoveryList
 
             list.forEach(provider -> provider.setActive(false));
             rpcConsumerRepository.saveAll(list);
-            rpcServerService.deactivate(list.get(0).getRegistryIdentity(), list.get(0).getAddress());
-            rpcServiceService.deactivate(list.get(0).getRegistryIdentity(), list.get(0).getInterfaceName());
-            rpcApplicationService.deactivate(list.get(0).getRegistryIdentity(), list.get(0).getApplication());
         }
     }
 }
