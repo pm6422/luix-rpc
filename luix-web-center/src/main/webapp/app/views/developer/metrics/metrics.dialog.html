@@ -13,9 +13,7 @@
     <span class="label label-warning" ng-click="threadDumpFilter = {threadState: 'TIMED_WAITING'}">Timed Waiting&nbsp;<span class="badge">{{vm.threadDumpTimedWaiting}}</span></span>&nbsp;
     <span class="label label-danger" ng-click="threadDumpFilter = {threadState: 'BLOCKED'}">Blocked&nbsp;<span class="badge">{{vm.threadDumpBlocked}}</span></span>&nbsp;
     <div class="voffset2">&nbsp;</div>
-    Filter
-    <input type="text" ng-model="threadDumpFilter" class="form-control">
-    <div class="row pad" ng-repeat="(k, v) in vm.threadDump | filter:threadDumpFilter">
+    <div class="row pad" ng-repeat="(k, v) in vm.threadDump | filter:threadDumpFilter : true">
         <h5><span class="label" ng-class="vm.getLabelClass(v.threadState)">{{v.threadState}}</span>&nbsp;{{v.threadName}} (ID {{v.threadId}})
             <a ng-click="show = !show">
                <span ng-show="!show">Show StackTrace</span>
