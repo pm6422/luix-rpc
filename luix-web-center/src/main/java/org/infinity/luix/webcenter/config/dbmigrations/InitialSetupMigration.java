@@ -3,12 +3,21 @@ package org.infinity.luix.webcenter.config.dbmigrations;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
+import org.infinity.luix.spring.boot.config.LuixProperties;
+import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.webcenter.domain.Authority;
+import org.infinity.luix.webcenter.domain.RpcScheduledTask;
 import org.infinity.luix.webcenter.domain.User;
 import org.infinity.luix.webcenter.domain.UserAuthority;
+import org.infinity.luix.webcenter.service.RpcApplicationService;
+import org.infinity.luix.webcenter.service.RpcServerService;
+import org.infinity.luix.webcenter.service.RpcServiceService;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import static org.infinity.luix.webcenter.domain.RpcScheduledTask.UNIT_MINUTES;
+import static org.infinity.luix.webcenter.domain.RpcScheduledTask.UNIT_SECONDS;
 
 /**
  * Creates the initial database
@@ -16,17 +25,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ChangeUnit(id = "InitialSetupMigration", order = "01")
 public class InitialSetupMigration {
 
-    private static final String        APP_NAME = "rpc-web-center";
-    private final        MongoTemplate mongoTemplate;
+    private static final String         APP_NAME = "rpc-web-center";
+    private final        MongoTemplate  mongoTemplate;
+    private final        LuixProperties luixProperties;
 
-    public InitialSetupMigration(MongoTemplate mongoTemplate) {
+    public InitialSetupMigration(MongoTemplate mongoTemplate, LuixProperties luixProperties) {
         this.mongoTemplate = mongoTemplate;
+        this.luixProperties = luixProperties;
     }
 
     @Execution
     public void execute() {
         addAuthorities();
         addUserAndAuthorities();
+        addScheduledTasks();
     }
 
     @RollbackExecution
@@ -118,5 +130,50 @@ public class InitialSetupMigration {
         mongoTemplate.save(new UserAuthority(developerRoleUser.getId(), Authority.USER));
         mongoTemplate.save(new UserAuthority(developerRoleUser.getId(), Authority.ADMIN));
         mongoTemplate.save(new UserAuthority(developerRoleUser.getId(), Authority.DEVELOPER));
+    }
+
+    private void addScheduledTasks() {
+        luixProperties.getRegistries().values().forEach(r -> addScheduledTasksOfOneRegistry(r.getRegistryUrl().toString()));
+    }
+
+    private void addScheduledTasksOfOneRegistry(String registryUrl) {
+        saveUpdateStatusTask(registryUrl, RpcApplicationService.class.getName(), 2L);
+        saveUpdateStatusTask(registryUrl, RpcServerService.class.getName(), 2L);
+        saveUpdateStatusTask(registryUrl, RpcServiceService.class.getName(), 3L);
+
+        saveLoadAllTask(registryUrl, RpcApplicationService.class.getName(), 60L, 10L);
+        saveLoadAllTask(registryUrl, RpcServerService.class.getName(), 60L, 10L);
+    }
+
+    private void saveUpdateStatusTask(String registryUrl, String interfaceName, Long interval) {
+        RpcScheduledTask rpcScheduledTask = new RpcScheduledTask();
+        rpcScheduledTask.setName("T" + IdGenerator.generateShortId());
+        rpcScheduledTask.setRegistryIdentity(registryUrl);
+        rpcScheduledTask.setInterfaceName(interfaceName);
+        rpcScheduledTask.setMethodName("updateStatus");
+        rpcScheduledTask.setMethodSignature("updateStatus(void)");
+        rpcScheduledTask.setFixedInterval(interval);
+        rpcScheduledTask.setFixedIntervalUnit(UNIT_MINUTES);
+        rpcScheduledTask.setRequestTimeout(1500);
+        rpcScheduledTask.setEnabled(true);
+
+        mongoTemplate.save(rpcScheduledTask);
+    }
+
+    private void saveLoadAllTask(String registryUrl, String interfaceName, Long interval, Long initialDelay) {
+        RpcScheduledTask rpcScheduledTask = new RpcScheduledTask();
+        rpcScheduledTask.setName("T" + IdGenerator.generateShortId());
+        rpcScheduledTask.setRegistryIdentity(registryUrl);
+        rpcScheduledTask.setInterfaceName(interfaceName);
+        rpcScheduledTask.setMethodName("loadAll");
+        rpcScheduledTask.setMethodSignature("loadAll(void)");
+        rpcScheduledTask.setFixedInterval(interval);
+        rpcScheduledTask.setFixedIntervalUnit(UNIT_SECONDS);
+        rpcScheduledTask.setInitialDelay(initialDelay);
+        rpcScheduledTask.setInitialDelayUnit(UNIT_SECONDS);
+        rpcScheduledTask.setRequestTimeout(1500);
+        rpcScheduledTask.setEnabled(true);
+
+        mongoTemplate.save(rpcScheduledTask);
     }
 }
