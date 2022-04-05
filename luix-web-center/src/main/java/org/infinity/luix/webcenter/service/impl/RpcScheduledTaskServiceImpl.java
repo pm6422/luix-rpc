@@ -5,7 +5,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.client.proxy.Proxy;
 import org.infinity.luix.spring.boot.config.LuixProperties;
-import org.infinity.luix.utilities.destory.ShutdownHook;
 import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.webcenter.domain.RpcScheduledTask;
 import org.infinity.luix.webcenter.exception.DataNotFoundException;
@@ -16,10 +15,6 @@ import org.infinity.luix.webcenter.service.RpcRegistryService;
 import org.infinity.luix.webcenter.service.RpcScheduledTaskService;
 import org.infinity.luix.webcenter.task.schedule.CancelableScheduledTaskRegistrar;
 import org.infinity.luix.webcenter.task.schedule.RunnableTask;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -30,46 +25,30 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import static org.infinity.luix.webcenter.domain.RpcScheduledTask.*;
 
 @Service
 @Slf4j
-@Order(Ordered.HIGHEST_PRECEDENCE)
-public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, ApplicationRunner {
-    private static final ScheduledExecutorService          EXECUTOR_SERVICE = Executors.newScheduledThreadPool(1);
+public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService {
     @Resource
-    private              RpcScheduledTaskRepository        rpcScheduledTaskRepository;
+    private RpcScheduledTaskRepository        rpcScheduledTaskRepository;
     @Resource
-    private              RpcScheduledTaskHistoryRepository rpcScheduledTaskHistoryRepository;
+    private RpcScheduledTaskHistoryRepository rpcScheduledTaskHistoryRepository;
     @Resource
-    private              RpcScheduledTaskLockRepository    rpcScheduledTaskLockRepository;
+    private RpcScheduledTaskLockRepository    rpcScheduledTaskLockRepository;
     @Resource
-    private              RpcRegistryService                rpcRegistryService;
+    private RpcRegistryService                rpcRegistryService;
     @Resource
-    private              CancelableScheduledTaskRegistrar  cancelableScheduledTaskRegistrar;
+    private CancelableScheduledTaskRegistrar  cancelableScheduledTaskRegistrar;
     @Resource
-    private              LuixProperties                    luixProperties;
+    private LuixProperties                    luixProperties;
     @Resource
-    private              MongoTemplate                     mongoTemplate;
+    private MongoTemplate                     mongoTemplate;
 
     @Override
-    @Order
-    public void run(ApplicationArguments args) throws Exception {
-        EXECUTOR_SERVICE.schedule(this::loadAll, 20L, TimeUnit.SECONDS);
-        // Destroy the thread pools when the system exits
-        ShutdownHook.add(() -> {
-            if (!EXECUTOR_SERVICE.isShutdown()) {
-                EXECUTOR_SERVICE.shutdown();
-            }
-        });
-    }
-
-    private void loadAll() {
+    public void loadAll() {
         // Timed task with normal state in initial load database
         List<RpcScheduledTask> enabledScheduledTasks = rpcScheduledTaskRepository.findByEnabledIsTrue();
         if (CollectionUtils.isEmpty(enabledScheduledTasks)) {

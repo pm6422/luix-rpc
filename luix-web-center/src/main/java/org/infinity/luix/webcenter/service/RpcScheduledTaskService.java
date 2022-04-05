@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface RpcScheduledTaskService {
 
+    void loadAll();
+
     RpcScheduledTask insert(RpcScheduledTask domain);
 
     void update(RpcScheduledTask domain);
