@@ -1,37 +1,51 @@
 package org.infinity.luix.demoserver.config.dbmigrations;
 
-import com.github.cloudyrock.mongock.ChangeLog;
-import com.github.cloudyrock.mongock.ChangeSet;
-import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
+import io.mongock.api.annotations.ChangeUnit;
+import io.mongock.api.annotations.Execution;
+import io.mongock.api.annotations.RollbackExecution;
 import org.infinity.luix.democommon.domain.AdminMenu;
 import org.infinity.luix.democommon.domain.App;
 import org.infinity.luix.democommon.domain.Authority;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
  * Creates the initial database
  */
-@ChangeLog(order = "01")
+@ChangeUnit(id = "InitialSetupMigration", order = "01")
 public class InitialSetupMigration {
 
-    private static final String APP_NAME = "rpc-demo-server";
+    private static final String        APP_NAME = "rpc-demo-server";
+    private final        MongoTemplate mongoTemplate;
 
-    @ChangeSet(order = "01", author = "Louis", id = "addApps", runAlways = true)
-    public void addApps(MongockTemplate mongoTemplate) {
+    public InitialSetupMigration(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    @Execution
+    public void execute() {
+        addApps();
+        addAuthorities();
+        addAuthorityAdminMenu();
+    }
+
+    @RollbackExecution
+    public void rollback() {
+        mongoTemplate.getDb().drop();
+    }
+
+    public void addApps() {
         App app = new App(APP_NAME, true);
         mongoTemplate.save(app);
     }
 
-    @ChangeSet(order = "02", author = "Louis", id = "addAuthorities", runAlways = true)
-    public void addAuthorities(MongockTemplate mongoTemplate) {
+    public void addAuthorities() {
         mongoTemplate.save(new Authority(Authority.USER, true));
         mongoTemplate.save(new Authority(Authority.ADMIN, true));
         mongoTemplate.save(new Authority(Authority.DEVELOPER, true));
         mongoTemplate.save(new Authority(Authority.ANONYMOUS, true));
     }
 
-    @ChangeSet(order = "04", author = "Louis", id = "addAuthorityAdminMenu", runAlways = true)
-    public void addAuthorityAdminMenu(MongockTemplate mongoTemplate) {
-
+    public void addAuthorityAdminMenu() {
         AdminMenu userAuthority = new AdminMenu("user-authority", "User authority", 1, "user-authority", 100, null);
         mongoTemplate.save(userAuthority);
 

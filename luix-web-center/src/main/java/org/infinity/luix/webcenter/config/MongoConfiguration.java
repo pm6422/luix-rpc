@@ -1,6 +1,6 @@
 package org.infinity.luix.webcenter.config;
 
-import com.github.cloudyrock.spring.v5.EnableMongock;
+import io.mongock.runner.springboot.EnableMongock;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

@@ -1,30 +1,47 @@
 package org.infinity.luix.webcenter.config.dbmigrations;
 
-import com.github.cloudyrock.mongock.ChangeLog;
-import com.github.cloudyrock.mongock.ChangeSet;
-import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
-import org.infinity.luix.webcenter.domain.*;
+import io.mongock.api.annotations.ChangeUnit;
+import io.mongock.api.annotations.Execution;
+import io.mongock.api.annotations.RollbackExecution;
+import org.infinity.luix.webcenter.domain.Authority;
+import org.infinity.luix.webcenter.domain.User;
+import org.infinity.luix.webcenter.domain.UserAuthority;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Creates the initial database
  */
-@ChangeLog(order = "01")
+@ChangeUnit(id = "InitialSetupMigration", order = "01")
 public class InitialSetupMigration {
 
-    private static final String APP_NAME = "rpc-web-center";
+    private static final String        APP_NAME = "rpc-web-center";
+    private final        MongoTemplate mongoTemplate;
 
-    @ChangeSet(order = "02", author = "Louis", id = "addAuthorities", runAlways = true)
-    public void addAuthorities(MongockTemplate mongoTemplate) {
+    public InitialSetupMigration(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    @Execution
+    public void execute() {
+        addAuthorities();
+        addUserAndAuthorities();
+    }
+
+    @RollbackExecution
+    public void rollback() {
+        mongoTemplate.getDb().drop();
+    }
+
+    public void addAuthorities() {
         mongoTemplate.save(new Authority(Authority.USER, true));
         mongoTemplate.save(new Authority(Authority.ADMIN, true));
         mongoTemplate.save(new Authority(Authority.DEVELOPER, true));
         mongoTemplate.save(new Authority(Authority.ANONYMOUS, true));
     }
 
-    @ChangeSet(order = "03", author = "Louis", id = "addUserAndAuthorities", runAlways = true)
-    public void addUserAndAuthorities(MongockTemplate mongoTemplate) {
+    public void addUserAndAuthorities() {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         // Creates 'user' user and corresponding authorities
         User userRoleUser = new User();

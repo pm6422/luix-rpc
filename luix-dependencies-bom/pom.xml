@@ -47,7 +47,7 @@
         <jackson_datatype_problem_version>0.23.0</jackson_datatype_problem_version>
         <jackson_version>2.12.5</jackson_version>
         <jakarta_annotation_version>1.3.5</jakarta_annotation_version>
-        <javassist_version>3.20.0-GA</javassist_version>
+        <javassist_version>3.28.0-GA</javassist_version>
         <jcache_version>1.0.0</jcache_version>
         <jcl_version>1.2</jcl_version>
         <jedis_version>2.9.0</jedis_version>
@@ -65,7 +65,7 @@
         <maven_version>3.2.1</maven_version>
         <metrics_version>2.0.1</metrics_version>
         <mina_version>2.1.5</mina_version>
-        <mongodb_springdata_v3_driver_version>4.3.8</mongodb_springdata_v3_driver_version>
+        <mongock_version>5.0.38</mongock_version>
         <mortbay_jetty_version>6.1.26</mortbay_jetty_version>
         <nacos_version>1.1.1</nacos_version>
         <netty4_version>4.1.73.Final</netty4_version>
@@ -181,22 +181,6 @@
                 <groupId>com.github.briandilley.jsonrpc4j</groupId>
                 <artifactId>jsonrpc4j</artifactId>
                 <version>${jsonrpc_version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.cloudyrock.mongock</groupId>
-                <artifactId>mongock-spring-v5</artifactId>
-                <version>${mongodb_springdata_v3_driver_version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.reflections</groupId>
-                        <artifactId>reflections</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.github.cloudyrock.mongock</groupId>
-                <artifactId>mongodb-springdata-v3-driver</artifactId>
-                <version>${mongodb_springdata_v3_driver_version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.kstyrc</groupId>
@@ -349,6 +333,16 @@
                 <groupId>io.grpc</groupId>
                 <artifactId>gluix-stub</artifactId>
                 <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.mongock</groupId>
+                <artifactId>mongock-springboot</artifactId>
+                <version>${mongock_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.mongock</groupId>
+                <artifactId>mongodb-springdata-v3-driver</artifactId>
+                <version>${mongock_version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>

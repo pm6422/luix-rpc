@@ -1,6 +1,11 @@
 package org.infinity.luix.webcenter.controller;
 
-import com.github.cloudyrock.mongock.runner.core.executor.MongockRunnerBase;
+import io.mongock.api.config.MongockConfiguration;
+import io.mongock.driver.api.driver.ConnectionDriver;
+import io.mongock.driver.mongodb.springdata.v3.config.MongoDBConfiguration;
+import io.mongock.driver.mongodb.springdata.v3.config.SpringDataMongoV3Context;
+import io.mongock.runner.springboot.MongockSpringboot;
+import io.mongock.runner.springboot.RunnerSpringbootBuilder;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -13,10 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,25 +43,33 @@ import java.util.stream.Stream;
 public class SystemController {
 
     @Value("${arthas.httpPort}")
-    private int                   arthasPort;
+    private int                                  arthasPort;
     @Resource
-    private Environment           env;
+    private Environment                          env;
     @Resource
-    private ApplicationProperties applicationProperties;
+    private ApplicationProperties                applicationProperties;
     @Resource
-    private ApplicationContext    applicationContext;
-    @Autowired(required = false)
-    private MongockRunnerBase<?>  mongockRunnerBase;
+    private ApplicationContext                   applicationContext;
     @Resource
-    private MongoTemplate         mongoTemplate;
+    private MongoTemplate                        mongoTemplate;
     @Value("${app.id}")
-    private String                appId;
+    private String                               appId;
     @Value("${app.version}")
-    private String                appVersion;
+    private String                               appVersion;
     @Value("${app.companyName}")
-    private String                companyName;
+    private String                               companyName;
     @Autowired(required = false)
-    private BuildProperties       buildProperties;
+    private BuildProperties                      buildProperties;
+    @Resource
+    private MongockConfiguration                 springConfiguration;
+    @Resource
+    private ApplicationEventPublisher            applicationEventPublisher;
+    @Resource
+    private MongockConfiguration                 config;
+    @Resource
+    private MongoDBConfiguration                 mongoDbConfig;
+    @Resource
+    private Optional<PlatformTransactionManager> txManagerOpt;
 
     @GetMapping(value = "app/constants.js", produces = "application/javascript")
     String getConstantsJs() {
@@ -117,7 +133,14 @@ public class SystemController {
     @GetMapping("/open-api/systems/reset-database")
     public String resetDatabase() {
         mongoTemplate.getDb().drop();
-        mongockRunnerBase.execute();
+        ConnectionDriver connectionDriver = new SpringDataMongoV3Context()
+                .connectionDriver(mongoTemplate, config, mongoDbConfig, txManagerOpt);
+        RunnerSpringbootBuilder runnerSpringbootBuilder = MongockSpringboot.builder()
+                .setDriver(connectionDriver)
+                .setConfig(springConfiguration)
+                .setSpringContext(applicationContext)
+                .setEventPublisher(applicationEventPublisher);
+        runnerSpringbootBuilder.buildRunner().execute();
         return "Reset database successfully.";
     }
 }
