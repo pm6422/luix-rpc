@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 
 @Component
 @Slf4j
-public class MongockSuccessEventListener implements ApplicationListener<SpringMigrationSuccessEvent> {
+public class MongockMigrationSuccessEventListener implements ApplicationListener<SpringMigrationSuccessEvent> {
 
     @Resource
     private RpcScheduledTaskService rpcScheduledTaskService;
