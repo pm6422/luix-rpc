@@ -60,7 +60,7 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService, App
     @Override
     @Order
     public void run(ApplicationArguments args) throws Exception {
-        EXECUTOR_SERVICE.schedule(this::loadAll, 40L, TimeUnit.SECONDS);
+        EXECUTOR_SERVICE.schedule(this::loadAll, 20L, TimeUnit.SECONDS);
         // Destroy the thread pools when the system exits
         ShutdownHook.add(() -> {
             if (!EXECUTOR_SERVICE.isShutdown()) {
