@@ -60,6 +60,10 @@ public class ConsulHttpClient {
         return find(serviceName, null, null);
     }
 
+    public List<Url> findActive(String serviceName) {
+        return find(serviceName, null, true);
+    }
+
     public List<Url> find(String serviceName, String path) {
         return find(serviceName, path, null);
     }

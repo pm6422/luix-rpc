@@ -156,7 +156,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
                 try {
                     sleep(discoverInterval);
                     Map<String, List<Url>> currentPath2ProviderUrls =
-                            consulHttpClient.find(CONSUL_PROVIDER_SERVICE_NAME)
+                            consulHttpClient.findActive(CONSUL_PROVIDER_SERVICE_NAME)
                                     .stream()
                                     .collect(Collectors.groupingBy(Url::getPath));
 
