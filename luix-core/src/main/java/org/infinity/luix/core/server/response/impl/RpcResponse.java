@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.infinity.luix.core.client.request.Requestable;
+import org.infinity.luix.core.constant.ProtocolConstants;
 import org.infinity.luix.core.exception.impl.RpcInvocationException;
 import org.infinity.luix.core.protocol.constants.ProtocolVersion;
 import org.infinity.luix.core.server.response.Callbackable;
@@ -41,7 +42,7 @@ public class RpcResponse implements Responseable, Callbackable, Serializable {
     /**
      *
      */
-    protected            int                 serializerId;
+    protected            int                 serializerId     = ProtocolConstants.SERIALIZER_ID_DEFAULT;
 
     public static RpcResponse of(Responseable resp) {
         RpcResponse response = new RpcResponse();
