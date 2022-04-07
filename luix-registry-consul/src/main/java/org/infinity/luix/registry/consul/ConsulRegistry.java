@@ -110,7 +110,7 @@ public class ConsulRegistry extends FailbackAbstractRegistry implements Destroya
     private void discoverConsumerChanges(GlobalConsumerDiscoveryListener listener) {
         try {
             Map<String, List<Url>> currentPath2ConsumerUrls =
-                    consulHttpClient.find(CONSUL_CONSUMER_SERVICE_NAME)
+                    consulHttpClient.findActive(CONSUL_CONSUMER_SERVICE_NAME)
                             .stream()
                             .collect(Collectors.groupingBy(Url::getPath));
 
