@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -89,5 +90,15 @@ public class RpcProviderServiceImpl implements RpcProviderService {
             return false;
         }
         return existsApplication(registryIdentity, providers.get(0).getApplication(), active);
+    }
+
+    @Override
+    public void updateActiveByRegistryIdentityAndUrl(boolean active, String registryIdentity, String providerUrl) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where(FIELD_REGISTRY_IDENTITY).is(registryIdentity));
+        query.addCriteria(Criteria.where(FIELD_URL).is(providerUrl));
+        Update update = new Update();
+        update.set(FIELD_ACTIVE, active);
+        mongoTemplate.updateFirst(query, update, RpcProvider.class);
     }
 }

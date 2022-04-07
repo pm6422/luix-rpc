@@ -22,4 +22,6 @@ public interface RpcProviderService {
     boolean existsAddress(String registryIdentity, String address, boolean active);
 
     boolean existsApplicationService(String registryIdentity, String interfaceName, boolean active);
+
+    void updateActiveByRegistryIdentityAndUrl(boolean active, String registryIdentity, String providerUrl);
 }

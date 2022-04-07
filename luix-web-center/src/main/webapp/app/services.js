@@ -1349,8 +1349,8 @@ function RpcServiceService($resource) {
                 return data;
             }
         },
-        'activate': {method: 'GET', params: {extension: 'activate'}},
-        'deactivate': {method: 'GET', params: {extension: 'deactivate'}}
+        'activate': {method: 'PUT', params: {extension: 'activate'}},
+        'deactivate': {method: 'PUT', params: {extension: 'deactivate'}}
     });
     return service;
 }
@@ -1377,8 +1377,8 @@ function RpcProviderService($resource) {
             },
             params: {extension: 'health'}
         },
-        'activate': {method: 'GET', params: {extension: 'activate'}},
-        'deactivate': {method: 'GET', params: {extension: 'deactivate'}},
+        'activate': {method: 'PUT', params: {extension: 'activate'}},
+        'deactivate': {method: 'PUT', params: {extension: 'deactivate'}},
         'saveOptions': {method: 'PUT', params: {extension: 'options'}}
     });
     return service;

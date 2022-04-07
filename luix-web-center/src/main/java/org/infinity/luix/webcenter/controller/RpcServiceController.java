@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.infinity.luix.webcenter.component.HttpHeaderCreator;
 import org.infinity.luix.webcenter.domain.RpcService;
+import org.infinity.luix.webcenter.dto.InterfaceActivateDTO;
+import org.infinity.luix.webcenter.dto.ProviderActivateDTO;
 import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.infinity.luix.webcenter.repository.RpcServiceRepository;
 import org.infinity.luix.webcenter.service.RpcConsumerService;
@@ -16,12 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 
 import static org.infinity.luix.webcenter.config.ApplicationConstants.DEFAULT_REG;
@@ -105,24 +105,28 @@ public class RpcServiceController {
     }
 
     @ApiOperation("activate all providers of the interface")
-    @GetMapping("/api/rpc-services/activate")
-    public ResponseEntity<Void> activate(
-            @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
-            @ApiParam(value = "interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
-        rpcProviderService.find(registryIdentity, interfaceName, false)
-                .forEach(provider -> rpcProviderController.activate(registryIdentity, provider.getUrl()));
+    @PutMapping("/api/rpc-services/activate")
+    public ResponseEntity<Void> activate(@Valid @RequestBody InterfaceActivateDTO activateDTO) {
+        rpcProviderService.find(activateDTO.getRegistryIdentity(), activateDTO.getInterfaceName(), false)
+                .forEach(provider -> rpcProviderController.activate(
+                        ProviderActivateDTO.builder()
+                                .registryIdentity(activateDTO.getRegistryIdentity())
+                                .providerUrl(provider.getUrl())
+                                .build()));
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(httpHeaderCreator.createSuccessHeader("SM1012")).build();
     }
 
     @ApiOperation("deactivate all providers of the interface")
-    @GetMapping("/api/rpc-services/deactivate")
+    @PutMapping("/api/rpc-services/deactivate")
     @Timed
-    public ResponseEntity<Void> deactivate(
-            @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
-            @ApiParam(value = "interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
-        rpcProviderService.find(registryIdentity, interfaceName, true)
-                .forEach(provider -> rpcProviderController.deactivate(registryIdentity, provider.getUrl()));
+    public ResponseEntity<Void> deactivate(@Valid @RequestBody InterfaceActivateDTO activateDTO) {
+        rpcProviderService.find(activateDTO.getRegistryIdentity(), activateDTO.getInterfaceName(), true)
+                .forEach(provider -> rpcProviderController.deactivate(
+                        ProviderActivateDTO.builder()
+                                .registryIdentity(activateDTO.getRegistryIdentity())
+                                .providerUrl(provider.getUrl())
+                                .build()));
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(httpHeaderCreator.createSuccessHeader("SM1012")).build();
     }

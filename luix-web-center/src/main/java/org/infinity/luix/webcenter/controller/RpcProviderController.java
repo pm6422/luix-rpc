@@ -16,6 +16,7 @@ import org.infinity.luix.spring.boot.config.LuixProperties;
 import org.infinity.luix.webcenter.component.HttpHeaderCreator;
 import org.infinity.luix.webcenter.domain.Authority;
 import org.infinity.luix.webcenter.domain.RpcProvider;
+import org.infinity.luix.webcenter.dto.ProviderActivateDTO;
 import org.infinity.luix.webcenter.dto.OptionMetaDTO;
 import org.infinity.luix.webcenter.dto.OptionsDTO;
 import org.infinity.luix.webcenter.exception.DataNotFoundException;
@@ -120,27 +121,23 @@ public class RpcProviderController {
     }
 
     @ApiOperation("activate provider")
-    @GetMapping("/api/rpc-providers/activate")
+    @PutMapping("/api/rpc-providers/activate")
     @Secured({Authority.ADMIN})
     @Timed
-    public ResponseEntity<Void> activate(
-            @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
-            @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
-        Url providerUrl = Url.valueOf(providerUrlStr);
-        control(registryIdentity, providerUrl, METHOD_ACTIVATE);
+    public ResponseEntity<Void> activate(@Valid @RequestBody ProviderActivateDTO activateDTO) {
+        Url providerUrl = Url.valueOf(activateDTO.getProviderUrl());
+        control(activateDTO.getRegistryIdentity(), providerUrl, METHOD_ACTIVATE);
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(httpHeaderCreator.createSuccessHeader("SM1012")).build();
     }
 
     @ApiOperation("deactivate provider")
-    @GetMapping("/api/rpc-providers/deactivate")
+    @PutMapping("/api/rpc-providers/deactivate")
     @Secured({Authority.ADMIN})
     @Timed
-    public ResponseEntity<Void> deactivate(
-            @ApiParam(value = "registry url identity", defaultValue = DEFAULT_REG) @RequestParam(value = "registryIdentity", required = false) String registryIdentity,
-            @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
-        Url providerUrl = Url.valueOf(providerUrlStr);
-        control(registryIdentity, providerUrl, METHOD_DEACTIVATE);
+    public ResponseEntity<Void> deactivate(@Valid @RequestBody ProviderActivateDTO activateDTO) {
+        Url providerUrl = Url.valueOf(activateDTO.getProviderUrl());
+        control(activateDTO.getRegistryIdentity(), providerUrl, METHOD_DEACTIVATE);
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(httpHeaderCreator.createSuccessHeader("SM1012")).build();
     }
@@ -152,11 +149,21 @@ public class RpcProviderController {
                 // Use specified provider url
                 UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(identity, providerUrl);
                 invocationHandler.invoke(methodName);
+                if (methodName.equals(METHOD_ACTIVATE)) {
+                    rpcProviderService.updateActiveByRegistryIdentityAndUrl(true, identity, providerUrl.toFullStr());
+                } else {
+                    rpcProviderService.updateActiveByRegistryIdentityAndUrl(false, identity, providerUrl.toFullStr());
+                }
             });
         } else {
             // Use specified provider url
             UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
             invocationHandler.invoke(methodName);
+            if (methodName.equals(METHOD_ACTIVATE)) {
+                rpcProviderService.updateActiveByRegistryIdentityAndUrl(true, registryIdentity, providerUrl.toFullStr());
+            } else {
+                rpcProviderService.updateActiveByRegistryIdentityAndUrl(false, registryIdentity, providerUrl.toFullStr());
+            }
         }
     }
 
