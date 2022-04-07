@@ -413,12 +413,12 @@ public class ProviderStub<T> {
         try {
             // Invoke real method of provider
             Object result = null;
-            log.info("Invoking method {}", request.getMethodName());
             if (BUILD_IN_METHODS.contains(request.getMethodName())) {
                 result = method.invoke(this, request.getMethodArguments());
             } else if (activated.get()) {
                 result = method.invoke(instance, request.getMethodArguments());
             }
+            log.info("Invoked method {}", request.getMethodName());
             response.setResult(result);
         } catch (Exception e) {
             // If exception occurs
