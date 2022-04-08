@@ -402,8 +402,8 @@ public class ProviderStub<T> {
     public Responseable invokeMethod(Requestable request) {
         RpcResponse response = new RpcResponse();
         Method method = findMethod(request.getMethodName(), request.getMethodParameters());
+        String methodSignature = getMethodSignature(request.getMethodName(), request.getMethodParameters());
         if (method == null) {
-            String methodSignature = getMethodSignature(request.getMethodName(), request.getMethodParameters());
             RpcFrameworkException exception =
                     new RpcFrameworkException("Method [" + methodSignature + "] of service [" + request.getInterfaceName() + "] does NOT exist!");
             response.setException(exception);
@@ -418,7 +418,7 @@ public class ProviderStub<T> {
             } else if (activated.get()) {
                 result = method.invoke(instance, request.getMethodArguments());
             }
-            log.info("Invoked method {}", request.getMethodName());
+            log.info("Executed method {}", methodSignature);
             response.setResult(result);
         } catch (Exception e) {
             // If exception occurs
