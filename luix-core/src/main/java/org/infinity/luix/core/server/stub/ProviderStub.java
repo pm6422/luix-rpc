@@ -40,8 +40,7 @@ import java.util.stream.Collectors;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.infinity.luix.core.server.response.impl.RpcCheckHealthResponse.STATUS_INACTIVE;
 import static org.infinity.luix.core.server.response.impl.RpcCheckHealthResponse.STATUS_OK;
-import static org.infinity.luix.core.utils.MethodParameterUtils.getMethodParameters;
-import static org.infinity.luix.core.utils.MethodParameterUtils.getMethodSignature;
+import static org.infinity.luix.core.utils.MethodParameterUtils.*;
 
 /**
  * RPC provider stub
@@ -402,10 +401,10 @@ public class ProviderStub<T> {
     public Responseable invokeMethod(Requestable request) {
         RpcResponse response = new RpcResponse();
         Method method = findMethod(request.getMethodName(), request.getMethodParameters());
-        String methodSignature = getMethodSignature(request.getMethodName(), request.getMethodParameters());
+        String methodSignature = getFullMethodSignature(request);
         if (method == null) {
             RpcFrameworkException exception =
-                    new RpcFrameworkException("Method [" + methodSignature + "] of service [" + request.getInterfaceName() + "] does NOT exist!");
+                    new RpcFrameworkException(methodSignature + " does NOT exist!");
             response.setException(exception);
             return response;
         }
