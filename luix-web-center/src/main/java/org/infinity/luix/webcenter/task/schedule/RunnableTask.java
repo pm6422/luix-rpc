@@ -83,8 +83,8 @@ public class RunnableTask implements Runnable {
         BeanUtils.copyProperties(rpcScheduledTask, scheduledTaskHistory);
         scheduledTaskHistory.setId(null);
 
-        // Automatically delete records after 60 days
-        scheduledTaskHistory.setExpiryTime(Instant.now().plus(60, ChronoUnit.DAYS));
+        // Automatically delete records after 7 days
+        scheduledTaskHistory.setExpiryTime(Instant.now().plus(7, ChronoUnit.DAYS));
 
         try {
             // Execute task
