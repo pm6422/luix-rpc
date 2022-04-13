@@ -7,7 +7,7 @@
         <version>2.5.5</version>
         <relativePath/>
     </parent>
-    <groupId>org.infinity</groupId>
+    <groupId>com.luixtech</groupId>
     <artifactId>luix-portal</artifactId>
     <version>${revision}</version>
     <packaging>jar</packaging>
@@ -24,7 +24,7 @@
         <run.addResources>false</run.addResources>
         <skipJibBuild>true</skipJibBuild>
         <springfox.version>2.7.0</springfox.version>
-        <start-class>org.infinity.luix.portal.LuixPortalLauncher</start-class>
+        <start-class>com.luixtech.luixrpc.portal.LuixPortalLauncher</start-class>
     </properties>
     <!--
     *************************************************************************************

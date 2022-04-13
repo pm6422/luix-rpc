@@ -1,9 +1,9 @@
 {
   "registryIdentity": "zookeeper://localhost:2181/registry",
-  "interfaceName": "org.infinity.luix.democommon.service.AuthorityService",
+  "interfaceName": "AuthorityService",
   "methodName": "save",
   "methodParamTypes": [
-    "org.infinity.luix.democommon.domain.Authority"
+    "Authority"
   ],
   "args": [
     {

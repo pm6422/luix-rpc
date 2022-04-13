@@ -7,7 +7,7 @@
         <version>2.5.5</version>
         <relativePath/>
     </parent>
-    <groupId>org.infinity</groupId>
+    <groupId>com.luixtech</groupId>
     <artifactId>luix-demo-client</artifactId>
     <version>${revision}</version>
     <packaging>jar</packaging>
@@ -24,7 +24,7 @@
         <revision>1.0.0</revision>
         <run.addResources>false</run.addResources>
         <skipJibBuild>true</skipJibBuild>
-        <start-class>org.infinity.luix.democlient.LuixDemoClientLauncher</start-class>
+        <start-class>com.luixtech.luixrpc.democlient.LuixDemoClientLauncher</start-class>
     </properties>
     <!--
         *************************************************************************************

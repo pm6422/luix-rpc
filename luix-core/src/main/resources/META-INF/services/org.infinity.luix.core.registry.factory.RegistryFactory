@@ -1,4 +1,4 @@
 # The file name should be identical to the fully-qualified name of extension interface.
 # The file must be encoded in UTF-8.
 
-org.infinity.luix.core.registry.factory.impl.NoRegistryFactory
+com.luixtech.luixrpc.core.registry.factory.impl.NoRegistryFactory

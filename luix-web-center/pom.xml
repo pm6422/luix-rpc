@@ -7,7 +7,7 @@
         <version>2.5.5</version>
         <relativePath/>
     </parent>
-    <groupId>org.infinity</groupId>
+    <groupId>com.luixtech</groupId>
     <artifactId>luix-web-center</artifactId>
     <version>${revision}</version>
     <packaging>jar</packaging>
@@ -24,7 +24,7 @@
         <revision>1.0.0</revision>
         <run.addResources>false</run.addResources>
         <skipJibBuild>true</skipJibBuild>
-        <start-class>org.infinity.luix.webcenter.LuixWebCenterLauncher</start-class>
+        <start-class>com.luixtech.luixrpc.webcenter.LuixWebCenterLauncher</start-class>
     </properties>
     <!--
         *************************************************************************************
