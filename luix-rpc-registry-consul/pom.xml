@@ -3,15 +3,15 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.luixtech</groupId>
-        <artifactId>luix</artifactId>
+        <artifactId>luix-rpc</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>luix-transport-netty4</artifactId>
+    <artifactId>luix-rpc-registry-consul</artifactId>
     <name>${project.artifactId}</name>
     <!--
-        *************************************************************************************
-        Properties definition
-        *************************************************************************************
+    *************************************************************************************
+    Properties definition
+    *************************************************************************************
     -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,17 +19,12 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>luix-core</artifactId>
+            <artifactId>luix-rpc-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>luix-utilities</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
+            <groupId>com.ecwid.consul</groupId>
+            <artifactId>consul-api</artifactId>
         </dependency>
     </dependencies>
 </project>

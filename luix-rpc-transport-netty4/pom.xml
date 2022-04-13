@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.luixtech</groupId>
-        <artifactId>luix</artifactId>
+        <artifactId>luix-rpc</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>luix-spring-boot-starter</artifactId>
+    <artifactId>luix-rpc-transport-netty4</artifactId>
     <name>${project.artifactId}</name>
     <!--
         *************************************************************************************
@@ -19,29 +19,17 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>luix-core</artifactId>
+            <artifactId>luix-rpc-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>luix-registry-consul</artifactId>
+            <artifactId>luix-utilities</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>luix-spring-enhancement</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>luix-transport-netty4</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>2.5.5</version>
-            <scope>provided</scope>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
         </dependency>
     </dependencies>
 </project>

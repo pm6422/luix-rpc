@@ -3,16 +3,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.luixtech</groupId>
-        <artifactId>luix-demo</artifactId>
+        <artifactId>luix-rpc-demo</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>luix-demo-common</artifactId>
+    <artifactId>luix-rpc-demo-common</artifactId>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>luix-core</artifactId>
+            <artifactId>luix-rpc-core</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

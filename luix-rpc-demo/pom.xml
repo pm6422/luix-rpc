@@ -3,15 +3,15 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.luixtech</groupId>
-        <artifactId>luix</artifactId>
+        <artifactId>luix-rpc</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>luix-demo</artifactId>
+    <artifactId>luix-rpc-demo</artifactId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <modules>
-        <module>luix-demo-common</module>
-        <module>luix-demo-server</module>
-        <module>luix-demo-client</module>
+        <module>luix-rpc-demo-common</module>
+        <module>luix-rpc-demo-server</module>
+        <module>luix-rpc-demo-client</module>
     </modules>
 </project>

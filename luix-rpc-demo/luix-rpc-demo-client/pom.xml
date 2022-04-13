@@ -8,8 +8,8 @@
         <relativePath/>
     </parent>
     <groupId>com.luixtech</groupId>
-    <artifactId>luix-demo-server</artifactId>
-    <version>1.0.0</version>
+    <artifactId>luix-rpc-demo-client</artifactId>
+    <version>${revision}</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <!--
@@ -24,7 +24,7 @@
         <revision>1.0.0</revision>
         <run.addResources>false</run.addResources>
         <skipJibBuild>true</skipJibBuild>
-        <start-class>com.luixtech.luixrpc.demoserver.LuixDemoServerLauncher</start-class>
+        <start-class>com.luixtech.luixrpc.democlient.LuixDemoClientLauncher</start-class>
     </properties>
     <!--
         *************************************************************************************
@@ -35,7 +35,7 @@
         <dependencies>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>luix</artifactId>
+                <artifactId>luix-rpc</artifactId>
                 <version>${revision}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -50,12 +50,12 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>luix-demo-common</artifactId>
+            <artifactId>luix-rpc-demo-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>luix-spring-boot-starter</artifactId>
+            <artifactId>luix-rpc-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -74,14 +74,6 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.mongock</groupId>
-            <artifactId>mongock-springboot</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.mongock</groupId>
-            <artifactId>mongodb-springdata-v3-driver</artifactId>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
@@ -106,11 +98,13 @@
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>org.javassist</groupId>
-                    <artifactId>javassist</artifactId>
-                </exclusion>
             </exclusions>
+        </dependency>
+        <!-- performance testing -->
+        <dependency>
+            <groupId>org.databene</groupId>
+            <artifactId>contiperf</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
@@ -119,14 +113,6 @@
                 <exclusion>
                     <groupId>org.osgi</groupId>
                     <artifactId>org.osgi.core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jboss.logging</groupId>
-                    <artifactId>jboss-logging-annotations</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jboss.logging</groupId>
-                    <artifactId>jboss-logging-processor</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -163,10 +149,6 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
         <dependency>
@@ -196,17 +178,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-undertow</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.zalando</groupId>
@@ -264,7 +236,7 @@
                             <arg>/entrypoint.sh</arg>
                         </entrypoint>
                         <ports>
-                            <port>6010</port>
+                            <port>6020</port>
                         </ports>
                         <environment>
                             <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
@@ -437,54 +409,12 @@
             <properties>
                 <spring.profiles.active>dev</spring.profiles.active>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>de.flapdoodle.embed</groupId>
-                    <artifactId>de.flapdoodle.embed.mongo</artifactId>
-                    <version>3.2.8</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.slf4j</groupId>
-                            <artifactId>slf4j-api</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>net.java.dev.jna</groupId>
-                            <artifactId>jna</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>net.java.dev.jna</groupId>
-                            <artifactId>jna-platform</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-            </dependencies>
         </profile>
         <profile>
             <id>demo</id>
             <properties>
                 <spring.profiles.active>demo</spring.profiles.active>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>de.flapdoodle.embed</groupId>
-                    <artifactId>de.flapdoodle.embed.mongo</artifactId>
-                    <version>3.2.8</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.slf4j</groupId>
-                            <artifactId>slf4j-api</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>net.java.dev.jna</groupId>
-                            <artifactId>jna</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>net.java.dev.jna</groupId>
-                            <artifactId>jna-platform</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-            </dependencies>
         </profile>
         <profile>
             <id>prod</id>

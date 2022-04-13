@@ -8,7 +8,7 @@
         <relativePath/>
     </parent>
     <groupId>com.luixtech</groupId>
-    <artifactId>luix-web-center</artifactId>
+    <artifactId>luix-rpc-web-center</artifactId>
     <version>${revision}</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
@@ -35,7 +35,7 @@
         <dependencies>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>luix</artifactId>
+                <artifactId>luix-rpc</artifactId>
                 <version>${revision}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -50,7 +50,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>luix-spring-boot-starter</artifactId>
+            <artifactId>luix-rpc-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

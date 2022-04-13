@@ -2,21 +2,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.luixtech</groupId>
-    <artifactId>luix</artifactId>
+    <artifactId>luix-rpc</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
     <modules>
-        <module>luix-dependencies-bom</module>
+        <module>luix-rpc-dependencies-bom</module>
         <module>luix-utilities</module>
-        <module>luix-core</module>
-        <module>luix-metrics</module>
-        <module>luix-transport-netty4</module>
-        <module>luix-registry-consul</module>
-        <module>luix-spring-boot-starter</module>
-        <module>luix-spring-enhancement</module>
-        <module>luix-web-center</module>
-        <module>luix-demo</module>
-        <module>luix-portal</module>
+        <module>luix-rpc-core</module>
+        <module>luix-rpc-metrics</module>
+        <module>luix-rpc-transport-netty4</module>
+        <module>luix-rpc-registry-consul</module>
+        <module>luix-rpc-spring-boot-starter</module>
+        <module>luix-rpc-spring-enhancement</module>
+        <module>luix-rpc-web-center</module>
+        <module>luix-rpc-demo</module>
+        <module>luix-rpc-portal</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,7 +27,7 @@
         <dependencies>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>luix-dependencies-bom</artifactId>
+                <artifactId>luix-rpc-dependencies-bom</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>

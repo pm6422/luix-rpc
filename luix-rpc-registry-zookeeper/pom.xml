@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.luixtech</groupId>
-        <artifactId>luix</artifactId>
+        <artifactId>luix-rpc</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>luix-registry-zookeeper</artifactId>
+    <artifactId>luix-rpc-registry-zookeeper</artifactId>
     <name>${project.artifactId}</name>
     <!--
     *************************************************************************************
@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>luix-core</artifactId>
+            <artifactId>luix-rpc-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

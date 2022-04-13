@@ -8,10 +8,10 @@
         <relativePath/>
     </parent>
     <groupId>com.luixtech</groupId>
-    <artifactId>luix-dependencies-bom</artifactId>
+    <artifactId>luix-rpc-dependencies-bom</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
-    <name>luix-dependencies-bom</name>
+    <name>luix-rpc-dependencies-bom</name>
     <description>Luix dependencies BOM</description>
     <url>http://www.luixtech.com</url>
     <properties>
@@ -309,12 +309,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!-- grpc related dependencies -->
-            <dependency>
-                <groupId>io.grpc</groupId>
-                <artifactId>gluix-core</artifactId>
-                <version>${grpc.version}</version>
-            </dependency>
             <dependency>
                 <groupId>io.grpc</groupId>
                 <artifactId>gluix-grpclb</artifactId>
@@ -338,6 +332,12 @@
             <dependency>
                 <groupId>io.grpc</groupId>
                 <artifactId>gluix-stub</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <!-- grpc related dependencies -->
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-core</artifactId>
                 <version>${grpc.version}</version>
             </dependency>
             <dependency>

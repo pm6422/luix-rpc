@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.luixtech</groupId>
-        <artifactId>luix</artifactId>
+        <artifactId>luix-rpc</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>luix-spring-enhancement</artifactId>
+    <artifactId>luix-rpc-spring-boot-starter</artifactId>
     <name>${project.artifactId}</name>
     <!--
         *************************************************************************************
@@ -19,19 +19,28 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>luix-core</artifactId>
+            <artifactId>luix-rpc-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-commons</artifactId>
-            <version>2.5.5</version>
-            <scope>provided</scope>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>luix-rpc-registry-consul</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-mongodb</artifactId>
-            <version>3.2.5</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>luix-rpc-spring-enhancement</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>luix-rpc-transport-netty4</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <version>2.5.5</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
