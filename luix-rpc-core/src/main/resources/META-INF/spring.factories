@@ -1,2 +1,2 @@
 #SpringSPI扩展
-#org.springframework.context.ApplicationContextInitializer=com.luixtech.luixrpc.core.config.spring.startup.RpcConfigurationApplicationContextInitializer
+#org.springframework.context.ApplicationContextInitializer=com.luixtech.rpc.core.config.spring.startup.RpcConfigurationApplicationContextInitializer

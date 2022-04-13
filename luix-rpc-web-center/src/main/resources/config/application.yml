@@ -10,7 +10,7 @@ app:
     id: luix-web-center
     name: luix-web-center
     version: 1.0.0
-    package: com.luixtech.luixrpc.webcenter
+    package: com.luixtech.rpc.webcenter
     companyName: Infinity Organization
 management: # Management http server configuration, used by ManagementServerProperties
     endpoints:

@@ -10,7 +10,7 @@ app:
     id: luix-portal
     name: luix-portal
     version: 1.0.0
-    package: com.luixtech.luixrpc.portal
+    package: com.luixtech.rpc.portal
 management: # Management http server configuration, used by ManagementServerProperties
     endpoints:
         web:

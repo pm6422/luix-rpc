@@ -10,7 +10,7 @@ app:
     id: luix-demo-client
     name: luix-demo-client
     version: 1.0.0
-    package: com.luixtech.luixrpc.democlient
+    package: com.luixtech.rpc.democlient
     companyName: Infinity Organization
 management: # Management http server configuration, used by ManagementServerProperties
     endpoints:
