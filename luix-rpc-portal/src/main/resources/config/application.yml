@@ -7,8 +7,8 @@
 # https://docs.spring.io/spring-boot/docs/2.5.5/reference/html/application-properties.html#application-properties
 # ===================================================================
 app:
-    id: luix-portal
-    name: luix-portal
+    id: luix-rpc-portal
+    name: luix-rpc-portal
     version: 1.0.0
     package: com.luixtech.rpc.portal
 management: # Management http server configuration, used by ManagementServerProperties

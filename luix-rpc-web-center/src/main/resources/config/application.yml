@@ -7,8 +7,8 @@
 # https://docs.spring.io/spring-boot/docs/2.5.5/reference/html/application-properties.html#application-properties
 # ===================================================================
 app:
-    id: luix-web-center
-    name: luix-web-center
+    id: luix-rpc-web-center
+    name: luix-rpc-web-center
     version: 1.0.0
     package: com.luixtech.rpc.webcenter
     companyName: Infinity Organization
