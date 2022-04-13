@@ -41,13 +41,13 @@ public class SystemController {
         return this.luixDemoClientUrl;
     }
 
-    @ApiOperation("set luix web center url")
+    @ApiOperation("set luix RPC web center url")
     @PostMapping("/api/system/luix-web-center-url")
     public void setLuixWebCenterUrl(@RequestParam(value = "url") String url) {
         this.luixWebCenterUrl = url;
     }
 
-    @ApiOperation("get luix web center url")
+    @ApiOperation("get luix RPC web center url")
     @GetMapping("/api/system/luix-web-center-url")
     public String getLuixWebCenterUrl() {
         return this.luixWebCenterUrl;
@@ -71,7 +71,7 @@ public class SystemController {
         return this.monitorUrl;
     }
 
-    @ApiOperation("reset web center database")
+    @ApiOperation("reset RPC web center database")
     @GetMapping("/api/system/reset-web-center-database")
     public String resetWebCenterDatabase() {
         return this.luixWebCenterUrl + "/open-api/systems/reset-database";
