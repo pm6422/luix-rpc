@@ -2,7 +2,7 @@
 //
 //
 //import com.luixtech.rpc.spring.enhancement.kryo.serializer.*;
-//import com.luixtech.rpc.utilities.serializer.Serializer;
+//import com.luixtech.utilities.serializer.Serializer;
 //import com.luixtech.rpc.utilities.serializer.kryo.KryoUtils;
 //import com.luixtech.rpc.utilities.serviceloader.ServiceLoader;
 //import org.junit.BeforeClass;
@@ -13,7 +13,7 @@
 //
 //import static com.luixtech.rpc.democommon.domain.Authority.ADMIN;
 //import static com.luixtech.rpc.democommon.domain.Authority.USER;
-//import static com.luixtech.rpc.utilities.serializer.Serializer.SERIALIZER_NAME_KRYO;
+//import static com.luixtech.utilities.serializer.Serializer.SERIALIZER_NAME_KRYO;
 //
 //public class SerializerTests {
 //

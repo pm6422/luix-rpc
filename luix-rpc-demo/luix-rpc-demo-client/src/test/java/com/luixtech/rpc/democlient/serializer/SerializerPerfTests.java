@@ -6,7 +6,7 @@
 //import com.luixtech.rpc.appclient.serializer.service.AppServiceImpl;
 //import com.luixtech.rpc.democommon.domain.App;
 //import com.luixtech.rpc.spring.enhancement.kryo.serializer.*;
-//import com.luixtech.rpc.utilities.serializer.Serializer;
+//import com.luixtech.utilities.serializer.Serializer;
 //import com.luixtech.rpc.utilities.serializer.kryo.KryoUtils;
 //import com.luixtech.rpc.utilities.serviceloader.ServiceLoader;
 //import org.junit.jupiter.api.BeforeAll;
@@ -15,8 +15,8 @@
 //
 //import java.io.IOException;
 //
-//import static com.luixtech.rpc.utilities.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
-//import static com.luixtech.rpc.utilities.serializer.Serializer.SERIALIZER_NAME_KRYO;
+//import static com.luixtech.utilities.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
+//import static com.luixtech.utilities.serializer.Serializer.SERIALIZER_NAME_KRYO;
 //
 ///**
 // * Refer to {@link com.luixtech.rpc.utilities.serializer.SerializerPerfTests} for another test cases
