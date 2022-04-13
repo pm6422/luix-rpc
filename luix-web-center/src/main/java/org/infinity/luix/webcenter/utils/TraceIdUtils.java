@@ -7,7 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.infinity.luix.utilities.id.IdGenerator.generateTimestampId;
+import static com.luixtech.uidgenerator.core.id.IdGenerator.generateTimestampId;
+
 
 /**
  * https://www.toutiao.com/i6807750667449401869/

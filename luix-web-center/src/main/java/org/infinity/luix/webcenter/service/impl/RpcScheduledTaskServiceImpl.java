@@ -1,11 +1,11 @@
 package org.infinity.luix.webcenter.service.impl;
 
+import com.luixtech.uidgenerator.core.id.IdGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.infinity.luix.core.client.proxy.Proxy;
 import org.infinity.luix.spring.boot.config.LuixProperties;
-import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.webcenter.domain.RpcScheduledTask;
 import org.infinity.luix.webcenter.exception.DataNotFoundException;
 import org.infinity.luix.webcenter.repository.RpcScheduledTaskHistoryRepository;

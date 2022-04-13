@@ -1,10 +1,10 @@
 package org.infinity.luix.webcenter.config.dbmigrations;
 
+import com.luixtech.uidgenerator.core.id.IdGenerator;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
 import org.infinity.luix.spring.boot.config.LuixProperties;
-import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.webcenter.domain.Authority;
 import org.infinity.luix.webcenter.domain.RpcScheduledTask;
 import org.infinity.luix.webcenter.domain.User;

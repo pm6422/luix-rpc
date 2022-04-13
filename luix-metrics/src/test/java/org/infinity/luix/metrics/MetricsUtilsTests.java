@@ -1,7 +1,7 @@
 package org.infinity.luix.metrics;
 
+import com.luixtech.uidgenerator.core.id.IdGenerator;
 import lombok.extern.slf4j.Slf4j;
-import org.infinity.luix.utilities.id.IdGenerator;
 import org.junit.jupiter.api.Test;
 
 @Slf4j

@@ -1,5 +1,6 @@
 package org.infinity.luix.demoserver.controller;
 
+import com.luixtech.uidgenerator.core.id.IdGenerator;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +11,6 @@ import org.infinity.luix.demoserver.task.polling.queue.InMemoryAsyncTaskQueue;
 import org.infinity.luix.demoserver.task.polling.queue.Message;
 import org.infinity.luix.demoserver.utils.TraceIdUtils;
 import org.infinity.luix.spring.boot.config.LuixProperties;
-import org.infinity.luix.utilities.id.IdGenerator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

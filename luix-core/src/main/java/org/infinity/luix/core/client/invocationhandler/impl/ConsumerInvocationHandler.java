@@ -1,5 +1,6 @@
 package org.infinity.luix.core.client.invocationhandler.impl;
 
+import com.luixtech.uidgenerator.core.id.IdGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.infinity.luix.core.client.invocationhandler.AbstractConsumerInvocationHandler;
@@ -9,7 +10,6 @@ import org.infinity.luix.core.client.request.impl.RpcRequest;
 import org.infinity.luix.core.client.stub.ConsumerStub;
 import org.infinity.luix.core.server.response.FutureResponse;
 import org.infinity.luix.core.utils.MethodParameterUtils;
-import org.infinity.luix.utilities.id.IdGenerator;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

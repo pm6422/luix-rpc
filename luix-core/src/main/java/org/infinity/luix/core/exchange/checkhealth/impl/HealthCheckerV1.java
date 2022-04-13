@@ -16,12 +16,12 @@
 
 package org.infinity.luix.core.exchange.checkhealth.impl;
 
+import com.luixtech.uidgenerator.core.id.IdGenerator;
 import org.infinity.luix.core.client.request.Requestable;
 import org.infinity.luix.core.client.request.impl.RpcCheckHealthRequest;
 import org.infinity.luix.core.exchange.checkhealth.HealthChecker;
 import org.infinity.luix.core.server.handler.InvocationHandleable;
 import org.infinity.luix.core.server.handler.impl.DefaultCheckHealthHandlerWrapper;
-import org.infinity.luix.utilities.id.IdGenerator;
 import org.infinity.luix.utilities.serviceloader.annotation.SpiName;
 
 import static org.infinity.luix.core.constant.ProviderConstants.HEALTH_CHECKER_VAL_V1;

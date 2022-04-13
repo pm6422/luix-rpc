@@ -1,5 +1,6 @@
 package org.infinity.luix.demoserver.service.impl;
 
+import com.luixtech.uidgenerator.core.id.IdGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.infinity.luix.demoserver.domain.ScheduledTask;
@@ -10,7 +11,6 @@ import org.infinity.luix.demoserver.exception.DataNotFoundException;
 import org.infinity.luix.demoserver.repository.ScheduledTaskHistoryRepository;
 import org.infinity.luix.demoserver.repository.ScheduledTaskLockRepository;
 import org.infinity.luix.demoserver.repository.ScheduledTaskRepository;
-import org.infinity.luix.utilities.id.IdGenerator;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
