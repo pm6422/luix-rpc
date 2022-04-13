@@ -1,22 +1,21 @@
-package com.luixtech.rpc.democlient;
+package com.luixtech.rpc.demoserver;
 
-import com.luixtech.rpc.spring.enhancement.kryo.serializer.*;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.spring.boot.starter.EnableLuixRpc;
 import com.luixtech.rpc.spring.enhancement.kryo.serializer.*;
 import com.luixtech.utilities.serializer.kryo.KryoUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import javax.annotation.PostConstruct;
 
-@Slf4j
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @EnableLuixRpc
-public class LuixDemoClientLauncher {
+public class LuixRpcDemoServerLauncher {
+    public static ConfigurableApplicationContext applicationContext;
 
     /**
      * Entrance method which used to run the application. Spring profiles can be configured with a program arguments
@@ -25,7 +24,7 @@ public class LuixDemoClientLauncher {
      * @param args program arguments
      */
     public static void main(String[] args) {
-        SpringApplication.run(LuixDemoClientLauncher.class, args);
+        applicationContext = SpringApplication.run(LuixRpcDemoServerLauncher.class, args);
     }
 
     @PostConstruct

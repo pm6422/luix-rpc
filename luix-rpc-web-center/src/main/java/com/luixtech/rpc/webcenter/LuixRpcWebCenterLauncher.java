@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @SpringBootApplication
 @EnableLuixRpc
 @EnableConfigurationProperties({ApplicationProperties.class})
-public class LuixWebCenterLauncher {
+public class LuixRpcWebCenterLauncher {
     /**
      * Entrance method which used to run the application. Spring profiles can be configured with a program arguments
      * --spring.profiles.active=your-active-profile
@@ -17,6 +17,6 @@ public class LuixWebCenterLauncher {
      * @param args program arguments
      */
     public static void main(String[] args) {
-        SpringApplication.run(LuixWebCenterLauncher.class, args);
+        SpringApplication.run(LuixRpcWebCenterLauncher.class, args);
     }
 }

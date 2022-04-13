@@ -24,7 +24,7 @@
         <revision>1.0.0</revision>
         <run.addResources>false</run.addResources>
         <skipJibBuild>true</skipJibBuild>
-        <start-class>com.luixtech.rpc.webcenter.LuixWebCenterLauncher</start-class>
+        <start-class>com.luixtech.rpc.webcenter.LuixRpcWebCenterLauncher</start-class>
     </properties>
     <!--
         *************************************************************************************
