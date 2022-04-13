@@ -24,7 +24,7 @@
         <run.addResources>false</run.addResources>
         <skipJibBuild>true</skipJibBuild>
         <springfox.version>2.7.0</springfox.version>
-        <start-class>com.luixtech.rpc.portal.LuixPortalLauncher</start-class>
+        <start-class>com.luixtech.rpc.portal.LuixRpcPortalLauncher</start-class>
     </properties>
     <!--
     *************************************************************************************

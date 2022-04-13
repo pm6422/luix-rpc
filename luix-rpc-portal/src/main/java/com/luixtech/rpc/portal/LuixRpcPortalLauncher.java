@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @Slf4j
-public class LuixPortalLauncher {
+public class LuixRpcPortalLauncher {
 
     /**
      * Entrance method which used to run the application. Spring profiles can be configured with a program arguments
@@ -15,6 +15,6 @@ public class LuixPortalLauncher {
      * @param args program arguments
      */
     public static void main(String[] args) {
-        SpringApplication.run(LuixPortalLauncher.class, args);
+        SpringApplication.run(LuixRpcPortalLauncher.class, args);
     }
 }
