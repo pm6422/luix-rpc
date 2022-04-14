@@ -120,21 +120,6 @@
         <!-- metrics -->
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-annotation</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-            <version>4.1.25</version>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-graphite</artifactId>
         </dependency>
         <dependency>
