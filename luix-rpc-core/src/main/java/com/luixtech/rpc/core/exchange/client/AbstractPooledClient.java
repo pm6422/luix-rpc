@@ -2,13 +2,13 @@ package com.luixtech.rpc.core.exchange.client;
 
 import com.luixtech.rpc.core.constant.ProtocolConstants;
 import com.luixtech.rpc.core.exception.impl.RpcFrameworkException;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import com.luixtech.rpc.core.exchange.Channel;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.utilities.lang.MathUtils;
-import com.luixtech.utilities.threadpool.NamedThreadFactory;
 import com.luixtech.utilities.threadpool.NetworkThreadPoolExecutor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public abstract class AbstractPooledClient extends AbstractClient {
      * Network thread pool
      */
     private static final ThreadPoolExecutor           NETWORK_THREAD_POOL = new NetworkThreadPoolExecutor(1, 300,
-            20000, new NamedThreadFactory(AbstractPooledClient.class.getSimpleName(), true));
+            20000, new BasicThreadFactory.Builder().namingPattern(AbstractPooledClient.class.getSimpleName() + "-%d").daemon(true).build());
     /**
      * Object factory used to build channel
      */

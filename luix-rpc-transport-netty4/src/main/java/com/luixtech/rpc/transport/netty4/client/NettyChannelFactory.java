@@ -1,10 +1,10 @@
 package com.luixtech.rpc.transport.netty4.client;
 
 
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.core.exchange.client.SharedObjectFactory;
-import com.luixtech.utilities.threadpool.NamedThreadFactory;
 import com.luixtech.utilities.threadpool.NetworkThreadPoolExecutor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 public class NettyChannelFactory implements SharedObjectFactory<NettyChannel> {
     private static final ExecutorService rebuildExecutorService = new NetworkThreadPoolExecutor(5, 30, 10L, TimeUnit.SECONDS, 100,
-            new NamedThreadFactory("RebuildExecutorService", true),
+            new BasicThreadFactory.Builder().namingPattern("rebuildExecutorService-%d").daemon(true).build(),
             new ThreadPoolExecutor.CallerRunsPolicy());
     private              NettyClient     nettyClient;
     private              String          factoryName;

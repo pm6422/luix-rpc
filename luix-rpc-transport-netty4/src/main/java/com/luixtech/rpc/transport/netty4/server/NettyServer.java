@@ -1,14 +1,5 @@
 package com.luixtech.rpc.transport.netty4.server;
 
-import com.luixtech.rpc.transport.netty4.NettyDecoder;
-import com.luixtech.rpc.transport.netty4.NettyEncoder;
-import com.luixtech.rpc.transport.netty4.NettyServerClientHandler;
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.core.client.request.Requestable;
 import com.luixtech.rpc.core.exception.TransportException;
 import com.luixtech.rpc.core.exception.impl.RpcFrameworkException;
@@ -18,8 +9,17 @@ import com.luixtech.rpc.core.exchange.server.AbstractServer;
 import com.luixtech.rpc.core.server.handler.InvocationHandleable;
 import com.luixtech.rpc.core.server.response.Responseable;
 import com.luixtech.rpc.core.url.Url;
-import com.luixtech.utilities.threadpool.NamedThreadFactory;
+import com.luixtech.rpc.transport.netty4.NettyDecoder;
+import com.luixtech.rpc.transport.netty4.NettyEncoder;
+import com.luixtech.rpc.transport.netty4.NettyServerClientHandler;
 import com.luixtech.utilities.threadpool.NetworkThreadPoolExecutor;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,8 +32,8 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
     private   EventLoopGroup            bossGroup;
     private   EventLoopGroup            workerGroup;
     private   Channel                   serverChannel;
-    private InvocationHandleable      handler;
-    private NetworkThreadPoolExecutor networkThreadPoolExecutor;
+    private   InvocationHandleable      handler;
+    private   NetworkThreadPoolExecutor networkThreadPoolExecutor;
 
     private AtomicInteger rejectCounter = new AtomicInteger(0);
 
@@ -84,7 +84,8 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
         }
 
         networkThreadPoolExecutor = (networkThreadPoolExecutor != null && !networkThreadPoolExecutor.isShutdown()) ? networkThreadPoolExecutor
-                : new NetworkThreadPoolExecutor(minWorkerThread, maxWorkerThread, workerQueueSize, new NamedThreadFactory("NettyServer-" + providerUrl.getAddress(), true));
+                : new NetworkThreadPoolExecutor(minWorkerThread, maxWorkerThread, workerQueueSize,
+                new BasicThreadFactory.Builder().namingPattern(NettyServer.class.getSimpleName() + "-%d").daemon(true).build());
         networkThreadPoolExecutor.prestartAllCoreThreads();
 
         channelManager = new NettyServerChannelManager(maxServerConn);
