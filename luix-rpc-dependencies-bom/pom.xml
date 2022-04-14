@@ -69,7 +69,7 @@
         <mongock_version>5.0.38</mongock_version>
         <mortbay_jetty_version>6.1.26</mortbay_jetty_version>
         <nacos_version>1.1.1</nacos_version>
-        <netty4_version>4.1.73.Final</netty4_version>
+        <netty4_version>4.1.75.Final</netty4_version>
         <netty_version>3.2.5.Final</netty_version>
         <portlet_version>2.0</portlet_version>
         <problem_spring_web_version>0.25.2</problem_spring_web_version>
