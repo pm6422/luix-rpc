@@ -101,7 +101,7 @@
         <dependency>
             <groupId>com.taobao.arthas</groupId>
             <artifactId>arthas-spring-boot-starter</artifactId>
-            <version>3.5.4</version>
+            <version>3.6.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>net.java.dev.jna</groupId>
