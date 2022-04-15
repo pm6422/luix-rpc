@@ -1,5 +1,8 @@
 package com.luixtech.rpc.webcenter.controller;
 
+import com.luixtech.rpc.webcenter.config.ApplicationProperties;
+import com.luixtech.rpc.webcenter.domain.Authority;
+import com.luixtech.utilities.network.AddressUtils;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.mongodb.springdata.v3.config.MongoDBConfiguration;
@@ -10,10 +13,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import com.luixtech.utilities.network.AddressUtils;
-import com.luixtech.rpc.webcenter.config.ApplicationProperties;
-import com.luixtech.rpc.webcenter.domain.Authority;
-import com.luixtech.rpc.webcenter.utils.NetworkUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.BuildProperties;
@@ -29,9 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -42,8 +38,6 @@ import java.util.stream.Stream;
 @Slf4j
 public class SystemController {
 
-    @Value("${arthas.httpPort}")
-    private int                                  arthasPort;
     @Resource
     private Environment                          env;
     @Resource
@@ -63,11 +57,11 @@ public class SystemController {
     @Resource
     private MongockConfiguration                 springConfiguration;
     @Resource
-    private ApplicationEventPublisher            applicationEventPublisher;
+    private ApplicationEventPublisher applicationEventPublisher;
     @Resource
-    private MongockConfiguration                 config;
+    private MongockConfiguration                 mongockConfiguration;
     @Resource
-    private MongoDBConfiguration                 mongoDbConfig;
+    private MongoDBConfiguration                 mongoDBConfiguration;
     @Resource
     private Optional<PlatformTransactionManager> txManagerOpt;
 
@@ -120,21 +114,12 @@ public class SystemController {
         return ResponseEntity.ok(AddressUtils.getIntranetIp());
     }
 
-    @ApiOperation("redirect to arthas web console")
-    @GetMapping("/api/system/arthas-console")
-    @Secured(Authority.DEVELOPER)
-    public void redirectToArthasConsole(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String arthasUrl = NetworkUtils.getRequestUrl(request, arthasPort);
-        log.info("Redirect to arthas console: {}", arthasUrl);
-        response.sendRedirect(arthasUrl);
-    }
-
     @ApiOperation("reset database")
     @GetMapping("/open-api/systems/reset-database")
     public String resetDatabase() {
         mongoTemplate.getDb().drop();
         ConnectionDriver connectionDriver = new SpringDataMongoV3Context()
-                .connectionDriver(mongoTemplate, config, mongoDbConfig, txManagerOpt);
+                .connectionDriver(mongoTemplate, mongockConfiguration, mongoDBConfiguration, txManagerOpt);
         RunnerSpringbootBuilder runnerSpringbootBuilder = MongockSpringboot.builder()
                 .setDriver(connectionDriver)
                 .setConfig(springConfiguration)

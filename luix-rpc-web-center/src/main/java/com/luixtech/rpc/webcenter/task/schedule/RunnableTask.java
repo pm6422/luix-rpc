@@ -74,8 +74,6 @@ public class RunnableTask implements Runnable {
         scheduledTaskLock.setExpiryTime(Instant.now().plus(10, ChronoUnit.SECONDS));
         rpcScheduledTaskLockRepository.save(scheduledTaskLock);
 
-        log.info("Executing scheduled task {}.{}({}) at {}", interfaceName, rpcScheduledTask.getMethodName(),
-                rpcScheduledTask.getArgumentsJson(), ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         RpcScheduledTaskHistory scheduledTaskHistory = new RpcScheduledTaskHistory();

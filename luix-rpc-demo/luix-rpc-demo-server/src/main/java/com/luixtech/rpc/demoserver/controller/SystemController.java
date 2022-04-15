@@ -1,5 +1,6 @@
 package com.luixtech.rpc.demoserver.controller;
 
+import com.luixtech.rpc.demoserver.config.ApplicationProperties;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.mongodb.springdata.v3.config.MongoDBConfiguration;
@@ -9,7 +10,6 @@ import io.mongock.runner.springboot.RunnerSpringbootBuilder;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import com.luixtech.rpc.demoserver.config.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.BuildProperties;
@@ -55,9 +55,9 @@ public class SystemController {
     @Resource
     private ApplicationEventPublisher            applicationEventPublisher;
     @Resource
-    private MongockConfiguration                 config;
+    private MongockConfiguration                 mongockConfiguration;
     @Resource
-    private MongoDBConfiguration                 mongoDbConfig;
+    private MongoDBConfiguration                 mongoDBConfiguration;
     @Resource
     private Optional<PlatformTransactionManager> txManagerOpt;
 
@@ -115,7 +115,7 @@ public class SystemController {
         mongoTemplate.getDb().drop();
 
         ConnectionDriver connectionDriver = new SpringDataMongoV3Context()
-                .connectionDriver(mongoTemplate, config, mongoDbConfig, txManagerOpt);
+                .connectionDriver(mongoTemplate, mongockConfiguration, mongoDBConfiguration, txManagerOpt);
         RunnerSpringbootBuilder runnerSpringbootBuilder = MongockSpringboot.builder()
                 .setDriver(connectionDriver)
                 .setConfig(springConfiguration)
