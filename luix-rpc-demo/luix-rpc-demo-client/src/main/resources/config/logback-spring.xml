@@ -1,28 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration>
 <configuration scan="true">
-    <!--
-        *************************************************************************************
-        Appenders definitions
-        *************************************************************************************
-    -->
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d %-5level [%thread] %logger{0}: %msg%n</pattern>
-        </encoder>
-    </appender>
-    <appender name="ASYNC_CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
-        <discardingThreshold>0</discardingThreshold>
-        <queueSize>512</queueSize>
-        <appender-ref ref="CONSOLE"/>
-        <includeCallerData>true</includeCallerData>
-    </appender>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
-    <!--
-        *************************************************************************************
-        Loggers definitions
-        *************************************************************************************
-    -->
     <logger name="org.apache.catalina.webresources.Cache" level="ERROR"/>
     <logger name="org.apache.catalina.startup.DigesterFactory" level="ERROR"/>
     <logger name="org.apache.catalina.util.LifecycleBase" level="ERROR"/>
@@ -64,11 +44,6 @@
     <logger name="org.mybatis.spring.mapper.ClassPathMapperScanner" level="INFO"/>
     <logger name="org.mongodb.driver" level="WARN"/>
     <logger name="org.springframework.boot.devtools.autoconfigure" level="INFO"/>
-
-
-    <root level="${logging.level.root}">
-        <appender-ref ref="ASYNC_CONSOLE"/>
-    </root>
 
     <!-- https://logback.qos.ch/manual/configuration.html#shutdownHook and https://jira.qos.ch/browse/LOGBACK-1090 -->
     <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
