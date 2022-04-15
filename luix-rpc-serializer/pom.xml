@@ -33,7 +33,6 @@
         <dependency>
             <groupId>com.luixtech</groupId>
             <artifactId>luix-utilities</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>de.javakaffee</groupId>

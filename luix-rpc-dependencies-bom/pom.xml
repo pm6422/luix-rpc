@@ -91,9 +91,15 @@
         <validation_version>2.0.1.Final</validation_version>
         <xmemcached_version>1.3.6</xmemcached_version>
         <zookeeper_version>3.4.14</zookeeper_version>
+        <luix_utilities_version>1.0.1</luix_utilities_version>
     </properties>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.luixtech</groupId>
+                <artifactId>luix-utilities</artifactId>
+                <version>${luix_utilities_version}</version>
+            </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>

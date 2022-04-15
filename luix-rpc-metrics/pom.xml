@@ -20,7 +20,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>luix-utilities</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
