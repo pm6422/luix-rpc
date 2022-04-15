@@ -22,6 +22,10 @@
             <artifactId>luix-utilities</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.luixtech</groupId>
+            <artifactId>luix-uid-generator-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
@@ -30,14 +34,6 @@
             <artifactId>micrometer-core</artifactId>
             <version>1.7.4</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
         </dependency>
     </dependencies>
 </project>
