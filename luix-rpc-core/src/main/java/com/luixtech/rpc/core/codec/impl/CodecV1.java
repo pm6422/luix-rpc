@@ -6,6 +6,7 @@ import com.luixtech.rpc.core.constant.ServiceConstants;
 import com.luixtech.rpc.core.protocol.constants.ProtocolVersion;
 import com.luixtech.rpc.core.server.response.impl.RpcResponse;
 import com.luixtech.rpc.core.utils.MethodParameterUtils;
+import com.luixtech.rpc.serializer.Serializer;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +17,6 @@ import com.luixtech.rpc.core.codec.AbstractCodec;
 import com.luixtech.rpc.core.exception.ExceptionUtils;
 import com.luixtech.rpc.core.exception.impl.RpcFrameworkException;
 import com.luixtech.utilities.lang.ByteUtils;
-import com.luixtech.utilities.serializer.Serializer;
 import com.luixtech.utilities.serviceloader.annotation.SpiName;
 
 import java.io.*;

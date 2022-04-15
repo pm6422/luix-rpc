@@ -1,6 +1,6 @@
 package com.luixtech.rpc.core.utils;
 
-import com.luixtech.utilities.serializer.Serializer;
+import com.luixtech.rpc.serializer.Serializer;
 import com.luixtech.utilities.serviceloader.ServiceLoader;
 import lombok.extern.slf4j.Slf4j;
 

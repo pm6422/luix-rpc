@@ -25,9 +25,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.luixtech.rpc.core.constant.ServiceConstants.*;
+import static com.luixtech.rpc.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static com.luixtech.rpc.core.constant.ProtocolConstants.SERIALIZER;
-import static com.luixtech.utilities.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
 
 /**
  * REST controller for RPC calling.

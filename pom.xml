@@ -8,6 +8,7 @@
     <modules>
         <module>luix-rpc-dependencies-bom</module>
         <module>luix-utilities</module>
+        <module>luix-rpc-serializer</module>
         <module>luix-rpc-core</module>
         <module>luix-rpc-metrics</module>
         <module>luix-rpc-transport-netty4</module>

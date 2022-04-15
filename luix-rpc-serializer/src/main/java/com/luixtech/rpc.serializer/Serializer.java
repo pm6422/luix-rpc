@@ -1,4 +1,4 @@
-package com.luixtech.utilities.serializer;
+package com.luixtech.rpc.serializer;
 
 import com.luixtech.utilities.serviceloader.ServiceLoader;
 import com.luixtech.utilities.serviceloader.annotation.Spi;

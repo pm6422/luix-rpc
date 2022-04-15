@@ -1,9 +1,9 @@
-package com.luixtech.utilities.serializer.kryo.io;
+package com.luixtech.rpc.serializer.kryo.io;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
-import com.luixtech.utilities.serializer.kryo.KryoUtils;
+import com.luixtech.rpc.serializer.kryo.KryoUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,8 +1,8 @@
-package com.luixtech.utilities.serializer.hessian2;
+package com.luixtech.rpc.serializer.hessian2;
 
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
-import com.luixtech.utilities.serializer.Serializer;
+import com.luixtech.rpc.serializer.Serializer;
 import com.luixtech.utilities.serviceloader.annotation.SpiName;
 
 import java.io.ByteArrayInputStream;
@@ -14,7 +14,7 @@ import java.io.IOException;
  * Serializing and deserializing objects must implements {@link java.io.Serializable}
  * Supported languages: JAVA, Python, C++, PHP...
  * <p>
- * Refer to http://hessian.caucho.com
+ * Refer to http://hessian.caucho.com/ for more information
  */
 @SpiName(Serializer.SERIALIZER_NAME_HESSIAN2)
 public class Hessian2Serializer implements Serializer {

@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 
 import static com.luixtech.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_BROADCAST;
 import static com.luixtech.rpc.core.server.stub.ProviderStub.*;
-import static com.luixtech.utilities.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
+import static com.luixtech.rpc.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
 
 @RestController
 @Slf4j

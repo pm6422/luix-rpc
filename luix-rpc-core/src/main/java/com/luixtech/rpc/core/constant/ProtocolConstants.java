@@ -3,7 +3,7 @@ package com.luixtech.rpc.core.constant;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.luixtech.utilities.serializer.Serializer.*;
+import static com.luixtech.rpc.serializer.Serializer.*;
 
 public interface ProtocolConstants {
 

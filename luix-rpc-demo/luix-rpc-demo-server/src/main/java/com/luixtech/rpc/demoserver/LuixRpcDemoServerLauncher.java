@@ -1,8 +1,8 @@
 package com.luixtech.rpc.demoserver;
 
+import com.luixtech.rpc.serializer.kryo.KryoUtils;
 import com.luixtech.rpc.spring.boot.starter.EnableLuixRpc;
 import com.luixtech.rpc.spring.enhancement.kryo.serializer.*;
-import com.luixtech.utilities.serializer.kryo.KryoUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;

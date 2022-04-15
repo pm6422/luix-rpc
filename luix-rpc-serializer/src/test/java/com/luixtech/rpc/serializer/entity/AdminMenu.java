@@ -1,4 +1,4 @@
-package com.luixtech.utilities.serializer.entity;
+package com.luixtech.rpc.serializer.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

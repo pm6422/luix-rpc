@@ -1,8 +1,8 @@
-package com.luixtech.utilities.serializer.kryo.factory.impl;
+package com.luixtech.rpc.serializer.kryo.factory.impl;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.util.Pool;
-import com.luixtech.utilities.serializer.kryo.factory.AbstractKryoFactory;
+import com.luixtech.rpc.serializer.kryo.factory.AbstractKryoFactory;
 
 /**
  * The performance of pooled kryo is worse than thread-local one

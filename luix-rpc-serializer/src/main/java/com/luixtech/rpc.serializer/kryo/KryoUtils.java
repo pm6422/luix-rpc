@@ -1,9 +1,9 @@
-package com.luixtech.utilities.serializer.kryo;
+package com.luixtech.rpc.serializer.kryo;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
-import com.luixtech.utilities.serializer.kryo.factory.impl.ThreadLocalKryoFactory;
-import com.luixtech.utilities.serializer.kryo.factory.AbstractKryoFactory;
+import com.luixtech.rpc.serializer.kryo.factory.AbstractKryoFactory;
+import com.luixtech.rpc.serializer.kryo.factory.impl.ThreadLocalKryoFactory;
 
 public abstract class KryoUtils {
 

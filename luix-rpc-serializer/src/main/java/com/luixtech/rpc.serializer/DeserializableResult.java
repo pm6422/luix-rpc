@@ -1,4 +1,4 @@
-package com.luixtech.utilities.serializer;
+package com.luixtech.rpc.serializer;
 
 
 import java.io.IOException;

@@ -2,7 +2,7 @@ package com.luixtech.rpc.core.codec;
 
 
 import com.luixtech.rpc.core.exception.impl.RpcFrameworkException;
-import com.luixtech.utilities.serializer.Serializer;
+import com.luixtech.rpc.serializer.Serializer;
 
 import java.io.*;
 

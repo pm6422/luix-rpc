@@ -1,4 +1,4 @@
-package com.luixtech.utilities.serializer.kryo.factory;
+package com.luixtech.rpc.serializer.kryo.factory;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;

@@ -1,8 +1,8 @@
-package com.luixtech.utilities.serializer.kryo;
+package com.luixtech.rpc.serializer.kryo;
 
-import com.luixtech.utilities.serializer.Serializer;
-import com.luixtech.utilities.serializer.kryo.io.KryoObjectInput;
-import com.luixtech.utilities.serializer.kryo.io.KryoObjectOutput;
+import com.luixtech.rpc.serializer.Serializer;
+import com.luixtech.rpc.serializer.kryo.io.KryoObjectInput;
+import com.luixtech.rpc.serializer.kryo.io.KryoObjectOutput;
 import com.luixtech.utilities.serviceloader.annotation.SpiName;
 
 import java.io.ByteArrayInputStream;

@@ -29,10 +29,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static com.luixtech.rpc.core.constant.ServiceConstants.*;
+import static com.luixtech.rpc.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static com.luixtech.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE;
 import static com.luixtech.rpc.core.constant.ProtocolConstants.SERIALIZER;
-import static com.luixtech.utilities.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
 
 @Service
 @Slf4j

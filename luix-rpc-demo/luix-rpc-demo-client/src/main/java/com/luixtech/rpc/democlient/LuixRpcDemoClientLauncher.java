@@ -1,9 +1,9 @@
 package com.luixtech.rpc.democlient;
 
+import com.luixtech.rpc.serializer.kryo.KryoUtils;
 import com.luixtech.rpc.spring.enhancement.kryo.serializer.*;
 import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.spring.boot.starter.EnableLuixRpc;
-import com.luixtech.utilities.serializer.kryo.KryoUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;

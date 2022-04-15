@@ -1,6 +1,6 @@
-package com.luixtech.utilities.serializer;
+package com.luixtech.rpc.serializer;
 
-import com.luixtech.utilities.serializer.entity.AdminMenu;
+import com.luixtech.rpc.serializer.entity.AdminMenu;
 import com.luixtech.utilities.serviceloader.ServiceLoader;
 import lombok.extern.slf4j.Slf4j;
 import org.databene.contiperf.PerfTest;

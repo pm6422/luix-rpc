@@ -1,6 +1,7 @@
 package com.luixtech.rpc.core.server.response.impl;
 
 import com.luixtech.rpc.core.protocol.constants.ProtocolVersion;
+import com.luixtech.rpc.serializer.DeserializableResult;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +16,6 @@ import com.luixtech.rpc.core.server.response.FutureListener;
 import com.luixtech.rpc.core.server.response.FutureResponse;
 import com.luixtech.rpc.core.server.response.Responseable;
 import com.luixtech.rpc.core.url.Url;
-import com.luixtech.utilities.serializer.DeserializableResult;
 
 import java.io.IOException;
 import java.io.Serializable;
