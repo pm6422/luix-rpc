@@ -1,17 +1,8 @@
 package com.luixtech.rpc.transport.netty4.client;
 
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.core.client.request.Requestable;
 import com.luixtech.rpc.core.constant.RpcConstants;
-import com.luixtech.rpc.core.exception.ExceptionUtils;
-import com.luixtech.rpc.core.exception.RpcAbstractException;
+import com.luixtech.rpc.core.exception.impl.RpcBizException;
 import com.luixtech.rpc.core.exception.impl.RpcFrameworkException;
 import com.luixtech.rpc.core.exchange.Channel;
 import com.luixtech.rpc.core.exchange.client.AbstractPooledClient;
@@ -26,6 +17,14 @@ import com.luixtech.rpc.core.utils.RpcFrameworkUtils;
 import com.luixtech.rpc.transport.netty4.NettyDecoder;
 import com.luixtech.rpc.transport.netty4.NettyEncoder;
 import com.luixtech.rpc.transport.netty4.NettyServerClientHandler;
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -106,8 +105,8 @@ public class NettyClient extends AbstractPooledClient {
             // All requests are handled asynchronously and return type always be RpcFutureResponse
             response = channel.request(request);
         } catch (Exception e) {
-            if (ExceptionUtils.isBizException(e)) {
-                throw (RpcAbstractException) e;
+            if (e instanceof RpcBizException) {
+                throw (RpcBizException) e;
             } else {
                 throw new RpcFrameworkException("Failed to process request " + request, e);
             }
@@ -155,8 +154,6 @@ public class NettyClient extends AbstractPooledClient {
                 });
 
         createConnectionPool();
-//         注册统计回调
-//        StatsUtil.registryStatisticCallback(this);
         state = ChannelState.ACTIVE;
         log.info("Opened the netty client for provider url [{}]", providerUrl);
         return true;
