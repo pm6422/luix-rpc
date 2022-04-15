@@ -24,6 +24,7 @@ public class KryoObjectInput extends com.esotericsoftware.kryo.io.KryoObjectInpu
         return kryo.readObjectOrNull(input, clazz);
     }
 
+    @SuppressWarnings({"unchecked"})
     public <T> T readClassAndObject() {
         return (T) kryo.readClassAndObject(input);
     }
