@@ -18,7 +18,6 @@
         *************************************************************************************
     -->
     <properties>
-        <lombok.version>1.18.20</lombok.version>
         <maven.version>3.2.1</maven.version>
         <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
         <revision>1.0.0</revision>
@@ -115,10 +114,6 @@
                     <artifactId>org.osgi.core</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
