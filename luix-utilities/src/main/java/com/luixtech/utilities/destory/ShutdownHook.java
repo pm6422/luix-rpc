@@ -1,9 +1,9 @@
 package com.luixtech.utilities.destory;
 
-import com.luixtech.utilities.concurrent.ThreadSafe;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

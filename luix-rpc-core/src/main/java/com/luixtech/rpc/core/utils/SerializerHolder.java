@@ -1,10 +1,10 @@
 package com.luixtech.rpc.core.utils;
 
-import lombok.extern.slf4j.Slf4j;
-import com.luixtech.utilities.concurrent.ThreadSafe;
 import com.luixtech.utilities.serializer.Serializer;
 import com.luixtech.utilities.serviceloader.ServiceLoader;
+import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

@@ -1,16 +1,16 @@
 package com.luixtech.rpc.core.registry.impl;
 
 import com.luixtech.rpc.core.constant.ConsumerConstants;
-import com.luixtech.rpc.core.registry.AbstractRegistry;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 import com.luixtech.rpc.core.listener.GlobalConsumerDiscoveryListener;
 import com.luixtech.rpc.core.listener.ProviderDiscoveryListener;
+import com.luixtech.rpc.core.registry.AbstractRegistry;
 import com.luixtech.rpc.core.url.Url;
-import com.luixtech.utilities.concurrent.ThreadSafe;
 import com.luixtech.utilities.destory.Destroyable;
 import com.luixtech.utilities.network.AddressUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.List;
 

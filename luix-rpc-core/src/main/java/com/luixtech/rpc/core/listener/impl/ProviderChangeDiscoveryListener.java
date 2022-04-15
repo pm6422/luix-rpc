@@ -6,11 +6,11 @@ import com.luixtech.rpc.core.constant.ProtocolConstants;
 import com.luixtech.rpc.core.listener.ProviderDiscoveryListener;
 import com.luixtech.rpc.core.protocol.Protocol;
 import com.luixtech.rpc.core.url.Url;
+import com.luixtech.utilities.annotation.EventReceiver;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import com.luixtech.utilities.annotation.EventReceiver;
-import com.luixtech.utilities.concurrent.ThreadSafe;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;

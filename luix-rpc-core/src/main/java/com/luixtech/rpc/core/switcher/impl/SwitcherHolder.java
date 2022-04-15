@@ -3,8 +3,8 @@ package com.luixtech.rpc.core.switcher.impl;
 import org.apache.commons.collections4.CollectionUtils;
 import com.luixtech.rpc.core.switcher.Switcher;
 import com.luixtech.rpc.core.switcher.SwitcherListener;
-import com.luixtech.utilities.concurrent.NotThreadSafe;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

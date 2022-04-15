@@ -1,7 +1,6 @@
 package com.luixtech.rpc.core.server.stub;
 
-import com.luixtech.utilities.concurrent.ThreadSafe;
-
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

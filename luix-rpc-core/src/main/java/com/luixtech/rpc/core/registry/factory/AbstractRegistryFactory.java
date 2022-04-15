@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.core.registry.Registry;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.core.exception.impl.RpcFrameworkException;
-import com.luixtech.utilities.concurrent.NotThreadSafe;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;

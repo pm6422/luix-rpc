@@ -1,16 +1,16 @@
 package com.luixtech.utilities.serviceloader;
 
-import com.luixtech.utilities.concurrent.ThreadSafe;
 import com.luixtech.utilities.lang.CharacterUtils;
+import com.luixtech.utilities.serviceloader.annotation.Spi;
+import com.luixtech.utilities.serviceloader.annotation.SpiName;
+import com.luixtech.utilities.serviceloader.annotation.SpiScope;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import com.luixtech.utilities.serviceloader.annotation.Spi;
-import com.luixtech.utilities.serviceloader.annotation.SpiName;
-import com.luixtech.utilities.serviceloader.annotation.SpiScope;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;

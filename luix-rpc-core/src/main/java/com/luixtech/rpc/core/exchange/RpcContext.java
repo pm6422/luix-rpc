@@ -1,11 +1,11 @@
 package com.luixtech.rpc.core.exchange;
 
 import com.luixtech.rpc.core.client.request.Requestable;
+import com.luixtech.rpc.core.server.response.Responseable;
 import lombok.Getter;
 import lombok.Setter;
-import com.luixtech.rpc.core.server.response.Responseable;
-import com.luixtech.utilities.concurrent.ThreadSafe;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,9 +21,9 @@ public class RpcContext {
      * Create a new {@link RpcContext} for each thread
      */
     private static final ThreadLocal<RpcContext> THREAT_LOCAL_CONTEXT = ThreadLocal.withInitial(RpcContext::new);
-    private long         requestId;
-    private Requestable  request;
-    private Responseable response;
+    private              long                    requestId;
+    private              Requestable             request;
+    private              Responseable            response;
     /**
      * Options is a container used to store {@link String} types
      */
