@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@SpringBootTest(classes = LuixRpcWebCenterLauncher.class)
+@SpringBootTest(classes = LuixRpcWebCenterApplication.class)
 public @interface IntegrationTest {
 }

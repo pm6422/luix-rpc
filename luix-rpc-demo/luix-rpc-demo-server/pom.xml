@@ -23,7 +23,7 @@
         <revision>1.0.0</revision>
         <run.addResources>false</run.addResources>
         <skipJibBuild>true</skipJibBuild>
-        <start-class>com.luixtech.rpc.demoserver.LuixRpcDemoServerLauncher</start-class>
+        <start-class>com.luixtech.rpc.demoserver.LuixRpcDemoServerApplication</start-class>
     </properties>
     <!--
         *************************************************************************************
