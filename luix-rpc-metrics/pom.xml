@@ -18,16 +18,8 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>luix-utilities</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.luixtech</groupId>
             <artifactId>luix-uid-generator-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
