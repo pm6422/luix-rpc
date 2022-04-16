@@ -1,9 +1,5 @@
 package com.luixtech.rpc.spring.boot.starter.startup;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import com.luixtech.rpc.core.client.stub.ConsumerStub;
 import com.luixtech.rpc.core.client.stub.ConsumerStubHolder;
 import com.luixtech.rpc.core.common.RpcMethod;
@@ -17,22 +13,27 @@ import com.luixtech.rpc.core.server.stub.ProviderStubHolder;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
 import com.luixtech.utilities.destory.ShutdownHook;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.StopWatch;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.luixtech.rpc.core.constant.ServiceConstants.*;
-import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static com.luixtech.rpc.core.constant.ProtocolConstants.PROTOCOL;
 import static com.luixtech.rpc.core.constant.RegistryConstants.REGISTRY_VAL_NONE;
+import static com.luixtech.rpc.core.constant.ServiceConstants.*;
 import static com.luixtech.rpc.core.server.stub.ProviderStub.buildProviderStubBeanName;
 import static com.luixtech.rpc.core.utils.MethodParameterUtils.getMethodSignature;
 import static com.luixtech.rpc.spring.boot.starter.utils.ProxyUtils.getTargetClass;
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
 /**
  * Used to start and stop the RPC server
@@ -84,11 +85,14 @@ public class RpcLifecycle {
             return;
         }
         log.info("Starting the Luix RPC server");
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         registerShutdownHook();
         registerBuildInProviderStubs(beanFactory, luixProperties);
         register(luixProperties);
         subscribe(luixProperties);
-        log.info("Started the Luix RPC server");
+        stopWatch.stop();
+        log.info("Started the Luix RPC server in {} ms", stopWatch.getTotalTimeMillis());
     }
 
 
