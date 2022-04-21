@@ -8,5 +8,5 @@ ${AnsiColor.BRIGHT_YELLOW}██████████████████
 
 ${AnsiColor.BRIGHT_YELLOW}████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
                                             ${AnsiColor.YELLOW}:: Powered by Spring Boot ${spring-boot.version} ::
-                                            ${AnsiColor.YELLOW}:: Infinity Organization ::
+                                            ${AnsiColor.YELLOW}:: http://www.luixtech.com ::
                                             ${AnsiColor.YELLOW}:: Designed by ${AnsiStyle.BOLD}Louis ::${AnsiStyle.NORMAL}${AnsiColor.DEFAULT}
