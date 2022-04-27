@@ -5,14 +5,13 @@ import com.luixtech.rpc.spring.boot.starter.EnableLuixRpc;
 import com.luixtech.rpc.spring.enhancement.kryo.serializer.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import javax.annotation.PostConstruct;
 
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
+@SpringBootApplication
 @EnableLuixRpc
 public class LuixRpcDemoServerApplication {
     public static ConfigurableApplicationContext applicationContext;
