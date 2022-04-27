@@ -60,8 +60,8 @@ spring:
     profiles:
         # It can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
         active: dev
-    main:
-        allow-bean-definition-overriding: true
+#    autoconfigure:
+#        exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
     messages:
         basename: i18n/messages
     task:
@@ -100,9 +100,13 @@ server:
             timeout: 1D # Session timeout in 1 day, Note: this parameter can control the login expiration
             # and this statement can effect spring session, used by SessionProperties
 logging:
-    config: classpath:config/logback-spring.xml
     level:
-        root: INFO
+        root: DEBUG
+        org.springframework.boot.devtools.autoconfigure: INFO
+        org.apache: WARN
+        org.mongodb.driver: WARN
+        sun.rmi: WARN
+        jdk.event.security: WARN
 luix:
     application:
         id: ${spring.application.name}
