@@ -71,7 +71,7 @@ spring:
         # It can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
         active: dev
 #    autoconfigure:
-#        exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+#        exclude: org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration
     messages:
         basename: i18n/messages
     task:
