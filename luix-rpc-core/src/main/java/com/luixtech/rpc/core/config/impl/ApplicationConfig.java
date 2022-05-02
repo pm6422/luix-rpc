@@ -1,11 +1,11 @@
 package com.luixtech.rpc.core.config.impl;
 
-import com.luixtech.rpc.core.exception.impl.RpcConfigException;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.core.config.Configurable;
+import com.luixtech.rpc.core.exception.impl.RpcConfigException;
 import com.luixtech.rpc.core.utils.DebugModeHolder;
 import com.luixtech.rpc.core.utils.JarUtils;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -66,6 +66,10 @@ public class ApplicationConfig implements Configurable, Serializable {
      * JDK version
      */
     private              String       jdkVersion;
+    /**
+     * Enable LUIX endpoint
+     */
+    private              boolean      enableEndpoint   = true;
     /**
      * Debug mode
      */

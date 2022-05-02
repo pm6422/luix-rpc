@@ -30,6 +30,7 @@ management: # Management http server configuration, used by ManagementServerProp
                     - loggers
                     - prometheus
                     - threaddump
+                    - luix
     endpoint:
         health: # used by HealthEndpointProperties, Note: it will show health details if it has the access token by Ajax
             enabled: true
