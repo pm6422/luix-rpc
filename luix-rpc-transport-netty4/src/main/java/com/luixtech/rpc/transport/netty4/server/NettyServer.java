@@ -28,14 +28,13 @@ import static com.luixtech.rpc.core.constant.ProtocolConstants.*;
 
 @Slf4j
 public class NettyServer extends AbstractServer implements StatisticCallback {
-    protected NettyServerChannelManager channelManager;
-    private   EventLoopGroup            bossGroup;
-    private   EventLoopGroup            workerGroup;
-    private   Channel                   serverChannel;
-    private   InvocationHandleable      handler;
-    private   NetworkThreadPoolExecutor networkThreadPoolExecutor;
-
-    private AtomicInteger rejectCounter = new AtomicInteger(0);
+    protected     NettyServerChannelManager channelManager;
+    private       EventLoopGroup            bossGroup;
+    private       EventLoopGroup            workerGroup;
+    private       Channel                   serverChannel;
+    private       NetworkThreadPoolExecutor networkThreadPoolExecutor;
+    private final InvocationHandleable      handler;
+    private final AtomicInteger             rejectCounter = new AtomicInteger(0);
 
     public AtomicInteger getRejectCounter() {
         return rejectCounter;
@@ -68,8 +67,8 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
         }
 
         log.info("NettyServer ServerChannel start Open: url=" + providerUrl);
-        int maxContentLength = providerUrl.getIntOption(MAX_CONTENT_LENGTH, MAX_CONTENT_LENGTH_VAL_DEFAULT);
         int maxServerConn = providerUrl.getIntOption(MAX_SERVER_CONN, MAX_SERVER_CONN_VAL_DEFAULT);
+        int maxContentLength = providerUrl.getIntOption(MAX_CONTENT_LENGTH, MAX_CONTENT_LENGTH_VAL_DEFAULT);
         int workerQueueSize = providerUrl.getIntOption(WORK_QUEUE_SIZE, WORK_QUEUE_SIZE_VAL_DEFAULT);
         boolean shareChannel = providerUrl.getBooleanOption(SHARED_SERVER, SHARED_SERVER_VAL_DEFAULT);
 
@@ -163,7 +162,7 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
             workerGroup.shutdownGracefully();
             workerGroup = null;
         }
-        // close all clients's channel
+        // close all channels of clients
         if (channelManager != null) {
             channelManager.close();
         }
