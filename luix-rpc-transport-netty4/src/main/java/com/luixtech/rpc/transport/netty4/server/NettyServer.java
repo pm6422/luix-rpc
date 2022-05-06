@@ -115,6 +115,7 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
                 ? networkThreadPoolExecutor
                 : new NetworkThreadPoolExecutor(minWorkerThread, maxWorkerThread, workerQueueSize,
                 new BasicThreadFactory.Builder().namingPattern(NettyServer.class.getSimpleName() + "-%d").daemon(true).build());
+        // Immediately initialize corePoolSize number of threads
         networkThreadPoolExecutor.prestartAllCoreThreads();
     }
 
