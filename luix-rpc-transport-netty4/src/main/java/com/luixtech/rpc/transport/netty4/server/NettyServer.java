@@ -66,29 +66,12 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
             workerGroup = new NioEventLoopGroup();
         }
 
-        log.info("NettyServer ServerChannel start Open: url=" + providerUrl);
+        log.info("Opening netty server channel for url [{}]" + providerUrl);
+        createThreadPool();
+
         int maxServerConn = providerUrl.getIntOption(MAX_SERVER_CONN, MAX_SERVER_CONN_VAL_DEFAULT);
         int maxContentLength = providerUrl.getIntOption(MAX_CONTENT_LENGTH, MAX_CONTENT_LENGTH_VAL_DEFAULT);
-        int workerQueueSize = providerUrl.getIntOption(WORK_QUEUE_SIZE, WORK_QUEUE_SIZE_VAL_DEFAULT);
-        boolean shareChannel = providerUrl.getBooleanOption(SHARED_SERVER, SHARED_SERVER_VAL_DEFAULT);
-
-        int minWorkerThread, maxWorkerThread;
-
-        if (shareChannel) {
-            minWorkerThread = providerUrl.getIntOption(MIN_THREAD, MIN_THREAD_SHARED_CHANNEL);
-            maxWorkerThread = providerUrl.getIntOption(MAX_THREAD, MAX_THREAD_SHARED_CHANNEL);
-        } else {
-            minWorkerThread = providerUrl.getIntOption(MIN_THREAD, MIN_THREAD_VAL_DEFAULT);
-            maxWorkerThread = providerUrl.getIntOption(MAX_THREAD, MAX_THREAD_VAL_DEFAULT);
-        }
-
-        networkThreadPoolExecutor = (networkThreadPoolExecutor != null && !networkThreadPoolExecutor.isShutdown()) ? networkThreadPoolExecutor
-                : new NetworkThreadPoolExecutor(minWorkerThread, maxWorkerThread, workerQueueSize,
-                new BasicThreadFactory.Builder().namingPattern(NettyServer.class.getSimpleName() + "-%d").daemon(true).build());
-        networkThreadPoolExecutor.prestartAllCoreThreads();
-
         channelManager = new NettyServerChannelManager(maxServerConn);
-
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
@@ -109,9 +92,29 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
         serverChannel = channelFuture.channel();
         state = ChannelState.ACTIVE;
 //        StatsUtils.registryStatisticCallback(this);
-        log.info("NettyServer ServerChannel finish Open: url=" + providerUrl);
+        log.info("Opened netty server channel for url [{}]" + providerUrl);
         log.info("Started netty server with port [{}]", providerUrl.getPort());
         return state.isActive();
+    }
+
+    private void createThreadPool() {
+        int workerQueueSize = providerUrl.getIntOption(WORK_QUEUE_SIZE, WORK_QUEUE_SIZE_VAL_DEFAULT);
+        boolean shareChannel = providerUrl.getBooleanOption(SHARED_SERVER, SHARED_SERVER_VAL_DEFAULT);
+        int minWorkerThread;
+        int maxWorkerThread;
+
+        if (shareChannel) {
+            minWorkerThread = providerUrl.getIntOption(MIN_THREAD, MIN_THREAD_SHARED_CHANNEL);
+            maxWorkerThread = providerUrl.getIntOption(MAX_THREAD, MAX_THREAD_SHARED_CHANNEL);
+        } else {
+            minWorkerThread = providerUrl.getIntOption(MIN_THREAD, MIN_THREAD_VAL_DEFAULT);
+            maxWorkerThread = providerUrl.getIntOption(MAX_THREAD, MAX_THREAD_VAL_DEFAULT);
+        }
+
+        networkThreadPoolExecutor = (networkThreadPoolExecutor != null && !networkThreadPoolExecutor.isShutdown()) ? networkThreadPoolExecutor
+                : new NetworkThreadPoolExecutor(minWorkerThread, maxWorkerThread, workerQueueSize,
+                new BasicThreadFactory.Builder().namingPattern(NettyServer.class.getSimpleName() + "-%d").daemon(true).build());
+        networkThreadPoolExecutor.prestartAllCoreThreads();
     }
 
     private NettyServerClientHandler createServerClientHandler() {
