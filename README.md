@@ -10,9 +10,9 @@ Please visit our website for more details.
 
 ## Requirements
 
-Before you can build this project, you must install JDK 8 on your machine:
+Before you can build this project, you must install JDK on your machine:
 
-You can install JDK by [SDK Man](https://sdkman.io/install).
+You can install JDK by [SDK Man](https://sdkman.io/install). e.g.
 
 ```
 sdk install java 8.0.312-zulu
