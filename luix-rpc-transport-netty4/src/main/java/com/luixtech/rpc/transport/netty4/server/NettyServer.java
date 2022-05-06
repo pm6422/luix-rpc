@@ -111,7 +111,8 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
             maxWorkerThread = providerUrl.getIntOption(MAX_THREAD, MAX_THREAD_VAL_DEFAULT);
         }
 
-        networkThreadPoolExecutor = (networkThreadPoolExecutor != null && !networkThreadPoolExecutor.isShutdown()) ? networkThreadPoolExecutor
+        networkThreadPoolExecutor = (networkThreadPoolExecutor != null && !networkThreadPoolExecutor.isShutdown())
+                ? networkThreadPoolExecutor
                 : new NetworkThreadPoolExecutor(minWorkerThread, maxWorkerThread, workerQueueSize,
                 new BasicThreadFactory.Builder().namingPattern(NettyServer.class.getSimpleName() + "-%d").daemon(true).build());
         networkThreadPoolExecutor.prestartAllCoreThreads();
