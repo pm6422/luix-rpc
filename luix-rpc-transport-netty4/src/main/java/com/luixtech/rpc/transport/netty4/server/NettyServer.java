@@ -98,24 +98,24 @@ public class NettyServer extends AbstractServer implements StatisticCallback {
     }
 
     private void createThreadPool() {
-        int workerQueueSize = providerUrl.getIntOption(WORK_QUEUE_SIZE, WORK_QUEUE_SIZE_VAL_DEFAULT);
-        boolean shareChannel = providerUrl.getBooleanOption(SHARED_SERVER, SHARED_SERVER_VAL_DEFAULT);
-        int minWorkerThread;
-        int maxWorkerThread;
+        boolean sharedChannel = providerUrl.getBooleanOption(SHARED_SERVER, SHARED_SERVER_VAL_DEFAULT);
+        int workQueueSize = providerUrl.getIntOption(WORK_QUEUE_SIZE, WORK_QUEUE_SIZE_VAL_DEFAULT);
+        int corePoolSize;
+        int maximumPoolSize;
 
-        if (shareChannel) {
-            minWorkerThread = providerUrl.getIntOption(MIN_THREAD, MIN_THREAD_SHARED_CHANNEL_VAL_DEFAULT);
-            maxWorkerThread = providerUrl.getIntOption(MAX_THREAD, MAX_THREAD_SHARED_CHANNEL_VAL_DEFAULT);
+        if (sharedChannel) {
+            corePoolSize = providerUrl.getIntOption(MIN_THREAD, MIN_THREAD_SHARED_CHANNEL_VAL_DEFAULT);
+            maximumPoolSize = providerUrl.getIntOption(MAX_THREAD, MAX_THREAD_SHARED_CHANNEL_VAL_DEFAULT);
         } else {
-            minWorkerThread = providerUrl.getIntOption(MIN_THREAD, MIN_THREAD_VAL_DEFAULT);
-            maxWorkerThread = providerUrl.getIntOption(MAX_THREAD, MAX_THREAD_VAL_DEFAULT);
+            corePoolSize = providerUrl.getIntOption(MIN_THREAD, MIN_THREAD_VAL_DEFAULT);
+            maximumPoolSize = providerUrl.getIntOption(MAX_THREAD, MAX_THREAD_VAL_DEFAULT);
         }
 
         networkThreadPoolExecutor = (networkThreadPoolExecutor != null && !networkThreadPoolExecutor.isShutdown())
                 ? networkThreadPoolExecutor
-                : new NetworkThreadPoolExecutor(minWorkerThread, maxWorkerThread, workerQueueSize,
+                : new NetworkThreadPoolExecutor(corePoolSize, maximumPoolSize, workQueueSize,
                 new BasicThreadFactory.Builder().namingPattern(NettyServer.class.getSimpleName() + "-%d").daemon(true).build());
-        // Immediately initialize corePoolSize number of threads
+        // Immediately initialize corePoolSize number of threads when the thread pool is created
         networkThreadPoolExecutor.prestartAllCoreThreads();
     }
 
