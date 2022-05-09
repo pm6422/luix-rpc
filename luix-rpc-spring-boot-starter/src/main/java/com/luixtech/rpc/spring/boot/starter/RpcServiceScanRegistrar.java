@@ -65,13 +65,13 @@ public class RpcServiceScanRegistrar implements ImportBeanDefinitionRegistrar {
                 .filter(StringUtils::isNotEmpty)
                 .distinct()
                 .collect(Collectors.toList());
+
         if (CollectionUtils.isEmpty(packagesToScan)) {
             String packageName = ClassUtils.getPackageName(metadata.getClassName());
             log.debug("Default RPC provider and consumer scan base package: [{}]", packageName);
             Assert.hasText(packageName, "No RPC provider and consumer scan base package!");
             return Collections.singletonList(packageName);
         } else {
-            Assert.notEmpty(packagesToScan, "User defined RPC provider and consumer scan base packages must NOT be empty!");
             log.debug("User defined RPC provider and consumer scan base packages: [{}]", packagesToScan);
         }
         return packagesToScan;
