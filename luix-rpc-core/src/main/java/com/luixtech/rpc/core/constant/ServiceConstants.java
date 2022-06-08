@@ -18,6 +18,10 @@ public interface ServiceConstants {
     String RETRY_COUNT                 = "retryCount";
     int    RETRY_COUNT_VAL_DEFAULT     = 0;
     String REQUEST_TIMEOUT             = "requestTimeout";
+    /**
+     * timeout超时参数设置，通常是这么设置的，对于要调用的系统要看看他平时调用要多久能返回，然后比正常的耗时设置的多个50%就可以了，
+     * 比如平时一般正常在100~200ms，偶尔高峰会在500ms，那你设置个timeout=800ms或者1s其实都可以。
+     */
     int    REQUEST_TIMEOUT_VAL_DEFAULT = 500;
     String MAX_PAYLOAD                 = "maxPayload";
     /**
