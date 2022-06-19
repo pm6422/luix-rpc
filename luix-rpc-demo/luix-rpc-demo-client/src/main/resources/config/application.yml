@@ -154,7 +154,7 @@ application:
         api-include-pattern: /api/**
         open-api-include-pattern: /open-api/**
         management-include-pattern: /management/**
-        title: LUI️✘ RPC Web Center
+        title: LUI️✘ RPC Demo Client
         version: ${app.version}
         terms-of-service-url:
         contact-name: Louis
