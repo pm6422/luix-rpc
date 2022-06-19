@@ -33,7 +33,7 @@ import java.util.Map;
  */
 @Slf4j
 @Aspect
-@ConditionalOnProperty(prefix = "application.aop-logging", value = "enabled", havingValue = "true")
+@ConditionalOnProperty("application.aop-logging.enabled")
 @Configuration
 public class AopLoggingAspect {
 

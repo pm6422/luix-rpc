@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  * http://www.imooc.com/article/297283
  */
 @Aspect
-@ConditionalOnProperty(prefix = "application.elapsed-time-logging", value = "enabled", havingValue = "true")
+@ConditionalOnProperty("application.elapsed-time-logging.enabled")
 @Configuration
 public class ElapsedTimeLoggingAspect {
 
