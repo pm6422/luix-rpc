@@ -95,6 +95,9 @@ spring:
             max-request-size: 30MB
     banner:
         location: classpath:config/banner-company.txt
+    mongodb:
+        embedded:
+            version: 4.0.0
     data:
         mongodb:
             auto-index-creation: false
