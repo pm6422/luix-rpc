@@ -1,7 +1,7 @@
 package com.luixtech.rpc.webcenter.domain;
 
 import com.luixtech.rpc.webcenter.domain.base.AbstractAuditableDomain;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -24,12 +24,12 @@ public class UserAuthority extends AbstractAuditableDomain implements Serializab
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Indexed
     private String userId;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     private String authorityName;
 

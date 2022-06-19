@@ -1,12 +1,12 @@
 package com.luixtech.rpc.democommon.domain;
 
-import io.swagger.annotations.ApiModelProperty;
+import com.luixtech.rpc.democommon.domain.base.AbstractAuditableDomain;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.bson.types.Binary;
-import com.luixtech.rpc.democommon.domain.base.AbstractAuditableDomain;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -25,12 +25,12 @@ public class UserProfilePhoto extends AbstractAuditableDomain implements Seriali
 
     private static final long serialVersionUID = -8375847941374800940L;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Indexed(unique = true)
     private String userId;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     private Binary profilePhoto;
 

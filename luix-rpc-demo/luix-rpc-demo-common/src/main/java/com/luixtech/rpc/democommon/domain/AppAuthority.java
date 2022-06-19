@@ -1,6 +1,6 @@
 package com.luixtech.rpc.democommon.domain;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -24,13 +24,13 @@ public class AppAuthority implements Serializable {
     @Id
     private String id;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Size(min = 2, max = 20)
     @Indexed
     private String appName;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Size(min = 2, max = 20)
     @Indexed

@@ -2,15 +2,15 @@ package com.luixtech.rpc.webcenter.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.luixtech.rpc.webcenter.dto.MethodInvocation;
-import com.luixtech.rpc.webcenter.service.RpcRegistryService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import com.luixtech.rpc.core.client.proxy.Proxy;
 import com.luixtech.rpc.core.client.stub.ConsumerStub;
 import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import com.luixtech.rpc.webcenter.dto.MethodInvocation;
+import com.luixtech.rpc.webcenter.service.RpcRegistryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,9 +35,9 @@ public class RpcUniversalInvocationController {
     @Resource
     private RpcRegistryService rpcRegistryService;
 
-    @ApiOperation("direct address invocation")
+    @Operation(summary = "direct address invocation")
     @PostMapping("/api/rpc-invocations/invoke")
-    public String invoke(@ApiParam(value = "methodInvocation", required = true)
+    public String invoke(@Parameter(description = "methodInvocation", required = true)
                          @Valid @RequestBody MethodInvocation methodInvocation) throws JsonProcessingException {
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(methodInvocation.getRegistryIdentity(),
                 methodInvocation.getProviderUrl(), methodInvocation.getInterfaceName(), methodInvocation.getAttributes());
@@ -47,9 +47,9 @@ public class RpcUniversalInvocationController {
         return new ObjectMapper().writeValueAsString(result);
     }
 
-    @ApiOperation("discover address invocation by file")
+    @Operation(summary = "discover address invocation by file")
     @PostMapping("/api/rpc-invocations/invoke-by-file")
-    public String invokeByFile(@ApiParam(value = "file", required = true) @RequestPart MultipartFile file) throws IOException {
+    public String invokeByFile(@Parameter(description = "file", required = true) @RequestPart MultipartFile file) throws IOException {
         String input = StreamUtils.copyToString(file.getInputStream(), Charset.defaultCharset());
         MethodInvocation methodInvocation = new ObjectMapper().readValue(input, MethodInvocation.class);
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(methodInvocation.getRegistryIdentity(),

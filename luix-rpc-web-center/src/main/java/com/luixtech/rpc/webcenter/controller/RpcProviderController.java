@@ -1,21 +1,6 @@
 package com.luixtech.rpc.webcenter.controller;
 
 import com.codahale.metrics.annotation.Timed;
-import com.luixtech.rpc.webcenter.component.HttpHeaderCreator;
-import com.luixtech.rpc.webcenter.config.ApplicationConstants;
-import com.luixtech.rpc.webcenter.domain.Authority;
-import com.luixtech.rpc.webcenter.domain.RpcProvider;
-import com.luixtech.rpc.webcenter.dto.OptionsDTO;
-import com.luixtech.rpc.webcenter.dto.ProviderActivateDTO;
-import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
-import com.luixtech.rpc.webcenter.repository.RpcProviderRepository;
-import com.luixtech.rpc.webcenter.service.RpcProviderService;
-import com.luixtech.rpc.webcenter.service.RpcRegistryService;
-import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import com.luixtech.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import com.luixtech.rpc.core.client.proxy.Proxy;
 import com.luixtech.rpc.core.client.stub.ConsumerStub;
@@ -24,7 +9,23 @@ import com.luixtech.rpc.core.server.stub.MethodMeta;
 import com.luixtech.rpc.core.server.stub.ProviderStub;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import com.luixtech.rpc.webcenter.component.HttpHeaderCreator;
+import com.luixtech.rpc.webcenter.config.ApplicationConstants;
+import com.luixtech.rpc.webcenter.domain.Authority;
+import com.luixtech.rpc.webcenter.domain.RpcProvider;
 import com.luixtech.rpc.webcenter.dto.OptionMetaDTO;
+import com.luixtech.rpc.webcenter.dto.OptionsDTO;
+import com.luixtech.rpc.webcenter.dto.ProviderActivateDTO;
+import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
+import com.luixtech.rpc.webcenter.repository.RpcProviderRepository;
+import com.luixtech.rpc.webcenter.service.RpcProviderService;
+import com.luixtech.rpc.webcenter.service.RpcRegistryService;
+import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -57,34 +58,34 @@ public class RpcProviderController {
     @Resource
     private HttpHeaderCreator     httpHeaderCreator;
 
-    @ApiOperation("find provider by ID")
+    @Operation(summary = "find provider by ID")
     @GetMapping("/api/rpc-providers/{id}")
     @Timed
-    public ResponseEntity<RpcProvider> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
+    public ResponseEntity<RpcProvider> findById(@Parameter(description = "ID", required = true) @PathVariable String id) {
         RpcProvider domain = rpcProviderRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(domain);
     }
 
-    @ApiOperation("find provider list")
+    @Operation(summary = "find provider list")
     @GetMapping("/api/rpc-providers")
     @Timed
     public ResponseEntity<List<RpcProvider>> findProviders(
             Pageable pageable,
-            @ApiParam(value = "registry url identity", required = true, defaultValue = ApplicationConstants.DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "application name") @RequestParam(value = "application", required = false) String application,
-            @ApiParam(value = "address") @RequestParam(value = "address", required = false) String address,
-            @ApiParam(value = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName,
-            @ApiParam(value = "active flag") @RequestParam(value = "active", required = false) Boolean active) {
+            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
+            @Parameter(description = "application name") @RequestParam(value = "application", required = false) String application,
+            @Parameter(description = "address") @RequestParam(value = "address", required = false) String address,
+            @Parameter(description = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName,
+            @Parameter(description = "active flag") @RequestParam(value = "active", required = false) Boolean active) {
         Page<RpcProvider> list = rpcProviderService.find(pageable, registryIdentity, application, address, interfaceName, active);
         return ResponseEntity.ok().headers(HttpHeaderUtils.generatePageHeaders(list)).body(list.getContent());
     }
 
-    @ApiOperation("find all methods of provider")
+    @Operation(summary = "find all methods of provider")
     @GetMapping("/api/rpc-providers/methods")
     @Timed
     public ResponseEntity<List<MethodMeta>> findMethods(
-            @ApiParam(value = "registry url identity", required = true, defaultValue = ApplicationConstants.DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
+            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
+            @Parameter(description = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
         // Use specified provider url
         UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
@@ -93,12 +94,12 @@ public class RpcProviderController {
         return ResponseEntity.ok().body(result);
     }
 
-    @ApiOperation(value = "check health of provider", notes = "There is no service discovery in the direct connection mode, even the inactive provider can be called successfully")
+    @Operation(summary = "check health of provider", description = "There is no service discovery in the direct connection mode, even the inactive provider can be called successfully")
     @GetMapping("/api/rpc-providers/health")
     @Timed
     public ResponseEntity<String> health(
-            @ApiParam(value = "registry url identity", required = true, defaultValue = ApplicationConstants.DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
+            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
+            @Parameter(description = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
         // Use specified provider url
         UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(registryIdentity, providerUrl);
@@ -120,7 +121,7 @@ public class RpcProviderController {
         return proxyFactory.createUniversalInvocationHandler(consumerStub);
     }
 
-    @ApiOperation("activate provider")
+    @Operation(summary = "activate provider")
     @PutMapping("/api/rpc-providers/activate")
     @Secured({Authority.ADMIN})
     @Timed
@@ -131,7 +132,7 @@ public class RpcProviderController {
                 .headers(httpHeaderCreator.createSuccessHeader("SM1012")).build();
     }
 
-    @ApiOperation("deactivate provider")
+    @Operation(summary = "deactivate provider")
     @PutMapping("/api/rpc-providers/deactivate")
     @Secured({Authority.ADMIN})
     @Timed
@@ -167,10 +168,10 @@ public class RpcProviderController {
         }
     }
 
-    @ApiOperation("get provider options")
+    @Operation(summary = "get provider options")
     @GetMapping("/api/rpc-providers/options")
     public List<OptionMetaDTO> options(
-            @ApiParam(value = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
+            @Parameter(description = "provider url") @RequestParam(value = "providerUrl", required = false) String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
         Map<String, String> options = providerUrl.getOptions();
 
@@ -186,11 +187,11 @@ public class RpcProviderController {
         return all;
     }
 
-    @ApiOperation("save options")
+    @Operation(summary = "save options")
     @PutMapping("/api/rpc-providers/options")
     @Secured({Authority.ADMIN})
     @Timed
-    public ResponseEntity<Void> saveOptions(@ApiParam(value = "optionsDTO", required = true)
+    public ResponseEntity<Void> saveOptions(@Parameter(description = "optionsDTO", required = true)
                                             @Valid @RequestBody OptionsDTO optionsDTO) {
         Url providerUrl = Url.valueOf(optionsDTO.getUrl());
         for (OptionMetaDTO next : optionsDTO.getOptions()) {

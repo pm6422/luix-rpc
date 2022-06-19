@@ -1,12 +1,12 @@
 package com.luixtech.rpc.democlient.controller;
 
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.core.client.annotation.RpcConsumer;
 import com.luixtech.rpc.democommon.domain.App;
 import com.luixtech.rpc.democommon.domain.Authority;
 import com.luixtech.rpc.democommon.service.AppService;
 import com.luixtech.rpc.democommon.service.AuthorityService;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -38,7 +38,7 @@ public class TestController {
     @RpcConsumer(providerAddresses = "${application.url.appServiceProviderUrl}", form = "f2")
     private AppService         appService;
 
-    @ApiOperation("test kryo serialization and deserialization")
+    @Operation(summary = "test kryo serialization and deserialization")
     @GetMapping("/api/authority-names")
     public ResponseEntity<List<String>> find() {
         Query query = Query.query(Criteria.where("name").in(ADMIN, USER));
@@ -46,7 +46,7 @@ public class TestController {
         return ResponseEntity.ok(authorities);
     }
 
-    @ApiOperation("direct connect")
+    @Operation(summary = "direct connect")
     @GetMapping("/api/tests/direct-url")
     public List<App> directUrl() {
         Pageable pageable = PageRequest.of(0, 10);

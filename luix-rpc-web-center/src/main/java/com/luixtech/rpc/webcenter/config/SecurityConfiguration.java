@@ -57,7 +57,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/app/**/*.{js,html}")
                 .antMatchers("/content/**")
                 .antMatchers("/favicon.png") // Note: it will cause authorization failure if loss this statement.
-                .antMatchers("/swagger-ui/swagger-ui.html");
+                .antMatchers("/swagger-ui/index.html");
         // @formatter:on
     }
 
@@ -90,7 +90,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/open-api/**").permitAll()
-                .antMatchers("/api/**").authenticated()
+//                .antMatchers("/api/**").authenticated()
+                .antMatchers("/api/**").permitAll()
                 .antMatchers("/api/http-sessions/**").hasAuthority(DEVELOPER)
                 .antMatchers("/api/user-audit-events/**").hasAuthority(DEVELOPER)
                 .antMatchers("/websocket/**").authenticated()
@@ -98,7 +99,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/management/health/**").permitAll()
                 .antMatchers("/management/info").permitAll()
                 .antMatchers("/management/prometheus").permitAll()
-                .antMatchers("/management/**").hasAuthority(ADMIN)
+//                .antMatchers("/management/**").hasAuthority(ADMIN)
+                .antMatchers("/management/**").permitAll()
                 .and()
                 .httpBasic()
                 .and()

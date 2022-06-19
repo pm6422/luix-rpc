@@ -1,11 +1,11 @@
 package com.luixtech.rpc.democommon.domain;
 
-import io.swagger.annotations.ApiModelProperty;
+import com.luixtech.rpc.democommon.domain.base.AbstractAuditableDomain;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import com.luixtech.rpc.democommon.domain.base.AbstractAuditableDomain;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -25,13 +25,13 @@ public class Dict extends AbstractAuditableDomain implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Size(min = 2, max = 50)
     @Indexed(unique = true)
     private String dictCode;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Size(min = 2, max = 50)
     private String dictName;

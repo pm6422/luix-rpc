@@ -1,13 +1,13 @@
 package com.luixtech.rpc.demoserver.controller;
 
-import com.luixtech.rpc.demoserver.repository.AppRepository;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.democommon.domain.App;
 import com.luixtech.rpc.democommon.service.AppService;
 import com.luixtech.rpc.demoserver.component.HttpHeaderCreator;
 import com.luixtech.rpc.demoserver.exception.DataNotFoundException;
+import com.luixtech.rpc.demoserver.repository.AppRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -33,46 +33,46 @@ import static com.luixtech.rpc.demoserver.utils.HttpHeaderUtils.generatePageHead
 public class AppController {
 
     @Resource
-    private AppRepository appRepository;
+    private AppRepository     appRepository;
     @Resource(name = "appService1Impl")
-    private AppService    appService;
+    private AppService        appService;
     @Resource
     private HttpHeaderCreator httpHeaderCreator;
 
-    @ApiOperation("create application")
+    @Operation(summary = "create application")
     @PostMapping("/api/apps")
-    public ResponseEntity<Void> create(@ApiParam(value = "application", required = true) @Valid @RequestBody App domain) {
+    public ResponseEntity<Void> create(@Parameter(description = "application", required = true) @Valid @RequestBody App domain) {
         log.debug("REST request to create app: {}", domain);
         appService.insert(domain);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .headers(httpHeaderCreator.createSuccessHeader("SM1001", domain.getName())).build();
     }
 
-    @ApiOperation("find application list")
+    @Operation(summary = "find application list")
     @GetMapping("/api/apps")
     public ResponseEntity<List<App>> find(Pageable pageable) {
         Page<App> apps = appRepository.findAll(pageable);
         return ResponseEntity.ok().headers(generatePageHeaders(apps)).body(apps.getContent());
     }
 
-    @ApiOperation("find application by name")
+    @Operation(summary = "find application by name")
     @GetMapping("/api/apps/{name}")
-    public ResponseEntity<App> findById(@ApiParam(value = "application name", required = true) @PathVariable String name) {
+    public ResponseEntity<App> findById(@Parameter(description = "application name", required = true) @PathVariable String name) {
         App app = appRepository.findById(name).orElseThrow(() -> new DataNotFoundException(name));
         return ResponseEntity.ok(app);
     }
 
-    @ApiOperation("update application")
+    @Operation(summary = "update application")
     @PutMapping("/api/apps")
-    public ResponseEntity<Void> update(@ApiParam(value = "new application", required = true) @Valid @RequestBody App domain) {
+    public ResponseEntity<Void> update(@Parameter(description = "new application", required = true) @Valid @RequestBody App domain) {
         log.debug("REST request to update app: {}", domain);
         appService.update(domain);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getName())).build();
     }
 
-    @ApiOperation(value = "delete application by name", notes = "The data may be referenced by other data, and some problems may occur after deletion")
+    @Operation(summary = "delete application by name", description = "The data may be referenced by other data, and some problems may occur after deletion")
     @DeleteMapping("/api/apps/{name}")
-    public ResponseEntity<Void> delete(@ApiParam(value = "application name", required = true) @PathVariable String name) {
+    public ResponseEntity<Void> delete(@Parameter(description = "application name", required = true) @PathVariable String name) {
         log.debug("REST request to delete app: {}", name);
         if (!appRepository.existsById(name)) {
             throw new DataNotFoundException(name);

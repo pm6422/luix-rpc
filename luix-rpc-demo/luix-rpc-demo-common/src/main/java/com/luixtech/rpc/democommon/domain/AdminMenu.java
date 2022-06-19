@@ -2,7 +2,7 @@ package com.luixtech.rpc.democommon.domain;
 
 import com.luixtech.rpc.democommon.domain.base.AbstractAuditableDomain;
 import com.luixtech.rpc.democommon.dto.AdminMenuTreeDTO;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -29,29 +29,29 @@ public class AdminMenu extends AbstractAuditableDomain implements Serializable {
     public static final  String FIELD_LEVEL      = "level";
     public static final  String FIELD_SEQUENCE   = "sequence";
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Size(min = 1, max = 30)
     @Pattern(regexp = "^[a-z0-9-]+$", message = "{EP5901}")
     @Indexed(unique = true)
     private String code;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Size(min = 1, max = 30)
     private String name;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @Min(1)
     @Max(9)
     private Integer level;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Size(min = 3, max = 200)
     private String url;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @Min(1)
     @Max(999)
     private Integer sequence;

@@ -1,7 +1,7 @@
 package com.luixtech.rpc.democommon.domain;
 
 import com.luixtech.rpc.democommon.domain.base.AbstractAuditableDomain;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -26,22 +26,22 @@ public class DictItem extends AbstractAuditableDomain implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Indexed
     private String dictCode;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private String dictName;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Size(min = 2, max = 50)
     @Pattern(regexp = "^[a-z0-9-]+$", message = "{EP5901}")
     @Indexed
     private String dictItemCode;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Size(min = 2, max = 50)
     private String dictItemName;

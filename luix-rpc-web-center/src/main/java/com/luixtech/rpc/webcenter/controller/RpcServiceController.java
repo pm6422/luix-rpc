@@ -1,9 +1,6 @@
 package com.luixtech.rpc.webcenter.controller;
 
 import com.codahale.metrics.annotation.Timed;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.webcenter.component.HttpHeaderCreator;
 import com.luixtech.rpc.webcenter.domain.RpcService;
 import com.luixtech.rpc.webcenter.dto.InterfaceActivateDTO;
@@ -13,6 +10,10 @@ import com.luixtech.rpc.webcenter.repository.RpcServiceRepository;
 import com.luixtech.rpc.webcenter.service.RpcConsumerService;
 import com.luixtech.rpc.webcenter.service.RpcProviderService;
 import com.luixtech.rpc.webcenter.service.RpcServiceService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -44,10 +45,10 @@ public class RpcServiceController {
     @Resource
     private HttpHeaderCreator     httpHeaderCreator;
 
-    @ApiOperation("find service by ID")
+    @Operation(summary = "find service by ID")
     @GetMapping("/api/rpc-services/{id}")
     @Timed
-    public ResponseEntity<RpcService> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
+    public ResponseEntity<RpcService> findById(@Parameter(description = "ID", required = true) @PathVariable String id) {
         RpcService domain = rpcServiceRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         if (rpcProviderService.existsService(domain.getRegistryIdentity(), domain.getInterfaceName(), true)) {
             domain.setProviding(true);
@@ -60,13 +61,13 @@ public class RpcServiceController {
         return ResponseEntity.ok(domain);
     }
 
-    @ApiOperation("find service")
+    @Operation(summary = "find service")
     @GetMapping("/api/rpc-services/service")
     @Timed
     public ResponseEntity<RpcService> find(
-            @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
+            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG))
             @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
+            @Parameter(description = "interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
         String id = DigestUtils.md5DigestAsHex((interfaceName + "@" + registryIdentity).getBytes());
         RpcService domain = rpcServiceRepository.findById(id).orElseThrow(() -> new DataNotFoundException(interfaceName));
         if (rpcProviderService.existsService(registryIdentity, domain.getInterfaceName(), true)) {
@@ -80,14 +81,14 @@ public class RpcServiceController {
         return ResponseEntity.ok(domain);
     }
 
-    @ApiOperation("find service list")
+    @Operation(summary = "find service list")
     @GetMapping("/api/rpc-services")
     @Timed
     public ResponseEntity<List<RpcService>> findRpcServices(
             Pageable pageable,
-            @ApiParam(value = "registry url identity", required = true, defaultValue = DEFAULT_REG)
+            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG))
             @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
+            @Parameter(description = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName) {
         Page<RpcService> results = rpcServiceService.find(pageable, registryIdentity, interfaceName);
         if (!results.isEmpty()) {
             results.getContent().forEach(domain -> {
@@ -104,7 +105,7 @@ public class RpcServiceController {
         return ResponseEntity.ok().headers(generatePageHeaders(results)).body(results.getContent());
     }
 
-    @ApiOperation("activate all providers of the interface")
+    @Operation(summary = "activate all providers of the interface")
     @PutMapping("/api/rpc-services/activate")
     public ResponseEntity<Void> activate(@Valid @RequestBody InterfaceActivateDTO activateDTO) {
         rpcProviderService.find(activateDTO.getRegistryIdentity(), activateDTO.getInterfaceName(), false)
@@ -117,7 +118,7 @@ public class RpcServiceController {
                 .headers(httpHeaderCreator.createSuccessHeader("SM1012")).build();
     }
 
-    @ApiOperation("deactivate all providers of the interface")
+    @Operation(summary = "deactivate all providers of the interface")
     @PutMapping("/api/rpc-services/deactivate")
     @Timed
     public ResponseEntity<Void> deactivate(@Valid @RequestBody InterfaceActivateDTO activateDTO) {

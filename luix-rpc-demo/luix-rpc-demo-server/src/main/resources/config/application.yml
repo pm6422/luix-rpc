@@ -142,6 +142,10 @@ luix:
     protocol:
         port: 1${server.port}
         serializer: hessian2
+springdoc: # https://springdoc.org/#migrating-from-springfox
+    api-docs:
+        enabled: true
+    show-actuator: true
 # ===================================================================
 # Application specific properties
 # ===================================================================
@@ -149,22 +153,18 @@ application:
     http:
         cache: # Used by the CachingHttpHeadersFilter
             expired-after: 31
-    swagger:
-        enabled: true
-        api:
-            title: RPC App Server API
-            description: RPC App Server API
-        open-api:
-            title: RPC App Server Open API
-            description: RPC App Server API
+    api-docs:
+        api-include-pattern: /api/**
+        open-api-include-pattern: /open-api/**
+        management-include-pattern: /management/**
+        title: LUI️✘ RPC Web Center
         version: ${app.version}
-        terms-of-service-url: http://www.luixtech.com
+        terms-of-service-url:
         contact-name: Louis
-        contact-url: http://www.luixtech.com
+        contact-url:
         contact-email: louis@luixtech.com
-        license: 1.0
-        license-url: http://www.apache.org/licenses/LICENSE-2.0.html
-        host:
+        license: Unlicensed
+        license-url:
     aop-logging:
         enabled: true
         method-whitelist-mode: false

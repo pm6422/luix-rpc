@@ -1,10 +1,6 @@
 package com.luixtech.rpc.democlient.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.MapUtils;
 import com.luixtech.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import com.luixtech.rpc.core.client.proxy.Proxy;
 import com.luixtech.rpc.core.client.stub.ConsumerStub;
@@ -12,6 +8,10 @@ import com.luixtech.rpc.core.client.stub.ConsumerStubFactory;
 import com.luixtech.rpc.core.client.stub.ConsumerStubHolder;
 import com.luixtech.rpc.democlient.dto.MethodInvocation;
 import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -24,10 +24,10 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.luixtech.rpc.core.constant.ProtocolConstants.SERIALIZER;
 import static com.luixtech.rpc.core.constant.ServiceConstants.*;
 import static com.luixtech.rpc.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
-import static com.luixtech.rpc.core.constant.ProtocolConstants.SERIALIZER;
 
 /**
  * REST controller for RPC calling.
@@ -39,9 +39,9 @@ public class RpcUniversalInvocationController {
     @Resource
     private LuixProperties luixProperties;
 
-    @ApiOperation("discover address invocation")
+    @Operation(summary = "discover address invocation")
     @PostMapping("/api/rpc/universal-invocation")
-    public String universalInvoke(@ApiParam(value = "file", required = true) @RequestPart MultipartFile file) throws IOException {
+    public String universalInvoke(@Parameter(description = "file", required = true) @RequestPart MultipartFile file) throws IOException {
         String input = StreamUtils.copyToString(file.getInputStream(), Charset.defaultCharset());
         MethodInvocation methodInvocation = new ObjectMapper().readValue(input, MethodInvocation.class);
         ConsumerStub<?> consumerStub = getConsumerStub(methodInvocation);

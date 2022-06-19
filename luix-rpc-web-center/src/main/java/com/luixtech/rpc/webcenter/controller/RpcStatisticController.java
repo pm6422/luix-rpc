@@ -1,12 +1,12 @@
 package com.luixtech.rpc.webcenter.controller;
 
 import com.codahale.metrics.annotation.Timed;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.webcenter.dto.StatisticDTO;
 import com.luixtech.rpc.webcenter.service.RpcStatisticService;
 import com.luixtech.rpc.webcenter.task.polling.queue.InMemoryAsyncTaskQueue;
 import com.luixtech.rpc.webcenter.utils.TraceIdUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +25,7 @@ public class RpcStatisticController {
     @Resource
     private RpcStatisticService rpcStatisticService;
 
-    @ApiOperation("get RPC statistic data")
+    @Operation(summary = "get RPC statistic data")
     @GetMapping("api/rpc-statistics/data")
     @Timed
     public DeferredResult<ResponseEntity<StatisticDTO>> getStatistics() {

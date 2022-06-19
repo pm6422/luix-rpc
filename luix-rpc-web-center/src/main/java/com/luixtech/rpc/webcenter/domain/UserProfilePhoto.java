@@ -1,7 +1,7 @@
 package com.luixtech.rpc.webcenter.domain;
 
 import com.luixtech.rpc.webcenter.domain.base.AbstractAuditableDomain;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,12 +25,12 @@ public class UserProfilePhoto extends AbstractAuditableDomain implements Seriali
 
     private static final long serialVersionUID = -8375847941374800940L;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Indexed(unique = true)
     private String userId;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     private Binary profilePhoto;
 

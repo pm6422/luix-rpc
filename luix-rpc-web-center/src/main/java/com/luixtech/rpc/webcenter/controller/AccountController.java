@@ -9,14 +9,6 @@ import com.luixtech.rpc.webcenter.dto.LoginDTO;
 import com.luixtech.rpc.webcenter.dto.ManagedUserDTO;
 import com.luixtech.rpc.webcenter.dto.ResetKeyAndPasswordDTO;
 import com.luixtech.rpc.webcenter.dto.UserNameAndPasswordDTO;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
-import com.luixtech.rpc.webcenter.domain.*;
-import com.luixtech.rpc.webcenter.dto.*;
 import com.luixtech.rpc.webcenter.event.LogoutEvent;
 import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.repository.UserAuthorityRepository;
@@ -29,6 +21,13 @@ import com.luixtech.rpc.webcenter.service.UserProfilePhotoService;
 import com.luixtech.rpc.webcenter.service.UserService;
 import com.luixtech.rpc.webcenter.utils.RandomUtils;
 import com.luixtech.rpc.webcenter.utils.SecurityUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -76,15 +75,15 @@ public class AccountController {
     @Resource
     private              MailService                  mailService;
     @Resource
-    private ApplicationEventPublisher applicationEventPublisher;
+    private              ApplicationEventPublisher    applicationEventPublisher;
     @Resource
-    private HttpHeaderCreator         httpHeaderCreator;
+    private              HttpHeaderCreator            httpHeaderCreator;
     @Resource
-    private TokenProvider             tokenProvider;
+    private              TokenProvider                tokenProvider;
     @Resource
     private              AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    @ApiOperation("authenticate login")
+    @Operation(summary = "authenticate login")
     @PostMapping("/open-api/accounts/authenticate")
     public ResponseEntity<String> authorize(@Valid @RequestBody LoginDTO loginDTO) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
@@ -100,7 +99,7 @@ public class AccountController {
         return new ResponseEntity<>(jwt, httpHeaders, HttpStatus.OK);
     }
 
-    @ApiOperation("retrieve current user")
+    @Operation(summary = "retrieve current user")
     @GetMapping("/open-api/accounts/user")
     public ResponseEntity<User> getCurrentUser() {
         String currentUserName = SecurityUtils.getCurrentUserName();
@@ -116,16 +115,16 @@ public class AccountController {
         return ResponseEntity.ok().body(user);
     }
 
-    @ApiOperation("logout")
+    @Operation(summary = "logout")
     @PostMapping("/api/accounts/logout")
     public void logout() {
         applicationEventPublisher.publishEvent(new LogoutEvent(this));
     }
 
-    @ApiOperation("register a new user and send an activation email")
+    @Operation(summary = "register a new user and send an activation email")
     @PostMapping("/open-api/accounts/register")
     public ResponseEntity<Void> registerAccount(
-            @ApiParam(value = "user", required = true) @Valid @RequestBody ManagedUserDTO dto,
+            @Parameter(description = "user", required = true) @Valid @RequestBody ManagedUserDTO dto,
             HttpServletRequest request) {
         log.debug("REST request to register user: {}", dto);
         User newUser = userService.insert(dto.toUser(), dto.getPassword());
@@ -134,23 +133,23 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.CREATED).headers(headers).build();
     }
 
-    @ApiOperation("activate the account according to the activation code")
+    @Operation(summary = "activate the account according to the activation code")
     @GetMapping("/open-api/accounts/activate/{key:[0-9]+}")
-    public void activateAccount(@ApiParam(value = "activation code", required = true) @PathVariable String key) {
+    public void activateAccount(@Parameter(description = "activation code", required = true) @PathVariable String key) {
         userService.activateRegistration(key).orElseThrow(() -> new DataNotFoundException(key));
     }
 
-    @ApiOperation("retrieve a list of permission values")
+    @Operation(summary = "retrieve a list of permission values")
     @GetMapping("/api/accounts/authority-names")
     public ResponseEntity<List<String>> getAuthorityNames(
-            @ApiParam(allowableValues = "false,true,null") @RequestParam(value = "enabled", required = false) Boolean enabled) {
+            @Parameter(schema = @Schema(allowableValues = {"false", "true", "null"})) @RequestParam(value = "enabled", required = false) Boolean enabled) {
         List<String> authorities = authorityService.find(enabled).stream().map(Authority::getName).collect(Collectors.toList());
         return ResponseEntity.ok(authorities);
     }
 
-    @ApiOperation("update current user")
+    @Operation(summary = "update current user")
     @PutMapping("/api/accounts/user")
-    public ResponseEntity<Void> updateCurrentAccount(@ApiParam(value = "new user", required = true) @Valid @RequestBody User domain) {
+    public ResponseEntity<Void> updateCurrentAccount(@Parameter(description = "new user", required = true) @Valid @RequestBody User domain) {
         // For security reason
         User currentUser = userService.findOneByUserName(SecurityUtils.getCurrentUserName());
         domain.setId(currentUser.getId());
@@ -159,9 +158,9 @@ public class AccountController {
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getUserName())).build();
     }
 
-    @ApiOperation("modify the password of the current user")
+    @Operation(summary = "modify the password of the current user")
     @PutMapping("/api/accounts/password")
-    public ResponseEntity<Void> changePassword(@ApiParam(value = "new password", required = true) @RequestBody @Valid UserNameAndPasswordDTO dto) {
+    public ResponseEntity<Void> changePassword(@Parameter(description = "new password", required = true) @RequestBody @Valid UserNameAndPasswordDTO dto) {
         // For security reason
         dto.setUserName(SecurityUtils.getCurrentUserName());
         userService.changePassword(dto);
@@ -170,32 +169,32 @@ public class AccountController {
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", "password")).build();
     }
 
-    @ApiOperation("send reset password email")
+    @Operation(summary = "send reset password email")
     @PostMapping("/open-api/accounts/reset-password/init")
-    public ResponseEntity<Void> requestPasswordReset(@ApiParam(value = "email", required = true) @RequestBody String email,
+    public ResponseEntity<Void> requestPasswordReset(@Parameter(description = "email", required = true) @RequestBody String email,
                                                      HttpServletRequest request) {
         User user = userService.requestPasswordReset(email, RandomUtils.generateResetKey());
         mailService.sendPasswordResetMail(user, getRequestUrl(request));
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("NM2002")).build();
     }
 
-    @ApiOperation("reset password")
+    @Operation(summary = "reset password")
     @PostMapping("/open-api/accounts/reset-password/finish")
-    public ResponseEntity<Void> finishPasswordReset(@ApiParam(value = "reset code and new password", required = true) @Valid @RequestBody ResetKeyAndPasswordDTO dto) {
+    public ResponseEntity<Void> finishPasswordReset(@Parameter(description = "reset code and new password", required = true) @Valid @RequestBody ResetKeyAndPasswordDTO dto) {
         userService.completePasswordReset(dto.getNewPassword(), dto.getKey());
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("NM2003")).build();
     }
 
-    @ApiOperation("upload current user profile picture")
+    @Operation(summary = "upload current user profile picture")
     @PostMapping("/api/accounts/profile-photo/upload")
-    public void uploadProfilePhoto(@ApiParam(value = "file Description", required = true) @RequestPart String description,
-                                   @ApiParam(value = "user profile picture", required = true) @RequestPart MultipartFile file) throws IOException {
+    public void uploadProfilePhoto(@Parameter(description = "file Description", required = true) @RequestPart String description,
+                                   @Parameter(description = "user profile picture", required = true) @RequestPart MultipartFile file) throws IOException {
         log.debug("Upload profile with file name {} and description {}", file.getOriginalFilename(), description);
         User user = userService.findOneByUserName(SecurityUtils.getCurrentUserName());
         userProfilePhotoService.save(user, file.getBytes());
     }
 
-    @ApiOperation("download user profile picture")
+    @Operation(summary = "download user profile picture")
     @GetMapping("/api/accounts/profile-photo/download")
     public ResponseEntity<org.springframework.core.io.Resource> downloadProfilePhoto() {
         String currentUserName = SecurityUtils.getCurrentUserName();
@@ -217,7 +216,7 @@ public class AccountController {
 //        FileUtils.writeLines(outFile, strList);
     }
 
-    @ApiOperation("retrieve the current user avatar")
+    @Operation(summary = "retrieve the current user avatar")
     @GetMapping("/api/accounts/profile-photo")
     public ModelAndView getProfilePhoto() {
         // @RestController下使用return forwardUrl不好使

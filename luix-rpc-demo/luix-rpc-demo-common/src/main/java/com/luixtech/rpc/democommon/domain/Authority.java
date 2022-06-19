@@ -1,6 +1,6 @@
 package com.luixtech.rpc.democommon.domain;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,7 +35,7 @@ public class Authority implements Serializable {
 
     public static final String SYSTEM_ACCOUNT = "system";
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Size(min = 3, max = 16)
     @Pattern(regexp = "^[A-Z_]+$", message = "{EP5902}")

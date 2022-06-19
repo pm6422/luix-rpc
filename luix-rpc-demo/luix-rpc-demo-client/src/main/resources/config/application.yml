@@ -136,6 +136,10 @@ luix:
     protocol:
         port: 1${server.port}
         serializer: hessian2
+springdoc: # https://springdoc.org/#migrating-from-springfox
+    api-docs:
+        enabled: true
+    show-actuator: true
 # ===================================================================
 # Application specific properties
 # ===================================================================
@@ -146,21 +150,18 @@ application:
     http-client:
         read-timeout: 3 # unit: seconds
         retry-count: 1
-    swagger:
-        enabled: true
-        api:
-            title: Passport Server API
-            description: Passport Server API
-        open-api:
-            title: Passport Server Open API
-            description: Passport Server API
+    api-docs:
+        api-include-pattern: /api/**
+        open-api-include-pattern: /open-api/**
+        management-include-pattern: /management/**
+        title: LUI️✘ RPC Web Center
         version: ${app.version}
-        terms-of-service-url: http://www.luixtech.com
+        terms-of-service-url:
         contact-name: Louis
+        contact-url:
         contact-email: louis@luixtech.com
-        license: 1.0
-        license-url: http://www.apache.org/licenses/LICENSE-2.0.html
-        host:
+        license: Unlicensed
+        license-url:
     aop-logging:
         enabled: true
         method-whitelist-mode: false

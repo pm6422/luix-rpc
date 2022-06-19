@@ -1,13 +1,13 @@
 package com.luixtech.rpc.democlient.controller;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.core.client.annotation.RpcConsumer;
 import com.luixtech.rpc.democlient.component.HttpHeaderCreator;
 import com.luixtech.rpc.democlient.exception.DataNotFoundException;
 import com.luixtech.rpc.democommon.domain.Authority;
 import com.luixtech.rpc.democommon.service.AuthorityService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -32,10 +32,10 @@ public class AuthorityController {
     @Resource
     private HttpHeaderCreator httpHeaderCreator;
 
-    @ApiOperation("create authority")
+    @Operation(summary = "create authority")
     @PostMapping("/api/authorities")
     public ResponseEntity<Void> create(
-            @ApiParam(value = "authority", required = true) @Valid @RequestBody Authority domain) {
+            @Parameter(description = "authority", required = true) @Valid @RequestBody Authority domain) {
         log.debug("REST request to create authority: {}", domain);
         authorityService.save(domain);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -43,25 +43,25 @@ public class AuthorityController {
                 .build();
     }
 
-    @ApiOperation("find authority list")
+    @Operation(summary = "find authority list")
     @GetMapping("/api/authorities")
     public ResponseEntity<List<Authority>> find(Pageable pageable) {
         Page<Authority> authorities = authorityService.findAll(pageable);
         return ResponseEntity.ok().headers(generatePageHeaders(authorities)).body(authorities.getContent());
     }
 
-    @ApiOperation("find authority by name")
+    @Operation(summary = "find authority by name")
     @GetMapping("/api/authorities/{name}")
     public ResponseEntity<Authority> findById(
-            @ApiParam(value = "authority name", required = true) @PathVariable String name) {
+            @Parameter(description = "authority name", required = true) @PathVariable String name) {
         Authority authority = authorityService.findById(name).orElseThrow(() -> new DataNotFoundException(name));
         return ResponseEntity.ok(authority);
     }
 
-    @ApiOperation("update authority")
+    @Operation(summary = "update authority")
     @PutMapping("/api/authorities")
     public ResponseEntity<Void> update(
-            @ApiParam(value = "new authority", required = true) @Valid @RequestBody Authority domain) {
+            @Parameter(description = "new authority", required = true) @Valid @RequestBody Authority domain) {
         log.debug("REST request to update authority: {}", domain);
         authorityService.save(domain);
         return ResponseEntity.ok()
@@ -69,9 +69,9 @@ public class AuthorityController {
                 .build();
     }
 
-    @ApiOperation(value = "delete authority by name", notes = "The data may be referenced by other data, and some problems may occur after deletion")
+    @Operation(summary = "delete authority by name", description = "The data may be referenced by other data, and some problems may occur after deletion")
     @DeleteMapping("/api/authorities/{name}")
-    public ResponseEntity<Void> delete(@ApiParam(value = "authority name", required = true) @PathVariable String name) {
+    public ResponseEntity<Void> delete(@Parameter(description = "authority name", required = true) @PathVariable String name) {
         log.debug("REST request to delete authority: {}", name);
 //        authorityService.findById(name).orElseThrow(() -> new DataNotFoundException(name));
         authorityService.deleteById(name);

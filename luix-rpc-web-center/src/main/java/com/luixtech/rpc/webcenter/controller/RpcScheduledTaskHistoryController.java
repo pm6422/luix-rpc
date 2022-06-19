@@ -1,14 +1,15 @@
 package com.luixtech.rpc.webcenter.controller;
 
 import com.codahale.metrics.annotation.Timed;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.webcenter.config.ApplicationConstants;
-import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
 import com.luixtech.rpc.webcenter.domain.RpcScheduledTaskHistory;
 import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.repository.RpcScheduledTaskHistoryRepository;
+import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -34,16 +35,16 @@ public class RpcScheduledTaskHistoryController {
     @Resource
     private RpcScheduledTaskHistoryRepository rpcScheduledTaskHistoryRepository;
 
-    @ApiOperation("find scheduled task history list")
+    @Operation(summary = "find scheduled task history list")
     @GetMapping("/api/rpc-scheduled-task-histories")
     @Timed
     public ResponseEntity<List<RpcScheduledTaskHistory>> find(Pageable pageable,
-                                                              @ApiParam(value = "registry url identity", required = true, defaultValue = ApplicationConstants.DEFAULT_REG) @RequestParam(value = "registryIdentity") String registryIdentity,
-                                                              @ApiParam(value = "Task name") @RequestParam(value = "name", required = false) String name,
-                                                              @ApiParam(value = "Interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName,
-                                                              @ApiParam(value = "Form") @RequestParam(value = "form", required = false) String form,
-                                                              @ApiParam(value = "Version") @RequestParam(value = "version", required = false) String version,
-                                                              @ApiParam(value = "Method signature") @RequestParam(value = "methodSignature", required = false) String methodSignature) {
+                                                              @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
+                                                              @Parameter(description = "Task name") @RequestParam(value = "name", required = false) String name,
+                                                              @Parameter(description = "Interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName,
+                                                              @Parameter(description = "Form") @RequestParam(value = "form", required = false) String form,
+                                                              @Parameter(description = "Version") @RequestParam(value = "version", required = false) String version,
+                                                              @Parameter(description = "Method signature") @RequestParam(value = "methodSignature", required = false) String methodSignature) {
         RpcScheduledTaskHistory probe = new RpcScheduledTaskHistory();
         probe.setRegistryIdentity(registryIdentity);
         probe.setName(trimToNull(name));
@@ -57,10 +58,10 @@ public class RpcScheduledTaskHistoryController {
         return ResponseEntity.ok().headers(HttpHeaderUtils.generatePageHeaders(histories)).body(histories.getContent());
     }
 
-    @ApiOperation("find scheduled task history by ID")
+    @Operation(summary = "find scheduled task history by ID")
     @GetMapping("/api/rpc-scheduled-task-histories/{id}")
     @Timed
-    public ResponseEntity<RpcScheduledTaskHistory> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
+    public ResponseEntity<RpcScheduledTaskHistory> findById(@Parameter(description = "task ID", required = true) @PathVariable String id) {
         RpcScheduledTaskHistory history = rpcScheduledTaskHistoryRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(history);
     }

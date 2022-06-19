@@ -137,6 +137,10 @@ luix:
     protocol:
         port: 1${server.port}
         serializer: hessian2
+springdoc: # https://springdoc.org/#migrating-from-springfox
+    api-docs:
+        enabled: true
+    show-actuator: true
 # ===================================================================
 # Application specific properties
 # ===================================================================
@@ -153,18 +157,18 @@ application:
     http:
         cache: # Used by the CachingHttpHeadersFilter
             expired-after: 31
-    swagger:
-        enabled: true
-        api:
-            title: Luix Web Center
-            description: Luix Web Center API
-        open-api:
-            title: Luix Web Center Open API
-            description: Luix Web Center Open API
+    api-docs:
+        api-include-pattern: /api/**
+        open-api-include-pattern: /open-api/**
+        management-include-pattern: /management/**
+        title: LUI️✘ RPC Web Center
         version: ${app.version}
+        terms-of-service-url:
         contact-name: Louis
+        contact-url:
         contact-email: louis@luixtech.com
-        host:
+        license: Unlicensed
+        license-url:
     aop-logging:
         enabled: true
     elapsed-time-logging:

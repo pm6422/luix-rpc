@@ -1,7 +1,7 @@
 package com.luixtech.rpc.webcenter.domain.base;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -28,31 +28,31 @@ public class BaseUser extends AbstractAuditableDomain implements Serializable {
     public static final  String FIELD_EMAIL      = "email";
     public static final  String FIELD_MOBILE_NO  = "mobileNo";
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Pattern(regexp = "^[a-z0-9-]+$", message = "{EP5901}")
     @Size(min = 3, max = 20)
     @Indexed(unique = true)
     private String userName;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Size(min = 1, max = 20)
     private String firstName;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Size(min = 1, max = 20)
     private String lastName;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Email
     @Size(min = 3, max = 30)
     @Indexed
     private String email;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Pattern(regexp = "^(13[0-9]|15[012356789]|17[03678]|18[0-9]|14[57])[0-9]{8}$", message = "{EP5951}")
     @Size(min = 11, max = 13)

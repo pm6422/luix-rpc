@@ -1,6 +1,6 @@
 package com.luixtech.rpc.democommon.domain;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,7 +24,7 @@ import java.util.Set;
 public class App implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Size(min = 3, max = 20)
     @Pattern(regexp = "^[a-zA-Z0-9-]+$", message = "{EP5903}")

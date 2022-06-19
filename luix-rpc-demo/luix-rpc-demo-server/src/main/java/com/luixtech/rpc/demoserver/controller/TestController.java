@@ -1,17 +1,16 @@
 package com.luixtech.rpc.demoserver.controller;
 
-import com.luixtech.rpc.demoserver.config.AsyncConfiguration;
-import com.luixtech.rpc.demoserver.task.polling.queue.InMemoryAsyncTaskQueue;
-import com.luixtech.rpc.demoserver.task.polling.queue.Message;
-import com.luixtech.uidgenerator.core.id.IdGenerator;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.democommon.service.AppService;
+import com.luixtech.rpc.demoserver.config.AsyncConfiguration;
 import com.luixtech.rpc.demoserver.service.AsyncTaskTestService;
+import com.luixtech.rpc.demoserver.task.polling.queue.InMemoryAsyncTaskQueue;
+import com.luixtech.rpc.demoserver.task.polling.queue.Message;
 import com.luixtech.rpc.demoserver.utils.TraceIdUtils;
 import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import com.luixtech.uidgenerator.core.id.IdGenerator;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +32,7 @@ public class TestController {
     @Resource
     private AsyncTaskTestService asyncTaskTestService;
 
-    @ApiOperation("register provider")
+    @Operation(summary = "register provider")
     @GetMapping("/api/tests/register-provider")
     public void registerProvider() {
         Url providerUrl = Url.of(
@@ -48,7 +47,7 @@ public class TestController {
         luixProperties.getRegistryList().forEach(registryConfig -> registryConfig.getRegistryImpl().register(providerUrl));
     }
 
-    @ApiOperation("blocking response")
+    @Operation(summary = "blocking response")
     @GetMapping("/api/tests/async/blocking-response")
     public String blockingResponse() {
         log.info("Request received");
@@ -69,7 +68,7 @@ public class TestController {
      *
      * @return callable
      */
-    @ApiOperation("callable response")
+    @Operation(summary = "callable response")
     @GetMapping("/api/tests/async/callable-response")
     public Callable<String> callableResponse() {
         log.info("Request received");
@@ -91,9 +90,9 @@ public class TestController {
      *
      * @return deferred result
      */
-    @ApiOperation("deferred result")
+    @Operation(summary = "deferred result")
     @GetMapping("/api/tests/async/deferred-result/{valid}")
-    public DeferredResult<ResponseEntity<String>> sendMessage(@ApiParam(value = "valid", required = true) @PathVariable boolean valid) {
+    public DeferredResult<ResponseEntity<String>> sendMessage(@PathVariable boolean valid) {
         DeferredResult<ResponseEntity<String>> deferredResult = new DeferredResult<>(5000L);
         handleAsyncError(deferredResult);
 

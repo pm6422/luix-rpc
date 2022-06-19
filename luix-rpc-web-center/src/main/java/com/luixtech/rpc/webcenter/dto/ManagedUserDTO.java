@@ -2,7 +2,7 @@ package com.luixtech.rpc.webcenter.dto;
 
 import com.luixtech.rpc.webcenter.domain.User;
 import com.luixtech.rpc.webcenter.domain.base.BaseUser;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -26,7 +26,7 @@ public class ManagedUserDTO extends BaseUser {
 
     public static final int RAW_PASSWORD_MAX_LENGTH = 50;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     @Size(min = RAW_PASSWORD_MIN_LENGTH, max = RAW_PASSWORD_MAX_LENGTH)
     private String password;

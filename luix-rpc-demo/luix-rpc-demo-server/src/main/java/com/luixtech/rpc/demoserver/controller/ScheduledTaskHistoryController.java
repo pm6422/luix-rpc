@@ -1,11 +1,11 @@
 package com.luixtech.rpc.demoserver.controller;
 
 import com.luixtech.rpc.demoserver.domain.ScheduledTaskHistory;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.demoserver.exception.DataNotFoundException;
 import com.luixtech.rpc.demoserver.repository.ScheduledTaskHistoryRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -31,10 +31,10 @@ public class ScheduledTaskHistoryController {
     @Resource
     private ScheduledTaskHistoryRepository scheduledTaskHistoryRepository;
 
-    @ApiOperation("find task history list")
+    @Operation(summary = "find task history list")
     @GetMapping("/api/scheduled-task-histories")
     public ResponseEntity<List<ScheduledTaskHistory>> find(Pageable pageable,
-                                                           @ApiParam(value = "Task name") @RequestParam(value = "name", required = false) String name) {
+                                                           @Parameter(description = "Task name") @RequestParam(value = "name", required = false) String name) {
         ScheduledTaskHistory probe = new ScheduledTaskHistory();
         probe.setName(name);
         // Ignore query parameter if it has a null value
@@ -43,9 +43,9 @@ public class ScheduledTaskHistoryController {
         return ResponseEntity.ok().headers(generatePageHeaders(histories)).body(histories.getContent());
     }
 
-    @ApiOperation("find task history by id")
+    @Operation(summary = "find task history by id")
     @GetMapping("/api/scheduled-task-histories/{id}")
-    public ResponseEntity<ScheduledTaskHistory> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
+    public ResponseEntity<ScheduledTaskHistory> findById(@Parameter(description = "task ID", required = true) @PathVariable String id) {
         ScheduledTaskHistory history = scheduledTaskHistoryRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(history);
     }

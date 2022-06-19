@@ -1,9 +1,6 @@
 package com.luixtech.rpc.webcenter.controller;
 
 import com.codahale.metrics.annotation.Timed;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.webcenter.config.ApplicationConstants;
 import com.luixtech.rpc.webcenter.domain.RpcServer;
 import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
@@ -12,6 +9,10 @@ import com.luixtech.rpc.webcenter.service.RpcConsumerService;
 import com.luixtech.rpc.webcenter.service.RpcProviderService;
 import com.luixtech.rpc.webcenter.service.RpcServerService;
 import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -36,10 +37,10 @@ public class RpcServerController {
     @Resource
     private RpcConsumerService  rpcConsumerService;
 
-    @ApiOperation("find server by ID in real time")
+    @Operation(summary = "find server by ID in real time")
     @GetMapping("/api/rpc-servers/{id}")
     @Timed
-    public ResponseEntity<RpcServer> findById(@ApiParam(value = "ID", required = true) @PathVariable String id) {
+    public ResponseEntity<RpcServer> findById(@Parameter(description = "ID", required = true) @PathVariable String id) {
         RpcServer domain = rpcServerRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         RpcServer rpcServer = rpcServerService.loadServer(domain.getRegistryIdentity(), domain.getAddress());
         rpcServer.setId(domain.getId());
@@ -47,14 +48,14 @@ public class RpcServerController {
         return ResponseEntity.ok(rpcServer);
     }
 
-    @ApiOperation("find server list")
+    @Operation(summary = "find server list")
     @GetMapping("/api/rpc-servers")
     @Timed
     public ResponseEntity<List<RpcServer>> findRpcServers(
             Pageable pageable,
-            @ApiParam(value = "registry url identity", required = true, defaultValue = ApplicationConstants.DEFAULT_REG)
+            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG))
             @RequestParam(value = "registryIdentity") String registryIdentity,
-            @ApiParam(value = "address(fuzzy query)") @RequestParam(value = "address", required = false) String address) {
+            @Parameter(description = "address(fuzzy query)") @RequestParam(value = "address", required = false) String address) {
         Page<RpcServer> results = rpcServerService.find(pageable, registryIdentity, address);
         if (!results.isEmpty()) {
             results.getContent().forEach(domain -> {

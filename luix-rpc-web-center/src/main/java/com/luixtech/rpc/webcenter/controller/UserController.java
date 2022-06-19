@@ -1,9 +1,6 @@
 package com.luixtech.rpc.webcenter.controller;
 
 import com.luixtech.rpc.webcenter.component.HttpHeaderCreator;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.webcenter.config.ApplicationProperties;
 import com.luixtech.rpc.webcenter.domain.Authority;
 import com.luixtech.rpc.webcenter.domain.User;
@@ -18,6 +15,9 @@ import com.luixtech.rpc.webcenter.repository.UserProfilePhotoRepository;
 import com.luixtech.rpc.webcenter.service.MailService;
 import com.luixtech.rpc.webcenter.service.UserService;
 import com.luixtech.rpc.webcenter.utils.SecurityUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,14 +56,14 @@ public class UserController {
     @Resource
     private MailService                mailService;
     @Resource
-    private ApplicationEventPublisher applicationEventPublisher;
+    private ApplicationEventPublisher  applicationEventPublisher;
     @Resource
-    private HttpHeaderCreator         httpHeaderCreator;
+    private HttpHeaderCreator          httpHeaderCreator;
 
-    @ApiOperation(value = "create new user and send activation email")
+    @Operation(summary = "create new user and send activation email")
     @PostMapping("/api/users")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<Void> create(@ApiParam(value = "user", required = true) @Valid @RequestBody User domain,
+    public ResponseEntity<Void> create(@Parameter(description = "user", required = true) @Valid @RequestBody User domain,
                                        HttpServletRequest request) {
         log.debug("REST request to create user: {}", domain);
         User newUser = userService.insert(domain, applicationProperties.getAccount().getDefaultPassword());
@@ -72,19 +72,19 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).headers(headers).build();
     }
 
-    @ApiOperation("find user list")
+    @Operation(summary = "find user list")
     @GetMapping("/api/users")
     @Secured({Authority.ADMIN})
     public ResponseEntity<List<User>> find(Pageable pageable,
-                                           @ApiParam(value = "search criteria") @RequestParam(value = "login", required = false) String login) {
+                                           @Parameter(description = "search criteria") @RequestParam(value = "login", required = false) String login) {
         Page<User> users = userService.findByLogin(pageable, login);
         return ResponseEntity.ok().headers(generatePageHeaders(users)).body(users.getContent());
     }
 
-    @ApiOperation("find user by name")
+    @Operation(summary = "find user by name")
     @GetMapping("/api/users/{userName:[a-zA-Z0-9-]+}")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<ManagedUserDTO> findByName(@ApiParam(value = "user name", required = true) @PathVariable String userName) {
+    public ResponseEntity<ManagedUserDTO> findByName(@Parameter(description = "user name", required = true) @PathVariable String userName) {
         User domain = userService.findOneByUserName(userName);
         List<UserAuthority> userAuthorities = Optional.ofNullable(userAuthorityRepository.findByUserId(domain.getId()))
                 .orElseThrow(() -> new NoAuthorityException(userName));
@@ -92,10 +92,10 @@ public class UserController {
         return ResponseEntity.ok(new ManagedUserDTO(domain, authorities));
     }
 
-    @ApiOperation("update user")
+    @Operation(summary = "update user")
     @PutMapping("/api/users")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<Void> update(@ApiParam(value = "new user", required = true) @Valid @RequestBody User domain) {
+    public ResponseEntity<Void> update(@Parameter(description = "new user", required = true) @Valid @RequestBody User domain) {
         log.debug("REST request to update user: {}", domain);
         userService.update(domain);
         if (domain.getUserName().equals(SecurityUtils.getCurrentUserName())) {
@@ -105,19 +105,19 @@ public class UserController {
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getUserName())).build();
     }
 
-    @ApiOperation(value = "delete user by name", notes = "The data may be referenced by other data, and some problems may occur after deletion")
+    @Operation(summary = "delete user by name", description = "The data may be referenced by other data, and some problems may occur after deletion")
     @DeleteMapping("/api/users/{userName:[a-zA-Z0-9-]+}")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<Void> delete(@ApiParam(value = "user name", required = true) @PathVariable String userName) {
+    public ResponseEntity<Void> delete(@Parameter(description = "user name", required = true) @PathVariable String userName) {
         log.debug("REST request to delete user: {}", userName);
         userService.deleteByUserName(userName);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", userName)).build();
     }
 
-    @ApiOperation("reset password by user name")
+    @Operation(summary = "reset password by user name")
     @PutMapping("/api/users/{userName:[a-zA-Z0-9-]+}")
     @Secured({Authority.ADMIN})
-    public ResponseEntity<Void> resetPassword(@ApiParam(value = "user name", required = true) @PathVariable String userName) {
+    public ResponseEntity<Void> resetPassword(@Parameter(description = "user name", required = true) @PathVariable String userName) {
         log.debug("REST reset the password of user: {}", userName);
         UserNameAndPasswordDTO dto = UserNameAndPasswordDTO.builder()
                 .userName(userName)
@@ -129,9 +129,9 @@ public class UserController {
 
     public static final String GET_PROFILE_PHOTO_URL = "/api/users/profile-photo/";
 
-    @ApiOperation("get user profile picture")
+    @Operation(summary = "get user profile picture")
     @GetMapping(GET_PROFILE_PHOTO_URL + "{userName:[a-zA-Z0-9-]+}")
-    public ResponseEntity<byte[]> getProfilePhoto(@ApiParam(value = "user name", required = true) @PathVariable String userName) {
+    public ResponseEntity<byte[]> getProfilePhoto(@Parameter(description = "user name", required = true) @PathVariable String userName) {
         User user = userService.findOneByUserName(userName);
         Optional<UserProfilePhoto> userProfilePhoto = userProfilePhotoRepository.findByUserId(user.getId());
         return userProfilePhoto.map(photo -> ResponseEntity.ok(photo.getProfilePhoto().getData())).orElse(null);

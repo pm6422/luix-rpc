@@ -1,17 +1,17 @@
 package com.luixtech.rpc.demoserver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import com.luixtech.rpc.demoserver.component.HttpHeaderCreator;
+import com.luixtech.rpc.demoserver.domain.ScheduledTask;
+import com.luixtech.rpc.demoserver.exception.DataNotFoundException;
+import com.luixtech.rpc.demoserver.repository.ScheduledTaskRepository;
+import com.luixtech.rpc.demoserver.service.ScheduledTaskService;
+import com.luixtech.rpc.demoserver.task.schedule.TaskExecutable;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import com.luixtech.rpc.demoserver.component.HttpHeaderCreator;
-import com.luixtech.rpc.demoserver.domain.ScheduledTask;
-import com.luixtech.rpc.demoserver.service.ScheduledTaskService;
-import com.luixtech.rpc.demoserver.exception.DataNotFoundException;
-import com.luixtech.rpc.demoserver.repository.ScheduledTaskRepository;
-import com.luixtech.rpc.demoserver.task.schedule.TaskExecutable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,9 +44,9 @@ public class ScheduledTaskController {
     @Resource
     private ApplicationContext      applicationContext;
 
-    @ApiOperation("create scheduled task")
+    @Operation(summary = "create scheduled task")
     @PostMapping("/api/scheduled-tasks")
-    public ResponseEntity<Void> create(@ApiParam(value = "task", required = true) @Valid @RequestBody ScheduledTask domain) {
+    public ResponseEntity<Void> create(@Parameter(description = "task", required = true) @Valid @RequestBody ScheduledTask domain) {
         log.debug("REST request to create task: {}", domain);
         if (domain.getStartTime() != null && domain.getStopTime() != null) {
             Validate.isTrue(domain.getStopTime().isAfter(domain.getStartTime()),
@@ -71,25 +71,25 @@ public class ScheduledTaskController {
                 .headers(httpHeaderCreator.createSuccessHeader("SM1001", domain.getName())).build();
     }
 
-    @ApiOperation("find scheduled task list")
+    @Operation(summary = "find scheduled task list")
     @GetMapping("/api/scheduled-tasks")
     public ResponseEntity<List<ScheduledTask>> find(Pageable pageable,
-                                                    @ApiParam(value = "Task name") @RequestParam(value = "name", required = false) String name,
-                                                    @ApiParam(value = "Bean name") @RequestParam(value = "beanName", required = false) String beanName) {
+                                                    @Parameter(description = "Task name") @RequestParam(value = "name", required = false) String name,
+                                                    @Parameter(description = "Bean name") @RequestParam(value = "beanName", required = false) String beanName) {
         Page<ScheduledTask> tasks = scheduledTaskService.find(pageable, name, beanName);
         return ResponseEntity.ok().headers(generatePageHeaders(tasks)).body(tasks.getContent());
     }
 
-    @ApiOperation("find scheduled task by id")
+    @Operation(summary = "find scheduled task by id")
     @GetMapping("/api/scheduled-tasks/{id}")
-    public ResponseEntity<ScheduledTask> findById(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
+    public ResponseEntity<ScheduledTask> findById(@Parameter(description = "task ID", required = true) @PathVariable String id) {
         ScheduledTask scheduledTask = scheduledTaskRepository.findById(id).orElseThrow(() -> new DataNotFoundException(id));
         return ResponseEntity.ok(scheduledTask);
     }
 
-    @ApiOperation("update scheduled task")
+    @Operation(summary = "update scheduled task")
     @PutMapping("/api/scheduled-tasks")
-    public ResponseEntity<Void> update(@ApiParam(value = "new task", required = true) @Valid @RequestBody ScheduledTask domain) {
+    public ResponseEntity<Void> update(@Parameter(description = "new task", required = true) @Valid @RequestBody ScheduledTask domain) {
         log.debug("REST request to update scheduled task: {}", domain);
         if (domain.getStartTime() != null && domain.getStopTime() != null) {
             Validate.isTrue(domain.getStopTime().isAfter(domain.getStartTime()),
@@ -113,21 +113,21 @@ public class ScheduledTaskController {
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getName())).build();
     }
 
-    @ApiOperation(value = "delete scheduled task by id", notes = "The data may be referenced by other data, and some problems may occur after deletion")
+    @Operation(summary = "delete scheduled task by id", description = "The data may be referenced by other data, and some problems may occur after deletion")
     @DeleteMapping("/api/scheduled-tasks/{id}")
-    public ResponseEntity<Void> delete(@ApiParam(value = "task ID", required = true) @PathVariable String id) {
+    public ResponseEntity<Void> delete(@Parameter(description = "task ID", required = true) @PathVariable String id) {
         log.debug("REST request to delete scheduled task: {}", id);
         scheduledTaskService.delete(id);
         return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", id)).build();
     }
 
-    @ApiOperation("find scheduled task bean names")
+    @Operation(summary = "find scheduled task bean names")
     @GetMapping("/api/scheduled-tasks/beans")
     public ResponseEntity<List<String>> findBeans() {
         return ResponseEntity.ok().body(Arrays.asList(applicationContext.getBeanNamesForType(TaskExecutable.class)));
     }
 
-    @ApiOperation("find available time units of fixed rate interval")
+    @Operation(summary = "find available time units of fixed rate interval")
     @GetMapping("/api/scheduled-tasks/time-units")
     public ResponseEntity<List<String>> findTimeUnits() {
         return ResponseEntity.ok().body(ScheduledTask.AVAILABLE_FIXED_INTERVAL_UNIT);

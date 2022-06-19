@@ -1,10 +1,10 @@
 package com.luixtech.rpc.democlient.controller;
 
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.core.client.annotation.RpcConsumer;
 import com.luixtech.rpc.democommon.dto.AdminMenuTreeDTO;
 import com.luixtech.rpc.democommon.service.AdminMenuService;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +25,7 @@ public class AdminMenuController {
         this.adminMenuService = adminMenuService;
     }
 
-    @ApiOperation("find all menus")
+    @Operation(summary = "find all menus")
     @GetMapping("/api/admin-menus")
     public ResponseEntity<List<AdminMenuTreeDTO>> find() {
         List<AdminMenuTreeDTO> results = adminMenuService.getMenus();
