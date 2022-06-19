@@ -416,22 +416,8 @@
             <dependencies>
                 <dependency>
                     <groupId>de.flapdoodle.embed</groupId>
-                    <artifactId>de.flapdoodle.embed.mongo</artifactId>
-                    <version>3.4.5</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.slf4j</groupId>
-                            <artifactId>slf4j-api</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>net.java.dev.jna</groupId>
-                            <artifactId>jna</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>net.java.dev.jna</groupId>
-                            <artifactId>jna-platform</artifactId>
-                        </exclusion>
-                    </exclusions>
+                    <artifactId>de.flapdoodle.embed.mongo.spring</artifactId>
+                    <version>1.1.0-spring27x</version>
                 </dependency>
             </dependencies>
         </profile>
@@ -443,22 +429,8 @@
             <dependencies>
                 <dependency>
                     <groupId>de.flapdoodle.embed</groupId>
-                    <artifactId>de.flapdoodle.embed.mongo</artifactId>
-                    <version>3.4.5</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.slf4j</groupId>
-                            <artifactId>slf4j-api</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>net.java.dev.jna</groupId>
-                            <artifactId>jna</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>net.java.dev.jna</groupId>
-                            <artifactId>jna-platform</artifactId>
-                        </exclusion>
-                    </exclusions>
+                    <artifactId>de.flapdoodle.embed.mongo.spring</artifactId>
+                    <version>1.1.0-spring27x</version>
                 </dependency>
             </dependencies>
         </profile>
