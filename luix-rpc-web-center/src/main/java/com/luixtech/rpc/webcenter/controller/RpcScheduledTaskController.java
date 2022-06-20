@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -78,7 +79,7 @@ public class RpcScheduledTaskController {
     @Operation(summary = "find scheduled task list")
     @GetMapping("/api/rpc-scheduled-tasks")
     @Timed
-    public ResponseEntity<List<RpcScheduledTask>> find(Pageable pageable,
+    public ResponseEntity<List<RpcScheduledTask>> find(@ParameterObject Pageable pageable,
                                                        @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
                                                        @Parameter(description = "Task name(fuzzy query)") @RequestParam(value = "name", required = false) String name,
                                                        @Parameter(description = "Interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName,

@@ -10,6 +10,7 @@ import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -49,7 +50,7 @@ public class AuthorityController {
 
     @Operation(summary = "find authority list")
     @GetMapping("/api/authorities")
-    public ResponseEntity<List<Authority>> find(Pageable pageable) {
+    public ResponseEntity<List<Authority>> find(@ParameterObject Pageable pageable) {
         Page<Authority> authorities = authorityRepository.findAll(pageable);
         HttpHeaders headers = HttpHeaderUtils.generatePageHeaders(authorities);
         return ResponseEntity.ok().headers(headers).body(authorities.getContent());

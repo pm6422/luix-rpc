@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +53,7 @@ public class RpcServerController {
     @GetMapping("/api/rpc-servers")
     @Timed
     public ResponseEntity<List<RpcServer>> findRpcServers(
-            Pageable pageable,
+            @ParameterObject Pageable pageable,
             @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG))
             @RequestParam(value = "registryIdentity") String registryIdentity,
             @Parameter(description = "address(fuzzy query)") @RequestParam(value = "address", required = false) String address) {

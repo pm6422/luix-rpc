@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class RpcConsumerController {
     @GetMapping("/api/rpc-consumers")
     @Timed
     public ResponseEntity<List<RpcConsumer>> findConsumers(
-            Pageable pageable,
+            @ParameterObject Pageable pageable,
             @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG))
             @RequestParam(value = "registryIdentity") String registryIdentity,
             @Parameter(description = "application name") @RequestParam(value = "application", required = false) String application,

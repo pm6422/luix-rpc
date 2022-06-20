@@ -8,6 +8,7 @@ import com.luixtech.rpc.demoserver.repository.AppRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -50,7 +51,7 @@ public class AppController {
 
     @Operation(summary = "find application list")
     @GetMapping("/api/apps")
-    public ResponseEntity<List<App>> find(Pageable pageable) {
+    public ResponseEntity<List<App>> find(@ParameterObject Pageable pageable) {
         Page<App> apps = appRepository.findAll(pageable);
         return ResponseEntity.ok().headers(generatePageHeaders(apps)).body(apps.getContent());
     }

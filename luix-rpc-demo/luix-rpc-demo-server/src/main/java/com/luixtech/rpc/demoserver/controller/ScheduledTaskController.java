@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -73,7 +74,7 @@ public class ScheduledTaskController {
 
     @Operation(summary = "find scheduled task list")
     @GetMapping("/api/scheduled-tasks")
-    public ResponseEntity<List<ScheduledTask>> find(Pageable pageable,
+    public ResponseEntity<List<ScheduledTask>> find(@ParameterObject Pageable pageable,
                                                     @Parameter(description = "Task name") @RequestParam(value = "name", required = false) String name,
                                                     @Parameter(description = "Bean name") @RequestParam(value = "beanName", required = false) String beanName) {
         Page<ScheduledTask> tasks = scheduledTaskService.find(pageable, name, beanName);

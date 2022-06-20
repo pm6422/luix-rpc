@@ -5,6 +5,7 @@ import com.luixtech.rpc.webcenter.repository.PersistenceAuditEventRepository;
 import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -37,7 +38,7 @@ public class UserAuditEventController {
      */
     @Operation(summary = "find user audit list")
     @GetMapping("/api/user-audit-events")
-    public ResponseEntity<List<PersistentAuditEvent>> getUserAuditEvents(Pageable pageable,
+    public ResponseEntity<List<PersistentAuditEvent>> getUserAuditEvents(@ParameterObject Pageable pageable,
                                                                          @Parameter(description = "start date，e.g：2020-10-01") @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
                                                                          @Parameter(description = "end date，e.g：2020-10-02") @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         Page<PersistentAuditEvent> userAuditEvents = persistenceAuditEventRepository.findByAuditEventDateBetween(pageable, from, to);

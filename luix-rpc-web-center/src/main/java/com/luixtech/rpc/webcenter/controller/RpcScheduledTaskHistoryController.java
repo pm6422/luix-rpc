@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -38,7 +39,7 @@ public class RpcScheduledTaskHistoryController {
     @Operation(summary = "find scheduled task history list")
     @GetMapping("/api/rpc-scheduled-task-histories")
     @Timed
-    public ResponseEntity<List<RpcScheduledTaskHistory>> find(Pageable pageable,
+    public ResponseEntity<List<RpcScheduledTaskHistory>> find(@ParameterObject Pageable pageable,
                                                               @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
                                                               @Parameter(description = "Task name") @RequestParam(value = "name", required = false) String name,
                                                               @Parameter(description = "Interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName,

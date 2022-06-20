@@ -6,6 +6,7 @@ import com.luixtech.rpc.demoserver.repository.ScheduledTaskHistoryRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -33,7 +34,7 @@ public class ScheduledTaskHistoryController {
 
     @Operation(summary = "find task history list")
     @GetMapping("/api/scheduled-task-histories")
-    public ResponseEntity<List<ScheduledTaskHistory>> find(Pageable pageable,
+    public ResponseEntity<List<ScheduledTaskHistory>> find(@ParameterObject Pageable pageable,
                                                            @Parameter(description = "Task name") @RequestParam(value = "name", required = false) String name) {
         ScheduledTaskHistory probe = new ScheduledTaskHistory();
         probe.setName(name);
