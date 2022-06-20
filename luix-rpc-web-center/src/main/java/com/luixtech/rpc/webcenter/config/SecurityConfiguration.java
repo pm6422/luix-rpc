@@ -7,12 +7,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.web.filter.CorsFilter;
@@ -20,26 +20,24 @@ import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
 import javax.annotation.Resource;
 
-import static com.luixtech.rpc.webcenter.domain.Authority.ADMIN;
 import static com.luixtech.rpc.webcenter.domain.Authority.DEVELOPER;
 
 /**
  * If any class extends WebSecurityConfigurerAdapter, the auto-configuration of spring security will don't work.
  * <p>
- * Refer
- * https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-Security-2.0
+ * Refer to https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-Security-2.0
  */
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Import(SecurityProblemSupport.class)
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class SecurityConfiguration {
 
     @Resource
-    private ApplicationProperties applicationProperties;
+    private ApplicationProperties  applicationProperties;
     @Resource
-    private TokenProvider         tokenProvider;
+    private TokenProvider          tokenProvider;
     @Resource
-    private CorsFilter            corsFilter;
+    private CorsFilter             corsFilter;
     @Resource
     private SecurityProblemSupport problemSupport;
 
@@ -48,25 +46,23 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Override
-    public void configure(WebSecurity web) {
-        // @formatter:off
-        web
-                .ignoring()
-                .antMatchers(HttpMethod.OPTIONS, "/**")
-                .antMatchers("/app/**/*.{js,html}")
-                .antMatchers("/content/**")
-                .antMatchers("/favicon.png") // Note: it will cause authorization failure if loss this statement.
-                .antMatchers("/swagger-ui/index.html");
-        // @formatter:on
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web ->
+                web
+                        .ignoring()
+                        .antMatchers(HttpMethod.OPTIONS, "/**")
+                        .antMatchers("/app/**/*.{js,html}")
+                        .antMatchers("/content/**")
+                        .antMatchers("/favicon.png") // Note: it will cause authorization failure if loss this statement.
+                        .antMatchers("/swagger-ui/index.html");
     }
 
     /**
      * Note: csrf is activated by default when using WebSecurityConfigurerAdapter.
      */
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        // @formatter:off
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf()
                 .disable()
@@ -105,7 +101,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and()
                 .apply(securityConfigurerAdapter());
-        // @formatter:on
+        return http.build();
     }
 
     private JwtFilterConfigurer securityConfigurerAdapter() {
