@@ -25,7 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -63,7 +63,7 @@ public class UserController {
 
     @Operation(summary = "create new user and send activation email")
     @PostMapping("/api/users")
-    @Secured({Authority.ADMIN})
+    @PreAuthorize("hasAuthority(\"" + Authority.ADMIN + "\")")
     public ResponseEntity<Void> create(@Parameter(description = "user", required = true) @Valid @RequestBody User domain,
                                        HttpServletRequest request) {
         log.debug("REST request to create user: {}", domain);
@@ -75,7 +75,7 @@ public class UserController {
 
     @Operation(summary = "find user list")
     @GetMapping("/api/users")
-    @Secured({Authority.ADMIN})
+    @PreAuthorize("hasAuthority(\"" + Authority.ADMIN + "\")")
     public ResponseEntity<List<User>> find(@ParameterObject Pageable pageable,
                                            @Parameter(description = "search criteria") @RequestParam(value = "login", required = false) String login) {
         Page<User> users = userService.findByLogin(pageable, login);
@@ -84,7 +84,7 @@ public class UserController {
 
     @Operation(summary = "find user by name")
     @GetMapping("/api/users/{userName:[a-zA-Z0-9-]+}")
-    @Secured({Authority.ADMIN})
+    @PreAuthorize("hasAuthority(\"" + Authority.ADMIN + "\")")
     public ResponseEntity<ManagedUserDTO> findByName(@Parameter(description = "user name", required = true) @PathVariable String userName) {
         User domain = userService.findOneByUserName(userName);
         List<UserAuthority> userAuthorities = Optional.ofNullable(userAuthorityRepository.findByUserId(domain.getId()))
@@ -95,7 +95,7 @@ public class UserController {
 
     @Operation(summary = "update user")
     @PutMapping("/api/users")
-    @Secured({Authority.ADMIN})
+    @PreAuthorize("hasAuthority(\"" + Authority.ADMIN + "\")")
     public ResponseEntity<Void> update(@Parameter(description = "new user", required = true) @Valid @RequestBody User domain) {
         log.debug("REST request to update user: {}", domain);
         userService.update(domain);
@@ -108,7 +108,7 @@ public class UserController {
 
     @Operation(summary = "delete user by name", description = "The data may be referenced by other data, and some problems may occur after deletion")
     @DeleteMapping("/api/users/{userName:[a-zA-Z0-9-]+}")
-    @Secured({Authority.ADMIN})
+    @PreAuthorize("hasAuthority(\"" + Authority.ADMIN + "\")")
     public ResponseEntity<Void> delete(@Parameter(description = "user name", required = true) @PathVariable String userName) {
         log.debug("REST request to delete user: {}", userName);
         userService.deleteByUserName(userName);
@@ -117,7 +117,7 @@ public class UserController {
 
     @Operation(summary = "reset password by user name")
     @PutMapping("/api/users/{userName:[a-zA-Z0-9-]+}")
-    @Secured({Authority.ADMIN})
+    @PreAuthorize("hasAuthority(\"" + Authority.ADMIN + "\")")
     public ResponseEntity<Void> resetPassword(@Parameter(description = "user name", required = true) @PathVariable String userName) {
         log.debug("REST reset the password of user: {}", userName);
         UserNameAndPasswordDTO dto = UserNameAndPasswordDTO.builder()

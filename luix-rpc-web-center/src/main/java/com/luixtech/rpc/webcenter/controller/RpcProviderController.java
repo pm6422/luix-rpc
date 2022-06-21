@@ -31,7 +31,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -124,7 +124,7 @@ public class RpcProviderController {
 
     @Operation(summary = "activate provider")
     @PutMapping("/api/rpc-providers/activate")
-    @Secured({Authority.ADMIN})
+    @PreAuthorize("hasAuthority(\"" + Authority.ADMIN + "\")")
     @Timed
     public ResponseEntity<Void> activate(@Valid @RequestBody ProviderActivateDTO activateDTO) {
         Url providerUrl = Url.valueOf(activateDTO.getProviderUrl());
@@ -135,7 +135,7 @@ public class RpcProviderController {
 
     @Operation(summary = "deactivate provider")
     @PutMapping("/api/rpc-providers/deactivate")
-    @Secured({Authority.ADMIN})
+    @PreAuthorize("hasAuthority(\"" + Authority.ADMIN + "\")")
     @Timed
     public ResponseEntity<Void> deactivate(@Valid @RequestBody ProviderActivateDTO activateDTO) {
         Url providerUrl = Url.valueOf(activateDTO.getProviderUrl());
@@ -190,7 +190,7 @@ public class RpcProviderController {
 
     @Operation(summary = "save options")
     @PutMapping("/api/rpc-providers/options")
-    @Secured({Authority.ADMIN})
+    @PreAuthorize("hasAuthority(\"" + Authority.ADMIN + "\")")
     @Timed
     public ResponseEntity<Void> saveOptions(@Parameter(description = "optionsDTO", required = true)
                                             @Valid @RequestBody OptionsDTO optionsDTO) {

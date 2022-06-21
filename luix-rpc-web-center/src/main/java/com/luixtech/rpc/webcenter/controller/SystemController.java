@@ -22,6 +22,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -110,7 +111,7 @@ public class SystemController {
 
     @Operation(summary = "get intranet ip")
     @GetMapping("/api/systems/intranet-ip")
-    @Secured(Authority.DEVELOPER)
+    @PreAuthorize("hasAuthority(\"" + Authority.DEVELOPER + "\")")
     public ResponseEntity<String> getIntranetIp() {
         return ResponseEntity.ok(AddressUtils.getIntranetIp());
     }
