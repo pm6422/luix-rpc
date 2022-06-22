@@ -24,6 +24,7 @@ import com.luixtech.rpc.webcenter.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -52,12 +53,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.webcenter.utils.NetworkUtils.getRequestUrl;
 
 /**
  * REST controller for managing the user's account.
  */
 @RestController
+@SecurityRequirement(name = AUTH)
 @Slf4j
 public class AccountController {
     private static final FastDateFormat               DATETIME_FORMAT = FastDateFormat.getInstance("yyyyMMdd-HHmmss");

@@ -6,6 +6,7 @@ import com.luixtech.rpc.webcenter.service.RpcStatisticService;
 import com.luixtech.rpc.webcenter.task.polling.queue.InMemoryAsyncTaskQueue;
 import com.luixtech.rpc.webcenter.utils.TraceIdUtils;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,10 +16,12 @@ import org.springframework.web.context.request.async.DeferredResult;
 import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
+import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.webcenter.task.polling.AsyncTask.NAME_STATISTIC;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
+@SecurityRequirement(name = AUTH)
 @Slf4j
 public class RpcStatisticController {
 

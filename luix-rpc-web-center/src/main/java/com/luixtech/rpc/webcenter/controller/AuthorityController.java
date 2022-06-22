@@ -9,6 +9,7 @@ import com.luixtech.rpc.webcenter.repository.AuthorityRepository;
 import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -22,10 +23,13 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
 
+import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
+
 /**
  * REST controller for managing authorities.
  */
 @RestController
+@SecurityRequirement(name = AUTH)
 @Slf4j
 public class AuthorityController {
 

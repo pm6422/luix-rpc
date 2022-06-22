@@ -10,6 +10,7 @@ import io.mongock.driver.mongodb.springdata.v3.config.SpringDataMongoV3Context;
 import io.mongock.runner.springboot.MongockSpringboot;
 import io.mongock.runner.springboot.RunnerSpringbootBuilder;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -35,7 +36,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
+
 @RestController
+@SecurityRequirement(name = AUTH)
 @Slf4j
 public class SystemController {
 

@@ -5,6 +5,7 @@ import com.luixtech.rpc.webcenter.repository.PersistenceAuditEventRepository;
 import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,10 +20,13 @@ import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
+
 /**
  * REST controller for managing the user audit events.
  */
 @RestController
+@SecurityRequirement(name = AUTH)
 public class UserAuditEventController {
 
     @Resource

@@ -9,6 +9,7 @@ import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Example;
@@ -24,12 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 /**
  * REST controller for managing RPC scheduled task histories.
  */
 @RestController
+@SecurityRequirement(name = AUTH)
 @Slf4j
 public class RpcScheduledTaskHistoryController {
 

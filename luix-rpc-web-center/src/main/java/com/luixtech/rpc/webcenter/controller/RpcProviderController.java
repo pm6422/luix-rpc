@@ -24,6 +24,7 @@ import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springdoc.api.annotations.ParameterObject;
@@ -43,8 +44,10 @@ import java.util.stream.Collectors;
 import static com.luixtech.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_BROADCAST;
 import static com.luixtech.rpc.core.server.stub.ProviderStub.*;
 import static com.luixtech.rpc.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
+import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
 
 @RestController
+@SecurityRequirement(name = AUTH)
 @Slf4j
 public class RpcProviderController {
 

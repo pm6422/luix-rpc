@@ -12,6 +12,7 @@ import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -31,12 +32,14 @@ import java.util.Map;
 
 import static com.luixtech.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_FAILFAST;
 import static com.luixtech.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_FAILOVER;
+import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
 
 
 /**
  * REST controller for managing RPC scheduled tasks.
  */
 @RestController
+@SecurityRequirement(name = AUTH)
 @Slf4j
 public class RpcScheduledTaskController {
 

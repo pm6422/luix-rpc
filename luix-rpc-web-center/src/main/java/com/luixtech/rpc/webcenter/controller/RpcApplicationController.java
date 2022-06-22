@@ -11,6 +11,7 @@ import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,10 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
+
 @RestController
+@SecurityRequirement(name = AUTH)
 @Slf4j
 public class RpcApplicationController {
 

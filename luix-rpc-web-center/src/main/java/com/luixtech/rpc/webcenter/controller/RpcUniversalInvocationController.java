@@ -10,6 +10,7 @@ import com.luixtech.rpc.webcenter.dto.MethodInvocation;
 import com.luixtech.rpc.webcenter.service.RpcRegistryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,10 +24,13 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
+
 /**
  * REST controller for RPC universal calling.
  */
 @RestController
+@SecurityRequirement(name = AUTH)
 @Slf4j
 public class RpcUniversalInvocationController {
 

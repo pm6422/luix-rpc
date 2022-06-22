@@ -17,6 +17,7 @@ import com.luixtech.rpc.webcenter.service.UserService;
 import com.luixtech.rpc.webcenter.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.context.ApplicationEventPublisher;
@@ -36,6 +37,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 import static com.luixtech.rpc.webcenter.utils.NetworkUtils.getRequestUrl;
 
@@ -43,6 +45,7 @@ import static com.luixtech.rpc.webcenter.utils.NetworkUtils.getRequestUrl;
  * REST controller for managing users.
  */
 @RestController
+@SecurityRequirement(name = AUTH)
 @Slf4j
 public class UserController {
 

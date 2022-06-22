@@ -20,6 +20,7 @@ import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
 import javax.annotation.Resource;
 
+import static com.luixtech.rpc.webcenter.domain.Authority.ADMIN;
 import static com.luixtech.rpc.webcenter.domain.Authority.DEVELOPER;
 
 /**
@@ -86,8 +87,7 @@ public class SecurityConfiguration {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/open-api/**").permitAll()
-//                .antMatchers("/api/**").authenticated()
-                .antMatchers("/api/**").permitAll()
+                .antMatchers("/api/**").authenticated()
                 .antMatchers("/api/http-sessions/**").hasAuthority(DEVELOPER)
                 .antMatchers("/api/user-audit-events/**").hasAuthority(DEVELOPER)
                 .antMatchers("/websocket/**").authenticated()
@@ -95,8 +95,7 @@ public class SecurityConfiguration {
                 .antMatchers("/management/health/**").permitAll()
                 .antMatchers("/management/info").permitAll()
                 .antMatchers("/management/prometheus").permitAll()
-//                .antMatchers("/management/**").hasAuthority(ADMIN)
-                .antMatchers("/management/**").permitAll()
+                .antMatchers("/management/**").hasAuthority(ADMIN)
                 .and()
                 .httpBasic()
                 .and()
