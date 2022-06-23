@@ -11,6 +11,9 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
+import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,9 +42,10 @@ public class AdminMenuController {
 
     @Operation(summary = "advanced query")
     @GetMapping(value = "/api/admin-menus/query")
-    public List<AdminMenu> query(@Parameter(in = ParameterIn.QUERY, name = "filter", description = "query criteria",
+    @Parameter(in = ParameterIn.QUERY, name = "filter", description = "query criteria",
             schema = @Schema(type = "string", defaultValue = "(code:'user-authority') or (name:'Authority')"))
-                                 @Filter(entityClass = AdminMenu.class) Document filter) {
-        return adminMenuQueryRepository.findAll(filter);
+    public Page<AdminMenu> query(@Filter(entityClass = AdminMenu.class) Document filter,
+                                 @ParameterObject Pageable pageable) {
+        return adminMenuQueryRepository.findAll(filter, pageable);
     }
 }
