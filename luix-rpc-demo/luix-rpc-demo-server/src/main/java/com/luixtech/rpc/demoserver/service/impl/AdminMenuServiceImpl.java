@@ -30,7 +30,7 @@ public class AdminMenuServiceImpl implements AdminMenuService {
         return menus.stream()
                 // 过滤父节点
                 .filter(parent -> parentId.equals(parent.getParentId()))
-                .map(m -> m.toDTO())
+                .map(AdminMenu::toDTO)
                 // 排序
                 .sorted(Comparator.comparing(AdminMenuDTO::getSequence))
                 // 把父节点children递归赋值成为子节点
