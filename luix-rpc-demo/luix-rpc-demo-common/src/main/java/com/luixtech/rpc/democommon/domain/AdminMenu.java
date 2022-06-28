@@ -1,7 +1,7 @@
 package com.luixtech.rpc.democommon.domain;
 
 import com.luixtech.rpc.democommon.domain.base.AbstractAuditableDomain;
-import com.luixtech.rpc.democommon.dto.AdminMenuTreeDTO;
+import com.luixtech.rpc.democommon.dto.AdminMenuDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -72,8 +72,8 @@ public class AdminMenu extends AbstractAuditableDomain implements Serializable {
         this.parentId = parentId;
     }
 
-    public AdminMenuTreeDTO toTreeDTO() {
-        AdminMenuTreeDTO dto = new AdminMenuTreeDTO();
+    public AdminMenuDTO toDTO() {
+        AdminMenuDTO dto = new AdminMenuDTO();
         BeanUtils.copyProperties(this, dto);
         return dto;
     }

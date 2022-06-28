@@ -1,7 +1,7 @@
 package com.luixtech.rpc.demoserver.controller;
 
 import com.luixtech.rpc.democommon.domain.AdminMenu;
-import com.luixtech.rpc.democommon.dto.AdminMenuTreeDTO;
+import com.luixtech.rpc.democommon.dto.AdminMenuDTO;
 import com.luixtech.rpc.democommon.service.AdminMenuService;
 import com.luixtech.rpc.demoserver.repository.AdminMenuQueryRepository;
 import com.turkraft.springfilter.boot.Filter;
@@ -27,7 +27,6 @@ import java.util.List;
 @RestController
 @Slf4j
 public class AdminMenuController {
-
     @Resource
     private AdminMenuQueryRepository adminMenuQueryRepository;
     @Resource
@@ -35,8 +34,8 @@ public class AdminMenuController {
 
     @Operation(summary = "find all menus")
     @GetMapping("/api/admin-menus")
-    public ResponseEntity<List<AdminMenuTreeDTO>> find() {
-        List<AdminMenuTreeDTO> results = adminMenuService.getMenus();
+    public ResponseEntity<List<AdminMenuDTO>> find() {
+        List<AdminMenuDTO> results = adminMenuService.getMenus();
         return ResponseEntity.ok(results);
     }
 

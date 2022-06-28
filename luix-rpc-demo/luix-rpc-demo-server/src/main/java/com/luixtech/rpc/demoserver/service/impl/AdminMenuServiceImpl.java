@@ -2,10 +2,9 @@ package com.luixtech.rpc.demoserver.service.impl;
 
 import com.luixtech.rpc.core.server.annotation.RpcProvider;
 import com.luixtech.rpc.democommon.domain.AdminMenu;
-import com.luixtech.rpc.democommon.dto.AdminMenuTreeDTO;
+import com.luixtech.rpc.democommon.dto.AdminMenuDTO;
 import com.luixtech.rpc.democommon.service.AdminMenuService;
 import com.luixtech.rpc.demoserver.repository.AdminMenuRepository;
-import org.thymeleaf.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Comparator;
@@ -14,41 +13,28 @@ import java.util.stream.Collectors;
 
 @RpcProvider
 public class AdminMenuServiceImpl implements AdminMenuService {
-
     @Resource
     private AdminMenuRepository adminMenuRepository;
 
     @Override
-    public List<AdminMenuTreeDTO> getMenus() {
+    public List<AdminMenuDTO> getMenus() {
         List<AdminMenu> adminMenus = adminMenuRepository.findAll();
-        return generateTree(adminMenus);
+        return convertToTree(adminMenus);
     }
 
-    private List<AdminMenuTreeDTO> generateTree(List<AdminMenu> menus) {
-        // 根节点
-        List<AdminMenuTreeDTO> rootMenus = menus.stream()
-                .filter(menu -> StringUtils.isEmpty(menu.getParentId()))
-                .map(AdminMenu::toTreeDTO)
-                .sorted(Comparator.comparing(AdminMenuTreeDTO::getSequence))
-                .collect(Collectors.toList());
-        rootMenus.forEach(rootMenu -> {
-            // 给根节点设置子节点
-            rootMenu.setChildren(getChildren(rootMenu.getId(), menus));
-        });
-        return rootMenus;
+    private List<AdminMenuDTO> convertToTree(List<AdminMenu> menus) {
+        return convertToTree(menus, "0");
     }
 
-    private List<AdminMenuTreeDTO> getChildren(String parentId, List<AdminMenu> menus) {
-        // 子菜单
-        List<AdminMenuTreeDTO> childMenus = menus.stream()
-                .filter(menu -> parentId.equals(menu.getParentId()))
-                .map(AdminMenu::toTreeDTO)
-                .sorted(Comparator.comparing(AdminMenuTreeDTO::getSequence))
+    private List<AdminMenuDTO> convertToTree(List<AdminMenu> menus, String parentId) {
+        return menus.stream()
+                // 过滤父节点
+                .filter(parent -> parentId.equals(parent.getParentId()))
+                .map(m -> m.toDTO())
+                // 排序
+                .sorted(Comparator.comparing(AdminMenuDTO::getSequence))
+                // 把父节点children递归赋值成为子节点
+                .peek(node -> node.setChildren(convertToTree(menus, node.getId())))
                 .collect(Collectors.toList());
-        // 递归
-        for (AdminMenuTreeDTO childMenu : childMenus) {
-            childMenu.setChildren(getChildren(childMenu.getId(), menus));
-        }
-        return childMenus;
     }
 }

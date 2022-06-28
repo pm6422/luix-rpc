@@ -1,7 +1,8 @@
 package com.luixtech.rpc.democlient.controller;
 
 import com.luixtech.rpc.core.client.annotation.RpcConsumer;
-import com.luixtech.rpc.democommon.dto.AdminMenuTreeDTO;
+import com.luixtech.rpc.democommon.domain.AdminMenu;
+import com.luixtech.rpc.democommon.dto.AdminMenuDTO;
 import com.luixtech.rpc.democommon.service.AdminMenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +28,8 @@ public class AdminMenuController {
 
     @Operation(summary = "find all menus")
     @GetMapping("/api/admin-menus")
-    public ResponseEntity<List<AdminMenuTreeDTO>> find() {
-        List<AdminMenuTreeDTO> results = adminMenuService.getMenus();
+    public ResponseEntity<List<AdminMenuDTO>> find() {
+        List<AdminMenuDTO> results = adminMenuService.getMenus();
         return ResponseEntity.ok(results);
     }
 }
