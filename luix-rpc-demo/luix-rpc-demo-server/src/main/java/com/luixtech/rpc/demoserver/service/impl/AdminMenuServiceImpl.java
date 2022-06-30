@@ -28,10 +28,11 @@ public class AdminMenuServiceImpl implements AdminMenuService {
 
     private List<AdminMenuDTO> convertToTree(List<AdminMenu> menus, String parentId) {
         return menus.stream()
-                // 过滤父节点
+                // filter by parentId
                 .filter(parent -> parentId.equals(parent.getParentId()))
+                // convert to DTO
                 .map(AdminMenu::toDTO)
-                // 排序
+                // sort by order
                 .sorted(Comparator.comparing(AdminMenuDTO::getSequence))
                 // 把父节点children递归赋值成为子节点
                 .peek(node -> node.setChildren(convertToTree(menus, node.getId())))
