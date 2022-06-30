@@ -12,11 +12,6 @@
     <version>${revision}</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
-    <!--
-        *************************************************************************************
-        Properties definition
-        *************************************************************************************
-    -->
     <properties>
         <lombok.version>1.18.20</lombok.version>
         <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
@@ -26,11 +21,6 @@
         <springfox.version>2.7.0</springfox.version>
         <start-class>com.luixtech.rpc.portal.LuixRpcPortalApplication</start-class>
     </properties>
-    <!--
-    *************************************************************************************
-    Dependencies management
-    *************************************************************************************
-    -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -42,11 +32,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <!--
-        *************************************************************************************
-        Dependencies definition
-        *************************************************************************************
-    -->
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -116,11 +101,6 @@
             </exclusions>
         </dependency>
     </dependencies>
-    <!--
-        *************************************************************************************
-        Plugins definition
-        *************************************************************************************
-    -->
     <build>
         <defaultGoal>spring-boot:run</defaultGoal>
         <plugins>
@@ -278,11 +258,6 @@
             </plugin>
         </plugins>
     </build>
-    <!--
-        *************************************************************************************
-        Profile
-        *************************************************************************************
-    -->
     <profiles>
         <profile>
             <id>dev</id>

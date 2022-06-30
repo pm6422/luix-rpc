@@ -12,11 +12,6 @@
     <version>${revision}</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
-    <!--
-        *************************************************************************************
-        Properties definition
-        *************************************************************************************
-    -->
     <properties>
         <maven.version>3.2.1</maven.version>
         <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
@@ -25,11 +20,6 @@
         <skipJibBuild>true</skipJibBuild>
         <start-class>com.luixtech.rpc.democlient.LuixRpcDemoClientApplication</start-class>
     </properties>
-    <!--
-        *************************************************************************************
-        Dependencies management
-        *************************************************************************************
-    -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -41,11 +31,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <!--
-        *************************************************************************************
-        Dependencies definition
-        *************************************************************************************
-    -->
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -368,11 +353,6 @@
             </plugin>
         </plugins>
     </build>
-    <!--
-        *************************************************************************************
-        Profile
-        *************************************************************************************
-    -->
     <profiles>
         <profile>
             <id>dev</id>

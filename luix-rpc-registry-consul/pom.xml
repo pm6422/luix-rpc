@@ -8,11 +8,6 @@
     </parent>
     <artifactId>luix-rpc-registry-consul</artifactId>
     <name>${project.artifactId}</name>
-    <!--
-    *************************************************************************************
-    Properties definition
-    *************************************************************************************
-    -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
