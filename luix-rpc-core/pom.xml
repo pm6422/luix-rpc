@@ -8,11 +8,6 @@
     </parent>
     <artifactId>luix-rpc-core</artifactId>
     <name>${project.artifactId}</name>
-    <!--
-        *************************************************************************************
-        Properties definition
-        *************************************************************************************
-    -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -40,11 +35,6 @@
             <artifactId>validation-api</artifactId>
         </dependency>
     </dependencies>
-    <!--
-    *************************************************************************************
-    Plugins definition
-    *************************************************************************************
-    -->
     <build>
         <plugins>
             <plugin>
