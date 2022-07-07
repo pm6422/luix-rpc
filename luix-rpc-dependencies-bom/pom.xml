@@ -53,7 +53,7 @@
         <jedis_version>2.9.0</jedis_version>
         <jel_version>3.0.1-b08</jel_version>
         <jetcd_version>0.4.1</jetcd_version>
-        <jetty_version>9.4.41.v20210516</jetty_version>
+        <jetty_version>10.0.10</jetty_version>
         <jsonrpc_version>1.2.0</jsonrpc_version>
         <jsr305_version>3.0.2</jsr305_version>
         <kryo_serializers_version>0.45</kryo_serializers_version>
