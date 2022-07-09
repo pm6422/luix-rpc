@@ -33,7 +33,6 @@
         <!-- Eureka -->
         <eureka_version>1.9.12</eureka_version>
         <fastjson2_version>2.0.7</fastjson2_version>
-        <forest_spring_boot_starter_version>1.5.0</forest_spring_boot_starter_version>
         <fst_version>2.48-jdk-6</fst_version>
         <grizzly_version>2.1.4</grizzly_version>
         <grpc.version>1.22.1</grpc.version>
@@ -53,7 +52,7 @@
         <jedis_version>2.9.0</jedis_version>
         <jel_version>3.0.1-b08</jel_version>
         <jetcd_version>0.4.1</jetcd_version>
-        <jetty_version>9.4.41.v20210516</jetty_version>
+        <jetty_version>10.0.10</jetty_version>
         <jsonrpc_version>1.2.0</jsonrpc_version>
         <jsr305_version>3.0.2</jsr305_version>
         <kryo_serializers_version>0.45</kryo_serializers_version>
@@ -142,25 +141,6 @@
                 <groupId>com.ctrip.framework.apollo</groupId>
                 <artifactId>apollo-client</artifactId>
                 <version>${apollo_client_version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.dtflys.forest</groupId>
-                <artifactId>forest-spring-boot-starter</artifactId>
-                <version>${forest_spring_boot_starter_version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-io</groupId>
-                        <artifactId>commons-io</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.google.code.findbugs</groupId>
-                        <artifactId>jsr305</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.ecwid.consul</groupId>
