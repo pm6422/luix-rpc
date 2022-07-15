@@ -252,7 +252,6 @@
                     <keepBlankLines>false</keepBlankLines>
                     <expandEmptyElements>false</expandEmptyElements>
                     <createBackupFile>false</createBackupFile>
-                    <pomFile>pom.xml</pomFile>
                 </configuration>
                 <executions>
                     <execution>
