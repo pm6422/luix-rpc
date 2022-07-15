@@ -53,7 +53,7 @@ public class MongoConfiguration {
 
     @Configuration
     @EnableMongock
-    @ConditionalOnProperty(prefix = "mongock", value = "enabled", havingValue = "true")
+    @ConditionalOnProperty("mongock.enabled")
     protected static class EmbeddedDatabaseConfiguration {
 
     }

@@ -22,7 +22,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,8 +60,6 @@ public class SystemController {
     private boolean                              enabledApiDocs;
     @Autowired(required = false)
     private BuildProperties                      buildProperties;
-    @Resource
-    private MongockConfiguration                 springConfiguration;
     @Resource
     private ApplicationEventPublisher            applicationEventPublisher;
     @Resource
@@ -128,7 +125,7 @@ public class SystemController {
                 .connectionDriver(mongoTemplate, mongockConfiguration, mongoDBConfiguration, txManagerOpt);
         RunnerSpringbootBuilder runnerSpringbootBuilder = MongockSpringboot.builder()
                 .setDriver(connectionDriver)
-                .setConfig(springConfiguration)
+                .setConfig(mongockConfiguration)
                 .setSpringContext(applicationContext)
                 .setEventPublisher(applicationEventPublisher);
         runnerSpringbootBuilder.buildRunner().execute();

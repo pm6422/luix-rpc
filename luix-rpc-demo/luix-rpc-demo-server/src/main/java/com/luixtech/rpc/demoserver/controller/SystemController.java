@@ -53,8 +53,6 @@ public class SystemController {
     @Autowired(required = false)
     private BuildProperties                      buildProperties;
     @Resource
-    private MongockConfiguration                 springConfiguration;
-    @Resource
     private ApplicationEventPublisher            applicationEventPublisher;
     @Resource
     private MongockConfiguration                 mongockConfiguration;
@@ -119,7 +117,7 @@ public class SystemController {
                 .connectionDriver(mongoTemplate, mongockConfiguration, mongoDBConfiguration, txManagerOpt);
         RunnerSpringbootBuilder runnerSpringbootBuilder = MongockSpringboot.builder()
                 .setDriver(connectionDriver)
-                .setConfig(springConfiguration)
+                .setConfig(mongockConfiguration)
                 .setSpringContext(applicationContext)
                 .setEventPublisher(applicationEventPublisher);
         runnerSpringbootBuilder.buildRunner().execute();
