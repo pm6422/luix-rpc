@@ -65,8 +65,8 @@ public class JwtTokenProvider {
                 .filter(auth -> StringUtils.isNotEmpty(auth.trim()))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
-        User principal = new User(claims.getSubject(), StringUtils.EMPTY, authorities);
-        return new UsernamePasswordAuthenticationToken(principal, jwtToken, authorities);
+        User user = new User(claims.getSubject(), StringUtils.EMPTY, authorities);
+        return new UsernamePasswordAuthenticationToken(user, jwtToken, authorities);
     }
 
     public boolean validateToken(String authToken) {
