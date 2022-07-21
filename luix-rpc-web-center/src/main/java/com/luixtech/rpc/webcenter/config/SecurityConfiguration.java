@@ -33,11 +33,11 @@ import static com.luixtech.rpc.webcenter.domain.Authority.DEVELOPER;
 @Import(SecurityProblemSupport.class)
 public class SecurityConfiguration {
     @Resource
-    private ApplicationProperties applicationProperties;
+    private ApplicationProperties  applicationProperties;
     @Resource
-    private JwtTokenProvider      jwtTokenProvider;
+    private JwtTokenProvider       jwtTokenProvider;
     @Resource
-    private CorsFilter            corsFilter;
+    private CorsFilter             corsFilter;
     @Resource
     private SecurityProblemSupport problemSupport;
 
