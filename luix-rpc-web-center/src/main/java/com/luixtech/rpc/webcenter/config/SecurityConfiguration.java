@@ -32,7 +32,6 @@ import static com.luixtech.rpc.webcenter.domain.Authority.DEVELOPER;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Import(SecurityProblemSupport.class)
 public class SecurityConfiguration {
-
     @Resource
     private ApplicationProperties  applicationProperties;
     @Resource
