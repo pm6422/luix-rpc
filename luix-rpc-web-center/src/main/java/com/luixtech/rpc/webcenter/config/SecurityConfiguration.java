@@ -2,6 +2,7 @@ package com.luixtech.rpc.webcenter.config;
 
 import com.luixtech.rpc.webcenter.security.jwt.JwtFilterConfigurer;
 import com.luixtech.rpc.webcenter.security.jwt.JwtTokenProvider;
+import com.luixtech.rpc.webcenter.service.SecurityErrorMeterService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
@@ -33,17 +34,22 @@ import static com.luixtech.rpc.webcenter.domain.Authority.DEVELOPER;
 @Import(SecurityProblemSupport.class)
 public class SecurityConfiguration {
     @Resource
-    private ApplicationProperties  applicationProperties;
+    private ApplicationProperties     applicationProperties;
     @Resource
-    private JwtTokenProvider       jwtTokenProvider;
+    private CorsFilter                corsFilter;
     @Resource
-    private CorsFilter             corsFilter;
+    private SecurityProblemSupport    problemSupport;
     @Resource
-    private SecurityProblemSupport problemSupport;
+    private SecurityErrorMeterService securityErrorMeterService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public JwtTokenProvider jwtTokenProvider() {
+        return new JwtTokenProvider(applicationProperties, securityErrorMeterService);
     }
 
     @Bean
@@ -103,6 +109,6 @@ public class SecurityConfiguration {
     }
 
     private JwtFilterConfigurer securityConfigurerAdapter() {
-        return new JwtFilterConfigurer(jwtTokenProvider);
+        return new JwtFilterConfigurer(jwtTokenProvider());
     }
 }
