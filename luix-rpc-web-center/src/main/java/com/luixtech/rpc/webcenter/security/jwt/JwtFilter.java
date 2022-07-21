@@ -18,12 +18,12 @@ import java.io.IOException;
  */
 public class JwtFilter extends GenericFilterBean {
 
-    public static final String        AUTHORIZATION_HEADER = "Authorization";
-    public static final String        AUTHORIZATION_TOKEN  = "access_token";
-    private final       TokenProvider tokenProvider;
+    public static final String           AUTHORIZATION_HEADER = "Authorization";
+    public static final String           AUTHORIZATION_TOKEN  = "access_token";
+    private final       JwtTokenProvider jwtTokenProvider;
 
-    public JwtFilter(TokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
+    public JwtFilter(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -31,8 +31,8 @@ public class JwtFilter extends GenericFilterBean {
             throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         String jwt = resolveToken(httpServletRequest);
-        if (StringUtils.isNotEmpty(jwt) && this.tokenProvider.validateToken(jwt)) {
-            Authentication authentication = this.tokenProvider.getAuthentication(jwt);
+        if (StringUtils.isNotEmpty(jwt) && this.jwtTokenProvider.validateToken(jwt)) {
+            Authentication authentication = this.jwtTokenProvider.getAuthentication(jwt);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(servletRequest, servletResponse);

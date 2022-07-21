@@ -14,7 +14,7 @@ import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.repository.UserAuthorityRepository;
 import com.luixtech.rpc.webcenter.repository.UserProfilePhotoRepository;
 import com.luixtech.rpc.webcenter.security.jwt.JwtFilter;
-import com.luixtech.rpc.webcenter.security.jwt.TokenProvider;
+import com.luixtech.rpc.webcenter.security.jwt.JwtTokenProvider;
 import com.luixtech.rpc.webcenter.service.AuthorityService;
 import com.luixtech.rpc.webcenter.service.MailService;
 import com.luixtech.rpc.webcenter.service.UserProfilePhotoService;
@@ -82,24 +82,21 @@ public class AccountController {
     @Resource
     private              HttpHeaderCreator            httpHeaderCreator;
     @Resource
-    private              TokenProvider                tokenProvider;
+    private              JwtTokenProvider             jwtTokenProvider;
     @Resource
     private              AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Operation(summary = "authenticate login")
     @PostMapping("/open-api/accounts/authenticate")
     public ResponseEntity<String> authorize(@Valid @RequestBody LoginDTO loginDTO) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                loginDTO.getUsername(),
-                loginDTO.getPassword()
-        );
-
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = tokenProvider.createToken(authentication, loginDTO.isRememberMe());
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
+        Authentication user = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(user);
+        String jwt = jwtTokenProvider.createToken(user, loginDTO.isRememberMe());
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
-        return new ResponseEntity<>(jwt, httpHeaders, HttpStatus.OK);
+        return ResponseEntity.ok().headers(httpHeaders).body(jwt);
     }
 
     @Operation(summary = "retrieve current user")

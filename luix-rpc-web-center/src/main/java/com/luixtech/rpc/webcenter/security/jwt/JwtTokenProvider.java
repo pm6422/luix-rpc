@@ -1,13 +1,13 @@
 package com.luixtech.rpc.webcenter.security.jwt;
 
 import com.luixtech.rpc.webcenter.config.ApplicationProperties;
+import com.luixtech.rpc.webcenter.service.SecurityErrorMeterService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import com.luixtech.rpc.webcenter.service.SecurityErrorMeterService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -23,46 +24,39 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class TokenProvider {
+public class JwtTokenProvider {
     private static final String                    AUTHORITIES_KEY = "auth";
     private final        Key                       key;
     private final        JwtParser                 jwtParser;
-    private final        long                      tokenValidityInMilliseconds;
-    private final        long                      tokenValidityInMillisecondsForRememberMe;
+    private final        long                      tokenValidityInMillis;
+    private final        long                      tokenValidityInMillisForRememberMe;
     private final        SecurityErrorMeterService securityErrorMeterService;
 
-    public TokenProvider(ApplicationProperties applicationProperties, SecurityErrorMeterService securityErrorMeterService) {
+    public JwtTokenProvider(ApplicationProperties applicationProperties, SecurityErrorMeterService securityErrorMeterService) {
         byte[] keyBytes = Decoders.BASE64.decode(applicationProperties.getSecurity().getAuthentication().getJwt().getBase64Secret());
         key = Keys.hmacShaKeyFor(keyBytes);
         jwtParser = Jwts.parserBuilder().setSigningKey(key).build();
-        this.tokenValidityInMilliseconds = 1000 * applicationProperties.getSecurity().getAuthentication().getJwt()
+        this.tokenValidityInMillis = 1000 * applicationProperties.getSecurity().getAuthentication().getJwt()
                 .getTokenValidityInSeconds();
-        this.tokenValidityInMillisecondsForRememberMe =
-                1000 * applicationProperties.getSecurity().getAuthentication().getJwt()
-                        .getTokenValidityInSecondsForRememberMe();
+        this.tokenValidityInMillisForRememberMe = 1000 * applicationProperties.getSecurity().getAuthentication().getJwt()
+                .getTokenValidityInSecondsForRememberMe();
         this.securityErrorMeterService = securityErrorMeterService;
     }
 
-    public String createToken(Authentication authentication, boolean rememberMe) {
-        String authorities = authentication.getAuthorities()
+    public String createToken(Authentication user, boolean rememberMe) {
+        String authorities = user.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-
-        long now = (new Date()).getTime();
-        Date validity;
-        if (rememberMe) {
-            validity = new Date(now + this.tokenValidityInMillisecondsForRememberMe);
-        } else {
-            validity = new Date(now + this.tokenValidityInMilliseconds);
-        }
-
+        Instant validity = rememberMe ?
+                Instant.now().plusMillis(tokenValidityInMillisForRememberMe) :
+                Instant.now().plusMillis(tokenValidityInMillis);
         return Jwts
                 .builder()
-                .setSubject(authentication.getName())
+                .setSubject(user.getName())
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(validity)
+                .setExpiration(Date.from(validity))
                 .compact();
     }
 
