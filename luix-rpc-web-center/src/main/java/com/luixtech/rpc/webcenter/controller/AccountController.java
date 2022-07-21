@@ -92,6 +92,7 @@ public class AccountController {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
         Authentication user = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        // Set authentication to security context after login successfully
         SecurityContextHolder.getContext().setAuthentication(user);
         String jwt = jwtTokenProvider.createToken(user, loginDTO.isRememberMe());
         HttpHeaders httpHeaders = new HttpHeaders();

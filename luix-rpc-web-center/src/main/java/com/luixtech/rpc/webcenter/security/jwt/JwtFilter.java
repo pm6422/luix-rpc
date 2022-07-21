@@ -1,5 +1,6 @@
 package com.luixtech.rpc.webcenter.security.jwt;
 
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,23 +17,21 @@ import java.io.IOException;
  * Filters incoming requests and installs a Spring Security principal if a header corresponding to a valid user is
  * found.
  */
+@AllArgsConstructor
 public class JwtFilter extends GenericFilterBean {
 
     public static final String           AUTHORIZATION_HEADER = "Authorization";
     public static final String           AUTHORIZATION_TOKEN  = "access_token";
     private final       JwtTokenProvider jwtTokenProvider;
 
-    public JwtFilter(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
-
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        String jwt = resolveToken(httpServletRequest);
-        if (StringUtils.isNotEmpty(jwt) && this.jwtTokenProvider.validateToken(jwt)) {
-            Authentication authentication = this.jwtTokenProvider.getAuthentication(jwt);
+        String jwtToken = resolveToken(httpServletRequest);
+        if (StringUtils.isNotEmpty(jwtToken) && jwtTokenProvider.validateToken(jwtToken)) {
+            // Set authentication to security context after validating successfully
+            Authentication authentication = jwtTokenProvider.extractAuthentication(jwtToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(servletRequest, servletResponse);
@@ -43,10 +42,6 @@ public class JwtFilter extends GenericFilterBean {
         if (StringUtils.isNotEmpty(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
-        String jwt = request.getParameter(AUTHORIZATION_TOKEN);
-        if (StringUtils.isNotEmpty(jwt)) {
-            return jwt;
-        }
-        return null;
+        return StringUtils.trimToNull(request.getParameter(AUTHORIZATION_TOKEN));
     }
 }

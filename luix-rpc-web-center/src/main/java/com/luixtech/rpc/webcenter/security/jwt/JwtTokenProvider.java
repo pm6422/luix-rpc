@@ -60,16 +60,15 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public Authentication getAuthentication(String token) {
-        Claims claims = jwtParser.parseClaimsJws(token).getBody();
+    public Authentication extractAuthentication(String jwtToken) {
+        Claims claims = jwtParser.parseClaimsJws(jwtToken).getBody();
         Collection<? extends GrantedAuthority> authorities = Arrays
                 .stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                 .filter(auth -> StringUtils.isNotEmpty(auth.trim()))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
-
         User principal = new User(claims.getSubject(), StringUtils.EMPTY, authorities);
-        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        return new UsernamePasswordAuthenticationToken(principal, jwtToken, authorities);
     }
 
     public boolean validateToken(String authToken) {
