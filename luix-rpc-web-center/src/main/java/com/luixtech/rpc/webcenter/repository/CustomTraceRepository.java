@@ -1,11 +1,11 @@
 package com.luixtech.rpc.webcenter.repository;
 
 import com.luixtech.rpc.webcenter.domain.PersistentHttpTrace;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.actuate.trace.http.HttpTrace;
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
@@ -15,10 +15,9 @@ import java.util.stream.Collectors;
  * An implementation of Spring Boot's HttpTraceRepository.
  */
 @Repository
+@AllArgsConstructor
 public class CustomTraceRepository implements HttpTraceRepository {
-
-    @Resource
-    private PersistenceHttpTraceRepository persistenceHttpTraceRepository;
+    private final PersistenceHttpTraceRepository persistenceHttpTraceRepository;
 
     @Override
     public List<HttpTrace> findAll() {

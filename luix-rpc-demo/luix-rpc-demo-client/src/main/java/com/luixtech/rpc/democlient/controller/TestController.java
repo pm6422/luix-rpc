@@ -28,7 +28,6 @@ import static com.luixtech.rpc.democommon.domain.Authority.USER;
 @RestController
 @Slf4j
 public class TestController {
-
     @Resource
     private ApplicationContext applicationContext;
     @Resource

@@ -5,6 +5,7 @@ import com.codahale.metrics.servlet.InstrumentedFilter;
 import com.codahale.metrics.servlets.MetricsServlet;
 import io.undertow.server.DefaultByteBufferPool;
 import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;
@@ -21,7 +22,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import javax.annotation.Resource;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
@@ -39,15 +39,12 @@ import static java.net.URLDecoder.decode;
  * Web application configuration
  */
 @Configuration
+@AllArgsConstructor
 @Slf4j
 public class WebConfigurer implements ServletContextInitializer, WebServerFactoryCustomizer<UndertowServletWebServerFactory> {
-
-    @Resource
-    private Environment           env;
-    @Resource
-    private ApplicationProperties applicationProperties;
-    @Resource
-    private MetricRegistry        metricRegistry;
+    private final Environment           env;
+    private final ApplicationProperties applicationProperties;
+    private final MetricRegistry        metricRegistry;
 
     @Override
     public void onStartup(ServletContext servletContext) {

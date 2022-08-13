@@ -1,11 +1,5 @@
 package com.luixtech.rpc.webcenter.service.impl;
 
-import com.luixtech.rpc.webcenter.dto.RpcRegistryDTO;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 import com.luixtech.rpc.core.client.stub.ConsumerStub;
 import com.luixtech.rpc.core.client.stub.ConsumerStubFactory;
 import com.luixtech.rpc.core.client.stub.ConsumerStubHolder;
@@ -15,12 +9,18 @@ import com.luixtech.rpc.core.listener.GlobalProviderDiscoveryListener;
 import com.luixtech.rpc.core.registry.Registry;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import com.luixtech.rpc.webcenter.dto.RpcRegistryDTO;
 import com.luixtech.rpc.webcenter.service.RpcRegistryService;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,23 +28,21 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import static com.luixtech.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE;
+import static com.luixtech.rpc.core.constant.ProtocolConstants.SERIALIZER;
 import static com.luixtech.rpc.core.constant.ServiceConstants.*;
 import static com.luixtech.rpc.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
-import static com.luixtech.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE;
-import static com.luixtech.rpc.core.constant.ProtocolConstants.SERIALIZER;
 
 @Service
+@AllArgsConstructor
 @Slf4j
 public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRunner {
-    private static final Map<String, RegistryConfig> REGISTRY_CONFIG_MAP = new ConcurrentHashMap<>();
-    private static final List<RpcRegistryDTO>        REGISTRIES          = new ArrayList<>();
-    @Resource
-    private              LuixProperties              luixProperties;
-    @Resource
-    private              GlobalConsumerDiscoveryListener globalConsumerDiscoveryListener;
-    @Resource
-    private              GlobalProviderDiscoveryListener globalProviderDiscoveryListener;
+    private static final Map<String, RegistryConfig>     REGISTRY_CONFIG_MAP = new ConcurrentHashMap<>();
+    private static final List<RpcRegistryDTO>            REGISTRIES          = new ArrayList<>();
+    private final        LuixProperties                  luixProperties;
+    private final        GlobalConsumerDiscoveryListener globalConsumerDiscoveryListener;
+    private final        GlobalProviderDiscoveryListener globalProviderDiscoveryListener;
 
     /**
      * {@link org.springframework.beans.factory.InitializingBean#afterPropertiesSet()} execute too earlier

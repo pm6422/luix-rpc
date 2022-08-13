@@ -18,6 +18,7 @@ import com.luixtech.rpc.webcenter.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.context.ApplicationEventPublisher;
@@ -29,7 +30,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
@@ -46,23 +46,17 @@ import static com.luixtech.rpc.webcenter.utils.NetworkUtils.getRequestUrl;
  */
 @RestController
 @SecurityRequirement(name = AUTH)
+@AllArgsConstructor
 @Slf4j
 public class UserController {
 
-    @Resource
-    private ApplicationProperties      applicationProperties;
-    @Resource
-    private UserProfilePhotoRepository userProfilePhotoRepository;
-    @Resource
-    private UserAuthorityRepository    userAuthorityRepository;
-    @Resource
-    private UserService                userService;
-    @Resource
-    private MailService                mailService;
-    @Resource
-    private ApplicationEventPublisher  applicationEventPublisher;
-    @Resource
-    private HttpHeaderCreator          httpHeaderCreator;
+    private final ApplicationProperties      applicationProperties;
+    private final UserProfilePhotoRepository userProfilePhotoRepository;
+    private final UserAuthorityRepository    userAuthorityRepository;
+    private final UserService                userService;
+    private final MailService                mailService;
+    private final ApplicationEventPublisher  applicationEventPublisher;
+    private final HttpHeaderCreator          httpHeaderCreator;
 
     @Operation(summary = "create new user and send activation email")
     @PostMapping("/api/users")

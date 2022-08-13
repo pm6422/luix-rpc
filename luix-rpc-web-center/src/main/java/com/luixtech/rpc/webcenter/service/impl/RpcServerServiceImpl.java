@@ -41,7 +41,6 @@ import static com.luixtech.rpc.webcenter.domain.RpcService.generateMd5Id;
 @RpcProvider
 @Slf4j
 public class RpcServerServiceImpl implements RpcServerService {
-
     private static final int                                             PAGE_SIZE              = 100;
     private static final ConcurrentHashMap<String, Pair<String, String>> DISCOVERED_RPC_SERVERS = new ConcurrentHashMap<>();
     @Resource

@@ -3,6 +3,7 @@ package com.luixtech.rpc.webcenter.config;
 import com.luixtech.rpc.webcenter.security.jwt.JwtFilterConfigurer;
 import com.luixtech.rpc.webcenter.security.jwt.JwtTokenProvider;
 import com.luixtech.rpc.webcenter.service.SecurityErrorMeterService;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
@@ -19,8 +20,6 @@ import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWrite
 import org.springframework.web.filter.CorsFilter;
 import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
-import javax.annotation.Resource;
-
 import static com.luixtech.rpc.webcenter.domain.Authority.ADMIN;
 import static com.luixtech.rpc.webcenter.domain.Authority.DEVELOPER;
 
@@ -32,15 +31,12 @@ import static com.luixtech.rpc.webcenter.domain.Authority.DEVELOPER;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Import(SecurityProblemSupport.class)
+@AllArgsConstructor
 public class SecurityConfiguration {
-    @Resource
-    private ApplicationProperties     applicationProperties;
-    @Resource
-    private CorsFilter                corsFilter;
-    @Resource
-    private SecurityProblemSupport    problemSupport;
-    @Resource
-    private SecurityErrorMeterService securityErrorMeterService;
+    private final ApplicationProperties     applicationProperties;
+    private final CorsFilter                corsFilter;
+    private final SecurityProblemSupport    problemSupport;
+    private final SecurityErrorMeterService securityErrorMeterService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {

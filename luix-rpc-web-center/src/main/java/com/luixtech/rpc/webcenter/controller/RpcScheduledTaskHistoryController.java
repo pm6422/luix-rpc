@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Example;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
@@ -33,11 +33,10 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
  */
 @RestController
 @SecurityRequirement(name = AUTH)
+@AllArgsConstructor
 @Slf4j
 public class RpcScheduledTaskHistoryController {
-
-    @Resource
-    private RpcScheduledTaskHistoryRepository rpcScheduledTaskHistoryRepository;
+    private final RpcScheduledTaskHistoryRepository rpcScheduledTaskHistoryRepository;
 
     @Operation(summary = "find scheduled task history list")
     @GetMapping("/api/rpc-scheduled-task-histories")

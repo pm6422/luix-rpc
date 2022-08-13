@@ -1,5 +1,6 @@
 package com.luixtech.rpc.demoserver.task.schedule;
 
+import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.DisposableBean;
@@ -7,7 +8,6 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,14 +18,14 @@ import java.util.concurrent.ScheduledFuture;
  * and it can also cancel the started scheduled task.
  */
 @Component
+@AllArgsConstructor
 public class CancelableScheduledTaskRegistrar implements DisposableBean {
 
     private static final Map<String, ScheduledFuture<?>> SCHEDULED_TASKS = new ConcurrentHashMap<>(16);
     /**
      * Spring task scheduler
      */
-    @Resource
-    private              TaskScheduler                   taskScheduler;
+    private final        TaskScheduler                   taskScheduler;
 
     public synchronized void addCronTask(String id, Runnable task, String cronExpression) {
         Validate.notEmpty(id, "Task ID must NOT be empty!");

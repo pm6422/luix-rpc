@@ -9,6 +9,7 @@ import com.luixtech.rpc.demoserver.service.ScheduledTaskService;
 import com.luixtech.rpc.demoserver.task.schedule.TaskExecutable;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -21,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
@@ -33,17 +33,13 @@ import static com.luixtech.rpc.demoserver.utils.HttpHeaderUtils.generatePageHead
  * REST controller for managing scheduled tasks.
  */
 @RestController
+@AllArgsConstructor
 @Slf4j
 public class ScheduledTaskController {
-
-    @Resource
-    private ScheduledTaskRepository scheduledTaskRepository;
-    @Resource
-    private ScheduledTaskService    scheduledTaskService;
-    @Resource
-    private HttpHeaderCreator       httpHeaderCreator;
-    @Resource
-    private ApplicationContext      applicationContext;
+    private final ScheduledTaskRepository scheduledTaskRepository;
+    private final ScheduledTaskService    scheduledTaskService;
+    private final HttpHeaderCreator       httpHeaderCreator;
+    private final ApplicationContext      applicationContext;
 
     @Operation(summary = "create scheduled task")
     @PostMapping("/api/scheduled-tasks")

@@ -2,6 +2,7 @@ package com.luixtech.rpc.demoserver.config;
 
 import com.luixtech.rpc.demoserver.async.ExceptionHandlingAsyncTaskExecutor;
 import com.luixtech.rpc.demoserver.async.ExceptionHandlingAsyncUncaughtExceptionHandler;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
@@ -17,19 +18,16 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.annotation.Resource;
 import java.util.concurrent.Executor;
 
 @Configuration
 @EnableAsync
 @EnableScheduling
+@AllArgsConstructor
 @Slf4j
 public class AsyncConfiguration implements AsyncConfigurer, WebMvcConfigurer {
-
-    @Resource
-    private TaskExecutionProperties  taskExecutionProperties;
-    @Resource
-    private TaskSchedulingProperties taskSchedulingProperties;
+    private final TaskExecutionProperties  taskExecutionProperties;
+    private final TaskSchedulingProperties taskSchedulingProperties;
 
     @Override
     @Bean(name = "asyncTaskExecutor")

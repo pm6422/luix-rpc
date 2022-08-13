@@ -1,20 +1,21 @@
 package com.luixtech.rpc.webcenter.service.impl;
 
-import com.luixtech.rpc.webcenter.domain.RpcScheduledTask;
-import com.luixtech.rpc.webcenter.task.schedule.CancelableScheduledTaskRegistrar;
-import com.luixtech.uidgenerator.core.id.IdGenerator;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import com.luixtech.rpc.core.client.proxy.Proxy;
 import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import com.luixtech.rpc.webcenter.domain.RpcScheduledTask;
 import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.repository.RpcScheduledTaskHistoryRepository;
 import com.luixtech.rpc.webcenter.repository.RpcScheduledTaskLockRepository;
 import com.luixtech.rpc.webcenter.repository.RpcScheduledTaskRepository;
 import com.luixtech.rpc.webcenter.service.RpcRegistryService;
 import com.luixtech.rpc.webcenter.service.RpcScheduledTaskService;
+import com.luixtech.rpc.webcenter.task.schedule.CancelableScheduledTaskRegistrar;
 import com.luixtech.rpc.webcenter.task.schedule.RunnableTask;
+import com.luixtech.uidgenerator.core.id.IdGenerator;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,27 +24,20 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.regex.Pattern;
 
 @Service
+@AllArgsConstructor
 @Slf4j
 public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService {
-    @Resource
-    private RpcScheduledTaskRepository        rpcScheduledTaskRepository;
-    @Resource
-    private RpcScheduledTaskHistoryRepository rpcScheduledTaskHistoryRepository;
-    @Resource
-    private RpcScheduledTaskLockRepository    rpcScheduledTaskLockRepository;
-    @Resource
-    private RpcRegistryService               rpcRegistryService;
-    @Resource
-    private CancelableScheduledTaskRegistrar cancelableScheduledTaskRegistrar;
-    @Resource
-    private LuixProperties                   luixProperties;
-    @Resource
-    private MongoTemplate                     mongoTemplate;
+    private final RpcScheduledTaskRepository        rpcScheduledTaskRepository;
+    private final RpcScheduledTaskHistoryRepository rpcScheduledTaskHistoryRepository;
+    private final RpcScheduledTaskLockRepository    rpcScheduledTaskLockRepository;
+    private final RpcRegistryService                rpcRegistryService;
+    private final CancelableScheduledTaskRegistrar  cancelableScheduledTaskRegistrar;
+    private final LuixProperties                    luixProperties;
+    private final MongoTemplate                     mongoTemplate;
 
     @Override
     public void loadAll() {

@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -23,24 +24,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
 
 @RestController
 @SecurityRequirement(name = AUTH)
+@AllArgsConstructor
 @Slf4j
 public class RpcServerController {
-
-    @Resource
-    private RpcServerRepository rpcServerRepository;
-    @Resource
-    private RpcServerService    rpcServerService;
-    @Resource
-    private RpcProviderService  rpcProviderService;
-    @Resource
-    private RpcConsumerService  rpcConsumerService;
+    private final RpcServerRepository rpcServerRepository;
+    private final RpcServerService    rpcServerService;
+    private final RpcProviderService  rpcProviderService;
+    private final RpcConsumerService  rpcConsumerService;
 
     @Operation(summary = "find server by ID in real time")
     @GetMapping("/api/rpc-servers/{id}")

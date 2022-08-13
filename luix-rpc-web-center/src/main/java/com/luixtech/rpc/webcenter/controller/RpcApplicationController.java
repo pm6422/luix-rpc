@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,17 +29,13 @@ import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
 
 @RestController
 @SecurityRequirement(name = AUTH)
+@AllArgsConstructor
 @Slf4j
 public class RpcApplicationController {
-
-    @Resource
-    private RpcApplicationRepository rpcApplicationRepository;
-    @Resource
-    private RpcApplicationService    rpcApplicationService;
-    @Resource
-    private RpcProviderService       rpcProviderService;
-    @Resource
-    private RpcConsumerService       rpcConsumerService;
+    private final RpcApplicationRepository rpcApplicationRepository;
+    private final RpcApplicationService    rpcApplicationService;
+    private final RpcProviderService       rpcProviderService;
+    private final RpcConsumerService       rpcConsumerService;
 
     @Operation(summary = "find all application names")
     @GetMapping("api/rpc-applications/names")

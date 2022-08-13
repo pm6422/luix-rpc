@@ -22,7 +22,6 @@ import java.util.stream.Stream;
 
 @RestController
 public class SystemController {
-
     @Resource
     private Environment           env;
     @Resource

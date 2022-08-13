@@ -2,6 +2,7 @@ package com.luixtech.rpc.webcenter.listener;
 
 import com.luixtech.rpc.webcenter.event.LogoutEvent;
 import com.luixtech.rpc.webcenter.security.AjaxLogoutSuccessHandler;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -9,16 +10,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
+@AllArgsConstructor
 @Slf4j
 public class AuthEventListener {
-
-    @Resource
-    private AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler;
+    private final AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler;
 
     @Async
     @EventListener

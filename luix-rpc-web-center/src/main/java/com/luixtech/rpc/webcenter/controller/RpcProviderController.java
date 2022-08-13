@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springdoc.api.annotations.ParameterObject;
@@ -35,7 +36,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -48,19 +48,14 @@ import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
 
 @RestController
 @SecurityRequirement(name = AUTH)
+@AllArgsConstructor
 @Slf4j
 public class RpcProviderController {
-
-    @Resource
-    private LuixProperties        luixProperties;
-    @Resource
-    private RpcRegistryService    rpcRegistryService;
-    @Resource
-    private RpcProviderService    rpcProviderService;
-    @Resource
-    private RpcProviderRepository rpcProviderRepository;
-    @Resource
-    private HttpHeaderCreator     httpHeaderCreator;
+    private final LuixProperties        luixProperties;
+    private final RpcRegistryService    rpcRegistryService;
+    private final RpcProviderService    rpcProviderService;
+    private final RpcProviderRepository rpcProviderRepository;
+    private final HttpHeaderCreator     httpHeaderCreator;
 
     @Operation(summary = "find provider by ID")
     @GetMapping("/api/rpc-providers/{id}")

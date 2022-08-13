@@ -2,8 +2,6 @@ package com.luixtech.rpc.webcenter.service.impl;
 
 import com.google.common.collect.ImmutableMap;
 import com.luixtech.rpc.webcenter.component.MessageCreator;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import com.luixtech.rpc.webcenter.domain.Authority;
 import com.luixtech.rpc.webcenter.domain.User;
 import com.luixtech.rpc.webcenter.domain.UserAuthority;
@@ -14,6 +12,9 @@ import com.luixtech.rpc.webcenter.repository.UserAuthorityRepository;
 import com.luixtech.rpc.webcenter.repository.UserRepository;
 import com.luixtech.rpc.webcenter.service.UserService;
 import com.luixtech.rpc.webcenter.utils.RandomUtils;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,24 +22,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.thymeleaf.util.StringUtils;
 
-import javax.annotation.Resource;
 import java.time.Instant;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@AllArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
-
-    @Resource
-    private UserRepository          userRepository;
-    @Resource
-    private UserAuthorityRepository userAuthorityRepository;
-    @Resource
-    private PasswordEncoder passwordEncoder;
-    @Resource
-    private MessageCreator  messageCreator;
+    private final UserRepository          userRepository;
+    private final UserAuthorityRepository userAuthorityRepository;
+    private final PasswordEncoder         passwordEncoder;
+    private final MessageCreator          messageCreator;
 
     // private void removeUserToken(User user) {
     // String clientId =

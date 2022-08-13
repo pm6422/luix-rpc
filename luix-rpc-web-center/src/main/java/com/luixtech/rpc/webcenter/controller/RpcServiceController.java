@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -23,7 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -33,21 +33,15 @@ import static com.luixtech.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeade
 
 @RestController
 @SecurityRequirement(name = AUTH)
+@AllArgsConstructor
 @Slf4j
 public class RpcServiceController {
-
-    @Resource
-    private RpcServiceService     rpcServiceService;
-    @Resource
-    private RpcServiceRepository  rpcServiceRepository;
-    @Resource
-    private RpcProviderService    rpcProviderService;
-    @Resource
-    private RpcConsumerService    rpcConsumerService;
-    @Resource
-    private RpcProviderController rpcProviderController;
-    @Resource
-    private HttpHeaderCreator     httpHeaderCreator;
+    private final RpcServiceService     rpcServiceService;
+    private final RpcServiceRepository  rpcServiceRepository;
+    private final RpcProviderService    rpcProviderService;
+    private final RpcConsumerService    rpcConsumerService;
+    private final RpcProviderController rpcProviderController;
+    private final HttpHeaderCreator     httpHeaderCreator;
 
     @Operation(summary = "find service by ID")
     @GetMapping("/api/rpc-services/{id}")

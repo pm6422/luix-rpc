@@ -4,12 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.luixtech.rpc.webcenter.component.MessageCreator;
-import com.luixtech.rpc.webcenter.exception.NoAuthorityException;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import com.luixtech.rpc.webcenter.dto.ErrorDTO;
 import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.exception.DuplicationException;
+import com.luixtech.rpc.webcenter.exception.NoAuthorityException;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
@@ -42,20 +42,19 @@ import java.util.List;
  * Exception list refer to {@link org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler}
  */
 @ControllerAdvice
+@AllArgsConstructor
 @Slf4j
 public class ExceptionTranslatorAdvice {
 
-    public static final String ILLEGAL_REQUEST_ARG_CODE   = "EP5000";
-    public static final String NO_DATA_FOUND_CODE         = "EP5002";
-    public static final String NO_AUTH_CODE               = "EP5011";
-    public static final String ACCESS_DENIED_CODE         = "EP5030";
-    public static final String DUPLICATED_DATA_CODE       = "EP5101";
-    public static final String SYS_ERROR_CODE             = "ES7000";
-    public static final String SYS_EXCEPTION_CODE         = "ES7001";
-    public static final String CONCURRENCY_EXCEPTION_CODE = "ES7002";
-
-    @Resource
-    private MessageCreator messageCreator;
+    public static final String         ILLEGAL_REQUEST_ARG_CODE   = "EP5000";
+    public static final String         NO_DATA_FOUND_CODE         = "EP5002";
+    public static final String         NO_AUTH_CODE               = "EP5011";
+    public static final String         ACCESS_DENIED_CODE         = "EP5030";
+    public static final String         DUPLICATED_DATA_CODE       = "EP5101";
+    public static final String         SYS_ERROR_CODE             = "ES7000";
+    public static final String         SYS_EXCEPTION_CODE         = "ES7001";
+    public static final String         CONCURRENCY_EXCEPTION_CODE = "ES7002";
+    private final       MessageCreator messageCreator;
 
     /**
      * JSR 303 bean validation exception handler

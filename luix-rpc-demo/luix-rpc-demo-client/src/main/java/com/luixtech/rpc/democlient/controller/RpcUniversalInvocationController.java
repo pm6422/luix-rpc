@@ -10,6 +10,7 @@ import com.luixtech.rpc.democlient.dto.MethodInvocation;
 import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.util.StreamUtils;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -33,10 +33,9 @@ import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
  * REST controller for RPC calling.
  */
 @RestController
+@AllArgsConstructor
 @Slf4j
 public class RpcUniversalInvocationController {
-
-    @Resource
     private LuixProperties luixProperties;
 
     @Operation(summary = "discover address invocation")

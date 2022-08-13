@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +44,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -61,30 +61,21 @@ import static com.luixtech.rpc.webcenter.utils.NetworkUtils.getRequestUrl;
  */
 @RestController
 @SecurityRequirement(name = AUTH)
+@AllArgsConstructor
 @Slf4j
 public class AccountController {
     private static final FastDateFormat               DATETIME_FORMAT = FastDateFormat.getInstance("yyyyMMdd-HHmmss");
     private static final String                       ANONYMOUS_USER  = "anonymousUser";
-    @Resource
-    private              UserService                  userService;
-    @Resource
-    private              UserAuthorityRepository      userAuthorityRepository;
-    @Resource
-    private              UserProfilePhotoRepository   userProfilePhotoRepository;
-    @Resource
-    private              UserProfilePhotoService      userProfilePhotoService;
-    @Resource
-    private              AuthorityService             authorityService;
-    @Resource
-    private              MailService                  mailService;
-    @Resource
-    private              ApplicationEventPublisher    applicationEventPublisher;
-    @Resource
-    private              HttpHeaderCreator            httpHeaderCreator;
-    @Resource
-    private              JwtTokenProvider             jwtTokenProvider;
-    @Resource
-    private              AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final        UserService                  userService;
+    private final        UserAuthorityRepository      userAuthorityRepository;
+    private final        UserProfilePhotoRepository   userProfilePhotoRepository;
+    private final        UserProfilePhotoService      userProfilePhotoService;
+    private final        AuthorityService             authorityService;
+    private final        MailService                  mailService;
+    private final        ApplicationEventPublisher    applicationEventPublisher;
+    private final        HttpHeaderCreator            httpHeaderCreator;
+    private final        JwtTokenProvider             jwtTokenProvider;
+    private final        AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Operation(summary = "authenticate login")
     @PostMapping("/open-api/accounts/authenticate")

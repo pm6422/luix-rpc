@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springdoc.api.annotations.ParameterObject;
@@ -18,19 +19,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
  * REST controller for managing the admin menu.
  */
 @RestController
+@AllArgsConstructor
 @Slf4j
 public class AdminMenuController {
-    @Resource
-    private AdminMenuQueryRepository adminMenuQueryRepository;
-    @Resource
-    private AdminMenuService         adminMenuService;
+    private final AdminMenuQueryRepository adminMenuQueryRepository;
+    private final AdminMenuService         adminMenuService;
 
     @Operation(summary = "find all menus")
     @GetMapping("/api/admin-menus")

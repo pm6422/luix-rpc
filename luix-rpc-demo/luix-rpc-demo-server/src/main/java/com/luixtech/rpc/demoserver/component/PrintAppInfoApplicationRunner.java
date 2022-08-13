@@ -1,8 +1,9 @@
 package com.luixtech.rpc.demoserver.component;
 
+import com.luixtech.utilities.network.AddressUtils;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import com.luixtech.utilities.network.AddressUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
@@ -10,15 +11,13 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 
-import javax.annotation.Resource;
 import java.nio.charset.Charset;
 
 @Component
+@AllArgsConstructor
 @Slf4j
 public class PrintAppInfoApplicationRunner implements ApplicationRunner {
-
-    @Resource
-    private Environment env;
+    private final Environment env;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {

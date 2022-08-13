@@ -11,6 +11,7 @@ import com.luixtech.rpc.webcenter.service.RpcRegistryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -31,13 +31,11 @@ import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
  */
 @RestController
 @SecurityRequirement(name = AUTH)
+@AllArgsConstructor
 @Slf4j
 public class RpcUniversalInvocationController {
-
-    @Resource
-    private LuixProperties     luixProperties;
-    @Resource
-    private RpcRegistryService rpcRegistryService;
+    private final LuixProperties     luixProperties;
+    private final RpcRegistryService rpcRegistryService;
 
     @Operation(summary = "direct address invocation")
     @PostMapping("/api/rpc-invocations/invoke")

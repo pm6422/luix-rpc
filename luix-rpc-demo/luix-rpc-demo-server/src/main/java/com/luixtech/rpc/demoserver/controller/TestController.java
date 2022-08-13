@@ -10,6 +10,7 @@ import com.luixtech.rpc.demoserver.utils.TraceIdUtils;
 import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
 import com.luixtech.uidgenerator.core.id.IdGenerator;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,18 +20,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 
-import javax.annotation.Resource;
 import java.util.concurrent.Callable;
 
 import static com.luixtech.rpc.core.constant.ApplicationConstants.APP;
 
 @RestController
+@AllArgsConstructor
 @Slf4j
 public class TestController {
-    @Resource
-    private LuixProperties       luixProperties;
-    @Resource
-    private AsyncTaskTestService asyncTaskTestService;
+    private final LuixProperties       luixProperties;
+    private final AsyncTaskTestService asyncTaskTestService;
 
     @Operation(summary = "register provider")
     @GetMapping("/api/tests/register-provider")

@@ -2,13 +2,12 @@ package com.luixtech.rpc.webcenter.service.impl;
 
 import com.luixtech.rpc.webcenter.dto.StatisticDTO;
 import com.luixtech.rpc.webcenter.repository.*;
-import com.luixtech.rpc.webcenter.repository.*;
 import com.luixtech.rpc.webcenter.service.RpcStatisticService;
 import com.luixtech.rpc.webcenter.task.polling.queue.StatisticResultHolder;
+import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -16,24 +15,16 @@ import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class RpcStatisticServiceImpl implements RpcStatisticService {
-
-    @Resource
-    private RpcApplicationRepository          rpcApplicationRepository;
-    @Resource
-    private RpcServerRepository               rpcServerRepository;
-    @Resource
-    private RpcServiceRepository              rpcServiceRepository;
-    @Resource
-    private RpcProviderRepository             rpcProviderRepository;
-    @Resource
-    private RpcConsumerRepository             rpcConsumerRepository;
-    @Resource
-    private RpcScheduledTaskRepository        rpcScheduledTaskRepository;
-    @Resource
-    private RpcScheduledTaskHistoryRepository rpcScheduledTaskHistoryRepository;
-    @Resource
-    private Executor                          asyncTaskExecutor;
+    private final RpcApplicationRepository          rpcApplicationRepository;
+    private final RpcServerRepository               rpcServerRepository;
+    private final RpcServiceRepository              rpcServiceRepository;
+    private final RpcProviderRepository             rpcProviderRepository;
+    private final RpcConsumerRepository             rpcConsumerRepository;
+    private final RpcScheduledTaskRepository        rpcScheduledTaskRepository;
+    private final RpcScheduledTaskHistoryRepository rpcScheduledTaskHistoryRepository;
+    private final Executor                          asyncTaskExecutor;
 
     /**
      * Refer to https://www.toutiao.com/a6783214804937998851/

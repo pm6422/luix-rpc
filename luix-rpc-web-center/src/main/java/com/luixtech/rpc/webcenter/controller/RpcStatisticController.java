@@ -7,6 +7,7 @@ import com.luixtech.rpc.webcenter.task.polling.queue.InMemoryAsyncTaskQueue;
 import com.luixtech.rpc.webcenter.utils.TraceIdUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,11 +23,10 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @SecurityRequirement(name = AUTH)
+@AllArgsConstructor
 @Slf4j
 public class RpcStatisticController {
-
-    @Resource
-    private RpcStatisticService rpcStatisticService;
+    private final RpcStatisticService rpcStatisticService;
 
     @Operation(summary = "get RPC statistic data")
     @GetMapping("api/rpc-statistics/data")

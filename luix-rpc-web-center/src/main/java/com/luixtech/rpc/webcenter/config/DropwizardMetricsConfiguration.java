@@ -6,6 +6,7 @@ import com.codahale.metrics.graphite.Graphite;
 import com.codahale.metrics.graphite.GraphiteReporter;
 import com.codahale.metrics.jvm.*;
 import com.ryantenney.metrics.spring.config.annotation.EnableMetrics;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -14,7 +15,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.lang.management.ManagementFactory;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
@@ -26,17 +26,15 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @EnableMetrics
 @Configuration
+@AllArgsConstructor
 public class DropwizardMetricsConfiguration {
-
     private static final String                PROP_METRIC_REG_JVM_MEMORY  = "jvm.memory";
     private static final String                PROP_METRIC_REG_JVM_GARBAGE = "jvm.garbage";
     private static final String                PROP_METRIC_REG_JVM_THREADS = "jvm.threads";
     private static final String                PROP_METRIC_REG_JVM_FILES   = "jvm.files";
     private static final String                PROP_METRIC_REG_JVM_BUFFERS = "jvm.buffers";
-    @Resource
-    private              MetricRegistry        metricRegistry;
-    @Resource
-    private              ApplicationProperties applicationProperties;
+    private final        MetricRegistry        metricRegistry;
+    private final        ApplicationProperties applicationProperties;
 
     @PostConstruct
     public void init() {
@@ -59,12 +57,11 @@ public class DropwizardMetricsConfiguration {
 
     @Configuration
     @ConditionalOnClass(Graphite.class)
+    @AllArgsConstructor
     @Slf4j
     public static class GraphiteRegistry {
-        @Resource
-        private ApplicationProperties applicationProperties;
-        @Resource
-        private MetricRegistry        metricRegistry;
+        private final ApplicationProperties applicationProperties;
+        private final MetricRegistry        metricRegistry;
 
         @PostConstruct
         private void init() {

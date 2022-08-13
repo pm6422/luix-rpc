@@ -3,19 +3,18 @@ package com.luixtech.rpc.webcenter.service.impl;
 import com.luixtech.rpc.webcenter.domain.Authority;
 import com.luixtech.rpc.webcenter.repository.AuthorityRepository;
 import com.luixtech.rpc.webcenter.service.AuthorityService;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class AuthorityServiceImpl implements AuthorityService {
-
-    @Resource
-    private AuthorityRepository authorityRepository;
+    private final AuthorityRepository authorityRepository;
 
     @Override
     public List<String> findAllAuthorityNames(Boolean enabled) {

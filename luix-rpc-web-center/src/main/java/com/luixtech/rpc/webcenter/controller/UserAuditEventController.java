@@ -6,6 +6,7 @@ import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,10 +27,9 @@ import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
  */
 @RestController
 @SecurityRequirement(name = AUTH)
+@AllArgsConstructor
 public class UserAuditEventController {
-
-    @Resource
-    private PersistenceAuditEventRepository persistenceAuditEventRepository;
+    private final PersistenceAuditEventRepository persistenceAuditEventRepository;
 
     /**
      * 分页检索用户审计事件列表

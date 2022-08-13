@@ -1,11 +1,12 @@
 package com.luixtech.rpc.webcenter.aspect;
 
+import com.luixtech.rpc.webcenter.config.ApplicationConstants;
+import com.luixtech.rpc.webcenter.config.ApplicationProperties;
+import lombok.AllArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import com.luixtech.rpc.webcenter.config.ApplicationConstants;
-import com.luixtech.rpc.webcenter.config.ApplicationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,7 +15,6 @@ import org.springframework.util.StopWatch;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -25,14 +25,14 @@ import javax.servlet.http.HttpServletResponse;
 @Aspect
 @ConditionalOnProperty("application.elapsed-time-logging.enabled")
 @Configuration
+@AllArgsConstructor
 public class ElapsedTimeLoggingAspect {
 
     private static final String                SERVICE_PACKAGE = "within(" + ApplicationConstants.BASE_PACKAGE + ".service..*)";
     private static final String                HEADER_KEY      = "X-ELAPSED";
     private static final int                   SECOND          = 1000;
     private static final int                   MINUTE          = 60000;
-    @Resource
-    private              ApplicationProperties applicationProperties;
+    private final        ApplicationProperties applicationProperties;
 
     /**
      * Log method execution time of controller

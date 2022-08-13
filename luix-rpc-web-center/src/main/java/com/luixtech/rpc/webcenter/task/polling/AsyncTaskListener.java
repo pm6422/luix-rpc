@@ -2,13 +2,13 @@ package com.luixtech.rpc.webcenter.task.polling;
 
 import com.luixtech.rpc.webcenter.task.polling.queue.InMemoryAsyncTaskQueue;
 import com.luixtech.rpc.webcenter.task.polling.resulthandler.AsyncTaskResultHandler;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Objects;
 
 /**
@@ -21,10 +21,9 @@ import java.util.Objects;
  */
 @Slf4j
 @Component
+@AllArgsConstructor
 public class AsyncTaskListener implements ApplicationRunner {
-
-    @Resource
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {

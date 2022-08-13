@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -24,7 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
@@ -40,15 +40,12 @@ import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
  */
 @RestController
 @SecurityRequirement(name = AUTH)
+@AllArgsConstructor
 @Slf4j
 public class RpcScheduledTaskController {
-
-    @Resource
-    private RpcScheduledTaskRepository rpcScheduledTaskRepository;
-    @Resource
-    private RpcScheduledTaskService    rpcScheduledTaskService;
-    @Resource
-    private HttpHeaderCreator          httpHeaderCreator;
+    private final RpcScheduledTaskRepository rpcScheduledTaskRepository;
+    private final RpcScheduledTaskService    rpcScheduledTaskService;
+    private final HttpHeaderCreator          httpHeaderCreator;
 
     @Operation(summary = "create scheduled task")
     @PostMapping("/api/rpc-scheduled-tasks")

@@ -1,6 +1,9 @@
 package com.luixtech.rpc.webcenter.aspect;
 
 import com.alibaba.fastjson2.JSON;
+import com.luixtech.rpc.webcenter.config.ApplicationProperties;
+import com.luixtech.rpc.webcenter.utils.TraceIdUtils;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -8,8 +11,6 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import com.luixtech.rpc.webcenter.config.ApplicationProperties;
-import com.luixtech.rpc.webcenter.utils.TraceIdUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,7 +19,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -35,11 +35,10 @@ import java.util.Map;
 @Aspect
 @ConditionalOnProperty("application.aop-logging.enabled")
 @Configuration
+@AllArgsConstructor
 public class AopLoggingAspect {
-
     private static final String                UNKNOWN_ARG_VAL = "UNKNOWN";
-    @Resource
-    private              ApplicationProperties applicationProperties;
+    private final        ApplicationProperties applicationProperties;
 
     /**
      * Advice that logs methods throwing exceptions

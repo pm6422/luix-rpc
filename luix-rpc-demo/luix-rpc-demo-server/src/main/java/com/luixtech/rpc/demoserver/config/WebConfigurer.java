@@ -2,6 +2,7 @@ package com.luixtech.rpc.demoserver.config;
 
 import io.undertow.server.DefaultByteBufferPool;
 import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;
 import org.springframework.boot.web.server.MimeMappings;
@@ -13,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -27,11 +27,10 @@ import static java.net.URLDecoder.decode;
  * Web application configuration
  */
 @Configuration
+@AllArgsConstructor
 @Slf4j
 public class WebConfigurer implements ServletContextInitializer, WebServerFactoryCustomizer<UndertowServletWebServerFactory> {
-
-    @Resource
-    private Environment env;
+    private final Environment env;
 
     @Override
     public void onStartup(ServletContext servletContext) {

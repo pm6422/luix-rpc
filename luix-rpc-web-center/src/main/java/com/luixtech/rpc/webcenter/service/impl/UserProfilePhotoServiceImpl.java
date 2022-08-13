@@ -1,24 +1,22 @@
 package com.luixtech.rpc.webcenter.service.impl;
 
-import org.bson.BsonBinarySubType;
-import org.bson.types.Binary;
 import com.luixtech.rpc.webcenter.domain.User;
 import com.luixtech.rpc.webcenter.domain.UserProfilePhoto;
 import com.luixtech.rpc.webcenter.repository.UserProfilePhotoRepository;
 import com.luixtech.rpc.webcenter.repository.UserRepository;
 import com.luixtech.rpc.webcenter.service.UserProfilePhotoService;
+import lombok.AllArgsConstructor;
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class UserProfilePhotoServiceImpl implements UserProfilePhotoService {
-
-    @Resource
-    private UserProfilePhotoRepository userProfilePhotoRepository;
-    @Resource
-    private UserRepository             userRepository;
+    private final UserProfilePhotoRepository userProfilePhotoRepository;
+    private final UserRepository             userRepository;
 
     @Override
     public void insert(String userId, byte[] photoData) {

@@ -5,6 +5,7 @@ import com.luixtech.rpc.demoserver.exception.DataNotFoundException;
 import com.luixtech.rpc.demoserver.repository.ScheduledTaskHistoryRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Example;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 import static com.luixtech.rpc.demoserver.utils.HttpHeaderUtils.generatePageHeaders;
@@ -26,11 +26,10 @@ import static com.luixtech.rpc.demoserver.utils.HttpHeaderUtils.generatePageHead
  * REST controller for managing scheduled task histories.
  */
 @RestController
+@AllArgsConstructor
 @Slf4j
 public class ScheduledTaskHistoryController {
-
-    @Resource
-    private ScheduledTaskHistoryRepository scheduledTaskHistoryRepository;
+    private final ScheduledTaskHistoryRepository scheduledTaskHistoryRepository;
 
     @Operation(summary = "find task history list")
     @GetMapping("/api/scheduled-task-histories")
