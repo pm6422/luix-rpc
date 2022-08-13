@@ -13,7 +13,7 @@ import java.time.Instant;
 /**
  * Spring Data MongoDB collection for the ScheduledTaskHistory entity.
  */
-@Document(collection = "ScheduledTaskHistory")
+@Document
 @Data
 @NoArgsConstructor
 public class ScheduledTaskHistory implements Serializable {

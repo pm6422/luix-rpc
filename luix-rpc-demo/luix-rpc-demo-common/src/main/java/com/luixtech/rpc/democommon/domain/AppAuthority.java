@@ -14,7 +14,7 @@ import java.io.Serializable;
 /**
  * Spring Data MongoDB collection for the AppAuthority entity.
  */
-@Document(collection = "AppAuthority")
+@Document
 @Data
 @NoArgsConstructor
 public class AppAuthority implements Serializable {

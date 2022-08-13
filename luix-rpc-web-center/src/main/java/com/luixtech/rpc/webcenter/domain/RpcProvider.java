@@ -15,7 +15,7 @@ import static com.luixtech.rpc.core.constant.ApplicationConstants.APP;
 /**
  * Spring Data MongoDB collection for the RpcProvider entity.
  */
-@Document(collection = "RpcProvider")
+@Document
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

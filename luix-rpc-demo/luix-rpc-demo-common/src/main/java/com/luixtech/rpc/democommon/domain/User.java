@@ -12,7 +12,7 @@ import java.io.Serializable;
 /**
  * Spring Data MongoDB collection for the User entity.
  */
-@Document(collection = "User")
+@Document
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)

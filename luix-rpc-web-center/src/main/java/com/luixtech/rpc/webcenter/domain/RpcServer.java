@@ -14,7 +14,7 @@ import java.io.Serializable;
 /**
  * Spring Data MongoDB collection for the RpcServer entity.
  */
-@Document(collection = "RpcServer")
+@Document
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

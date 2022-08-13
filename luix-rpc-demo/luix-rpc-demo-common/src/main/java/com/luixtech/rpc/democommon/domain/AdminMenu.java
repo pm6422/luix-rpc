@@ -18,7 +18,7 @@ import java.io.Serializable;
 /**
  * Spring Data MongoDB collection for the AdminMenu entity.
  */
-@Document(collection = "AdminMenu")
+@Document
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)

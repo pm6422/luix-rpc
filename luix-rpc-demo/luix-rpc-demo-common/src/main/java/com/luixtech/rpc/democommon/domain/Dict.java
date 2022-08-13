@@ -17,7 +17,7 @@ import java.io.Serializable;
  * Spring Data MongoDB collection for the Dict entity.
  */
 @EqualsAndHashCode(callSuper = true)
-@Document(collection = "Dict")
+@Document
 @Data
 @ToString(callSuper = true)
 @NoArgsConstructor

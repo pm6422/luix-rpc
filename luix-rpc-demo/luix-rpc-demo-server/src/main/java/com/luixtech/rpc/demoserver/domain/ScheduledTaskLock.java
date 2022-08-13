@@ -13,7 +13,7 @@ import java.time.Instant;
 /**
  * Spring Data MongoDB collection for the ScheduledTaskLock entity.
  */
-@Document(collection = "ScheduledTaskLock")
+@Document
 @Data
 @NoArgsConstructor
 public class ScheduledTaskLock implements Serializable {

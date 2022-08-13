@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Spring Data MongoDB collection for the ScheduledTask entity.
  */
-@Document(collection = "ScheduledTask")
+@Document
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)

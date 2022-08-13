@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * Spring Data MongoDB collection for the App entity.
  */
-@Document(collection = "App")
+@Document
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

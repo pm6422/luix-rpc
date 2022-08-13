@@ -16,7 +16,7 @@ import java.io.Serializable;
  * Spring Data MongoDB collection for the UserAuthority entity.
  */
 @EqualsAndHashCode(callSuper = true)
-@Document(collection = "UserAuthority")
+@Document
 @Data
 @ToString(callSuper = true)
 @NoArgsConstructor

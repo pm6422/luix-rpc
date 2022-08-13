@@ -15,7 +15,7 @@ import java.io.Serializable;
 /**
  * Spring Data MongoDB collection for the Authority entity.
  */
-@Document(collection = "Authority")
+@Document
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

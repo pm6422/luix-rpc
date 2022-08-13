@@ -17,7 +17,7 @@ import java.time.Instant;
  */
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@Document(collection = "RpcApplication")
+@Document
 @Data
 @NoArgsConstructor
 public class RpcApplication extends ApplicationConfig implements Serializable {
