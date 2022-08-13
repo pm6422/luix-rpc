@@ -1,35 +1,32 @@
 package com.luixtech.rpc.demoserver.service.impl;
 
 import com.google.common.collect.ImmutableMap;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import com.luixtech.rpc.core.server.annotation.RpcProvider;
 import com.luixtech.rpc.democommon.domain.DictItem;
 import com.luixtech.rpc.democommon.service.DictItemService;
 import com.luixtech.rpc.democommon.service.DictService;
-import com.luixtech.rpc.demoserver.exception.DuplicationException;
 import com.luixtech.rpc.demoserver.exception.DataNotFoundException;
+import com.luixtech.rpc.demoserver.exception.DuplicationException;
 import com.luixtech.rpc.demoserver.repository.DictItemRepository;
 import com.luixtech.rpc.demoserver.repository.DictRepository;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
 @RpcProvider
+@AllArgsConstructor
 @Slf4j
 public class DictItemServiceImpl implements DictItemService {
-
-    @Resource
-    private DictRepository     dictRepository;
-    @Resource
-    private DictItemRepository dictItemRepository;
-    @Resource
-    private DictService        dictService;
+    private final DictRepository     dictRepository;
+    private final DictItemRepository dictItemRepository;
+    private final DictService        dictService;
 
     @Override
     public DictItem insert(DictItem domain) {

@@ -1,16 +1,17 @@
 package com.luixtech.rpc.demoserver.service.impl;
 
 import com.luixtech.rpc.demoserver.domain.ScheduledTask;
+import com.luixtech.rpc.demoserver.exception.DataNotFoundException;
+import com.luixtech.rpc.demoserver.repository.ScheduledTaskHistoryRepository;
 import com.luixtech.rpc.demoserver.repository.ScheduledTaskLockRepository;
-import com.luixtech.uidgenerator.core.id.IdGenerator;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
+import com.luixtech.rpc.demoserver.repository.ScheduledTaskRepository;
 import com.luixtech.rpc.demoserver.service.ScheduledTaskService;
 import com.luixtech.rpc.demoserver.task.schedule.CancelableScheduledTaskRegistrar;
 import com.luixtech.rpc.demoserver.task.schedule.RunnableTask;
-import com.luixtech.rpc.demoserver.exception.DataNotFoundException;
-import com.luixtech.rpc.demoserver.repository.ScheduledTaskHistoryRepository;
-import com.luixtech.rpc.demoserver.repository.ScheduledTaskRepository;
+import com.luixtech.uidgenerator.core.id.IdGenerator;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
@@ -20,23 +21,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.time.Instant;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 @Slf4j
 public class ScheduledTaskServiceImpl implements ScheduledTaskService, ApplicationRunner {
-    @Resource
-    private ApplicationContext                applicationContext;
-    @Resource
-    private ScheduledTaskRepository           scheduledTaskRepository;
-    @Resource
-    private ScheduledTaskHistoryRepository   scheduledTaskHistoryRepository;
-    @Resource
-    private ScheduledTaskLockRepository      scheduledTaskLockRepository;
-    @Resource
-    private CancelableScheduledTaskRegistrar cancelableScheduledTaskRegistrar;
+    private final ApplicationContext               applicationContext;
+    private final ScheduledTaskRepository          scheduledTaskRepository;
+    private final ScheduledTaskHistoryRepository   scheduledTaskHistoryRepository;
+    private final ScheduledTaskLockRepository      scheduledTaskLockRepository;
+    private final CancelableScheduledTaskRegistrar cancelableScheduledTaskRegistrar;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {

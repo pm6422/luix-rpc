@@ -1,9 +1,10 @@
 package com.luixtech.rpc.webcenter.service.impl;
 
-import com.luixtech.rpc.webcenter.repository.RpcConsumerRepository;
-import org.apache.commons.lang3.StringUtils;
 import com.luixtech.rpc.webcenter.domain.RpcConsumer;
+import com.luixtech.rpc.webcenter.repository.RpcConsumerRepository;
 import com.luixtech.rpc.webcenter.service.RpcConsumerService;
+import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -20,12 +20,10 @@ import static com.luixtech.rpc.webcenter.domain.RpcConsumer.*;
 import static com.luixtech.rpc.webcenter.domain.RpcProvider.FIELD_ADDRESS;
 
 @Service
+@AllArgsConstructor
 public class RpcConsumerServiceImpl implements RpcConsumerService {
-
-    @Resource
-    private RpcConsumerRepository rpcConsumerRepository;
-    @Resource
-    private MongoTemplate         mongoTemplate;
+    private final RpcConsumerRepository rpcConsumerRepository;
+    private final MongoTemplate         mongoTemplate;
 
     @Override
     public Page<RpcConsumer> find(Pageable pageable, String registryIdentity,

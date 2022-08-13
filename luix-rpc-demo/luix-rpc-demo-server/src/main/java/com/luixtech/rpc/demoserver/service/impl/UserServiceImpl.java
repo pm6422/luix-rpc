@@ -1,26 +1,25 @@
 package com.luixtech.rpc.demoserver.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.core.server.annotation.RpcProvider;
 import com.luixtech.rpc.democommon.domain.User;
 import com.luixtech.rpc.democommon.service.UserService;
 import com.luixtech.rpc.demoserver.repository.UserRepository;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.Assert;
 
-import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 @RpcProvider
+@AllArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
-
-    @Resource
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     public User findOneByLogin(String login) {

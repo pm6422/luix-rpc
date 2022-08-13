@@ -5,16 +5,16 @@ import com.luixtech.rpc.democommon.domain.AdminMenu;
 import com.luixtech.rpc.democommon.dto.AdminMenuDTO;
 import com.luixtech.rpc.democommon.service.AdminMenuService;
 import com.luixtech.rpc.demoserver.repository.AdminMenuRepository;
+import lombok.AllArgsConstructor;
 
-import javax.annotation.Resource;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RpcProvider
+@AllArgsConstructor
 public class AdminMenuServiceImpl implements AdminMenuService {
-    @Resource
-    private AdminMenuRepository adminMenuRepository;
+    private final AdminMenuRepository adminMenuRepository;
 
     @Override
     public List<AdminMenuDTO> getMenus() {

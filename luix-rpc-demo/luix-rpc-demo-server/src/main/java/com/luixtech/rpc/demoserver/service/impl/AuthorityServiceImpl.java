@@ -4,23 +4,21 @@ import com.luixtech.rpc.core.server.annotation.RpcProvider;
 import com.luixtech.rpc.democommon.domain.Authority;
 import com.luixtech.rpc.democommon.service.AuthorityService;
 import com.luixtech.rpc.demoserver.repository.AuthorityRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RpcProvider
+@AllArgsConstructor
 public class AuthorityServiceImpl implements AuthorityService {
-
-    @Resource
-    private AuthorityRepository authorityRepository;
-    @Resource
-    private MongoTemplate       mongoTemplate;
+    private final AuthorityRepository authorityRepository;
+    private final MongoTemplate       mongoTemplate;
 
     @Override
     public List<String> findAllAuthorityNames(Boolean enabled) {

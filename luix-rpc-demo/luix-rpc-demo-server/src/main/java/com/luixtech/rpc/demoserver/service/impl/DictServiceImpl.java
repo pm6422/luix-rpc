@@ -4,20 +4,19 @@ import com.luixtech.rpc.core.server.annotation.RpcProvider;
 import com.luixtech.rpc.democommon.domain.Dict;
 import com.luixtech.rpc.democommon.service.DictService;
 import com.luixtech.rpc.demoserver.repository.DictRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import javax.annotation.Resource;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @RpcProvider
+@AllArgsConstructor
 public class DictServiceImpl implements DictService {
-
-    @Resource
-    private DictRepository dictRepository;
+    private final DictRepository dictRepository;
 
     @Override
     public Page<Dict> find(Pageable pageable, String dictName, Boolean enabled) {

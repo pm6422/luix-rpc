@@ -1,24 +1,22 @@
 package com.luixtech.rpc.demoserver.service.impl;
 
-import org.bson.BsonBinarySubType;
-import org.bson.types.Binary;
 import com.luixtech.rpc.core.server.annotation.RpcProvider;
 import com.luixtech.rpc.democommon.domain.User;
 import com.luixtech.rpc.democommon.domain.UserProfilePhoto;
 import com.luixtech.rpc.democommon.service.UserProfilePhotoService;
 import com.luixtech.rpc.demoserver.repository.UserProfilePhotoRepository;
 import com.luixtech.rpc.demoserver.repository.UserRepository;
+import lombok.AllArgsConstructor;
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 
-import javax.annotation.Resource;
 import java.util.Optional;
 
 @RpcProvider
+@AllArgsConstructor
 public class UserProfilePhotoServiceImpl implements UserProfilePhotoService {
-
-    @Resource
-    private UserProfilePhotoRepository userProfilePhotoRepository;
-    @Resource
-    private UserRepository             userRepository;
+    private final UserProfilePhotoRepository userProfilePhotoRepository;
+    private final UserRepository             userRepository;
 
     @Override
     public void insert(String userId, byte[] photoData) {
