@@ -1,9 +1,5 @@
 package com.luixtech.rpc.webcenter.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import com.luixtech.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import com.luixtech.rpc.core.client.proxy.Proxy;
 import com.luixtech.rpc.core.client.stub.ConsumerStub;
@@ -19,6 +15,11 @@ import com.luixtech.rpc.webcenter.service.RpcConsumerService;
 import com.luixtech.rpc.webcenter.service.RpcProviderService;
 import com.luixtech.rpc.webcenter.service.RpcRegistryService;
 import com.luixtech.rpc.webcenter.service.RpcServerService;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
@@ -29,7 +30,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import javax.annotation.Resource;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,22 +39,17 @@ import static com.luixtech.rpc.core.server.buildin.BuildInService.METHOD_GET_SER
 import static com.luixtech.rpc.webcenter.domain.RpcService.generateMd5Id;
 
 @RpcProvider
+@AllArgsConstructor
 @Slf4j
 public class RpcServerServiceImpl implements RpcServerService {
     private static final int                                             PAGE_SIZE              = 100;
     private static final ConcurrentHashMap<String, Pair<String, String>> DISCOVERED_RPC_SERVERS = new ConcurrentHashMap<>();
-    @Resource
-    private              LuixProperties                                  luixProperties;
-    @Resource
-    private              ApplicationContext                              applicationContext;
-    @Resource
-    private              MongoTemplate                                   mongoTemplate;
-    @Resource
-    private              RpcServerRepository                             rpcServerRepository;
-    @Resource
-    private              RpcProviderService                              rpcProviderService;
-    @Resource
-    private              RpcConsumerService                              rpcConsumerService;
+    private final        LuixProperties                                  luixProperties;
+    private final        ApplicationContext                              applicationContext;
+    private final        MongoTemplate                                   mongoTemplate;
+    private final        RpcServerRepository                             rpcServerRepository;
+    private final        RpcProviderService                              rpcProviderService;
+    private final        RpcConsumerService                              rpcConsumerService;
 
     @Override
     public void loadAll() {

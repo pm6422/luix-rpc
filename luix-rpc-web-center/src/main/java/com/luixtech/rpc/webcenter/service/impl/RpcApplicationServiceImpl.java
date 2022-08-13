@@ -16,6 +16,7 @@ import com.luixtech.rpc.webcenter.service.RpcApplicationService;
 import com.luixtech.rpc.webcenter.service.RpcConsumerService;
 import com.luixtech.rpc.webcenter.service.RpcProviderService;
 import com.luixtech.rpc.webcenter.service.RpcRegistryService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -30,7 +31,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import javax.annotation.Resource;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.List;
@@ -42,21 +42,16 @@ import java.util.regex.Pattern;
 import static com.luixtech.rpc.core.server.buildin.BuildInService.METHOD_GET_APPLICATION_INFO;
 
 @RpcProvider
+@AllArgsConstructor
 @Slf4j
 public class RpcApplicationServiceImpl implements RpcApplicationService {
     private static final ConcurrentHashMap<String, Pair<String, String>> DISCOVERED_RPC_APPLICATIONS = new ConcurrentHashMap<>();
-    @Resource
-    private              LuixProperties                                  luixProperties;
-    @Resource
-    private              ApplicationContext                              applicationContext;
-    @Resource
-    private              MongoTemplate                                   mongoTemplate;
-    @Resource
-    private              RpcApplicationRepository                        rpcApplicationRepository;
-    @Resource
-    private              RpcProviderService                              rpcProviderService;
-    @Resource
-    private              RpcConsumerService                              rpcConsumerService;
+    private final        LuixProperties                                  luixProperties;
+    private final        ApplicationContext                              applicationContext;
+    private final        MongoTemplate                                   mongoTemplate;
+    private final        RpcApplicationRepository                        rpcApplicationRepository;
+    private final        RpcProviderService                              rpcProviderService;
+    private final        RpcConsumerService                              rpcConsumerService;
 
     @Override
     public void loadAll() {

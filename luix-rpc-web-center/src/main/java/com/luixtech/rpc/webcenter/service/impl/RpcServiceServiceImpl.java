@@ -1,8 +1,5 @@
 package com.luixtech.rpc.webcenter.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import com.luixtech.rpc.core.server.annotation.RpcProvider;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.webcenter.domain.RpcService;
@@ -10,6 +7,10 @@ import com.luixtech.rpc.webcenter.repository.RpcServiceRepository;
 import com.luixtech.rpc.webcenter.service.RpcConsumerService;
 import com.luixtech.rpc.webcenter.service.RpcProviderService;
 import com.luixtech.rpc.webcenter.service.RpcServiceService;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.data.domain.Page;
@@ -20,7 +21,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import javax.annotation.Resource;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,19 +30,16 @@ import java.util.regex.Pattern;
 import static com.luixtech.rpc.webcenter.domain.RpcService.*;
 
 @RpcProvider
+@AllArgsConstructor
 @Slf4j
 public class RpcServiceServiceImpl implements RpcServiceService, ApplicationRunner {
 
     private static final ConcurrentHashMap<String, RpcService> DISCOVERED_RPC_SERVICES = new ConcurrentHashMap<>();
     private static final int                                   PAGE_SIZE               = 100;
-    @Resource
-    private              MongoTemplate                         mongoTemplate;
-    @Resource
-    private              RpcServiceRepository                  rpcServiceRepository;
-    @Resource
-    private              RpcProviderService                    rpcProviderService;
-    @Resource
-    private              RpcConsumerService                    rpcConsumerService;
+    private final        MongoTemplate                         mongoTemplate;
+    private final        RpcServiceRepository                  rpcServiceRepository;
+    private final        RpcProviderService                    rpcProviderService;
+    private final        RpcConsumerService                    rpcConsumerService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
