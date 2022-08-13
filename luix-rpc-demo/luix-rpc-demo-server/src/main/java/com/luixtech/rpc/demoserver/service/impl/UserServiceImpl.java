@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findOneByLogin(String login) {
         Assert.hasText(login, "it must not be null, empty, or blank");
-        return userRepository.findOneByUserNameOrEmailOrMobileNo(login.toLowerCase(Locale.ENGLISH),
+        return userRepository.findOneByUsernameOrEmailOrMobileNo(login.toLowerCase(Locale.ENGLISH),
                 login.toLowerCase(Locale.ENGLISH), login.toLowerCase(Locale.ENGLISH)).orElse(null);
     }
 
@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findOneByMobile(int mobileNo) {
         User user = new User();
-        user.setUserName("dummy");
+        user.setUsername("dummy");
         user.setMobileNo(String.valueOf(mobileNo));
         return user;
     }
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findByWeight(Double weight) {
         User user = new User();
-        user.setUserName("dummy");
+        user.setUsername("dummy");
         return Collections.singletonList(user);
     }
 
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findByEnabledIsTrue() {
         User user = new User();
-        user.setUserName("dummy");
+        user.setUsername("dummy");
         return Collections.singletonList(user);
     }
 

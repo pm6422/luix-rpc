@@ -965,7 +965,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                     resolve: {
                         entity: {
                             userId: null,
-                            userName: null,
+                            username: null,
                             firstName: null,
                             lastName: null,
                             email: null,
@@ -987,7 +987,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             }]
         })
         .state('user-authority.user-list.edit', {
-            url: '/edit/:userName',
+            url: '/edit/:username',
             data: {
                 pageTitle: 'Edit user',
                 mode: 'edit'
@@ -1001,7 +1001,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
                     size: 'lg',
                     resolve: {
                         entity: ['UserService', function (UserService) {
-                            return UserService.get({userName: $stateParams.userName}).$promise;
+                            return UserService.get({username: $stateParams.username}).$promise;
                         }]
                     }
                 }).result.then(function (result) {
@@ -1012,7 +1012,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             }]
         })
         .state('user-authority.user-list.view', {
-            url: '/view/:userName',
+            url: '/view/:username',
             views: {
                 'content@': {
                     templateUrl: 'app/views/admin/user/user-details.html',
@@ -1025,7 +1025,7 @@ function stateConfig($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, Id
             },
             resolve: {
                 entity: ['UserService', '$stateParams', function (UserService, $stateParams) {
-                    return UserService.get({userName: $stateParams.userName}).$promise;
+                    return UserService.get({username: $stateParams.username}).$promise;
                 }]
             }
         })

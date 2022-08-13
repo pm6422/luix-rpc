@@ -136,7 +136,7 @@ public class ExceptionTranslatorAdvice {
     @ResponseBody
     public ResponseEntity<ErrorDTO> processNoAuthorityException(NoAuthorityException ex) {
         log.warn("No authority: ", ex);
-        ErrorDTO error = ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(messageCreator.getMessage(NO_AUTH_CODE, ex.getUserName())).build();
+        ErrorDTO error = ErrorDTO.builder().code(ILLEGAL_REQUEST_ARG_CODE).message(messageCreator.getMessage(NO_AUTH_CODE, ex.getUsername())).build();
         // Http status: 400
         return ResponseEntity.badRequest().body(error);
     }

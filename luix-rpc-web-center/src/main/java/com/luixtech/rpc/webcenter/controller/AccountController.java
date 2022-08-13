@@ -8,7 +8,7 @@ import com.luixtech.rpc.webcenter.domain.UserProfilePhoto;
 import com.luixtech.rpc.webcenter.dto.LoginDTO;
 import com.luixtech.rpc.webcenter.dto.ManagedUserDTO;
 import com.luixtech.rpc.webcenter.dto.ResetKeyAndPasswordDTO;
-import com.luixtech.rpc.webcenter.dto.UserNameAndPasswordDTO;
+import com.luixtech.rpc.webcenter.dto.UsernameAndPasswordDTO;
 import com.luixtech.rpc.webcenter.event.LogoutEvent;
 import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.repository.UserAuthorityRepository;
@@ -103,11 +103,11 @@ public class AccountController {
     @Operation(summary = "retrieve current user")
     @GetMapping("/open-api/accounts/user")
     public ResponseEntity<User> getCurrentUser() {
-        String currentUserName = SecurityUtils.getCurrentUserName();
-        if (StringUtils.isEmpty(currentUserName) || ANONYMOUS_USER.equals(currentUserName)) {
+        String currentUsername = SecurityUtils.getCurrentUsername();
+        if (StringUtils.isEmpty(currentUsername) || ANONYMOUS_USER.equals(currentUsername)) {
             return null;
         }
-        User user = userService.findOneByUserName(currentUserName);
+        User user = userService.findOneByUsername(currentUsername);
         List<UserAuthority> userAuthorities = userAuthorityRepository.findByUserId(user.getId());
         if (CollectionUtils.isNotEmpty(userAuthorities)) {
             Set<String> authorities = userAuthorities.stream().map(UserAuthority::getAuthorityName).collect(Collectors.toSet());
@@ -152,18 +152,18 @@ public class AccountController {
     @PutMapping("/api/accounts/user")
     public ResponseEntity<Void> updateCurrentAccount(@Parameter(description = "new user", required = true) @Valid @RequestBody User domain) {
         // For security reason
-        User currentUser = userService.findOneByUserName(SecurityUtils.getCurrentUserName());
+        User currentUser = userService.findOneByUsername(SecurityUtils.getCurrentUsername());
         domain.setId(currentUser.getId());
-        domain.setUserName(currentUser.getUserName());
+        domain.setUsername(currentUser.getUsername());
         userService.update(domain);
-        return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getUserName())).build();
+        return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getUsername())).build();
     }
 
     @Operation(summary = "modify the password of the current user")
     @PutMapping("/api/accounts/password")
-    public ResponseEntity<Void> changePassword(@Parameter(description = "new password", required = true) @RequestBody @Valid UserNameAndPasswordDTO dto) {
+    public ResponseEntity<Void> changePassword(@Parameter(description = "new password", required = true) @RequestBody @Valid UsernameAndPasswordDTO dto) {
         // For security reason
-        dto.setUserName(SecurityUtils.getCurrentUserName());
+        dto.setUsername(SecurityUtils.getCurrentUsername());
         userService.changePassword(dto);
         // Logout asynchronously
         applicationEventPublisher.publishEvent(new LogoutEvent(this));
@@ -191,15 +191,15 @@ public class AccountController {
     public void uploadProfilePhoto(@Parameter(description = "file Description", required = true) @RequestPart String description,
                                    @Parameter(description = "user profile picture", required = true) @RequestPart MultipartFile file) throws IOException {
         log.debug("Upload profile with file name {} and description {}", file.getOriginalFilename(), description);
-        User user = userService.findOneByUserName(SecurityUtils.getCurrentUserName());
+        User user = userService.findOneByUsername(SecurityUtils.getCurrentUsername());
         userProfilePhotoService.save(user, file.getBytes());
     }
 
     @Operation(summary = "download user profile picture")
     @GetMapping("/api/accounts/profile-photo/download")
     public ResponseEntity<org.springframework.core.io.Resource> downloadProfilePhoto() {
-        String currentUserName = SecurityUtils.getCurrentUserName();
-        User user = userService.findOneByUserName(currentUserName);
+        String currentUserName = SecurityUtils.getCurrentUsername();
+        User user = userService.findOneByUsername(currentUserName);
         Optional<UserProfilePhoto> existingPhoto = userProfilePhotoRepository.findByUserId(user.getId());
         if (!existingPhoto.isPresent()) {
             return ResponseEntity.ok().body(null);
@@ -221,7 +221,7 @@ public class AccountController {
     @GetMapping("/api/accounts/profile-photo")
     public ModelAndView getProfilePhoto() {
         // @RestController下使用return forwardUrl不好使
-        String forwardUrl = "forward:".concat(UserController.GET_PROFILE_PHOTO_URL).concat(SecurityUtils.getCurrentUserName());
+        String forwardUrl = "forward:".concat(UserController.GET_PROFILE_PHOTO_URL).concat(SecurityUtils.getCurrentUsername());
         log.info(forwardUrl);
         return new ModelAndView(forwardUrl);
     }

@@ -51,7 +51,7 @@ public class SpringSecurityUserDetailsServiceImpl implements org.springframework
         List<GrantedAuthority> grantedAuthorities = userAuthorityRepository.findByUserId(userFromDatabase.getId())
                 .stream().map(userAuthority -> new SimpleGrantedAuthority(userAuthority.getAuthorityName()))
                 .collect(Collectors.toList());
-        return new org.springframework.security.core.userdetails.User(userFromDatabase.getUserName(),
+        return new org.springframework.security.core.userdetails.User(userFromDatabase.getUsername(),
                 userFromDatabase.getPasswordHash(), grantedAuthorities);
     }
 }

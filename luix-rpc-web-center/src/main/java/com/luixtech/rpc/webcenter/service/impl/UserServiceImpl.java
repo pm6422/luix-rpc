@@ -7,7 +7,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import com.luixtech.rpc.webcenter.domain.Authority;
 import com.luixtech.rpc.webcenter.domain.User;
 import com.luixtech.rpc.webcenter.domain.UserAuthority;
-import com.luixtech.rpc.webcenter.dto.UserNameAndPasswordDTO;
+import com.luixtech.rpc.webcenter.dto.UsernameAndPasswordDTO;
 import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.exception.DuplicationException;
 import com.luixtech.rpc.webcenter.repository.UserAuthorityRepository;
@@ -44,13 +44,13 @@ public class UserServiceImpl implements UserService {
     // String clientId =
     // applicationProperties.getSecurity().getAuthentication().getOauth().getClientId();
     // tokenStore.findTokensByClientIdAndUserName(clientId,
-    // user.getUserName()).stream()
+    // user.getUsername()).stream()
     // .forEach(token -> tokenStore.removeAccessToken(token));
     // }
 
     @Override
-    public void changePassword(UserNameAndPasswordDTO dto) {
-        userRepository.findOneByUserName(dto.getUserName()).ifPresent(user -> {
+    public void changePassword(UsernameAndPasswordDTO dto) {
+        userRepository.findOneByUsername(dto.getUsername()).ifPresent(user -> {
             user.setPasswordHash(passwordEncoder.encode(dto.getNewPassword()));
             userRepository.save(user);
             log.debug("Changed password for user: {}", user);
@@ -59,9 +59,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User insert(User user, String rawPassword) {
-        Optional<User> existingUser = userRepository.findOneByUserName(user.getUserName().toLowerCase(Locale.ENGLISH));
+        Optional<User> existingUser = userRepository.findOneByUsername(user.getUsername().toLowerCase(Locale.ENGLISH));
         if (existingUser.isPresent()) {
-            throw new DuplicationException(ImmutableMap.of("userName", user.getUserName()));
+            throw new DuplicationException(ImmutableMap.of("username", user.getUsername()));
         }
         if (findOneByEmail(user.getEmail()).isPresent()) {
             throw new DuplicationException(ImmutableMap.of("email", user.getEmail()));
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
             throw new DuplicationException(ImmutableMap.of("mobileNo", user.getMobileNo()));
         }
 
-        user.setUserName(user.getUserName().toLowerCase());
+        user.setUsername(user.getUsername().toLowerCase());
         user.setEmail(user.getEmail().toLowerCase());
         user.setPasswordHash(passwordEncoder.encode(rawPassword));
         user.setActivationKey(RandomUtils.generateActivationKey());
@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(User user) {
-        // 因为其他表的创建者和更新者使用的是userName，所以不能更新
+        // 因为其他表的创建者和更新者使用的是username，所以不能更新
         userRepository.findById(user.getId()).map(u -> {
             Optional<User> existingUser = findOneByEmail(user.getEmail());
             if (existingUser.isPresent() && (!existingUser.get().getId().equalsIgnoreCase(user.getId()))) {
@@ -129,10 +129,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findOneByUserName(String userName) {
-        Assert.hasText(userName, "it must not be null, empty, or blank");
-        return userRepository.findOneByUserName(userName.toLowerCase(Locale.ENGLISH))
-                .orElseThrow(() -> new DataNotFoundException(userName));
+    public User findOneByUsername(String username) {
+        Assert.hasText(username, "it must not be null, empty, or blank");
+        return userRepository.findOneByUsername(username.toLowerCase(Locale.ENGLISH))
+                .orElseThrow(() -> new DataNotFoundException(username));
     }
 
     @Override
@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findOneByLogin(String login) {
         Assert.hasText(login, "it must not be null, empty, or blank");
-        return userRepository.findOneByUserNameOrEmailOrMobileNo(login.toLowerCase(Locale.ENGLISH),
+        return userRepository.findOneByUsernameOrEmailOrMobileNo(login.toLowerCase(Locale.ENGLISH),
                 login.toLowerCase(Locale.ENGLISH), login.toLowerCase(Locale.ENGLISH));
     }
 
@@ -159,7 +159,7 @@ public class UserServiceImpl implements UserService {
         if (StringUtils.isEmpty(login)) {
             return userRepository.findAll(pageable);
         }
-        return userRepository.findByUserNameOrEmailOrMobileNo(pageable, login, login, login);
+        return userRepository.findByUsernameOrEmailOrMobileNo(pageable, login, login, login);
     }
 
     @Override
@@ -198,8 +198,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteByUserName(String userName) {
-        User user = findOneByUserName(userName);
+    public void deleteByUsername(String username) {
+        User user = findOneByUsername(username);
         userRepository.deleteById(user.getId());
         userAuthorityRepository.deleteByUserId(user.getId());
     }

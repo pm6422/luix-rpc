@@ -13,8 +13,8 @@ import javax.validation.constraints.Size;
 @Schema(title = "用户名密码DTO")
 @Data
 @Builder
-public class UserNameAndPasswordDTO {
-    private String userName;
+public class UsernameAndPasswordDTO {
+    private String username;
 
     @Schema(required = true)
     @NotNull

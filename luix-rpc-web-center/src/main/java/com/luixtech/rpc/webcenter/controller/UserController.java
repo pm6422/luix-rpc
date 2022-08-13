@@ -7,7 +7,7 @@ import com.luixtech.rpc.webcenter.domain.User;
 import com.luixtech.rpc.webcenter.domain.UserAuthority;
 import com.luixtech.rpc.webcenter.domain.UserProfilePhoto;
 import com.luixtech.rpc.webcenter.dto.ManagedUserDTO;
-import com.luixtech.rpc.webcenter.dto.UserNameAndPasswordDTO;
+import com.luixtech.rpc.webcenter.dto.UsernameAndPasswordDTO;
 import com.luixtech.rpc.webcenter.event.LogoutEvent;
 import com.luixtech.rpc.webcenter.exception.NoAuthorityException;
 import com.luixtech.rpc.webcenter.repository.UserAuthorityRepository;
@@ -86,12 +86,12 @@ public class UserController {
     }
 
     @Operation(summary = "find user by name")
-    @GetMapping("/api/users/{userName:[a-zA-Z0-9-]+}")
+    @GetMapping("/api/users/{username:[a-zA-Z0-9-]+}")
     @PreAuthorize("hasAuthority(\"" + Authority.ADMIN + "\")")
-    public ResponseEntity<ManagedUserDTO> findByName(@Parameter(description = "user name", required = true) @PathVariable String userName) {
-        User domain = userService.findOneByUserName(userName);
+    public ResponseEntity<ManagedUserDTO> findByName(@Parameter(description = "username", required = true) @PathVariable String username) {
+        User domain = userService.findOneByUsername(username);
         List<UserAuthority> userAuthorities = Optional.ofNullable(userAuthorityRepository.findByUserId(domain.getId()))
-                .orElseThrow(() -> new NoAuthorityException(userName));
+                .orElseThrow(() -> new NoAuthorityException(username));
         Set<String> authorities = userAuthorities.stream().map(UserAuthority::getAuthorityName).collect(Collectors.toSet());
         return ResponseEntity.ok(new ManagedUserDTO(domain, authorities));
     }
@@ -102,29 +102,29 @@ public class UserController {
     public ResponseEntity<Void> update(@Parameter(description = "new user", required = true) @Valid @RequestBody User domain) {
         log.debug("REST request to update user: {}", domain);
         userService.update(domain);
-        if (domain.getUserName().equals(SecurityUtils.getCurrentUserName())) {
+        if (domain.getUsername().equals(SecurityUtils.getCurrentUsername())) {
             // Logout if current user were changed
             applicationEventPublisher.publishEvent(new LogoutEvent(this));
         }
-        return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getUserName())).build();
+        return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1002", domain.getUsername())).build();
     }
 
     @Operation(summary = "delete user by name", description = "The data may be referenced by other data, and some problems may occur after deletion")
-    @DeleteMapping("/api/users/{userName:[a-zA-Z0-9-]+}")
+    @DeleteMapping("/api/users/{username:[a-zA-Z0-9-]+}")
     @PreAuthorize("hasAuthority(\"" + Authority.ADMIN + "\")")
-    public ResponseEntity<Void> delete(@Parameter(description = "user name", required = true) @PathVariable String userName) {
-        log.debug("REST request to delete user: {}", userName);
-        userService.deleteByUserName(userName);
-        return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", userName)).build();
+    public ResponseEntity<Void> delete(@Parameter(description = "username", required = true) @PathVariable String username) {
+        log.debug("REST request to delete user: {}", username);
+        userService.deleteByUsername(username);
+        return ResponseEntity.ok().headers(httpHeaderCreator.createSuccessHeader("SM1003", username)).build();
     }
 
     @Operation(summary = "reset password by user name")
-    @PutMapping("/api/users/{userName:[a-zA-Z0-9-]+}")
+    @PutMapping("/api/users/{username:[a-zA-Z0-9-]+}")
     @PreAuthorize("hasAuthority(\"" + Authority.ADMIN + "\")")
-    public ResponseEntity<Void> resetPassword(@Parameter(description = "user name", required = true) @PathVariable String userName) {
-        log.debug("REST reset the password of user: {}", userName);
-        UserNameAndPasswordDTO dto = UserNameAndPasswordDTO.builder()
-                .userName(userName)
+    public ResponseEntity<Void> resetPassword(@Parameter(description = "user name", required = true) @PathVariable String username) {
+        log.debug("REST reset the password of user: {}", username);
+        UsernameAndPasswordDTO dto = UsernameAndPasswordDTO.builder()
+                .username(username)
                 .newPassword(applicationProperties.getAccount().getDefaultPassword()).build();
         userService.changePassword(dto);
         HttpHeaders headers = httpHeaderCreator.createSuccessHeader("NM2012", applicationProperties.getAccount().getDefaultPassword());
@@ -134,9 +134,9 @@ public class UserController {
     public static final String GET_PROFILE_PHOTO_URL = "/api/users/profile-photo/";
 
     @Operation(summary = "get user profile picture")
-    @GetMapping(GET_PROFILE_PHOTO_URL + "{userName:[a-zA-Z0-9-]+}")
-    public ResponseEntity<byte[]> getProfilePhoto(@Parameter(description = "user name", required = true) @PathVariable String userName) {
-        User user = userService.findOneByUserName(userName);
+    @GetMapping(GET_PROFILE_PHOTO_URL + "{username:[a-zA-Z0-9-]+}")
+    public ResponseEntity<byte[]> getProfilePhoto(@Parameter(description = "user name", required = true) @PathVariable String username) {
+        User user = userService.findOneByUsername(username);
         Optional<UserProfilePhoto> userProfilePhoto = userProfilePhotoRepository.findByUserId(user.getId());
         return userProfilePhoto.map(photo -> ResponseEntity.ok(photo.getProfilePhoto().getData())).orElse(null);
     }

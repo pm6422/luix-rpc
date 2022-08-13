@@ -6,7 +6,7 @@ import com.luixtech.rpc.democommon.service.LoginService;
 @RpcProvider
 public class LoginServiceImpl implements LoginService {
     @Override
-    public String getUserName() {
+    public String getUsername() {
         return "louis";
     }
 }

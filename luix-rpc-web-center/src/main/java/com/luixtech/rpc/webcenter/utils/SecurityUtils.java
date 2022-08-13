@@ -19,19 +19,19 @@ public abstract class SecurityUtils {
     /**
      * Get the name of the current user.
      */
-    public static String getCurrentUserName() {
+    public static String getCurrentUsername() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
-        String userName = null;
+        String username = null;
         if (authentication != null) {
             if (authentication.getPrincipal() instanceof UserDetails) {
                 UserDetails springSecurityUser = (UserDetails) authentication.getPrincipal();
-                userName = springSecurityUser.getUsername();
+                username = springSecurityUser.getUsername();
             } else if (authentication.getPrincipal() instanceof String) {
-                userName = (String) authentication.getPrincipal();
+                username = (String) authentication.getPrincipal();
             }
         }
-        return userName;
+        return username;
     }
 
     /**
