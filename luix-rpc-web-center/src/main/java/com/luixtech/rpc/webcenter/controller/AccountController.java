@@ -91,7 +91,7 @@ public class AccountController {
         return ResponseEntity.ok().headers(httpHeaders).body(jwt);
     }
 
-    @Operation(summary = "retrieve current user")
+    @Operation(summary = "get current user")
     @GetMapping("/open-api/accounts/user")
     public ResponseEntity<User> getCurrentUser() {
         String currentUsername = SecurityUtils.getCurrentUsername();
@@ -126,12 +126,12 @@ public class AccountController {
     }
 
     @Operation(summary = "activate the account according to the activation code")
-    @GetMapping("/open-api/accounts/activate/{key:[0-9]+}")
-    public void activateAccount(@Parameter(description = "activation code", required = true) @PathVariable String key) {
-        userService.activateRegistration(key).orElseThrow(() -> new DataNotFoundException(key));
+    @GetMapping("/open-api/accounts/activate/{code:[0-9]+}")
+    public void activateAccount(@Parameter(description = "activation code", required = true) @PathVariable String code) {
+        userService.activateRegistration(code).orElseThrow(() -> new DataNotFoundException(code));
     }
 
-    @Operation(summary = "retrieve a list of permission values")
+    @Operation(summary = "get authority name list")
     @GetMapping("/api/accounts/authority-names")
     public ResponseEntity<List<String>> getAuthorityNames(
             @Parameter(schema = @Schema(allowableValues = {"false", "true", "null"})) @RequestParam(value = "enabled", required = false) Boolean enabled) {
@@ -179,11 +179,11 @@ public class AccountController {
 
     @Operation(summary = "upload current user profile picture")
     @PostMapping("/api/accounts/profile-photo/upload")
-    public void uploadProfilePhoto(@Parameter(description = "file Description", required = true) @RequestPart String description,
+    public void uploadProfilePhoto(@Parameter(description = "file description", required = true) @RequestPart String description,
                                    @Parameter(description = "user profile picture", required = true) @RequestPart MultipartFile file) throws IOException {
-        log.debug("Upload profile with file name {} and description {}", file.getOriginalFilename(), description);
         User user = userService.findOneByUsername(SecurityUtils.getCurrentUsername());
         userProfilePhotoService.save(user, file.getBytes());
+        log.info("Uploaded profile with file name {} and description {}", file.getOriginalFilename(), description);
     }
 
     @Operation(summary = "download user profile picture")
@@ -208,7 +208,7 @@ public class AccountController {
 //        FileUtils.writeLines(outFile, strList);
     }
 
-    @Operation(summary = "retrieve the current user avatar")
+    @Operation(summary = "get the current user avatar")
     @GetMapping("/api/accounts/profile-photo")
     public ModelAndView getProfilePhoto() {
         // @RestController下使用return forwardUrl不好使
