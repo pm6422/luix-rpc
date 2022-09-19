@@ -79,7 +79,7 @@
         <servlet_version>3.1.0</servlet_version>
         <!-- Log libs -->
         <slf4j_version>1.7.30</slf4j_version>
-        <snakeyaml_version>1.26</snakeyaml_version>
+        <snakeyaml_version>1.31</snakeyaml_version>
         <springdoc_version>1.6.8</springdoc_version>
         <!-- Common libs -->
         <test_container_version>1.11.2</test_container_version>
