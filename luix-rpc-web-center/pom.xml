@@ -260,7 +260,7 @@
                         <!--https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin#using-specific-credentials-->
                         <auth>
                             <username>pm6422@126.com</username>
-                            <password>Gpp7vkgckv</password>
+                            <password>Test12345</password>
                         </auth>
                     </to>
                     <container>
