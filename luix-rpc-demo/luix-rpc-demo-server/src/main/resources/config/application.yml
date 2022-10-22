@@ -97,7 +97,7 @@ spring:
         location: classpath:config/banner-company.txt
     mongodb:
         embedded:
-            version: 4.0.0
+            version: 5.0.0
     data:
         mongodb:
             auto-index-creation: false
