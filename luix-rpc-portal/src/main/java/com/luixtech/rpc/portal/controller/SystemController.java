@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class SystemController {
 
-    private String luixDemoServerUrl = "http://pm6422.club:6010";
-    private String luixDemoClientUrl = "http://pm6422.club:6020";
-    private String luixWebCenterUrl  = "http://pm6422.club:6030";
-    private String luixRegistryUrl   = "http://pm6422.club:8500";
-    private String monitorUrl        = "http://pm6422.club:3000";
+    private String luixDemoServerUrl = "http://pm6422.co:6010";
+    private String luixDemoClientUrl = "http://pm6422.co:6020";
+    private String luixWebCenterUrl  = "http://pm6422.co:6030";
+    private String luixRegistryUrl   = "http://pm6422.co:8500";
+    private String monitorUrl        = "http://pm6422.co:3000";
 
     @Operation(summary = "set luix demo server url")
     @PostMapping("/api/system/luix-demo-server-url")
