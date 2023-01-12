@@ -13,6 +13,8 @@
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <properties>
+        <dockerRegistryPassword/>
+        <dockerRegistryUsername/>
         <maven.version>3.2.1</maven.version>
         <revision>1.0.0</revision>
         <skipJibBuild>true</skipJibBuild>
@@ -258,8 +260,8 @@
                     <to>
                         <image>pm6422.jfrog.io/default-docker-virtual/${project.artifactId}:${project.version}</image>
                         <auth>
-                            <username>pm6422@126.com</username>
-                            <password>Test12345</password>
+                            <username>${dockerRegistryUsername}</username>
+                            <password>${dockerRegistryPassword}</password>
                         </auth>
                     </to>
                     <container>
@@ -293,7 +295,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>build-image</id>
+                        <id>build-publish-image</id>
                         <goals>
                             <goal>build</goal>
                         </goals>

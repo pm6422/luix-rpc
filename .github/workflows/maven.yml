@@ -20,4 +20,4 @@ jobs:
         cache: maven
     - name: Publish docker image to docker registry
 #      run: mvn compile jib:build
-      run: ./mvnw package -DskipTests -DskipJibBuild=false
+      run: ./mvnw package -DskipTests -DskipJibBuild=false -DdockerRegistryUsername=pm6422@126.com -DdockerRegistryPassword=Test12345
