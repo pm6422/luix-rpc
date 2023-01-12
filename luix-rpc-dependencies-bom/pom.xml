@@ -294,27 +294,27 @@
             </dependency>
             <dependency>
                 <groupId>io.grpc</groupId>
-                <artifactId>gluix-grpclb</artifactId>
+                <artifactId>grpc-grpclb</artifactId>
                 <version>${grpc.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.grpc</groupId>
-                <artifactId>gluix-netty</artifactId>
+                <artifactId>grpc-netty</artifactId>
                 <version>${grpc.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.grpc</groupId>
-                <artifactId>gluix-netty-shaded</artifactId>
+                <artifactId>grpc-netty-shaded</artifactId>
                 <version>${grpc.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.grpc</groupId>
-                <artifactId>gluix-protobuf</artifactId>
+                <artifactId>grpc-protobuf</artifactId>
                 <version>${grpc.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.grpc</groupId>
-                <artifactId>gluix-stub</artifactId>
+                <artifactId>grpc-stub</artifactId>
                 <version>${grpc.version}</version>
             </dependency>
             <!-- grpc related dependencies -->
