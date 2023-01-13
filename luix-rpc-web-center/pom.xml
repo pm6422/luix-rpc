@@ -15,7 +15,7 @@
     <properties>
         <dockerRegistryPassword/>
         <dockerRegistryUsername/>
-        <maven.version>3.2.1</maven.version>
+        <maven.version>3.5.0</maven.version>
         <revision>1.0.0</revision>
         <skipJibBuild>true</skipJibBuild>
         <start-class>com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication</start-class>
