@@ -13,8 +13,9 @@
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <properties>
-        <dockerRegistryPassword/>
-        <dockerRegistryUsername/>
+        <harborPassword/>
+        <harborUrl/>
+        <harborUsername/>
         <revision>1.0.0</revision>
         <skipJibBuild>true</skipJibBuild>
         <start-class>com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication</start-class>
@@ -251,10 +252,10 @@
                         </platforms>
                     </from>
                     <to>
-                        <image>pm6422.jfrog.io/default-docker-virtual/${project.artifactId}:${project.version}</image>
+                        <image>${harborUrl}/${project.artifactId}:${project.version}</image>
                         <auth>
-                            <username>${dockerRegistryUsername}</username>
-                            <password>${dockerRegistryPassword}</password>
+                            <username>${harborUsername}</username>
+                            <password>${harborPassword}</password>
                         </auth>
                     </to>
                     <container>
