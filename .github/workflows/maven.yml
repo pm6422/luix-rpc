@@ -20,4 +20,4 @@ jobs:
         cache: maven
     - name: Publish docker image to docker registry
 #      run: mvn compile jib:build
-      run: ./mvnw package -DskipTests -DskipJibBuild=false -DdockerRegistryUsername=pm6422@126.com -DdockerRegistryPassword=Test12345
+      run: ./mvnw package -DskipTests -DskipJibBuild=false -DharborUrl=pm6422.jfrog.io/default-docker-virtual -DharborUsername=pm6422@126.com -DharborPassword=Test12345
