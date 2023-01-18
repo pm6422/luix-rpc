@@ -78,7 +78,7 @@
         <servlet_version>3.1.0</servlet_version>
         <slf4j_version>1.7.30</slf4j_version>
         <snakeyaml_version>1.32</snakeyaml_version>
-        <springdoc_version>1.6.8</springdoc_version>
+        <springdoc_version>1.6.12</springdoc_version>
         <test_container_version>1.11.2</test_container_version>
         <thrift_version>0.14.0</thrift_version>
         <tomcat_embed_version>8.5.63</tomcat_embed_version>
