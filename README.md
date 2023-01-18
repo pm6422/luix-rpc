@@ -65,6 +65,13 @@ java -jar luix-web-center/target/*.jar
 
 Then navigate to [http://localhost:6030](http://localhost:6030) in your browser.
 
+## VM Options
+Add below Key/Value pair to env variable of rancher.
+```
+key: JAVA_OPTS
+value: -Dspring.profiles.active=test
+```
+
 ## Testing
 
 To launch your application's tests, run:

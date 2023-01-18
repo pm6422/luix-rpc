@@ -1,6 +1,7 @@
 package com.luixtech.rpc.webcenter.component;
 
 import com.luixtech.rpc.webcenter.config.ApplicationConstants;
+import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -9,13 +10,9 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @Component
+@AllArgsConstructor
 public class HttpHeaderCreator {
-
-    private final MessageSource messageSource;
-
-    public HttpHeaderCreator(MessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
+    private MessageSource messageSource;
 
     public HttpHeaders createSuccessHeader(String code, Object... args) {
         HttpHeaders headers = new HttpHeaders();

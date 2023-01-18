@@ -1,6 +1,6 @@
 //package com.luixtech.rpc.demoserver.component;
 //
-//import io.swagger.annotations.ApiModelProperty;
+//import io.swagger.v3.oas.annotations.media.Schema;
 //import lombok.extern.slf4j.Slf4j;
 //import org.apache.commons.lang3.StringUtils;
 //import org.apache.commons.lang3.reflect.FieldUtils;
@@ -50,10 +50,10 @@
 //                Field[] parameterFields = FieldUtils.getAllFields(parameterType);
 //                for (Field parameterField : parameterFields) {
 //                    Annotation[] annotations = parameterField.getDeclaredAnnotations();
-//                    Optional<Annotation> apiModelPropertyAnnotation = Arrays.stream(annotations)
-//                            .filter(annotation -> annotation.annotationType().equals(ApiModelProperty.class)).findFirst();
+//                    Optional<Annotation> schemaAnnotation = Arrays.stream(annotations)
+//                            .filter(annotation -> annotation.annotationType().equals(Schema.class)).findFirst();
 //                    for (Annotation annotation : annotations) {
-//                        addMessageProperty(parameterField, apiModelPropertyAnnotation, annotation);
+//                        addMessageProperty(parameterField, schemaAnnotation, annotation);
 //                    }
 //                }
 //            }
@@ -61,7 +61,7 @@
 //        return bean;
 //    }
 //
-//    private void addMessageProperty(Field parameterField, Optional<Annotation> apiModelPropertyAnnotation, Annotation annotation) {
+//    private void addMessageProperty(Field parameterField, Optional<Annotation> schemaAnnotation, Annotation annotation) {
 //        String fieldAnnotationName = annotation.annotationType().getName();
 //        if (!isBeanValidationAnnotation(fieldAnnotationName)) {
 //            return;
@@ -70,7 +70,7 @@
 //        try {
 //            // Enhance message property of validation annotation class by dynamic proxy
 //            InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
-//            // Get the field memberValues of sun.reflect.annotationAnnotationInvocationHandler
+//            // Get the field memberValues of sun.reflect.annotation.AnnotationInvocationHandler
 //            Field memberValuesField = invocationHandler.getClass().getDeclaredField("memberValues");
 //            memberValuesField.setAccessible(true);
 //            @SuppressWarnings("unchecked")
@@ -79,8 +79,8 @@
 //
 //            // Get the bean validation annotation simple name
 //            String annotationSimpleName = fieldAnnotationName.substring(fieldAnnotationName.lastIndexOf(".") + 1);
-//            // Get field name from 'value' attribute of ApiModelProperty.class
-//            String annotationFieldName = apiModelPropertyAnnotation.map(value -> ((ApiModelProperty) value).value()).orElse("");
+//            // Get field name from 'value' attribute of Schema.class
+//            String annotationFieldName = schemaAnnotation.map(value -> ((Schema) value).description()).orElse("");
 //            String fieldName = StringUtils.isNotEmpty(annotationFieldName) ? annotationFieldName : parameterField.getName();
 //            if (PATTERN_PACKAGE.equals(fieldAnnotationName)) {
 //                // Handle message property of @Pattern annotation

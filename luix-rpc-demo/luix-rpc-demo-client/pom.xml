@@ -13,9 +13,9 @@
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <properties>
-        <dockerRegistryPassword/>
-        <dockerRegistryUsername/>
-        <maven.version>3.2.1</maven.version>
+        <harborPassword/>
+        <harborUrl/>
+        <harborUsername/>
         <revision>1.0.0</revision>
         <skipJibBuild>true</skipJibBuild>
         <start-class>com.luixtech.rpc.democlient.LuixRpcDemoClientApplication</start-class>
@@ -149,10 +149,10 @@
                         </platforms>
                     </from>
                     <to>
-                        <image>pm6422.jfrog.io/default-docker-virtual/${project.artifactId}:${project.version}</image>
+                        <image>${harborUrl}/${project.artifactId}:${project.version}</image>
                         <auth>
-                            <username>${dockerRegistryUsername}</username>
-                            <password>${dockerRegistryPassword}</password>
+                            <username>${harborUsername}</username>
+                            <password>${harborPassword}</password>
                         </auth>
                     </to>
                     <container>
@@ -220,10 +220,6 @@
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <configuration>
                     <rules>
-                        <requireMavenVersion>
-                            <message>You are running an older version of Maven. Application requires at least Maven ${maven.version}</message>
-                            <version>[${maven.version},)</version>
-                        </requireMavenVersion>
                         <requireJavaVersion>
                             <message>You are running an incompatible version of Java. Application only supports JDK 8 to 18.</message>
                             <version>[1.8,9),[9,10),[10,11),[11,12),[12,13),[13,14),[14,15),[15,16),[16,17),[17,18),[18,19)</version>

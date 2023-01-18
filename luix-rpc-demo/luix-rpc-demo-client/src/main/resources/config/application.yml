@@ -99,6 +99,10 @@ spring:
     data:
         mongodb:
             auto-index-creation: false
+        web:
+            pageable:
+                one-indexed-parameters: false # whether to expose and assume 1-based page number indexes
+                max-page-size: 2000
     jackson:
         mapper:
             propagate-transient-marker: true # disable serialize transient fields
