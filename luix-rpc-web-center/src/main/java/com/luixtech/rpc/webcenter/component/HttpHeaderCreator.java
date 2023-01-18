@@ -1,6 +1,7 @@
 package com.luixtech.rpc.webcenter.component;
 
 import com.luixtech.rpc.webcenter.config.ApplicationConstants;
+import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
