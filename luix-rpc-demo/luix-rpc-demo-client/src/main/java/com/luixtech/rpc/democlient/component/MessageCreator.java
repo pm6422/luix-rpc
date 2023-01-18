@@ -1,6 +1,7 @@
 package com.luixtech.rpc.democlient.component;
 
 import com.luixtech.rpc.democlient.config.ApplicationConstants;
+import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
