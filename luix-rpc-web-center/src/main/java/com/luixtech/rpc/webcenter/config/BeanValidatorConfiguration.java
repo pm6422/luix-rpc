@@ -7,15 +7,8 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @Configuration
 public class BeanValidatorConfiguration {
-
-    private final MessageSource messageSource;
-
-    public BeanValidatorConfiguration(MessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
-
     @Bean
-    public LocalValidatorFactoryBean validator() {
+    public LocalValidatorFactoryBean validator(MessageSource messageSource) {
         LocalValidatorFactoryBean validatorFactoryBean = new LocalValidatorFactoryBean();
         validatorFactoryBean.setValidationMessageSource(messageSource);
         return validatorFactoryBean;
