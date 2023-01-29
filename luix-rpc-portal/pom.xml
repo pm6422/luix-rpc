@@ -76,7 +76,7 @@
                 <version>3.3.0</version>
                 <configuration>
                     <from>
-                        <image>eclipse-temurin:17-jre</image>
+                        <image>eclipse-temurin:17-jdk-focal</image>
                         <platforms>
                             <platform>
                                 <architecture>amd64</architecture>
@@ -114,10 +114,20 @@
                         <user>1000</user>
                     </container>
                     <extraDirectories>
-                        <paths>src/main/jib</paths>
+                        <paths>
+                            <path>src/main/jib</path>
+                        </paths>
                         <permissions>
                             <permission>
                                 <file>/entrypoint.sh</file>
+                                <mode>755</mode>
+                            </permission>
+                            <permission>
+                                <file>/arthas-install.sh</file>
+                                <mode>755</mode>
+                            </permission>
+                            <permission>
+                                <file>/arthas-run.sh</file>
                                 <mode>755</mode>
                             </permission>
                         </permissions>
