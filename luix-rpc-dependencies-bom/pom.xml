@@ -146,6 +146,16 @@
                 <version>${dropwizard_metrics_version}</version>
             </dependency>
             <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-graphite</artifactId>
+                <version>${dropwizard_metrics_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-servlet</artifactId>
+                <version>${dropwizard_metrics_version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.turkraft</groupId>
                 <artifactId>spring-filter</artifactId>
                 <version>${spring_filter_version}</version>
