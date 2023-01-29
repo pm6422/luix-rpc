@@ -111,7 +111,7 @@
                             <TZ>Asia/Shanghai</TZ>
                         </environment>
                         <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-                        <user>1000</user>
+                        <user>root</user>
                     </container>
                     <extraDirectories>
                         <paths>
