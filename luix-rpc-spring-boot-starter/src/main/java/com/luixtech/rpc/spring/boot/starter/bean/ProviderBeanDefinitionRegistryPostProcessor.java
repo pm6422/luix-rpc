@@ -1,15 +1,15 @@
 package com.luixtech.rpc.spring.boot.starter.bean;
 
+import com.luixtech.rpc.core.config.impl.ProtocolConfig;
+import com.luixtech.rpc.core.config.impl.ProviderConfig;
+import com.luixtech.rpc.core.server.annotation.RpcProvider;
+import com.luixtech.rpc.core.server.stub.ProviderStub;
 import com.luixtech.rpc.spring.boot.starter.bean.name.DefaultBeanNameGenerator;
 import com.luixtech.rpc.spring.boot.starter.bean.registry.ClassPathBeanDefinitionRegistryScanner;
 import com.luixtech.rpc.spring.boot.starter.utils.AnnotationBeanDefinitionUtils;
 import com.luixtech.rpc.spring.boot.starter.utils.AnnotationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import com.luixtech.rpc.core.config.impl.ProtocolConfig;
-import com.luixtech.rpc.core.config.impl.ProviderConfig;
-import com.luixtech.rpc.core.server.annotation.RpcProvider;
-import com.luixtech.rpc.core.server.stub.ProviderStub;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
@@ -36,15 +36,14 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.luixtech.rpc.core.constant.ServiceConstants.*;
-import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static com.luixtech.rpc.core.constant.ProtocolConstants.PROTOCOL;
 import static com.luixtech.rpc.core.constant.ProtocolConstants.SERIALIZER;
 import static com.luixtech.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
+import static com.luixtech.rpc.core.constant.ServiceConstants.*;
 import static com.luixtech.rpc.core.server.stub.ProviderStub.buildProviderStubBeanName;
 import static com.luixtech.rpc.spring.boot.starter.config.LuixProperties.readProtocolConfig;
 import static com.luixtech.rpc.spring.boot.starter.config.LuixProperties.readProviderConfig;
-import static com.luixtech.rpc.spring.boot.starter.utils.AnnotationBeanDefinitionUtils.addPropertyValue;
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
 /**
  * Register provider bean and provider stub under specified scan base packages to spring context

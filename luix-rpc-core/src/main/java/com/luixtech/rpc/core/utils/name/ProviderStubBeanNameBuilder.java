@@ -1,8 +1,8 @@
 package com.luixtech.rpc.core.utils.name;
 
+import com.luixtech.rpc.core.server.annotation.RpcProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import com.luixtech.rpc.core.server.annotation.RpcProvider;
 
 /**
  * RPC provider {@link RpcProvider} stub bean name builder

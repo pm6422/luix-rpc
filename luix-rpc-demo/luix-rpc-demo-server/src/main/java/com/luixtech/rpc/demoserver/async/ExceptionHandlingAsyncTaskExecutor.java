@@ -1,7 +1,7 @@
 package com.luixtech.rpc.demoserver.async;
 
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.demoserver.utils.TraceIdUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;

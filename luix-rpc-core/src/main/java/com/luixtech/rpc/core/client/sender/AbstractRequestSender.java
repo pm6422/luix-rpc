@@ -1,19 +1,19 @@
 package com.luixtech.rpc.core.client.sender;
 
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.core.client.request.Requestable;
-import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.core.exception.impl.RpcFrameworkException;
 import com.luixtech.rpc.core.server.response.Responseable;
+import com.luixtech.rpc.core.url.Url;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public abstract class AbstractRequestSender implements Sendable {
-    protected String        interfaceName;
-    protected Url           providerUrl;
-    protected AtomicBoolean initialized     = new AtomicBoolean(false);
+    protected          String        interfaceName;
+    protected          Url           providerUrl;
+    protected          AtomicBoolean initialized     = new AtomicBoolean(false);
     protected          AtomicInteger processingCount = new AtomicInteger(0);
     protected volatile boolean       active          = false;
 

@@ -1,7 +1,7 @@
 package com.luixtech.rpc.core.config.impl;
 
-import lombok.Data;
 import com.luixtech.rpc.core.config.Configurable;
+import lombok.Data;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

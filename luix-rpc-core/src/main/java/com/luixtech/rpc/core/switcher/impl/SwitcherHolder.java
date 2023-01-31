@@ -1,8 +1,8 @@
 package com.luixtech.rpc.core.switcher.impl;
 
-import org.apache.commons.collections4.CollectionUtils;
 import com.luixtech.rpc.core.switcher.Switcher;
 import com.luixtech.rpc.core.switcher.SwitcherListener;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.ArrayList;
@@ -14,9 +14,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @NotThreadSafe
 public class SwitcherHolder {
 
-    private static final SwitcherHolder                      INSTANCE       = new SwitcherHolder();
-    private final        Map<String, Switcher>               switcherMap    = new ConcurrentHashMap<>();
-    private final        Map<String, List<SwitcherListener>> listenerMap    = new ConcurrentHashMap<>();
+    private static final SwitcherHolder                      INSTANCE    = new SwitcherHolder();
+    private final        Map<String, Switcher>               switcherMap = new ConcurrentHashMap<>();
+    private final        Map<String, List<SwitcherListener>> listenerMap = new ConcurrentHashMap<>();
 
     /**
      * Prevent instantiation of it outside the class

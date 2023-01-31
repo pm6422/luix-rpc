@@ -1,8 +1,8 @@
 package com.luixtech.rpc.core.server.exposer.impl;
 
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.core.server.exposer.AbstractProviderExposer;
 import com.luixtech.rpc.core.url.Url;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class JvmProviderExposer extends AbstractProviderExposer {

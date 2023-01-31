@@ -1,9 +1,9 @@
 package com.luixtech.rpc.webcenter.aspect;
 
+import com.luixtech.rpc.webcenter.utils.TraceIdUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import com.luixtech.rpc.webcenter.utils.TraceIdUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 

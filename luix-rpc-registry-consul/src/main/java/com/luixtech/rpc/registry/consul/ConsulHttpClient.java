@@ -5,11 +5,11 @@ import com.ecwid.consul.v1.QueryParams;
 import com.ecwid.consul.v1.Response;
 import com.ecwid.consul.v1.health.HealthServicesRequest;
 import com.ecwid.consul.v1.health.model.HealthService;
+import com.luixtech.rpc.core.url.Url;
+import com.luixtech.rpc.registry.consul.utils.ConsulUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import com.luixtech.rpc.core.url.Url;
-import com.luixtech.rpc.registry.consul.utils.ConsulUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,8 +1,8 @@
 package com.luixtech.rpc.webcenter.dto;
 
+import com.luixtech.rpc.core.server.stub.OptionMeta;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
-import com.luixtech.rpc.core.server.stub.OptionMeta;
 import org.springframework.beans.BeanUtils;
 
 @EqualsAndHashCode(callSuper = true)

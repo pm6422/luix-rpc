@@ -1,15 +1,15 @@
 package com.luixtech.rpc.core.config.impl;
 
+import com.luixtech.rpc.core.config.Configurable;
 import com.luixtech.rpc.core.constant.ConsumerConstants;
 import com.luixtech.rpc.core.constant.RegistryConstants;
 import com.luixtech.rpc.core.exception.impl.RpcConfigException;
+import com.luixtech.rpc.core.registry.Registry;
 import com.luixtech.rpc.core.registry.factory.RegistryFactory;
+import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.core.utils.RpcConfigValidator;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import com.luixtech.rpc.core.config.Configurable;
-import com.luixtech.rpc.core.registry.Registry;
-import com.luixtech.rpc.core.url.Url;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;

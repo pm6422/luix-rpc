@@ -8,9 +8,9 @@ import com.luixtech.rpc.core.server.stub.ProviderStubHolder;
 
 import java.util.Date;
 
+import static com.luixtech.rpc.metrics.MetricsUtils.getMemoryStatistic;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
-import static com.luixtech.rpc.metrics.MetricsUtils.getMemoryStatistic;
 
 public class BuildInServiceImpl implements BuildInService {
     @Override

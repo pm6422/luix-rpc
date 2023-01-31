@@ -3,9 +3,9 @@ package com.luixtech.rpc.core.exchange.client;
 import com.luixtech.rpc.core.codec.Codec;
 import com.luixtech.rpc.core.constant.ProtocolConstants;
 import com.luixtech.rpc.core.exchange.constants.ChannelState;
+import com.luixtech.rpc.core.url.Url;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import com.luixtech.rpc.core.url.Url;
 
 import java.net.InetSocketAddress;
 

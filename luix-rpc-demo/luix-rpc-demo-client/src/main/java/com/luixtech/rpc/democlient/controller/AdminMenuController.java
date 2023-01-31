@@ -1,7 +1,6 @@
 package com.luixtech.rpc.democlient.controller;
 
 import com.luixtech.rpc.core.client.annotation.RpcConsumer;
-import com.luixtech.rpc.democommon.domain.AdminMenu;
 import com.luixtech.rpc.democommon.dto.AdminMenuDTO;
 import com.luixtech.rpc.democommon.service.AdminMenuService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,11 +1,11 @@
 package com.luixtech.rpc.registry.consul.utils;
 
 import com.ecwid.consul.v1.health.model.HealthService;
+import com.luixtech.rpc.core.url.Url;
+import com.luixtech.rpc.core.utils.UrlUtils;
 import com.luixtech.rpc.registry.consul.ConsulService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import com.luixtech.rpc.core.url.Url;
-import com.luixtech.rpc.core.utils.UrlUtils;
 
 @Slf4j
 public class ConsulUtils {

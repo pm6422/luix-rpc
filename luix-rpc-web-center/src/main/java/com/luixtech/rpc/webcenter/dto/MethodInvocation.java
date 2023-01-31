@@ -45,5 +45,5 @@ public class MethodInvocation implements Serializable {
     /**
      * Consumer stub attributes map
      */
-    private              Map<String, String> attributes = new HashMap<>();
+    private              Map<String, String> attributes       = new HashMap<>();
 }

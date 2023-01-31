@@ -1,10 +1,10 @@
 package com.luixtech.rpc.webcenter.domain;
 
+import com.luixtech.rpc.core.server.buildin.ServerInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import com.luixtech.rpc.core.server.buildin.ServerInfo;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
