@@ -74,6 +74,7 @@ spring:
         active: dev
     messages:
         basename: i18n/messages
+        fallback-to-system-locale: false
     task:
         execution:
             thread-name-prefix: global-async-task-
