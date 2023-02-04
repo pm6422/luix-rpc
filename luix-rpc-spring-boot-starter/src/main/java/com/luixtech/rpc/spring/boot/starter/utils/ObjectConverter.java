@@ -36,7 +36,7 @@ import java.util.Map;
  * The method name doesn't matter. It's all about the parameter type and the return type.
  *
  * @author BalusC
- * @link http://balusc.blogspot.com/2007/08/generic-object-converter.html
+ * @link <a href="http://balusc.blogspot.com/2007/08/generic-object-converter.html">Generic object converter</a>
  */
 public abstract class ObjectConverter {
 
@@ -107,7 +107,7 @@ public abstract class ObjectConverter {
      * @return The converted Boolean value.
      */
     public static Boolean integerToBoolean(Integer value) {
-        return value.intValue() == 0 ? Boolean.FALSE : Boolean.TRUE;
+        return value == 0 ? Boolean.FALSE : Boolean.TRUE;
     }
 
     /**
@@ -117,7 +117,7 @@ public abstract class ObjectConverter {
      * @return The converted Integer value.
      */
     public static Integer booleanToInteger(Boolean value) {
-        return value.booleanValue() ? Integer.valueOf(1) : Integer.valueOf(0);
+        return value ? Integer.valueOf(1) : Integer.valueOf(0);
     }
 
     /**
@@ -127,7 +127,7 @@ public abstract class ObjectConverter {
      * @return The converted BigDecimal value.
      */
     public static BigDecimal doubleToBigDecimal(Double value) {
-        return new BigDecimal(value.doubleValue());
+        return new BigDecimal(value);
     }
 
     /**
@@ -137,7 +137,7 @@ public abstract class ObjectConverter {
      * @return The converted Double value.
      */
     public static Double bigDecimalToDouble(BigDecimal value) {
-        return new Double(value.doubleValue());
+        return value.doubleValue();
     }
 
     /**

@@ -218,7 +218,7 @@ public class MethodParameterUtils {
             sb.append("[]");
             clz = clz.getComponentType();
         }
-        return clz.getName() + sb.toString();
+        return clz.getName() + sb;
     }
 
     /**
@@ -286,7 +286,7 @@ public class MethodParameterUtils {
             try {
                 Object value = emptyInstances.get(type);
                 if (value == null) {
-                    value = type.newInstance();
+                    value = type.getDeclaredConstructor().newInstance();
                     emptyInstances.put(type, value);
                 }
                 Class<?> cls = value.getClass();
@@ -296,9 +296,7 @@ public class MethodParameterUtils {
                         Object property = getEmptyObject(field.getType(), emptyInstances, nestDepth + 1);
                         if (property != null) {
                             try {
-                                if (!field.isAccessible()) {
-                                    field.setAccessible(true);
-                                }
+                                field.setAccessible(true);
                                 field.set(value, property);
                             } catch (Throwable e) {
                                 // Leave blank intentionally
