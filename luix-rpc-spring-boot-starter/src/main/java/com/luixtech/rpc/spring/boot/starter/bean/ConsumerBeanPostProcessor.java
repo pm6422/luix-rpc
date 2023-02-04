@@ -122,7 +122,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
                 AnnotationAttributes attributes = getConsumerAnnotationAttributes(field);
                 // Register consumer stub instance to spring context
                 ConsumerStub<?> consumerStub = registerConsumerStub(rpcConsumerAnnotation, attributes, field.getType());
-                if (!field.isAccessible()) {
+                if (!field.canAccess(bean)) {
                     field.setAccessible(true);
                 }
                 // Inject RPC consumer proxy instance

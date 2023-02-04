@@ -296,7 +296,9 @@ public class MethodParameterUtils {
                         Object property = getEmptyObject(field.getType(), emptyInstances, nestDepth + 1);
                         if (property != null) {
                             try {
-                                field.setAccessible(true);
+                                if(!field.canAccess(value)){
+                                    field.setAccessible(true);
+                                }
                                 field.set(value, property);
                             } catch (Throwable e) {
                                 // Leave blank intentionally
