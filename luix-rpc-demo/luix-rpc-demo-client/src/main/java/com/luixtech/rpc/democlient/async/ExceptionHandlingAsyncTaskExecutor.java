@@ -29,6 +29,7 @@ public class ExceptionHandlingAsyncTaskExecutor implements AsyncTaskExecutor, In
         executor.execute(createWrappedRunnable(task, MDC.getCopyOfContextMap()));
     }
 
+    @Deprecated
     @Override
     public void execute(@NonNull Runnable task, long startTimeout) {
         executor.execute(createWrappedRunnable(task, MDC.getCopyOfContextMap()), startTimeout);
