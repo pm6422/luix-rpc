@@ -92,6 +92,7 @@ public class NettyClient extends AbstractPooledClient {
         }
         return doRequest(request);
     }
+
     private Responseable doRequest(Requestable request) {
         Responseable response;
         try {

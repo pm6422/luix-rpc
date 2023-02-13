@@ -1,9 +1,9 @@
 package com.luixtech.rpc.core.client.faulttolerance;
 
-import lombok.Getter;
-import lombok.Setter;
 import com.luixtech.rpc.core.client.loadbalancer.LoadBalancer;
 import com.luixtech.rpc.core.url.Url;
+import lombok.Getter;
+import lombok.Setter;
 
 @Setter
 @Getter

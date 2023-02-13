@@ -1,12 +1,12 @@
 package com.luixtech.rpc.spring.boot.starter.bean;
 
-import com.luixtech.rpc.spring.boot.starter.utils.AnnotationBeanDefinitionUtils;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import com.luixtech.rpc.core.client.annotation.RpcConsumer;
 import com.luixtech.rpc.core.client.stub.ConsumerStub;
 import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import com.luixtech.rpc.spring.boot.starter.utils.AnnotationBeanDefinitionUtils;
 import com.luixtech.rpc.spring.boot.starter.utils.AnnotationUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -29,14 +29,12 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.luixtech.rpc.core.constant.ConsumerConstants.*;
-import static com.luixtech.rpc.core.constant.ServiceConstants.*;
-import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static com.luixtech.rpc.core.client.stub.ConsumerStub.buildConsumerStubBeanName;
+import static com.luixtech.rpc.core.constant.ConsumerConstants.*;
 import static com.luixtech.rpc.core.constant.ProtocolConstants.PROTOCOL;
 import static com.luixtech.rpc.core.constant.ProtocolConstants.SERIALIZER;
-import static com.luixtech.rpc.spring.boot.starter.utils.AnnotationBeanDefinitionUtils.addPropertyValue;
 import static com.luixtech.rpc.spring.boot.starter.utils.ProxyUtils.getTargetClass;
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
 
 /**
@@ -124,7 +122,7 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
                 AnnotationAttributes attributes = getConsumerAnnotationAttributes(field);
                 // Register consumer stub instance to spring context
                 ConsumerStub<?> consumerStub = registerConsumerStub(rpcConsumerAnnotation, attributes, field.getType());
-                if (!field.isAccessible()) {
+                if (!field.canAccess(bean)) {
                     field.setAccessible(true);
                 }
                 // Inject RPC consumer proxy instance

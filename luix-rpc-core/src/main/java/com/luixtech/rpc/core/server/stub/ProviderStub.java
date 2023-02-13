@@ -15,6 +15,7 @@ import com.luixtech.rpc.core.exception.impl.RpcFrameworkException;
 import com.luixtech.rpc.core.protocol.Protocol;
 import com.luixtech.rpc.core.registry.Registry;
 import com.luixtech.rpc.core.registry.factory.RegistryFactory;
+import com.luixtech.rpc.core.server.response.Responseable;
 import com.luixtech.rpc.core.server.response.impl.RpcCheckHealthResponse;
 import com.luixtech.rpc.core.server.response.impl.RpcResponse;
 import com.luixtech.rpc.core.url.Url;
@@ -25,7 +26,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import com.luixtech.rpc.core.server.response.Responseable;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.Max;
@@ -186,27 +186,27 @@ public class ProviderStub<T> {
     /**
      * All the methods of the interface class
      */
-    private       List<MethodMeta>  methodMetas  = new ArrayList<>();
+    private           List<MethodMeta>          methodMetas  = new ArrayList<>();
     /**
      * The provider url
      */
-    private       Url               url;
+    private           Url                       url;
     /**
      * Indicates whether the provider were active
      */
-    private final AtomicBoolean     activated    = new AtomicBoolean(false);
+    private final     AtomicBoolean             activated    = new AtomicBoolean(false);
     /**
      * Application configuration
      */
-    private       ApplicationConfig applicationConfig;
+    private           ApplicationConfig         applicationConfig;
     /**
      * Protocol configuration
      */
-    private       ProtocolConfig    protocolConfig;
+    private           ProtocolConfig            protocolConfig;
     /**
      * Registry configuration
      */
-    private       RegistryConfig    registryConfig;
+    private           RegistryConfig            registryConfig;
 
     /**
      * The method is invoked by Java EE container automatically after registered bean definition

@@ -1,10 +1,10 @@
 package com.luixtech.rpc.webcenter.domain;
 
+import com.luixtech.rpc.webcenter.domain.base.AbstractAuditableDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import com.luixtech.rpc.webcenter.domain.base.AbstractAuditableDomain;
 import org.springframework.data.mongodb.core.index.Indexed;
 
 import javax.validation.constraints.NotEmpty;

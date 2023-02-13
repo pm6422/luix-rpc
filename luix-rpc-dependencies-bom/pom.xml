@@ -15,6 +15,11 @@
     <description>Luix dependencies BOM</description>
     <url>http://www.luixtech.com</url>
     <properties>
+        <java.version>11</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.version>3.5.0</maven.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <activation_version>1.2.0</activation_version>
         <apollo_client_version>1.6.0</apollo_client_version>
         <avro_version>1.8.2</avro_version>
@@ -686,11 +691,12 @@
             <plugin>
                 <groupId>com.github.ekryd.sortpom</groupId>
                 <artifactId>sortpom-maven-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.2.0</version>
                 <configuration>
                     <sortProperties>true</sortProperties>
                     <nrOfIndentSpace>4</nrOfIndentSpace>
                     <sortDependencies>groupId,artifactId</sortDependencies>
+                    <sortPlugins>groupId,artifactId</sortPlugins>
                     <keepBlankLines>false</keepBlankLines>
                     <expandEmptyElements>false</expandEmptyElements>
                     <createBackupFile>false</createBackupFile>
@@ -729,6 +735,11 @@
                         <phase>clean</phase>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
             </plugin>
         </plugins>
     </build>

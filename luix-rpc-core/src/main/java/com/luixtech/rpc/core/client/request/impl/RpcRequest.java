@@ -1,5 +1,6 @@
 package com.luixtech.rpc.core.client.request.impl;
 
+import com.luixtech.rpc.core.client.request.Requestable;
 import com.luixtech.rpc.core.protocol.constants.ProtocolVersion;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +8,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import com.luixtech.rpc.core.client.request.Requestable;
 
 import java.io.Serializable;
 import java.util.Map;

@@ -16,8 +16,8 @@ public class NettyChannelFactory implements SharedObjectFactory<NettyChannel> {
     private static final ExecutorService rebuildExecutorService = new NetworkThreadPoolExecutor(5, 30, 10L, TimeUnit.SECONDS, 100,
             new BasicThreadFactory.Builder().namingPattern("rebuildExecutorService-%d").daemon(true).build(),
             new ThreadPoolExecutor.CallerRunsPolicy());
-    private              NettyClient     nettyClient;
-    private              String          factoryName;
+    private final NettyClient nettyClient;
+    private final String      factoryName;
 
     public NettyChannelFactory(NettyClient nettyClient) {
         this.nettyClient = nettyClient;
@@ -45,7 +45,7 @@ public class NettyChannelFactory implements SharedObjectFactory<NettyChannel> {
                     }
                 }
             } catch (Exception e) {
-                log.error("rebuild error: " + this.toString() + ", " + nettyChannel.getProviderUrl(), e);
+                log.error("rebuild error: " + this + ", " + nettyChannel.getProviderUrl(), e);
             } finally {
                 lock.unlock();
             }
@@ -59,8 +59,8 @@ public class NettyChannelFactory implements SharedObjectFactory<NettyChannel> {
         return factoryName;
     }
 
-    class RebuildTask implements Runnable {
-        private NettyChannel channel;
+    static class RebuildTask implements Runnable {
+        private final NettyChannel channel;
 
         public RebuildTask(NettyChannel channel) {
             this.channel = channel;
@@ -74,7 +74,7 @@ public class NettyChannelFactory implements SharedObjectFactory<NettyChannel> {
                 channel.open();
                 log.info("rebuild channel success: " + channel.getProviderUrl());
             } catch (Exception e) {
-                log.error("rebuild error: " + this.toString() + ", " + channel.getProviderUrl(), e);
+                log.error("rebuild error: " + this + ", " + channel.getProviderUrl(), e);
             } finally {
                 channel.getLock().unlock();
             }

@@ -1,8 +1,8 @@
 package com.luixtech.rpc.core.url;
 
+import com.luixtech.rpc.core.constant.ServiceConstants;
 import com.luixtech.rpc.core.exception.impl.RpcConfigException;
 import com.luixtech.rpc.core.registry.Registry;
-import com.luixtech.rpc.core.constant.ServiceConstants;
 import com.luixtech.rpc.core.utils.MethodParameterUtils;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.luixtech.rpc.core.utils.MethodParameterUtils.getMethodSignature;
 import static org.apache.commons.io.IOUtils.DIR_SEPARATOR_UNIX;
 
 /**

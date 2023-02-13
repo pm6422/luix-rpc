@@ -1,7 +1,9 @@
 package com.luixtech.rpc.webcenter.config.dbmigrations;
 
+import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
 import com.luixtech.rpc.webcenter.domain.Authority;
 import com.luixtech.rpc.webcenter.domain.RpcScheduledTask;
+import com.luixtech.rpc.webcenter.domain.User;
 import com.luixtech.rpc.webcenter.domain.UserAuthority;
 import com.luixtech.rpc.webcenter.service.RpcApplicationService;
 import com.luixtech.rpc.webcenter.service.RpcServerService;
@@ -10,8 +12,6 @@ import com.luixtech.uidgenerator.core.id.IdGenerator;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
-import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
-import com.luixtech.rpc.webcenter.domain.User;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;

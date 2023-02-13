@@ -1,11 +1,11 @@
 package com.luixtech.rpc.webcenter.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.webcenter.domain.User;
 import com.luixtech.rpc.webcenter.exception.UserDisabledException;
 import com.luixtech.rpc.webcenter.exception.UserNotActivatedException;
 import com.luixtech.rpc.webcenter.repository.UserAuthorityRepository;
 import com.luixtech.rpc.webcenter.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

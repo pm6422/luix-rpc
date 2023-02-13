@@ -1,10 +1,10 @@
 package com.luixtech.rpc.registry.consul;
 
 import com.ecwid.consul.v1.agent.model.NewService;
-import lombok.Data;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.core.utils.UrlUtils;
 import com.luixtech.rpc.registry.consul.utils.ConsulUtils;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;

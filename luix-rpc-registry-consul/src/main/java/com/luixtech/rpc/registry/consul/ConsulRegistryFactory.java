@@ -1,13 +1,13 @@
 package com.luixtech.rpc.registry.consul;
 
-import lombok.extern.slf4j.Slf4j;
-import com.luixtech.rpc.core.registry.factory.AbstractRegistryFactory;
 import com.luixtech.rpc.core.registry.Registry;
+import com.luixtech.rpc.core.registry.factory.AbstractRegistryFactory;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.utilities.serviceloader.annotation.SpiName;
+import lombok.extern.slf4j.Slf4j;
 
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static com.luixtech.rpc.core.constant.RegistryConstants.REGISTRY_VAL_CONSUL;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 @SpiName(REGISTRY_VAL_CONSUL)
 @Slf4j

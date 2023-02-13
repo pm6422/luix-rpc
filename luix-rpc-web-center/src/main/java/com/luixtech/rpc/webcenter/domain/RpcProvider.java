@@ -1,9 +1,9 @@
 package com.luixtech.rpc.webcenter.domain;
 
+import com.luixtech.rpc.core.url.Url;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.luixtech.rpc.core.url.Url;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

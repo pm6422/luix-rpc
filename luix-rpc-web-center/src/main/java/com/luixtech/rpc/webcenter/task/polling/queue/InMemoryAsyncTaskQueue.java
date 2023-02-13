@@ -1,7 +1,7 @@
 package com.luixtech.rpc.webcenter.task.polling.queue;
 
-import lombok.extern.slf4j.Slf4j;
 import com.luixtech.rpc.webcenter.task.polling.AsyncTask;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.async.DeferredResult;
 

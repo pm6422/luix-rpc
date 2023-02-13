@@ -1,6 +1,5 @@
 package com.luixtech.rpc.democommon.service;
 
-import com.luixtech.rpc.democommon.domain.AdminMenu;
 import com.luixtech.rpc.democommon.dto.AdminMenuDTO;
 
 import java.util.List;

@@ -1,16 +1,16 @@
 package com.luixtech.rpc.core.codec;
 
+import com.luixtech.rpc.core.client.request.Requestable;
 import com.luixtech.rpc.core.codec.impl.CodecHeader;
 import com.luixtech.rpc.core.codec.impl.CodecV1;
 import com.luixtech.rpc.core.constant.RpcConstants;
 import com.luixtech.rpc.core.exception.impl.RpcFrameworkException;
-import lombok.extern.slf4j.Slf4j;
-import com.luixtech.rpc.core.client.request.Requestable;
 import com.luixtech.rpc.core.exchange.Channel;
 import com.luixtech.rpc.core.exchange.Exchangable;
 import com.luixtech.rpc.core.server.response.Responseable;
 import com.luixtech.rpc.core.utils.RpcFrameworkUtils;
 import com.luixtech.utilities.lang.ByteUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
@@ -22,11 +22,9 @@ public class CodecUtils {
             short type = ByteUtils.bytes2short(data, 0);
             if (type == CodecV1.MAGIC) {
                 return encodeV1(msg, data);
-            }
-            else if (type == CodecHeader.MAGIC) {
+            } else if (type == CodecHeader.MAGIC) {
                 return data;
-            }
-            else {
+            } else {
                 throw new RpcFrameworkException("Found invalid magic [" + type + "]");
             }
         } catch (IOException e) {

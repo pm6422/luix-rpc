@@ -1,8 +1,8 @@
 package com.luixtech.rpc.registry.consul;
 
+import com.luixtech.utilities.collection.ConcurrentHashSet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import com.luixtech.utilities.collection.ConcurrentHashSet;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,15 +26,15 @@ public class ConsulStatusUpdater {
     /**
      * 连续检测MAX_CHECK_TIMES次必须发送一次心跳
      */
-    private static final int                      SCHEDULE_INTERVAL   = HEARTBEAT_CIRCLE / MAX_CHECK_TIMES;
+    private static final int                       SCHEDULE_INTERVAL   = HEARTBEAT_CIRCLE / MAX_CHECK_TIMES;
     /**
      * Luix consul client
      */
-    private final        ConsulHttpClient         consulClient;
+    private final        ConsulHttpClient          consulClient;
     /**
      * Consul service instance status update executor service
      */
-    private final        ScheduledExecutorService statusUpdateExecutorService;
+    private final        ScheduledExecutorService  statusUpdateExecutorService;
     /**
      * Consul service instance status update execution thread pool
      */

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 
-import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
