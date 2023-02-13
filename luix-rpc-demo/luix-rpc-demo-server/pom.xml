@@ -207,10 +207,6 @@
                                 <mode>755</mode>
                             </permission>
                             <permission>
-                                <file>/arthas-install.sh</file>
-                                <mode>755</mode>
-                            </permission>
-                            <permission>
                                 <file>/arthas-run.sh</file>
                                 <mode>755</mode>
                             </permission>
