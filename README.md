@@ -65,11 +65,61 @@ java -jar luix-web-center/target/*.jar
 
 Then navigate to [http://localhost:6030](http://localhost:6030) in your browser.
 
-## VM Options
+### VM Options
 Add below Key/Value pair to env variable of rancher.
 ```
 key: JAVA_OPTS
 value: -Dspring.profiles.active=test
+```
+
+## Arthas Usages
+### Run Arthas
+```
+./arthas-run.sh
+```
+
+### Invoke method
+First get the spring context object by tt(time tunnel) command
+```
+tt -t org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter invokeHandlerMethod
+```
+Output:
+```
+ INDEX        TIMESTAMP                        COST(ms)        IS-RET       IS-EXP       OBJECT                  CLASS                                            METHOD
+
+--------------------------------------------------------------------------------------------
+
+ 1000         2023-01-30 11:50:44              4.825545        true         false        0x15c8b75c              RequestMappingHandlerAdapter                     invokeHandlerMethod
+```
+We can get the index value(1000). Then we can get any spring bean objects and invoke any methods.
+```
+tt -i 1000 -w 'target.getApplicationContext().getBean("threatSeverityRepository").findAll()'
+```
+Output:
+```
+@ArrayList[
+@ThreatSeverity[ThreatSeverity(super=AbstractAuditableDomain(id=63be1662832439552abfd384, createdBy=louis, createdTime=2023-01-11T01:52:34.600Z, modifiedBy=louis, modifiedTime=2023-01-11T01:52:34.600Z), seqNum=1, code=critical, name=严重, score=0, enabled=true)]
+]
+```
+Invoke another method
+```
+tt -i 1000 -w 'target.getApplicationContext().getBean("threatSeverityRepository").findById("63be1662832439552abfd384")'
+```
+
+### Monitor the execution time, arguments and return value of method
+Command:
+```
+watch cn.com.bydauto.tsap.apiapp.controller.ThreatTypeController findAllCodes
+```
+We can get the output after invocation:
+```
+Affect(class count: 2 , method count: 2) cost in 52 ms, listenerId: 3
+method=cn.com.bydauto.tsap.apiapp.controller.ThreatTypeController.findAllCodes location=AtExit
+ts=2023-01-30 11:42:56; [cost=0.657476ms] result=@ArrayList[
+    @Object[][isEmpty=true;size=0],
+    @ThreatTypeController[cn.com.bydauto.tsap.apiapp.controller.ThreatTypeController@10f192d8],
+    @Result[Result(code=TSAPS0000, message=处理成功, result=[vlan-up-down-traffic, vehicle-equipment-connection, door-switch, ota-upgrade])],
+]
 ```
 
 ## Testing
@@ -80,7 +130,7 @@ To launch your application's tests, run:
 ./mvnw verify
 ```
 
-### Code quality
+## Code quality
 
 Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
 
