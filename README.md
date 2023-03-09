@@ -15,10 +15,10 @@ Before you can build this project, you must install JDK on your machine:
 You can install JDK by [SDK Man](https://sdkman.io/install). e.g.
 
 ```
-sdk install java 8.0.312-zulu
+sdk install java 17.0.6-tem
 ```
 
-Java compatability: JDK 8 ~ 17
+Java compatability: JDK 11 ~ 17
 
 Docker is optional, unit testing programs can start dockerized mongo, consul instance.
 
