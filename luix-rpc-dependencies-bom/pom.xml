@@ -12,7 +12,7 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
     <name>luix-rpc-dependencies-bom</name>
-    <description>Luix dependencies BOM</description>
+    <description>Luix RPC dependencies BOM</description>
     <url>http://www.luixtech.com</url>
     <properties>
         <java.version>11</java.version>
