@@ -1,7 +1,7 @@
 package com.luixtech.rpc.demoserver.service.impl;
 
+import com.luixtech.framework.exception.DataNotFoundException;
 import com.luixtech.rpc.demoserver.domain.ScheduledTask;
-import com.luixtech.rpc.demoserver.exception.DataNotFoundException;
 import com.luixtech.rpc.demoserver.repository.ScheduledTaskHistoryRepository;
 import com.luixtech.rpc.demoserver.repository.ScheduledTaskLockRepository;
 import com.luixtech.rpc.demoserver.repository.ScheduledTaskRepository;

@@ -1,9 +1,9 @@
 package com.luixtech.rpc.demoserver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.luixtech.rpc.demoserver.component.HttpHeaderCreator;
+import com.luixtech.framework.component.HttpHeaderCreator;
+import com.luixtech.framework.exception.DataNotFoundException;
 import com.luixtech.rpc.demoserver.domain.ScheduledTask;
-import com.luixtech.rpc.demoserver.exception.DataNotFoundException;
 import com.luixtech.rpc.demoserver.repository.ScheduledTaskRepository;
 import com.luixtech.rpc.demoserver.service.ScheduledTaskService;
 import com.luixtech.rpc.demoserver.task.schedule.TaskExecutable;
@@ -27,7 +27,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static com.luixtech.rpc.demoserver.utils.HttpHeaderUtils.generatePageHeaders;
+import static com.luixtech.framework.utils.HttpHeaderUtils.generatePageHeaders;
+
 
 /**
  * REST controller for managing scheduled tasks.
@@ -37,9 +38,9 @@ import static com.luixtech.rpc.demoserver.utils.HttpHeaderUtils.generatePageHead
 @Slf4j
 public class ScheduledTaskController {
     private final ScheduledTaskRepository scheduledTaskRepository;
-    private final ScheduledTaskService    scheduledTaskService;
-    private final HttpHeaderCreator       httpHeaderCreator;
-    private final ApplicationContext      applicationContext;
+    private final ScheduledTaskService scheduledTaskService;
+    private final HttpHeaderCreator    httpHeaderCreator;
+    private final ApplicationContext   applicationContext;
 
     @Operation(summary = "create scheduled task")
     @PostMapping("/api/scheduled-tasks")

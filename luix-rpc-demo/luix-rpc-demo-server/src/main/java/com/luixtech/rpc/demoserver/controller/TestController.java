@@ -1,12 +1,11 @@
 package com.luixtech.rpc.demoserver.controller;
 
+import com.luixtech.framework.utils.TraceIdUtils;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.democommon.service.AppService;
-import com.luixtech.rpc.demoserver.config.AsyncConfiguration;
 import com.luixtech.rpc.demoserver.service.AsyncTaskTestService;
 import com.luixtech.rpc.demoserver.task.polling.queue.InMemoryAsyncTaskQueue;
 import com.luixtech.rpc.demoserver.task.polling.queue.Message;
-import com.luixtech.rpc.demoserver.utils.TraceIdUtils;
 import com.luixtech.rpc.spring.boot.starter.config.LuixRpcProperties;
 import com.luixtech.uidgenerator.core.id.IdGenerator;
 import io.swagger.v3.oas.annotations.Operation;

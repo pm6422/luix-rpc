@@ -1,9 +1,9 @@
 package com.luixtech.rpc.demoserver.controller;
 
+import com.luixtech.framework.component.HttpHeaderCreator;
+import com.luixtech.framework.exception.DataNotFoundException;
 import com.luixtech.rpc.democommon.domain.App;
 import com.luixtech.rpc.democommon.service.AppService;
-import com.luixtech.rpc.demoserver.component.HttpHeaderCreator;
-import com.luixtech.rpc.demoserver.exception.DataNotFoundException;
 import com.luixtech.rpc.demoserver.repository.AppRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.luixtech.rpc.demoserver.utils.HttpHeaderUtils.generatePageHeaders;
+import static com.luixtech.framework.utils.HttpHeaderUtils.generatePageHeaders;
 
 /**
  * REST controller for managing apps.

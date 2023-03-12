@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
+
 
 /**
  * REST controller for managing the user audit events.

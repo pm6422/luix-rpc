@@ -3,7 +3,7 @@ package com.luixtech.rpc.democlient.controller.advice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.luixtech.rpc.democlient.component.MessageCreator;
+import com.luixtech.framework.component.MessageCreator;
 import com.luixtech.rpc.democlient.dto.ErrorDTO;
 import com.luixtech.rpc.democlient.exception.DataNotFoundException;
 import com.luixtech.rpc.democlient.exception.DuplicationException;

@@ -155,9 +155,9 @@ springdoc: # https://springdoc.org/#migrating-from-springfox
         enabled: true
     show-actuator: true
 # ===================================================================
-# Application specific properties
+# Luix framework specific properties
 # ===================================================================
-application:
+luix:
     http:
         cache: # Used by the CachingHttpHeadersFilter
             expired-after: 31

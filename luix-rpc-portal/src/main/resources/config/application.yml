@@ -95,7 +95,7 @@ logging:
 # ===================================================================
 # Application specific properties
 # ===================================================================
-application:
+luix:
     swagger:
         enabled: true
         api:

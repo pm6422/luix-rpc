@@ -1,7 +1,6 @@
 package com.luixtech.rpc.webcenter.controller;
 
 import com.codahale.metrics.annotation.Timed;
-import com.luixtech.rpc.webcenter.config.ApplicationConstants;
 import com.luixtech.rpc.webcenter.domain.RpcScheduledTaskHistory;
 import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.repository.RpcScheduledTaskHistoryRepository;
@@ -25,7 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication.DEFAULT_REG;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 /**
@@ -42,7 +42,7 @@ public class RpcScheduledTaskHistoryController {
     @GetMapping("/api/rpc-scheduled-task-histories")
     @Timed
     public ResponseEntity<List<RpcScheduledTaskHistory>> find(@ParameterObject Pageable pageable,
-                                                              @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
+                                                              @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
                                                               @Parameter(description = "Task name") @RequestParam(value = "name", required = false) String name,
                                                               @Parameter(description = "Interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName,
                                                               @Parameter(description = "Form") @RequestParam(value = "form", required = false) String form,

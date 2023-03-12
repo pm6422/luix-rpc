@@ -2,7 +2,6 @@ package com.luixtech.rpc.webcenter.controller;
 
 import com.codahale.metrics.annotation.Timed;
 import com.luixtech.rpc.core.client.stub.ConsumerStub;
-import com.luixtech.rpc.webcenter.config.ApplicationConstants;
 import com.luixtech.rpc.webcenter.domain.RpcConsumer;
 import com.luixtech.rpc.webcenter.service.RpcConsumerService;
 import com.luixtech.rpc.webcenter.utils.HttpHeaderUtils;
@@ -23,7 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
-import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication.DEFAULT_REG;
+
 
 @RestController
 @SecurityRequirement(name = AUTH)
@@ -37,7 +38,7 @@ public class RpcConsumerController {
     @Timed
     public ResponseEntity<List<RpcConsumer>> findConsumers(
             @ParameterObject Pageable pageable,
-            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG))
+            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG))
             @RequestParam(value = "registryIdentity") String registryIdentity,
             @Parameter(description = "application name") @RequestParam(value = "application", required = false) String application,
             @Parameter(description = "address") @RequestParam(value = "address", required = false) String address,

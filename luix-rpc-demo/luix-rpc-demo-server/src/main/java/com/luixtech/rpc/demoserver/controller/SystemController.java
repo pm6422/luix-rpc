@@ -1,6 +1,6 @@
 package com.luixtech.rpc.demoserver.controller;
 
-import com.luixtech.rpc.demoserver.config.ApplicationProperties;
+import com.luixtech.framework.config.LuixProperties;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.mongodb.springdata.v3.config.MongoDBConfiguration;
@@ -37,7 +37,7 @@ public class SystemController {
     @Resource
     private Environment                          env;
     @Resource
-    private ApplicationProperties                applicationProperties;
+    private LuixProperties                       luixProperties;
     @Resource
     private ApplicationContext                   applicationContext;
     @Resource
@@ -85,7 +85,7 @@ public class SystemController {
     }
 
     private String getRibbonProfile() {
-        String[] displayOnActiveProfiles = applicationProperties.getRibbon().getDisplayOnActiveProfiles();
+        String[] displayOnActiveProfiles = luixProperties.getRibbon().getDisplayOnActiveProfiles();
         if (ArrayUtils.isEmpty(displayOnActiveProfiles)) {
             return null;
         }

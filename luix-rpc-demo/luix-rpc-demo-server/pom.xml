@@ -56,6 +56,10 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.luixtech</groupId>
+            <artifactId>luix-framework</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.turkraft</groupId>
             <artifactId>spring-filter</artifactId>
         </dependency>

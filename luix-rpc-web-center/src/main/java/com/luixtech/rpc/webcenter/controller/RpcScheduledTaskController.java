@@ -2,8 +2,7 @@ package com.luixtech.rpc.webcenter.controller;
 
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.luixtech.rpc.webcenter.component.HttpHeaderCreator;
-import com.luixtech.rpc.webcenter.config.ApplicationConstants;
+import com.luixtech.framework.component.HttpHeaderCreator;
 import com.luixtech.rpc.webcenter.domain.RpcScheduledTask;
 import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.repository.RpcScheduledTaskRepository;
@@ -30,9 +29,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_FAILFAST;
 import static com.luixtech.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_FAILOVER;
-import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication.DEFAULT_REG;
 
 
 /**
@@ -44,8 +44,8 @@ import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
 @Slf4j
 public class RpcScheduledTaskController {
     private final RpcScheduledTaskRepository rpcScheduledTaskRepository;
-    private final RpcScheduledTaskService    rpcScheduledTaskService;
-    private final HttpHeaderCreator          httpHeaderCreator;
+    private final RpcScheduledTaskService rpcScheduledTaskService;
+    private final HttpHeaderCreator       httpHeaderCreator;
 
     @Operation(summary = "create scheduled task")
     @PostMapping("/api/rpc-scheduled-tasks")
@@ -80,7 +80,7 @@ public class RpcScheduledTaskController {
     @GetMapping("/api/rpc-scheduled-tasks")
     @Timed
     public ResponseEntity<List<RpcScheduledTask>> find(@ParameterObject Pageable pageable,
-                                                       @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
+                                                       @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
                                                        @Parameter(description = "Task name(fuzzy query)") @RequestParam(value = "name", required = false) String name,
                                                        @Parameter(description = "Interface name") @RequestParam(value = "interfaceName", required = false) String interfaceName,
                                                        @Parameter(description = "Form") @RequestParam(value = "form", required = false) String form,

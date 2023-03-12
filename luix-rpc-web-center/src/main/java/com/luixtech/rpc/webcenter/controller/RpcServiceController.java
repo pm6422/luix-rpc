@@ -1,7 +1,7 @@
 package com.luixtech.rpc.webcenter.controller;
 
 import com.codahale.metrics.annotation.Timed;
-import com.luixtech.rpc.webcenter.component.HttpHeaderCreator;
+import com.luixtech.framework.component.HttpHeaderCreator;
 import com.luixtech.rpc.webcenter.domain.RpcService;
 import com.luixtech.rpc.webcenter.dto.InterfaceActivateDTO;
 import com.luixtech.rpc.webcenter.dto.ProviderActivateDTO;
@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.luixtech.rpc.webcenter.config.ApplicationConstants.DEFAULT_REG;
-import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication.DEFAULT_REG;
 import static com.luixtech.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
 @RestController

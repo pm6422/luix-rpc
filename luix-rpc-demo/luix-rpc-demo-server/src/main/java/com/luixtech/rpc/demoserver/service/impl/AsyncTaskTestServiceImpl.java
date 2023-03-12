@@ -1,9 +1,9 @@
 package com.luixtech.rpc.demoserver.service.impl;
 
+import com.luixtech.framework.utils.TraceIdUtils;
 import com.luixtech.rpc.demoserver.service.AsyncTaskTestService;
 import com.luixtech.rpc.demoserver.task.polling.queue.DistributedMessageQueue;
 import com.luixtech.rpc.demoserver.task.polling.queue.Message;
-import com.luixtech.rpc.demoserver.utils.TraceIdUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

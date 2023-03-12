@@ -1,6 +1,6 @@
 package com.luixtech.rpc.democlient.controller;
 
-import com.luixtech.rpc.democlient.config.ApplicationProperties;
+import com.luixtech.framework.config.LuixProperties;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -23,21 +23,21 @@ import java.util.stream.Stream;
 @RestController
 public class SystemController {
     @Resource
-    private Environment           env;
+    private Environment        env;
     @Resource
-    private ApplicationProperties applicationProperties;
+    private LuixProperties     luixProperties;
     @Resource
-    private ApplicationContext    applicationContext;
+    private ApplicationContext applicationContext;
     @Value("${app.id}")
-    private String                appId;
+    private String             appId;
     @Value("${app.version}")
-    private String                appVersion;
+    private String             appVersion;
     @Value("${app.companyName}")
-    private String                companyName;
+    private String             companyName;
     @Value("${springdoc.api-docs.enabled}")
-    private boolean               enabledApiDocs;
+    private boolean            enabledApiDocs;
     @Autowired(required = false)
-    private BuildProperties       buildProperties;
+    private BuildProperties    buildProperties;
 
     @GetMapping(value = "app/constants.js", produces = "application/javascript")
     public String getConstantsJs() {
@@ -63,7 +63,7 @@ public class SystemController {
     }
 
     private String getRibbonProfile() {
-        String[] displayOnActiveProfiles = applicationProperties.getRibbon().getDisplayOnActiveProfiles();
+        String[] displayOnActiveProfiles = luixProperties.getRibbon().getDisplayOnActiveProfiles();
         if (ArrayUtils.isEmpty(displayOnActiveProfiles)) {
             return null;
         }

@@ -66,6 +66,10 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.luixtech</groupId>
+            <artifactId>luix-framework</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.ryantenney.metrics</groupId>
             <artifactId>metrics-spring</artifactId>
             <exclusions>

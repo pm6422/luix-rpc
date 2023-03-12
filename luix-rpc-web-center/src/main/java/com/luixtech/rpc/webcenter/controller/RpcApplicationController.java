@@ -1,7 +1,6 @@
 package com.luixtech.rpc.webcenter.controller;
 
 import com.codahale.metrics.annotation.Timed;
-import com.luixtech.rpc.webcenter.config.ApplicationConstants;
 import com.luixtech.rpc.webcenter.domain.RpcApplication;
 import com.luixtech.rpc.webcenter.repository.RpcApplicationRepository;
 import com.luixtech.rpc.webcenter.service.RpcApplicationService;
@@ -25,7 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication.DEFAULT_REG;
+
 
 @RestController
 @SecurityRequirement(name = AUTH)
@@ -41,7 +42,7 @@ public class RpcApplicationController {
     @GetMapping("api/rpc-applications/names")
     @Timed
     public ResponseEntity<List<String>> findApplications(
-            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG))
+            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG))
             @RequestParam(value = "registryIdentity") String registryIdentity) {
         List<String> results = rpcApplicationRepository.findByRegistryIdentity(registryIdentity)
                 .stream().map(RpcApplication::getId).collect(Collectors.toList());
@@ -53,7 +54,7 @@ public class RpcApplicationController {
     @Timed
     public ResponseEntity<List<RpcApplication>> findApplications(
             @ParameterObject Pageable pageable,
-            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG))
+            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG))
             @RequestParam(value = "registryIdentity") String registryIdentity,
             @Parameter(description = "application name(fuzzy query)") @RequestParam(value = "name", required = false) String name,
             @Parameter(description = "active flag") @RequestParam(value = "active", required = false) Boolean active) {

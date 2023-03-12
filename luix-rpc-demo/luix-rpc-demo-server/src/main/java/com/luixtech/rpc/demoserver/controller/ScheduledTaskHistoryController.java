@@ -1,7 +1,7 @@
 package com.luixtech.rpc.demoserver.controller;
 
+import com.luixtech.framework.exception.DataNotFoundException;
 import com.luixtech.rpc.demoserver.domain.ScheduledTaskHistory;
-import com.luixtech.rpc.demoserver.exception.DataNotFoundException;
 import com.luixtech.rpc.demoserver.repository.ScheduledTaskHistoryRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.luixtech.rpc.demoserver.utils.HttpHeaderUtils.generatePageHeaders;
+import static com.luixtech.framework.utils.HttpHeaderUtils.generatePageHeaders;
+
 
 /**
  * REST controller for managing scheduled task histories.

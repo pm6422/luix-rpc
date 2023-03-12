@@ -1,7 +1,7 @@
 package com.luixtech.rpc.webcenter.service.impl;
 
 import com.google.common.collect.ImmutableMap;
-import com.luixtech.rpc.webcenter.component.MessageCreator;
+import com.luixtech.framework.component.MessageCreator;
 import com.luixtech.rpc.webcenter.domain.Authority;
 import com.luixtech.rpc.webcenter.domain.User;
 import com.luixtech.rpc.webcenter.domain.UserAuthority;
@@ -33,8 +33,8 @@ import java.util.concurrent.TimeUnit;
 public class UserServiceImpl implements UserService {
     private final UserRepository          userRepository;
     private final UserAuthorityRepository userAuthorityRepository;
-    private final PasswordEncoder         passwordEncoder;
-    private final MessageCreator          messageCreator;
+    private final PasswordEncoder passwordEncoder;
+    private final MessageCreator  messageCreator;
 
     // private void removeUserToken(User user) {
     // String clientId =

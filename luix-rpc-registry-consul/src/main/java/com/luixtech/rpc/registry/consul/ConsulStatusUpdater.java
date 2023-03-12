@@ -1,6 +1,6 @@
 package com.luixtech.rpc.registry.consul;
 
-import com.luixtech.utilities.collection.ConcurrentHashSet;
+import com.luixtech.utilities.lang.collection.ConcurrentHashSet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 

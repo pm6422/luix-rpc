@@ -4,8 +4,8 @@ import com.luixtech.rpc.core.listener.GlobalConsumerDiscoveryListener;
 import com.luixtech.rpc.core.registry.FailbackAbstractRegistry;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.registry.consul.utils.ConsulUtils;
-import com.luixtech.utilities.destory.Destroyable;
-import com.luixtech.utilities.destory.ShutdownHook;
+import com.luixtech.utilities.lang.Destroyable;
+import com.luixtech.utilities.lang.ShutdownHook;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 

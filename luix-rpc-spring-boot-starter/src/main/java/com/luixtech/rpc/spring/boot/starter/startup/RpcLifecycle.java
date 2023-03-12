@@ -12,7 +12,7 @@ import com.luixtech.rpc.core.server.stub.ProviderStub;
 import com.luixtech.rpc.core.server.stub.ProviderStubHolder;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.spring.boot.starter.config.LuixRpcProperties;
-import com.luixtech.utilities.destory.ShutdownHook;
+import com.luixtech.utilities.lang.ShutdownHook;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;

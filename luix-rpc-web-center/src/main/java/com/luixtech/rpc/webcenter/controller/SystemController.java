@@ -1,6 +1,6 @@
 package com.luixtech.rpc.webcenter.controller;
 
-import com.luixtech.rpc.webcenter.config.ApplicationProperties;
+import com.luixtech.framework.config.LuixProperties;
 import com.luixtech.rpc.webcenter.domain.Authority;
 import com.luixtech.utilities.network.AddressUtils;
 import io.mongock.api.config.MongockConfiguration;
@@ -35,7 +35,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
+
 
 @RestController
 @SecurityRequirement(name = AUTH)
@@ -45,7 +46,7 @@ public class SystemController {
     @Resource
     private Environment                          env;
     @Resource
-    private ApplicationProperties                applicationProperties;
+    private LuixProperties                       luixProperties;
     @Resource
     private ApplicationContext                   applicationContext;
     @Resource
@@ -93,7 +94,7 @@ public class SystemController {
     }
 
     private String getRibbonProfile() {
-        String[] displayOnActiveProfiles = applicationProperties.getRibbon().getDisplayOnActiveProfiles();
+        String[] displayOnActiveProfiles = luixProperties.getRibbon().getDisplayOnActiveProfiles();
         if (ArrayUtils.isEmpty(displayOnActiveProfiles)) {
             return null;
         }

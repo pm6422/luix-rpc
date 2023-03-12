@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+import static com.luixtech.framework.config.LuixProperties.SPRING_PROFILE_DEV;
 import static java.net.URLDecoder.decode;
 
 /**
@@ -43,7 +44,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     public void customize(UndertowServletWebServerFactory factory) {
         setWebSocketDeploymentInfo(factory);
         setMimeMappings(factory);
-        if (Arrays.asList(env.getActiveProfiles()).contains(ApplicationConstants.SPRING_PROFILE_DEV)) {
+        if (Arrays.asList(env.getActiveProfiles()).contains(SPRING_PROFILE_DEV)) {
             // When running in an IDE or with ./mvnw spring-boot:run, set location of the static web assets.
             setLocationForStaticAssets(factory);
         }

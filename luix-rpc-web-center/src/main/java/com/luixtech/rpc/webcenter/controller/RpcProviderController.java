@@ -1,6 +1,7 @@
 package com.luixtech.rpc.webcenter.controller;
 
 import com.codahale.metrics.annotation.Timed;
+import com.luixtech.framework.component.HttpHeaderCreator;
 import com.luixtech.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import com.luixtech.rpc.core.client.proxy.Proxy;
 import com.luixtech.rpc.core.client.stub.ConsumerStub;
@@ -9,8 +10,6 @@ import com.luixtech.rpc.core.server.stub.MethodMeta;
 import com.luixtech.rpc.core.server.stub.ProviderStub;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.spring.boot.starter.config.LuixRpcProperties;
-import com.luixtech.rpc.webcenter.component.HttpHeaderCreator;
-import com.luixtech.rpc.webcenter.config.ApplicationConstants;
 import com.luixtech.rpc.webcenter.domain.Authority;
 import com.luixtech.rpc.webcenter.domain.RpcProvider;
 import com.luixtech.rpc.webcenter.dto.OptionMetaDTO;
@@ -41,10 +40,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_BROADCAST;
 import static com.luixtech.rpc.core.server.stub.ProviderStub.*;
 import static com.luixtech.rpc.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;
-import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication.DEFAULT_REG;
 
 @RestController
 @SecurityRequirement(name = AUTH)
@@ -70,7 +70,7 @@ public class RpcProviderController {
     @Timed
     public ResponseEntity<List<RpcProvider>> findProviders(
             @ParameterObject Pageable pageable,
-            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
+            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
             @Parameter(description = "application name") @RequestParam(value = "application", required = false) String application,
             @Parameter(description = "address") @RequestParam(value = "address", required = false) String address,
             @Parameter(description = "interface name(fuzzy query)") @RequestParam(value = "interfaceName", required = false) String interfaceName,
@@ -83,7 +83,7 @@ public class RpcProviderController {
     @GetMapping("/api/rpc-providers/methods")
     @Timed
     public ResponseEntity<List<MethodMeta>> findMethods(
-            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
+            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
             @Parameter(description = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
         // Use specified provider url
@@ -97,7 +97,7 @@ public class RpcProviderController {
     @GetMapping("/api/rpc-providers/health")
     @Timed
     public ResponseEntity<String> health(
-            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
+            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG)) @RequestParam(value = "registryIdentity") String registryIdentity,
             @Parameter(description = "provider url", required = true) @RequestParam(value = "providerUrl") String providerUrlStr) {
         Url providerUrl = Url.valueOf(providerUrlStr);
         // Use specified provider url

@@ -1,10 +1,10 @@
 package com.luixtech.rpc.demoserver.controller;
 
 import com.google.common.collect.ImmutableMap;
+import com.luixtech.framework.component.HttpHeaderCreator;
+import com.luixtech.framework.exception.DataNotFoundException;
+import com.luixtech.framework.exception.DuplicationException;
 import com.luixtech.rpc.democommon.domain.Authority;
-import com.luixtech.rpc.demoserver.component.HttpHeaderCreator;
-import com.luixtech.rpc.demoserver.exception.DataNotFoundException;
-import com.luixtech.rpc.demoserver.exception.DuplicationException;
 import com.luixtech.rpc.demoserver.repository.AuthorityRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,7 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.luixtech.rpc.demoserver.utils.HttpHeaderUtils.generatePageHeaders;
+import static com.luixtech.framework.utils.HttpHeaderUtils.generatePageHeaders;
+
 
 /**
  * REST controller for managing authorities.

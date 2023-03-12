@@ -24,7 +24,8 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
+
 
 /**
  * REST controller for RPC universal calling.

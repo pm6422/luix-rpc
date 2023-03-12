@@ -146,15 +146,12 @@ springdoc: # https://springdoc.org/#migrating-from-springfox
         enabled: true
     show-actuator: true
 # ===================================================================
-# Application specific properties
+# Luix framework specific properties
 # ===================================================================
-application:
+luix:
     http:
         cache: # Used by the CachingHttpHeadersFilter
             expired-after: 31
-    http-client:
-        read-timeout: 3 # unit: seconds
-        retry-count: 1
     api-docs:
         api-include-pattern: /api/**
         open-api-include-pattern: /open-api/**
@@ -178,3 +175,10 @@ application:
     ribbon:
         # comma separated list of profiles to show a ribbon on the GUI
         display-on-active-profiles: dev,test,demo
+# ===================================================================
+# Application specific properties
+# ===================================================================
+application:
+    http-client:
+        read-timeout: 3 # unit: seconds
+        retry-count: 1

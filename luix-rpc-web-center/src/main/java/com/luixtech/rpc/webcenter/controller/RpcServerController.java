@@ -1,7 +1,6 @@
 package com.luixtech.rpc.webcenter.controller;
 
 import com.codahale.metrics.annotation.Timed;
-import com.luixtech.rpc.webcenter.config.ApplicationConstants;
 import com.luixtech.rpc.webcenter.domain.RpcServer;
 import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.repository.RpcServerRepository;
@@ -26,7 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication.DEFAULT_REG;
+
 
 @RestController
 @SecurityRequirement(name = AUTH)
@@ -54,7 +55,7 @@ public class RpcServerController {
     @Timed
     public ResponseEntity<List<RpcServer>> findRpcServers(
             @ParameterObject Pageable pageable,
-            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = ApplicationConstants.DEFAULT_REG))
+            @Parameter(description = "registry url identity", required = true, schema = @Schema(defaultValue = DEFAULT_REG))
             @RequestParam(value = "registryIdentity") String registryIdentity,
             @Parameter(description = "address(fuzzy query)") @RequestParam(value = "address", required = false) String address) {
         Page<RpcServer> results = rpcServerService.find(pageable, registryIdentity, address);

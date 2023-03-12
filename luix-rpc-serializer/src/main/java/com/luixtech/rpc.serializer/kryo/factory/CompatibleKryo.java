@@ -3,7 +3,7 @@ package com.luixtech.rpc.serializer.kryo.factory;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serializers.JavaSerializer;
-import com.luixtech.utilities.reflection.ReflectionUtils;
+import com.luixtech.utilities.lang.ReflectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
 

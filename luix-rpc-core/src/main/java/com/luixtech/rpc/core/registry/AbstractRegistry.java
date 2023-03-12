@@ -4,7 +4,7 @@ import com.luixtech.rpc.core.exception.impl.RpcConfigException;
 import com.luixtech.rpc.core.listener.GlobalProviderDiscoveryListener;
 import com.luixtech.rpc.core.listener.ProviderDiscoveryListener;
 import com.luixtech.rpc.core.url.Url;
-import com.luixtech.utilities.collection.ConcurrentHashSet;
+import com.luixtech.utilities.lang.collection.ConcurrentHashSet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.Validate;
