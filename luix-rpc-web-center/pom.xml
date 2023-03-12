@@ -9,7 +9,7 @@
     </parent>
     <groupId>com.luixtech</groupId>
     <artifactId>luix-rpc-web-center</artifactId>
-    <version>${revision}</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <properties>
@@ -21,7 +21,6 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.version>3.6.2</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <revision>1.0.0</revision>
         <skipJibBuild>true</skipJibBuild>
         <start-class>com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication</start-class>
     </properties>
@@ -30,7 +29,7 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>luix-rpc</artifactId>
-                <version>${revision}</version>
+                <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
