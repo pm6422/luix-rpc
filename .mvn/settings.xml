@@ -258,8 +258,7 @@ under the License.
     <profile>
       <id>gpg</id>
       <properties>
-      <!-- 由于我的电脑装的gpg2，所以需要指定执行gpg2，否则会报错 -->
-      <gpg.executable>gpg2</gpg.executable>
+      <gpg.executable>gpg</gpg.executable>
           <gpg.passphrase>64226422</gpg.passphrase>
       </properties>
     </profile>
