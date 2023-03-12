@@ -135,7 +135,7 @@ mongock:
         read-concern: local
         write-concern:
             journal: false
-luix:
+luix-rpc:
     application:
         id: ${spring.application.name}
         description: RPC Demo Server

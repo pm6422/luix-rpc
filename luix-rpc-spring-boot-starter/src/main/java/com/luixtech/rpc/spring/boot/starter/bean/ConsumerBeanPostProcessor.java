@@ -2,7 +2,7 @@ package com.luixtech.rpc.spring.boot.starter.bean;
 
 import com.luixtech.rpc.core.client.annotation.RpcConsumer;
 import com.luixtech.rpc.core.client.stub.ConsumerStub;
-import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import com.luixtech.rpc.spring.boot.starter.config.LuixRpcProperties;
 import com.luixtech.rpc.spring.boot.starter.utils.AnnotationBeanDefinitionUtils;
 import com.luixtech.rpc.spring.boot.starter.utils.AnnotationUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -225,47 +225,47 @@ public class ConsumerBeanPostProcessor implements BeanPostProcessor, Environment
                                                                Class<?> interfaceClass,
                                                                RpcConsumer annotation) {
         // Create and load luixProperties bean
-        LuixProperties luixProperties = beanFactory.getBean(LuixProperties.class);
+        LuixRpcProperties luixRpcProperties = beanFactory.getBean(LuixRpcProperties.class);
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ConsumerStub.class);
 
         AnnotationBeanDefinitionUtils.addPropertyValue(builder, BEAN_NAME, beanName);
         AnnotationBeanDefinitionUtils.addPropertyValue(builder, INTERFACE_CLASS, interfaceClass);
         AnnotationBeanDefinitionUtils.addPropertyValue(builder, INTERFACE_NAME, interfaceClass.getName());
 
-        String protocol = defaultIfEmpty(annotation.protocol(), luixProperties.getProtocol().getName());
+        String protocol = defaultIfEmpty(annotation.protocol(), luixRpcProperties.getProtocol().getName());
         AnnotationBeanDefinitionUtils.addPropertyValue(builder, PROTOCOL, protocol);
 
-        String serializer = defaultIfEmpty(annotation.serializer(), luixProperties.getProtocol().getSerializer());
+        String serializer = defaultIfEmpty(annotation.serializer(), luixRpcProperties.getProtocol().getSerializer());
         AnnotationBeanDefinitionUtils.addPropertyValue(builder, SERIALIZER, serializer);
 
-        String form = defaultIfEmpty(annotation.form(), luixProperties.getConsumer().getForm());
+        String form = defaultIfEmpty(annotation.form(), luixRpcProperties.getConsumer().getForm());
         AnnotationBeanDefinitionUtils.addPropertyValue(builder, FORM, form);
 
-        String version = defaultIfEmpty(annotation.version(), luixProperties.getConsumer().getVersion());
+        String version = defaultIfEmpty(annotation.version(), luixRpcProperties.getConsumer().getVersion());
         AnnotationBeanDefinitionUtils.addPropertyValue(builder, VERSION, version);
 
-        String invoker = defaultIfEmpty(annotation.invoker(), luixProperties.getConsumer().getInvoker());
+        String invoker = defaultIfEmpty(annotation.invoker(), luixRpcProperties.getConsumer().getInvoker());
         AnnotationBeanDefinitionUtils.addPropertyValue(builder, INVOKER, invoker);
 
-        String faultTolerance = defaultIfEmpty(annotation.faultTolerance(), luixProperties.getConsumer().getFaultTolerance());
+        String faultTolerance = defaultIfEmpty(annotation.faultTolerance(), luixRpcProperties.getConsumer().getFaultTolerance());
         AnnotationBeanDefinitionUtils.addPropertyValue(builder, FAULT_TOLERANCE, faultTolerance);
 
-        String loadBalancer = defaultIfEmpty(annotation.loadBalancer(), luixProperties.getConsumer().getLoadBalancer());
+        String loadBalancer = defaultIfEmpty(annotation.loadBalancer(), luixRpcProperties.getConsumer().getLoadBalancer());
         AnnotationBeanDefinitionUtils.addPropertyValue(builder, LOAD_BALANCER, loadBalancer);
 
-        String proxyFactory = defaultIfEmpty(annotation.proxyFactory(), luixProperties.getConsumer().getProxyFactory());
+        String proxyFactory = defaultIfEmpty(annotation.proxyFactory(), luixRpcProperties.getConsumer().getProxyFactory());
         AnnotationBeanDefinitionUtils.addPropertyValue(builder, PROXY, proxyFactory);
 
         Integer requestTimeout = StringUtils.isEmpty(annotation.requestTimeout())
-                ? luixProperties.getConsumer().getRequestTimeout() : Integer.valueOf(annotation.requestTimeout());
+                ? luixRpcProperties.getConsumer().getRequestTimeout() : Integer.valueOf(annotation.requestTimeout());
         AnnotationBeanDefinitionUtils.addPropertyValue(builder, REQUEST_TIMEOUT, requestTimeout);
 
         Integer retryCount = StringUtils.isEmpty(annotation.retryCount())
-                ? luixProperties.getConsumer().getRetryCount() : Integer.valueOf(annotation.retryCount());
+                ? luixRpcProperties.getConsumer().getRetryCount() : Integer.valueOf(annotation.retryCount());
         AnnotationBeanDefinitionUtils.addPropertyValue(builder, RETRY_COUNT, retryCount);
 
-        AnnotationBeanDefinitionUtils.addPropertyValue(builder, LIMIT_RATE, luixProperties.getConsumer().isLimitRate());
-        AnnotationBeanDefinitionUtils.addPropertyValue(builder, MAX_PAYLOAD, luixProperties.getConsumer().getMaxPayload());
+        AnnotationBeanDefinitionUtils.addPropertyValue(builder, LIMIT_RATE, luixRpcProperties.getConsumer().isLimitRate());
+        AnnotationBeanDefinitionUtils.addPropertyValue(builder, MAX_PAYLOAD, luixRpcProperties.getConsumer().getMaxPayload());
         AnnotationBeanDefinitionUtils.addPropertyValue(builder, PROVIDER_ADDRESSES, annotation.providerAddresses(), env);
 
         return builder.getBeanDefinition();

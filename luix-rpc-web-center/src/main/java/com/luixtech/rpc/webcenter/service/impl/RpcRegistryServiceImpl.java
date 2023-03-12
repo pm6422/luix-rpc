@@ -8,7 +8,7 @@ import com.luixtech.rpc.core.listener.GlobalConsumerDiscoveryListener;
 import com.luixtech.rpc.core.listener.GlobalProviderDiscoveryListener;
 import com.luixtech.rpc.core.registry.Registry;
 import com.luixtech.rpc.core.url.Url;
-import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import com.luixtech.rpc.spring.boot.starter.config.LuixRpcProperties;
 import com.luixtech.rpc.webcenter.dto.RpcRegistryDTO;
 import com.luixtech.rpc.webcenter.service.RpcRegistryService;
 import lombok.AllArgsConstructor;
@@ -40,7 +40,7 @@ import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRunner {
     private static final Map<String, RegistryConfig>     REGISTRY_CONFIG_MAP = new ConcurrentHashMap<>();
     private static final List<RpcRegistryDTO>            REGISTRIES          = new ArrayList<>();
-    private final        LuixProperties                  luixProperties;
+    private final        LuixRpcProperties               luixRpcProperties;
     private final        GlobalConsumerDiscoveryListener globalConsumerDiscoveryListener;
     private final        GlobalProviderDiscoveryListener globalProviderDiscoveryListener;
 
@@ -52,12 +52,12 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
      */
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        if (CollectionUtils.isEmpty(luixProperties.getRegistryList())) {
+        if (CollectionUtils.isEmpty(luixRpcProperties.getRegistryList())) {
             log.warn("No registries found!");
             return;
         }
         try {
-            luixProperties.getRegistryList().forEach(registryConfig -> {
+            luixRpcProperties.getRegistryList().forEach(registryConfig -> {
                 REGISTRY_CONFIG_MAP.put(registryConfig.getRegistryUrl().getIdentity(), registryConfig);
                 REGISTRIES.add(new RpcRegistryDTO(registryConfig.getRegistryImpl().getName(), registryConfig.getRegistryUrl().getIdentity()));
 
@@ -74,14 +74,14 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
                             return;
                         }
                         // Generate consumer stub for each provider
-                        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixProperties.getApplication(), registryConfig,
-                                luixProperties.getAvailableProtocol(), url.getPath(), url.getForm());
+                        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixRpcProperties.getApplication(), registryConfig,
+                                luixRpcProperties.getAvailableProtocol(), url.getPath(), url.getForm());
 
                         ConsumerStubHolder.getInstance().add(stubBeanName, consumerStub);
 
                         // Register and active consumer services
-                        consumerStub.registerAndActivate(luixProperties.getApplication(),
-                                luixProperties.getAvailableProtocol(), registryConfig);
+                        consumerStub.registerAndActivate(luixRpcProperties.getApplication(),
+                                luixRpcProperties.getAvailableProtocol(), registryConfig);
                     } catch (Exception e) {
                         log.error("Failed to create consumer stub for interface {}", url.getPath(), e);
                     }
@@ -156,8 +156,8 @@ public class RpcRegistryServiceImpl implements RpcRegistryService, ApplicationRu
 
         // Default hessian 2 serializer
         String serializer = defaultIfEmpty(attributes.get(SERIALIZER), SERIALIZER_NAME_HESSIAN2);
-        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixProperties.getApplication(),
-                findRegistryConfig(registryIdentity), luixProperties.getAvailableProtocol(), providerAddress,
+        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixRpcProperties.getApplication(),
+                findRegistryConfig(registryIdentity), luixRpcProperties.getAvailableProtocol(), providerAddress,
                 resolvedInterfaceName, serializer, form, version, requestTimeout, retryCount, faultTolerance);
 
         ConsumerStubHolder.getInstance().add(beanName, consumerStub);

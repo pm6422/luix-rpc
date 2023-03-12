@@ -8,7 +8,7 @@ import com.luixtech.rpc.core.config.impl.RegistryConfig;
 import com.luixtech.rpc.core.server.annotation.RpcProvider;
 import com.luixtech.rpc.core.server.buildin.BuildInService;
 import com.luixtech.rpc.core.url.Url;
-import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import com.luixtech.rpc.spring.boot.starter.config.LuixRpcProperties;
 import com.luixtech.rpc.webcenter.domain.RpcApplication;
 import com.luixtech.rpc.webcenter.domain.RpcService;
 import com.luixtech.rpc.webcenter.repository.RpcApplicationRepository;
@@ -46,7 +46,7 @@ import static com.luixtech.rpc.core.server.buildin.BuildInService.METHOD_GET_APP
 @Slf4j
 public class RpcApplicationServiceImpl implements RpcApplicationService {
     private static final ConcurrentHashMap<String, Pair<String, String>> DISCOVERED_RPC_APPLICATIONS = new ConcurrentHashMap<>();
-    private final        LuixProperties                                  luixProperties;
+    private final        LuixRpcProperties                               luixRpcProperties;
     private final        ApplicationContext                              applicationContext;
     private final        MongoTemplate                                   mongoTemplate;
     private final        RpcApplicationRepository                        rpcApplicationRepository;
@@ -137,10 +137,10 @@ public class RpcApplicationServiceImpl implements RpcApplicationService {
     public RpcApplication loadApplication(Url registryUrl, Url url) {
         RpcRegistryService rpcRegistryService = applicationContext.getBean(RpcRegistryService.class);
         RegistryConfig registryConfig = rpcRegistryService.findRegistryConfig(registryUrl.getIdentity());
-        Proxy proxyFactory = Proxy.getInstance(luixProperties.getConsumer().getProxyFactory());
+        Proxy proxyFactory = Proxy.getInstance(luixRpcProperties.getConsumer().getProxyFactory());
 
-        ConsumerStub<?> consumerStub = BuildInService.createConsumerStub(luixProperties.getApplication(), registryConfig,
-                luixProperties.getAvailableProtocol(), url.getAddress(), 60_000, 2);
+        ConsumerStub<?> consumerStub = BuildInService.createConsumerStub(luixRpcProperties.getApplication(), registryConfig,
+                luixRpcProperties.getAvailableProtocol(), url.getAddress(), 60_000, 2);
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         // Send a remote request to get ApplicationConfig
         ApplicationConfig applicationConfig = (ApplicationConfig) invocationHandler.invoke(METHOD_GET_APPLICATION_INFO);

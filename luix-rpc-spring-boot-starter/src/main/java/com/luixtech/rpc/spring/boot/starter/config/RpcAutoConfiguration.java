@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-@EnableConfigurationProperties({LuixProperties.class})
+@EnableConfigurationProperties({LuixRpcProperties.class})
 public class RpcAutoConfiguration {
 
     @Bean

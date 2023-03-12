@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luixtech.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import com.luixtech.rpc.core.client.proxy.Proxy;
 import com.luixtech.rpc.core.client.stub.ConsumerStub;
-import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import com.luixtech.rpc.spring.boot.starter.config.LuixRpcProperties;
 import com.luixtech.rpc.webcenter.dto.MethodInvocation;
 import com.luixtech.rpc.webcenter.service.RpcRegistryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +34,7 @@ import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
 @AllArgsConstructor
 @Slf4j
 public class RpcUniversalInvocationController {
-    private final LuixProperties     luixProperties;
+    private final LuixRpcProperties  luixRpcProperties;
     private final RpcRegistryService rpcRegistryService;
 
     @Operation(summary = "direct address invocation")
@@ -43,7 +43,7 @@ public class RpcUniversalInvocationController {
                          @Valid @RequestBody MethodInvocation methodInvocation) throws JsonProcessingException {
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(methodInvocation.getRegistryIdentity(),
                 methodInvocation.getProviderUrl(), methodInvocation.getInterfaceName(), methodInvocation.getAttributes());
-        Proxy proxyFactory = Proxy.getInstance(luixProperties.getConsumer().getProxyFactory());
+        Proxy proxyFactory = Proxy.getInstance(luixRpcProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Object result = invocationHandler.invoke(methodInvocation.getMethodName(), methodInvocation.getMethodParamTypes(), methodInvocation.getArgs());
         return new ObjectMapper().writeValueAsString(result);
@@ -56,7 +56,7 @@ public class RpcUniversalInvocationController {
         MethodInvocation methodInvocation = new ObjectMapper().readValue(input, MethodInvocation.class);
         ConsumerStub<?> consumerStub = rpcRegistryService.getConsumerStub(methodInvocation.getRegistryIdentity(),
                 methodInvocation.getProviderUrl(), methodInvocation.getInterfaceName(), methodInvocation.getAttributes());
-        Proxy proxyFactory = Proxy.getInstance(luixProperties.getConsumer().getProxyFactory());
+        Proxy proxyFactory = Proxy.getInstance(luixRpcProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         Object result = invocationHandler.invoke(methodInvocation.getMethodName(), methodInvocation.getMethodParamTypes(), methodInvocation.getArgs());
         return new ObjectMapper().writeValueAsString(result);

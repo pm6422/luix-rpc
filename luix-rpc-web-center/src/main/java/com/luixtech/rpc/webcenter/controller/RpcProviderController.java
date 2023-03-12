@@ -8,7 +8,7 @@ import com.luixtech.rpc.core.client.stub.ConsumerStubFactory;
 import com.luixtech.rpc.core.server.stub.MethodMeta;
 import com.luixtech.rpc.core.server.stub.ProviderStub;
 import com.luixtech.rpc.core.url.Url;
-import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import com.luixtech.rpc.spring.boot.starter.config.LuixRpcProperties;
 import com.luixtech.rpc.webcenter.component.HttpHeaderCreator;
 import com.luixtech.rpc.webcenter.config.ApplicationConstants;
 import com.luixtech.rpc.webcenter.domain.Authority;
@@ -51,8 +51,8 @@ import static com.luixtech.rpc.webcenter.config.api.SpringDocConfiguration.AUTH;
 @AllArgsConstructor
 @Slf4j
 public class RpcProviderController {
-    private final LuixProperties        luixProperties;
-    private final RpcRegistryService    rpcRegistryService;
+    private final LuixRpcProperties  luixRpcProperties;
+    private final RpcRegistryService rpcRegistryService;
     private final RpcProviderService    rpcProviderService;
     private final RpcProviderRepository rpcProviderRepository;
     private final HttpHeaderCreator     httpHeaderCreator;
@@ -113,10 +113,10 @@ public class RpcProviderController {
 
     private UniversalInvocationHandler createBuildInInvocationHandler(String registryIdentity, Url providerUrl) {
         ConsumerStub<?> consumerStub = ConsumerStubFactory.create(
-                luixProperties.getApplication(), rpcRegistryService.findRegistryConfig(registryIdentity),
-                luixProperties.getAvailableProtocol(), providerUrl.getAddress(), providerUrl.getPath(),
+                luixRpcProperties.getApplication(), rpcRegistryService.findRegistryConfig(registryIdentity),
+                luixRpcProperties.getAvailableProtocol(), providerUrl.getAddress(), providerUrl.getPath(),
                 providerUrl.getForm(), providerUrl.getVersion());
-        Proxy proxyFactory = Proxy.getInstance(luixProperties.getConsumer().getProxyFactory());
+        Proxy proxyFactory = Proxy.getInstance(luixRpcProperties.getConsumer().getProxyFactory());
         return proxyFactory.createUniversalInvocationHandler(consumerStub);
     }
 
@@ -144,7 +144,7 @@ public class RpcProviderController {
 
     private void control(String registryIdentity, Url providerUrl, String methodName) {
         if (StringUtils.isEmpty(registryIdentity)) {
-            luixProperties.getRegistryList().forEach(registry -> {
+            luixRpcProperties.getRegistryList().forEach(registry -> {
                 String identity = registry.getRegistryImpl().getRegistryUrl().getIdentity();
                 // Use specified provider url
                 UniversalInvocationHandler invocationHandler = createBuildInInvocationHandler(identity, providerUrl);
@@ -208,7 +208,7 @@ public class RpcProviderController {
 
     private void reregister(String registryIdentity, Url providerUrl) {
         if (StringUtils.isEmpty(registryIdentity)) {
-            luixProperties.getRegistryList().forEach(registry -> {
+            luixRpcProperties.getRegistryList().forEach(registry -> {
                 doReregister(registry.getRegistryImpl().getRegistryUrl().getIdentity(), providerUrl);
             });
         } else {
@@ -217,13 +217,13 @@ public class RpcProviderController {
     }
 
     private void doReregister(String registryIdentity, Url providerUrl) {
-        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixProperties.getApplication(),
+        ConsumerStub<?> consumerStub = ConsumerStubFactory.create(luixRpcProperties.getApplication(),
                 rpcRegistryService.findRegistryConfig(registryIdentity),
-                luixProperties.getAvailableProtocol(),
+                luixRpcProperties.getAvailableProtocol(),
                 providerUrl.getPath(), SERIALIZER_NAME_HESSIAN2, providerUrl.getForm(), providerUrl.getVersion(),
                 60 * 1000, FAULT_TOLERANCE_VAL_BROADCAST);
 
-        Proxy proxyFactory = Proxy.getInstance(luixProperties.getConsumer().getProxyFactory());
+        Proxy proxyFactory = Proxy.getInstance(luixRpcProperties.getConsumer().getProxyFactory());
         UniversalInvocationHandler invocationHandler = proxyFactory.createUniversalInvocationHandler(consumerStub);
         invocationHandler.invoke(METHOD_REREGISTER, new String[]{Map.class.getName()}, new Object[]{providerUrl.getOptions()});
     }

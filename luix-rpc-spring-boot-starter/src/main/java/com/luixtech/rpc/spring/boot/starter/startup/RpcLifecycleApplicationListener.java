@@ -1,6 +1,6 @@
 package com.luixtech.rpc.spring.boot.starter.startup;
 
-import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import com.luixtech.rpc.spring.boot.starter.config.LuixRpcProperties;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -22,8 +22,8 @@ import javax.annotation.Resource;
 public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListener implements Ordered, BeanFactoryAware {
 
     @Resource
-    private       LuixProperties             luixProperties;
-    private final RpcLifecycle               rpcLifecycle;
+    private       LuixRpcProperties luixRpcProperties;
+    private final RpcLifecycle      rpcLifecycle;
     /**
      * {@link DefaultListableBeanFactory} can register bean definition
      */
@@ -42,7 +42,7 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
 
     @PostConstruct
     public void init() {
-        Validate.notNull(luixProperties, "luixProperties must NOT be null!");
+        Validate.notNull(luixRpcProperties, "luixProperties must NOT be null!");
     }
 
     @Override
@@ -56,11 +56,11 @@ public class RpcLifecycleApplicationListener extends ExecuteOnceApplicationListe
     }
 
     private void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        rpcLifecycle.start(beanFactory, luixProperties);
+        rpcLifecycle.start(beanFactory, luixRpcProperties);
     }
 
     private void onContextClosedEvent(ContextClosedEvent event) {
-        rpcLifecycle.destroy(luixProperties);
+        rpcLifecycle.destroy(luixRpcProperties);
     }
 
     @Override

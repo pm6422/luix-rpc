@@ -5,7 +5,7 @@
 # Full reference is available at:
 # https://docs.spring.io/spring-boot/docs/2.7.1/reference/html/application-properties.html#application-properties
 # ===================================================================
-luix:
+luix-rpc:
     registry:
         host: localhost
         port: 8500

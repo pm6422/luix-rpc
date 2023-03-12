@@ -1,6 +1,6 @@
 package com.luixtech.rpc.webcenter.config.dbmigrations;
 
-import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import com.luixtech.rpc.spring.boot.starter.config.LuixRpcProperties;
 import com.luixtech.rpc.webcenter.domain.Authority;
 import com.luixtech.rpc.webcenter.domain.RpcScheduledTask;
 import com.luixtech.rpc.webcenter.domain.User;
@@ -23,12 +23,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class InitialSetupMigration {
 
     private static final String         APP_NAME = "rpc-web-center";
-    private final        MongoTemplate  mongoTemplate;
-    private final        LuixProperties luixProperties;
+    private final MongoTemplate     mongoTemplate;
+    private final LuixRpcProperties luixRpcProperties;
 
-    public InitialSetupMigration(MongoTemplate mongoTemplate, LuixProperties luixProperties) {
+    public InitialSetupMigration(MongoTemplate mongoTemplate, LuixRpcProperties luixRpcProperties) {
         this.mongoTemplate = mongoTemplate;
-        this.luixProperties = luixProperties;
+        this.luixRpcProperties = luixRpcProperties;
     }
 
     @Execution
@@ -130,7 +130,7 @@ public class InitialSetupMigration {
     }
 
     private void addScheduledTasks() {
-        luixProperties.getRegistries().values().forEach(r -> addScheduledTasksOfOneRegistry(r.getRegistryUrl().toString()));
+        luixRpcProperties.getRegistries().values().forEach(r -> addScheduledTasksOfOneRegistry(r.getRegistryUrl().toString()));
     }
 
     private void addScheduledTasksOfOneRegistry(String registryUrl) {

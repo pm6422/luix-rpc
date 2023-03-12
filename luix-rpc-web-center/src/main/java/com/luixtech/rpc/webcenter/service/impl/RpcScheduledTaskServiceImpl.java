@@ -1,7 +1,7 @@
 package com.luixtech.rpc.webcenter.service.impl;
 
 import com.luixtech.rpc.core.client.proxy.Proxy;
-import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import com.luixtech.rpc.spring.boot.starter.config.LuixRpcProperties;
 import com.luixtech.rpc.webcenter.domain.RpcScheduledTask;
 import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.repository.RpcScheduledTaskHistoryRepository;
@@ -35,9 +35,9 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService {
     private final RpcScheduledTaskHistoryRepository rpcScheduledTaskHistoryRepository;
     private final RpcScheduledTaskLockRepository    rpcScheduledTaskLockRepository;
     private final RpcRegistryService                rpcRegistryService;
-    private final CancelableScheduledTaskRegistrar  cancelableScheduledTaskRegistrar;
-    private final LuixProperties                    luixProperties;
-    private final MongoTemplate                     mongoTemplate;
+    private final CancelableScheduledTaskRegistrar cancelableScheduledTaskRegistrar;
+    private final LuixRpcProperties                luixRpcProperties;
+    private final MongoTemplate                    mongoTemplate;
 
     @Override
     public void loadAll() {
@@ -139,7 +139,7 @@ public class RpcScheduledTaskServiceImpl implements RpcScheduledTaskService {
                 .rpcScheduledTaskLockRepository(rpcScheduledTaskLockRepository)
                 .rpcScheduledTask(scheduledTask)
                 .rpcRegistryService(rpcRegistryService)
-                .proxyFactory(Proxy.getInstance(luixProperties.getConsumer().getProxyFactory()))
+                .proxyFactory(Proxy.getInstance(luixRpcProperties.getConsumer().getProxyFactory()))
                 .name(scheduledTask.getName())
                 .registryIdentity(scheduledTask.getRegistryIdentity())
                 .interfaceName(scheduledTask.getInterfaceName())

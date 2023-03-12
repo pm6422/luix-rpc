@@ -7,7 +7,7 @@ import com.luixtech.rpc.demoserver.service.AsyncTaskTestService;
 import com.luixtech.rpc.demoserver.task.polling.queue.InMemoryAsyncTaskQueue;
 import com.luixtech.rpc.demoserver.task.polling.queue.Message;
 import com.luixtech.rpc.demoserver.utils.TraceIdUtils;
-import com.luixtech.rpc.spring.boot.starter.config.LuixProperties;
+import com.luixtech.rpc.spring.boot.starter.config.LuixRpcProperties;
 import com.luixtech.uidgenerator.core.id.IdGenerator;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
@@ -28,22 +28,22 @@ import static com.luixtech.rpc.core.constant.ApplicationConstants.APP;
 @AllArgsConstructor
 @Slf4j
 public class TestController {
-    private final LuixProperties       luixProperties;
+    private final LuixRpcProperties    luixRpcProperties;
     private final AsyncTaskTestService asyncTaskTestService;
 
     @Operation(summary = "register provider")
     @GetMapping("/api/tests/register-provider")
     public void registerProvider() {
         Url providerUrl = Url.of(
-                luixProperties.getAvailableProtocol().getName(),
+                luixRpcProperties.getAvailableProtocol().getName(),
                 "192.168.0.1",
-                luixProperties.getAvailableProtocol().getPort(),
+                luixRpcProperties.getAvailableProtocol().getPort(),
                 AppService.class.getName());
 
         // Assign values to parameters
-        providerUrl.addOption(APP, luixProperties.getApplication().getId());
+        providerUrl.addOption(APP, luixRpcProperties.getApplication().getId());
 
-        luixProperties.getRegistryList().forEach(registryConfig -> registryConfig.getRegistryImpl().register(providerUrl));
+        luixRpcProperties.getRegistryList().forEach(registryConfig -> registryConfig.getRegistryImpl().register(providerUrl));
     }
 
     @Operation(summary = "blocking response")

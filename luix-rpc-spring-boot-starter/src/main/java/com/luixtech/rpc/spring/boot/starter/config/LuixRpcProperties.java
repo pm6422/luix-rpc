@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 import java.util.*;
 
 import static com.luixtech.rpc.core.constant.RegistryConstants.REGISTRY_VAL_NONE;
-import static com.luixtech.rpc.spring.boot.starter.config.LuixProperties.PREFIX;
+import static com.luixtech.rpc.spring.boot.starter.config.LuixRpcProperties.PREFIX;
 import static com.luixtech.rpc.spring.boot.starter.utils.PropertySourcesUtils.readProperties;
 
 /**
@@ -28,9 +28,9 @@ import static com.luixtech.rpc.spring.boot.starter.utils.PropertySourcesUtils.re
 @ConfigurationProperties(prefix = PREFIX)
 @Data
 @Validated
-public class LuixProperties implements InitializingBean {
+public class LuixRpcProperties implements InitializingBean {
 
-    public static final String                      PREFIX      = "luix";
+    public static final String                      PREFIX      = "luix-rpc";
     @NotNull
     private             ApplicationConfig           application = new ApplicationConfig();
     /**

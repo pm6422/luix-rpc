@@ -41,8 +41,8 @@ import static com.luixtech.rpc.core.constant.ProtocolConstants.SERIALIZER;
 import static com.luixtech.rpc.core.constant.ProviderConstants.HEALTH_CHECKER;
 import static com.luixtech.rpc.core.constant.ServiceConstants.*;
 import static com.luixtech.rpc.core.server.stub.ProviderStub.buildProviderStubBeanName;
-import static com.luixtech.rpc.spring.boot.starter.config.LuixProperties.readProtocolConfig;
-import static com.luixtech.rpc.spring.boot.starter.config.LuixProperties.readProviderConfig;
+import static com.luixtech.rpc.spring.boot.starter.config.LuixRpcProperties.readProtocolConfig;
+import static com.luixtech.rpc.spring.boot.starter.config.LuixRpcProperties.readProviderConfig;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
 /**

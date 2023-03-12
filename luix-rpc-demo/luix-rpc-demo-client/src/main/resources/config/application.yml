@@ -124,7 +124,7 @@ logging:
         org.mongodb.driver: WARN
         sun.rmi: WARN
         jdk.event.security: WARN
-luix:
+luix-rpc:
     application:
         id: ${spring.application.name}
         description: RPC Demo Client
