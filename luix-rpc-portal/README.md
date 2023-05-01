@@ -1,1 +1,1 @@
-sudo `which java` -jar luix-rpc-portal-1.0.0.jar --server.port=80 >> start.log 2>&1 &
+java -jar luix-rpc-portal-1.0.0.jar --server.port=80 >> start.log 2>&1 &
