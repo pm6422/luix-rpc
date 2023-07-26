@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.BuildProperties;
@@ -94,15 +95,14 @@ public class SystemController {
     }
 
     private String getRibbonProfile() {
-        String[] displayOnActiveProfiles = luixProperties.getRibbon().getDisplayOnActiveProfiles();
-        if (ArrayUtils.isEmpty(displayOnActiveProfiles)) {
+        List<String> displayOnActiveProfiles = luixProperties.getRibbon().getDisplayOnActiveProfiles();
+        if (CollectionUtils.isEmpty(displayOnActiveProfiles)) {
             return null;
         }
 
-        List<String> ribbonProfiles = Stream.of(displayOnActiveProfiles).collect(Collectors.toList());
-        ribbonProfiles.retainAll(Arrays.asList(env.getActiveProfiles()));
+        displayOnActiveProfiles.retainAll(Arrays.asList(env.getActiveProfiles()));
 
-        return CollectionUtils.isNotEmpty(ribbonProfiles) ? ribbonProfiles.get(0) : null;
+        return CollectionUtils.isNotEmpty(displayOnActiveProfiles) ? displayOnActiveProfiles.get(0) : StringUtils.EMPTY;
     }
 
     @Operation(summary = "get bean")

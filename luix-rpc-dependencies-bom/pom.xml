@@ -63,7 +63,7 @@
         <log4j2_version>2.17.1</log4j2_version>
         <logback_version>1.2.6</logback_version>
         <lombok_version>1.18.20</lombok_version>
-        <luix_framework_version>1.2.0</luix_framework_version>
+        <luix_framework_version>1.2.1.1</luix_framework_version>
         <maven_flatten_pluggin_version>1.1.0</maven_flatten_pluggin_version>
         <maven_version>3.2.1</maven_version>
         <metrics_version>2.0.1</metrics_version>
