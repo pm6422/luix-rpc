@@ -5,7 +5,7 @@ import com.luixtech.rpc.core.exception.impl.RpcFrameworkException;
 import com.luixtech.rpc.core.exchange.Channel;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.utilities.lang.MathUtils;
-import com.luixtech.utilities.threadpool.NetworkThreadPoolExecutor;
+import com.luixtech.utilities.thread.pool.NetworkThreadPoolExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;

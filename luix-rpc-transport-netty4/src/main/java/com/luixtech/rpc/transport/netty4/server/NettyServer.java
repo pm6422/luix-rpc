@@ -12,7 +12,7 @@ import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.transport.netty4.NettyDecoder;
 import com.luixtech.rpc.transport.netty4.NettyEncoder;
 import com.luixtech.rpc.transport.netty4.NettyServerClientHandler;
-import com.luixtech.utilities.threadpool.NetworkThreadPoolExecutor;
+import com.luixtech.utilities.thread.pool.NetworkThreadPoolExecutor;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;

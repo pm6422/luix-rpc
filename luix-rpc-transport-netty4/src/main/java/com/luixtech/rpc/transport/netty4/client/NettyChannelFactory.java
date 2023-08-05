@@ -1,8 +1,7 @@
 package com.luixtech.rpc.transport.netty4.client;
 
-
 import com.luixtech.rpc.core.exchange.client.SharedObjectFactory;
-import com.luixtech.utilities.threadpool.NetworkThreadPoolExecutor;
+import com.luixtech.utilities.thread.pool.NetworkThreadPoolExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
