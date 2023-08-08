@@ -9,9 +9,7 @@ import io.mongock.runner.springboot.MongockSpringboot;
 import io.mongock.runner.springboot.RunnerSpringbootBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.ApplicationContext;
@@ -29,8 +27,6 @@ import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 public class SystemController {
@@ -51,8 +47,8 @@ public class SystemController {
     private String                               companyName;
     @Value("${springdoc.api-docs.enabled}")
     private boolean                              enabledApiDocs;
-    @Autowired(required = false)
-    private BuildProperties                      buildProperties;
+    @Resource
+    private Optional<BuildProperties>            buildProperties;
     @Resource
     private ApplicationEventPublisher            applicationEventPublisher;
     @Resource
@@ -64,8 +60,8 @@ public class SystemController {
 
     @GetMapping(value = "app/constants.js", produces = "application/javascript")
     public String getConstantsJs() {
-        String id = buildProperties != null ? buildProperties.getArtifact() : appId;
-        String version = buildProperties != null ? buildProperties.getVersion() : appVersion;
+        String id = buildProperties.isPresent() ? buildProperties.get().getArtifact() : appId;
+        String version = buildProperties.isPresent() ? buildProperties.get().getVersion() : appVersion;
         String js = "'use strict';\n" +
                 "(function () {\n" +
                 "    'use strict';\n" +
