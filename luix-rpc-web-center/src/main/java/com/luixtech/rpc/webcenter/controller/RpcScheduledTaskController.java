@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static com.luixtech.springbootframework.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.springbootframework.config.apidoc.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_FAILFAST;
 import static com.luixtech.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_FAILOVER;
 import static com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication.DEFAULT_REG;

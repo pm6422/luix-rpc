@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.luixtech.springbootframework.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.springbootframework.config.apidoc.SpringDocConfiguration.AUTH;
 
 
 /**

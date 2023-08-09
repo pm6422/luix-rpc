@@ -37,7 +37,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.luixtech.springbootframework.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.springbootframework.config.apidoc.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 import static com.luixtech.rpc.webcenter.utils.NetworkUtils.getRequestUrl;
 

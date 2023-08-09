@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.luixtech.springbootframework.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.springbootframework.config.apidoc.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.webcenter.LuixRpcWebCenterApplication.DEFAULT_REG;
 import static com.luixtech.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 
