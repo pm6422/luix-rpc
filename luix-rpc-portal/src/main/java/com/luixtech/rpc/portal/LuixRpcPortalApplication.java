@@ -1,11 +1,11 @@
 package com.luixtech.rpc.portal;
 
-import com.luixtech.framework.EnableLuixWebFramework;
+import com.luixtech.springbootframework.EnableLuixSpringBootFramework;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@EnableLuixWebFramework
+@EnableLuixSpringBootFramework
 public class LuixRpcPortalApplication {
 
     /**

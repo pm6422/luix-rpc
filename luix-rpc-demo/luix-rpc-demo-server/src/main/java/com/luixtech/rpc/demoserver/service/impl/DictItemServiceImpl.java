@@ -1,14 +1,14 @@
 package com.luixtech.rpc.demoserver.service.impl;
 
 import com.google.common.collect.ImmutableMap;
-import com.luixtech.framework.exception.DataNotFoundException;
-import com.luixtech.framework.exception.DuplicationException;
 import com.luixtech.rpc.core.server.annotation.RpcProvider;
 import com.luixtech.rpc.democommon.domain.DictItem;
 import com.luixtech.rpc.democommon.service.DictItemService;
 import com.luixtech.rpc.democommon.service.DictService;
 import com.luixtech.rpc.demoserver.repository.DictItemRepository;
 import com.luixtech.rpc.demoserver.repository.DictRepository;
+import com.luixtech.utilities.exception.DataNotFoundException;
+import com.luixtech.utilities.exception.DuplicationException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

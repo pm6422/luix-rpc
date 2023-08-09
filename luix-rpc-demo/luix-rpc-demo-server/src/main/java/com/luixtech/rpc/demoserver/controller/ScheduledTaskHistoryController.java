@@ -1,8 +1,8 @@
 package com.luixtech.rpc.demoserver.controller;
 
-import com.luixtech.framework.exception.DataNotFoundException;
 import com.luixtech.rpc.demoserver.domain.ScheduledTaskHistory;
 import com.luixtech.rpc.demoserver.repository.ScheduledTaskHistoryRepository;
+import com.luixtech.utilities.exception.DataNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.luixtech.framework.utils.HttpHeaderUtils.generatePageHeaders;
+import static com.luixtech.springbootframework.utils.HttpHeaderUtils.generatePageHeaders;
 
 
 /**

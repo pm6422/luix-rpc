@@ -1,6 +1,6 @@
 package com.luixtech.rpc.demoserver.controller;
 
-import com.luixtech.framework.config.LuixProperties;
+import com.luixtech.springbootframework.config.LuixProperties;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.mongodb.springdata.v3.config.MongoDBConfiguration;

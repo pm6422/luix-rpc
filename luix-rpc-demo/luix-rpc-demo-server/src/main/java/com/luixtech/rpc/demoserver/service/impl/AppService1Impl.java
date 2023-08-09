@@ -1,6 +1,5 @@
 package com.luixtech.rpc.demoserver.service.impl;
 
-import com.luixtech.framework.exception.DataNotFoundException;
 import com.luixtech.rpc.core.common.RpcMethod;
 import com.luixtech.rpc.core.server.annotation.RpcProvider;
 import com.luixtech.rpc.core.server.response.FutureResponse;
@@ -9,6 +8,7 @@ import com.luixtech.rpc.core.server.response.impl.RpcResponse;
 import com.luixtech.rpc.democommon.domain.App;
 import com.luixtech.rpc.democommon.service.AppService;
 import com.luixtech.rpc.demoserver.repository.AppRepository;
+import com.luixtech.utilities.exception.DataNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

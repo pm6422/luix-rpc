@@ -1,6 +1,6 @@
 package com.luixtech.rpc.webcenter.controller;
 
-import com.luixtech.framework.config.LuixProperties;
+import com.luixtech.springbootframework.config.LuixProperties;
 import com.luixtech.rpc.webcenter.domain.Authority;
 import com.luixtech.utilities.network.AddressUtils;
 import io.mongock.api.config.MongockConfiguration;
@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.springbootframework.config.api.SpringDocConfiguration.AUTH;
 
 
 @RestController

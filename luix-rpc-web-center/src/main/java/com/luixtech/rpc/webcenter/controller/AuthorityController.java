@@ -1,7 +1,7 @@
 package com.luixtech.rpc.webcenter.controller;
 
 import com.google.common.collect.ImmutableMap;
-import com.luixtech.framework.component.HttpHeaderCreator;
+import com.luixtech.springbootframework.component.HttpHeaderCreator;
 import com.luixtech.rpc.webcenter.domain.Authority;
 import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.exception.DuplicationException;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.springbootframework.config.api.SpringDocConfiguration.AUTH;
 
 
 /**

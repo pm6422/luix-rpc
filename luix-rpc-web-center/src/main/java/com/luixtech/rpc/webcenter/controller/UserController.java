@@ -1,6 +1,6 @@
 package com.luixtech.rpc.webcenter.controller;
 
-import com.luixtech.framework.component.HttpHeaderCreator;
+import com.luixtech.springbootframework.component.HttpHeaderCreator;
 import com.luixtech.rpc.webcenter.config.ApplicationProperties;
 import com.luixtech.rpc.webcenter.domain.Authority;
 import com.luixtech.rpc.webcenter.domain.User;
@@ -37,7 +37,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.springbootframework.config.api.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.webcenter.utils.HttpHeaderUtils.generatePageHeaders;
 import static com.luixtech.rpc.webcenter.utils.NetworkUtils.getRequestUrl;
 

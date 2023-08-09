@@ -3,7 +3,7 @@ package com.luixtech.rpc.webcenter.controller.advice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.luixtech.framework.component.MessageCreator;
+import com.luixtech.springbootframework.component.MessageCreator;
 import com.luixtech.rpc.webcenter.dto.ErrorDTO;
 import com.luixtech.rpc.webcenter.exception.DataNotFoundException;
 import com.luixtech.rpc.webcenter.exception.DuplicationException;

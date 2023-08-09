@@ -1,7 +1,7 @@
 package com.luixtech.rpc.webcenter.controller;
 
 import com.codahale.metrics.annotation.Timed;
-import com.luixtech.framework.component.HttpHeaderCreator;
+import com.luixtech.springbootframework.component.HttpHeaderCreator;
 import com.luixtech.rpc.core.client.invocationhandler.UniversalInvocationHandler;
 import com.luixtech.rpc.core.client.proxy.Proxy;
 import com.luixtech.rpc.core.client.stub.ConsumerStub;
@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.springbootframework.config.api.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.core.constant.ConsumerConstants.FAULT_TOLERANCE_VAL_BROADCAST;
 import static com.luixtech.rpc.core.server.stub.ProviderStub.*;
 import static com.luixtech.rpc.serializer.Serializer.SERIALIZER_NAME_HESSIAN2;

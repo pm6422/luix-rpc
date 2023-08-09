@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import static com.luixtech.framework.config.LuixProperties.SPRING_PROFILE_DEV;
+import static com.luixtech.springbootframework.config.LuixProperties.SPRING_PROFILE_DEV;
 import static java.net.URLDecoder.decode;
 
 /**

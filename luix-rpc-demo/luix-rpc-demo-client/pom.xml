@@ -56,7 +56,7 @@
         </dependency>
         <dependency>
             <groupId>com.luixtech</groupId>
-            <artifactId>luix-web-framework</artifactId>
+            <artifactId>luix-springboot2-framework</artifactId>
         </dependency>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>

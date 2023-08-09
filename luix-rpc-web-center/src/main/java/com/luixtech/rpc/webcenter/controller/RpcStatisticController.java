@@ -16,7 +16,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.springbootframework.config.api.SpringDocConfiguration.AUTH;
 import static com.luixtech.rpc.webcenter.task.polling.AsyncTask.NAME_STATISTIC;
 import static org.springframework.http.HttpStatus.*;
 

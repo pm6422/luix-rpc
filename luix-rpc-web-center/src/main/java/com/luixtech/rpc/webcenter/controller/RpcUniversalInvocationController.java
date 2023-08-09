@@ -24,7 +24,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import static com.luixtech.framework.config.api.SpringDocConfiguration.AUTH;
+import static com.luixtech.springbootframework.config.api.SpringDocConfiguration.AUTH;
 
 
 /**

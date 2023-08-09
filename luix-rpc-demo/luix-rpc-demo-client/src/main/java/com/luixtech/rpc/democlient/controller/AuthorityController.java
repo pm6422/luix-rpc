@@ -1,6 +1,6 @@
 package com.luixtech.rpc.democlient.controller;
 
-import com.luixtech.framework.component.HttpHeaderCreator;
+import com.luixtech.springbootframework.component.HttpHeaderCreator;
 import com.luixtech.rpc.core.client.annotation.RpcConsumer;
 import com.luixtech.rpc.democlient.exception.DataNotFoundException;
 import com.luixtech.rpc.democommon.domain.Authority;
@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.luixtech.framework.utils.HttpHeaderUtils.generatePageHeaders;
+import static com.luixtech.springbootframework.utils.HttpHeaderUtils.generatePageHeaders;
 
 
 /**

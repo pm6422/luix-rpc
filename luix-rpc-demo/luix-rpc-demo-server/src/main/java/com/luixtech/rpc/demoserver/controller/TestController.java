@@ -1,6 +1,6 @@
 package com.luixtech.rpc.demoserver.controller;
 
-import com.luixtech.framework.utils.TraceIdUtils;
+import com.luixtech.springbootframework.utils.TraceIdUtils;
 import com.luixtech.rpc.core.url.Url;
 import com.luixtech.rpc.democommon.service.AppService;
 import com.luixtech.rpc.demoserver.service.AsyncTaskTestService;

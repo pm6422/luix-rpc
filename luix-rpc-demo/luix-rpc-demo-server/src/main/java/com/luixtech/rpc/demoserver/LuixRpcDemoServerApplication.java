@@ -1,9 +1,9 @@
 package com.luixtech.rpc.demoserver;
 
-import com.luixtech.framework.EnableLuixWebFramework;
 import com.luixtech.rpc.serializer.kryo.KryoUtils;
 import com.luixtech.rpc.spring.boot.starter.EnableLuixRpc;
 import com.luixtech.rpc.spring.enhancement.kryo.serializer.*;
+import com.luixtech.springbootframework.EnableLuixSpringBootFramework;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 
 @SpringBootApplication
 @EnableLuixRpc
-@EnableLuixWebFramework
+@EnableLuixSpringBootFramework
 public class LuixRpcDemoServerApplication {
     public static ConfigurableApplicationContext applicationContext;
 

@@ -1,7 +1,7 @@
 package com.luixtech.rpc.webcenter.service.impl;
 
 import com.google.common.collect.ImmutableMap;
-import com.luixtech.framework.component.MessageCreator;
+import com.luixtech.springbootframework.component.MessageCreator;
 import com.luixtech.rpc.webcenter.domain.Authority;
 import com.luixtech.rpc.webcenter.domain.User;
 import com.luixtech.rpc.webcenter.domain.UserAuthority;

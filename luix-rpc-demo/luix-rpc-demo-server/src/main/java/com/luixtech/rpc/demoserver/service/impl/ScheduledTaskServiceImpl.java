@@ -1,6 +1,5 @@
 package com.luixtech.rpc.demoserver.service.impl;
 
-import com.luixtech.framework.exception.DataNotFoundException;
 import com.luixtech.rpc.demoserver.domain.ScheduledTask;
 import com.luixtech.rpc.demoserver.repository.ScheduledTaskHistoryRepository;
 import com.luixtech.rpc.demoserver.repository.ScheduledTaskLockRepository;
@@ -9,6 +8,7 @@ import com.luixtech.rpc.demoserver.service.ScheduledTaskService;
 import com.luixtech.rpc.demoserver.task.schedule.CancelableScheduledTaskRegistrar;
 import com.luixtech.rpc.demoserver.task.schedule.RunnableTask;
 import com.luixtech.uidgenerator.core.id.IdGenerator;
+import com.luixtech.utilities.exception.DataNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

@@ -1,12 +1,12 @@
 package com.luixtech.rpc.demoserver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.luixtech.framework.component.HttpHeaderCreator;
-import com.luixtech.framework.exception.DataNotFoundException;
+import com.luixtech.springbootframework.component.HttpHeaderCreator;
 import com.luixtech.rpc.demoserver.domain.ScheduledTask;
 import com.luixtech.rpc.demoserver.repository.ScheduledTaskRepository;
 import com.luixtech.rpc.demoserver.service.ScheduledTaskService;
 import com.luixtech.rpc.demoserver.task.schedule.TaskExecutable;
+import com.luixtech.utilities.exception.DataNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static com.luixtech.framework.utils.HttpHeaderUtils.generatePageHeaders;
+import static com.luixtech.springbootframework.utils.HttpHeaderUtils.generatePageHeaders;
 
 
 /**
