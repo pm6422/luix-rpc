@@ -158,7 +158,9 @@ luix:
         api-include-pattern: /api/**
         open-api-include-pattern: /open-api/**
         management-include-pattern: /management/**
-        title: LUI️✘ RPC Demo Client
+        api-title: LUI️✘ RPC Demo Client API
+        open-api-title: LUI️✘ RPC Demo Client Open API
+        management-title: LUI️✘ RPC Demo Client Management
         version: ${app.version}
         terms-of-service-url:
         contact-name: Louis

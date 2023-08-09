@@ -171,7 +171,9 @@ luix:
         api-include-pattern: /api/**
         open-api-include-pattern: /open-api/**
         management-include-pattern: /management/**
-        title: LUI️✘ RPC Web Center
+        api-title: LUI️✘ RPC Web Center API
+        open-api-title: LUI️✘ RPC Web Center Open API
+        management-title: LUI️✘ RPC Web Center Management
         version: ${app.version}
         terms-of-service-url:
         contact-name: Louis
