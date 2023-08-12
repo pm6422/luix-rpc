@@ -94,7 +94,7 @@
         <assertj_version>3.22.0</assertj_version>
         <junit_jupiter_version>5.7.2</junit_jupiter_version>
         <spring_filter_version>2.0.9</spring_filter_version>
-        <dropwizard_metrics_version>4.1.25</dropwizard_metrics_version>
+        <dropwizard_metrics_version>4.2.11</dropwizard_metrics_version>
         <swagger_version>2.2.0</swagger_version>
         <spring_data_mongodb_version>3.4.1</spring_data_mongodb_version>
         <micrometer_version>1.8.13</micrometer_version>
