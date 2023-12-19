@@ -129,8 +129,8 @@ luix-rpc:
         id: ${spring.application.name}
         description: RPC Demo Client
         team: Infinity Team
-        emailSuffixes: '@luixtech.com'
-        ownerEmail: louis@luixtech.com
+        emailSuffixes: '@luixtech.cn'
+        ownerEmail: louis@luixtech.cn
         env: ${spring.profiles.active}
         debugMode: true
     registry:
@@ -165,7 +165,7 @@ luix:
         terms-of-service-url:
         contact-name: Louis
         contact-url:
-        contact-email: louis@luixtech.com
+        contact-email: louis@luixtech.cn
         license: Unlicensed
         license-url:
     aop-logging:

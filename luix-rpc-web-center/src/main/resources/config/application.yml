@@ -95,7 +95,7 @@ spring:
             max-request-size: 30MB
     mail: # specific mail property, used by MailProperties
         host: smtp.exmail.qq.com
-        username: test@luixtech.com
+        username: test@luixtech.cn
         password: LoU-UHR-9dH-8G9-F3G
     banner:
         location: classpath:config/banner-company.txt
@@ -134,8 +134,8 @@ luix-rpc:
         id: ${spring.application.name}
         description: RPC Web Center
         team: Infinity Team
-        emailSuffixes: '@luixtech.com'
-        ownerEmail: louis@luixtech.com
+        emailSuffixes: '@luixtech.cn'
+        ownerEmail: louis@luixtech.cn
         env: ${spring.profiles.active}
     registries:
         0:
@@ -178,7 +178,7 @@ luix:
         terms-of-service-url:
         contact-name: Louis
         contact-url:
-        contact-email: louis@luixtech.com
+        contact-email: louis@luixtech.cn
         license: Unlicensed
         license-url:
     aop-logging:

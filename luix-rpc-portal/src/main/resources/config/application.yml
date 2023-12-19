@@ -103,7 +103,7 @@ luix:
             description: Luix Portal接口文档
         version: ${app.version}
         contact-name: Louis
-        contact-email: louis@luixtech.com
+        contact-email: louis@luixtech.cn
     http:
         cache: # Used by the CachingHttpHeadersFilter
             expired-after: 31

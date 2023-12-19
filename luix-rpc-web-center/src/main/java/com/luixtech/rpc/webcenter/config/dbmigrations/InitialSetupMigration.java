@@ -113,7 +113,7 @@ public class InitialSetupMigration {
         developerRoleUser.setUsername("louis");
         developerRoleUser.setFirstName("Louis");
         developerRoleUser.setLastName("Lau");
-        developerRoleUser.setEmail("louis@luixtech.com");
+        developerRoleUser.setEmail("louis@luixtech.cn");
         developerRoleUser.setMobileNo("15000899488");
         // Raw password: louis
         developerRoleUser.setPasswordHash(passwordEncoder.encode("louis"));

@@ -13,7 +13,7 @@
     <packaging>pom</packaging>
     <name>luix-rpc-dependencies-bom</name>
     <description>Luix RPC dependencies BOM</description>
-    <url>http://www.luixtech.com</url>
+    <url>http://www.luixtech.cn</url>
     <properties>
         <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
