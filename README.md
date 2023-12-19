@@ -5,7 +5,7 @@ LUI️✘ is pronounced [ˈluːɪks], which is an easy-to-use, high-performance 
 ## Official Website
 Please visit our website for more details.
 
-[http://www.luixtech.com](http://www.luixtech.com)
+[https://rpc.luixtech.cn](https://rpc.luixtech.cn)
 
 
 ## Requirements
