@@ -17,6 +17,12 @@
         <harborUrl/>
         <harborUsername/>
         <java.version>11</java.version>
+        <jib.arch>amd64</jib.arch>
+        <jib.goal>dockerBuild</jib.goal>
+        <jib.image.version>latest</jib.image.version>
+        <jib.registry.password/>
+        <jib.registry.url/>
+        <jib.registry.username/>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.version>3.6.2</maven.version>
@@ -142,26 +148,22 @@
                     <plugin>
                         <groupId>com.google.cloud.tools</groupId>
                         <artifactId>jib-maven-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.4.0</version>
                         <configuration>
                             <from>
-                                <image>eclipse-temurin:17-jdk-focal</image>
+                                <image>eclipse-temurin:17-jre-jammy</image>
                                 <platforms>
                                     <platform>
-                                        <architecture>amd64</architecture>
-                                        <os>linux</os>
-                                    </platform>
-                                    <platform>
-                                        <architecture>arm64</architecture>
+                                        <architecture>${jib.arch}</architecture>
                                         <os>linux</os>
                                     </platform>
                                 </platforms>
                             </from>
                             <to>
-                                <image>${harborUrl}/${project.artifactId}:${project.version}</image>
+                                <image>${jib.registry.url}${project.artifactId}:${jib.image.version}</image>
                                 <auth>
-                                    <username>${harborUsername}</username>
-                                    <password>${harborPassword}</password>
+                                    <username>${jib.registry.username}</username>
+                                    <password>${jib.registry.password}</password>
                                 </auth>
                             </to>
                             <container>
@@ -171,7 +173,7 @@
                                     <arg>/entrypoint.sh</arg>
                                 </entrypoint>
                                 <ports>
-                                    <port>6040</port>
+                                    <port>4000</port>
                                 </ports>
                                 <environment>
                                     <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
@@ -200,11 +202,11 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <id>build-push-image</id>
+                                <id>build</id>
                                 <goals>
-                                    <goal>build</goal>
+                                    <goal>${jib.goal}</goal>
                                 </goals>
-                                <phase>package</phase>
+                                <phase>compile</phase>
                             </execution>
                         </executions>
                     </plugin>

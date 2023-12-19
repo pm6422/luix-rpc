@@ -1,0 +1,11 @@
+{
+  "name": "luix-rpc",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Luix RPC Package Management",
+  "license": "UNLICENSED",
+  "scripts": {
+    "docker:build": "./mvnw compile -ntp verify -DskipTests -Prelease",
+    "docker:build:arm64": "npm run docker:build -- -Djib.arch=arm64"
+  }
+}
