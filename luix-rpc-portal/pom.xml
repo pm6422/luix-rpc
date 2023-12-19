@@ -16,7 +16,7 @@
         <harborPassword/>
         <harborUrl/>
         <harborUsername/>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <jib.arch>amd64</jib.arch>
         <jib.goal>dockerBuild</jib.goal>
         <jib.image.version>latest</jib.image.version>

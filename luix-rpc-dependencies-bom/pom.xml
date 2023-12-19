@@ -13,7 +13,7 @@
     <packaging>pom</packaging>
     <name>luix-rpc-dependencies-bom</name>
     <description>Luix RPC dependencies BOM</description>
-    <url>http://www.luixtech.com</url>
+    <url>http://www.luixtech.cn</url>
     <properties>
         <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -62,7 +62,6 @@
         <kryo_version>5.3.0</kryo_version>
         <log4j2_version>2.17.1</log4j2_version>
         <logback_version>1.2.6</logback_version>
-        <lombok_version>1.18.30</lombok_version>
         <luix_commons_version>1.2.3.4</luix_commons_version>
         <maven_flatten_pluggin_version>1.1.0</maven_flatten_pluggin_version>
         <maven_version>3.2.1</maven_version>
@@ -641,11 +640,6 @@
                 <artifactId>jetty</artifactId>
                 <version>${mortbay_jetty_version}</version>
                 <optional>true</optional>
-            </dependency>
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok_version}</version>
             </dependency>
             <!-- Log libs -->
             <dependency>
