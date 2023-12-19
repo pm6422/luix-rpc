@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '21'
-          distribution: 'corretto'
+          distribution: 'temurin'
           cache: maven
       - name: Build and push docker image to registry
         # run: mvn compile jib:build
