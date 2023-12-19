@@ -101,6 +101,7 @@
         <spring_data_commons_version>2.7.1</spring_data_commons_version>
         <metrics_spring_version>3.1.3</metrics_spring_version>
         <jjwt_version>0.11.2</jjwt_version>
+        <luix_springboot3_version>1.2.2.8</luix_springboot3_version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -311,6 +312,11 @@
                 <groupId>com.luixtech</groupId>
                 <artifactId>luix-springboot2-framework</artifactId>
                 <version>${luix_commons_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.luixtech</groupId>
+                <artifactId>luix-springboot3-framework</artifactId>
+                <version>${luix_springboot3_version}</version>
             </dependency>
             <!-- Eureka -->
             <dependency>
