@@ -1,6 +1,6 @@
-# LUI️✘
+# LUI️X RPC
 
-LUI️✘ is pronounced [ˈluːɪks], which is an easy-to-use, high-performance RPC(Remote Procedure Call) framework with builtin service registration & discovery, traffic management, fault tolerance, monitor tools and best practices for building enterprise-level microservices.
+LUI️X RPC is pronounced [ˈluːɪks], which is an easy-to-use, high-performance RPC(Remote Procedure Call) framework with builtin service registration & discovery, traffic management, fault tolerance, monitor tools and best practices for building enterprise-level microservices.
 
 ## Official Website
 Please visit our website for more details.
